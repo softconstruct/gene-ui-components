@@ -1,0 +1,10 @@
+.git
+.gitlab
+node_modules
+
+# Ignore artifacts:
+dist
+stats
+
+coverage
+docs

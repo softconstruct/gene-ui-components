@@ -1,0 +1,9 @@
+@import 'src/assets/styles/variables';
+
+.fake-paper-placeholder {
+    margin: rem(10);
+    border-radius: rem(4);
+    border: rem(1) solid sc(b, 0.1);
+    font: 600 rem(14) / rem(46) $f;
+    padding: 0 rem(36);
+}

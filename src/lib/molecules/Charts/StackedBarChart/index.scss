@@ -1,0 +1,14 @@
+@import 'src/assets/styles/variables';
+
+.stacked-chart {
+    min-height: rem(550);
+    background-color: var(--background);
+}
+
+.stacked-chart-proxy-content {
+    min-height: rem(550);
+
+    > .icon {
+        margin: auto;
+    }
+}

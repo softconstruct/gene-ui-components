@@ -1,0 +1,62 @@
+@import 'src/assets/styles/variables';
+
+.badge {
+    position: relative;
+    max-width: fit-content;
+
+    &__content {
+        display: block;
+        background: c(danger);
+        color: sc(danger);
+        border-radius: rem(30);
+        text-align: center;
+        padding: 0 rem(5);
+        font: 600 rem(10) / rem(16) $f;
+        min-width: rem(16);
+
+        &-children {
+            position: absolute;
+            top: -rem(8);
+            @include rtlp(right, left, -rem(8));
+        }
+
+        &-dot {
+            min-width: rem(10);
+            min-height: rem(10);
+            width: rem(10);
+            height: rem(10);
+            top: -rem(5);
+            @include rtlp(right, left, -rem(5));
+        }
+
+        &-medium {
+            line-height: rem(18);
+            min-width: rem(18);
+            min-height: rem(18);
+        }
+
+        &-big {
+            line-height: rem(22);
+            min-width: rem(22);
+            min-height: rem(22);
+        }
+
+        &-huge {
+            line-height: rem(26);
+            min-width: rem(26);
+            min-height: rem(26);
+            font-size: rem(13);
+        }
+
+        &-medium,
+        &-big,
+        &-huge {
+            top: -rem(10);
+            @include rtlp(right, left, -rem(10));
+        }
+
+        &-primary {
+            background: var(--hero);
+        }
+    }
+}

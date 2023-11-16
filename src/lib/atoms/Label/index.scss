@@ -1,0 +1,17 @@
+.label {
+    display: inline-block;
+    vertical-align: top;
+    max-width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-weight: normal;
+
+    &.bold {
+        font-weight: bolder;
+    }
+
+    &.semiBold {
+        font-weight: bold;
+    }
+}

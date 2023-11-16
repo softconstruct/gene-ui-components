@@ -1,0 +1,497 @@
+@import 'src/assets/styles/variables';
+
+$sticky-gradient-cut-default-1: linear-gradient(to left, c(b) 65%, c(b, 0) 100%);
+$sticky-gradient-cut-default-2: linear-gradient(to right, c(b) 65%, c(b, 0) 100%);
+$sticky-gradient-cut-even-1: linear-gradient(to left, sc(b, 0.02) 65%, sc(b, 0) 100%),
+    linear-gradient(to left, c(b) 65%, c(b, 0) 100%);
+$sticky-gradient-cut-even-2: linear-gradient(to right, sc(b, 0.02) 65%, sc(b, 0) 100%),
+    linear-gradient(to right, c(b) 65%, c(b, 0) 100%);
+$sticky-gradient-cut-hero-1: linear-gradient(to left, c(hero, 0.08) 65%, c(hero, 0) 100%),
+    linear-gradient(to left, c(b) 65%, c(b, 0) 100%);
+$sticky-gradient-cut-hero-2: linear-gradient(to right, c(hero, 0.08) 65%, c(hero, 0) 100%),
+    linear-gradient(to right, c(b) 65%, c(b, 0) 100%);
+
+.table-loader-container {
+    width: 100%;
+    position: relative;
+}
+
+.table-holder {
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    font: 600 rem(14) / rem(18) $f;
+
+    .table-loader-container & {
+        position: static;
+    }
+
+    .ReactVirtualized__Grid {
+        width: auto !important;
+        overflow: visible !important;
+        direction: inherit !important;
+        min-width: 100%;
+
+        .ReactVirtualized__Grid__innerScrollContainer {
+            width: auto !important;
+            overflow: visible !important;
+            max-width: inherit !important;
+            min-width: 100%;
+        }
+    }
+
+    &:not(.content-empty) {
+        max-height: calc(100vh - var(--header-height, 0px) - var(--table-max-height-additional-calc, 0px));
+    }
+}
+
+.ta-body {
+    position: relative;
+    min-width: 100%;
+    display: inline-block;
+    @include zIndex(0);
+
+    .content-empty & {
+        position: sticky;
+        @include rtlp(left, right, 0);
+    }
+}
+
+.ta-n-body {
+    min-width: 100%;
+    display: inline-block;
+    position: sticky;
+    @include zIndex(tableSticky);
+
+    background: c(b);
+    font-weight: 700;
+    user-select: none;
+
+    .ta-row {
+        background: sc(b, 0.04);
+        min-width: 100%;
+        display: inline-flex;
+
+        &.disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    }
+
+    .content-empty & {
+        //pointer-events: none;
+    }
+}
+
+.ta-group {
+    display: inline-flex;
+    flex-direction: column;
+    min-width: 100%;
+    position: relative;
+    width: auto !important;
+    @include rtlp(right, left, auto !important);
+    @include rtlp(left, right, 0 !important);
+}
+
+.ta-gr-left-line {
+    position: absolute;
+    @include rtlp(left, right, 0);
+
+    width: 100%;
+    top: -rem(1);
+    bottom: 0;
+    display: flex;
+    @include zIndex(tableStickyOverPlus);
+
+    pointer-events: none;
+
+    &::before {
+        content: '';
+        display: block;
+        position: sticky;
+        height: 100%;
+        width: rem(3);
+        @include rtlp(left, right, 0);
+
+        background: c(hero);
+        @include rtl(transform, translateX(-110%), translateX(110%));
+
+        transition: 300ms transform;
+
+        .hover-able:hover &,
+        .selected & {
+            transform: translateX(0);
+        }
+    }
+}
+
+.ta-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    min-width: 100%;
+    background-clip: content-box;
+
+    &.border-bottom {
+        border-bottom: rem(1) solid sc(b, 0.1);
+    }
+
+    &.border-top {
+        border-top: rem(1) solid sc(b, 0.1);
+    }
+
+    &.even-coloring {
+        background-color: sc(b, 0.02);
+    }
+
+    &.hover-able:hover,
+    &.selected {
+        background-color: c(hero, 0.08);
+
+        .tl-bc-icon-action {
+            color: c(hero);
+        }
+    }
+
+    &.hover-able {
+        &:not(.cursor-grab) {
+            cursor: pointer;
+        }
+    }
+
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+}
+
+.ta-cell {
+    min-width: rem(42);
+    flex-shrink: 0;
+    min-height: rem(42);
+    display: flex;
+    align-items: center;
+    position: relative;
+    will-change: width, background-color, position;
+
+    > .ellipsis-text {
+        width: 100%;
+    }
+
+    .ta-n-body & {
+        &:last-child,
+        &:nth-last-child(2) {
+            overflow: hidden;
+        }
+    }
+
+    a {
+        color: c(hero);
+        font-weight: 600;
+    }
+
+    &:not(.a-square) {
+        @include rtl(padding, 0 rem(12) 0 rem(20), 0 rem(20) 0 rem(12));
+    }
+
+    &.a-square {
+        justify-content: center;
+
+        &:empty {
+            pointer-events: none;
+        }
+
+        &:not(:empty) {
+            position: sticky;
+            transform: translate3d(0, 0, 0);
+            @include zIndex(tableStickyOver);
+        }
+    }
+
+    &.sticky {
+        position: sticky;
+        @include zIndex(tableStickyOver);
+
+        background-color: inherit;
+        transition: none;
+        box-shadow: rem(1) 0 0 sc(b, 0.1), -rem(1) 0 0 sc(b, 0.1), inset 0 0 0 rem(100) c(b);
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            z-index: -1;
+        }
+
+        &::after {
+            content: '';
+            display: block;
+            position: absolute;
+            top: 0;
+            bottom: -rem(1);
+            width: rem(20);
+            transition: opacity $tableTransition, visibility $tableTransition;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        sub:last-of-type + &,
+        sup:first-of-type + & {
+            &::after {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        &.now-sticky {
+            box-shadow: inset 0 0 0 rem(100) c(b);
+        }
+
+        &.sticky-left {
+            @include rtlp(left, right, 0);
+
+            &::after {
+                @include rtlp(left, right, 100%);
+                @include rtl(
+                    background,
+                    linear-gradient(to right, rgba(black, 0.05), c(b, 0)),
+                    linear-gradient(to left, rgba(black, 0.05), c(b, 0))
+                );
+            }
+
+            sub:last-of-type + & {
+                box-shadow: rem(1) 0 0 sc(b, 0.1), inset 0 0 0 rem(100) c(b);
+            }
+        }
+
+        &.sticky-right {
+            @include rtlp(right, left, 0);
+
+            &::after {
+                @include rtlp(right, left, 100%);
+                @include rtl(
+                    background,
+                    linear-gradient(to left, rgba(black, 0.05), c(b, 0)),
+                    linear-gradient(to right, rgba(black, 0.05), c(b, 0))
+                );
+            }
+
+            sup:first-of-type + & {
+                box-shadow: -rem(1) 0 0 sc(b, 0.1), inset 0 0 0 rem(100) c(b);
+            }
+        }
+    }
+
+    &:hover {
+        .copy-icon {
+            opacity: 1;
+        }
+    }
+
+    .copy-icon {
+        font-size: 14px;
+        margin-right: 6px;
+        opacity: 0;
+
+        &:focus {
+            color: c(hero);
+        }
+    }
+
+    .crs-holder {
+        display: flex;
+    }
+}
+
+.ta-nested-child-holder {
+    width: 100%;
+    overflow: hidden;
+    position: sticky;
+    @include rtlp(left, right, 0);
+
+    max-width: var(--table-max-width);
+    cursor: auto;
+    user-select: text;
+
+    &:not(.table-empty-holder) {
+        border-bottom: rem(1) solid sc(b, 0.1);
+    }
+}
+
+.ta-nested-child {
+    padding: rem(12) rem(14);
+    width: 100%;
+}
+
+.tl-bc-icon-action {
+    width: 100%;
+    text-align: center;
+    transition: 300ms color, 300ms transform;
+    cursor: pointer;
+    position: relative;
+    @include zIndex(1);
+
+    &.active {
+        transform: rotate(180deg);
+    }
+}
+
+.table-splash-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: c(b, 0.6);
+    border-radius: rem(20);
+    @include zIndex(tableStickyOver);
+}
+
+.table-empty-holder {
+    padding: rem(20);
+    min-height: rem(420);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+}
+
+.right-actions-holder {
+    width: rem(52);
+    @include rtlp(right, left, 0);
+
+    .ta-n-body &:not(.sticky) {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.left-actions-holder {
+    @include rtlp(left, right, 0);
+
+    .icon {
+        margin: 0 rem(9);
+    }
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        @include rtlp(right, left, -rem(20));
+        @include rtlp(left, right, 0);
+
+        pointer-events: none;
+    }
+
+    &::before {
+        @include rtl(background, $sticky-gradient-cut-default-2, $sticky-gradient-cut-default-1);
+
+        .even-coloring & {
+            @include rtl(background, $sticky-gradient-cut-even-2, $sticky-gradient-cut-even-1);
+        }
+    }
+
+    &::after {
+        @include rtl(background, $sticky-gradient-cut-hero-2, $sticky-gradient-cut-hero-1);
+
+        opacity: 0;
+    }
+
+    .ta-row.hover-able:hover &,
+    .ta-row.selected & {
+        &::before {
+            opacity: 0;
+        }
+
+        &::after {
+            opacity: 1;
+        }
+    }
+}
+
+.ta-action {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    padding: 0 rem(6);
+    display: flex;
+    align-items: center;
+    @include rtlp(right, left, 0);
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        @include rtlp(left, right, -rem(30));
+        @include rtlp(right, left, 0);
+    }
+
+    &::before {
+        @include rtl(background, $sticky-gradient-cut-default-1, $sticky-gradient-cut-default-2);
+
+        .even-coloring & {
+            @include rtl(background, $sticky-gradient-cut-even-1, $sticky-gradient-cut-even-2);
+        }
+    }
+
+    &::after {
+        @include rtl(background, $sticky-gradient-cut-hero-1, $sticky-gradient-cut-hero-2);
+
+        opacity: 0;
+    }
+
+    &.ta-a-2 {
+        visibility: hidden;
+    }
+
+    .ta-row.hover-able:hover &,
+    .ta-row.selected & {
+        &.ta-a-1:not(:only-child),
+        &::before {
+            opacity: 0;
+        }
+
+        &.ta-a-2,
+        &::after {
+            visibility: unset;
+        }
+    }
+
+    .now-sticky & {
+        &::before {
+            content: none;
+        }
+    }
+}
+
+.ta-item {
+    display: flex;
+    align-items: center;
+    position: relative;
+    @include zIndex(1);
+}
+
+.edit-save-button-holder {
+    display: flex;
+    align-items: center;
+
+    &:not(:only-child) {
+        margin-inline-end: rem(10);
+    }
+
+    > * {
+        + * {
+            margin-inline-start: rem(10);
+        }
+    }
+}

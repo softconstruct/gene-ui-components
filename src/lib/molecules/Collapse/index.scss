@@ -1,0 +1,118 @@
+@import 'src/assets/styles/variables';
+
+$s: '.accordion-holder';
+
+.accordion-holder {
+    width: 100%;
+    overflow: hidden;
+
+    &.a-minimal {
+        &:not(.active) + .a-minimal {
+            margin: rem(15) 0 0;
+        }
+
+        &.active {
+            .accordion-head-arrow {
+                transform: rotate(180deg);
+            }
+        }
+
+        .a-minimal {
+            &:not(.active) {
+                .accordion-head-arrow {
+                    @include rtl(transform, rotate(-90deg), rotate(90deg));
+                }
+            }
+        }
+    }
+
+    &.a-default {
+        border: rem(1) solid sc(b, 0.05);
+
+        + .a-default {
+            margin: rem(5) 0 0;
+        }
+
+        &:first-of-type {
+            border-top-left-radius: rem(10);
+            border-top-right-radius: rem(10);
+        }
+
+        &:last-of-type {
+            border-bottom-left-radius: rem(10);
+            border-bottom-right-radius: rem(10);
+        }
+
+        &:not(.active) {
+            .accordion-head-arrow {
+                @include rtl(transform, rotate(-90deg), rotate(90deg));
+            }
+        }
+    }
+
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+}
+
+.accordion-head {
+    display: flex;
+    align-items: center;
+    font: 600 rem(14) / rem(24) $f;
+    cursor: pointer;
+    user-select: none;
+
+    .a-default > & {
+        height: rem(40);
+        background: sc(b, 0.02);
+        padding: 0 rem(12);
+
+        > li {
+            + li {
+                @include rtl(margin, 0 0 0 rem(18), 0 rem(18) 0 0);
+            }
+
+            flex-shrink: 0;
+
+            &.ellipsis-text {
+                flex: auto;
+            }
+        }
+    }
+
+    .a-minimal > & {
+        > li {
+            flex-shrink: 0;
+
+            &.ellipsis-text {
+                @include rtl(margin, 0 rem(10) 0 rem(4), 0 rem(4) 0 rem(10));
+            }
+
+            &.line {
+                flex: auto;
+            }
+        }
+
+        .line {
+            height: rem(1);
+            background: sc(b, 0.1);
+        }
+    }
+
+    .accordion-head-arrow {
+        transition: 300ms transform;
+    }
+}
+
+.accordion-body {
+    font: rem(12) / 1.33 $f;
+
+    .a-default & {
+        padding: rem(10) rem(20);
+    }
+
+    .a-minimal & {
+        @include rtl(padding, rem(10) 0 rem(10) rem(28), rem(10) rem(28) rem(10) 0);
+    }
+}

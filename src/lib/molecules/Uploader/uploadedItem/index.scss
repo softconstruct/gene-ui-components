@@ -1,0 +1,146 @@
+@import 'src/assets/styles/variables';
+
+.uploaded-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    @include rtl(padding, 0 rem(1) 0 rem(8), 0 rem(8) 0 rem(1));
+
+    height: rem(28);
+    border-radius: rem(4);
+    transition: 400ms background, 400ms color, 400ms border-color;
+
+    &:not(.error) {
+        cursor: pointer;
+    }
+
+    > li {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+
+        &.ui-title {
+            flex: auto;
+            overflow: hidden;
+        }
+    }
+
+    .ui-preview-holder {
+        position: relative;
+
+        small {
+            display: block;
+            text-align: center;
+            position: absolute;
+            top: rem(8);
+            left: 0;
+            width: 100%;
+            text-transform: uppercase;
+            font: 700 rem(5) / rem(9) $f;
+        }
+    }
+
+    .ui-title {
+        padding: 0 rem(20);
+        font: 600 rem(14) / normal $f;
+    }
+
+    .ui-actions-holder {
+        small {
+            display: block;
+            padding-inline-end: rem(8);
+            opacity: 0.7;
+            font: 600 rem(10) / rem(14) $f;
+            text-transform: uppercase;
+        }
+
+        .icon {
+            cursor: pointer;
+            transition: 400ms opacity;
+        }
+    }
+
+    &.ui-light,
+    &.ui-minimal {
+        .ui-actions-holder {
+            .icon {
+                opacity: 0;
+                @include hover {
+                    opacity: 1;
+                }
+            }
+        }
+        @include hover {
+            background: sc(b, 0.05);
+
+            .ui-actions-holder {
+                .icon:not(:hover) {
+                    opacity: 0.5;
+                }
+            }
+        }
+
+        &.error {
+            color: c(danger);
+            @include hover {
+                background: c(danger, 0.05);
+            }
+
+            .ui-actions-holder {
+                .icon:not(:hover) {
+                    opacity: 0.5;
+                }
+            }
+        }
+    }
+
+    &.ui-detailed {
+        height: rem(42);
+        border-radius: rem(8);
+        border: rem(1) solid sc(b, 0.08);
+        @include rtl(padding, 0 rem(8) 0 rem(14), 0 rem(14) 0 rem(8));
+
+        img {
+            width: rem(26);
+            height: rem(26);
+            object-fit: cover;
+            border-radius: rem(4);
+        }
+
+        .ui-title {
+            padding: 0 rem(14);
+            font-size: rem(12);
+        }
+
+        .ui-actions-holder {
+            .icon {
+                opacity: 0.5;
+                @include hover {
+                    opacity: 1;
+                }
+            }
+        }
+        @include hover {
+            border-color: sc(b, 0.38);
+        }
+
+        &.error {
+            border-color: c(danger, 0.5);
+
+            .ui-actions-holder {
+                .icon {
+                    color: c(danger);
+                }
+            }
+            @include hover {
+                border-color: c(danger);
+
+                .ui-actions-holder {
+                    .icon {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,89 @@
+@import 'src/assets/styles/variables';
+
+.switcher-element {
+    --size: #{rem(18)};
+
+    display: flex;
+    border-radius: rem(20);
+    background: sc(b, 0.38);
+    min-width: calc(var(--size) * 2);
+    height: var(--size);
+    justify-content: center;
+    align-items: center;
+    font: 600 rem(8) / rem(10) $f;
+    color: c(b);
+    position: relative;
+    transition: 200ms color, 200ms background, 200ms border-color, 200ms min-width, 200ms height;
+    border: rem(1) solid transparent;
+    padding-inline-start: var(--size);
+    padding-inline-end: rem(3);
+    cursor: pointer;
+
+    small {
+        position: absolute;
+        box-shadow: 0 rem(2) rem(4) 0 rgba(0, 0, 0, 16%);
+        background: c(b);
+        width: calc(var(--size) - 4px);
+        height: calc(var(--size) - 4px);
+        border-radius: rem(14);
+        top: rem(1);
+        transition: 200ms width, 200ms left, 200ms right, 200ms transform, 200ms background, 200ms box-shadow;
+        @include rtlp(left, right, rem(1));
+    }
+    @media (hover: hover) {
+        .crs-label:hover ~ .crs-component &,
+        .crs-component &:hover,
+        .crs-holder:focus-within & {
+            color: transparent;
+
+            small {
+                width: var(--size);
+            }
+        }
+    }
+
+    &.active {
+        background: c(hero);
+        color: sc(hero);
+        padding-inline-start: rem(3);
+        padding-inline-end: var(--size);
+
+        small {
+            background: sc(hero);
+            @include rtlp(left, right, calc(100% - #{rem(1)}));
+            @include rtl(transform, translateX(-100%), translateX(100%));
+        }
+    }
+
+    &.s-big {
+        --size: #{rem(20)};
+    }
+
+    &.error-color {
+        background: c(danger);
+        color: sc(danger);
+
+        small {
+            background: sc(danger);
+        }
+    }
+
+    &.read-only {
+        background: none;
+        border-color: sc(b, 0.38);
+        color: sc(b, 0.38);
+
+        small {
+            background: sc(b, 0.38);
+            box-shadow: none;
+        }
+
+        &.active {
+            color: c(hero);
+
+            small {
+                background: c(hero);
+            }
+        }
+    }
+}

@@ -1,0 +1,32 @@
+@import 'src/assets/styles/variables';
+
+.bread-crumbs-holder {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    font-weight: 600;
+    min-height: rem(36);
+
+    > * {
+        + *:not(button) {
+            @include rtl(margin, 0 0 0 rem(10), 0 rem(10) 0 0);
+        }
+    }
+
+    > button {
+        margin: 0 rem(4);
+
+        + .icon {
+            @include rtl(margin, 0, 0);
+        }
+    }
+}
+
+.breadcrumbs-link {
+    color: inherit;
+    cursor: pointer;
+    @include hover-active {
+        color: c(hero);
+    }
+}

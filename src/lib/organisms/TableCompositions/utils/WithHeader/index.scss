@@ -1,0 +1,38 @@
+@import 'src/assets/styles/variables';
+
+.paper-actions {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+
+    > li {
+        padding: rem(20);
+        display: flex;
+        align-items: center;
+    }
+
+    .paper-left-actions {
+        flex: auto;
+
+        > {
+            .input-holder,
+            .dropdown-holder {
+                max-width: rem(255);
+            }
+        }
+
+        > * {
+            + * {
+                @include rtlp(margin-left, margin-right, rem(20));
+            }
+        }
+    }
+
+    .paper-right-actions {
+        flex-shrink: 0;
+
+        > *:not(.btn) + *:not(.btn) {
+            @include rtlp(margin-left, margin-right, rem(16));
+        }
+    }
+}

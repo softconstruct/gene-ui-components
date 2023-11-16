@@ -1,0 +1,30 @@
+{
+    "branches": ["master"],
+    "plugins": [
+        [
+            "@semantic-release/commit-analyzer",
+            {
+                "preset": "angular",
+                "releaseRules": [
+                    { "type": "fix", "release": "patch" },
+                    { "type": "feat", "release": "minor" }
+                ]
+            }
+        ],
+        "@semantic-release/release-notes-generator",
+        [
+            "@semantic-release/changelog",
+            {
+                "changelogFile": "CHANGELOG.md",
+                "changelogTitle": "# Changelog"
+            }
+        ],
+        [
+            "@semantic-release/npm",
+            {
+                "npmPublish": false
+            }
+        ]
+    ],
+    "repositoryUrl": "git@github.com:softconstruct/gene-ui-components.git"
+}

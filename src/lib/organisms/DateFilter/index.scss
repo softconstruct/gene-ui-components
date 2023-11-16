@@ -1,0 +1,39 @@
+@import 'src/assets/styles/variables';
+
+.date-filters-holder {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: flex-end;
+
+    > *:not(:last-child) {
+        flex-shrink: 0;
+    }
+}
+
+.date-filter-input {
+    margin-inline-start: rem(10);
+
+    .input-structure {
+        @include rtlp(padding-right, padding-left, 0);
+    }
+
+    .icon {
+        width: rem(36);
+        height: rem(36);
+        border-radius: var(--input-element-border-radius, 100%);
+        @include rtl(margin, 0 0 0 rem(5), 0 rem(5) 0 0);
+    }
+
+    &.active {
+        .icon {
+            background: c(hero);
+            color: sc(hero);
+        }
+
+        .input-element-back {
+            background: transparent;
+            border-color: c(hero);
+        }
+    }
+}

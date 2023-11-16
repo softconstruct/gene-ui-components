@@ -1,0 +1,15 @@
+@import 'src/assets/styles/variables';
+
+.form-buttons {
+    margin: rem(20) 0 0;
+
+    > * {
+        + * {
+            margin-inline-start: rem(10);
+        }
+    }
+}
+
+form {
+    width: 100%;
+}

@@ -1,0 +1,21 @@
+@import 'src/assets/styles/variables';
+
+.chart-overflow-holder.column-chart {
+    .highcharts-series-0 {
+        .highcharts-point {
+            y: 0;
+            height: 100%;
+        }
+    }
+
+    min-height: rem(480);
+    background-color: var(--background);
+}
+
+.column-chart-proxy-content {
+    min-height: rem(480);
+
+    > .icon {
+        margin: auto;
+    }
+}

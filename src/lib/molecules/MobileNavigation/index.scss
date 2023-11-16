@@ -1,0 +1,77 @@
+@import 'src/assets/styles/variables';
+
+.mob-navigation-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top: rem(1) solid sc(b, 0.06);
+    text-align: center;
+    font: 600 rem(10) / rem(14) $f;
+    background: c(b);
+    @include zIndex(navigation);
+
+    > ul {
+        width: 100%;
+        display: table;
+        table-layout: fixed;
+
+        > li {
+            display: table-cell;
+            padding: rem(8) 0 rem(4);
+            overflow: hidden;
+            position: relative;
+            transition: 300ms color, 300ms opacity;
+
+            .badge {
+                width: rem(52);
+                margin: 0 auto;
+                position: absolute;
+                top: rem(8);
+
+                &-right {
+                    .badge {
+                        right: calc(50% - rem(25));
+                    }
+                }
+
+                &-left {
+                    .badge {
+                        left: calc(50% - rem(25));
+                    }
+                }
+            }
+
+            &::before {
+                content: '';
+                display: block;
+                width: rem(52);
+                height: rem(3);
+                background: c(hero);
+                border-radius: 0 0 rem(5) rem(5);
+                position: absolute;
+                top: 0;
+                left: calc(50% - #{rem(26)});
+                transition: 300ms transform;
+                transform: translateY(-100%);
+            }
+
+            &.active {
+                color: c(hero);
+
+                &::before {
+                    transform: translateY(0);
+                }
+            }
+
+            &.disabled {
+                pointer-events: none;
+                opacity: 0.5;
+            }
+        }
+    }
+
+    .icon {
+        margin: 0 0 rem(2);
+    }
+}

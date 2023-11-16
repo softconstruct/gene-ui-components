@@ -1,0 +1,21 @@
+@import 'src/assets/styles/variables';
+
+.charts-pie-chart {
+    overflow: hidden;
+    min-height: rem(480);
+    background-color: var(--background);
+
+    &.vertical-legend {
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+}
+
+.pie-chart-proxy-content {
+    min-height: rem(480);
+
+    > .icon {
+        margin: auto;
+    }
+}

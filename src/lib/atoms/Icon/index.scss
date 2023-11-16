@@ -1,0 +1,79 @@
+@import 'src/assets/styles/variables';
+
+.icon {
+    font-size: rem(24);
+    display: block;
+
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    &.bc-icon-loader {
+        overflow: hidden;
+
+        &::before {
+            display: block;
+            animation: loader-icon 0.3s infinite linear;
+            @keyframes loader-icon {
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+        }
+    }
+}
+
+.bc-icon-arrow-right-nav::before {
+    [dir='rtl'] & {
+        content: '\e906';
+    }
+}
+
+.bc-icon-arrow-left-nav::before {
+    [dir='rtl'] & {
+        content: '\e90a';
+    }
+}
+
+.bc-icon-arrow-right::before {
+    [dir='rtl'] & {
+        content: '\e907';
+    }
+}
+
+.bc-icon-arrow-left::before {
+    [dir='rtl'] & {
+        content: '\e90b';
+    }
+}
+
+.bc-icon-arrow-forward::before {
+    [dir='rtl'] & {
+        content: '\e901';
+    }
+}
+
+.bc-icon-left-outline::before {
+    [dir='rtl'] & {
+        content: '\e959';
+    }
+}
+
+.bc-icon-right-outline::before {
+    [dir='rtl'] & {
+        content: '\e955';
+    }
+}
+
+.bc-icon-forwards::before {
+    [dir='rtl'] & {
+        content: '\e95b';
+    }
+}
+
+.bc-icon-backwards::before {
+    [dir='rtl'] & {
+        content: '\e95a';
+    }
+}

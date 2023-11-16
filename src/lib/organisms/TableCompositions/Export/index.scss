@@ -1,0 +1,29 @@
+@import 'src/assets/styles/variables';
+
+.export-holder {
+    display: flex;
+    align-items: center;
+    height: rem(28);
+    padding-inline-end: rem(3);
+    color: c(hero);
+    user-select: none;
+    transition: 400ms opacity;
+
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    p {
+        font-weight: 600;
+    }
+
+    .export-icon-holder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: rem(24);
+        height: rem(24);
+        margin: 0 rem(5);
+    }
+}

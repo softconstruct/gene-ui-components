@@ -1,0 +1,16 @@
+.pagination-holder {
+    display: flex;
+    align-items: center;
+
+    .icon {
+        cursor: pointer;
+    }
+
+    .defaultCursor {
+        cursor: default;
+    }
+
+    .input-element {
+        text-align: center;
+    }
+}

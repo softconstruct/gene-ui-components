@@ -1,0 +1,241 @@
+@import 'src/assets/styles/variables';
+
+.drop-area-holder {
+    position: relative;
+    transition: opacity 400ms;
+    max-width: 100%;
+
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    &:not(.ua-button) {
+        width: 100%;
+    }
+
+    &.ua-input {
+        .uploader-chooser-holder {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-areas: 'input button';
+            position: relative;
+
+            .input-holder {
+                grid-area: input;
+            }
+
+            .input-element-back {
+                @include rtlp(border-top-right-radius, border-top-left-radius, 0);
+                @include rtlp(border-bottom-right-radius, border-bottom-left-radius, 0);
+                @include rtlp(border-right, border-left, 0);
+            }
+
+            .btn {
+                grid-area: button;
+                @include rtlp(border-top-left-radius, border-top-right-radius, 0);
+                @include rtlp(border-bottom-left-radius, border-bottom-right-radius, 0);
+                @include rtlp(border-left, border-right, 0);
+            }
+
+            &.dirty {
+                input[type='file'] {
+                    grid-area: input;
+                }
+            }
+        }
+    }
+
+    &.ua-box {
+        .uploader-chooser-holder {
+            padding: 100% 0 0;
+            position: relative;
+        }
+    }
+}
+
+.uploader-chooser-holder {
+    transition: opacity 400ms;
+    display: block;
+
+    .drop-area-holder.active & {
+        opacity: 0;
+    }
+
+    input[type='file'] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 1;
+
+        &::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+    }
+}
+
+.drop-here-element {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transition: opacity 400ms;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: rem(10);
+    border: rem(1) dashed c(hero);
+    background: c(hero, 0.1);
+    color: c(hero);
+    font: 600 rem(14) / rem(18) $f;
+    padding: 0 rem(10);
+    z-index: 10;
+
+    .drop-area-holder:not(.active) & {
+        opacity: 0;
+    }
+
+    .ua-button &,
+    .ua-input & {
+        &.cr-round {
+            border-radius: rem(36);
+        }
+
+        &.cr-smooth {
+            border-radius: rem(4);
+        }
+    }
+
+    .ua-cloud & {
+        border-radius: rem(8);
+    }
+}
+
+.cloud-box-uploader {
+    width: 100%;
+    min-height: rem(280);
+    border-radius: rem(8);
+    border: dashed rem(1) sc(b, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font: 600 rem(20) / rem(24) $f;
+    transition: 400ms background, 400ms border-color;
+
+    .uploader-chooser-holder:hover & {
+        border-color: c(hero);
+        background: c(hero, 0.02);
+    }
+
+    .s-uploading & {
+        background: sc(b, 0.01);
+    }
+
+    &.error {
+        border-color: c(danger);
+        background: c(danger, 0.02);
+    }
+
+    > {
+        p {
+            opacity: 0.8;
+        }
+
+        .icon {
+            font-size: rem(96);
+            opacity: 0.23;
+            margin: rem(10) 0 rem(4);
+        }
+
+        h5 {
+            font: inherit;
+            opacity: 0.8;
+        }
+
+        small {
+            opacity: 0.5;
+            display: block;
+            margin: rem(10) 0 rem(15);
+            font: 600 rem(14) / rem(18) $f;
+        }
+    }
+}
+
+.box-uploader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: rem(10);
+    border: dashed rem(1) sc(b, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transition: 400ms background, 400ms border-color;
+
+    .uploader-chooser-holder:hover & {
+        border-color: c(hero);
+        background: c(hero, 0.02);
+    }
+
+    .s-uploading & {
+        border-style: solid;
+    }
+
+    &.error {
+        border-color: c(danger);
+        background: c(danger, 0.02);
+    }
+
+    h5 {
+        font: 600 rem(14) / normal $f;
+        margin: rem(10) 0 0;
+        opacity: 0.8;
+    }
+
+    .responsive-plus-icon-holder {
+        opacity: 0.2;
+        width: per(106, 456);
+        min-width: rem(36);
+        min-height: rem(36);
+        max-width: rem(64);
+        max-height: rem(64);
+    }
+}
+
+.responsive-plus-icon {
+    padding: 100% 0 0;
+    position: relative;
+
+    &::before,
+    &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        width: per(94, 106);
+        padding: per(8, 106) 0 0;
+        background: sc(b);
+        border-radius: rem(10);
+        top: 50%;
+        left: 50%;
+    }
+
+    &::before {
+        transform: translate(-50%, -50%);
+    }
+
+    &::after {
+        transform: translate(-50%, -50%) rotate(90deg);
+    }
+}

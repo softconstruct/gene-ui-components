@@ -1,0 +1,125 @@
+@import 'src/assets/styles/variables';
+
+.image-holder {
+    --image-border-radius: #{rem(10)};
+
+    position: relative;
+    width: 100%;
+    padding: 100% 0 0;
+    user-select: none;
+    transition: 400ms box-shadow;
+
+    &.with-border {
+        box-shadow: inset 0 0 0 rem(1) sc(b, 0.2);
+        border-radius: rem(10);
+
+        --distance: #{rem(8)};
+        --image-border-radius: #{rem(6)};
+
+        &:hover {
+            box-shadow: inset 0 0 0 rem(1) sc(b, 0.5);
+        }
+
+        &.error {
+            box-shadow: inset 0 0 0 rem(1) c(danger, 0.5);
+
+            &:hover {
+                box-shadow: inset 0 0 0 rem(1) c(danger);
+            }
+        }
+    }
+}
+
+.image-content {
+    position: absolute;
+    top: var(--distance, 0);
+    left: var(--distance, 0);
+    right: var(--distance, 0);
+    bottom: var(--distance, 0);
+
+    img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: var(--image-border-radius);
+    }
+}
+
+.image-label-holder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 20%);
+    border-radius: var(--image-border-radius);
+    cursor: pointer;
+}
+
+.image-heading {
+    display: flex;
+    align-items: center;
+    padding: 0 rem(7);
+    position: absolute;
+    top: rem(12);
+    left: 0;
+    width: 100%;
+
+    > li {
+        margin: 0 rem(5);
+
+        &.image-cra {
+            flex-shrink: 0;
+            border-radius: rem(3);
+            background: white;
+        }
+
+        &.image-title {
+            flex: auto;
+            font: 700 rem(12) / rem(20) $f;
+            color: white;
+        }
+    }
+}
+
+.image-actions-holder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--image-border-radius);
+    background: rgba(0, 0, 0, 60%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 400ms opacity, 400ms visibility;
+
+    .image-holder:not(:hover) & {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.image-actions {
+    display: flex;
+    align-items: center;
+
+    > * {
+        box-shadow: inset 0 0 0 rem(50) rgba(white, 0.9);
+
+        + * {
+            @include rtlp(margin-left, margin-right, rem(5));
+        }
+    }
+}
+
+.image-empty-state-holder {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    position: absolute;
+}

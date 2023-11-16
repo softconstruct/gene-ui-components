@@ -1,0 +1,73 @@
+@import 'src/assets/styles/variables';
+
+.bc-navigation-menu {
+    --size: #{rem(36)};
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 rem(10);
+    min-width: var(--button-external-size, var(--size));
+    min-height: var(--button-external-size, var(--size));
+    font: 600 rem(14) / rem(20) $f;
+    border: rem(1) solid transparent;
+    border-radius: var(--button-external-size, var(--size));
+    transition: 300ms color, 300ms background, 200ms opacity;
+    color: #fff;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    @include hover-active {
+        background: rgba(255, 255, 255, 10%);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    &_head {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+    }
+
+    &_layer {
+        display: flex;
+        align-items: center;
+        margin: 0 rem(8);
+        opacity: 0.7;
+
+        &:last-child {
+            opacity: 1;
+        }
+
+        &:not(&:last-child)::after {
+            content: '';
+            display: block;
+            width: rem(1);
+            height: rem(23);
+            margin-left: rem(15);
+            background-color: #fff;
+            transform: rotate(15deg);
+        }
+
+        &.active {
+            opacity: 1;
+        }
+    }
+
+    &_content {
+        display: flex;
+        padding: rem(10) 0;
+    }
+
+    &_content-menu {
+        width: rem(258);
+
+        &:not(&:last-child) {
+            border-right: 1px solid rgba(0, 0, 0, 10%);
+        }
+    }
+}

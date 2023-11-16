@@ -1,0 +1,178 @@
+@import 'src/assets/styles/variables';
+
+$selector: '.option-container';
+#{$selector} {
+    width: 100%;
+    position: relative;
+    z-index: 0;
+    transition: 400ms background;
+    overflow: hidden;
+    min-height: rem(40);
+    padding: 0 rem(14);
+    display: flex;
+    align-items: center;
+    user-select: none;
+    cursor: pointer;
+
+    > * {
+        transition: 400ms color;
+    }
+    @include mobile {
+        min-height: rem(48);
+        padding: 0 rem(20);
+    }
+
+    &.border-top {
+        border-top: rem(1) solid;
+    }
+
+    &.border-bottom {
+        border-bottom: rem(1) solid;
+    }
+
+    &.border-bottom,
+    &.border-top {
+        border-color: sc(b, 0.1);
+    }
+
+    &.sticky-top,
+    &.sticky-bottom {
+        position: sticky;
+        z-index: 1;
+    }
+
+    &.sticky-top {
+        top: 0;
+    }
+
+    &.sticky-bottom {
+        bottom: 0;
+    }
+
+    &.hovered,
+    &:hover {
+        @include hover {
+            background: sc(b, 0.05);
+        }
+    }
+
+    &.hovered {
+        background: sc(b, 0.05);
+    }
+
+    &.c-hero,
+    &.active {
+        color: c(hero);
+    }
+
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    a {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+
+        /* TODO: since Option does not have the ability to be the path, you send it Link
+     * and but this is not the right decision, mamen is given, I will not touch
+     * the component, only changed styles, but in the future this needs to be fixed
+     * @sedrak.ghukasyan
+    */
+        line-height: rem(40);
+        padding: 0 rem(14);
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+
+        /* ------------------------ */
+
+        &.active {
+            ~ * {
+                color: c(hero);
+            }
+        }
+    }
+
+    &-relative {
+        position: relative;
+    }
+}
+
+.option-left-elements {
+    flex-shrink: 0;
+    min-width: rem(24);
+    min-height: rem(24);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline-end: rem(12);
+}
+
+.option-right-elements {
+    flex-shrink: 0;
+    margin-inline-start: rem(12);
+
+    .bc-icon-selected {
+        transition: 400ms transform;
+
+        @include desktop($selector) {
+            margin-inline-end: rem(-4);
+        }
+
+        #{$selector}:not(.active) & {
+            transform: scale(0);
+        }
+    }
+}
+
+.mobile-view {
+    .bc-icon-selected {
+        margin-inline-end: rem(8) !important;
+    }
+}
+
+.option-texts {
+    flex: auto;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    font: 600 rem(14) / rem(20) $f;
+
+    > li {
+        flex-shrink: 0;
+
+        &:first-child {
+            flex: auto;
+            overflow: hidden;
+        }
+
+        &.assigned-value {
+            margin-inline-start: rem(10);
+            opacity: 0.7;
+        }
+    }
+}
+
+.option-description {
+    font: 600 rem(12) / rem(16) $f;
+    opacity: 0.7;
+}
+
+.option-title {
+    &-center {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    &-end {
+        text-align: end;
+    }
+}

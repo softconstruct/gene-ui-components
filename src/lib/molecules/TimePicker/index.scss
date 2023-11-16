@@ -1,0 +1,93 @@
+@import 'src/assets/styles/variables';
+
+.time-picker-holder {
+    width: 100%;
+
+    &.read-only {
+        .cursor-pointer {
+            cursor: default;
+        }
+    }
+
+    &.mobile {
+        caret-color: transparent;
+        color: transparent;
+        text-shadow: 0 0 0 sc(b, 0.75);
+    }
+
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+
+    > ul {
+        display: flex;
+        width: 100%;
+        align-items: center;
+
+        > li {
+            &.no-shrink {
+                flex-shrink: 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                > span {
+                    margin: 0 rem(5);
+                    font-weight: 600;
+                    display: block;
+                }
+            }
+
+            &.shrink-auto {
+                flex: auto;
+            }
+
+            &.icon-holder {
+                margin-inline-end: rem(5);
+                width: rem(40);
+            }
+        }
+    }
+}
+
+.time-picker-drop-holder {
+    width: 100%;
+    display: flex;
+
+    > li {
+        width: 100%;
+
+        + li {
+            border-inline-start: rem(1) solid sc(b, 0.08);
+        }
+    }
+}
+
+.time-picker-drop {
+    width: 100%;
+    font: 600 rem(14) / rem(18) $f;
+    padding: rem(10) 0;
+
+    ul {
+        width: 100%;
+
+        li {
+            width: 100%;
+            display: flex;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            height: rem(40);
+            cursor: pointer;
+            transition: 400ms background, 400ms color;
+            @include hover {
+                background: sc(b, 0.05);
+            }
+
+            &.active {
+                color: c(hero);
+            }
+        }
+    }
+}

@@ -1,0 +1,135 @@
+@import 'src/assets/styles/variables';
+@mixin focus {
+    &:not(.read-only) {
+        &:focus-within {
+            @content;
+        }
+    }
+}
+@mixin filled {
+    &.filled {
+        &:not(:focus-within) {
+            @content;
+        }
+    }
+}
+
+.combo-box {
+    --element-height: #{rem(46)};
+    --element-min-width: #{rem(250)};
+    --message-padding-side: #{rem(20)};
+    --input-message-padding-side: #{rem(20)};
+    --element-border-color: #{sc(b, 0.2)};
+
+    &.read-only {
+        --element-border-color: #{sc(b, 0.05)};
+    }
+
+    @include filled {
+        --element-border-color: #{sc(b, 0.3)};
+    }
+    @include focus {
+        --element-border-color: #{c(hero)};
+    }
+
+    position: relative;
+    max-width: 100%;
+    min-width: var(--element-min-width);
+    height: fit-content;
+    transition: 300ms opacity;
+    user-select: none;
+    width: fit-content;
+
+    &:not(.f-content-size) {
+        width: 100%;
+    }
+
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+        @include focus {
+            --element-border-color: rgba(var(--background-sc-rgb), 0.2);
+        }
+    }
+
+    &.read-only {
+        cursor: inherit;
+    }
+
+    .combo-box-container {
+        overflow: hidden;
+        width: 100%;
+        border: rem(1) solid var(--element-border-color, transparent);
+        border-radius: 10px;
+
+        .swap-label {
+            position: absolute;
+            top: -rem(9);
+            left: 0;
+            width: 100%;
+            font: 600 rem(10) / rem(18) $f;
+            padding: 0 var(--input-message-padding-side);
+            display: flex;
+            z-index: 5;
+
+            .icon {
+                font-size: rem(18);
+                transition: none;
+            }
+        }
+
+        .swap {
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        .swap-animate {
+            padding: 0 rem(4);
+            color: var(--swap-label-color);
+            background: c(b);
+            box-shadow: inset 0 -rem(8) 0 var(--input-element-background);
+            transition: transform 300ms, opacity 300ms 100ms, color 300ms;
+            max-width: 100%;
+            display: flex;
+            align-items: center;
+
+            > * {
+                + * {
+                    margin-inline-start: rem(5);
+                }
+            }
+
+            &.hide {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+        }
+
+        .boxes {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 8px 16px;
+            gap: 8px;
+            min-height: rem(42);
+        }
+    }
+}
+@include information-message;
+@include input-description;
+
+.title {
+    max-width: 100%;
+    padding: 0 var(--message-padding-side);
+    opacity: 0.5;
+    margin: 0 0 rem(4);
+    display: flex;
+    align-items: center;
+    cursor: default;
+    font: 600 rem(14) / rem(20) $f;
+
+    > * {
+        + * {
+            margin-inline-start: rem(5);
+        }
+    }
+}

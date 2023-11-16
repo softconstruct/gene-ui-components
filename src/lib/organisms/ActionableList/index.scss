@@ -1,0 +1,76 @@
+@import 'src/assets/styles/variables';
+
+.gene-actionable-list {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    .gene-actionable-list-header {
+        margin: 16px 0;
+
+        .gene-actionable-list-header-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 rem(20);
+            height: rem(51);
+            font: 600 rem(14) / rem(18) $f;
+            border-bottom: 1px solid rgba(var(--background-sc-rgb), 0.1); // should be a token, color pallet
+
+            h5 {
+                color: #{c(hero)}; // should be a token, typography
+            }
+
+            span {
+                color: sc(b, 0.5); // should be a token, typography
+            }
+        }
+
+        .gene-actionable-list-header-search-box {
+            display: flex;
+            align-items: center;
+            padding: 16px; // should be token, has principles of usage and defined values
+        }
+
+        .gene-actionable-list-header-mark-all {
+            padding: 0 32px;
+        }
+    }
+
+    .gene-actionable-list-body {
+        height: 100%;
+        padding: 0 16px;
+
+        .gene-actionable-list-row-content {
+            display: flex;
+            align-items: center;
+            border-radius: 8px; // should be token, has principles of usage and defined values
+            border: 1px solid rgba(var(--background-sc-rgb), 0.1); // should be a token, color pallet
+            margin-bottom: 1.5rem; // should be a token, spacing rules
+            padding: 0 8px; // should be a token spacing rules based on 8px progression this one is 1X
+            background-color: var(--background); // should be a token, color pallet
+
+            .gene-actionable-list-row-content-body {
+                display: flex;
+                align-items: center;
+                flex: 1;
+                height: 100%;
+
+                & > span {
+                    line-height: 40px; // should be a token, typography
+                    margin-left: 8px;
+                    width: 100%;
+
+                    & > span.highlight {
+                        background: rgba(var(--hero-rgb), 0.15);
+                        color: var(--hero);
+                    }
+                }
+            }
+        }
+
+        .gene-actionable-list-row-children {
+            margin-left: 34px; // should be a token, spacing rules
+        }
+    }
+}

@@ -1,0 +1,95 @@
+@import 'src/assets/styles/variables';
+
+.bc-transfer-container {
+    width: 100%;
+
+    > li {
+        + li {
+            border-top: rem(1) solid var(--transfer-container-border-color, transparent);
+        }
+    }
+}
+
+.bc-tl-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 rem(20);
+    height: rem(51);
+    font: 600 rem(14) / rem(18) $f;
+
+    h5 {
+        color: #{c(hero)};
+    }
+
+    span {
+        color: sc(b, 0.5);
+    }
+}
+
+.bc-tl-buttons {
+    flex-shrink: 0;
+    padding: 0 rem(10);
+    border: solid sc(b, 0.1);
+    border-width: 0 rem(1);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+    --button-external-size: #{rem(40)};
+
+    > * {
+        + * {
+            margin: rem(10) 0 0 0;
+        }
+    }
+}
+
+.bc-tl-search {
+    padding: rem(20);
+}
+
+.bc-tl-content-holder {
+    overflow: hidden;
+    position: relative;
+    height: var(--transfer-container-content-height);
+}
+
+.bc-tl-content {
+    padding: rem(7) rem(20);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    min-height: 100%;
+
+    > .bc-tl-item {
+        opacity: 1 !important;
+    }
+}
+
+.bc-tl-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 0 rem(36);
+}
+
+.bc-tl-drop-here {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font: 600 rem(14) / rem(18) $f;
+
+    i {
+        font-size: rem(110);
+        color: c(hero, 0.1);
+    }
+}

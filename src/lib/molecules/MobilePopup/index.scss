@@ -1,0 +1,113 @@
+@import 'src/assets/styles/variables';
+
+.m-popup-holder {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    @include zIndex(popover);
+
+    overflow: hidden;
+}
+
+.m-popup-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    background-color: rgba(0, 0, 0, 20%);
+    animation: 300ms m-popup-backdrop-reveal forwards;
+    @keyframes m-popup-backdrop-reveal {
+        to {
+            opacity: 1;
+        }
+    }
+}
+
+.m-popup-c {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: rem(10) rem(10) 0 0;
+    box-shadow: 0 -rem(1) rem(2) 0 rgba(0, 0, 0, 5%);
+    background: c(b);
+    display: flex;
+    flex-direction: column;
+    padding: 0 rem(16);
+    transform: translate3d(0, 100%, 0);
+    animation: 400ms m-popup-c-reveal 250ms forwards;
+    max-height: calc(100% - #{rem(20)});
+    @keyframes m-popup-c-reveal {
+        to {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+}
+
+.m-popup-head {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    position: relative;
+    height: rem(51);
+    border-bottom: rem(1) solid sc(b, 0.1);
+    font-weight: 700;
+
+    > li {
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+
+        &:first-child {
+            .mp-action {
+                .icon {
+                    margin-inline-end: rem(10);
+                }
+            }
+        }
+
+        &:last-child {
+            .mp-action {
+                flex-direction: row-reverse;
+
+                .icon {
+                    margin-inline-start: rem(10);
+                }
+            }
+        }
+
+        &:nth-child(2) {
+            padding: 0 rem(10);
+        }
+
+        &:not(:nth-child(2)) {
+            min-width: fit-content;
+        }
+
+        &:nth-child(3) {
+            justify-content: flex-end;
+        }
+
+        .mp-action {
+            display: flex;
+            align-items: center;
+            font: 600 rem(14) / rem(36) $f;
+            cursor: pointer;
+            color: c(hero);
+            overflow: hidden;
+        }
+    }
+}
+
+.m-popup-content {
+    flex: auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: auto;
+    transition: 400ms padding;
+    width: calc(100% + #{rem(32)});
+    margin: 0 -rem(16);
+    padding: 0 rem(16) env(safe-area-inset-bottom);
+}

@@ -1,0 +1,171 @@
+@import 'src/assets/styles/variables';
+
+.btn {
+    --size: #{rem(36)};
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: var(--button-external-size, var(--size));
+    min-height: var(--button-external-size, var(--size));
+    font: 600 rem(14) / rem(20) $f;
+    cursor: pointer;
+    color: inherit;
+    border: rem(1) solid transparent;
+    border-radius: var(--button-external-border-radius, var(--button-external-size, var(--size)));
+    transition: 300ms color, 300ms background, 200ms opacity;
+    user-select: none;
+    position: relative;
+    @include focus-visible(var(--button-external-border-radius, var(--button-external-size, var(--size))));
+
+    &:disabled {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    &.s-medium {
+        --size: #{rem(32)};
+
+        font-size: #{rem(12)};
+    }
+
+    &.s-big {
+        --size: #{rem(42)};
+    }
+
+    &.cr-smooth {
+        border-radius: var(--button-external-border-radius, #{rem(4)});
+    }
+
+    > * + * {
+        @include rtl(margin, 0 0 0 rem(4), 0 rem(4) 0 0);
+    }
+
+    &.id-end {
+        flex-direction: row-reverse;
+
+        > * + * {
+            @include rtl(margin, 0 rem(7) 0 0, 0 0 0 rem(7));
+        }
+    }
+
+    &:not(.c-icon) {
+        padding: 0 rem(20);
+
+        &.f-content-size {
+            padding: 0 rem(13);
+        }
+
+        &.f-default {
+            min-width: rem(100);
+        }
+
+        &.f-full-width {
+            width: 100%;
+        }
+
+        &.loading-padding {
+            padding: 0 rem(6);
+        }
+    }
+
+    &.c-confirm {
+        --hero: var(--confirm);
+        --hero-sc: var(--confirm-sc);
+        --hero-hover: var(--confirm-hover);
+    }
+
+    &.c-danger {
+        --hero: var(--danger);
+        --hero-sc: var(--danger-sc);
+        --hero-hover: var(--danger-hover);
+    }
+
+    &:not(.active) {
+        &.a-outline {
+            border-color: c(hero);
+            color: c(hero);
+            @include hover {
+                background: c(hero);
+                color: sc(hero);
+            }
+
+            &:active {
+                background: c(hero);
+                color: sc(hero);
+            }
+        }
+
+        &.a-minimal {
+            &:not(.c-default) {
+                color: c(hero);
+            }
+            @include hover-active {
+                background: sc(b, 0.03);
+            }
+        }
+
+        &.a-grayscale {
+            &:not(:disabled) {
+                background: sc(b, 0.01);
+                @include hover-active {
+                    background: sc(b, 0.03);
+                }
+            }
+
+            &:not(.c-default) {
+                color: c(hero);
+            }
+        }
+
+        &.a-clean {
+            &:not(.c-default) {
+                color: sc(b, 0.6);
+            }
+
+            &:not(:disabled) {
+                background: c(hero, 0.1);
+                color: c(hero);
+                @include hover-active {
+                    background: c(hero);
+                    color: sc(hero);
+                }
+            }
+        }
+    }
+
+    &:not(.a-grayscale) {
+        &.with-shadow {
+            box-shadow: 0 rem(2) rem(4) 0 rgba(0, 0, 0, 10%);
+        }
+    }
+
+    &.a-grayscale {
+        &:not(:disabled) {
+            box-shadow: 0 rem(1) 0 0 rgba(0, 0, 0, 16%);
+        }
+    }
+
+    &.a-default,
+    &.active {
+        background: c(hero);
+        color: sc(hero);
+        @include hover {
+            background: c(hero-hover);
+        }
+    }
+
+    &.loading-state {
+        > *:not(.btn-loader-holder) {
+            color: transparent !important;
+        }
+    }
+
+    .btn-loader-holder {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin: 0;
+    }
+}

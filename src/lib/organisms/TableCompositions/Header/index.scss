@@ -1,0 +1,19 @@
+@import 'src/assets/styles/variables';
+
+.table-actions {
+    padding: rem(10);
+    display: flex;
+    align-items: center;
+
+    > li {
+        padding: rem(10);
+    }
+
+    .table-left-actions {
+        flex: auto;
+    }
+
+    .table-right-actions {
+        flex-shrink: 0;
+    }
+}

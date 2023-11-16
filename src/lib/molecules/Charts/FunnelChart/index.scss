@@ -1,0 +1,14 @@
+@import 'src/assets/styles/variables';
+
+.funnel-chart {
+    min-height: rem(480);
+    background-color: var(--background);
+}
+
+.funnel-chart-proxy-content {
+    min-height: rem(480);
+
+    > .icon {
+        margin: auto;
+    }
+}

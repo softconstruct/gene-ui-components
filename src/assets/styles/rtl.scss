@@ -1,0 +1,36 @@
+@mixin rtl($type, $v1, $v2) {
+    #{$type}: #{$v1};
+
+    html[dir='rtl'] & {
+        #{$type}: #{$v2};
+    }
+}
+
+@mixin rtls($type, $v, $side, $suffix: '') {
+    @if $suffix != '' {
+        $suffix: '-' + $suffix;
+    }
+
+    html:not([dir='rtl']) & {
+        #{$type + '-' + $side + $suffix}: #{$v};
+    }
+
+    html[dir='rtl'] & {
+        @if $side == left {
+            $type: $type + '-right';
+        } @else if $side == right {
+            $type: $type + '-left';
+        }
+
+        #{$type + $suffix}: #{$v};
+    }
+}
+@mixin rtlp($type1, $type2, $v) {
+    html:not([dir='rtl']) & {
+        #{$type1}: #{$v};
+    }
+
+    html[dir='rtl'] & {
+        #{$type2}: #{$v};
+    }
+}

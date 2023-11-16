@@ -1,0 +1,200 @@
+@import 'src/assets/styles/variables';
+
+.overlay-back-drop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: c(b, 0.6);
+    opacity: 0;
+    animation: 1s fadeIn forwards;
+    @include zIndex(overlayBackdrop);
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+}
+
+.overlay-holder {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    transition: 400ms width, 400ms height;
+    @include zIndex(overlay);
+
+    &.t-horizontal {
+        top: var(--header-height, 0);
+        bottom: 0;
+        background: c(b);
+        animation: slideInX 400ms forwards linear;
+        @keyframes slideInX {
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        &.p-left {
+            @include rtlp(left, right, 0);
+            @include rtl(box-shadow, (rem(5) 0 rem(6) 0 rgba(0, 0, 0, 0.05)), (-rem(5) 0 rem(6) 0 rgba(0, 0, 0, 0.05)));
+            @include rtl(transform, translateX(-120%), translateX(120%));
+
+            .overlay-close {
+                @include rtlp(left, right, 100%);
+                @include rtl(
+                    box-shadow,
+                    (rem(5) 0 rem(6) 0 rgba(0, 0, 0, 0.05)),
+                    (-rem(5) 0 rem(6) 0 rgba(0, 0, 0, 0.05))
+                );
+                @include rtl(border-radius, 0 rem(4) rem(4) 0, rem(4) 0 0 rem(4));
+            }
+        }
+
+        &.p-right {
+            @include rtlp(right, left, 0);
+            @include rtl(box-shadow, (-rem(5) 0 rem(6) 0 rgba(0, 0, 0, 0.05)), (rem(5) 0 rem(6) 0 rgba(0, 0, 0, 0.05)));
+            @include rtl(transform, translateX(120%), translateX(-120%));
+
+            .overlay-close {
+                @include rtlp(right, left, 100%);
+                @include rtl(
+                    box-shadow,
+                    (-rem(5) 0 rem(6) 0 rgba(0, 0, 0, 0.05)),
+                    (rem(5) 0 rem(6) 0 rgba(0, 0, 0, 0.05))
+                );
+                @include rtl(border-radius, rem(4) 0 0 rem(4), 0 rem(4) rem(4) 0);
+            }
+        }
+
+        &.s-half {
+            width: 50%;
+        }
+
+        &.s-wide {
+            width: 75%;
+        }
+
+        &.s-minimal {
+            width: rem(300);
+        }
+    }
+
+    &.t-vertical {
+        width: 100%;
+        left: 0;
+        background: c(b);
+        height: 25vh;
+        animation: slideInY 400ms forwards linear;
+        @keyframes slideInY {
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        &.s-extended {
+            height: 50vh;
+        }
+
+        &.p-top {
+            top: 0;
+            box-shadow: 0 rem(3) rem(6) 0 rgba(0, 0, 0, 5%);
+            border-radius: 0 0 rem(20) rem(20);
+            transform: translateY(-120%);
+
+            .extend-reduce {
+                box-shadow: 0 rem(3) rem(6) 0 rgba(0, 0, 0, 5%);
+                top: 100%;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        &.p-bottom {
+            bottom: 0;
+            box-shadow: 0 -rem(3) rem(6) 0 rgba(0, 0, 0, 5%);
+            flex-direction: column-reverse;
+            border-radius: rem(20) rem(20) 0 0;
+            transform: translateY(120%);
+
+            .extend-reduce {
+                box-shadow: 0 -rem(3) rem(6) 0 rgba(0, 0, 0, 5%);
+                bottom: 100%;
+                transform: translate(-50%, 50%);
+            }
+        }
+    }
+}
+
+.overlay-head {
+    position: relative;
+    flex-shrink: 0;
+    @include zIndex(1);
+}
+
+.overlay-close {
+    position: absolute;
+    top: 0;
+    height: rem(60);
+    width: rem(60);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: c(b);
+}
+
+.overlay-body {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    > .scroll-holder {
+        position: absolute !important;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+
+        > .scroll-content {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-start;
+        }
+    }
+
+    .overlay-content {
+        padding: rem(21) rem(19);
+        flex: auto;
+    }
+
+    .overlay-footer {
+        flex-shrink: 0;
+        display: flex;
+        justify-content: flex-end;
+
+        > * {
+            margin: rem(10);
+        }
+    }
+}
+
+.extend-reduce {
+    position: absolute;
+    left: 50%;
+    min-width: rem(140);
+    text-align: center;
+    height: rem(36);
+    background: c(b);
+    border-radius: rem(36);
+    font: 600 rem(14) / rem(18) $f;
+    color: c(hero);
+    transition: 300ms color, 300ms background;
+    cursor: pointer;
+    padding: 0 rem(20);
+
+    &:hover {
+        background: c(hero);
+        color: sc(hero);
+    }
+}

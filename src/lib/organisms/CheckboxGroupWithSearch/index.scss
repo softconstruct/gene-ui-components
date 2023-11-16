@@ -1,0 +1,66 @@
+@import 'src/assets/styles/variables';
+
+.checkbox-group-with-search-holder {
+    width: 100%;
+    background: c(b);
+}
+
+.empty-data-holder {
+    width: 100%;
+    height: rem(190);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.c-g-w-s-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: sc(b, 0.01);
+
+    > li {
+        width: 100%;
+        display: flex;
+    }
+}
+
+.c-g-w-s-head {
+    padding: rem(15);
+    border-bottom: rem(1) solid sc(b, 0.1);
+}
+
+.c-g-w-s-footer {
+    padding: rem(15) 0;
+    display: flex;
+    justify-content: center;
+    border-top: rem(1) solid sc(b, 0.1);
+
+    > * {
+        + * {
+            margin-inline-start: rem(10);
+        }
+    }
+}
+
+.c-g-w-s-body-content {
+    width: 100%;
+    padding: rem(15) 0;
+    max-height: rem((15 * 2) + (40 * 7));
+}
+
+.grouped-checkbox-with-search {
+    flex-direction: column;
+
+    > div {
+        padding: 1rem !important;
+    }
+}
+
+.checkbox-group-with-search-holder {
+    .crs-holder.active {
+        @media (hover: hover) {
+            background: sc(b, 0.05);
+        }
+    }
+}

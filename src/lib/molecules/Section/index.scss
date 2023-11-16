@@ -1,0 +1,38 @@
+@import 'src/assets/styles/variables';
+
+.section-holder {
+    width: 100%;
+    background: c(b);
+    border: rem(1) solid sc(b, 0.1);
+    border-radius: rem(20);
+    padding: 0 rem(20) rem(20);
+
+    & + & {
+        margin: rem(13) 0 0;
+    }
+}
+
+.section-head {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: rem(54);
+}
+
+.section-body {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.section-sub-group {
+    width: 100%;
+
+    &:not(:last-child) {
+        margin-bottom: rem(14);
+    }
+
+    &:not(:first-child) {
+        margin-top: rem(7);
+    }
+}

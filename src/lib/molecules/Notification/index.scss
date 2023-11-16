@@ -1,0 +1,105 @@
+@import 'src/assets/styles/variables';
+
+$s: '.notifier-block';
+
+.notifier-block {
+    display: flex;
+    align-items: flex-start;
+    border-radius: rem(10);
+    box-shadow: 0 rem(2) rem(4) 0 rgba(0, 0, 0, 10%);
+    border: solid rem(1) sc(b, 0.1);
+    background: c(b);
+    width: 100%;
+    height: rem(85);
+    transition: 300ms border-color;
+    cursor: pointer;
+    @include mobile {
+        border-width: 0 0 rem(1) 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    > li {
+        flex-shrink: 0;
+
+        &.notifier-icon {
+            align-self: stretch;
+        }
+
+        &.notifier-content {
+            flex: auto;
+            padding: rem(12) rem(14);
+            overflow: hidden;
+            width: rem(100);
+        }
+
+        &.notifier-action {
+            padding: rem(10) rem(15) 0 0;
+            @include rtl(padding, rem(10) rem(15) 0 0, rem(10) 0 0 rem(15));
+
+            .icon {
+                cursor: pointer;
+                @include hover {
+                    color: c(hero);
+                }
+            }
+        }
+    }
+    @include hover {
+        border-color: c(hero);
+    }
+}
+
+.notifier-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: rem(85);
+    font-size: rem(42);
+    background: c(hero, 0.28);
+    color: c(b);
+    @include rtl(border-radius, rem(9) 0 0 rem(9), 0 rem(9) rem(9) 0);
+    @include mobile($s) {
+        border-radius: 0;
+    }
+
+    .type-clean & {
+        background: none;
+        color: c(hero, 0.48);
+        @include rtlp(border-right, border-left, solid rem(1) sc(b, 0.1));
+    }
+}
+
+.notifier-title {
+    font: 600 rem(14) / 1.36 $f;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.notifier-c-t {
+    margin: rem(8) 0 0;
+
+    > ul {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-areas: 'c1 c2';
+        font: 600 rem(12) / 1.42 $f;
+
+        > li {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &:first-child {
+                width: rem(64);
+                grid-area: c1;
+                opacity: 0.5;
+            }
+
+            &:nth-child(2) {
+                grid-area: c2;
+            }
+        }
+    }
+}

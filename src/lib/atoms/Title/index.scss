@@ -1,0 +1,40 @@
+@import 'src/assets/styles/variables';
+
+.title-holder {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    font: 600 rem(14) / rem(18) $f;
+    min-height: rem(32);
+
+    &.c-hero {
+        .title-text {
+            color: c(hero);
+        }
+    }
+
+    > li {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+
+        &.line {
+            flex: auto;
+
+            i {
+                display: block;
+                width: 100%;
+                height: rem(1);
+                background: sc(b, 0.1);
+            }
+        }
+
+        ~ li {
+            @include rtl(margin, 0 0 0 rem(10), 0 rem(10) 0 0);
+        }
+    }
+
+    .divider {
+        margin: 0 rem(10);
+    }
+}

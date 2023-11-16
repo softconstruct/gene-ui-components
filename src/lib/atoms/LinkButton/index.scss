@@ -1,0 +1,20 @@
+@import 'src/assets/styles/variables';
+
+.linkButton {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    max-width: fit-content;
+    color: var(--hero);
+    padding: 0 rem(8);
+    @include focus-visible;
+
+    &__icon {
+        display: inline-block;
+    }
+
+    &-disable {
+        opacity: 0.3;
+        pointer-events: none;
+    }
+}

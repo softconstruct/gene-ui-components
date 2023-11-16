@@ -1,0 +1,34 @@
+@import 'src/assets/styles/variables';
+
+.highcharts-drillup-button {
+    rect {
+        display: none;
+    }
+
+    &.highcharts-button {
+        text {
+            font-size: rem(14) !important;
+            font-weight: 600 !important;
+            fill: #3c4043 !important;
+        }
+
+        &:hover {
+            text {
+                fill: c(hero) !important;
+            }
+        }
+    }
+}
+
+.dal-chart {
+    min-height: rem(550);
+    background-color: var(--background);
+}
+
+.dal-chart-proxy-content {
+    min-height: rem(550);
+
+    > .icon {
+        margin: auto;
+    }
+}

@@ -1,0 +1,108 @@
+@import 'src/assets/styles/variables';
+
+.color-picker-holder {
+    padding: rem(12);
+    width: rem(252 + 24);
+    background: c(b);
+
+    .react-colorful {
+        width: 100%;
+        display: grid;
+        height: auto;
+        grid-template-columns: 100%;
+        grid-row-gap: rem(12);
+
+        .react-colorful__saturation {
+            height: rem(140);
+            border-radius: rem(5);
+        }
+
+        .react-colorful__hue,
+        .react-colorful__alpha {
+            height: rem(16);
+            border-radius: rem(16);
+        }
+
+        .react-colorful__pointer {
+            box-shadow: 0 0 6px 0 rgba(0, 0, 0, 30%);
+            width: rem(20);
+            height: rem(20);
+        }
+    }
+}
+
+.color-picker-samples {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-column-gap: rem(5);
+    grid-row-gap: rem(5);
+    margin: rem(24) 0 0;
+
+    button {
+        padding: 100% 0 0;
+        border-radius: rem(5);
+        border: rem(1) solid sc(b, 0.05);
+        cursor: pointer;
+        position: relative;
+        transition: 400ms border-color;
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            background: white;
+            border-radius: rem(3);
+            transition: 400ms opacity;
+        }
+        @include hover {
+            border-color: sc(b, 0.15);
+
+            &::after {
+                opacity: 0.15;
+            }
+        }
+
+        small {
+            display: block;
+            height: rem(2);
+            background: #e86a6a;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 110%;
+            transform: translate3d(-50%, -50%, 0) rotate(-45deg);
+            border-radius: rem(2);
+        }
+    }
+}
+
+.color-picker-inputs {
+    margin: rem(12) 0 0;
+    display: grid;
+    grid-template-columns: 100%;
+    grid-column-gap: rem(5);
+
+    .alpha-enabled & {
+        grid-template-columns: 1fr 0.75fr;
+    }
+
+    input {
+        height: rem(32);
+        width: 100%;
+        padding: 0 rem(12);
+        border-radius: rem(8);
+        border: rem(1) solid sc(b, 0.15);
+        background-color: var(--b);
+        transition: border-color 400ms;
+        text-align: center;
+
+        &:focus {
+            border-color: sc(b, 0.3);
+        }
+    }
+}

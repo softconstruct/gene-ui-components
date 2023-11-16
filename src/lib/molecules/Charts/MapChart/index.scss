@@ -1,0 +1,123 @@
+@import 'src/assets/styles/variables';
+
+.charts-map-chart {
+    position: relative;
+    min-height: rem(480);
+    background-color: var(--background);
+
+    .chart-activity-box {
+        width: rem(240);
+        height: rem(240);
+        padding: rem(10);
+        border-radius: 4px;
+        color: white;
+        background-color: rgba(0, 0, 0, 70%);
+        position: absolute;
+        right: rem(70);
+        top: rem(30);
+        pointer-events: none;
+        opacity: 0;
+        transition: 0.4s;
+        font-weight: 600;
+        text-align: center;
+
+        &.active {
+            opacity: 1;
+        }
+
+        .headline {
+            line-height: 1.36;
+        }
+
+        .content {
+            height: calc(100% - 36px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    .highcharts-reset-zoom {
+        display: none;
+    }
+
+    .actions-box {
+        position: absolute;
+        z-index: 10;
+        right: rem(28);
+        top: rem(28);
+
+        .zoom-button {
+            cursor: pointer;
+            width: rem(28);
+            height: rem(28);
+            margin-bottom: rem(10);
+            border-radius: 100%;
+            background-color: rgba(0, 0, 0, 60%);
+            color: rgba(255, 255, 255, 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 80%);
+            }
+
+            &.disabled {
+                pointer-events: none;
+                background-color: rgba(0, 0, 0, 20%);
+            }
+
+            .icon {
+                font-size: 2rem;
+            }
+        }
+    }
+
+    .map-inline-data {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        align-items: center;
+        padding: rem(15);
+        font-weight: 600;
+        overflow-x: auto;
+
+        &.isMobile {
+            justify-content: flex-start;
+
+            li {
+                padding: rem(5);
+            }
+        }
+
+        > li {
+            padding: rem(15) rem(25);
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+
+            &:last-child {
+                span {
+                    opacity: 0.5;
+                }
+            }
+        }
+
+        small {
+            display: block;
+            margin: 0 rem(10);
+            width: rem(12);
+            height: rem(12);
+            border-radius: 100%;
+        }
+    }
+}
+
+.map-chart-proxy-content {
+    min-height: rem(480);
+
+    > .icon {
+        margin: auto;
+    }
+}
