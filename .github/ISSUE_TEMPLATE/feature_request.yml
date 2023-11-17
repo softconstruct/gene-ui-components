@@ -30,8 +30,8 @@ body:
     attributes:
       label: Are you able to assist to bring the feature to reality?
       options:
-        - no
-        - yes
+        - 'no'
+        - 'yes'
     validations:
       required: true
   - type: textarea
