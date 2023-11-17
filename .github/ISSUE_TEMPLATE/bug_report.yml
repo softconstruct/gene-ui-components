@@ -1,0 +1,79 @@
+name: Bug report 🐞
+description: >-
+  Create a report to help us improve.
+title: '[Bug]: '
+labels:
+  - phase / exploring
+  - type / bug
+body:
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      description: Write the component name issue is related with.
+    validations:
+      required: true
+  - type: textarea
+    id: describeTheBug
+    attributes:
+      label: Describe the bug
+      description: >-
+        A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: toReproduce
+    attributes:
+      label: To Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expectedBehavior
+    attributes:
+      label: Expected behavior
+      description: A clear and concise description of what you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: If applicable, could you add screenshots to help explain your problem?
+  - type: textarea
+    id: desktop
+    attributes:
+      label: Desktop
+      description: Please complete the following information.
+      value: |
+        . OS: 
+        . Browser: 
+        . Version: 
+        . Additional Information:
+  - type: textarea
+    id: smartphone
+    attributes:
+      label: Smartphone
+      description: Please complete the following information.
+      value: |
+        . Device:
+        . OS: 
+        . Browser: 
+        . Version: 
+        . Additional Information:
+  - type: textarea
+    id: exceptionOrError
+    attributes:
+      label: Exception or Error
+      description: If an exception or an error accompanies the issue, please share it here.
+      render: bash
+  - type: textarea
+    id: additionalContext
+    attributes:
+      label: Additional context
+      description: Please feel free to add any other context about the problem here.
