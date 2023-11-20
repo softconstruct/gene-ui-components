@@ -6,6 +6,11 @@ labels:
   - phase / exploring
   - type / feature
 body:
+  - type: input
+    id: component
+    attributes:
+      label: Component
+      description: Write the component name issue is related with.
   - type: textarea
     id: problem
     attributes:
