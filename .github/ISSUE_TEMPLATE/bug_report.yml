@@ -45,6 +45,13 @@ body:
     attributes:
       label: Screenshots
       description: If applicable, could you add screenshots to help explain your problem?
+  - type: input
+    id: packageVersion
+    attributes:
+      label: Package version
+      description: Provide a version of the @geneui/components package you use.
+    validations:
+      required: true
   - type: textarea
     id: desktop
     attributes:
@@ -52,8 +59,7 @@ body:
       description: Please complete the following information.
       value: |
         . OS: 
-        . Browser: 
-        . Version: 
+        . Browser & version: 
         . Additional Information:
   - type: textarea
     id: smartphone
@@ -63,8 +69,7 @@ body:
       value: |
         . Device:
         . OS: 
-        . Browser: 
-        . Version: 
+        . Browser & version: 
         . Additional Information:
   - type: textarea
     id: exceptionOrError
