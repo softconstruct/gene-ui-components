@@ -13,6 +13,14 @@ body:
       description: Write the component name issue is related with.
     validations:
       required: true
+  - type: dropdown
+    id: regression
+    attributes:
+      label: Is this a regression?
+      description: Did this behavior work in the previous version?
+      options:
+        - 'no'
+        - 'yes'
   - type: textarea
     id: describeTheBug
     attributes:
