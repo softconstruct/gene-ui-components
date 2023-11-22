@@ -71,7 +71,8 @@ function MapChart({
             chart: {
                 width,
                 height,
-                type: 'map'
+                type: 'map',
+                animation: false
             },
             title: {
                 text: title
