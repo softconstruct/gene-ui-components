@@ -1,8 +1,11 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React from 'react';
+
 export const data = [
     {
-        id: '1',
-        title: 'Section 1',
-        icon: 'bc-icon-send-pop-up-block'
+        title: <a href="#">Link</a>,
+        id: '111',
+        icon: 'bc-icon-custom-link'
     },
     {
         id: '2',
