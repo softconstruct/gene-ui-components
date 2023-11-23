@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import ProfileComponent from 'src/lib/molecules/Profile';
 import { avatarProps, menuOptions, languages, partners } from './data';
 import { args, category } from '../../assets/storybook.globals';
+import Icon from 'src/lib/atoms/Icon';
 
 const screenTypes = ['desktop', 'mobile'];
 
@@ -41,7 +42,7 @@ export default {
     }
 };
 
-export const Profile = ({ ...args }) => {
+export const Default = ({ ...args }) => {
     const [activeLanguage, setActiveLanguage] = useState('ru');
     const [activePartner, setActivePartner] = useState('1');
 
@@ -87,4 +88,38 @@ export const Profile = ({ ...args }) => {
             />
         </div>
     );
+};
+
+export const WithCustomAvatar = ({ ...args }) => {
+    return (
+        <div style={{ width: 'fit-content' }}>
+            <ProfileComponent
+                menuProps={{ data: menuOptions }}
+                username={args.username}
+                email={args.email}
+                showIcon={args.showIcon}
+                avatarProps={avatarProps}
+                tooltipProps={
+                    (args.tooltipText &&
+                        args.tooltipTitle && {
+                            title: args.tooltipTitle,
+                            text: args.tooltipText
+                        }) ||
+                    {}
+                }
+                {...args}
+            />
+        </div>
+    );
+};
+
+WithCustomAvatar.args = {
+    screenTypes: 'mobile',
+    tooltipProps: {},
+    customAvatar: (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <Icon type="bc-icon-user" />
+            <span style={{ fontSize: '12px', marginTop: '4px' }}>Profile</span>
+        </div>
+    )
 };
