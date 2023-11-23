@@ -10,11 +10,12 @@ const getTitle = (id, data) => {
 
 export const getTitlesArray = (ids, data) => ids.map((id) => getTitle(id, data)).filter(Boolean);
 
-export const navigationOptionsToMenuMenu = (navigationOptions) =>
+export const navigationOptionsToMenuMenu = (navigationOptions, optionId) =>
     navigationOptions.map(({ data, ...rest }) => ({
-        ...rest,
-        ...(data ? { children: navigationOptionsToMenuMenu(data) } : {})
-    }));
+            ...rest,
+            active: optionId?.toString() === rest.id.toString(),
+            ...(data ? { children: navigationOptionsToMenuMenu(data, optionId) } : {})
+        }));
 
 export const indexStackFromItems = (stack, items, selectedItemId) => {
     if (!items?.length) {
