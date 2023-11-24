@@ -20,6 +20,7 @@ export default {
         languages: args({ control: 'object', category: category.content }),
         partners: args({ control: 'object', category: category.content }),
         tooltipText: args({ control: 'text', category: category.content }),
+        customAvatar: args({ control: false, category: category.content }),
         tooltipTitle: args({ control: 'text', category: category.content }),
         padding: args({ control: 'number', category: category.appearance }),
         userSelect: args({ control: 'boolean', category: category.states }),
