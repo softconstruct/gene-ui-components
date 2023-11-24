@@ -22,7 +22,7 @@ export default {
 };
 
 const Template = ({ onChange, ...args }) => {
-    const [activePath, setActivePath] = useState('1/8');
+    const [activePath, setActivePath] = useState('111');
 
     const handleChange = (path, item) => {
         onChange(path, item);
