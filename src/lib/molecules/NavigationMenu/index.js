@@ -37,14 +37,14 @@ function NavigationMenu({ data, value, onChange, disabled }) {
             children={
                 <button className="bc-navigation-menu" disabled={disabled}>
                     <div className="bc-navigation-menu_head">
-                        {title.map((item, index, arr) => (
-                                <div className="bc-navigation-menu_title-wrapper">
-                                    {item?.icon && isMobile && <Icon type={item.icon} />}
-                                    <span key={index} className="bc-navigation-menu_layer">
-                                        {item.title}
-                                    </span>
-                                </div>
-                            ))}
+                        {title.map((item, index) => (
+                            <div className="bc-navigation-menu_title-wrapper">
+                                {item?.icon && isMobile && <Icon type={item.icon} />}
+                                <span key={index} className="bc-navigation-menu_layer">
+                                    {item.title}
+                                </span>
+                            </div>
+                        ))}
                     </div>
                     <Icon type="bc-icon-arrow-down" />
                 </button>

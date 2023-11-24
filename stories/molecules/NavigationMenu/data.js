@@ -1,9 +1,11 @@
+/* eslint-disable no-script-url */
+/* eslint-disable react/jsx-no-script-url */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 
 export const data = [
     {
-        title: <a href="#">Link</a>,
+        title: <a href="javascript:void(0)">Link</a>,
         id: '111',
         icon: 'bc-icon-custom-link'
     },
