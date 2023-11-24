@@ -3,7 +3,7 @@ import { debounce } from 'utils';
 import { useDeviceType } from 'hooks';
 import MenuContent from '../Menu';
 
-import { indexStackFromItems, navigationOptionsToMenuMenu } from './utils';
+import { indexStackFromItems, navigationOptionsToMenu } from './utils';
 import Option from '../../atoms/Option';
 
 function NavigationMenuContent({ depth, path, options, onChange, splitedValue }) {
@@ -14,7 +14,10 @@ function NavigationMenuContent({ depth, path, options, onChange, splitedValue })
     const optionId = useMemo(() => splitedValue?.[depth], [depth, splitedValue]);
 
     const isActiveItem = useMemo(() => activeItem?.id && optionId === activeItem.id, [activeItem, optionId]);
-    const mobileOptions = useMemo(() => (options ? navigationOptionsToMenuMenu(options) : undefined), [options]);
+    const mobileOptions = useMemo(
+        () => (options ? navigationOptionsToMenu(options, optionId) : undefined),
+        [options, optionId]
+    );
     const initialIndexStack = useMemo(
         () => indexStackFromItems([], mobileOptions, optionId),
         [mobileOptions, activeItem]

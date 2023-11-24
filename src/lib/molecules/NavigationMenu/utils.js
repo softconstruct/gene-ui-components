@@ -3,17 +3,18 @@ const getTitle = (id, data) => {
         const matchedDatum = data.find((datum) => datum.id === id);
 
         return matchedDatum && matchedDatum.title
-            ? matchedDatum.title
+            ? matchedDatum
             : data.map((datum) => getTitle(id, datum.data)).filter(Boolean)[0];
     }
 };
 
 export const getTitlesArray = (ids, data) => ids.map((id) => getTitle(id, data)).filter(Boolean);
 
-export const navigationOptionsToMenuMenu = (navigationOptions) =>
+export const navigationOptionsToMenu = (navigationOptions, optionId) =>
     navigationOptions.map(({ data, ...rest }) => ({
         ...rest,
-        ...(data ? { children: navigationOptionsToMenuMenu(data) } : {})
+        active: optionId?.toString() === rest.id.toString(),
+        ...(data ? { children: navigationOptionsToMenu(data, optionId) } : {})
     }));
 
 export const indexStackFromItems = (stack, items, selectedItemId) => {

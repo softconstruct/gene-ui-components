@@ -10,6 +10,17 @@ import Scrollbar from '../../atoms/Scrollbar';
 import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
+const findHeaderByIndexStack = (data, indexStack) => {
+    if (!data || !Array.isArray(data) || data.length === 0) {
+        return null;
+    }
+
+    const [currentIndex, ...nextIndexStack] = indexStack;
+    const nextData = data[currentIndex]?.children;
+
+    return indexStack.length === 1 ? data[currentIndex] : findHeaderByIndexStack(nextData, nextIndexStack);
+};
+
 const Menu = forwardRef(
     (
         { data, onBack, toggle, onNext, onSelect, screenType, scrollToActiveElement, initialIndexStack, ...restProps },
@@ -61,8 +72,6 @@ const Menu = forwardRef(
             }
         });
 
-        const [prevHeader, setPrevHeader] = useState([]);
-
         const handleClick = useCallback(
             (e, item, isHeader, index) => {
                 setWithSmoothScroll(false);
@@ -70,18 +79,17 @@ const Menu = forwardRef(
                 setHoverIndex(null);
                 setScrollTopGap(item?.scrollTopGap ? item?.scrollTopGap : 0);
 
+                const newIndexStack = indexStack.slice(0, -1);
+
                 if (isHeader) {
-                    setIndexStack(indexStack.slice(0, -1));
-                    setPrevHeader((prev) => prev.slice(0, -1));
-                    !(indexStack.length - 1) && setHeader(null);
+                    setIndexStack(newIndexStack);
                     onBack && onBack(e, item);
-                    setHeader(prevHeader[prevHeader.length - 2]);
+                    setHeader(findHeaderByIndexStack(data, newIndexStack));
                 } else {
                     const { onClick, children } = item;
                     if (children) {
                         setIndexStack([...indexStack, index]);
                         setHeader(item);
-                        setPrevHeader((prev) => [...prev, item]);
                         onNext && onNext(e, item);
                     } else {
                         onSelect && onSelect(e, item);
