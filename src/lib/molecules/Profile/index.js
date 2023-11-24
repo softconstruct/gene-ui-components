@@ -37,7 +37,8 @@ function Profile(props) {
         tabIndex,
         userSelect,
         languages,
-        partners
+        partners,
+        customAvatar
     } = props;
 
     const [opened, toggle] = useToggle(false);
@@ -284,25 +285,29 @@ function Profile(props) {
 
     let Content = (
         <div
-            className="user-profile-c"
+            className={classnames({ 'user-profile-c': !customAvatar })}
             onClick={handleMenuStateChange}
             ref={profileRef}
             tabIndex={tabIndex}
             onKeyDown={keyDownHandler}
         >
-            <Avatar icon="bc-icon-user" {...avatarProps} />
-            {!isMobile && (
+            {customAvatar || (
                 <>
-                    {username && (
-                        <p
-                            className={classnames('user-profile-text', 'ellipsis-text', {
-                                'user-profile-text-select': userSelect
-                            })}
-                        >
-                            {username}
-                        </p>
+                    <Avatar icon="bc-icon-user" {...avatarProps} />
+                    {!isMobile && (
+                        <>
+                            {username && (
+                                <p
+                                    className={classnames('user-profile-text', 'ellipsis-text', {
+                                        'user-profile-text-select': userSelect
+                                    })}
+                                >
+                                    {username}
+                                </p>
+                            )}
+                            {showIcon && menuExists && <Icon type="bc-icon-arrow-down" />}
+                        </>
                     )}
-                    {showIcon && menuExists && <Icon type="bc-icon-arrow-down" />}
                 </>
             )}
         </div>
@@ -516,7 +521,11 @@ Profile.propTypes = {
          * (id: string) => void
          */
         onSelect: PropTypes.func.isRequired
-    })
+    }),
+    /*
+     * Custom avatar node.
+     */
+    customAvatar: PropTypes.node
 };
 
 Profile.defaultProps = {
