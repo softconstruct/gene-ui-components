@@ -86,6 +86,7 @@ function Row({
     });
 
     const [ignored, drag, preview] = useDrag({
+        item: { index },
         type: `${itemTypes.tr}${eventRef.current}`,
         canDrag: () => !opened && !dragDisable && !sortType && !isEditActive && rowsLength > 0,
         collect: (monitor) => ({
