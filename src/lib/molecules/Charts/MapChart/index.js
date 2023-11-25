@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState, useCallback, useEffect } from 'react';
+import React, { useMemo, useRef, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import Highcharts from 'highcharts';
 import HC_map from 'highcharts/modules/map';
@@ -71,7 +71,8 @@ function MapChart({
             chart: {
                 width,
                 height,
-                type: 'map'
+                type: 'map',
+                animation: false
             },
             title: {
                 text: title
@@ -148,59 +149,22 @@ function MapChart({
             ],
             ...restProps
         }),
-        [data, mapData, colorAxis]
+        [
+            data,
+            title,
+            width,
+            height,
+            joinBy,
+            opacity,
+            mapData,
+            isMobile,
+            colorAxis,
+            withLegend,
+            withTooltip,
+            withActivity,
+            withNavigation
+        ]
     );
-
-    const updatedMapChartOptions = useMemo(() => ({
-            title: [{ key: 'text', value: title }],
-            chart: [
-                { key: 'height', value: height },
-                { key: 'width', value: width }
-            ],
-            series: [
-                { key: 'opacity', value: opacity },
-                { key: 'joinBy', value: joinBy }
-            ],
-            isMobile: [{ key: 'isMobile', value: isMobile }],
-            legend: [{ key: 'enabled', value: withLegend }],
-            tooltip: [{ key: 'enabled', value: withTooltip }],
-            withActivity: [{ key: 'withActivity', value: withActivity }],
-            withNavigation: [{ key: 'withNavigation', value: withNavigation }]
-        }), [title, width, height, joinBy, opacity, isMobile, withLegend, withTooltip, withActivity, withNavigation]);
-
-    const updateMapChartOptions = useCallback((updatedKey, updatedPropertyObj) => {
-        if (updatedPropertyObj && updatedKey) {
-            highChartRef.current.chart[updatedKey]?.update({ [updatedPropertyObj.key]: updatedPropertyObj.value });
-        }
-    }, []);
-
-    const prevUpdatedMapChartOptions = useRef(structuredClone(updatedMapChartOptions));
-
-    useEffect(() => {
-        const findChartValues = (mapChartItem) => {
-            const updatedMapChartItem = { key: '', value: '' };
-
-            if (Array.isArray(mapChartItem)) {
-                const [{ value, key }] = mapChartItem;
-                updatedMapChartItem.value = value;
-                updatedMapChartItem.key = key;
-            }
-
-            return updatedMapChartItem;
-        };
-
-        const [updatedKey] = Object.keys(updatedMapChartOptions).filter(
-            (key, index) =>
-                findChartValues(updatedMapChartOptions[key]).value !==
-                    findChartValues(Object.values(prevUpdatedMapChartOptions.current)[index]).value &&
-                updatedMapChartOptions[key]
-        );
-        const [changedProperty] = updatedMapChartOptions[updatedKey] || [];
-
-        updateMapChartOptions(updatedKey, changedProperty);
-
-        prevUpdatedMapChartOptions.current = updatedMapChartOptions;
-    }, [updatedMapChartOptions]);
 
     const handleMapZoom = useCallback(
         (level) => {
