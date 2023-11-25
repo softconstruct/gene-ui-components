@@ -451,7 +451,7 @@ $sticky-gradient-cut-hero-2: linear-gradient(to right, c(hero, 0.08) 65%, c(hero
     }
 
     &.ta-a-2 {
-        visibility: hidden;
+        opacity: 0;
     }
 
     .ta-row.hover-able:hover &,
@@ -463,7 +463,7 @@ $sticky-gradient-cut-hero-2: linear-gradient(to right, c(hero, 0.08) 65%, c(hero
 
         &.ta-a-2,
         &::after {
-            visibility: unset;
+            opacity: 1;
         }
     }
 

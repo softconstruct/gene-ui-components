@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
-
+import { useDeviceType } from 'hooks';
 import { noop } from 'utils';
 import Icon from '../../atoms/Icon';
 import Option from '../../atoms/Option';
@@ -13,6 +13,7 @@ import './index.scss';
 
 function NavigationMenu({ data, value, onChange, disabled }) {
     const [isOpen, setIsOpen] = useState(false);
+    const { isMobile } = useDeviceType();
 
     const splitedValue = useMemo(() => value && value.split('/').filter(Boolean), [value]);
     const title = useMemo(() => getTitlesArray(splitedValue, data), [splitedValue, data]);
@@ -37,9 +38,12 @@ function NavigationMenu({ data, value, onChange, disabled }) {
                 <button className="bc-navigation-menu" disabled={disabled}>
                     <div className="bc-navigation-menu_head">
                         {title.map((item, index) => (
-                            <span key={index} className="bc-navigation-menu_layer">
-                                {item}
-                            </span>
+                            <div className="bc-navigation-menu_title-wrapper">
+                                {item?.icon && isMobile && <Icon type={item.icon} />}
+                                <span key={index} className="bc-navigation-menu_layer">
+                                    {item.title}
+                                </span>
+                            </div>
                         ))}
                     </div>
                     <Icon type="bc-icon-arrow-down" />

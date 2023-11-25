@@ -71,20 +71,12 @@ $selector: '.option-container';
     }
 
     a {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-
         /* TODO: since Option does not have the ability to be the path, you send it Link
      * and but this is not the right decision, mamen is given, I will not touch
      * the component, only changed styles, but in the future this needs to be fixed
      * @sedrak.ghukasyan
     */
         line-height: rem(40);
-        padding: 0 rem(14);
         display: block;
         overflow: hidden;
         white-space: nowrap;

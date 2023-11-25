@@ -89,6 +89,7 @@ function HeaderItem({
     });
 
     const [_, drag] = useDrag({
+        item: { index },
         type: `${itemTypes.th}${eventRef.current}`,
         canDrag: () => !resizeMode && isDraggable && !stickyStatus
     });

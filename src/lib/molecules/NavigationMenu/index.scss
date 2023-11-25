@@ -43,16 +43,6 @@
             opacity: 1;
         }
 
-        &:not(&:last-child)::after {
-            content: '';
-            display: block;
-            width: rem(1);
-            height: rem(23);
-            margin-left: rem(15);
-            background-color: #fff;
-            transform: rotate(15deg);
-        }
-
         &.active {
             opacity: 1;
         }
@@ -68,6 +58,22 @@
 
         &:not(&:last-child) {
             border-right: 1px solid rgba(0, 0, 0, 10%);
+        }
+    }
+
+    &_title-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &:not(&:last-child)::after {
+            content: '';
+            display: block;
+            width: rem(1);
+            height: rem(23);
+            margin-inline: rem(6);
+            background-color: #fff;
+            transform: rotate(15deg);
         }
     }
 }

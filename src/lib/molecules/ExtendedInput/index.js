@@ -187,9 +187,9 @@ const ExtendedInput = forwardRef((props, ref) => {
     const fieldStep = type === 'number' ? { step } : {};
     const numberedValue = Number(inputValue);
     const inputLabel = label || placeholder;
-    const asterisk = required ? '*' : '';
+    const asterisk = required ? '* ' : '';
 
-    const inputPlaceholder = !readOnly && placeholder ? `${asterisk} ${placeholder}` : '';
+    const inputPlaceholder = !readOnly && placeholder ? `${asterisk}${placeholder}` : '';
     const hasFakePlaceholder = type === 'date' || type === 'time' || type === 'datetime-local';
 
     const sharedProps = {
