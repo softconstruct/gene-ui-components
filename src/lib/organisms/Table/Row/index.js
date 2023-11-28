@@ -237,8 +237,16 @@ function Row({
                     </div>
                 )}
                 {orders.map(({ dataKey, id }, colIndex) => {
-                    const { hide, getter, copyable, formatter, colRenderer, copyableValue, copyTooltipText } =
-                        columns.find((column) => column.uid === id) || {};
+                    const {
+                        hide,
+                        getter,
+                        copyable,
+                        formatter,
+                        colRenderer,
+                        copyableValue,
+                        copyTooltipText,
+                        copiedTooltipText
+                    } = columns.find((column) => column.uid === id) || {};
                     const { autoSizeOn, customWidth, autoSizeWidth, defaultCustomWidth } = colsInfo[id];
                     if (hide) return null;
                     return (
@@ -263,6 +271,7 @@ function Row({
                             disabledColumnPin={disabledColumnPin}
                             initialColWidth={initialColWidth}
                             copyTooltipText={copyTooltipText}
+                            copiedTooltipText={copiedTooltipText}
                             defaultCustomWidth={defaultCustomWidth}
                         />
                     );

@@ -663,6 +663,7 @@ Table.propTypes = {
             copyable: PropTypes.bool,
             exportDisabled: PropTypes.bool,
             copyTooltipText: PropTypes.string,
+            copiedTooltipText: PropTypes.string,
             copyableValue: PropTypes.string,
             sortable: PropTypes.bool,
             resizable: PropTypes.bool,

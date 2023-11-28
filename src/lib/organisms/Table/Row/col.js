@@ -6,6 +6,7 @@ import { guid, stopEvent, copyToClipboard } from 'utils';
 import Icon from '../../../atoms/Icon';
 import SkeletonLoader from '../../../atoms/SkeletonLoader';
 import Tooltip from '../../../molecules/Tooltip';
+import callAfterDelay from '../../../../utils/callAfterDelay';
 
 function Col({
     id,
@@ -25,6 +26,7 @@ function Col({
     copyableValue,
     stickyColumns,
     copyTooltipText,
+    copiedTooltipText,
     initialColWidth,
     disabledColumnPin,
     defaultCustomWidth,
@@ -53,6 +55,7 @@ function Col({
             return guidRef.current;
         }
     });
+    const [isCopied, setIsCopied] = useState(false);
 
     useEffect(() => {
         mounted.current = true;
@@ -70,8 +73,12 @@ function Col({
         (event) => {
             stopEvent(event);
             copyToClipboard(copyableValue || value);
+            !isCopied && setIsCopied(true);
+            callAfterDelay(() => {
+                setIsCopied(false);
+            }, 2000);
         },
-        [copyableValue, value]
+        [copyableValue, value, isCopied]
     );
 
     return (
@@ -97,7 +104,7 @@ function Col({
             >
                 <SkeletonLoader height={20} isBusy={guidRef.current && promiseValue === guidRef.current}>
                     {copyable && value && (
-                        <Tooltip title={copyTooltipText}>
+                        <Tooltip title={isCopied ? copiedTooltipText : copyTooltipText}>
                             <Icon
                                 tabIndex="1"
                                 className="cursor-pointer copy-icon"
@@ -116,7 +123,8 @@ function Col({
 }
 
 Col.defaultProps = {
-    copyTooltipText: 'Copy'
+    copyTooltipText: 'Copy',
+    copiedTooltipText: 'Copied!'
 };
 
 export default React.memo(Col, isEqual);
