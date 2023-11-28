@@ -106,8 +106,13 @@ const ExtendedInput = forwardRef((props, ref) => {
 
     const handleFocus = useCallback(
         (e) => {
-            setFocused(true);
-            onFocus(e);
+            if (isDropdown) {
+                stopEvent(e, true);
+                inputRef?.current?.blur();
+            } else {
+                setFocused(true);
+                onFocus(e);
+            }
         },
         [onFocus]
     );
