@@ -549,7 +549,7 @@ function Dropdown({
     }, []);
 
     useEffect(() => {
-        isMultiSelect && hasSearch && searchRef?.current && callAfterDelay(() => searchRef.current.focus());
+        !isMobile && hasSearch && searchRef?.current && callAfterDelay(() => searchRef.current.focus());
     }, [hasSearch, searchRef?.current]);
 
     useEffect(() => {
