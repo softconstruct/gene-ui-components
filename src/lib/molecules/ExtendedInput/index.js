@@ -4,14 +4,13 @@ import PropTypes from 'prop-types';
 
 import { inputConfig, screenTypes } from 'configs';
 import { noop, stopEvent } from 'utils';
-import { useDeviceType } from 'hooks';
+import { useDeviceType, useEllipsisDetection } from 'hooks';
 import SuggestionList from '../SuggestionList';
 import Icon from '../../atoms/Icon';
 import Tooltip from '../Tooltip';
 
 import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
-import useEllipsisDetection from '../../../hooks/useEllipsisDetection';
 
 function replaceBetween(start, end, initial, what) {
     return initial.substring(0, start) + what + initial.substring(end);
