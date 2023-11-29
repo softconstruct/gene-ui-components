@@ -11,6 +11,7 @@ import Tooltip from '../Tooltip';
 
 import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
+import useEllipsisDetection from '../../../hooks/useEllipsisDetection';
 
 function replaceBetween(start, end, initial, what) {
     return initial.substring(0, start) + what + initial.substring(end);
@@ -89,6 +90,10 @@ const ExtendedInput = forwardRef((props, ref) => {
     // non strict equality is needed for covering 'undefined' case also
     const inputValue = isControlled ? (value != null ? value : '') : localValue;
 
+    const [isTextTruncated, setIsTextTruncated] = useState(false);
+    const ellipsisDetector = useEllipsisDetection(inputRef, [inputValue]);
+    useEffect(() => setIsTextTruncated(ellipsisDetector), [ellipsisDetector]);
+
     useEffect(() => {
         isControlled && value && value !== inputValue && setLocalValue(value);
     }, [value, isControlled, inputValue]);
@@ -106,7 +111,7 @@ const ExtendedInput = forwardRef((props, ref) => {
 
     const handleFocus = useCallback(
         (e) => {
-            if (isDropdown) {
+            if (isDropdown && (isTextTruncated || isMobile)) {
                 stopEvent(e, true);
                 inputRef?.current?.blur();
             } else {
@@ -114,7 +119,7 @@ const ExtendedInput = forwardRef((props, ref) => {
                 onFocus(e);
             }
         },
-        [onFocus]
+        [onFocus, isTextTruncated]
     );
 
     const handleIconClick = useCallback(
