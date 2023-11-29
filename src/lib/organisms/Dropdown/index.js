@@ -549,6 +549,10 @@ function Dropdown({
     }, []);
 
     useEffect(() => {
+        !isMobile && hasSearch && searchRef?.current && callAfterDelay(() => searchRef.current.focus());
+    }, [hasSearch, searchRef?.current]);
+
+    useEffect(() => {
         const dataObject = (data && data.find((item) => item[valueKey] === initialValue)) || {};
         setSelectedValue(dataObject[valueKey]);
     }, [data, initialValue, valueKey]);
