@@ -2,18 +2,14 @@
 import React, { forwardRef, useState, useImperativeHandle, useMemo, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
+
 // Import styles
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 // Import helpers
 import { noop } from 'utils';
+import { Empty, BusyLoader, Checkbox, ExtendedInput, Tooltip, Row, Icon, Scrollbar } from 'components';
 import { searchMethods, searchFunctions } from './config';
 // Import components
-import CustomScrollbar from '../../atoms/Scrollbar';
-import { Empty, BusyLoader } from '../../atoms';
-import { Checkbox, ExtendedInput, Tooltip } from '../../molecules';
-import Row from './Row';
-import Icon from '../../atoms/Icon';
 
 // @TODO move helper function to separated file and check code to avoid code duplications
 const isNodeLeaf = (node = {}) => !node.hasOwnProperty('childrenList');
@@ -401,7 +397,7 @@ const ActionableList = forwardRef(
                                 )}
                             </div>
 
-                            <CustomScrollbar>
+                            <Scrollbar>
                                 <div className="gene-actionable-list-body">
                                     {isSearchEmpty ? (
                                         <Empty appearance="greyscale" type="search" title={emptySearchText} />
@@ -426,7 +422,7 @@ const ActionableList = forwardRef(
                                         </DragDropContext>
                                     )}
                                 </div>
-                            </CustomScrollbar>
+                            </Scrollbar>
                         </>
                     ) : (
                         <Empty appearance="greyscale" type="data" title={emptyDataText} />

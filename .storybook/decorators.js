@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import './storybookReset.scss';
 import { useDarkMode } from 'storybook-dark-mode';
-import { GeneUIProvider } from 'src/lib/providers';
+import { GeneUIProvider } from 'components';
 import { Alert } from 'src';
 import { componentStage } from '../stories/assets/storybook.globals';
 

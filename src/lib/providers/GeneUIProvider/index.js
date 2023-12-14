@@ -2,6 +2,8 @@ import React, { createContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import pgk from '../../../../package.json';
 
+import 'src/assets/styles/globalStyling.scss';
+
 export const GeneUIDesignSystemContext = createContext();
 
 function GeneUIProvider({ children, tokens, theme }) {

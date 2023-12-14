@@ -3,12 +3,10 @@ import classnames from 'classnames';
 import { List } from 'react-virtualized';
 
 import { stopEvent } from 'utils';
-import Icon from '../../atoms/Icon';
-import Tag from '../../molecules/Tag';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
-import { Tooltip } from '../../molecules';
+
+import { Tooltip, Icon, Tag } from 'components';
 
 const SingleSelect = forwardRef(
     (

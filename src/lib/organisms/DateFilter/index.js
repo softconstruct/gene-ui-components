@@ -16,10 +16,8 @@ import {
 } from 'utils';
 import { dayjsWithPlugins } from 'wrappers';
 
-import DatePickerInput from '../../molecules/DatePickerInput';
-import Button from '../../atoms/Button';
+import { DatePickerInput, Button } from 'components';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function getFilterByKey(key, date) {

@@ -6,14 +6,10 @@ import { fileSizeDisplay, noop } from 'utils';
 import { uploaderConfig } from 'configs';
 import { useKeyDown } from 'hooks';
 
-import BusyLoader from '../../../atoms/BusyLoader';
-import Icon from '../../../atoms/Icon';
-import Image from '../../../atoms/Image';
-import Button from '../../../atoms/Button';
-import Tooltip from '../../Tooltip';
+import { BusyLoader, Icon, Image, Button, Tooltip } from 'components';
+
 import Preview from './Preview';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 import { useImgDownload } from '../../../../hooks';
 import { getLastMod } from '../uploadUtils';

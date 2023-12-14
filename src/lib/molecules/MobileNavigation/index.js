@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import Badge from '../../atoms/Badge';
 import Icon from '../../atoms/Icon';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function MobileNavigation({ list, activeSlug, onChange, className, ...restProps }) {

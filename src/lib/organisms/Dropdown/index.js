@@ -3,23 +3,18 @@ import { WindowScroller, AutoSizer } from 'react-virtualized';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
-import { useDeviceType, useKeyDown, useMount, useUpdatableRef, useClick, useClickOutside } from 'hooks';
+import { useDeviceType, useKeyDown, useMount, useUpdatableRef, useClick, useClickOutside , useEllipsisDetection } from 'hooks';
 import { inputConfig, screenTypes, popoverConfig } from 'configs';
 import { noop, stopEvent } from 'utils';
 
+import { ExtendedInput, BusyLoader, Tooltip, Popover, Empty } from 'components';
 import callAfterDelay from '../../../utils/callAfterDelay';
-import ExtendedInput from '../../molecules/ExtendedInput';
-import BusyLoader from '../../atoms/BusyLoader';
-import Tooltip from '../../molecules/Tooltip';
-import Popover from '../../atoms/PopoverV2';
-import Empty from '../../atoms/Empty';
+
 
 import MultipleSelect from './MultipleSelect';
 import SingleSelect from './SingleSelect';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
-import useEllipsisDetection from '../../../hooks/useEllipsisDetection';
 
 const MULTISELECT_SEARCH_HEIGHT = 65;
 const CHECK_ALL_HEIGHT = 40;

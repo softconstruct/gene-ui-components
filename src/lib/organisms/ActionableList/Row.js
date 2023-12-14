@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
+
 // Import styles
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 // Import helpers
 import { noop } from 'utils';

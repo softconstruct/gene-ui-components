@@ -4,10 +4,7 @@ import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import Tag from '../../Tag';
-import Label from '../../../atoms/Label';
-import Button from '../../../atoms/Button';
-import { Empty, BusyLoader } from '../../../atoms';
+import { Empty, BusyLoader, Tag, Label, Button } from 'components';
 
 import './index.scss';
 

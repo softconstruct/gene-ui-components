@@ -5,7 +5,6 @@ import { titleConfig } from 'configs';
 
 import Title from '../../atoms/Title';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Section({ children, ...restProps }) {

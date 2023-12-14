@@ -6,7 +6,6 @@ import { fileSizeDisplay, noop } from 'utils';
 import Icon from '../../atoms/Icon';
 import Button from '../../atoms/Button';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Progress({

@@ -1,4 +1,3 @@
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 import DateInput from './DateInput';
