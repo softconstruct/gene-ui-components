@@ -29,7 +29,7 @@ const isDirectory = (source) => lstatSync(source).isDirectory();
 const isFile = (source) => lstatSync(source).isFile();
 
 const copyStaticFilesToDist = async () => {
-    const filesToCopy = ['package.json', 'README.md', 'CHANGELOG.md']; // need to add also LICENSE
+    const filesToCopy = ['package.json', 'README.md', 'CHANGELOG.md', 'LICENSE']; // need to add also LICENSE
     const copyPromises = filesToCopy.map(async (fileName) => {
         const sourcePath = join(__dirname, '..', fileName);
         const destinationPath = join(__dirname, '..', 'dist', fileName);

@@ -1,7 +1,7 @@
 name: Feature request 💡
 description: >-
   Use this template to propose new features.
-title: '[Feat:] '
+title: '[Feat]: '
 labels:
   - phase / exploring
   - type / feature
