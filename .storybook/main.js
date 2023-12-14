@@ -6,15 +6,17 @@ module.exports = {
         './../stories/changelog.story.mdx',
         './../stories/gettingStarted.story.mdx',
         './../stories/*/**/*.stories.jsx',
-        './../stories/*/**/*.stories.mdx'
-    ], // '../stories/atoms/*/*.stories.jsx'
+        './../stories/*/**/*.stories.tsx',
+        './../stories/*/**/*.stories.mdx',
+        './../src/lib/**/**/*.stories.tsx'
+    ],
     addons: [
         '@storybook/preset-scss',
         'storybook-dark-mode',
         {
             name: '@storybook/addon-essentials',
             options: {
-                backgrounds: true // 👈 control addon params
+                backgrounds: true
             }
         },
         '@storybook/addon-a11y'
@@ -26,6 +28,9 @@ module.exports = {
     core: {
         builder: 'webpack5'
     },
+    typescript: {
+        reactDocgen: 'react-docgen-typescript-plugin'
+    },
     webpackFinal: async (config) => {
         const aliasPaths = {
             src: '../src/',
@@ -34,15 +39,18 @@ module.exports = {
             wrappers: '../src/wrappers/index.js',
             configs: '../src/configs.js',
             hooks: '../src/hooks/index.js',
-            indexof: '../src/utils/indexof.js'
+            indexof: '../src/utils/indexof.js',
+            stories: '../stories/',
+            components: '../src/index.ts'
         };
 
         for (let aliasPath in aliasPaths) {
             config.resolve.alias[aliasPath] = path.resolve(__dirname, aliasPaths[aliasPath]);
         }
+
         return config;
     },
     features: {
-        previewMdx2: true // 👈 MDX 2 enabled here
+        previewMdx2: true
     }
 };
