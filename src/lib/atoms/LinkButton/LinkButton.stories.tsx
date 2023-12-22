@@ -1,13 +1,10 @@
-import React from 'react';
-import type { Meta, StoryObj } from '@storybook/react';
-// @ts-ignore
-import { args, category } from 'stories/assets/storybook.globals';
+import { Meta, StoryObj } from '@storybook/react';
+import LinkButton from './index';
+import { args, category } from '../../../../stories/assets/storybook.globals';
 
-import LinkButtonCmp, { ILinkButtonProps } from '.';
-
-const meta: Meta<typeof LinkButtonCmp> = {
+const meta = {
+    component: LinkButton,
     title: 'Atoms/LinkButton',
-    component: LinkButtonCmp,
     argTypes: {
         href: args({ control: 'text', category: category.content }),
         onClick: args({ control: false, category: category.action }),
@@ -18,17 +15,17 @@ const meta: Meta<typeof LinkButtonCmp> = {
         iconAfter: args({ control: 'text', category: category.content }),
         iconBefore: args({ control: 'text', category: category.content }),
         isDisabled: args({ control: 'boolean', category: category.states })
-    },
-    args: {
-        iconAfter: 'bc-icon-arrow-down'
     }
-} as Meta<typeof LinkButtonCmp>;
+} satisfies Meta<typeof LinkButton>;
 
 export default meta;
-// type Story = StoryObj<typeof LinkButtonCmp>;
 
-// export const Playground: Story = {
-//     render: (args) => <LinkButton {...args} />
-// };
+type Story = StoryObj<typeof meta>;
 
-export const LinkButton = (args: ILinkButtonProps) => <LinkButtonCmp {...args} />;
+export const Default: Story = {};
+
+export const WithIcon: Story = {
+    args: {
+        iconAfter: 'bc-icon-arrow-right'
+    }
+};
