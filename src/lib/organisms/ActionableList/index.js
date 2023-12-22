@@ -7,9 +7,10 @@ import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import './index.scss';
 // Import helpers
 import { noop } from 'utils';
-import { Empty, BusyLoader, Checkbox, ExtendedInput, Tooltip, Row, Icon, Scrollbar } from 'components';
+import { Empty, BusyLoader, Checkbox, ExtendedInput, Tooltip, Icon, Scrollbar } from 'components';
 import { searchMethods, searchFunctions } from './config';
 // Import components
+import Row from './Row';
 
 // @TODO move helper function to separated file and check code to avoid code duplications
 const isNodeLeaf = (node = {}) => !node.hasOwnProperty('childrenList');

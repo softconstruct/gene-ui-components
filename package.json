@@ -25,7 +25,9 @@
     ],
     "scripts": {
         "start": "storybook dev -p 6006",
+        "dev": "concurrently --kill-others -g \"npm:test:watch\" \"npm:start\"",
         "test": "jest --silent --config ./configs/jest.config.js --rootDir ./",
+        "test:watch": "npm run test -- --watch --json --outputFile=./coverage/.jest-test-results.json",
         "test-coverage": "babel-node --config-file ./configs/.babelrc ./scripts/testCoverage.js",
         "build": "babel-node --config-file ./configs/.babelrc ./scripts/build.js",
         "copy-build-statics-files": "babel-node --config-file ./configs/.babelrc ./scripts/copyFiles.js",
@@ -95,6 +97,7 @@
         "babel-loader": "^8.2.5",
         "chalk": "^4.1.2",
         "commitizen": "^4.2.5",
+        "concurrently": "^8.2.2",
         "conventional-changelog-cli": "^2.2.2",
         "css-loader": "^6.7.3",
         "cz-conventional-changelog": "^3.3.0",
