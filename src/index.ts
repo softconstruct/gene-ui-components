@@ -30,8 +30,8 @@ export {
     paperDirections,
     cornersRadius
 } from './lib/atoms/Paper';
-export { default as Avatar } from './lib/atoms/Avatar';
-export { default as LinkButton } from './lib/atoms/LinkButton';
+export { default as Avatar } from './lib/atoms/Avatar/index';
+export { default as LinkButton } from './lib/atoms/LinkButton/index';
 
 // Molecules
 export { Row, Col } from './lib/molecules/Grid';
