@@ -2,13 +2,11 @@ const path = require('path');
 
 module.exports = {
     stories: [
-        './../stories/introduction.story.mdx',
-        './../stories/changelog.story.mdx',
-        './../stories/gettingStarted.story.mdx',
-        './../stories/*/**/*.stories.jsx',
-        './../stories/*/**/*.stories.tsx',
-        './../stories/*/**/*.stories.mdx',
-        './../src/lib/**/**/*.stories.tsx'
+        './../stories/introduction.mdx',
+        './../stories/changelog.mdx',
+        './../stories/gettingStarted.mdx',
+        './../src/lib/**/**/*.stories.tsx',
+        './../stories/*/**/*.stories.jsx'
     ],
     addons: [
         '@storybook/preset-scss',
@@ -19,11 +17,15 @@ module.exports = {
                 backgrounds: true
             }
         },
-        '@storybook/addon-a11y'
+        '@storybook/addon-a11y',
+        '@storybook/addon-jest'
     ],
-    framework: '@storybook/react',
-    reactOptions: {
-        fastRefresh: true
+    staticDirs: ['./public'],
+    framework: {
+        name: '@storybook/react-webpack5',
+        options: {
+            fastRefresh: true
+        }
     },
     core: {
         builder: 'webpack5'
@@ -52,5 +54,8 @@ module.exports = {
     },
     features: {
         previewMdx2: true
+    },
+    docs: {
+        autodocs: true
     }
 };
