@@ -50,6 +50,15 @@ module.exports = {
             config.resolve.alias[aliasPath] = path.resolve(__dirname, aliasPaths[aliasPath]);
         }
 
+        // Hardcode to specify custom babel config file path for storybook
+        // as the last one not supporting the babel custom config file path
+        const babelLoader = config.module.rules[3].use[0];
+        babelLoader.options = {
+            ...babelLoader.options,
+            babelrc: true,
+            configFile: './.storybook/.babelrc'
+        };
+
         return config;
     },
     features: {
