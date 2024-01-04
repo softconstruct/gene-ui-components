@@ -3,7 +3,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
-import { Empty, BusyLoader } from '../../../atoms';
+
+import { Empty, BusyLoader } from 'components';
 
 import './index.scss';
 

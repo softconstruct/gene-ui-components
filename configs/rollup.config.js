@@ -1,3 +1,4 @@
+import typescript from '@rollup/plugin-typescript';
 import { resolve as resolvePath } from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
 import resolve from '@rollup/plugin-node-resolve';
@@ -7,23 +8,24 @@ import babel from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import image from '@rollup/plugin-image';
 import json from '@rollup/plugin-json';
-
-// import url from 'postcss-url';
 import postcss from 'rollup-plugin-postcss';
 import prefixSelector from 'postcss-prefix-selector';
 import autoprefixer from 'autoprefixer';
 import { getDirectories, getFiles } from '../scripts/utils';
-// import scss from 'rollup-plugin-scss';
 
 const packageJson = require('../package.json');
-// console.log('🚀 ~ file: rollup.config.js ~ line 103 ~ packageJson', packageJson);
+
+const TSComponentsList = ['Avatar', 'LinkButton'];
 
 const getInputs = (name, dir) => {
     const inputs = getDirectories(dir).reduce((obj, item) => {
         const [name] = item.split('/').reverse();
+        // Tmp solution should be removed after full
+        // typescript migration
+        const extension = TSComponentsList.includes(name) ? 'tsx' : 'js';
         return {
             ...obj,
-            [name]: `${item}/index.js`
+            [name]: `${item}/index.${extension}`
         };
     }, {});
 
@@ -32,12 +34,19 @@ const getInputs = (name, dir) => {
     };
 };
 
-const scriptsInputs = Object.entries({
+const componentsInputs = Object.entries({
     atoms: 'src/lib/atoms',
     molecules: 'src/lib/molecules',
     organisms: 'src/lib/organisms',
     providers: 'src/lib/providers'
 }).reduce((obj, entry) => ({ ...obj, ...getInputs(...entry) }), {});
+
+const hooks = getFiles('src/hooks').reduce((acc, path) => {
+    const [hookPath] = path.split('/').reverse();
+    const hookName = hookPath.replace('.js', '');
+    acc[hookName] = path;
+    return acc;
+}, {});
 
 const getFormableInputs = (name, dir) =>
     getFiles(dir).reduce((obj, item) => {
@@ -56,17 +65,34 @@ const formableInputs = Object.entries({
 
 export default {
     input: {
-        ...scriptsInputs,
+        ...componentsInputs,
         ...formableInputs,
-        index: 'src/index.js',
+        ...hooks,
+        index: 'src/index.ts',
         configs: 'src/configs.js'
     },
     output: [
         {
             dir: 'dist',
             format: 'esm',
-            entryFileNames: '[name].js',
-            exports: 'named'
+            exports: 'named',
+            entryFileNames: ({ facadeModuleId }) => {
+                // Check if the module is one of the components that require nested structure
+
+                const folders = ['atoms', 'molecules', 'organisms', 'providers'];
+                const isComponent = folders.some((folder) => facadeModuleId.includes(`/src/lib/${folder}/`));
+                const isHook = facadeModuleId.includes(`/src/hooks/`);
+
+                let filePath = '[name].js';
+
+                if (isComponent) {
+                    filePath = `[name]/index.js`;
+                } else if (isHook) {
+                    filePath = `hooks/[name].js`;
+                }
+
+                return filePath;
+            }
         }
     ],
     external: ['react', 'react-dom'],
@@ -82,10 +108,16 @@ export default {
                 wrappers: 'src/wrappers/index.js',
                 configs: 'src/configs.js',
                 hooks: 'src/hooks/index.js',
-                indexof: 'src/utils/indexof.js'
+                indexof: 'src/utils/indexof.js',
+                components: 'src/index.ts'
             }
         }),
-        resolve(),
+        resolve({
+            ignoreSideEffectsForRoot: true
+        }),
+        typescript({
+            tsconfig: resolvePath(__dirname, 'tsconfig.json')
+        }),
         babel({
             babelHelpers: 'bundled',
             babelrc: true,
@@ -106,14 +138,14 @@ export default {
                 autoprefixer,
                 prefixSelector({
                     prefix: `[data-gene-ui-version="${packageJson.version}"]`,
-                    // to prevent global styles isolation
+                    // To prevent global styles isolation
                     exclude: [new RegExp(/^(html|:root|body|\*)/)],
                     transform: (prefix, selector, prefixedSelector, file) =>
                         file.includes('src/lib/') ? prefixedSelector : selector
                 })
             ]
         }),
-        // make conditional of generation bundle size via script parameter
+        // Make conditional of generation bundle size via script parameter
         visualizer({ template: 'treemap', filename: 'stats/treemap.html', gzipSize: true }),
         visualizer({ template: 'network', filename: 'stats/network.html', gzipSize: true }),
         visualizer({ template: 'sunburst', filename: 'stats/sunburst.html', gzipSize: true })

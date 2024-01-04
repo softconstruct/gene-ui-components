@@ -24,5 +24,6 @@
         "scss/operator-no-unspaced": null,
         "scss/operator-no-newline-after": null,
         "color-function-notation": "legacy"
-    }
+    },
+    "ignoreFiles": ["../coverage/**/*.css"]
 }

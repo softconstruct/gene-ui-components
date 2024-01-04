@@ -7,7 +7,6 @@ import { useWidth } from 'hooks';
 import Icon from '../../atoms/Icon';
 import NumberInput from '../ValidatableElements/Elements/ValidatableNumberInput';
 
-import 'src/assets/styles/globalStyling.scss';
 import 'src/assets/styles/rangeAndSlider.scss';
 
 const SliderWithTooltip = createSliderWithTooltip(Slider);

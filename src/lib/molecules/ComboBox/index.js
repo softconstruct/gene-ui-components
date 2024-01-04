@@ -13,7 +13,6 @@ import { actionTypes, keyDownKeys, SPACE_HEIGHT } from './config';
 
 import CustomScrollbar from '../../atoms/Scrollbar';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 /**

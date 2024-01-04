@@ -4,7 +4,7 @@ import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
 
 import { useDeviceType } from 'hooks';
-import { Empty, BusyLoader } from '../../../atoms';
+import { Empty, BusyLoader } from 'components';
 
 import './index.scss';
 

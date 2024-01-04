@@ -6,7 +6,6 @@ import Empty from '../Empty';
 import Tooltip from '../../molecules/Tooltip';
 import Checkbox from '../../molecules/Checkbox';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Image({

@@ -6,10 +6,9 @@ import isEqual from 'react-fast-compare';
 import { useMount } from 'hooks';
 import { callAfterDelay, stopEvent, debounce } from 'utils';
 
+import { Popover, Icon, Dropdown, ExtendedInput, Menu } from 'components';
 import { resizeConfigs, searchConfigs } from '../../../../utils/configs/tableConfigs';
-import { ExtendedInput, Menu } from '../../../molecules';
-import { Popover, Icon } from '../../../atoms';
-import Dropdown from '../../Dropdown';
+
 
 import { itemTypes } from '../utils';
 import resizeHandler from './resize';

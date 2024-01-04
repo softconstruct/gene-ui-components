@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function SkeletonLoader({ children, isBusy, width, ...restProps }) {

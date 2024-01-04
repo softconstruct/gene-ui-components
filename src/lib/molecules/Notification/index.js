@@ -7,7 +7,6 @@ import { screenTypes } from 'configs';
 
 import Icon from '../../atoms/Icon';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 const notificationTypes = ['default', 'clean'];

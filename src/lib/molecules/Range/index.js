@@ -5,7 +5,6 @@ import { Range, createSliderWithTooltip } from 'rc-slider';
 
 import { useWidth, useToggle } from 'hooks';
 
-import 'src/assets/styles/globalStyling.scss';
 import 'src/assets/styles/rangeAndSlider.scss';
 
 function formatter(value, tooltipType) {

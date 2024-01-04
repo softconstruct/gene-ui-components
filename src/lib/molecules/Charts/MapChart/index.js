@@ -7,12 +7,11 @@ import classnames from 'classnames';
 
 import { noop } from 'utils';
 import { useDeviceType } from 'hooks';
-import Icon from '../../../atoms/Icon';
 
+import { Empty, BusyLoader, Icon } from 'components';
 import IconButton from './IconButton';
-import { Empty, BusyLoader } from '../../../atoms';
 
-import 'src/assets/styles/globalStyling.scss';
+
 import './index.scss';
 
 HC_map(Highcharts);

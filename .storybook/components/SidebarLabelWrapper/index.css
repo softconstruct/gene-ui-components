@@ -46,10 +46,10 @@ button[data-action='collapse-root'] {
 }
 
 .versions {
-    position: sticky;
+    position: absolute;
     bottom: 29px;
     background: #f6f9fc;
-    width: 100%;
+    width: 88%;
     box-shadow: 1px -5px 31px 0 rgba(0, 0, 0, 0.1);
     z-index: 9999999;
 }
@@ -143,6 +143,9 @@ button[data-action='collapse-root'] {
     border-color: #404040;
 }
 
+#storybook-explorer-menu {
+    margin-bottom: 100px;
+}
 /*******************************************/
 /*addons icons change and display none*/
 /******************************************/

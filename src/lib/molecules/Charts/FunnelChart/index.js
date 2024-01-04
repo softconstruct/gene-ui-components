@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import addFunnel from 'highcharts/modules/funnel';
 import Highcharts from 'highcharts/highcharts-gantt';
 import HighchartsReact from 'highcharts-react-official';
-import { Empty, BusyLoader } from '../../../atoms';
+
+import { Empty, BusyLoader } from 'components';
 
 import './index.scss';
 

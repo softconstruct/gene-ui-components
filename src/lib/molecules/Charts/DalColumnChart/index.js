@@ -4,7 +4,7 @@ import Highcharts from 'highcharts';
 import DrillDown from 'highcharts/modules/drilldown';
 import HighchartsReact from 'highcharts-react-official';
 
-import { Empty, BusyLoader } from '../../../atoms';
+import { Empty, BusyLoader } from 'components';
 
 import './index.scss';
 

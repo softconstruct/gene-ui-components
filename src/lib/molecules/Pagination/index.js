@@ -8,7 +8,6 @@ import Divider from '../../atoms/Divider';
 import TextInput from '../ValidatableElements/Elements/ValidatableTextInput';
 import Tooltip from '../Tooltip';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 const drawCount = 5;

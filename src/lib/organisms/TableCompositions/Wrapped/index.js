@@ -1,4 +1,4 @@
-export TableHeader from './header';
-export TableTitle from './title';
-export TablePagination from './pagination';
-export TableContainer from './container';
+export { default as TableHeader } from './header';
+export { default as TableTitle } from './title';
+export { default as TablePagination } from './pagination';
+export { default as TableContainer } from './container';

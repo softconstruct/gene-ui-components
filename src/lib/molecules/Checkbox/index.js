@@ -7,7 +7,6 @@ import { interceptValue, guid, noop, stopEvent } from 'utils';
 
 import Tooltip from '../Tooltip';
 
-import 'src/assets/styles/globalStyling.scss';
 import 'src/assets/styles/checkboxRadioSwitcher.scss';
 
 const Checkbox = forwardRef((props, ref) => {

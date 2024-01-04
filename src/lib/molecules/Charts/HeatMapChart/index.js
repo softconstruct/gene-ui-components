@@ -5,9 +5,9 @@ import Highcharts from 'highcharts';
 
 import HS_map from 'highcharts/modules/treemap';
 import HighchartsReact from 'highcharts-react-official';
-import { Empty, BusyLoader } from '../../../atoms';
 
-import 'src/assets/styles/globalStyling.scss';
+import { Empty, BusyLoader } from 'components';
+
 import './index.scss';
 
 HS_map(Highcharts);

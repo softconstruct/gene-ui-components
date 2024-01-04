@@ -7,7 +7,6 @@ import { noop } from 'utils';
 import Button from '../../atoms/Button';
 import Portal from '../../atoms/Portal';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 const sizes = ['default', 'content-size'];

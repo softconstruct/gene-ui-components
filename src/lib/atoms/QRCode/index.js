@@ -2,8 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { QRCodeSVG } from 'qrcode.react';
 
-import 'src/assets/styles/globalStyling.scss';
-
 const QRConfig = {
     levels: {
         L: 'L',

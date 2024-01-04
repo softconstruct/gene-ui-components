@@ -13,7 +13,6 @@ import ModuleTitle from '../../atoms/ModuleTitle';
 
 import Tooltip from '../Tooltip';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Holder({

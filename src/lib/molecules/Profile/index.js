@@ -5,19 +5,13 @@ import { screenTypes } from 'configs';
 import { noop, childrenOf } from 'utils';
 import { useClickOutside, useDeviceType, useToggle } from 'hooks';
 import classnames from 'classnames';
-import Icon from '../../atoms/Icon';
-import Avatar from '../../atoms/Avatar';
-import Popover from '../../atoms/PopoverV2';
-import Tooltip from '../Tooltip';
-import Menu from '../Menu';
+import { Empty, Icon, Popover, Tooltip, Menu, Search, Avatar } from 'components';
 import ProfileModule from './ProfileModule';
 import flagSVGs from './Languages/flags/flagsIcons';
 import languagesDataModel from './Languages/languagesDataModel';
-import 'src/assets/styles/globalStyling.scss';
-import ExtendedInput from '../ExtendedInput';
+
 import './index.scss';
-import Search from '../Search';
-import { Empty } from '../../atoms';
+
 
 function Profile(props) {
     const {

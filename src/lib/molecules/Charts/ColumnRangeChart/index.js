@@ -1,13 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import 'src/assets/styles/globalStyling.scss';
 import './style.scss';
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts/highstock';
 import HighchartsMore from 'highcharts/highcharts-more.src';
 
-import { Empty, BusyLoader } from '../../../atoms';
+import { Empty, BusyLoader } from 'components';
 
 HighchartsMore(Highcharts);
 

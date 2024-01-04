@@ -1,4 +1,4 @@
-import FormableHOC from '../FormableHOC';
+import Editor from '../FormableHOC';
 import ValidatableEditor from '../../Editor';
 
-export default FormableHOC(ValidatableEditor);
+export default Editor(ValidatableEditor);

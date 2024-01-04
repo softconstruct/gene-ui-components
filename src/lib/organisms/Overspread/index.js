@@ -4,13 +4,8 @@ import PropTypes from 'prop-types';
 import { useClickOutside } from 'hooks';
 import { noop } from 'utils';
 
-import Icon from '../../atoms/Icon';
-import Portal from '../../atoms/Portal';
-import Dropdown from '../Dropdown';
-import Popover from '../../atoms/Popover';
-import Menu from '../../molecules/Menu';
+import { Icon, Portal, Dropdown, Popover, Menu } from 'components';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Overspread(props) {

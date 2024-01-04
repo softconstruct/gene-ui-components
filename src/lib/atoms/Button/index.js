@@ -2,9 +2,8 @@ import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import Icon from '../Icon';
+import { Icon } from 'components';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 const Button = forwardRef(

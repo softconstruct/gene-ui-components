@@ -7,7 +7,6 @@ import dayjs from 'dayjs';
 
 import Icon from '../Icon';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Time({ format, showIcon, startDate, showSeconds, ...restProps }) {

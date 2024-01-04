@@ -4,12 +4,10 @@ import { stopEvent, callAfterDelay } from 'utils';
 import { useKeyDown, useClickOutside } from 'hooks';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
+import { Icon, Tooltip, Tag } from 'components';
 import { keyDownKeys } from '../config';
-import { Icon } from '../../../atoms';
-import Tooltip from '../../Tooltip';
-import Tag from '../../Tag';
 
-import 'src/assets/styles/globalStyling.scss';
+
 import './index.scss';
 
 /**

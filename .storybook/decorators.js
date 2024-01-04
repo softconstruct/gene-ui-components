@@ -1,14 +1,14 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import './storybookReset.scss';
 import { useDarkMode } from 'storybook-dark-mode';
-import { GeneUIProvider } from 'src/lib/providers';
+import { GeneUIProvider } from 'components';
 import { Alert } from 'src';
 import { componentStage } from '../stories/assets/storybook.globals';
 
 const ComponentStageMessage = ({ stage, currentVersion }) => (
     <>
         This component is <b>{stage}</b>, to learn more about the <b>{stage}</b> stage{' '}
-        <a href={`${currentVersion}/?path=/docs/introduction--page#component-stages`}>read here</a>.
+        <a href={`${currentVersion}/?path=/docs/introduction--docs#component-stages`}>read here</a>.
     </>
 );
 
@@ -18,7 +18,19 @@ const CustomDecorator = ({ children }) => {
     const [allowRenderChildren, setAllowRenderChildren] = useState(false);
     const isDarkMode = useDarkMode();
     let type;
-    const componentStageProp = children?.props?.componentStage || children?.props?.children?.props?.componentStage;
+    const componentStageGetter = (children, num) => {
+        return (
+            Array.isArray(children?.props?.children) &&
+            children?.props?.children.length >= num &&
+            children?.props?.children[num]?.props?.componentStage
+        );
+    };
+
+    const componentStageProp =
+        children?.props?.componentStage ||
+        children?.props?.children?.props?.componentStage ||
+        componentStageGetter(children, 1) ||
+        componentStageGetter(children, 0);
 
     const currentVersion = useMemo(
         () =>

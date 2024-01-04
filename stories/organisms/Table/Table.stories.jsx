@@ -58,7 +58,10 @@ export default {
             <div>
                 <Button>headerActions</Button>
             </div>
-        )
+        ),
+        componentStage: {
+            type: componentStage.deprecated
+        }
     }
 };
 
@@ -610,4 +613,10 @@ export const ControlledComboTable = ({ ...args }) => {
             </Modal>
         </>
     );
+};
+
+ControlledComboTable.args = {
+    componentStage: {
+        type: componentStage.deprecated
+    }
 };

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import Table from '../../Table';
 import { WithHeader } from '../utils';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function TableHeader({

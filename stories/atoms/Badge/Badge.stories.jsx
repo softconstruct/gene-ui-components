@@ -1,7 +1,7 @@
 import React from 'react';
 
 import BadgeComponent from 'src/lib/atoms/Badge';
-import Avatar from 'src/lib/atoms/Avatar';
+import Avatar from 'src/lib/atoms/Avatar/index';
 import { args, category } from '../../assets/storybook.globals';
 import { badgeConfig } from '../../../src/configs';
 

@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import { titleConfig } from 'configs';
 import Icon from '../Icon';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Title({ icon, text, actions, color, withLine, className, ...restProps }) {

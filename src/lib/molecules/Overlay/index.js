@@ -11,7 +11,6 @@ import Button from '../../atoms/Button';
 import Divider from '../../atoms/Divider';
 import ModuleTitle from '../../atoms/ModuleTitle';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 const horizontalSizes = ['half', 'wide', 'minimal'];

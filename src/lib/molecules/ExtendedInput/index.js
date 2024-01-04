@@ -9,7 +9,6 @@ import SuggestionList from '../SuggestionList';
 import Icon from '../../atoms/Icon';
 import Tooltip from '../Tooltip';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function replaceBetween(start, end, initial, what) {

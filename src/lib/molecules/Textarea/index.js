@@ -3,9 +3,8 @@ import { noop } from 'utils';
 
 import PropTypes from 'prop-types';
 import { inputConfig, screenTypes } from 'configs';
-import ExtendedInput from '../ExtendedInput';
+import { ExtendedInput } from 'components';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Textarea(props) {

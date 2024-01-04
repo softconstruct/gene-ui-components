@@ -5,7 +5,6 @@ import classnames from 'classnames';
 import { checkboxRadioSwitcherConfig } from 'configs';
 import { interceptValue, guid } from 'utils';
 
-import 'src/assets/styles/globalStyling.scss';
 import 'src/assets/styles/checkboxRadioSwitcher.scss';
 
 const Radio = forwardRef(

@@ -7,7 +7,7 @@ import Option from '../../atoms/Option';
 
 import { findDeep } from './utils';
 import Scrollbar from '../../atoms/Scrollbar';
-import 'src/assets/styles/globalStyling.scss';
+
 import './index.scss';
 
 const findHeaderByIndexStack = (data, indexStack) => {

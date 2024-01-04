@@ -6,7 +6,6 @@ import { screenTypes } from 'configs';
 import { useDeviceType } from 'hooks';
 import Icon from '../../atoms/Icon';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 const alertTypes = ['success', 'info', 'warning', 'error', 'note', 'message'];

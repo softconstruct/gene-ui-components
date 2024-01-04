@@ -9,11 +9,11 @@ import { useDeviceType, useClickOutside } from 'hooks';
 
 import { screenTypes, popoverV2Config } from 'configs';
 
+import { GeneUIDesignSystemContext } from 'components';
 import Scrollbar from '../Scrollbar';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
-import { GeneUIDesignSystemContext } from '../../providers';
+
 
 const PopoverV2 = forwardRef((props, ref) => {
     const {

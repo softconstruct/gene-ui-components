@@ -1,5 +1,5 @@
 import './index.scss';
-import 'src/assets/styles/globalStyling.scss';
+
 import DatePicker from './DatePicker';
 import WeekPicker from './WeekPicker';
 import MonthPicker from './MonthPicker';

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import DatePicker from 'src/lib/molecules/DatePickerInput';
 import { inputConfig, popoverConfig } from '../../../src/configs';
-import { args, category } from '../../assets/storybook.globals';
+import { args, category, componentStage } from '../../assets/storybook.globals';
 
 const { flexibility, appearance: appearances, size, cornerRadius, labelAppearance } = inputConfig;
 
@@ -15,7 +15,7 @@ const functionality = { category: category.functionality };
 const others = { category: category.others };
 
 export default {
-    title: 'Molecules/DatePickerInput',
+    title: 'Molecules/DatePickerInput-d',
     component: DatePicker,
     argTypes: {
         value: args({ control: 'text', ...content }),
@@ -61,7 +61,10 @@ export default {
         flexibility: flexibility[0],
         cornerRadius: cornerRadius[0],
         labelAppearance: labelAppearance[2],
-        popoverAlign: popoverConfig.align[1]
+        popoverAlign: popoverConfig.align[1],
+        componentStage: {
+            type: componentStage.deprecated
+        }
     }
 };
 

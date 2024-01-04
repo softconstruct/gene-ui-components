@@ -7,12 +7,12 @@ import PropTypes from 'prop-types';
 import { useDeviceType, useUpdatableRef } from 'hooks';
 import { noop, guid, stopEvent } from 'utils';
 import { screenTypes, popoverConfig } from 'configs';
-import { GeneUIDesignSystemContext } from '../../providers';
+
+import { GeneUIDesignSystemContext } from 'components';
 
 import Portal from '../Portal';
 import Scrollbar from '../Scrollbar';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 const setRef = (ref, currentRef) => {

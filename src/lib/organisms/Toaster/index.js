@@ -7,7 +7,6 @@ import Portal from '../../atoms/Portal';
 import Notification from '../../molecules/Notification';
 import Alert, { alertTypes } from '../../molecules/Alert';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 const toasterPositions = ['top', 'bottom', 'center', 'left-top', 'left-bottom', 'right-top', 'right-bottom'];

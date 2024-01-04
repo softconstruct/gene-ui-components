@@ -6,9 +6,9 @@ import ReactPopover from 'react-tiny-popover';
 import { positions } from 'configs';
 import { noop } from 'utils';
 import { useDeviceType } from 'hooks';
-import { GeneUIDesignSystemContext } from '../../providers';
 
-import 'src/assets/styles/globalStyling.scss';
+import { GeneUIDesignSystemContext } from 'components';
+
 import './index.scss';
 
 function Tooltip({

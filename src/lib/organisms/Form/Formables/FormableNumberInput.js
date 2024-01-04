@@ -1,4 +1,4 @@
-import FormableHOC from '../FormableHOC';
+import NumberInput from '../FormableHOC';
 import ValidatableNumberInput from '../../../molecules/ValidatableElements/Elements/ValidatableNumberInput';
 
-export default FormableHOC(ValidatableNumberInput);
+export default NumberInput(ValidatableNumberInput);

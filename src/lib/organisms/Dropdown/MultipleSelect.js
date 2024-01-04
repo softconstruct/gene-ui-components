@@ -2,12 +2,9 @@ import React, { forwardRef, useCallback, useMemo } from 'react';
 import { List } from 'react-virtualized';
 import classnames from 'classnames';
 
-import Checkbox from '../../molecules/Checkbox';
-import Icon from '../../atoms/Icon';
-
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
-import { Tooltip } from '../../molecules';
+
+import { Tooltip, Icon, Checkbox } from 'components';
 
 const MultipleSelect = forwardRef(
     (

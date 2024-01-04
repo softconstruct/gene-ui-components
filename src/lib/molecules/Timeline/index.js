@@ -6,7 +6,6 @@ import { childrenOf } from 'utils';
 
 import TimelineItem, { timelineColors, timelineAppearances } from './item';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Timeline(props) {

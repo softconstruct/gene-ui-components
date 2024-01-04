@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 import { badgeConfig } from '../../../configs';
 

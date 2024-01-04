@@ -3,11 +3,9 @@ import { noop, stopEvent } from 'utils';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import { useKeyDown } from 'hooks';
-import Tooltip from '../Tooltip';
-import ExtendedInput from '../ExtendedInput';
-import { Button, Label, SkeletonLoader } from '../../atoms';
 
-import 'src/assets/styles/globalStyling.scss';
+import { Button, Label, SkeletonLoader, Tooltip, ExtendedInput } from 'components';
+
 import './index.scss';
 
 const keyDownKeys = {

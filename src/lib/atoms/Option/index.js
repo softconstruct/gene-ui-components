@@ -7,7 +7,6 @@ import { useDeviceType, useEllipsisDetection } from 'hooks';
 import Tooltip from '../../molecules/Tooltip';
 import Icon from '../Icon';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Option(props) {
