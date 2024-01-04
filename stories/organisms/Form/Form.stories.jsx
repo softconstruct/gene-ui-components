@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 
 import MobileNavigation from 'src/lib/molecules/MobileNavigation';
 
-import { args, category } from '../../assets/storybook.globals';
+import { args, category, componentStage } from '../../assets/storybook.globals';
+
 import {
     Col,
     Form,
@@ -27,7 +28,7 @@ const dataOfDropdown = [
 ];
 
 export default {
-    title: 'Organisms/Form',
+    title: 'Organisms/Form-d',
     component: MobileNavigation,
     argTypes: {
         list: args({ control: false, category: category.content }),
@@ -35,8 +36,13 @@ export default {
         className: args({ control: false, category: category.others }),
         activeSlug: args({ control: false, category: category.states })
     },
-    args: {}
+    args: {
+        componentStage: {
+            type: componentStage.deprecated
+        }
+    }
 };
+
 export const PersonalInfoForm = (args) => {
     const [email, setEmail] = useState('');
     const [lastName, setLastName] = useState('');
@@ -180,6 +186,7 @@ export const PersonalInfoForm = (args) => {
         </Form>
     );
 };
+
 export const FormWithDate = () => {
     return (
         <Form className={'sb_form'}>
