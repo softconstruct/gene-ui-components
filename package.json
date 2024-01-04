@@ -27,7 +27,7 @@
         "start": "storybook dev -p 6006",
         "dev": "concurrently --kill-others -g \"npm:test:watch\" \"npm:start\"",
         "test": "jest --silent --config ./configs/jest.config.js --rootDir ./",
-        "test:watch": "npm run test -- --watch --json --outputFile=./coverage/.jest-test-results.json",
+        "test:watch": "npm run test -- --watchAll --json --outputFile=./coverage/.jest-test-results.json",
         "test-coverage": "babel-node --config-file ./configs/.babelrc ./scripts/testCoverage.js",
         "build": "babel-node --config-file ./configs/.babelrc ./scripts/build.js",
         "copy-build-statics-files": "babel-node --config-file ./configs/.babelrc ./scripts/copyFiles.js",
