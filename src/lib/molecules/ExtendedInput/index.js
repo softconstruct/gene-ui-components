@@ -90,8 +90,8 @@ const ExtendedInput = forwardRef((props, ref) => {
     const inputValue = isControlled ? (value != null ? value : '') : localValue;
 
     const [isTextTruncated, setIsTextTruncated] = useState(false);
-    const ellipsisDetector = useEllipsisDetection(inputRef, [inputValue]);
-    useEffect(() => setIsTextTruncated(ellipsisDetector), [ellipsisDetector]);
+    const isTruncated = useEllipsisDetection(inputRef, [inputValue]);
+    useEffect(() => setIsTextTruncated(isTruncated), [isTruncated]);
 
     useEffect(() => {
         isControlled && value && value !== inputValue && setLocalValue(value);
@@ -118,7 +118,7 @@ const ExtendedInput = forwardRef((props, ref) => {
                 onFocus(e);
             }
         },
-        [onFocus, isTextTruncated]
+        [onFocus, isTextTruncated, isMobile]
     );
 
     const handleIconClick = useCallback(
