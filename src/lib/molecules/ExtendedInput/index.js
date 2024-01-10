@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { inputConfig, screenTypes } from 'configs';
 import { noop, stopEvent } from 'utils';
-import { useDeviceType } from 'hooks';
+import { useDeviceType, useEllipsisDetection } from 'hooks';
 import SuggestionList from '../SuggestionList';
 import Icon from '../../atoms/Icon';
 import Tooltip from '../Tooltip';
@@ -89,6 +89,10 @@ const ExtendedInput = forwardRef((props, ref) => {
     // non strict equality is needed for covering 'undefined' case also
     const inputValue = isControlled ? (value != null ? value : '') : localValue;
 
+    const [isTextTruncated, setIsTextTruncated] = useState(false);
+    const isTruncated = useEllipsisDetection(inputRef, [inputValue]);
+    useEffect(() => setIsTextTruncated(isTruncated), [isTruncated]);
+
     useEffect(() => {
         isControlled && value && value !== inputValue && setLocalValue(value);
     }, [value, isControlled, inputValue]);
@@ -106,10 +110,15 @@ const ExtendedInput = forwardRef((props, ref) => {
 
     const handleFocus = useCallback(
         (e) => {
-            setFocused(true);
-            onFocus(e);
+            if (isDropdown && (isTextTruncated || isMobile || !value)) {
+                stopEvent(e, true);
+                inputRef?.current?.blur();
+            } else {
+                setFocused(true);
+                onFocus(e);
+            }
         },
-        [onFocus]
+        [onFocus, isTextTruncated, isMobile, value]
     );
 
     const handleIconClick = useCallback(
