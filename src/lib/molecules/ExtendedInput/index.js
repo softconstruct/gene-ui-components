@@ -118,7 +118,7 @@ const ExtendedInput = forwardRef((props, ref) => {
                 onFocus(e);
             }
         },
-        [onFocus, isTextTruncated, isMobile]
+        [onFocus, isTextTruncated, isMobile, value]
     );
 
     const handleIconClick = useCallback(
