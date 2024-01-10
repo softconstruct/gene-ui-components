@@ -54,6 +54,7 @@ function DatePickerInput({
     const [date, setDate] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [popoverOpened, setPopoverState] = useState(false);
+    const [isBlurred, setIsBlurred] = useState(true);
 
     const setPickerRef = useClick((e) => {
         e.preventDefault();
@@ -66,6 +67,7 @@ function DatePickerInput({
             setDate(date);
             onChange(date.toDate());
             setInputValue(date.format(validFormat));
+            !withTime && setIsBlurred(false);
         },
         [validFormat, withTime, onChange]
     );
@@ -133,6 +135,7 @@ function DatePickerInput({
 
     const handleFocus = useCallback(
         (e) => {
+            setIsBlurred(true);
             setPopoverState(true);
             onFocus(e);
         },
@@ -162,6 +165,13 @@ function DatePickerInput({
             setInputValue('');
         }
     }, [value, validFormat]);
+
+    useEffect(() => {
+        if (!isBlurred) {
+            setPopoverState(false);
+            inputRef.current.blur();
+        }
+    }, [isBlurred]);
 
     useKeyDown(() => setPopoverState(false), [], { current: window }, ['Escape']);
 
