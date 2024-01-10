@@ -636,7 +636,7 @@ Table.propTypes = {
      *
      * copyTooltipText: Text for the tooltip when you hover on the element that can be copied.
      *
-     * copiedTooltipText: Text for the tooltip when you already pushed copy button on the element that can be copied.
+     * copiedTooltipText: Text for the tooltip when you already pressed copy button on the element that can be copied.
      *
      * resizable: Allows resizing if true
      *

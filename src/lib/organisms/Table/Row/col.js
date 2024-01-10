@@ -2,11 +2,10 @@ import React, { useRef, useCallback, useEffect, useState } from 'react';
 import classnames from 'classnames';
 import isEqual from 'react-fast-compare';
 
-import { guid, stopEvent, copyToClipboard } from 'utils';
+import { guid, stopEvent, copyToClipboard, callAfterDelay } from 'utils';
 import Icon from 'src/lib/atoms/Icon';
 import SkeletonLoader from 'src/lib/atoms/SkeletonLoader';
 import Tooltip from 'src/lib/molecules/Tooltip';
-import callAfterDelay from 'src/utils/callAfterDelay';
 
 function Col({
     id,
