@@ -110,7 +110,7 @@ const ExtendedInput = forwardRef((props, ref) => {
 
     const handleFocus = useCallback(
         (e) => {
-            if (isDropdown && (isTextTruncated || isMobile)) {
+            if (isDropdown && (isTextTruncated || isMobile || !value)) {
                 stopEvent(e, true);
                 inputRef?.current?.blur();
             } else {
