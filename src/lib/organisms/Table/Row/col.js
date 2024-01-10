@@ -3,10 +3,10 @@ import classnames from 'classnames';
 import isEqual from 'react-fast-compare';
 
 import { guid, stopEvent, copyToClipboard } from 'utils';
-import Icon from '../../../atoms/Icon';
-import SkeletonLoader from '../../../atoms/SkeletonLoader';
-import Tooltip from '../../../molecules/Tooltip';
-import callAfterDelay from '../../../../utils/callAfterDelay';
+import Icon from 'src/lib/atoms/Icon';
+import SkeletonLoader from 'src/lib/atoms/SkeletonLoader';
+import Tooltip from 'src/lib/molecules/Tooltip';
+import callAfterDelay from 'src/utils/callAfterDelay';
 
 function Col({
     id,
@@ -108,8 +108,8 @@ function Col({
                             <Icon
                                 tabIndex="1"
                                 className="cursor-pointer copy-icon"
-                                type="bc-icon-copy-mirror"
-                                onClick={handleCopy}
+                                type={isCopied ? 'bc-icon-checkbox-checked' : 'bc-icon-copy-mirror'}
+                                onClick={!isCopied && handleCopy}
                             />
                         </Tooltip>
                     )}

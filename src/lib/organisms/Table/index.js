@@ -634,6 +634,10 @@ Table.propTypes = {
      *
      * exportDisabled: Hide that column from export
      *
+     * copyTooltipText: Text for the tooltip when you hover on the element that can be copied.
+     *
+     * copiedTooltipText: Text for the tooltip when you already pushed copy button on the element that can be copied.
+     *
      * resizable: Allows resizing if true
      *
      * current column's data key
