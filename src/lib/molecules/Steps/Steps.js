@@ -7,7 +7,6 @@ import { stepsConfig } from 'configs';
 
 import Step from './Step';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function getStepStatus(current, index, statusProp) {

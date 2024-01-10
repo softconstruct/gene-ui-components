@@ -1,0 +1,45 @@
+import { Meta, Source } from '@storybook/blocks';
+
+<Meta title="Getting started"/>
+
+# Getting started with <b style={{color: '#E90789'}}>Gene UI</b> components package
+
+<br />
+<br />
+<br />
+
+## Package installation
+<div style={{ height:'100%' }}>
+    <p>
+    Go to your project directory and run one of the following commands in your terminal
+    </p>
+    <div style={{ width: '70%' }}>
+        <Source code={`npm install @geneui/components --save`} language="bash" />
+    </div>
+    If your favorite package manager is `Yarn`
+    <div style={{ width: '70%' }}>
+        <Source code={`yarn add @geneui/components`} language="bash" />
+    </div>
+
+    <br />
+    ## Usage
+
+    <p>
+        At first you need to import the provider in your main component e.g. in the `App.js` file.
+    </p>
+        <div style={{ width: '70%' }}>
+            <Source code={`import GeneUIProvider from '@geneui/components/GeneUIProvider';`} language="js" />
+        </div>
+        Then you need to wrap your main component with provider
+        <div style={{ width: '70%' }}>
+            <Source
+                code={`<GeneUIProvider>
+    <App />
+</GeneUIProvider>`}
+                language="jsx"
+            />
+        </div>
+    <p>
+        Now you can start use any components available in the package. Happy coding.
+    </p>
+</div>

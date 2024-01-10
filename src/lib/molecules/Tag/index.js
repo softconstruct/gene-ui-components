@@ -4,7 +4,6 @@ import classnames from 'classnames';
 
 import { tagConfig } from 'configs';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Tag({

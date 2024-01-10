@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 
 import Editor from 'src/lib/organisms/RichEditor/RichEditor';
 import { toolbarTextButtons, defaultHTML } from './store';
-import { args, category } from '../../assets/storybook.globals';
+import { args, category, componentStage } from '../../assets/storybook.globals';
 
 export default {
-    title: 'Organisms/RichEditor',
+    title: 'Organisms/RichEditor-d',
     component: Editor,
     argTypes: {
         id: args({ control: 'text', category: category.content }),
@@ -29,7 +29,10 @@ export default {
         success: false,
         disabled: false,
         readOnly: false,
-        placeholder: 'placeholder'
+        placeholder: 'placeholder',
+        componentStage: {
+            type: componentStage.deprecated
+        }
     }
 };
 

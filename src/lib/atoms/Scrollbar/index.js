@@ -5,7 +5,6 @@ import { Scrollbars } from 'react-custom-scrollbars';
 
 import { customScrollbarConfig } from 'configs';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 const easeOutQuad = (t) => t * (2 - t);

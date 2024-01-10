@@ -8,9 +8,8 @@ import classnames from 'classnames';
 import { oneIsRequired, noop, stopEvent, debounce, guid } from 'utils';
 import { useMount, useUpdate, useThrottle } from 'hooks';
 
-import Empty from '../../atoms/Empty';
-import Scrollbar from '../../atoms/Scrollbar';
-import BusyLoader from '../../atoms/BusyLoader';
+import { Empty, Scrollbar, BusyLoader } from 'components';
+
 import { searchConfigs } from '../../../utils/configs/tableConfigs';
 
 import Row from './Row';
@@ -28,7 +27,6 @@ import {
     getOffsetValuesAndSubscriptions
 } from './utils';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Table(props) {

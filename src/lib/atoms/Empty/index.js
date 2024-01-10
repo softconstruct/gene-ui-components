@@ -18,7 +18,6 @@ import imageWithoutCircles from 'src/assets/media/empty-state/without-circles/im
 import searchWithoutCircles from 'src/assets/media/empty-state/without-circles/search.svg';
 import messageWithoutCircles from 'src/assets/media/empty-state/without-circles/message.svg';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 const images = {

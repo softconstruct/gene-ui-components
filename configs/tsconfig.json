@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "baseUrl": "../src",
+        "paths": {
+            "src": ["./"],
+            "components": ["./index.ts"],
+            "utils": ["./utils/index.js"],
+            "wrappers": ["./wrappers/index.js"],
+            "configs": ["./configs.js"],
+            "hooks": ["./hooks/index.js"]
+        },
+        "outDir": "../dist",
+        "target": "es6",
+        "module": "esnext",
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "moduleResolution": "node",
+        "jsx": "react",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "noImplicitAny": false // TODO remove after typescript migration
+    },
+    "include": ["../src/**/*.ts", "../src/**/index.tsx"]
+}
