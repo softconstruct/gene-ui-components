@@ -3,7 +3,7 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
 
-import { Empty, BusyLoader } from '../../../atoms';
+import { Empty, BusyLoader } from 'components';
 
 import './index.scss';
 

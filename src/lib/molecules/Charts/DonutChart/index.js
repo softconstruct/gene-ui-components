@@ -4,9 +4,10 @@ import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { useDeviceType } from 'hooks';
-import Icon from '../../../atoms/Icon';
+
+import { Empty, BusyLoader, Icon } from 'components';
 import ChartLegend from '../Legend';
-import { Empty, BusyLoader } from '../../../atoms';
+
 
 import './index.scss';
 

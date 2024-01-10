@@ -1,10 +1,18 @@
 import chalk from 'chalk';
 import process from 'process';
 import ora from 'ora';
+import yargs from 'yargs';
 
 import { rmSync } from 'fs';
 import { resolve } from 'path';
 import { execCommand, copyStaticFilesToDist } from './utils';
+
+// In case of true the build script should skip lint and semver steps
+const { pure: isBuildRunInPureMode } = yargs.option('pure', {
+    describe: 'If --pure option specified then lint and semver steps will be skipped from build job.',
+    type: 'boolean',
+    default: false
+}).argv;
 
 const spinner = ora({
     color: 'yellow',
@@ -53,24 +61,26 @@ const semanticRelease = async () => {
 };
 
 const main = async () => {
-    spinner.start('Linting source code of the @geneui/components package...');
-    const lintResult = await lint();
+    if (!isBuildRunInPureMode) {
+        spinner.start('Linting source code of the @geneui/components package...');
+        const lintResult = await lint();
 
-    if (lintResult?.hasError) {
-        spinner.fail(messages.ERROR(lintResult?.error));
-        process.exit(1);
-    } else {
-        spinner.succeed();
-    }
+        if (lintResult?.hasError) {
+            spinner.fail(messages.ERROR(lintResult?.error));
+            process.exit(1);
+        } else {
+            spinner.succeed();
+        }
 
-    spinner.start('Semantic versioning and changelog generation of the @geneui/components package...');
-    const semanticReleaseResult = await semanticRelease();
+        spinner.start('Semantic versioning and changelog generation of the @geneui/components package...');
+        const semanticReleaseResult = await semanticRelease();
 
-    if (semanticReleaseResult?.hasError) {
-        spinner.fail(messages.ERROR(semanticReleaseResult?.error));
-        process.exit(1);
-    } else {
-        spinner.succeed();
+        if (semanticReleaseResult?.hasError) {
+            spinner.fail(messages.ERROR(semanticReleaseResult?.error));
+            process.exit(1);
+        } else {
+            spinner.succeed();
+        }
     }
 
     spinner.start('Rollup build of the @geneui/components package...');

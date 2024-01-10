@@ -1,5 +1,21 @@
 # Changelog
 
+# 2.11.2 (2023-11-25)
+
+### Bug Fixes
+
+-   **ExtendedInput:** remove space in the beginning of
+    placeholder([#20](https://github.com/softconstruct/gene-ui-components/issues/20))
+-   **MapChart:** set animation prop to false ([#21](https://github.com/softconstruct/gene-ui-components/issues/21))
+-   **NavigationMenu:** change a tag styles and header visibility
+    logic([#28](https://github.com/softconstruct/gene-ui-components/issues/28))
+-   **Profile:** add custom avatar option to Profile
+    component([#26](https://github.com/softconstruct/gene-ui-components/issues/26))
+-   **Table:** add row index value in useDrag hook callback
+    function([#32](https://github.com/softconstruct/gene-ui-components/issues/32))
+-   **table:** remove animation from the table component row
+    actions([#23](https://github.com/softconstruct/gene-ui-components/issues/23))
+
 # 2.11.0 (2023-11-15)
 
 ### Bug Fixes

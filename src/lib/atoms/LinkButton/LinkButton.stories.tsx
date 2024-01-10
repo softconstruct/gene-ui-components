@@ -1,11 +1,10 @@
-import React from 'react';
+import { Meta, StoryObj } from '@storybook/react';
+import LinkButton from './index';
+import { args, category } from '../../../../stories/assets/storybook.globals';
 
-import LinkButtonComponent from 'src/lib/atoms/LinkButton/index';
-import { args, category } from '../../assets/storybook.globals';
-
-export default {
+const meta = {
+    component: LinkButton,
     title: 'Atoms/LinkButton',
-    component: LinkButtonComponent,
     argTypes: {
         href: args({ control: 'text', category: category.content }),
         onClick: args({ control: false, category: category.action }),
@@ -16,10 +15,17 @@ export default {
         iconAfter: args({ control: 'text', category: category.content }),
         iconBefore: args({ control: 'text', category: category.content }),
         isDisabled: args({ control: 'boolean', category: category.states })
-    },
+    }
+} satisfies Meta<typeof LinkButton>;
+
+export default meta;
+
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+
+export const WithIcon: Story = {
     args: {
-        iconAfter: 'bc-icon-arrow-down'
+        iconAfter: 'bc-icon-arrow-right'
     }
 };
-
-export const LinkButton = (args) => <LinkButtonComponent {...args} />;

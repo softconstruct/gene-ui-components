@@ -5,7 +5,9 @@ import { DocsContainer } from './components/DocContainer';
 import { themes } from '@storybook/theming';
 import { softConstructThem } from './softConstructThem';
 
-import { Title, Subtitle, Description, Primary, ArgsTable, Stories, PRIMARY_STORY } from '@storybook/addon-docs';
+import { Title, Subtitle, Description, ArgsTable, Stories, PRIMARY_STORY } from '@storybook/blocks';
+import { withTests } from '@storybook/addon-jest';
+import results from '../coverage/.jest-test-results.json';
 
 export const decorators = [
     (Story, context) => {
@@ -16,11 +18,9 @@ export const decorators = [
             setDir(RTL);
         }, [RTL]);
         document.documentElement.dir = dir.toString();
-
-        // if you need to override some description 👈
-        // if(context?.argTypes?.className?.description) context.argTypes.className.description = 'custom description'
         return customDecorators(Story);
-    }
+    },
+    withTests({ results })
 ];
 
 export const parameters = {

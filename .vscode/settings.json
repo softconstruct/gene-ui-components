@@ -1,4 +1,27 @@
 {
     "prettier.configPath": "./configs/.prettierrc",
-    "editor.formatOnSave": true
+    "prettier.ignorePath": "./configs/.prettierignore",
+    "editor.formatOnSave": true,
+    
+    "stylelint.enable": true,
+    "stylelint.configFile": "./configs/.stylelintrc.json",
+    "stylelint.validate": ["css", "scss"],
+
+    "eslint.enable": true,
+    "eslint.options": {
+      "configFile": "./configs/.eslintrc.json",
+      "ignorePatterns": [
+        ".git/",
+        ".github/",
+        "node_modules/",
+        "dist/",
+        "stats/",
+        "coverage/",
+        "docs/"
+      ]
+    },
+
+    "cSpell.words": [
+      "geneui"
+    ]
 }

@@ -1,9 +1,8 @@
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
-import DateInput from './DateInput';
+import DatePickerInput from './DateInput';
 import DateRangeInput from './DateRangeInput';
 
-DateInput.WithRange = DateRangeInput;
+DatePickerInput.WithRange = DateRangeInput;
 
-export default DateInput;
+export default DatePickerInput;

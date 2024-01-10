@@ -1,0 +1,23 @@
+name: Pull Request CI
+on:
+    pull_request:
+        branches: ["release/*"]
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: Setup Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: '16.x'
+                  registry-url: 'https://registry.npmjs.org'
+            - name: 📥 Install dependencies
+              run: npm install
+            - name: 🔧 Pure build 
+              run: npm run build -- --pure
+            - name: 🧪 Run tests
+              run: npm run test
+            - name: 🧑‍💻 Linting source code
+              run: npm run lint-styles && npm run lint-scripts

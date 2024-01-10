@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import AdvancedSearchComponent from 'src/lib/molecules/AdvancedSearch';
 import Icon from 'src/lib/atoms/Icon';
@@ -21,6 +21,7 @@ export default {
         initialData: args({ control: 'object', category: category.content }),
         onShowMoreClick: args({ control: false, category: category.action }),
         totalCountText: args({ control: 'text', category: category.content }),
+        showMoreIsLoading: args({ control: false, category: category.states }),
         primaryFilterData: args({ control: 'object', category: category.content }),
         closedInputWidth: args({ control: 'number', category: category.appearance }),
         openedInputWidth: args({ control: 'number', category: category.appearance }),
@@ -68,7 +69,8 @@ export const AdvancedSearch = ({ ...args }) => {
                 };
             });
         }, 2000);
-    }, [userFilterObject]);
+    }, []);
+
     const [currentData, setCurrentData] = useState([]);
     const [typesForFilter, setTypesForFilter] = useState([]);
     const [usersForFilter, setUsersForFilter] = useState([]);
@@ -169,7 +171,7 @@ export const AdvancedSearch = ({ ...args }) => {
                 ]
             };
         });
-    }, [data, onSearchHandler]);
+    }, [data]);
 
     const onSearchHandler = useCallback(
         (e) => {
