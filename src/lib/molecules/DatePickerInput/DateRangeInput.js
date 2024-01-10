@@ -154,13 +154,17 @@ function DateRangePickerInput({
 
                 setStartDate(start);
                 setEndDate(end);
-                !withTime && inputRef.current.blur();
-                !withTime && setPopoverState(false);
+
+                if (!withTime) {
+                    inputRef.current.blur();
+                    setPopoverState(false);
+                }
+
                 setInputValue(`${start.format(validFormat)}${rangeSeparator}${end.format(validFormat)}`);
                 onChange(value);
             }
         },
-        [validFormat, rangeSeparator, onChange]
+        [validFormat, rangeSeparator, onChange, withTime]
     );
 
     const handleInputChange = useCallback(

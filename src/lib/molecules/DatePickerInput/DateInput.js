@@ -54,7 +54,6 @@ function DatePickerInput({
     const [date, setDate] = useState('');
     const [inputValue, setInputValue] = useState('');
     const [popoverOpened, setPopoverState] = useState(false);
-    const [isBlurred, setIsBlurred] = useState(true);
 
     const setPickerRef = useClick((e) => {
         e.preventDefault();
@@ -64,10 +63,15 @@ function DatePickerInput({
     const handleChange = useCallback(
         (value) => {
             const date = dayjsWithPlugins(value);
+
+            if (!withTime) {
+                setPopoverState(false);
+                inputRef.current.blur();
+            }
+
             setDate(date);
             onChange(date.toDate());
             setInputValue(date.format(validFormat));
-            !withTime && setIsBlurred(false);
         },
         [validFormat, withTime, onChange]
     );
@@ -109,6 +113,11 @@ function DatePickerInput({
 
     const checkDateInerval = useCallback(() => {
         let value = getLastValidValue(date, validFormat);
+
+        if (!value) {
+            return null;
+        }
+
         const minUnix = minDate && minDate.valueOf();
         const maxUnix = maxDate && maxDate.valueOf();
         const dateUnix = date && dayjs(date, validFormat).valueOf();
@@ -135,7 +144,6 @@ function DatePickerInput({
 
     const handleFocus = useCallback(
         (e) => {
-            setIsBlurred(true);
             setPopoverState(true);
             onFocus(e);
         },
@@ -165,13 +173,6 @@ function DatePickerInput({
             setInputValue('');
         }
     }, [value, validFormat]);
-
-    useEffect(() => {
-        if (!isBlurred) {
-            setPopoverState(false);
-            inputRef.current.blur();
-        }
-    }, [isBlurred]);
 
     useKeyDown(() => setPopoverState(false), [], { current: window }, ['Escape']);
 
