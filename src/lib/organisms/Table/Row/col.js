@@ -3,9 +3,7 @@ import classnames from 'classnames';
 import isEqual from 'react-fast-compare';
 
 import { guid, stopEvent, copyToClipboard, callAfterDelay } from 'utils';
-import Icon from 'src/lib/atoms/Icon';
-import SkeletonLoader from 'src/lib/atoms/SkeletonLoader';
-import Tooltip from 'src/lib/molecules/Tooltip';
+import { Icon, SkeletonLoader, Tooltip } from 'components';
 
 function Col({
     id,
