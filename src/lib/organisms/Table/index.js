@@ -8,9 +8,8 @@ import classnames from 'classnames';
 import { oneIsRequired, noop, stopEvent, debounce, guid } from 'utils';
 import { useMount, useUpdate, useThrottle } from 'hooks';
 
-import Empty from '../../atoms/Empty';
-import Scrollbar from '../../atoms/Scrollbar';
-import BusyLoader from '../../atoms/BusyLoader';
+import { Empty, Scrollbar, BusyLoader } from 'components';
+
 import { searchConfigs } from '../../../utils/configs/tableConfigs';
 
 import Row from './Row';
@@ -28,7 +27,6 @@ import {
     getOffsetValuesAndSubscriptions
 } from './utils';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Table(props) {
@@ -634,6 +632,10 @@ Table.propTypes = {
      *
      * exportDisabled: Hide that column from export
      *
+     * copyTooltipText: Text for the tooltip when you hover on the element that can be copied.
+     *
+     * copiedTooltipText: Text for the tooltip when you already pressed copy button on the element that can be copied.
+     *
      * resizable: Allows resizing if true
      *
      * current column's data key
@@ -663,6 +665,7 @@ Table.propTypes = {
             copyable: PropTypes.bool,
             exportDisabled: PropTypes.bool,
             copyTooltipText: PropTypes.string,
+            copiedTooltipText: PropTypes.string,
             copyableValue: PropTypes.string,
             sortable: PropTypes.bool,
             resizable: PropTypes.bool,

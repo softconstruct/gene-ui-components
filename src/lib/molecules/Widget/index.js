@@ -3,11 +3,9 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 import { widgetConfig } from 'configs';
-import Icon from '../../atoms/Icon';
-import KeyValue from '../../atoms/KeyValue';
-import ModuleTitle from '../../atoms/ModuleTitle';
 
-import 'src/assets/styles/globalStyling.scss';
+import { Icon, KeyValue, ModuleTitle } from 'components';
+
 import './index.scss';
 
 function Widget({

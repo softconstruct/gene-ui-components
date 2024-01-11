@@ -5,13 +5,12 @@ import { fileSizeDisplay, noop } from 'utils';
 import { useImgDownload } from 'hooks';
 
 import classnames from 'classnames';
-import Icon from '../Icon';
-import Switcher from '../Switcher';
-import Magnifier from './Magnifier';
 
 import './index.scss';
+import { Tooltip, Icon, Switcher } from 'components';
 import useEllipsisDetection from '../../../hooks/useEllipsisDetection';
-import { Tooltip } from '../../molecules';
+
+import Magnifier from './Magnifier';
 
 function ImagePreview({
     name,

@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import EditorComponent from 'src/lib/organisms/Editor';
 import { Button, Tag } from '../../../src';
-import { args, category } from '../../assets/storybook.globals';
+import { args, category, componentStage } from '../../assets/storybook.globals';
 
 const toolbarTextButtons = [
     {
@@ -26,7 +26,7 @@ const toolbarTextButtons = [
     }
 ];
 export default {
-    title: 'Organisms/Editor',
+    title: 'Organisms/Editor-d',
     component: EditorComponent,
     argTypes: {
         onBlur: args({ control: false, category: category.action }),
@@ -55,7 +55,10 @@ export default {
         disabled: false,
         toolbarTextButtons,
         defaultHTML: 'default HTML',
-        informationMessage: 'information Message'
+        informationMessage: 'information Message',
+        componentStage: {
+            type: componentStage.deprecated
+        }
     }
 };
 

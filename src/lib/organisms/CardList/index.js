@@ -1,2 +1,2 @@
-export WrappedCardList from './WrappedCardList';
-export CardList from './DefaultCardList';
+export { default as WrappedCardList } from './WrappedCardList';
+export { default as CardList } from './DefaultCardList';

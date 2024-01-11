@@ -3,7 +3,7 @@ import experimental from '../../assets/experimental.svg';
 import deprecated from '../../assets/deprecated.svg';
 import './index.css';
 
-import libVersions from '../../lib-versions';
+import libVersions from '../../lib-versions.json';
 
 const cmpStages = {
     '-e': {
@@ -43,7 +43,7 @@ const SidebarLabelWrapper = ({ item }) => {
     useEffect(() => {
         if (renderOnce || !document.querySelector('#versions__select')) {
             renderOnce = false;
-            const sidebar = document.querySelector('.os-content');
+            const sidebar = document.querySelector('.css-194spiq');
             const currentVersionRegex = /v\d\.\d\.\d/;
             const currentVersion =
                 window.location.href.match(currentVersionRegex) && window.location.href.match(currentVersionRegex)[0];

@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import { uploaderConfig } from 'configs';
 import { noop, stopEvent } from 'utils';
 
+import { Row, Col, Button, ExtendedInput } from 'components';
 import {
     generateFilesByPage,
     removeDragEventListener,
@@ -16,13 +17,10 @@ import {
     toBlobFile
 } from './uploadUtils';
 
-import { Row, Col } from '../Grid';
-import Button from '../../atoms/Button';
+
 import UploadedItem from './uploadedItem';
 import UploadView from './uploadView';
-import ExtendedInput from '../ExtendedInput';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 const lowGrid = 10;

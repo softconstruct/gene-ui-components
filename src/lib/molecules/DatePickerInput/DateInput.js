@@ -63,6 +63,12 @@ function DatePickerInput({
     const handleChange = useCallback(
         (value) => {
             const date = dayjsWithPlugins(value);
+
+            if (!withTime) {
+                setPopoverState(false);
+                inputRef.current.blur();
+            }
+
             setDate(date);
             onChange(date.toDate());
             setInputValue(date.format(validFormat));
@@ -107,6 +113,11 @@ function DatePickerInput({
 
     const checkDateInerval = useCallback(() => {
         let value = getLastValidValue(date, validFormat);
+
+        if (!value) {
+            return null;
+        }
+
         const minUnix = minDate && minDate.valueOf();
         const maxUnix = maxDate && maxDate.valueOf();
         const dateUnix = date && dayjs(date, validFormat).valueOf();

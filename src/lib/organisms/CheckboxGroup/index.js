@@ -5,9 +5,7 @@ import PropTypes from 'prop-types';
 import { checkboxRadioSwitcherConfig } from 'configs';
 import { noop } from 'utils';
 
-import Checkbox from '../../molecules/Checkbox';
-
-import 'src/assets/styles/globalStyling.scss';
+import { Checkbox } from 'components';
 
 function CheckboxGroup(props) {
     const {

@@ -1,15 +1,9 @@
 import React from 'react';
-
-import AvatarComponent from 'src/lib/atoms/Avatar';
+import AvatarComponent from 'src/lib/atoms/Avatar/index';
 import { args, category } from '../../assets/storybook.globals';
 export default {
     title: 'Atoms/Avatar',
     component: AvatarComponent,
-    control: 'select',
-    darkMode: {
-        stylePreview: true
-    },
-    // src, icon, size, color, shape, onClick, children
     argTypes: {
         children: args({ control: 'text', category: category.content }),
         size: args({ control: 'select', category: category.appearance }),

@@ -4,11 +4,10 @@ import classnames from 'classnames';
 
 import { moduleTitleConfig } from 'configs';
 import { noop } from 'utils';
-import Icon from '../Icon';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
-import { Tooltip } from '../../molecules';
+
+import { Tooltip, Icon } from 'components';
 
 function IconWithTooltip({ toolTip, children }) {
     return toolTip ? <Tooltip title={toolTip}>{children}</Tooltip> : children;

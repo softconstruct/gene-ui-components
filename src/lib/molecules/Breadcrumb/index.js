@@ -11,7 +11,6 @@ import Menu from '../Menu';
 
 import BreadcrumbItem from './item';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 function Breadcrumb({ data, onClick, collapsed, className, separator, ...restProps }) {

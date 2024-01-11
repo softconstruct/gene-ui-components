@@ -5,8 +5,6 @@ import classnames from 'classnames';
 import { childrenOf } from 'utils';
 import Radio from '../../atoms/Radio';
 
-import 'src/assets/styles/globalStyling.scss';
-
 function RadioGroup(props) {
     const { defaultValue, name, options, descriptionKey, disabled, onChange, required, type, ...restProps } = props;
 

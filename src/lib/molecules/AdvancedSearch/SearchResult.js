@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import Badge from '../../atoms/Badge';
 import SearchResultRow from './SearchResultRow';
 import Scrollbar from '../../atoms/Scrollbar';
-import LinkButton from '../../atoms/LinkButton';
+import LinkButton from '../../atoms/LinkButton/index';
 import SkeletonSet from './SkeletonSet';
 import Empty from '../../atoms/Empty';
 import FilterList from './FilterList';

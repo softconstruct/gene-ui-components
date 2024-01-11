@@ -3,12 +3,10 @@ import PropTypes from 'prop-types';
 
 import { noop, stopEvent } from 'utils';
 
+import { Paper, Button } from 'components';
 import { useFormContext, FormProvider } from '../utils/context';
 
-import Paper from '../../../atoms/Paper';
-import Button from '../../../atoms/Button';
 
-import 'src/assets/styles/globalStyling.scss';
 import '../index.scss';
 
 const KEYBOARD_ENTER_KEY = 13;

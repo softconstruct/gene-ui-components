@@ -6,7 +6,6 @@ import Icon from '../Icon';
 
 import { keyValueConfig } from '../../../configs';
 
-import 'src/assets/styles/globalStyling.scss';
 import './index.scss';
 
 // TODO need to refine where is using restProps

@@ -6,7 +6,6 @@ import { checkboxRadioSwitcherConfig } from 'configs';
 import { interceptValue, guid, noop } from 'utils';
 import { useKeyDown } from 'hooks';
 
-import 'src/assets/styles/globalStyling.scss';
 import 'src/assets/styles/checkboxRadioSwitcher.scss';
 import './index.scss';
 
