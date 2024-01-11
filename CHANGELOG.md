@@ -1,5 +1,45 @@
 # Changelog
 
+# [2.12.0](https://github.com/softconstruct/gene-ui-components/compare/v2.11.2...v2.12.0) (2024-01-11)
+
+### Bug Fixes
+
+-   **CommitMessage:** disable scope lowercase functional in the git-cz package
+    ([#46](https://github.com/softconstruct/gene-ui-components/issues/46))
+    ([120bebe](https://github.com/softconstruct/gene-ui-components/commit/120bebe883430c04ebd8b0aea09408809a3f8e3a))
+-   **Component-stage:** fix and improve component-stage
+    ([b244edb](https://github.com/softconstruct/gene-ui-components/commit/b244edbdaca3d1d3415df8c59a15cef51d7dbbbe))
+-   **DatePickerInput:** close picker popover after value selection
+    ([#48](https://github.com/softconstruct/gene-ui-components/issues/48))
+    ([e58be53](https://github.com/softconstruct/gene-ui-components/commit/e58be53709630eb00cacf089c767c91aa3021675))
+-   **Dropdown:** input truncated text blinking fix
+    ([#37](https://github.com/softconstruct/gene-ui-components/issues/37))
+    ([19f4e54](https://github.com/softconstruct/gene-ui-components/commit/19f4e54bb3fb37d6acefd7e55480ea82dba9c5a7))
+-   **Dropdown:** open by tab key will autofocus to searhc input
+    ([d2a130b](https://github.com/softconstruct/gene-ui-components/commit/d2a130bbf65dfa8b47337fd4df8f91ec44ec7efa))
+-   **Dropdown:** remove Dropdown search input autofocus
+    ([be5b4e6](https://github.com/softconstruct/gene-ui-components/commit/be5b4e6802a31545f6fca86b2bfcd1959e1cf003))
+-   **Module:** remove undefined modules exports from the library entry point
+    ([c2d32c2](https://github.com/softconstruct/gene-ui-components/commit/c2d32c2c68924477957f8016c79a67522d623b9c))
+-   **Stories:** import and export changes
+    ([896ce5c](https://github.com/softconstruct/gene-ui-components/commit/896ce5c2484c03a5fd020991f0c5757e0203dae1))
+-   **Theming:** dark and light mode fix
+    ([a7c3c24](https://github.com/softconstruct/gene-ui-components/commit/a7c3c2461614e6f810d67eee13e0b50ec6de969e))
+-   **Version-select:** version select container fix
+    ([e57c363](https://github.com/softconstruct/gene-ui-components/commit/e57c3635ee8d0d3422c9db82f6bb6d151e040a10))
+
+### Features
+
+-   **Addon-jest:** add test addon to storybook
+    ([d3849b2](https://github.com/softconstruct/gene-ui-components/commit/d3849b20375b17d803e3bf6ee3163352bce84d81))
+-   **Table:** add copied tooltip text for table col element
+    ([#36](https://github.com/softconstruct/gene-ui-components/issues/36))
+    ([356b35a](https://github.com/softconstruct/gene-ui-components/commit/356b35ae66b419bea53b4826a8df6197ecfa3074))
+-   **Test:** add jest, enzyme and setup testing env
+    ([c91f9d9](https://github.com/softconstruct/gene-ui-components/commit/c91f9d94949ea61ec246760e8588e339fe2b2188))
+-   **Typescript:** add ts support, remove some redundant modules, change tree shake logic
+    ([58838da](https://github.com/softconstruct/gene-ui-components/commit/58838da2b3c2ad8effaf64649d97cbb4444dfd44))
+
 # 2.11.2 (2023-11-25)
 
 ### Bug Fixes
