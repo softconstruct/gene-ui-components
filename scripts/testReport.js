@@ -4,7 +4,9 @@ import figlet from 'figlet';
 import process from 'process';
 import ora from 'ora';
 
-import { execCommand } from './utils';
+import { execCommand, isFileExists } from './utils';
+
+const reportFilePath = 'coverage/lcov-report/index.html';
 
 const spinner = ora({
     color: 'yellow',
@@ -45,10 +47,10 @@ const generateTestsCoverageReport = async (isGenerateNewReport) => {
     try {
         if (isGenerateNewReport) {
             await execCommand('rm -rf coverage');
-            await execCommand('jest --coverage --config ./configs/jest.config.js --rootDir ./');
+            await execCommand('npm run test');
         }
 
-        await execCommand(`open-cli coverage/lcov-report/index.html`);
+        await execCommand(`open-cli ${reportFilePath}`);
     } catch (error) {
         return {
             hasError: true,
@@ -61,8 +63,10 @@ const main = async () => {
     // Show script introduction
     init();
 
+    const isAskQuestions = await isFileExists(reportFilePath);
+
     // Ask questions
-    const { isGenerateNewReport } = await askQuestions();
+    const { isGenerateNewReport } = isAskQuestions ? await askQuestions() : { isGenerateNewReport: true };
 
     if (isGenerateNewReport) {
         spinner.text = 'Collecting test coverage... \n\n';

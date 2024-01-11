@@ -11,10 +11,8 @@ export const category = {
 export const args = (obj) => {
     const { control, options, category, condition, defaultValue, truthy, name, action, ...rest } = obj;
     return {
-        control: {
-            type: control,
-            ...(options && { options })
-        },
+        ...(control && { control }),
+        ...(options && { options }),
         ...(name && { name }),
         ...((category || defaultValue) && {
             table: {

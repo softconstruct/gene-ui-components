@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import { lstatSync, readdirSync } from 'fs';
-import { copyFile } from 'fs/promises';
+import { copyFile, stat } from 'fs/promises';
 import { join } from 'path';
 import { exec } from 'child_process';
 
@@ -49,4 +49,17 @@ const getFiles = (source) =>
         .map((name) => join(source, name))
         .filter(isFile);
 
-export { execCommand, isDirectory, isFile, getDirectories, getFiles, copyStaticFilesToDist };
+const isFileExists = async (filePath) => {
+    try {
+        await stat(filePath);
+        return true;
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return false;
+        } else {
+            throw error;
+        }
+    }
+};
+
+export { execCommand, isDirectory, isFile, isFileExists, getDirectories, getFiles, copyStaticFilesToDist };
