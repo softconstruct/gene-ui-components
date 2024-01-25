@@ -62,7 +62,7 @@ const CustomDecorator = ({ children }) => {
 
     return (
         <>
-            <React.Fragment>
+            <GeneUIProvider>
                 <div data-stage-alert>
                     {componentStageProp && (
                         <Alert
@@ -74,9 +74,9 @@ const CustomDecorator = ({ children }) => {
                     )}
                 </div>
                 <div style={{ position: 'relative', height: '100%' }}>
-                    <GeneUIProvider>{allowRenderChildren && children}</GeneUIProvider>
+                    <div>{allowRenderChildren && children}</div>
                 </div>
-            </React.Fragment>
+            </GeneUIProvider>
             {isDarkMode ? (
                 <style>
                     {`:root {
