@@ -2,11 +2,12 @@ import React, { useRef, useMemo, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import JoditEditor from 'jodit-react';
-// Import helpers
+
+// Helpers
 import { noop } from 'utils';
-// Import configs
 import { buttons, controls } from './config';
-// Import styles
+
+// Styles
 import './index.scss';
 
 function RichEditor({

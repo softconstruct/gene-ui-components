@@ -1,9 +1,10 @@
 import React from 'react';
-
 import classnames from 'classnames';
+
+// Components
 import Icon from '../../../atoms/Icon';
 
-function MapChartIconButton({ children, disabled, name, onClick }) {
+function MapChartIconButton({ disabled, name, onClick }) {
     return (
         <button
             className={classnames('zoom-button', {

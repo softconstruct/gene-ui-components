@@ -2,11 +2,15 @@ import React, { useMemo, useCallback, useEffect } from 'react';
 import classnames from 'classnames';
 import dayjs from 'dayjs';
 
+// Helpers
 import { guid, chunk } from 'utils';
-import { useDatePickerContext } from '../Context';
-
 import { getCalendarMonths } from '../utils';
+
+// Components
 import Button from '../../../atoms/Button';
+
+// Local components
+import { useDatePickerContext } from '../Context';
 
 function Months({ year, selected, onChange, max, min, setIsThisMonthAllowed }) {
     const [contextConfigs] = useDatePickerContext();

@@ -1,11 +1,18 @@
 import React, { useCallback, useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { useClickOutside } from 'hooks';
 import { noop } from 'utils';
 
-import { Icon, Portal, Dropdown, Popover, Menu } from 'components';
+// Components
+import Icon from '../../atoms/Icon';
+import Portal from '../../atoms/Portal';
+import Popover from '../../atoms/Popover';
+import Menu from '../../molecules/Menu';
+import Dropdown from '../Dropdown';
 
+// Styles
 import './index.scss';
 
 function Overspread(props) {

@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import dayjs from 'dayjs';
 
+// Helpers
 import { noop } from 'utils';
-import { useKeyDown } from 'hooks';
 import { dayjsWithPlugins } from 'wrappers';
 
+// Components
 import Button from '../../atoms/Button';
 
+// Local components
 import Calendar from './Calendar';
 import { useDatePickerContext } from './Context';
 import { RangeOptions } from './RangeOptions';

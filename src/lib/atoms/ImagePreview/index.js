@@ -1,9 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ImagePreview from './ImagePreview';
+// Helpers
+import { noop } from 'utils';
+
+// Components
 import Portal from '../Portal';
-import { noop } from '../../../utils';
+
+// Local components
+import ImagePreview from './ImagePreview';
 
 function ImagePreviewWrapper({ withModal, ...restProps }) {
     return withModal ? (

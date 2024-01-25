@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Components
 import Paper from '../../../../atoms/Paper';
 
 function PaperWrapper({ className, shadow, cornerRadius, paperDirection, children, ...restProps }) {

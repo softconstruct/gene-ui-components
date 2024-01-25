@@ -1,10 +1,13 @@
 import React, { memo, useEffect, useRef, useMemo, useState, useCallback } from 'react';
+
+// Helpers
 import { debounce } from 'utils';
 import { useDeviceType } from 'hooks';
-import MenuContent from '../Menu';
-
 import { indexStackFromItems, navigationOptionsToMenu } from './utils';
+
+// Components
 import Option from '../../atoms/Option';
+import MenuContent from '../Menu';
 
 function NavigationMenuContent({ depth, path, options, onChange, splitedValue }) {
     const [activeItem, setActiveItem] = useState();

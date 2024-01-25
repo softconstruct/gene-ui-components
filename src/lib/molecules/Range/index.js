@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { Range, createSliderWithTooltip } from 'rc-slider';
 
+// Helpers
 import { useWidth, useToggle } from 'hooks';
 
+// Styles
 import 'src/assets/styles/rangeAndSlider.scss';
 
 function formatter(value, tooltipType) {

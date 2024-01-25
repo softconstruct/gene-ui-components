@@ -2,7 +2,8 @@ import { useEffect, useState, memo, useContext } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-import { GeneUIDesignSystemContext } from 'components';
+// Components
+import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
 function Portal({ isOpen, children, className, container: propsContainer }) {
     const [container, setContainer] = useState(propsContainer);

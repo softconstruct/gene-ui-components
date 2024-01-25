@@ -1,18 +1,22 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-
 import classnames from 'classnames';
+
+// Helpers
 import { inputConfig } from 'configs';
 import { noop, callAfterDelay } from 'utils';
 import { useClickOutside } from 'hooks';
-
-import Tooltip from '../Tooltip';
-import Icon from '../../atoms/Icon';
-import TagWrapper from './TagWrapper';
 import { actionTypes, keyDownKeys, SPACE_HEIGHT } from './config';
 
+// Components
+import Icon from '../../atoms/Icon';
 import CustomScrollbar from '../../atoms/Scrollbar';
+import Tooltip from '../Tooltip';
 
+// Local components
+import TagWrapper from './TagWrapper';
+
+// Styles
 import './index.scss';
 
 /**

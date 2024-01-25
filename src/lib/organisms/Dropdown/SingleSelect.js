@@ -2,11 +2,16 @@ import React, { forwardRef } from 'react';
 import classnames from 'classnames';
 import { List } from 'react-virtualized';
 
+// Helpers
 import { stopEvent } from 'utils';
 
-import './index.scss';
+// Components
+import Icon from '../../atoms/Icon';
+import Tag from '../../molecules/Tag';
+import Tooltip from '../../molecules/Tooltip';
 
-import { Tooltip, Icon, Tag } from 'components';
+// Styles
+import './index.scss';
 
 const SingleSelect = forwardRef(
     (

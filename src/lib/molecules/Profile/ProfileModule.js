@@ -1,7 +1,10 @@
 import React from 'react';
 
-import { Avatar, Divider } from 'components';
+// Components
+import Avatar from '../../atoms/Avatar';
+import Divider from '../../atoms/Divider';
 
+// Styles
 import './index.scss';
 
 function ProfileModule({ username, email, avatarProps }) {

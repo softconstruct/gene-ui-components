@@ -4,8 +4,11 @@ import addFunnel from 'highcharts/modules/funnel';
 import Highcharts from 'highcharts/highcharts-gantt';
 import HighchartsReact from 'highcharts-react-official';
 
-import { Empty, BusyLoader } from 'components';
+// Components
+import Empty from '../../../atoms/Empty';
+import BusyLoader from '../../../atoms/BusyLoader';
 
+// Styles
 import './index.scss';
 
 addFunnel(Highcharts);

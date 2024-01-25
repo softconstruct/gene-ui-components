@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import classnames from 'classnames';
 
+// Local Components
 import FilterList from './FilterList';
 import SearchResult from './SearchResult';
 

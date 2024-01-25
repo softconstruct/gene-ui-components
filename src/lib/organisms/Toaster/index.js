@@ -2,11 +2,15 @@ import React, { useEffect, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { guid } from 'utils';
+
+// Components
 import Portal from '../../atoms/Portal';
 import Notification from '../../molecules/Notification';
 import Alert, { alertTypes } from '../../molecules/Alert';
 
+// Styles
 import './index.scss';
 
 const toasterPositions = ['top', 'bottom', 'center', 'left-top', 'left-bottom', 'right-top', 'right-bottom'];

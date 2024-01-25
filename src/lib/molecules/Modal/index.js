@@ -2,11 +2,15 @@ import React, { useCallback, useRef, useState } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { useKeyDown } from 'hooks';
 import { noop } from 'utils';
+
+// Components
 import Button from '../../atoms/Button';
 import Portal from '../../atoms/Portal';
 
+// Styles
 import './index.scss';
 
 const sizes = ['default', 'content-size'];

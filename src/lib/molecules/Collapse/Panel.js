@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Components
 import Icon from '../../atoms/Icon';
 
+// Styles
 import './index.scss';
 
 const appearances = ['default', 'minimal'];

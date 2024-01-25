@@ -2,10 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { fileSizeDisplay, noop } from 'utils';
+
+// Components
 import Icon from '../../atoms/Icon';
 import Button from '../../atoms/Button';
 
+// Styles
 import './index.scss';
 
 function Progress({

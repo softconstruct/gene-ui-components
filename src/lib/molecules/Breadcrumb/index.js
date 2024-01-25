@@ -1,16 +1,20 @@
 import React, { Fragment, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-
 import classnames from 'classnames';
 
+// Helpers
 import { noop } from 'utils';
+
+// Components
 import Button from '../../atoms/Button';
 import Popover from '../../atoms/Popover';
 import Icon from '../../atoms/Icon';
 import Menu from '../Menu';
 
+// Local components
 import BreadcrumbItem from './item';
 
+// Styles
 import './index.scss';
 
 function Breadcrumb({ data, onClick, collapsed, className, separator, ...restProps }) {

@@ -3,8 +3,10 @@ import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 
+// Helpers
 import { noop } from 'utils';
 
+// Local components
 import Calendar from './Calendar';
 
 function MonthPicker({

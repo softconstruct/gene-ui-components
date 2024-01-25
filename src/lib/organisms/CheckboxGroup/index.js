@@ -2,10 +2,12 @@ import React, { useState, useCallback, useEffect } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { checkboxRadioSwitcherConfig } from 'configs';
 import { noop } from 'utils';
 
-import { Checkbox } from 'components';
+// Components
+import Checkbox from '../../molecules/Checkbox';
 
 function CheckboxGroup(props) {
     const {

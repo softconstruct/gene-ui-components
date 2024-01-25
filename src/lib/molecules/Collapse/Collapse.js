@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { conflictPropsLog } from 'utils';
-
 import deepCheck from './utils';
 
 const appearances = ['default', 'minimal'];

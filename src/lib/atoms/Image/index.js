@@ -2,10 +2,12 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Components
 import Empty from '../Empty';
 import Tooltip from '../../molecules/Tooltip';
 import Checkbox from '../../molecules/Checkbox';
 
+// Styles
 import './index.scss';
 
 function Image({

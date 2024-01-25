@@ -1,11 +1,12 @@
 import React, { useMemo, useCallback } from 'react';
 import dayjs from 'dayjs';
 
-import Button from '../../../atoms/Button';
-
-import { useDatePickerContext } from '../Context';
-
+// Helpers
 import { getDefaultOptions, getOptionIndex } from './options';
+
+// Components
+import Button from '../../../atoms/Button';
+import { useDatePickerContext } from '../Context';
 
 function RangeOption({ start, end, selected, children, onClick, ...restProps }) {
     const handleClick = useCallback(() => onClick && onClick([start, end]), [onClick, start, end]);

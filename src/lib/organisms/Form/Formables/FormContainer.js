@@ -1,12 +1,17 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { noop, stopEvent } from 'utils';
 
-import { Paper, Button } from 'components';
+// Components
+import Paper from '../../../atoms/Paper';
+import Button from '../../../atoms/Button';
+
+// Local components
 import { useFormContext, FormProvider } from '../utils/context';
 
-
+// Styles
 import '../index.scss';
 
 const KEYBOARD_ENTER_KEY = 13;

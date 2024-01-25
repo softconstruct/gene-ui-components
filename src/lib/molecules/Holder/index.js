@@ -2,17 +2,19 @@ import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { noop } from 'utils';
-
 import { popoverV2Config } from 'configs';
+
+// Components
 import Icon from '../../atoms/Icon';
 import Button from '../../atoms/Button';
 import Portal from '../../atoms/Portal';
 import Scrollbar from '../../atoms/Scrollbar';
 import ModuleTitle from '../../atoms/ModuleTitle';
-
 import Tooltip from '../Tooltip';
 
+// Styles
 import './index.scss';
 
 function Holder({

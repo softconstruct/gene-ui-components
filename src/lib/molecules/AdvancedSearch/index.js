@@ -2,12 +2,20 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import dayjs from 'dayjs';
-import ExtendedInput from '../ExtendedInput';
+
+// Helpers
+import { advancedSearchConfig } from 'configs';
+import { useDebounce, useKeyDown } from 'hooks';
+import { noop } from 'utils';
+
+// Components
 import PopoverV2 from '../../atoms/PopoverV2';
+import ExtendedInput from '../ExtendedInput';
+
+// Local components
 import Content from './Content';
-import { advancedSearchConfig } from '../../../configs';
-import { useDebounce, useKeyDown } from '../../../hooks';
-import { noop } from '../../../utils';
+
+// Styles
 import './index.scss';
 
 function AdvancedSearch({

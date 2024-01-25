@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { fileSizeDisplay, stopEvent } from 'utils';
+
+// Components
 import Icon from '../../../../atoms/Icon';
 
+// Styles
 import './index.scss';
 
 function Preview({

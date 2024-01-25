@@ -1,11 +1,14 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { Logger, noop } from 'utils';
 
-import Dropdown from '../../../Dropdown';
+// Components
 import Pagination from '../../../../molecules/Pagination';
+import Dropdown from '../../../Dropdown';
 
+// Styles
 import './index.scss';
 
 function PaginationSelector({

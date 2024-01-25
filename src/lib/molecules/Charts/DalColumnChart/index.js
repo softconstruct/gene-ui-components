@@ -4,8 +4,11 @@ import Highcharts from 'highcharts';
 import DrillDown from 'highcharts/modules/drilldown';
 import HighchartsReact from 'highcharts-react-official';
 
-import { Empty, BusyLoader } from 'components';
+// Components
+import Empty from '../../../atoms/Empty';
+import BusyLoader from '../../../atoms/BusyLoader';
 
+// Styles
 import './index.scss';
 
 DrillDown(Highcharts);

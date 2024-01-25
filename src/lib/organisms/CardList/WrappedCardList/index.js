@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Local components
 import WithTitle from './WithTitle';
 import PaperWrapper from './PaperWrapper';
 import CardList from '../DefaultCardList';

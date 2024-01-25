@@ -2,15 +2,18 @@ import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { positions } from 'configs';
 import { useKeyDown, useClickOutside } from 'hooks';
 import { noop } from 'utils';
 
+// Components
 import Scrollbar from '../../atoms/Scrollbar';
 import Button from '../../atoms/Button';
 import Divider from '../../atoms/Divider';
 import ModuleTitle from '../../atoms/ModuleTitle';
 
+// Styles
 import './index.scss';
 
 const horizontalSizes = ['half', 'wide', 'minimal'];

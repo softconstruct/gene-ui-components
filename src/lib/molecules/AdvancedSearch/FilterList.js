@@ -1,9 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
+
+// Helpers
+import { noop } from 'utils';
+
+// Components
 import Scrollbar from '../../atoms/Scrollbar';
-import ListElementWithCheckbox from './ListElementWithCheckbox';
 import LinkButton from '../../atoms/LinkButton';
-import { noop } from '../../../utils';
+
+// Local components
+import ListElementWithCheckbox from './ListElementWithCheckbox';
 import SkeletonSet from './SkeletonSet';
 
 function FilterList({ data, skeletonCount, onSelect }) {

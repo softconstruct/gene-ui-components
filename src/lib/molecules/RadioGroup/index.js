@@ -2,7 +2,10 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { childrenOf } from 'utils';
+
+// Components
 import Radio from '../../atoms/Radio';
 
 function RadioGroup(props) {

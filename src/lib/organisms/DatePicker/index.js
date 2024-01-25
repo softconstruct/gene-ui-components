@@ -1,5 +1,7 @@
+// Styles
 import './index.scss';
 
+// Local components
 import DatePicker from './DatePicker';
 import WeekPicker from './WeekPicker';
 import MonthPicker from './MonthPicker';

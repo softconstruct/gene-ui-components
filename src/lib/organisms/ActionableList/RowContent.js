@@ -1,13 +1,18 @@
 import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-// Import styles
 
-import './index.scss';
-// Import helpers
+// Helpers
 import { noop } from 'utils';
 import isEmpty from 'lodash/isEmpty';
-// Import components
-import { Button, Icon, Tooltip, Checkbox } from 'components';
+
+// Components
+import Button from '../../atoms/Button';
+import Icon from '../../atoms/Icon';
+import Tooltip from '../../molecules/Tooltip';
+import Checkbox from '../../molecules/Checkbox';
+
+// Styles
+import './index.scss';
 
 function RowContent({
     label,

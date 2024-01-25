@@ -1,11 +1,15 @@
 import React, { useCallback, useRef, useState } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import Checkbox from '../Checkbox';
+
+// Helpers
+import { useEllipsisDetection } from 'hooks';
+import { noop } from 'utils';
+
+// Components
 import Icon from '../../atoms/Icon';
-import useEllipsisDetection from '../../../hooks/useEllipsisDetection';
+import Checkbox from '../Checkbox';
 import Tooltip from '../Tooltip';
-import { noop } from '../../../utils';
 
 function ListElementWithCheckbox({ item, onSelect }) {
     const { checked, icon, name } = item;

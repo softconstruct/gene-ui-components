@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { DragDropContext } from 'react-beautiful-dnd';
 import classnames from 'classnames';
 
+// Helpers
 import { noop } from 'utils';
 import { useDidMount } from 'hooks';
-
 import {
     addOrRemove,
     unionIndexes,
@@ -16,8 +16,10 @@ import {
 } from './utils';
 import { DEFAULT_TRANSLATE_MESSAGE, DEFAULT_DATA_ERROR_MESSAGE } from './constants';
 
+// Local components
 import TransferListContainer from './Container';
 
+// Styles
 import './index.scss';
 
 function TransferList({ onChange, className, isEditable, defaultData, translateMessages, ...props }) {

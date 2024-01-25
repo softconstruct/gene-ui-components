@@ -1,3 +1,4 @@
+// Helpers
 import { getImageDimensions } from 'utils';
 
 export const typeListReplacer = 'TYPE_LIST';

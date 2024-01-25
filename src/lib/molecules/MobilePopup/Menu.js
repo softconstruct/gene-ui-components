@@ -1,6 +1,9 @@
 import React, { useState, useCallback } from 'react';
 
+// Helpers
 import { useClickOutside } from 'hooks';
+
+// Components
 import Popover from '../../atoms/Popover';
 import Menu from '../Menu';
 

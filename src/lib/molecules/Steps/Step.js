@@ -2,13 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { stepsConfig } from 'configs';
 
+// Components
 import Icon from '../../atoms/Icon';
 import Tooltip from '../Tooltip';
 
+// Local components
 import DetailedView from './DetailedView';
 
+// Styles
 import './index.scss';
 
 function WithTooltip({ tooltip, children }) {

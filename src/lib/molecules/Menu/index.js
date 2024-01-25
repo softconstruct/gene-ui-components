@@ -1,13 +1,16 @@
 import React, { forwardRef, useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-
-import { screenTypes } from 'configs';
 import classnames from 'classnames';
-import Option from '../../atoms/Option';
 
+// Helpers
+import { screenTypes } from 'configs';
 import { findDeep } from './utils';
+
+// Components
+import Option from '../../atoms/Option';
 import Scrollbar from '../../atoms/Scrollbar';
 
+// Styles
 import './index.scss';
 
 const findHeaderByIndexStack = (data, indexStack) => {

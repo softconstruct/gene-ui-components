@@ -1,14 +1,20 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
+
+// Helpers
 import { useDeviceType } from 'hooks';
 import { noop } from 'utils';
+import { getTitlesArray } from './utils';
+
+// Components
 import Icon from '../../atoms/Icon';
 import Option from '../../atoms/Option';
 import Popover from '../../atoms/Popover';
 
+// Local components
 import NavigationMenuContent from './Content';
-import { getTitlesArray } from './utils';
 
+// Styles
 import './index.scss';
 
 function NavigationMenu({ data, value, onChange, disabled }) {

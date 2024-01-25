@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { guid, oneIsRequired } from 'utils';
+
+// Components
 import SkeletonLoader from '../../atoms/SkeletonLoader';
 import KeyValue from '../../atoms/KeyValue';
 
+// Styles
 import './index.scss';
 
 function Col({ col, row, index, ...restProps }) {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 
+// Local components
 import TransferListElement from '../Element';
 
 function TransferListItem({

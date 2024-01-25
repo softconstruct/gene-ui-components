@@ -5,13 +5,18 @@ import HC_map from 'highcharts/modules/map';
 import HighchartsReact from 'highcharts-react-official';
 import classnames from 'classnames';
 
+// Helpers
 import { noop } from 'utils';
 import { useDeviceType } from 'hooks';
 
-import { Empty, BusyLoader, Icon } from 'components';
+// Components
+import Empty from '../../../atoms/Empty';
+import BusyLoader from '../../../atoms/BusyLoader';
+
+// Local components
 import IconButton from './IconButton';
 
-
+// Styles
 import './index.scss';
 
 HC_map(Highcharts);

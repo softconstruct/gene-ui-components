@@ -1,17 +1,28 @@
 import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
 
+// Helpers
 import { screenTypes } from 'configs';
 import { noop, childrenOf } from 'utils';
 import { useClickOutside, useDeviceType, useToggle } from 'hooks';
-import classnames from 'classnames';
-import { Empty, Icon, Popover, Tooltip, Menu, Search, Avatar } from 'components';
+
+// Components
+import Empty from '../../atoms/Empty';
+import Icon from '../../atoms/Icon';
+import Popover from '../../atoms/Popover';
+import Avatar from '../../atoms/Avatar';
+import Tooltip from '../Tooltip';
+import Menu from '../Menu';
+import Search from '../Search';
+
+// Local components
 import ProfileModule from './ProfileModule';
 import flagSVGs from './Languages/flags/flagsIcons';
 import languagesDataModel from './Languages/languagesDataModel';
 
+// Styles
 import './index.scss';
-
 
 function Profile(props) {
     const {

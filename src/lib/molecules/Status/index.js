@@ -2,8 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import { Icon, Tooltip } from 'components';
+// Components
+import Icon from '../../atoms/Icon';
+import Tooltip from '../Tooltip';
 
+// Styles
 import './index.scss';
 
 const statusIconTypes = ['dot', 'play', 'stop', 'circle', 'circle-outline'];

@@ -3,11 +3,13 @@ import classnames from 'classnames';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 
+// Helpers
 import { chunk, guid } from 'utils';
+import { getRange, getCalendarDays, nextMonthAvailable, prevMonthAvailable } from '../utils';
+
+// Local components
 import { useDatePickerContext } from '../Context';
 import Day from './Day';
-
-import { getRange, getCalendarDays, nextMonthAvailable, prevMonthAvailable } from '../utils';
 
 dayjs.extend(isBetween);
 dayjs.Ls.en.weekStart = 1;

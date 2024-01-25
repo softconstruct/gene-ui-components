@@ -4,8 +4,14 @@ import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import { Empty, BusyLoader, Tag, Label, Button } from 'components';
+// Components
+import Empty from '../../../atoms/Empty';
+import BusyLoader from '../../../atoms/BusyLoader';
+import Label from '../../../atoms/Label';
+import Button from '../../../atoms/Button';
+import Tag from '../../../molecules/Tag';
 
+// Styles
 import './index.scss';
 
 function ScatterChart(props) {

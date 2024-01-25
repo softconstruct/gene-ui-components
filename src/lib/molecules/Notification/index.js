@@ -2,11 +2,14 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { useDeviceType } from 'hooks';
 import { screenTypes } from 'configs';
 
+// Components
 import Icon from '../../atoms/Icon';
 
+// Styles
 import './index.scss';
 
 const notificationTypes = ['default', 'clean'];

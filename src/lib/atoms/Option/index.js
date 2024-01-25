@@ -2,11 +2,15 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { optionConfig, screenTypes } from 'configs';
 import { useDeviceType, useEllipsisDetection } from 'hooks';
-import Tooltip from '../../molecules/Tooltip';
-import Icon from '../Icon';
 
+// Components
+import Icon from '../Icon';
+import Tooltip from '../../molecules/Tooltip';
+
+// Styles
 import './index.scss';
 
 function Option(props) {

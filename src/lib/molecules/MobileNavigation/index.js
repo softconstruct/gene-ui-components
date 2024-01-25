@@ -2,9 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Components
 import Badge from '../../atoms/Badge';
 import Icon from '../../atoms/Icon';
 
+// Styles
 import './index.scss';
 
 function MobileNavigation({ list, activeSlug, onChange, className, ...restProps }) {

@@ -2,12 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { moduleTitleConfig } from 'configs';
 import { noop } from 'utils';
 
-import './index.scss';
+// Components
+import Icon from '../Icon';
+import Tooltip from '../../molecules/Tooltip';
 
-import { Tooltip, Icon } from 'components';
+// Styles
+import './index.scss';
 
 function IconWithTooltip({ toolTip, children }) {
     return toolTip ? <Tooltip title={toolTip}>{children}</Tooltip> : children;

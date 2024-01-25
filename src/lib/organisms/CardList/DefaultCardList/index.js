@@ -3,17 +3,18 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { List, WindowScroller, CellMeasurer, CellMeasurerCache, InfiniteLoader } from 'react-virtualized';
 
+// Helpers
 import { oneIsRequired, noop } from 'utils';
 
+// Components
 import BusyLoader from '../../../atoms/BusyLoader';
 import Empty from '../../../atoms/Empty';
 import Icon from '../../../atoms/Icon';
-
 import Widget from '../../../molecules/Widget';
 import Card from '../../../molecules/Card';
-
 import Dropdown from '../../Dropdown';
 
+// Styles
 import './index.scss';
 
 const defaultSortFn = (prev, next, dataKey, type) => {

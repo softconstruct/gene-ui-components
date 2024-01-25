@@ -1,9 +1,11 @@
 import React, { useCallback, useState, useEffect, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { useMount } from 'hooks';
 import { noop } from 'utils';
 
+// Components
 import Dropdown from '../../../organisms/Dropdown';
 
 function checkValidation(required, isValid, value, min, max) {

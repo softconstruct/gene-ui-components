@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Table from '../../Table';
+// Helpers
 import { WithHeader } from '../utils';
 
+// Components
+import Table from '../../Table';
+
+// Styles
 import './index.scss';
 
 function TableHeader({

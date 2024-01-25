@@ -6,12 +6,15 @@ import htmlToDraft from 'html-to-draftjs';
 import clx from 'classnames';
 import { Editor as DraftEditor } from 'react-draft-wysiwyg';
 
+// Helpers
 import { interceptValue, noop } from 'utils';
 import { useMount, useDeviceType } from 'hooks';
-import Button from '../../atoms/Button';
-
 import { defaultToolbarConfig, fullToolbarOptions } from './toolbarConfig';
 
+// Components
+import Button from '../../atoms/Button';
+
+// Styles
 import './index.scss';
 
 const EDITOR_EMPTY_STATE = '<p></p>';

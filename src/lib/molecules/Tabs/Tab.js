@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Components
 import Icon from '../../atoms/Icon';
 
 function Tab(props) {

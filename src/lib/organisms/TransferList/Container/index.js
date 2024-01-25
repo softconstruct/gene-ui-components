@@ -2,16 +2,18 @@ import React, { useMemo, useState } from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import classnames from 'classnames';
 
+// Components
 import Icon from '../../../atoms/Icon';
 import Empty from '../../../atoms/Empty';
 import Search from '../../../molecules/Search';
-import Checkbox from '../../../molecules/Checkbox';
 import CustomScrollbar from '../../../atoms/Scrollbar';
 
+// Local components
 import TransferListItem from './Item';
 import TransferListButtons from './Buttons';
 import TransferListElements from '../Element';
 
+// Styles
 import './index.scss';
 
 function TransferListContainer({

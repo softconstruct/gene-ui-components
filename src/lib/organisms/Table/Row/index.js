@@ -4,15 +4,18 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import { useDrag, useDrop } from 'react-dnd';
 import isEqual from 'react-fast-compare';
 
+// Helpers
 import { useMutationObserver, useUpdate } from 'hooks';
 import { stopEvent } from 'utils';
+import { itemTypes } from '../utils';
 
+// Components
+import Icon from '../../../atoms/Icon';
+
+// Local components
 import ActionBar from './actionBar';
 import Nested from './Nested';
 import Col from './col';
-
-import { itemTypes } from '../utils';
-import Icon from '../../../atoms/Icon';
 
 function Row({
     style,

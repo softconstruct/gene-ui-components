@@ -3,9 +3,14 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { useDeviceType } from 'hooks';
-import { Empty, BusyLoader } from 'components';
 
+// Components
+import Empty from '../../../atoms/Empty';
+import BusyLoader from '../../../atoms/BusyLoader';
+
+// Styles
 import './index.scss';
 
 const pointMountEvents = {

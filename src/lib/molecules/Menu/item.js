@@ -2,7 +2,10 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { childrenOf } from 'utils';
+
+// Components
 import Icon from '../../atoms/Icon';
 import Divider from '../../atoms/Divider';
 

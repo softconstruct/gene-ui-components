@@ -2,9 +2,13 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { useWidth } from 'hooks';
 
+// Local components
 import Col from './col';
+
+// Styles
 import './index.scss';
 
 function Row(props) {

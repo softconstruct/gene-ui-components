@@ -2,11 +2,14 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { noop } from 'utils';
 
+// Components
 import Search from '../../molecules/Search';
 import Dropdown from '../Dropdown';
 
+// Styles
 import './index.scss';
 
 const SearchWithDropdownConfig = {

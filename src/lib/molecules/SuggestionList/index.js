@@ -1,14 +1,16 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-import { callAfterDelay, stopEvent } from 'utils';
-import { useClickOutside, useKeyDown } from 'hooks';
-
 import classnames from 'classnames';
 
+// Helpers
+import { callAfterDelay, stopEvent } from 'utils';
+import { useClickOutside, useKeyDown } from 'hooks';
 import { keyDownKeys } from '../ComboBox/config';
-import Scrollbar from '../../atoms/Scrollbar';
 import { getCaretPos, getCursorPos } from './detectPosition';
 
+// Components
+import Scrollbar from '../../atoms/Scrollbar';
+
+// Styles
 import './index.scss';
 
 const ROW_WIDTH = 300;

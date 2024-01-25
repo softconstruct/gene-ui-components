@@ -1,15 +1,19 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
+// Statics
+import xlsSvg from '../../../../assets/media/export/xls.svg';
+import csvSvg from '../../../../assets/media/export/csv.svg';
+
+// Helpers
+import { exportToXLSX, exportToCSV } from '../utils/Export';
+
+// Components
 import Paper from '../../../atoms/Paper';
 import Button from '../../../atoms/Button';
 import Popover from '../../../atoms/PopoverV2';
 
-import xlsSvg from '../../../../assets/media/export/xls.svg';
-import csvSvg from '../../../../assets/media/export/csv.svg';
-
-import { exportToXLSX, exportToCSV } from '../utils/Export';
-
+// Local components
 import ExportItem from './Item';
 
 const LOADING_DEFAULT_VALUE = {

@@ -2,15 +2,19 @@ import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { oneIsRequired, noop, stopEvent } from 'utils';
 import { useBodyScroll } from 'hooks';
-import Button from '../../atoms/Button';
 
+// Components
+import Button from '../../atoms/Button';
 import MobilePopUp from '../MobilePopup';
 
+// Local components
 import CardMenu from './Menu';
 import Col from './Col';
 
+// Styles
 import './index.scss';
 
 function Card({

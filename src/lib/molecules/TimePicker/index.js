@@ -2,18 +2,21 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { timePickerConfig, screenTypes } from 'configs';
 import { noop } from 'utils';
 import { useDeviceType } from 'hooks';
+
+// Components
 import Scrollbar from '../../atoms/Scrollbar';
-import Popover from '../../atoms/Popover';
 import Icon from '../../atoms/Icon';
-
-import { ValidatableNumberInput } from '../ValidatableElements';
 import ExtendedInput from '../ExtendedInput';
+import ValidatableNumberInput from '../ValidatableElements/Elements/ValidatableNumberInput';
 
+// Local components
 import TimePickerPopover from './Popover';
 
+// Styles
 import './index.scss';
 
 function generateTimeValues(format, max) {

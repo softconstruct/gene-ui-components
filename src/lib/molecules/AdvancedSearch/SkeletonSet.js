@@ -1,6 +1,5 @@
 import React from 'react';
 import SkeletonLoader from '../../atoms/SkeletonLoader';
-import SearchResult from './SearchResult';
 
 function SkeletonSet({ count, searchResult }) {
     return searchResult ? (
@@ -34,6 +33,7 @@ function SkeletonSet({ count, searchResult }) {
 }
 
 SkeletonSet.defaultProps = {};
+
 SkeletonSet.propTypes = {};
 
 export default SkeletonSet;

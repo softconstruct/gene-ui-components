@@ -1,7 +1,10 @@
 import React, { useCallback, useState, forwardRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { useMount } from 'hooks';
+
+// Components
 import Uploader from '../../Uploader';
 
 function checkValidation(required, isValid, value = '') {

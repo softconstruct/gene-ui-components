@@ -1,15 +1,18 @@
 import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
+import classnames from 'classnames';
 
+// Helpers
 import { inputConfig, popoverConfig } from 'configs';
 import { noop, stopEvent } from 'utils';
 import { dayjsWithPlugins } from 'wrappers';
 import { useClick, useDeviceType, useKeyDown } from 'hooks';
-import classnames from 'classnames';
+
+// Components
 import Popover from '../../atoms/PopoverV2';
-import DatePicker from '../../organisms/DatePicker';
 import ExtendedInput from '../ExtendedInput';
+import DatePicker from '../../organisms/DatePicker';
 
 const getLastValidValue = (date, validFormat) => (date && date.isValid() ? date.format(validFormat) : '');
 

@@ -3,14 +3,16 @@ import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import classnames from 'classnames';
 
+// Helpers
 import { inputConfig, popoverConfig } from 'configs';
-
 import { getBrowserDateFormat, noop, stopEvent } from 'utils';
 import { useClick, useDeviceType, useKeyDown } from 'hooks';
 import { dayjsWithPlugins } from 'wrappers';
+
+// Components
 import Popover from '../../atoms/PopoverV2';
-import DatePicker from '../../organisms/DatePicker';
 import ExtendedInput from '../ExtendedInput';
+import DatePicker from '../../organisms/DatePicker';
 
 function getLastValidValue(startDate, endDate, validFormat, rangeSeparator) {
     if (startDate && endDate && startDate.isValid() && endDate.isValid()) {

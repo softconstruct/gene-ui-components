@@ -2,11 +2,15 @@ import React, { Fragment, useMemo, useEffect, useCallback, useState, useRef } fr
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 
+// Helpers
 import { noop } from 'utils';
 import { useClickOutside } from 'hooks';
+
+// Components
 import Icon from '../../atoms/Icon';
 import Tooltip from '../../molecules/Tooltip';
 
+// Styles
 import './index.scss';
 
 function Drawer({

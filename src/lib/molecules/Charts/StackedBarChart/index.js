@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
-
 import Highcharts from 'highcharts/highstock';
 import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
 
-import { Empty, BusyLoader } from 'components';
+// Components
+import Empty from '../../../atoms/Empty';
+import BusyLoader from '../../../atoms/BusyLoader';
 
+// Styles
 import './index.scss';
 
 function StackedBarChart({

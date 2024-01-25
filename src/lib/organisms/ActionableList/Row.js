@@ -2,12 +2,14 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
 
-// Import styles
-import './index.scss';
-// Import helpers
+// Helpers
 import { noop } from 'utils';
 
+// Local components
 import RowContent from './RowContent';
+
+// Styles
+import './index.scss';
 
 const getItemStyle = (isDragging, draggableStyle) => ({
     // some basic styles to make the items look a bit nicer

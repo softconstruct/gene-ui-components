@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import isEqual from 'react-fast-compare';
 import classnames from 'classnames';
 
+// Local components
 import ActionsWrapper from './actionsWrapper';
 
 function ActionBar({ children, lastColRef, stickyRightExist }) {

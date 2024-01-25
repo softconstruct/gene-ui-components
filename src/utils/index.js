@@ -6,8 +6,6 @@ import copyToClipboard from './copyToClipboard';
 import Logger from './logger';
 import { dayjsWithPlugins } from '../wrappers';
 
-import pgk from '../../package.json';
-
 export { Logger };
 export * from './localization';
 export guid from './guid';

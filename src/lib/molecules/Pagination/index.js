@@ -2,12 +2,16 @@ import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { conflictPropsLog, keyboardHandler } from 'utils';
+
+// Components
 import Button from '../../atoms/Button';
 import Divider from '../../atoms/Divider';
-import TextInput from '../ValidatableElements/Elements/ValidatableTextInput';
 import Tooltip from '../Tooltip';
+import TextInput from '../ValidatableElements/Elements/ValidatableTextInput';
 
+// Styles
 import './index.scss';
 
 const drawCount = 5;

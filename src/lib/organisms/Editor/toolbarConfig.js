@@ -1,3 +1,4 @@
+// Statics
 import emojis from './emojis';
 
 export const fullToolbarOptions = (isMobile) => {

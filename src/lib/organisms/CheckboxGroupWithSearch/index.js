@@ -2,18 +2,19 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import { noop } from '../../../utils';
-import { useKeyDown } from '../../../hooks';
-import { checkboxRadioSwitcherConfig, noDataConfig } from '../../../configs';
+// Helpers
+import { noop } from 'utils';
+import { useKeyDown } from 'hooks';
+import { checkboxRadioSwitcherConfig, noDataConfig } from 'configs';
 
-import CheckboxGroup from '../CheckboxGroup';
-
-import ExtendedInput from '../../molecules/ExtendedInput';
-
+// Components
 import CustomScrollbar from '../../atoms/Scrollbar';
 import Button from '../../atoms/Button';
 import Empty from '../../atoms/Empty';
+import ExtendedInput from '../../molecules/ExtendedInput';
+import CheckboxGroup from '../CheckboxGroup';
 
+// Styles
 import '../Dropdown/index.scss';
 import './index.scss';
 

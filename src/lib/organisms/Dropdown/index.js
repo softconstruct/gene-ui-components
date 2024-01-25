@@ -3,14 +3,27 @@ import { WindowScroller, AutoSizer } from 'react-virtualized';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
-import { useDeviceType, useKeyDown, useMount, useUpdatableRef, useClick, useClickOutside , useEllipsisDetection } from 'hooks';
+// Helpers
+import {
+    useDeviceType,
+    useKeyDown,
+    useMount,
+    useUpdatableRef,
+    useClick,
+    useClickOutside,
+    useEllipsisDetection
+} from 'hooks';
 import { inputConfig, screenTypes, popoverConfig } from 'configs';
-import { noop, stopEvent } from 'utils';
+import { noop, stopEvent, callAfterDelay } from 'utils';
 
-import { ExtendedInput, BusyLoader, Tooltip, Popover, Empty } from 'components';
-import callAfterDelay from '../../../utils/callAfterDelay';
+// Components
+import BusyLoader from '../../atoms/BusyLoader';
+import Empty from '../../atoms/Empty';
+import Popover from '../../atoms/Popover';
+import Tooltip from '../../molecules/Tooltip';
+import ExtendedInput from '../../molecules/ExtendedInput';
 
-
+// Local components
 import MultipleSelect from './MultipleSelect';
 import SingleSelect from './SingleSelect';
 

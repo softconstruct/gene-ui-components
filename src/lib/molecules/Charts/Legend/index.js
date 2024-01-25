@@ -4,10 +4,13 @@ import { Slider, Slide, ButtonBack, ButtonNext, CarouselProvider } from 'pure-re
 import 'pure-react-carousel/dist/react-carousel.es.css';
 import classnames from 'classnames';
 
+// Helpers
 import { noop } from 'utils';
 
+// Components
 import Icon from '../../../atoms/Icon';
 
+// Styles
 import './styles.scss';
 
 function ChartLegend({ options, isMobile, isVertical, onLegendClick, notApplicableSymbol, customLegendFormatter }) {

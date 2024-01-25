@@ -1,9 +1,11 @@
 import React, { useCallback, useState, useEffect, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { noop } from 'utils';
 import { useMount } from 'hooks';
 
+// Components
 import RadioGroup from '../../RadioGroup';
 
 function checkValidation(required, isValid, value = '') {

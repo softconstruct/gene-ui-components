@@ -2,11 +2,14 @@ import React, { useState, forwardRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { checkboxRadioSwitcherConfig } from 'configs';
 import { interceptValue, guid, noop, stopEvent } from 'utils';
 
+// Components
 import Tooltip from '../Tooltip';
 
+// Styles
 import 'src/assets/styles/checkboxRadioSwitcher.scss';
 
 const Checkbox = forwardRef((props, ref) => {

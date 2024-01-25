@@ -1,8 +1,12 @@
 import React, { useRef, useState } from 'react';
 
+// Helpers
 import { debounce } from 'utils';
+
+// Components
 import Popover from '../../atoms/Popover';
 
+// Styles
 import './index.scss';
 
 const positionMap = {

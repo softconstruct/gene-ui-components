@@ -1,8 +1,11 @@
 import React, { useMemo, useCallback } from 'react';
 import classnames from 'classnames';
 
-import Icon from '../../../atoms/Icon';
+// Helpers
 import { getStartOfDecade, nextDecade, prevDecade, nextMonthAvailable, prevMonthAvailable } from '../utils';
+
+// Components
+import Icon from '../../../atoms/Icon';
 
 function Header({
     view,

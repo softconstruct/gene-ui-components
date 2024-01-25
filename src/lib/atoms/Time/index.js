@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
-
-import { getBrowserTimeFormat } from 'utils';
-import { dayjsWithPlugins } from 'wrappers';
 import dayjs from 'dayjs';
 
+// Helpers
+import { getBrowserTimeFormat } from 'utils';
+import { dayjsWithPlugins } from 'wrappers';
+
+// Components
 import Icon from '../Icon';
 
+// Styles
 import './index.scss';
 
 function Time({ format, showIcon, startDate, showSeconds, ...restProps }) {

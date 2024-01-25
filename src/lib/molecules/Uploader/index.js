@@ -2,10 +2,9 @@ import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { uploaderConfig } from 'configs';
 import { noop, stopEvent } from 'utils';
-
-import { Row, Col, Button, ExtendedInput } from 'components';
 import {
     generateFilesByPage,
     removeDragEventListener,
@@ -17,10 +16,16 @@ import {
     toBlobFile
 } from './uploadUtils';
 
+// Components
+import Button from '../../atoms/Button';
+import ExtendedInput from '../ExtendedInput';
+import { Row, Col } from '../Grid';
 
+// Local components
 import UploadedItem from './uploadedItem';
 import UploadView from './uploadView';
 
+// Styles
 import './index.scss';
 
 const lowGrid = 10;

@@ -1,9 +1,11 @@
 import React, { useCallback, useState, useEffect, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { noop, interceptValue } from 'utils';
 import { useMount } from 'hooks';
 
+// Components
 import Checkbox from '../../Checkbox';
 
 function checkValidation(required, isValid, checked) {

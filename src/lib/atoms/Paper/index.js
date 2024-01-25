@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
+// Styles
 import './index.scss';
 
 const paperDirections = ['row', 'row-reverse', 'column', 'column-reverse'];

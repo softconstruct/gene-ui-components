@@ -2,13 +2,16 @@ import React, { useMemo, forwardRef, useCallback } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { uploaderConfig } from 'configs';
 
+// Components
 import Button from '../../../atoms/Button';
 import Icon from '../../../atoms/Icon';
 import BusyLoader from '../../../atoms/BusyLoader';
 import ExtendedInput from '../../ExtendedInput';
 
+// Styles
 import './index.scss';
 
 const UploadView = forwardRef(

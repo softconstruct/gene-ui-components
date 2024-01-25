@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+// Styles
 import './index.scss';
 
 // This this because in production we need to replace 'nonames.com' with host

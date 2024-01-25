@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Statics
 import dataGreyscale from 'src/assets/media/empty-state/greyscale/data.svg';
 import imageGreyscale from 'src/assets/media/empty-state/greyscale/image.svg';
 import searchGreyscale from 'src/assets/media/empty-state/greyscale/search.svg';
@@ -18,6 +19,7 @@ import imageWithoutCircles from 'src/assets/media/empty-state/without-circles/im
 import searchWithoutCircles from 'src/assets/media/empty-state/without-circles/search.svg';
 import messageWithoutCircles from 'src/assets/media/empty-state/without-circles/message.svg';
 
+// Styles
 import './index.scss';
 
 const images = {

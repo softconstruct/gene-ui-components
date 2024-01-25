@@ -1,6 +1,7 @@
 import React, { useState, useCallback, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
+// Components
 import ExtendedInput from '../ExtendedInput';
 
 const Search = forwardRef(({ onChange, placeholder, defaultValue, className, ...restProps }, ref) => {

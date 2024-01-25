@@ -3,15 +3,19 @@ import classnames from 'classnames';
 import { useDrag, useDrop } from 'react-dnd';
 import isEqual from 'react-fast-compare';
 
+// Helpers
 import { useMount } from 'hooks';
 import { callAfterDelay, stopEvent, debounce } from 'utils';
-
-import { Popover, Icon, Dropdown, ExtendedInput, Menu } from 'components';
 import { resizeConfigs, searchConfigs } from '../../../../utils/configs/tableConfigs';
-
-
 import { itemTypes } from '../utils';
 import resizeHandler from './resize';
+
+// Components
+import Popover from '../../../atoms/Popover';
+import Icon from '../../../atoms/Icon';
+import ExtendedInput from '../../../molecules/ExtendedInput';
+import Menu from '../../../molecules/Menu';
+import Dropdown from '../../Dropdown';
 
 function HeaderItem({
     id,

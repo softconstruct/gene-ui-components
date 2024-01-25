@@ -3,11 +3,18 @@ import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+
+// Helpers
 import { useDeviceType } from 'hooks';
-import { Empty, BusyLoader } from 'components';
+
+// Components
+import Empty from '../../../atoms/Empty';
+import BusyLoader from '../../../atoms/BusyLoader';
+
+// Local components
 import ChartLegend from '../Legend';
 
-
+// Styles
 import './index.scss';
 
 function PieChart({

@@ -2,11 +2,17 @@ import React, { forwardRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { noop } from 'utils';
+
+// Components
 import Icon from '../../atoms/Icon';
 import Portal from '../../atoms/Portal';
 
+// Local components
 import ActionMenu from './Menu';
+
+// Styles
 import './index.scss';
 
 const MobilePopUp = forwardRef(

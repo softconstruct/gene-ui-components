@@ -1,8 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Table from '../../Table';
+// Helpers
 import { WithTitle } from '../utils';
+
+// Components
+import Table from '../../Table';
 
 function TableTitle({ name, titleActions, ...tableProps }) {
     return (

@@ -1,12 +1,15 @@
 import React, { useCallback, useMemo } from 'react';
 import classnames from 'classnames';
 
-import './LinkButton.scss';
-
-// @ts-ignore
-import { Icon } from 'components';
+// Helpers
 // @ts-ignore
 import { noop } from 'utils';
+
+// Components
+import Icon from '../Icon';
+
+// Styles
+import './LinkButton.scss';
 
 interface ILinkButtonProps {
     /**

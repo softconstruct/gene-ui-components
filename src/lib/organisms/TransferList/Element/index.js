@@ -1,10 +1,11 @@
 import React, { forwardRef } from 'react';
 import classnames from 'classnames';
 
+// Components
 import Icon from '../../../atoms/Icon';
-import Label from '../../../atoms/Label';
 import Checkbox from '../../../molecules/Checkbox';
 
+// Styles
 import './index.scss';
 
 const TransferElement = forwardRef(

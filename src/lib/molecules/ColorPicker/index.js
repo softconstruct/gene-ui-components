@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { RgbaColorPicker, HexColorPicker } from 'react-colorful';
 
+// Helpers
 import { noop } from 'utils';
 
+// Styles
 import './index.scss';
 
 const defaultColors = [

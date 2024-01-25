@@ -2,17 +2,24 @@ import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { fileSizeDisplay, noop } from 'utils';
 import { uploaderConfig } from 'configs';
-import { useKeyDown } from 'hooks';
+import { useKeyDown, useImgDownload } from 'hooks';
+import { getLastMod } from '../uploadUtils';
 
-import { BusyLoader, Icon, Image, Button, Tooltip } from 'components';
+// Components
+import BusyLoader from '../../../atoms/BusyLoader';
+import Icon from '../../../atoms/Icon';
+import Button from '../../../atoms/Button';
+import Image from '../../../atoms/Image';
+import Tooltip from '../../Tooltip';
 
+// Local components
 import Preview from './Preview';
 
+// Styles
 import './index.scss';
-import { useImgDownload } from '../../../../hooks';
-import { getLastMod } from '../uploadUtils';
 
 function UploadedItem({
     notUploadedFileList,

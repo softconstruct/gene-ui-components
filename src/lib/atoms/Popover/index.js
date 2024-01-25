@@ -4,15 +4,19 @@ import { useSwipeable } from 'react-swipeable';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { useDeviceType, useUpdatableRef } from 'hooks';
 import { noop, guid, stopEvent } from 'utils';
 import { screenTypes, popoverConfig } from 'configs';
 
-import { GeneUIDesignSystemContext } from 'components';
+// Components
+import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
+// Local Components
 import Portal from '../Portal';
 import Scrollbar from '../Scrollbar';
 
+// Styles
 import './index.scss';
 
 const setRef = (ref, currentRef) => {

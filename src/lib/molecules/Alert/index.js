@@ -2,10 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { screenTypes } from 'configs';
 import { useDeviceType } from 'hooks';
+
+// Components
 import Icon from '../../atoms/Icon';
 
+// Styles
 import './index.scss';
 
 const alertTypes = ['success', 'info', 'warning', 'error', 'note', 'message'];

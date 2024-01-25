@@ -3,14 +3,24 @@ import React, { forwardRef, useState, useImperativeHandle, useMemo, useEffect, u
 import PropTypes from 'prop-types';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 
-// Import styles
-import './index.scss';
-// Import helpers
+// Helpers
 import { noop } from 'utils';
-import { Empty, BusyLoader, Checkbox, ExtendedInput, Tooltip, Icon, Scrollbar } from 'components';
 import { searchMethods, searchFunctions } from './config';
-// Import components
+
+// Components
+import Icon from '../../atoms/Icon';
+import Empty from '../../atoms/Empty';
+import BusyLoader from '../../atoms/BusyLoader';
+import Scrollbar from '../../atoms/Scrollbar';
+import Checkbox from '../../molecules/Checkbox';
+import ExtendedInput from '../../molecules/ExtendedInput';
+import Tooltip from '../../molecules/Tooltip';
+
+// Local components
 import Row from './Row';
+
+// Styles
+import './index.scss';
 
 // @TODO move helper function to separated file and check code to avoid code duplications
 const isNodeLeaf = (node = {}) => !node.hasOwnProperty('childrenList');

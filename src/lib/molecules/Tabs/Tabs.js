@@ -2,9 +2,13 @@ import React, { useState, useCallback, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { childrenOf } from 'utils';
+
+// Local components
 import Tab from './Tab';
 
+// Styles
 import './index.scss';
 
 function Tabs(props) {

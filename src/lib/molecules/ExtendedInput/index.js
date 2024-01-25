@@ -2,13 +2,17 @@ import React, { useState, forwardRef, useRef, useCallback, useEffect } from 'rea
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { inputConfig, screenTypes } from 'configs';
 import { noop, stopEvent } from 'utils';
 import { useDeviceType, useEllipsisDetection } from 'hooks';
-import SuggestionList from '../SuggestionList';
+
+// Components
 import Icon from '../../atoms/Icon';
+import SuggestionList from '../SuggestionList';
 import Tooltip from '../Tooltip';
 
+// Styles
 import './index.scss';
 
 function replaceBetween(start, end, initial, what) {

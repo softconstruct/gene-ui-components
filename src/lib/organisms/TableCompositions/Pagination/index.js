@@ -1,11 +1,13 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { noop, Logger } from 'utils';
-
 import { searchConfigs } from '../../../../utils/configs/tableConfigs';
-import Table from '../../Table';
 import { PaginationSelector } from '../utils';
+
+// Components
+import Table from '../../Table';
 
 function PaginationTable({
     rows,

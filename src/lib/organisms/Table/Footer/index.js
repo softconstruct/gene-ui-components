@@ -1,8 +1,11 @@
 import React from 'react';
 import classnames from 'classnames';
+
+// Local components
 import FooterItem from './item';
 import ActionBar from '../Row/actionBar';
 
+// Styles
 import './index.scss';
 
 function Footer({ values, orders, withRightCorner, withLeftCorners, stickyLeftExist, ...rest }) {

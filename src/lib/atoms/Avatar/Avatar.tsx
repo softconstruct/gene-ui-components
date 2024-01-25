@@ -1,9 +1,11 @@
 import React, { MouseEvent, ReactNode } from 'react';
 import classnames from 'classnames';
 
+// Helpers
 // @ts-ignore
 import { getInitials, noop } from 'utils';
 
+// Styles
 import './Avatar.scss';
 
 interface IAvatarProps {

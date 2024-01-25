@@ -2,13 +2,16 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
 import classnames from 'classnames';
+
+// Components
 import Badge from '../../atoms/Badge';
-import SearchResultRow from './SearchResultRow';
 import Scrollbar from '../../atoms/Scrollbar';
 import LinkButton from '../../atoms/LinkButton/index';
-import SkeletonSet from './SkeletonSet';
 import Empty from '../../atoms/Empty';
-import FilterList from './FilterList';
+
+// Local components
+import SearchResultRow from './SearchResultRow';
+import SkeletonSet from './SkeletonSet';
 
 function SearchResult({
     data,
@@ -112,6 +115,7 @@ SearchResult.defaultProps = {
     isSearchLoading: false,
     showMoreIsLoading: false
 };
+
 SearchResult.propTypes = {
     /**
      * total count of data to show in badge

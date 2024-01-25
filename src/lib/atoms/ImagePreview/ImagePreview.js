@@ -1,16 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-
-import { fileSizeDisplay, noop } from 'utils';
-import { useImgDownload } from 'hooks';
-
 import classnames from 'classnames';
 
-import './index.scss';
-import { Tooltip, Icon, Switcher } from 'components';
-import useEllipsisDetection from '../../../hooks/useEllipsisDetection';
+// Helpers
+import { fileSizeDisplay, noop } from 'utils';
+import { useImgDownload, useEllipsisDetection } from 'hooks';
 
+// Components
+import Icon from '../Icon';
+import Switcher from '../Switcher';
+import Tooltip from '../../molecules/Tooltip';
+
+// Local components
 import Magnifier from './Magnifier';
+
+// Styles
+import './index.scss';
 
 function ImagePreview({
     name,

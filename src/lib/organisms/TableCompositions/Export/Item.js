@@ -1,15 +1,13 @@
 import React, { useRef, useCallback } from 'react';
 
+// Helpers
+import { stopEvent } from '../../../../utils';
+
+// Components
 import Icon from '../../../atoms/Icon';
 import Paper from '../../../atoms/Paper';
 import Option from '../../../atoms/Option';
 import Tooltip from '../../../molecules/Tooltip';
-import Button from '../../../atoms/Button';
-
-import { stopEvent } from '../../../../utils';
-
-import xlsSvg from '../../../../assets/media/export/xls.svg';
-import csvSvg from '../../../../assets/media/export/csv.svg';
 
 function ExportItem({
     type,

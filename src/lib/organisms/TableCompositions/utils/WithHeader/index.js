@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 
+// Components
 import SearchWithDropdown from '../../../SearchWithDropdown';
 
+// Styles
 import './index.scss';
 
 function WithHeader({

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// Components
 import ModuleTitle from '../../../../atoms/ModuleTitle';
 
 function WithTitle({ name, actions, children, ...restProps }) {

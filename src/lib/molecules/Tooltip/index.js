@@ -3,12 +3,15 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import ReactPopover from 'react-tiny-popover';
 
+// Helpers
 import { positions } from 'configs';
 import { noop } from 'utils';
 import { useDeviceType } from 'hooks';
 
-import { GeneUIDesignSystemContext } from 'components';
+// Components
+import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
+// Styles
 import './index.scss';
 
 function Tooltip({

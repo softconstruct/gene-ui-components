@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 
+// Helpers
 import { callAfterDelay, stopEvent } from 'utils';
 import { getOffsetValuesAndSubscriptions, observeStickyInfo } from '../utils';
 import { resizeConfigs } from '../../../../utils/configs/tableConfigs';

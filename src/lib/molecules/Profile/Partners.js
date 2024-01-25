@@ -1,8 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Divider, Option, Scrollbar, Empty, Search } from 'components';
+// Helpers
+import { toLowerCaseString } from 'utils';
 
-import { toLowerCaseString } from '../../../utils';
+// Components
+import Divider from '../../atoms/Divider';
+import Option from '../../atoms/Option';
+import Scrollbar from '../../atoms/Scrollbar';
+import Empty from '../../atoms/Empty';
+import Search from '../Search';
 
 function Partners({ partners }) {
     const [partnersData, setPartnersData] = useState([]);

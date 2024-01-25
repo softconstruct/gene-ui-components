@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-
 import Highcharts from 'highcharts';
-
 import HS_map from 'highcharts/modules/treemap';
 import HighchartsReact from 'highcharts-react-official';
 
-import { Empty, BusyLoader } from 'components';
+// Components
+import Empty from '../../../atoms/Empty';
+import BusyLoader from '../../../atoms/BusyLoader';
 
+// Styles
 import './index.scss';
 
 HS_map(Highcharts);

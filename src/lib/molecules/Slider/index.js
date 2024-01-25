@@ -3,10 +3,14 @@ import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import Slider, { createSliderWithTooltip } from 'rc-slider';
 
+// Helpers
 import { useWidth } from 'hooks';
+
+// Components
 import Icon from '../../atoms/Icon';
 import NumberInput from '../ValidatableElements/Elements/ValidatableNumberInput';
 
+// Styles
 import 'src/assets/styles/rangeAndSlider.scss';
 
 const SliderWithTooltip = createSliderWithTooltip(Slider);

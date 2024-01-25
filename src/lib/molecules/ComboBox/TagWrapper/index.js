@@ -1,13 +1,18 @@
 import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
-import { stopEvent, callAfterDelay } from 'utils';
-import { useKeyDown, useClickOutside } from 'hooks';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
-import { Icon, Tooltip, Tag } from 'components';
+
+// Helpers
+import { stopEvent, callAfterDelay } from 'utils';
+import { useKeyDown, useClickOutside } from 'hooks';
 import { keyDownKeys } from '../config';
 
+// Components
+import Icon from '../../../atoms/Icon';
+import Tooltip from '../../Tooltip';
+import Tag from '../../Tag';
 
+// Styles
 import './index.scss';
 
 /**

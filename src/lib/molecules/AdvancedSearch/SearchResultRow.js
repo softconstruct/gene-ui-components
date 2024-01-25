@@ -2,11 +2,14 @@ import React, { useCallback, useRef, useState } from 'react';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 import dayjs from 'dayjs';
+
+// Helpers
+import { useEllipsisDetection } from 'hooks';
+
+// Components
 import Icon from '../../atoms/Icon';
 import Button from '../../atoms/Button';
-import useEllipsisDetection from '../../../hooks/useEllipsisDetection';
 import Tooltip from '../Tooltip';
-import SearchResult from './SearchResult';
 
 function SearchResultRow({ element }) {
     const { icon, id, title, name, date, actions } = element;
@@ -89,6 +92,7 @@ function SearchResultRow({ element }) {
 SearchResultRow.defaultProps = {
     element: {}
 };
+
 SearchResultRow.propTypes = {
     element: PropTypes.shape({
         icon: PropTypes.string,

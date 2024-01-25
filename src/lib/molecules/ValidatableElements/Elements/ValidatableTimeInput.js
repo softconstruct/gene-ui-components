@@ -1,9 +1,11 @@
 import React, { useCallback, useState, useEffect, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { getBrowserDateFormat, checkTimeValidation } from 'utils';
 import { dayjsWithPlugins } from 'wrappers';
 
+// Components
 import ExtendedInput from '../../ExtendedInput';
 
 const nonLettersRegex = /[\W_]+/g;

@@ -2,15 +2,16 @@ import React, { useState, useCallback, forwardRef, useEffect } from 'react';
 import classnames from 'classnames';
 import dayjs from 'dayjs';
 
+// Helpers
 import { dayjsWithPlugins } from 'wrappers';
+import { addTime } from '../utils';
 
+// Local components
 import Body from './Body';
 import Header from './Header';
 import Footer from './Footer';
 import { useDatePickerContext } from '../Context';
 import TimeInput from '../TimeInput';
-
-import { addTime } from '../utils';
 
 const Calendar = forwardRef((props, ref) => {
     const {

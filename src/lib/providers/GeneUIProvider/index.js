@@ -1,7 +1,10 @@
 import React, { createContext, useRef } from 'react';
 import PropTypes from 'prop-types';
+
+// Statics
 import pgk from '../../../../package.json';
 
+// Styles
 import 'src/assets/styles/globalStyling.scss';
 
 export const GeneUIDesignSystemContext = createContext();

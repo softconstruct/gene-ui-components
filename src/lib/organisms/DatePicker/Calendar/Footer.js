@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import dayjs from 'dayjs';
 
+// Components
 import Button from '../../../atoms/Button';
 
 function Footer({

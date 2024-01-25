@@ -2,10 +2,15 @@ import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { widgetConfig } from 'configs';
 
-import { Icon, KeyValue, ModuleTitle } from 'components';
+// Components
+import Icon from '../../atoms/Icon';
+import KeyValue from '../../atoms/KeyValue';
+import ModuleTitle from '../../atoms/ModuleTitle';
 
+// Styles
 import './index.scss';
 
 function Widget({

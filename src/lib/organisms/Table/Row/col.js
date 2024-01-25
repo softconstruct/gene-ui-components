@@ -2,8 +2,13 @@ import React, { useRef, useCallback, useEffect, useState } from 'react';
 import classnames from 'classnames';
 import isEqual from 'react-fast-compare';
 
+// Helpers
 import { guid, stopEvent, copyToClipboard, callAfterDelay } from 'utils';
-import { Icon, SkeletonLoader, Tooltip } from 'components';
+
+// Components
+import Icon from '../../../atoms/Icon';
+import SkeletonLoader from '../../../atoms/SkeletonLoader';
+import Tooltip from '../../../molecules/Tooltip';
 
 function Col({
     id,

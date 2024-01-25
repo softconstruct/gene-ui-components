@@ -1,8 +1,10 @@
 import React from 'react';
 
+// Local components
 import Header from './header';
 import Body from './body';
 
+// Styles
 import './index.scss';
 
 function Nested({ rows, columns, isEditActive, ...restProps }) {

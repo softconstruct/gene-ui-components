@@ -2,9 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { titleConfig } from 'configs';
+
+// Components
 import Icon from '../Icon';
 
+// Styles
 import './index.scss';
 
 function Title({ icon, text, actions, color, withLine, className, ...restProps }) {

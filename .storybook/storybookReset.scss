@@ -8,15 +8,15 @@ $sb-hero: #14a4ff;
 }
 
 body {
-    padding: 0 rem(24) rem(24);
     height: 100%;
-    @include sbMobile {
-        padding: 0 rem(6) rem(6);
-    }
 
     #root {
         height: 100%;
     }
+}
+
+.sb-show-main.sb-main-padded {
+    padding: 0;
 }
 
 .storybook-preview-header {

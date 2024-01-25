@@ -1,10 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { titleConfig } from 'configs';
 
+// Components
 import Title from '../../atoms/Title';
 
+// Styles
 import './index.scss';
 
 function Section({ children, ...restProps }) {

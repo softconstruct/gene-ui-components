@@ -2,8 +2,10 @@ import React, { forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import { Icon } from 'components';
+// Components
+import Icon from '../Icon';
 
+// Styles
 import './index.scss';
 
 const Button = forwardRef(

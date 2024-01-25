@@ -2,18 +2,20 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { noop } from 'utils';
 import { useThrottle } from 'hooks';
-
-import Export from '../Export';
-import PaginationTable from '../Pagination';
 import { WithHeader, WithTitle, PaperWrapper } from '../utils';
 import { useSortConfigs, sortHandler } from '../../Table/utils';
 
+// Components
 import Button from '../../../atoms/Button';
 import Divider from '../../../atoms/Divider';
 import Tooltip from '../../../molecules/Tooltip';
 
+// Local components
+import Export from '../Export';
+import PaginationTable from '../Pagination';
 function ComboTable({
     rows,
     name,

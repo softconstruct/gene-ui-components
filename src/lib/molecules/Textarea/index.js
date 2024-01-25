@@ -1,10 +1,14 @@
 import React from 'react';
-import { noop } from 'utils';
-
 import PropTypes from 'prop-types';
-import { inputConfig, screenTypes } from 'configs';
-import { ExtendedInput } from 'components';
 
+// Helpers
+import { noop } from 'utils';
+import { inputConfig, screenTypes } from 'configs';
+
+// Components
+import ExtendedInput from '../ExtendedInput';
+
+// Styles
 import './index.scss';
 
 function Textarea(props) {

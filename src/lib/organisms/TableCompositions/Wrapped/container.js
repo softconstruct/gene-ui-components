@@ -2,7 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { PaperWrapper, WithTitle } from '../utils';
+
+// Local components
 import Header from '../Header';
 
 function WrapperTableContainer({ name, titleActions, headerActions, className, paperProps, ...headerProps }) {

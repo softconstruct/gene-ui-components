@@ -2,8 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+// Helpers
 import { tagConfig } from 'configs';
 
+// Styles
 import './index.scss';
 
 function Tag({

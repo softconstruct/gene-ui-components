@@ -1,11 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { noop, stopEvent } from 'utils';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
+
+// Helpers
 import { useKeyDown } from 'hooks';
+import { noop, stopEvent } from 'utils';
 
-import { Button, Label, SkeletonLoader, Tooltip, ExtendedInput } from 'components';
+// Components
+import Button from '../../atoms/Button';
+import Label from '../../atoms/Label';
+import SkeletonLoader from '../../atoms/SkeletonLoader';
+import Tooltip from '../Tooltip';
+import ExtendedInput from '../ExtendedInput';
 
+// Styles
 import './index.scss';
 
 const keyDownKeys = {

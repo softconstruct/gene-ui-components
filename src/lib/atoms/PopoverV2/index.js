@@ -4,16 +4,17 @@ import { useSwipeable } from 'react-swipeable';
 import classnames from 'classnames';
 import PropTypes from 'prop-types';
 
+// Helpers
 import { noop, stopEvent, debounce } from 'utils';
 import { useDeviceType, useClickOutside } from 'hooks';
-
 import { screenTypes, popoverV2Config } from 'configs';
 
-import { GeneUIDesignSystemContext } from 'components';
+// Components
 import Scrollbar from '../Scrollbar';
+import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
+// Styles
 import './index.scss';
-
 
 const PopoverV2 = forwardRef((props, ref) => {
     const {
@@ -75,11 +76,12 @@ const PopoverV2 = forwardRef((props, ref) => {
     }, [isMobile, cornerRadius]);
 
     useEffect(() => {
-        if (popoverRef.current && popoverRef.current.offsetWidth) {
-            setTargetWidth(popoverRef.current.offsetWidth);
+        if (popoverRef.current && popoverRef.current?.offsetWidth) {
+            setTargetWidth(popoverRef.current?.offsetWidth);
             const debouncedHandleResize = debounce(() => {
-                setTargetWidth(popoverRef.current.offsetWidth);
+                setTargetWidth(popoverRef.current?.offsetWidth);
             }, 20);
+
             window.addEventListener('resize', debouncedHandleResize);
             return () => window.removeEventListener('resize', debouncedHandleResize);
         }

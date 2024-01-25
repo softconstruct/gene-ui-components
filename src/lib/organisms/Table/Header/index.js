@@ -2,10 +2,14 @@ import React, { useMemo, useCallback, forwardRef, memo } from 'react';
 import classnames from 'classnames';
 import isEqual from 'react-fast-compare';
 
-import HeaderItem from './item';
+// Helpers
 import { arrayReorder } from '../utils';
+
+// Local components
+import HeaderItem from './item';
 import ActionBar from '../Row/actionBar';
 
+// Styles
 import './index.scss';
 
 const Header = forwardRef(

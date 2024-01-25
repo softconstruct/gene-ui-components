@@ -5,17 +5,10 @@ import PropTypes from 'prop-types';
 import { List, WindowScroller, CellMeasurer, CellMeasurerCache, InfiniteLoader, AutoSizer } from 'react-virtualized';
 import classnames from 'classnames';
 
+// Helpers
 import { oneIsRequired, noop, stopEvent, debounce, guid } from 'utils';
 import { useMount, useUpdate, useThrottle } from 'hooks';
-
-import { Empty, Scrollbar, BusyLoader } from 'components';
-
 import { searchConfigs } from '../../../utils/configs/tableConfigs';
-
-import Row from './Row';
-import Header from './Header';
-import Footer from './Footer';
-
 import {
     sortHandler,
     useSortConfigs,
@@ -27,6 +20,17 @@ import {
     getOffsetValuesAndSubscriptions
 } from './utils';
 
+// Components
+import Empty from '../../atoms/Empty';
+import Scrollbar from '../../atoms/Scrollbar';
+import BusyLoader from '../../atoms/BusyLoader';
+
+// Local components
+import Row from './Row';
+import Header from './Header';
+import Footer from './Footer';
+
+// Styles
 import './index.scss';
 
 function Table(props) {
