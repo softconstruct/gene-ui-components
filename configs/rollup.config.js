@@ -95,7 +95,7 @@ export default {
             }
         }
     ],
-    external: ['react', 'react-dom'],
+    external: ['react', 'react-dom', 'prop-types'],
     plugins: [
         // peerDepsExternal({
         //     packageJsonPath: resolvePath(__dirname, '../package.json'),
