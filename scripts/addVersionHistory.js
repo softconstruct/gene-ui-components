@@ -8,18 +8,15 @@ const messages = {
 
 const addVersionToHistory = async () => {
     try {
-        const firstVersionTag = 'v2.1.0';
-
         const libVersionsFromRepo = await execCommand('npm view @geneui/components versions');
+
         const libVersionsFromRepoArr = libVersionsFromRepo
             .split(',')
-            .map((version) => `v${version.replace(/[\[\]\\n']/g, '').trim()}`)
-            .filter((version) => version.endsWith('0'));
+            .map((version) => `v${version.replace(/[\[\]\\n']/g, '').trim()}`);
+        // .filter((version) => version.endsWith('0'));
 
         const libVersions = {
             versions: libVersionsFromRepoArr
-                .splice(libVersionsFromRepoArr.indexOf(firstVersionTag), libVersionsFromRepoArr.length)
-                .reverse()
         };
 
         await fs.writeFile('./.storybook/lib-versions.json', JSON.stringify(libVersions));
