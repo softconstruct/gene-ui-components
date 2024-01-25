@@ -1,6 +1,6 @@
 # Changelog
 
-# [2.12.0](https://github.com/softconstruct/gene-ui-components/compare/v2.11.2...v2.12.0) (2024-01-11)
+# [2.12.1](https://github.com/softconstruct/gene-ui-components/compare/v2.11.2...v2.12.1) (2024-01-11)
 
 ### Bug Fixes
 
