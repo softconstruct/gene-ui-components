@@ -34,6 +34,7 @@ export default {
         comparisonText: args({ control: 'text', ...content }),
         withShadow: args({ control: 'boolean', ...appearance }),
         withBorder: args({ control: 'boolean', ...appearance }),
+        withHeaderActions: args({ control: 'boolean', ...appearance }),
         showComparisonIcons: args({ control: 'boolean', ...content }),
         size: args({ control: 'select', options: widgetConfig.size, ...appearance }),
         type: args({ control: 'select', options: widgetConfig.type, ...appearance }),
@@ -53,6 +54,7 @@ export default {
         showComparisonIcons: false,
         size: widgetConfig.size[1],
         headerActions: headerActions,
+        withHeaderActions: false,
         titleIcon: 'bc-icon-fantasy-sports',
         comparisonStatus: widgetConfig.comparisonStatus[0],
         img: 'https://www.svgrepo.com/show/244697/coins-money.svg'
