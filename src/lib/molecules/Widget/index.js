@@ -20,7 +20,6 @@ function Widget({
     text,
     color,
     headerActions,
-    withHeaderActions,
     noDataText,
     noData,
     className,
@@ -35,7 +34,6 @@ function Widget({
     keyValues,
     ...restProps
 }) {
-    const showHeaderActions = type !== widgetConfig.type[1] || withHeaderActions;
     const showKeyValues = useMemo(() => !!keyValues.length && size === widgetConfig.size[2], [size, keyValues]);
 
     return (
@@ -92,7 +90,7 @@ function Widget({
                 </>
             ) : (
                 <>
-                    <li className="image">{img && <img src={img} alt="" />}</li>
+                    {img && <li className="image">{img && <img src={img} alt="" />}</li>}
                     <li className="head">
                         <ModuleTitle
                             title={title}
@@ -102,7 +100,7 @@ function Widget({
                             titleIcon={titleIcon}
                             {...titleProps}
                         >
-                            {showHeaderActions && headerActions}
+                            {headerActions}
                         </ModuleTitle>
                     </li>
                     <li
@@ -173,12 +171,8 @@ Widget.propTypes = {
      */
     color: PropTypes.string,
     /**
-     * The prop is responsible for the `headerActions` prop visibility option
-     */
-    withHeaderActions: PropTypes.bool,
-
-    /**
-     * Header of widget can have actions, so with this prop can be set actions
+     * The prop allows you to specify actions for the widget's header.
+     * It works only for types `default` and `compact`
      */
     headerActions: PropTypes.node,
     /**
@@ -241,7 +235,6 @@ Widget.defaultProps = {
     titleProps: {},
     withShadow: true,
     withBorder: false,
-    withHeaderActions: false,
     showComparisonIcons: false,
     comparisonStatus: widgetConfig.comparisonStatus[0],
     size: widgetConfig.size[1],
