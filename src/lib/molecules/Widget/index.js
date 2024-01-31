@@ -90,7 +90,11 @@ function Widget({
                 </>
             ) : (
                 <>
-                    {img && <li className="image">{img && <img src={img} alt="" />}</li>}
+                    {img && (
+                        <li className="image">
+                            <img src={img} alt="" />
+                        </li>
+                    )}
                     <li className="head">
                         <ModuleTitle
                             title={title}
