@@ -86,6 +86,11 @@ const NumberInput = forwardRef((props, ref) => {
     // we use this because need to show field validation after onBlur
     const handleBlur = useCallback(
         (e) => {
+            const { value, validity } = e.target;
+
+            if (validity.badInput && !value.length) {
+                e.target.value = '';
+            }
             onBlur(e);
             setAllowValidation(true);
         },
