@@ -248,7 +248,7 @@ function DatePickerInput({
                         {...pickerProps}
                         markedDate={markedDate}
                         frozenDateRange={frozenDateRange}
-                        autocomplete="off"
+                        autoComplete="off"
                     />
                 )
             }
