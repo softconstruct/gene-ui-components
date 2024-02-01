@@ -331,11 +331,11 @@ function DateRangePickerInput({
             e.stopPropagation();
             e.preventDefault();
 
-            if (!popoverOpened && !isBlurInitiatorCalendarIcon) {
+            if ((!popoverOpened && !isBlurInitiatorCalendarIcon) || withoutPicker) {
                 inputRef.current.focus();
             }
         },
-        [popoverOpened]
+        [popoverOpened, withoutPicker]
     );
 
     useEffect(() => {
@@ -499,7 +499,8 @@ function DateRangePickerInput({
                 onIconClick={handleIconClick}
                 className={classnames(className, 'date-input', {
                     'default-cursor': readOnly,
-                    'clearable-date-picker': clearable
+                    'clearable-date-picker': clearable,
+                    'text-cursor': withoutPicker
                 })}
                 autoComplete="off"
                 {...sharedProps}

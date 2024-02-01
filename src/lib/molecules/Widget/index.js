@@ -34,7 +34,6 @@ function Widget({
     keyValues,
     ...restProps
 }) {
-    const isCompact = type === widgetConfig.type[1];
     const showKeyValues = useMemo(() => !!keyValues.length && size === widgetConfig.size[2], [size, keyValues]);
 
     return (
@@ -91,7 +90,11 @@ function Widget({
                 </>
             ) : (
                 <>
-                    <li className="image">{img && <img src={img} alt="" />}</li>
+                    {img && (
+                        <li className="image">
+                            <img src={img} alt="" />
+                        </li>
+                    )}
                     <li className="head">
                         <ModuleTitle
                             title={title}
@@ -101,7 +104,7 @@ function Widget({
                             titleIcon={titleIcon}
                             {...titleProps}
                         >
-                            {!isCompact && headerActions}
+                            {headerActions}
                         </ModuleTitle>
                     </li>
                     <li
@@ -172,7 +175,8 @@ Widget.propTypes = {
      */
     color: PropTypes.string,
     /**
-     * Header of widget can have actions, so with this prop can be set actions
+     * The prop allows you to specify actions for the widget's header.
+     * It works only for types `default` and `compact`
      */
     headerActions: PropTypes.node,
     /**
