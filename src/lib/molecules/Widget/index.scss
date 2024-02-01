@@ -44,7 +44,7 @@
         grid-template-areas: 'image head' 'image text';
 
         &.t-default {
-         padding-inline: rem(20);
+            padding-inline: rem(20);
 
             .module-title {
                 font-size: rem(12);
@@ -117,12 +117,15 @@
                         display: none;
                     }
                     .s-medium#{&} {
-                        padding: 0 rem(20);
+                        padding-inline: rem(20);
 
                         img {
                             width: rem(30);
                             height: rem(30);
                         }
+                    }
+                    .s-big#{&} {
+                        padding-inline: rem(20);
                     }
                 }
             }
