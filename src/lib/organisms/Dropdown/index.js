@@ -363,7 +363,7 @@ function Dropdown({
      */
     const outsideClickInputHandler = useClickOutside((e) => {
         if (!opened && !parentRef.current.contains(e.target)) {
-            setInputOutsideClick(selectedValue);
+            setInputOutsideClick(true);
         }
     });
 

@@ -14,6 +14,7 @@ import Empty from '../../../atoms/Empty';
 import BusyLoader from '../../../atoms/BusyLoader';
 
 // Local components
+import Icon from '../../../atoms/Icon';
 import IconButton from './IconButton';
 
 // Styles
