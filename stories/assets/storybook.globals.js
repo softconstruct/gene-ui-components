@@ -1,3 +1,5 @@
+// TODO: This object will be removed after refactoring
+// all stories to use `propCategory` instead of `category`
 export const category = {
     functionality: 'Functionality',
     validation: 'Validation',
@@ -6,6 +8,18 @@ export const category = {
     action: 'Actions',
     states: 'States',
     others: 'Others'
+};
+
+// TODO: This comment can be removed after refactoring
+// all stories to use this object instead of `category`
+export const propCategory = {
+    functionality: { category: 'Functionality' },
+    validation: { category: 'Validation' },
+    appearance: { category: 'Appearance' },
+    content: { category: 'Content' },
+    action: { category: 'Actions' },
+    states: { category: 'States' },
+    others: { category: 'Others' }
 };
 
 export const args = (obj) => {
