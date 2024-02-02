@@ -158,11 +158,11 @@ function DatePickerInput({
             e.stopPropagation();
             e.preventDefault();
 
-            if (!popoverOpened && !isBlurInitiatorCalendarIcon) {
+            if ((!popoverOpened && !isBlurInitiatorCalendarIcon) || withoutPicker) {
                 inputRef.current.focus();
             }
         },
-        [popoverOpened]
+        [popoverOpened, withoutPicker]
     );
 
     useEffect(() => {
@@ -248,7 +248,6 @@ function DatePickerInput({
                         {...pickerProps}
                         markedDate={markedDate}
                         frozenDateRange={frozenDateRange}
-                        autocomplete="off"
                     />
                 )
             }
@@ -263,8 +262,9 @@ function DatePickerInput({
                 onChange={handleInputChange}
                 icon={readOnly ? '' : 'bc-icon-calendar'}
                 className={classnames(className, 'date-input', {
-                    'default-cursor': readOnly,
-                    'clearable-date-picker': clearable
+                    'default-cursor': readOnly || disabled,
+                    'clearable-date-picker': clearable,
+                    'text-cursor': withoutPicker
                 })}
                 {...sharedProps}
             />

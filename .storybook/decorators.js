@@ -63,16 +63,16 @@ const CustomDecorator = ({ children }) => {
     return (
         <>
             <GeneUIProvider>
-                <div data-stage-alert style={{ padding: '16px 16px 0' }}>
-                    {componentStageProp && (
+                {componentStageProp && (
+                    <div data-stage-alert style={{ padding: '16px 16px 0' }}>
                         <Alert
                             title={componentStageProp?.type.replace(/^\w/, (c) => c.toUpperCase())}
                             message={alertMessage}
                             style={{ marginBottom: '10px' }}
                             type={type}
                         />
-                    )}
-                </div>
+                    </div>
+                )}
                 <div style={{ position: 'relative', height: '100%', padding: '8px 16px' }}>
                     <div>{allowRenderChildren && children}</div>
                 </div>
