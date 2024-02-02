@@ -263,7 +263,7 @@ function DatePickerInput({
                 onChange={handleInputChange}
                 icon={readOnly ? '' : 'bc-icon-calendar'}
                 className={classnames(className, 'date-input', {
-                    'default-cursor': readOnly,
+                    'default-cursor': readOnly || disabled,
                     'clearable-date-picker': clearable,
                     'text-cursor': withoutPicker
                 })}
