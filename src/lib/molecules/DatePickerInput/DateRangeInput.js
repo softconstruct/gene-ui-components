@@ -498,7 +498,7 @@ function DateRangePickerInput({
                 icon={readOnly ? '' : 'bc-icon-calendar'}
                 onIconClick={handleIconClick}
                 className={classnames(className, 'date-input', {
-                    'default-cursor': readOnly,
+                    'default-cursor': readOnly || disabled,
                     'clearable-date-picker': clearable,
                     'text-cursor': withoutPicker
                 })}
