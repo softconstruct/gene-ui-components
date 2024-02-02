@@ -502,7 +502,7 @@ function DateRangePickerInput({
                     'clearable-date-picker': clearable,
                     'text-cursor': withoutPicker
                 })}
-                autoComplete="off"
+                autocomplete="off"
                 {...sharedProps}
             />
         </Popover>
