@@ -230,10 +230,6 @@ const PopoverV2 = forwardRef((props, ref) => {
         [popoverTrackRef, children, trackClassName, popoverState, disabled, handleTrackClick]
     );
 
-    if (!Content) {
-        return childElement;
-    }
-
     const containerParentMemo = useMemo(
         () => ({
             containerParent: containerParent || geneUIProviderRef.current
@@ -241,6 +237,9 @@ const PopoverV2 = forwardRef((props, ref) => {
         [containerParent]
     );
 
+    if (!Content) {
+        return childElement;
+    }
     return (
         <TinyPopover
             key={updateKey}

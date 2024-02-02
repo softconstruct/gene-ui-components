@@ -331,11 +331,11 @@ function DateRangePickerInput({
             e.stopPropagation();
             e.preventDefault();
 
-            if (!popoverOpened && !isBlurInitiatorCalendarIcon) {
+            if ((!popoverOpened && !isBlurInitiatorCalendarIcon) || withoutPicker) {
                 inputRef.current.focus();
             }
         },
-        [popoverOpened]
+        [popoverOpened, withoutPicker]
     );
 
     useEffect(() => {
@@ -498,10 +498,11 @@ function DateRangePickerInput({
                 icon={readOnly ? '' : 'bc-icon-calendar'}
                 onIconClick={handleIconClick}
                 className={classnames(className, 'date-input', {
-                    'default-cursor': readOnly,
-                    'clearable-date-picker': clearable
+                    'default-cursor': readOnly || disabled,
+                    'clearable-date-picker': clearable,
+                    'text-cursor': withoutPicker
                 })}
-                autoComplete="off"
+                autocomplete="off"
                 {...sharedProps}
             />
         </Popover>

@@ -25,5 +25,5 @@
         "scss/operator-no-newline-after": null,
         "color-function-notation": "legacy"
     },
-    "ignoreFiles": ["../coverage/**/*.css"]
+    "ignoreFiles": ["../coverage/**/*.css", "../storybook-static/**/*.css"]
 }

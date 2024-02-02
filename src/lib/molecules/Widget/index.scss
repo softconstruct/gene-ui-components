@@ -44,7 +44,7 @@
         grid-template-areas: 'image head' 'image text';
 
         &.t-default {
-            @include rtl(padding, 0 rem(20) 0 0, 0 0 0 rem(20));
+            padding-inline: rem(20);
 
             .module-title {
                 font-size: rem(12);
@@ -55,7 +55,7 @@
             }
 
             .image {
-                padding: 0 rem(35);
+                padding-inline-end: rem(35);
 
                 img {
                     width: rem(50);
@@ -63,7 +63,7 @@
                 }
                 @at-root {
                     .s-small#{&} {
-                        padding: 0 rem(15);
+                        padding-inline-end: rem(15);
 
                         img {
                             width: rem(34);
@@ -71,7 +71,7 @@
                         }
                     }
                     .s-medium#{&} {
-                        padding: 0 rem(20);
+                        padding-inline-end: rem(20);
 
                         img {
                             width: rem(48);
@@ -106,7 +106,7 @@
             grid-template-rows: auto 1fr;
 
             .image {
-                padding: 0 rem(15);
+                padding-inline-end: rem(15);
 
                 img {
                     width: rem(48);
@@ -117,12 +117,15 @@
                         display: none;
                     }
                     .s-medium#{&} {
-                        padding: 0 rem(20);
+                        padding-inline: rem(20);
 
                         img {
                             width: rem(30);
                             height: rem(30);
                         }
+                    }
+                    .s-big#{&} {
+                        padding-inline: rem(20);
                     }
                 }
             }

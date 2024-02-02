@@ -19,7 +19,7 @@ import { noop, stopEvent, callAfterDelay } from 'utils';
 // Components
 import BusyLoader from '../../atoms/BusyLoader';
 import Empty from '../../atoms/Empty';
-import Popover from '../../atoms/Popover';
+import Popover from '../../atoms/PopoverV2';
 import Tooltip from '../../molecules/Tooltip';
 import ExtendedInput from '../../molecules/ExtendedInput';
 
