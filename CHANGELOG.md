@@ -1,6 +1,19 @@
 # Changelog
 
-# [2.12.1](https://github.com/softconstruct/gene-ui-components/compare/v2.11.2...v2.12.1) (2024-01-11)
+# 2.12.2 (2023-11-25)
+
+### Bug Fixes
+
+-   **PopoverV2:** rmove to up container parent ref
+    definition([#50](https://github.com/softconstruct/gene-ui-components/issues/50))
+-   **Widget:** add support headerActions prop functional for compact
+    type([#54](https://github.com/softconstruct/gene-ui-components/issues/54))
+-   **ValidatableNumberInput:** clear bad values of
+    input([#51](https://github.com/softconstruct/gene-ui-components/issues/51))
+-   **ExtendedInput:** focus event logic input([#52](https://github.com/softconstruct/gene-ui-components/issues/52))
+-   **Dropdown:** default value falsy case input([#53](https://github.com/softconstruct/gene-ui-components/issues/53))
+
+# 2.12.1 (2024-01-11)
 
 ### Bug Fixes
 
