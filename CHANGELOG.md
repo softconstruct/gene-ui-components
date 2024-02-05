@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.12.3](https://github.com/softconstruct/gene-ui-components/compare/v2.12.2...v2.12.3) (2024-02-05)
+
+
+### Bug Fixes
+
+* **Package:** remove side effects from package.json and rollup config ([8ccbb41](https://github.com/softconstruct/gene-ui-components/commit/8ccbb4100d31265d7e6b52f439796037f1256019))
+* **Portal:** add optional chaining for provider ref ([cda1f02](https://github.com/softconstruct/gene-ui-components/commit/cda1f026b28566dbfcdd6a9fb7f5c8834e29f3ff))
+
 # 2.12.2 (2024-02-02)
 
 ### Bug Fixes
