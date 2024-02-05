@@ -18,7 +18,8 @@ function Portal({ isOpen, children, className, container: propsContainer }) {
 
             setContainer(div);
 
-            geneUIProviderRef.current.appendChild(div);
+            geneUIProviderRef.current?.appendChild(div);
+
             return () => {
                 geneUIProviderRef.current?.removeChild(div);
             };

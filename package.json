@@ -19,10 +19,6 @@
     ],
     "main": "index.js",
     "typings": "index.d.ts",
-    "sideEffects": [
-        "**/*.css",
-        "**/*.scss"
-    ],
     "scripts": {
         "start": "npm run test && storybook dev -p 6006",
         "dev": "concurrently --kill-others -g \"npm:test:watch\" \"npm:start\"",
