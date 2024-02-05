@@ -112,9 +112,7 @@ export default {
                 components: 'src/index.ts'
             }
         }),
-        resolve({
-            ignoreSideEffectsForRoot: true
-        }),
+        resolve(),
         typescript({
             tsconfig: resolvePath(__dirname, 'tsconfig.json')
         }),
