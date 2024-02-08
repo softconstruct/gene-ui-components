@@ -79,7 +79,7 @@ function SearchResultRow({ element }) {
                         appearance="minimal"
                         onFocus={handleFocus}
                         cornerRadius="smooth"
-                        onClick={action.onClick(element)}
+                        onClick={() => action?.onClick(element)}
                         className="searchResultRow__action"
                         ariaLabel={action.name || action.icon}
                     />
