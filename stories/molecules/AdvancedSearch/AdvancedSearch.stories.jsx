@@ -156,17 +156,20 @@ export const AdvancedSearch = ({ ...args }) => {
                     {
                         name: 'name1',
                         icon: 'bc-icon-archive',
-                        onClick: () => {}
+                        onClick: () => {},
+                        description: 'description 1'
                     },
                     {
                         name: 'name2',
                         icon: 'bc-icon-convert-to-report',
-                        onClick: () => {}
+                        onClick: () => {},
+                        description: 'description 2'
                     },
                     {
                         name: 'name3',
                         icon: 'bc-icon-info',
-                        onClick: () => {}
+                        onClick: () => {},
+                        description: 'description 3'
                     }
                 ]
             };

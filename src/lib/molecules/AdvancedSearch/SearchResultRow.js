@@ -70,19 +70,20 @@ function SearchResultRow({ element }) {
                 })}
             >
                 {actions?.map((action, index) => (
-                    <Button
-                        key={index}
-                        tabIndex={0}
-                        size="medium"
-                        icon={action.icon}
-                        onBlur={handleBlur}
-                        appearance="minimal"
-                        onFocus={handleFocus}
-                        cornerRadius="smooth"
-                        onClick={() => action?.onClick(element)}
-                        className="searchResultRow__action"
-                        ariaLabel={action.name || action.icon}
-                    />
+                    <Tooltip key={index} text={action?.description} isVisible={!!action?.description}>
+                        <Button
+                            tabIndex={0}
+                            size="medium"
+                            icon={action.icon}
+                            onBlur={handleBlur}
+                            appearance="minimal"
+                            onFocus={handleFocus}
+                            cornerRadius="smooth"
+                            onClick={() => action?.onClick(element)}
+                            className="searchResultRow__action"
+                            ariaLabel={action.name || action.icon}
+                        />
+                    </Tooltip>
                 ))}
             </div>
         </li>
@@ -112,8 +113,9 @@ SearchResultRow.propTypes = {
         actions: PropTypes.arrayOf(
             PropTypes.shape({
                 name: PropTypes.string,
-                icon: PropTypes.string,
-                onClick: PropTypes.func
+                icon: PropTypes.string.isRequired,
+                onClick: PropTypes.func,
+                description: PropTypes.string
             })
         )
     })
