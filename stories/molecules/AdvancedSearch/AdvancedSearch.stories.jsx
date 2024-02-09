@@ -18,6 +18,7 @@ export default {
         noDataText: args({ control: 'text', category: category.content }),
         showMoreText: args({ control: 'text', category: category.content }),
         totalCount: args({ control: 'number', category: category.content }),
+        onOutsideClick: args({ control: false, category: category.action }),
         initialData: args({ control: 'object', category: category.content }),
         onShowMoreClick: args({ control: false, category: category.action }),
         totalCountText: args({ control: 'text', category: category.content }),

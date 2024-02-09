@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 
 // Helpers
 import { advancedSearchConfig } from 'configs';
-import { useDebounce, useKeyDown } from 'hooks';
+import { useDebounce, useKeyDown, useClickOutside } from 'hooks';
 import { noop } from 'utils';
 
 // Components
@@ -28,6 +28,7 @@ function AdvancedSearch({
     showMoreText,
     totalCountMax,
     totalCountText,
+    onOutsideClick,
     onShowMoreClick,
     isSearchLoading,
     openedInputWidth,
@@ -86,11 +87,14 @@ function AdvancedSearch({
         [popoverOpen]
     );
 
+    const handleOutsideClick = useClickOutside(() => onOutsideClick());
+
     return (
         <div
             className={classnames('advancedSearch', {
                 'advancedSearch-left': position === advancedSearchConfig.positions.left
             })}
+            ref={handleOutsideClick}
         >
             <div
                 className={classnames('advancedSearch__wrapper', {
@@ -221,6 +225,10 @@ AdvancedSearch.propTypes = {
      */
     onSearch: PropTypes.func, // Pass typed value using some debounce
     /**
+     * Fires event when user clicks on outside of component.
+     */
+    onOutsideClick: PropTypes.func,
+    /**
      * If search field is empty, initialDataDescription is describing witch data is showing by default for example (Recently modified data).
      */
     initialDataDescription: PropTypes.string,
@@ -324,6 +332,7 @@ AdvancedSearch.defaultProps = {
     onSearch: noop,
     openedInputWidth: 65,
     onShowMoreClick: noop,
+    onOutsideClick: noop,
     closedInputWidth: '200px',
     hasActiveShowMore: false,
     showMoreIsLoading: false,
