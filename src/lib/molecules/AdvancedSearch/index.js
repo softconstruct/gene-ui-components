@@ -20,6 +20,7 @@ import './index.scss';
 
 function AdvancedSearch({
     data,
+    isOpen,
     position,
     onSearch,
     totalCount,
@@ -43,9 +44,13 @@ function AdvancedSearch({
     const searchRef = useRef(null);
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [initialDataState, setInitialDataState] = useState([]);
-
     const [searchValue, setSearchValue] = useState(null);
+    const [isOpenControlled, setIsOpenControlled] = useState(false);
     const debouncedSearchValue = useDebounce(searchValue, 300);
+
+    useEffect(() => {
+        setIsOpenControlled(isOpen !== undefined);
+    }, [isOpen]);
 
     useEffect(() => {
         if (debouncedSearchValue === null) return;
@@ -82,9 +87,11 @@ function AdvancedSearch({
 
     const inputAndPopoverWidthVariable = useMemo(
         () => ({
-            '--advanced-search-width': popoverOpen ? `${openedInputWidth}vw` : closedInputWidth
+            '--advanced-search-width': (isOpenControlled ? isOpen : popoverOpen)
+                ? `${openedInputWidth}vw`
+                : closedInputWidth
         }),
-        [popoverOpen]
+        [popoverOpen, isOpenControlled, isOpen]
     );
 
     const handleOutsideClick = useClickOutside(() => onOutsideClick());
@@ -106,7 +113,7 @@ function AdvancedSearch({
                 <PopoverV2
                     position="bottom"
                     screenType="desktop"
-                    isOpen={popoverOpen}
+                    isOpen={isOpenControlled ? isOpen : popoverOpen}
                     scrollbarNeeded={false}
                     extendTargetWidth={false}
                     className="advancedSearch__popover"
@@ -325,7 +332,11 @@ AdvancedSearch.propTypes = {
     /**
      * text for no data to display
      */
-    noDataText: PropTypes.string
+    noDataText: PropTypes.string,
+    /**
+     * A boolean prop to control the popover's open and close states from outside the component.
+     */
+    isOpen: PropTypes.bool
 };
 
 AdvancedSearch.defaultProps = {

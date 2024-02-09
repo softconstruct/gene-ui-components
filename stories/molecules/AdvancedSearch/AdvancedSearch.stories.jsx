@@ -23,6 +23,7 @@ export default {
         onShowMoreClick: args({ control: false, category: category.action }),
         totalCountText: args({ control: 'text', category: category.content }),
         showMoreIsLoading: args({ control: false, category: category.states }),
+        isOpen: args({ control: 'boolean', category: category.functionality }),
         primaryFilterData: args({ control: 'object', category: category.content }),
         closedInputWidth: args({ control: 'number', category: category.appearance }),
         openedInputWidth: args({ control: 'number', category: category.appearance }),
@@ -84,6 +85,7 @@ export const AdvancedSearch = ({ ...args }) => {
     const [byUserFiltered, setByUserFiltered] = useState([]);
     const [initialData, setInitialData] = useState([]);
     const [searchCharacter, setSearchCharacter] = useState('');
+    const [isOpen, setIsOpen] = useState(false);
 
     setTimeout(() => setLoading(false), 3000);
 
@@ -289,6 +291,9 @@ export const AdvancedSearch = ({ ...args }) => {
                 {...args}
                 onShowMoreClick={showMoreHandler}
                 onSearch={onSearchHandler}
+                isOpen={isOpen}
+                extendedInputConfigs={{ onFocus: () => setIsOpen(true) }}
+                onOutsideClick={() => setIsOpen(false)}
             />
             <Divider size={32} />
             <Time style={{ marginLeft: '10px' }} />
