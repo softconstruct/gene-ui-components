@@ -292,7 +292,10 @@ export const AdvancedSearch = ({ ...args }) => {
                 onShowMoreClick={showMoreHandler}
                 onSearch={onSearchHandler}
                 isOpen={isOpen}
-                extendedInputConfigs={{ onFocus: () => setIsOpen(true) }}
+                extendedInputConfigs={{
+                    onFocus: () => setIsOpen(true),
+                    onIconClick: () => setIsOpen(true)
+                }}
                 onOutsideClick={() => setIsOpen(false)}
             />
             <Divider size={32} />
