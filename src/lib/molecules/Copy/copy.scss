@@ -1,0 +1,44 @@
+@import 'src/assets/styles/variables';
+
+.copy {
+    cursor: pointer;
+    max-width: fit-content;
+    max-height: fit-content;
+
+    &-controlVisibility {
+        visibility: hidden;
+    }
+
+    &-pointerNon {
+        cursor: initial;
+    }
+
+    &-isVisible {
+        visibility: visible;
+    }
+
+    &__displayOnHover {
+        visibility: hidden;
+
+        &-show {
+            visibility: visible;
+        }
+    }
+
+    &__icon {
+        max-width: fit-content;
+        max-height: fit-content;
+
+        &-big {
+            font-size: rem(32);
+        }
+
+        &-small {
+            font-size: rem(14);
+        }
+    }
+
+    &:hover {
+        visibility: visible;
+    }
+}
