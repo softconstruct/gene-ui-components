@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import * as classNames from 'classnames';
+import classnames from 'classnames';
 import { callAfterDelay } from 'utils';
 import useHover from '../../../hooks/useHover';
 import { Icon, Tooltip } from '../../../index';
@@ -61,22 +61,24 @@ const Copy: React.FC<ICopyProps> = ({
         if ((value || contentRef?.current) && !isCopied) {
             const content = contentRef?.current?.innerText || value;
 
-            navigator.clipboard
-                .writeText(content)
-                .then(() => {
-                    setIsCopied(true);
-                    callAfterDelay(() => {
-                        setIsCopied(false);
-                    }, 2000);
-                })
-                .catch((error) => console.error('Failed to copy:', error));
+            if (content) {
+                navigator.clipboard
+                    .writeText(content)
+                    .then(() => {
+                        setIsCopied(true);
+                        callAfterDelay(() => {
+                            setIsCopied(false);
+                        }, 2000);
+                    })
+                    .catch((error) => console.error('Failed to copy:', error));
+            }
         }
     }, [contentRef, isCopied, value]);
 
     return (
         <Tooltip title={isCopied ? copiedTooltipText : copyTooltipText} isVisible={true}>
             <div
-                className={classNames('copy', className, {
+                className={classnames('copy', className, {
                     copy__displayOnHover: displayOnHover && !value,
                     'copy__displayOnHover-show': isHovered && !value && !isControlledVisibility,
                     'copy-pointerNon': isCopied,
@@ -86,7 +88,7 @@ const Copy: React.FC<ICopyProps> = ({
                 onClick={copyContent}
             >
                 <Icon
-                    className={classNames('copy__icon', `copy__icon-${size}`)}
+                    className={classnames('copy__icon', `copy__icon-${size}`)}
                     type={isCopied ? 'bc-icon-checkbox-checked' : 'bc-icon-copy-mirror'}
                 />
             </div>
