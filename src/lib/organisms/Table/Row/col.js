@@ -3,12 +3,11 @@ import classnames from 'classnames';
 import isEqual from 'react-fast-compare';
 
 // Helpers
-import { guid, stopEvent, copyToClipboard, callAfterDelay } from 'utils';
+import { guid } from 'utils';
 
 // Components
-import Icon from '../../../atoms/Icon';
 import SkeletonLoader from '../../../atoms/SkeletonLoader';
-import Tooltip from '../../../molecules/Tooltip';
+import Copy from '../../../molecules/Copy';
 
 function Col({
     id,
@@ -57,7 +56,6 @@ function Col({
             return guidRef.current;
         }
     });
-    const [isCopied, setIsCopied] = useState(false);
 
     useEffect(() => {
         mounted.current = true;
@@ -70,18 +68,6 @@ function Col({
     }, [formattedValue, isValuePromise, mounted.current]);
 
     const value = isValuePromise ? promiseValue : formattedValue;
-
-    const handleCopy = useCallback(
-        (event) => {
-            stopEvent(event);
-            copyToClipboard(copyableValue || value);
-            !isCopied && setIsCopied(true);
-            callAfterDelay(() => {
-                setIsCopied(false);
-            }, 2000);
-        },
-        [copyableValue, value, isCopied]
-    );
 
     return (
         <>
@@ -106,14 +92,13 @@ function Col({
             >
                 <SkeletonLoader height={20} isBusy={guidRef.current && promiseValue === guidRef.current}>
                     {copyable && value && (
-                        <Tooltip title={isCopied ? copiedTooltipText : copyTooltipText}>
-                            <Icon
-                                tabIndex="1"
-                                className="cursor-pointer copy-icon"
-                                type={isCopied ? 'bc-icon-checkbox-checked' : 'bc-icon-copy-mirror'}
-                                onClick={!isCopied && handleCopy}
-                            />
-                        </Tooltip>
+                        <Copy
+                            value={value}
+                            size="small"
+                            className="cursor-pointer copy-icon"
+                            copyTooltipText={copyTooltipText}
+                            copiedTooltipText={copiedTooltipText}
+                        />
                     )}
                     <div className="ellipsis-text">
                         {colRenderer ? colRenderer(value, index, row, isEditActive, formatter) : value}
