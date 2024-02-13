@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 import { callAfterDelay } from 'utils';
-import useHover from '../../../hooks/useHover';
+import { useHover } from 'hooks';
 import { Icon, Tooltip } from '../../../index';
 
 import './copy.scss';
