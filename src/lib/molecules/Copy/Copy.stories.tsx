@@ -10,7 +10,7 @@ const meta = {
     argTypes: {
         value: args({ control: 'text', category: category.content }),
         className: args({ control: false, category: category.others }),
-        contentRef: args({ control: false, category: category.others }),
+        contentRef: args({ category: category.others }),
         size: args({ control: 'select', category: category.appearance }),
         isVisible: args({ control: 'boolean', category: category.appearance }),
         copyTooltipText: args({ control: 'text', category: category.content }),
