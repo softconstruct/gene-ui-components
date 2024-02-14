@@ -1,7 +1,7 @@
-import { useState, useEffect, RefObject } from 'react';
+import { useState, useEffect } from 'react';
 
-function useHover<T extends HTMLElement>(ref: RefObject<T>): boolean {
-    const [isHovered, setIsHovered] = useState<boolean>(false);
+const useHover = (ref) => {
+    const [isHovered, setIsHovered] = useState(false);
 
     const handleMouseEnter = () => setIsHovered(true);
     const handleMouseLeave = () => setIsHovered(false);
@@ -19,6 +19,6 @@ function useHover<T extends HTMLElement>(ref: RefObject<T>): boolean {
     }, [ref]);
 
     return isHovered;
-}
+};
 
 export default useHover;
