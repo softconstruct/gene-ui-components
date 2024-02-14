@@ -43,7 +43,6 @@ CopyWithRef.args = {
 };
 
 const ValueTemplate: Story = ({ ...args }) => {
-    const textRef = useRef<HTMLParagraphElement>(null);
     return (
         <div>
             <Copy {...args} />
