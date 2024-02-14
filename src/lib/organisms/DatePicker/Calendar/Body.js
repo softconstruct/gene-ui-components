@@ -97,6 +97,8 @@ function Body({
                     onChange={handleYearChange}
                     previewYear={preview.year()}
                     onPreviewChange={handleFooterPreviewChange}
+                    max={max}
+                    min={min}
                 />
             )}
         </>

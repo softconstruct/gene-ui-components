@@ -23,13 +23,15 @@ function Years({ previewYear, selected, onChange, onPreviewChange, max, min }) {
 
             if (min && !max) {
                 return year >= dayjs(min).year();
-            } if (!min && max) {
+            }
+            if (!min && max) {
                 return year <= dayjs(max).year();
-            } if (min && max) {
+            }
+            if (min && max) {
                 return max && year <= dayjs(max).year() && min && year >= dayjs(min).year();
-            } 
-                return true;
-            
+            }
+
+            return true;
         },
         [max, min]
     );
