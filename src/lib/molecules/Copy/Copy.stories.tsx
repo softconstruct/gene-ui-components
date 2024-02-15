@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import Copy from './index';
+import Copy, { ICopyProps } from './index';
 import { args, category } from '../../../../stories/assets/storybook.globals';
 import { Textarea } from '../../../index';
 
-const meta = {
+const meta: React.FC<ICopyProps> = {
     component: Copy,
     title: 'Molecules/Copy',
     argTypes: {
@@ -23,7 +23,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const RefTemplate: Story = ({ ...args }) => {
+export const CopyWithRef: Story = (args: ICopyProps) => {
     const textRef = useRef<HTMLParagraphElement>(null);
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -36,13 +36,12 @@ const RefTemplate: Story = ({ ...args }) => {
     );
 };
 
-export const CopyWithRef = RefTemplate.bind({});
 CopyWithRef.args = {
     displayOnHover: false,
     size: 'medium'
 };
 
-const ValueTemplate: Story = ({ ...args }) => {
+export const CopyWithValue: Story = (args: ICopyProps) => {
     return (
         <div>
             <Copy {...args} />
@@ -51,7 +50,6 @@ const ValueTemplate: Story = ({ ...args }) => {
     );
 };
 
-export const CopyWithValue = ValueTemplate.bind({});
 CopyWithValue.args = {
     displayOnHover: false,
     value: 'Value for copy',
