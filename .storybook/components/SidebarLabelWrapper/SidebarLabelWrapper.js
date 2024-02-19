@@ -17,6 +17,7 @@ const cmpStages = {
 };
 
 const { versions } = libVersions;
+const [lastVersion] = [...versions].reverse();
 
 const getVersionDropdown = (currentVersion) =>
     `<div class="versions">
@@ -44,16 +45,19 @@ const SidebarLabelWrapper = ({ item }) => {
         if (renderOnce || !document.querySelector('#versions__select')) {
             renderOnce = false;
             const sidebar = document.querySelector('.css-194spiq');
-            const currentVersionRegex = /v\d\.\d\.\d/;
-            const currentVersion =
-                window.location.href.match(currentVersionRegex) && window.location.href.match(currentVersionRegex)[0];
+            const currentVersionRegex = /v\d+\.\d+\.\d+/;
+            const [versionInURL] = window.location.href.match(currentVersionRegex) || [];
+            const currentVersion = versionInURL || lastVersion;
             const versions__select = getVersionDropdown(currentVersion);
             sidebar.insertAdjacentHTML('beforeend', versions__select);
             const select = document.querySelector('#versions__select');
+
             select.addEventListener('change', () => {
-                if (currentVersion) {
-                    window.location.href = window.location.href.replace(currentVersion, select.value);
-                }
+                const modifiedURL = versionInURL
+                    ? window.location.href.replace(currentVersion, select.value)
+                    : window.location.href.replace(/(\.com\/)(\?path=)/, `$1${currentVersion}$2`);
+
+                window.location.href = modifiedURL;
             });
         }
     }, []);
