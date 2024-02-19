@@ -231,15 +231,19 @@ const PopoverV2 = forwardRef((props, ref) => {
     );
 
     const containerParentMemo = useMemo(
-        () => ({
-            containerParent: containerParent || geneUIProviderRef.current
-        }),
-        [containerParent]
+        () =>
+            containerParent || geneUIProviderRef.current
+                ? {
+                      containerParent: containerParent || geneUIProviderRef.current
+                  }
+                : {},
+        [containerParent, geneUIProviderRef.current]
     );
 
     if (!Content) {
         return childElement;
     }
+
     return (
         <TinyPopover
             key={updateKey}
