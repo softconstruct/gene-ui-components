@@ -6,18 +6,6 @@ jobs:
     send_notification:
         runs-on: ubuntu-latest
         steps:
-            - id: accumulate_reviewers
-              run: |
-                REVIEWERS=${{ github.event.pull_request.requested_reviewers.*.login }}
-                REVIEWERS_LIST=""
-
-                # Iterate over the reviewers and accumulate bullet list
-                for reviewer in $REVIEWERS; do
-                    REVIEWERS_LIST="$REVIEWERS_LIST- $reviewer\n"
-                done
-
-                # Set the accumulated reviewers list as an output
-                echo "reviewers_list=$REVIEWERS_LIST" >> "$GITHUB_OUTPUT"
             - name: Send Notification
               env:
                   INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT: ${{ secrets.INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT }}
@@ -25,7 +13,7 @@ jobs:
                   PR_ID=${{ github.event.pull_request.number }}
                   PR_URL=${{ github.event.pull_request.html_url }}
                   PR_AUTHOR=${{ github.event.pull_request.user.login }}
-                  REVIEWERS=${{ steps.accumulate_reviewers.outputs.reviewers_list }}
+                  REVIEWERS=${{ jq -r github.event.pull_request.requested_reviewers.*.login }}
 
                   MESSAGE="@channel\nNew Pull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nRequested Reviewers: $REVIEWERS"
 
