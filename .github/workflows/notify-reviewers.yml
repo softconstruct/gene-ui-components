@@ -6,12 +6,9 @@ jobs:
     send_notification:
         runs-on: ubuntu-latest
         steps:
-            - id: get_reviewers
-              run: |
-                echo "reviewers=$(echo '${{ github.event.pull_request.requested_reviewers.*.login }}' | tr ' ' '\n')" >> "$GITHUB_OUTPUT"
             - id: accumulate_reviewers
               run: |
-                REVIEWERS=${{ steps.get_reviewers.outputs.reviewers }}
+                REVIEWERS=${{ github.event.pull_request.requested_reviewers.*.login }}
                 REVIEWERS_LIST=""
 
                 # Iterate over the reviewers and accumulate bullet list
