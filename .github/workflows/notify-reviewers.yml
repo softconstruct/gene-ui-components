@@ -6,13 +6,11 @@ jobs:
     send_notification:
         runs-on: ubuntu-latest
         steps:
-            - name: Get Reviewers
-            id: get_reviewers
-            run: |
+            - id: get_reviewers
+              run: |
                 echo "reviewers=$(echo '${{ github.event.pull_request.requested_reviewers.*.login }}' | tr ' ' '\n')" >> "$GITHUB_OUTPUT"
-            - name: Accumulate Reviewers
-            id: accumulate_reviewers
-            run: |
+            - id: accumulate_reviewers
+              run: |
                 REVIEWERS=${{ steps.get_reviewers.outputs.reviewers }}
                 REVIEWERS_LIST=""
 
@@ -24,14 +22,14 @@ jobs:
                 # Set the accumulated reviewers list as an output
                 echo "reviewers_list=$REVIEWERS_LIST" >> "$GITHUB_OUTPUT"
             - name: Send Notification
-            env:
-                INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT: ${{ secrets.INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT }}
-            run: |
-                PR_ID=${{ github.event.pull_request.number }}
-                PR_URL=${{ github.event.pull_request.html_url }}
-                PR_AUTHOR=${{ github.event.pull_request.user.login }}
-                REVIEWERS=${{ steps.accumulate_reviewers.outputs.reviewers_list }}
+              env:
+                  INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT: ${{ secrets.INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT }}
+              run: |
+                  PR_ID=${{ github.event.pull_request.number }}
+                  PR_URL=${{ github.event.pull_request.html_url }}
+                  PR_AUTHOR=${{ github.event.pull_request.user.login }}
+                  REVIEWERS=${{ steps.accumulate_reviewers.outputs.reviewers_list }}
 
-                MESSAGE="@channel\nNew Pull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nRequested Reviewers: $REVIEWERS"
+                  MESSAGE="@channel\nNew Pull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nRequested Reviewers: $REVIEWERS"
 
-                curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT
+                  curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT
