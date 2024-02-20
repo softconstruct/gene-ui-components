@@ -8,7 +8,7 @@ jobs:
         steps:
             - id: accumulate_reviewers
               run: |
-                echo "${{ github.event.pull_request.requested_reviewers.*.login[*] }}"
+                printf '%s\n' "${github.event.pull_request.requested_reviewers.*.login[@]}"
                 REVIEWERS=${{ github.event.pull_request.requested_reviewers.*.login }}
                 REVIEWERS_LIST=""
 
