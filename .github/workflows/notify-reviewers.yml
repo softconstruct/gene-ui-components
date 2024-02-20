@@ -17,4 +17,5 @@ jobs:
 
                   MESSAGE="@channel\nPull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nRequested Reviewers: $REVIEWERS"
 
-                  curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT
+                  curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\", \"username\": \"GitHub\", \"icon_url\": \"https://github.githubassets.com/favicons/favicon.png\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT
+                  
