@@ -17,4 +17,6 @@ jobs:
 
                   MESSAGE="Pull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nRequested Reviewers: $REVIEWERS"
 
+                  echo "$MESSAGE"
+
                   curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT
