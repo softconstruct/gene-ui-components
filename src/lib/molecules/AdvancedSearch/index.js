@@ -203,7 +203,8 @@ AdvancedSearch.propTypes = {
                 name: PropTypes.string,
                 value: PropTypes.string,
                 checked: PropTypes.bool,
-                icon: PropTypes.string
+                icon: PropTypes.string,
+                id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
             })
         )
     }),
@@ -223,7 +224,8 @@ AdvancedSearch.propTypes = {
                 name: PropTypes.string,
                 value: PropTypes.string,
                 checked: PropTypes.bool,
-                icon: PropTypes.string
+                icon: PropTypes.string,
+                id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
             })
         )
     }),
