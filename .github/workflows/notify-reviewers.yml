@@ -13,7 +13,7 @@ jobs:
                   PR_ID=${{ github.event.pull_request.number }}
                   PR_URL=${{ github.event.pull_request.html_url }}
                   PR_AUTHOR=${{ github.event.pull_request.user.login }}
-                  REVIEWERS="- ${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}"
+                  REVIEWERS="${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}"
 
                   MESSAGE="@channel\nPull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nRequested Reviewers: $REVIEWERS"
 
