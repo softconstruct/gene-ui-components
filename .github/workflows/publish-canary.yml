@@ -33,6 +33,6 @@ jobs:
                   VERSION=$(jq -r '.version' dist/package.json)
                   VERSION_URL="https://www.npmjs.com/package/@geneui/components/v/$VERSION"
 
-                  MESSAGE="@channel\nNew canary version [$VERSION]($VERSION_URL) is published on NPM. For installation follow the below command.\n```\nnpm i $VERSION\n```"
+                  MESSAGE="@channel\nNew canary version [$VERSION]($VERSION_URL) is published on NPM"
 
                   curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\", \"username\": \"NPM\", \"icon_url\": \"https://static-production.npmjs.com/b0f1a8318363185cc2ea6a40ac23eeb2.png\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT
