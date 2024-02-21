@@ -257,7 +257,7 @@ const ExtendedInput = forwardRef((props, ref) => {
     );
 
     return (
-        <Tooltip position="bottom" title={tooltipText && isValid ? tooltipText : ''}>
+        <Tooltip position="bottom" title={tooltipText ? tooltipText : ''}>
             <div
                 className={classnames(
                     'input-holder',
