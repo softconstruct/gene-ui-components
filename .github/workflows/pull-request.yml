@@ -14,8 +14,8 @@ jobs:
                   node-version: '16.x'
                   registry-url: 'https://registry.npmjs.org'
             - name: 📥 Install dependencies
-              run: npm install
-            - name: 🔧 Pure build 
+              run: npm ci
+            - name: 🔧 Pure build
               run: npm run build -- --pure
             - name: 🧪 Run tests
               run: npm run test
