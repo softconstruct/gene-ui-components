@@ -2,12 +2,12 @@ import React, { useMemo, useCallback } from 'react';
 import classnames from 'classnames';
 import dayjs from 'dayjs';
 
-// Components
-import { chunk } from 'utils';
-import Button from '../../../atoms/Button';
-
 // Helpers
+import { chunk } from 'utils';
 import { getCalendarYears, getStartOfDecade } from '../utils';
+
+// Components
+import Button from '../../../atoms/Button';
 
 function Years({ previewYear, selected, onChange, onPreviewChange, max, min }) {
     const startOfDecade = useMemo(() => getStartOfDecade(previewYear), [previewYear]);
