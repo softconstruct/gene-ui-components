@@ -45,12 +45,9 @@ function AdvancedSearch({
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [initialDataState, setInitialDataState] = useState([]);
     const [searchValue, setSearchValue] = useState(null);
-    const [isOpenControlled, setIsOpenControlled] = useState(false);
     const debouncedSearchValue = useDebounce(searchValue, 300);
 
-    useEffect(() => {
-        setIsOpenControlled(isOpen !== undefined);
-    }, [isOpen]);
+    const isOpenControlled = useMemo(() => isOpen !== undefined, [isOpen]);
 
     useEffect(() => {
         if (debouncedSearchValue === null) return;
@@ -91,10 +88,10 @@ function AdvancedSearch({
                 ? `${openedInputWidth}vw`
                 : closedInputWidth
         }),
-        [popoverOpen, isOpenControlled, isOpen]
+        [popoverOpen, isOpenControlled, isOpen, openedInputWidth, closedInputWidth]
     );
 
-    const handleOutsideClick = useClickOutside(() => onOutsideClick());
+    const handleOutsideClick = useClickOutside(onOutsideClick);
 
     return (
         <div
@@ -230,9 +227,9 @@ AdvancedSearch.propTypes = {
         )
     }),
     /**
-     * Fires an event when input changes and returns value of input (used 300ms debounce)
+     * Fires event when a user clicks outside from the component.
      */
-    onSearch: PropTypes.func, // Pass typed value using some debounce
+    onSearch: PropTypes.func,
     /**
      * Fires event when user clicks on outside of component.
      */
@@ -336,7 +333,7 @@ AdvancedSearch.propTypes = {
      */
     noDataText: PropTypes.string,
     /**
-     * A boolean prop to control the popover's open and close states from outside the component.
+     * A boolean prop to control the popover's open and close state.
      */
     isOpen: PropTypes.bool
 };
