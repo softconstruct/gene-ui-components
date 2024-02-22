@@ -17,20 +17,10 @@ function Years({ previewYear, selected, onChange, onPreviewChange, max, min }) {
 
     const isYearMaxOrMinChecker = useCallback(
         (year) => {
-            if (!year) {
-                return false;
-            }
-
-            if (min && !max) {
-                return year >= dayjs(min).year();
-            }
-            if (!min && max) {
-                return year <= dayjs(max).year();
-            }
-            if (min && max) {
-                return max && year <= dayjs(max).year() && min && year >= dayjs(min).year();
-            }
-
+            if (!year) return false;
+            if (min && !max) return year >= dayjs(min).year();
+            if (!min && max) return year <= dayjs(max).year();
+            if (min && max) return max && year <= dayjs(max).year() && min && year >= dayjs(min).year();
             return true;
         },
         [max, min]
