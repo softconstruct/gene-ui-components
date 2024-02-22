@@ -58,21 +58,21 @@ const Copy: React.FC<ICopyProps> = ({
     useEffect(() => setIsControlledVisibility(isVisible !== undefined), [isVisible]);
 
     const copyContent = useCallback(() => {
-        if ((value || contentRef?.current) && !isCopied) {
-            const content = contentRef?.current?.innerText || value;
+        if (isCopied) return;
 
-            if (content) {
-                navigator.clipboard
-                    .writeText(content)
-                    .then(() => {
-                        setIsCopied(true);
-                        callAfterDelay(() => {
-                            setIsCopied(false);
-                        }, 2000);
-                    })
-                    .catch((error) => console.error('Failed to copy:', error));
-            }
-        }
+        const content = contentRef?.current?.innerText || value;
+
+        if (!content) return;
+
+        navigator.clipboard
+            .writeText(content)
+            .then(() => {
+                setIsCopied(true);
+                callAfterDelay(() => {
+                    setIsCopied(false);
+                }, 2000);
+            })
+            .catch((error) => console.error('Failed to copy:', error));
     }, [contentRef, isCopied, value]);
 
     return (
