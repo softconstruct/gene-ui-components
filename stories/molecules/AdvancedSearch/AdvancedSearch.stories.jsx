@@ -42,7 +42,7 @@ export default {
     args: {}
 };
 
-export const AdvancedSearch = ({ ...args }) => {
+export const Default = ({ ...args }) => {
     const twoDimensionalFilterData = [
         userFilterData.slice(0, 4),
         userFilterData.slice(4, 8),
@@ -296,7 +296,7 @@ export const AdvancedSearch = ({ ...args }) => {
         </header>
     );
 };
-export const AdvancedSearchOpenControlled = ({ ...args }) => {
+export const OpenStateControlled = ({ ...args }) => {
     const twoDimensionalFilterData = [
         userFilterData.slice(0, 4),
         userFilterData.slice(4, 8),
