@@ -92,12 +92,11 @@ const Calendar = forwardRef((props, ref) => {
     }, [value]);
 
     useEffect(() => {
-        if (min && !max) setIsThisDateAllowed(dayjs(min).isSameOrBefore(dayjs(new Date()), 'date'));
-        if (!min && max) setIsThisDateAllowed(dayjs(max).isSameOrAfter(dayjs(new Date()), 'date'));
+        if (min && !max) setIsThisDateAllowed(dayjs(min).isSameOrBefore(dayjs(), 'date'));
+        if (!min && max) setIsThisDateAllowed(dayjs(max).isSameOrAfter(dayjs(), 'date'));
         if (min && max)
             setIsThisDateAllowed(
-                dayjs(min).isSameOrBefore(dayjs(new Date()), 'date') &&
-                    dayjs(max).isSameOrAfter(dayjs(new Date()), 'date')
+                dayjs(min).isSameOrBefore(dayjs(), 'date') && dayjs(max).isSameOrAfter(dayjs(), 'date')
             );
     }, [max, min]);
 
