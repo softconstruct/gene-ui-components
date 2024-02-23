@@ -154,7 +154,6 @@ const ExtendedInput = forwardRef((props, ref) => {
             if (isDropdown) {
                 onClick(e);
                 if (!readOnly) {
-                    e.preventDefault();
                     focused ? inputRef.current.blur() : inputRef.current.focus();
                 }
             }
@@ -257,7 +256,7 @@ const ExtendedInput = forwardRef((props, ref) => {
     );
 
     return (
-        <Tooltip position="bottom" title={tooltipText ? tooltipText : ''}>
+        <Tooltip position="bottom" title={tooltipText} isVisible={!!tooltipText}>
             <div
                 className={classnames(
                     'input-holder',
