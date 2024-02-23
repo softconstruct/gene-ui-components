@@ -10,7 +10,7 @@ const meta: Meta<typeof Copy> = {
     argTypes: {
         contentRef: args({ ...propCategory.content }),
         value: args({ control: 'text', ...propCategory.content }),
-        className: args({ control: false, ...propCategory.others }),
+        className: args({ control: false, ...propCategory.appearance }),
         size: args({ control: 'select', ...propCategory.appearance }),
         copyTooltipText: args({ control: 'text', ...propCategory.content }),
         copiedTooltipText: args({ control: 'text', ...propCategory.content }),
@@ -35,6 +35,8 @@ export const WithRef: Story = (args: ICopyProps) => {
         </div>
     );
 };
+
+WithRef.args = {};
 
 export const WithValue: Story = (args: ICopyProps) => {
     return (

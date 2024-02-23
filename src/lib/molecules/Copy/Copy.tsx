@@ -2,9 +2,11 @@ import React, { useCallback, useState, RefObject, FC, useMemo } from 'react';
 import classnames from 'classnames';
 
 // Helpers
+// @ts-ignore
 import { callAfterDelay } from 'utils';
 
 // Hooks
+// @ts-ignore
 import { useHover } from 'hooks';
 
 // Components
