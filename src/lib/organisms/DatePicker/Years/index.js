@@ -15,7 +15,7 @@ function Years({ previewYear, selected, onChange, onPreviewChange, max, min }) {
 
     const isFromDecade = useCallback((year) => year > startOfDecade - 1 && year < startOfDecade + 10, [startOfDecade]);
 
-    const isYearMaxOrMinChecker = useCallback(
+    const checkYearEnableState = useCallback(
         (year) => {
             if (!year) return false;
             if (min && !max) return year >= dayjs(min).year();
@@ -42,7 +42,7 @@ function Years({ previewYear, selected, onChange, onPreviewChange, max, min }) {
                             key={year}
                             className={classnames({
                                 selected: selected && selected === year,
-                                disabled: !isFromDecade(year) || !isYearMaxOrMinChecker(year)
+                                disabled: !isFromDecade(year) || !checkYearEnableState(year)
                             })}
                             onClick={() => handleClick(year)}
                             color="default"
