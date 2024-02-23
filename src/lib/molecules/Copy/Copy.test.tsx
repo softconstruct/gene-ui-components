@@ -5,7 +5,7 @@ import Copy, { ICopyProps } from './Copy';
 describe('Copy Component', () => {
     const defaultProps: ICopyProps = {
         size: 'medium',
-        displayOnHover: false,
+        showOnHover: false,
         copyTooltipText: 'Copy',
         copiedTooltipText: 'Copied!'
     };

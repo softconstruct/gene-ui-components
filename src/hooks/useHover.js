@@ -8,14 +8,15 @@ const useHover = (ref) => {
 
     useEffect(() => {
         const node = ref.current;
-        if (node) {
-            node.addEventListener('mouseenter', handleMouseEnter);
-            node.addEventListener('mouseleave', handleMouseLeave);
-            return () => {
-                node.removeEventListener('mouseenter', handleMouseEnter);
-                node.removeEventListener('mouseleave', handleMouseLeave);
-            };
-        }
+
+        if (!node) return;
+
+        node.addEventListener('mouseenter', handleMouseEnter);
+        node.addEventListener('mouseleave', handleMouseLeave);
+        return () => {
+            node.removeEventListener('mouseenter', handleMouseEnter);
+            node.removeEventListener('mouseleave', handleMouseLeave);
+        };
     }, [ref]);
 
     return isHovered;

@@ -12,10 +12,10 @@ const meta: React.FC<ICopyProps> = {
         className: args({ control: false, category: category.others }),
         contentRef: args({ category: category.others }),
         size: args({ control: 'select', category: category.appearance }),
-        isVisible: args({ control: 'boolean', category: category.appearance }),
+        isVisible: args({ control: 'boolean', category: category.functionality }),
         copyTooltipText: args({ control: 'text', category: category.content }),
         copiedTooltipText: args({ control: 'text', category: category.content }),
-        displayOnHover: args({ control: 'boolean', category: category.functionality })
+        showOnHover: args({ control: 'boolean', category: category.functionality })
     }
 } satisfies Meta<typeof Copy>;
 
@@ -23,7 +23,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const CopyWithRef: Story = (args: ICopyProps) => {
+export const WithRef: Story = (args: ICopyProps) => {
     const textRef = useRef<HTMLParagraphElement>(null);
     return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -36,12 +36,7 @@ export const CopyWithRef: Story = (args: ICopyProps) => {
     );
 };
 
-CopyWithRef.args = {
-    displayOnHover: false,
-    size: 'medium'
-};
-
-export const CopyWithValue: Story = (args: ICopyProps) => {
+export const WithValue: Story = (args: ICopyProps) => {
     return (
         <div>
             <Copy {...args} />
@@ -50,8 +45,24 @@ export const CopyWithValue: Story = (args: ICopyProps) => {
     );
 };
 
-CopyWithValue.args = {
-    displayOnHover: false,
+WithValue.args = {
     value: 'Value for copy',
     size: 'big'
+};
+
+export const ShowOnHover: Story = (args: ICopyProps) => {
+    const textRef = useRef<HTMLParagraphElement>(null);
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="wrapper" style={{ display: 'flex', marginBottom: '30px' }}>
+                <p ref={textRef}>This is the text content you want to copy.</p>
+                <Copy contentRef={textRef} {...args} />
+            </div>
+            <Textarea placeholder={'Past here for testing'} />
+        </div>
+    );
+};
+
+ShowOnHover.args = {
+    showOnHover: true
 };

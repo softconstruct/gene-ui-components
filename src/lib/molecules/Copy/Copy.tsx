@@ -2,9 +2,12 @@ import React, { useCallback, useEffect, useState, RefObject, FC } from 'react';
 import classnames from 'classnames';
 import { callAfterDelay } from 'utils';
 import { useHover } from 'hooks';
-import { Icon, Tooltip } from '../../../index';
 
-import './copy.scss';
+// Components
+import Icon from '../../atoms/Icon';
+import Tooltip from '../../molecules/Tooltip';
+
+import './Copy.scss';
 
 interface ICopyProps {
     /**
@@ -22,7 +25,7 @@ interface ICopyProps {
     /**
      * Determines whether the copy icon is displayed only on hover.
      */
-    displayOnHover?: boolean;
+    showOnHover?: boolean;
     /**
      * Tooltip text to display when the copy action is available.
      */
@@ -47,7 +50,7 @@ const Copy: FC<ICopyProps> = ({
     isVisible,
     className,
     contentRef,
-    displayOnHover,
+    showOnHover,
     copyTooltipText,
     copiedTooltipText
 }) => {
@@ -79,8 +82,8 @@ const Copy: FC<ICopyProps> = ({
         <Tooltip title={isCopied ? copiedTooltipText : copyTooltipText} isVisible={true}>
             <div
                 className={classnames('copy', className, {
-                    copy__displayOnHover: displayOnHover && !value,
-                    'copy__displayOnHover-show': isHovered && !value && !isControlledVisibility,
+                    copy__showOnHover: showOnHover && !value,
+                    'copy__showOnHover-show': isHovered && !value && !isControlledVisibility,
                     'copy-pointerNon': isCopied,
                     'copy-controlVisibility': isControlledVisibility,
                     ...(isControlledVisibility ? { 'copy-isVisible': isVisible } : {})
@@ -98,7 +101,7 @@ const Copy: FC<ICopyProps> = ({
 
 Copy.defaultProps = {
     size: 'medium',
-    displayOnHover: false,
+    showOnHover: false,
     copyTooltipText: 'Copy',
     copiedTooltipText: 'Copied!'
 };
