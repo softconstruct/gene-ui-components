@@ -1,12 +1,18 @@
-import React, { useCallback, useEffect, useState, RefObject, FC } from 'react';
+import React, { useCallback, useState, RefObject, FC, useMemo } from 'react';
 import classnames from 'classnames';
+
+// Helpers
 import { callAfterDelay } from 'utils';
+
+// Hooks
 import { useHover } from 'hooks';
 
 // Components
+// @ts-ignore
 import Icon from '../../atoms/Icon';
 import Tooltip from '../../molecules/Tooltip';
 
+// Styles
 import './Copy.scss';
 
 interface ICopyProps {
@@ -27,11 +33,11 @@ interface ICopyProps {
      */
     showOnHover?: boolean;
     /**
-     * Tooltip text to display when the copy action is available.
+     * Tooltip text to display when the copy action is available. It will be shown when the user hovers over the copy icon.
      */
     copyTooltipText?: string;
     /**
-     * Tooltip text to display when the copy action has been performed.
+     * Tooltip text to display when the copy action has been performed. It will be shown when the user clicks on the copy icon.
      */
     copiedTooltipText?: string;
     /**
@@ -55,10 +61,9 @@ const Copy: FC<ICopyProps> = ({
     copiedTooltipText
 }) => {
     const [isCopied, setIsCopied] = useState(false);
-    const [isControlledVisibility, setIsControlledVisibility] = useState(false);
-    const isHovered: boolean = contentRef ? useHover(contentRef) : false;
 
-    useEffect(() => setIsControlledVisibility(isVisible !== undefined), [isVisible]);
+    const isControlledVisibility = useMemo(() => isVisible !== undefined, [isVisible]);
+    const isHovered: boolean = contentRef ? useHover(contentRef) : false;
 
     const copyContent = useCallback(() => {
         if (isCopied) return;
@@ -79,7 +84,8 @@ const Copy: FC<ICopyProps> = ({
     }, [contentRef, isCopied, value]);
 
     return (
-        <Tooltip title={isCopied ? copiedTooltipText : copyTooltipText} isVisible={true}>
+        // @ts-ignore
+        <Tooltip title={isCopied ? copiedTooltipText : copyTooltipText} isVisible>
             <div
                 className={classnames('copy', className, {
                     copy__showOnHover: showOnHover && !value,
@@ -90,8 +96,9 @@ const Copy: FC<ICopyProps> = ({
                 })}
                 onClick={copyContent}
             >
+                {/*@ts-ignore*/}
                 <Icon
-                    className={classnames('copy__icon', `copy__icon-${size}`)}
+                    className={`copy__icon copy__icon-${size}`}
                     type={isCopied ? 'bc-icon-checkbox-checked' : 'bc-icon-copy-mirror'}
                 />
             </div>

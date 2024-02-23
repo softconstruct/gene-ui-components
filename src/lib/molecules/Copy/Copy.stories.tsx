@@ -1,23 +1,23 @@
 import React, { useRef } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import Copy, { ICopyProps } from './index';
-import { args, category } from '../../../../stories/assets/storybook.globals';
+import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 import { Textarea } from '../../../index';
 
-const meta: React.FC<ICopyProps> = {
+const meta: Meta<typeof Copy> = {
     component: Copy,
     title: 'Molecules/Copy',
     argTypes: {
-        value: args({ control: 'text', category: category.content }),
-        className: args({ control: false, category: category.others }),
-        contentRef: args({ category: category.others }),
-        size: args({ control: 'select', category: category.appearance }),
-        isVisible: args({ control: 'boolean', category: category.functionality }),
-        copyTooltipText: args({ control: 'text', category: category.content }),
-        copiedTooltipText: args({ control: 'text', category: category.content }),
-        showOnHover: args({ control: 'boolean', category: category.functionality })
+        contentRef: args({ ...propCategory.content }),
+        value: args({ control: 'text', ...propCategory.content }),
+        className: args({ control: false, ...propCategory.others }),
+        size: args({ control: 'select', ...propCategory.appearance }),
+        copyTooltipText: args({ control: 'text', ...propCategory.content }),
+        copiedTooltipText: args({ control: 'text', ...propCategory.content }),
+        isVisible: args({ control: 'boolean', ...propCategory.functionality }),
+        showOnHover: args({ control: 'boolean', ...propCategory.functionality })
     }
-} satisfies Meta<typeof Copy>;
+};
 
 export default meta;
 

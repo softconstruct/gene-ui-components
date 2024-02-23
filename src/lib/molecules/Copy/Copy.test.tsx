@@ -27,4 +27,9 @@ describe('Copy Component', () => {
     it('renders the correct tooltip text', () => {
         expect(wrapper.find('Tooltip').prop('title')).toBe(defaultProps.copyTooltipText);
     });
+
+    it('renders the copy icon with displayOnHover', () => {
+        const wrapper = setup({ showOnHover: true });
+        expect(wrapper.find('.copy__showOnHover').exists()).toBeTruthy();
+    });
 });
