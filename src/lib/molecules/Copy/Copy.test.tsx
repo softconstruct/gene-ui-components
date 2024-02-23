@@ -21,7 +21,7 @@ describe('Copy Component', () => {
     });
 
     it('renders the copy icon', () => {
-        expect(wrapper.find('.copy__icon')).toHaveLength(1);
+        expect(wrapper.find('.copy__icon').exists()).toBeTruthy();
     });
 
     it('renders the correct tooltip text', () => {

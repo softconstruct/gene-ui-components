@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, RefObject, FC } from 'react';
 import classnames from 'classnames';
 import { callAfterDelay } from 'utils';
 import { useHover } from 'hooks';
@@ -18,7 +18,7 @@ interface ICopyProps {
     /**
      * Reference to the content you want to copy
      */
-    contentRef?: React.RefObject<HTMLElement>;
+    contentRef?: RefObject<HTMLElement>;
     /**
      * Determines whether the copy icon is displayed only on hover.
      */
@@ -41,7 +41,7 @@ interface ICopyProps {
     isVisible?: boolean;
 }
 
-const Copy: React.FC<ICopyProps> = ({
+const Copy: FC<ICopyProps> = ({
     size,
     value,
     isVisible,
