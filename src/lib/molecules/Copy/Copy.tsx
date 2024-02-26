@@ -1,4 +1,4 @@
-import React, { useCallback, useState, RefObject, FC, useMemo } from 'react';
+import React, { useCallback, useState, RefObject, FC, useMemo, MouseEvent } from 'react';
 import classnames from 'classnames';
 
 // Helpers
@@ -67,23 +67,28 @@ const Copy: FC<ICopyProps> = ({
     const isControlledVisibility = useMemo(() => isVisible !== undefined, [isVisible]);
     const isHovered: boolean = contentRef ? useHover(contentRef) : false;
 
-    const copyContent = useCallback(() => {
-        if (isCopied) return;
+    const copyContent = useCallback(
+        (e: MouseEvent<HTMLDivElement>): void => {
+            e.stopPropagation();
 
-        const content = contentRef?.current?.innerText || value;
+            if (isCopied) return;
 
-        if (!content) return;
+            const content = contentRef?.current?.innerText || value;
 
-        navigator.clipboard
-            .writeText(content)
-            .then(() => {
-                setIsCopied(true);
-                callAfterDelay(() => {
-                    setIsCopied(false);
-                }, 2000);
-            })
-            .catch((error) => console.error('Failed to copy:', error));
-    }, [contentRef, isCopied, value]);
+            if (!content) return;
+
+            navigator.clipboard
+                .writeText(content)
+                .then(() => {
+                    setIsCopied(true);
+                    callAfterDelay(() => {
+                        setIsCopied(false);
+                    }, 2000);
+                })
+                .catch((error) => console.error('Failed to copy:', error));
+        },
+        [contentRef, isCopied, value]
+    );
 
     return (
         // @ts-ignore
