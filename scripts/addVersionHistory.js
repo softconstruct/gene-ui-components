@@ -10,13 +10,15 @@ const addVersionToHistory = async () => {
     try {
         const libVersionsFromRepo = await execCommand('npm view @geneui/components versions');
 
-        const libVersionsFromRepoArr = libVersionsFromRepo
+        const libStabileVersionsFromRepo = libVersionsFromRepo
             .split(',')
-            .map((version) => `v${version.replace(/[\[\]\\n']/g, '').trim()}`);
+            .map((version) => `${version.replace(/[\[\]\\n']/g, '').trim()}`)
+            .filter((version) => version.match(/^\d+\.\d+\.\d+$/))
+            .map((version) => `v${version}`);
         // .filter((version) => version.endsWith('0'));
 
         const libVersions = {
-            versions: libVersionsFromRepoArr
+            versions: libStabileVersionsFromRepo
         };
 
         await fs.writeFile('./.storybook/lib-versions.json', JSON.stringify(libVersions));

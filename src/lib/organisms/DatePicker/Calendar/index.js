@@ -49,7 +49,7 @@ const Calendar = forwardRef((props, ref) => {
     const defaultView = monthPicker ? 'months' : 'days';
 
     const [view, setView] = useState(defaultView);
-    const [isThisMonthAllowed, setIsThisMonthAllowed] = useState(true);
+    const [isThisDateAllowed, setIsThisDateAllowed] = useState(true);
     const [previewState, setPreviewState] = useState(() => defaultPreview || dayjs());
     const [selected, setSelected] = useState(defaultValue);
 
@@ -91,6 +91,15 @@ const Calendar = forwardRef((props, ref) => {
         }
     }, [value]);
 
+    useEffect(() => {
+        if (min && !max) setIsThisDateAllowed(dayjs(min).isSameOrBefore(dayjs(), 'date'));
+        if (!min && max) setIsThisDateAllowed(dayjs(max).isSameOrAfter(dayjs(), 'date'));
+        if (min && max)
+            setIsThisDateAllowed(
+                dayjs(min).isSameOrBefore(dayjs(), 'date') && dayjs(max).isSameOrAfter(dayjs(), 'date')
+            );
+    }, [max, min]);
+
     return (
         <>
             <li className={classnames('date-box', className)} ref={ref}>
@@ -126,7 +135,6 @@ const Calendar = forwardRef((props, ref) => {
                     min={min}
                     markedDate={markedDate}
                     frozenDateRange={frozenDateRange}
-                    setIsThisMonthAllowed={setIsThisMonthAllowed}
                 />
                 {withTime && time && <TimeInput value={time} onChange={onTimeChange} />}
             </li>
@@ -141,7 +149,7 @@ const Calendar = forwardRef((props, ref) => {
                 thisWeekText={thisWeekText || contextConfigs.buttons.thisWeek}
                 thisMonthText={thisMonthText || contextConfigs.buttons.thisMonth}
                 customOption={customOption}
-                isThisMonthAllowed={isThisMonthAllowed}
+                isThisDateAllowed={isThisDateAllowed}
             />
         </>
     );

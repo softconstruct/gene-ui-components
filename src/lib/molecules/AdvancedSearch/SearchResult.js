@@ -147,8 +147,9 @@ SearchResult.propTypes = {
             actions: PropTypes.arrayOf(
                 PropTypes.shape({
                     name: PropTypes.string,
-                    icon: PropTypes.string,
-                    onClick: PropTypes.func
+                    icon: PropTypes.string.isRequired,
+                    onClick: PropTypes.func,
+                    description: PropTypes.string
                 })
             )
         })
@@ -207,8 +208,9 @@ SearchResult.propTypes = {
             actions: PropTypes.arrayOf(
                 PropTypes.shape({
                     name: PropTypes.string,
-                    icon: PropTypes.string,
-                    onClick: PropTypes.func
+                    icon: PropTypes.string.isRequired,
+                    onClick: PropTypes.func,
+                    description: PropTypes.string
                 })
             )
         })

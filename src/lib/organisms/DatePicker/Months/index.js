@@ -12,7 +12,7 @@ import Button from '../../../atoms/Button';
 // Local components
 import { useDatePickerContext } from '../Context';
 
-function Months({ year, selected, onChange, max, min, setIsThisMonthAllowed }) {
+function Months({ year, selected, onChange, max, min }) {
     const [contextConfigs] = useDatePickerContext();
 
     const months = useMemo(() => chunk(getCalendarMonths(year.startOf('y')), 3), [year]);
@@ -35,19 +35,6 @@ function Months({ year, selected, onChange, max, min, setIsThisMonthAllowed }) {
         },
         [max, min]
     );
-
-    useEffect(() => {
-        if (min && !max) {
-            setIsThisMonthAllowed(dayjs(min).isSameOrBefore(dayjs(new Date()), 'month'));
-        } else if (!min && max) {
-            setIsThisMonthAllowed(dayjs(max).isSameOrAfter(dayjs(new Date()), 'month'));
-        } else if (min && max) {
-            setIsThisMonthAllowed(
-                dayjs(min).isSameOrBefore(dayjs(new Date()), 'month') &&
-                    dayjs(max).isSameOrAfter(dayjs(new Date()), 'month')
-            );
-        }
-    }, [max, min]);
 
     return (
         <ul className="month-years-select">
