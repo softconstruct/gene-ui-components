@@ -1,12 +1,70 @@
 # Changelog
 
-## [2.12.3](https://github.com/softconstruct/gene-ui-components/compare/v2.12.2...v2.12.3) (2024-02-05)
-
+# [2.13.0](https://github.com/softconstruct/gene-ui-components/compare/v2.12.3...v2.13.0) (2024-02-26)
 
 ### Bug Fixes
 
-* **Package:** remove side effects from package.json and rollup config ([8ccbb41](https://github.com/softconstruct/gene-ui-components/commit/8ccbb4100d31265d7e6b52f439796037f1256019))
-* **Portal:** add optional chaining for provider ref ([cda1f02](https://github.com/softconstruct/gene-ui-components/commit/cda1f026b28566dbfcdd6a9fb7f5c8834e29f3ff))
+-   **AdvancedSearch:** add id for `primaryFilterData` and `secondaryFilterData`
+    ([237c939](https://github.com/softconstruct/gene-ui-components/commit/237c9398c25399c63f0a76fe8f390c0432b404fa))
+-   **AdvancedSearch:** add logic for show tooltip on action focus
+    ([d6d5801](https://github.com/softconstruct/gene-ui-components/commit/d6d580192b4aa1b85b4c20e5d9d519c4d78fd88d))
+-   **AdvancedSearch:** stop immediate call for action onclick
+    ([61890fd](https://github.com/softconstruct/gene-ui-components/commit/61890fdd27d1ef59de59b84f27ef79a4f975677e))
+-   **Copy:** stop click event propagation
+    ([ae9f4c8](https://github.com/softconstruct/gene-ui-components/commit/ae9f4c876850bfd14455f9c2d441bffa62d28fff))
+-   **DatePickerInput:** disabled state of years in case if they is limit
+    ([b3c2ff3](https://github.com/softconstruct/gene-ui-components/commit/b3c2ff38d3c3680715262ed621947223c73c70ad))
+-   **Dropdown:** opened dropdown must be closed in case open another one
+    ([724be16](https://github.com/softconstruct/gene-ui-components/commit/724be1694e405a38f0bc6a70b41f5498842c2dc9))
+-   **GitHub:** change webhook request body field from message to text
+    ([2ebdb52](https://github.com/softconstruct/gene-ui-components/commit/2ebdb52c61ced608ac5ecf7fdfee52ce29ce5bc2))
+-   **GitHub:** remove install command from message
+    ([cc282c5](https://github.com/softconstruct/gene-ui-components/commit/cc282c504d0008915c2fb851b66ba3d24e31f7cb))
+-   **Portal:** add watcher for gene ui provider ref
+    ([1f4e9e5](https://github.com/softconstruct/gene-ui-components/commit/1f4e9e59b057340f600ebb2c7040c28f67c3e696))
+-   **Profile:** change extend target with value
+    ([fe9664c](https://github.com/softconstruct/gene-ui-components/commit/fe9664cee094d46e6c58b07c49f4d76f18285805))
+-   **Profile:** data update properly
+    ([076d368](https://github.com/softconstruct/gene-ui-components/commit/076d368af9b6b15a822dea6780b23fef7560320d))
+-   **Profile:** remove absolute style and change `extendTargetWidth` value to false
+    ([f12ec28](https://github.com/softconstruct/gene-ui-components/commit/f12ec28bd83a62f2386df314922b28031fdee869))
+-   **Storybook:** change logic for version selector
+    ([6abd758](https://github.com/softconstruct/gene-ui-components/commit/6abd758b9372595caf815ba7dcc4e06f18b205c3))
+-   **Storybook:** introduction and gettingStarted page formatting
+    ([22fce2a](https://github.com/softconstruct/gene-ui-components/commit/22fce2ae8e14f2330aa7b5795166fa9f2cec607f))
+
+### Features
+
+-   **AdvancedSearch:** add `isOpen` control possibility
+    ([abcebde](https://github.com/softconstruct/gene-ui-components/commit/abcebdefd9b5085bf751efd503d16e0223469935))
+-   **AdvancedSearch:** add `onOutsideClick` prop
+    ([b54a6e1](https://github.com/softconstruct/gene-ui-components/commit/b54a6e1f16b0f8dfe9ec38fed1b4a9e0ef42d9a6))
+-   **AdvancedSearch:** add tooltip for actions
+    ([31bed35](https://github.com/softconstruct/gene-ui-components/commit/31bed3546ac97db7ad5930e2fe31259b4906f2e5))
+-   **Copy:** add new component
+    ([4919ead](https://github.com/softconstruct/gene-ui-components/commit/4919ead5566d5c8a78e4e65372322af56e44d430))
+-   **GitHub:** add `CODEOWNERS` function for the repo
+    ([7397bd9](https://github.com/softconstruct/gene-ui-components/commit/7397bd953b5eb67c5a97866d64b25f0a362a0afc))
+-   **GitHub:** add review request notification for maintainers internal channel
+    ([d70b128](https://github.com/softconstruct/gene-ui-components/commit/d70b128347283e1d87dbd322979e3a2f3c873a63))
+-   **GitHub:** add send notification task in canry version publish workflow
+    ([5afffec](https://github.com/softconstruct/gene-ui-components/commit/5afffec27deed322153c49697e23e41c41dcc0cd))
+-   **GitHub:** add workflow to notify when opened new issue
+    ([ecd653b](https://github.com/softconstruct/gene-ui-components/commit/ecd653b6e33fc30e03de7b3faf669774773bfcc3))
+-   **Publish:** add canary publish functional for `release/*.0` branches
+    ([#82](https://github.com/softconstruct/gene-ui-components/issues/82))
+    ([394cecd](https://github.com/softconstruct/gene-ui-components/commit/394cecdd7e90e8ac2da0b13d2d304e194ff0c481))
+-   **useEllipsisDetection:** add detect multiline ellipsis functionality
+    ([c4f6d8c](https://github.com/softconstruct/gene-ui-components/commit/c4f6d8c5093dbdb9926f755d991fef637d917c50))
+
+## [2.12.3](https://github.com/softconstruct/gene-ui-components/compare/v2.12.2...v2.12.3) (2024-02-05)
+
+### Bug Fixes
+
+-   **Package:** remove side effects from package.json and rollup config
+    ([8ccbb41](https://github.com/softconstruct/gene-ui-components/commit/8ccbb4100d31265d7e6b52f439796037f1256019))
+-   **Portal:** add optional chaining for provider ref
+    ([cda1f02](https://github.com/softconstruct/gene-ui-components/commit/cda1f026b28566dbfcdd6a9fb7f5c8834e29f3ff))
 
 # 2.12.2 (2024-02-02)
 
