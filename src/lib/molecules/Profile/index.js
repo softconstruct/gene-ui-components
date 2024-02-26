@@ -339,7 +339,7 @@ function Profile(props) {
                 contentRef={outsideClickRef}
                 align="end"
                 isOpen={menuVisibleState}
-                extendTargetWidth={!customAvatar}
+                extendTargetWidth={false}
                 padding={padding}
                 className={classnames('profile-module-popover', { [popoverClassName]: !!popoverClassName })}
                 {...dynamicPropsContainerParent}
