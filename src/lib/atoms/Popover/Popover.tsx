@@ -19,21 +19,28 @@ import { SwipeEventData } from 'react-swipeable';
 import { useDeviceType } from 'hooks';
 import { useSwipeable } from 'react-swipeable';
 import useWindowSize from '../../../hooks/useWindowSize';
-//utils
+
+// Utils
 //@ts-ignore
 import { noop, stopEvent } from 'utils';
-//configs
+
+// Configs
 //@ts-ignore
 import { popoverConfig } from 'configs';
+
 // Components
 import PortalContent from './PortalContent';
 import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
-// Styles
-import './Popover.scss';
+
 //Helper
 import PopoverHelper from './helper';
+
 //Types
 import { IGeneralProps } from './types';
+
+// Styles
+import './Popover.scss';
+
 export interface IPopoverProps extends IGeneralProps {
     /**
      * The Popover will get the width of its child. The property will not work when "width" prop is specified

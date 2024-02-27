@@ -100,6 +100,7 @@ const Tooltip: FC<ITooltipProps> = ({
 }) => {
     const { isMobile } = useDeviceType(screenType);
     const [isPopoverOpen, setPopoverState] = useState(false);
+    // @ts-ignore
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
 
     const mouseEnterHandler = () => !alwaysShow && setPopoverState(true);

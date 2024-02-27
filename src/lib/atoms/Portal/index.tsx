@@ -20,6 +20,7 @@ interface Props extends PropsWithChildren {
 
 const Portal: React.FC<Props> = ({ isOpen = false, children, className, container: propsContainer }) => {
     const [container, setContainer] = useState(propsContainer);
+    // @ts-ignore
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
 
     useEffect(() => {
