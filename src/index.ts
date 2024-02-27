@@ -101,6 +101,7 @@ export { default as ComboBox } from './lib/molecules/ComboBox';
 export { default as Textarea } from './lib/molecules/Textarea';
 export { default as Counter } from './lib/molecules/Counter';
 export { default as AdvancedSearch } from './lib/molecules/AdvancedSearch';
+export { default as Copy } from './lib/molecules/Copy';
 
 // Organisms
 export { default as FormableMultiSelectDropdown } from './lib/organisms/Form/Formables/FormableMultiSelectDropdown';

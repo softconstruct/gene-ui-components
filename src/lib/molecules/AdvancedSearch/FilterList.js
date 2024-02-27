@@ -13,15 +13,7 @@ import ListElementWithCheckbox from './ListElementWithCheckbox';
 import SkeletonSet from './SkeletonSet';
 
 function FilterList({ data, skeletonCount, onSelect }) {
-    const {
-        data: filterData,
-        isLoading,
-        onShowMoreClick,
-        showMoreIsLoading,
-        sectionNameText,
-        hasActiveShowMore,
-        showMoreText
-    } = data;
+    const { data: filterData, isLoading, onShowMoreClick, sectionNameText, hasActiveShowMore, showMoreText } = data;
 
     const listRef = useRef(null);
     const scrollbarRef = useRef(null);
@@ -111,7 +103,8 @@ FilterList.propTypes = {
                 name: PropTypes.string,
                 value: PropTypes.string,
                 checked: PropTypes.bool,
-                icon: PropTypes.string
+                icon: PropTypes.string,
+                id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
             })
         )
     }),

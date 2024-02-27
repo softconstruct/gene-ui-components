@@ -121,6 +121,7 @@ export default {
 };
 
 const Template = ({ ...args }) => <DropdownComponent {...args} />;
+
 export const Default = Template.bind({});
 
 export const Multiselect = Template.bind({});

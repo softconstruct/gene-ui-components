@@ -15,7 +15,7 @@ function Footer({
     thisWeekText,
     thisMonthText,
     customOption,
-    isThisMonthAllowed
+    isThisDateAllowed
 }) {
     const handleClick = useCallback(() => {
         const today = customOption
@@ -43,7 +43,7 @@ function Footer({
                             appearance="minimal"
                             flexibility="default"
                             onClick={handleClick}
-                            disabled={!isThisMonthAllowed}
+                            disabled={!isThisDateAllowed}
                         >
                             {customOption
                                 ? customOption.label

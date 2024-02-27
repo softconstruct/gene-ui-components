@@ -30,7 +30,7 @@ function Content({
         (clonedData, selectedElement) => ({
             ...clonedData,
             data: clonedData?.data.map((elem) => {
-                if (elem.name === selectedElement.name) {
+                if (elem.id === selectedElement.id) {
                     elem.checked = !elem.checked;
                 }
                 return elem;

@@ -5,31 +5,36 @@ export const typeFilterData = [
         name: 'Segment',
         value: 'segment',
         icon: 'bc-icon-segment',
-        checked: false
+        checked: false,
+        id: 1
     },
     {
         name: 'Template',
         value: 'template',
         icon: 'bc-icon-template',
-        checked: false
+        checked: false,
+        id: 2
     },
     {
         name: 'Campaign',
         value: 'campaign',
         icon: 'bc-icon-campaign',
-        checked: false
+        checked: false,
+        id: 3
     },
     {
         name: 'Customer Journey',
         value: 'customer-journey',
         icon: 'bc-icon-customer-journey',
-        checked: false
+        checked: false,
+        id: 4
     },
     {
         name: 'Reports',
         value: 'reports',
         icon: 'bc-icon-reports',
-        checked: false
+        checked: false,
+        id: 5
     }
 ];
 
@@ -37,7 +42,8 @@ const names = Array.from({ length: 10 }, () => faker.name.fullName());
 export const userFilterData = Array.from({ length: names.length }, (e, n) => ({
     name: names[n],
     value: names[n],
-    checked: false
+    checked: false,
+    id: crypto.randomUUID()
 }));
 
 const types = ['segment', 'template', 'campaign', 'customer-journey', 'reports'];

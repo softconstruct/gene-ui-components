@@ -38,7 +38,7 @@ const Portal: React.FC<Props> = ({ isOpen = false, children, className, containe
                 geneUIProviderRef.current?.removeChild(div);
             };
         }
-    }, [className, propsContainer]);
+    }, [className, propsContainer, geneUIProviderRef.current]);
 
     return <>{isOpen && container ? ReactDOM.createPortal(children, container) : null}</>;
 };

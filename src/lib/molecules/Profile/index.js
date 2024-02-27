@@ -237,7 +237,7 @@ function Profile(props) {
             }
             return menuProps;
         });
-    }, [languagesMappedData, partnersMappedData]);
+    }, [languagesMappedData, partnersMappedData, menuProps]);
 
     const handleMenuStateChange = useCallback(
         (e) => {

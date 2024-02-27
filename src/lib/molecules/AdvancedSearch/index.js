@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 
 // Helpers
 import { advancedSearchConfig } from 'configs';
-import { useDebounce, useKeyDown } from 'hooks';
+import { useDebounce, useKeyDown, useClickOutside } from 'hooks';
 import { noop } from 'utils';
 
 // Components
@@ -20,6 +20,7 @@ import './index.scss';
 
 function AdvancedSearch({
     data,
+    isOpen,
     position,
     onSearch,
     totalCount,
@@ -28,6 +29,7 @@ function AdvancedSearch({
     showMoreText,
     totalCountMax,
     totalCountText,
+    onOutsideClick,
     onShowMoreClick,
     isSearchLoading,
     openedInputWidth,
@@ -42,9 +44,10 @@ function AdvancedSearch({
     const searchRef = useRef(null);
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [initialDataState, setInitialDataState] = useState([]);
-
     const [searchValue, setSearchValue] = useState(null);
     const debouncedSearchValue = useDebounce(searchValue, 300);
+
+    const isOpenControlled = useMemo(() => isOpen !== undefined, [isOpen]);
 
     useEffect(() => {
         if (debouncedSearchValue === null) return;
@@ -81,16 +84,21 @@ function AdvancedSearch({
 
     const inputAndPopoverWidthVariable = useMemo(
         () => ({
-            '--advanced-search-width': popoverOpen ? `${openedInputWidth}vw` : closedInputWidth
+            '--advanced-search-width': (isOpenControlled ? isOpen : popoverOpen)
+                ? `${openedInputWidth}vw`
+                : closedInputWidth
         }),
-        [popoverOpen]
+        [popoverOpen, isOpenControlled, isOpen, openedInputWidth, closedInputWidth]
     );
+
+    const handleOutsideClick = useClickOutside(onOutsideClick);
 
     return (
         <div
             className={classnames('advancedSearch', {
                 'advancedSearch-left': position === advancedSearchConfig.positions.left
             })}
+            ref={handleOutsideClick}
         >
             <div
                 className={classnames('advancedSearch__wrapper', {
@@ -102,7 +110,7 @@ function AdvancedSearch({
                 <Popover
                     position="bottom"
                     screenType="desktop"
-                    isOpen={popoverOpen}
+                    isOpen={isOpenControlled ? isOpen : popoverOpen}
                     scrollbarNeeded={false}
                     extendTargetWidth={false}
                     className="advancedSearch__popover"
@@ -192,7 +200,8 @@ AdvancedSearch.propTypes = {
                 name: PropTypes.string,
                 value: PropTypes.string,
                 checked: PropTypes.bool,
-                icon: PropTypes.string
+                icon: PropTypes.string,
+                id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
             })
         )
     }),
@@ -212,14 +221,19 @@ AdvancedSearch.propTypes = {
                 name: PropTypes.string,
                 value: PropTypes.string,
                 checked: PropTypes.bool,
-                icon: PropTypes.string
+                icon: PropTypes.string,
+                id: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
             })
         )
     }),
     /**
-     * Fires an event when input changes and returns value of input (used 300ms debounce)
+     * Fires event when a user clicks outside from the component.
      */
-    onSearch: PropTypes.func, // Pass typed value using some debounce
+    onSearch: PropTypes.func,
+    /**
+     * Fires event when user clicks on outside of component.
+     */
+    onOutsideClick: PropTypes.func,
     /**
      * If search field is empty, initialDataDescription is describing witch data is showing by default for example (Recently modified data).
      */
@@ -246,8 +260,9 @@ AdvancedSearch.propTypes = {
             actions: PropTypes.arrayOf(
                 PropTypes.shape({
                     name: PropTypes.string,
-                    icon: PropTypes.string,
-                    onClick: PropTypes.func
+                    icon: PropTypes.string.isRequired,
+                    onClick: PropTypes.func,
+                    description: PropTypes.string
                 })
             )
         })
@@ -306,8 +321,9 @@ AdvancedSearch.propTypes = {
             actions: PropTypes.arrayOf(
                 PropTypes.shape({
                     name: PropTypes.string,
-                    icon: PropTypes.string,
-                    onClick: PropTypes.func
+                    icon: PropTypes.string.isRequired,
+                    onClick: PropTypes.func,
+                    description: PropTypes.string
                 })
             )
         })
@@ -315,13 +331,18 @@ AdvancedSearch.propTypes = {
     /**
      * text for no data to display
      */
-    noDataText: PropTypes.string
+    noDataText: PropTypes.string,
+    /**
+     * A boolean prop to control the popover's open and close state.
+     */
+    isOpen: PropTypes.bool
 };
 
 AdvancedSearch.defaultProps = {
     onSearch: noop,
     openedInputWidth: 65,
     onShowMoreClick: noop,
+    onOutsideClick: noop,
     closedInputWidth: '200px',
     hasActiveShowMore: false,
     showMoreIsLoading: false,
