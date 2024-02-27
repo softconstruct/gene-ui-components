@@ -337,7 +337,7 @@ function Profile(props) {
         Content = (
             <Popover
                 contentRef={outsideClickRef}
-                align="end"
+                align="bottom-start"
                 isOpen={menuVisibleState}
                 extendTargetWidth={false}
                 padding={padding}

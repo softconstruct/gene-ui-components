@@ -4,7 +4,7 @@ import classnames from 'classnames';
 
 // Helpers
 import { noop } from 'utils';
-import { popoverV2Config } from 'configs';
+import { popoverConfig } from 'configs';
 
 // Components
 import Icon from '../../atoms/Icon';
@@ -75,7 +75,7 @@ function Holder({
             })}
             style={{ '--opened-width': openedWidth }}
             onMouseLeave={() => {
-                if (!document.documentElement.classList.contains(popoverV2Config.onOpenClassName)) {
+                if (!document.documentElement.classList.contains(popoverConfig.onOpenClassName)) {
                     handleHover(false);
                 }
             }}

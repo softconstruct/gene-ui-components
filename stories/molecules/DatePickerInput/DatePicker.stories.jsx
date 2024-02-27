@@ -61,7 +61,7 @@ export default {
         flexibility: flexibility[0],
         cornerRadius: cornerRadius[0],
         labelAppearance: labelAppearance[2],
-        popoverAlign: popoverConfig.align[1],
+        popoverAlign: popoverConfig.align[7],
         componentStage: {
             type: componentStage.deprecated
         }

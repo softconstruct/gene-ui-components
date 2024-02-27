@@ -10,7 +10,7 @@ import { dayjsWithPlugins } from 'wrappers';
 import { useClick, useDeviceType, useKeyDown } from 'hooks';
 
 // Components
-import Popover from '../../atoms/PopoverV2';
+import Popover from '../../atoms/Popover';
 import ExtendedInput from '../ExtendedInput';
 import DatePicker from '../../organisms/DatePicker';
 

@@ -9,7 +9,7 @@ import { useDebounce, useKeyDown } from 'hooks';
 import { noop } from 'utils';
 
 // Components
-import PopoverV2 from '../../atoms/PopoverV2';
+import Popover from '../../atoms/Popover';
 import ExtendedInput from '../ExtendedInput';
 
 // Local components
@@ -99,14 +99,14 @@ function AdvancedSearch({
                 style={inputAndPopoverWidthVariable}
                 ref={parentRef}
             >
-                <PopoverV2
+                <Popover
                     position="bottom"
                     screenType="desktop"
                     isOpen={popoverOpen}
                     scrollbarNeeded={false}
                     extendTargetWidth={false}
                     className="advancedSearch__popover"
-                    onClickOutside={closePopoverHandler}
+                    toggleHandler={closePopoverHandler}
                     containerParent={parentRef?.current}
                     Content={
                         <Content
@@ -141,7 +141,7 @@ function AdvancedSearch({
                         className="advancedSearch__extendedInput"
                         {...extendedInputConfigs}
                     />
-                </PopoverV2>
+                </Popover>
             </div>
             <div
                 data-comment="for-popover-accessibility-to-close"
