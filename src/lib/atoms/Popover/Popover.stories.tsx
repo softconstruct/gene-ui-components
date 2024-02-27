@@ -1,15 +1,17 @@
-import React from 'react';
-
+import React, { FC } from 'react';
+import { Meta } from '@storybook/react';
+//@ts-ignore
 import Label from 'src/lib/atoms/Label/index';
+//@ts-ignore
 import Empty from 'src/lib/atoms/Empty/index';
-import PopoverComponent from 'src/lib/atoms/Popover/index';
-
+import PopoverComponent, { IPopoverProps } from './Popover';
+//@ts-ignore
 import Icon from 'src/lib/atoms/Icon/index';
-
+//@ts-ignore
 import { screenTypes, popoverConfig } from 'configs';
-import { args, category } from '../../assets/storybook.globals';
+import { args, category } from '../../../../stories/assets/storybook.globals';
 
-export default {
+const meta: Meta<typeof PopoverComponent> = {
     title: 'Atoms/Popover',
     component: PopoverComponent,
     argTypes: {
@@ -41,7 +43,7 @@ export default {
         align: args({
             control: 'select',
             options: popoverConfig.align,
-            defaultValue: popoverConfig.align[0],
+            defaultValue: popoverConfig.align[7],
             category: category.appearance
         }),
         cornerRadius: args({
@@ -73,16 +75,25 @@ export default {
         padding: 10,
         disabled: false,
         position: popoverConfig.position[0],
-        align: popoverConfig.align[0],
+        align: popoverConfig.align[7],
         cornerRadius: popoverConfig.cornerRadius[0],
         behave: popoverConfig.behave[0]
     }
 };
 
-const Template = ({ ...args }) => (
-    <PopoverComponent {...args} extendTargetWidth={false}>
-        <Icon type="bc-icon-apps" />
-    </PopoverComponent>
+const Template: FC<IPopoverProps> = ({ ...args }) => (
+    <div
+        style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)'
+        }}
+    >
+        <PopoverComponent {...args} extendTargetWidth={false}>
+            <Icon type="bc-icon-apps" />
+        </PopoverComponent>{' '}
+    </div>
 );
 
 export const Default = Template.bind({});
@@ -94,3 +105,5 @@ export const Mobile = Template.bind({});
 Mobile.args = {
     screenType: screenTypes[1]
 };
+
+export default meta;

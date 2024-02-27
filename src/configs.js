@@ -1,5 +1,7 @@
 // update mechanism for this section is under consideration
 
+import { placements } from '@floating-ui/utils';
+
 export const clientConfigs = {};
 
 export const updateConfig = (configs) => {
@@ -25,7 +27,7 @@ export const colors = ['primary', 'confirm', 'danger'];
 
 export const sizes = ['small', 'medium', 'big'];
 
-export const positions = ['top', 'right', 'bottom', 'left'];
+export const positions = placements;
 
 export const radius = ['default-radius', 'full-radius'];
 
@@ -64,15 +66,9 @@ export const stepsConfig = {
 };
 
 export const popoverConfig = {
-    align: ['start', 'end', 'center'],
-    position: ['bottom', 'top', 'left', 'right'],
-    cornerRadius: ['full-radius', 'smooth-radius'],
-    behave: ['toggle', 'open']
-};
-
-export const popoverV2Config = {
     onOpenClassName: 'has-popover-opened',
-    align: ['start', 'end', 'center'],
+
+    align: placements,
     position: ['bottom', 'top', 'left', 'right'],
     cornerRadius: ['full-radius', 'smooth-radius'],
     behave: ['toggle', 'open']
