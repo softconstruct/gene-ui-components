@@ -5,6 +5,7 @@ function useWindowSize() {
     const { innerHeight, innerWidth } = w;
     const [width, setWindowWidth] = useState(innerWidth);
     const [height, setWindowHeight] = useState(innerHeight);
+    let timeoutId;
 
     const handleResize = () => {
         const { innerHeight, innerWidth } = w;
@@ -12,12 +13,18 @@ function useWindowSize() {
         setWindowHeight(innerHeight);
     };
 
+    const debounceResize = () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(handleResize, 100);
+    };
+
     useEffect(() => {
-        w.addEventListener('resize', handleResize);
-        w.addEventListener('orientationChange', handleResize);
+        w.addEventListener('resize', debounceResize);
+        w.addEventListener('orientationChange', debounceResize);
         return () => {
-            w.removeEventListener('resize', handleResize);
-            w.removeEventListener('orientationChange', handleResize);
+            w.removeEventListener('resize', debounceResize);
+            w.removeEventListener('orientationChange', debounceResize);
+            clearTimeout(timeoutId);
         };
     }, []);
 
