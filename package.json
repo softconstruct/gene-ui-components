@@ -177,7 +177,7 @@
         "react-draft-wysiwyg": "^1.15.0",
         "react-fast-compare": "^3.2.0",
         "react-is": "^17.0.2",
-        "react-loading-skeleton": "^1.1.1",
+        "react-loading-skeleton": "^3.4.0",
         "react-swipeable": "^7.0.0",
         "react-tiny-popover": "^3.4.5",
         "react-tiny-popover-latest": "npm:react-tiny-popover@^6.0.4",

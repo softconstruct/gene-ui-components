@@ -8,7 +8,11 @@ function SkeletonSet({ count, searchResult }) {
                 .fill('')
                 .map((_, i) => (
                     <li className="skeleton__searchElement" key={i}>
-                        <SkeletonLoader duration={+`${2}.0${i}`} width="100%" isBusy />
+                        <SkeletonLoader
+                            duration={+`${2}.0${i}`}
+                            data={[{ col: 12, style: { width: '100%', height: '100%' } }]}
+                            isBusy
+                        />
                     </li>
                 ))}
         </ul>
@@ -18,14 +22,9 @@ function SkeletonSet({ count, searchResult }) {
                 .fill('')
                 .map((_, i) => (
                     <li className="skeleton__filter" key={i}>
-                        <SkeletonLoader duration={2} height="23px" width="23px" isBusy />
+                        <SkeletonLoader duration={2} data={[{ col: 1, style: { height: 23, width: 23 } }]} isBusy />
                         <span style={{ width: '10px' }} />
-                        <SkeletonLoader
-                            duration={+`${2}.0${i}`}
-                            height="23px"
-                            width={`${Math.floor(Math.random() * 51) + 50}%`}
-                            isBusy
-                        />
+                        <SkeletonLoader duration={+`${2}.0${i}`} data={[{ col: 10, style: { height: 23 } }]} isBusy />
                     </li>
                 ))}
         </ul>
