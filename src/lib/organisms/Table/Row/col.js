@@ -90,7 +90,7 @@ function Col({
                 title={colRenderer ? '' : value}
                 ref={mainRef}
             >
-                <SkeletonLoader height={20} isBusy={guidRef.current && promiseValue === guidRef.current}>
+                <SkeletonLoader isBusy={guidRef.current && promiseValue === guidRef.current}>
                     {copyable && value && (
                         <Copy
                             value={value}

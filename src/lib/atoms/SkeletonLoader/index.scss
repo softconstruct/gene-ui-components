@@ -1,15 +1,153 @@
-@import 'src/assets/styles/variables';
+.wrapper-container {
+    width: 100%;
+    height: 100%;
+}
 
-.skeleton-holder {
+.skeleton-story-wrapper {
+    background: var(--background);
+    padding: 20px;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.row > * {
+    box-sizing: border-box;
+    flex-shrink: 0;
+    width: 100%;
     max-width: 100%;
-    display: block;
+}
 
-    .react-loading-skeleton {
-        background-color: var(--background-hover);
-        background-image: linear-gradient(90deg, var(--background-hover), var(--background), var(--background-hover));
-    }
+.col-1 {
+    flex: 0 0 auto;
+    width: 8.3333%;
+}
 
-    span {
-        display: block;
-    }
+.col-2 {
+    flex: 0 0 auto;
+    width: 16.6666%;
+}
+
+.col-3 {
+    flex: 0 0 auto;
+    width: 25%;
+}
+
+.col-4 {
+    flex: 0 0 auto;
+    width: 33.3333%;
+}
+
+.col-5 {
+    flex: 0 0 auto;
+    width: 41.6666%;
+}
+
+.col-6 {
+    flex: 0 0 auto;
+    width: 50%;
+}
+
+.col-7 {
+    flex: 0 0 auto;
+    width: 58.3333%;
+}
+
+.col-8 {
+    flex: 0 0 auto;
+    width: 66.6666%;
+}
+
+.col-9 {
+    flex: 0 0 auto;
+    width: 75%;
+}
+
+.col-10 {
+    flex: 0 0 auto;
+    width: 83.3333%;
+}
+
+.col-11 {
+    flex: 0 0 auto;
+    width: 91.6666%;
+}
+
+.col-12 {
+    flex: 0 0 auto;
+    width: 100%;
+}
+
+.align-items-start {
+    align-items: flex-start !important;
+}
+
+.align-items-end {
+    align-items: flex-end !important;
+}
+
+.align-items-center {
+    align-items: center !important;
+}
+
+.align-items-baseline {
+    align-items: baseline !important;
+}
+
+.align-items-stretch {
+    align-items: stretch !important;
+}
+
+.align-content-start {
+    align-content: flex-start !important;
+}
+
+.content-center {
+    text-align: center;
+}
+
+.align-content-end {
+    align-content: flex-end !important;
+}
+
+.align-content-center {
+    align-content: center !important;
+}
+
+.align-content-between {
+    align-content: space-between !important;
+}
+
+.align-content-around {
+    align-content: space-around !important;
+}
+
+.align-content-stretch {
+    align-content: stretch !important;
+}
+
+.align-self-auto {
+    align-self: auto !important;
+}
+
+.align-self-start {
+    align-self: flex-start !important;
+}
+
+.align-self-end {
+    align-self: flex-end !important;
+}
+
+.align-self-center {
+    align-self: center !important;
+}
+
+.align-self-baseline {
+    align-self: baseline !important;
+}
+
+.align-self-stretch {
+    align-self: stretch !important;
 }
