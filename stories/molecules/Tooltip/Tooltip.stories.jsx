@@ -3,8 +3,7 @@ import React from 'react';
 import TooltipComponent from 'src/lib/molecules/Tooltip';
 import Button from 'src/lib/atoms/Button';
 import { args, category } from '../../assets/storybook.globals';
-
-const positions = ['auto', 'top', 'right', 'bottom', 'left'];
+import { positions } from '../../../src/configs';
 
 const sizes = ['default', 'small'];
 

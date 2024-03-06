@@ -3,8 +3,9 @@ import React from 'react';
 import DropdownComponent from 'src/lib/organisms/Dropdown';
 import data, { dataForReadOnly } from './data';
 import { args, category } from '../../assets/storybook.globals';
+import { popoverConfig } from '../../../src/configs';
 
-const align = ['start', 'end', 'center'];
+const align = popoverConfig.align;
 const position = ['bottom', 'left', 'right', 'top'];
 const cornerRadius = ['full-radius', 'smooth-radius'];
 const screenTypes = ['desktop', 'mobile'];
@@ -92,7 +93,7 @@ export default {
         disabled: false,
         clearable: true,
         readOnly: false,
-        align: align[0],
+        align: align[7],
         swipeable: false,
         multiSelectCount: 5,
         rowHeightMobile: 48,

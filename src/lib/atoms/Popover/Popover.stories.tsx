@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { Meta } from '@storybook/react';
+import { args, category } from '../../../../stories/assets/storybook.globals';
 
-import Label from 'src/lib/atoms/Label/index';
-import Empty from 'src/lib/atoms/Empty/index';
-import PopoverComponent from 'src/lib/atoms/Popover/index';
-
+//@ts-ignore
 import Icon from 'src/lib/atoms/Icon/index';
 
-import { screenTypes, popoverConfig } from 'configs';
-import { args, category } from '../../assets/storybook.globals';
+//@ts-ignore
+//Components
+import Label from 'src/lib/atoms/Label/index';
+import PopoverComponent, { IPopoverProps } from './Popover';
 
-export default {
+//@ts-ignore
+import Empty from 'src/lib/atoms/Empty/index';
+
+//@ts-ignore
+//Cpnfigs
+import { screenTypes, popoverConfig } from 'configs';
+
+//Styles
+import './Popover.stories.scss';
+
+const meta: Meta<typeof PopoverComponent> = {
     title: 'Atoms/Popover',
     component: PopoverComponent,
     argTypes: {
@@ -41,7 +52,7 @@ export default {
         align: args({
             control: 'select',
             options: popoverConfig.align,
-            defaultValue: popoverConfig.align[0],
+            defaultValue: popoverConfig.align[7],
             category: category.appearance
         }),
         cornerRadius: args({
@@ -73,16 +84,18 @@ export default {
         padding: 10,
         disabled: false,
         position: popoverConfig.position[0],
-        align: popoverConfig.align[0],
+        align: popoverConfig.align[7],
         cornerRadius: popoverConfig.cornerRadius[0],
         behave: popoverConfig.behave[0]
     }
 };
 
-const Template = ({ ...args }) => (
-    <PopoverComponent {...args} extendTargetWidth={false}>
-        <Icon type="bc-icon-apps" />
-    </PopoverComponent>
+const Template: FC<IPopoverProps> = ({ ...args }) => (
+    <div className="popoverWrapper">
+        <PopoverComponent {...args} extendTargetWidth={false}>
+            <Icon type="bc-icon-apps" />
+        </PopoverComponent>{' '}
+    </div>
 );
 
 export const Default = Template.bind({});
@@ -94,3 +107,5 @@ export const Mobile = Template.bind({});
 Mobile.args = {
     screenType: screenTypes[1]
 };
+
+export default meta;

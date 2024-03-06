@@ -19,7 +19,7 @@ import { noop, stopEvent, callAfterDelay } from 'utils';
 // Components
 import BusyLoader from '../../atoms/BusyLoader';
 import Empty from '../../atoms/Empty';
-import Popover from '../../atoms/PopoverV2';
+import Popover from '../../atoms/Popover';
 import Tooltip from '../../molecules/Tooltip';
 import ExtendedInput from '../../molecules/ExtendedInput';
 
@@ -1168,7 +1168,7 @@ Dropdown.defaultProps = {
     searchPlaceholderText: 'Search',
     unCheckAllText: 'Deselect All',
     inputSize: inputConfig.size[1],
-    align: popoverConfig.align[0],
+    align: popoverConfig.align[8],
     noDataText: 'No data found',
     position: ['bottom', 'top'],
     checkAllText: 'Select All',

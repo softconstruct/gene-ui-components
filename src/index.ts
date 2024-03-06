@@ -15,7 +15,6 @@ export { default as Scrollbar } from './lib/atoms/Scrollbar';
 export { default as Time } from './lib/atoms/Time';
 export { default as Empty } from './lib/atoms/Empty';
 export { default as Popover } from './lib/atoms/Popover';
-export { default as PopoverV2 } from './lib/atoms/PopoverV2';
 export { default as Title } from './lib/atoms/Title';
 export { default as Image } from './lib/atoms/Image';
 export { default as KeyValue } from './lib/atoms/KeyValue';

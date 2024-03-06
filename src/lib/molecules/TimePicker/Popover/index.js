@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useKeyDown, useClickOutside } from 'hooks';
 
 // Components
-import Popover from '../../../atoms/PopoverV2';
+import Popover from '../../../atoms/Popover';
 
 function TimePickerPopover({ children, readOnly, value, positions, ...props }) {
     const rootRef = useRef(null);

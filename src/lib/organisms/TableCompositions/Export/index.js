@@ -11,7 +11,7 @@ import { exportToXLSX, exportToCSV } from '../utils/Export';
 // Components
 import Paper from '../../../atoms/Paper';
 import Button from '../../../atoms/Button';
-import Popover from '../../../atoms/PopoverV2';
+import Popover from '../../../atoms/Popover';
 
 // Local components
 import ExportItem from './Item';
@@ -64,7 +64,7 @@ function Export({
 
     return (
         <Popover
-            align="end"
+            align="bottom-end"
             disabled={isDisable}
             extendTargetWidth={false}
             Content={

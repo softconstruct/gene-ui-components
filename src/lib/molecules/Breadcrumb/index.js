@@ -41,9 +41,13 @@ function Breadcrumb({ data, onClick, collapsed, className, separator, ...restPro
                     {separator}
                     <Popover
                         isOpen={isPopoverOpen}
-                        align="start"
+                        align="bottom-start"
+                        toggleHandler={handlePopoverToggle}
                         extendTargetWidth={false}
                         Content={<Menu onSelect={handlePopoverItemClick} data={others.slice(0, -2)} />}
+                        customStyles={{
+                            margin: '0 0.4rem'
+                        }}
                     >
                         <Button
                             onClick={handlePopoverToggle}

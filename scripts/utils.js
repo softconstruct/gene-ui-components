@@ -57,9 +57,8 @@ const isFileExists = async (filePath) => {
     } catch (error) {
         if (error.code === 'ENOENT') {
             return false;
-        } 
-            throw error;
-        
+        }
+        throw error;
     }
 };
 
@@ -73,9 +72,8 @@ const replaceCanaryVersionInDistPGK = async (canaryVersion, commitSHA) => {
     } catch (error) {
         if (error.code === 'ENOENT') {
             return false;
-        } 
-            throw error;
-        
+        }
+        throw error;
     }
 };
 
