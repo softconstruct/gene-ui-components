@@ -1,4 +1,4 @@
-import React, { LegacyRef, MouseEvent, MutableRefObject } from 'react';
+import React, { FC, LegacyRef, MouseEvent, MutableRefObject } from 'react';
 import Scrollbar from '../Scrollbar';
 import { IGeneralProps } from './types';
 import classNames from 'classnames';
@@ -13,7 +13,7 @@ export interface IPortalContentProps extends IGeneralProps {
     width: number | null;
 }
 
-const PortalContent: React.FC<IPortalContentProps> = ({
+const PortalContent: FC<IPortalContentProps> = ({
     stopEvent,
     generateContentRef,
     swipingPosition,

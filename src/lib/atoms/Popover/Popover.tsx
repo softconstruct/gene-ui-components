@@ -246,10 +246,7 @@ const Popover: FC<IPopoverProps> = (props) => {
         if (isControlled) {
             toggleHandler(event, isOpen);
         } else {
-            setPopoverOpened((isPopoverOpened) => {
-                toggleHandler(event, !isPopoverOpened);
-                return !isPopoverOpened;
-            });
+            setPopoverOpened((isPopoverOpened) => !isPopoverOpened);
         }
     };
 

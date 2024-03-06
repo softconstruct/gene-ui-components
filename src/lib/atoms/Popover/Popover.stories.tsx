@@ -1,15 +1,24 @@
 import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
-//@ts-ignore
-import Label from 'src/lib/atoms/Label/index';
-//@ts-ignore
-import Empty from 'src/lib/atoms/Empty/index';
-import PopoverComponent, { IPopoverProps } from './Popover';
+import { args, category } from '../../../../stories/assets/storybook.globals';
+
 //@ts-ignore
 import Icon from 'src/lib/atoms/Icon/index';
+
 //@ts-ignore
+//Components
+import Label from 'src/lib/atoms/Label/index';
+import PopoverComponent, { IPopoverProps } from './Popover';
+
+//@ts-ignore
+import Empty from 'src/lib/atoms/Empty/index';
+
+//@ts-ignore
+//Cpnfigs
 import { screenTypes, popoverConfig } from 'configs';
-import { args, category } from '../../../../stories/assets/storybook.globals';
+
+//Styles
+import './Popover.stories.scss';
 
 const meta: Meta<typeof PopoverComponent> = {
     title: 'Atoms/Popover',
@@ -82,14 +91,7 @@ const meta: Meta<typeof PopoverComponent> = {
 };
 
 const Template: FC<IPopoverProps> = ({ ...args }) => (
-    <div
-        style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)'
-        }}
-    >
+    <div className="popoverWrapper">
         <PopoverComponent {...args} extendTargetWidth={false}>
             <Icon type="bc-icon-apps" />
         </PopoverComponent>{' '}
