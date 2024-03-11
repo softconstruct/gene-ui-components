@@ -73,4 +73,6 @@ Badge.defaultProps = {
     color: badgeConfig.color[0]
 };
 
+Badge.displayName = 'Badge';
+
 export { IBadgeProps, Badge as default };
