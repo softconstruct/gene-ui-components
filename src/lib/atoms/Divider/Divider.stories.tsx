@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { args, category } from '../../../../stories/assets/storybook.globals';
+import { Meta } from '@storybook/react';
 
-import DividerComponent from 'src/lib/atoms/Divider/index';
-import { args, category } from '../../assets/storybook.globals';
+// Components
+import DividerComponent, { IDividerProps } from './index';
 
-export default {
+const meta: Meta<typeof DividerComponent> = {
     title: 'Atoms/Divider',
     component: DividerComponent,
     argTypes: {
@@ -18,7 +20,9 @@ export default {
     }
 };
 
-const Template = ({ ...args }) => <DividerComponent {...args} />;
+export default meta;
+
+const Template: FC<IDividerProps> = ({ ...args }) => <DividerComponent {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
