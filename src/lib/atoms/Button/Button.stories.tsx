@@ -1,9 +1,13 @@
-import React from 'react';
-
-import ButtonComponent, { IButtonProps } from './index';
+import React, { FC } from 'react';
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 import { Meta } from '@storybook/react';
+
+// Components
+import ButtonComponent, { IButtonProps } from './index';
+
 const colors = ['primary', 'confirm', 'danger', 'default'];
+
+const cornerRadius = ['round', 'smooth'];
 
 const meta: Meta<typeof ButtonComponent> = {
     title: 'Atoms/Button',
@@ -21,7 +25,12 @@ const meta: Meta<typeof ButtonComponent> = {
         withShadow: args({ control: 'boolean', ...propCategory.appearance }),
         color: args({ control: 'select', options: colors, ...propCategory.appearance }),
         size: args({ control: 'select', defaultValue: 'default', ...propCategory.appearance }),
-        cornerRadius: args({ control: 'select', defaultValue: 'round', ...propCategory.appearance }),
+        cornerRadius: args({
+            control: 'select',
+            defaultValue: 'round',
+            options: cornerRadius,
+            ...propCategory.appearance
+        }),
         flexibility: args({ control: 'select', defaultValue: 'default', ...propCategory.appearance }),
         itemsDirection: args({ control: 'select', defaultValue: 'start', ...propCategory.appearance })
     },
@@ -40,7 +49,7 @@ const meta: Meta<typeof ButtonComponent> = {
 
 export default meta;
 
-const Template: React.FC<IButtonProps> = ({ children, ...args }) => {
+const Template: FC<IButtonProps> = ({ children, ...args }) => {
     return <ButtonComponent {...args}>{children}</ButtonComponent>;
 };
 

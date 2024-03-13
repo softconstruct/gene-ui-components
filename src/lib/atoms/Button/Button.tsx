@@ -1,5 +1,4 @@
 import React, { HTMLAttributes, ReactNode, forwardRef } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 // Components
@@ -7,6 +6,7 @@ import Icon from '../Icon';
 
 // Styles
 import './index.scss';
+
 const ButtonConfig = {
     appearance: ['default', 'outline', 'minimal', 'grayscale', 'clean'],
     size: ['default', 'medium', 'big'],
@@ -15,6 +15,9 @@ const ButtonConfig = {
     itemsDirection: ['start', 'end'],
     cornerRadius: ['round', 'smooth']
 } as const;
+
+type GetArrayAsUnion<T extends keyof typeof ButtonConfig> = (typeof ButtonConfig)[T][number];
+
 export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
     /**
      * Any valid React node
@@ -23,31 +26,31 @@ export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
     /**
      * The way how the Button should be displayed
      */
-    appearance: (typeof ButtonConfig.appearance)[number];
+    appearance: GetArrayAsUnion<'appearance'>;
     /**
      * Button size
      */
-    size: (typeof ButtonConfig.size)[number];
+    size: GetArrayAsUnion<'size'>;
     /**
      * How to display inscription in relation to it's parent in Button
      */
-    flexibility: (typeof ButtonConfig.flexibility)[number];
+    flexibility: GetArrayAsUnion<'flexibility'>;
     /**
      * Button color
      */
-    color: (typeof ButtonConfig.color)[number] | string;
+    color: GetArrayAsUnion<'color'>;
     /**
      * Button children direction either from the start, or from the end
      */
-    itemsDirection: (typeof ButtonConfig.itemsDirection)[number];
+    itemsDirection: GetArrayAsUnion<'itemsDirection'>;
     /**
      * Button corner radius
      */
-    cornerRadius: (typeof ButtonConfig.cornerRadius)[number];
+    cornerRadius: GetArrayAsUnion<'cornerRadius'>;
     /**
      * The property will add an "Icon" as Button child. The valid values can be found in "Icon" atom
      */
-    icon: ReactNode;
+    icon: ReactNode | string;
     /**
      * Button disabled state
      */
@@ -94,8 +97,6 @@ const Button = forwardRef<HTMLButtonElement, Partial<IButtonProps>>(
         },
         ref
     ) => {
-        console.log(cornerRadius);
-
         const noChildren = !children && children !== 0;
 
         return (
@@ -120,7 +121,6 @@ const Button = forwardRef<HTMLButtonElement, Partial<IButtonProps>>(
                 {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
                 {...restProps}
             >
-                {' '}
                 {/*@ts-ignore*/}
                 {icon && (loading ? <Icon type="bc-icon-loader" /> : <Icon type={icon} />)}
                 {!noChildren &&
@@ -144,9 +144,6 @@ const Button = forwardRef<HTMLButtonElement, Partial<IButtonProps>>(
         );
     }
 );
-
-Button.propTypes = {};
-Button.defaultProps = {};
 
 Button.displayName = 'Button';
 

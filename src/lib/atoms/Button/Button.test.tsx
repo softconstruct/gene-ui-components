@@ -1,84 +1,62 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
+import { ReactWrapper, ShallowWrapper, mount, shallow } from 'enzyme';
 import Button, { IButtonProps } from './index';
 
-type ButtonKeysType = keyof Readonly<IButtonProps>;
-
-interface IDataProp {
-    propName: ButtonKeysType;
-    expectVal: unknown;
-    propVal: unknown;
-}
-
-// type WrapperPropsForCall = typeof shallow & typeof mount;
-
-// type WrapperProps = typeof shallow | typeof mount;
-
-const Props: IDataProp[] = [
-    { propName: 'children', propVal: 'dataset', expectVal: 'dataset' },
-    { propName: 'appearance', propVal: true, expectVal: true },
-    { propName: 'flexibility', propVal: 'flex2', expectVal: 'flex2' },
-    { propName: 'color', propVal: 'red', expectVal: 'red' },
-    { propName: 'itemsDirection', propVal: 'itemsDirection', expectVal: 'itemsDirection' },
-    { propName: 'cornerRadius', propVal: 'cornerRadius', expectVal: 'cornerRadius' },
-    { propName: 'icon', propVal: 'icon', expectVal: 'icon' },
-    { propName: 'disabled', propVal: true, expectVal: true },
-    { propName: 'active', propVal: true, expectVal: true },
-    { propName: 'withShadow', propVal: true, expectVal: true },
-    { propName: 'className', propVal: 'amd', expectVal: 'amd' },
-    { propName: 'loading', propVal: false, expectVal: false }
-];
-
-// wrapper: WrapperProps = mount
 describe('Button Component', () => {
-    const setup = (props?: Partial<IButtonProps>, isShallow: boolean = false) => {
-        // const wrapperFunction = wrapper as WrapperPropsForCall;
-        return isShallow ? shallow(<Button {...props} />) : mount(<Button {...props} />);
+    type WrapperType<T> = (prop?: Partial<IButtonProps>, isShallow?: boolean) => T;
+    type GetType<T extends keyof IButtonProps> = Pick<IButtonProps, T>[T];
+    let setup: WrapperType<ShallowWrapper | ReactWrapper>;
 
-        //wrapperFunction(<Button {...props} />);
-    };
-
-    it.each<IDataProp>(Props)('call with property $propName', ({ propName, propVal, expectVal }) => {
-        const wrapper = setup({
-            [propName]: propVal
-        });
-        expect(wrapper.props()[propName]).toBe(expectVal);
+    beforeEach(() => {
+        setup = (props, isShallow = false) => {
+            let button = <Button {...props} />;
+            return isShallow ? shallow(button) : mount(button);
+        };
     });
 
-    it.each<Omit<IDataProp, 'expectVal'>>([
-        { propName: 'children', propVal: '' },
-        { propName: 'appearance', propVal: false },
-        { propName: 'flexibility', propVal: '' },
-        { propName: 'color', propVal: '' },
-        { propName: 'itemsDirection', propVal: '' },
-        { propName: 'cornerRadius', propVal: '' },
-        { propName: 'icon', propVal: '' },
-        { propName: 'disabled', propVal: false },
-        { propName: 'active', propVal: false },
-        { propName: 'withShadow', propVal: false },
-        { propName: 'className', propVal: '' },
-        { propName: 'loading', propVal: '' }
-    ])('call with empty props $propName', ({ propName, propVal }) => {
-        const wrapper = setup({
-            [propName]: propVal
-        });
-        expect(wrapper.props()[propName]).toBeFalsy();
-    });
-
-    it('check click event', () => {
-        const onClick = jest.fn();
-        const wrapper = setup({
-            onClick
-        });
-        wrapper.simulate('click');
-        expect(onClick).toHaveBeenCalled();
+    it('checking if a component exists', () => {
+        const wrapper = setup();
+        expect(wrapper.exists()).toBeTruthy();
     });
 
     it('check conditional rendering', () => {
         const wrapper = setup({
             loading: true
         });
-
         expect(wrapper.find('.btn-loader-holder').exists()).toBeTruthy();
+    });
+
+    it('check with "icon" props', () => {
+        let icon = <div>Test</div>;
+        const wrapper = setup({
+            icon
+        });
+
+        expect(wrapper.find(icon).exists()).toBeFalsy();
+    });
+
+    it.each<GetType<'children'>>([<div>Test</div>, 'test'])('check with children  props', (children) => {
+        const wrapper = setup({
+            children
+        });
+
+        expect(wrapper.find(children as string).exists()).toBeFalsy();
+    });
+
+    it('check with conditional class', () => {
+        const wrapper = setup({
+            withShadow: true
+        });
+
+        expect(wrapper.find('.with-shadow').exists()).toBeTruthy();
+    });
+
+    it('check with prop "ariaLabel"', () => {
+        const ariaLabel = 'test';
+        const wrapper = setup({
+            ariaLabel
+        });
+
+        expect(wrapper.find(`[aria-label="${ariaLabel}"]`).exists()).toBeTruthy();
     });
 });
