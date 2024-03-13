@@ -1,30 +1,28 @@
 import { useEffect, useState } from 'react';
+import useDebounce from './useDebounceHook';
 
 const EQUAL_HEIGHT_DIFF = 3;
 
 const useEllipsisDetection = (ref, externalDependencies = []) => {
     const [isTruncated, setIsTruncated] = useState(false);
 
+    const { debounceCallback, clearDebounce } = useDebounce();
+
+    const handleResize = () => {
+        if (!ref.current) return;
+        const { scrollWidth, clientWidth, scrollHeight, clientHeight } = ref.current;
+        setIsTruncated(scrollWidth > clientWidth || scrollHeight > clientHeight + EQUAL_HEIGHT_DIFF);
+    };
+
+    useEffect(() => handleResize(), []);
+
     useEffect(() => {
-        let timeoutId;
-        const handleResize = () => {
-            if (!ref.current) return;
-            const { scrollWidth, clientWidth, scrollHeight, clientHeight } = ref.current;
-            setIsTruncated(scrollWidth > clientWidth || scrollHeight > clientHeight + EQUAL_HEIGHT_DIFF);
-        };
-
-        const debounceResize = () => {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(handleResize, 100);
-        };
-
-        window.addEventListener('resize', debounceResize);
-
-        handleResize();
+        const debounce = () => debounceCallback(handleResize, 100);
+        window.addEventListener('resize', debounce);
 
         return () => {
-            window.removeEventListener('resize', debounceResize);
-            clearTimeout(timeoutId);
+            clearDebounce();
+            window.removeEventListener('resize', debounce);
         };
     }, [
         ref,

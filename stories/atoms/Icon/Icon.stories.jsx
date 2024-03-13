@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 
+// Helpers
 import { args, propCategory } from '../../assets/storybook.globals';
+
+// Components
 import {
     BusyLoader,
     Empty,
@@ -10,6 +13,8 @@ import {
     Toaster,
     Icon as IconComponent
 } from '../../../src';
+
+// Styles
 import './Icon.stories.scss';
 
 const ICONS = 'https://sharedassets.namerandomness.com/betcore-icons/selection.json';
