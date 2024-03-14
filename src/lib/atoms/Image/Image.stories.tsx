@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { Meta } from '@storybook/react';
+import { args, category } from '../../../../stories/assets/storybook.globals';
 
-import ImageComponent from 'src/lib/atoms/Image/index';
-import Button from 'src/lib/atoms/Button/index';
-import { args, category } from '../../assets/storybook.globals';
+// Component
+import ImageComponent, { IImageProps } from '.';
+import Button from '../Button';
 
-export default {
+const meta: Meta<typeof ImageComponent> = {
     title: 'Atoms/Image',
     component: ImageComponent,
     argTypes: {
@@ -26,9 +28,12 @@ export default {
     }
 };
 
-const Template = ({ ...args }) => <ImageComponent {...args} />;
+const Template: FC<IImageProps> = ({ ...args }) => <ImageComponent {...args} />;
+
+export default meta;
 
 export const Default = Template.bind({});
+
 Default.args = {
     withBorder: true,
     selectMode: false,
@@ -36,8 +41,11 @@ Default.args = {
     isValid: true,
     actions: (
         <>
+            {/**@ts-ignore */}
             <Button icon="bc-icon-apps" appearance="minimal" />
+            {/**@ts-ignore */}
             <Button icon="bc-icon-players" appearance="minimal" />
+            {/**@ts-ignore */}
             <Button icon="bc-icon-trash" appearance="minimal" color="danger" />
         </>
     )
