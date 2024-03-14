@@ -18,12 +18,12 @@ describe('Image component', () => {
     });
 
     it('checking if a component exists', () => {
-        const wrapper = setup({}, true);
+        const wrapper = setup();
         expect(wrapper.exists());
     });
 
     it('checking "ToolTip" inside of component', () => {
-        const wrapper = setup({}, true);
+        const wrapper = setup();
         expect(wrapper.find(Tooltip).exists()).toBeTruthy();
     });
 
