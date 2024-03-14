@@ -2,10 +2,13 @@ import React from 'react';
 import { ReactWrapper, ShallowWrapper, mount, shallow } from 'enzyme';
 
 // Components
-import Image, { IImageProps } from './';
+import Image from './';
 import Tooltip from '../../molecules/Tooltip';
 import Empty from '../Empty';
 import Checkbox from '../../molecules/Checkbox';
+
+// Types
+import { IImageProps } from '.';
 
 describe('Image component', () => {
     type WrapperType<T> = (prop?: Partial<IImageProps>, isShallow?: boolean) => T;

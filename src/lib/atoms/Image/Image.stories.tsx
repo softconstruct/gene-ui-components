@@ -3,8 +3,11 @@ import { Meta } from '@storybook/react';
 import { args, category } from '../../../../stories/assets/storybook.globals';
 
 // Component
-import ImageComponent, { IImageProps } from '.';
+import ImageComponent from '.';
 import Button from '../Button';
+
+// Types
+import { IImageProps } from '.';
 
 const meta: Meta<typeof ImageComponent> = {
     title: 'Atoms/Image',
