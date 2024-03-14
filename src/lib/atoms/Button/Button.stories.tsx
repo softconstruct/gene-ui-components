@@ -3,7 +3,10 @@ import { args, propCategory } from '../../../../stories/assets/storybook.globals
 import { Meta } from '@storybook/react';
 
 // Components
-import ButtonComponent, { IButtonProps } from './index';
+import ButtonComponent from './index';
+
+// Types
+import { IButtonProps } from './index';
 
 const colors = ['primary', 'confirm', 'danger', 'default'];
 

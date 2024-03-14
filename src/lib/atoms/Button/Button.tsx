@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import Icon from '../Icon';
 
 // Styles
-import './index.scss';
+import './Button.scss';
 
 const ButtonConfig = {
     appearance: ['default', 'outline', 'minimal', 'grayscale', 'clean'],

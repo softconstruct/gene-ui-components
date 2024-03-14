@@ -1,6 +1,11 @@
 import React from 'react';
 import { ReactWrapper, ShallowWrapper, mount, shallow } from 'enzyme';
-import Button, { IButtonProps } from './index';
+
+// Components
+import Button from './index';
+
+// Types
+import { IButtonProps } from './index';
 
 describe('Button Component', () => {
     type WrapperType<T> = (prop?: Partial<IButtonProps>, isShallow?: boolean) => T;
