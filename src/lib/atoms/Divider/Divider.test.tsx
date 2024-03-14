@@ -2,7 +2,10 @@ import React from 'react';
 import { mount, ReactWrapper, shallow, ShallowWrapper } from 'enzyme';
 
 // Components
-import Divider, { IDividerProps } from './Divider';
+import Divider from './Divider';
+
+// Types
+import { IDividerProps } from './Divider';
 
 describe('divider component', () => {
     type WrapperType<T> = (prop?: Partial<IDividerProps>, isShallow?: boolean) => T;

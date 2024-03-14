@@ -2,7 +2,7 @@ import React, { FC, HTMLAttributes, useMemo } from 'react';
 import classnames from 'classnames';
 
 // Styles
-import './index.scss';
+import './Divider.scss';
 
 export interface IDividerProps extends HTMLAttributes<HTMLDivElement> {
     /**
