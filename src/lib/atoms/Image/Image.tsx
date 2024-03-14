@@ -1,5 +1,4 @@
 import React, { FC, HTMLAttributes, ReactNode, useMemo } from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 // Components
@@ -8,7 +7,7 @@ import Tooltip from '../../molecules/Tooltip';
 import Checkbox from '../../molecules/Checkbox';
 
 // Styles
-import './index.scss';
+import './Image.scss';
 
 export interface IImageProps extends HTMLAttributes<HTMLDivElement> {
     /**
