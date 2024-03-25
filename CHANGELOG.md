@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.13.1 (2024-03-25)
+
+### Bug Fixes
+
+-   **ExtendedInput:** errorText with tooltip([#103](https://github.com/softconstruct/gene-ui-components/issues/103))
+
 # [2.13.0](https://github.com/softconstruct/gene-ui-components/compare/v2.12.3...v2.13.0) (2024-02-26)
 
 ### Bug Fixes
