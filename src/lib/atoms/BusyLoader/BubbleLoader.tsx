@@ -9,6 +9,4 @@ const BubbleLoader: FC = () => {
     );
 };
 
-BubbleLoader.displayName = 'BubbleLoader';
-
 export default BubbleLoader;

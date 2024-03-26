@@ -1,9 +1,13 @@
 import React from 'react';
-import { shallow, mount, render, ShallowWrapper, ReactWrapper, MountRendererProps } from 'enzyme';
-import BusyLoader, { IBusyLoaderProps } from './index';
+import { shallow, mount, render, ShallowWrapper } from 'enzyme';
 
+// Components
 import { Icon } from '../../../index';
 import BubbleLoader from './BubbleLoader';
+import BusyLoader from './index';
+
+//Types
+import { IBusyLoaderProps } from './index';
 
 const shallowComponent = (props?: IBusyLoaderProps): ShallowWrapper => shallow(<BusyLoader {...props} />);
 

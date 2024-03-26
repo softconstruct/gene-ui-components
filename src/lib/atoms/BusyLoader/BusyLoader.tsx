@@ -37,14 +37,21 @@ interface IBusyLoaderProps {
     className?: string;
 }
 
-const BusyLoader: FC<IBusyLoaderProps> = ({ type, isBusy, children, className, loadingText, spinnerSize }) => {
+const BusyLoader: FC<IBusyLoaderProps> = ({
+    type = 'spinner',
+    isBusy = true,
+    children = null,
+    className,
+    loadingText,
+    spinnerSize = 'small'
+}) => {
     return type === 'bar' ? (
         <div className="bar-loader" />
     ) : isBusy ? (
         <div className={classnames('loader-holder', className)}>
-            {/*@ts-ignore*/}
             {type === 'spinner' ? (
-                <Icon type={`bc-icon-loader s-${spinnerSize}`} className={'zzzz'} />
+                // @ts-ignore
+                <Icon type={`bc-icon-loader s-${spinnerSize}`} />
             ) : (
                 <BubbleLoader />
             )}
@@ -54,14 +61,5 @@ const BusyLoader: FC<IBusyLoaderProps> = ({ type, isBusy, children, className, l
         children
     );
 };
-
-BusyLoader.defaultProps = {
-    isBusy: true,
-    children: null,
-    type: 'spinner',
-    spinnerSize: 'small'
-};
-
-BusyLoader.displayName = 'BusyLoader';
 
 export { IBusyLoaderProps, BusyLoader as default };

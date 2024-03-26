@@ -1,9 +1,13 @@
 import React, { FC } from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta } from '@storybook/react';
+
+//Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
+//Components
 import BusyLoader from './index';
 
+//Types
 import { IBusyLoaderProps } from './index';
 
 const meta: Meta<typeof BusyLoader> = {
@@ -26,15 +30,11 @@ const meta: Meta<typeof BusyLoader> = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
-
-type StoryTemplateType = Story & FC<IBusyLoaderProps>;
-
 interface IBusyLoaderPropsExtended extends IBusyLoaderProps {
     icon?: string;
 }
 
-export const Default: StoryTemplateType = (args) => {
+const Template: FC<IBusyLoaderPropsExtended> = (args) => {
     return (
         <BusyLoader {...args}>
             <div>
@@ -45,18 +45,23 @@ export const Default: StoryTemplateType = (args) => {
         </BusyLoader>
     );
 };
+
+export const Default = Template.bind({});
+
 Default.args = {
     type: 'spinner',
     spinnerSize: 'medium'
 };
 
-export const Bubble: Story = (args: IBusyLoaderPropsExtended) => <Default icon="bc-icon-apps" {...args} />;
+export const Bubble = Template.bind({});
+
 Bubble.args = {
     type: 'bubbles'
 };
 
-export const Bar: Story = (args: IBusyLoaderPropsExtended) => <Default icon="bc-icon-monospace" {...args} />;
-Bar.args = {
-    type: 'bar',
+export const Bar = Template.bind({});
+
+Bubble.args = {
+    type: 'Bar',
     loadingText: 'bar loading'
 };
