@@ -1,0 +1,38 @@
+name: Publish canary version to NPM
+on:
+    push:
+        branches:
+          - 'release/*.0'
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: Setup Node
+              uses: actions/setup-node@v2
+              with:
+                  node-version: '16.x'
+                  registry-url: 'https://registry.npmjs.org'
+            - name: 📥 Install dependencies
+              run: npm install
+            - name: 🔧 Build
+              run: |
+                  BRANCH_NAME=${{ github.ref }}
+                  COMMIT_SHA=$(git rev-parse --short HEAD)
+
+                  npm run build -- --pure --canary $BRANCH_NAME --commitSHA $COMMIT_SHA
+            - name: 📦 Publish package on NPM
+              run: cd dist && npm publish --access public --tag canary
+              env:
+                  NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTOMATION_ACCESS_TOKEN }}
+            - name: 🔔 Send Notification
+              env:
+                  INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT: ${{ secrets.INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT }}
+              run: |
+                  VERSION=$(jq -r '.version' dist/package.json)
+                  VERSION_URL="https://www.npmjs.com/package/@geneui/components/v/$VERSION"
+
+                  MESSAGE="@channel\nNew canary version [$VERSION]($VERSION_URL) is published on NPM"
+
+                  curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\", \"username\": \"NPM\", \"icon_url\": \"https://static-production.npmjs.com/b0f1a8318363185cc2ea6a40ac23eeb2.png\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT

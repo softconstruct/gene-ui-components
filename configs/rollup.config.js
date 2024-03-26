@@ -15,7 +15,7 @@ import { getDirectories, getFiles } from '../scripts/utils';
 
 const packageJson = require('../package.json');
 
-const TSComponentsList = ['Avatar', 'LinkButton', 'MapChartD3'];
+const TSComponentsList = ['Avatar', 'LinkButton', 'Copy', 'MapChartD3'];
 
 const getInputs = (name, dir) => {
     const inputs = getDirectories(dir).reduce((obj, item) => {

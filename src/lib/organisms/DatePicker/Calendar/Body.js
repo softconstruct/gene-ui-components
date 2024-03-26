@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 // Local components
 import Days from '../Days';
@@ -25,7 +25,6 @@ function Body({
     max,
     min,
     markedDate,
-    setIsThisMonthAllowed,
     frozenDateRange
 }) {
     const isRange = weekPicker || monthPicker || rangePicker;
@@ -88,7 +87,6 @@ function Body({
                     year={preview.startOf('y')}
                     max={max}
                     min={min}
-                    setIsThisMonthAllowed={setIsThisMonthAllowed}
                 />
             )}
             {view === 'years' && (
@@ -97,6 +95,8 @@ function Body({
                     onChange={handleYearChange}
                     previewYear={preview.year()}
                     onPreviewChange={handleFooterPreviewChange}
+                    max={max}
+                    min={min}
                 />
             )}
         </>

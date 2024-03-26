@@ -214,7 +214,6 @@ const Menu = forwardRef(
                         border="bottom"
                         className={classnames({ hovered: hoveredHeader })}
                         screenType={screenType}
-                        titlePosition="center"
                         {...headerProps}
                         title={header.title}
                     />

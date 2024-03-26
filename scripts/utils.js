@@ -1,8 +1,9 @@
 import chalk from 'chalk';
 import { lstatSync, readdirSync } from 'fs';
-import { copyFile, stat } from 'fs/promises';
-import { join } from 'path';
+import { copyFile, stat, readFile, writeFile } from 'fs/promises';
+import { join, resolve } from 'path';
 import { exec } from 'child_process';
+import dayjs from 'dayjs';
 
 /**
  * Executes a shell command and return it as a Promise.
@@ -56,10 +57,33 @@ const isFileExists = async (filePath) => {
     } catch (error) {
         if (error.code === 'ENOENT') {
             return false;
-        } else {
-            throw error;
         }
+        throw error;
     }
 };
 
-export { execCommand, isDirectory, isFile, isFileExists, getDirectories, getFiles, copyStaticFilesToDist };
+const replaceCanaryVersionInDistPGK = async (canaryVersion, commitSHA) => {
+    try {
+        const [version] = canaryVersion.split('/').reverse();
+        const packageJsonFile = await readFile(resolve(__dirname, '../dist/package.json'), 'utf8');
+        const packageJson = JSON.parse(packageJsonFile);
+        packageJson.version = `${version}-canary-${commitSHA}-${dayjs().format('DDMMYYYY')}`;
+        await writeFile(resolve(__dirname, '../dist/package.json'), JSON.stringify(packageJson, null, 4), 'utf8');
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            return false;
+        }
+        throw error;
+    }
+};
+
+export {
+    execCommand,
+    isDirectory,
+    isFile,
+    isFileExists,
+    getDirectories,
+    getFiles,
+    copyStaticFilesToDist,
+    replaceCanaryVersionInDistPGK
+};

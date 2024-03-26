@@ -5,13 +5,27 @@ import yargs from 'yargs';
 
 import { rmSync } from 'fs';
 import { resolve } from 'path';
-import { execCommand, copyStaticFilesToDist } from './utils';
+import { execCommand, copyStaticFilesToDist, replaceCanaryVersionInDistPGK } from './utils';
 
 // In case of true the build script should skip lint and semver steps
 const { pure: isBuildRunInPureMode } = yargs.option('pure', {
     describe: 'If --pure option specified then lint and semver steps will be skipped from build job.',
     type: 'boolean',
     default: false
+}).argv;
+
+// The canary version branch name. If provided package json file version will be replaced
+const { canary: canaryVersion } = yargs.option('canary', {
+    describe: 'If --canary argument is specified then package json version will be generated as canary version.',
+    type: 'string',
+    default: null
+}).argv;
+
+// The commit SHA. It should be provided for canary versions only
+const { commitSHA } = yargs.option('commitSHA', {
+    describe: 'If --canary version is provided this argument should be provided too --commitSHA.',
+    type: 'string',
+    default: null
 }).argv;
 
 const spinner = ora({
@@ -30,6 +44,10 @@ const build = async () => {
         await execCommand('rollup -c ./configs/rollup.config.js --bundleConfigAsCjs', 'rollup.config');
 
         await copyStaticFilesToDist();
+
+        if (canaryVersion && commitSHA) {
+            await replaceCanaryVersionInDistPGK(canaryVersion, commitSHA);
+        }
     } catch (error) {
         return {
             hasError: true,

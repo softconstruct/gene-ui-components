@@ -102,7 +102,8 @@ const ExtendedInput = forwardRef((props, ref) => {
 
     const hasError = !isValid;
 
-    const showTooltip = (tooltipText && isValid) || (showErrorWithTooltip && hasError && errorText);
+    const showTooltip =
+        tooltipText && isValid ? tooltipText : showErrorWithTooltip && hasError && errorText ? errorText : '';
 
     const handleChange = (e) => {
         const { value } = e.target;
@@ -154,7 +155,6 @@ const ExtendedInput = forwardRef((props, ref) => {
             if (isDropdown) {
                 onClick(e);
                 if (!readOnly) {
-                    stopEvent(e, true);
                     focused ? inputRef.current.blur() : inputRef.current.focus();
                 }
             }
@@ -257,7 +257,7 @@ const ExtendedInput = forwardRef((props, ref) => {
     );
 
     return (
-        <Tooltip position="bottom" title={showTooltip ? errorText || tooltipText : ''}>
+        <Tooltip position="bottom" title={showTooltip} isVisible={!!showTooltip}>
             <div
                 className={classnames(
                     'input-holder',

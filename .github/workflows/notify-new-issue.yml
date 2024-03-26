@@ -1,0 +1,20 @@
+name: Notify New Issue Opened
+on:
+    issues:
+        types:
+          - opened
+jobs:
+    send_notification:
+        runs-on: ubuntu-latest
+        steps:
+            - name: 🔔 Send Notification
+              env:
+                  INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT: ${{ secrets.INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT }}
+              run: |
+                  ISSUE_TITLE="${{ github.event.issue.title }}"
+                  ISSUE_LINK=${{ github.event.issue.html_url }}
+                  ISSUE_AUTHOR=${{ github.event.issue.user.login }}
+
+                  MESSAGE="@channel\n**New Issue Opened**\nAuthor: $ISSUE_AUTHOR\nTitle: $ISSUE_TITLE\nLink: $ISSUE_LINK"
+
+                  curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\", \"username\": \"GitHub\", \"icon_url\": \"https://github.githubassets.com/favicons/favicon.png\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT
