@@ -15,3 +15,4 @@ export { default as DonutChart } from './DonutChart';
 export { default as ScatterChart } from './ScatterChart';
 export { default as HeatMapChart } from './HeatMapChart';
 export { default as ColumnRangeChart } from './ColumnRangeChart';
+export { default as MapChartD3 } from './MapChartD3';

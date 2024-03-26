@@ -1,0 +1,108 @@
+@import 'src/assets/styles/variables';
+
+.charts__map-chart {
+    position: relative;
+    min-height: rem(480);
+    background-color: var(--background);
+
+    .map-chart__proxy-content {
+        min-height: rem(480);
+    }
+
+    .chart__title-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+    }
+
+    .chart__legends {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 50px;
+        margin: 30px 0;
+
+        .legend__button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+
+            .legend__circle {
+                display: block;
+                border-radius: 100%;
+                width: 10px;
+                height: 10px;
+            }
+        }
+    }
+
+    .chart__activity-box {
+        width: rem(240);
+        height: rem(240);
+        padding: rem(10);
+        border-radius: 4px;
+        color: white;
+        background-color: rgba(0, 0, 0, 70%);
+        position: absolute;
+        right: rem(70);
+        top: rem(30);
+        pointer-events: none;
+        opacity: 0;
+        transition: 0.4s;
+        font-weight: 600;
+        text-align: center;
+
+        &.active {
+            opacity: 1;
+        }
+
+        .headline {
+            line-height: 1.36;
+        }
+
+        .content {
+            height: calc(100% - 36px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    .actions__box {
+        position: absolute;
+        z-index: 10;
+        right: rem(28);
+        top: rem(28);
+
+        .zoom-button {
+            cursor: pointer;
+            width: rem(28);
+            height: rem(28);
+            margin-bottom: rem(10);
+            border-radius: 100%;
+            background-color: rgba(0, 0, 0, 60%);
+            color: rgba(255, 255, 255, 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 80%);
+            }
+
+            &.disabled {
+                pointer-events: none;
+                background-color: rgba(0, 0, 0, 20%);
+            }
+
+            .icon {
+                font-size: 2rem;
+            }
+        }
+    }
+}
+
+.popover__content {
+    padding: 7px 14px;
+}

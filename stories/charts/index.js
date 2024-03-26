@@ -17,6 +17,7 @@ import ScatterChart from './ScatterChart.stories';
 import StackedBarChart from './StackedBarChart.stories';
 import StackedColumnChart from './StackedColumnChart.stories';
 import TreeMapChart from './TreeMapChart.stories';
+import MapChartD3Stories from '../../src/lib/molecules/Charts/MapChartD3/MapChartD3.stories';
 /** End components imports */
 
 /** Start stories adding */
@@ -40,5 +41,6 @@ storiesOf('Charts', module)
     .add('ScatterChart', ...ScatterChart)
     .add('StackedColumnChart', ...StackedColumnChart)
     .add('StackedBarChart', ...StackedBarChart)
-    .add('TreeMapChart', ...TreeMapChart);
+    .add('TreeMapChart', ...TreeMapChart)
+    .add('MapChartD3', ...MapChartD3Stories);
 /** End stories adding */

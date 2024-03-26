@@ -82,7 +82,8 @@ export {
     DonutChart,
     ScatterChart,
     HeatMapChart,
-    ColumnRangeChart
+    ColumnRangeChart,
+    MapChartD3
 } from './lib/molecules/Charts';
 export { default as Widget } from './lib/molecules/Widget';
 export { default as Progress } from './lib/molecules/Progress';
