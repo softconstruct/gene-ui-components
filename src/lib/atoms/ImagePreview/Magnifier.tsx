@@ -1,5 +1,47 @@
-import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { forwardRef, MouseEvent, useCallback, useImperativeHandle, useRef, useState } from 'react';
+
+interface IMagnifierProps {
+    /**
+     * Image path to display. <span style="color: red">( Required )</span>
+     */
+    imgUrl: string;
+    /**
+     * On or off rotation functionality
+     */
+    withRotation?: boolean;
+    /**
+     * On or off magnifier functionality
+     */
+    withMagnifier?: boolean;
+    /**
+     * Zoom Ratio
+     */
+    zoom?: number;
+    /**
+     * Hide or show magnifier
+     */
+    showMagnifier?: boolean;
+    /**
+     * Name for image alt
+     */
+    name?: string;
+    /**
+     * Additional className for img
+     */
+    className?: string;
+    /**
+     * Shape for magnifier
+     */
+    magnifierAppearance?: 'square' | 'circle';
+}
+
+interface IStylesProps {
+    top?: string;
+    right?: string;
+    bottom?: string;
+    left?: string;
+    backgroundPosition?: string;
+}
 
 const magnifierAppearances = {
     square: 'square',
@@ -9,14 +51,30 @@ const magnifierAppearances = {
 const bufferSize = 40;
 const borderWidth = 2;
 
-const Magnifier = forwardRef(
-    ({ imgUrl, className, name, withRotation, withMagnifier, showMagnifier, zoom, magnifierAppearance }, ref) => {
-        const imgRef = useRef(null);
-        const glassRef = useRef(null);
+interface IMagnifierForwardRef {
+    rotate?: (deg?: number) => void;
+}
+
+const Magnifier = forwardRef<IMagnifierForwardRef, IMagnifierProps>(
+    (
+        {
+            imgUrl,
+            className,
+            name,
+            withRotation = false,
+            withMagnifier = false,
+            showMagnifier = false,
+            zoom = 1.5,
+            magnifierAppearance = magnifierAppearances.square
+        },
+        ref
+    ) => {
+        const imgRef = useRef<HTMLImageElement | null>(null);
+        const glassRef = useRef<HTMLDivElement | null>(null);
 
         const [rotationDeg, setRotationDeg] = useState(0);
         const [isCursorInScopeOfImage, setIsCursorInScopeOfImage] = useState(false);
-        const [glassPositionStyles, setGlassPositionStyles] = useState({});
+        const [glassPositionStyles, setGlassPositionStyles] = useState<IStylesProps>({});
 
         const rotate = useCallback(
             (deg = 90) => {
@@ -32,14 +90,16 @@ const Magnifier = forwardRef(
         }));
 
         const onMouseMoveHandler = useCallback(
-            (e) => {
+            (e: MouseEvent) => {
                 // Prevent any calculation in case of magnifier is turned off
-                if (!withMagnifier) return;
+                if (!withMagnifier || !imgRef.current || !glassRef.current) return;
 
                 e.preventDefault();
 
                 const img = imgRef.current;
                 const cnt = img.offsetParent;
+
+                if (!cnt) return;
 
                 const glassWidth = glassRef.current?.offsetWidth / 2;
                 const glassHeight = glassRef.current?.offsetHeight / 2;
@@ -49,7 +109,7 @@ const Magnifier = forwardRef(
 
                 const { clientX, clientY } = e;
 
-                const stylesProps = {};
+                const stylesProps: IStylesProps = {};
 
                 // @TODO need move to useMemo hooks for better performance
                 const { bottom, height, left, right, top, width } = cnt.getBoundingClientRect();
@@ -128,7 +188,7 @@ const Magnifier = forwardRef(
             showMagnifier && setIsCursorInScopeOfImage(true);
         }, [showMagnifier]);
 
-        const onMouseLeaveHandler = useCallback((e) => {
+        const onMouseLeaveHandler = useCallback((e: MouseEvent) => {
             if (e.relatedTarget !== glassRef.current) {
                 setIsCursorInScopeOfImage(false);
             }
@@ -150,9 +210,9 @@ const Magnifier = forwardRef(
                                 borderRadius: `${magnifierAppearance === magnifierAppearances.circle ? 50 : 0}%`,
                                 backgroundImage: `url(${imgUrl})`,
                                 backgroundRepeat: 'no-repeat',
-                                backgroundSize: `${imgRef.current.clientWidth * zoom}px ${
-                                    imgRef.current.clientHeight * zoom
-                                }px`,
+                                backgroundSize: imgRef.current
+                                    ? `${imgRef.current.clientWidth * zoom}px ${imgRef.current.clientHeight * zoom}px`
+                                    : `0 0`,
                                 ...glassPositionStyles
                             }}
                             onMouseLeave={onMouseLeaveHandler}
@@ -173,27 +233,4 @@ const Magnifier = forwardRef(
     }
 );
 
-Magnifier.propTypes = {
-    imgUrl: PropTypes.string.isRequired,
-    withRotation: PropTypes.bool,
-    withMagnifier: PropTypes.bool,
-    zoom: PropTypes.number,
-    showMagnifier: PropTypes.bool,
-    name: PropTypes.string,
-    className: PropTypes.string,
-    magnifierAppearance: PropTypes.oneOf(Object.keys(magnifierAppearances))
-};
-
-Magnifier.defaultProps = {
-    withRotation: false,
-    withMagnifier: false,
-    showMagnifier: false,
-    zoom: 1.5,
-    name: '',
-    className: '',
-    magnifierAppearance: magnifierAppearances.square
-};
-
-Magnifier.displayName = 'Magnifier';
-
-export default Magnifier;
+export { IMagnifierProps, IMagnifierForwardRef, Magnifier as default };

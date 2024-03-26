@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import classnames from 'classnames';
+import React, { FC, FormEvent, MouseEvent, useEffect, useRef, useState } from 'react';
 
 // Helpers
+//@ts-ignore
 import { fileSizeDisplay, noop } from 'utils';
+//@ts-ignore
 import { useImgDownload, useEllipsisDetection } from 'hooks';
+import classnames from 'classnames';
 
 // Components
 import Icon from '../Icon';
@@ -12,39 +13,92 @@ import Switcher from '../Switcher';
 import Tooltip from '../../molecules/Tooltip';
 
 // Local components
-import Magnifier from './Magnifier';
+import Magnifier, { IMagnifierForwardRef } from './Magnifier';
 
 // Styles
-import './index.scss';
+import './ImagePreview.scss';
 
-function ImagePreview({
+interface IImagePreviewProps {
+    /**
+     * Image file display name. <span style="color: red">( Required )</span>
+     */
+    name?: string;
+    /**
+     * Image path to display
+     */
+    path: string;
+    /**
+     * Event fires when click on close button
+     */
+    onClose?: (event: MouseEvent) => void;
+    /**
+     * Need to size or not
+     */
+    showSize?: boolean;
+    /**
+     * Need to download or not
+     */
+    showDownload?: boolean;
+    /**
+     * Need to rotate or not
+     */
+    showRotate?: boolean;
+    /**
+     * Need to dimensions or not
+     */
+    showDimensions?: boolean;
+    /**
+     * With magnifier functionality
+     */
+    withMagnifier?: boolean;
+    /**
+     * modal mode
+     */
+    withModal?: boolean;
+    /**
+     * Default magnifier Value switched On
+     */
+    magnifierDefaultValue?: boolean;
+    /**
+     * This is for fetch image for example through this prop you can pass token.
+     * Provide an Object that will spread in Request Headers:{...customHeaders} in second parameter for fetch function.
+     * For example { 'Content-Type': 'application/json'} it will convert fetch(URL,{headers{'Content-Type': 'application/json'}})
+     */
+    customHeaders?: {};
+    /**
+     * The prop is responsible for header view and alignment for mobile device
+     */
+    isMobile?: boolean;
+}
+
+const ImagePreview: FC<IImagePreviewProps> = ({
     name,
     path,
-    onClose,
-    showSize,
-    isMobile,
-    withModal,
-    showRotate,
-    showDownload,
+    onClose = noop,
+    showSize = true,
+    isMobile = false,
+    withModal = true,
+    showRotate = true,
+    showDownload = true,
     customHeaders,
-    showDimensions,
-    withMagnifier,
-    magnifierDefaultValue,
+    showDimensions = true,
+    withMagnifier = false,
+    magnifierDefaultValue = true,
     ...rest
-}) {
-    const magnifierRef = useRef();
-    const downloadImg = useImgDownload();
-
+}) => {
+    const [isMagnifierOn, setIsMagnifierOn] = useState(magnifierDefaultValue);
+    const [imageData, setImageData] = useState('');
     const [meta, setMeta] = useState({
         size: 0,
         width: 0,
         height: 0
     });
 
-    const [isMagnifierOn, setIsMagnifierOn] = useState(magnifierDefaultValue);
-    const [imageData, setImageData] = useState('');
-    const nameRef = useRef(null);
+    const nameRef = useRef<HTMLSpanElement | null>(null);
+    const magnifierRef = useRef<IMagnifierForwardRef | null>(null);
+
     const isTruncated = useEllipsisDetection(nameRef);
+    const downloadImg = useImgDownload();
 
     useEffect(() => {
         !!path &&
@@ -68,16 +122,19 @@ function ImagePreview({
                 });
     }, [path]);
 
+    // @ts-ignore
     return (
         <div className={classnames('imagePreview', { 'modal-view': withModal, 'mobile-view': isMobile })} {...rest}>
             <div className="imagePreview__header">
                 <div className="imagePreview__infoWrapper">
+                    {/*@ts-ignore*/}
                     <Icon type="bc-icon-Image" className="imagePreview__icon imagePreview__imgIcon" />
                     <div
                         className={classnames('imagePreview__info', {
                             'imagePreview__info-center': !showSize && !showDimensions
                         })}
                     >
+                        {/*@ts-ignore*/}
                         <Tooltip text={name} isVisible={isTruncated}>
                             <span className="imagePreview__name ellipsis-text" ref={nameRef}>
                                 {name}
@@ -104,9 +161,10 @@ function ImagePreview({
                     {withMagnifier && (
                         <div className="imagePreview__magnifier">
                             <Switcher
+                                /*@ts-ignore*/
                                 defaultChecked={magnifierDefaultValue}
                                 value={isMagnifierOn}
-                                onChange={(e) => setIsMagnifierOn(e.currentTarget.checked)}
+                                onChange={(e: FormEvent<HTMLInputElement>) => setIsMagnifierOn(e.currentTarget.checked)}
                                 labelPosition="left"
                                 label="Magnifier"
                             />
@@ -114,20 +172,29 @@ function ImagePreview({
                     )}
                     {showRotate && (
                         <div className="imagePreview__rotate">
+                            {/*@ts-ignore*/}
                             <Icon
                                 type="bc-icon-rotate-left"
                                 className="imagePreview__icon"
-                                onClick={() => magnifierRef.current.rotate(-90)}
+                                onClick={() => {
+                                    if (!magnifierRef.current?.rotate) return;
+                                    magnifierRef.current.rotate(-90);
+                                }}
                             />
+                            {/*@ts-ignore*/}
                             <Icon
                                 type="bc-icon-rotate-right"
                                 className="imagePreview__icon"
-                                onClick={() => magnifierRef.current.rotate(90)}
+                                onClick={() => {
+                                    if (!magnifierRef.current?.rotate) return;
+                                    magnifierRef.current.rotate(90);
+                                }}
                             />
                         </div>
                     )}
                     {showDownload && (
                         <div className="imagePreview__download">
+                            {/*@ts-ignore*/}
                             <Icon
                                 type="bc-icon-download"
                                 className="imagePreview__icon"
@@ -138,6 +205,7 @@ function ImagePreview({
                     {withModal && (
                         <div className="imagePreview__close">
                             <div className="imagePreview__divider" />
+                            {/*@ts-ignore*/}
                             <Icon type="bc-icon-close" className="imagePreview__icon" onClick={onClose} />
                         </div>
                     )}
@@ -177,71 +245,6 @@ function ImagePreview({
             </div>
         </div>
     );
-}
-
-ImagePreview.defaultProps = {
-    onClose: noop,
-    showSize: true,
-    isMobile: false,
-    withModal: true,
-    showRotate: true,
-    showDownload: true,
-    withMagnifier: false,
-    showDimensions: true,
-    magnifierDefaultValue: false
 };
 
-ImagePreview.propTypes = {
-    /**
-     * Image file display name
-     */
-    name: PropTypes.string,
-    /**
-     * Image path to display
-     */
-    path: PropTypes.string.isRequired,
-    /**
-     * Event fires when click on close button
-     */
-    onClose: PropTypes.func,
-    /**
-     * Need to size or not
-     */
-    showSize: PropTypes.bool,
-    /**
-     * Need to download or not
-     */
-    showDownload: PropTypes.bool,
-    /**
-     * Need to rotate or not
-     */
-    showRotate: PropTypes.bool,
-    /**
-     * Need to dimensions or not
-     */
-    showDimensions: PropTypes.bool,
-    /**
-     * With magnifier functionality
-     */
-    withMagnifier: PropTypes.bool,
-    /**
-     * modal mode
-     */
-    withModal: PropTypes.bool,
-    /**
-     * Default magnifier Value switched On
-     */
-    magnifierDefaultValue: PropTypes.bool,
-    /**
-     * This is for fetch image for example through this prop you can pass token.
-     * Provide an Object that will spread in Request Headers:{...customHeaders} in second parameter for fetch function.
-     * For example { 'Content-Type': 'application/json'} it will convert fetch(URL,{headers{'Content-Type': 'application/json'}})
-     */
-    customHeaders: PropTypes.object,
-    /**
-     * The prop is responsible for header view and alignment for mobile device
-     */
-    isMobile: PropTypes.bool
-};
-
-export default ImagePreview;
+export { IImagePreviewProps, ImagePreview as default };
