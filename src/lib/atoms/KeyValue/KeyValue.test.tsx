@@ -36,7 +36,7 @@ describe('KeyValue component', () => {
 
     it('with prop "icon"', () => {
         const icon = 'test-data';
-        const wrapper = setup.setProps({ icon: 'test-data' });
+        const wrapper = setup.setProps({ icon });
         //@ts-ignore
         expect(wrapper.find(Icon).props().type).toBe(icon);
         expect(wrapper.find(Icon).exists()).toBeTruthy();
