@@ -1,8 +1,10 @@
 import React, { FC, ReactNode } from 'react';
+
+// Helpers
 import classnames from 'classnames';
 
-// Statics
-import { appearances, images, sizes, types } from './helper';
+// Utils
+import { appearances, images, sizes, types } from './utils';
 
 // Styles
 import './Empty.scss';
@@ -60,7 +62,5 @@ const Empty: FC<IEmptyProps> = ({
         </div>
     );
 };
-
-Empty.displayName = 'Empty';
 
 export { IEmptyProps, Empty as default };

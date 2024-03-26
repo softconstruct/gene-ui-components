@@ -1,9 +1,15 @@
 import React, { FC } from 'react';
-import { Meta, StoryObj } from '@storybook/react';
-import { args, propCategory } from '../../../../stories/assets/storybook.globals';
+import { Meta } from '@storybook/react';
 
-import Empty, { IEmptyProps } from './index';
-import { appearances, sizes, types } from './helper';
+//Helpers
+import { args, propCategory } from '../../../../stories/assets/storybook.globals';
+import { appearances, sizes, types } from './utils';
+
+// Components
+import Empty from './index';
+
+// Types
+import { IEmptyProps } from './index';
 
 const meta: Meta<typeof Empty> = {
     title: 'Atoms/Empty',
@@ -29,15 +35,13 @@ const meta: Meta<typeof Empty> = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+const Template: FC<IEmptyProps> = (args) => <Empty {...args} />;
 
-type StoryTemplateType = Story & FC<IEmptyProps>;
+export const Default = Template.bind({});
 
-export const Default: StoryTemplateType = (args) => <Empty {...args} />;
-
-export const WithNoImage: Story = (args: IEmptyProps) => <Default {...args} />;
+export const WithNoImage = Template.bind({});
 
 WithNoImage.args = {
-    type: types[3],
+    type: types[3] as IEmptyProps['type'],
     withImage: false
 };
