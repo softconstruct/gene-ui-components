@@ -2,6 +2,7 @@ import React, { ReactNode, FC, HTMLAttributes } from 'react';
 
 // Helpers
 import classnames from 'classnames';
+
 //@ts-ignore
 import { badgeConfig } from 'configs';
 
@@ -45,7 +46,16 @@ const getShowValue = (count?: number, maxCount?: number) => {
     return count > maxCount ? `${maxCount}+` : count;
 };
 
-const Badge: FC<IBadgeProps> = ({ size, dot, color, count, maxCount, className, children, ...restProps }) => {
+const Badge: FC<IBadgeProps> = ({
+    size = badgeConfig.size[0],
+    dot = false,
+    color = badgeConfig.color[0],
+    count,
+    maxCount,
+    className,
+    children,
+    ...restProps
+}) => {
     const show = dot ? '' : getShowValue(count, maxCount);
 
     return (
@@ -66,13 +76,5 @@ const Badge: FC<IBadgeProps> = ({ size, dot, color, count, maxCount, className, 
         </div>
     );
 };
-
-Badge.defaultProps = {
-    dot: false,
-    size: badgeConfig.size[0],
-    color: badgeConfig.color[0]
-};
-
-Badge.displayName = 'Badge';
 
 export { IBadgeProps, Badge as default };

@@ -1,6 +1,11 @@
 import React from 'react';
 import { shallow, ShallowWrapper, mount } from 'enzyme';
-import Badge, { IBadgeProps } from './index';
+
+// Components
+import Badge from './index';
+
+// Types
+import { IBadgeProps } from './index';
 
 const shallowComponent = (props?: IBadgeProps): ShallowWrapper => {
     return shallow(<Badge {...props} />);

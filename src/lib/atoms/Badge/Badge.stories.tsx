@@ -1,11 +1,15 @@
 import React, { FC } from 'react';
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta } from '@storybook/react';
+
+//helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 import { badgeConfig } from '../../../../src/configs';
 
+// components
 import BadgeComponent from './index';
 import Avatar from '../Avatar/index';
 
+//types
 import { IBadgeProps } from './Badge';
 
 const meta: Meta<typeof BadgeComponent> = {
@@ -21,10 +25,8 @@ const meta: Meta<typeof BadgeComponent> = {
         color: args({ control: 'select', ...propCategory.appearance })
     },
     args: {
-        //@ts-ignore
-        size: badgeConfig.size[0],
-        //@ts-ignore
-        color: badgeConfig.color[0],
+        size: badgeConfig.size[0] as IBadgeProps['size'],
+        color: badgeConfig.color[0] as IBadgeProps['color'],
         dot: false,
         count: 100,
         maxCount: 99
@@ -33,15 +35,12 @@ const meta: Meta<typeof BadgeComponent> = {
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
-
 interface IBadgeExtended extends IBadgeProps {
     icon?: string;
+    args: IBadgeProps;
 }
 
-type StoryTemplateType = Story & FC<IBadgeExtended>;
-
-export const Default: StoryTemplateType = ({ icon = 'bc-icon-user', ...args }) => {
+const Template: FC<IBadgeExtended> = ({ icon = 'bc-icon-user', ...args }) => {
     return (
         <BadgeComponent {...args}>
             <Avatar shape="square" icon={icon} />
@@ -49,30 +48,22 @@ export const Default: StoryTemplateType = ({ icon = 'bc-icon-user', ...args }) =
     );
 };
 
-export const Doted: Story = (args: IBadgeProps) => {
-    return <Default {...args} icon="bc-icon-apps" />;
-};
+export const Default = Template.bind({});
+
+export const Doted = Template.bind({});
 
 Doted.args = {
-    dot: true
+    dot: true,
+    icon: 'bc-icon-apps'
 };
 
-export const MaxCount: Story = (args: IBadgeProps) => {
-    return <Default icon="bc-icon-monospace" {...args} />;
-};
+export const MaxCount = Template.bind({});
 
 MaxCount.args = {
-    //@ts-ignore
-    size: badgeConfig.size[1],
+    size: badgeConfig.size[1] as IBadgeProps['size'],
     maxCount: 10,
-    count: 11
+    count: 11,
+    icon: 'bc-icon-monospace'
 };
 
-export const WithoutChildren: Story = (args: IBadgeProps) => <BadgeComponent {...args} />;
-
-WithoutChildren.args = {
-    //@ts-ignore
-    size: badgeConfig.size[2],
-    //@ts-ignore
-    color: badgeConfig.color[1]
-};
+export const WithoutChildren: FC<IBadgeProps> = ({ ...args }) => <BadgeComponent {...args} />;
