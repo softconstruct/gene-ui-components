@@ -43,7 +43,7 @@ export interface IImageProps extends HTMLAttributes<HTMLDivElement> {
      */
     tooltipTitle: string | ReactNode;
     /**
-     * Addional className
+     * Additional className
      */
     className: string;
     /**
@@ -56,7 +56,7 @@ export interface IImageProps extends HTMLAttributes<HTMLDivElement> {
     emptyText: string;
 }
 
-const Image: FC<Partial<IImageProps>> = ({
+const Image: FC<IImageProps> = ({
     src,
     withBorder = false,
     selectMode = false,

@@ -15,7 +15,7 @@ describe('Image component', () => {
     let setup: WrapperType<ShallowWrapper | ReactWrapper>;
     beforeEach(() => {
         setup = (props, isShallow = true) => {
-            let image = <Image {...props} />;
+            let image = <Image {...(props as IImageProps)} />;
             return isShallow ? shallow(image) : mount(image);
         };
     });

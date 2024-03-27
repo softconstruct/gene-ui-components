@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
-import { args, category } from '../../../../stories/assets/storybook.globals';
+import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Component
 import ImageComponent from '.';
@@ -13,17 +13,17 @@ const meta: Meta<typeof ImageComponent> = {
     title: 'Atoms/Image',
     component: ImageComponent,
     argTypes: {
-        src: args({ control: 'text', category: category.content }),
-        withBorder: args({ control: 'boolean', defaultValue: 'true', category: category.appearance }),
-        selectMode: args({ control: 'boolean', defaultValue: 'false', category: category.states }),
-        title: args({ control: 'text', category: category.content }),
-        tooltipTitle: args({ control: 'text', category: category.content }),
-        actions: args({ control: 'text', category: category.content }),
-        checkboxProps: args({ control: false, category: category.others }),
-        imageProps: args({ control: false, category: category.others }),
-        className: args({ control: false, category: category.others }),
-        isValid: args({ control: 'boolean', category: category.validation }),
-        emptyText: args({ control: 'text', category: category.content })
+        src: args({ control: 'text', ...propCategory.content }),
+        withBorder: args({ control: 'boolean', defaultValue: 'true', ...propCategory.appearance }),
+        selectMode: args({ control: 'boolean', defaultValue: 'false', ...propCategory.states }),
+        title: args({ control: 'text', ...propCategory.content }),
+        tooltipTitle: args({ control: 'text', ...propCategory.content }),
+        actions: args({ control: 'text', ...propCategory.content }),
+        checkboxProps: args({ control: false, ...propCategory.others }),
+        imageProps: args({ control: false, ...propCategory.others }),
+        className: args({ control: false, ...propCategory.others }),
+        isValid: args({ control: 'boolean', ...propCategory.validation }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     },
     args: {
         src: 'https://picsum.photos/1920/1080',
@@ -39,9 +39,7 @@ export const Default = Template.bind({});
 
 Default.args = {
     withBorder: true,
-    selectMode: false,
     tooltipTitle: '',
-    isValid: true,
     actions: (
         <>
             {/**@ts-ignore */}
