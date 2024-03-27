@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { args, category } from '../../../../stories/assets/storybook.globals';
 import { Meta } from '@storybook/react';
+import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
 import DividerComponent from './index';
@@ -12,10 +12,10 @@ const meta: Meta<typeof DividerComponent> = {
     title: 'Atoms/Divider',
     component: DividerComponent,
     argTypes: {
-        type: args({ control: 'select', category: category.appearance }),
-        size: args({ control: 'text', category: category.appearance }),
-        withSpace: args({ control: 'boolean', category: category.appearance }),
-        className: args({ control: false, category: category.others })
+        type: args({ control: 'select', ...propCategory.appearance }),
+        size: args({ control: 'text', ...propCategory.appearance }),
+        withSpace: args({ control: 'boolean', ...propCategory.appearance }),
+        className: args({ control: false, ...propCategory.others })
     },
     args: {
         size: '50px',

@@ -23,13 +23,7 @@ export interface IDividerProps extends HTMLAttributes<HTMLDivElement> {
     withSpace: boolean;
 }
 
-const Divider: FC<Partial<IDividerProps>> = ({
-    type = 'vertical',
-    className,
-    size,
-    withSpace = true,
-    ...restProps
-}) => {
+const Divider: FC<IDividerProps> = ({ type = 'vertical', className, size, withSpace = true, ...restProps }) => {
     const modifiedSize = useMemo(() => (typeof size === 'number' ? `${size / 10}rem` : size), [size]);
 
     const styles = useMemo(
@@ -45,7 +39,5 @@ const Divider: FC<Partial<IDividerProps>> = ({
         />
     );
 };
-
-Divider.displayName = 'Divider';
 
 export default Divider;

@@ -13,7 +13,9 @@ describe('divider component', () => {
     let setup: WrapperType<ShallowWrapper | ReactWrapper>;
     beforeEach(() => {
         setup = (props, isShallow = false) => {
-            return isShallow ? shallow(<Divider {...props} />) : mount(<Divider {...props} />);
+            return isShallow
+                ? shallow(<Divider {...(props as IDividerProps)} />)
+                : mount(<Divider {...(props as IDividerProps)} />);
         };
     });
 
