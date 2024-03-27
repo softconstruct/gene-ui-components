@@ -196,6 +196,19 @@ body {
         max-width: none !important;
     }
 
+    & [role='tablist'] .tabbutton-active {
+        color: #c41d7f;
+        border-bottom-color: #c41d7f;
+
+        & &:focus {
+            border-bottom-color: #c41d7f !important;
+        }
+
+        &:active {
+            border-bottom-color: #c41d7f !important;
+        }
+    }
+
     .docblock-argstable {
         display: grid;
 
@@ -224,7 +237,11 @@ body {
                 > td {
                     width: 100% !important;
 
-                    &:last-child {
+                    &:last-child:has(button) {
+                        display: none !important;
+                    }
+
+                    &:nth-child(4) {
                         display: none !important;
                     }
                 }
