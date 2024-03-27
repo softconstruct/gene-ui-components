@@ -64,7 +64,7 @@ export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
      */
     withShadow: boolean;
     /**
-     * Button additianl className
+     * Button additional className
      */
     className: string;
     /**
@@ -77,7 +77,7 @@ export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
     ariaLabel: string;
 }
 
-const Button = forwardRef<HTMLButtonElement, Partial<IButtonProps>>(
+const Button = forwardRef<HTMLButtonElement, IButtonProps>(
     (
         {
             children,
@@ -126,7 +126,6 @@ const Button = forwardRef<HTMLButtonElement, Partial<IButtonProps>>(
                 {!noChildren &&
                     (!icon && loading ? (
                         <>
-                            {' '}
                             {/*@ts-ignore*/}
                             <Icon type="bc-icon-loader" />
                             <span>{children}</span>
@@ -144,7 +143,5 @@ const Button = forwardRef<HTMLButtonElement, Partial<IButtonProps>>(
         );
     }
 );
-
-Button.displayName = 'Button';
 
 export default Button;

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
-import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 import { Meta } from '@storybook/react';
+import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
 import ButtonComponent from './index';
@@ -36,17 +36,6 @@ const meta: Meta<typeof ButtonComponent> = {
         }),
         flexibility: args({ control: 'select', defaultValue: 'default', ...propCategory.appearance }),
         itemsDirection: args({ control: 'select', defaultValue: 'start', ...propCategory.appearance })
-    },
-    args: {
-        size: 'default',
-        flexibility: 'default',
-        itemsDirection: 'start',
-        cornerRadius: 'round',
-        icon: '',
-        disabled: false,
-        active: false,
-        loading: false,
-        withShadow: false
     }
 };
 
@@ -58,7 +47,6 @@ const Template: FC<IButtonProps> = ({ children, ...args }) => {
 
 export const Default = Template.bind({});
 Default.args = {
-    appearance: 'default',
     children: 'Button'
 };
 

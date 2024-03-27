@@ -14,7 +14,7 @@ describe('Button Component', () => {
 
     beforeEach(() => {
         setup = (props, isShallow = false) => {
-            let button = <Button {...props} />;
+            let button = <Button {...(props as IButtonProps)} />;
             return isShallow ? shallow(button) : mount(button);
         };
     });
