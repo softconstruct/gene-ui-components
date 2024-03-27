@@ -2,9 +2,10 @@ import React, { FC } from 'react';
 
 // Components
 import Portal from '../Portal';
+import ImagePreview from './ImagePreview';
 
-// Local components
-import ImagePreview, { IImagePreviewProps } from './ImagePreview';
+//Types
+import { IImagePreviewProps } from './ImagePreview';
 
 const ImagePreviewWrapper: FC<IImagePreviewProps> = ({ withModal, ...restProps }) => {
     return withModal ? (

@@ -11,9 +11,10 @@ import classnames from 'classnames';
 import Icon from '../Icon';
 import Switcher from '../Switcher';
 import Tooltip from '../../molecules/Tooltip';
+import Magnifier from './Magnifier';
 
-// Local components
-import Magnifier, { IMagnifierForwardRef } from './Magnifier';
+//Types
+import { IMagnifierForwardRef } from './Magnifier';
 
 // Styles
 import './ImagePreview.scss';
