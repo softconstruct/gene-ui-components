@@ -5,11 +5,12 @@ import { Meta } from '@storybook/react';
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
-import ImagePreviewComponent from './index';
-import ImagePreview from './ImagePreview';
+import ImagePreviewComponent from './ImagePreview';
+import ImagePreview from '.';
 
 //Types
 import { IImagePreviewProps } from './index';
+
 //@ts-ignore
 import ButtonComponent from 'src/lib/atoms/Button/index';
 
@@ -20,8 +21,8 @@ const meta: Meta<typeof ImagePreviewComponent> = {
         onClose: args({ control: false, ...propCategory.action }),
         name: args({ control: 'text', ...propCategory.content }),
         path: args({ control: 'text', ...propCategory.content }),
-        showSize: args({ control: 'boolean', defaultValue: true, ...propCategory.functionality }),
-        showDownload: args({ control: 'boolean', defaultValue: false, ...propCategory.functionality }),
+        showSize: args({ control: 'boolean', ...propCategory.functionality }),
+        showDownload: args({ control: 'boolean', ...propCategory.functionality }),
         showRotate: args({ control: 'boolean', ...propCategory.functionality }),
         showDimensions: args({ control: 'boolean', ...propCategory.functionality }),
         withMagnifier: args({ control: 'boolean', ...propCategory.functionality }),
@@ -42,7 +43,7 @@ const Template: FC<IImagePreviewProps> = (args) => {
     let [show, setShow] = useState(true);
 
     return show ? (
-        <ImagePreviewComponent {...args} onClose={() => setShow(false)} />
+        <ImagePreview {...args} onClose={() => setShow(false)} />
     ) : (
         <div>
             <span style={{ textAlign: 'center', margin: '15px' }}>no image to show</span>
