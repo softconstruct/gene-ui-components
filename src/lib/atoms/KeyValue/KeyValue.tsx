@@ -1,18 +1,48 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { FC, HTMLAttributes, ReactNode } from 'react';
 import classnames from 'classnames';
 
-// Helpers
+// Configs
+//@ts-ignore
 import { keyValueConfig } from 'configs';
 
 // Components
 import Icon from '../Icon';
 
 // Styles
-import './index.scss';
+import './KeyValue.scss';
+
+export interface IKeyValueProps extends HTMLAttributes<HTMLDivElement> {
+    /**
+     * Label for 'KeyValue'.
+     */
+    label: ReactNode | string;
+    /**
+     * Value for 'KeyValue'.
+     */
+    value: ReactNode | string;
+    /**
+     * External/Additional className that can be added to 'KeyValue' component.
+     */
+    className?: string;
+    /**
+     * The way how the KeyValue should be displayed.
+     */
+    appearance?: 'horizontal' | 'vertical';
+    /**
+     * The property will show icon.
+     */
+    icon?: string;
+}
 
 // TODO need to refine where is using restProps
-function KeyValue({ label, value, className, icon, appearance, ...restProps }) {
+const KeyValue: FC<IKeyValueProps> = ({
+    label,
+    value,
+    className,
+    icon,
+    appearance = keyValueConfig.appearance.horizontal._key,
+    ...restProps
+}) => {
     return (
         <div
             {...restProps}
@@ -23,6 +53,7 @@ function KeyValue({ label, value, className, icon, appearance, ...restProps }) {
         >
             {icon && (
                 <div className="geneKeyValue__iconWrapper">
+                    {/*@ts-ignore*/}
                     <Icon
                         type={icon}
                         className={classnames(
@@ -35,7 +66,7 @@ function KeyValue({ label, value, className, icon, appearance, ...restProps }) {
 
             <p
                 role="heading"
-                aria-level="1"
+                aria-level={1}
                 className={classnames(
                     'geneKeyValue__label ellipsis-text',
                     keyValueConfig.appearance[appearance]?.labelClassName
@@ -53,31 +84,6 @@ function KeyValue({ label, value, className, icon, appearance, ...restProps }) {
             </p>
         </div>
     );
-}
-
-KeyValue.propTypes = {
-    /**
-     * Label for 'KeyValue'.
-     */
-    label: PropTypes.node.isRequired,
-    /**
-     * Value for 'KeyValue'.
-     */
-    value: PropTypes.node,
-    /**
-     * External/Additional className that can be added to 'KeyValue' component.
-     */
-    className: PropTypes.string,
-    /**
-     * The way how the KeyValue should be displayed.
-     */
-    appearance: PropTypes.oneOf(Object.keys(keyValueConfig.appearance))
-};
-
-KeyValue.defaultProps = {
-    value: '',
-    className: '',
-    appearance: keyValueConfig.appearance.horizontal._key
 };
 
 export default KeyValue;
