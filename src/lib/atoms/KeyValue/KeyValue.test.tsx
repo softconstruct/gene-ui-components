@@ -15,11 +15,13 @@ describe('KeyValue component', () => {
     let setup: ReactWrapper<IKeyValueProps>;
 
     beforeEach(() => {
-        setup = mount(<KeyValue />);
+        setup = mount(<KeyValue label={'label'} value={'value'} />);
     });
+
     it('checking if a component exists', () => {
         expect(setup.exists()).toBeTruthy();
     });
+
     it.each<IKeyValueProps['appearance']>(['horizontal', 'vertical'])('check with props %p', (appearance) => {
         const wrapper = setup.setProps({ appearance });
         expect(wrapper.props().appearance).toBe(appearance);

@@ -15,28 +15,30 @@ export interface IKeyValueProps extends HTMLAttributes<HTMLDivElement> {
     /**
      * Label for 'KeyValue'.
      */
-    label: ReactNode;
+    label: ReactNode | string;
     /**
      * Value for 'KeyValue'.
      */
-    value: ReactNode;
+    value: ReactNode | string;
     /**
      * External/Additional className that can be added to 'KeyValue' component.
      */
-    className: string;
+    className?: string;
     /**
      * The way how the KeyValue should be displayed.
      */
-    appearance: 'horizontal' | 'vertical';
-
-    icon: string;
+    appearance?: 'horizontal' | 'vertical';
+    /**
+     * The property will show icon.
+     */
+    icon?: string;
 }
 
 // TODO need to refine where is using restProps
-const KeyValue: FC<Partial<IKeyValueProps>> = ({
+const KeyValue: FC<IKeyValueProps> = ({
     label,
-    value = '',
-    className = '',
+    value,
+    className,
     icon,
     appearance = keyValueConfig.appearance.horizontal._key,
     ...restProps

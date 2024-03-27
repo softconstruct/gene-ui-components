@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
-import { args, category } from '../../../../stories/assets/storybook.globals';
+import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
 import KeyValueComponent from '.';
@@ -16,16 +16,16 @@ const meta: Meta<typeof KeyValueComponent> = {
     title: 'Atoms/KeyValue',
     component: KeyValueComponent,
     argTypes: {
-        label: args({ control: 'text', category: category.content }),
-        value: args({ control: 'text', category: category.content }),
-        className: args({ control: false, category: category.others }),
+        label: args({ control: 'text', ...propCategory.content }),
+        value: args({ control: 'text', ...propCategory.content }),
+        className: args({ control: false, ...propCategory.others }),
         appearance: args({
             content: 'select',
             defaultValue: keyValueConfig.appearance[0],
             options: keyValueConfig.appearance,
-            category: category.appearance
+            ...propCategory.appearance
         }),
-        icon: args({ control: 'text', category: category.content })
+        icon: args({ control: 'text', ...propCategory.content })
     },
     args: {
         label: 'Some label',
