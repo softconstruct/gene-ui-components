@@ -65,7 +65,7 @@ interface IImagePreviewProps {
      * Provide an Object that will spread in Request Headers:{...customHeaders} in second parameter for fetch function.
      * For example { 'Content-Type': 'application/json'} it will convert fetch(URL,{headers{'Content-Type': 'application/json'}})
      */
-    customHeaders?: {};
+    customHeaders?: HeadersInit;
     /**
      * The prop is responsible for header view and alignment for mobile device
      */
@@ -123,7 +123,19 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                 });
     }, [path]);
 
-    // @ts-ignore
+    const MagnifierWrapper = imageData && (
+        <Magnifier
+            ref={magnifierRef}
+            imgUrl={imageData}
+            name={name}
+            zoom={2}
+            showMagnifier={isMagnifierOn}
+            className="imagePreview__img"
+            withRotation
+            withMagnifier
+        />
+    );
+
     return (
         <div className={classnames('imagePreview', { 'modal-view': withModal, 'mobile-view': isMobile })} {...rest}>
             <div className="imagePreview__header">
@@ -216,32 +228,10 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                 {withModal ? (
                     <>
                         <div className="imagePreview__background" onClick={onClose} />
-                        {imageData && (
-                            <Magnifier
-                                ref={magnifierRef}
-                                imgUrl={imageData}
-                                name={name}
-                                zoom={2}
-                                showMagnifier={isMagnifierOn}
-                                className="imagePreview__img"
-                                withRotation
-                                withMagnifier
-                            />
-                        )}
+                        {MagnifierWrapper}
                     </>
                 ) : (
-                    imageData && (
-                        <Magnifier
-                            ref={magnifierRef}
-                            imgUrl={imageData}
-                            name={name}
-                            zoom={2}
-                            showMagnifier={isMagnifierOn}
-                            className="imagePreview__img"
-                            withRotation
-                            withMagnifier
-                        />
-                    )
+                    MagnifierWrapper
                 )}
             </div>
         </div>

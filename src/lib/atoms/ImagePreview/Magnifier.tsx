@@ -76,14 +76,11 @@ const Magnifier = forwardRef<IMagnifierForwardRef, IMagnifierProps>(
         const [isCursorInScopeOfImage, setIsCursorInScopeOfImage] = useState(false);
         const [glassPositionStyles, setGlassPositionStyles] = useState<IStylesProps>({});
 
-        const rotate = useCallback(
-            (deg = 90) => {
-                if (!withRotation) return;
-                const newDeg = rotationDeg + deg;
-                setRotationDeg(Math.abs(newDeg) >= 360 ? 0 : newDeg);
-            },
-            [rotationDeg, withRotation]
-        );
+        const rotate = (deg = 90) => {
+            if (!withRotation) return;
+            const newDeg = rotationDeg + deg;
+            setRotationDeg(Math.abs(newDeg) >= 360 ? 0 : newDeg);
+        };
 
         useImperativeHandle(ref, () => ({
             rotate
@@ -184,15 +181,13 @@ const Magnifier = forwardRef<IMagnifierForwardRef, IMagnifierProps>(
             [rotationDeg]
         );
 
-        const onMouseEnterHandler = useCallback(() => {
-            showMagnifier && setIsCursorInScopeOfImage(true);
-        }, [showMagnifier]);
+        const onMouseEnterHandler = () => showMagnifier && setIsCursorInScopeOfImage(true);
 
-        const onMouseLeaveHandler = useCallback((e: MouseEvent) => {
+        const onMouseLeaveHandler = (e: MouseEvent) => {
             if (e.relatedTarget !== glassRef.current) {
                 setIsCursorInScopeOfImage(false);
             }
-        }, []);
+        };
 
         return (
             <>

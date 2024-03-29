@@ -9,6 +9,7 @@ import { IImagePreviewProps } from './ImagePreview';
 
 const ImagePreviewWrapper: FC<IImagePreviewProps> = ({ withModal, ...restProps }) => {
     return withModal ? (
+        // @ts-ignore
         <Portal isOpen>
             <ImagePreview {...restProps} withModal={withModal} />
         </Portal>
