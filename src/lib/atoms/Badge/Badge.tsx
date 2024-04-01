@@ -25,7 +25,7 @@ interface IBadgeProps extends HTMLAttributes<HTMLDivElement> {
     /**
      * Shows the specified number on the badge
      */
-    count?: number | undefined;
+    count?: number;
     /**
      * Set this property to have only dot instead of number
      */
