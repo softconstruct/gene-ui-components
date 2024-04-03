@@ -1,10 +1,13 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
 // Helpers
+// @ts-ignore
 import { timePickerConfig, screenTypes } from 'configs';
+// @ts-ignore
 import { noop } from 'utils';
+// @ts-ignore
 import { useDeviceType } from 'hooks';
 
 // Components
@@ -17,10 +20,10 @@ import ValidatableNumberInput from '../ValidatableElements/Elements/ValidatableN
 import TimePickerPopover from './Popover';
 
 // Styles
-import './index.scss';
+import './TimePicker.scss';
 
 function generateTimeValues(format, max) {
-    const numbers = [];
+    const numbers: string[] = [];
     const formatLength = format.length;
 
     for (let i = 0; i <= max; i++) {
@@ -37,8 +40,11 @@ function generateTimeValues(format, max) {
 const checkFormatValidation = (format, value) =>
     (format.length === 1 && value.length <= 2 && Number(value[0]) !== 0) || (format.length === 2 && value.length === 2);
 
-const checkHourRange = (value, format) =>
-    value.length <= 2 && ((isLongHour(format) && Number(value) < 24) || (isShortHour(format) && Number(value) < 12));
+const checkHourRange = (value, format) => {
+    return value.length <= 2 && Array.isArray(format)
+        ? Number(value) < 12
+        : (isLongHour(format) && Number(value) < 24) || (isShortHour(format) && Number(value) < 12);
+};
 
 // seconds and minutes cant be equal or higher then 60
 const checkRange = (value) => value.length <= 2 && Number(value) < 60;
@@ -60,7 +66,77 @@ function convertToFormat(value, format, notEmpty) {
     return value;
 }
 
-function TimePicker({
+const TimePickerConfig = {
+    appearance: ['multipleInputs', 'singleInput'],
+    screenTypes: ['desktop', 'mobile'],
+    positions: ['top', 'right', 'bottom', 'left']
+} as const;
+
+type GetArrayAsUnion<T extends keyof typeof TimePickerConfig> = (typeof TimePickerConfig)[T][number];
+
+interface ITimePickerProps {
+    /**
+     * Define is seconds field will shown or no
+     */
+    showSeconds: boolean;
+    /**
+     * Select view with multiple inputs or with single inputs
+     */
+    appearance: GetArrayAsUnion<'appearance'>;
+    /**
+     * Format for hour field
+     */
+    hourFormat: 'HH' | 'H' | 'hh' | 'h';
+    /**
+     * Format for hour field
+     */
+    minuteFormat: 'mm' | 'm';
+    /**
+     * Format for hour field
+     */
+    secondFormat: 'ss' | 's';
+    /**
+     * Time field separator
+     */
+    separator: string;
+    /**
+     * Fires an event when field is changed((event: SyntheticEvent) => void).
+     */
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    /**
+     * Fires an event when field is blurred((date: Date, event: SyntheticEvent) => void).
+     */
+    onBlur: (e: React.FocusEvent<HTMLInputElement>) => void;
+    /**
+     * Additional classname
+     */
+    className: string;
+    /**
+     * Value for input field
+     */
+    value: string;
+    /**
+     * disabled for input field
+     */
+    disabled: boolean;
+    /**
+     * Makes Time picker readonly when set to "true"
+     */
+    readOnly: boolean;
+    /**
+     * The switch between mobile and desktop version of Dropdown will be applied automatically, when the prop is not specified.
+     * When the prop is present it must be changed from outside.
+     */
+    screenType: GetArrayAsUnion<'screenTypes'>;
+    /**
+     * preferred positions by priority ['bottom','top', 'left', 'right']
+     * default is ['bottom','top', 'left', 'right']
+     * if you'd like, you can limit the positions ['top', 'left']
+     */
+    positions: GetArrayAsUnion<'positions'>;
+}
+
+const TimePicker: React.FC<ITimePickerProps> = ({
     value,
     onChange,
     showSeconds,
@@ -76,7 +152,7 @@ function TimePicker({
     onBlur,
     positions,
     ...restProps
-}) {
+}) => {
     const { isMobile } = useDeviceType(screenType);
 
     const [hour, setHour] = useState('');
@@ -86,13 +162,12 @@ function TimePicker({
     const [minuteFieldError, setMinuteFieldError] = useState(false);
     const [secondFieldError, setSecondFieldError] = useState(false);
     const [hourFieldError, setHourFieldError] = useState(false);
-
     // We save every value that selected from popup, because we need to
     // close current popup when user select value from popup
     const [hourPopupValue, setHourPopupValue] = useState(null);
     const [minutePopupValue, setMinutePopupValue] = useState(null);
     const [secondPopupValue, setSecondPopupValue] = useState(null);
-
+    const childRef = useRef();
     // for replacing special symbols
     const numberRegExp = useMemo(() => {
         const numberRegExpString = `[^0-9${separator}]`;
@@ -147,19 +222,30 @@ function TimePicker({
         [checkHasError, second, secondFormat, showSeconds]
     );
 
-    const handleHourPopover = useCallback((e, open) => !open && checkTimeValidation(), [checkTimeValidation]);
+    const handleHourPopover = useCallback(
+        (e, open) => {
+            return !open && checkTimeValidation(hour, true);
+        },
+        [checkTimeValidation, hour]
+    );
 
-    const handleMinutePopover = useCallback((e, open) => !open && checkMinuteValidation(), [checkMinuteValidation]);
+    const handleMinutePopover = useCallback(
+        (e, open) => !open && checkMinuteValidation(minute, true),
+        [checkMinuteValidation, minute]
+    );
 
-    const handleSecondPopover = useCallback((e, open) => !open && checkSecondValidation(), [checkSecondValidation]);
+    const handleSecondPopover = useCallback(
+        (e, open) => !open && checkSecondValidation(second, true),
+        [checkSecondValidation, second]
+    );
 
     const handlePopoverToggle = useCallback(
         (e, open) => {
             if (open) return;
 
-            const timeError = checkTimeValidation();
-            const minuteError = checkMinuteValidation();
-            const secondError = checkSecondValidation();
+            const timeError = checkTimeValidation(hour, true);
+            const minuteError = checkMinuteValidation(minute, true);
+            const secondError = checkSecondValidation(second, true);
 
             // need to reset all data when user click outside and any of this fields has error
             if (timeError || minuteError || secondError) {
@@ -169,7 +255,18 @@ function TimePicker({
                 setSecond('');
             }
         },
-        [checkTimeValidation, checkMinuteValidation, checkSecondValidation]
+        [
+            checkTimeValidation,
+            checkMinuteValidation,
+            checkSecondValidation,
+            hour,
+            minute,
+            second,
+            setInputValue,
+            setHour,
+            setMinute,
+            setSecond
+        ]
     );
 
     const handleChange = useCallback(
@@ -193,7 +290,6 @@ function TimePicker({
             const { value } = e.target;
 
             const isInRange = checkHourRange(value, hourFormat);
-
             if (isInRange) {
                 if (!checkTimeValidation(value, false)) {
                     setHourFieldError(false);
@@ -276,7 +372,7 @@ function TimePicker({
             const { value } = e.target;
 
             // replacing special chars that not allowed
-            const replacedValue = value.replace(numberRegExp, '');
+            let replacedValue = value.replace(numberRegExp, '');
             const timeParts = replacedValue.split(separator);
 
             const lastChar = replacedValue[replacedValue.length - 1];
@@ -299,40 +395,40 @@ function TimePicker({
 
             if (timeParts.some((item) => item.length > 2)) return;
 
-            let outOfRange = false;
-
-            timeParts[0] && setHour(timeParts[0]);
-            timeParts[1] && setMinute(timeParts[1]);
-            showSeconds && timeParts[2] && setSecond(timeParts[2]);
-
             if (typeof timeParts[0] !== 'undefined') {
-                const isInRange = checkHourRange(timeParts[0], hourFormat);
-
-                if (isInRange) {
-                    setHour(timeParts[0]);
+                if (Array.isArray(hourFormat)) {
+                    if (timeParts[0] > 11) {
+                        let tempValue = replacedValue.split(separator);
+                        tempValue[0] = hour;
+                        replacedValue = tempValue.join(separator);
+                    }
                 } else {
-                    outOfRange = true;
+                    if (isShortHour(hourFormat)) {
+                        if (timeParts[0] > 11) {
+                            let tempValue = replacedValue.split(separator);
+                            tempValue[0] = hour;
+                            replacedValue = tempValue.join(separator);
+                        }
+                    } else {
+                        if (timeParts[0] > 23) {
+                            let tempValue = replacedValue.split(separator);
+                            tempValue[0] = hour;
+                            replacedValue = tempValue.join(separator);
+                        }
+                    }
                 }
             }
 
-            if (typeof timeParts[1] !== 'undefined') {
-                const isInRange = checkRange(timeParts[1]);
-
-                if (isInRange) {
-                    setMinute(timeParts[1]);
-                } else {
-                    outOfRange = true;
-                }
+            if (typeof timeParts[1] !== 'undefined' && timeParts[1] > 59) {
+                let tempValue = replacedValue.split(separator);
+                tempValue[1] = minute;
+                replacedValue = tempValue.join(separator);
             }
 
-            if (showSeconds && typeof timeParts[2] !== 'undefined') {
-                const isInRange = checkRange(timeParts[2]);
-
-                if (isInRange) {
-                    setSecond(timeParts[2]);
-                } else {
-                    outOfRange = true;
-                }
+            if (showSeconds && typeof timeParts[2] !== 'undefined' && timeParts[2] > 59) {
+                let tempValue = replacedValue.split(separator);
+                tempValue[2] = second;
+                replacedValue = tempValue.join(separator);
             }
 
             // Make field valid when after typing field pass validation
@@ -341,44 +437,11 @@ function TimePicker({
             !checkMinuteValidation(timeParts[1], false) && setMinuteFieldError(false);
             (!showSeconds || !checkSecondValidation(timeParts[2], false)) && setSecondFieldError(false);
 
-            if (!outOfRange) {
-                setInputValue(replacedValue);
-                onChange(e);
-            }
+            setInputValue(replacedValue);
+            onChange(e);
         },
-        [
-            numberRegExp,
-            separator,
-            showSeconds,
-            checkTimeValidation,
-            checkMinuteValidation,
-            checkSecondValidation,
-            handleChange,
-            hourFormat,
-            onChange
-        ]
+        [numberRegExp, handleChange, showSeconds, hourFormat, separator, onChange, minute, second]
     );
-
-    useEffect(() => {
-        // if hour format changes, convert value to that format
-        const formattedHour = convertToFormat(hour, hourFormat);
-        setHour(formattedHour);
-        setInputValue(combinedValue(formattedHour, minute, second, false));
-    }, [combinedValue, hour, hourFormat, minute, second]);
-
-    useEffect(() => {
-        // if minute format changes, convert value to that format
-        const formattedMinute = convertToFormat(minute, minuteFormat);
-        setMinute(formattedMinute);
-        setInputValue(combinedValue(hour, formattedMinute, second, false));
-    }, [combinedValue, hour, minute, minuteFormat, second]);
-
-    useEffect(() => {
-        // if second format changes, convert value to that format
-        const formattedSecond = convertToFormat(second, secondFormat);
-        setSecond(formattedSecond);
-        setInputValue(combinedValue(hour, minute, formattedSecond, false));
-    }, [combinedValue, hour, minute, second, secondFormat]);
 
     useEffect(() => {
         if (value) {
@@ -439,17 +502,44 @@ function TimePicker({
             } = event;
             let formated = value;
             if (value) {
+                // @ts-ignore
                 formated = combinedValue(...value.split(separator));
                 setInputValue(formated);
                 handleChange(event, formated);
             }
+            // @ts-ignore
             onBlur(formated, event);
+
+            const timeParts = inputValue.split(separator);
+
+            timeParts[0] && setHour(timeParts[0]);
+            timeParts[1] && setMinute(timeParts[1]);
+            showSeconds && timeParts[2] && setSecond(timeParts[2]);
         },
-        [combinedValue, separator, handleChange, onBlur]
+        [
+            checkSecondValidation,
+            checkMinuteValidation,
+            checkTimeValidation,
+            combinedValue,
+            handleChange,
+            numberRegExp,
+            showSeconds,
+            inputValue,
+            hourFormat,
+            separator,
+            onBlur
+        ]
     );
 
     const handleMultiInputBlur = useCallback(
         (event) => {
+            const formattedHour = convertToFormat(hour, hourFormat, true);
+            const formattedMinute = convertToFormat(minute, minuteFormat, true);
+            const formattedSecond = convertToFormat(second, secondFormat, true);
+            setHour(formattedHour);
+            setMinute(formattedMinute);
+            setSecond(formattedSecond);
+            setInputValue(combinedValue(formattedHour, formattedMinute, formattedSecond, false));
             const {
                 currentTarget: { value }
             } = event;
@@ -458,15 +548,35 @@ function TimePicker({
                 setMinute(convertToFormat(minute, minuteFormat, true));
                 showSeconds && setSecond(convertToFormat(second, secondFormat, true));
             }
+            // @ts-ignore
             onBlur(`${hour}${hour && minute && ':'}${minute}${minute && second && ':'}${second}`, event);
         },
-        [hour, minute, second, onBlur, hourFormat, minuteFormat, showSeconds, secondFormat]
+        [
+            hour,
+            minute,
+            second,
+            onBlur,
+            hourFormat,
+            minuteFormat,
+            showSeconds,
+            secondFormat,
+            setHour,
+            setMinute,
+            setSecond,
+            setInputValue,
+            combinedValue
+        ]
     );
 
     const signleInputPopoverValue = useMemo(
         () => (showSeconds ? convertToFormat(second, secondFormat, true) : convertToFormat(minute, minuteFormat, true)),
         [second, secondFormat, minute, minuteFormat, showSeconds]
     );
+
+    const handleIconClick = useCallback(() => {
+        // @ts-ignore
+        childRef.current.toggleOpen();
+    }, [childRef]);
 
     return (
         <div
@@ -483,23 +593,23 @@ function TimePicker({
                     </li>
                     <li className="shrink-auto">
                         <TimePickerPopover
-                            value={hourPopupValue}
                             toggleHandler={handleHourPopover}
-                            Content={hours}
-                            readOnly={readOnly}
+                            value={hourPopupValue}
                             positions={positions}
+                            readOnly={readOnly}
+                            Content={hours}
                         >
                             <ValidatableNumberInput
-                                value={hour}
-                                isValid={!hourFieldError}
-                                forceAllowValidation
-                                onChange={handleHourChange}
-                                placeholder={hourFormat}
-                                appearance="minimal"
-                                showNumberIcon={false}
-                                readOnly={readOnly}
-                                writeProtected={isMobile}
                                 onBlur={handleMultiInputBlur}
+                                onChange={handleHourChange}
+                                isValid={!hourFieldError}
+                                writeProtected={isMobile}
+                                placeholder={hourFormat}
+                                showNumberIcon={false}
+                                appearance="minimal"
+                                forceAllowValidation
+                                readOnly={readOnly}
+                                value={hour}
                             />
                         </TimePickerPopover>
                     </li>
@@ -508,23 +618,23 @@ function TimePicker({
                     </li>
                     <li className="shrink-auto">
                         <TimePickerPopover
-                            value={minutePopupValue}
                             toggleHandler={handleMinutePopover}
-                            Content={minutes}
-                            readOnly={readOnly}
+                            value={minutePopupValue}
                             positions={positions}
+                            readOnly={readOnly}
+                            Content={minutes}
                         >
                             <ValidatableNumberInput
-                                value={minute}
-                                isValid={!minuteFieldError}
-                                forceAllowValidation
-                                onChange={handleMinuteChange}
-                                placeholder={minuteFormat}
-                                appearance="minimal"
-                                showNumberIcon={false}
-                                readOnly={readOnly}
-                                writeProtected={isMobile}
                                 onBlur={handleMultiInputBlur}
+                                onChange={handleMinuteChange}
+                                isValid={!minuteFieldError}
+                                placeholder={minuteFormat}
+                                writeProtected={isMobile}
+                                showNumberIcon={false}
+                                forceAllowValidation
+                                appearance="minimal"
+                                readOnly={readOnly}
+                                value={minute}
                             />
                         </TimePickerPopover>
                     </li>
@@ -535,23 +645,23 @@ function TimePicker({
                             </li>
                             <li className="shrink-auto">
                                 <TimePickerPopover
-                                    value={secondPopupValue}
                                     toggleHandler={handleSecondPopover}
-                                    Content={seconds}
-                                    readOnly={readOnly}
+                                    value={secondPopupValue}
                                     positions={positions}
+                                    readOnly={readOnly}
+                                    Content={seconds}
                                 >
                                     <ValidatableNumberInput
-                                        value={second}
-                                        forceAllowValidation
-                                        isValid={!secondFieldError}
-                                        onChange={handleSecondChange}
-                                        placeholder={secondFormat}
-                                        appearance="minimal"
-                                        showNumberIcon={false}
-                                        readOnly={readOnly}
-                                        writeProtected={isMobile}
                                         onBlur={handleMultiInputBlur}
+                                        onChange={handleSecondChange}
+                                        isValid={!secondFieldError}
+                                        placeholder={secondFormat}
+                                        writeProtected={isMobile}
+                                        showNumberIcon={false}
+                                        forceAllowValidation
+                                        appearance="minimal"
+                                        readOnly={readOnly}
+                                        value={second}
                                     />
                                 </TimePickerPopover>
                             </li>
@@ -561,8 +671,10 @@ function TimePicker({
             ) : (
                 <TimePickerPopover
                     toggleHandler={handlePopoverToggle}
-                    readOnly={readOnly}
                     value={signleInputPopoverValue}
+                    positions={positions}
+                    readOnly={readOnly}
+                    ref={childRef}
                     Content={
                         <ul className="time-picker-drop-holder">
                             <li>{hours}</li>
@@ -570,88 +682,27 @@ function TimePicker({
                             {showSeconds && <li>{seconds}</li>}
                         </ul>
                     }
-                    positions={positions}
                 >
                     <ExtendedInput
+                        isValid={!(hourFieldError || minuteFieldError || secondFieldError)}
                         placeholder={`${hourFormat}${separator}${minuteFormat}${
                             showSeconds ? `${separator}${secondFormat}` : ''
                         }`}
-                        icon="bc-icon-clock"
+                        onIconClick={handleIconClick}
                         onChange={handleInputChange}
-                        value={inputValue}
-                        isValid={!(hourFieldError || minuteFieldError || secondFieldError)}
-                        itemsDirection="end"
-                        readOnly={readOnly}
                         writeProtected={isMobile}
                         onBlur={handleInputBlur}
+                        itemsDirection="end"
+                        icon="bc-icon-clock"
+                        readOnly={readOnly}
+                        value={inputValue}
+                        clickableIcon
                         {...restProps}
                     />
                 </TimePickerPopover>
             )}
         </div>
     );
-}
-
-TimePicker.propTypes = {
-    /**
-     * Define is seconds field will shown or no
-     */
-    showSeconds: PropTypes.bool,
-    /**
-     * Select view with multiple inputs or with single inputs
-     */
-    appearance: PropTypes.oneOf(timePickerConfig.appearance),
-    /**
-     * Format for hour field
-     */
-    hourFormat: PropTypes.oneOf(['HH', 'H', 'hh', 'h']),
-    /**
-     * Format for hour field
-     */
-    minuteFormat: PropTypes.oneOf(['mm', 'm']),
-    /**
-     * Format for hour field
-     */
-    secondFormat: PropTypes.oneOf(['ss', 's']),
-    /**
-     * Time field separator
-     */
-    separator: PropTypes.string,
-    /**
-     * Fires an event when field is changed((event: SyntheticEvent) => void).
-     */
-    onChange: PropTypes.func,
-    /**
-     * Fires an event when field is blurred((date: Date, event: SyntheticEvent) => void).
-     */
-    onBlur: PropTypes.func,
-    /**
-     * Additional classname
-     */
-    className: PropTypes.string,
-    /**
-     * Value for input field
-     */
-    value: PropTypes.string,
-    /**
-     * disabled for input field
-     */
-    disabled: PropTypes.bool,
-    /**
-     * Makes Time picker readonly when set to "true"
-     */
-    readOnly: PropTypes.bool,
-    /**
-     * The switch between mobile and desktop version of Dropdown will be applied automatically, when the prop is not specified.
-     * When the prop is present it must be changed from outside.
-     */
-    screenType: PropTypes.oneOf(screenTypes),
-    /**
-     * preferred positions by priority ['bottom','top', 'left', 'right']
-     * default is ['bottom','top', 'left', 'right']
-     * if you'd like, you can limit the positions ['top', 'left']
-     */
-    positions: PropTypes.array
 };
 
 TimePicker.defaultProps = {
@@ -667,4 +718,4 @@ TimePicker.defaultProps = {
     readOnly: false
 };
 
-export default TimePicker;
+export { ITimePickerProps, TimePicker as default };

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 
 // Helpers
 import { useKeyDown, useClickOutside } from 'hooks';
@@ -6,11 +6,17 @@ import { useKeyDown, useClickOutside } from 'hooks';
 // Components
 import Popover from '../../../atoms/PopoverV2';
 
-function TimePickerPopover({ children, readOnly, value, positions, ...props }) {
+const TimePickerPopover = forwardRef(({ children, readOnly, value, positions, ...props }, ref) => {
     const rootRef = useRef(null);
     const [isOpen, setIsOpen] = useState(false);
 
-    const openPopover = () => !readOnly && setIsOpen(true);
+    useImperativeHandle(ref, () => ({
+        toggleOpen() {
+            setIsOpen(!isOpen);
+        }
+    }));
+
+    const openPopover = () => !readOnly && !isOpen && setIsOpen(true);
     const closePopover = () => setIsOpen(false);
 
     useKeyDown(openPopover, [openPopover], rootRef, ['Enter']);
@@ -28,11 +34,11 @@ function TimePickerPopover({ children, readOnly, value, positions, ...props }) {
 
     return (
         <Popover
-            behave="open"
-            scrollbarNeeded={false}
             contentRef={handleOutsideClick}
-            isOpen={isOpen}
+            scrollbarNeeded={false}
             position={positions}
+            isOpen={isOpen}
+            behave="open"
             {...props}
         >
             <div tabIndex={1} ref={rootRef} onClick={openPopover}>
@@ -40,6 +46,6 @@ function TimePickerPopover({ children, readOnly, value, positions, ...props }) {
             </div>
         </Popover>
     );
-}
+});
 
 export default TimePickerPopover;

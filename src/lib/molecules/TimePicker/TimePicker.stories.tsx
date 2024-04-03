@@ -1,10 +1,43 @@
-import React from 'react';
+import React, { FC } from 'react';
 
-import TimePickerComponent from 'src/lib/molecules/TimePicker/TimePicker';
+import TimePickerComponent, { ITimePickerProps } from 'src/lib/molecules/TimePicker/TimePicker';
+import { Meta } from '@storybook/react';
 import { args, category } from '../../assets/storybook.globals';
 import { screenTypes, timePickerConfig } from '../../../src/configs';
 
-export default {
+const meta: {
+    argTypes: {
+        minuteFormat: any;
+        onChange: any;
+        positions: any;
+        className: any;
+        readOnly: any;
+        separator: any;
+        hourFormat: any;
+        onBlur: any;
+        showSeconds: any;
+        appearance: any;
+        screenType: any;
+        disabled: any;
+        screenTypes: any;
+        secondFormat: any;
+        value: any;
+    };
+    args: {
+        showSeconds: boolean;
+        minuteFormat: string[];
+        appearance: any;
+        screenType: any;
+        className: string;
+        disabled: boolean;
+        readOnly: boolean;
+        secondFormat: string[];
+        separator: string;
+        hourFormat: string[];
+    };
+    component: React.FunctionComponent<ITimePickerProps>;
+    title: string;
+} = {
     title: 'Molecules/TimePicker',
     component: TimePickerComponent,
     argTypes: {
@@ -42,7 +75,9 @@ export default {
     }
 };
 
-const Template = ({ ...args }) => <TimePickerComponent {...args} />;
+export default meta;
+
+const Template: FC<ITimePickerProps> = ({ ...args }) => <TimePickerComponent {...args} />;
 
 export const Default = Template.bind({});
 export const WithoutSecondsField = Template.bind({});

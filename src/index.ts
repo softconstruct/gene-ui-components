@@ -95,7 +95,7 @@ export { default as DatePickerInput } from './lib/molecules/DatePickerInput';
 export { default as Holder } from './lib/molecules/Holder';
 export { default as Breadcrumb } from './lib/molecules/Breadcrumb';
 export { default as Section } from './lib/molecules/Section';
-export { default as TimePicker } from './lib/molecules/TimePicker';
+export { default as TimePicker } from './lib/molecules/TimePicker/TimePicker';
 export { default as ColorPicker } from './lib/molecules/ColorPicker';
 export { default as NavigationMenu } from './lib/molecules/NavigationMenu';
 export { default as ComboBox } from './lib/molecules/ComboBox';

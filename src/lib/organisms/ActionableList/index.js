@@ -348,7 +348,7 @@ const ActionableList = forwardRef(
         const onRowSelectHandler = (row, checked) => {
             const _data = selectHandler(dataList, row, checked);
             const a = d(_data, row.id, checked);
-            // console.log('🚀 ~ file: index.js ~ line 366 ~ onRowSelectHandler ~ row.id', row.id);
+            // console.log('🚀 ~ file: TimePicker.tsx ~ line 366 ~ onRowSelectHandler ~ row.id', row.id);
 
             setDataList(a);
             onChange(a);
