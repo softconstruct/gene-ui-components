@@ -37,7 +37,6 @@ export default meta;
 
 interface IBadgeExtended extends IBadgeProps {
     icon?: string;
-    args: IBadgeProps;
 }
 
 const Template: FC<IBadgeExtended> = ({ icon = 'bc-icon-user', ...args }) => {
