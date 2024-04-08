@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, HTMLAttributes, ReactNode } from 'react';
 
 // Helpers
 import classnames from 'classnames';
@@ -9,7 +9,7 @@ import { appearances, images, sizes, types } from './utils';
 // Styles
 import './Empty.scss';
 
-interface IEmptyProps {
+interface IEmptyProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
     /**
      * Available style varieties of Empty atom to display
      */
