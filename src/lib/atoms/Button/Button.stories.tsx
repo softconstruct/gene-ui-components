@@ -8,9 +8,8 @@ import ButtonComponent from './index';
 // Types
 import { IButtonProps } from './index';
 
-const colors = ['primary', 'confirm', 'danger', 'default'];
-
-const cornerRadius = ['round', 'smooth'];
+// Configs
+import { ButtonConfig } from './Button';
 
 const meta: Meta<typeof ButtonComponent> = {
     title: 'Atoms/Button',
@@ -24,18 +23,45 @@ const meta: Meta<typeof ButtonComponent> = {
         children: args({ control: 'text', ...propCategory.content }),
         loading: args({ control: 'boolean', ...propCategory.states }),
         disabled: args({ control: 'boolean', ...propCategory.states }),
-        appearance: args({ control: 'select', ...propCategory.appearance }),
-        withShadow: args({ control: 'boolean', ...propCategory.appearance }),
-        color: args({ control: 'select', options: colors, ...propCategory.appearance }),
-        size: args({ control: 'select', defaultValue: 'default', ...propCategory.appearance }),
-        cornerRadius: args({
+        appearance: args({
             control: 'select',
-            defaultValue: 'round',
-            options: cornerRadius,
+            defaultValue: 'default',
+            options: ButtonConfig.appearance,
             ...propCategory.appearance
         }),
-        flexibility: args({ control: 'select', defaultValue: 'default', ...propCategory.appearance }),
-        itemsDirection: args({ control: 'select', defaultValue: 'start', ...propCategory.appearance })
+        withShadow: args({ control: 'boolean', ...propCategory.appearance }),
+        color: args({ control: 'select', options: ButtonConfig.color, ...propCategory.appearance }),
+        size: args({
+            control: 'select',
+            options: ButtonConfig.size,
+
+            ...propCategory.appearance
+        }),
+        cornerRadius: args({
+            control: 'select',
+            options: ButtonConfig.cornerRadius,
+            defaultValue: 'round',
+            ...propCategory.appearance
+        }),
+        flexibility: args({
+            control: 'select',
+            options: ButtonConfig.flexibility,
+            defaultValue: 'default',
+            ...propCategory.appearance
+        }),
+        itemsDirection: args({
+            control: 'select',
+            defaultValue: 'start',
+            options: ButtonConfig.itemsDirection,
+            ...propCategory.appearance
+        })
+    },
+    args: {
+        appearance: 'default',
+        size: 'default',
+        cornerRadius: 'round',
+        flexibility: 'default',
+        itemsDirection: 'start'
     }
 };
 

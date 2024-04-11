@@ -7,7 +7,7 @@ import Icon from '../Icon';
 // Styles
 import './Button.scss';
 
-const ButtonConfig = {
+export const ButtonConfig = {
     appearance: ['default', 'outline', 'minimal', 'grayscale', 'clean'],
     size: ['default', 'medium', 'big'],
     color: ['primary', 'confirm', 'danger', 'default'],
