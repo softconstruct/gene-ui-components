@@ -19,7 +19,7 @@ export interface IKeyValueProps extends HTMLAttributes<HTMLDivElement> {
     /**
      * Value for 'KeyValue'.
      */
-    value: ReactNode | string;
+    value?: ReactNode | string;
     /**
      * External/Additional className that can be added to 'KeyValue' component.
      */
