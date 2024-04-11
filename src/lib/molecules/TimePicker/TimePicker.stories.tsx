@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 
-import TimePickerComponent, { ITimePickerProps } from 'src/lib/molecules/TimePicker/TimePicker';
+import TimePickerComponent, { ITimePickerProps } from '../../../../src/lib/molecules/TimePicker/TimePicker';
 import { Meta } from '@storybook/react';
-import { args, category } from '../../assets/storybook.globals';
-import { screenTypes, timePickerConfig } from '../../../src/configs';
+import { args, category } from '../../../../stories/assets/storybook.globals';
+import { screenTypes, timePickerConfig } from '../../../../src/configs';
 
 const meta: {
     argTypes: {

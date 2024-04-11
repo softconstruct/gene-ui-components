@@ -12,8 +12,11 @@ import { useDeviceType } from 'hooks';
 
 // Components
 import Scrollbar from '../../atoms/Scrollbar';
+// @ts-ignore
 import Icon from '../../atoms/Icon';
+// @ts-ignore
 import ExtendedInput from '../ExtendedInput';
+// @ts-ignore
 import ValidatableNumberInput from '../ValidatableElements/Elements/ValidatableNumberInput';
 
 // Local components
@@ -138,18 +141,18 @@ interface ITimePickerProps {
 
 const TimePicker: React.FC<ITimePickerProps> = ({
     value,
-    onChange,
-    showSeconds,
-    appearance,
-    hourFormat,
-    minuteFormat,
-    secondFormat,
-    separator,
+    onChange = noop,
+    showSeconds = true,
+    appearance = timePickerConfig.appearance[0],
+    hourFormat = 'HH',
+    minuteFormat = 'mm',
+    secondFormat = 'ss',
+    separator = ':',
     className,
-    disabled,
-    readOnly,
+    disabled = false,
+    readOnly = false,
     screenType,
-    onBlur,
+    onBlur = noop,
     positions,
     ...restProps
 }) => {
@@ -459,6 +462,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
             function (numbers, active, key) {
                 return (
                     <div className="time-picker-drop">
+                        {/* @ts-ignore */}
                         <Scrollbar autoHeight autoHeightMax={200} size="small">
                             <ul>
                                 {numbers.map((i) => (
@@ -589,9 +593,11 @@ const TimePicker: React.FC<ITimePickerProps> = ({
             {appearance === timePickerConfig.appearance[0] ? (
                 <ul>
                     <li className="no-shrink icon-holder">
+                        {/* @ts-ignore */}
                         <Icon type="bc-icon-clock" />
                     </li>
                     <li className="shrink-auto">
+                        {/* @ts-ignore */}
                         <TimePickerPopover
                             toggleHandler={handleHourPopover}
                             value={hourPopupValue}
@@ -600,6 +606,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
                             Content={hours}
                         >
                             <ValidatableNumberInput
+                                // @ts-ignore
                                 onBlur={handleMultiInputBlur}
                                 onChange={handleHourChange}
                                 isValid={!hourFieldError}
@@ -617,6 +624,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
                         <span>{separator}</span>
                     </li>
                     <li className="shrink-auto">
+                        {/* @ts-ignore */}
                         <TimePickerPopover
                             toggleHandler={handleMinutePopover}
                             value={minutePopupValue}
@@ -625,6 +633,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
                             Content={minutes}
                         >
                             <ValidatableNumberInput
+                                // @ts-ignore
                                 onBlur={handleMultiInputBlur}
                                 onChange={handleMinuteChange}
                                 isValid={!minuteFieldError}
@@ -644,6 +653,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
                                 <span>{separator}</span>
                             </li>
                             <li className="shrink-auto">
+                                {/* @ts-ignore */}
                                 <TimePickerPopover
                                     toggleHandler={handleSecondPopover}
                                     value={secondPopupValue}
@@ -652,6 +662,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
                                     Content={seconds}
                                 >
                                     <ValidatableNumberInput
+                                        // @ts-ignore
                                         onBlur={handleMultiInputBlur}
                                         onChange={handleSecondChange}
                                         isValid={!secondFieldError}
@@ -669,6 +680,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
                     )}
                 </ul>
             ) : (
+                // @ts-ignore
                 <TimePickerPopover
                     toggleHandler={handlePopoverToggle}
                     value={signleInputPopoverValue}
@@ -677,17 +689,19 @@ const TimePicker: React.FC<ITimePickerProps> = ({
                     ref={childRef}
                     Content={
                         <ul className="time-picker-drop-holder">
-                            <li>{hours}</li>
-                            <li>{minutes}</li>
-                            {showSeconds && <li>{seconds}</li>}
+                            <li className="time-picker-drop-hours">{hours}</li>
+                            <li className="time-picker-drop-minutes">{minutes}</li>
+                            {showSeconds && <li className="time-picker-drop-seconds">{seconds}</li>}
                         </ul>
                     }
                 >
                     <ExtendedInput
-                        isValid={!(hourFieldError || minuteFieldError || secondFieldError)}
+                        // @ts-ignore
                         placeholder={`${hourFormat}${separator}${minuteFormat}${
                             showSeconds ? `${separator}${secondFormat}` : ''
                         }`}
+                        isValid={!(hourFieldError || minuteFieldError || secondFieldError)}
+                        className="time-picker-single-input"
                         onIconClick={handleIconClick}
                         onChange={handleInputChange}
                         writeProtected={isMobile}
@@ -703,19 +717,6 @@ const TimePicker: React.FC<ITimePickerProps> = ({
             )}
         </div>
     );
-};
-
-TimePicker.defaultProps = {
-    appearance: timePickerConfig.appearance[0],
-    showSeconds: true,
-    hourFormat: 'HH',
-    minuteFormat: 'mm',
-    secondFormat: 'ss',
-    separator: ':',
-    onChange: noop,
-    onBlur: noop,
-    disabled: false,
-    readOnly: false
 };
 
 export { ITimePickerProps, TimePicker as default };
