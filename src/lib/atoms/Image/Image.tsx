@@ -25,27 +25,27 @@ export interface IImageProps extends HTMLAttributes<HTMLDivElement> {
     /**
      * Customize checkbox(will be rendered only when "selectMode" is set to "true").
      */
-    checkboxProps: {};
+    checkboxProps?: {};
     /**
      * Customize image tag with this property.
      */
-    imageProps: HTMLAttributes<HTMLImageElement>;
+    imageProps?: HTMLAttributes<HTMLImageElement>;
     /**
      * The property will render "actions" when "selectMode" is not setted to "true". Any valid React node
      */
-    actions: ReactNode;
+    actions?: ReactNode;
     /**
      * Will add a title to the top of Image atom. Any valid React node
      */
-    title: string;
+    title?: string;
     /**
      * Title for 'Tooltip'.
      */
-    tooltipTitle: string | ReactNode;
+    tooltipTitle?: string | ReactNode;
     /**
      * Additional className
      */
-    className: string;
+    className?: string;
     /**
      * Image atom also can be included in "Form" organism. It can be validated as other "Form" elements
      */
@@ -53,7 +53,7 @@ export interface IImageProps extends HTMLAttributes<HTMLDivElement> {
     /**
      * Empty state text for component
      */
-    emptyText: string;
+    emptyText?: string;
 }
 
 const Image: FC<IImageProps> = ({
