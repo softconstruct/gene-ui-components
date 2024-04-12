@@ -13,7 +13,7 @@ describe('BusyLoader ', () => {
     let setup: ReactWrapper<IBusyLoaderProps>;
     beforeEach(() => (setup = mount(<BusyLoader />)));
 
-    it('exists', () => expect(setup.exists()).toBeTruthy());
+    it('renders without crashing', () => expect(setup.exists()).toBeTruthy());
 
     it('renders className prop correctly', () => {
         const className = 'test-class';
