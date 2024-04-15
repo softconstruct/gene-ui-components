@@ -4,49 +4,63 @@ import ImagePreview, { IImagePreviewProps } from './ImagePreview';
 import GeneUIProvider from '../../providers/GeneUIProvider';
 
 import { enableFetchMocks } from 'jest-fetch-mock';
+import Magnifier from './Magnifier';
+
 enableFetchMocks();
 
 const path =
     'https://images.unsplash.com/photo-1599420186946-7b6fb4e297f0?ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2734&q=80';
 
 const propsToTest = [
-    { propName: 'showSize', propValue: true },
-    { propName: 'showDownload', propValue: true },
-    { propName: 'showRotate', propValue: true },
-    { propName: 'showDimensions', propValue: true },
-    { propName: 'withMagnifier', propValue: true },
-    { propName: 'withModal', propValue: true },
-    { propName: 'magnifierDefaultValue', propValue: true },
-    { propName: 'isMobile', propValue: true }
+    { propName: 'showSize', className: '.imagePreview__weight' },
+    { propName: 'showDownload', className: '.imagePreview__download' },
+    { propName: 'showRotate', className: '.imagePreview__rotate' },
+    { propName: 'showDimensions', className: '.imagePreview__resolution' },
+    { propName: 'withMagnifier', className: '.imagePreview__magnifier' },
+    { propName: 'withModal', className: '.imagePreview__background' },
+    { propName: 'isMobile', className: '.mobile-view' }
 ];
 
-describe('ImagePreview component', () => {
+describe('ImagePreview ', () => {
     let setup: ReactWrapper<IImagePreviewProps>;
+    const onClose = jest.fn();
     global.URL.createObjectURL = jest.fn();
 
-    beforeEach(() => {
-        setup = mount(<ImagePreview path={path} />, { wrappingComponent: GeneUIProvider });
+    beforeEach(() => (setup = mount(<ImagePreview path={path} />, { wrappingComponent: GeneUIProvider })));
+
+    it('renders without crashing', () => expect(setup.exists()).toBeTruthy());
+
+    it('renders path prop correctly', () => {
+        const wrapper = setup.setProps({});
+
+        expect(wrapper.find(Magnifier)).toBeTruthy();
     });
 
-    it('exists', () => {
-        expect(setup.exists()).toBeTruthy();
-    });
-
-    it('path prop renders correct', () => {
-        expect(setup.props().path).toBe(path);
-    });
-
-    it('name prop renders correct', () => {
-        const name = 'testName';
+    it('renders name prop correctly', () => {
+        const name = 'test name';
         const wrapper = setup.setProps({ name });
-        expect(wrapper.props().name).toBe(name);
+
         expect(wrapper.contains(name)).toBeTruthy();
     });
 
-    propsToTest.forEach(({ propName, propValue }) => {
-        it(`${propName} prop renders correct`, () => {
-            const wrapper = setup.setProps({ [propName]: propValue, path: path });
-            expect(wrapper.props()[propName]).toBe(propValue);
+    it('renders magnifierDefaultValue prop correctly', () => {
+        const wrapper = setup.setProps({ magnifierDefaultValue: false });
+
+        expect(wrapper.props().magnifierDefaultValue).toBeFalsy();
+    });
+
+    it('handles onClose', () => {
+        setup.setProps({ onClose });
+        setup.find('.bc-icon-close').simulate('click');
+
+        expect(onClose).toHaveBeenCalled();
+    });
+
+    propsToTest.forEach(({ propName, className }) => {
+        it(`renders ${propName} prop correctly`, () => {
+            const wrapper = setup.setProps({ [propName]: true, path });
+
+            expect(wrapper.find(className).exists()).toBeTruthy();
         });
     });
 });
