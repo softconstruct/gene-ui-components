@@ -7,33 +7,41 @@ import Divider from './Divider';
 // Types
 import { IDividerProps } from './Divider';
 
-describe('divider component', () => {
-    type WrapperType<T> = (prop?: Partial<IDividerProps>, isShallow?: boolean) => T;
-    type GetType<T extends keyof IDividerProps> = Pick<IDividerProps, T>[T];
-    let setup: WrapperType<ShallowWrapper | ReactWrapper>;
+describe('divider', () => {
+    let setup: ReactWrapper<IDividerProps>;
+
     beforeEach(() => {
-        setup = (props, isShallow = false) => {
-            return isShallow
-                ? shallow(<Divider {...(props as IDividerProps)} />)
-                : mount(<Divider {...(props as IDividerProps)} />);
-        };
+        setup = mount(<Divider type={'horizontal'} withSpace={false} />);
     });
 
-    it('checking if a component exists', () => {
-        const wrapper = setup();
-        expect(wrapper.exists()).toBeTruthy();
+    it('renders without crashing', () => {
+        expect(setup.exists()).toBeTruthy();
     });
-
-    it.each<GetType<'type'>>(['horizontal', 'vertical'])('checking for class acceptance %p', (prop) => {
-        const wrapper = setup({
+    it.each<IDividerProps['type']>(['horizontal', 'vertical'])('renders type %p prop correctly', (prop) => {
+        const wrapper = setup.setProps({
             type: prop
         });
         expect(wrapper.find(`.type-${prop}`).exists()).toBeTruthy();
     });
 
-    it.each<GetType<'type'>>(['horizontal', 'vertical'])('check styles with %p props', (props) => {
+    it('renders withSpace prop correctly', () => {
+        const wrapper = setup.setProps({
+            withSpace: false
+        });
+        expect(wrapper.find('.divider-withNoSpace').exists()).toBeTruthy();
+    });
+
+    it('renders className prop correctly"', () => {
+        const className = 'divider-class';
+        const wrapper = setup.setProps({
+            className
+        });
+        expect(wrapper.hasClass(`${className}`)).toBeTruthy();
+    });
+
+    it.each<IDividerProps['type']>(['horizontal', 'vertical'])('renders styles with %p props', (props) => {
         const size = 25;
-        const wrapper = setup({
+        const wrapper = setup.setProps({
             type: props,
             size
         });
@@ -44,20 +52,5 @@ describe('divider component', () => {
         } else {
             getWrapper.toHaveProperty('height', equalSize);
         }
-    });
-
-    it('check through negative "withSpace" value in props', () => {
-        const wrapper = setup({
-            withSpace: false
-        });
-        expect(wrapper.find('.divider-withNoSpace').exists()).toBeTruthy();
-    });
-
-    it('check with prop "className"', () => {
-        const className = 'divider-class';
-        const wrapper = setup({
-            className
-        });
-        expect(wrapper.find(`.${className}`).exists()).toBeTruthy();
     });
 });
