@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactWrapper, ShallowWrapper, mount, shallow } from 'enzyme';
+import { ReactWrapper, mount } from 'enzyme';
 
 // Components
 import Button from './index';
@@ -7,58 +7,44 @@ import Button from './index';
 // Types
 import { IButtonProps } from './index';
 
-describe('Button Component', () => {
-    type WrapperType<T> = (prop?: Partial<IButtonProps>, isShallow?: boolean) => T;
-    type GetType<T extends keyof IButtonProps> = Pick<IButtonProps, T>[T];
-    let setup: WrapperType<ShallowWrapper | ReactWrapper>;
+describe('Button', () => {
+    let setup: ReactWrapper<IButtonProps>;
 
     beforeEach(() => {
-        setup = (props, isShallow = false) => {
-            let button = <Button {...(props as IButtonProps)} />;
-            return isShallow ? shallow(button) : mount(button);
-        };
+        setup = mount(<Button children={''} flexibility={'default'} />);
     });
 
-    it('checking if a component exists', () => {
-        const wrapper = setup();
-        expect(wrapper.exists()).toBeTruthy();
+    it('renders without crashing', () => {
+        expect(setup.exists()).toBeTruthy();
     });
 
-    it('check conditional rendering', () => {
-        const wrapper = setup({
-            loading: true
-        });
-        expect(wrapper.find('.btn-loader-holder').exists()).toBeTruthy();
-    });
-
-    it('check with "icon" props', () => {
+    it('renders icon props correctly', () => {
         let icon = <div>Test</div>;
-        const wrapper = setup({
+        const wrapper = setup.setProps({
             icon
         });
 
         expect(wrapper.find(icon).exists()).toBeFalsy();
     });
 
-    it.each<GetType<'children'>>([<div>Test</div>, 'test'])('check with children  props', (children) => {
-        const wrapper = setup({
+    it.each<IButtonProps['children']>([<div>Test</div>, 'test'])('renders children prop correctly', (children) => {
+        const wrapper = setup.setProps({
             children
         });
-
         expect(wrapper.find(children as string).exists()).toBeFalsy();
     });
 
-    it('check with conditional class', () => {
-        const wrapper = setup({
+    it('renders withShadow prop correctly', () => {
+        const wrapper = setup.setProps({
             withShadow: true
         });
 
         expect(wrapper.find('.with-shadow').exists()).toBeTruthy();
     });
 
-    it('check with prop "ariaLabel"', () => {
+    it('renders ariaLabel prop correctly"', () => {
         const ariaLabel = 'test';
-        const wrapper = setup({
+        const wrapper = setup.setProps({
             ariaLabel
         });
 

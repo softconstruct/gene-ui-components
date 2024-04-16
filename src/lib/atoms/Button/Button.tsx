@@ -26,11 +26,11 @@ export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
     /**
      * The way how the Button should be displayed
      */
-    appearance: GetArrayAsUnion<'appearance'>;
+    appearance?: GetArrayAsUnion<'appearance'>;
     /**
      * Button size
      */
-    size: GetArrayAsUnion<'size'>;
+    size?: GetArrayAsUnion<'size'>;
     /**
      * How to display inscription in relation to it's parent in Button
      */
@@ -38,43 +38,43 @@ export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
     /**
      * Button color
      */
-    color: GetArrayAsUnion<'color'>;
+    color?: GetArrayAsUnion<'color'>;
     /**
      * Button children direction either from the start, or from the end
      */
-    itemsDirection: GetArrayAsUnion<'itemsDirection'>;
+    itemsDirection?: GetArrayAsUnion<'itemsDirection'>;
     /**
      * Button corner radius
      */
-    cornerRadius: GetArrayAsUnion<'cornerRadius'>;
+    cornerRadius?: GetArrayAsUnion<'cornerRadius'>;
     /**
      * The property will add an "Icon" as Button child. The valid values can be found in "Icon" atom
      */
-    icon: ReactNode | string;
+    icon?: ReactNode | string;
     /**
      * Button disabled state
      */
-    disabled: boolean;
+    disabled?: boolean;
     /**
      * Button active state
      */
-    active: boolean;
+    active?: boolean;
     /**
      * Adding shadow to button
      */
-    withShadow: boolean;
+    withShadow?: boolean;
     /**
      * Button additional className
      */
-    className: string;
+    className?: string;
     /**
      * Button text transforms to spinner
      */
-    loading: boolean;
+    loading?: boolean;
     /**
      * aria-label for button.
      */
-    ariaLabel: string;
+    ariaLabel?: string;
 }
 
 const Button = forwardRef<HTMLButtonElement, IButtonProps>(
