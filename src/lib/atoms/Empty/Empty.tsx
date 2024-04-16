@@ -50,8 +50,6 @@ const Empty: FC<IEmptyProps> = ({
     className,
     ...restProps
 }) => {
-    console.log(images[appearance][type]);
-    // static/media/src/assets/media/empty-state/with-circles/data.svg
     return (
         <div {...restProps} className={classnames('empty-state-holder', `s-${size}`, className)}>
             {withImage && (

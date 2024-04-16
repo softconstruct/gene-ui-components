@@ -6,12 +6,13 @@ import { IEmptyProps } from './index';
 
 //Components
 import Empty from './index';
+
+//helpers
 import { sizes } from './utils';
 
 describe('Empty', () => {
     let setup: ReactWrapper<IEmptyProps>;
     beforeEach(() => (setup = mount(<Empty />)));
-    // beforeEach(function() { mount(<Empty/>) })
 
     it('renders without crashing', () => expect(setup.exists()).toBeTruthy());
 
