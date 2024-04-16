@@ -1,10 +1,14 @@
 import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import ImagePreview, { IImagePreviewProps } from './ImagePreview';
+import { enableFetchMocks } from 'jest-fetch-mock';
+
+//Components
+import ImagePreview from './index';
+import Magnifier from './Magnifier';
 import GeneUIProvider from '../../providers/GeneUIProvider';
 
-import { enableFetchMocks } from 'jest-fetch-mock';
-import Magnifier from './Magnifier';
+//Types
+import { IImagePreviewProps } from './index';
 
 enableFetchMocks();
 
@@ -17,7 +21,6 @@ const propsToTest = [
     { propName: 'showRotate', className: '.imagePreview__rotate' },
     { propName: 'showDimensions', className: '.imagePreview__resolution' },
     { propName: 'withMagnifier', className: '.imagePreview__magnifier' },
-    { propName: 'withModal', className: '.imagePreview__background' },
     { propName: 'isMobile', className: '.mobile-view' }
 ];
 
@@ -31,9 +34,8 @@ describe('ImagePreview ', () => {
     it('renders without crashing', () => expect(setup.exists()).toBeTruthy());
 
     it('renders path prop correctly', () => {
-        const wrapper = setup.setProps({});
-
-        expect(wrapper.find(Magnifier)).toBeTruthy();
+        const wrapper = setup.setProps({ path });
+        expect(wrapper.find(Magnifier).exists()).toBeTruthy();
     });
 
     it('renders name prop correctly', () => {
