@@ -11,14 +11,14 @@ import { IKeyValueProps } from '.';
 //config
 import { keyValueConfig } from '../../../configs';
 
-describe('KeyValue component', () => {
+describe('KeyValue', () => {
     let setup: ReactWrapper<IKeyValueProps>;
 
     beforeEach(() => {
         setup = mount(<KeyValue label={'label'} value={'value'} />);
     });
 
-    it('checking if a component exists', () => {
+    it('renders without crashing', () => {
         expect(setup.exists()).toBeTruthy();
     });
 
@@ -30,13 +30,13 @@ describe('KeyValue component', () => {
         );
     });
 
-    it('with prop "className"', () => {
+    it('renders className prop correctly', () => {
         const className = 'test1';
         const wrapper = setup.setProps({ className });
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    it('with prop "icon"', () => {
+    it('renders icon prop correctly', () => {
         const icon = 'test-data';
         const wrapper = setup.setProps({ icon });
         //@ts-ignore
@@ -44,19 +44,20 @@ describe('KeyValue component', () => {
         expect(wrapper.find(Icon).exists()).toBeTruthy();
     });
 
-    it('with prop "value"', () => {
+    it('renders value prop correctly', () => {
         const value = 'test-data';
         const wrapper = setup.setProps({ value });
         expect(wrapper.contains(value)).toBeTruthy();
     });
 
-    it('with prop "label"', () => {
+    it('renders label prop correctly', () => {
         const label = 'test-data';
         const wrapper = setup.setProps({ label });
         expect(wrapper.props().label).toBe(label);
         expect(wrapper.contains(label)).toBeTruthy();
     });
-    it('without prop "icon"', () => {
+
+    it('renders without prop icon', () => {
         const wrapper = setup;
         expect(wrapper.find(Icon).exists()).toBeFalsy();
     });
