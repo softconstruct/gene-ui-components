@@ -419,8 +419,8 @@ The patch branches are serves to fix some regression and critical issues during 
 
 e.g `release/2.3.x` branch is patch release branch and `x` is mandatory as we don’t know how much regression and
 critical issues we will face during the new milestone development process. This branch will created from `main` with
-upcoming release branch but with the `reslease/2.3.x` name. CI pipeline will increment minor version number with each
-new patch release execution.
+upcoming release branch but with the `release/2.3.x` name. CI pipeline will increment minor version number with each new
+patch release execution.
 
 ### Create branch
 
@@ -428,7 +428,7 @@ new patch release execution.
 
 The fix branch should be created under the `fix/` directory and contain the short name of the fix written by the
 [kebab case](https://betterprogramming.pub/string-case-styles-camel-pascal-snake-and-kebab-case-981407998841). e.g
-`fix/checkbox-group-sellect-all-option`
+`fix/checkbox-group-select-all-option`
 
 When you are going to start fix some bug you need to follow bellow listed steps
 
@@ -436,13 +436,13 @@ When you are going to start fix some bug you need to follow bellow listed steps
 2. then pull from origin e.g `git pull origin release/2.4.0`
 3. create new fix branch following the
    [naming rules](https://www.notion.so/GIT-Branch-naming-conventions-and-workflow-b79e0a04b4b143428231c1bdf7073724?pvs=21)
-   of fix branch. e.g `git checkout -b fix/checkbox-group-sellect-all-option`
+   of fix branch. e.g `git checkout -b fix/checkbox-group-select-all-option`
 4. implement the bug fixing code
 5. pull from the upcoming milestone release branch and fix some conflicts if they exit. e.g
    `git pull origin release/2.4.0`
 6. commit your changes following the
    [commit message rules](https://www.notion.so/GIT-Branch-naming-conventions-and-workflow-b79e0a04b4b143428231c1bdf7073724?pvs=21)
-7. push your branch to the origin. e.g `git push -u fix/checkbox-group-sellect-all-option`
+7. push your branch to the origin. e.g `git push -u fix/checkbox-group-select-all-option`
 8. create pull request to the upcoming milestone branch. e.g `release/2.4.0`
 
 #### Feature branch creation naming rules
