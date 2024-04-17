@@ -72,20 +72,20 @@ const meta: Meta<typeof MapChartD3> = {
         colorAxis: {
             dataClasses: [
                 {
-                    to: 50,
                     from: 30,
+                    to: 50,
                     name: 'Profit',
                     color: '#4CD7E5'
                 },
                 {
-                    to: 1000,
                     from: 50,
+                    to: 1000,
                     name: 'Loss',
                     color: '#FFA5C1'
                 },
                 {
-                    to: 30,
                     from: 10,
+                    to: 30,
                     name: 'Even',
                     color: '#FFE272'
                 },
