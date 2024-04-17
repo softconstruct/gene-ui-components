@@ -363,9 +363,10 @@ const MapChartD3: FC<IMapChartD3Props> = ({
 
         const context = contextRef.current;
         const path = pathRef.current;
+        const canvasWidth = (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().width;
 
         context.save();
-        context.clearRect(0, 0, width, width);
+        context.clearRect(0, 0, canvasWidth, canvasWidth);
         context.resetTransform();
         context.translate(transformRef.current.x, transformRef.current.y);
         context.scale(transformRef.current.k, transformRef.current.k);
