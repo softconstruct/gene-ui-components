@@ -24,7 +24,7 @@ function Portal({ isOpen, children, className, container: propsContainer }) {
                 geneUIProviderRef.current?.removeChild(div);
             };
         }
-    }, [className, propsContainer]);
+    }, [className, propsContainer, geneUIProviderRef.current]);
 
     return isOpen && container ? ReactDOM.createPortal(children, container) : null;
 }

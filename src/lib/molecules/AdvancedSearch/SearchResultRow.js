@@ -14,16 +14,26 @@ import Tooltip from '../Tooltip';
 function SearchResultRow({ element }) {
     const { icon, id, title, name, date, actions } = element;
     const [isFocused, setIsFocused] = useState(false);
+    const [focusedIndex, setFocusedIndex] = useState(null);
     const titleRef = useRef(null);
     const isTitleTruncated = useEllipsisDetection(titleRef);
     const nameRef = useRef(null);
     const isNameTruncated = useEllipsisDetection(nameRef);
 
     // Handle blur event to clear focus state
-    const handleBlur = useCallback(() => setIsFocused(false), [element]);
+    const handleBlur = useCallback(() => {
+        setFocusedIndex(null);
+        setIsFocused(false);
+    }, [element]);
 
     // Handle Focus event to add focus state
-    const handleFocus = useCallback(() => setIsFocused(true), [element]);
+    const handleFocus = useCallback(
+        (index) => {
+            setFocusedIndex(index);
+            setIsFocused(true);
+        },
+        [element]
+    );
 
     return (
         <li
@@ -70,19 +80,27 @@ function SearchResultRow({ element }) {
                 })}
             >
                 {actions?.map((action, index) => (
-                    <Button
+                    <Tooltip
                         key={index}
-                        tabIndex={0}
-                        size="medium"
-                        icon={action.icon}
-                        onBlur={handleBlur}
-                        appearance="minimal"
-                        onFocus={handleFocus}
-                        cornerRadius="smooth"
-                        onClick={action.onClick(element)}
-                        className="searchResultRow__action"
-                        ariaLabel={action.name || action.icon}
-                    />
+                        text={action?.description}
+                        isVisible={!!action?.description}
+                        alwaysShow={!!action?.description && index === focusedIndex}
+                    >
+                        <Button
+                            tabIndex={0}
+                            size="medium"
+                            icon={action.icon}
+                            onBlur={handleBlur}
+                            appearance="minimal"
+                            onFocus={() => {
+                                handleFocus(index);
+                            }}
+                            cornerRadius="smooth"
+                            onClick={() => action?.onClick(element)}
+                            className="searchResultRow__action"
+                            ariaLabel={action.name || action.icon}
+                        />
+                    </Tooltip>
                 ))}
             </div>
         </li>
@@ -112,8 +130,9 @@ SearchResultRow.propTypes = {
         actions: PropTypes.arrayOf(
             PropTypes.shape({
                 name: PropTypes.string,
-                icon: PropTypes.string,
-                onClick: PropTypes.func
+                icon: PropTypes.string.isRequired,
+                onClick: PropTypes.func,
+                description: PropTypes.string
             })
         )
     })

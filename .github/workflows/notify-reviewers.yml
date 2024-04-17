@@ -1,0 +1,21 @@
+name: Notify Reviewers
+on:
+    pull_request:
+        branches: ["release/*"]
+jobs:
+    send_notification:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Send Notification
+              env:
+                  INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT: ${{ secrets.INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT }}
+              run: |
+                  PR_ID=${{ github.event.pull_request.number }}
+                  PR_URL=${{ github.event.pull_request.html_url }}
+                  PR_AUTHOR=${{ github.event.pull_request.user.login }}
+                  REVIEWERS="${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}"
+
+                  MESSAGE="@channel\nPull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nRequested Reviewers: $REVIEWERS"
+
+                  curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\", \"username\": \"GitHub\", \"icon_url\": \"https://github.githubassets.com/favicons/favicon.png\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT
+                  
