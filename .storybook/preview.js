@@ -71,7 +71,16 @@ export const parameters = {
     },
     options: {
         storySort: {
-            order: ['Introduction', 'Changelog', 'Atoms', 'Molecules', 'Organisms', 'Charts']
+            order: [
+                'Introduction',
+                'Changelog',
+                'Getting started',
+                'Atoms',
+                'Molecules',
+                'Organisms',
+                'Charts',
+                'Hooks'
+            ]
         }
     }
 };
