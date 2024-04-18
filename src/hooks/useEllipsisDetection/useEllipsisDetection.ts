@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
-import useDebounce from './useDebounceHook';
+import { useEffect, useState, RefObject } from 'react';
+import useDebounce from '../useDebounce';
 
 const EQUAL_HEIGHT_DIFF = 3;
 
-const useEllipsisDetection = (ref, externalDependencies = []) => {
-    const [isTruncated, setIsTruncated] = useState(false);
+interface IUseEllipsisDetection {
+    (ref: RefObject<HTMLElement>, externalDependencies?: any[]): boolean;
+}
+
+const useEllipsisDetection: IUseEllipsisDetection = (ref, externalDependencies = []): boolean => {
+    const [isTruncated, setIsTruncated] = useState<boolean>(false);
 
     const { debounceCallback, clearDebounce } = useDebounce();
 
