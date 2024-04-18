@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import useDebounce from './useDebounceHook';
+import useDebounce from './useDebounce';
 
 function useWindowSize() {
     const w = window;
