@@ -2,11 +2,10 @@ import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 
 // Components
-import { Icon } from '../../../index';
-import BubbleLoader from './BubbleLoader';
+import Icon from '../Icon';
 import BusyLoader from './index';
 
-//Types
+// Types
 import { IBusyLoaderProps } from './index';
 
 describe('BusyLoader ', () => {
@@ -53,7 +52,7 @@ describe('BusyLoader ', () => {
         } else if (type === 'spinner') {
             expect(wrapper.find(Icon).exists()).toBeTruthy();
         } else if (type === 'bubbles') {
-            expect(wrapper.find(BubbleLoader).exists()).toBeTruthy();
+            expect(wrapper.find('.bubble-loader')).toBeTruthy();
         }
     });
 });

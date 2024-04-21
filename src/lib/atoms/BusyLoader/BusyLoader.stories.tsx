@@ -1,14 +1,11 @@
 import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
 
-//Helpers
+// Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
-//Components
-import BusyLoader from './index';
-
-//Types
-import { IBusyLoaderProps } from './index';
+// Components
+import BusyLoader, { IBusyLoaderProps } from './index';
 
 const meta: Meta<typeof BusyLoader> = {
     title: 'Atoms/BusyLoader',
@@ -30,11 +27,7 @@ const meta: Meta<typeof BusyLoader> = {
 
 export default meta;
 
-interface IBusyLoaderPropsExtended extends IBusyLoaderProps {
-    icon?: string;
-}
-
-const Template: FC<IBusyLoaderPropsExtended> = (args) => {
+const Template: FC<IBusyLoaderProps> = (args) => {
     return (
         <BusyLoader {...args}>
             <div>
@@ -61,7 +54,6 @@ Bubble.args = {
 
 export const Bar = Template.bind({});
 
-Bubble.args = {
-    type: 'Bar',
-    loadingText: 'bar loading'
+Bar.args = {
+    type: 'bar'
 };
