@@ -9,7 +9,7 @@ export { default as useForceUpdate } from './useForceUpdate';
 export { default as useDeviceType } from './useDeviceType';
 export { default as useWindowSize } from './useWindowSize';
 export { default as useClickOutside } from './useClickOutside';
-export { default as useDebounce } from './useDebounceHook';
+export { default as useDebounce } from './useDebounce';
 export { default as useThrottle } from './useThrottle';
 export { default as useMutationObserver } from './useMutationObserver';
 export { default as useUpdatableRef } from './useUpdatableRef';
