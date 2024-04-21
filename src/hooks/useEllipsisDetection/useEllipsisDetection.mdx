@@ -1,0 +1,56 @@
+
+import { Markdown , Meta} from '@storybook/blocks';
+import useEllipsisDetection from './useEllipsisDetection';
+
+<Meta title="Hooks/useEllipsisDetection" />
+
+<div style={{paddingInlineStart:'20px'}}>
+
+## useEllipsisDetection
+
+This hook is responsible for detecting whether an element with a given `ref` is truncated with an ellipsis due to
+overflowing content.
+
+#### Parameters
+
+-   **`ref`**: A React RefObject referencing the element whose text truncation status needs to be detected.
+
+-   **`externalDependencies`** (optional): An array of dependencies to watch for changes that might affect the ellipsis
+    detection. This allows for re-evaluation of the truncation state if any of these dependencies change.
+
+#### Returns
+
+-   **`isTruncated`**: A boolean state indicating whether the element is currently truncated with an ellipsis (true) or
+    not (false).
+
+#### Usage
+
+```js
+import React, { useRef, FC } from 'react';
+import { useEllipsisDetection } from '@geneui/components';
+
+const ExampleComponent:FC = () => {
+    const elementRef = useRef<HTMLDivElement>(null);
+    const isTruncated = useEllipsisDetection(elementRef);
+
+    return (
+        <div ref={elementRef} style={{ width: '200px', height: '50px', border: '1px solid black', overflow: 'hidden' }}>
+            {/* Long content that may be truncated with an ellipsis */}
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla convallis libero vel luctus facilisis.
+        </div>
+    );
+};
+
+export default ExampleComponent;
+```
+
+#### Notes
+
+-   This hook listens for the resize event on the window and recalculates the truncation status when triggered. It also
+    uses debouncing to prevent excessive recalculations during rapid resizing.
+-   Ensure that the element referenced by ref is rendered in the DOM before using this hook to avoid potential errors.
+-   External dependencies can be provided to force re-evaluation of truncation when those dependencies change, improving
+    the hook's flexibility in different scenarios.
+
+
+</div>
