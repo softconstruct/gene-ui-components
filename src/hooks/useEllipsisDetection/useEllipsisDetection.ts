@@ -7,7 +7,7 @@ interface IUseEllipsisDetection {
     (ref: RefObject<HTMLElement>, externalDependencies?: any[]): boolean;
 }
 
-const useEllipsisDetection: IUseEllipsisDetection = (ref, externalDependencies = []): boolean => {
+const useEllipsisDetection: IUseEllipsisDetection = (ref, externalDependencies = []) => {
     const [isTruncated, setIsTruncated] = useState<boolean>(false);
 
     const { debounceCallback, clearDebounce } = useDebounce();
