@@ -9,6 +9,7 @@ import GeneUIProvider from '../../providers/GeneUIProvider';
 
 //Types
 import { IImagePreviewProps } from './index';
+import Switcher from '../Switcher';
 
 enableFetchMocks();
 
@@ -46,9 +47,8 @@ describe('ImagePreview ', () => {
     });
 
     it('renders magnifierDefaultValue prop correctly', () => {
-        const wrapper = setup.setProps({ magnifierDefaultValue: false });
-
-        expect(wrapper.props().magnifierDefaultValue).toBeFalsy();
+        const wrapper = setup.setProps({ magnifierDefaultValue: true, withMagnifier: true });
+        expect(wrapper.find('.imagePreview__switcher').first().props().defaultChecked).toBeTruthy();
     });
 
     it('handles onClose', () => {

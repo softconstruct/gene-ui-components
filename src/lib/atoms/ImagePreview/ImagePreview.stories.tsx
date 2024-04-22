@@ -33,7 +33,13 @@ const meta: Meta<typeof ImagePreviewComponent> = {
     },
     args: {
         name: 'Hand',
-        path: 'https://images.unsplash.com/photo-1599420186946-7b6fb4e297f0?ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2734&q=80'
+        path: 'https://images.unsplash.com/photo-1599420186946-7b6fb4e297f0?ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2734&q=80',
+        showDimensions: true,
+        showDownload: true,
+        showRotate: true,
+        withMagnifier: true,
+        showSize: true,
+        magnifierDefaultValue: true
     }
 };
 

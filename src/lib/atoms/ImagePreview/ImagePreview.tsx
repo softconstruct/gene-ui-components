@@ -1,11 +1,11 @@
 import React, { FC, FormEvent, MouseEvent, useEffect, useRef, useState } from 'react';
+import classnames from 'classnames';
 
 // Helpers
 //@ts-ignore
 import { fileSizeDisplay, noop } from 'utils';
 //@ts-ignore
 import { useImgDownload, useEllipsisDetection } from 'hooks';
-import classnames from 'classnames';
 
 // Components
 import Icon from '../Icon';
@@ -13,11 +13,11 @@ import Switcher from '../Switcher';
 import Tooltip from '../../molecules/Tooltip';
 import Magnifier from './Magnifier';
 
-//Types
-import { IMagnifierForwardRef } from './Magnifier';
-
 // Styles
 import './ImagePreview.scss';
+
+//Types
+import { IMagnifierForwardRef } from './Magnifier';
 
 interface IImagePreviewProps {
     /**
@@ -180,6 +180,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                                 onChange={(e: FormEvent<HTMLInputElement>) => setIsMagnifierOn(e.currentTarget.checked)}
                                 labelPosition="left"
                                 label="Magnifier"
+                                className="imagePreview__switcher"
                             />
                         </div>
                     )}
