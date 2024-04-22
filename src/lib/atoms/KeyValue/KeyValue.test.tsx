@@ -2,20 +2,17 @@ import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 
 // Components
-import KeyValue from '.';
+import KeyValue, { IKeyValueProps } from './index';
 import Icon from '../Icon';
 
-// Types
-import { IKeyValueProps } from '.';
-
-//config
-import { keyValueConfig } from '../../../configs';
+// Variants
+import { TypedKeyValueVariants } from './KeyValue';
 
 describe('KeyValue', () => {
     let setup: ReactWrapper<IKeyValueProps>;
 
     beforeEach(() => {
-        setup = mount(<KeyValue label={'label'} value={'value'} />);
+        setup = mount(<KeyValue label={'label'} value={'value'} appearance={'horizontal'} />);
     });
 
     it('renders without crashing', () => {
@@ -26,7 +23,7 @@ describe('KeyValue', () => {
         const wrapper = setup.setProps({ appearance });
         expect(wrapper.props().appearance).toBe(appearance);
         expect(wrapper.find('.geneKeyValue').props().className).toContain(
-            keyValueConfig.appearance[appearance].parentItemClassName
+            TypedKeyValueVariants[appearance]!.parentItemClassName
         );
     });
 
@@ -53,12 +50,10 @@ describe('KeyValue', () => {
     it('renders label prop correctly', () => {
         const label = 'test-data';
         const wrapper = setup.setProps({ label });
-        expect(wrapper.props().label).toBe(label);
         expect(wrapper.contains(label)).toBeTruthy();
     });
 
     it('renders without prop icon', () => {
-        const wrapper = setup;
-        expect(wrapper.find(Icon).exists()).toBeFalsy();
+        expect(setup.find(Icon).exists()).toBeFalsy();
     });
 });

@@ -8,9 +8,7 @@ import KeyValueComponent from '.';
 // Types
 import { IKeyValueProps } from '.';
 
-const keyValueConfig = {
-    appearance: ['horizontal', 'vertical']
-};
+const appearance = ['horizontal', 'vertical'] as const;
 
 const meta: Meta<typeof KeyValueComponent> = {
     title: 'Atoms/KeyValue',
@@ -21,8 +19,8 @@ const meta: Meta<typeof KeyValueComponent> = {
         className: args({ control: false, ...propCategory.others }),
         appearance: args({
             content: 'select',
-            defaultValue: keyValueConfig.appearance[0],
-            options: keyValueConfig.appearance,
+            defaultValue: appearance[0],
+            options: appearance,
             ...propCategory.appearance
         }),
         icon: args({ control: 'text', ...propCategory.content })
@@ -31,7 +29,7 @@ const meta: Meta<typeof KeyValueComponent> = {
         label: 'Some label',
         value: 'Some value',
         icon: 'bc-icon-info',
-        appearance: keyValueConfig.appearance[0] as IKeyValueProps['appearance']
+        appearance: appearance[0]
     }
 };
 
@@ -43,5 +41,5 @@ export const Default = Template.bind({});
 
 export const Vertical = Template.bind({});
 Vertical.args = {
-    appearance: keyValueConfig.appearance[1]
+    appearance: appearance[1]
 };

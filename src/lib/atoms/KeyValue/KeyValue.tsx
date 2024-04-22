@@ -3,13 +3,30 @@ import classnames from 'classnames';
 
 // Configs
 //@ts-ignore
-import { keyValueConfig } from 'configs';
 
 // Components
 import Icon from '../Icon';
 
 // Styles
 import './KeyValue.scss';
+
+const keyValueVariants = {
+    horizontal: {
+        parentItemClassName: 'geneKeyValue--horizontal',
+        labelClassName: 'geneKeyValue__label--horizontal',
+        valueClassName: 'geneKeyValue__value--horizontal',
+        iconClassName: 'geneKeyValue__icon--horizontal'
+    },
+    vertical: {
+        parentItemClassName: '',
+        itemClassName: '',
+        labelClassName: '',
+        valueClassName: '',
+        iconClassName: ''
+    }
+} as const;
+
+export const TypedKeyValueVariants = keyValueVariants as Partial<Readonly<typeof keyValueVariants>>;
 
 export interface IKeyValueProps extends HTMLAttributes<HTMLDivElement> {
     /**
@@ -27,7 +44,7 @@ export interface IKeyValueProps extends HTMLAttributes<HTMLDivElement> {
     /**
      * The way how the KeyValue should be displayed.
      */
-    appearance?: 'horizontal' | 'vertical';
+    appearance: keyof typeof TypedKeyValueVariants;
     /**
      * The property will show icon.
      */
@@ -35,31 +52,18 @@ export interface IKeyValueProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 // TODO need to refine where is using restProps
-const KeyValue: FC<IKeyValueProps> = ({
-    label,
-    value,
-    className,
-    icon,
-    appearance = keyValueConfig.appearance.horizontal._key,
-    ...restProps
-}) => {
+const KeyValue: FC<IKeyValueProps> = ({ label, value, className, icon, appearance = 'horizontal', ...restProps }) => {
     return (
         <div
             {...restProps}
-            className={classnames(
-                `geneKeyValue ${className}`,
-                keyValueConfig.appearance[appearance]?.parentItemClassName
-            )}
+            className={classnames(`geneKeyValue ${className}`, TypedKeyValueVariants[appearance]?.parentItemClassName)}
         >
             {icon && (
                 <div className="geneKeyValue__iconWrapper">
                     {/*@ts-ignore*/}
                     <Icon
                         type={icon}
-                        className={classnames(
-                            'geneKeyValue__icon',
-                            keyValueConfig.appearance[appearance]?.iconClassName
-                        )}
+                        className={classnames('geneKeyValue__icon', TypedKeyValueVariants[appearance]?.iconClassName)}
                     />
                 </div>
             )}
@@ -67,17 +71,16 @@ const KeyValue: FC<IKeyValueProps> = ({
             <p
                 role="heading"
                 aria-level={1}
-                className={classnames(
-                    'geneKeyValue__label ellipsis-text',
-                    keyValueConfig.appearance[appearance]?.labelClassName
-                )}
+                className={classnames('geneKeyValue__label ellipsis-text', {
+                    [TypedKeyValueVariants[appearance]!.labelClassName]: appearance === 'horizontal'
+                })}
             >
                 {label}
             </p>
             <p
                 className={classnames(
                     'geneKeyValue__value ellipsis-text',
-                    keyValueConfig.appearance[appearance]?.valueClassName
+                    TypedKeyValueVariants[appearance]?.valueClassName
                 )}
             >
                 {value}
