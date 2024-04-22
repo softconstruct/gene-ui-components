@@ -2,11 +2,8 @@ import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 
 // Components
+import BusyLoader, { IBusyLoaderProps } from './index';
 import Icon from '../Icon';
-import BusyLoader from './index';
-
-// Types
-import { IBusyLoaderProps } from './index';
 
 describe('BusyLoader ', () => {
     let setup: ReactWrapper<IBusyLoaderProps>;
@@ -42,17 +39,21 @@ describe('BusyLoader ', () => {
         expect(wrapper.find('.bc-icon-loader').hasClass(`s-${spinnerSize}`)).toBeTruthy();
     });
 
-    it.each<IBusyLoaderProps['type']>(['spinner', 'bubbles', 'bar'])('should have %s type', (type) => {
-        const wrapper = setup.setProps({ type });
+    it('should have bar type', () => {
+        const wrapper = setup.setProps({ type: 'bar' });
 
-        expect(wrapper.props().type).toBe(type);
+        expect(wrapper.find('.bar-loader')).toBeTruthy();
+    });
 
-        if (type === 'bar') {
-            expect(wrapper.find('.bar-loader')).toBeTruthy();
-        } else if (type === 'spinner') {
-            expect(wrapper.find(Icon).exists()).toBeTruthy();
-        } else if (type === 'bubbles') {
-            expect(wrapper.find('.bubble-loader')).toBeTruthy();
-        }
+    it('should have spinner type', () => {
+        const wrapper = setup.setProps({ type: 'spinner' });
+
+        expect(wrapper.find(Icon).exists()).toBeTruthy();
+    });
+
+    it('should have bubbles type', () => {
+        const wrapper = setup.setProps({ type: 'bubbles' });
+
+        expect(wrapper.find('.bubble-loader')).toBeTruthy();
     });
 });

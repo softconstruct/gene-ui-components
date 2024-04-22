@@ -11,8 +11,8 @@ const meta: Meta<typeof BusyLoader> = {
     title: 'Atoms/BusyLoader',
     component: BusyLoader,
     argTypes: {
-        type: args({ control: 'select', ...propCategory.appearance }),
-        spinnerSize: args({ control: 'select', ...propCategory.appearance }),
+        type: args({ control: 'select', options: ['spinner', 'bubbles', 'bar'], ...propCategory.appearance }),
+        spinnerSize: args({ control: 'select', options: ['small', 'medium', 'big'], ...propCategory.appearance }),
         children: args({ control: false, ...propCategory.content }),
         loadingText: args({ control: 'text', ...propCategory.content }),
         isBusy: args({ control: 'boolean', ...propCategory.states }),
@@ -22,7 +22,7 @@ const meta: Meta<typeof BusyLoader> = {
         isBusy: true,
         spinnerSize: 'big',
         loadingText: 'Loading text...'
-    }
+    } as IBusyLoaderProps
 };
 
 export default meta;
