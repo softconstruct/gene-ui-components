@@ -27,8 +27,14 @@ module.exports = {
         '^components$': '<rootDir>/src/index.ts'
     },
     setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
-    testMatch: ['**/?(*.)+(test).tsx'], // TODO add .ts also for helpers and hooks
-    collectCoverageFrom: ['src/**/*.tsx', '!src/**/*.d.ts', '!src/**/*.stories.tsx'], // TODO add .ts also for helpers and hooks
+    testMatch: ['**/?(*.)+(test).tsx'], // TODO add .ts also for helpers
+    collectCoverageFrom: [
+        'src/**/*.tsx',
+        'src/hooks/**/*.ts',
+        '!src/hooks/index.ts',
+        '!src/**/*.d.ts',
+        '!src/**/*.stories.tsx'
+    ], // TODO add .ts also for helpers
     coveragePathIgnorePatterns: ['/node_modules/', '/dist/'],
     transformIgnorePatterns: ['<rootDir>/node_modules/(?!react-dnd|dnd-core|@react-dnd)'],
     modulePathIgnorePatterns: ['node_modules', 'jest-test-results.json']
