@@ -2,10 +2,7 @@ import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 
 // Components
-import Badge from './index';
-
-// Types
-import { IBadgeProps } from './index';
+import Badge, { IBadgeProps } from './index';
 
 describe('Badge ', () => {
     let setup: ReactWrapper<IBadgeProps>;

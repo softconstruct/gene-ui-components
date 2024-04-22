@@ -1,16 +1,12 @@
 import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
 
-//helpers
+// Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
-import { badgeConfig } from '../../../../src/configs';
 
-// components
-import BadgeComponent from './index';
-import Avatar from '../Avatar/index';
-
-//types
-import { IBadgeProps } from './Badge';
+// Components
+import BadgeComponent, { IBadgeProps } from './index';
+import Avatar from '../Avatar';
 
 const meta: Meta<typeof BadgeComponent> = {
     title: 'Atoms/Badge',
@@ -25,8 +21,8 @@ const meta: Meta<typeof BadgeComponent> = {
         color: args({ control: 'select', ...propCategory.appearance })
     },
     args: {
-        size: badgeConfig.size[0] as IBadgeProps['size'],
-        color: badgeConfig.color[0] as IBadgeProps['color'],
+        size: 'default',
+        color: 'danger',
         dot: false,
         count: 100,
         maxCount: 99
@@ -54,15 +50,15 @@ export const Doted = Template.bind({});
 Doted.args = {
     dot: true,
     icon: 'bc-icon-apps'
-};
+} as IBadgeExtended;
 
 export const MaxCount = Template.bind({});
 
 MaxCount.args = {
-    size: badgeConfig.size[1] as IBadgeProps['size'],
+    size: 'medium',
     maxCount: 10,
     count: 11,
     icon: 'bc-icon-monospace'
-};
+} as IBadgeExtended;
 
 export const WithoutChildren: FC<IBadgeProps> = ({ ...args }) => <BadgeComponent {...args} />;

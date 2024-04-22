@@ -1,13 +1,13 @@
 import React, { ReactNode, FC, HTMLAttributes } from 'react';
-
-// Helpers
 import classnames from 'classnames';
-
-//@ts-ignore
-import { badgeConfig } from 'configs';
 
 // Styles
 import './Badge.scss';
+
+interface IBadgeConfig {
+    color: 'danger' | 'primary';
+    size: 'default' | 'medium' | 'big' | 'huge';
+}
 
 interface IBadgeProps extends HTMLAttributes<HTMLDivElement> {
     /**
@@ -17,11 +17,11 @@ interface IBadgeProps extends HTMLAttributes<HTMLDivElement> {
     /**
      * Badge size
      */
-    size?: 'default' | 'medium' | 'big' | 'huge';
+    size?: IBadgeConfig['size'];
     /**
      * Badge color
      */
-    color?: 'danger' | 'primary';
+    color?: IBadgeConfig['color'];
     /**
      * Shows the specified number on the badge
      */
@@ -47,9 +47,9 @@ const getShowValue = (count?: number, maxCount?: number) => {
 };
 
 const Badge: FC<IBadgeProps> = ({
-    size = badgeConfig.size[0],
+    size = 'default',
     dot = false,
-    color = badgeConfig.color[0],
+    color = 'danger',
     count,
     maxCount,
     className,
