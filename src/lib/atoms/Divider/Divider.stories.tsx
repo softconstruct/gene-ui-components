@@ -3,10 +3,7 @@ import { Meta } from '@storybook/react';
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
-import DividerComponent from './index';
-
-// Types
-import { IDividerProps } from './index';
+import DividerComponent, { IDividerProps } from './index';
 
 const meta: Meta<typeof DividerComponent> = {
     title: 'Atoms/Divider',
