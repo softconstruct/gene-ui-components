@@ -4,7 +4,7 @@ import { mount, ReactWrapper } from 'enzyme';
 // Components
 import Divider, { IDividerProps } from './Divider';
 
-describe('divider', () => {
+describe('Divider', () => {
     let setup: ReactWrapper<IDividerProps>;
 
     beforeEach(() => {
@@ -14,6 +14,7 @@ describe('divider', () => {
     it('renders without crashing', () => {
         expect(setup.exists()).toBeTruthy();
     });
+
     it.each<IDividerProps['type']>(['horizontal', 'vertical'])('renders type %p prop correctly', (prop) => {
         const wrapper = setup.setProps({
             type: prop
