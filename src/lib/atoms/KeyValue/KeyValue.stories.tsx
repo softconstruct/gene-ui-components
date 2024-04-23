@@ -18,7 +18,7 @@ const meta: Meta<typeof KeyValueComponent> = {
         value: args({ control: 'text', ...propCategory.content }),
         className: args({ control: false, ...propCategory.others }),
         appearance: args({
-            content: 'select',
+            control: 'select',
             defaultValue: appearance[0],
             options: appearance,
             ...propCategory.appearance
