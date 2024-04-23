@@ -3,13 +3,9 @@ import { Meta } from '@storybook/react';
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
-import ButtonComponent from './index';
-
-// Types
-import { IButtonProps } from './index';
+import ButtonComponent, { IButtonProps } from './index';
 
 // Configs
-import { ButtonConfig } from './Button';
 
 const meta: Meta<typeof ButtonComponent> = {
     title: 'Atoms/Button',
@@ -26,33 +22,27 @@ const meta: Meta<typeof ButtonComponent> = {
         appearance: args({
             control: 'select',
             defaultValue: 'default',
-            options: ButtonConfig.appearance,
             ...propCategory.appearance
         }),
         withShadow: args({ control: 'boolean', ...propCategory.appearance }),
-        color: args({ control: 'select', options: ButtonConfig.color, ...propCategory.appearance }),
+        color: args({ control: 'select', ...propCategory.appearance }),
         size: args({
             control: 'select',
-            options: ButtonConfig.size,
-
             ...propCategory.appearance
         }),
         cornerRadius: args({
             control: 'select',
-            options: ButtonConfig.cornerRadius,
             defaultValue: 'round',
             ...propCategory.appearance
         }),
         flexibility: args({
             control: 'select',
-            options: ButtonConfig.flexibility,
             defaultValue: 'default',
             ...propCategory.appearance
         }),
         itemsDirection: args({
             control: 'select',
             defaultValue: 'start',
-            options: ButtonConfig.itemsDirection,
             ...propCategory.appearance
         })
     },

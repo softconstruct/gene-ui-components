@@ -1,4 +1,4 @@
-import React, { HTMLAttributes, ReactNode, forwardRef } from 'react';
+import React, { FC, HTMLAttributes, ReactNode, forwardRef } from 'react';
 import classnames from 'classnames';
 
 // Components
@@ -7,46 +7,41 @@ import Icon from '../Icon';
 // Styles
 import './Button.scss';
 
-export const ButtonConfig = {
-    appearance: ['default', 'outline', 'minimal', 'grayscale', 'clean'],
-    size: ['default', 'medium', 'big'],
-    color: ['primary', 'confirm', 'danger', 'default'],
-    flexibility: ['default', 'content-size', 'full-width'],
-    itemsDirection: ['start', 'end'],
-    cornerRadius: ['round', 'smooth']
-} as const;
-
-type GetArrayAsUnion<T extends keyof typeof ButtonConfig> = (typeof ButtonConfig)[T][number];
-
 export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
     /**
      * Any valid React node
      */
     children: ReactNode | string;
     /**
-     * The way how the Button should be displayed
+     * The way how the Button should be displayed <br/>
+     * Possible values: `default | outline | minimal | grayscale | clean`
      */
-    appearance?: GetArrayAsUnion<'appearance'>;
+    appearance?: 'default' | 'outline' | 'minimal' | 'grayscale' | 'clean';
     /**
-     * Button size
+     * Button size <br/>
+     * Possible values: `default | medium | big`
      */
-    size?: GetArrayAsUnion<'size'>;
+    size?: 'default' | 'medium' | 'big';
     /**
-     * How to display inscription in relation to it's parent in Button
+     * How to display inscription in relation to it's parent in Button <br/>
+     * Possible values: `default | content-size | full-width`
      */
-    flexibility: GetArrayAsUnion<'flexibility'>;
+    flexibility: 'default' | 'content-size' | 'full-width';
     /**
-     * Button color
+     * Button color <br/>
+     * Possible values: `primary | confirm | danger | default`
      */
-    color?: GetArrayAsUnion<'color'>;
+    color?: 'primary' | 'confirm' | 'danger' | 'default';
     /**
-     * Button children direction either from the start, or from the end
+     * Button children direction either from the start, or from the end <br/>
+     * Possible values `start | end`
      */
-    itemsDirection?: GetArrayAsUnion<'itemsDirection'>;
+    itemsDirection?: 'start' | 'end';
     /**
-     * Button corner radius
+     * Button corner radius <br/>
+     * Possible values `round | smooth`
      */
-    cornerRadius?: GetArrayAsUnion<'cornerRadius'>;
+    cornerRadius?: 'round' | 'smooth';
     /**
      * The property will add an "Icon" as Button child. The valid values can be found in "Icon" atom
      */
@@ -77,16 +72,16 @@ export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
     ariaLabel?: string;
 }
 
-const Button = forwardRef<HTMLButtonElement, IButtonProps>(
+const Button: FC<IButtonProps> = forwardRef<HTMLButtonElement, IButtonProps>(
     (
         {
             children,
-            appearance = ButtonConfig.appearance[0],
-            size = ButtonConfig.size[0],
-            flexibility = ButtonConfig.flexibility[0],
-            color = ButtonConfig.color[0],
-            cornerRadius = ButtonConfig.cornerRadius[0],
-            itemsDirection = ButtonConfig.itemsDirection[0],
+            appearance = 'default',
+            size = 'default',
+            flexibility = 'default',
+            color = 'primary',
+            cornerRadius = 'round',
+            itemsDirection = 'start',
             icon,
             active,
             className,
