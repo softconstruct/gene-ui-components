@@ -1,4 +1,5 @@
 import React, { FC, HTMLAttributes, ReactNode } from 'react';
+import classNames from 'classnames';
 
 // Components
 import Icon from '../Icon';
@@ -35,14 +36,13 @@ export interface IKeyValueProps extends HTMLAttributes<HTMLDivElement> {
 // TODO need to refine where is using restProps
 const KeyValue: FC<IKeyValueProps> = ({ label, value, className, icon, appearance = 'horizontal', ...restProps }) => {
     return (
-        <div {...restProps} className={`geneKeyValue ${className} geneKeyValue--${appearance}`}>
+        <div {...restProps} className={classNames(`geneKeyValue geneKeyValue--${appearance}`, className)}>
             {icon && (
                 <div className="geneKeyValue__iconWrapper">
                     {/*@ts-ignore*/}
                     <Icon type={icon} className={'geneKeyValue__icon'} />
                 </div>
             )}
-
             <p
                 role="heading"
                 aria-level={1}

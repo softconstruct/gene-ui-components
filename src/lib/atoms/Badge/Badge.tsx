@@ -10,11 +10,13 @@ interface IBadgeProps extends HTMLAttributes<HTMLDivElement> {
      */
     className?: string;
     /**
-     * Badge size
+     * Badge size <br/>
+     * Possible values: `default | medium | big | huge`
      */
     size?: 'default' | 'medium' | 'big' | 'huge';
     /**
-     * Badge color
+     * Badge color <br/>
+     * Possible values: `danger | primary`
      */
     color?: 'danger' | 'primary';
     /**

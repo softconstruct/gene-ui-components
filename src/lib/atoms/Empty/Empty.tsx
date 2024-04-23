@@ -9,23 +9,28 @@ import './Empty.scss';
 
 interface IEmptyProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
     /**
-     * Available style varieties of Empty atom to display
+     * Available style varieties of Empty atom to display <br/>
+     * Possible values: `with-circles | without-circles | greyscale | transparent`
      */
     appearance?: 'with-circles' | 'without-circles' | 'greyscale' | 'transparent';
     /**
-     * Types of data Empty atom should represent
+     * Types of data Empty atom should represent <br/>
+     * Possible values: `data | image | search | message`
      */
     type?: 'data' | 'image' | 'search' | 'message';
     /**
-     * Empty atom size
+     * Empty atom size <br/>
+     * Possible values: `big | medium | small`
      */
     size?: 'big' | 'medium' | 'small';
     /**
-     * Will add a title to the Empty atom. Any valid React node
+     * Will add a title to the Empty atom. Any valid React node <br/>
+     * Possible values: `ReactNode | string`
      */
     title?: ReactNode | string;
     /**
-     * Will add a subtitle to the Empty atom. Any valid React node
+     * Will add a subtitle to the Empty atom. Any valid React node  <br/>
+     * Possible values: `ReactNode | string`
      */
     subTitle?: ReactNode | string;
     /**
