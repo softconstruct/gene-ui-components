@@ -5,9 +5,6 @@ import { ReactWrapper, mount } from 'enzyme';
 import KeyValue, { IKeyValueProps } from './index';
 import Icon from '../Icon';
 
-// Variants
-import { TypedKeyValueVariants } from './KeyValue';
-
 describe('KeyValue', () => {
     let setup: ReactWrapper<IKeyValueProps>;
 
@@ -22,9 +19,7 @@ describe('KeyValue', () => {
     it.each<IKeyValueProps['appearance']>(['horizontal', 'vertical'])('check with props %p', (appearance) => {
         const wrapper = setup.setProps({ appearance });
         expect(wrapper.props().appearance).toBe(appearance);
-        expect(wrapper.find('.geneKeyValue').props().className).toContain(
-            TypedKeyValueVariants[appearance]!.parentItemClassName
-        );
+        expect(wrapper.find('.geneKeyValue').props().className).toContain(`geneKeyValue--${appearance}`);
     });
 
     it('renders className prop correctly', () => {
