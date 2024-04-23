@@ -124,23 +124,6 @@ export const optionConfig = {
     }
 };
 
-export const keyValueConfig = {
-    appearance: {
-        horizontal: {
-            _key: 'horizontal',
-            parentItemClassName: 'geneKeyValue--horizontal',
-            labelClassName: 'geneKeyValue__label--horizontal',
-            valueClassName: 'geneKeyValue__value--horizontal',
-            iconClassName: 'geneKeyValue__icon--horizontal'
-        },
-        vertical: {
-            _key: 'vertical',
-            parentItemClassName: '',
-            itemClassName: ''
-        }
-    }
-};
-
 export const advancedSearchConfig = {
     positions: {
         right: 'right',
