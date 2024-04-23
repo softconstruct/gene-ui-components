@@ -6,10 +6,7 @@ import { args, propCategory } from '../../../../stories/assets/storybook.globals
 
 // Components
 import ImagePreviewComponent from './ImagePreview';
-import ImagePreview from '.';
-
-//Types
-import { IImagePreviewProps } from './index';
+import ImagePreview, { IImagePreviewProps } from './index';
 
 //@ts-ignore
 import ButtonComponent from 'src/lib/atoms/Button/index';

@@ -3,13 +3,9 @@ import { mount, ReactWrapper } from 'enzyme';
 import { enableFetchMocks } from 'jest-fetch-mock';
 
 //Components
-import ImagePreview from './index';
+import ImagePreview, { IImagePreviewProps } from './index';
 import Magnifier from './Magnifier';
 import GeneUIProvider from '../../providers/GeneUIProvider';
-
-//Types
-import { IImagePreviewProps } from './index';
-import Switcher from '../Switcher';
 
 enableFetchMocks();
 
@@ -58,11 +54,9 @@ describe('ImagePreview ', () => {
         expect(onClose).toHaveBeenCalled();
     });
 
-    propsToTest.forEach(({ propName, className }) => {
-        it(`renders ${propName} prop correctly`, () => {
-            const wrapper = setup.setProps({ [propName]: true, path });
+    it.each(propsToTest)('renders $propName prop correctly', ({ propName, className }) => {
+        const wrapper = setup.setProps({ [propName]: true, path });
 
-            expect(wrapper.find(className).exists()).toBeTruthy();
-        });
+        expect(wrapper.find(className).exists()).toBeTruthy();
     });
 });

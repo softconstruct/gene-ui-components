@@ -1,7 +1,7 @@
 import React, { FC, FormEvent, MouseEvent, useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 
-// Helpers
+// Utils
 //@ts-ignore
 import { fileSizeDisplay, noop } from 'utils';
 //@ts-ignore
@@ -11,13 +11,10 @@ import { useImgDownload, useEllipsisDetection } from 'hooks';
 import Icon from '../Icon';
 import Switcher from '../Switcher';
 import Tooltip from '../../molecules/Tooltip';
-import Magnifier from './Magnifier';
+import Magnifier, { IMagnifierForwardRef } from './Magnifier';
 
 // Styles
 import './ImagePreview.scss';
-
-//Types
-import { IMagnifierForwardRef } from './Magnifier';
 
 interface IImagePreviewProps {
     /**
