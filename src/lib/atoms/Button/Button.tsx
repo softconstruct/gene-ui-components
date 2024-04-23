@@ -72,7 +72,7 @@ export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
     ariaLabel?: string;
 }
 
-const Button: FC<IButtonProps> = forwardRef<HTMLButtonElement, IButtonProps>(
+const Button = forwardRef<HTMLButtonElement, IButtonProps>(
     (
         {
             children,
@@ -89,7 +89,7 @@ const Button: FC<IButtonProps> = forwardRef<HTMLButtonElement, IButtonProps>(
             loading,
             ariaLabel,
             ...restProps
-        },
+        }: IButtonProps,
         ref
     ) => {
         const noChildren = !children && children !== 0;
