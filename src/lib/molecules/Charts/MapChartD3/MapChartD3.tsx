@@ -218,10 +218,6 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 
     useEffect(() => {
-        if (!regionData) {
-        } else {
-        }
-
         const _chartData = mapData.features.map((item: MapChartFeature) => {
             const region =
                 colorAxis && regionData && regionData.length
@@ -247,7 +243,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         });
 
         setChartData(_chartData);
-    }, [mapData]);
+    }, [isLoading, withLegend, mapData]);
 
     const handleMouseEnter = (geo: MapChartFeature, e: MouseEvent): void => {
         const [x, y] = pointer(e);
@@ -364,9 +360,11 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         const context = contextRef.current;
         const path = pathRef.current;
         const canvasWidth = (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().width;
+        const canvasHeight = (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().height;
+        const clearRectSize = canvasWidth > canvasHeight ? canvasWidth : canvasHeight;
 
         context.save();
-        context.clearRect(0, 0, canvasWidth, canvasWidth);
+        context.clearRect(0, 0, clearRectSize, clearRectSize);
         context.resetTransform();
         context.translate(transformRef.current.x, transformRef.current.y);
         context.scale(transformRef.current.k, transformRef.current.k);
@@ -469,9 +467,12 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     }, [
         mapData,
         chartData,
+        isLoading,
         withTooltip,
         withActivity,
+        withLegend,
         canvasRef,
+        zoomRef,
         canvasWrapperRef,
         width,
         height,
@@ -581,7 +582,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                                     <span>{selectedName}</span>
                                 </div>
                             )}
-                            <div className="canvas-wrapper" ref={canvasWrapperRef}>
+                            <div className="canvas-wrapper" ref={canvasWrapperRef} style={{ maxHeight: `${height}px` }}>
                                 <canvas
                                     ref={canvasRef}
                                     width={(canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().width}

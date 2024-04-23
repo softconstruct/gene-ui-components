@@ -42,11 +42,12 @@ const meta: Meta<typeof MapChartD3> = {
         withNavigation: args({ control: 'boolean', category: category.content }),
         withActivity: args({ control: 'boolean', category: category.states }),
         withTooltip: args({ control: 'boolean', category: category.content }),
+        regionData: args({ control: 'object', category: category.content }),
         withLegend: args({ control: 'boolean', category: category.states }),
         brightness: args({ control: 'number', category: category.appearance }),
         mapData: args({ control: 'object', category: category.content }),
         colorAxis: args({ control: 'object', category: category.appearance }),
-        width: args({ control: 'text', category: category.appearance }),
+        width: args({ control: 'number', category: category.appearance }),
         height: args({ control: 'number', category: category.appearance }),
         screenType: args({ control: 'select', category: category.appearance }),
         className: args({ control: false, category: category.others }),
@@ -56,10 +57,13 @@ const meta: Meta<typeof MapChartD3> = {
         emptyText: args({ control: 'text', category: category.content }),
         zoomedFeatureId: args({ control: 'string', category: category.appearance }),
         defaultZoomScale: args({ control: 'number', category: category.appearance }),
-        defaultTranslateExtent: args({ control: 'object', category: category.appearance })
+        defaultTranslateExtent: args({ control: 'object', category: category.appearance }),
+        defaultScaleExtent: args({ control: 'object', category: category.appearance })
     },
     args: {
         title: '',
+        width: 900,
+        height: 600,
         mapData: testData,
         withNavigation: true,
         withActivity: true,
@@ -106,7 +110,11 @@ const meta: Meta<typeof MapChartD3> = {
     }
 };
 
-const Template: FC<IMapChartD3Props> = ({ ...args }) => <MapChartD3 {...args} />;
+const Template: FC<IMapChartD3Props> = ({ ...args }) => (
+    <div style={{ height: `${args.height + 200}px` }}>
+        <MapChartD3 {...args} />
+    </div>
+);
 
 export default meta;
 
