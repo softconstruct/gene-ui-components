@@ -7,13 +7,6 @@ import Icon from '../Icon';
 // Styles
 import './BusyLoader.scss';
 
-interface BusyLoaderVariants {
-    type: 'spinner' | 'bubbles' | 'bar';
-    size: 'small' | 'medium' | 'big';
-}
-
-type BusyLoadersType = { [key in BusyLoaderVariants['type']]: ReactNode };
-
 interface IBusyLoaderProps {
     /**
      * Show loader
@@ -28,18 +21,22 @@ interface IBusyLoaderProps {
      */
     loadingText?: string;
     /**
-     * Loader available type/style
+     * Loader available type/style </br>
+     * Possible values: `spinner | bubbles | bar`
      */
-    type?: BusyLoaderVariants['type'];
+    type?: 'spinner' | 'bubbles' | 'bar';
     /**
-     * Loader size
+     * Loader size </br>
+     * Possible values: `small | medium | big`
      */
-    spinnerSize?: BusyLoaderVariants['size'];
+    spinnerSize?: 'small' | 'medium' | 'big';
     /**
      * Any custom class name
      */
     className?: string;
 }
+
+type BusyLoadersType = { [key in NonNullable<IBusyLoaderProps['type']>]: ReactNode };
 
 const BusyLoader: FC<IBusyLoaderProps> = ({
     type = 'spinner',
