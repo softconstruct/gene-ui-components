@@ -1,3 +1,4 @@
+import { IEmptyProps } from './index';
 // @ts-ignore
 import dataGreyscale from 'src/assets/media/empty-state/greyscale/data.svg';
 // @ts-ignore
@@ -29,11 +30,11 @@ import searchWithoutCircles from 'src/assets/media/empty-state/without-circles/s
 // @ts-ignore
 import messageWithoutCircles from 'src/assets/media/empty-state/without-circles/message.svg';
 
-export const appearances = ['with-circles', 'without-circles', 'greyscale', 'transparent'] as const;
-export const types = ['data', 'image', 'search', 'message'] as const;
-export const sizes = ['big', 'medium', 'small'] as const;
+type ImageTypes = { [key in NonNullable<IEmptyProps['type']>]: string };
 
-export const images = {
+type ImagesTypes = { [key in NonNullable<IEmptyProps['appearance']>]: ImageTypes };
+
+export const images: ImagesTypes = {
     'with-circles': {
         data: dataWithCircles,
         image: imageWithCircles,

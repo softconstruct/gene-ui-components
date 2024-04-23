@@ -1,10 +1,8 @@
 import React, { FC, HTMLAttributes, ReactNode } from 'react';
-
-// Helpers
 import classnames from 'classnames';
 
 // Utils
-import { appearances, images, sizes, types } from './utils';
+import { images } from './utils';
 
 // Styles
 import './Empty.scss';
@@ -13,21 +11,21 @@ interface IEmptyProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
     /**
      * Available style varieties of Empty atom to display
      */
-    appearance?: (typeof appearances)[number];
+    appearance?: 'with-circles' | 'without-circles' | 'greyscale' | 'transparent';
     /**
      * Types of data Empty atom should represent
      */
-    type?: (typeof types)[number];
+    type?: 'data' | 'image' | 'search' | 'message';
     /**
      * Empty atom size
      */
-    size?: (typeof sizes)[number];
+    size?: 'big' | 'medium' | 'small';
     /**
-     * Will add a title to the "Empty" atom. Any valid React node
+     * Will add a title to the Empty atom. Any valid React node
      */
     title?: ReactNode | string;
     /**
-     * Will add a subtitle to the "Empty" atom. Any valid React node
+     * Will add a subtitle to the Empty atom. Any valid React node
      */
     subTitle?: ReactNode | string;
     /**
@@ -41,9 +39,9 @@ interface IEmptyProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
 }
 
 const Empty: FC<IEmptyProps> = ({
-    appearance = appearances[0],
-    type = types[0],
-    size = sizes[0],
+    appearance = 'with-circles',
+    type = 'data',
+    size = 'big',
     withImage = true,
     title = 'No Data to Display',
     subTitle,

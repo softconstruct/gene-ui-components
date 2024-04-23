@@ -1,14 +1,8 @@
 import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 
-//Types
-import { IEmptyProps } from './index';
-
-//Components
-import Empty from './index';
-
-//helpers
-import { sizes } from './utils';
+// Components
+import Empty, { IEmptyProps } from './index';
 
 describe('Empty', () => {
     let setup: ReactWrapper<IEmptyProps>;
@@ -43,7 +37,7 @@ describe('Empty', () => {
         expect(wrapper.find('.empty-state-image').exists()).toBeTruthy();
     });
 
-    it.each<IEmptyProps['size']>(sizes)('should have %s size', (size) => {
+    it.each<IEmptyProps['size']>(['small', 'medium', 'big'])('should have %s size', (size) => {
         const wrapper = setup.setProps({ size });
 
         expect(wrapper.props().size).toBe(size);

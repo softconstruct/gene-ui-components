@@ -4,11 +4,6 @@ import classnames from 'classnames';
 // Styles
 import './Badge.scss';
 
-interface IBadgeConfig {
-    color: 'danger' | 'primary';
-    size: 'default' | 'medium' | 'big' | 'huge';
-}
-
 interface IBadgeProps extends HTMLAttributes<HTMLDivElement> {
     /**
      * Any custom class name
@@ -17,11 +12,11 @@ interface IBadgeProps extends HTMLAttributes<HTMLDivElement> {
     /**
      * Badge size
      */
-    size?: IBadgeConfig['size'];
+    size?: 'default' | 'medium' | 'big' | 'huge';
     /**
      * Badge color
      */
-    color?: IBadgeConfig['color'];
+    color?: 'danger' | 'primary';
     /**
      * Shows the specified number on the badge
      */
