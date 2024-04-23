@@ -87,4 +87,4 @@ Stay up-to-date with the latest changes and improvements by checking our
 ## ⚖️ License
 
 The Gene UI design system is licensed under the
-[MIT Licensed](https://github.com/softconstruct/gene-ui-components/blob/main/LICENSE)
+[MIT License](https://github.com/softconstruct/gene-ui-components/blob/main/LICENSE)
