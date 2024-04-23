@@ -1,11 +1,8 @@
 import React from 'react';
-import { mount, ReactWrapper, shallow, ShallowWrapper } from 'enzyme';
+import { mount, ReactWrapper } from 'enzyme';
 
 // Components
-import Divider from './Divider';
-
-// Types
-import { IDividerProps } from './Divider';
+import Divider, { IDividerProps } from './Divider';
 
 describe('divider', () => {
     let setup: ReactWrapper<IDividerProps>;
@@ -47,10 +44,7 @@ describe('divider', () => {
         });
         const getWrapper = expect(wrapper.find(`.type-${props}`).get(0).props.style);
         const equalSize = `${size / 10}rem`;
-        if (props === 'horizontal') {
-            getWrapper.toHaveProperty('width', equalSize);
-        } else {
-            getWrapper.toHaveProperty('height', equalSize);
-        }
+
+        getWrapper.toHaveProperty(props === 'horizontal' ? 'width' : 'height', equalSize);
     });
 });

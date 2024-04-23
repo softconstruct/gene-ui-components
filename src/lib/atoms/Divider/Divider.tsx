@@ -6,7 +6,8 @@ import './Divider.scss';
 
 export interface IDividerProps extends HTMLAttributes<HTMLDivElement> {
     /**
-     * Divider direction
+     * Divider direction. <br>
+     * Possible values: `horizontal | vertical`
      */
     type: 'horizontal' | 'vertical';
     /**
@@ -14,7 +15,8 @@ export interface IDividerProps extends HTMLAttributes<HTMLDivElement> {
      */
     className?: string;
     /**
-     * Divider size will be applied to height(when "type" is set to "vertical") or to width(when "type" is set to "horizontal")
+     * Divider size will be applied to height(when "type" is set to "vertical") or to width(when "type" is set to "horizontal"). <br>
+     * Possible values: `string | number`
      */
     size?: string | number;
     /**
