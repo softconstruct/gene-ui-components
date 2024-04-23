@@ -130,8 +130,3 @@ export const advancedSearchConfig = {
         left: 'left'
     }
 };
-
-export const badgeConfig = {
-    color: ['danger', 'primary'],
-    size: ['default', 'medium', 'big', 'huge']
-};
