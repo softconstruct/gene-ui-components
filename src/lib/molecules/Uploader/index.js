@@ -410,7 +410,7 @@ Uploader.propTypes = {
     /**
      * Button corner radius
      */
-    cornerRadius: Button.propTypes.cornerRadius,
+    cornerRadius: 'smooth',
     /**
      * ExtendedInput corner radius
      */
@@ -584,7 +584,7 @@ Uploader.defaultProps = {
     allTypesAccepted: true,
     browseLabel: 'Browse',
     chooseFileLabel: 'Upload File',
-    cornerRadius: Button.defaultProps.cornerRadius,
+    cornerRadius: 'smooth',
     inputCornerRadius: ExtendedInput.defaultProps.cornerRadius,
     dropHereLabel: 'Drop here',
     sizeErrorMsg: `File must be smaller than ${maxFileSizeReplacer} bytes.`,
