@@ -1,15 +1,13 @@
 import React, { useState, FC } from 'react';
 import { Meta } from '@storybook/react';
 
-//helpers
+// Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
-import ImagePreviewComponent from './ImagePreview';
 import ImagePreview, { IImagePreviewProps } from './index';
-
-//@ts-ignore
-import ButtonComponent from 'src/lib/atoms/Button/index';
+import ImagePreviewComponent from './ImagePreview';
+import Button from '../Button';
 
 const meta: Meta<typeof ImagePreviewComponent> = {
     title: 'Atoms/ImagePreview',
@@ -50,9 +48,10 @@ const Template: FC<IImagePreviewProps> = (args) => {
     ) : (
         <div>
             <span style={{ textAlign: 'center', margin: '15px' }}>no image to show</span>
-            <ButtonComponent onClick={() => setShow(true)} style={{ marginTop: '15px' }}>
+            {/* @ts-ignore */}
+            <Button onClick={() => setShow(true)} style={{ marginTop: '15px' }}>
                 Show image modal
-            </ButtonComponent>
+            </Button>
         </div>
     );
 };

@@ -1,1 +1,1 @@
-export { IImagePreviewProps, default as default } from './ImagePreviewWrapper';
+export { IImagePreviewProps, default as default } from './ImagePreviewHOC';

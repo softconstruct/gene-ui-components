@@ -4,7 +4,7 @@ import React, { FC } from 'react';
 import Portal from '../Portal';
 import ImagePreview, { IImagePreviewProps } from './ImagePreview';
 
-const ImagePreviewWrapper: FC<IImagePreviewProps> = ({ withModal, ...restProps }) => {
+const ImagePreviewHOC: FC<IImagePreviewProps> = ({ withModal, ...restProps }) => {
     return withModal ? (
         // @ts-ignore
         <Portal isOpen>
@@ -15,4 +15,4 @@ const ImagePreviewWrapper: FC<IImagePreviewProps> = ({ withModal, ...restProps }
     );
 };
 
-export { IImagePreviewProps, ImagePreviewWrapper as default };
+export { IImagePreviewProps, ImagePreviewHOC as default };

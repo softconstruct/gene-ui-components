@@ -8,19 +8,19 @@ import { fileSizeDisplay, noop } from 'utils';
 import { useImgDownload, useEllipsisDetection } from 'hooks';
 
 // Components
+import Magnifier, { IMagnifierForwardRef } from './Magnifier';
 import Icon from '../Icon';
 import Switcher from '../Switcher';
 import Tooltip from '../../molecules/Tooltip';
-import Magnifier, { IMagnifierForwardRef } from './Magnifier';
 
 // Styles
 import './ImagePreview.scss';
 
 interface IImagePreviewProps {
     /**
-     * Image file display name. <span style="color: red">( Required )</span>
+     * Image file display name
      */
-    name?: string;
+    name: string;
     /**
      * Image path to display
      */
@@ -30,31 +30,31 @@ interface IImagePreviewProps {
      */
     onClose?: (event: MouseEvent) => void;
     /**
-     * Need to size or not
+     * Show image size
      */
     showSize?: boolean;
     /**
-     * Need to download or not
+     * Adding download functional for image
      */
     showDownload?: boolean;
     /**
-     * Need to rotate or not
+     * Adding rotation functional for image
      */
     showRotate?: boolean;
     /**
-     * Need to dimensions or not
+     * Show dimensions of image
      */
     showDimensions?: boolean;
     /**
-     * With magnifier functionality
+     * Turning on magnifier functional
      */
     withMagnifier?: boolean;
     /**
-     * modal mode
+     * Show image in the modal
      */
     withModal?: boolean;
     /**
-     * Default magnifier Value switched On
+     * Magnifier default value
      */
     magnifierDefaultValue?: boolean;
     /**
@@ -95,7 +95,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     const nameRef = useRef<HTMLSpanElement | null>(null);
     const magnifierRef = useRef<IMagnifierForwardRef | null>(null);
 
-    const isTruncated = useEllipsisDetection(nameRef);
+    const isTruncated: boolean = useEllipsisDetection(nameRef);
     const downloadImg = useImgDownload();
 
     useEffect(() => {

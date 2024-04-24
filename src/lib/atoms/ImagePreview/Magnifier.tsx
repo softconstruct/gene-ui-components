@@ -34,7 +34,6 @@ interface IMagnifierProps {
      */
     magnifierAppearance?: 'square' | 'circle';
 }
-
 interface IStylesProps {
     top?: string;
     right?: string;
@@ -42,11 +41,6 @@ interface IStylesProps {
     left?: string;
     backgroundPosition?: string;
 }
-
-const magnifierAppearances = {
-    square: 'square',
-    circle: 'circle'
-};
 
 const bufferSize = 40;
 const borderWidth = 2;
@@ -65,7 +59,7 @@ const Magnifier = forwardRef<IMagnifierForwardRef, IMagnifierProps>(
             withMagnifier = false,
             showMagnifier = false,
             zoom = 1.5,
-            magnifierAppearance = magnifierAppearances.square
+            magnifierAppearance = 'square'
         },
         ref
     ) => {
@@ -202,7 +196,7 @@ const Magnifier = forwardRef<IMagnifierForwardRef, IMagnifierProps>(
                             ref={glassRef}
                             className="imgMagnifier__glass"
                             style={{
-                                borderRadius: `${magnifierAppearance === magnifierAppearances.circle ? 50 : 0}%`,
+                                borderRadius: `${magnifierAppearance === 'circle' ? 50 : 0}%`,
                                 backgroundImage: `url(${imgUrl})`,
                                 backgroundRepeat: 'no-repeat',
                                 backgroundSize: imgRef.current
