@@ -2,10 +2,7 @@ import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 
 // Components
-import Button from './index';
-
-// Types
-import { IButtonProps } from './index';
+import Button, { IButtonProps } from './index';
 
 describe('Button', () => {
     let setup: ReactWrapper<IButtonProps>;

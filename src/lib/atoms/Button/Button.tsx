@@ -1,4 +1,4 @@
-import React, { FC, HTMLAttributes, ReactNode, forwardRef } from 'react';
+import React, { HTMLAttributes, ReactNode, forwardRef } from 'react';
 import classnames from 'classnames';
 
 // Components
@@ -9,7 +9,8 @@ import './Button.scss';
 
 export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
     /**
-     * Any valid React node
+     * Any valid React node <br>
+     * Possible values: `ReactNode | string`
      */
     children: ReactNode | string;
     /**
@@ -34,16 +35,17 @@ export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
     color?: 'primary' | 'confirm' | 'danger' | 'default';
     /**
      * Button children direction either from the start, or from the end <br/>
-     * Possible values `start | end`
+     * Possible values: `start | end`
      */
     itemsDirection?: 'start' | 'end';
     /**
      * Button corner radius <br/>
-     * Possible values `round | smooth`
+     * Possible values: `round | smooth`
      */
     cornerRadius?: 'round' | 'smooth';
     /**
-     * The property will add an "Icon" as Button child. The valid values can be found in "Icon" atom
+     * The property will add an "Icon" as Button child. The valid values can be found in "Icon" atom <br>
+     * Possible values: `ReactNode | string`
      */
     icon?: ReactNode | string;
     /**
