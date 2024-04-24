@@ -39,7 +39,8 @@ export interface IImageProps extends HTMLAttributes<HTMLDivElement> {
      */
     title?: string;
     /**
-     * Title for 'Tooltip'.
+     * Title for 'Tooltip'. <br>
+     * Possible values: `string | ReactNode`
      */
     tooltipTitle?: string | ReactNode;
     /**
@@ -70,8 +71,6 @@ const Image: FC<IImageProps> = ({
     emptyText = 'No image to display',
     ...restProps
 }) => {
-    const isValidSource = useMemo(() => typeof src === 'string' && src !== '', [src]);
-
     return (
         /*@ts-ignore */
         <Tooltip title={tooltipTitle}>
@@ -82,7 +81,7 @@ const Image: FC<IImageProps> = ({
                 })}
                 {...restProps}
             >
-                {isValidSource ? (
+                {src ? (
                     <div className="image-content">
                         <img src={src} alt={title} {...imageProps} />
                         {selectMode && (

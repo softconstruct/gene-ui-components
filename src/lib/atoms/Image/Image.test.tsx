@@ -3,9 +3,9 @@ import { ReactWrapper, mount } from 'enzyme';
 
 // Components
 import Image from './';
-import Tooltip from '../../molecules/Tooltip';
-import Empty from '../Empty';
-import Checkbox from '../../molecules/Checkbox';
+// import Tooltip from '../../molecules/Tooltip';
+// import Empty from '../Empty';
+// import Checkbox from '../../molecules/Checkbox';
 
 // Types
 import { IImageProps } from '.';

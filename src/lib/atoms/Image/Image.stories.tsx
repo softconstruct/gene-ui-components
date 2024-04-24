@@ -1,17 +1,16 @@
 import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
+
+// Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Component
-import ImageComponent from '.';
+import Image, { IImageProps } from './index';
 import Button from '../Button';
 
-// Types
-import { IImageProps } from '.';
-
-const meta: Meta<typeof ImageComponent> = {
+const meta: Meta<typeof Image> = {
     title: 'Atoms/Image',
-    component: ImageComponent,
+    component: Image,
     argTypes: {
         src: args({ control: 'text', ...propCategory.content }),
         withBorder: args({ control: 'boolean', defaultValue: 'true', ...propCategory.appearance }),
@@ -31,7 +30,7 @@ const meta: Meta<typeof ImageComponent> = {
     }
 };
 
-const Template: FC<IImageProps> = ({ ...args }) => <ImageComponent {...args} />;
+const Template: FC<IImageProps> = ({ ...args }) => <Image {...args} />;
 
 export default meta;
 
@@ -50,5 +49,6 @@ Default.args = {
             <Button icon="bc-icon-trash" appearance="minimal" color="danger" />
         </>
     )
-};
+} as IImageProps;
+
 export const WithoutActions = Template.bind({});
