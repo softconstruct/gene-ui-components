@@ -24,7 +24,8 @@ const TSComponentsList = [
     'KeyValue',
     'BusyLoader',
     'Divider',
-    'Button'
+    'Button',
+    'Image'
 ];
 
 const getInputs = (name, dir) => {
