@@ -46,6 +46,7 @@ interface DataClasses {
     from: number;
     name: string;
     color: string;
+    disabled?: boolean;
 }
 
 export interface IMapChartD3Props {
@@ -177,8 +178,6 @@ const hexToRgb = (hex: string) => {
 
 const MapChartD3: FC<IMapChartD3Props> = ({
     title = '',
-    width = 900,
-    height = 600,
     brightness,
     mapData,
     colorAxis,
@@ -216,6 +215,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     const [minScaleExtent, maxScaleExtent] = defaultScaleExtent;
     const pathRef = useRef<GeoPath | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+    const [legends, setLegends] = useState(colorAxis.dataClasses);
 
     useEffect(() => {
         const _chartData = mapData.features.map((item: MapChartFeature) => {
@@ -225,9 +225,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                     : null;
 
             if (region && colorAxis) {
-                const dataClass = colorAxis.dataClasses.find(
-                    (axis) => region.value >= axis.from && region.value <= axis.to
-                );
+                const dataClass = legends.find((axis) => region.value >= axis.from && region.value <= axis.to);
                 return {
                     ...item,
                     properties: {
@@ -474,8 +472,6 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         canvasRef,
         zoomRef,
         canvasWrapperRef,
-        width,
-        height,
         defaultZoomScale,
         isMobile,
         windowWidth,
@@ -536,13 +532,17 @@ const MapChartD3: FC<IMapChartD3Props> = ({
             }
         });
 
+        const legend = legends.find((item) => item.name === name);
+        legend.disabled = !legend.disabled;
+        setLegends([...legends]);
+
         drawMap();
     };
 
-    const handleLegendMouseOver = (isEnter: boolean) => {
+    const handleLegendMouseOver = (isEnter: boolean, disabled: boolean) => {
         chartData.forEach(({ properties }) => {
             if (properties.value > 0) {
-                properties.brightness = isEnter ? 0.3 : 0;
+                properties.brightness = isEnter && !disabled ? 0.3 : 0;
             }
         });
 
@@ -566,7 +566,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                     ></div>
                 </Popover>
             )}
-            <div className={classnames(`charts__map-chart chart-overflow-holder ${className}`)}>
+            <div className={classnames(`charts__map-chart chart-overflow-holder ${className || ''}`)}>
                 <BusyLoader isBusy={isLoading} className="map-chart__proxy-content">
                     {!mapData?.features.length ? (
                         <Empty type="data" title={emptyText} className="map-chart__proxy-content" />
@@ -582,7 +582,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                                     <span>{selectedName}</span>
                                 </div>
                             )}
-                            <div className="canvas-wrapper" ref={canvasWrapperRef} style={{ maxHeight: `${height}px` }}>
+                            <div className="canvas-wrapper" ref={canvasWrapperRef}>
                                 <canvas
                                     ref={canvasRef}
                                     width={(canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().width}
@@ -593,15 +593,18 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                             </div>
                             {withLegend && colorAxis && (
                                 <div className="chart__legends">
-                                    {colorAxis.dataClasses.map(({ to, color, name }) => (
+                                    {legends.map(({ to, color, name, disabled }) => (
                                         <button
                                             key={`${name}_${to}`}
-                                            className="legend__button"
+                                            className={classnames('legend__button', { disabled: disabled })}
                                             onClick={() => handleLegendClick(name, color)}
-                                            onMouseEnter={() => handleLegendMouseOver(true)}
-                                            onMouseLeave={() => handleLegendMouseOver(false)}
+                                            onMouseEnter={() => handleLegendMouseOver(true, disabled)}
+                                            onMouseLeave={() => handleLegendMouseOver(false, disabled)}
                                         >
-                                            <i className="legend__circle" style={{ background: color }} />
+                                            <i
+                                                className="legend__circle"
+                                                style={{ background: disabled ? defaultFeatureColor : color }}
+                                            />
                                             <span className="legend__name">{name}</span>
                                         </button>
                                     ))}

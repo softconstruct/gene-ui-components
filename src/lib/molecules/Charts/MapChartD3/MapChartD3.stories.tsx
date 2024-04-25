@@ -47,8 +47,6 @@ const meta: Meta<typeof MapChartD3> = {
         brightness: args({ control: 'number', category: category.appearance }),
         mapData: args({ control: 'object', category: category.content }),
         colorAxis: args({ control: 'object', category: category.appearance }),
-        width: args({ control: 'number', category: category.appearance }),
-        height: args({ control: 'number', category: category.appearance }),
         screenType: args({ control: 'select', category: category.appearance }),
         className: args({ control: false, category: category.others }),
         onPointOver: args({ control: false, category: category.action }),
@@ -62,8 +60,6 @@ const meta: Meta<typeof MapChartD3> = {
     },
     args: {
         title: '',
-        width: 900,
-        height: 600,
         mapData: testData,
         withNavigation: true,
         withActivity: true,
@@ -111,7 +107,7 @@ const meta: Meta<typeof MapChartD3> = {
 };
 
 const Template: FC<IMapChartD3Props> = ({ ...args }) => (
-    <div style={{ height: `${args.height + 200}px` }}>
+    <div style={{ height: '800px' }}>
         <MapChartD3 {...args} />
     </div>
 );
