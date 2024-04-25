@@ -24,6 +24,7 @@ const TSComponentsList = [
     'KeyValue',
     'BusyLoader',
     'Divider',
+    'ImagePreview',
     'Button',
     'Image'
 ];
