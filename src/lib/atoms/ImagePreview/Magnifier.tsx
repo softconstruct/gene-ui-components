@@ -211,7 +211,7 @@ const Magnifier = forwardRef<IMagnifierForwardRef, IMagnifierProps>(
                     <img
                         ref={imgRef}
                         src={imgUrl}
-                        alt={name}
+                        alt={name || ''}
                         onMouseEnter={onMouseEnterHandler}
                         onMouseMove={(e) => showMagnifier && onMouseMoveHandler(e)}
                         className={`imgMagnifier__img ${className}`}

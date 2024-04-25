@@ -20,7 +20,7 @@ interface IImagePreviewProps {
     /**
      * Image file display name
      */
-    name: string;
+    name?: string;
     /**
      * Image path to display
      */
@@ -145,11 +145,13 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                         })}
                     >
                         {/*@ts-ignore*/}
-                        <Tooltip text={name} isVisible={isTruncated}>
-                            <span className="imagePreview__name ellipsis-text" ref={nameRef}>
-                                {name}
-                            </span>
-                        </Tooltip>
+                        {name && (
+                            <Tooltip text={name} isVisible={isTruncated}>
+                                <span className="imagePreview__name ellipsis-text" ref={nameRef}>
+                                    {name}
+                                </span>
+                            </Tooltip>
+                        )}
                         <div className="imagePreview__sizes">
                             {showSize && <span className="imagePreview__weight">{fileSizeDisplay(meta.size)}</span>}
                             {showSize && showDimensions && <div className="imagePreview__divider-small" />}
