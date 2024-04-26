@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent, ReactNode } from 'react';
+import React, { FC, MouseEvent, ReactElement, ReactNode } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import {
     select,
@@ -25,6 +25,12 @@ import { BusyLoader, Empty, Popover, useWindowSize } from '../../../../index';
 
 // Styles
 import './MapChartD3.scss';
+
+interface Tooltip {
+    top: number;
+    left: number;
+    content: ReactElement | undefined;
+}
 
 interface MapChartFeature {
     type: string;
@@ -55,14 +61,6 @@ export interface IMapChartD3Props {
      */
     title?: string;
     /**
-     * Canvas width
-     */
-    width: number;
-    /**
-     * Canvas height
-     */
-    height: number;
-    /**
      * Brightness of regions on hover action
      */
     brightness?: number;
@@ -81,7 +79,7 @@ export interface IMapChartD3Props {
     /**
      * Device screen type
      */
-    screenType?: string;
+    screenType?: 'mobile' | 'desktop';
     /**
      * Add legends for chart
      */
@@ -150,6 +148,12 @@ export interface IMapChartD3Props {
      * <code> [0, 0] </code>
      */
     defaultTranslateExtent?: [number, number];
+    /**
+     * Tooltip renderer method.
+     * <br>
+     * <code> (activeFeature) => <div style={{ padding: '7px 14px'}}>{activeFeature.properties.name}</div> </code>
+     */
+    tooltipRenderer?: (event: MapChartFeature) => ReactElement;
 }
 
 const defaultFeatureColor = '#ebebeb';
@@ -197,7 +201,8 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     defaultZoomScale = 1,
     zoomedFeatureId = '',
     defaultScaleExtent = [1, 8],
-    defaultTranslateExtent = [0, 0]
+    defaultTranslateExtent = [0, 0],
+    tooltipRenderer
 }) => {
     const { width: windowWidth, height: windowHeight } = useWindowSize();
     const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
@@ -209,13 +214,13 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     const { isMobile } = useDeviceType(screenType);
     const [isViewActive, setViewActive] = useState<boolean>(false);
     const [selectedName, setSelectedName] = useState<string | null>(null);
-    const [chartData, setChartData] = useState<MapChartFeature[]>(mapData.features);
-    const [tooltipData, setTooltipData] = useState({ top: 0, left: 0, content: null });
+    const [chartData, setChartData] = useState<MapChartFeature[]>(mapData?.features || []);
+    const [tooltipData, setTooltipData] = useState<Tooltip>({ top: 0, left: 0, content: undefined });
     const [zoomButtonsStatus, setZoomButtonsStatus] = useState({ zoomIn: false, zoomOut: true, reset: true });
     const [minScaleExtent, maxScaleExtent] = defaultScaleExtent;
     const pathRef = useRef<GeoPath | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
-    const [legends, setLegends] = useState(colorAxis.dataClasses);
+    const [legends, setLegends] = useState(colorAxis?.dataClasses || []);
 
     useEffect(() => {
         const _chartData = mapData.features.map((item: MapChartFeature) => {
@@ -246,12 +251,13 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     const handleMouseEnter = (geo: MapChartFeature, e: MouseEvent): void => {
         const [x, y] = pointer(e);
         withActivity && setSelectedName(geo.properties.name);
-        withTooltip && setTooltipData({ top: y, left: x, content: geo.properties.name });
+        const tooltipContent = tooltipRenderer && tooltipRenderer(geo);
+        tooltipRenderer && withTooltip && setTooltipData({ top: y, left: x, content: tooltipContent });
     };
 
     const handleMouseLeave = () => {
         withActivity && !isMobile && setSelectedName(null);
-        withTooltip && setTooltipData({ top: 0, left: 0, content: null });
+        withTooltip && setTooltipData({ top: 0, left: 0, content: undefined });
     };
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -533,8 +539,11 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         });
 
         const legend = legends.find((item) => item.name === name);
-        legend.disabled = !legend.disabled;
-        setLegends([...legends]);
+
+        if (legend) {
+            legend.disabled = !legend.disabled;
+            setLegends([...legends]);
+        }
 
         drawMap();
     };
@@ -568,7 +577,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
             )}
             <div className={classnames(`charts__map-chart chart-overflow-holder ${className || ''}`)}>
                 <BusyLoader isBusy={isLoading} className="map-chart__proxy-content">
-                    {!mapData?.features.length ? (
+                    {!mapData?.features?.length ? (
                         <Empty type="data" title={emptyText} className="map-chart__proxy-content" />
                     ) : (
                         <>
@@ -596,14 +605,14 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                                     {legends.map(({ to, color, name, disabled }) => (
                                         <button
                                             key={`${name}_${to}`}
-                                            className={classnames('legend__button', { disabled: disabled })}
+                                            className={classnames('legend__button', { disabled: !!disabled })}
                                             onClick={() => handleLegendClick(name, color)}
-                                            onMouseEnter={() => handleLegendMouseOver(true, disabled)}
-                                            onMouseLeave={() => handleLegendMouseOver(false, disabled)}
+                                            onMouseEnter={() => handleLegendMouseOver(true, !!disabled)}
+                                            onMouseLeave={() => handleLegendMouseOver(false, !!disabled)}
                                         >
                                             <i
                                                 className="legend__circle"
-                                                style={{ background: disabled ? defaultFeatureColor : color }}
+                                                style={{ background: !!disabled ? defaultFeatureColor : color }}
                                             />
                                             <span className="legend__name">{name}</span>
                                         </button>

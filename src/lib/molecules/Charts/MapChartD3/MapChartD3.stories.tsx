@@ -102,7 +102,8 @@ const meta: Meta<typeof MapChartD3> = {
         zoomedFeatureId: '',
         defaultZoomScale: 1,
         defaultScaleExtent: [1, 8],
-        defaultTranslateExtent: [0, 0]
+        defaultTranslateExtent: [0, 0],
+        tooltipRenderer: (activeFeature) => <div style={{ padding: '7px 14px' }}>{activeFeature.properties.name}</div>
     }
 };
 
