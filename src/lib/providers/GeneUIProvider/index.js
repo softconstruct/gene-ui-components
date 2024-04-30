@@ -1,4 +1,4 @@
-import React, { createContext, useRef } from 'react';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 
 // Statics
@@ -11,16 +11,22 @@ export const GeneUIDesignSystemContext = createContext();
 
 function GeneUIProvider({ children, tokens, theme }) {
     const geneUIProviderRef = useRef(null);
+    const [isRefExist, setIsRefExist] = useState(false);
+
     const contextValue = {
         theme,
         tokens,
         geneUIProviderRef
     };
 
+    useEffect(() => {
+        geneUIProviderRef.current && !isRefExist && setIsRefExist(true);
+    }, [geneUIProviderRef.current]);
+
     return (
         <GeneUIDesignSystemContext.Provider value={contextValue}>
             <div data-gene-ui-version={pgk.version} ref={geneUIProviderRef} style={{ height: '100%' }}>
-                {children}
+                {isRefExist && children}
             </div>
         </GeneUIDesignSystemContext.Provider>
     );

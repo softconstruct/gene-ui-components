@@ -15,7 +15,19 @@ import { getDirectories, getFiles } from '../scripts/utils';
 
 const packageJson = require('../package.json');
 
-const TSComponentsList = ['Avatar', 'LinkButton', 'Copy'];
+const TSComponentsList = [
+    'Avatar',
+    'LinkButton',
+    'Copy',
+    'Badge',
+    'Empty',
+    'KeyValue',
+    'BusyLoader',
+    'Divider',
+    'ImagePreview',
+    'Button',
+    'Image'
+];
 
 const getInputs = (name, dir) => {
     const inputs = getDirectories(dir).reduce((obj, item) => {
@@ -43,7 +55,7 @@ const componentsInputs = Object.entries({
 
 const hooks = getFiles('src/hooks').reduce((acc, path) => {
     const [hookPath] = path.split('/').reverse();
-    const hookName = hookPath.replace('.js', '');
+    const hookName = hookPath.replace(/\.(js|ts)$/, '');
     acc[hookName] = path;
     return acc;
 }, {});
@@ -107,7 +119,7 @@ export default {
                 utils: 'src/utils/index.js',
                 wrappers: 'src/wrappers/index.js',
                 configs: 'src/configs.js',
-                hooks: 'src/hooks/index.js',
+                hooks: 'src/hooks/index.ts',
                 indexof: 'src/utils/indexof.js',
                 components: 'src/index.ts'
             }
