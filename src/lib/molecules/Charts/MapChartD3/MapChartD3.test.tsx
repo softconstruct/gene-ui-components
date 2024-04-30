@@ -1,13 +1,15 @@
 import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import data from './../../../../../stories/charts/Map/woldMapData';
+import * as d3 from 'd3';
 
 //Components
-import GeneUIProvider from '../../../providers/GeneUIProvider';
 import MapChartD3 from '.';
+import GeneUIProvider from '../../../providers/GeneUIProvider';
 
 //Types
 import { IMapChartD3Props } from '.';
+import * as jsdom from 'jsdom';
 
 const colorAxis = {
     dataClasses: [
@@ -42,7 +44,9 @@ describe('D3 Map chart', () => {
     let setup: ReactWrapper<IMapChartD3Props>;
 
     beforeEach(() => {
-        setup = mount(<MapChartD3 mapData={data} isLoading={false} />);
+        setup = mount(<MapChartD3 mapData={data} isLoading={false} />, { wrappingComponent: GeneUIProvider });
+        const canvasWrapper = new jsdom.JSDOM('<!doctype html><div><canvas></canvas></div>').window.document.body;
+        const d3Canvas = d3.select(canvasWrapper).select('div').node();
     });
 
     it('renders without crashing', () => {
@@ -82,8 +86,17 @@ describe('D3 Map chart', () => {
     // TODO
     // it('renders with screenType props', () => {
     //     const screenType = 'desktop';
+    //     let jestSpy = jest.spyOn(React, 'useState');
+    //     // jestSpy.mockImplementation((init) => [init, setState]);
     //     const wrapper = setup.setProps({ screenType });
     //
     //     // expect(wrapper.find('.charts__map-chart').hasClass(className)).toBeTruthy();
+    // });
+
+    // it('handles handleClick', () => {
+    //     const wrapper = setup;
+    //
+    //     wrapper.find('canvas').simulate('handleClick');
+    //     expect(handleClick).toHaveBeenCalled();
     // });
 });
