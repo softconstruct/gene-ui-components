@@ -1,7 +1,7 @@
 {
     "name": "@geneui/components",
     "description": "The Gene UI components library designed for BI tools",
-    "version": "2.13.1",
+    "version": "2.14.0",
     "author": "SoftConstruct",
     "homepage": "https://github.com/softconstruct/gene-ui-components#readme",
     "repository": {
