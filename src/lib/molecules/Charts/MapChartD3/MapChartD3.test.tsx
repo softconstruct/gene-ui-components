@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import data from './../../../../../stories/charts/Map/woldMapData';
-import * as d3 from 'd3';
 
 //Components
 import MapChartD3 from '.';
@@ -9,7 +8,12 @@ import GeneUIProvider from '../../../providers/GeneUIProvider';
 
 //Types
 import { IMapChartD3Props } from '.';
-import * as jsdom from 'jsdom';
+import { MapChartFeature } from './MapChartD3';
+import { BusyLoader, Empty, Popover } from '../../../../index';
+
+const tooltipRenderer: (activeFeature: MapChartFeature) => ReactElement = (activeFeature) => (
+    <div style={{ padding: '7px 14px' }}>{activeFeature.properties.name}</div>
+);
 
 const colorAxis = {
     dataClasses: [
@@ -42,11 +46,13 @@ const colorAxis = {
 
 describe('D3 Map chart', () => {
     let setup: ReactWrapper<IMapChartD3Props>;
+    const setState = jest.fn();
+
+    let jestSpy = jest.spyOn(React, 'useState');
+    jestSpy.mockImplementation((init) => [init, setState]);
 
     beforeEach(() => {
         setup = mount(<MapChartD3 mapData={data} isLoading={false} />, { wrappingComponent: GeneUIProvider });
-        const canvasWrapper = new jsdom.JSDOM('<!doctype html><div><canvas></canvas></div>').window.document.body;
-        const d3Canvas = d3.select(canvasWrapper).select('div').node();
     });
 
     it('renders without crashing', () => {
@@ -83,20 +89,43 @@ describe('D3 Map chart', () => {
         expect(wrapper.find('.chart__legends').exists()).toBeTruthy();
     });
 
-    // TODO
-    // it('renders with screenType props', () => {
-    //     const screenType = 'desktop';
-    //     let jestSpy = jest.spyOn(React, 'useState');
-    //     // jestSpy.mockImplementation((init) => [init, setState]);
-    //     const wrapper = setup.setProps({ screenType });
-    //
-    //     // expect(wrapper.find('.charts__map-chart').hasClass(className)).toBeTruthy();
-    // });
+    it('renders with emptyText props', () => {
+        const emptyText = 'test empty text';
+        const mapData = [];
+        const wrapper = setup.setProps({ emptyText, mapData });
 
-    // it('handles handleClick', () => {
-    //     const wrapper = setup;
-    //
-    //     wrapper.find('canvas').simulate('handleClick');
-    //     expect(handleClick).toHaveBeenCalled();
-    // });
+        expect(wrapper.find(Empty).exists()).toBeTruthy();
+    });
+
+    it('renders with isLoading props', () => {
+        const isLoading = true;
+        const wrapper = setup.setProps({ isLoading });
+
+        expect(wrapper.find(BusyLoader).exists()).toBeTruthy();
+    });
+
+    it('renders with withActivity props', () => {
+        const withActivity = true;
+        const screenType = 'mobile';
+        const wrapper = setup.setProps({ withActivity, screenType });
+
+        expect(wrapper.find('.chart__activity-table').exists()).toBeTruthy();
+    });
+
+    it('renders with withNavigation props', () => {
+        const withNavigation = true;
+        const wrapper = setup.setProps({ withNavigation });
+        wrapper.setState('isViewActive', () => false);
+
+        expect(wrapper.find('.actions__box').exists()).toBeTruthy();
+    });
+
+    it('renders with selectedData props', () => {
+        const selectedData = <span>test selectedData node</span>;
+        const withActivity = true;
+        const screenType = 'mobile';
+        const wrapper = setup.setProps({ selectedData, withActivity, screenType });
+
+        expect(wrapper.find('.chart-activity-body').exists()).toBeTruthy();
+    });
 });

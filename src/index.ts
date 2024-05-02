@@ -160,7 +160,7 @@ export { default as useForceUpdate } from './hooks/useForceUpdate';
 export { default as useDeviceType } from './hooks/useDeviceType';
 export { default as useWindowSize } from './hooks/useWindowSize';
 export { default as useClickOutside } from './hooks/useClickOutside';
-export { default as useDebounce } from './hooks/useDebounceHook';
+export { default as useDebounce } from './hooks/useDebounce';
 export { default as useThrottle } from './hooks/useThrottle';
 export { default as useMutationObserver } from './hooks/useMutationObserver';
 export { default as useUpdatableRef } from './hooks/useUpdatableRef';

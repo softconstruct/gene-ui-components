@@ -43,6 +43,7 @@ const meta: Meta<typeof MapChartD3> = {
         withActivity: args({ control: 'boolean', category: category.states }),
         withTooltip: args({ control: 'boolean', category: category.content }),
         regionData: args({ control: 'object', category: category.content }),
+        tooltipRenderer: args({ control: 'text', category: category.content }),
         withLegend: args({ control: 'boolean', category: category.states }),
         brightness: args({ control: 'number', category: category.appearance }),
         mapData: args({ control: 'object', category: category.content }),

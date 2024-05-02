@@ -32,7 +32,7 @@ interface Tooltip {
     content: ReactElement | undefined;
 }
 
-interface MapChartFeature {
+export interface MapChartFeature {
     type: string;
     id: string;
     properties: any;
@@ -223,7 +223,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     const [legends, setLegends] = useState(colorAxis?.dataClasses || []);
 
     useEffect(() => {
-        const _chartData = mapData.features.map((item: MapChartFeature) => {
+        const _chartData = mapData?.features?.map((item: MapChartFeature) => {
             const region =
                 colorAxis && regionData && regionData.length
                     ? regionData.find((region) => region.id === item.id)

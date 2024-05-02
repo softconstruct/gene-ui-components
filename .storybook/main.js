@@ -6,7 +6,8 @@ module.exports = {
         './../stories/changelog.mdx',
         './../stories/gettingStarted.mdx',
         './../src/lib/**/**/*.stories.tsx',
-        './../stories/*/**/*.stories.jsx'
+        './../stories/**/**/*.stories.jsx',
+        './../src/hooks/**/*.mdx'
     ],
     addons: [
         '@storybook/preset-scss',
@@ -33,14 +34,14 @@ module.exports = {
     typescript: {
         reactDocgen: 'react-docgen-typescript-plugin'
     },
-    webpackFinal: async (config) => {
+    webpackFinal: async (config, options) => {
         const aliasPaths = {
             src: '../src/',
             utils: '../src/utils',
             lib: '../src/lib/',
             wrappers: '../src/wrappers/index.js',
             configs: '../src/configs.js',
-            hooks: '../src/hooks/index.js',
+            hooks: '../src/hooks/index.ts',
             indexof: '../src/utils/indexof.js',
             stories: '../stories/',
             components: '../src/index.ts'
@@ -58,6 +59,8 @@ module.exports = {
             babelrc: true,
             configFile: './.storybook/.babelrc'
         };
+
+        options.cache.set = () => Promise.resolve();
 
         return config;
     },
