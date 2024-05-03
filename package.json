@@ -20,8 +20,8 @@
     "main": "index.js",
     "typings": "index.d.ts",
     "scripts": {
-        "start": "npm run test && storybook dev -p 6006",
-        "dev": "concurrently --kill-others -g \"npm:test:watch\" \"npm:start\"",
+        "start": "storybook dev -p 6006",
+        "dev": "concurrently --kill-others -g  \"npm:start\"",
         "test": "jest --silent --config ./configs/jest.config.js --rootDir ./ --coverage --json --outputFile=./coverage/.jest-test-results.json",
         "test:watch": "npm run test -- --watchAll --json",
         "test-report": "babel-node --config-file ./configs/.babelrc ./scripts/testReport.js",
@@ -166,6 +166,7 @@
         "i": "^0.3.7",
         "immer": "^9.0.18",
         "jodit-react": "^1.3.23",
+        "lucide-react": "^0.376.0",
         "npm": "^9.4.1",
         "pure-react-carousel": "^1.30.1",
         "qrcode.react": "^3.1.0",

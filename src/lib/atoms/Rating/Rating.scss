@@ -1,0 +1,28 @@
+.rating {
+    display: flex;
+    width: 300px;
+
+    &__wrapper {
+        height: fit-content;
+        display: flex;
+        justify-content: center;
+    }
+
+    &__content {
+        position: relative;
+        width: 100%;
+    }
+
+    &__element {
+        position: absolute;
+        top: 0;
+        overflow: hidden;
+        height: 100%;
+        z-index: 7;
+    }
+
+    &__icon {
+        width: 100% !important;
+        height: 100% !important;
+    }
+}
