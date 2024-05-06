@@ -1,31 +1,74 @@
-import React, { FC, HTMLAttributes, MouseEvent, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { LucideProps, Angry, Annoyed, Smile, Star, Laugh, Meh } from 'lucide-react';
-import Tooltip from '../../molecules/Tooltip';
+import React, {
+    FC,
+    HTMLAttributes,
+    MouseEvent,
+    ReactElement,
+    ReactNode,
+    SVGProps,
+    cloneElement,
+    isValidElement,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState
+} from 'react';
+import classNames from 'classnames';
+
+// Components
+import SvgStarIcon from './DefaultSvg';
+// Styles
 import './Rating.scss';
+
 export const positions = ['top', 'right', 'bottom', 'left'] as const;
 
 export interface IRatingProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
+    /**
+     Default selected rating 
+     */
     defaultValue: number;
+    /**
+     Number how many elements need to be redrawn
+      */
     count: number;
+    /**
+     Function with which you can take a rating
+     */
     onChange?: (rating: number) => void;
-    Icon?: React.FC<LucideProps>;
+    /**
+     Icon who we wont to drawing
+     */
+    character?: FC | string | number | ((i: number) => ReactNode);
+    /**
+     * Hover and selection colorr
+     */
     color?: string;
-    activeColor?: string;
-    showToolTip?: boolean;
-    tooTipTitle?: string;
-    toolTipText?: string;
-    toolTipPosition?: (typeof positions)[number];
-    icons?: React.FC<LucideProps>[];
+    /**
+     * Background color
+     */
+    backgroundColor?: string;
+    /**Whether to allow semi selection */
+    halfAllow?: boolean;
+    /**
+     * Will make switcher readonly when set to "true"
+     */
+    readonly?: boolean;
+    /**
+     * Rating size <br/>
+     * Possible values: `small | medium | big`
+     */
+    size?: 'small' | 'medium' | 'big';
 }
 
 const Rating: FC<IRatingProps> = ({
     defaultValue = 4.5,
-    count = 15,
+    count = 5,
     onChange,
-    Icon = Star,
+    character = SvgStarIcon,
     color = 'white',
-    activeColor = 'red',
-    icons = [Angry, Meh, Annoyed, Smile, Laugh],
+    backgroundColor = 'red',
+    halfAllow,
+    readonly = false,
+    size = 'small',
     ...restProps
 }) => {
     const [rating, setRating] = useState(defaultValue);
@@ -37,11 +80,17 @@ const Rating: FC<IRatingProps> = ({
 
     const iconRef = useRef<SVGSVGElement | null>(null);
     const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, rating: number) => {
+        if (readonly) return;
+
         setHoveredValue(rating);
         const rect = e.currentTarget.getBoundingClientRect();
         const getClientPosition = e.clientX - rect.left;
         const getRelativeWidth = Math.abs((+getClientPosition / e.currentTarget.offsetWidth) * 100);
-        setRegardingPosition(getRelativeWidth <= 50 ? 50 : 100);
+        if (halfAllow) {
+            setRegardingPosition(getRelativeWidth <= 50 ? 50 : 100);
+        } else {
+            setRegardingPosition(100);
+        }
         setRating(0);
     };
 
@@ -61,10 +110,11 @@ const Rating: FC<IRatingProps> = ({
 
     useEffect(() => {
         const getIconsWidth = iconRef.current?.getBoundingClientRect()?.width;
+
         if (getIconsWidth) {
             setIconsWidth(getIconsWidth);
         }
-    }, [iconRef.current]);
+    }, [iconRef.current, count, size]);
 
     const mouseLeave = () => {
         setHoveredValue(0);
@@ -72,17 +122,24 @@ const Rating: FC<IRatingProps> = ({
         setRating(temporaryRatingValue);
     };
 
-    const getRating = (rating: number) => {
-        const state = regardingPosition === 50 ? +`${rating - 1}.${regardingPosition}` : rating;
+    const getRating = (currentRating: number) => {
+        if (readonly) return;
+
+        const state = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
+
+        const getCurrentRateValue = (prev: number) => {
+            if (state !== prev) return state;
+            return 0;
+        };
+
         if (onChange) {
             onChange(state);
-        } else {
-            setTemporaryRatingValue(state);
-            setRating(state);
         }
+        setTemporaryRatingValue(getCurrentRateValue);
+        setRating(getCurrentRateValue);
     };
 
-    const getRef = (el: SVGSVGElement) => {
+    const getRef = (el) => {
         if (el) {
             iconRef.current = el;
             return;
@@ -93,66 +150,118 @@ const Rating: FC<IRatingProps> = ({
         setTemporaryRatingValue(rating);
     };
 
-    const iconsToRender = icons.length ? icons : count > 2 ? new Array(count).fill(undefined) : [];
-
+    const iconsToRender = count > 0 ? new Array(count).fill(undefined) : [];
+    const currentSize = size === 'small' ? '32px' : size === 'big' ? '42px' : '36px';
     const generalPropsForIcons = {
         width: '100%',
-        height: '100%'
+        height: currentSize
+    };
+
+    const DefaultElement = ({ isIcon = false, Element }) =>
+        isIcon ? (
+            <Element
+                fill={color}
+                stroke={'0'}
+                strokeWidth={0}
+                ref={getRef}
+                {...generalPropsForIcons}
+                className={classNames('rating__icon', `s-${size}`)}
+            />
+        ) : (
+            <div
+                style={{
+                    color
+                }}
+                ref={getRef}
+                {...generalPropsForIcons}
+                className={classNames('rating__icon', `s-${size}`)}
+            >
+                {Element}
+            </div>
+        );
+
+    const CompareElement = ({ isIcon = false, Element }: { isIcon?: boolean; Element: ReactNode | FC<any> }) => {
+        const Icon = isIcon && !isValidElement(Element) ? (Element as FC<SVGProps<'classNames'>>) : null;
+        return Icon ? (
+            <Icon
+                {...generalPropsForIcons}
+                fill={backgroundColor}
+                className={classNames('rating__icon', `s-${size}`)}
+                stroke={'0'}
+                strokeWidth={'0'}
+            />
+        ) : (
+            <div
+                style={{
+                    color: backgroundColor
+                }}
+                {...generalPropsForIcons}
+                className={classNames('rating__icon', `s-${size}`)}
+            >
+                {Element as ReactNode}
+            </div>
+        );
     };
 
     return (
-        <>
-            <div className="rating" onMouseLeave={mouseLeave} onMouseEnter={mouseEnterHandler} {...restProps}>
-                {iconsToRender.map((CurrentIcon, i) => {
-                    const currentRating = i + 1;
+        <div {...restProps} className="rating" onMouseLeave={mouseLeave} onMouseEnter={mouseEnterHandler}>
+            {iconsToRender.map((_, i) => {
+                const currentRating = i + 1;
 
-                    const GetCurrentIcon = CurrentIcon || Icon;
+                const Callback =
+                    typeof character === 'function' &&
+                    isValidElement(character(i)) &&
+                    (character(i) as JSX.Element).type
+                        ? cloneElement(character(i) as ReactElement, { ...generalPropsForIcons })
+                        : null;
 
-                    return (
-                        <>
+                const Icon = (typeof character === 'object' ? character : null) as React.FC<
+                    SVGProps<'classNames'>
+                > | null;
+
+                const PrimitiveValue = (typeof character === 'string' || typeof character === 'number') && character;
+
+                const calculateWidth =
+                    currentRating < hoveredValue
+                        ? '100%'
+                        : hoveredValue === currentRating
+                        ? `${regardingPosition}%`
+                        : currentRating <= rating
+                        ? '100%'
+                        : currentRating === Math.ceil(rating)
+                        ? `${residue}%`
+                        : 0;
+
+                return (
+                    <div
+                        className={classNames('rating__wrapper', `s-${size}`)}
+                        onMouseMove={(e) => handleMouseMoveForElement(e, currentRating)}
+                        onClick={() => getRating(currentRating)}
+                        key={i}
+                    >
+                        <div className={classNames('rating__content', { 'rating__content-readonly': readonly })}>
+                            {Callback && <DefaultElement Element={Callback} />}
+
+                            {Icon && <DefaultElement Element={Icon} isIcon />}
+
+                            {PrimitiveValue && <DefaultElement Element={PrimitiveValue} />}
                             <div
-                                className="rating__wrapper"
-                                onMouseMove={(e) => handleMouseMoveForElement(e, currentRating)}
-                                onClick={() => getRating(currentRating)}
-                                key={i}
+                                className="rating__element"
+                                style={{
+                                    width: calculateWidth
+                                }}
                             >
-                                <div className="rating__content">
-                                    <GetCurrentIcon
-                                        fill={color}
-                                        ref={getRef}
-                                        {...generalPropsForIcons}
-                                        className="rating__icon"
-                                    />
-                                    <div
-                                        className="rating__element"
-                                        style={{
-                                            width:
-                                                currentRating < hoveredValue
-                                                    ? '100%'
-                                                    : hoveredValue === currentRating
-                                                    ? `${regardingPosition}%`
-                                                    : currentRating <= rating
-                                                    ? '100%'
-                                                    : currentRating === Math.ceil(rating)
-                                                    ? `${residue}%`
-                                                    : 0
-                                        }}
-                                    >
-                                        <div style={{ width: `${iconsWidth}px`, height: '100%' }}>
-                                            <GetCurrentIcon
-                                                {...generalPropsForIcons}
-                                                fill={activeColor}
-                                                className="rating__icon"
-                                            />
-                                        </div>
-                                    </div>
+                                <div style={{ width: `${iconsWidth}px`, height: '100%' }}>
+                                    {Callback && <CompareElement Element={Callback} />}
+                                    {Icon && <CompareElement Element={Icon} isIcon />}
+                                    {PrimitiveValue && <CompareElement Element={PrimitiveValue} />}
                                 </div>
                             </div>
-                        </>
-                    );
-                })}
-            </div>
-        </>
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
     );
 };
 
