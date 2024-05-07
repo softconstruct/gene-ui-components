@@ -26,7 +26,8 @@ const TSComponentsList = [
     'Divider',
     'ImagePreview',
     'Button',
-    'Image'
+    'Image',
+    'Rating'
 ];
 
 const getInputs = (name, dir) => {
