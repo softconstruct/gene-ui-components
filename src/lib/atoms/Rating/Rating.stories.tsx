@@ -1,8 +1,10 @@
 import React, { FC } from 'react';
-import Rating, { IRatingProps } from './Rating';
 import { Meta } from '@storybook/react';
-import { Angry, Annoyed, Smile, Star, Laugh, Meh, LucideIcon } from 'lucide-react';
+import { Angry, Annoyed, Smile, Laugh, Meh } from 'lucide-react';
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
+
+// Components
+import Rating, { IRatingProps } from './';
 
 const meta: Meta<typeof Rating> = {
     title: 'Atoms/Rating',
