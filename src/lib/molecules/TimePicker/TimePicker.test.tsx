@@ -2,26 +2,24 @@ import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 import TimePicker, { ITimePickerProps } from './TimePicker';
 import GeneUIProvider from '../../providers/GeneUIProvider';
-import TimePickerPopover from './Popover';
+import TimePickerPopover from './TimePickerPopover';
 
 describe('<TimePicker/>', () => {
     let setup: ReactWrapper<ITimePickerProps>;
     beforeEach(() => {
-        // @ts-ignore
-        setup = mount(<TimePicker />, {
+        setup = mount(<TimePicker positions={'top'} />, {
             wrappingComponent: GeneUIProvider
         });
     });
 
-    it('Checking if a component exists', () => {
+    it('renders without crashing', () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it('Test with prop value', () => {
+    it('renders with value prop', () => {
         const value = '10:34:52';
 
         const wrapper = setup.setProps({ value });
-        //@ts-ignore
         const timePickerPopover = wrapper.find(TimePickerPopover).last();
         expect(timePickerPopover.exists()).toBeTruthy();
 
@@ -30,21 +28,19 @@ describe('<TimePicker/>', () => {
         expect(getProvider.find('.time-picker-drop-holder').find('.active')).toBeDefined();
     });
 
-    it('Test with prop onChange', () => {
+    it('renders with onChange prop', () => {
         const onChange = jest.fn();
-
         const wrapper = setup.setProps({ onChange, appearance: 'singleInput' });
-        const e = { target: { value: 'time-picker-single-input' } };
-        //@ts-ignore
+        const event = { target: { value: 'time-picker-single-input' } } as React.ChangeEvent<HTMLInputElement>;
         const singleInput = wrapper.find('.time-picker-single-input').first();
         expect(singleInput.exists()).toBeTruthy();
-        //@ts-ignore
-        singleInput.props().onChange(e);
+        const onChangeHandler = singleInput.prop('onChange');
+        onChangeHandler && onChangeHandler(event);
 
-        expect(onChange).toHaveBeenCalledWith(e);
+        expect(onChange).toHaveBeenCalledWith(event);
     });
 
-    it('Test with prop showSeconds', () => {
+    it('renders with showSeconds prop', () => {
         const wrapper = setup.setProps({ appearance: 'singleInput', showSeconds: true });
         const singleInput = wrapper.find('.time-picker-single-input').first();
         singleInput.simulate('click');
@@ -52,13 +48,13 @@ describe('<TimePicker/>', () => {
         expect(dropSeconds.exists()).toBeTruthy();
     });
 
-    it('Test with prop appearance', () => {
+    it('renders with appearance prop', () => {
         const wrapper = setup.setProps({ appearance: 'singleInput' });
         const singleInput = wrapper.find('.time-picker-single-input').first();
         expect(singleInput.exists()).toBeTruthy();
     });
 
-    it('Test with prop hourFormat', () => {
+    it('renders with hourFormat prop', () => {
         const expectedListCount = 24;
         const wrapper = setup.setProps({ appearance: 'singleInput', hourFormat: 'HH' });
         const singleInput = wrapper.find('.time-picker-single-input').first();
@@ -69,7 +65,7 @@ describe('<TimePicker/>', () => {
         expect(actualDropHoursCount).toEqual(expectedListCount);
     });
 
-    it('Test with prop minuteFormat', () => {
+    it('renders with minuteFormat prop', () => {
         const expectedListCount = 60;
         const wrapper = setup.setProps({ appearance: 'singleInput', minuteFormat: 'mm' });
         const singleInput = wrapper.find('.time-picker-single-input').first();
@@ -80,7 +76,7 @@ describe('<TimePicker/>', () => {
         expect(actualDropdropMinutesCount).toEqual(expectedListCount);
     });
 
-    it('Test with prop secondFormat', () => {
+    it('renders with secondFormat prop', () => {
         const expectedListCount = 60;
         const wrapper = setup.setProps({ appearance: 'singleInput', minuteFormat: 'mm' });
         const singleInput = wrapper.find('.time-picker-single-input').first();
@@ -91,46 +87,44 @@ describe('<TimePicker/>', () => {
         expect(actualDropdropSecondsCount).toEqual(expectedListCount);
     });
 
-    it('Test with prop separator', () => {
+    it('renders with separator prop', () => {
         const wrapper = setup.setProps({ appearance: 'singleInput', separator: ':' });
         const singleInput = wrapper.find('.time-picker-single-input').first();
         const singleInputPlaceholder = singleInput.props().placeholder;
         expect(singleInputPlaceholder).toContain(':');
     });
 
-    it('Test with prop disabled', () => {
+    it('renders with disabled prop', () => {
         const wrapper = setup.setProps({ appearance: 'singleInput', disabled: true });
         const timePickerHolder = wrapper.find('.time-picker-holder');
         const classNames = timePickerHolder.prop('className');
         expect(classNames).toContain('disabled');
     });
 
-    it('Test with prop readOnly', () => {
+    it('renders with readOnly prop', () => {
         const wrapper = setup.setProps({ appearance: 'singleInput', readOnly: true });
         const timePickerHolder = wrapper.find('.time-picker-holder');
         const classNames = timePickerHolder.prop('className');
         expect(classNames).toContain('read-only');
     });
 
-    it('Test with prop screenType', () => {
+    it('renders with screenType prop', () => {
         const wrapper = setup.setProps({ appearance: 'singleInput', screenType: 'mobile' });
         const timePickerHolder = wrapper.find('.time-picker-holder');
         const classNames = timePickerHolder.prop('className');
         expect(classNames).toContain('mobile');
     });
 
-    it('Test with prop onBlur', () => {
+    it('handles onBlur event', () => {
         const onBlur = jest.fn();
-
         const wrapper = setup.setProps({ onBlur, appearance: 'singleInput' });
         const e = {
             currentTarget: { value: '12:15:27' }
-        };
-        //@ts-ignore
+        } as React.FocusEvent<HTMLInputElement>;
         const singleInput = wrapper.find('.time-picker-single-input').first();
         expect(singleInput.exists()).toBeTruthy();
-        //@ts-ignore
-        singleInput.props().onBlur(e);
+        const onBlurHandler = singleInput.prop('onBlur');
+        onBlurHandler && onBlurHandler(e);
 
         expect(onBlur).toHaveBeenCalled();
     });

@@ -261,7 +261,7 @@ const createComponentFiles = async ({ level, name, hasMobileView, files, ...rest
 
         // Create component folder
         await fs.mkdir(cmpDir);
-        // Create TimePicker.tsx file with code
+        // Create index.js file with code
         await fs.appendFile(`${cmpDir}/index.js`, prettier.format(srcCode, prettierConfig));
         // Create scss file for the component
         await fs.appendFile(`${cmpDir}/index.scss`, '@import "src/assets/styles/variables";');
@@ -284,7 +284,7 @@ const createComponentFiles = async ({ level, name, hasMobileView, files, ...rest
 const addExports = async ({ level, name, hasMobileView }) => {
     try {
         const levelPaths = getLevelIndexPaths(level);
-        // Add export to the level TimePicker.tsx file for desktop view
+        // Add export to the level index.js file for desktop view
         await fs.writeFile(levelPaths.desktop, `export ${name} from './${name}';`, { flag: 'a+' });
         // Add export to the level index.mobile.js for mobile view
         if (hasMobileView) {
@@ -310,7 +310,7 @@ const createStoryFiles = async (storyData, { name, level, ...restCmpData }) => {
 
         // Create component folder
         await fs.mkdir(storyDir);
-        // Create TimePicker.tsx file with code
+        // Create index.js file with code
         await fs.appendFile(`${storyDir}/index.js`, prettier.format(storyCode, prettierConfig));
         // Create data source file for the component
         const componentDataSource = `
@@ -358,7 +358,7 @@ const addStoryExports = async ({ level, name }) => {
     try {
         const levelPaths = getLevelIndexPaths(level, true);
 
-        // Add export to the level TimePicker.tsx file for desktop view
+        // Add export to the level index.js file for desktop view
         const data = await fs.readFile(levelPaths.desktop, 'utf-8');
         const fileRows = data.split('\n');
 

@@ -1,65 +1,36 @@
 import React, { FC } from 'react';
-
-import TimePickerComponent, { ITimePickerProps } from '../../../../src/lib/molecules/TimePicker/TimePicker';
 import { Meta } from '@storybook/react';
-import { args, category } from '../../../../stories/assets/storybook.globals';
+
+// Helpers
+import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 import { screenTypes, timePickerConfig } from '../../../../src/configs';
 
-const meta: {
-    argTypes: {
-        minuteFormat: any;
-        onChange: any;
-        positions: any;
-        className: any;
-        readOnly: any;
-        separator: any;
-        hourFormat: any;
-        onBlur: any;
-        showSeconds: any;
-        appearance: any;
-        screenType: any;
-        disabled: any;
-        screenTypes: any;
-        secondFormat: any;
-        value: any;
-    };
-    args: {
-        showSeconds: boolean;
-        minuteFormat: string[];
-        appearance: any;
-        screenType: any;
-        className: string;
-        disabled: boolean;
-        readOnly: boolean;
-        secondFormat: string[];
-        separator: string;
-        hourFormat: string[];
-    };
-    component: React.FunctionComponent<ITimePickerProps>;
-    title: string;
-} = {
+// Component
+import TimePicker, { ITimePickerProps } from './';
+
+const meta: Meta<typeof TimePicker> = {
     title: 'Molecules/TimePicker',
-    component: TimePickerComponent,
+    component: TimePicker,
     argTypes: {
         positions: args({
             control: 'select',
             options: ['bottom', 'top', 'left', 'right'],
-            category: category.appearance
+            category: propCategory.appearance
         }),
-        onBlur: args({ control: false, category: category.action }),
-        value: args({ control: 'text', category: category.content }),
-        onChange: args({ control: false, category: category.action }),
-        className: args({ control: false, category: category.others }),
-        separator: args({ control: 'text', category: category.content }),
-        disabled: args({ control: 'boolean', category: category.states }),
-        readOnly: args({ control: 'boolean', category: category.states }),
-        showSeconds: args({ control: 'boolean', category: category.states }),
-        screenTypes: args({ control: false, options: screenTypes, category: category.states }),
-        secondFormat: args({ control: 'select', options: ['ss', 's'], category: category.states }),
-        minuteFormat: args({ control: 'select', options: ['mm', 'm'], category: category.states }),
-        screenType: args({ control: 'select', options: screenTypes, category: category.appearance }),
-        hourFormat: args({ control: 'select', options: ['HH', 'H', 'hh', 'h'], category: category.states }),
-        appearance: args({ control: 'select', options: timePickerConfig.appearance, category: category.appearance })
+        onBlur: args({ control: false, category: propCategory.action }),
+        value: args({ control: 'text', category: propCategory.content }),
+        onChange: args({ control: false, category: propCategory.action }),
+        className: args({ control: false, category: propCategory.others }),
+        separator: args({ control: 'text', category: propCategory.content }),
+        disabled: args({ control: 'boolean', category: propCategory.states }),
+        readOnly: args({ control: 'boolean', category: propCategory.states }),
+        showSeconds: args({ control: 'boolean', category: propCategory.states }),
+        screenTypes: args({ control: false, options: screenTypes, category: propCategory.states }),
+        secondFormat: args({ control: 'select', options: ['ss', 's'], category: propCategory.states }),
+        minuteFormat: args({ control: 'select', options: ['mm', 'm'], category: propCategory.states }),
+        screenType: args({ control: 'select', options: screenTypes, category: propCategory.appearance }),
+        hourFormat: args({ control: 'select', options: ['HH', 'H', 'hh', 'h'], category: propCategory.states }),
+        appearance: args({ control: 'select', options: timePickerConfig.appearance, category: propCategory.appearance })
     },
     args: {
         className: '',
@@ -77,7 +48,7 @@ const meta: {
 
 export default meta;
 
-const Template: FC<ITimePickerProps> = ({ ...args }) => <TimePickerComponent {...args} />;
+const Template: FC<ITimePickerProps> = ({ ...args }) => <TimePicker {...args} />;
 
 export const Default = Template.bind({});
 export const WithoutSecondsField = Template.bind({});
