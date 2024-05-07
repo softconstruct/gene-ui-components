@@ -20,8 +20,8 @@
     "main": "index.js",
     "typings": "index.d.ts",
     "scripts": {
-        "start": "storybook dev -p 6006",
-        "dev": "concurrently --kill-others -g  \"npm:start\"",
+        "start": "npm run test && storybook dev -p 6006",
+        "dev": "concurrently --kill-others -g \"npm:test:watch\" \"npm:start\"",
         "test": "jest --silent --config ./configs/jest.config.js --rootDir ./ --coverage --json --outputFile=./coverage/.jest-test-results.json",
         "test:watch": "npm run test -- --watchAll --json",
         "test-report": "babel-node --config-file ./configs/.babelrc ./scripts/testReport.js",
