@@ -85,19 +85,23 @@ const Rating: FC<IRatingProps> = (props) => {
     const [residue, setResidue] = useState(0);
     const [temporaryRatingValue, setTemporaryRatingValue] = useState(0);
     const [iconsWidth, setIconsWidth] = useState(0);
-    const [disableMouseMove, setDisableMouseMovie] = useState(false);
+
     const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, rating: number) => {
-        if (readonly || disableMouseMove) return;
+        if (readonly) return;
+        e.preventDefault();
+        e.stopPropagation();
 
         setHoveredValue(rating);
         const rect = e.currentTarget.getBoundingClientRect();
         const getClientPosition = e.clientX - rect.left;
         const getRelativeWidth = Math.abs((getClientPosition / e.currentTarget.offsetWidth) * 100);
+
         if (halfAllow) {
             setRegardingPosition(getRelativeWidth <= 50 ? 50 : 100);
         } else {
             setRegardingPosition(100);
         }
+
         setRating(0);
     };
 
@@ -132,7 +136,6 @@ const Rating: FC<IRatingProps> = (props) => {
     };
 
     const mouseLeaveHandlerForEveryElement = () => {
-        setDisableMouseMovie(false);
         calculateIconWidth();
     };
 
@@ -140,12 +143,11 @@ const Rating: FC<IRatingProps> = (props) => {
         if (readonly) return;
 
         const state = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
-
+        calculateIconWidth();
         const getCurrentRateValue = (prev: number) => {
             if (state !== prev) return state;
             setIconsWidth(0);
             setRegardingPosition(0);
-            setDisableMouseMovie(true);
             setHoveredValue(0);
             return 0;
         };
@@ -154,7 +156,6 @@ const Rating: FC<IRatingProps> = (props) => {
             onChange?.(state);
             return;
         }
-
         setTemporaryRatingValue(getCurrentRateValue);
         setRating(getCurrentRateValue);
     };
