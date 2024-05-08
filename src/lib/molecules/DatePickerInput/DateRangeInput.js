@@ -157,7 +157,7 @@ function DateRangePickerInput({
                 setStartDate(start);
                 setEndDate(end);
 
-                if (!withTime) {
+                if (!withTime && !isMobile) {
                     inputRef.current.blur();
                     setPopoverState(false);
                 }
@@ -497,7 +497,7 @@ function DateRangePickerInput({
                 onChange={handleInputChange}
                 icon={readOnly ? '' : 'bc-icon-calendar'}
                 onIconClick={handleIconClick}
-                className={classnames(className, 'date-input', {
+                className={classnames(className, 'bbbbb date-input', {
                     'default-cursor': readOnly || disabled,
                     'clearable-date-picker': clearable,
                     'text-cursor': withoutPicker
