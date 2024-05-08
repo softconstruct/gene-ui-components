@@ -38,8 +38,7 @@ const meta: Meta<typeof InteractiveWidget> = {
         title: 'Interactive Widget',
         iconColor: '#15ab1b',
         description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
-        titleInfo: 'additional info for title',
-        switcherProps: {}
+        titleInfo: 'additional info for title'
     } as IInteractiveWidgetProps
 };
 
@@ -55,19 +54,37 @@ const ListTemplate: FC<IInteractiveWidgetProps> = (args) => {
                 <InteractiveWidget style={{ maxWidth: '50%' }} icon={'bc-icon-product-48'} {...args} />
             </div>
             <div style={{ display: 'flex', maxWidth: '100%', margin: '1rem 0' }}>
-                <InteractiveWidget icon={'bc-icon-codesandbox'} {...args} />
+                <InteractiveWidget
+                    icon={'bc-icon-codesandbox'}
+                    switcherProps={{}}
+                    withBorder={false}
+                    {...args}
+                    onClick={undefined}
+                />
             </div>
             <div style={{ display: 'flex', maxWidth: '100%', justifyContent: 'space-between', gap: '1rem' }}>
-                <InteractiveWidget style={{ maxWidth: '50%' }} icon={'bc-icon-user'} {...args} />
-                <InteractiveWidget style={{ maxWidth: '50%' }} icon={'bc-icon-product-48'} {...args} />
+                <InteractiveWidget
+                    style={{ maxWidth: '50%' }}
+                    icon={'bc-icon-user'}
+                    withBorder={false}
+                    switcherProps={{}}
+                    {...args}
+                    onClick={undefined}
+                />
+                <InteractiveWidget
+                    style={{ maxWidth: '50%' }}
+                    icon={'bc-icon-product-48'}
+                    withBorder={false}
+                    switcherProps={{}}
+                    {...args}
+                    onClick={undefined}
+                />
             </div>
         </>
     );
 };
 
 export const Default = Template.bind({});
-
-Default.args = { onClick: undefined };
 
 export const Compact = Template.bind({});
 
@@ -82,7 +99,8 @@ Compact.args = {
         size: 'small'
     },
     withBorder: false,
-    withSwitcher: false
+    switcherProps: {},
+    onClick: undefined
 };
 
 export const Group = ListTemplate.bind({});

@@ -92,7 +92,7 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
     const descriptionRef = useRef<HTMLParagraphElement | null>(null);
     const isTitleTruncated = useEllipsisDetection(titleRef);
     const isDescriptionTruncated = useEllipsisDetection(descriptionRef);
-    console.log(isDescriptionTruncated, 8888);
+
     return (
         <div
             className={classNames(
