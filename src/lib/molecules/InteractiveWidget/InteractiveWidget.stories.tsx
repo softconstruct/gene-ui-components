@@ -45,7 +45,7 @@ const meta: Meta<typeof InteractiveWidget> = {
 
 export default meta;
 
-const Template: FC<IInteractiveWidgetProps> = (args) => <InteractiveWidget {...args} icon={'bc-icon-user'} />;
+const Template: FC<IInteractiveWidgetProps> = (args) => <InteractiveWidget icon={'bc-icon-user'} {...args} />;
 
 const ListTemplate: FC<IInteractiveWidgetProps> = (args) => {
     return (
