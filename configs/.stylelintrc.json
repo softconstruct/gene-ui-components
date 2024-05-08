@@ -23,7 +23,10 @@
         "scss/double-slash-comment-whitespace-inside": null,
         "scss/operator-no-unspaced": null,
         "scss/operator-no-newline-after": null,
-        "color-function-notation": "legacy"
+        "color-function-notation": "legacy",
+        "declaration-property-value-disallowed-list": {
+            "-webkit-box": []
+        }
     },
     "ignoreFiles": ["../coverage/**/*.css", "../storybook-static/**/*.css"]
 }
