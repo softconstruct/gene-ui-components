@@ -6,7 +6,7 @@ import { args, propCategory } from '../../../../stories/assets/storybook.globals
 
 // Components
 import InteractiveWidget, { IInteractiveWidgetProps } from './index';
-import { Icon, Switcher, Tag } from '../../../index';
+import { Switcher, Tag } from '../../../index';
 
 const meta: Meta<typeof InteractiveWidget> = {
     title: 'Molecules/InteractiveWidget',
