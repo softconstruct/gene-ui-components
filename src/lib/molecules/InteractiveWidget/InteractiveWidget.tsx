@@ -21,9 +21,9 @@ interface IInteractiveWidgetProps extends HTMLAttributes<HTMLDivElement> {
      */
     className?: string;
     /**
-     * Fires an event on Panel click((event: Event) => void).
+     * Fires an event on Panel click `((event: Event) => void)`.
      */
-    onClick?: (event: MouseEvent) => void;
+    onClick?: (event: MouseEvent | KeyboardEvent) => void;
     /**
      * Disabled state.
      */
@@ -35,7 +35,7 @@ interface IInteractiveWidgetProps extends HTMLAttributes<HTMLDivElement> {
     icon?: string | React.ReactNode;
     /**
      * This property controls the size of the icon, influencing the appearance of the component.<br>
-     * Possible values: `big | small`
+     * Possible values: `'default' | 'compact'`
      */
     appearance?: 'default' | 'compact';
     /**
@@ -45,7 +45,7 @@ interface IInteractiveWidgetProps extends HTMLAttributes<HTMLDivElement> {
     iconColor?: string;
     /**
      * Label for tag component.
-     * Adding props you wil add the `<Tag/>` component.
+     * Adding props you will add the `<Tag/>` component.
      */
     tagName?: string;
     /**
@@ -110,6 +110,10 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
                 className
             )}
             {...(!disabled && onClick ? { onClick: (event: MouseEvent<HTMLDivElement>) => onClick(event) } : {})}
+            tabIndex={0}
+            onKeyDown={(e: React.KeyboardEvent) => {
+                onClick && onClick(e);
+            }}
             {...restProps}
         >
             <div className={'interactiveWidget__wrapper'}>
@@ -135,7 +139,6 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
                                     </h3>
                                 </Tooltip>
                             )}
-                            {/*@ts-ignore*/}
                             {titleInfo && title && (
                                 // @ts-ignore
                                 <Tooltip text={titleInfo}>
@@ -146,8 +149,8 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
                         </div>
                         {(switcherProps || tagName) && (
                             <div className="interactiveWidget__components">
-                                {/*@ts-ignore*/}
                                 {tagName && (
+                                    // @ts-ignore
                                     <Tag
                                         name={tagName}
                                         color={tagColor}
@@ -158,7 +161,11 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
                                 )}
                                 {switcherProps && (
                                     // @ts-ignore
-                                    <Switcher className={'interactiveWidget__switcher'} {...switcherProps} />
+                                    <Switcher
+                                        className={'interactiveWidget__switcher'}
+                                        changeOnEnter
+                                        {...switcherProps}
+                                    />
                                 )}
                             </div>
                         )}

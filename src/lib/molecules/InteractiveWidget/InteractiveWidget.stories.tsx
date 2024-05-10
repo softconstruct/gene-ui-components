@@ -6,7 +6,7 @@ import { args, propCategory } from '../../../../stories/assets/storybook.globals
 
 // Components
 import InteractiveWidget, { IInteractiveWidgetProps } from './index';
-import { Switcher, Tag } from '../../../index';
+import { Switcher } from '../../../index';
 
 const meta: Meta<typeof InteractiveWidget> = {
     title: 'Molecules/InteractiveWidget',
@@ -28,7 +28,6 @@ const meta: Meta<typeof InteractiveWidget> = {
         switcherProps: args({ control: 'false', ...propCategory.functionality }),
         iconBackground: args({ control: 'boolean', ...propCategory.appearance })
     },
-    // @ts-ignore
     args: {
         title: 'Interactive Widget',
         iconColor: '#15ab1b',
@@ -89,11 +88,6 @@ Compact.args = {
     description:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
     iconColor: '#3e00ff',
-    tagProps: {
-        appearance: 'outline',
-        name: 'Tag',
-        size: 'small'
-    },
     withBorder: false,
     switcherProps: {},
     onClick: undefined

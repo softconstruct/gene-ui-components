@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { CSSProperties, FC } from 'react';
 import classNames from 'classnames';
 
 //components
@@ -20,8 +20,7 @@ const InteractiveWidgetIcon: FC<IInteractiveWidgetIconProps> = ({
     return (
         <div
             className={`widgetIcon widgetIcon-${appearance}`}
-            // @ts-ignore
-            style={iconColor ? { '--icon-color': iconColor, filter: 'alpha(opacity=60)' } : {}}
+            style={iconColor ? ({ '--icon-color': iconColor, filter: 'alpha(opacity=60)' } as CSSProperties) : {}}
         >
             {iconBackground && <div className="widgetIcon__background" />}
             {typeof children === 'string' ? (

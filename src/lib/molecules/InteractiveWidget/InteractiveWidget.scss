@@ -10,6 +10,10 @@
     display: flex;
     min-width: 1px;
 
+    &:focus-visible {
+        outline: 0.2rem var(--hero) solid;
+    }
+
     &-border {
         border: solid rem(2) rgba(var(--background-sc-rgb), 0.05);
 
