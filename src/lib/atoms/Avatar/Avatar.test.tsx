@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Avatar from './index';
 
-describe('InteractiveWidget Component', () => {
+describe('Avatar Component', () => {
     it('renders without crashing', () => {
         const wrapper = shallow(<Avatar />);
         expect(wrapper.exists()).toBeTruthy();

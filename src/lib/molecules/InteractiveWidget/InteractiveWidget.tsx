@@ -44,10 +44,14 @@ interface IInteractiveWidgetProps extends HTMLAttributes<HTMLDivElement> {
      */
     iconColor?: string;
     /**
-     * Props for `<Tag/>` component (see Tag component documentation).
-     * Adding props you wil add the component.
+     * Label for tag component.
+     * Adding props you wil add the `<Tag/>` component.
      */
-    tagProps?: typeof Tag.propTypes;
+    tagName?: string;
+    /**
+     * color for tag.
+     */
+    tagColor?: string;
     /**
      * Props for `<Switcher/>` component (see `<Switcher/>` component documentation).
      * Adding props you wil add the component.
@@ -81,7 +85,8 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
     title,
     appearance = 'default',
     iconColor,
-    tagProps,
+    tagName,
+    tagColor,
     switcherProps,
     titleInfo,
     description,
@@ -122,8 +127,8 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
                             <InteractiveWidgetIcon children={icon} appearance={appearance} iconColor={iconColor} />
                         )}
                         <div className="interactiveWidget__titleWrapper">
-                            {/*@ts-ignore*/}
                             {title && (
+                                // @ts-ignore
                                 <Tooltip text={title} isVisible={isTitleTruncated}>
                                     <h3 className={'interactiveWidget__title ellipsis-text'} ref={titleRef}>
                                         {title}
@@ -132,15 +137,25 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
                             )}
                             {/*@ts-ignore*/}
                             {titleInfo && title && (
+                                // @ts-ignore
                                 <Tooltip text={titleInfo}>
                                     {/*@ts-ignore*/}
                                     <Icon className={'interactiveWidget__infoIcon'} type={'bc-icon-info-48'} />
                                 </Tooltip>
                             )}
                         </div>
-                        {(switcherProps || tagProps) && (
+                        {(switcherProps || tagName) && (
                             <div className="interactiveWidget__components">
-                                {tagProps && <Tag {...tagProps} />}
+                                {/*@ts-ignore*/}
+                                {tagName && (
+                                    <Tag
+                                        name={tagName}
+                                        color={tagColor}
+                                        appearance="outline"
+                                        size="small"
+                                        cornerRadius={'smooth-radius'}
+                                    />
+                                )}
                                 {switcherProps && (
                                     // @ts-ignore
                                     <Switcher className={'interactiveWidget__switcher'} {...switcherProps} />

@@ -17,7 +17,8 @@ const meta: Meta<typeof InteractiveWidget> = {
         icon: args({ control: 'text', ...propCategory.appearance }),
         onClick: args({ control: 'false', ...propCategory.action }),
         titleInfo: args({ control: 'text', ...propCategory.content }),
-        tagProps: args({ control: 'false', ...propCategory.content }),
+        tagColor: args({ control: 'color', ...propCategory.content }),
+        tagName: args({ control: 'text', ...propCategory.content }),
         className: args({ control: 'false', ...propCategory.others }),
         disabled: args({ control: 'boolean', ...propCategory.states }),
         description: args({ control: 'text', ...propCategory.content }),
@@ -27,14 +28,8 @@ const meta: Meta<typeof InteractiveWidget> = {
         switcherProps: args({ control: 'false', ...propCategory.functionality }),
         iconBackground: args({ control: 'boolean', ...propCategory.appearance })
     },
+    // @ts-ignore
     args: {
-        tagProps: {
-            appearance: 'outline',
-            name: 'Tag Name',
-            // @ts-ignore
-            icons: <Icon type="bc-icon-publish-globe-48" />,
-            size: 'small'
-        },
         title: 'Interactive Widget',
         iconColor: '#15ab1b',
         description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
@@ -90,6 +85,7 @@ export const Compact = Template.bind({});
 
 Compact.args = {
     appearance: 'compact',
+    tagName: 'Tag',
     description:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
     iconColor: '#3e00ff',

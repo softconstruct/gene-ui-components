@@ -1,5 +1,5 @@
 import React from 'react';
-import { ReactWrapper, mount, shallow } from 'enzyme';
+import { ReactWrapper, mount } from 'enzyme';
 
 // Components
 import InteractiveWidget, { IInteractiveWidgetProps } from './index';
@@ -73,8 +73,7 @@ describe('InteractiveWidget', () => {
         const iconColor = '#ffffff';
         const wrapper = setup.setProps({ iconColor, icon: 'bc-icon-dropdown' });
         const widgetIcon = wrapper.find('.widgetIcon').getDOMNode() as HTMLDivElement;
-        // @ts-ignore
-        const backgroundColor = widgetIcon.style._values['--icon-color'];
+        const backgroundColor = widgetIcon.style['_values']['--icon-color'];
 
         expect(backgroundColor).toEqual(iconColor);
     });
@@ -85,20 +84,23 @@ describe('InteractiveWidget', () => {
         expect(wrapper.find('.widgetIcon__background').exists()).toBeTruthy();
     });
 
-    it('calls tagProps prop when clicked', () => {
-        // @ts-ignore
-        const wrapper = setup.setProps({ tagProps: { label: 'label' } });
+    it('calls tagName prop when clicked', () => {
+        const tagName = 'tagName';
+        const wrapper = setup.setProps({ tagName });
 
-        // @ts-ignore
-        expect(wrapper.find(Tag).props().label).toStrictEqual('label');
+        expect((wrapper.find(Tag).props() as React.ComponentProps<typeof Tag>).name).toStrictEqual(tagName);
+    });
+
+    it('calls tagColor prop when clicked', () => {
+        const tagColor = '#ffffff';
+        const wrapper = setup.setProps({ tagColor, tagName: 'tagName' });
+        expect((wrapper.find(Tag).props() as React.ComponentProps<typeof Tag>).color).toStrictEqual(tagColor);
     });
 
     it('calls switcherProps prop when clicked', () => {
-        // @ts-ignore
-        const wrapper = setup.setProps({ switcherProps: { label: 'label' } });
+        const wrapper = setup.setProps({ switcherProps: { label: 'label' } as React.ComponentProps<typeof Switcher> });
 
-        // @ts-ignore
-        expect(wrapper.find(Switcher).props().label).toStrictEqual('label');
+        expect((wrapper.find(Switcher).props() as React.ComponentProps<typeof Switcher>).label).toStrictEqual('label');
     });
 
     it('calls onClick prop when clicked', () => {
