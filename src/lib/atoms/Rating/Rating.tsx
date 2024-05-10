@@ -49,7 +49,7 @@ export interface IRatingProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onCh
     /**
      * Background color
      */
-    backgroundColor?: string;
+    bgColor?: string;
     /**Whether to allow semi selection */
     halfAllow?: boolean;
     /**
@@ -61,8 +61,36 @@ export interface IRatingProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onCh
      * Possible values: `small | medium | big`
      */
     size?: 'small' | 'medium' | 'big';
+    /**
+     * show reviews
+     */
+    showRecall?: boolean;
 }
+const Element = ({ isIcon = false, Element, compareElement = false, color, bgColor, size }) => {
+    const currentColor = compareElement ? color : bgColor;
 
+    const className = classNames('rating__icon', `s-${size}`);
+
+    const currentSizes = {
+        width: '100%',
+        height: sizes[size]
+    };
+
+    const elementProps = { fill: currentColor, ...currentSizes, style: { color: currentColor, ...currentSizes } };
+
+    return isIcon ? (
+        cloneElement(Element, {
+            ...elementProps,
+            className
+        })
+    ) : (
+        <div {...elementProps} className={className}>
+            {Element}
+        </div>
+    );
+};
+
+const sizes = { small: 36, medium: 32, big: 42 };
 const Rating: FC<IRatingProps> = (props) => {
     const {
         defaultValue,
@@ -70,30 +98,29 @@ const Rating: FC<IRatingProps> = (props) => {
         onChange,
         character = SvgStarIcon,
         color = '#1267cf',
-        backgroundColor = '#fff',
+        bgColor = '#fff',
         halfAllow = true,
         readonly = false,
         size = 'small',
         value,
+        showRecall = false,
         ...restProps
     } = props;
 
     const isControlled = 'value' in props;
+    const isDefaultValueExist = 'defaultValue' in props;
     const [rating, setRating] = useState(value || defaultValue || 0);
     const [hoveredValue, setHoveredValue] = useState(0);
     const [regardingPosition, setRegardingPosition] = useState<null | number>(null);
     const [residue, setResidue] = useState(0);
     const [temporaryRatingValue, setTemporaryRatingValue] = useState(0);
-    const [iconsWidth, setIconsWidth] = useState(0);
-
+    const [iconWidth, setIconWidth] = useState(0);
     const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, rating: number) => {
         if (readonly) return;
-        e.preventDefault();
-        e.stopPropagation();
 
         setHoveredValue(rating);
-        const rect = e.currentTarget.getBoundingClientRect();
-        const getClientPosition = e.clientX - rect.left;
+
+        const getClientPosition = e.clientX - e.currentTarget.offsetLeft;
         const getRelativeWidth = Math.abs((getClientPosition / e.currentTarget.offsetWidth) * 100);
 
         if (halfAllow) {
@@ -106,27 +133,27 @@ const Rating: FC<IRatingProps> = (props) => {
     };
 
     useLayoutEffect(() => {
-        if (defaultValue && !value) {
-            setRating(defaultValue);
+        if (isDefaultValueExist && !isControlled) {
+            setRating(defaultValue!);
         }
-    }, [defaultValue]);
+    }, [isDefaultValueExist, defaultValue]);
 
     useLayoutEffect(() => {
-        const ratingDecimalParts = String(rating).split('.');
-        if (ratingDecimalParts.length > 1) {
-            const getDecimalNumber = ratingDecimalParts[1];
-            setResidue(getDecimalNumber.length > 1 ? +getDecimalNumber : +`${getDecimalNumber}0`);
+        const ratingDecimalParts = Math.round((rating % Math.floor(rating)) * 100);
+
+        if (ratingDecimalParts !== 0) {
+            setResidue(ratingDecimalParts);
         }
     }, [value, rating]);
 
     useEffect(() => {
-        if (value && value !== rating) {
-            setRating(value);
+        if (isControlled) {
+            setRating(value!);
         }
     }, [value]);
 
     useEffect(() => {
-        calculateIconWidth();
+        setIconWidth(sizes[size]);
     }, [count, size]);
 
     const mouseLeaveHandler = () => {
@@ -136,19 +163,23 @@ const Rating: FC<IRatingProps> = (props) => {
     };
 
     const mouseLeaveHandlerForEveryElement = () => {
-        calculateIconWidth();
+        setIconWidth(sizes[size]);
     };
 
     const getRating = (currentRating: number) => {
         if (readonly) return;
 
         const state = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
-        calculateIconWidth();
+
+        setIconWidth(sizes[size]);
+        setHoveredValue(currentRating);
+
         const getCurrentRateValue = (prev: number) => {
             if (state !== prev) return state;
-            setIconsWidth(0);
-            setRegardingPosition(0);
+
             setHoveredValue(0);
+            setIconWidth(0);
+
             return 0;
         };
 
@@ -156,8 +187,8 @@ const Rating: FC<IRatingProps> = (props) => {
             onChange?.(state);
             return;
         }
+
         setTemporaryRatingValue(getCurrentRateValue);
-        setRating(getCurrentRateValue);
     };
 
     const mouseEnterHandler = () => {
@@ -166,35 +197,6 @@ const Rating: FC<IRatingProps> = (props) => {
 
     const iconsToRender = count > 0 ? new Array(count).fill(undefined) : [];
 
-    const currentSize = size === 'small' ? 32 : size === 'big' ? 42 : 36;
-
-    const calculateIconWidth = () => {
-        setIconsWidth(currentSize);
-    };
-
-    const Element = ({ isIcon = false, Element, compareElement = false }) => {
-        const currentColor = compareElement ? color : backgroundColor;
-
-        const className = classNames('rating__icon', `s-${size}`);
-
-        const sizes = {
-            width: '100%',
-            height: currentSize
-        };
-
-        const element = isIcon ? { fill: currentColor, ...sizes } : { style: { color: currentColor, ...sizes } };
-
-        return isIcon ? (
-            cloneElement(Element, {
-                ...element,
-                className
-            })
-        ) : (
-            <div {...element} className={className}>
-                {Element}
-            </div>
-        );
-    };
     const PrimitiveValue = (typeof character === 'string' || typeof character === 'number') && character;
 
     return (
@@ -223,22 +225,43 @@ const Rating: FC<IRatingProps> = (props) => {
                     <div
                         className={classNames('rating__wrapper', `s-${size}`)}
                         onMouseMove={(e) => handleMouseMoveForElement(e, currentRating)}
-                        onClick={() => getRating(currentRating)}
                         onMouseLeave={mouseLeaveHandlerForEveryElement}
                         key={i}
                     >
-                        <div className={classNames('rating__content', { 'rating__content-readonly': readonly })}>
-                            {Icon && <Element Element={Icon} isIcon />}
-                            {PrimitiveValue && <Element Element={PrimitiveValue} />}
+                        <div
+                            className={classNames('rating__content', { 'rating__content-readonly': readonly })}
+                            onClick={() => getRating(currentRating)}
+                        >
+                            {Icon && <Element color={color} bgColor={bgColor} size={size} Element={Icon} isIcon />}
+                            {PrimitiveValue && (
+                                <Element color={color} bgColor={bgColor} size={size} Element={PrimitiveValue} />
+                            )}
                             <div
                                 className="rating__element"
                                 style={{
                                     width: calculateWidth
                                 }}
                             >
-                                <div style={{ width: `${iconsWidth}px`, height: '100%' }}>
-                                    {Icon && <Element Element={Icon} isIcon compareElement />}
-                                    {PrimitiveValue && <Element Element={PrimitiveValue} compareElement />}
+                                <div style={{ width: `${iconWidth}px`, height: '100%' }}>
+                                    {Icon && (
+                                        <Element
+                                            Element={Icon}
+                                            isIcon
+                                            compareElement
+                                            color={color}
+                                            bgColor={bgColor}
+                                            size={size}
+                                        />
+                                    )}
+                                    {PrimitiveValue && (
+                                        <Element
+                                            Element={PrimitiveValue}
+                                            color={color}
+                                            bgColor={bgColor}
+                                            size={size}
+                                            compareElement
+                                        />
+                                    )}
                                 </div>
                             </div>
                         </div>

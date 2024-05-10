@@ -5,9 +5,10 @@ import { args, propCategory } from '../../../../stories/assets/storybook.globals
 
 // Components
 import Rating, { IRatingProps } from './';
+import Label from '../Label';
 
 const icons = [Angry, Annoyed, Smile, Laugh, Meh];
-
+const primitive = ['G', 'e', 'n', 'e', 'U', 'I'];
 const meta: Meta<typeof Rating> = {
     title: 'Atoms/Rating',
     component: Rating,
@@ -16,10 +17,10 @@ const meta: Meta<typeof Rating> = {
         defaultValue: args({ control: 'number', ...propCategory.appearance }),
         value: args({ control: 'number', ...propCategory.appearance }),
         color: args({ control: 'color', default: 'red', ...propCategory.appearance }),
-        backgroundColor: args({ control: 'color', default: 'white', ...propCategory.appearance }),
+        bgColor: args({ control: 'color', default: 'white', ...propCategory.appearance }),
         count: args({ control: 'number', ...propCategory.appearance }),
         readonly: args({ control: 'boolean', ...propCategory.states }),
-        character: args({ control: 'string', ...propCategory.appearance }),
+        character: args({ control: 'false', ...propCategory.appearance }),
         halfAllow: args({ control: 'boolean', default: true, ...propCategory.states })
     },
     args: { size: 'big' }
@@ -32,14 +33,26 @@ const Template: FC<IRatingProps> = ({ ...args }) => {
 
 const TemplateControlled: FC<IRatingProps> = ({ ...args }) => {
     const [rating, setRating] = useState(0);
+    const recall = ['terrible', 'bad', 'normal', 'good', 'wonderful'];
+
+    const [recallState, setRecallState] = useState<null | number>(null);
 
     const onChangeHandler = (value: number) => {
+        setRecallState(Math.ceil(value));
         setTimeout(() => {
-            setRating(value + 1);
+            setRating(value);
         }, 1000);
     };
 
-    return <Rating {...args} onChange={onChangeHandler} value={rating} />;
+    return (
+        <div>
+            <Rating {...args} onChange={onChangeHandler} value={rating} />
+            {/* @ts-ignore */}
+            <Label size={'headingBig'}>
+                {recallState && recall[recallState - 1 > recall.length - 1 ? recall.length - 1 : recallState - 1]}
+            </Label>
+        </div>
+    );
 };
 
 export const Default = Template.bind({});
@@ -58,5 +71,14 @@ WithCustomIcons.args = {
 export const WithCharacter = Template.bind({});
 
 WithCharacter.args = {
-    character: 'A'
+    character: (i: number) => {
+        const PrimitiveValue = primitive[i];
+        return <div>{PrimitiveValue} </div>;
+    },
+    count: primitive.length,
+    bgColor: '#fa0087',
+    color: '#000'
+};
+WithCharacter.argTypes = {
+    character: args({ control: 'text', ...propCategory.appearance })
 };

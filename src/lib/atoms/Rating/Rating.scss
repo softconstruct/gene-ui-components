@@ -1,33 +1,43 @@
 @import 'src/assets/styles/variables';
 
 .rating {
-    display: flex;
     box-sizing: border-box;
+    width: fit-content;
+    user-select: none;
+    display: flex;
     flex-wrap: wrap;
-    min-width: 300px;
+
+    * > svg {
+        color: unset !important;
+    }
 
     &__wrapper {
         height: fit-content;
         display: flex;
         justify-content: center;
-        margin-left: 20px;
 
-        &.s-medium {
-            margin-left: 22px;
-        }
+        &:not(:first-child) {
+            &.s-small {
+                margin-inline: 4px 0;
+            }
 
-        &.s-big {
-            margin-left: 25px;
+            &.s-medium {
+                margin-inline: 8px 0;
+            }
+
+            &.s-big {
+                margin-inline: 12px 0;
+            }
         }
     }
 
     &__content {
         position: relative;
         width: 100%;
-        transition: all 0.1s ease-in;
+        transition: transform 0.1s ease-in;
 
         &:hover:not(.rating__content-readonly) {
-            transform: scale(1.2);
+            transform: scale(1.1);
             cursor: pointer;
         }
 
@@ -46,7 +56,9 @@
     }
 
     &__icon {
-        font-size: #{rem(32)};
+        &.s-small {
+            font-size: #{rem(32)};
+        }
 
         &.s-medium {
             font-size: #{rem(36)};
