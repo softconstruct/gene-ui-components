@@ -3,8 +3,7 @@ import { ReactWrapper, mount, shallow } from 'enzyme';
 
 // Components
 import InteractiveWidget, { IInteractiveWidgetProps } from './index';
-import { GeneUIProvider, Tag } from '../../../index';
-import Avatar from '../../atoms/Avatar';
+import { GeneUIProvider, Switcher, Tag } from '../../../index';
 
 describe('InteractiveWidget', () => {
     let setup: ReactWrapper<IInteractiveWidgetProps>;
@@ -54,6 +53,12 @@ describe('InteractiveWidget', () => {
         expect(wrapper.find('.interactiveWidget__infoIcon').exists()).toBeTruthy();
     });
 
+    it('renders description prop correctly', () => {
+        const wrapper = setup.setProps({ description: 'description' });
+
+        expect(wrapper.find('.interactiveWidget__description').exists()).toBeTruthy();
+    });
+
     it.each<IInteractiveWidgetProps['appearance']>(['default', 'compact'])(
         'renders appearance %s prop correctly',
         (appearance) => {
@@ -80,15 +85,27 @@ describe('InteractiveWidget', () => {
         expect(wrapper.find('.widgetIcon__background').exists()).toBeTruthy();
     });
 
-    it('calls onClick prop when clicked', () => {
-        const onClickMock = jest.fn();
-        const wrapper = shallow(<InteractiveWidget onClick={onClickMock} />);
-        wrapper.simulate('click');
-        expect(onClickMock).toHaveBeenCalled();
+    it('calls tagProps prop when clicked', () => {
+        // @ts-ignore
+        const wrapper = setup.setProps({ tagProps: { label: 'label' } });
+
+        // @ts-ignore
+        expect(wrapper.find(Tag).props().label).toStrictEqual('label');
     });
 
-    it('calls tagProps prop when clicked', () => {
-        // const wrapper = setup.setProps({tagProps: {label:'label'} });
-        // expect(wrapper.find(Tag).props().label).toEqual('label')
+    it('calls switcherProps prop when clicked', () => {
+        // @ts-ignore
+        const wrapper = setup.setProps({ switcherProps: { label: 'label' } });
+
+        // @ts-ignore
+        expect(wrapper.find(Switcher).props().label).toStrictEqual('label');
+    });
+
+    it('calls onClick prop when clicked', () => {
+        const onClickMock = jest.fn();
+        const wrapper = setup.setProps({ onClick: onClickMock });
+        wrapper.simulate('click');
+
+        expect(onClickMock).toHaveBeenCalled();
     });
 });
