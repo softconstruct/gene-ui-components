@@ -11,7 +11,7 @@ import { Switcher, Tag } from '../../../index';
 const meta: Meta<typeof InteractiveWidget> = {
     title: 'Molecules/InteractiveWidget',
     component: InteractiveWidget,
-    subcomponents: { Switcher, Tag },
+    subcomponents: { Switcher },
     argTypes: {
         title: args({ control: 'text', ...propCategory.content }),
         icon: args({ control: 'text', ...propCategory.appearance }),
