@@ -141,8 +141,8 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
                         {(switcherProps || tagProps) && (
                             <div className="interactiveWidget__components">
                                 {tagProps && <Tag {...tagProps} />}
-                                {/*@ts-ignore*/}
                                 {switcherProps && (
+                                    // @ts-ignore
                                     <Switcher className={'interactiveWidget__switcher'} {...switcherProps} />
                                 )}
                             </div>
