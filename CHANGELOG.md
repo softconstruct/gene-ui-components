@@ -1,5 +1,26 @@
 # Changelog
 
+# [2.14.0](https://github.com/softconstruct/gene-ui-components/compare/v2.13.1...v2.14.0) (2024-04-30)
+
+
+### Bug Fixes
+
+* **GeneUIProvider:** add check for geneUIProviderRef.current ([#117](https://github.com/softconstruct/gene-ui-components/issues/117)) ([aa5aa09](https://github.com/softconstruct/gene-ui-components/commit/aa5aa09ae9b0bd67dbf13ede7c6d538b0b516170))
+* **Storybook:** remove old version story entry point files ([56d6395](https://github.com/softconstruct/gene-ui-components/commit/56d6395f092434a441ca8114756f8805179d8ef1))
+* **useDebounce:** rename the useDebounceHook to useDebounce ([7658172](https://github.com/softconstruct/gene-ui-components/commit/7658172957ce81713684e37219be6b5d0048df4a))
+* **useEllipsisDetection:** add debounce for window resize ([457fd1e](https://github.com/softconstruct/gene-ui-components/commit/457fd1e0b7bd0cef4227c9f12ee6c2db58ed7c4c))
+* **useWindowSize:** add debounce for window resize and orientation change ([c7b4ccc](https://github.com/softconstruct/gene-ui-components/commit/c7b4ccc0faef8e64152f15c39eac723eb2f523fa))
+
+
+### Features
+
+* **Hooks:** configure tests and documentation for hooks ([7565149](https://github.com/softconstruct/gene-ui-components/commit/7565149bd174aaf136be730fd56eff8b3c8d8595))
+
+
+### Performance Improvements
+
+* **useDebounceHook:** add new debounce functionality ([eb62c5d](https://github.com/softconstruct/gene-ui-components/commit/eb62c5dba56199ea54660820d6e3a6988c1aef48))
+
 ## 2.13.1 (2024-03-25)
 
 ### Bug Fixes

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import useDebounce from './useDebounce';
 
 function useWindowSize() {
     const w = window;
     const { innerHeight, innerWidth } = w;
     const [width, setWindowWidth] = useState(innerWidth);
     const [height, setWindowHeight] = useState(innerHeight);
+    const { debounceCallback, clearDebounce } = useDebounce();
 
     const handleResize = () => {
         const { innerHeight, innerWidth } = w;
@@ -12,12 +14,16 @@ function useWindowSize() {
         setWindowHeight(innerHeight);
     };
 
+    const debounce = () => debounceCallback(handleResize, 100);
+
     useEffect(() => {
-        w.addEventListener('resize', handleResize);
-        w.addEventListener('orientationChange', handleResize);
+        w.addEventListener('resize', debounce);
+        w.addEventListener('orientationChange', debounce);
+
         return () => {
-            w.removeEventListener('resize', handleResize);
-            w.removeEventListener('orientationChange', handleResize);
+            w.removeEventListener('resize', debounce);
+            w.removeEventListener('orientationChange', debounce);
+            clearDebounce();
         };
     }, []);
 

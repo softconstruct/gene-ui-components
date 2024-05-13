@@ -1,7 +1,7 @@
 {
     "name": "@geneui/components",
     "description": "The Gene UI components library designed for BI tools",
-    "version": "2.13.1",
+    "version": "2.14.0",
     "author": "SoftConstruct",
     "homepage": "https://github.com/softconstruct/gene-ui-components#readme",
     "repository": {
@@ -117,6 +117,7 @@
         "inquirer": "^8.2.4",
         "jest": "^29.7.0",
         "jest-environment-jsdom": "^29.7.0",
+        "jest-fetch-mock": "^3.0.3",
         "lint-staged": "^13.0.3",
         "metro-react-native-babel-preset": "^0.51.1",
         "open-cli": "^7.1.0",
