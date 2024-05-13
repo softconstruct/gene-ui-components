@@ -1,4 +1,4 @@
-import React, { FC, HTMLAttributes, MouseEvent, useRef } from 'react';
+import React, { FC, HTMLAttributes, MouseEvent, KeyboardEvent, useRef, ReactNode } from 'react';
 import classNames from 'classnames';
 
 //Components
@@ -32,7 +32,7 @@ interface IInteractiveWidgetProps extends HTMLAttributes<HTMLDivElement> {
      * The `icon` prop determines the representation of an icon within the component.
      * It can be a string, such as a URL for an SVG image, or a React component for example <Icon> component.
      */
-    icon?: string | React.ReactNode;
+    icon?: string | ReactNode;
     /**
      * This property controls the size of the icon, influencing the appearance of the component.<br>
      * Possible values: `'default' | 'compact'`
@@ -111,8 +111,8 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
             )}
             {...(!disabled && onClick ? { onClick: (event: MouseEvent<HTMLDivElement>) => onClick(event) } : {})}
             tabIndex={0}
-            onKeyDown={(e: React.KeyboardEvent) => {
-                onClick && onClick(e);
+            onKeyDown={(event: KeyboardEvent<HTMLDivElement>) => {
+                onClick && onClick(event);
             }}
             {...restProps}
         >
