@@ -4,7 +4,7 @@ import TimePicker, { ITimePickerProps } from './TimePicker';
 import GeneUIProvider from '../../providers/GeneUIProvider';
 import TimePickerPopover from './TimePickerPopover';
 
-describe('<TimePicker/>', () => {
+describe('TimePicker Component', () => {
     let setup: ReactWrapper<ITimePickerProps>;
     beforeEach(() => {
         setup = mount(<TimePicker positions={'top'} />, {

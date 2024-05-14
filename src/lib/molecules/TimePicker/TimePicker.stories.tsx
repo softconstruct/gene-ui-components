@@ -12,27 +12,24 @@ const meta: Meta<typeof TimePicker> = {
     title: 'Molecules/TimePicker',
     component: TimePicker,
     argTypes: {
-        positions: args({
-            control: 'select',
-            options: ['bottom', 'top', 'left', 'right'],
-            category: propCategory.appearance
-        }),
-        onBlur: args({ control: false, category: propCategory.action }),
-        value: args({ control: 'text', category: propCategory.content }),
-        onChange: args({ control: false, category: propCategory.action }),
-        className: args({ control: false, category: propCategory.others }),
-        separator: args({ control: 'text', category: propCategory.content }),
-        disabled: args({ control: 'boolean', category: propCategory.states }),
-        readOnly: args({ control: 'boolean', category: propCategory.states }),
-        showSeconds: args({ control: 'boolean', category: propCategory.states }),
-        screenTypes: args({ control: false, options: screenTypes, category: propCategory.states }),
-        secondFormat: args({ control: 'select', options: ['ss', 's'], category: propCategory.states }),
-        minuteFormat: args({ control: 'select', options: ['mm', 'm'], category: propCategory.states }),
-        screenType: args({ control: 'select', options: screenTypes, category: propCategory.appearance }),
-        hourFormat: args({ control: 'select', options: ['HH', 'H', 'hh', 'h'], category: propCategory.states }),
-        appearance: args({ control: 'select', options: timePickerConfig.appearance, category: propCategory.appearance })
+        positions: args({ control: 'select', ...propCategory.appearance }),
+        onBlur: args({ control: false, ...propCategory.action }),
+        value: args({ control: 'text', ...propCategory.content }),
+        onChange: args({ control: false, ...propCategory.action }),
+        className: args({ control: false, ...propCategory.others }),
+        separator: args({ control: 'text', ...propCategory.content }),
+        disabled: args({ control: 'boolean', ...propCategory.states }),
+        readOnly: args({ control: 'boolean', ...propCategory.states }),
+        showSeconds: args({ control: 'boolean', ...propCategory.states }),
+        screenTypes: args({ control: false, ...propCategory.states }),
+        secondFormat: args({ control: 'select', ...propCategory.states }),
+        minuteFormat: args({ control: 'select', ...propCategory.states }),
+        screenType: args({ control: 'select', ...propCategory.appearance }),
+        hourFormat: args({ control: 'select', ...propCategory.states }),
+        appearance: args({ control: 'select', ...propCategory.appearance })
     },
     args: {
+        positions: ['bottom', 'top', 'left', 'right'],
         className: '',
         separator: ':',
         disabled: false,
@@ -43,7 +40,7 @@ const meta: Meta<typeof TimePicker> = {
         screenType: screenTypes[0],
         hourFormat: ['HH', 'H', 'hh', 'h'],
         appearance: timePickerConfig.appearance[1]
-    }
+    } as ITimePickerProps
 };
 
 export default meta;

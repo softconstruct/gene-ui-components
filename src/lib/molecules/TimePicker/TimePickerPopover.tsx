@@ -7,14 +7,14 @@ import { useKeyDown, useClickOutside } from 'hooks';
 import Popover from '../../atoms/PopoverV2';
 
 // Types
-import { ChildRef, GetArrayAsUnion } from './TimePicker';
+import { ChildRef } from './TimePicker';
 
 interface ITimePickerPopover {
     toggleHandler: (open: boolean) => boolean | void;
     children: ReactNode;
     readOnly: boolean;
     value: string | null;
-    positions: GetArrayAsUnion<'positions'>;
+    positions: 'bottom' | 'top' | 'left' | 'right' | string[];
     Content: ReactNode;
 }
 
@@ -39,8 +39,6 @@ const TimePickerPopover = forwardRef<ChildRef | undefined, ITimePickerPopover>(
             !rootRef.current?.contains(event.target as Node) && closePopover();
         });
 
-        // We need to close popup every time when
-        // user select some value from current popup
         useEffect(() => {
             setIsOpen(false);
         }, [value]);

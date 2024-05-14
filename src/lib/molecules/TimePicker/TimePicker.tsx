@@ -1,9 +1,7 @@
-import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 
 // Helpers
-// @ts-ignore
-import { timePickerConfig } from 'configs';
 // @ts-ignore
 import { noop } from 'utils';
 // @ts-ignore
@@ -17,23 +15,17 @@ import Icon from '../../atoms/Icon';
 import ExtendedInput from '../ExtendedInput';
 // @ts-ignore
 import ValidatableNumberInput from '../ValidatableElements/Elements/ValidatableNumberInput';
-
-// Local components
 import TimePickerPopover from './TimePickerPopover';
 
 // Styles
 import './TimePicker.scss';
 
-function generateTimeValues(format: string, max: number) {
+function generateTimeValues(format: string | string[], max: number) {
     const numbers: string[] = [];
     const formatLength = format.length;
 
     for (let i = 0; i <= max; i++) {
-        if (formatLength === 1) {
-            numbers.push(String(i));
-        } else {
-            numbers.push(i < 10 ? `0${i}` : String(i));
-        }
+        numbers.push(i < 10 && formatLength !== 1 ? `0${i}` : String(i));
     }
 
     return numbers;
@@ -43,19 +35,18 @@ const checkFormatValidation = (format: string | string[] | undefined, value: str
     (format?.length === 1 && value?.length && value?.length <= 2 && value && Number(value[0]) !== 0) ||
     (format?.length === 2 && value && value.length === 2);
 
-const checkHourRange = (value: string, format: string) => {
+const checkHourRange = (value: string, format: string | string[]) => {
     return value.length <= 2 && Array.isArray(format)
         ? Number(value) < 12
         : (isLongHour(format) && Number(value) < 24) || (isShortHour(format) && Number(value) < 12);
 };
 
-// seconds and minutes cant be equal or higher then 60
 const checkRange = (value: string) => value.length <= 2 && Number(value) < 60;
 
-const isLongHour = (str: string) => str === 'HH' || str === 'H';
-const isShortHour = (str: string) => str === 'hh' || str === 'h';
+const isLongHour = (str: string | string[]) => str === 'HH' || str === 'H';
+const isShortHour = (str: string | string[]) => str === 'hh' || str === 'h';
 
-function convertToFormat(value: string, format: string | string[] | undefined, notEmpty: boolean) {
+function convertToFormat(value: string, format: string | string[] | undefined, notEmpty: boolean = true) {
     if (!value && notEmpty) {
         return format?.length === 1 ? '0' : '00';
     }
@@ -69,45 +60,43 @@ function convertToFormat(value: string, format: string | string[] | undefined, n
     return value;
 }
 
-const TimePickerConfig = {
-    appearance: ['multipleInputs', 'singleInput'],
-    screenTypes: ['desktop', 'mobile'],
-    positions: ['top', 'right', 'bottom', 'left']
-} as const;
-
-export type GetArrayAsUnion<T extends keyof typeof TimePickerConfig> = (typeof TimePickerConfig)[T][number];
-
 interface ITimePickerProps {
     /**
-     * Define is seconds field will shown or no
+     * Define is seconds field will be shown or no
      */
     showSeconds?: boolean;
     /**
-     * Select view with multiple inputs or with single inputs
+     * Select view with multiple inputs or with single inputs <br>
+     * Possible values: `'multipleInputs' | 'singleInput'`
      */
-    appearance?: GetArrayAsUnion<'appearance'>;
+    appearance?: 'multipleInputs' | 'singleInput';
     /**
-     * Format for hour field
+     * Format for hour field <br>
+     * Possible values: `'HH' | 'H' | 'hh' | 'h' | ['HH', 'H', 'hh', 'h']`
      */
-    hourFormat?: 'HH' | 'H' | 'hh' | 'h';
+    hourFormat?: 'HH' | 'H' | 'hh' | 'h' | string[];
     /**
-     * Format for hour field
+     * Format for hour field <br>
+     * Possible values: `'mm' | 'm' | ['mm' | 'm']`
      */
-    minuteFormat?: 'mm' | 'm';
+    minuteFormat?: 'mm' | 'm' | string[];
     /**
-     * Format for hour field
+     * Format for hour field <br>
+     * Possible values: `'ss' | 's' | ['ss' | 's']`
      */
-    secondFormat?: 'ss' | 's';
+    secondFormat?: 'ss' | 's' | string[];
     /**
      * Time field separator
      */
     separator?: string;
     /**
-     * Fires an event when field is changed((event: SyntheticEvent) => void).
+     * Fires an event when field is changed
+     * `((event: SyntheticEvent) => void)`.
      */
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     /**
-     * Fires an event when field is blurred((date: Date, event: SyntheticEvent) => void).
+     * Fires an event when field is blurred
+     * `((date: Date, event: SyntheticEvent) => void)`.
      */
     onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
     /**
@@ -119,7 +108,7 @@ interface ITimePickerProps {
      */
     value?: string;
     /**
-     * disabled for input field
+     * Disabled for input field
      */
     disabled?: boolean;
     /**
@@ -128,15 +117,16 @@ interface ITimePickerProps {
     readOnly?: boolean;
     /**
      * The switch between mobile and desktop version of Dropdown will be applied automatically, when the prop is not specified.
-     * When the prop is present it must be changed from outside.
+     * When the prop is present it must be changed from outside. <br>
+     * Possible values: `'desktop' | 'mobile'`
      */
-    screenType?: GetArrayAsUnion<'screenTypes'>;
+    screenType?: 'desktop' | 'mobile';
     /**
-     * preferred positions by priority ['bottom','top', 'left', 'right']
-     * default is ['bottom','top', 'left', 'right']
+     * Preferred positions by priority ['bottom', 'top', 'left', 'right']
+     * default is ['bottom', 'top', 'left', 'right']
      * if you'd like, you can limit the positions ['top', 'left']
      */
-    positions: GetArrayAsUnion<'positions'>;
+    positions: 'bottom' | 'top' | 'left' | 'right' | string[];
 }
 
 export interface ChildRef {
@@ -147,7 +137,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
     value,
     onChange = noop,
     showSeconds = true,
-    appearance = timePickerConfig.appearance[0],
+    appearance = 'multipleInputs',
     hourFormat = 'HH',
     minuteFormat = 'mm',
     secondFormat = 'ss',
@@ -169,32 +159,28 @@ const TimePicker: React.FC<ITimePickerProps> = ({
     const [minuteFieldError, setMinuteFieldError] = useState(false);
     const [secondFieldError, setSecondFieldError] = useState(false);
     const [hourFieldError, setHourFieldError] = useState(false);
-    // We save every value that selected from popup, because we need to
-    // close current popup when user select value from popup
-    const [hourPopupValue, setHourPopupValue] = useState<string | null>(null);
-    const [minutePopupValue, setMinutePopupValue] = useState<string | null>(null);
-    const [secondPopupValue, setSecondPopupValue] = useState<string | null>(null);
+    const [hourPopupValue, setHourPopupValue] = useState('');
+    const [minutePopupValue, setMinutePopupValue] = useState('');
+    const [secondPopupValue, setSecondPopupValue] = useState('');
     const childRef = useRef<ChildRef | undefined>();
-    // for replacing special symbols
-    const numberRegExp = useMemo(() => {
+    const numberRegExp = () => {
         const numberRegExpString = `[^0-9${separator}]`;
         return new RegExp(numberRegExpString, 'g');
-    }, [separator]);
+    };
 
-    const combinedValue = useCallback(
-        (hour: string, minute: string, second: string, notEmpty = true) => {
-            if (hour || minute || second) {
-                const formatted = [
-                    convertToFormat(hour, hourFormat, notEmpty),
-                    convertToFormat(minute, minuteFormat, notEmpty),
-                    convertToFormat(second, secondFormat, notEmpty)
-                ];
-                return showSeconds ? formatted.join(separator) : `${formatted[0]}${separator}${formatted[1]}`;
-            }
-            return '';
-        },
-        [showSeconds, separator, hourFormat, minuteFormat, secondFormat]
-    );
+    const combinedValue = (hour: string, minute: string, second: string, notEmpty = true) => {
+        if (hour || minute || second) {
+            const [formattedHour, formattedMinute, formattedSecond] = [
+                convertToFormat(hour, hourFormat, notEmpty),
+                convertToFormat(minute, minuteFormat, notEmpty),
+                convertToFormat(second, secondFormat, notEmpty)
+            ];
+            return showSeconds
+                ? `${formattedHour}${separator}${formattedMinute}${separator}${formattedSecond}`
+                : `${formattedHour}${separator}${formattedMinute}`;
+        }
+        return '';
+    };
 
     const checkHasError = useCallback(
         (currentValue: string, format: string | string[]) =>
@@ -202,388 +188,283 @@ const TimePicker: React.FC<ITimePickerProps> = ({
         []
     );
 
-    const checkTimeValidation = useCallback(
-        (value: string, needToSetState = true) => {
-            const hasError = checkHasError(value || hour, hourFormat);
-            needToSetState && setHourFieldError(hasError);
-            return hasError;
-        },
-        [checkHasError, hour, hourFormat]
-    );
+    const checkTimeValidation = (value: string, needToSetState = true) => {
+        const hasError = checkHasError(value || hour, hourFormat);
+        needToSetState && setHourFieldError(hasError);
+        return hasError;
+    };
 
-    const checkMinuteValidation = useCallback(
-        (value: string, needToSetState = true) => {
-            const hasError = checkHasError(value || minute, minuteFormat);
-            needToSetState && setMinuteFieldError(hasError);
-            return hasError;
-        },
-        [checkHasError, minute, minuteFormat]
-    );
+    const checkMinuteValidation = (value: string, needToSetState = true) => {
+        const hasError = checkHasError(value || minute, minuteFormat);
+        needToSetState && setMinuteFieldError(hasError);
+        return hasError;
+    };
 
-    const checkSecondValidation = useCallback(
-        (value: string, needToSetState = true) => {
-            const hasError = checkHasError(value || second, secondFormat);
-            needToSetState && showSeconds && setSecondFieldError(hasError);
-            return !showSeconds || hasError;
-        },
-        [checkHasError, second, secondFormat, showSeconds]
-    );
+    const checkSecondValidation = (value: string, needToSetState = true) => {
+        const hasError = checkHasError(value || second, secondFormat);
+        needToSetState && showSeconds && setSecondFieldError(hasError);
+        return !showSeconds || hasError;
+    };
 
-    const handleHourPopover = useCallback(
-        (open: boolean) => {
-            return !open && checkTimeValidation(hour, true);
-        },
-        [checkTimeValidation, hour]
-    );
+    const handleHourPopover = (open: boolean) => !open && checkTimeValidation(hour);
 
-    const handleMinutePopover = useCallback(
-        (open: boolean) => !open && checkMinuteValidation(minute, true),
-        [checkMinuteValidation, minute]
-    );
+    const handleMinutePopover = (open: boolean) => !open && checkMinuteValidation(minute);
 
-    const handleSecondPopover = useCallback(
-        (open: boolean) => !open && checkSecondValidation(second, true),
-        [checkSecondValidation, second]
-    );
+    const handleSecondPopover = (open: boolean) => !open && checkSecondValidation(second);
 
-    const handlePopoverToggle = useCallback(
-        (open: boolean) => {
-            if (open) return;
+    const handlePopoverToggle = (open: boolean) => {
+        if (open) return;
 
-            const timeError = checkTimeValidation(hour, true);
-            const minuteError = checkMinuteValidation(minute, true);
-            const secondError = checkSecondValidation(second, true);
+        const timeError = checkTimeValidation(hour);
+        const minuteError = checkMinuteValidation(minute);
+        const secondError = checkSecondValidation(second);
 
-            // need to reset all data when user click outside and any of this fields has error
-            if (timeError || minuteError || secondError) {
-                setInputValue('');
-                setHour('');
-                setMinute('');
-                setSecond('');
+        if (timeError || minuteError || secondError) {
+            setInputValue('');
+            setHour('');
+            setMinute('');
+            setSecond('');
+        }
+    };
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent>,
+        value: string
+    ) => {
+        const changedEvent = {
+            ...e,
+            target: {
+                ...e.target,
+                value
             }
-        },
-        [
-            checkTimeValidation,
-            checkMinuteValidation,
-            checkSecondValidation,
-            hour,
-            minute,
-            second,
-            setInputValue,
-            setHour,
-            setMinute,
-            setSecond
-        ]
-    );
+        };
+        onChange(changedEvent);
+    };
 
-    const handleChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent>, value: string) => {
-            // replacing event target's default value, because we have more than one input
-            // and value can be changes from popup, too
-            const changedEvent = {
-                ...e,
-                target: {
-                    ...e.target,
-                    value
-                }
-            };
-            onChange(changedEvent);
-        },
-        [onChange]
-    );
+    const handleHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
 
-    const handleHourChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            const { value } = e.target;
-
-            const isInRange = checkHourRange(value, hourFormat);
-            if (isInRange) {
-                if (!checkTimeValidation(value, false)) {
-                    setHourFieldError(false);
-                }
-                setHour(value);
-                // second argument needs because we call onChange event immediately after setState
-                handleChange(e, combinedValue(value, minute, second));
-            }
-        },
-        [hourFormat, checkTimeValidation, handleChange, combinedValue, minute, second]
-    );
-
-    const handleMinuteChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            const { value } = e.target;
-
-            const isInRange = checkRange(value);
-
-            if (isInRange) {
-                if (!checkMinuteValidation(value, false)) {
-                    setMinuteFieldError(false);
-                }
-                setMinute(value);
-                // second argument needs because we call onChange event immediately after setState
-                handleChange(e, combinedValue(hour, value, second));
-            }
-        },
-        [checkMinuteValidation, handleChange, combinedValue, hour, second]
-    );
-
-    const handleSecondChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            const { value } = e.target;
-
-            const isInRange = checkRange(value);
-
-            if (isInRange) {
-                if (!checkSecondValidation(value, false)) {
-                    setSecondFieldError(false);
-                }
-                setSecond(value);
-                // second argument needs because we call onChange event immediately after setState
-                handleChange(e, combinedValue(hour, minute, value));
-            }
-        },
-        [checkSecondValidation, handleChange, combinedValue, hour, minute]
-    );
-
-    const handleChangeFromPopup = useCallback(
-        (e: React.MouseEvent<HTMLLIElement, MouseEvent>, value: string, key: string) => {
-            let time = '';
-
-            if (key === 'second') {
-                time = combinedValue(hour, minute, value);
-                setSecondFieldError(false);
-                setSecondPopupValue(value);
-            } else if (key === 'hour') {
-                time = combinedValue(value, minute, second);
+        const isInRange = checkHourRange(value, hourFormat);
+        if (isInRange) {
+            if (!checkTimeValidation(value, false)) {
                 setHourFieldError(false);
-                setHourPopupValue(value);
-            } else {
-                time = combinedValue(hour, value, second);
+            }
+            setHour(value);
+            handleChange(e, combinedValue(value, minute, second));
+        }
+    };
+
+    const handleMinuteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+
+        const isInRange = checkRange(value);
+
+        if (isInRange) {
+            if (!checkMinuteValidation(value, false)) {
                 setMinuteFieldError(false);
-                setMinutePopupValue(value);
             }
+            setMinute(value);
+            handleChange(e, combinedValue(hour, value, second));
+        }
+    };
 
-            const values = time.split(separator);
-            setHour(values[0]);
-            setMinute(values[1]);
-            showSeconds && setSecond(values[2]);
+    const handleSecondChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
 
-            setInputValue(time);
-            handleChange(e, time);
-        },
-        [hour, minute, second, separator, showSeconds, handleChange, combinedValue]
-    );
+        const isInRange = checkRange(value);
 
-    const handleInputChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (!e.target) {
-                return;
+        if (isInRange) {
+            if (!checkSecondValidation(value, false)) {
+                setSecondFieldError(false);
             }
-            const { value } = e.target;
+            setSecond(value);
+            handleChange(e, combinedValue(hour, minute, value));
+        }
+    };
 
-            // replacing special chars that not allowed
-            let replacedValue = value.replace(numberRegExp, '');
-            const timeParts = replacedValue.split(separator);
+    const handleChangeFromPopup = (e: React.MouseEvent<HTMLLIElement, MouseEvent>, value: string, key: string) => {
+        let time: string;
 
-            const lastChar = replacedValue[replacedValue.length - 1];
-            const secondLastChar = replacedValue[replacedValue.length - 2];
+        if (key === 'second') {
+            time = combinedValue(hour, minute, value);
+            setSecondFieldError(false);
+            setSecondPopupValue(value);
+        } else if (key === 'hour') {
+            time = combinedValue(value, minute, second);
+            setHourFieldError(false);
+            setHourPopupValue(value);
+        } else {
+            time = combinedValue(hour, value, second);
+            setMinuteFieldError(false);
+            setMinutePopupValue(value);
+        }
 
-            // Checking if last and second last chars are same and equal to separator then return
-            if (lastChar === separator && lastChar === secondLastChar) return;
+        const [combinedHour, combinedMinute, combinedSecond] = time.split(separator);
+        setHour(combinedHour);
+        setMinute(combinedMinute);
+        showSeconds && setSecond(combinedSecond);
 
-            if (value === '') {
-                setHour('');
-                setMinute('');
-                setSecond('');
-                setInputValue('');
+        setInputValue(time);
+        handleChange(e, time);
+    };
 
-                handleChange(e, '');
-                return;
-            }
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target) {
+            return;
+        }
+        const { value } = e.target;
 
-            if (typeof timeParts[showSeconds ? 3 : 2] !== 'undefined') return;
+        let replacedValue = value.replace(numberRegExp(), '');
+        const timeParts = replacedValue.split(separator);
 
-            if (timeParts.some((item: string) => item.length > 2)) return;
+        const [replacedHour, replacedMinute, replacedSecond] = timeParts;
 
-            if (typeof timeParts[0] !== 'undefined') {
-                if (Array.isArray(hourFormat)) {
-                    if (+timeParts[0] > 11) {
+        const lastChar = replacedValue[replacedValue.length - 1];
+        const preLastChar = replacedValue[replacedValue.length - 2];
+
+        if (lastChar === separator && lastChar === preLastChar) return;
+
+        if (value === '') {
+            setHour('');
+            setMinute('');
+            setSecond('');
+            setInputValue('');
+
+            handleChange(e, '');
+            return;
+        }
+
+        if (typeof timeParts[showSeconds ? 3 : 2] !== 'undefined') return;
+
+        if (timeParts.some((item: string) => item.length > 2)) return;
+
+        if (typeof replacedHour !== 'undefined') {
+            if (Array.isArray(hourFormat)) {
+                if (+replacedHour > 11) {
+                    let tempValue = replacedValue.split(separator);
+                    tempValue[0] = hour;
+                    replacedValue = tempValue.join(separator);
+                }
+            } else {
+                if (isShortHour(hourFormat)) {
+                    if (+replacedHour > 11) {
                         let tempValue = replacedValue.split(separator);
                         tempValue[0] = hour;
                         replacedValue = tempValue.join(separator);
                     }
                 } else {
-                    if (isShortHour(hourFormat)) {
-                        if (+timeParts[0] > 11) {
-                            let tempValue = replacedValue.split(separator);
-                            tempValue[0] = hour;
-                            replacedValue = tempValue.join(separator);
-                        }
-                    } else {
-                        if (+timeParts[0] > 23) {
-                            let tempValue = replacedValue.split(separator);
-                            tempValue[0] = hour;
-                            replacedValue = tempValue.join(separator);
-                        }
+                    if (+replacedHour > 23) {
+                        let tempValue = replacedValue.split(separator);
+                        tempValue[0] = hour;
+                        replacedValue = tempValue.join(separator);
                     }
                 }
             }
+        }
 
-            if (typeof timeParts[1] !== 'undefined' && +timeParts[1] > 59) {
-                let tempValue = replacedValue.split(separator);
-                tempValue[1] = minute;
-                replacedValue = tempValue.join(separator);
-            }
+        if (typeof replacedMinute !== 'undefined' && +replacedMinute > 59) {
+            let tempValue = replacedValue.split(separator);
+            tempValue[1] = minute;
+            replacedValue = tempValue.join(separator);
+        }
 
-            if (showSeconds && typeof timeParts[2] !== 'undefined' && +timeParts[2] > 59) {
-                let tempValue = replacedValue.split(separator);
-                tempValue[2] = second;
-                replacedValue = tempValue.join(separator);
-            }
+        if (showSeconds && typeof replacedSecond !== 'undefined' && +replacedSecond > 59) {
+            let tempValue = replacedValue.split(separator);
+            tempValue[2] = second;
+            replacedValue = tempValue.join(separator);
+        }
 
-            // Make field valid when after typing field pass validation
-            // but we must set error only when user click outside or onBlur event fires
-            !checkTimeValidation(timeParts[0], false) && setHourFieldError(false);
-            !checkMinuteValidation(timeParts[1], false) && setMinuteFieldError(false);
-            (!showSeconds || !checkSecondValidation(timeParts[2], false)) && setSecondFieldError(false);
+        !checkTimeValidation(replacedHour, false) && setHourFieldError(false);
+        !checkMinuteValidation(replacedMinute, false) && setMinuteFieldError(false);
+        (!showSeconds || !checkSecondValidation(replacedSecond, false)) && setSecondFieldError(false);
 
-            setInputValue(replacedValue);
-            onChange(e);
-        },
-        [numberRegExp, handleChange, showSeconds, hourFormat, separator, onChange, minute, second]
-    );
+        setInputValue(replacedValue);
+        onChange(e);
+    };
 
     useEffect(() => {
         if (value) {
-            const timeParts = value.split(separator);
-            timeParts[0] && setHour(timeParts[0]);
-            timeParts[1] && setMinute(timeParts[1]);
-            showSeconds && timeParts[2] && setSecond(timeParts[2]);
+            const [splitHour, splitMinute, splitSecond] = value.split(separator);
+            splitHour && setHour(splitHour);
+            splitMinute && setMinute(splitMinute);
+            showSeconds && splitSecond && setSecond(splitSecond);
 
             setInputValue(value);
         }
     }, [value, separator, showSeconds]);
 
-    const timeDropDown = useMemo(
-        () =>
-            function (numbers: string[], active: string, key: string) {
-                return (
-                    <div className="time-picker-drop">
-                        {/* @ts-ignore */}
-                        <Scrollbar autoHeight autoHeightMax={200} size="small">
-                            <ul>
-                                {numbers.map((i: string) => (
-                                    <li
-                                        onClick={(e) => handleChangeFromPopup(e, i, key)}
-                                        key={i}
-                                        className={classnames({
-                                            active: i === active
-                                        })}
-                                    >
-                                        <span>{i}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </Scrollbar>
-                    </div>
-                );
-            },
-        [handleChangeFromPopup]
-    );
+    const timeDropDown = (numbers: string[], active: string, key: string) => {
+        return (
+            <div className="time-picker-drop">
+                {/* @ts-ignore */}
+                <Scrollbar autoHeight autoHeightMax={200} size="small">
+                    <ul>
+                        {numbers.map((i: string) => (
+                            <li
+                                onClick={(e) => handleChangeFromPopup(e, i, key)}
+                                key={i}
+                                className={classnames({
+                                    active: i === active
+                                })}
+                            >
+                                <span>{i}</span>
+                            </li>
+                        ))}
+                    </ul>
+                </Scrollbar>
+            </div>
+        );
+    };
 
-    const hours = useMemo(
-        () => timeDropDown(generateTimeValues(hourFormat, isLongHour(hourFormat) ? 23 : 11), hour, 'hour'),
-        [timeDropDown, hourFormat, hour]
-    );
+    const hours = timeDropDown(generateTimeValues(hourFormat, isLongHour(hourFormat) ? 23 : 11), hour, 'hour');
 
-    const minutes = useMemo(
-        () => timeDropDown(generateTimeValues(minuteFormat, 59), minute, 'minute'),
-        [timeDropDown, minuteFormat, minute]
-    );
+    const minutes = timeDropDown(generateTimeValues(minuteFormat, 59), minute, 'minute');
 
-    const seconds = useMemo(
-        () => timeDropDown(generateTimeValues(secondFormat, 59), second, 'second'),
-        [timeDropDown, secondFormat, second]
-    );
+    const seconds = timeDropDown(generateTimeValues(secondFormat, 59), second, 'second');
 
-    const handleInputBlur = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>) => {
-            const {
-                currentTarget: { value }
-            } = event;
-            let formatted = value;
-            if (value) {
-                const [hour, minute, second] = value.split(separator);
+    const handleInputBlur = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const {
+            currentTarget: { value }
+        } = event;
+        let formatted = value;
+        if (value) {
+            const [hour, minute, second] = value.split(separator);
 
-                formatted = combinedValue(hour, minute, second);
-                setInputValue(formatted);
-                handleChange(event, formatted);
-            }
-            onBlur(formatted, event);
+            formatted = combinedValue(hour, minute, second);
+            setInputValue(formatted);
+            handleChange(event, formatted);
+        }
+        onBlur(formatted, event);
 
-            const timeParts = inputValue.split(separator);
+        const [splitHour, splitMinute, splitSecond] = inputValue.split(separator);
 
-            timeParts[0] && setHour(timeParts[0]);
-            timeParts[1] && setMinute(timeParts[1]);
-            showSeconds && timeParts[2] && setSecond(timeParts[2]);
-        },
-        [
-            checkSecondValidation,
-            checkMinuteValidation,
-            checkTimeValidation,
-            combinedValue,
-            handleChange,
-            numberRegExp,
-            showSeconds,
-            inputValue,
-            hourFormat,
-            separator,
-            onBlur
-        ]
-    );
+        splitHour && setHour(splitHour);
+        splitMinute && setMinute(splitMinute);
+        showSeconds && splitSecond && setSecond(splitSecond);
+    };
 
-    const handleMultiInputBlur = useCallback(
-        (event: React.FocusEvent<HTMLInputElement>) => {
-            const formattedHour = convertToFormat(hour, hourFormat, true);
-            const formattedMinute = convertToFormat(minute, minuteFormat, true);
-            const formattedSecond = convertToFormat(second, secondFormat, true);
-            setHour(formattedHour);
-            setMinute(formattedMinute);
-            setSecond(formattedSecond);
-            setInputValue(combinedValue(formattedHour, formattedMinute, formattedSecond, false));
+    const handleMultiInputBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+        const formattedHour = convertToFormat(hour, hourFormat);
+        const formattedMinute = convertToFormat(minute, minuteFormat);
+        const formattedSecond = convertToFormat(second, secondFormat);
+        setHour(formattedHour);
+        setMinute(formattedMinute);
+        setSecond(formattedSecond);
+        setInputValue(combinedValue(formattedHour, formattedMinute, formattedSecond, false));
 
-            if (hour || minute || second) {
-                setHour(convertToFormat(hour, hourFormat, true));
-                setMinute(convertToFormat(minute, minuteFormat, true));
-                showSeconds && setSecond(convertToFormat(second, secondFormat, true));
-            }
-            onBlur(`${hour}${hour && minute && ':'}${minute}${minute && second && ':'}${second}`, event);
-        },
-        [
-            hour,
-            minute,
-            second,
-            onBlur,
-            hourFormat,
-            minuteFormat,
-            showSeconds,
-            secondFormat,
-            setHour,
-            setMinute,
-            setSecond,
-            setInputValue,
-            combinedValue
-        ]
-    );
+        if (hour || minute || second) {
+            setHour(convertToFormat(hour, hourFormat));
+            setMinute(convertToFormat(minute, minuteFormat));
+            showSeconds && setSecond(convertToFormat(second, secondFormat));
+        }
+        onBlur(`${hour}${hour && minute && ':'}${minute}${minute && second && ':'}${second}`, event);
+    };
 
-    const singleInputPopoverValue = useMemo(
-        () => (showSeconds ? convertToFormat(second, secondFormat, true) : convertToFormat(minute, minuteFormat, true)),
-        [second, secondFormat, minute, minuteFormat, showSeconds]
-    );
+    const singleInputPopoverValue = showSeconds
+        ? convertToFormat(second, secondFormat)
+        : convertToFormat(minute, minuteFormat);
 
-    const handleIconClick = useCallback(() => {
-        childRef.current && childRef.current.toggleOpen();
-    }, [childRef]);
+    const handleIconClick = () => childRef.current && childRef.current.toggleOpen();
 
     return (
         <div
@@ -593,7 +474,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
                 disabled
             })}
         >
-            {appearance === timePickerConfig.appearance[0] ? (
+            {appearance === 'multipleInputs' ? (
                 <ul>
                     <li className="no-shrink icon-holder">
                         {/* @ts-ignore */}
