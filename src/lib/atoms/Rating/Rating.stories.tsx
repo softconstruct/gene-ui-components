@@ -16,14 +16,19 @@ const meta: Meta<typeof Rating> = {
         size: args({ control: 'select', ...propCategory.appearance }),
         defaultValue: args({ control: 'number', ...propCategory.appearance }),
         value: args({ control: 'number', ...propCategory.appearance }),
-        color: args({ control: 'color', default: 'red', ...propCategory.appearance }),
-        bgColor: args({ control: 'color', default: 'white', ...propCategory.appearance }),
+        color: args({ control: 'color', ...propCategory.appearance }),
+        bgColor: args({ control: 'color', ...propCategory.appearance }),
         count: args({ control: 'number', ...propCategory.appearance }),
         readonly: args({ control: 'boolean', ...propCategory.states }),
         character: args({ control: 'false', ...propCategory.appearance }),
         halfAllow: args({ control: 'boolean', default: true, ...propCategory.states })
     },
-    args: { size: 'big' }
+    args: {
+        size: 'big',
+        count: 5,
+        defaultValue: 0,
+        halfAllow: true
+    } as IRatingProps
 };
 export default meta;
 
@@ -39,9 +44,8 @@ const TemplateControlled: FC<IRatingProps> = ({ ...args }) => {
 
     const onChangeHandler = (value: number) => {
         setRecallState(Math.ceil(value));
-        setTimeout(() => {
-            setRating(value);
-        }, 1000);
+
+        setRating(value);
     };
 
     return (

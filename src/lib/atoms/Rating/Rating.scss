@@ -18,15 +18,15 @@
 
         &:not(:first-child) {
             &.s-small {
-                margin-inline: 4px 0;
+                margin-inline-start: 4px;
             }
 
             &.s-medium {
-                margin-inline: 8px 0;
+                margin-inline-start: 8px;
             }
 
             &.s-big {
-                margin-inline: 12px 0;
+                margin-inline-start: 12px;
             }
         }
     }
@@ -44,6 +44,10 @@
         &-readonly {
             pointer-events: none;
         }
+
+        &:focus-visible {
+            outline: 0.2rem solid var(--hero);
+        }
     }
 
     &__element {
@@ -51,8 +55,15 @@
         top: 0;
         overflow: hidden;
         height: 100%;
-        left: 0;
         z-index: 7;
+
+        &:dir(rtl) {
+            right: 0;
+        }
+
+        &:dir(ltr) {
+            left: 0;
+        }
     }
 
     &__icon {
