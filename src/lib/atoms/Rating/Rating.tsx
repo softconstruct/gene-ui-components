@@ -64,7 +64,7 @@ export interface IRatingProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onCh
     size?: 'small' | 'medium' | 'big';
 }
 
-const sizes = { small: 36, medium: 32, big: 42 };
+const sizes = { small: 32, medium: 36, big: 42 };
 
 const Element = ({ isIcon = false, Element, compareElement = false, color, bgColor, size }) => {
     const currentColor = compareElement ? color : bgColor;
@@ -114,8 +114,6 @@ const Rating: FC<IRatingProps> = (props) => {
     const [residue, setResidue] = useState(0);
     const [temporaryRatingValue, setTemporaryRatingValue] = useState(0);
     const [iconWidth, setIconWidth] = useState(0);
-
-    const divRef = useRef<Record<string, HTMLDivElement> | null>(null);
 
     const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, rating: number) => {
         if (readonly) return;
@@ -204,60 +202,15 @@ const Rating: FC<IRatingProps> = (props) => {
             const state = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
 
             if (isControlled) {
+                setHoveredValue(currentRating + 1);
                 onChange?.(state);
                 return;
             }
 
             setRating(state);
             ratingController(currentRating, state);
-            setHoveredValue(currentRating);
-            setRegardingPosition(state % 1 !== 0 ? 50 : 100);
+            setHoveredValue(currentRating + 1);
         }
-    };
-
-    const globalKeyDawnHandler: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
-        e.persist();
-        setRegardingPosition((prev) => {
-            if (e.key === 'ArrowRight') {
-                let add = prev + (halfAllow ? 50 : 100);
-
-                setHoveredValue((prev) => {
-                    const isFull = (add / 100) % 1 === 0;
-
-                    if (isFull) {
-                        divRef.current?.[`${prev + 1}`]?.focus();
-                    }
-                    return isFull ? prev + 1 : prev === 0 ? prev + 1 : prev;
-                });
-                if (add >= 100) {
-                    add = 0;
-                }
-                setRating(0);
-
-                return add;
-            }
-            if (e.key === 'ArrowLeft') {
-                let reduce = prev - (halfAllow ? 50 : 100);
-                setHoveredValue((prev) => {
-                    const isFull = !halfAllow || !((reduce / 100) % 1 === 0);
-                    if (isFull) {
-                        divRef.current?.[`${prev - 1}`]?.focus();
-                    }
-                    return isFull ? prev - 1 : prev;
-                });
-                if (halfAllow && reduce < 0) {
-                    return 50;
-                }
-                if (reduce < 0) {
-                    return 0;
-                }
-                setRating(0);
-
-                return reduce;
-            }
-
-            return prev;
-        });
     };
 
     return (
@@ -266,7 +219,7 @@ const Rating: FC<IRatingProps> = (props) => {
             className="rating"
             onMouseLeave={mouseLeaveHandler}
             onMouseEnter={mouseEnterHandler}
-            onKeyDown={globalKeyDawnHandler}
+            onBlur={() => setHoveredValue(0)}
         >
             {iconsToRender.map((_, i) => {
                 const currentRating = i + 1;
@@ -300,10 +253,6 @@ const Rating: FC<IRatingProps> = (props) => {
                             tabIndex={0}
                             className={classNames('rating__content', { 'rating__content-readonly': readonly })}
                             onClick={() => getRating(currentRating)}
-                            ref={(el: HTMLDivElement) =>
-                                (divRef.current = { ...divRef.current, [`${currentRating}`]: el })
-                            }
-                            // {...(i === hoveredValue - 1 ? { ref: divRef } : {})}
                         >
                             {Icon && <Element color={color} bgColor={bgColor} size={size} Element={Icon} isIcon />}
                             {PrimitiveValue && (

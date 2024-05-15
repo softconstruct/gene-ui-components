@@ -7,15 +7,15 @@ import { args, propCategory } from '../../../../stories/assets/storybook.globals
 import Rating, { IRatingProps } from './';
 import Label from '../Label';
 
-const icons = [Angry, Annoyed, Smile, Laugh, Meh];
-const primitive = ['G', 'e', 'n', 'e', 'U', 'I'];
+const icons = [Angry, Annoyed, Meh, Smile, Laugh];
+const primitive = ['A', 'B', 'C', 'D'];
 const meta: Meta<typeof Rating> = {
     title: 'Atoms/Rating',
     component: Rating,
     argTypes: {
         size: args({ control: 'select', ...propCategory.appearance }),
         defaultValue: args({ control: 'number', ...propCategory.appearance }),
-        value: args({ control: 'number', ...propCategory.appearance }),
+        value: args({ control: 'false', ...propCategory.appearance }),
         color: args({ control: 'color', ...propCategory.appearance }),
         bgColor: args({ control: 'color', ...propCategory.appearance }),
         count: args({ control: 'number', ...propCategory.appearance }),
@@ -62,6 +62,10 @@ const TemplateControlled: FC<IRatingProps> = ({ ...args }) => {
 export const Default = Template.bind({});
 
 export const Controlled = TemplateControlled.bind({});
+
+Controlled.argTypes = {
+    value: args({ control: 'number', ...propCategory.appearance })
+};
 
 export const WithCustomIcons = Template.bind({});
 
