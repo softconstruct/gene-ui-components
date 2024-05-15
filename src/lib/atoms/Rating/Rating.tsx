@@ -218,14 +218,14 @@ const Rating: FC<IRatingProps> = (props) => {
         setRegardingPosition((prev) => {
             if (e.key === 'ArrowRight') {
                 let add = prev + (halfAllow ? 50 : 100);
+
                 setHoveredValue((prev) => {
                     const isFull = (add / 100) % 1 === 0;
 
                     if (isFull) {
                         divRef.current?.[`${prev + 1}`]?.focus();
                     }
-
-                    return isFull ? prev + 1 : prev;
+                    return isFull ? prev + 1 : prev === 0 ? prev + 1 : prev;
                 });
                 if (add >= 100) {
                     add = 0;
