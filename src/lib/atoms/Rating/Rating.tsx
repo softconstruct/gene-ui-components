@@ -198,6 +198,8 @@ const Rating: FC<IRatingProps> = (props) => {
     const PrimitiveValue = (typeof character === 'string' || typeof character === 'number') && character;
 
     const keyDownHandler = (e: React.KeyboardEvent<HTMLDivElement>, currentRating: number) => {
+        if (readonly) return;
+
         if (e.key === 'Enter') {
             const state = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
 
