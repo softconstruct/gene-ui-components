@@ -8,63 +8,74 @@ import React, {
     useEffect,
     useLayoutEffect,
     useState,
-    JSX,
-    useRef
+    JSX
 } from 'react';
 import classNames from 'classnames';
 
 // Components
-import SvgStarIcon from './DefaultSvg';
+import SvgSquareIcon from './DefaultSvg';
 // Styles
 import './Rating.scss';
 
+const sizes = { small: 32, medium: 36, big: 42 };
+
 export interface IRatingProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
     /**
-     Default selected rating 
+     * The default rating value is selected when the component is first rendered.
      */
     defaultValue?: number;
 
     /**
-     * Selected rating
+     * The currently selected rating value. Use this to control the component from the outside.<br>
+     * If this prop is used the component will lose default behavior related to rating state.
      */
     value?: number;
 
     /**
-     Number how many elements need to be redrawn
-      */
-    count?: number;
-    /**
-     Function with which you can take a rating
+     * The number of rating elements to render.
      */
-    onChange?: (rating: number) => void;
+    count?: number;
+
     /**
-     Icon which we want to drawing
+     * The icon or character used to represent each rating element.<br>
+     * It can be a `React functional component`, `string`, `number`, or a `function` that returns a React node.<br>
+     * Possible values: `FC | string | number | ((i: number) => ReactNode)`
      */
     character?: FC | string | number | ((i: number) => ReactNode);
+
     /**
-     * Hover and selection color
+     * The color is used for the rating elements when hovered over or selected.
      */
     color?: string;
+
     /**
-     * Background color
+     * The background color of the rating elements.
      */
     bgColor?: string;
+
     /**
-     * Whether to allow semi selection
+     * Allows users to select half values in the rating component, enabling finer granularity.<br>
+     * For example, if `count` is 5, users can select 1, 1.5, 2, 2.5, and so on up to 5.
      */
     halfAllow?: boolean;
+
     /**
-     * Will make switcher readonly when set to "true"
+     * When set to `true`, the rating component becomes read-only, preventing any interaction.
      */
     readonly?: boolean;
+
     /**
-     * Rating size <br/>
+     * The size of the rating elements.<br>
      * Possible values: `small | medium | big`
      */
     size?: 'small' | 'medium' | 'big';
-}
 
-const sizes = { small: 32, medium: 36, big: 42 };
+    /**
+     * Callback function that is called when the rating value changes.<br>
+     * Receives the new rating value as an argument.
+     */
+    onChange?: (rating: number) => void;
+}
 
 const Element = ({ isIcon = false, Element, compareElement = false, color, bgColor, size }) => {
     const currentColor = compareElement ? color : bgColor;
@@ -72,7 +83,7 @@ const Element = ({ isIcon = false, Element, compareElement = false, color, bgCol
     const className = classNames('rating__icon', `s-${size}`);
 
     const currentSizes = {
-        width: '100%',
+        width: sizes[size],
         height: sizes[size]
     };
 
@@ -95,15 +106,16 @@ const Rating: FC<IRatingProps> = (props) => {
         defaultValue,
         count = 5,
         onChange,
-        character = SvgStarIcon,
-        color = '#1267cf',
-        bgColor = 'rgba(255,255,255,0.6)',
-        halfAllow = true,
+        character = SvgSquareIcon,
+        color = 'var(--hero)',
+        bgColor = 'rgba(var(--hero-rgb), 0.3)',
+        halfAllow = false,
         readonly = false,
         size = 'small',
         value,
         ...restProps
     } = props;
+
     const isControlled = 'value' in props;
     const isDefaultValueExist = 'defaultValue' in props;
     const isRTLMode = document.dir === 'rtl';
@@ -111,8 +123,8 @@ const Rating: FC<IRatingProps> = (props) => {
     const [rating, setRating] = useState(value || defaultValue || 0);
     const [hoveredValue, setHoveredValue] = useState(0);
     const [regardingPosition, setRegardingPosition] = useState(0);
-    const [residue, setResidue] = useState(0);
-    const [temporaryRatingValue, setTemporaryRatingValue] = useState(0);
+    const [remainingRating, setRemainingRating] = useState(0);
+    const [temporaryRating, setTemporaryRating] = useState(0);
     const [iconWidth, setIconWidth] = useState(0);
 
     const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, rating: number) => {
@@ -135,14 +147,14 @@ const Rating: FC<IRatingProps> = (props) => {
     useLayoutEffect(() => {
         const ratingDecimalParts = Math.round((rating % Math.floor(rating)) * 100);
         if (ratingDecimalParts !== 0) {
-            setResidue(ratingDecimalParts);
+            setRemainingRating(ratingDecimalParts);
         }
     }, [value, rating]);
 
     useEffect(() => {
         if (isControlled) {
             setRating(value!);
-            setTemporaryRatingValue(value!);
+            setTemporaryRating(value!);
         }
     }, [value]);
 
@@ -153,14 +165,14 @@ const Rating: FC<IRatingProps> = (props) => {
     const mouseLeaveHandler = () => {
         setHoveredValue(0);
         setRegardingPosition(0);
-        setRating(temporaryRatingValue);
+        setRating(temporaryRating);
     };
 
     const mouseLeaveHandlerForEveryElement = () => {
         setIconWidth(sizes[size]);
     };
 
-    const ratingController = (currentRating: number, state) => {
+    const ratingController = (currentRating: number, state: number) => {
         setIconWidth(sizes[size]);
         setHoveredValue(currentRating);
 
@@ -171,7 +183,7 @@ const Rating: FC<IRatingProps> = (props) => {
             return 0;
         };
 
-        setTemporaryRatingValue(getCurrentRateValue);
+        setTemporaryRating(getCurrentRateValue);
     };
 
     const getRating = (currentRating: number) => {
@@ -188,10 +200,10 @@ const Rating: FC<IRatingProps> = (props) => {
     };
 
     const mouseEnterHandler = () => {
-        setTemporaryRatingValue(rating);
+        setTemporaryRating(rating);
     };
 
-    const iconsToRender = count > 0 ? new Array(count).fill(undefined) : [];
+    const elementsList = count > 0 ? new Array(count).fill(undefined) : [];
 
     const PrimitiveValue = (typeof character === 'string' || typeof character === 'number') && character;
 
@@ -221,7 +233,7 @@ const Rating: FC<IRatingProps> = (props) => {
             onMouseEnter={mouseEnterHandler}
             onBlur={() => setHoveredValue(0)}
         >
-            {iconsToRender.map((_, i) => {
+            {elementsList.map((_, i) => {
                 const currentRating = i + 1;
                 const Icon =
                     typeof character === 'function' &&
@@ -238,7 +250,7 @@ const Rating: FC<IRatingProps> = (props) => {
                         : currentRating <= rating
                         ? '100%'
                         : currentRating === Math.ceil(rating)
-                        ? `${residue}%`
+                        ? `${remainingRating}%`
                         : 0;
 
                 return (

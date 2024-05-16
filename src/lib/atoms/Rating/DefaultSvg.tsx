@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-var SvgStarMajor = function SvgStarMajor(props) {
+function SvgSquareMajor(props) {
     return React.createElement(
         'svg',
         {
@@ -8,13 +8,18 @@ var SvgStarMajor = function SvgStarMajor(props) {
             width: 24,
             height: 24,
             viewBox: '0 0 24 24',
-            className: 'lucide lucide-star'
+            strokeLinecap: 'round',
+            strokeLinejoin: 'round'
         },
         props,
-        React.createElement('path', {
-            d: 'm12 2 3.09 6.26 6.91 1.01-5 4.87 1.18 6.88-6.18-3.25-6.18 3.25 1.18-6.88-5-4.87 6.91-1.01 3.09-6.26z'
+        React.createElement('rect', {
+            width: 18,
+            height: 18,
+            x: 3,
+            y: 3,
+            rx: 2
         })
     );
-};
+}
 
-export default SvgStarMajor;
+export default SvgSquareMajor;
