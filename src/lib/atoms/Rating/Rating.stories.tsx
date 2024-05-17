@@ -22,7 +22,7 @@ const meta: Meta<typeof Rating> = {
         bgColor: args({ control: 'color', ...propCategory.appearance }),
         count: args({ control: 'number', ...propCategory.appearance }),
         readonly: args({ control: 'boolean', ...propCategory.states }),
-        character: args({ control: 'false', ...propCategory.appearance }),
+        character: args({ control: 'text', ...propCategory.appearance }),
         halfAllow: args({ control: 'boolean', default: false, ...propCategory.states })
     },
     args: {
@@ -88,7 +88,7 @@ WithCustomIcons.args = {
         return <Icon />;
     },
     color: '#fadb13',
-    bgColor: '#ffffff'
+    bgColor: 'var(--background)'
 } as IRatingProps;
 
 export const WithCharacter = Template.bind({});
