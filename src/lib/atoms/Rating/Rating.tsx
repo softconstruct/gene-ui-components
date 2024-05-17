@@ -243,6 +243,7 @@ const Rating: FC<IRatingProps> = (props) => {
                 onChange?.(state);
                 return;
             }
+            setRegardingPosition(0);
             ratingController(currentRating + 1, state, false);
         }
     };
