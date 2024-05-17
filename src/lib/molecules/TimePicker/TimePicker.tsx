@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 
 // Helpers
@@ -139,9 +139,9 @@ const TimePicker: React.FC<ITimePickerProps> = ({
     className,
     disabled = false,
     readOnly = false,
-    screenType,
+    screenType = 'desktop',
     onBlur = noop,
-    positions = ['bottom', 'top', 'left', 'right'],
+    positions = ['bottom', 'top', 'left', 'right'] as ('bottom' | 'top' | 'left' | 'right')[],
     ...restProps
 }) => {
     const { isMobile } = useDeviceType(screenType);
@@ -177,11 +177,8 @@ const TimePicker: React.FC<ITimePickerProps> = ({
         return '';
     };
 
-    const checkHasError = useCallback(
-        (currentValue: string, format: string) =>
-            !currentValue || !checkFormatValidation(format, currentValue) || !checkRange(currentValue),
-        []
-    );
+    const checkHasError = (currentValue: string, format: string) =>
+        !currentValue || !checkFormatValidation(format, currentValue) || !checkRange(currentValue);
 
     const checkTimeValidation = (value: string, needToSetState = true) => {
         const hasError = checkHasError(value || hour, hourFormat);
