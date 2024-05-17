@@ -5,7 +5,7 @@ import yargs from 'yargs';
 
 import { rmSync } from 'fs';
 import { resolve } from 'path';
-import { execCommand, copyStaticFilesToDist, replaceCanaryVersionInDistPGK } from './utils';
+import { execCommand, copyStaticFilesToDist, replaceVersionInDistPGK } from './utils';
 
 // In case of true the build script should skip lint and semver steps
 const { pure: isBuildRunInPureMode } = yargs.option('pure', {
@@ -21,9 +21,16 @@ const { canary: canaryVersion } = yargs.option('canary', {
     default: null
 }).argv;
 
-// The commit SHA. It should be provided for canary versions only
+// The next version branch name. If provided package json file version will be replaced
+const { next: nextVersion } = yargs.option('next', {
+    describe: 'If --next argument is specified then package json version will be generated as next version.',
+    type: 'string',
+    default: null
+}).argv;
+
+// The commit SHA. It should be provided for canary and next versions only
 const { commitSHA } = yargs.option('commitSHA', {
-    describe: 'If --canary version is provided this argument should be provided too --commitSHA.',
+    describe: 'If --canary or --next versions is provided this argument should be provided too --commitSHA.',
     type: 'string',
     default: null
 }).argv;
@@ -45,8 +52,14 @@ const build = async () => {
 
         await copyStaticFilesToDist();
 
-        if (canaryVersion && commitSHA) {
-            await replaceCanaryVersionInDistPGK(canaryVersion, commitSHA);
+        if (commitSHA) {
+            if (canaryVersion) {
+                await replaceVersionInDistPGK(canaryVersion, commitSHA, 'canary');
+            }
+
+            if (nextVersion) {
+                await replaceVersionInDistPGK(nextVersion, commitSHA, 'next');
+            }
         }
     } catch (error) {
         return {
