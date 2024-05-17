@@ -7,7 +7,7 @@ import TimePickerPopover from './TimePickerPopover';
 describe('TimePicker Component', () => {
     let setup: ReactWrapper<ITimePickerProps>;
     beforeEach(() => {
-        setup = mount(<TimePicker positions={'top'} />, {
+        setup = mount(<TimePicker />, {
             wrappingComponent: GeneUIProvider
         });
     });
@@ -72,8 +72,8 @@ describe('TimePicker Component', () => {
         singleInput.simulate('click');
         const dropMinutes = wrapper.find('.time-picker-drop-minutes li');
         expect(dropMinutes.exists()).toBeTruthy();
-        const actualDropdropMinutesCount = dropMinutes.length;
-        expect(actualDropdropMinutesCount).toEqual(expectedListCount);
+        const actualDropMinutesCount = dropMinutes.length;
+        expect(actualDropMinutesCount).toEqual(expectedListCount);
     });
 
     it('renders with secondFormat prop', () => {
@@ -83,8 +83,8 @@ describe('TimePicker Component', () => {
         singleInput.simulate('click');
         const dropSeconds = wrapper.find('.time-picker-drop-seconds li');
         expect(dropSeconds.exists()).toBeTruthy();
-        const actualDropdropSecondsCount = dropSeconds.length;
-        expect(actualDropdropSecondsCount).toEqual(expectedListCount);
+        const actualDropSecondsCount = dropSeconds.length;
+        expect(actualDropSecondsCount).toEqual(expectedListCount);
     });
 
     it('renders with separator prop', () => {

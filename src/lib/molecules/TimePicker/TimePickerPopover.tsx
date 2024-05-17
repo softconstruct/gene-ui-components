@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, ReactNode } from 'react';
 
 // Helpers
+//@ts-ignore
 import { useKeyDown, useClickOutside } from 'hooks';
 
 // Components
@@ -13,8 +14,8 @@ interface ITimePickerPopover {
     toggleHandler: (open: boolean) => boolean | void;
     children: ReactNode;
     readOnly: boolean;
-    value: string | null;
-    positions: 'bottom' | 'top' | 'left' | 'right' | string[];
+    value: string;
+    positions: ('bottom' | 'top' | 'left' | 'right')[];
     Content: ReactNode;
 }
 
@@ -44,6 +45,7 @@ const TimePickerPopover = forwardRef<ChildRef | undefined, ITimePickerPopover>(
         }, [value]);
 
         return (
+            //@ts-ignore
             <Popover
                 contentRef={handleOutsideClick}
                 scrollbarNeeded={false}

@@ -6,7 +6,6 @@ import classnames from 'classnames';
 import { noop } from 'utils';
 // @ts-ignore
 import { useDeviceType } from 'hooks';
-
 // Components
 import Scrollbar from '../../atoms/Scrollbar';
 // @ts-ignore
@@ -20,7 +19,7 @@ import TimePickerPopover from './TimePickerPopover';
 // Styles
 import './TimePicker.scss';
 
-function generateTimeValues(format: string | string[], max: number) {
+function generateTimeValues(format: string, max: number) {
     const numbers: string[] = [];
     const formatLength = format.length;
 
@@ -31,32 +30,27 @@ function generateTimeValues(format: string | string[], max: number) {
     return numbers;
 }
 
-const checkFormatValidation = (format: string | string[] | undefined, value: string | undefined) =>
-    (format?.length === 1 && value?.length && value?.length <= 2 && value && Number(value[0]) !== 0) ||
-    (format?.length === 2 && value && value.length === 2);
+const checkFormatValidation = (format: string, value: string) =>
+    (format.length === 1 && value.length <= 2 && Number(value[0]) !== 0) || (format.length === 2 && value.length === 2);
 
-const checkHourRange = (value: string, format: string | string[]) => {
-    return value.length <= 2 && Array.isArray(format)
-        ? Number(value) < 12
-        : (isLongHour(format) && Number(value) < 24) || (isShortHour(format) && Number(value) < 12);
-};
+const checkHourRange = (value: string, format: string) =>
+    value.length <= 2 && ((isLongHour(format) && Number(value) < 24) || (isShortHour(format) && Number(value) < 12));
 
 const checkRange = (value: string) => value.length <= 2 && Number(value) < 60;
 
-const isLongHour = (str: string | string[]) => str === 'HH' || str === 'H';
-const isShortHour = (str: string | string[]) => str === 'hh' || str === 'h';
+const isLongHour = (str: string) => str === 'HH' || str === 'H';
+const isShortHour = (str: string) => str === 'hh' || str === 'h';
 
-function convertToFormat(value: string, format: string | string[] | undefined, notEmpty: boolean = true) {
+function convertToFormat(value: string, format: string, notEmpty: boolean = true) {
     if (!value && notEmpty) {
-        return format?.length === 1 ? '0' : '00';
+        return format.length === 1 ? '0' : '00';
     }
-    if (format?.length === 2 && value?.length === 1) {
+    if (format.length === 2 && value.length === 1) {
         return `0${value}`;
     }
-    if (format?.length === 1 && value?.length === 2) {
+    if (format.length === 1 && value.length === 2) {
         return Number(value).toString();
     }
-
     return value;
 }
 
@@ -72,19 +66,19 @@ interface ITimePickerProps {
     appearance?: 'multipleInputs' | 'singleInput';
     /**
      * Format for hour field <br>
-     * Possible values: `'HH' | 'H' | 'hh' | 'h' | ['HH', 'H', 'hh', 'h']`
+     * Possible values: `'HH' | 'H' | 'hh' | 'h'`
      */
-    hourFormat?: 'HH' | 'H' | 'hh' | 'h' | string[];
+    hourFormat?: 'HH' | 'H' | 'hh' | 'h';
     /**
      * Format for hour field <br>
-     * Possible values: `'mm' | 'm' | ['mm' | 'm']`
+     * Possible values: `'mm' | 'm'`
      */
-    minuteFormat?: 'mm' | 'm' | string[];
+    minuteFormat?: 'mm' | 'm';
     /**
      * Format for hour field <br>
-     * Possible values: `'ss' | 's' | ['ss' | 's']`
+     * Possible values: `'ss' | 's'`
      */
-    secondFormat?: 'ss' | 's' | string[];
+    secondFormat?: 'ss' | 's';
     /**
      * Time field separator
      */
@@ -126,7 +120,7 @@ interface ITimePickerProps {
      * default is ['bottom', 'top', 'left', 'right']
      * if you'd like, you can limit the positions ['top', 'left']
      */
-    positions: 'bottom' | 'top' | 'left' | 'right' | string[];
+    positions?: ('bottom' | 'top' | 'left' | 'right')[];
 }
 
 export interface ChildRef {
@@ -147,7 +141,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
     readOnly = false,
     screenType,
     onBlur = noop,
-    positions,
+    positions = ['bottom', 'top', 'left', 'right'],
     ...restProps
 }) => {
     const { isMobile } = useDeviceType(screenType);
@@ -163,6 +157,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
     const [minutePopupValue, setMinutePopupValue] = useState('');
     const [secondPopupValue, setSecondPopupValue] = useState('');
     const childRef = useRef<ChildRef | undefined>();
+
     const numberRegExp = () => {
         const numberRegExpString = `[^0-9${separator}]`;
         return new RegExp(numberRegExpString, 'g');
@@ -183,7 +178,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
     };
 
     const checkHasError = useCallback(
-        (currentValue: string, format: string | string[]) =>
+        (currentValue: string, format: string) =>
             !currentValue || !checkFormatValidation(format, currentValue) || !checkRange(currentValue),
         []
     );
@@ -299,10 +294,10 @@ const TimePicker: React.FC<ITimePickerProps> = ({
             setMinutePopupValue(value);
         }
 
-        const [combinedHour, combinedMinute, combinedSecond] = time.split(separator);
-        setHour(combinedHour);
-        setMinute(combinedMinute);
-        showSeconds && setSecond(combinedSecond);
+        const [changedHour, changedMinute, changedSecond] = time.split(separator);
+        setHour(changedHour);
+        setMinute(changedMinute);
+        showSeconds && setSecond(changedSecond);
 
         setInputValue(time);
         handleChange(e, time);
@@ -314,10 +309,9 @@ const TimePicker: React.FC<ITimePickerProps> = ({
         }
         const { value } = e.target;
 
-        let replacedValue = value.replace(numberRegExp(), '');
-        const timeParts = replacedValue.split(separator);
-
-        const [replacedHour, replacedMinute, replacedSecond] = timeParts;
+        const replacedValue: string = value.replace(numberRegExp(), '');
+        const timeParts: string[] = replacedValue.split(separator);
+        const [splitHour, splitMinute, splitSecond] = timeParts;
 
         const lastChar = replacedValue[replacedValue.length - 1];
         const preLastChar = replacedValue[replacedValue.length - 2];
@@ -336,50 +330,52 @@ const TimePicker: React.FC<ITimePickerProps> = ({
 
         if (typeof timeParts[showSeconds ? 3 : 2] !== 'undefined') return;
 
-        if (timeParts.some((item: string) => item.length > 2)) return;
+        if (timeParts.some((item) => item.length > 2)) return;
 
-        if (typeof replacedHour !== 'undefined') {
-            if (Array.isArray(hourFormat)) {
-                if (+replacedHour > 11) {
-                    let tempValue = replacedValue.split(separator);
-                    tempValue[0] = hour;
-                    replacedValue = tempValue.join(separator);
-                }
+        let outOfRange = false;
+
+        splitHour && setHour(splitHour);
+        minute && setMinute(minute);
+        showSeconds && second && setSecond(second);
+
+        if (typeof splitHour !== 'undefined') {
+            const isInRange = checkHourRange(splitHour, hourFormat);
+
+            if (isInRange) {
+                setHour(splitHour);
             } else {
-                if (isShortHour(hourFormat)) {
-                    if (+replacedHour > 11) {
-                        let tempValue = replacedValue.split(separator);
-                        tempValue[0] = hour;
-                        replacedValue = tempValue.join(separator);
-                    }
-                } else {
-                    if (+replacedHour > 23) {
-                        let tempValue = replacedValue.split(separator);
-                        tempValue[0] = hour;
-                        replacedValue = tempValue.join(separator);
-                    }
-                }
+                outOfRange = true;
             }
         }
 
-        if (typeof replacedMinute !== 'undefined' && +replacedMinute > 59) {
-            let tempValue = replacedValue.split(separator);
-            tempValue[1] = minute;
-            replacedValue = tempValue.join(separator);
+        if (typeof splitMinute !== 'undefined') {
+            const isInRange = checkRange(splitMinute);
+
+            if (isInRange) {
+                setMinute(splitMinute);
+            } else {
+                outOfRange = true;
+            }
         }
 
-        if (showSeconds && typeof replacedSecond !== 'undefined' && +replacedSecond > 59) {
-            let tempValue = replacedValue.split(separator);
-            tempValue[2] = second;
-            replacedValue = tempValue.join(separator);
+        if (showSeconds && typeof splitSecond !== 'undefined') {
+            const isInRange = checkRange(splitSecond);
+
+            if (isInRange) {
+                setSecond(splitSecond);
+            } else {
+                outOfRange = true;
+            }
         }
 
-        !checkTimeValidation(replacedHour, false) && setHourFieldError(false);
-        !checkMinuteValidation(replacedMinute, false) && setMinuteFieldError(false);
-        (!showSeconds || !checkSecondValidation(replacedSecond, false)) && setSecondFieldError(false);
+        !checkTimeValidation(splitHour, false) && setHourFieldError(false);
+        !checkMinuteValidation(splitMinute, false) && setMinuteFieldError(false);
+        (!showSeconds || !checkSecondValidation(splitSecond, false)) && setSecondFieldError(false);
 
-        setInputValue(replacedValue);
-        onChange(e);
+        if (!outOfRange) {
+            setInputValue(replacedValue);
+            onChange(e);
+        }
     };
 
     useEffect(() => {
@@ -393,28 +389,26 @@ const TimePicker: React.FC<ITimePickerProps> = ({
         }
     }, [value, separator, showSeconds]);
 
-    const timeDropDown = (numbers: string[], active: string, key: string) => {
-        return (
-            <div className="time-picker-drop">
-                {/* @ts-ignore */}
-                <Scrollbar autoHeight autoHeightMax={200} size="small">
-                    <ul>
-                        {numbers.map((i: string) => (
-                            <li
-                                onClick={(e) => handleChangeFromPopup(e, i, key)}
-                                key={i}
-                                className={classnames({
-                                    active: i === active
-                                })}
-                            >
-                                <span>{i}</span>
-                            </li>
-                        ))}
-                    </ul>
-                </Scrollbar>
-            </div>
-        );
-    };
+    const timeDropDown = (numbers: string[], active: string, key: string) => (
+        <div className="time-picker-drop">
+            {/* @ts-ignore */}
+            <Scrollbar autoHeight autoHeightMax={200} size="small">
+                <ul>
+                    {numbers.map((i) => (
+                        <li
+                            onClick={(e) => handleChangeFromPopup(e, i, key)}
+                            key={i}
+                            className={classnames({
+                                active: i === active
+                            })}
+                        >
+                            <span>{i}</span>
+                        </li>
+                    ))}
+                </ul>
+            </Scrollbar>
+        </div>
+    );
 
     const hours = timeDropDown(generateTimeValues(hourFormat, isLongHour(hourFormat) ? 23 : 11), hour, 'hour');
 
@@ -507,7 +501,6 @@ const TimePicker: React.FC<ITimePickerProps> = ({
                         <span>{separator}</span>
                     </li>
                     <li className="shrink-auto">
-                        {/* @ts-ignore */}
                         <TimePickerPopover
                             toggleHandler={handleMinutePopover}
                             value={minutePopupValue}

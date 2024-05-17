@@ -16,16 +16,16 @@ const meta: Meta<typeof TimePicker> = {
         onBlur: args({ control: false, ...propCategory.action }),
         value: args({ control: 'text', ...propCategory.content }),
         onChange: args({ control: false, ...propCategory.action }),
-        className: args({ control: false, ...propCategory.others }),
-        separator: args({ control: 'text', ...propCategory.content }),
+        className: args({ control: false, ...propCategory.appearance }),
+        separator: args({ control: 'text', ...propCategory.appearance }),
         disabled: args({ control: 'boolean', ...propCategory.states }),
         readOnly: args({ control: 'boolean', ...propCategory.states }),
-        showSeconds: args({ control: 'boolean', ...propCategory.states }),
-        screenTypes: args({ control: false, ...propCategory.states }),
-        secondFormat: args({ control: 'select', ...propCategory.states }),
-        minuteFormat: args({ control: 'select', ...propCategory.states }),
+        showSeconds: args({ control: 'boolean', ...propCategory.appearance }),
+        screenTypes: args({ control: false, ...propCategory.appearance }),
+        secondFormat: args({ control: 'select', ...propCategory.appearance }),
+        minuteFormat: args({ control: 'select', ...propCategory.appearance }),
         screenType: args({ control: 'select', ...propCategory.appearance }),
-        hourFormat: args({ control: 'select', ...propCategory.states }),
+        hourFormat: args({ control: 'select', ...propCategory.appearance }),
         appearance: args({ control: 'select', ...propCategory.appearance })
     },
     args: {
@@ -35,10 +35,10 @@ const meta: Meta<typeof TimePicker> = {
         disabled: false,
         readOnly: false,
         showSeconds: true,
-        minuteFormat: ['mm', 'm'],
-        secondFormat: ['ss', 's'],
+        minuteFormat: 'mm',
+        secondFormat: 'ss',
         screenType: screenTypes[0],
-        hourFormat: ['HH', 'H', 'hh', 'h'],
+        hourFormat: 'hh',
         appearance: timePickerConfig.appearance[1]
     } as ITimePickerProps
 };
