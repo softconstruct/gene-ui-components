@@ -44,13 +44,12 @@ const TemplateControlled: FC<IRatingProps> = ({ ...args }) => {
 
     const onChangeHandler = (value: number) => {
         setRecallState(Math.ceil(value));
-
-        setRating(value);
+        setRating((prev) => (prev === value ? 0 : value));
     };
 
     return (
         <div>
-            <Rating {...args} onChange={onChangeHandler} value={rating} />
+            <Rating {...args} onChange={onChangeHandler} />
             {/* @ts-ignore */}
             <Label size={'headingBig'}>
                 {recallState && recall[recallState - 1 > recall.length - 1 ? recall.length - 1 : recallState - 1]}

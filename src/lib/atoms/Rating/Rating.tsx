@@ -8,12 +8,14 @@ import React, {
     useEffect,
     useLayoutEffect,
     useState,
-    JSX
+    JSX,
+    KeyboardEvent
 } from 'react';
 import classNames from 'classnames';
 
 // Components
 import SvgSquareIcon from './DefaultSvg';
+
 // Styles
 import './Rating.scss';
 
@@ -77,7 +79,16 @@ export interface IRatingProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onCh
     onChange?: (rating: number) => void;
 }
 
-const Element = ({ isIcon = false, Element, compareElement = false, color, bgColor, size }) => {
+interface IElementProps {
+    isIcon?: boolean;
+    Element: JSX.Element | string | number;
+    compareElement?: boolean;
+    color: string;
+    bgColor: string;
+    size: string;
+}
+
+const Element: FC<IElementProps> = ({ isIcon = false, Element, compareElement = false, color, bgColor, size }) => {
     const currentColor = compareElement ? color : bgColor;
 
     const className = classNames('rating__icon', `s-${size}`);
@@ -90,7 +101,7 @@ const Element = ({ isIcon = false, Element, compareElement = false, color, bgCol
     const elementProps = { fill: currentColor, ...currentSizes, style: { color: currentColor, ...currentSizes } };
 
     return isIcon ? (
-        cloneElement(Element, {
+        cloneElement(Element as JSX.Element, {
             ...elementProps,
             className
         })
@@ -103,7 +114,7 @@ const Element = ({ isIcon = false, Element, compareElement = false, color, bgCol
 
 const Rating: FC<IRatingProps> = (props) => {
     const {
-        defaultValue,
+        defaultValue = 0,
         count = 5,
         onChange,
         character = SvgSquareIcon,
@@ -113,6 +124,7 @@ const Rating: FC<IRatingProps> = (props) => {
         readonly = false,
         size = 'small',
         value,
+
         ...restProps
     } = props;
 
@@ -125,73 +137,88 @@ const Rating: FC<IRatingProps> = (props) => {
     const [regardingPosition, setRegardingPosition] = useState(0);
     const [remainingRating, setRemainingRating] = useState(0);
     const [temporaryRating, setTemporaryRating] = useState(0);
-    const [iconWidth, setIconWidth] = useState(0);
-
-    const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, rating: number) => {
-        if (readonly) return;
-        setHoveredValue(rating);
+    const [disableMouseMovie, setDisableMouseMovie] = useState(false);
+    const [temporaryRegardingPosition, setTemporaryRegardingPosition] = useState(0);
+    const calculateRegardingPosition = (e: MouseEvent<HTMLElement>) => {
         const getClientPosition =
             e.clientX -
             (isRTLMode ? e.currentTarget.offsetLeft + e.currentTarget.clientWidth : e.currentTarget.offsetLeft);
         const getRelativeWidth = Math.abs((getClientPosition / e.currentTarget.offsetWidth) * 100);
-        setRegardingPosition(halfAllow ? (getRelativeWidth <= 50 ? 50 : 100) : 100);
-        setRating(0);
+
+        return getRelativeWidth <= 50 ? 50 : 100;
+    };
+
+    const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, currentRating: number) => {
+        if (readonly) return;
+        const regradingPosition = calculateRegardingPosition(e);
+
+        setTemporaryRegardingPosition(regradingPosition);
+
+        if (disableMouseMovie) return;
+        setRegardingPosition(regradingPosition);
+
+        setHoveredValue(currentRating);
+        setRating(currentRating);
     };
 
     useLayoutEffect(() => {
         if (isDefaultValueExist && !isControlled) {
-            setRating(defaultValue!);
+            const currentValue = defaultValue || 0;
+            setRating(currentValue);
+            setTemporaryRating(currentValue);
         }
     }, [isDefaultValueExist, defaultValue]);
 
     useLayoutEffect(() => {
         const ratingDecimalParts = Math.round((rating % Math.floor(rating)) * 100);
+
         if (ratingDecimalParts !== 0) {
             setRemainingRating(ratingDecimalParts);
         }
-    }, [value, rating]);
+
+        if (rating < 1) {
+            setRemainingRating(Math.ceil(rating * 100));
+        }
+    }, [rating]);
 
     useEffect(() => {
         if (isControlled) {
-            setRating(value!);
-            setTemporaryRating(value!);
+            const currentValue = value || 0;
+            setRating(currentValue);
+            setTemporaryRating(currentValue);
         }
-    }, [value]);
+    }, [value, isControlled]);
 
     useEffect(() => {
-        setIconWidth(sizes[size]);
-    }, [count, size]);
+        setRegardingPosition(temporaryRegardingPosition);
+    }, [temporaryRegardingPosition]);
 
     const mouseLeaveHandler = () => {
         setHoveredValue(0);
         setRegardingPosition(0);
+        setDisableMouseMovie(false);
         setRating(temporaryRating);
     };
 
-    const mouseLeaveHandlerForEveryElement = () => {
-        setIconWidth(sizes[size]);
-    };
-
-    const ratingController = (currentRating: number, state: number) => {
-        setIconWidth(sizes[size]);
+    const ratingController = (currentRating: number, state: number, blockMouseMovie = true) => {
         setHoveredValue(currentRating);
-
-        const getCurrentRateValue = (prev: number) => {
+        setTemporaryRating((prev: number) => {
             if (state !== prev) return state;
-            setHoveredValue(0);
-            setIconWidth(0);
-            return 0;
-        };
 
-        setTemporaryRating(getCurrentRateValue);
+            setHoveredValue(defaultValue);
+            setRating(defaultValue);
+            setDisableMouseMovie(blockMouseMovie);
+            return defaultValue;
+        });
     };
 
-    const getRating = (currentRating: number) => {
+    const getRating = (e: MouseEvent<HTMLDivElement>, currentRating: number) => {
         if (readonly) return;
-
+        setRegardingPosition(calculateRegardingPosition(e));
         const state = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
-
         if (isControlled) {
+            setHoveredValue(defaultValue);
+            setDisableMouseMovie(true);
             onChange?.(state);
             return;
         }
@@ -203,26 +230,25 @@ const Rating: FC<IRatingProps> = (props) => {
         setTemporaryRating(rating);
     };
 
-    const elementsList = count > 0 ? new Array(count).fill(undefined) : [];
+    const elementsList = Math.round(count) > 0 ? new Array(count).fill(undefined) : [];
 
     const PrimitiveValue = (typeof character === 'string' || typeof character === 'number') && character;
 
-    const keyDownHandler = (e: React.KeyboardEvent<HTMLDivElement>, currentRating: number) => {
+    const keyDownHandler = (e: KeyboardEvent<HTMLDivElement>, currentRating: number) => {
         if (readonly) return;
 
         if (e.key === 'Enter') {
             const state = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
-
             if (isControlled) {
-                setHoveredValue(currentRating + 1);
                 onChange?.(state);
                 return;
             }
-
-            setRating(state);
-            ratingController(currentRating, state);
-            setHoveredValue(currentRating + 1);
+            ratingController(currentRating + 1, state, false);
         }
+    };
+
+    const mouseLeaveHandlerForEveryElement = () => {
+        setDisableMouseMovie(false);
     };
 
     return (
@@ -231,7 +257,7 @@ const Rating: FC<IRatingProps> = (props) => {
             className="rating"
             onMouseLeave={mouseLeaveHandler}
             onMouseEnter={mouseEnterHandler}
-            onBlur={() => setHoveredValue(0)}
+            onBlur={() => setDisableMouseMovie(false)}
         >
             {elementsList.map((_, i) => {
                 const currentRating = i + 1;
@@ -239,65 +265,63 @@ const Rating: FC<IRatingProps> = (props) => {
                     typeof character === 'function' &&
                     isValidElement(character(i)) &&
                     (character(i) as JSX.Element).type
-                        ? character(i)
+                        ? (character(i) as JSX.Element)
                         : null;
 
                 const calculateWidth =
                     currentRating < hoveredValue
-                        ? '100%'
+                        ? 100
                         : hoveredValue === currentRating
-                        ? `${regardingPosition}%`
+                        ? regardingPosition
                         : currentRating <= rating
-                        ? '100%'
+                        ? 100
                         : currentRating === Math.ceil(rating)
-                        ? `${remainingRating}%`
+                        ? remainingRating
                         : 0;
+
+                const clipPath = isRTLMode
+                    ? `polygon(${100 - calculateWidth}% 0, 100% 0, 100% 100%, ${100 - calculateWidth}% 100%)`
+                    : `polygon( 0  0, ${calculateWidth}% 0,  ${calculateWidth}% 100%,0  100%)`;
 
                 return (
                     <div
-                        className={classNames('rating__wrapper', `s-${size}`)}
+                        className={classNames('rating__wrapper', `s-${size}`, { 'rating__wrapper-readonly': readonly })}
                         onMouseMove={(e) => handleMouseMoveForElement(e, currentRating)}
                         onMouseLeave={mouseLeaveHandlerForEveryElement}
                         onKeyDown={(e) => keyDownHandler(e, currentRating)}
+                        onClick={(e) => getRating(e, currentRating)}
+                        tabIndex={0}
                         key={i}
                     >
+                        {Icon && <Element color={color} bgColor={bgColor} size={size} Element={Icon} isIcon />}
+                        {PrimitiveValue && (
+                            <Element color={color} bgColor={bgColor} size={size} Element={PrimitiveValue} />
+                        )}
                         <div
-                            tabIndex={0}
-                            className={classNames('rating__content', { 'rating__content-readonly': readonly })}
-                            onClick={() => getRating(currentRating)}
+                            className="rating__element"
+                            style={{
+                                clipPath
+                            }}
                         >
-                            {Icon && <Element color={color} bgColor={bgColor} size={size} Element={Icon} isIcon />}
-                            {PrimitiveValue && (
-                                <Element color={color} bgColor={bgColor} size={size} Element={PrimitiveValue} />
+                            {Icon && (
+                                <Element
+                                    Element={Icon}
+                                    isIcon
+                                    compareElement
+                                    color={color}
+                                    bgColor={bgColor}
+                                    size={size}
+                                />
                             )}
-                            <div
-                                className="rating__element"
-                                style={{
-                                    width: calculateWidth
-                                }}
-                            >
-                                <div style={{ width: `${iconWidth}px`, height: '100%' }}>
-                                    {Icon && (
-                                        <Element
-                                            Element={Icon}
-                                            isIcon
-                                            compareElement
-                                            color={color}
-                                            bgColor={bgColor}
-                                            size={size}
-                                        />
-                                    )}
-                                    {PrimitiveValue && (
-                                        <Element
-                                            Element={PrimitiveValue}
-                                            color={color}
-                                            bgColor={bgColor}
-                                            size={size}
-                                            compareElement
-                                        />
-                                    )}
-                                </div>
-                            </div>
+                            {PrimitiveValue && (
+                                <Element
+                                    Element={PrimitiveValue}
+                                    color={color}
+                                    bgColor={bgColor}
+                                    size={size}
+                                    compareElement
+                                />
+                            )}
                         </div>
                     </div>
                 );

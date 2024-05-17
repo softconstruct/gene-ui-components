@@ -14,6 +14,22 @@
         height: fit-content;
         display: flex;
         justify-content: center;
+        position: relative;
+        width: 100%;
+        transition: transform 0.1s ease-in;
+
+        &:hover:not(.rating__wrapper-readonly) {
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+
+        &-readonly {
+            pointer-events: none;
+        }
+
+        &:focus-visible {
+            outline: 0.2rem solid var(--hero);
+        }
 
         &:not(:first-child) {
             &.s-small {
@@ -30,31 +46,13 @@
         }
     }
 
-    &__content {
-        position: relative;
-        width: 100%;
-        transition: transform 0.1s ease-in;
-
-        &:hover:not(.rating__content-readonly) {
-            transform: scale(1.1);
-            cursor: pointer;
-        }
-
-        &-readonly {
-            pointer-events: none;
-        }
-
-        &:focus-visible {
-            outline: 0.2rem solid var(--hero);
-        }
-    }
-
     &__element {
         position: absolute;
         top: 0;
         overflow: hidden;
         height: 100%;
         z-index: 7;
+        width: 100%;
 
         &:dir(rtl) {
             right: 0;
