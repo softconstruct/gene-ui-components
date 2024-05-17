@@ -145,7 +145,7 @@ const Rating: FC<IRatingProps> = (props) => {
             (isRTLMode ? e.currentTarget.offsetLeft + e.currentTarget.clientWidth : e.currentTarget.offsetLeft);
         const getRelativeWidth = Math.abs((getClientPosition / e.currentTarget.offsetWidth) * 100);
 
-        return getRelativeWidth <= 50 ? 50 : 100;
+        return halfAllow ? (getRelativeWidth <= 50 ? 50 : 100) : 100;
     };
 
     const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, currentRating: number) => {
