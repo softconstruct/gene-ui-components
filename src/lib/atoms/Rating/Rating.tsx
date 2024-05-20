@@ -161,19 +161,18 @@ const Rating: FC<IRatingProps> = (props) => {
     };
 
     useLayoutEffect(() => {
-        const ratingDecimalParts = Math.round((currentValue % Math.floor(rating)) * 100);
-
         if (isControlled || isDefaultValueExist) {
             setRating(currentValue);
             setTemporaryRating(currentValue);
         }
+        const ratingDecimalParts = Math.round((currentValue % Math.floor(currentValue)) * 100);
 
-        if (ratingDecimalParts !== 0) {
+        if (ratingDecimalParts > 0) {
             setRemainingRating(ratingDecimalParts);
         }
 
         if (currentValue < 1) {
-            setRemainingRating(Math.ceil(rating * 100));
+            setRemainingRating(Math.ceil(currentValue * 100));
         }
     }, [defaultValue, isDefaultValueExist, value, isControlled, currentValue]);
 
