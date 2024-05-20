@@ -24,7 +24,8 @@ module.exports = {
         '^wrappers$': '<rootDir>/src/wrappers/',
         '^configs$': '<rootDir>/src/configs.js',
         '^hooks$': '<rootDir>/src/hooks/',
-        '^components$': '<rootDir>/src/index.ts'
+        '^components$': '<rootDir>/src/index.ts',
+        d3: '<rootDir>/node_modules/d3/dist/d3.min.js'
     },
     setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
     testMatch: ['**/?(*.)+(test).tsx'], // TODO add .ts also for helpers

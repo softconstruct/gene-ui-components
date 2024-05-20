@@ -34,7 +34,7 @@ module.exports = {
     typescript: {
         reactDocgen: 'react-docgen-typescript-plugin'
     },
-    webpackFinal: async (config) => {
+    webpackFinal: async (config, options) => {
         const aliasPaths = {
             src: '../src/',
             utils: '../src/utils',
@@ -59,6 +59,8 @@ module.exports = {
             babelrc: true,
             configFile: './.storybook/.babelrc'
         };
+
+        options.cache.set = () => Promise.resolve();
 
         return config;
     },

@@ -1,0 +1,218 @@
+@import 'src/assets/styles/variables';
+
+.charts__map-chart {
+    position: relative;
+    height: 100%;
+    background-color: var(--background);
+    display: flex;
+    flex-direction: column;
+
+    .canvas-wrapper {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        flex: 1;
+        min-height: 1px;
+
+        canvas {
+            max-width: 100%;
+            height: 100%;
+        }
+    }
+
+    .chart-selected-title {
+        display: flex;
+        justify-content: center;
+        position: absolute;
+        color: c(hero);
+        top: rem(20);
+        z-index: 1;
+
+        span {
+            box-shadow: 0 rem(2) rem(4) 0 rgba(60, 64, 67, 10%);
+            background-color: #fff;
+            height: rem(44);
+            border-radius: rem(22);
+            font-size: rem(15);
+            line-height: rem(44);
+            padding: 0 rem(20);
+        }
+    }
+
+    .chart__title-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: rem(20) 0;
+    }
+
+    .chart__legends {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: rem(18);
+        margin: rem(30) 0;
+        flex-wrap: wrap;
+        width: 100%;
+
+        .legend__button {
+            display: flex;
+            align-items: center;
+            gap: rem(10);
+            cursor: pointer;
+
+            .legend__circle {
+                display: block;
+                border-radius: 100%;
+                width: rem(10);
+                height: rem(10);
+            }
+        }
+
+        .disabled {
+            opacity: 0.5;
+
+            &:hover {
+                opacity: 1;
+            }
+        }
+    }
+
+    .chart__activity-table {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        &.active {
+            .view-activity {
+                .icon {
+                    transform: rotate(270deg);
+                }
+            }
+
+            .chart-activity-data {
+                transform: translateY(0);
+            }
+        }
+
+        .chart-activity-data {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            height: 100%;
+            transform: translateY(100%);
+            overflow: hidden;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+
+            .chart-activity-title {
+                display: inline-flex;
+                justify-content: center;
+                flex-direction: column;
+                color: rgba(60, 64, 67, 80%);
+                text-align: center;
+                cursor: pointer;
+                padding-top: rem(10);
+
+                span {
+                    font-size: rem(22);
+                    color: #3c4043;
+                }
+
+                .icon {
+                    height: rem(25);
+                    transform: rotate(-90deg);
+                }
+            }
+        }
+
+        .view-activity {
+            display: inline-flex;
+            justify-content: center;
+            flex-direction: column;
+            color: rgba(60, 64, 67, 80%);
+            text-align: center;
+            position: relative;
+            top: -rem(5);
+            cursor: pointer;
+
+            span {
+                font-size: rem(15);
+            }
+
+            .icon {
+                height: rem(25);
+                transform: rotate(90deg);
+            }
+        }
+    }
+
+    .chart__activity-box {
+        width: rem(240);
+        height: rem(240);
+        padding: rem(10);
+        border-radius: rem(4);
+        color: white;
+        background-color: rgba(0, 0, 0, 70%);
+        position: absolute;
+        right: rem(70);
+        top: rem(30);
+        pointer-events: none;
+        opacity: 0;
+        transition: 0.4s;
+        font-weight: 600;
+        text-align: center;
+
+        &.active {
+            opacity: 1;
+        }
+
+        .headline {
+            line-height: 1.36;
+        }
+
+        .content {
+            height: calc(100% - 36px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    .actions__box {
+        position: absolute;
+        z-index: 10;
+        right: rem(28);
+        top: rem(28);
+
+        .zoom-button {
+            cursor: pointer;
+            width: rem(28);
+            height: rem(28);
+            margin-bottom: rem(10);
+            border-radius: 100%;
+            background-color: rgba(0, 0, 0, 60%);
+            color: rgba(255, 255, 255, 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                background-color: rgba(0, 0, 0, 80%);
+            }
+
+            &.disabled {
+                pointer-events: none;
+                background-color: rgba(0, 0, 0, 20%);
+            }
+
+            .icon {
+                font-size: 2rem;
+            }
+        }
+    }
+}

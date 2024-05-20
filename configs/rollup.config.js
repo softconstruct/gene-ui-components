@@ -26,7 +26,8 @@ const TSComponentsList = [
     'Divider',
     'ImagePreview',
     'Button',
-    'Image'
+    'Image',
+    'MapChartD3'
 ];
 
 const getInputs = (name, dir) => {
