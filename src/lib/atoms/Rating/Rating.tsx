@@ -21,8 +21,8 @@ import './Rating.scss';
 
 const sizes = { small: 32, medium: 36, big: 42 };
 
-export interface IRatingProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChange'> {
-    /**
+export interface IRatingProps {
+    /*
      * The default rating value is selected when the component is first rendered.
      */
     defaultValue?: number;
@@ -98,7 +98,11 @@ const Element: FC<IElementProps> = ({ isIcon = false, Element, compareElement = 
         height: sizes[size]
     };
 
-    const elementProps = { fill: currentColor, ...currentSizes, style: { color: currentColor, ...currentSizes } };
+    const elementProps = {
+        fill: currentColor,
+        ...currentSizes,
+        style: { color: currentColor, ...currentSizes }
+    };
 
     return isIcon ? (
         cloneElement(Element as JSX.Element, {
@@ -124,21 +128,20 @@ const Rating: FC<IRatingProps> = (props) => {
         readonly = false,
         size = 'small',
         value,
-
         ...restProps
     } = props;
 
     const isControlled = 'value' in props;
-    const isDefaultValueExist = 'defaultValue' in props;
     const isRTLMode = document.dir === 'rtl';
+    const currentValue = value || defaultValue || 0;
 
-    const [rating, setRating] = useState(value || defaultValue || 0);
+    const [rating, setRating] = useState(currentValue);
     const [hoveredValue, setHoveredValue] = useState(0);
     const [regardingPosition, setRegardingPosition] = useState(0);
     const [remainingRating, setRemainingRating] = useState(0);
     const [temporaryRating, setTemporaryRating] = useState(0);
     const [disableMouseMovie, setDisableMouseMovie] = useState(false);
-    const [temporaryRegardingPosition, setTemporaryRegardingPosition] = useState(0);
+
     const calculateRegardingPosition = (e: MouseEvent<HTMLElement>) => {
         const getClientPosition =
             e.clientX -
@@ -147,29 +150,19 @@ const Rating: FC<IRatingProps> = (props) => {
 
         return halfAllow ? (getRelativeWidth <= 50 ? 50 : 100) : 100;
     };
-
     const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, currentRating: number) => {
         if (readonly) return;
         const regradingPosition = calculateRegardingPosition(e);
 
-        setTemporaryRegardingPosition(regradingPosition);
+        setRegardingPosition(regradingPosition);
 
         if (disableMouseMovie) return;
-        setRegardingPosition(regradingPosition);
 
         setHoveredValue(currentRating);
         setRating(currentRating);
     };
 
-    useLayoutEffect(() => {
-        if (isDefaultValueExist && !isControlled) {
-            const currentValue = defaultValue || 0;
-            setRating(currentValue);
-            setTemporaryRating(currentValue);
-        }
-    }, [isDefaultValueExist, defaultValue]);
-
-    useLayoutEffect(() => {
+    useEffect(() => {
         const ratingDecimalParts = Math.round((rating % Math.floor(rating)) * 100);
 
         if (ratingDecimalParts !== 0) {
@@ -181,17 +174,12 @@ const Rating: FC<IRatingProps> = (props) => {
         }
     }, [rating]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (isControlled) {
-            const currentValue = value || 0;
             setRating(currentValue);
             setTemporaryRating(currentValue);
         }
-    }, [value, isControlled]);
-
-    useEffect(() => {
-        setRegardingPosition(temporaryRegardingPosition);
-    }, [temporaryRegardingPosition]);
+    }, [defaultValue, value, isControlled, currentValue]);
 
     const mouseLeaveHandler = () => {
         setHoveredValue(0);
@@ -202,6 +190,7 @@ const Rating: FC<IRatingProps> = (props) => {
 
     const ratingController = (currentRating: number, state: number, blockMouseMovie = true) => {
         setHoveredValue(currentRating);
+        setRating(0);
         setTemporaryRating((prev: number) => {
             if (state !== prev) return state;
 
@@ -217,8 +206,9 @@ const Rating: FC<IRatingProps> = (props) => {
         setRegardingPosition(calculateRegardingPosition(e));
         const state = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
         if (isControlled) {
-            setHoveredValue(defaultValue);
+            setHoveredValue(0);
             setDisableMouseMovie(true);
+
             onChange?.(state);
             return;
         }
@@ -238,13 +228,16 @@ const Rating: FC<IRatingProps> = (props) => {
         if (readonly) return;
 
         if (e.key === 'Enter') {
-            const state = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
             if (isControlled) {
-                onChange?.(state);
+                setHoveredValue(currentRating);
+                setRegardingPosition(100);
+                onChange?.(currentRating);
+
                 return;
             }
+
             setRegardingPosition(0);
-            ratingController(currentRating + 1, state, false);
+            ratingController(currentRating + 1, currentRating, false);
         }
     };
 
@@ -283,10 +276,11 @@ const Rating: FC<IRatingProps> = (props) => {
                 const clipPath = isRTLMode
                     ? `polygon(${100 - calculateWidth}% 0, 100% 0, 100% 100%, ${100 - calculateWidth}% 100%)`
                     : `polygon( 0  0, ${calculateWidth}% 0,  ${calculateWidth}% 100%,0  100%)`;
-
                 return (
                     <div
-                        className={classNames('rating__wrapper', `s-${size}`, { 'rating__wrapper-readonly': readonly })}
+                        className={classNames('rating__wrapper', `s-${size}`, {
+                            'rating__wrapper-readonly': readonly
+                        })}
                         onMouseMove={(e) => handleMouseMoveForElement(e, currentRating)}
                         onMouseLeave={mouseLeaveHandlerForEveryElement}
                         onKeyDown={(e) => keyDownHandler(e, currentRating)}
