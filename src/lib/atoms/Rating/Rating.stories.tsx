@@ -4,7 +4,7 @@ import { Angry, Annoyed, Smile, Laugh, Meh, Star, Circle } from 'lucide-react';
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
-import Rating, { IRatingProps } from './';
+import Rating, { IRatingProps } from '.';
 import Label from '../Label';
 
 const icons = [Angry, Annoyed, Meh, Smile, Laugh];
@@ -44,12 +44,12 @@ const TemplateControlled: FC<IRatingProps> = ({ ...args }) => {
 
     const onChangeHandler = (value: number) => {
         setRecallState(Math.ceil(value));
-        setRating((prev) => (prev === value ? 0 : value));
+        setRating((prev) => (prev === value ? 2 : value));
     };
 
     return (
         <div>
-            <Rating {...args} onChange={onChangeHandler} />
+            <Rating {...args} onChange={onChangeHandler} value={rating} />
             {/* @ts-ignore */}
             <Label size={'headingBig'}>
                 {recallState && recall[recallState - 1 > recall.length - 1 ? recall.length - 1 : recallState - 1]}

@@ -1,11 +1,9 @@
 import React, {
     FC,
-    HTMLAttributes,
     MouseEvent,
     ReactNode,
     cloneElement,
     isValidElement,
-    useEffect,
     useLayoutEffect,
     useState,
     JSX,
@@ -132,6 +130,8 @@ const Rating: FC<IRatingProps> = (props) => {
     } = props;
 
     const isControlled = 'value' in props;
+    const isDefaultValueExist = 'defaultValue' in props;
+
     const isRTLMode = document.dir === 'rtl';
     const currentValue = value || defaultValue || 0;
 
@@ -153,33 +153,29 @@ const Rating: FC<IRatingProps> = (props) => {
     const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, currentRating: number) => {
         if (readonly) return;
         const regradingPosition = calculateRegardingPosition(e);
-
         setRegardingPosition(regradingPosition);
-
         if (disableMouseMovie) return;
 
         setHoveredValue(currentRating);
         setRating(currentRating);
     };
 
-    useEffect(() => {
-        const ratingDecimalParts = Math.round((rating % Math.floor(rating)) * 100);
+    useLayoutEffect(() => {
+        const ratingDecimalParts = Math.round((currentValue % Math.floor(rating)) * 100);
+
+        if (isControlled || isDefaultValueExist) {
+            setRating(currentValue);
+            setTemporaryRating(currentValue);
+        }
 
         if (ratingDecimalParts !== 0) {
             setRemainingRating(ratingDecimalParts);
         }
 
-        if (rating < 1) {
+        if (currentValue < 1) {
             setRemainingRating(Math.ceil(rating * 100));
         }
-    }, [rating]);
-
-    useLayoutEffect(() => {
-        if (isControlled) {
-            setRating(currentValue);
-            setTemporaryRating(currentValue);
-        }
-    }, [defaultValue, value, isControlled, currentValue]);
+    }, [defaultValue, isDefaultValueExist, value, isControlled, currentValue]);
 
     const mouseLeaveHandler = () => {
         setHoveredValue(0);
@@ -193,8 +189,7 @@ const Rating: FC<IRatingProps> = (props) => {
         setRating(0);
         setTemporaryRating((prev: number) => {
             if (state !== prev) return state;
-
-            setHoveredValue(defaultValue);
+            setHoveredValue(0);
             setRating(defaultValue);
             setDisableMouseMovie(blockMouseMovie);
             return defaultValue;
@@ -206,9 +201,9 @@ const Rating: FC<IRatingProps> = (props) => {
         setRegardingPosition(calculateRegardingPosition(e));
         const state = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
         if (isControlled) {
-            setHoveredValue(0);
             setDisableMouseMovie(true);
-
+            setHoveredValue(0);
+            setRating(state);
             onChange?.(state);
             return;
         }
@@ -229,7 +224,6 @@ const Rating: FC<IRatingProps> = (props) => {
 
         if (e.key === 'Enter') {
             if (isControlled) {
-                setHoveredValue(currentRating);
                 setRegardingPosition(100);
                 onChange?.(currentRating);
 
