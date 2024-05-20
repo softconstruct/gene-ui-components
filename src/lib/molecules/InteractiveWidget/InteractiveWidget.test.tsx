@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 
 // Components
 import InteractiveWidget, { IInteractiveWidgetProps } from './index';
-import { GeneUIProvider, Switcher, Tag } from '../../../index';
+import Switcher from '../../atoms/Switcher';
+import Tag from '../Tag';
+import GeneUIProvider from '../../../lib/providers/GeneUIProvider';
 
 describe('InteractiveWidget', () => {
     let setup: ReactWrapper<IInteractiveWidgetProps>;
@@ -60,7 +62,7 @@ describe('InteractiveWidget', () => {
     });
 
     it.each<IInteractiveWidgetProps['appearance']>(['default', 'compact'])(
-        'renders appearance %s prop correctly',
+        'renders appearance prop %s',
         (appearance) => {
             const wrapper = setup.setProps({
                 appearance
@@ -87,27 +89,32 @@ describe('InteractiveWidget', () => {
     it('calls tagName prop when clicked', () => {
         const tagName = 'tagName';
         const wrapper = setup.setProps({ tagName });
-
-        expect((wrapper.find(Tag).props() as React.ComponentProps<typeof Tag>).name).toStrictEqual(tagName);
+        // @ts-ignore
+        expect(wrapper.find(Tag).props().name).toStrictEqual(tagName);
     });
 
     it('calls tagColor prop when clicked', () => {
         const tagColor = '#ffffff';
         const wrapper = setup.setProps({ tagColor, tagName: 'tagName' });
-        expect((wrapper.find(Tag).props() as React.ComponentProps<typeof Tag>).color).toStrictEqual(tagColor);
+        //@ts-ignore
+        expect(wrapper.find(Tag).props().color).toStrictEqual(tagColor);
     });
 
     it('calls switcherProps prop when clicked', () => {
-        const wrapper = setup.setProps({ switcherProps: { label: 'label' } as React.ComponentProps<typeof Switcher> });
-
-        expect((wrapper.find(Switcher).props() as React.ComponentProps<typeof Switcher>).label).toStrictEqual('label');
+        const wrapper = setup.setProps({
+            switcherProps: { label: 'label' } as IInteractiveWidgetProps['switcherProps']
+        });
+        //@ts-ignore
+        expect(wrapper.find(Switcher).props().label).toStrictEqual('label');
     });
 
     it('calls onClick prop when clicked', () => {
-        const onClickMock = jest.fn();
-        const wrapper = setup.setProps({ onClick: onClickMock });
-        wrapper.simulate('click');
+        const onClick = jest.fn();
+        const event = { currentTarget: { innerHTML: 'click' } } as MouseEvent<HTMLDivElement>;
+        const wrapper = setup.setProps({ onClick });
 
-        expect(onClickMock).toHaveBeenCalled();
+        wrapper.find('.interactiveWidget').props().onClick!(event);
+
+        expect(onClick).toHaveBeenCalledWith(event);
     });
 });

@@ -1,27 +1,33 @@
-import React, { FC, HTMLAttributes, MouseEvent, KeyboardEvent, useRef, ReactNode } from 'react';
+import React, { FC, MouseEvent, KeyboardEvent, useRef, ReactNode } from 'react';
 import classNames from 'classnames';
 
-//Components
-import { Switcher, Tag, Tooltip, Icon } from '../../../index';
+// Components
 import InteractiveWidgetIcon from './InteractiveWidgetIcon';
+import Switcher from '../../atoms/Switcher';
+import Icon from '../../atoms/Icon';
+import Tag from '../Tag';
+import Tooltip from '../Tooltip';
 
-//Hooks
-import { useEllipsisDetection } from '../../../hooks';
+// Types
+import { IHTMLDivElementAttributes } from '../../../types';
+
+// Hooks
+import { useEllipsisDetection } from 'hooks';
 
 // Styles
 import './InteractiveWidget.scss';
 
-interface IInteractiveWidgetProps extends HTMLAttributes<HTMLDivElement> {
+interface IInteractiveWidgetProps extends IHTMLDivElementAttributes {
     /**
      * Show/Hide border.
      */
     withBorder?: boolean;
     /**
-     * Additional className.
+     * Additional className will be applied on the wrapper element.
      */
     className?: string;
     /**
-     * Fires an event on Panel click `((event: Event) => void)`.
+     * Fires an event on Widget click `((event: Event) => void)`.
      */
     onClick?: (event: MouseEvent | KeyboardEvent) => void;
     /**
@@ -32,14 +38,14 @@ interface IInteractiveWidgetProps extends HTMLAttributes<HTMLDivElement> {
      * The `icon` prop determines the representation of an icon within the component.
      * It can be a string, such as a URL for an SVG image, or a React component for example <Icon> component.
      */
-    icon?: string | ReactNode;
+    icon?: ReactNode;
     /**
      * This property controls the size of the icon, influencing the appearance of the component.<br>
      * Possible values: `'default' | 'compact'`
      */
     appearance?: 'default' | 'compact';
     /**
-     * The `iconColor` prop determines the color of the icon in the component.
+     * The prop determines the color of the icon in the component.
      * It should be a string representing a valid CSS color value.
      */
     iconColor?: string;
@@ -49,7 +55,7 @@ interface IInteractiveWidgetProps extends HTMLAttributes<HTMLDivElement> {
      */
     tagName?: string;
     /**
-     * color for tag.
+     * Color value for tag component.
      */
     tagColor?: string;
     /**
@@ -71,7 +77,7 @@ interface IInteractiveWidgetProps extends HTMLAttributes<HTMLDivElement> {
      */
     description?: string;
     /**
-     * icon background for default appearance.
+     * Icon background color for default appearance.
      */
     iconBackground?: boolean;
 }
@@ -84,7 +90,7 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
     icon,
     title,
     appearance = 'default',
-    iconColor,
+    iconColor = 'var(--background-sc)',
     tagName,
     tagColor,
     switcherProps,
@@ -109,9 +115,12 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
                 },
                 className
             )}
-            {...(!disabled && onClick ? { onClick: (event: MouseEvent<HTMLDivElement>) => onClick(event) } : {})}
             tabIndex={0}
+            onClick={(event: MouseEvent<HTMLDivElement>) => {
+                onClick && onClick(event);
+            }}
             onKeyDown={(event: KeyboardEvent<HTMLDivElement>) => {
+                if (disabled) return;
                 onClick && onClick(event);
             }}
             {...restProps}
@@ -125,7 +134,7 @@ const InteractiveWidget: FC<IInteractiveWidgetProps> = ({
                         iconBackground={iconBackground}
                     />
                 )}
-                <div className={classNames('interactiveWidget__content')}>
+                <div className={'interactiveWidget__content'}>
                     <div className={`interactiveWidget__header interactiveWidget__header-${appearance}`}>
                         {icon && appearance === 'compact' && (
                             <InteractiveWidgetIcon children={icon} appearance={appearance} iconColor={iconColor} />

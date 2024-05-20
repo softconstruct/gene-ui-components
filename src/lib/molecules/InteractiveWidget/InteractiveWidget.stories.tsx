@@ -6,7 +6,7 @@ import { args, propCategory } from '../../../../stories/assets/storybook.globals
 
 // Components
 import InteractiveWidget, { IInteractiveWidgetProps } from './index';
-import { Switcher } from '../../../index';
+import Switcher from '../../atoms/Switcher';
 
 const meta: Meta<typeof InteractiveWidget> = {
     title: 'Molecules/InteractiveWidget',
@@ -30,7 +30,7 @@ const meta: Meta<typeof InteractiveWidget> = {
     },
     args: {
         title: 'Interactive Widget',
-        iconColor: '#15ab1b',
+        iconColor: 'var(--danger)',
         description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
         titleInfo: 'additional info for title'
     } as IInteractiveWidgetProps
@@ -91,6 +91,6 @@ Compact.args = {
     withBorder: false,
     switcherProps: {},
     onClick: undefined
-};
+} as IInteractiveWidgetProps;
 
 export const Group = ListTemplate.bind({});

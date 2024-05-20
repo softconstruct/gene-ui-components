@@ -1,11 +1,10 @@
-import React, { CSSProperties, FC } from 'react';
+import React, { CSSProperties, FC, PropsWithChildren } from 'react';
 import classNames from 'classnames';
 
-//components
-import { Icon } from '../../../index';
+//Components
+import Icon from '../../atoms/Icon';
 
-interface IInteractiveWidgetIconProps {
-    children?: string | React.ReactNode;
+interface IInteractiveWidgetIconProps extends PropsWithChildren {
     appearance?: 'default' | 'compact';
     iconColor?: string;
     iconBackground?: boolean;
@@ -13,7 +12,7 @@ interface IInteractiveWidgetIconProps {
 
 const InteractiveWidgetIcon: FC<IInteractiveWidgetIconProps> = ({
     children,
-    iconColor = '#000000',
+    iconColor,
     appearance,
     iconBackground
 }) => {
