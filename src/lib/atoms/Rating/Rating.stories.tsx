@@ -16,8 +16,8 @@ const meta: Meta<typeof Rating> = {
     component: Rating,
     argTypes: {
         size: args({ control: 'select', defaultValue: 'small', ...propCategory.appearance }),
-        defaultValue: args({ control: 'number', defaultValue: 0, ...propCategory.appearance }),
-        value: args({ control: 'false', ...propCategory.appearance }),
+        defaultValue: args({ control: 'number', defaultValue: 0, ...propCategory.content }),
+        value: args({ control: 'false', ...propCategory.content }),
         color: args({ control: 'color', defaultValue: 'var(--hero)', ...propCategory.appearance }),
         bgColor: args({ control: 'color', defaultValue: 'rgba(var(--hero-rgb), 0.3)', ...propCategory.appearance }),
         count: args({ control: 'number', defaultValue: 5, ...propCategory.appearance }),
