@@ -15,15 +15,15 @@ const meta: Meta<typeof Rating> = {
     title: 'Atoms/Rating',
     component: Rating,
     argTypes: {
-        size: args({ control: 'select', ...propCategory.appearance }),
-        defaultValue: args({ control: 'number', ...propCategory.appearance }),
+        size: args({ control: 'select', defaultValue: 'small', ...propCategory.appearance }),
+        defaultValue: args({ control: 'number', defaultValue: 0, ...propCategory.appearance }),
         value: args({ control: 'false', ...propCategory.appearance }),
-        color: args({ control: 'color', ...propCategory.appearance }),
-        bgColor: args({ control: 'color', ...propCategory.appearance }),
-        count: args({ control: 'number', ...propCategory.appearance }),
-        readonly: args({ control: 'boolean', ...propCategory.states }),
-        character: args({ control: 'text', ...propCategory.appearance }),
-        halfAllow: args({ control: 'boolean', default: false, ...propCategory.states })
+        color: args({ control: 'color', defaultValue: 'var(--hero)', ...propCategory.appearance }),
+        bgColor: args({ control: 'color', defaultValue: 'rgba(var(--hero-rgb), 0.3)', ...propCategory.appearance }),
+        count: args({ control: 'number', defaultValue: 5, ...propCategory.appearance }),
+        readonly: args({ control: 'boolean', defaultValue: false, ...propCategory.states }),
+        character: args({ control: 'text', defaultValue: `SvgSquareIcon`, ...propCategory.appearance }),
+        halfAllow: args({ control: 'boolean', defaultValue: false, ...propCategory.states })
     },
     args: {
         count: 5,
