@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { FC, useState, useEffect, useRef, ChangeEvent, FocusEvent, MouseEvent as ReactMouseEvent } from 'react';
 import classnames from 'classnames';
 
 // Helpers
@@ -87,12 +87,12 @@ interface ITimePickerProps {
      * Fires an event when field is changed
      * `((event: SyntheticEvent) => void)`.
      */
-    onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     /**
      * Fires an event when field is blurred
      * `((date: Date, event: SyntheticEvent) => void)`.
      */
-    onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+    onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
     /**
      * Additional classname
      */
@@ -124,10 +124,10 @@ interface ITimePickerProps {
 }
 
 export interface ChildRef {
-    toggleOpen: () => void;
+    toggleOpen: (isOpen?: boolean) => void;
 }
 
-const TimePicker: React.FC<ITimePickerProps> = ({
+const TimePicker: FC<ITimePickerProps> = ({
     value,
     onChange = noop,
     showSeconds = true,
@@ -156,7 +156,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
     const [hourPopupValue, setHourPopupValue] = useState('');
     const [minutePopupValue, setMinutePopupValue] = useState('');
     const [secondPopupValue, setSecondPopupValue] = useState('');
-    const childRef = useRef<ChildRef | undefined>();
+    const childRef = useRef<ChildRef>();
 
     const numberRegExp = () => {
         const numberRegExpString = `[^0-9${separator}]`;
@@ -220,7 +220,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
     };
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLLIElement, MouseEvent>,
+        e: ChangeEvent<HTMLInputElement> | ReactMouseEvent<HTMLLIElement, MouseEvent>,
         value: string
     ) => {
         const changedEvent = {
@@ -233,7 +233,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
         onChange(changedEvent);
     };
 
-    const handleHourChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleHourChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
 
         const isInRange = checkHourRange(value, hourFormat);
@@ -246,7 +246,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
         }
     };
 
-    const handleMinuteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleMinuteChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
 
         const isInRange = checkRange(value);
@@ -260,7 +260,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
         }
     };
 
-    const handleSecondChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleSecondChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
 
         const isInRange = checkRange(value);
@@ -274,7 +274,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
         }
     };
 
-    const handleChangeFromPopup = (e: React.MouseEvent<HTMLLIElement, MouseEvent>, value: string, key: string) => {
+    const handleChangeFromPopup = (e: ReactMouseEvent<HTMLLIElement, MouseEvent>, value: string, key: string) => {
         let time: string;
 
         if (key === 'second') {
@@ -300,7 +300,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
         handleChange(e, time);
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target) {
             return;
         }
@@ -376,6 +376,12 @@ const TimePicker: React.FC<ITimePickerProps> = ({
     };
 
     useEffect(() => {
+        if ((disabled || readOnly) && childRef.current) {
+            childRef.current.toggleOpen(true);
+        }
+    }, [disabled, readOnly]);
+
+    useEffect(() => {
         if (!inputValue) return;
 
         const [splitHour, splitMinute, splitSecond] = inputValue.split(separator);
@@ -420,7 +426,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
 
     const seconds = timeDropDown(generateTimeValues(secondFormat, 59), second, 'second');
 
-    const handleInputBlur = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputBlur = (event: ChangeEvent<HTMLInputElement>) => {
         const {
             currentTarget: { value }
         } = event;
@@ -441,7 +447,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
         showSeconds && splitSecond && setSecond(splitSecond);
     };
 
-    const handleMultiInputBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    const handleMultiInputBlur = (event: FocusEvent<HTMLInputElement>) => {
         const formattedHour = convertToFormat(hour, hourFormat);
         const formattedMinute = convertToFormat(minute, minuteFormat);
         const formattedSecond = convertToFormat(second, secondFormat);

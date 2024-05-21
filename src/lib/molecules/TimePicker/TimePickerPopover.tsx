@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, ReactNode } from 'react';
+import React, { useState, useRef, useEffect, forwardRef, useImperativeHandle, ReactNode, MouseEvent } from 'react';
 
 // Helpers
 //@ts-ignore
@@ -25,8 +25,8 @@ const TimePickerPopover = forwardRef<ChildRef | undefined, ITimePickerPopover>(
         const [isOpen, setIsOpen] = useState(false);
 
         useImperativeHandle(ref, () => ({
-            toggleOpen() {
-                setIsOpen(!isOpen);
+            toggleOpen(isPopoverOpen: boolean = isOpen) {
+                setIsOpen(!isPopoverOpen);
             }
         }));
 
@@ -36,8 +36,8 @@ const TimePickerPopover = forwardRef<ChildRef | undefined, ITimePickerPopover>(
         useKeyDown(openPopover, [openPopover], rootRef, ['Enter']);
         useKeyDown(closePopover, [closePopover], rootRef, ['Tab', 'Escape']);
 
-        const handleOutsideClick = useClickOutside((event: MouseEvent) => {
-            !rootRef.current?.contains(event.target as Node) && closePopover();
+        const handleOutsideClick = useClickOutside((event: MouseEvent<HTMLElement>) => {
+            !rootRef.current?.contains(event.target as HTMLElement) && closePopover();
         });
 
         useEffect(() => {

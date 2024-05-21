@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 
 //Components
@@ -38,7 +38,7 @@ describe('TimePicker Component', () => {
         const onChange = jest.fn();
         const value = '10:34:52';
         const wrapper = setup.setProps({ onChange, appearance: 'singleInput', value });
-        const event = { currentTarget: { value: 'time-picker-single-input' } } as React.ChangeEvent<HTMLInputElement>;
+        const event = { currentTarget: { value: 'time-picker-single-input' } } as ChangeEvent<HTMLInputElement>;
         wrapper.find(ExtendedInput).get(0).props.onBlur(event);
         expect(onChange).toHaveBeenCalled();
     });
@@ -112,7 +112,7 @@ describe('TimePicker Component', () => {
     });
 
     it('renders with positions prop', () => {
-        const positions = ['bottom', 'top', 'left', 'right'] as ('bottom' | 'top' | 'left' | 'right')[];
+        const positions: ITimePickerProps['positions'] = ['bottom', 'top', 'left', 'right'];
         const wrapper = setup.setProps({ positions, appearance: 'singleInput' });
 
         wrapper.find(TimePickerPopover).get(0).props.positions;
@@ -124,7 +124,7 @@ describe('TimePicker Component', () => {
         const onBlur = jest.fn();
         const value = '10:34:52';
         const wrapper = setup.setProps({ onBlur, appearance: 'singleInput', value });
-        const event = { currentTarget: { value: 'time-picker-single-input' } } as React.ChangeEvent<HTMLInputElement>;
+        const event = { currentTarget: { value: 'time-picker-single-input' } } as ChangeEvent<HTMLInputElement>;
         wrapper.find(ExtendedInput).get(0).props.onBlur(event);
 
         expect(onBlur).toHaveBeenCalled();
