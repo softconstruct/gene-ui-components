@@ -33,7 +33,7 @@ const meta: Meta<typeof Rating> = {
 export default meta;
 
 const Template: FC<IRatingProps> = ({ ...args }) => {
-    return <Rating {...args} onChange={undefined} />;
+    return <Rating {...args} />;
 };
 
 const TemplateControlled: FC<IRatingProps> = ({ ...args }) => {

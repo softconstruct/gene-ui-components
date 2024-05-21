@@ -7,7 +7,7 @@
     display: flex;
 
     * > svg {
-        color: unset !important;
+        color: unset;
     }
 
     &__wrapper {
@@ -18,7 +18,7 @@
         width: 100%;
         transition: transform 0.1s ease-in;
 
-        &:hover:not(.rating__wrapper-readonly) {
+        &:hover {
             transform: scale(1.1);
             cursor: pointer;
         }
@@ -28,21 +28,19 @@
         }
 
         &:focus-visible {
-            outline: 0.2rem solid var(--hero);
+            outline: rem(0.2) solid var(--hero);
         }
 
-        &:not(:first-child) {
-            &.s-small {
-                margin-inline-start: 4px;
-            }
+        &-small:not(:first-child) {
+            margin-inline-start: rem(4);
+        }
 
-            &.s-medium {
-                margin-inline-start: 8px;
-            }
+        &-medium:not(:first-child) {
+            margin-inline-start: rem(8);
+        }
 
-            &.s-big {
-                margin-inline-start: 12px;
-            }
+        &-big:not(:first-child) {
+            margin-inline-start: rem(12);
         }
     }
 
@@ -53,27 +51,20 @@
         height: 100%;
         z-index: 7;
         width: 100%;
-
-        &:dir(rtl) {
-            right: 0;
-        }
-
-        &:dir(ltr) {
-            left: 0;
-        }
+        inset-inline-start: 0;
     }
 
     &__icon {
-        &.s-small {
-            font-size: #{rem(32)};
+        &-small {
+            font-size: rem(32);
         }
 
-        &.s-medium {
-            font-size: #{rem(36)};
+        &-medium {
+            font-size: rem(36);
         }
 
-        &.s-big {
-            font-size: #{rem(42)};
+        &-big {
+            font-size: rem(42);
         }
     }
 }

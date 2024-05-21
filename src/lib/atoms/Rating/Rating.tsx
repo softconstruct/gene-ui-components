@@ -80,16 +80,16 @@ export interface IRatingProps {
 interface IElementProps {
     isIcon?: boolean;
     Element: JSX.Element | string | number;
-    compareElement?: boolean;
+    isCompareElement?: boolean;
     color: string;
     bgColor: string;
     size: string;
 }
 
-const Element: FC<IElementProps> = ({ isIcon = false, Element, compareElement = false, color, bgColor, size }) => {
-    const currentColor = compareElement ? color : bgColor;
+const Element: FC<IElementProps> = ({ isIcon = false, Element, isCompareElement = false, color, bgColor, size }) => {
+    const currentColor = isCompareElement ? color : bgColor;
 
-    const className = classNames('rating__icon', `s-${size}`);
+    const className = `rating__icon rating__icon-${size}`;
 
     const currentSizes = {
         width: sizes[size],
@@ -113,6 +113,8 @@ const Element: FC<IElementProps> = ({ isIcon = false, Element, compareElement = 
         </div>
     );
 };
+
+const calculatePosition = (position: number) => (position - Math.floor(position)) * 100;
 
 const Rating: FC<IRatingProps> = (props) => {
     const {
@@ -140,7 +142,7 @@ const Rating: FC<IRatingProps> = (props) => {
     const [regardingPosition, setRegardingPosition] = useState(0);
     const [remainingRating, setRemainingRating] = useState(0);
     const [temporaryRating, setTemporaryRating] = useState(0);
-    const [disableMouseMovie, setDisableMouseMovie] = useState(false);
+    const [disableMouseMove, setDisableMouseMove] = useState(false);
 
     const calculateRegardingPosition = (e: MouseEvent<HTMLElement>) => {
         const getClientPosition =
@@ -148,14 +150,13 @@ const Rating: FC<IRatingProps> = (props) => {
             (isRTLMode ? e.currentTarget.offsetLeft + e.currentTarget.clientWidth : e.currentTarget.offsetLeft);
         const getRelativeWidth = Math.abs((getClientPosition / e.currentTarget.offsetWidth) * 100);
 
-        return halfAllow ? (getRelativeWidth <= 50 ? 50 : 100) : 100;
+        return halfAllow && getRelativeWidth <= 50 ? 50 : 100;
     };
     const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, currentRating: number) => {
         if (readonly) return;
         const regradingPosition = calculateRegardingPosition(e);
         setRegardingPosition(regradingPosition);
-        if (disableMouseMovie) return;
-
+        if (disableMouseMove) return;
         setHoveredValue(currentRating);
         setRating(currentRating);
     };
@@ -179,35 +180,36 @@ const Rating: FC<IRatingProps> = (props) => {
     const mouseLeaveHandler = () => {
         setHoveredValue(0);
         setRegardingPosition(0);
-        setDisableMouseMovie(false);
+        setDisableMouseMove(false);
         setRating(temporaryRating);
     };
 
     const ratingController = (currentRating: number, state: number, blockMouseMovie = true) => {
         setHoveredValue(currentRating);
         setRating(0);
+        setRemainingRating(calculatePosition(state));
         setTemporaryRating((prev: number) => {
             if (state !== prev) return state;
             setHoveredValue(0);
-            setRating(defaultValue);
-            setDisableMouseMovie(blockMouseMovie);
-            return defaultValue;
+            setRating(currentValue);
+            setDisableMouseMove(blockMouseMovie);
+            return currentValue;
         });
     };
 
     const getRating = (e: MouseEvent<HTMLDivElement>, currentRating: number) => {
         if (readonly) return;
         setRegardingPosition(calculateRegardingPosition(e));
-        const state = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
+        const selected = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
         if (isControlled) {
-            setDisableMouseMovie(true);
+            setDisableMouseMove(true);
             setHoveredValue(0);
-            setRating(state);
-            onChange?.(state);
+            setRating(selected);
+            onChange?.(selected);
             return;
         }
 
-        ratingController(currentRating, state);
+        ratingController(currentRating, selected);
     };
 
     const mouseEnterHandler = () => {
@@ -235,7 +237,7 @@ const Rating: FC<IRatingProps> = (props) => {
     };
 
     const mouseLeaveHandlerForEveryElement = () => {
-        setDisableMouseMovie(false);
+        setDisableMouseMove(false);
     };
 
     return (
@@ -244,7 +246,7 @@ const Rating: FC<IRatingProps> = (props) => {
             className="rating"
             onMouseLeave={mouseLeaveHandler}
             onMouseEnter={mouseEnterHandler}
-            onBlur={() => setDisableMouseMovie(false)}
+            onBlur={() => setDisableMouseMove(false)}
         >
             {elementsList.map((_, i) => {
                 const currentRating = i + 1;
@@ -255,23 +257,26 @@ const Rating: FC<IRatingProps> = (props) => {
                         ? (character(i) as JSX.Element)
                         : null;
 
-                const calculateWidth =
-                    currentRating < hoveredValue
-                        ? 100
-                        : hoveredValue === currentRating
-                        ? regardingPosition
-                        : currentRating <= rating
-                        ? 100
-                        : currentRating === Math.ceil(rating)
-                        ? remainingRating
-                        : 0;
+                let calculatedWidthFor = 0;
+
+                if (currentRating < hoveredValue) {
+                    calculatedWidthFor = 100;
+                } else if (hoveredValue === currentRating) {
+                    calculatedWidthFor = regardingPosition;
+                } else if (currentRating <= rating) {
+                    calculatedWidthFor = 100;
+                } else if (currentRating === Math.ceil(rating)) {
+                    calculatedWidthFor = remainingRating;
+                } else {
+                    calculatedWidthFor = 0;
+                }
 
                 const clipPath = isRTLMode
-                    ? `polygon(${100 - calculateWidth}% 0, 100% 0, 100% 100%, ${100 - calculateWidth}% 100%)`
-                    : `polygon( 0  0, ${calculateWidth}% 0,  ${calculateWidth}% 100%,0  100%)`;
+                    ? `polygon(${100 - calculatedWidthFor}% 0, 100% 0, 100% 100%, ${100 - calculatedWidthFor}% 100%)`
+                    : `polygon( 0  0, ${calculatedWidthFor}% 0,  ${calculatedWidthFor}% 100%,0  100%)`;
                 return (
                     <div
-                        className={classNames('rating__wrapper', `s-${size}`, {
+                        className={classNames('rating__wrapper', `rating__wrapper-${size}`, {
                             'rating__wrapper-readonly': readonly
                         })}
                         onMouseMove={(e) => handleMouseMoveForElement(e, currentRating)}
@@ -295,7 +300,7 @@ const Rating: FC<IRatingProps> = (props) => {
                                 <Element
                                     Element={Icon}
                                     isIcon
-                                    compareElement
+                                    isCompareElement
                                     color={color}
                                     bgColor={bgColor}
                                     size={size}
@@ -307,7 +312,7 @@ const Rating: FC<IRatingProps> = (props) => {
                                     color={color}
                                     bgColor={bgColor}
                                     size={size}
-                                    compareElement
+                                    isCompareElement
                                 />
                             )}
                         </div>
