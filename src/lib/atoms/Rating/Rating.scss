@@ -7,7 +7,7 @@
     display: flex;
 
     * > svg {
-        color: unset;
+        color: unset !important;
     }
 
     &__wrapper {
