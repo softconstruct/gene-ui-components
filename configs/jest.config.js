@@ -25,6 +25,7 @@ module.exports = {
         '^configs$': '<rootDir>/src/configs.js',
         '^hooks$': '<rootDir>/src/hooks/',
         '^components$': '<rootDir>/src/index.ts',
+        '^__data__$': '<rootDir>/stories/__data__/index.ts',
         d3: '<rootDir>/node_modules/d3/dist/d3.min.js'
     },
     setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],

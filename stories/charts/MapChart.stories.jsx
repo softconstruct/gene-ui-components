@@ -3,9 +3,7 @@ import React from 'react';
 import MapChartComponent from 'src/lib/molecules/Charts/MapChart/index';
 
 import { args, category } from '../assets/storybook.globals';
-import data from './Map/data';
-import testData from './Map/regionData';
-import worldMapData from './Map/woldMapData';
+import { testData as data, regionData as testData, worldMapData } from '__data__';
 
 const regionData = [
     ['am-er', 12],

@@ -1,19 +1,14 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import data from './../../../../../stories/charts/Map/woldMapData';
 
 //Components
-import MapChartD3 from '.';
+import MapChartD3, { IMapChartD3Props } from '.';
 import GeneUIProvider from '../../../providers/GeneUIProvider';
+import { BusyLoader, Empty } from '../../../../index';
 
-//Types
-import { IMapChartD3Props } from '.';
-import { MapChartFeature } from './MapChartD3';
-import { BusyLoader, Empty, Popover } from '../../../../index';
-
-const tooltipRenderer: (activeFeature: MapChartFeature) => ReactElement = (activeFeature) => (
-    <div style={{ padding: '7px 14px' }}>{activeFeature.properties.name}</div>
-);
+//Data
+// @ts-ignore
+import { regionData as data } from '__data__';
 
 const colorAxis = {
     dataClasses: [
@@ -46,10 +41,6 @@ const colorAxis = {
 
 describe('D3 Map chart', () => {
     let setup: ReactWrapper<IMapChartD3Props>;
-    const setState = jest.fn();
-
-    let jestSpy = jest.spyOn(React, 'useState');
-    jestSpy.mockImplementation((init) => [init, setState]);
 
     beforeEach(() => {
         setup = mount(<MapChartD3 mapData={data} isLoading={false} />, { wrappingComponent: GeneUIProvider });
@@ -115,16 +106,15 @@ describe('D3 Map chart', () => {
     it('renders with withNavigation props', () => {
         const withNavigation = true;
         const wrapper = setup.setProps({ withNavigation });
-        wrapper.setState('isViewActive', () => false);
 
         expect(wrapper.find('.actions__box').exists()).toBeTruthy();
     });
 
-    it('renders with selectedData props', () => {
-        const selectedData = <span>test selectedData node</span>;
+    it('renders with viewActivityData props', () => {
+        const viewActivityData = <span>test viewActivityData node</span>;
         const withActivity = true;
         const screenType = 'mobile';
-        const wrapper = setup.setProps({ selectedData, withActivity, screenType });
+        const wrapper = setup.setProps({ viewActivityData, withActivity, screenType });
 
         expect(wrapper.find('.chart-activity-body').exists()).toBeTruthy();
     });

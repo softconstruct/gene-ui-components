@@ -155,9 +155,8 @@
         "yargs": "^17.7.2"
     },
     "dependencies": {
-        "@types/d3": "^7.4.3",
         "classnames": "^2.3.2",
-        "d3": "^7.8.5",
+        "d3": "^7.9.0",
         "dayjs": "^1.11.5",
         "draft-js": "^0.11.7",
         "draftjs-to-html": "^0.9.1",

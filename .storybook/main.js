@@ -44,7 +44,8 @@ module.exports = {
             hooks: '../src/hooks/index.ts',
             indexof: '../src/utils/indexof.js',
             stories: '../stories/',
-            components: '../src/index.ts'
+            components: '../src/index.ts',
+            __data__: '../stories/__data__/index.ts'
         };
 
         for (let aliasPath in aliasPaths) {

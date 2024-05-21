@@ -1,13 +1,12 @@
 import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
-import { args, category } from '../../../../../stories/assets/storybook.globals';
-import testData from './../../../../../stories/charts/Map/regionData';
+import { args, propCategory } from '../../../../../stories/assets/storybook.globals';
 
 // Component
-import MapChartD3 from './index';
+import MapChartD3, { IMapChartD3Props } from './index';
 
-// Types
-import { IMapChartD3Props } from './index';
+// Data
+import { regionData as testData, worldMapData } from '__data__';
 
 const regionData = [
     {
@@ -36,39 +35,38 @@ const meta: Meta<typeof MapChartD3> = {
     title: 'Charts/MapChartD3',
     component: MapChartD3,
     argTypes: {
-        title: args({ control: 'text', category: category.content }),
-        selectedData: args({ control: false, category: category.content }),
-        viewActivityText: args({ control: 'text', category: category.content }),
-        withNavigation: args({ control: 'boolean', category: category.content }),
-        withActivity: args({ control: 'boolean', category: category.states }),
-        withTooltip: args({ control: 'boolean', category: category.content }),
-        regionData: args({ control: 'object', category: category.content }),
-        tooltipRenderer: args({ control: 'text', category: category.content }),
-        withLegend: args({ control: 'boolean', category: category.states }),
-        brightness: args({ control: 'number', category: category.appearance }),
-        mapData: args({ control: 'object', category: category.content }),
-        colorAxis: args({ control: 'object', category: category.appearance }),
-        screenType: args({ control: 'select', category: category.appearance }),
-        className: args({ control: false, category: category.others }),
-        onPointOver: args({ control: false, category: category.action }),
-        onPointClick: args({ control: false, category: category.functionality }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content }),
-        zoomedFeatureId: args({ control: 'string', category: category.appearance }),
-        defaultZoomScale: args({ control: 'number', category: category.appearance }),
-        defaultTranslateExtent: args({ control: 'object', category: category.appearance }),
-        defaultScaleExtent: args({ control: 'object', category: category.appearance })
+        title: args({ control: 'text', ...propCategory.content }),
+        viewActivityData: args({ control: false, ...propCategory.content }),
+        viewActivityName: args({ control: 'text', ...propCategory.content }),
+        withNavigation: args({ control: 'boolean', ...propCategory.functionality }),
+        withActivity: args({ control: 'boolean', ...propCategory.states }),
+        withTooltip: args({ control: 'boolean', ...propCategory.content }),
+        regionData: args({ control: 'object', ...propCategory.content }),
+        tooltipRenderer: args({ control: 'text', ...propCategory.content }),
+        withLegend: args({ control: 'boolean', ...propCategory.functionality }),
+        brightness: args({ control: 'number', ...propCategory.appearance }),
+        mapData: args({ control: 'object', ...propCategory.content }),
+        colorAxis: args({ control: 'object', ...propCategory.appearance }),
+        screenType: args({ control: 'select', ...propCategory.appearance }),
+        className: args({ control: false, ...propCategory.others }),
+        onPointOver: args({ control: false, ...propCategory.action }),
+        onPointClick: args({ control: false, ...propCategory.action }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content }),
+        zoomedFeatureId: args({ control: 'string', ...propCategory.appearance }),
+        defaultZoomScale: args({ control: 'number', ...propCategory.appearance }),
+        defaultTranslateExtent: args({ control: 'object', ...propCategory.appearance }),
+        defaultScaleExtent: args({ control: 'object', ...propCategory.appearance })
     },
     args: {
-        title: '',
         mapData: testData,
         withNavigation: true,
         withActivity: true,
         withTooltip: true,
         withLegend: true,
         brightness: 0.5,
-        selectedData: 'This tooltip can contain a table or any module',
-        viewActivityText: 'View Activity',
+        viewActivityData: 'This tooltip can contain a table or any module',
+        viewActivityName: 'View Activity',
         regionData: regionData,
         colorAxis: {
             dataClasses: [
@@ -100,7 +98,6 @@ const meta: Meta<typeof MapChartD3> = {
         },
         isLoading: false,
         emptyText: 'No data to display',
-        zoomedFeatureId: '',
         defaultZoomScale: 1,
         defaultScaleExtent: [1, 8],
         defaultTranslateExtent: [0, 0],
@@ -117,3 +114,9 @@ const Template: FC<IMapChartD3Props> = ({ ...args }) => (
 export default meta;
 
 export const Default = Template.bind({});
+
+export const WorldMap = Template.bind({});
+
+WorldMap.args = {
+    mapData: worldMapData
+};
