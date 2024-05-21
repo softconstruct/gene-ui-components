@@ -376,6 +376,13 @@ const TimePicker: React.FC<ITimePickerProps> = ({
     };
 
     useEffect(() => {
+        if (!inputValue) return;
+
+        const [splitHour, splitMinute, splitSecond] = inputValue.split(separator);
+        setInputValue(combinedValue(splitHour, splitMinute, splitSecond));
+    }, [showSeconds]);
+
+    useEffect(() => {
         if (value) {
             const [splitHour, splitMinute, splitSecond] = value.split(separator);
             splitHour && setHour(splitHour);
@@ -455,7 +462,7 @@ const TimePicker: React.FC<ITimePickerProps> = ({
         ? convertToFormat(second, secondFormat)
         : convertToFormat(minute, minuteFormat);
 
-    const handleIconClick = () => childRef.current && childRef.current.toggleOpen();
+    const handleIconClick = () => childRef.current && !readOnly && !disabled && childRef.current.toggleOpen();
 
     return (
         <div
