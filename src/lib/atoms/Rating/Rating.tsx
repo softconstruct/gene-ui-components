@@ -192,6 +192,7 @@ const Rating: FC<IRatingProps> = (props) => {
             if (state !== prev) return state;
             setHoveredValue(0);
             setRating(currentValue);
+            setRemainingRating(calculatePosition(currentValue));
             setDisableMouseMove(blockMouseMovie);
             return currentValue;
         });
@@ -216,7 +217,7 @@ const Rating: FC<IRatingProps> = (props) => {
         setTemporaryRating(rating);
     };
 
-    const elementsList = Math.round(count) > 0 ? new Array(count).fill(undefined) : [];
+    const elementsList = Math.round(count) > 0 ? new Array(Math.round(count)).fill(undefined) : [];
 
     const PrimitiveValue = (typeof character === 'string' || typeof character === 'number') && character;
 
