@@ -27,6 +27,7 @@ const TSComponentsList = [
     'ImagePreview',
     'Button',
     'Image',
+    'Rating',
     'InteractiveWidget'
 ];
 
