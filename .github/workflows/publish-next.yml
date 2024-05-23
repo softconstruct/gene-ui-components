@@ -1,9 +1,8 @@
-name: Publish canary version to NPM
+name: Publish next version to NPM
 on:
     push:
         branches:
-          - 'release/*.0'
-          - '!release/3.0.0'
+          - 'release/3.0.0'
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -22,9 +21,9 @@ jobs:
                   BRANCH_NAME=${{ github.ref }}
                   COMMIT_SHA=$(git rev-parse --short HEAD)
 
-                  npm run build -- --pure --canary $BRANCH_NAME --commitSHA $COMMIT_SHA
+                  npm run build -- --pure --next $BRANCH_NAME --commitSHA $COMMIT_SHA
             - name: 📦 Publish package on NPM
-              run: cd dist && npm publish --access public --tag canary
+              run: cd dist && npm publish --access public --tag next
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTOMATION_ACCESS_TOKEN }}
             - name: 🔔 Send Notification
@@ -34,6 +33,6 @@ jobs:
                   VERSION=$(jq -r '.version' dist/package.json)
                   VERSION_URL="https://www.npmjs.com/package/@geneui/components/v/$VERSION"
 
-                  MESSAGE="@channel\nNew canary version [$VERSION]($VERSION_URL) is published on NPM"
-
+                  MESSAGE="@channel\nExciting news! New `next` version [$VERSION]($VERSION_URL) is published with new features and improvements! on NPM"
+                  
                   curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\", \"username\": \"NPM\", \"icon_url\": \"https://static-production.npmjs.com/b0f1a8318363185cc2ea6a40ac23eeb2.png\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT

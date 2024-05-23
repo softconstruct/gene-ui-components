@@ -1,0 +1,145 @@
+@import 'src/assets/styles/variables';
+
+.interactiveWidget {
+    box-sizing: border-box;
+    border-radius: rem(16);
+    height: rem(104);
+    padding: rem(20);
+    background: var(--background);
+    width: 100%;
+    display: flex;
+    min-width: 1px;
+
+    &:focus-visible {
+        outline: 0.2rem var(--hero) solid;
+    }
+
+    &-border {
+        border: solid rem(2) rgba(var(--background-sc-rgb), 0.05);
+
+        &:hover {
+            border: solid rem(2) var(--hero);
+        }
+    }
+
+    &-pointer {
+        cursor: pointer;
+
+        &:hover {
+            background: c(hero, 0.1);
+        }
+    }
+
+    &-disabled {
+        pointer-events: none;
+        opacity: 0.6;
+    }
+
+    &__wrapper {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        min-width: 0;
+    }
+
+    &__content {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        min-width: 0;
+    }
+
+    &__header {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        min-width: 0;
+        margin-bottom: rem(6);
+    }
+
+    &__titleWrapper {
+        flex: 1;
+        padding-inline-end: rem(16);
+        max-width: 100%;
+        display: flex;
+        min-width: 0;
+    }
+
+    &__title {
+        font-size: rem(16);
+        font-weight: bold;
+    }
+
+    &__infoIcon {
+        margin-inline-start: rem(4);
+    }
+
+    &__components {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+    }
+
+    &__switcher {
+        margin-inline-start: rem(16);
+    }
+
+    &__description {
+        font-size: rem(12);
+        line-height: rem(16);
+        opacity: 0.7;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .widgetIcon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: var(--icon-color);
+        fill: var(--icon-color);
+        position: relative;
+        z-index: 1;
+        flex: 0 0 auto;
+        margin-inline-end: rem(20);
+
+        &-default {
+            height: rem(64);
+            width: rem(64);
+            padding: rem(10);
+            box-sizing: border-box;
+        }
+
+        &-compact {
+            height: rem(24);
+            width: rem(24);
+
+            .widgetIcon__background {
+                display: none;
+            }
+        }
+
+        &__iconDefault {
+            font-size: rem(40);
+        }
+
+        &__background {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 100%;
+            z-index: -1;
+            opacity: 0.07;
+            background: var(--icon-color);
+        }
+    }
+}

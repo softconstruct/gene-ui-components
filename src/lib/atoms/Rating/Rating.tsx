@@ -152,6 +152,7 @@ const Rating: FC<IRatingProps> = (props) => {
 
         return halfAllow && getRelativeWidth <= 50 ? 50 : 100;
     };
+
     const handleMouseMoveForElement = (e: MouseEvent<HTMLDivElement>, currentRating: number) => {
         if (readonly) return;
         const regradingPosition = calculateRegardingPosition(e);
