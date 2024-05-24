@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
 import { args, propCategory } from '../../../../../stories/assets/storybook.globals';
 
-// Component
+// Components
 import MapChartD3, { IMapChartD3Props } from './index';
 
 // Data
@@ -36,13 +36,12 @@ const meta: Meta<typeof MapChartD3> = {
     component: MapChartD3,
     argTypes: {
         title: args({ control: 'text', ...propCategory.content }),
-        viewActivityData: args({ control: false, ...propCategory.content }),
+        viewActivityContent: args({ control: false, ...propCategory.content }),
         viewActivityName: args({ control: 'text', ...propCategory.content }),
         withNavigation: args({ control: 'boolean', ...propCategory.functionality }),
         withActivity: args({ control: 'boolean', ...propCategory.states }),
-        withTooltip: args({ control: 'boolean', ...propCategory.content }),
         regionData: args({ control: 'object', ...propCategory.content }),
-        tooltipRenderer: args({ control: 'text', ...propCategory.content }),
+        tooltipRenderer: args({ control: false, ...propCategory.content }),
         withLegend: args({ control: 'boolean', ...propCategory.functionality }),
         brightness: args({ control: 'number', ...propCategory.appearance }),
         mapData: args({ control: 'object', ...propCategory.content }),
@@ -53,7 +52,7 @@ const meta: Meta<typeof MapChartD3> = {
         onPointClick: args({ control: false, ...propCategory.action }),
         isLoading: args({ control: 'boolean', ...propCategory.states }),
         emptyText: args({ control: 'text', ...propCategory.content }),
-        zoomedFeatureId: args({ control: 'string', ...propCategory.appearance }),
+        initialZoomedRegionId: args({ control: 'text', ...propCategory.appearance }),
         defaultZoomScale: args({ control: 'number', ...propCategory.appearance }),
         defaultTranslateExtent: args({ control: 'object', ...propCategory.appearance }),
         defaultScaleExtent: args({ control: 'object', ...propCategory.appearance })
@@ -62,10 +61,9 @@ const meta: Meta<typeof MapChartD3> = {
         mapData: testData,
         withNavigation: true,
         withActivity: true,
-        withTooltip: true,
         withLegend: true,
         brightness: 0.5,
-        viewActivityData: 'This tooltip can contain a table or any module',
+        viewActivityContent: 'This tooltip can contain a table or any module',
         viewActivityName: 'View Activity',
         regionData: regionData,
         colorAxis: {
@@ -106,7 +104,7 @@ const meta: Meta<typeof MapChartD3> = {
 };
 
 const Template: FC<IMapChartD3Props> = ({ ...args }) => (
-    <div style={{ height: '800px' }}>
+    <div style={{ height: '100vh', maxHeight: '800px' }}>
         <MapChartD3 {...args} />
     </div>
 );

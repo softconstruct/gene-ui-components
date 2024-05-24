@@ -22,6 +22,7 @@ import { useDeviceType } from '../../../../hooks';
 import Icon from '../../../atoms/Icon';
 import IconButton from '../MapChart/IconButton';
 import { BusyLoader, Empty, Popover, useWindowSize } from '../../../../index';
+import Button from '../../../atoms/Button';
 
 // Styles
 import './MapChartD3.scss';
@@ -57,102 +58,114 @@ interface IDataClasses {
 
 export interface IMapChartD3Props {
     /**
-     * Map chart title
+     * Map chart title.
      */
     title?: string;
     /**
-     * Brightness of regions on hover action
+     * Brightness of regions on hover action.
+     * Use positive numbers to reach the desired result.
      */
     brightness?: number;
     /**
-     * Map chart data
+     * Map chart data.
      */
     mapData: any;
     /**
-     * Background colors with range ('from', 'to') of regions depends on statistics
+     * Background colors with range ('from', 'to') of regions depends on statistics. <br>
+     * Use a similar object to reach the desired result:
+     * `{
+     *     to: number;
+     *     from: number;
+     *     name: string;
+     *     color: string;
+     *     disabled?: boolean;
+     * }`
      */
     colorAxis?: { dataClasses: IDataClasses[] };
     /**
-     * Classname for parent element of chart
+     * Classname for parent element of chart.
      */
     className?: string;
     /**
-     * Device screen type <br/>
-     * Possible values: 'mobile' | 'desktop'
+     * Device screen type. <br/>
+     * Possible values: `'mobile' | 'desktop'`
      */
     screenType?: 'mobile' | 'desktop';
     /**
-     * Add legends for chart
+     * Add legends for chart.
      */
     withLegend?: boolean;
     /**
-     * Show tooltip for regions on hover action
-     */
-    withTooltip?: boolean;
-    /**
      * Fires event when user click on Region.
-     * <br>
-     * <code>(event: IMapChartFeature) => void </code>
      */
     onPointClick?: (event: IMapChartFeature) => void;
     /**
      * Fires event when user hover on Region.
-     * <br>
-     * <code>(event: IMapChartFeature) => void </code>
      */
     onPointOver?: (event: IMapChartFeature) => void;
     /**
-     * Show activities for regions on hover action
+     * Show activities for regions on hover action.
      */
     withActivity?: boolean;
     /**
-     * Data which will be shown in Activity box
+     * Content which will be shown in Activity box.
      */
-    viewActivityData?: ReactNode;
+    viewActivityContent?: ReactNode;
     /**
-     * Show zoom navigation bar
+     * Show zoom navigation bar.
      */
     withNavigation?: boolean;
     /**
-     * Activities name
+     * Activities name.
      */
     viewActivityName?: string;
     /**
-     * Show loading component
+     * The prop responsible for showing the loading spinner if passed true.
      */
     isLoading?: boolean;
     /**
-     * Content of empty component in case if nothing to show
+     * Empty state text for component
      */
     emptyText?: string;
     /**
-     * Regions data which need to highlight depends on case
+     * Regions data to highlight depending on the case.
+     * <br>
+     * Send `id` as the region ID and `value` as a number from a range that is customized for your case.
+     * `{ id: 'AM.ER', value: 12 }`
      */
     regionData?: IRegionData[];
     /**
-     * Default zoom scale value
+     * Default zoom scale value.
+     * Use positive numbers to reach the desired result. <br>
+     * See `defaultScaleExtent` prop for more information. <br>
      */
     defaultZoomScale?: number;
     /**
-     * Feature id on which it should be zoom
+     * Region id on which should zoom initially.
      */
-    zoomedFeatureId?: string;
+    initialZoomedRegionId?: string;
     /**
-     * Default zoom scale extent.
-     * <br>
-     * <code> [1, 8] </code>
+     * Default zoom scale extent. <br>
+     * Send array with 2 elements as "from to" which well be zoom scale range.
      */
     defaultScaleExtent?: [number, number];
     /**
-     * Default zoom translate extent.
+     * Default zoom translate extent
+     * If extent is specified, sets the scale extent to the specified array of
+     * numbers [k0, k1] where k0 is the minimum allowed scale factor and k1 is the
+     * maximum allowed scale factor, and returns this zoom behavior. If extent is
+     * not specified, returns the current scale extent, which defaults to [0, ∞].
+     * The scale extent restricts zooming in and out.
+     * See D3 documentation for more information.
      * <br>
-     * <code> [0, 0] </code>
+     * ` [0, 0] `
      */
     defaultTranslateExtent?: [number, number];
     /**
-     * Tooltip renderer method.
+     * Tooltip renderer method. <br>
+     * Use to generate custom tooltip for the chart.
      * <br>
-     * <code> (activeFeature) => <div style={{ padding: '7px 14px'}}>{activeFeature.properties.name}</div> </code>
+     * `(activeRegion) => <div style={{ padding: '7px 14px'}}>{activeRegion.properties.name}</div>`
      */
     tooltipRenderer?: (event: IMapChartFeature) => ReactElement;
 }
@@ -188,19 +201,18 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     colorAxis,
     className,
     screenType,
-    withLegend,
-    withTooltip,
+    withLegend = false,
     onPointOver,
     onPointClick,
-    withActivity,
-    viewActivityData,
-    withNavigation,
+    withActivity = false,
+    viewActivityContent,
+    withNavigation = true,
     viewActivityName,
-    isLoading,
+    isLoading = false,
     emptyText,
     regionData,
     defaultZoomScale = 1,
-    zoomedFeatureId,
+    initialZoomedRegionId,
     defaultScaleExtent = [1, 8],
     defaultTranslateExtent = [0, 0],
     tooltipRenderer
@@ -247,18 +259,17 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         });
 
         setChartData(_chartData);
-    }, [isLoading, withLegend, title, windowWidth, windowHeight, mapData]);
+    }, [isLoading, withLegend, isViewActive, withActivity, screenType, title, windowWidth, windowHeight, mapData]);
 
     const handleMouseEnter = (geo: IMapChartFeature, e: MouseEvent): void => {
-        const [x, y] = pointer(e);
         withActivity && setSelectedName(geo.properties.name);
         const tooltipContent = tooltipRenderer && tooltipRenderer(geo);
-        tooltipRenderer && withTooltip && setTooltipData({ top: y, left: x, content: tooltipContent });
+        tooltipRenderer && setTooltipData({ top: e.clientY, left: e.clientX, content: tooltipContent });
     };
 
     const handleMouseLeave = () => {
         withActivity && !isMobile && setSelectedName(null);
-        withTooltip && setTooltipData({ top: 0, left: 0, content: undefined });
+        tooltipRenderer && setTooltipData({ top: 0, left: 0, content: undefined });
     };
 
     const handleMouseMove = (event: MouseEvent) => {
@@ -298,11 +309,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
 
         // START Highlight regions depends on brightness
 
-        if (
-            hoveredRegion &&
-            hoveredRegion?.properties.value &&
-            hoveredRegion?.properties.color !== defaultFeatureColor
-        ) {
+        if (hoveredRegion.properties.value && hoveredRegion.properties.color !== defaultFeatureColor) {
             if (hoveredRegionRef.current?.id === hoveredRegion.id) {
                 handleMouseEnter(hoveredRegion, event);
 
@@ -425,8 +432,8 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         const path = geoPath(projection, context);
         pathRef.current = path;
 
-        if (zoomedFeatureId && defaultZoomScale > 1) {
-            const zoomedRegion = chartData.find((item) => item.id === zoomedFeatureId);
+        if (initialZoomedRegionId && defaultZoomScale > 1) {
+            const zoomedRegion = chartData.find((item) => item.id === initialZoomedRegionId);
             const [[minX, minY], [maxX, maxY]] = path.bounds(zoomedRegion as GeoGeometryObjects);
 
             transformedX = -(canvas.width / 2 - ((minX + maxX) / 2) * defaultZoomScale);
@@ -468,7 +475,6 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         mapData,
         chartData,
         isLoading,
-        withTooltip,
         withActivity,
         withLegend,
         canvasRef,
@@ -564,32 +570,33 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                     ref={popoverRef}
                     position={'top'}
                     cornerRadius={'smooth-radius'}
-                    Content={<div className="popover__content">{tooltipData.content}</div>}
+                    Content={<div className="popover">{tooltipData.content}</div>}
                 >
                     <div
-                        className=""
+                        className="popover__target"
                         style={{ position: 'absolute', left: `${tooltipData.left}px`, top: `${tooltipData.top}px` }}
                     ></div>
                 </Popover>
             )}
-            <div className={classnames(`charts__map-chart chart-overflow-holder ${className || ''}`)}>
+            <div className={classnames(`map-chart chart-overflow-holder ${className || ''}`)}>
                 <BusyLoader isBusy={isLoading} className="map-chart__proxy-content">
                     {!mapData?.features?.length ? (
                         <Empty type="data" title={emptyText} className="map-chart__proxy-content" />
                     ) : (
                         <>
                             {title && (
-                                <div className="chart__title-wrapper">
-                                    <h2 className="chart__title">{title}</h2>
+                                <div className="map-chart__title-wrapper">
+                                    <h2 className="map-chart__title">{title}</h2>
                                 </div>
                             )}
                             {isMobile && selectedName && (
-                                <div className="chart-selected-title">
-                                    <span>{selectedName}</span>
+                                <div className="map-chart__selected-element">
+                                    <span className="map-chart__selected-element-title">{selectedName}</span>
                                 </div>
                             )}
                             <div className="canvas-wrapper" ref={canvasWrapperRef}>
                                 <canvas
+                                    className="canvas"
                                     ref={canvasRef}
                                     width={(canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().width}
                                     height={
@@ -598,7 +605,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                                 ></canvas>
                             </div>
                             {withLegend && colorAxis && (
-                                <div className="chart__legends">
+                                <div className="map-chart__legends">
                                     {legends.map(({ to, color, name, disabled }) => (
                                         <button
                                             key={`${name}_${to}`}
@@ -617,7 +624,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                                 </div>
                             )}
                             {withNavigation && !isViewActive && (
-                                <div className="actions__box">
+                                <div className="map-chart__actions__box">
                                     <IconButton
                                         name="bc-icon-full-screen"
                                         onClick={handleZoomReset}
@@ -635,33 +642,47 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                                     />
                                 </div>
                             )}
-
                             {withActivity && !isMobile && selectedName && (
-                                <div className={classnames('chart__activity-box active')}>
-                                    <div className="headline">{selectedName}</div>
-                                    <div className="content">{viewActivityData}</div>
+                                <div className={classnames('map-chart__activity-box active')}>
+                                    <div className="activity-box__headline">{selectedName}</div>
+                                    <div className="activity-box__content">{viewActivityContent}</div>
                                 </div>
                             )}
                             {withActivity && isMobile && (
                                 <div
-                                    className={classnames('chart__activity-table', {
+                                    className={classnames('map-chart__activity-box__mobile', {
                                         active: isViewActive
                                     })}
                                 >
-                                    {selectedName && (
-                                        <div className="view-activity" onClick={setViewActiveHandler}>
+                                    <Button
+                                        disabled={!selectedName}
+                                        color="default"
+                                        appearance="minimal"
+                                        itemsDirection="end"
+                                        flexibility="content-size"
+                                        className="activity__mobile-view"
+                                        onClick={setViewActiveHandler}
+                                    >
+                                        {/*@ts-ignore*/}
+                                        <Icon type="bc-icon-backwards" />
+                                        {!isViewActive && (
+                                            <span className="activity__mobile-view-name">{viewActivityName}</span>
+                                        )}
+                                    </Button>
+                                    <div className="activity__mobile-content chart-activity-data">
+                                        <div
+                                            className="activity__mobile-content__header chart-activity-title"
+                                            onClick={setViewActiveHandler}
+                                        >
                                             {/*@ts-ignore*/}
                                             <Icon type="bc-icon-backwards" />
-                                            {!isViewActive && <span>{viewActivityName}</span>}
+                                            <span className="activity__mobile-content__header-title">
+                                                {selectedName}
+                                            </span>
                                         </div>
-                                    )}
-                                    <div className="chart-activity-data">
-                                        <div className="chart-activity-title" onClick={setViewActiveHandler}>
-                                            {/*@ts-ignore*/}
-                                            <Icon type="bc-icon-backwards" />
-                                            <span>{selectedName}</span>
+                                        <div className="activity__mobile-content__body chart-activity-body">
+                                            {viewActivityContent}
                                         </div>
-                                        <div className="chart-activity-body">{viewActivityData}</div>
                                     </div>
                                 </div>
                             )}

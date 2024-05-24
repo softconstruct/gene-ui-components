@@ -54,7 +54,7 @@ describe('D3 Map chart', () => {
         const title = 'test-data';
         const wrapper = setup.setProps({ title });
 
-        expect(wrapper.find('.chart__title').text()).toEqual(title);
+        expect(wrapper.find('.map-chart__title-wrapper').text()).toEqual(title);
     });
 
     it('should have mapData prop', () => {
@@ -70,14 +70,14 @@ describe('D3 Map chart', () => {
         const className = 'testClassName';
         const wrapper = setup.setProps({ className });
 
-        expect(wrapper.find('.charts__map-chart').hasClass(className)).toBeTruthy();
+        expect(wrapper.find('.map-chart').hasClass(className)).toBeTruthy();
     });
 
     it('renders with withLegend props', () => {
         const withLegend = true;
         const wrapper = setup.setProps({ withLegend, colorAxis });
 
-        expect(wrapper.find('.chart__legends').exists()).toBeTruthy();
+        expect(wrapper.find('.map-chart__legends').exists()).toBeTruthy();
     });
 
     it('renders with emptyText props', () => {
@@ -100,22 +100,22 @@ describe('D3 Map chart', () => {
         const screenType = 'mobile';
         const wrapper = setup.setProps({ withActivity, screenType });
 
-        expect(wrapper.find('.chart__activity-table').exists()).toBeTruthy();
+        expect(wrapper.find('.map-chart__activity-box__mobile').exists()).toBeTruthy();
     });
 
     it('renders with withNavigation props', () => {
         const withNavigation = true;
         const wrapper = setup.setProps({ withNavigation });
 
-        expect(wrapper.find('.actions__box').exists()).toBeTruthy();
+        expect(wrapper.find('.map-chart__actions__box').exists()).toBeTruthy();
     });
 
-    it('renders with viewActivityData props', () => {
-        const viewActivityData = <span>test viewActivityData node</span>;
+    it('renders with viewActivityContent props', () => {
+        const viewActivityContent = <span>test viewActivityData node</span>;
         const withActivity = true;
         const screenType = 'mobile';
-        const wrapper = setup.setProps({ viewActivityData, withActivity, screenType });
+        const wrapper = setup.setProps({ viewActivityContent, withActivity, screenType });
 
-        expect(wrapper.find('.chart-activity-body').exists()).toBeTruthy();
+        expect(wrapper.find('.activity__mobile-content__body').exists()).toBeTruthy();
     });
 });
