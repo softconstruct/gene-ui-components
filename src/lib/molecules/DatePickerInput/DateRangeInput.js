@@ -157,7 +157,7 @@ function DateRangePickerInput({
                 setStartDate(start);
                 setEndDate(end);
 
-                if (!withTime) {
+                if (!withTime && !isMobile) {
                     inputRef.current.blur();
                     setPopoverState(false);
                 }

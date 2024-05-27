@@ -57,25 +57,23 @@ const isFileExists = async (filePath) => {
     } catch (error) {
         if (error.code === 'ENOENT') {
             return false;
-        } 
-            throw error;
-        
+        }
+        throw error;
     }
 };
 
-const replaceCanaryVersionInDistPGK = async (canaryVersion, commitSHA) => {
+const replaceVersionInDistPGK = async (newVersion, commitSHA, tag) => {
     try {
-        const [version] = canaryVersion.split('/').reverse();
+        const [version] = newVersion.split('/').reverse();
         const packageJsonFile = await readFile(resolve(__dirname, '../dist/package.json'), 'utf8');
         const packageJson = JSON.parse(packageJsonFile);
-        packageJson.version = `${version}-canary-${commitSHA}-${dayjs().format('DDMMYYYY')}`;
+        packageJson.version = `${version}-${tag}-${commitSHA}-${dayjs().format('DDMMYYYY')}`;
         await writeFile(resolve(__dirname, '../dist/package.json'), JSON.stringify(packageJson, null, 4), 'utf8');
     } catch (error) {
         if (error.code === 'ENOENT') {
             return false;
-        } 
-            throw error;
-        
+        }
+        throw error;
     }
 };
 
@@ -87,5 +85,5 @@ export {
     getDirectories,
     getFiles,
     copyStaticFilesToDist,
-    replaceCanaryVersionInDistPGK
+    replaceVersionInDistPGK
 };
