@@ -1,5 +1,18 @@
 # Changelog
 
+# [2.15.0](https://github.com/softconstruct/gene-ui-components/compare/v2.14.0...v2.15.0) (2024-05-27)
+
+
+### Bug Fixes
+
+* **DateRangeInput:** error on input blur in mobile screen ([#123](https://github.com/softconstruct/gene-ui-components/issues/123)) ([51314a1](https://github.com/softconstruct/gene-ui-components/commit/51314a141053d5ef41926472a9de51bdc02d825f))
+
+
+### Features
+
+* **InteractiveWidget:** add new component ([#124](https://github.com/softconstruct/gene-ui-components/issues/124)) ([25f0015](https://github.com/softconstruct/gene-ui-components/commit/25f001533e7daf83c2afd0f2760850e56c4a1121))
+* **Rating:** create component ([#119](https://github.com/softconstruct/gene-ui-components/issues/119)) ([45496a0](https://github.com/softconstruct/gene-ui-components/commit/45496a0ab552e157f7f9990e7b6f34cd57ac6c03))
+
 # [2.14.0](https://github.com/softconstruct/gene-ui-components/compare/v2.13.1...v2.14.0) (2024-04-30)
 
 
