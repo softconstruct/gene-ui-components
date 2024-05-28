@@ -1,5 +1,4 @@
-import React, { FC, MouseEvent, ReactElement, ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
+import React, { FC, MouseEvent, ReactElement, ReactNode, useEffect, useRef, useState } from 'react';
 import {
     select,
     pointer,
@@ -21,7 +20,7 @@ import { useDeviceType } from '../../../../hooks';
 // Components
 import Icon from '../../../atoms/Icon';
 import IconButton from '../MapChart/IconButton';
-import { BusyLoader, Empty, Popover, useWindowSize } from '../../../../index';
+import { BusyLoader, Empty, Popover } from '../../../../index';
 import Button from '../../../atoms/Button';
 
 // Styles
@@ -217,7 +216,6 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     defaultTranslateExtent = [0, 0],
     tooltipRenderer
 }) => {
-    const { width: windowWidth, height: windowHeight } = useWindowSize();
     const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const zoomRef = useRef<ZoomBehavior<Element, unknown> | null>(null);
@@ -234,6 +232,8 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     const pathRef = useRef<GeoPath | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [legends, setLegends] = useState(colorAxis?.dataClasses || []);
+    const canvasWidth = (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().width;
+    const canvasHeight = (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().height;
 
     useEffect(() => {
         const _chartData = mapData?.features?.map((item: IMapChartFeature) => {
@@ -259,7 +259,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         });
 
         setChartData(_chartData);
-    }, [isLoading, withLegend, isViewActive, withActivity, screenType, title, windowWidth, windowHeight, mapData]);
+    }, [isLoading, withLegend, isViewActive, withActivity, screenType, title, canvasWidth, canvasHeight, mapData]);
 
     const handleMouseEnter = (geo: IMapChartFeature, e: MouseEvent): void => {
         withActivity && setSelectedName(geo.properties.name);
@@ -316,13 +316,11 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                 if (hoveredRegionRef.current.properties.brightness === hoveredRegion.properties.brightness) return;
 
                 hoveredRegion.properties.brightness = 0;
-                drawMap();
             } else {
                 if (hoveredRegionRef.current) hoveredRegionRef.current.properties.brightness = 0;
 
                 hoveredRegion.properties.brightness = brightness;
                 handleMouseEnter(hoveredRegion, event);
-                drawMap();
             }
 
             hoveredRegionRef.current = hoveredRegion as IMapChartFeature;
@@ -335,9 +333,9 @@ const MapChartD3: FC<IMapChartD3Props> = ({
             handleMouseLeave();
             hoveredRegion.properties.brightness = 0;
             hoveredRegionRef.current.properties.brightness = 0;
-            drawMap();
             hoveredRegionRef.current = hoveredRegion;
         }
+        drawMap();
         // END Highlight regions depends on brightness
     };
 
@@ -385,7 +383,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                 addBrightness(feature.properties.color, feature.properties.brightness || 0) || defaultFeatureColor;
             context.fill();
             context.strokeStyle = '#cee7f2';
-            context.lineWidth = 1.5;
+            context.lineWidth = 1.5 / transformRef.current.k;
             context.stroke();
         });
         context.restore();
@@ -394,12 +392,14 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     // END Draw map
 
     const handleZoom = (event: D3ZoomEvent<HTMLCanvasElement, any>) => {
-        const { transform } = event;
-        transformRef.current = { x: transform.x, y: transform.y, k: transform.k };
+        const {
+            transform: { x, y, k }
+        } = event;
+        transformRef.current = { x: x, y: y, k: k };
         setZoomButtonsStatus({
-            zoomIn: transform.k === maxScaleExtent,
-            zoomOut: transform.k === minScaleExtent,
-            reset: transform.k === minScaleExtent
+            zoomIn: k === maxScaleExtent,
+            zoomOut: k === minScaleExtent,
+            reset: k === minScaleExtent
         });
         drawMap();
     };
@@ -471,20 +471,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         });
 
         select(canvas).on('click', handleClick);
-    }, [
-        mapData,
-        chartData,
-        isLoading,
-        withActivity,
-        withLegend,
-        canvasRef,
-        zoomRef,
-        canvasWrapperRef,
-        defaultZoomScale,
-        isMobile,
-        windowWidth,
-        windowHeight
-    ]);
+    }, [chartData, canvasRef, zoomRef, canvasWrapperRef, defaultZoomScale, isMobile]);
 
     // END Set configurations for D3 CANVAS
 
@@ -550,7 +537,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         drawMap();
     };
 
-    const handleLegendMouseOver = (isEnter: boolean, disabled: boolean) => {
+    const handleLegendMouseOver = (isEnter: boolean, disabled: boolean | undefined) => {
         chartData.forEach(({ properties }) => {
             if (properties.value > 0) {
                 properties.brightness = isEnter && !disabled ? 0.3 : 0;
@@ -575,10 +562,10 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                     <div
                         className="popover__target"
                         style={{ position: 'absolute', left: `${tooltipData.left}px`, top: `${tooltipData.top}px` }}
-                    ></div>
+                    />
                 </Popover>
             )}
-            <div className={classnames(`map-chart chart-overflow-holder ${className || ''}`)}>
+            <div className={`map-chart chart-overflow-holder ${className || ''}`}>
                 <BusyLoader isBusy={isLoading} className="map-chart__proxy-content">
                     {!mapData?.features?.length ? (
                         <Empty type="data" title={emptyText} className="map-chart__proxy-content" />
@@ -586,12 +573,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                         <>
                             {title && (
                                 <div className="map-chart__title-wrapper">
-                                    <h2 className="map-chart__title">{title}</h2>
-                                </div>
-                            )}
-                            {isMobile && selectedName && (
-                                <div className="map-chart__selected-element">
-                                    <span className="map-chart__selected-element-title">{selectedName}</span>
+                                    <h2 className="map-chart__title chart-title ellipsis-text">{title}</h2>
                                 </div>
                             )}
                             <div className="canvas-wrapper" ref={canvasWrapperRef}>
@@ -609,14 +591,14 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                                     {legends.map(({ to, color, name, disabled }) => (
                                         <button
                                             key={`${name}_${to}`}
-                                            className={classnames('legend__button', { disabled: !!disabled })}
+                                            className={classnames('legend__button', { disabled })}
                                             onClick={() => handleLegendClick(name, color)}
-                                            onMouseEnter={() => handleLegendMouseOver(true, !!disabled)}
-                                            onMouseLeave={() => handleLegendMouseOver(false, !!disabled)}
+                                            onMouseEnter={() => handleLegendMouseOver(true, disabled)}
+                                            onMouseLeave={() => handleLegendMouseOver(false, disabled)}
                                         >
                                             <i
                                                 className="legend__circle"
-                                                style={{ background: !!disabled ? defaultFeatureColor : color }}
+                                                style={{ background: disabled ? defaultFeatureColor : color }}
                                             />
                                             <span className="legend__name">{name}</span>
                                         </button>

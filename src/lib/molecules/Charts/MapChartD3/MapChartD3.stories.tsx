@@ -36,7 +36,7 @@ const meta: Meta<typeof MapChartD3> = {
     component: MapChartD3,
     argTypes: {
         title: args({ control: 'text', ...propCategory.content }),
-        viewActivityContent: args({ control: false, ...propCategory.content }),
+        viewActivityContent: args({ control: 'text', ...propCategory.content }),
         viewActivityName: args({ control: 'text', ...propCategory.content }),
         withNavigation: args({ control: 'boolean', ...propCategory.functionality }),
         withActivity: args({ control: 'boolean', ...propCategory.states }),
@@ -63,7 +63,7 @@ const meta: Meta<typeof MapChartD3> = {
         withActivity: true,
         withLegend: true,
         brightness: 0.5,
-        viewActivityContent: 'This tooltip can contain a table or any module',
+        viewActivityContent: 'Active data content',
         viewActivityName: 'View Activity',
         regionData: regionData,
         colorAxis: {
@@ -116,5 +116,7 @@ export const Default = Template.bind({});
 export const WorldMap = Template.bind({});
 
 WorldMap.args = {
-    mapData: worldMapData
+    mapData: worldMapData,
+    withLegend: false,
+    withActivity: false
 };

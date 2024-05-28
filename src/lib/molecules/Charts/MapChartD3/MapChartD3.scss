@@ -7,29 +7,15 @@
     display: flex;
     flex-direction: column;
 
-    &__title-wrapper {
-        display: flex;
-        justify-content: center;
-        padding: rem(20) 0;
+    .map-chart__proxy-content {
+        height: 100%;
     }
 
-    &__selected-element {
+    &__title-wrapper {
         display: flex;
-        justify-content: center;
-        position: absolute;
-        color: c(hero);
-        top: rem(20);
-        z-index: 1;
-
-        &-title {
-            box-shadow: 0 rem(2) rem(4) 0 rgba(60, 64, 67, 10%);
-            background-color: #fff;
-            height: rem(44);
-            border-radius: rem(22);
-            font-size: rem(15);
-            line-height: rem(44);
-            padding: 0 rem(20);
-        }
+        justify-content: flex-start;
+        max-width: 90%;
+        padding: rem(20);
     }
 
     .canvas-wrapper {
