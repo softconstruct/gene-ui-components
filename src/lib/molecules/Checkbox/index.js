@@ -35,6 +35,9 @@ const Checkbox = forwardRef((props, ref) => {
         onWrapperClick,
         onMouseEnter,
         onMouseLeave,
+        name,
+        register,
+        rules,
         ...restProps
     } = props;
 
@@ -67,9 +70,8 @@ const Checkbox = forwardRef((props, ref) => {
 
         onKeyPress(e);
     };
-
     const hasError = !isValid;
-
+    const getRegister = register && name ? { ...register(name, rules) } : {};
     return (
         <div
             onMouseEnter={onMouseEnter}
@@ -107,6 +109,7 @@ const Checkbox = forwardRef((props, ref) => {
                         ref={ref}
                         id={randomId}
                         {...restProps}
+                        {...getRegister}
                     />
                     <label
                         className={classnames('checkbox', 'cr-element', `s-${size}`, {
