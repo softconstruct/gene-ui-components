@@ -35,6 +35,7 @@ function Modal({
     okText,
     title,
     width,
+    height,
     zIndex,
     children,
     onOK,
@@ -92,7 +93,10 @@ function Modal({
             ref={modalSplashRef}
             {...rest}
         >
-            <div className={classnames('modal-content', `s-${size}`)} style={{ width }}>
+            <div
+                className={classnames('modal-content', `s-${size}`)}
+                style={{ width, height: height || 'fit-content' }}
+            >
                 {closable && !title && (
                     <Button
                         icon="bc-icon-close"
@@ -119,7 +123,11 @@ function Modal({
                         {customActions}
                     </div>
                 )}
-                {children && <div className="modal-body">{children}</div>}
+                {children && (
+                    <div className="modal-body" style={{ height, display: 'flex', flexDirection: 'column' }}>
+                        {children}
+                    </div>
+                )}
                 {!disableFooter && (
                     <div className="modal-footer">
                         {footer || (
