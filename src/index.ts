@@ -48,6 +48,8 @@ export { default as Range } from './lib/molecules/Range';
 export { default as Slider } from './lib/molecules/Slider';
 export { default as Pagination } from './lib/molecules/Pagination';
 export { default as ExtendedInput } from './lib/molecules/ExtendedInput';
+export { default as Wizard, WizardPRovider, useGetDataFromContext } from './lib/molecules/Wizard';
+
 export {
     ValidatableDropdown,
     MultiSelectDropdownField,
