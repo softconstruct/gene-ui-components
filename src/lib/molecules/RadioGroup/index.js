@@ -20,19 +20,18 @@ function RadioGroup(props) {
     const handleChange = useCallback(
         (e) => {
             !isControlled && setValueState(e.target.value);
-
             onChange && onChange(e);
         },
         [isControlled, onChange]
     );
 
+    const { errorText, isValid } = restProps;
     return (
         <div className={classnames('cha-ra-group', `t-${type}`)}>
             {options.map((option) => {
                 const isOptionsString = typeof option === 'string';
                 const optionValue = isOptionsString ? option : option.value;
                 const label = isOptionsString ? option : option.label;
-
                 return (
                     <Radio
                         key={optionValue}
@@ -43,11 +42,13 @@ function RadioGroup(props) {
                         checked={optionValue === value}
                         onChange={handleChange}
                         {...restProps}
+                        isValid
                         value={optionValue}
                         type={type}
                     />
                 );
             })}
+            {!isValid && <div className="information-message color-danger">{errorText}</div>}
         </div>
     );
 }

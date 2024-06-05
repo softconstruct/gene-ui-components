@@ -27,6 +27,9 @@ const Radio = forwardRef(
             checked,
             className,
             type,
+            register,
+            name,
+            rules,
             ...restProps
         },
         ref
@@ -36,7 +39,7 @@ const Radio = forwardRef(
         const handleChange = (e) => {
             onChange && onChange(interceptValue(e, value));
         };
-
+        const getRegister = register && name ? { ...register(name, rules) } : {};
         const hasError = !isValid;
 
         return (
@@ -76,6 +79,7 @@ const Radio = forwardRef(
                             id={randomId}
                             checked={checked}
                             {...restProps}
+                            {...getRegister}
                         />
                         <label
                             className={classnames('radio', 'cr-element', `s-${size}`, {

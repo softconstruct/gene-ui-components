@@ -41,6 +41,9 @@ function DatePickerInput({
     markedDate,
     frozenDateRange,
     clearable,
+    name,
+    register,
+    rules,
     ...restProps
 }) {
     const { isMobile } = useDeviceType();
@@ -191,6 +194,9 @@ function DatePickerInput({
         required,
         ref: inputRef,
         canClear: clearable,
+        name,
+        register,
+        rules,
         ...restProps
     };
 

@@ -4,30 +4,58 @@ import PropTypes from 'prop-types';
 // Components
 import ExtendedInput from '../ExtendedInput';
 
-const Search = forwardRef(({ onChange, placeholder, defaultValue, className, ...restProps }, ref) => {
-    const [value, setValue] = useState(defaultValue);
+const Search = forwardRef(
+    (
+        {
+            onChange,
 
-    const handleChange = useCallback(
-        (e) => {
-            setValue(e.target.value);
-            onChange && onChange(e, e.target.value);
+            placeholder,
+
+            defaultValue,
+
+            className,
+
+            name,
+            rules,
+            errorText,
+            hasError,
+            showErrorWithTooltip,
+            isValid,
+            register,
+            ...restProps
         },
-        [onChange]
-    );
+        ref
+    ) => {
+        const [value, setValue] = useState(defaultValue);
 
-    return (
-        <ExtendedInput
-            ref={ref}
-            placeholder={placeholder}
-            onChange={handleChange}
-            {...restProps}
-            value={value}
-            type="text"
-            icon="bc-icon-search"
-            className={`search-holder ${className}`}
-        />
-    );
-});
+        const handleChange = useCallback(
+            (e) => {
+                setValue(e.target.value);
+                onChange && onChange(e, e.target.value);
+            },
+            [onChange]
+        );
+
+        return (
+            <ExtendedInput
+                ref={ref}
+                placeholder={placeholder}
+                onChange={handleChange}
+                {...restProps}
+                value={value}
+                type="text"
+                icon="bc-icon-search"
+                className={`search-holder ${className}`}
+                register={register}
+                name={name}
+                rules={rules}
+                errorText={errorText}
+                showErrorWithTooltip={showErrorWithTooltip}
+                isValid={isValid}
+            />
+        );
+    }
+);
 
 Search.propTypes = {
     /**
