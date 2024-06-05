@@ -59,6 +59,7 @@ function Uploader({
     deleteAction,
     sizeErrorMsg,
     typeErrorMsg,
+    errorText,
     isActiveDrop,
     loadingLabel,
     browseLabel,
@@ -80,6 +81,7 @@ function Uploader({
     initialImages,
     additionalContext,
     hideName,
+    disabled,
     ...restProps
 }) {
     const isControlled = useMemo(() => Array.isArray(images), [images]);
@@ -321,7 +323,8 @@ function Uploader({
                         draggable={draggable}
                         icon={icon}
                         cornerRadius={cornerRadius}
-                        isDisabled={isDisabled}
+                        // TODO isDisabled needs to be removed in version 3.0.0
+                        isDisabled={disabled || isDisabled}
                         isBusy={isBusy}
                         chooseFileLabel={chooseFileLabel}
                         browseLabel={browseLabel}
@@ -337,7 +340,7 @@ function Uploader({
             {(isExistFile || isBoxApperance) && (
                 <Row padding={gridGap} gutter={gridGap}>
                     {fileList.map((file, index) => (
-                        <Col {...uploaderConfig.gridColumnSize} key={index}>
+                        <Col xs={2} key={index}>
                             <UploadedItem
                                 file={file}
                                 index={index}
@@ -346,7 +349,7 @@ function Uploader({
                                 retryIndex={refreshIndex}
                                 showRemoveButton={showTrash}
                                 onRemove={deleteItemByIndex}
-                                uploadErrorText={uploadErrorText}
+                                uploadErrorText={uploadErrorText || errorText}
                                 showResetButton={showResetButton}
                                 metaDataHeaders={metaDataHeaders}
                                 appearance={uploadedItemsAppearance}
@@ -367,13 +370,13 @@ function Uploader({
                 </Row>
             )}
             <div className="uploader-footer">
-                {(informationMessage || (showLocalErrors && errorMsg)) && (
+                {(informationMessage || (showLocalErrors && errorMsg) || errorText) && (
                     <div
                         className={classnames('information-message', {
-                            'color-danger': !!errorMsg
+                            'color-danger': !!errorMsg || !!errorText
                         })}
                     >
-                        {errorMsg || informationMessage}
+                        {errorMsg || errorText || informationMessage}
                     </div>
                 )}
                 {!immediatelyUploadAfterSelect &&
@@ -592,6 +595,7 @@ Uploader.defaultProps = {
     immediatelyUploadAfterSelect: true,
     isActiveDrop: false,
     isDisabled: false,
+    disabled: false,
     isImageUpload: false,
     loadingLabel: 'Uploading...',
     maxFileSize: 5000000,
