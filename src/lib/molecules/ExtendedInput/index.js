@@ -33,6 +33,7 @@ const ExtendedInput = forwardRef((props, ref) => {
         icon,
         type,
         step,
+        name,
         value,
         label,
         onBlur,
@@ -76,6 +77,8 @@ const ExtendedInput = forwardRef((props, ref) => {
         tooltipText,
         endAdornment,
         suggestionData,
+        register,
+        rules,
         ...restProps
     } = props;
     const { isMobile } = useDeviceType(screenType);
@@ -184,6 +187,24 @@ const ExtendedInput = forwardRef((props, ref) => {
         onClear(event);
     };
 
+    const fieldStep = type === 'number' ? { step } : {};
+    const numberedValue = Number(inputValue);
+    const inputLabel = label || placeholder;
+    const asterisk = required ? '* ' : '';
+
+    const inputPlaceholder = !readOnly && placeholder ? `${asterisk}${placeholder}` : '';
+    const hasFakePlaceholder = type === 'date' || type === 'time' || type === 'datetime-local';
+
+    const values = {
+        value:
+            type !== 'textarea'
+                ? inputValue
+                : textareaRef.current?.isSuggestionListOpen
+                ? textareaRef.current.value
+                : inputValue
+    };
+    const getRegister = register && name ? { ...register(name, rules) } : values;
+
     const handleRef = (val) => {
         if (ref) {
             ref.current = val;
@@ -195,15 +216,6 @@ const ExtendedInput = forwardRef((props, ref) => {
             textareaRef.current = val;
         }
     };
-
-    const fieldStep = type === 'number' ? { step } : {};
-    const numberedValue = Number(inputValue);
-    const inputLabel = label || placeholder;
-    const asterisk = required ? '* ' : '';
-
-    const inputPlaceholder = !readOnly && placeholder ? `${asterisk}${placeholder}` : '';
-    const hasFakePlaceholder = type === 'date' || type === 'time' || type === 'datetime-local';
-
     const sharedProps = {
         onClick,
         required,
@@ -222,6 +234,7 @@ const ExtendedInput = forwardRef((props, ref) => {
             'textarea-element': type === 'textarea',
             hide: !inputValue && hasFakePlaceholder
         }),
+        ...getRegister,
         ...restProps
     };
 
@@ -333,17 +346,9 @@ const ExtendedInput = forwardRef((props, ref) => {
                                     min={min}
                                     type={type}
                                     size={flexibility === 'content-size' ? 1 : null}
-                                    value={inputValue}
                                 />
                             ) : (
-                                <textarea
-                                    {...sharedProps}
-                                    value={
-                                        textareaRef.current?.isSuggestionListOpen
-                                            ? textareaRef.current.value
-                                            : inputValue
-                                    }
-                                />
+                                <textarea {...sharedProps} />
                             )}
                             {hasFakePlaceholder && (
                                 <div
