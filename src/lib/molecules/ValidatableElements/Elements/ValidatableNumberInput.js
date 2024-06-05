@@ -47,6 +47,9 @@ const NumberInput = forwardRef((props, ref) => {
         isFieldValid,
         forceAllowValidation,
         forceValidateDuringChange,
+        register,
+        name,
+        errorText,
         ...restProps
     } = props;
 
@@ -135,6 +138,7 @@ const NumberInput = forwardRef((props, ref) => {
             onBlur={handleBlur}
             required={required}
             type="number"
+            errorText={errorText}
             {...restProps}
         />
     );
