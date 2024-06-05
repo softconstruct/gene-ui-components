@@ -30,6 +30,9 @@ const Switcher = forwardRef((props, ref) => {
         changeOnEnter,
         value,
         className,
+        register,
+        name,
+        rules,
         ...restProps
     } = props;
 
@@ -39,6 +42,7 @@ const Switcher = forwardRef((props, ref) => {
     const isControlled = 'checked' in props;
     const checked = isControlled ? props.checked : checkedState;
     const randomId = useMemo(guid, []);
+    const getRegister = register && name ? { ...register(name, rules) } : {};
 
     const handleChange = (e) => {
         const { checked } = e.target;
@@ -97,6 +101,7 @@ const Switcher = forwardRef((props, ref) => {
                         ref={ref}
                         id={randomId}
                         {...restProps}
+                        {...getRegister}
                     />
                     <label
                         className={classnames('switcher-element', `s-${size}`, {
