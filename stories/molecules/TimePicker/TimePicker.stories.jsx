@@ -37,7 +37,7 @@ export default {
         minuteFormat: ['mm', 'm'],
         secondFormat: ['ss', 's'],
         screenType: screenTypes[0],
-        hourFormat: ['HH', 'H', 'hh', 'h'],
+        hourFormat: 'HH',
         appearance: timePickerConfig.appearance[1]
     }
 };
