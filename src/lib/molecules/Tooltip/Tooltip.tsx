@@ -3,23 +3,20 @@ import classnames from 'classnames';
 import { shift, flip, offset } from '@floating-ui/core';
 import { FloatingPortal, useFloating } from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
-
 //configs
 //@ts-ignore
 import { positions } from 'configs';
-
 //utils
 //@ts-ignore
 import { noop } from 'utils';
-
 // Helpers
 //@ts-ignore
 import { useDeviceType } from 'hooks';
 // Components
 import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
-
 // Styles
 import './index.scss';
+import useDebounce from '../../../hooks/useDebounce';
 
 interface ICustomPosition {
     left?: number;
@@ -54,7 +51,7 @@ export interface ITooltipProps {
     /**
      * Any valid React node.
      */
-    children?: JSX.Element;
+    children: JSX.Element;
     /**
      * Disable/Enable repositions.
      */
@@ -106,6 +103,8 @@ const Tooltip: FC<ITooltipProps> = ({
     const mouseEnterHandler = () => !alwaysShow && setPopoverState(true);
     const mouseLeaveHandler = () => !alwaysShow && setPopoverState(false);
 
+    const [childElementWidth, setChildElementWidth] = useState<string | number>('fit-content');
+
     const getCustomPosition = {
         name: 'getCustomPosition',
         fn: () =>
@@ -149,7 +148,18 @@ const Tooltip: FC<ITooltipProps> = ({
 
     const checkNudged = ({ nudgedLeft, nudgedTop }) => (isMobile ? !(nudgedTop || nudgedLeft) : true);
 
-    const childElementWidth = elements.domReference?.firstElementChild?.clientWidth;
+    const { debounceCallback, clearDebounce } = useDebounce();
+
+    useEffect(() => {
+        const debouncedValue = elements.domReference?.firstElementChild?.scrollWidth;
+        if (debouncedValue) {
+            debounceCallback(() => setChildElementWidth(debouncedValue + 2), 1000);
+        }
+
+        return () => {
+            clearDebounce();
+        };
+    }, [title, text, elements.domReference?.firstElementChild?.scrollWidth]);
 
     return (
         <>
@@ -165,7 +175,8 @@ const Tooltip: FC<ITooltipProps> = ({
                         }}
                         ref={refs.setReference}
                         style={{
-                            width: childElementWidth
+                            width: childElementWidth,
+                            maxWidth: '100%'
                         }}
                     >
                         {children}
