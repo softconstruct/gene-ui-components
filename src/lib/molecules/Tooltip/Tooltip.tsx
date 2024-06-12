@@ -17,6 +17,7 @@ import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 // Styles
 import './index.scss';
 import useDebounce from '../../../hooks/useDebounce';
+import useWindowSize from '../../../hooks/useWindowSize';
 
 interface ICustomPosition {
     left?: number;
@@ -102,7 +103,7 @@ const Tooltip: FC<ITooltipProps> = ({
 
     const mouseEnterHandler = () => !alwaysShow && setPopoverState(true);
     const mouseLeaveHandler = () => !alwaysShow && setPopoverState(false);
-
+    const { width, height } = useWindowSize();
     const [childElementWidth, setChildElementWidth] = useState<string | number>('fit-content');
 
     const getCustomPosition = {
@@ -137,6 +138,7 @@ const Tooltip: FC<ITooltipProps> = ({
         if (alwaysShow) {
             window.addEventListener('scroll', update);
         }
+
         return () => window.removeEventListener('scroll', update);
     }, [alwaysShow]);
 
@@ -155,11 +157,17 @@ const Tooltip: FC<ITooltipProps> = ({
         if (debouncedValue) {
             debounceCallback(() => setChildElementWidth(debouncedValue + 2), 1000);
         }
-
         return () => {
             clearDebounce();
         };
     }, [title, text, elements.domReference?.firstElementChild?.scrollWidth]);
+
+    useEffect(() => {
+        debounceCallback(update);
+        return () => {
+            clearDebounce();
+        };
+    }, [title, text, width, height]);
 
     return (
         <>
