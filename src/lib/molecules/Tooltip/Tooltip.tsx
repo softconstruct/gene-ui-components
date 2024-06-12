@@ -164,10 +164,11 @@ const Tooltip: FC<ITooltipProps> = ({
 
     useEffect(() => {
         debounceCallback(update);
+
         return () => {
             clearDebounce();
         };
-    }, [title, text, width, height]);
+    }, [title, text, width, height, elements.domReference?.getBoundingClientRect().x]);
 
     return (
         <>
