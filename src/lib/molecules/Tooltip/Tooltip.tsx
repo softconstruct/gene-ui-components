@@ -15,7 +15,7 @@ import { useDeviceType } from 'hooks';
 // Components
 import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 // Styles
-import './index.scss';
+import './Tooltip.scss';
 import useDebounce from '../../../hooks/useDebounce';
 import useWindowSize from '../../../hooks/useWindowSize';
 
