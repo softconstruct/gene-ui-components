@@ -1,7 +1,17 @@
-import React, { useState, useEffect, useContext, CSSProperties, JSX, MouseEvent, FC, PointerEvent } from 'react';
+import React, {
+    useState,
+    useEffect,
+    useContext,
+    CSSProperties,
+    JSX,
+    MouseEvent,
+    FC,
+    PointerEvent,
+    cloneElement
+} from 'react';
 import classnames from 'classnames';
 import { shift, flip, offset } from '@floating-ui/core';
-import { FloatingPortal, useFloating } from '@floating-ui/react';
+import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
 //configs
 //@ts-ignore
@@ -125,13 +135,14 @@ const Tooltip: FC<ITooltipProps> = ({
 
             flip({
                 fallbackAxisSideDirection: 'none',
-                fallbackPlacements: positions
-            }),
-            shift({
+                fallbackPlacements: positions,
                 mainAxis: !disableReposition
             }),
+            shift(),
+
             getCustomPosition
-        ]
+        ],
+        whileElementsMounted: autoUpdate
     });
 
     useEffect(() => {
@@ -163,7 +174,7 @@ const Tooltip: FC<ITooltipProps> = ({
     }, [title, text, elements.domReference?.firstElementChild?.scrollWidth]);
 
     useEffect(() => {
-        debounceCallback(update);
+        debounceCallback(update, 100);
 
         return () => {
             clearDebounce();
@@ -183,14 +194,13 @@ const Tooltip: FC<ITooltipProps> = ({
                             onClick(e);
                         }}
                         ref={refs.setReference}
+                        className="tooltip-wrapper"
                         style={{
-                            width: childElementWidth,
-                            maxWidth: '100%'
+                            width: childElementWidth
                         }}
                     >
                         {children}
                     </div>
-
                     {(alwaysShow || isPopoverOpen) && (
                         <FloatingPortal root={geneUIProviderRef.current}>
                             {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
