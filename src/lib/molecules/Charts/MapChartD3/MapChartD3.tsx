@@ -219,6 +219,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     const canvasWrapperRef = useRef<HTMLDivElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const zoomRef = useRef<ZoomBehavior<Element, unknown> | null>(null);
+    const currentTransform = useRef({ x: 0, y: 0, k: defaultZoomScale });
     const transformRef = useRef({ x: 0, y: 0, k: defaultZoomScale });
     const popoverRef = useRef();
     const hoveredRegionRef = useRef<IMapChartFeature | null>(null);
@@ -232,8 +233,17 @@ const MapChartD3: FC<IMapChartD3Props> = ({
     const pathRef = useRef<GeoPath | null>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [legends, setLegends] = useState(colorAxis?.dataClasses || []);
+    const initialCanvasWidth = useRef<number | undefined>();
     const canvasWidth = (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().width;
+    const initialCanvasHeight = useRef<number | undefined>();
     const canvasHeight = (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().height;
+    const initialCoordinates = useRef({ minX: 0, maxX: 0, minY: 0, maxY: 0 });
+    const zoomedCoordinates = useRef({ x: 0, y: 0 });
+
+    useEffect(() => {
+        initialCanvasWidth.current = (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().width;
+        initialCanvasHeight.current = (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().height;
+    }, []);
 
     useEffect(() => {
         const _chartData = mapData?.features?.map((item: IMapChartFeature) => {
@@ -259,7 +269,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         });
 
         setChartData(_chartData);
-    }, [isLoading, withLegend, isViewActive, withActivity, screenType, title, canvasWidth, canvasHeight, mapData]);
+    }, [regionData, colorAxis, mapData]);
 
     const handleMouseEnter = (geo: IMapChartFeature, e: MouseEvent): void => {
         withActivity && setSelectedName(geo.properties.name);
@@ -289,8 +299,8 @@ const MapChartD3: FC<IMapChartD3Props> = ({
             generateContext(feature as GeoPermissibleObjects);
 
             return context.isPointInPath(
-                (x - transformRef.current.x) / transformRef.current.k,
-                (y - transformRef.current.y) / transformRef.current.k
+                (x - currentTransform.current.x) / currentTransform.current.k,
+                (y - currentTransform.current.y) / currentTransform.current.k
             );
         });
 
@@ -369,12 +379,13 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         const path = pathRef.current;
         const { width, height } = (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect();
         const clearRectSize = width > height ? width : height;
+        transformRef.current = currentTransform.current;
 
         context.save();
         context.clearRect(0, 0, clearRectSize, clearRectSize);
         context.resetTransform();
-        context.translate(transformRef.current.x, transformRef.current.y);
-        context.scale(transformRef.current.k, transformRef.current.k);
+        context.translate(currentTransform.current.x, currentTransform.current.y);
+        context.scale(currentTransform.current.k, currentTransform.current.k);
         context.beginPath();
         chartData.forEach((feature) => {
             context.beginPath();
@@ -383,7 +394,7 @@ const MapChartD3: FC<IMapChartD3Props> = ({
                 addBrightness(feature.properties.color, feature.properties.brightness || 0) || defaultFeatureColor;
             context.fill();
             context.strokeStyle = '#cee7f2';
-            context.lineWidth = 1.5 / transformRef.current.k;
+            context.lineWidth = 1.5 / currentTransform.current.k;
             context.stroke();
         });
         context.restore();
@@ -395,7 +406,14 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         const {
             transform: { x, y, k }
         } = event;
-        transformRef.current = { x: x, y: y, k: k };
+        const [[minX, minY], [maxX, maxY]] = pathRef.current.bounds(mapData as GeoGeometryObjects);
+        if (event.sourceEvent) {
+            zoomedCoordinates.current.x = event.sourceEvent.clientX;
+            zoomedCoordinates.current.y = event.sourceEvent.clientY;
+        }
+
+        initialCoordinates.current = { minX, minY, maxX, maxY };
+        currentTransform.current = { x, y, k };
         setZoomButtonsStatus({
             zoomIn: k === maxScaleExtent,
             zoomOut: k === minScaleExtent,
@@ -404,6 +422,60 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         drawMap();
     };
 
+    useEffect(() => {
+        if (!canvasRef.current || !zoomRef.current) {
+            return;
+        }
+
+        // contextRef.current.translate(0, 0);
+
+        setTimeout(() => {
+            if (
+                initialCanvasWidth.current &&
+                initialCanvasHeight.current &&
+                (initialCanvasHeight.current !==
+                    (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().height ||
+                    initialCanvasWidth.current !==
+                        (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().width)
+            ) {
+                const [[currentMinX, currentMinY], [currentMaxX, currentMaxY]] = pathRef.current.bounds(
+                    mapData as GeoGeometryObjects
+                );
+
+                if (initialCanvasWidth.current !== canvasWidth) {
+                    const initialWidth = initialCanvasWidth.current || 0;
+                    const initialHeight = initialCanvasHeight.current || 0;
+                    const { x, y, k } = transformRef.current;
+                    const zoomScale = k / (initialWidth / initialHeight) < 1 ? 1 : k / (initialWidth / initialHeight);
+
+                    const calculatedX = (x * zoomScale) / (initialWidth / canvasWidth);
+                    const calculatedY = (y * zoomScale) / (initialHeight / canvasHeight);
+
+                    currentTransform.current = { x: -calculatedX, y: -calculatedY, k };
+
+                    initialCanvasWidth.current = canvasWidth;
+                    initialCanvasHeight.current = currentMaxY - currentMinY;
+                }
+                select(canvasRef.current as Element)
+                    .call(zoomRef.current)
+                    .call(
+                        zoomRef.current.transform,
+                        zoomIdentity
+                            .translate(currentTransform.current.x, currentTransform.current.y)
+                            .scale(currentTransform.current.k)
+                    );
+            }
+        }, 0);
+    }, [
+        canvasWidth,
+        canvasHeight,
+        pathRef.current,
+        contextRef.current,
+        canvasRef.current,
+        zoomRef.current,
+        initialCanvasHeight.current,
+        initialCanvasWidth.current
+    ]);
     // START Set configurations for D3 CANVAS
 
     useEffect(() => {
@@ -432,32 +504,39 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         const path = geoPath(projection, context);
         pathRef.current = path;
 
-        if (initialZoomedRegionId && defaultZoomScale > 1) {
-            const zoomedRegion = chartData.find((item) => item.id === initialZoomedRegionId);
-            const [[minX, minY], [maxX, maxY]] = path.bounds(zoomedRegion as GeoGeometryObjects);
-
-            transformedX = -(canvas.width / 2 - ((minX + maxX) / 2) * defaultZoomScale);
-            transformedY = -(canvas.height / 2 - ((minY + maxY) / 2) * defaultZoomScale);
-        } else {
-            transformedX = canvas.width / 2;
-            transformedY = canvas.height / 2;
-        }
-
         const zoom = d3Zoom()
             .scaleExtent(defaultScaleExtent)
             .translateExtent([defaultTranslateExtent, [canvas.width, canvas.height]])
             .on('zoom', (event: D3ZoomEvent<HTMLCanvasElement, any>) => handleZoom(event));
-        zoomRef.current = zoom;
 
-        select(canvas as Element)
-            .call(zoom)
-            .call(
-                zoom.transform,
-                zoomIdentity
-                    .translate(transformedX, transformedY)
-                    .scale(defaultZoomScale)
-                    .translate(-transformedX, -transformedY)
-            );
+        if (
+            initialCanvasWidth.current &&
+            initialCanvasHeight.current &&
+            initialCanvasHeight.current ===
+                (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().height &&
+            initialCanvasWidth.current === (canvasWrapperRef.current as HTMLDivElement)?.getBoundingClientRect().width
+        ) {
+            if (initialZoomedRegionId && defaultZoomScale > 1) {
+                const zoomedRegion = chartData.find((item) => item.id === initialZoomedRegionId);
+                const [[minX, minY], [maxX, maxY]] = path.bounds(zoomedRegion as GeoGeometryObjects);
+                transformedX = -(canvas.width / 2 - ((minX + maxX) / 2) * defaultZoomScale);
+                transformedY = -(canvas.height / 2 - ((minY + maxY) / 2) * defaultZoomScale);
+            } else {
+                transformedX = canvas.width / 2;
+                transformedY = canvas.height / 2;
+            }
+
+            select(canvas as Element)
+                .call(zoom)
+                .call(
+                    zoom.transform,
+                    zoomIdentity
+                        .translate(transformedX, transformedY)
+                        .scale(currentTransform.current.k)
+                        .translate(-transformedX, -transformedY)
+                );
+        }
+        zoomRef.current = zoom;
 
         select(canvas).on('mousemove', handleMouseMove);
 
@@ -471,7 +550,22 @@ const MapChartD3: FC<IMapChartD3Props> = ({
         });
 
         select(canvas).on('click', handleClick);
-    }, [chartData, canvasRef, zoomRef, canvasWrapperRef, defaultZoomScale, isMobile]);
+    }, [
+        chartData,
+        canvasRef,
+        zoomRef,
+        canvasWrapperRef,
+        defaultZoomScale,
+        isMobile,
+        isLoading,
+        withLegend,
+        isViewActive,
+        withActivity,
+        screenType,
+        title,
+        canvasWidth,
+        canvasHeight
+    ]);
 
     // END Set configurations for D3 CANVAS
 
