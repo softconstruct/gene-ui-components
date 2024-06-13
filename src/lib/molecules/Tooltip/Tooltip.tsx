@@ -19,6 +19,7 @@ import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 import './Tooltip.scss';
 
 const positions: Placement[] = ['top', 'right', 'bottom', 'left'];
+const letterBufferSpace = 2;
 
 interface ICustomPosition {
     left?: number;
@@ -155,9 +156,11 @@ const Tooltip: FC<ITooltipProps> = ({
 
     useEffect(() => {
         const debouncedValue = elements.domReference?.firstElementChild?.scrollWidth;
+
         if (debouncedValue) {
-            debounceCallback(() => setChildElementWidth(debouncedValue + 2), 1000);
+            debounceCallback(() => setChildElementWidth(debouncedValue + letterBufferSpace), 1000);
         }
+
         return () => {
             clearDebounce();
         };
