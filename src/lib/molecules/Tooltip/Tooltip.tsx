@@ -63,7 +63,7 @@ export interface ITooltipProps {
      * Positions where will be displayed the Tooltip relates the child component.
      * Possible values: `top | right | bottom | left`
      */
-    position?: Placement;
+    position?: 'top' | 'right' | 'bottom' | 'left';
     /**
      * Tooltip padding from the target element
      */
@@ -98,6 +98,7 @@ const Tooltip: FC<ITooltipProps> = ({
     isVisible = true,
     ...props
 }) => {
+    // @ts-ignore
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
 
     const { isMobile } = useDeviceType(screenType);
