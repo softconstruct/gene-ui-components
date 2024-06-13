@@ -1,33 +1,24 @@
-import React, {
-    useState,
-    useEffect,
-    useContext,
-    CSSProperties,
-    JSX,
-    MouseEvent,
-    FC,
-    PointerEvent,
-    cloneElement
-} from 'react';
+import React, { useState, useEffect, useContext, CSSProperties, JSX, MouseEvent, FC, PointerEvent } from 'react';
 import classnames from 'classnames';
 import { shift, flip, offset } from '@floating-ui/core';
 import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
-//configs
-//@ts-ignore
-import { positions } from 'configs';
-//utils
+
+// Utils
 //@ts-ignore
 import { noop } from 'utils';
-// Helpers
+
+// Hooks
 //@ts-ignore
-import { useDeviceType } from 'hooks';
+import { useDeviceType, useDebounce, useWindowSize } from 'hooks';
+
 // Components
 import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
+
 // Styles
 import './Tooltip.scss';
-import useDebounce from '../../../hooks/useDebounce';
-import useWindowSize from '../../../hooks/useWindowSize';
+
+const positions: Placement[] = ['top', 'right', 'bottom', 'left'];
 
 interface ICustomPosition {
     left?: number;
@@ -36,15 +27,16 @@ interface ICustomPosition {
 
 export interface ITooltipProps {
     /**
-     * Different sizes for 'Tooltip'.
+     * The Tooltip component size
+     * Possible values: `default | small`
      */
     size?: 'default' | 'small';
     /**
-     * Text for 'Tooltip'.
+     * Main content for the component.
      */
     text?: string;
     /**
-     * Title for 'Tooltip'.
+     * Title for the component.
      */
     title?: string;
     /**
@@ -52,11 +44,11 @@ export interface ITooltipProps {
      */
     style?: CSSProperties;
     /**
-     * Have always visible 'Tooltip'.
+     * The component will be visible without any action.
      */
     alwaysShow?: boolean;
     /**
-     * Custom positions(left, top) for 'Tooltip'.
+     * Will display the component in the specified location.
      */
     customPosition?: ICustomPosition;
     /**
@@ -64,16 +56,16 @@ export interface ITooltipProps {
      */
     children: JSX.Element;
     /**
-     * Disable/Enable repositions.
+     * Disable/Enable auto repositions.
      */
     disableReposition?: boolean;
     /**
-     * 'Tooltip' position to be displayed
+     * Positions where will be displayed the Tooltip relates the child component.
+     * Possible values: `top | right | bottom | left`
      */
     position?: Placement;
-
     /**
-     * 'Tooltip' padding from the target element
+     * Tooltip padding from the target element
      */
     padding?: number;
     /**
@@ -81,11 +73,11 @@ export interface ITooltipProps {
      */
     screenType?: 'desktop' | 'mobile';
     /**
-     * If isVisible is false, the component will render only children without a tooltip wrapped.
+     * In case of `false` value, the children component will rendered without Tooltip.
      */
     isVisible?: boolean;
     /**
-     * Handle click event on avatar component((event: Event) => void 0).
+     * The action will triggered when the Tooltip component will clicked.
      */
     onClick?: (e: MouseEvent) => void;
 }
@@ -106,41 +98,38 @@ const Tooltip: FC<ITooltipProps> = ({
     isVisible = true,
     ...props
 }) => {
-    const { isMobile } = useDeviceType(screenType);
-    const [isPopoverOpen, setPopoverState] = useState(false);
-    // @ts-ignore
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
+
+    const { isMobile } = useDeviceType(screenType);
+    const { width, height } = useWindowSize();
+
+    const [isPopoverOpen, setPopoverState] = useState(false);
+    const [childElementWidth, setChildElementWidth] = useState<string | number>('fit-content');
 
     const mouseEnterHandler = () => !alwaysShow && setPopoverState(true);
     const mouseLeaveHandler = () => !alwaysShow && setPopoverState(false);
-    const { width, height } = useWindowSize();
-    const [childElementWidth, setChildElementWidth] = useState<string | number>('fit-content');
-
-    const getCustomPosition = {
-        name: 'getCustomPosition',
-        fn: () =>
-            customPosition
-                ? {
-                      x: customPosition?.left,
-                      y: customPosition?.top
-                  }
-                : {}
-    };
 
     const { refs, floatingStyles, context, update, elements } = useFloating({
         open: alwaysShow || isPopoverOpen,
         placement: position,
         middleware: [
             offset(padding),
-
             flip({
                 fallbackAxisSideDirection: 'none',
                 fallbackPlacements: positions,
                 mainAxis: !disableReposition
             }),
             shift(),
-
-            getCustomPosition
+            {
+                name: 'getCustomPosition',
+                fn: () =>
+                    customPosition
+                        ? {
+                              x: customPosition?.left,
+                              y: customPosition?.top
+                          }
+                        : {}
+            }
         ],
         whileElementsMounted: autoUpdate
     });
