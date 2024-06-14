@@ -135,6 +135,10 @@ function Dropdown({
     const updatedSelectedValues = isControlled ? controlledValue || [] : selectedValues;
     const updatedSelectedValueMapping = isMultiSelect ? updatedSelectedValues : [];
 
+    useEffect(() => {
+        readOnly && setSelectedValues(initialValue && initialValue.constructor === Array ? initialValue : []);
+    }, [defaultValue]);
+
     /**
      * setting openedOption
      */
@@ -163,7 +167,7 @@ function Dropdown({
             readOnly && isMultiSelect
                 ? openedOptions.filter((item) => selectedValues.includes(item[valueKey]))
                 : openedOptions,
-        [readOnly, isMultiSelect, valueKey, options, openedOptions]
+        [readOnly, isMultiSelect, valueKey, options, openedOptions, selectedValues]
     );
     const inputValue = useMemo(() => {
         if (isMultiSelect) {

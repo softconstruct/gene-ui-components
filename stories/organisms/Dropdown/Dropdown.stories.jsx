@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import DropdownComponent from 'src/lib/organisms/Dropdown';
 import data, { dataForReadOnly } from './data';
 import { args, category } from '../../assets/storybook.globals';
+import { Tab, Tabs } from 'src/lib/molecules/Tabs';
 
 const align = ['start', 'end', 'center'];
 const position = ['bottom', 'left', 'right', 'top'];
@@ -133,4 +134,52 @@ ReadOnly.args = {
     data: dataForReadOnly,
     value: 1,
     label: 'Readonly Label'
+};
+
+export const ReadOnlyInTabs = ({ ...args }) => {
+    const [levels, setLevels] = useState([
+        { Id: 1, Name: 'tab 1' },
+        { Id: 2, Name: 'tab 2' },
+        {
+            Id: 3,
+            Name: 'tab 3'
+        },
+        { Id: 4, Name: 'tab 4' }
+    ]);
+    const [activeKey, setActiveKey] = useState(1);
+    const tabChangeHandler = (key) => setActiveKey(+key);
+    const [selectedData, setSelectedData] = useState([1]);
+
+    useEffect(() => {
+        setSelectedData(
+            Array(+activeKey)
+                .fill('')
+                .map((e, index) => index + 1)
+        );
+    }, [activeKey]);
+    console.log(selectedData);
+    return (
+        <Tabs
+            type="basic"
+            fixedSize={false}
+            contentClassName={'verificationTypes__tabsContent'}
+            position={'left'}
+            onChange={tabChangeHandler}
+            activeKey={activeKey.toString()}
+        >
+            {levels?.map(({ Name, Id }) => {
+                return (
+                    <Tab key={Id} title={Name}>
+                        <DropdownComponent
+                            {...args}
+                            isMultiSelect
+                            data={dataForReadOnly}
+                            defaultValue={selectedData}
+                            readOnly
+                        />
+                    </Tab>
+                );
+            })}
+        </Tabs>
+    );
 };
