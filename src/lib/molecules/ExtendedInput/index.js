@@ -256,6 +256,10 @@ const ExtendedInput = forwardRef((props, ref) => {
         [max, min, numberedValue]
     );
 
+    useEffect(() => {
+        if (document.activeElement !== inputRef.current && focused) inputRef.current.focus();
+    }, [showTooltip, inputRef, focused]);
+
     return (
         <Tooltip position="bottom" title={showTooltip} isVisible={!!showTooltip}>
             <div
