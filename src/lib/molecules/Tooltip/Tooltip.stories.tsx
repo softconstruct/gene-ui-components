@@ -1,49 +1,44 @@
 import React from 'react';
 import { Meta } from '@storybook/react';
-import { args, category } from '../../../../stories/assets/storybook.globals';
-
-//Configs
-import { positions } from '../../../configs';
+import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
+import TooltipComponent, { ITooltipProps } from './index';
 import Button from '../../atoms/Button';
-import TooltipComponent from './';
-
-// Types
-import { ITooltipProps } from './';
-
-const sizes = ['default', 'small'] as const;
 
 const meta: Meta<ITooltipProps> = {
     title: 'Molecules/Tooltip',
     component: TooltipComponent,
     argTypes: {
-        text: args({ control: 'text', category: category.content }),
-        title: args({ control: 'text', category: category.content }),
-        children: args({ control: 'text', category: category.content }),
-        style: args({ control: 'text', category: category.appearance }),
-        size: args({ control: 'select', category: category.appearance }),
-        padding: args({ control: 'number', category: category.appearance }),
-        alwaysShow: args({ control: 'boolean', category: category.states }),
-        disableReposition: args({ control: 'boolean', category: category.states }),
-        customPosition: args({ control: 'object', category: category.appearance }),
-        isVisible: args({ control: 'boolean', category: category.functionality }),
-        position: args({ control: 'select', options: positions, category: category.appearance })
+        text: args({ control: 'text', ...propCategory.content }),
+        title: args({ control: 'text', ...propCategory.content }),
+        children: args({ control: 'text', ...propCategory.content }),
+        style: args({ control: 'text', ...propCategory.appearance }),
+        size: args({ control: 'select', ...propCategory.appearance }),
+        padding: args({ control: 'number', ...propCategory.appearance }),
+        alwaysShow: args({ control: 'boolean', ...propCategory.states }),
+        disableReposition: args({ control: 'boolean', ...propCategory.states }),
+        customPosition: args({ control: 'object', ...propCategory.appearance }),
+        isVisible: args({ control: 'boolean', ...propCategory.functionality }),
+        position: args({ control: 'select', ...propCategory.appearance }),
+        onClick: args({ control: false, ...propCategory.action })
     },
     args: {
-        size: sizes[0],
+        size: 'default',
         title: 'Title',
         isVisible: true,
         alwaysShow: false,
-        position: positions[0] as ITooltipProps['position'],
+        position: 'top',
         disableReposition: false,
         text: 'Tooltip some text'
-    }
+    } as ITooltipProps
 };
+
 export default meta;
+
 export const Tooltip = ({ ...args }) => {
     return (
-        <div style={{ height: '100%', padding: '200px' }}>
+        <div style={{ height: '1000px', padding: '200px' }}>
             <TooltipComponent {...args}>
                 {/**@ts-ignore */}
                 <Button>Button with tooltip</Button>
