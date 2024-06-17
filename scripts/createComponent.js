@@ -34,32 +34,42 @@ const messages = {
 
 let prettierConfig;
 
-const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => `
-    import React${isWithForwardRef ? ', { forwardRef }' : ''} from 'react';
-    import PropTypes from 'prop-types';
+const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => {
+    const InterfaceName = `I${name}Props`;
 
+    const result = `
+    import React${isWithForwardRef ? ', { forwardRef }' : 'FC'} from 'react';
+
+    // Styles
     import 'src/assets/styles/globalStyling.scss';
-    import './index.scss';
+    import './${name}.scss';
+    
+    interface ${InterfaceName} {
+     ${
+         props.length
+             ? `${[...props].map((prop) => `
+             /**
+            * ${prop} description
+            */
+            ${prop}: any`)}`
+             : `// fill ${name} component props interface`
+     }
+        
+    }
 
     ${description ? `/** \n* ${description}\n*/` : ''}
-    const ${name} = ${isWithForwardRef ? 'forwardRef((' : '('}
-    ${props.length ? `{${[...props]}}` : 'props'}
+    const ${name}${!isWithForwardRef ? `: FC<I${name}Props>` : ''} = ${
+        isWithForwardRef ? `forwardRef<${InterfaceName}>((` : '('
+    }${props.length ? `{${[...props]}}: I${name}Props` : 'props'}
     ${isWithForwardRef ? ', ref' : ''}) => {
         return '${name}';
     }${isWithForwardRef ? ')' : ''};
 
-    ${name}.propTypes = {
-        // fill props types and comment each prop type
-    };
-
-    ${name}.defaultProps = {
-        // fill default prop values
-    };
-
-    ${name}.displayName = '${name}';
-
-    export default ${name};
+    export { I${name}Props, ${name} as default };
 `;
+    // console.log(result)
+    return result;
+};
 
 const generateCmpStoryTemplate = ({ title }, { name }) => `
     import React from 'react';
@@ -182,7 +192,7 @@ const askQuestions = () => {
             name: 'files',
             type: 'input',
             message:
-                "If you need extra .js files in the component folder type files names separated by ',' else leave the input empty: ",
+                "If you need extra .ts files in the component folder type files names separated by ',' else leave the input empty: ",
             prefix: '[?]',
             filter: (value) => (value ? value.split(',').map((prop) => prop.trim()) : []),
             validate: async (files) => {
@@ -262,16 +272,20 @@ const createComponentFiles = async ({ level, name, hasMobileView, files, ...rest
         // Create component folder
         await fs.mkdir(cmpDir);
         // Create index.js file with code
-        await fs.appendFile(`${cmpDir}/index.js`, prettier.format(srcCode, prettierConfig));
+        console.log('before', srcCode);
+        console.log('after', prettier.format(srcCode, prettierConfig));
+
+        await fs.appendFile(`${cmpDir}/${name}.tsx`, prettier.format(srcCode, prettierConfig));
+        // await fs.appendFile(`${cmpDir}/${name}.tsx`, srcCode);
         // Create scss file for the component
-        await fs.appendFile(`${cmpDir}/index.scss`, '@import "src/assets/styles/variables";');
+        await fs.appendFile(`${cmpDir}/${name}.scss`, '@import "src/assets/styles/variables";');
         // Create index.mobile.js file if has mobile view
         if (hasMobileView) {
-            await fs.appendFile(`${cmpDir}/index.mobile.js`, "export * from './index';");
+            await fs.appendFile(`${cmpDir}/${name}.mobile.js`, `export * from './${name}';`);
         }
         // Create extra js files in the component dir
         for (let i = 0; i < files.length; i++) {
-            await fs.appendFile(`${cmpDir}/${files[i]}.js`, '');
+            await fs.appendFile(`${cmpDir}/${files[i]}.ts`, '');
         }
     } catch (error) {
         return {
@@ -426,7 +440,7 @@ const main = async () => {
     // Show script introduction
     init();
 
-    prettierConfig = await prettier.resolveConfig(path.join(__dirname, `../.prettierrc`));
+    prettierConfig = await prettier.resolveConfig(path.join(__dirname, `../configs/.prettierrc`));
 
     // Ask questions
     const answers = await askQuestions();
