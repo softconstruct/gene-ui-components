@@ -539,7 +539,7 @@ function Dropdown({
                 handleCheckboxModel(newValues);
             }
         }
-        callAfterDelay(() => searchRef.current.focus(), DELAY);
+        callAfterDelay(() => searchRef.current?.focus(), DELAY);
     }, [filteredData, handleChangeAll, handleCheckboxModel, hoveredState, selectedValues, valueKey]);
 
     useEffect(() => {

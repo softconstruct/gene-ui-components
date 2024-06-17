@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
-import DropdownComponent from 'src/lib/organisms/Dropdown';
-import data, { dataForReadOnly } from './data';
+// Helpers
 import { args, category } from '../../assets/storybook.globals';
+
+// Components
+import DropdownComponent from 'src/lib/organisms/Dropdown';
 import { Tab, Tabs } from 'src/lib/molecules/Tabs';
+
+//Data
+import data, { dataForReadOnly } from './data';
 
 const align = ['start', 'end', 'center'];
 const position = ['bottom', 'left', 'right', 'top'];
@@ -18,8 +23,6 @@ const inputConfig = {
     flexibility: ['full-width', 'content-size'],
     type: ['text', 'color', 'number', 'password', 'textarea', 'date', 'time', 'datetime-local']
 };
-
-const types = ['data', 'image', 'search'];
 
 const states = { category: category.states };
 const action = { category: category.action };
@@ -157,7 +160,7 @@ export const ReadOnlyInTabs = ({ ...args }) => {
                 .map((e, index) => index + 1)
         );
     }, [activeKey]);
-    console.log(selectedData);
+
     return (
         <Tabs
             type="basic"
