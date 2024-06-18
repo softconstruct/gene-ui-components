@@ -38,7 +38,7 @@ const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => 
     const InterfaceName = `I${name}Props`;
 
     const result = `
-    import React${isWithForwardRef ? ', { forwardRef }' : 'FC'} from 'react';
+    import React${isWithForwardRef ? ', { forwardRef }' : ', { FC }'} from 'react';
 
     // Styles
     import 'src/assets/styles/globalStyling.scss';
@@ -47,20 +47,21 @@ const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => 
     interface ${InterfaceName} {
      ${
          props.length
-             ? `${[...props].map((prop) => `
+             ? `${[...props].map(
+                   (prop) => `
              /**
-            * ${prop} description
-            */
-            ${prop}: any`)}`
+               * ${prop} description
+               */
+            ${prop}: any`
+               )}`
              : `// fill ${name} component props interface`
      }
-        
     }
 
     ${description ? `/** \n* ${description}\n*/` : ''}
     const ${name}${!isWithForwardRef ? `: FC<I${name}Props>` : ''} = ${
         isWithForwardRef ? `forwardRef<${InterfaceName}>((` : '('
-    }${props.length ? `{${[...props]}}: I${name}Props` : 'props'}
+    }${props.length ? `{${[...props]}}` : 'props'}
     ${isWithForwardRef ? ', ref' : ''}) => {
         return '${name}';
     }${isWithForwardRef ? ')' : ''};
@@ -71,43 +72,57 @@ const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => 
     return result;
 };
 
-const generateCmpStoryTemplate = ({ title }, { name }) => `
-    import React from 'react';
-    
-    import { ${name} } from 'src';
+const generateCmpStoryTemplate = (storyData, rest) => {
+    const { title } = storyData;
+    const { name, level, props } = rest;
 
-    import data from './data';
-    import { CodeBox } from 'storyUtils';
-
-    const ${name}Story = ({ ...restProps }) => (
-        <CodeBox
-            title="${name}"
-            withSandbox={false}
-        >
-            <${name} {...restProps}></${name}>
-        </CodeBox>
-    );
-
-    const story = { 
-        info: { 
-            text: '${title}'
-        }
-    };
-
-    const ${name}StoryWrapper = () => <${name}Story/>
-
-    export default [
-        ${name}StoryWrapper,
-        story,
-    ];
-`;
+    return `
+            import React, { FC } from 'react';
+            import { Meta } from '@storybook/react';
+            
+            // Helpers
+            import { args, propCategory } from '../../../../stories/assets/storybook.globals';
+            
+            // Components
+            import ${name}, { I${name}Props } from './index';
+            
+            const meta: Meta<typeof ${name}> = {
+                title: '${level}/${name}',
+                component: ${name},
+                argTypes: {
+                         ${
+                             props.length
+                                 ? `${[...props].map(
+                                       (prop) => `
+                                 ${prop}: args({ control: false, ...propCategory.appearance })`
+                                   )}`
+                                 : `// fill ${name} component argTypes`
+                         }
+             
+                },
+                args: {
+                        ${
+                            props.length
+                                ? `${[...props].map(
+                                      (prop) => `
+                                   ${prop}: "fill the ${prop} prop value"`
+                                  )}`
+                                : `// fill ${name} component args`
+                        }
+                } as I${name}Props
+            };
+            
+            export default meta;
+            
+            `;
+};
 
 const getLevelIndexPaths = (level, isStory = false) => {
-    const basePath = isStory ? 'stories' : 'src/lib';
-    return {
-        desktop: path.join(__dirname, `../${basePath}/${level}/index.js`),
-        mobile: path.join(__dirname, `../${basePath}/${level}/index.mobile.js`)
-    };
+    // const basePath = isStory ? 'stories' : 'src/lib';
+    // return {
+    //     desktop: path.join(__dirname, `../${basePath}/${level}/index.js`),
+    //     mobile: path.join(__dirname, `../${basePath}/${level}/index.mobile.js`)
+    // };
 };
 
 const init = () => {
@@ -272,8 +287,6 @@ const createComponentFiles = async ({ level, name, hasMobileView, files, ...rest
         // Create component folder
         await fs.mkdir(cmpDir);
         // Create index.js file with code
-        console.log('before', srcCode);
-        console.log('after', prettier.format(srcCode, prettierConfig));
 
         await fs.appendFile(`${cmpDir}/${name}.tsx`, prettier.format(srcCode, prettierConfig));
         // await fs.appendFile(`${cmpDir}/${name}.tsx`, srcCode);
@@ -297,13 +310,15 @@ const createComponentFiles = async ({ level, name, hasMobileView, files, ...rest
 
 const addExports = async ({ level, name, hasMobileView }) => {
     try {
-        const levelPaths = getLevelIndexPaths(level);
-        // Add export to the level index.js file for desktop view
-        await fs.writeFile(levelPaths.desktop, `export ${name} from './${name}';`, { flag: 'a+' });
+        // const levelPaths = getLevelIndexPaths(level);
+        const cmpDir = path.join(__dirname, `../src/lib/${level}/${name}`);
+        const indexContent = `export { I${name}Props, default as default } from './${name}';`;
+
+        await fs.writeFile(`${cmpDir}/index.tsx`, indexContent, { flag: 'a+' });
         // Add export to the level index.mobile.js for mobile view
-        if (hasMobileView) {
-            await fs.writeFile(levelPaths.mobile, `export * from './${name}/index.mobile';`, { flag: 'a+' });
-        }
+        // if (hasMobileView) {
+        //     await fs.writeFile(levelPaths.mobile, `export * from './${name}/index.mobile';`, { flag: 'a+' });
+        // }
     } catch (error) {
         return {
             hasError: true,
@@ -320,12 +335,14 @@ const createStoryFiles = async (storyData, { name, level, ...restCmpData }) => {
             level,
             ...restCmpData
         });
-        const storyDir = path.join(__dirname, `../stories/${level}/${name}`);
+        // `../src/lib/${level}/${name}`
+        const storyDir = path.join(__dirname, `../src/lib/${level}/${name}`);
 
         // Create component folder
-        await fs.mkdir(storyDir);
+        // await fs.mkdir(storyDir);
         // Create index.js file with code
-        await fs.appendFile(`${storyDir}/index.js`, prettier.format(storyCode, prettierConfig));
+        await fs.appendFile(`${storyDir}/${name}.stories.tsx`, storyCode);
+        // await fs.appendFile(`${storyDir}/${name}.stories.tsx`, prettier.format(storyCode, prettierConfig));
         // Create data source file for the component
         const componentDataSource = `
             import { faker } from '@faker-js/faker';
@@ -356,7 +373,7 @@ const createStoryFiles = async (storyData, { name, level, ...restCmpData }) => {
 
             export default [];
         `;
-        await fs.appendFile(`${storyDir}/data.js`, prettier.format(componentDataSource, prettierConfig));
+        // await fs.appendFile(`${storyDir}/data.js`, prettier.format(componentDataSource, prettierConfig));
     } catch (error) {
         return {
             hasError: true,
@@ -463,7 +480,7 @@ const main = async () => {
         spinner.start();
 
         const storyCreationResult = await createStoryFiles(storyAnswers, answers);
-        const storyExportsAddingResult = addStoryExports(answers);
+        // const storyExportsAddingResult = addStoryExports(answers);
 
         if (storyCreationResult?.hasError || storyExportsAddingResult?.hasError) {
             const errorMessage = storyCreationResult?.error || storyExportsAddingResult?.error;
