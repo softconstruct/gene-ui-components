@@ -14,6 +14,7 @@ import classnames from 'classnames';
 import { shift, flip, offset } from '@floating-ui/core';
 import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
+import { ReferenceType } from '@floating-ui/react-dom';
 
 // Utils
 //@ts-ignore
@@ -28,7 +29,6 @@ import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
 // Styles
 import './Tooltip.scss';
-import { ReferenceType } from '@floating-ui/react-dom';
 
 const positions: Placement[] = ['top', 'right', 'bottom', 'left'];
 
