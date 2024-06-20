@@ -129,14 +129,12 @@ function Dropdown({
     );
     const setScrollRef = (element) => element && updateScrollRef(element);
 
-    const [selectedValues, setSelectedValues] = useState(
-        initialValue && initialValue.constructor === Array ? initialValue : []
-    );
+    const [selectedValues, setSelectedValues] = useState(Array.isArray(initialValue) ? initialValue : []);
     const updatedSelectedValues = isControlled ? controlledValue || [] : selectedValues;
     const updatedSelectedValueMapping = isMultiSelect ? updatedSelectedValues : [];
 
     useEffect(() => {
-        readOnly && setSelectedValues(initialValue && initialValue.constructor === Array ? initialValue : []);
+        readOnly && setSelectedValues(Array.isArray(initialValue) ? initialValue : []);
     }, [initialValue, readOnly]);
 
     /**
