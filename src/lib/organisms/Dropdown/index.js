@@ -137,7 +137,7 @@ function Dropdown({
 
     useEffect(() => {
         readOnly && setSelectedValues(initialValue && initialValue.constructor === Array ? initialValue : []);
-    }, [defaultValue]);
+    }, [initialValue, readOnly]);
 
     /**
      * setting openedOption

@@ -141,13 +141,13 @@ ReadOnly.args = {
 
 export const ReadOnlyInTabs = ({ ...args }) => {
     const [levels, setLevels] = useState([
-        { Id: 1, Name: 'tab 1' },
-        { Id: 2, Name: 'tab 2' },
+        { id: 1, name: 'tab 1' },
+        { id: 2, name: 'tab 2' },
         {
-            Id: 3,
-            Name: 'tab 3'
+            id: 3,
+            name: 'tab 3'
         },
-        { Id: 4, Name: 'tab 4' }
+        { id: 4, name: 'tab 4' }
     ]);
     const [activeKey, setActiveKey] = useState(1);
     const tabChangeHandler = (key) => setActiveKey(+key);
@@ -155,7 +155,7 @@ export const ReadOnlyInTabs = ({ ...args }) => {
 
     useEffect(() => {
         setSelectedData(
-            Array(+activeKey)
+            Array(activeKey)
                 .fill('')
                 .map((e, index) => index + 1)
         );
@@ -170,9 +170,9 @@ export const ReadOnlyInTabs = ({ ...args }) => {
             onChange={tabChangeHandler}
             activeKey={activeKey.toString()}
         >
-            {levels?.map(({ Name, Id }) => {
+            {levels?.map(({ name, id }) => {
                 return (
-                    <Tab key={Id} title={Name}>
+                    <Tab key={id} title={name}>
                         <DropdownComponent
                             {...args}
                             isMultiSelect
