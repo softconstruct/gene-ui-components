@@ -1,6 +1,4 @@
 // Atoms
-export * from './lib/atoms/Button/index.mobile';
-export * from './lib/atoms/Divider/index.mobile';
 export * from './lib/atoms/Icon/index.mobile';
 export * from './lib/atoms/Label/index.mobile';
 export * from './lib/atoms/Radio/index.mobile';
