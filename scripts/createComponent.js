@@ -7,6 +7,11 @@ import process from 'process';
 import ora from 'ora';
 import prettier from 'prettier';
 
+const firstLetterChange = (str, toUpperCase = true) => {
+    const firstChar = str.charAt(0);
+    return (toUpperCase ? firstChar.toUpperCase() : firstChar.toLowerCase()) + str.slice(1);
+};
+
 const spinner = ora({
     color: 'yellow',
     text: 'Creating the component...',
@@ -86,7 +91,7 @@ const generateCmpStoryTemplate = ({ name, level, props }) => `
         import ${name}, { I${name}Props } from './index';
         
         const meta: Meta<typeof ${name}> = {
-            title: '${level.charAt(0).toUpperCase() + level.slice(1)}/${name}',
+            title: '${firstLetterChange(level)}/${name}',
             component: ${name},
             argTypes: {
                  ${
@@ -270,7 +275,7 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
         const scssContent = `
         @import "src/assets/styles/variables";
         
-        .${name.toLowerCase()}{
+        .${firstLetterChange(name, false)}{
             //your styles here
         }`;
         const scssPath = path.join(`${cmpDir}`, `${name}.scss`);
