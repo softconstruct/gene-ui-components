@@ -3,6 +3,7 @@
 .tooltip {
     &-c-p {
         pointer-events: none;
+        z-index: 10;
 
         .s-small & {
             padding: rem(15);

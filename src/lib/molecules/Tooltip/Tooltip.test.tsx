@@ -26,7 +26,7 @@ describe('Tooltip', () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it.each<ITooltipProps['size']>(['default', 'small'])('renders %p prop correct', (size) => {
+    it.each<ITooltipProps['size']>(['default', 'small'])('renders %p size prop correct', (size) => {
         setup.setProps({ size, alwaysShow: true });
         expect(document.querySelector(`.s-${size}`)).toBeTruthy();
     });

@@ -8,7 +8,8 @@ import React, {
     FC,
     PointerEvent,
     cloneElement,
-    Children
+    Children,
+    Fragment
 } from 'react';
 import classnames from 'classnames';
 import { shift, flip, offset } from '@floating-ui/core';
@@ -22,13 +23,15 @@ import { noop } from 'utils';
 
 // Hooks
 //@ts-ignore
-import { useDeviceType, useDebounce, useWindowSize } from 'hooks';
+import { useDeviceType } from 'hooks';
 
 // Components
 import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
 // Styles
 import './Tooltip.scss';
+import { update } from 'draft-js/lib/DefaultDraftBlockRenderMap';
+import { flushSync } from 'react-dom/cjs/react-dom.production.min';
 
 const positions: Placement[] = ['top', 'right', 'bottom', 'left'];
 
@@ -39,8 +42,7 @@ interface ICustomPosition {
 
 export interface ITooltipProps {
     /**
-     * The Tooltip component size
-     * Possible values: `default | small`
+     * The Tooltip component size<br> Possible values: `default | small`
      */
     size?: 'default' | 'small';
     /**
@@ -66,14 +68,13 @@ export interface ITooltipProps {
     /**
      * Any valid React node.
      */
-    children: JSX.Element;
+    children: JSX.Element | JSX.Element[];
     /**
      * Disable/Enable auto repositions.
      */
     disableReposition?: boolean;
     /**
-     * Positions where will be displayed the Tooltip relates the child component.
-     * Possible values: `top | right | bottom | left`
+     * Positions where will be displayed the Tooltip relates the child component.<br> Possible values: `top | right | bottom | left`
      */
     position?: 'top' | 'right' | 'bottom' | 'left';
     /**
@@ -95,13 +96,21 @@ export interface ITooltipProps {
 }
 
 const FindAndMergeRef = <T extends { onClick: (e: PointerEvent, el: JSX.Element) => void }>(
-    children: JSX.Element,
+    children: JSX.Element | JSX.Element[],
     childProps: T,
     componentRef: (node: ReferenceType | null) => void
 ) =>
     Children.map(children, (el, i) => {
-        const onClick = (e: PointerEvent) => childProps?.onClick(e, el);
-        const newProps = { ...childProps, onClick, ref: i === 0 ? componentRef : {} };
+        const newProps = {
+            ...childProps,
+            onClick: (e: PointerEvent) => childProps?.onClick(e, el),
+            ref: i === 0 ? componentRef : {}
+        };
+
+        if (el.type === Fragment && el.props.children) {
+            return FindAndMergeRef(el.props.children, childProps, componentRef);
+        }
+
         if (typeof el.type === 'string') {
             return cloneElement(el, newProps);
         } else if (typeof el.type === 'function') {
@@ -130,14 +139,15 @@ const Tooltip: FC<ITooltipProps> = ({
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
 
     const { isMobile } = useDeviceType(screenType);
-    const { width, height } = useWindowSize();
 
     const [isPopoverOpen, setPopoverState] = useState(false);
-
+    //window.print
     const mouseEnterHandler = () => !alwaysShow && setPopoverState(true);
-    const mouseLeaveHandler = () => !alwaysShow && setPopoverState(false);
+    const mouseLeaveHandler = () => {
+        !alwaysShow && setPopoverState(false);
+    };
 
-    const { refs, floatingStyles, context, update, elements } = useFloating({
+    const { refs, floatingStyles, context } = useFloating({
         open: alwaysShow || isPopoverOpen,
         placement: position,
         middleware: [
@@ -162,35 +172,12 @@ const Tooltip: FC<ITooltipProps> = ({
         whileElementsMounted: autoUpdate
     });
 
-    useEffect(() => {
-        if (alwaysShow) {
-            window.addEventListener('scroll', update);
-        }
-
-        return () => window.removeEventListener('scroll', update);
-    }, [alwaysShow]);
-
-    useEffect(() => {
-        if (children?.props?.disabled) {
-            mouseLeaveHandler();
-        }
-    }, [children?.props?.disabled]);
-
     const checkNudged = ({ nudgedLeft, nudgedTop }) => (isMobile ? !(nudgedTop || nudgedLeft) : true);
-
-    const { debounceCallback, clearDebounce } = useDebounce();
-
-    useEffect(() => {
-        debounceCallback(update, 100);
-
-        return () => {
-            clearDebounce();
-        };
-    }, [title, text, width, height, elements.domReference?.getBoundingClientRect().x]);
 
     const childProps = {
         onMouseEnter: mouseEnterHandler,
         onMouseLeave: mouseLeaveHandler,
+
         onClick: (e: PointerEvent, el: JSX.Element) => {
             const { onClick: onClickHandler } = el?.props;
             typeof onClickHandler === 'function' && onClickHandler(e);
@@ -208,10 +195,9 @@ const Tooltip: FC<ITooltipProps> = ({
                         <FloatingPortal root={geneUIProviderRef.current}>
                             {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
                                 <div
-                                    className={classnames('tooltip-c-p', `s-${size}`)}
+                                    className={`tooltip-c-p s-${size}`}
                                     ref={refs.setFloating}
                                     style={{
-                                        zIndex: 10,
                                         ...style,
                                         ...floatingStyles
                                     }}
