@@ -52,9 +52,9 @@ const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => 
              ? `${[...props].map(
                    (prop) => `
              /**
-            * ${prop} description
-            */
-            ${prop}: any`
+                * ${prop} description
+               */
+                ${prop}?: unknown`
                )}`
              : `// fill ${name} component props interface`
      }
@@ -264,11 +264,8 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
         const componentFormattedData = prettier.format(srcCode, { ...prettierConfig, parser: 'typescript' });
 
         // Create index.js file with code
-        console.log('before', srcCode);
-        console.log('after', prettier.format(srcCode, prettierConfig));
+        await fs.appendFile(componentPath, componentFormattedData);
 
-        await fs.appendFile(`${cmpDir}/${name}.tsx`, prettier.format(srcCode, prettierConfig));
-        // await fs.appendFile(`${cmpDir}/${name}.tsx`, srcCode);
         // Create scss file for the component
         const scssContent = `
         @import "src/assets/styles/variables";
