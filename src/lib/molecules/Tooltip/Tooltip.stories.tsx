@@ -21,7 +21,8 @@ const meta: Meta<ITooltipProps> = {
         customPosition: args({ control: 'object', ...propCategory.appearance }),
         isVisible: args({ control: 'boolean', ...propCategory.functionality }),
         position: args({ control: 'select', ...propCategory.appearance }),
-        onClick: args({ control: false, ...propCategory.action })
+        onClick: args({ control: false, ...propCategory.action }),
+        screenType: args({ control: 'select', ...propCategory.appearance })
     },
     args: {
         size: 'default',
@@ -30,7 +31,8 @@ const meta: Meta<ITooltipProps> = {
         alwaysShow: false,
         position: 'top',
         disableReposition: false,
-        text: 'Tooltip some text'
+        text: 'Tooltip some text',
+        screenType: 'desktop'
     } as ITooltipProps
 };
 
@@ -38,10 +40,15 @@ export default meta;
 
 export const Tooltip = ({ ...args }) => {
     return (
-        <div style={{ height: '1000px', padding: '200px' }}>
+        <div style={{ height: '4000px', padding: '200px' }}>
             <TooltipComponent {...args}>
-                {/**@ts-ignore */}
-                <Button>Button with tooltip</Button>
+                <Button style={{ height: 20 }}>Button with tooltip</Button>
+                <div>123</div>
+                <div>123</div>
+                <div>123</div>
+                <div>123</div>
+                <div>123</div>
+                <div>123</div>
             </TooltipComponent>
         </div>
     );
