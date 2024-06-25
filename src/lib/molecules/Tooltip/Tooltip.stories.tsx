@@ -40,15 +40,9 @@ export default meta;
 
 export const Tooltip = ({ ...args }) => {
     return (
-        <div style={{ height: '4000px', padding: '200px' }}>
+        <div style={{ height: '200px', padding: '200px' }}>
             <TooltipComponent {...args}>
-                <Button style={{ height: 20 }}>Button with tooltip</Button>
-                <div>123</div>
-                <div>123</div>
-                <div>123</div>
-                <div>123</div>
-                <div>123</div>
-                <div>123</div>
+                <Button>Button with tooltip</Button>
             </TooltipComponent>
         </div>
     );
