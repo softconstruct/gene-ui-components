@@ -1,6 +1,5 @@
 import React, {
     useState,
-    useEffect,
     useContext,
     CSSProperties,
     JSX,
@@ -9,9 +8,9 @@ import React, {
     PointerEvent,
     cloneElement,
     Children,
-    Fragment
+    Fragment,
+    useEffect
 } from 'react';
-import classnames from 'classnames';
 import { shift, flip, offset } from '@floating-ui/core';
 import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
@@ -187,35 +186,28 @@ const Tooltip: FC<ITooltipProps> = ({
 
     return (
         <>
-            {isVisible ? (
-                <>
-                    {FindAndMergeRef(children, childProps, refs.setReference)}
-
-                    {(alwaysShow || isPopoverOpen) && (
-                        <FloatingPortal root={geneUIProviderRef.current}>
-                            {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
-                                <div
-                                    className={`tooltip-c-p s-${size}`}
-                                    ref={refs.setFloating}
-                                    style={{
-                                        ...style,
-                                        ...floatingStyles
-                                    }}
-                                    {...props}
-                                >
-                                    {(title || text) && (
-                                        <div className="tooltip-content">
-                                            {title && <div className="tooltip-title">{title}</div>}
-                                            {text && <div className="tooltip-text">{text}</div>}
-                                        </div>
-                                    )}
+            {FindAndMergeRef(children, childProps, refs.setReference)}
+            {isVisible && (alwaysShow || isPopoverOpen) && (
+                <FloatingPortal root={geneUIProviderRef.current}>
+                    {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
+                        <div
+                            className={`tooltip-c-p s-${size}`}
+                            ref={refs.setFloating}
+                            style={{
+                                ...style,
+                                ...floatingStyles
+                            }}
+                            {...props}
+                        >
+                            {(title || text) && (
+                                <div className="tooltip-content">
+                                    {title && <div className="tooltip-title">{title}</div>}
+                                    {text && <div className="tooltip-text">{text}</div>}
                                 </div>
                             )}
-                        </FloatingPortal>
+                        </div>
                     )}
-                </>
-            ) : (
-                children
+                </FloatingPortal>
             )}
         </>
     );
