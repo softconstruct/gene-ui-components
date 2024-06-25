@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import DropdownComponent from 'src/lib/organisms/Dropdown';
-import data, { dataForReadOnly } from './data';
+// Helpers
 import { args, category } from '../../assets/storybook.globals';
+
+// Components
+import DropdownComponent from 'src/lib/organisms/Dropdown';
+import { Tab, Tabs } from 'src/lib/molecules/Tabs';
+
+//Data
+import data, { dataForReadOnly } from './data';
 
 const align = ['start', 'end', 'center'];
 const position = ['bottom', 'left', 'right', 'top'];
@@ -17,8 +23,6 @@ const inputConfig = {
     flexibility: ['full-width', 'content-size'],
     type: ['text', 'color', 'number', 'password', 'textarea', 'date', 'time', 'datetime-local']
 };
-
-const types = ['data', 'image', 'search'];
 
 const states = { category: category.states };
 const action = { category: category.action };
@@ -133,4 +137,52 @@ ReadOnly.args = {
     data: dataForReadOnly,
     value: 1,
     label: 'Readonly Label'
+};
+
+export const ReadOnlyInTabs = ({ ...args }) => {
+    const [levels, setLevels] = useState([
+        { id: 1, name: 'tab 1' },
+        { id: 2, name: 'tab 2' },
+        {
+            id: 3,
+            name: 'tab 3'
+        },
+        { id: 4, name: 'tab 4' }
+    ]);
+    const [activeKey, setActiveKey] = useState(1);
+    const tabChangeHandler = (key) => setActiveKey(+key);
+    const [selectedData, setSelectedData] = useState([1]);
+
+    useEffect(() => {
+        setSelectedData(
+            Array(activeKey)
+                .fill('')
+                .map((e, index) => index + 1)
+        );
+    }, [activeKey]);
+
+    return (
+        <Tabs
+            type="basic"
+            fixedSize={false}
+            contentClassName={'verificationTypes__tabsContent'}
+            position={'left'}
+            onChange={tabChangeHandler}
+            activeKey={activeKey.toString()}
+        >
+            {levels?.map(({ name, id }) => {
+                return (
+                    <Tab key={id} title={name}>
+                        <DropdownComponent
+                            {...args}
+                            isMultiSelect
+                            data={dataForReadOnly}
+                            defaultValue={selectedData}
+                            readOnly
+                        />
+                    </Tab>
+                );
+            })}
+        </Tabs>
+    );
 };

@@ -129,11 +129,13 @@ function Dropdown({
     );
     const setScrollRef = (element) => element && updateScrollRef(element);
 
-    const [selectedValues, setSelectedValues] = useState(
-        initialValue && initialValue.constructor === Array ? initialValue : []
-    );
+    const [selectedValues, setSelectedValues] = useState(Array.isArray(initialValue) ? initialValue : []);
     const updatedSelectedValues = isControlled ? controlledValue || [] : selectedValues;
     const updatedSelectedValueMapping = isMultiSelect ? updatedSelectedValues : [];
+
+    useEffect(() => {
+        readOnly && setSelectedValues(Array.isArray(initialValue) ? initialValue : []);
+    }, [initialValue, readOnly]);
 
     /**
      * setting openedOption
@@ -163,7 +165,7 @@ function Dropdown({
             readOnly && isMultiSelect
                 ? openedOptions.filter((item) => selectedValues.includes(item[valueKey]))
                 : openedOptions,
-        [readOnly, isMultiSelect, valueKey, options, openedOptions]
+        [readOnly, isMultiSelect, valueKey, options, openedOptions, selectedValues]
     );
     const inputValue = useMemo(() => {
         if (isMultiSelect) {
@@ -535,7 +537,7 @@ function Dropdown({
                 handleCheckboxModel(newValues);
             }
         }
-        callAfterDelay(() => searchRef.current.focus(), DELAY);
+        callAfterDelay(() => searchRef.current?.focus(), DELAY);
     }, [filteredData, handleChangeAll, handleCheckboxModel, hoveredState, selectedValues, valueKey]);
 
     useEffect(() => {
