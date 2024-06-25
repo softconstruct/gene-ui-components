@@ -8,13 +8,13 @@ import React, {
     PointerEvent,
     cloneElement,
     Children,
-    Fragment,
-    useEffect
+    Fragment
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
 import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
 import { ReferenceType } from '@floating-ui/react-dom';
+import { isForwardRef } from 'react-is';
 
 // Utils
 //@ts-ignore
@@ -29,8 +29,6 @@ import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
 // Styles
 import './Tooltip.scss';
-import { update } from 'draft-js/lib/DefaultDraftBlockRenderMap';
-import { flushSync } from 'react-dom/cjs/react-dom.production.min';
 
 const positions: Placement[] = ['top', 'right', 'bottom', 'left'];
 
@@ -106,15 +104,19 @@ const FindAndMergeRef = <T extends { onClick: (e: PointerEvent, el: JSX.Element)
             ref: i === 0 ? componentRef : {}
         };
 
-        if (el.type === Fragment && el.props.children) {
+        if (el?.type === Fragment && el.props.children) {
             return FindAndMergeRef(el.props.children, childProps, componentRef);
         }
-
-        if (typeof el.type === 'string') {
-            return cloneElement(el, newProps);
-        } else if (typeof el.type === 'function') {
-            return cloneElement(el.type(el.props), newProps);
+        if (isForwardRef(el)) {
+            return FindAndMergeRef(el.type.render(el.props), newProps, componentRef);
         }
+        if (typeof el?.type === 'string') {
+            return cloneElement(el, newProps);
+        }
+        if (typeof el?.type === 'function') {
+            return FindAndMergeRef(el.type(el.props), newProps, componentRef);
+        }
+
         return cloneElement(el, newProps);
     });
 
@@ -146,7 +148,7 @@ const Tooltip: FC<ITooltipProps> = ({
         !alwaysShow && setPopoverState(false);
     };
 
-    const { refs, floatingStyles, context } = useFloating({
+    const { refs, floatingStyles, context, elements, update } = useFloating({
         open: alwaysShow || isPopoverOpen,
         placement: position,
         middleware: [

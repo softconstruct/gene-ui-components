@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import ExtendedInputComponent from 'src/lib/molecules/ExtendedInput';
 import { args, category } from '../../assets/storybook.globals';
 import { inputConfig, screenTypes } from '../../../src/configs';
-import { Tooltip } from '../../../src';
 
 const states = { category: category.states };
 const others = { category: category.others };
@@ -137,35 +136,3 @@ export const Default = Template.bind({});
 export const TextArea = Template.bind({});
 
 TextArea.args = { type: 'textarea' };
-
-export const Test = (args) => {
-    const [isValid, setIsValid] = useState(false);
-    const [MinAmount, setMinAmount] = useState(null);
-
-    useEffect(() => {
-        setIsValid(MinAmount > 10);
-    }, [MinAmount]);
-
-    return (
-        <Tooltip text={'test'} isVisible={true} alwaysShow={isValid} position={'bottom'}>
-            <>
-                <ExtendedInputComponent
-                    type="number"
-                    labelAppearance="swap"
-                    placeholder={'placeholder'}
-                    required
-                    value={MinAmount}
-                    showErrorWithTooltip
-                    errorText={'errorText'}
-                    isValid={isValid}
-                    canClear
-                    onChange={(e) => {
-                        setMinAmount(e.target.value);
-                    }}
-                />
-
-                <h1>Vladimir Putin</h1>
-            </>
-        </Tooltip>
-    );
-};
