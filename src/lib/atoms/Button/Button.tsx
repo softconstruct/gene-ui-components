@@ -27,7 +27,7 @@ export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
      * How to display inscription in relation to it's parent in Button <br/>
      * Possible values: `default | content-size | full-width`
      */
-    flexibility: 'default' | 'content-size' | 'full-width';
+    flexibility?: 'default' | 'content-size' | 'full-width';
     /**
      * Button color <br/>
      * Possible values: `primary | confirm | danger | default`
