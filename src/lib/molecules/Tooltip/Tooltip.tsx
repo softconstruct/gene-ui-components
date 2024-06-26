@@ -145,7 +145,7 @@ const Tooltip: FC<ITooltipProps> = ({
         !alwaysShow && setPopoverState(false);
     };
 
-    const { refs, floatingStyles, context, elements, update } = useFloating({
+    const { refs, floatingStyles, context } = useFloating({
         open: alwaysShow || isPopoverOpen,
         placement: position,
         middleware: [
