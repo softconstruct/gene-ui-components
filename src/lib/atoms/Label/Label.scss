@@ -1,0 +1,45 @@
+.label {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: var(--guit-ref-spacing-3xs);
+    max-width: 100%;
+
+    &__text {
+        color: var(--guit-ref-color-foreground-neutral-2);
+        font-weight: var(--guit-ref-font-weight-semibold);
+        line-height: var(--guit-ref-font-line-height-100);
+
+        &_medium {
+            font-size: var(--guit-ref-font-size-70);
+        }
+
+        &_small {
+            font-size: var(--guit-ref-font-size-70);
+        }
+
+        &_required {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            gap: var(--guit-ref-spacing-4xs);
+
+            &::after {
+                content: '*';
+            }
+        }
+
+        &_disabled {
+            color: var(--color-foreground-disabled);
+        }
+    }
+
+    &__icon {
+        font-size: var(--guit-ref-sizing-m-nudge);
+        color: var(--guit-ref-color-foreground-neutral-2);
+
+        &_disabled {
+            color: var(--color-foreground-disabled);
+        }
+    }
+}
