@@ -1,6 +1,7 @@
 // Atoms
 export { default as TextLink } from './lib/atoms/TextLink';
 export { default as Button } from './lib/atoms/Button';
+export { default as Export } from './lib/atoms/Export';
 export { default as Label } from './lib/atoms/Label';
 export { default as Icon } from './lib/atoms/Icon';
 export { default as Switcher } from './lib/atoms/Switcher';
