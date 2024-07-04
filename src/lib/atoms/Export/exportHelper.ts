@@ -151,9 +151,8 @@ const tableFormats = async (
 
     allIndex.forEach((el) => {
         if (typeof el.element === 'object') {
-            allRow[el.rowIndex as number].getCell(((el.colIndex as number) + 1) as number).style =
+            allRow[el.rowIndex as number].getCell((el.colIndex as number) + 1).style =
                 transformedStyles[el.element.value].style;
-            console.log(transformedStyles[el.element.value].style);
         }
     });
 
