@@ -17,7 +17,8 @@ const meta: Meta<typeof Label> = {
         required: args({ control: 'boolean', ...propCategory.validation }),
         infoText: args({ control: 'text', ...propCategory.content }),
         disabled: args({ control: 'boolean', ...propCategory.states }),
-        isLoading: args({ control: 'boolean', ...propCategory.states })
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        className: args({ control: false, ...propCategory.others })
     },
     args: {
         htmlFor: 'inputId',

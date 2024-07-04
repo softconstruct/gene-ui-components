@@ -71,7 +71,7 @@ const Label: FC<ILabelProps> = ({
     const isTruncated: boolean = useEllipsisDetection(labelRef);
 
     return (
-        <div {...restProps} className={`label ${className}`}>
+        <div {...restProps} className={classnames('label', { className })}>
             {isLoading ? (
                 'skeleton'
             ) : (
