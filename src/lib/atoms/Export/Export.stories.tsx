@@ -7,6 +7,7 @@ import Button from '../Button/Button';
 import InteractiveWidget from '../../molecules/InteractiveWidget/InteractiveWidget';
 import RichEditor from '../../organisms/RichEditor';
 import toHtml from 'string-to-html'; // Components
+import ColumnChart from '../../molecules/Charts/ColumnChart';
 const meta = {
     title: 'Atoms/Export',
     argTypes: {},
@@ -17,7 +18,7 @@ export default meta;
 
 export const ExelFormats = () => {
     const [currentFunction, setCurrentFunction] = useState<'xls' | 'csv' | 'xlsx'>('xlsx');
-    const createExel: ExportHelper.IData[] = [
+    const createExel: ExportHelper.DataType[] = [
         {
             test1: {
                 value: 'TestWithStyle',
@@ -64,7 +65,6 @@ export const ExelFormats = () => {
             >
                 <option defaultChecked>xlsx</option>
                 <option>csv</option>
-                <option>xls</option>
             </select>
             <Button onClick={exportHandler} flexibility={'default'}>
                 trigger
@@ -100,7 +100,15 @@ export const ExportAsImage = () => {
                         onClick={undefined}
                     />
                 </div>
-                <div style={{ display: 'flex', maxWidth: '100%', justifyContent: 'space-between', gap: '1rem' }}>
+                <div
+                    style={{
+                        display: 'flex',
+                        maxWidth: '100%',
+                        justifyContent: 'space-between',
+                        gap: '1rem',
+                        margin: '10px'
+                    }}
+                >
                     <InteractiveWidget
                         style={{ maxWidth: '50%' }}
                         withBorder={false}
@@ -119,6 +127,13 @@ export const ExportAsImage = () => {
                         onClick={undefined}
                     />
                 </div>
+                {/**@ts-ignore */}
+                <ColumnChart
+                    min={0}
+                    max={250}
+                    categories={['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']}
+                    data={[80, 1, 120, 220, 80, 130, 60]}
+                />
             </div>
             <select
                 style={{ border: '2px solid black', margin: 10 }}
@@ -129,6 +144,7 @@ export const ExportAsImage = () => {
                 <option>toSvg</option>
                 <option>toPng</option>
             </select>
+
             <Button onClick={exportHandler} flexibility={'default'}>
                 Export
             </Button>

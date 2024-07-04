@@ -6,6 +6,25 @@ import { saveAs } from 'file-saver';
 
 //TODO: change file location after tests
 
+interface IDataWithStyle {
+    style: {
+        fontSize?: number;
+        color?: `#${string}`;
+        bold?: boolean;
+        italic?: boolean;
+        underline?: boolean;
+        background?: `#${string}`;
+    };
+    value: string | number;
+}
+
+export type DataType = Record<string, IDataWithStyle | string>;
+
+export type ImageFormats = Exclude<
+    keyof typeof ImageExporter,
+    'toPixelData' | 'toBlob' | 'toCanvas' | 'toBlob' | 'getFontEmbedCSS'
+>;
+
 const transformData = {
     font: {} as Record<string, unknown>,
     fontSize(size: number) {
@@ -13,7 +32,7 @@ const transformData = {
 
         return { font: this.font };
     },
-    color(color) {
+    color(color: `#${string}`) {
         if (!this.font.color) {
             this.font.color = {};
         }
@@ -41,22 +60,6 @@ const transformData = {
     })
 };
 
-interface IDataWithStyle {
-    style: {
-        fontSize?: number;
-        color?: `#${string}`;
-        bold?: boolean;
-        italic?: boolean;
-        underline?: boolean;
-        background?: `#${string}`;
-    };
-    value: string | number;
-}
-
-export interface IData {
-    [keys: string]: IDataWithStyle | string;
-}
-
 export const pdf = (HTMLelement: HTMLElement, fileName: string = 'document') => {
     const doc = new jsPDF({
         format: 'a4',
@@ -72,10 +75,6 @@ export const pdf = (HTMLelement: HTMLElement, fileName: string = 'document') => 
     });
 };
 
-export type ImageFormats = Exclude<
-    keyof typeof ImageExporter,
-    'toPixelData' | 'toBlob' | 'toCanvas' | 'toBlob' | 'getFontEmbedCSS'
->;
 export const exportImage = async (
     HTMLelement: HTMLElement,
     format: ImageFormats = 'toPng',
@@ -94,7 +93,7 @@ export const exportImage = async (
 };
 
 const tableFormats = async (
-    data: IData[],
+    data: DataType[],
     header?: Partial<ExcelJS.Column>[],
     fileName: string = 'document',
     type: 'xlsx' | 'csv' = 'xlsx'
@@ -107,7 +106,6 @@ const tableFormats = async (
             aggr = [...Object.keys(val), ...aggr];
             return aggr;
         }, []);
-
         const createHeder = [...new Set(getHeaderKeys)].reduce((aggr: Record<string, unknown>[], val) => {
             aggr.push({ header: val, key: val });
             return aggr;
@@ -116,6 +114,7 @@ const tableFormats = async (
     } else {
         worksheet.columns = header;
     }
+
     const allIndex: Set<Record<string, string | number | IDataWithStyle>> = new Set();
     let transformedStyles = {};
     let allRow: Record<number, ExcelJS.Row> = {};
@@ -156,7 +155,7 @@ const tableFormats = async (
         }
     });
 
-    let buffer;
+    let buffer: ExcelJS.Buffer;
     if (type === 'csv') {
         buffer = await workbook.csv.writeBuffer();
     } else {
@@ -169,8 +168,8 @@ const tableFormats = async (
     saveAs(blob, `${fileName}.${type}`);
 };
 
-export const xlsx = (data: IData[], header?: Partial<ExcelJS.Column>[], documentName?: string) =>
+export const xlsx = (data: DataType[], header?: Partial<ExcelJS.Column>[], documentName?: string) =>
     tableFormats(data, header, documentName);
 
-export const csv = (data: IData[], header?: Partial<ExcelJS.Column>[], documentName?: string) =>
+export const csv = (data: DataType[], header?: Partial<ExcelJS.Column>[], documentName?: string) =>
     tableFormats(data, header, documentName, 'csv');
