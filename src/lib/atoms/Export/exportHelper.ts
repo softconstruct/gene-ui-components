@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import jsPDF from 'jspdf';
 import * as ImageExporter from 'html-to-image';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import html2canvas from 'html2canvas';
 //TODO: change file location after tests
-import ReactToPrint from 'react-to-print';
 
 interface IDataWithStyle {
     style: {
