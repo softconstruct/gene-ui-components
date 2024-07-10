@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import * as ImageExporter from 'html-to-image';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-
+import html2canvas from 'html2canvas';
 //TODO: change file location after tests
+import ReactToPrint from 'react-to-print';
 
 interface IDataWithStyle {
     style: {
@@ -22,7 +23,7 @@ export type DataType = Record<string, IDataWithStyle | string>;
 
 export type ImageFormats = Exclude<
     keyof typeof ImageExporter,
-    'toPixelData' | 'toBlob' | 'toCanvas' | 'toBlob' | 'getFontEmbedCSS'
+    'toPixelData' | 'toBlob' | 'toCanvas' | 'getFontEmbedCSS'
 >;
 
 const transformData = {
@@ -61,24 +62,27 @@ const transformData = {
 };
 
 export const pdf = (HTMLelement: HTMLElement, fileName: string = 'document') => {
-    const doc = new jsPDF({
-        format: 'a4',
-        unit: 'px'
-    });
+    try {
+        const doc = new jsPDF({
+            format: 'a4',
+            unit: 'px'
+        });
 
-    doc.html(HTMLelement, {
-        callback(doc) {
-            doc.save(fileName);
-        },
-        x: 10,
-        y: 10
-    });
+        doc.html(HTMLelement, {
+            callback(doc) {
+                doc.save(fileName);
+            },
+            x: 10,
+            y: 10
+        });
+    } catch (error) {
+        return error;
+    }
 };
 
 export const exportImage = async (
     HTMLelement: HTMLElement,
     format: ImageFormats = 'toPng',
-
     fileName: string = 'document'
 ) => {
     try {
@@ -88,7 +92,7 @@ export const exportImage = async (
         link.href = request;
         link.click();
     } catch (error) {
-        alert((error as Error).message);
+        return error;
     }
 };
 
@@ -98,74 +102,80 @@ const tableFormats = async (
     fileName: string = 'document',
     type: 'xlsx' | 'csv' = 'xlsx'
 ) => {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Sheet1');
+    try {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Sheet1');
+        let transformedStyles = {};
+        let allRow: Record<number, ExcelJS.Row> = {};
+        let dataFromHeader: string[] = [];
+        if (!header) {
+            const getHeaderKeys = data.reduce((aggr: string[], val) => {
+                aggr = [...aggr, ...Object.keys(val)];
+                return aggr;
+            }, []);
+            const createHeder = [...new Set(getHeaderKeys)].reduce((aggr: Record<string, unknown>[], val) => {
+                dataFromHeader.push(val);
+                aggr.push({ header: val, key: val });
+                return aggr;
+            }, []);
+            worksheet.columns = createHeder;
+        } else {
+            header.forEach((el) => {
+                dataFromHeader.push(el.key!);
+            });
+            worksheet.columns = header;
+        }
+        const allIndex: Set<Record<string, string | number | IDataWithStyle>> = new Set();
+        data.forEach((items, rowIndex) => {
+            let rows = {};
+            dataFromHeader.forEach((element, colIndex) => {
+                const isObject = typeof items[element] === 'object';
+                rows[element] = isObject ? (items[element] as IDataWithStyle).value : items[element];
+                allIndex.add({ element: items[element], colIndex: colIndex + 1, rowIndex: rowIndex });
 
-    if (!header) {
-        const getHeaderKeys = data.reduce((aggr: string[], val) => {
-            aggr = [...Object.keys(val), ...aggr];
-            return aggr;
-        }, []);
-        const createHeder = [...new Set(getHeaderKeys)].reduce((aggr: Record<string, unknown>[], val) => {
-            aggr.push({ header: val, key: val });
-            return aggr;
-        }, []);
-        worksheet.columns = createHeder;
-    } else {
-        worksheet.columns = header;
-    }
+                if (isObject) {
+                    const currentElement = items[element] as IDataWithStyle;
+                    transformedStyles = {
+                        ...transformedStyles,
+                        [currentElement.value]: {
+                            ...transformedStyles[currentElement.value],
+                            style: currentElement.style
+                        }
+                    };
+                }
+            });
+            const row = worksheet.addRow(rows);
+            allRow[rowIndex] = row;
+        });
 
-    const allIndex: Set<Record<string, string | number | IDataWithStyle>> = new Set();
-    let transformedStyles = {};
-    let allRow: Record<number, ExcelJS.Row> = {};
-    data.forEach((items, rowIndex) => {
-        let rows = {};
-        Object.keys(items).forEach((element, colIndex) => {
-            const isObject = typeof items[element] === 'object';
-            rows[element] = isObject ? (items[element] as IDataWithStyle).value : items[element];
-            allIndex.add({ element: items[element], colIndex: colIndex, rowIndex: rowIndex });
-            if (isObject) {
-                const currentElement = items[element] as IDataWithStyle;
-                transformedStyles = {
-                    ...transformedStyles,
-                    [currentElement.value]: {
-                        ...transformedStyles[currentElement.value],
-                        style: currentElement.style
-                    }
-                };
+        Object.keys(transformedStyles).forEach((el) => {
+            let styles = transformedStyles[el].style;
+            transformData.font = {};
+            Object.keys(styles).forEach((key) => {
+                transformedStyles[el].style = { ...transformedStyles[el].style, ...transformData[key](styles[key]) };
+                delete transformedStyles[el].style[key];
+            });
+        });
+
+        allIndex.forEach((el) => {
+            if (typeof el.element === 'object') {
+                allRow[el.rowIndex as number].getCell(el.colIndex as number).style =
+                    transformedStyles[el.element.value].style;
             }
         });
-        const row = worksheet.addRow(rows);
-        allRow[rowIndex] = row;
-    });
-
-    Object.keys(transformedStyles).forEach((el) => {
-        let styles = transformedStyles[el].style;
-        transformData.font = {};
-        Object.keys(styles).forEach((key) => {
-            transformedStyles[el].style = { ...transformedStyles[el].style, ...transformData[key](styles[key]) };
-            delete transformedStyles[el].style[key];
-        });
-    });
-
-    allIndex.forEach((el) => {
-        if (typeof el.element === 'object') {
-            allRow[el.rowIndex as number].getCell((el.colIndex as number) + 1).style =
-                transformedStyles[el.element.value].style;
+        let buffer: ExcelJS.Buffer;
+        if (type === 'csv') {
+            buffer = await workbook.csv.writeBuffer();
+        } else {
+            buffer = await workbook.xlsx.writeBuffer();
         }
-    });
-
-    let buffer: ExcelJS.Buffer;
-    if (type === 'csv') {
-        buffer = await workbook.csv.writeBuffer();
-    } else {
-        buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        });
+        saveAs(blob, `${fileName}.${type}`);
+    } catch (error) {
+        return error;
     }
-
-    const blob = new Blob([buffer], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    });
-    saveAs(blob, `${fileName}.${type}`);
 };
 
 export const xlsx = (data: DataType[], header?: Partial<ExcelJS.Column>[], documentName?: string) =>

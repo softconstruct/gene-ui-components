@@ -8,6 +8,7 @@ import InteractiveWidget from '../../molecules/InteractiveWidget/InteractiveWidg
 import RichEditor from '../../organisms/RichEditor';
 import toHtml from 'string-to-html'; // Components
 import ColumnChart from '../../molecules/Charts/ColumnChart';
+
 const meta = {
     title: 'Atoms/Export',
     argTypes: {},
@@ -21,36 +22,59 @@ export const ExelFormats = () => {
     const createExel: ExportHelper.DataType[] = [
         {
             test1: {
+                value: 'Zzzzz',
+                style: {
+                    color: '#e91e63',
+                    fontSize: 10
+                }
+            },
+            test2: {
                 value: 'TestWithStyle',
                 style: {
                     bold: true,
-                    color: '#7ad165',
-                    fontSize: 18,
+                    color: '#e91e63',
+                    fontSize: 30,
                     italic: true
                 }
             },
-            test2: 'test',
             test3: 'test'
         },
         {
-            test1: 'test',
+            test1: {
+                value: 'Zzzzz2',
+                style: {
+                    color: '#e91e63',
+                    fontSize: 30,
+                    italic: true,
+                    bold: true
+                }
+            },
             test2: 'test',
+            test4: 'test4',
+
             test3: {
                 value: 'Styled value',
                 style: {
-                    background: '#e33832',
-                    fontSize: 5
+                    background: '#e91e63',
+                    fontSize: 10
+                }
+            }
+        },
+        {
+            test5: 'loyality',
+            test2: 'loyality',
+            test3: {
+                value: 'ffdggdgd',
+                style: {
+                    background: '#e91e63',
+                    fontSize: 25
                 }
             }
         }
     ];
 
     const exportHandler = () => {
-        ExportHelper[currentFunction](createExel, [
-            { header: 'test1', key: 'test1' },
-            { header: 'test2', key: 'test2' },
-            { header: 'test3', key: 'test3' }
-        ]);
+        ExportHelper[currentFunction](createExel);
     };
 
     return (
@@ -167,6 +191,7 @@ export const ExportAsPdf = () => {
         div.appendChild(toHtml(e));
         ref.current = div;
     };
+
     return (
         <div>
             {/**@ts-ignore */}
