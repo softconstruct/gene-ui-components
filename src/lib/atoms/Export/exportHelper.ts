@@ -3,6 +3,7 @@ import jsPDF from 'jspdf';
 import * as ImageExporter from 'html-to-image';
 import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import autoTable, { ColumnInput } from 'jspdf-autotable';
 //TODO: change file location after tests
 
 interface IDataWithStyle {
@@ -22,39 +23,34 @@ export type ImageFormats = Exclude<
     'toPixelData' | 'toBlob' | 'toCanvas' | 'getFontEmbedCSS'
 >;
 
-const transformData = {
-    font: {} as Record<string, unknown>,
-    fontSize(size: number) {
-        this.font.size = size;
+export const exportToTablePdf = (
+    data: Record<string, string>[],
+    columns?: Record<string, unknown>[],
+    fileName: string = 'document'
+) => {
+    try {
+        const doc = new jsPDF({
+            format: 'letter'
+        });
 
-        return { font: this.font };
-    },
-    color(color: `#${string}`) {
-        if (!this.font.color) {
-            this.font.color = {};
-        }
-        this.font.color = { argb: color.replace('#', '') };
-        return { font: this.font };
-    },
-    bold(isBold: boolean) {
-        this.font.bold = isBold;
-        return { font: this.font };
-    },
-    italic(isItalic: boolean) {
-        this.font.italic = isItalic;
-        return { font: this.font };
-    },
-    underline(isUnderline: boolean) {
-        this.font.underline = isUnderline;
-        return { font: this.font };
-    },
-    background: (color: `#${string}`) => ({
-        fill: {
-            type: 'pattern',
-            pattern: 'solid',
-            fgColor: { argb: color.replace('#', '') }
-        }
-    })
+        const pdfColumns = columns
+            ? columns.map((column) => ({ header: column.header, dataKey: column.key }))
+            : data
+                  .reduce((aggr: string[], val) => {
+                      aggr = [...aggr, ...Object.keys(val)];
+                      return aggr;
+                  }, [])
+                  .map((el) => ({ header: el, dataKey: el }));
+
+        autoTable(doc, {
+            columns: [...new Set(pdfColumns)] as ColumnInput[],
+            body: data
+        });
+
+        doc.save(`${fileName}.pdf`);
+    } catch (error) {
+        return error;
+    }
 };
 
 export const pdf = (HTMLelement: HTMLElement, fileName: string = 'document') => {
@@ -101,6 +97,40 @@ export type DataType = Record<string, IDataWithStyle | string>;
 
 type AllIndexType = Set<Record<string, string | number | IDataWithStyle>>;
 
+const transformData = {
+    font: {} as Record<string, unknown>,
+    fontSize(size: number) {
+        this.font.size = size;
+
+        return { font: this.font };
+    },
+    color(color: `#${string}`) {
+        if (!this.font.color) {
+            this.font.color = {};
+        }
+        this.font.color = { argb: color.replace('#', '') };
+        return { font: this.font };
+    },
+    bold(isBold: boolean) {
+        this.font.bold = isBold;
+        return { font: this.font };
+    },
+    italic(isItalic: boolean) {
+        this.font.italic = isItalic;
+        return { font: this.font };
+    },
+    underline(isUnderline: boolean) {
+        this.font.underline = isUnderline;
+        return { font: this.font };
+    },
+    background: (color: `#${string}`) => ({
+        fill: {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: color.replace('#', '') }
+        }
+    })
+};
 const tableFormats = async (
     data: DataType[],
     header?: ITableHeader[],
@@ -109,7 +139,7 @@ const tableFormats = async (
 ) => {
     try {
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Sheet1');
+        const worksheet = workbook.addWorksheet();
         let transformedStyles = {};
         let allRow: Record<number, ExcelJS.Row> = {};
         let dataFromHeader: string[] = [];
@@ -175,7 +205,6 @@ const tableFormats = async (
                 }
             });
         }
-
         data.forEach((items, rowIndex) => {
             let rows = {};
             dataFromHeader.forEach((element, colIndex) => {

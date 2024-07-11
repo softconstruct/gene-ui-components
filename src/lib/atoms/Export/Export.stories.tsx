@@ -1,12 +1,14 @@
 import React, { useRef, useState } from 'react';
+import toHtml from 'string-to-html';
+import { args } from '../../../../stories/assets/storybook.globals';
 
 // Helpers
-import { args } from '../../../../stories/assets/storybook.globals';
 import * as ExportHelper from './exportHelper';
+
+// Components
 import Button from '../Button/Button';
 import InteractiveWidget from '../../molecules/InteractiveWidget/InteractiveWidget';
 import RichEditor from '../../organisms/RichEditor';
-import toHtml from 'string-to-html'; // Components
 import ColumnChart from '../../molecules/Charts/ColumnChart';
 
 const meta = {
@@ -111,6 +113,49 @@ export const ExelFormats = () => {
                 <option defaultChecked>xlsx</option>
                 <option>csv</option>
             </select>
+            <Button onClick={exportHandler} flexibility={'default'}>
+                trigger
+            </Button>{' '}
+        </div>
+    );
+};
+
+export const ExportTableAsPdf = () => {
+    const exelHeader = [
+        {
+            header: 'Test2',
+            key: 'test2'
+        },
+        {
+            header: 'Test5',
+            key: 'test5'
+        }
+    ];
+
+    const createExel: Record<string, string>[] = [
+        {
+            test3: 'test'
+        },
+        {
+            test2: 'test',
+            test4: 'test4'
+        },
+        {
+            test5: 'loyality',
+            test2: 'loyality'
+        }
+    ];
+
+    const exportHandler = () => {
+        ExportHelper.exportToTablePdf(createExel, exelHeader);
+    };
+
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', width: 500, height: 500 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                Data:<pre> {JSON.stringify(createExel, null, 2)} </pre>
+                Header:<pre> {JSON.stringify(exelHeader, null, 2)} </pre>
+            </div>
             <Button onClick={exportHandler} flexibility={'default'}>
                 trigger
             </Button>{' '}
