@@ -17,8 +17,6 @@ interface IDataWithStyle {
     value: string | number;
 }
 
-export type DataType = Record<string, IDataWithStyle | string>;
-
 export type ImageFormats = Exclude<
     keyof typeof ImageExporter,
     'toPixelData' | 'toBlob' | 'toCanvas' | 'getFontEmbedCSS'
@@ -94,9 +92,18 @@ export const exportImage = async (
     }
 };
 
+export interface ITableHeader extends Partial<Omit<ExcelJS.Column, 'style'>> {
+    style?: IDataWithStyle['style'];
+    header: string;
+    key: string;
+}
+export type DataType = Record<string, IDataWithStyle | string>;
+
+type AllIndexType = Set<Record<string, string | number | IDataWithStyle>>;
+
 const tableFormats = async (
     data: DataType[],
-    header?: Partial<ExcelJS.Column>[],
+    header?: ITableHeader[],
     fileName: string = 'document',
     type: 'xlsx' | 'csv' = 'xlsx'
 ) => {
@@ -106,6 +113,40 @@ const tableFormats = async (
         let transformedStyles = {};
         let allRow: Record<number, ExcelJS.Row> = {};
         let dataFromHeader: string[] = [];
+        const allIndex: AllIndexType = new Set();
+        const transformedData = (transformedStyles: Record<string, Record<string, IDataWithStyle['style']>>) => {
+            Object.keys(transformedStyles).forEach((el) => {
+                let styles = transformedStyles[el].style;
+                transformData.font = {};
+                Object.keys(styles).forEach((key) => {
+                    if (typeof transformData[key] === 'function') {
+                        transformedStyles[el].style = {
+                            ...transformedStyles[el].style,
+                            ...transformData[key](styles[key])
+                        };
+                    }
+                    delete transformedStyles[el].style[key];
+                });
+            });
+        };
+        const transformAllIndex = (allIndex: AllIndexType) => {
+            allIndex.forEach((el) => {
+                if (typeof el.element === 'object') {
+                    allRow[el.rowIndex as number].getCell(el.colIndex as number).style =
+                        transformedStyles[el.element.value].style;
+                }
+            });
+        };
+        const fillTransformedStyles = (key: string | number, style: IDataWithStyle['style']) => {
+            transformedStyles = {
+                ...transformedStyles,
+                [key]: {
+                    ...transformedStyles[key],
+                    style
+                }
+            };
+        };
+
         if (!header) {
             const getHeaderKeys = data.reduce((aggr: string[], val) => {
                 aggr = [...aggr, ...Object.keys(val)];
@@ -118,12 +159,23 @@ const tableFormats = async (
             }, []);
             worksheet.columns = createHeder;
         } else {
-            header.forEach((el) => {
+            const headerWithoutStyles = header.map((el) => {
                 dataFromHeader.push(el.key!);
+                if (el.style && el.key) {
+                    fillTransformedStyles(el.key, el.style);
+                }
+                return el;
             });
-            worksheet.columns = header;
+            transformedData(transformedStyles);
+            worksheet.columns = headerWithoutStyles as Partial<ExcelJS.Column>[];
+            worksheet.getRow(1).eachCell((cell, colNumber) => {
+                const getCol = worksheet.getColumn(colNumber);
+                if (getCol.key && transformedStyles.hasOwnProperty(getCol.key)) {
+                    cell.style = { ...cell.style, ...transformedStyles[getCol.key].style };
+                }
+            });
         }
-        const allIndex: Set<Record<string, string | number | IDataWithStyle>> = new Set();
+
         data.forEach((items, rowIndex) => {
             let rows = {};
             dataFromHeader.forEach((element, colIndex) => {
@@ -133,34 +185,15 @@ const tableFormats = async (
 
                 if (isObject) {
                     const currentElement = items[element] as IDataWithStyle;
-                    transformedStyles = {
-                        ...transformedStyles,
-                        [currentElement.value]: {
-                            ...transformedStyles[currentElement.value],
-                            style: currentElement.style
-                        }
-                    };
+
+                    fillTransformedStyles(currentElement.value, currentElement.style);
                 }
             });
             const row = worksheet.addRow(rows);
             allRow[rowIndex] = row;
         });
-
-        Object.keys(transformedStyles).forEach((el) => {
-            let styles = transformedStyles[el].style;
-            transformData.font = {};
-            Object.keys(styles).forEach((key) => {
-                transformedStyles[el].style = { ...transformedStyles[el].style, ...transformData[key](styles[key]) };
-                delete transformedStyles[el].style[key];
-            });
-        });
-
-        allIndex.forEach((el) => {
-            if (typeof el.element === 'object') {
-                allRow[el.rowIndex as number].getCell(el.colIndex as number).style =
-                    transformedStyles[el.element.value].style;
-            }
-        });
+        transformedData(transformedStyles);
+        transformAllIndex(allIndex);
         let buffer: ExcelJS.Buffer;
         if (type === 'csv') {
             buffer = await workbook.csv.writeBuffer();
@@ -176,8 +209,8 @@ const tableFormats = async (
     }
 };
 
-export const xlsx = (data: DataType[], header?: Partial<ExcelJS.Column>[], documentName?: string) =>
+export const xlsx = (data: DataType[], header?: ITableHeader[], documentName?: string) =>
     tableFormats(data, header, documentName);
 
-export const csv = (data: DataType[], header?: Partial<ExcelJS.Column>[], documentName?: string) =>
+export const csv = (data: DataType[], header?: ITableHeader[], documentName?: string) =>
     tableFormats(data, header, documentName, 'csv');

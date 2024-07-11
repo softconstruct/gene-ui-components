@@ -19,6 +19,26 @@ export default meta;
 
 export const ExelFormats = () => {
     const [currentFunction, setCurrentFunction] = useState<'xls' | 'csv' | 'xlsx'>('xlsx');
+
+    const exelHeader: ExportHelper.ITableHeader[] = [
+        {
+            header: 'Test2',
+            key: 'test2',
+            style: {
+                fontSize: 10,
+                color: '#e91e63'
+            }
+        },
+        {
+            header: 'Test5',
+            key: 'test5',
+            style: {
+                fontSize: 20,
+                color: '#e91e63'
+            }
+        }
+    ];
+
     const createExel: ExportHelper.DataType[] = [
         {
             test1: {
@@ -74,13 +94,14 @@ export const ExelFormats = () => {
     ];
 
     const exportHandler = () => {
-        ExportHelper[currentFunction](createExel);
+        ExportHelper[currentFunction](createExel, exelHeader);
     };
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', width: 500, height: 500 }}>
-            <div>
-                <pre> {JSON.stringify(createExel, null, 2)} </pre>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                Data:<pre> {JSON.stringify(createExel, null, 2)} </pre>
+                Header:<pre> {JSON.stringify(exelHeader, null, 2)} </pre>
             </div>{' '}
             <select
                 style={{ border: '2px solid black', margin: 10 }}
