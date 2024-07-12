@@ -158,6 +158,9 @@
         "yargs": "^17.7.2"
     },
     "dependencies": {
+        "@ironsoftware/ironpdf": "^2024.6.4",
+        "@ironsoftware/ironpdf-engine-windows-x64": "^2024.6.4",
+        "@ironsoftware/ironpdf-engine-windows-x86": "^2024.6.4",
         "classnames": "^2.3.2",
         "dayjs": "^1.11.5",
         "draft-js": "^0.11.7",
@@ -168,11 +171,13 @@
         "highcharts-react-official": "^3.1.0",
         "html-to-draftjs": "^1.5.0",
         "html-to-image": "^1.11.11",
+        "html2canvas": "^1.4.1",
         "i": "^0.3.7",
         "immer": "^9.0.18",
         "jodit-react": "^1.3.23",
         "jspdf": "^2.5.1",
-        "npm": "^9.4.1",
+        "jspdf-autotable": "^3.8.2",
+        "npm": "^9.9.3",
         "pure-react-carousel": "^1.30.1",
         "qrcode.react": "^3.1.0",
         "rc-slider": "^8.6.9",
@@ -188,6 +193,7 @@
         "react-swipeable": "^7.0.0",
         "react-tiny-popover": "^3.4.5",
         "react-tiny-popover-latest": "npm:react-tiny-popover@^6.0.4",
+        "react-to-print": "^2.15.1",
         "react-virtualized": "^9.21.1",
         "resize-observer-polyfill": "^1.5.1",
         "xlsx": "^0.18.5"

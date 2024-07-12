@@ -36,7 +36,8 @@ export const ExelFormats = () => {
             key: 'test5',
             style: {
                 fontSize: 20,
-                color: '#e91e63'
+                color: '#e91e63',
+                bold: true
             }
         }
     ];
@@ -231,7 +232,6 @@ export const ExportAsImage = () => {
                 onChange={(e) => setImageType(e.target.value)}
             >
                 <option defaultChecked>toJpeg</option>
-                <option>toSvg</option>
                 <option>toPng</option>
             </select>
 

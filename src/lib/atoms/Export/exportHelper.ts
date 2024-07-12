@@ -6,23 +6,6 @@ import { saveAs } from 'file-saver';
 import autoTable, { ColumnInput } from 'jspdf-autotable';
 //TODO: change file location after tests
 
-interface IDataWithStyle {
-    style: {
-        fontSize?: number;
-        color?: `#${string}`;
-        bold?: boolean;
-        italic?: boolean;
-        underline?: boolean;
-        background?: `#${string}`;
-    };
-    value: string | number;
-}
-
-export type ImageFormats = Exclude<
-    keyof typeof ImageExporter,
-    'toPixelData' | 'toBlob' | 'toCanvas' | 'getFontEmbedCSS'
->;
-
 export const exportToTablePdf = (
     data: Record<string, string>[],
     columns?: Record<string, unknown>[],
@@ -72,6 +55,7 @@ export const pdf = (HTMLelement: HTMLElement, fileName: string = 'document') => 
     }
 };
 
+export type ImageFormats = 'toPng' | 'toJpeg';
 export const exportImage = async (
     HTMLelement: HTMLElement,
     format: ImageFormats = 'toPng',
@@ -88,6 +72,17 @@ export const exportImage = async (
     }
 };
 
+interface IDataWithStyle {
+    style: {
+        fontSize?: number;
+        color?: `#${string}`;
+        bold?: boolean;
+        italic?: boolean;
+        underline?: boolean;
+        background?: `#${string}`;
+    };
+    value: string | number;
+}
 export interface ITableHeader extends Partial<Omit<ExcelJS.Column, 'style'>> {
     style?: IDataWithStyle['style'];
     header: string;
@@ -178,16 +173,17 @@ const tableFormats = async (
         };
 
         if (!header) {
-            const getHeaderKeys = data.reduce((aggr: string[], val) => {
-                aggr = [...aggr, ...Object.keys(val)];
-                return aggr;
-            }, []);
-            const createHeder = [...new Set(getHeaderKeys)].reduce((aggr: Record<string, unknown>[], val) => {
-                dataFromHeader.push(val);
-                aggr.push({ header: val, key: val });
-                return aggr;
-            }, []);
-            worksheet.columns = createHeder;
+            const createHeder = data
+                .reduce((aggr: string[], val) => {
+                    aggr = [...aggr, ...Object.keys(val)];
+                    return aggr;
+                }, [])
+                .map((val) => {
+                    dataFromHeader.push(val);
+                    return { header: val, key: val };
+                });
+
+            worksheet.columns = [...new Set(createHeder)];
         } else {
             const headerWithoutStyles = header.map((el) => {
                 dataFromHeader.push(el.key!);
@@ -240,6 +236,5 @@ const tableFormats = async (
 
 export const xlsx = (data: DataType[], header?: ITableHeader[], documentName?: string) =>
     tableFormats(data, header, documentName);
-
 export const csv = (data: DataType[], header?: ITableHeader[], documentName?: string) =>
     tableFormats(data, header, documentName, 'csv');
