@@ -30,7 +30,7 @@ const meta: Meta<typeof Label> = {
 
 export default meta;
 
-const Template: FC<ILabelProps> = (args) => <Label {...args}>Label</Label>;
+const Template: FC<ILabelProps> = (args) => <Label {...args}>{args.children}</Label>;
 
 export const Default = Template.bind({});
 
