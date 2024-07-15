@@ -193,7 +193,6 @@
         "react-swipeable": "^7.0.0",
         "react-tiny-popover": "^3.4.5",
         "react-tiny-popover-latest": "npm:react-tiny-popover@^6.0.4",
-        "react-to-print": "^2.15.1",
         "react-virtualized": "^9.21.1",
         "resize-observer-polyfill": "^1.5.1",
         "xlsx": "^0.18.5"

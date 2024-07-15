@@ -133,12 +133,14 @@ const tableFormats = async (
     type: 'xlsx' | 'csv' = 'xlsx'
 ) => {
     try {
+        let transformedStyles = {};
+
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet();
-        let transformedStyles = {};
-        let allRow: Record<number, ExcelJS.Row> = {};
-        let dataFromHeader: string[] = [];
+        const allRows: Record<number, ExcelJS.Row> = {};
+        const dataFromHeader: string[] = [];
         const allIndex: AllIndexType = new Set();
+
         const transformedData = (transformedStyles: Record<string, Record<string, IDataWithStyle['style']>>) => {
             Object.keys(transformedStyles).forEach((el) => {
                 let styles = transformedStyles[el].style;
@@ -157,7 +159,7 @@ const tableFormats = async (
         const transformAllIndex = (allIndex: AllIndexType) => {
             allIndex.forEach((el) => {
                 if (typeof el.element === 'object') {
-                    allRow[el.rowIndex as number].getCell(el.colIndex as number).style =
+                    allRows[el.rowIndex as number].getCell(el.colIndex as number).style =
                         transformedStyles[el.element.value].style;
                 }
             });
@@ -210,12 +212,11 @@ const tableFormats = async (
 
                 if (isObject) {
                     const currentElement = items[element] as IDataWithStyle;
-
                     fillTransformedStyles(currentElement.value, currentElement.style);
                 }
             });
             const row = worksheet.addRow(rows);
-            allRow[rowIndex] = row;
+            allRows[rowIndex] = row;
         });
         transformedData(transformedStyles);
         transformAllIndex(allIndex);
