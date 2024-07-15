@@ -1,46 +1,27 @@
-import { Meta, StoryObj } from '@storybook/react';
-import AvatarComponent from './index';
-import { args, category } from '../../../../stories/assets/storybook.globals';
+import React, { FC } from 'react';
+import { Meta } from '@storybook/react';
 
-const meta = {
+// Helpers
+import { args, propCategory } from '../../../../stories/assets/storybook.globals';
+
+// Components
+import Avatar, { IAvatarProps } from './index';
+
+const meta: Meta<typeof Avatar> = {
     title: 'Atoms/Avatar',
-    component: AvatarComponent,
+    component: Avatar,
     argTypes: {
-        children: args({ control: 'text', category: category.content }),
-        size: args({ control: 'select', category: category.appearance }),
-        shape: args({ control: 'select', defaultValue: 'circle', category: category.appearance }),
-        color: args({ control: 'select', defaultValue: 'default', category: category.appearance }),
-        icon: args({ control: 'text', category: category.content }),
-        src: args({ control: 'text', category: category.content }),
-        onClick: args({ control: false, category: category.action })
-    }
-} satisfies Meta<typeof AvatarComponent>;
+        size: args({ control: false, ...propCategory.others })
+    },
+    args: {
+        size: 'fill the size prop value'
+    } as IAvatarProps
+};
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+const Template: FC<IAvatarProps> = (args) => <Avatar {...args} />;
 
-export const Default: Story = {
-    args: {
-        children: 'US',
-        size: 'default',
-        shape: 'circle'
-    }
-};
+export const Default = Template.bind({});
 
-export const Square: Story = {
-    args: {
-        icon: 'bc-icon-monospace',
-        size: 'medium',
-        shape: 'square',
-        color: 'green'
-    }
-};
-
-export const Circled: Story = {
-    args: {
-        src: 'https://www.w3schools.com/howto/img_avatar.png',
-        size: 'big',
-        shape: 'circle'
-    }
-};
+Default.args = {} as IAvatarProps;
