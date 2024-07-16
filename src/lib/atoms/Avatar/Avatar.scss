@@ -1,5 +1,163 @@
+.forAvatarTestHolder {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 20px;
+}
+
+// todo
+
 .avatar {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--guit-ref-radius-full);
+    overflow: hidden;
+    user-select: none;
+    cursor: pointer;
+    position: relative;
+
+    &_size {
+        &_6Xlarge {
+            width: var(--guit-sem-sizing-width-6xl);
+            height: var(--guit-sem-sizing-height-6xl);
+            font-size: var(--guit-sem-font-heading-small-bold-font-size);
+            line-height: var(--guit-sem-font-heading-medium-semibold-line-height);
+            font-weight: var(--guit-sem-font-heading-medium-semibold-font-weight);
+        }
+
+        &_large {
+            width: var(--guit-sem-sizing-width-l);
+            height: var(--guit-sem-sizing-height-l);
+            font-size: var(--guit-sem-font-label-medium-default-bold-font-size);
+            line-height: var(--guit-sem-font-label-medium-default-bold-line-height);
+            font-weight: var(--guit-sem-font-label-medium-default-bold-font-weight);
+        }
+
+        &_medium {
+            width: var(--guit-sem-sizing-width-m);
+            height: var(--guit-sem-sizing-height-m);
+            font-size: var(--guit-sem-font-label-medium-default-bold-font-size);
+            line-height: var(--guit-sem-font-label-medium-default-bold-line-height);
+            font-weight: var(--guit-sem-font-label-medium-default-bold-font-weight);
+        }
+
+        &_small {
+            width: var(--guit-sem-sizing-width-s);
+            height: var(--guit-sem-sizing-height-s);
+            font-size: var(--guit-sem-font-label-small-default-bold-font-size);
+            line-height: var(--guit-sem-font-label-small-default-bold-line-height);
+            font-weight: var(--guit-sem-font-label-small-default-bold-font-weight);
+        }
+    }
+
+    &_color {
+        &_neutral {
+            background-color: var(--guit-sem-color-background-neutral-2);
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
+
+        &_blue {
+            background-color: var(--guit-sem-color-background-accent-blue);
+            color: var(--guit-sem-color-foreground-accent-blue);
+        }
+
+        &_red {
+            background-color: var(--guit-sem-color-background-accent-red);
+            color: var(--guit-sem-color-foreground-accent-red);
+        }
+
+        &_green {
+            background-color: var(--guit-sem-color-background-accent-green);
+            color: var(--guit-sem-color-foreground-accent-green);
+        }
+
+        &_purple {
+            background-color: var(--guit-sem-color-background-accent-purple);
+            color: var(--guit-sem-color-foreground-accent-purple);
+        }
+
+        &_orange {
+            background-color: var(--guit-sem-color-background-accent-orange);
+            color: var(--guit-sem-color-foreground-accent-orange);
+        }
+
+        &_lagoon {
+            background-color: var(--guit-sem-color-background-accent-lagoon);
+            color: var(--guit-sem-color-foreground-accent-lagoon);
+        }
+
+        &_magenta {
+            background-color: var(--guit-sem-color-background-accent-magenta);
+            color: var(--guit-sem-color-foreground-accent-magenta);
+        }
+
+        &_slate {
+            background-color: var(--guit-sem-color-background-accent-slate);
+            color: var(--guit-sem-color-foreground-accent-slate);
+        }
+    }
+
+    &__image {
+        display: block;
+        object-fit: cover;
+        object-position: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    &__text {
+        font-family: var(--guit-sem-font-heading-medium-semibold-font-family);
+        color: inherit;
+        font-size: inherit;
+        line-height: inherit;
+        font-weight: inherit;
+        text-transform: uppercase;
+    }
+
+    // active, hover, focus common styles START
+    &:focus-visible {
+        outline-offset: var(--guit-ref-border-width-thin);
+        outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-focus);
+    }
+
+    &:hover,
+    &:active,
+    &_disabled {
+        &::before {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+    }
+
+    // active, hover, focus common styles END
+
+    // active and hover states START
+    &:hover {
+        &::before {
+            background-color: var(--guit-sem-color-background-transparent-1-hover);
+        }
+    }
+
+    &:active {
+        &::before {
+            background-color: var(--guit-sem-color-background-transparent-1-pressed);
+        }
+    }
+
+    &_disabled {
+        pointer-events: none;
+
+        &::before {
+            background-color: var(--guit-sem-color-background-transparent-inverse-disabled);
+        }
+    }
+
+    // active and hover states END
 }
