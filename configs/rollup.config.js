@@ -29,7 +29,8 @@ const TSComponentsList = [
     'Image',
     'Rating',
     'InteractiveWidget',
-    'GeneUIProvider'
+    'GeneUIProvider',
+    'Pill'
 ];
 
 const getInputs = (name, dir) => {
