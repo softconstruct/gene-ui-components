@@ -1,5 +1,132 @@
+.pillTestHolder {
+    display: inline-grid;
+    grid-template-columns: repeat(4, auto);
+    grid-gap: 10px;
+}
+
+//todo
 .pill {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    display: inline-flex;
+    vertical-align: top;
+    align-items: center;
+    gap: var(--guit-ref-spacing-xs);
+    user-select: none;
+
+    &_size {
+        &_medium {
+            &:not(#{ $this }_icon_only) {
+                padding: var(--guit-ref-spacing-2xs) var(--guit-ref-spacing-m);
+            }
+            &#{ $this }_icon_only {
+                padding: var(--guit-ref-spacing-2xs);
+            }
+        }
+
+        &_small {
+            &:not(#{ $this }_icon_only) {
+                padding: var(--guit-ref-spacing-4xs) var(--guit-ref-spacing-m);
+            }
+            &#{ $this }_icon_only {
+                padding: var(--guit-ref-spacing-4xs);
+            }
+        }
+
+        &_small_nudge {
+            &:not(#{ $this }_icon_only) {
+                padding: var(--guit-ref-spacing-4xs) var(--guit-ref-spacing-xs);
+            }
+            &#{ $this }_icon_only {
+                padding: var(--guit-ref-spacing-4xs);
+            }
+        }
+    }
+
+    &_fill {
+        border-radius: var(--guit-ref-radius-xs);
+        &#{ $this }_color_informative {
+            background-color: var(--guit-sem-color-background-informative);
+        }
+        &#{ $this }_color_neutral {
+            background-color: var(--guit-sem-color-background-neutral-3);
+        }
+        &#{ $this }_color_error {
+            background-color: var(--guit-sem-color-background-error-1);
+        }
+        &#{ $this }_color_success {
+            background-color: var(--guit-sem-color-background-success-1);
+        }
+        &#{ $this }_color_warning {
+            background-color: var(--guit-sem-color-background-warning-1);
+        }
+        &#{ $this }_color_purple {
+            background-color: var(--guit-sem-color-background-accent-purple);
+        }
+        &#{ $this }_color_lagoon {
+            background-color: var(--guit-sem-color-background-accent-lagoon);
+        }
+        &#{ $this }_color_magenta {
+            background-color: var(--guit-sem-color-background-accent-magenta);
+        }
+        &#{ $this }_color_slate {
+            background-color: var(--guit-sem-color-background-accent-slate);
+        }
+        &#{ $this }_color_inverse {
+            background-color: var(--guit-sem-color-background-inverse);
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
+    }
+
+    &_color {
+        &_informative {
+            color: var(--guit-sem-color-foreground-informative);
+        }
+
+        &_neutral {
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
+
+        &_error {
+            color: var(--guit-sem-color-foreground-error);
+        }
+
+        &_success {
+            color: var(--guit-sem-color-foreground-success);
+        }
+
+        &_warning {
+            color: var(--guit-sem-color-foreground-warning);
+        }
+
+        &_purple {
+            color: var(--guit-sem-color-foreground-accent-purple);
+        }
+
+        &_lagoon {
+            color: var(--guit-sem-color-foreground-accent-lagoon);
+        }
+
+        &_magenta {
+            color: var(--guit-sem-color-foreground-accent-magenta);
+        }
+
+        &_slate {
+            color: var(--guit-sem-color-foreground-accent-slate);
+        }
+    }
+    &:not(#{ $this }_fill) {
+        &#{ $this }_color_inverse {
+            color: var(--guit-sem-color-foreground-inverse);
+        }
+    }
+
+    &__text {
+        text-transform: capitalize;
+        font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+        font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+        line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+        font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
+        color: inherit;
+    }
 }
