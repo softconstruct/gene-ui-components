@@ -104,6 +104,7 @@ export { default as Counter } from './lib/molecules/Counter';
 export { default as AdvancedSearch } from './lib/molecules/AdvancedSearch';
 export { default as Copy } from './lib/molecules/Copy';
 export { default as InteractiveWidget } from './lib/molecules/InteractiveWidget';
+export { default as TextField } from './lib/molecules/TextField';
 
 // Organisms
 export { default as FormableMultiSelectDropdown } from './lib/organisms/Form/Formables/FormableMultiSelectDropdown';
