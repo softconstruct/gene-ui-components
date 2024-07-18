@@ -32,6 +32,7 @@ export {
 } from './lib/atoms/Paper';
 export { default as Avatar } from './lib/atoms/Avatar/index';
 export { default as LinkButton } from './lib/atoms/LinkButton/index';
+export { default as SplitButton } from './lib/atoms/SplitButton';
 
 // Molecules
 export { Row, Col } from './lib/molecules/Grid';

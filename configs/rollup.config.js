@@ -29,7 +29,8 @@ const TSComponentsList = [
     'Image',
     'Rating',
     'InteractiveWidget',
-    'GeneUIProvider'
+    'GeneUIProvider',
+    'SplitButton'
 ];
 
 const getInputs = (name, dir) => {
