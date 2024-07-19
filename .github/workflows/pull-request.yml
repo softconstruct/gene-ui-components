@@ -38,5 +38,45 @@ jobs:
           with:
             projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
             exitZeroOnChanges: true
-        - name: Publish Summary
-          run: echo -e "| Results |  |\n| --- | --- |\n| Build URL | ${{steps.chromatic.outputs.buildUrl}} |\n| Storybook Preview URL | ${{steps.chromatic.outputs.storybookUrl}} |\n| Component Count | ${{steps.chromatic.outputs.componentCount}} |" >> $GITHUB_STEP_SUMMARY
+        - name: Add or Update PR Comment
+          uses: actions/github-script@v6
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            script: |
+              const { owner, repo } = context.repo;
+              const pull_number = context.issue.number;
+              const commentBody = `## Chromatic Build Summary\n\n| Results |  |\n| --- | --- |\n| Build URL | ${{steps.chromatic.outputs.buildUrl}} |\n| Storybook Preview URL | ${{steps.chromatic.outputs.storybookUrl}} |\n| Component Count | ${{steps.chromatic.outputs.componentCount}} |`;
+
+              async function run() {
+                // Check for an existing comment by this bot
+                const { data: comments } = await github.pulls.listReviewComments({
+                  owner,
+                  repo,
+                  pull_number,
+                });
+
+                const botComment = comments.find(comment => comment.user.login === 'github-actions[bot]' && comment.body.includes('## Chromatic Build Summary'));
+
+                if (botComment) {
+                  // Update the existing comment
+                  await github.pulls.updateReviewComment({
+                    owner,
+                    repo,
+                    comment_id: botComment.id,
+                    body: commentBody,
+                  });
+                } else {
+                  // Create a new comment
+                  await github.pulls.createReviewComment({
+                    owner,
+                    repo,
+                    pull_number,
+                    body: commentBody,
+                    commit_id: context.payload.pull_request.head.sha,
+                    path: context.payload.pull_request.base.ref,  // specify a valid path if needed
+                    position: 1,  // specify a valid position if needed
+                  });
+                }
+              }
+
+              run();
