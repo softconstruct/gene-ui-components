@@ -38,24 +38,10 @@ jobs:
           with:
             projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
             exitZeroOnChanges: true
-        - name: Find Comment
-          uses: peter-evans/find-comment@v3
-          id: fc
+        - name: Update PR Description
+          uses: nefrob/pr-description@v1.1.2
           with:
-            issue-number: ${{ github.event.pull_request.number }}
-            comment-author: 'github-actions[bot]'
-            body-includes: '## Chromatic Build'
-        - name: Create comment
-          if: steps.fc.outputs.comment-id == ''
-          uses: peter-evans/create-or-update-comment@v4
-          with:
-            issue-number: ${{ github.event.pull_request.number }}
-            body: |
-              ## Chromatic Build \n\n| Results |  |\n| --- | --- |\n| Build URL | ${{steps.chromatic.outputs.buildUrl}} |\n| Storybook Preview URL | ${{steps.chromatic.outputs.storybookUrl}} |\n| Component Count | ${{steps.chromatic.outputs.componentCount}} |
-        - name: Update comment
-          if: steps.fc.outputs.comment-id != ''
-          uses: peter-evans/create-or-update-comment@v4
-          with:
-            comment-id: ${{ steps.fc.outputs.comment-id }}
-            body: |
-              ## Chromatic Build Summary\n\n| Results |  |\n| --- | --- |\n| Build URL | ${{steps.chromatic.outputs.buildUrl}} |\n| Storybook Preview URL | ${{steps.chromatic.outputs.storybookUrl}} |\n| Component Count | ${{steps.chromatic.outputs.componentCount}} |
+            content: "| Build Results | ${{steps.chromatic.outputs.buildUrl}} |\n| Storybook Preview | ${{steps.chromatic.outputs.storybookUrl}} |\n| Component Count | ${{steps.chromatic.outputs.componentCount}} |"
+            regex: ".*"
+            regexFlags: s
+            token: ${{ secrets.GITHUB_TOKEN }}
