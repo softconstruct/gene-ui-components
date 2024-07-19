@@ -41,7 +41,7 @@ jobs:
         - name: Update PR Description
           uses: nefrob/pr-description@v1.1.2
           with:
-            content: "### Chromatic Build Summary \n**Build URL:** ${{steps.chromatic.outputs.buildUrl}} \n**Storybook URL:** ${{steps.chromatic.outputs.storybookUrl}}\n **Components Count:** ${{steps.chromatic.outputs.componentCount}}""
+            content: "### Chromatic Build Summary \n**Build URL:** ${{steps.chromatic.outputs.buildUrl}} \n**Storybook URL:** ${{steps.chromatic.outputs.storybookUrl}}\n **Components Count:** ${{steps.chromatic.outputs.componentCount}}"
             regex: ".*"
             regexFlags: s
             token: ${{ secrets.GITHUB_TOKEN }}
