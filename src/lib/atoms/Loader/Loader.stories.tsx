@@ -11,11 +11,15 @@ const meta: Meta<typeof Loader> = {
     title: 'Atoms/Loader',
     component: Loader,
     argTypes: {
-        isBusy: args({ control: false, ...propCategory.others })
+        show: args({ control: 'boolean', ...propCategory.others }),
+        text: args({ control: 'text', ...propCategory.content }),
+        textDirection: args({ control: 'select', ...propCategory.appearance })
     },
     args: {
-        isBusy: 'fill the isBusy prop value'
-    } as ILoaderProps
+        text: 'fill the text prop value',
+        show: true,
+        textDirection: 'horizontal'
+    }
 };
 
 export default meta;
