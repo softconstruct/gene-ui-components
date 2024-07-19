@@ -25,7 +25,7 @@ const meta: Meta<typeof Label> = {
         size: 'medium',
         children: 'label',
         required: false
-    } as ILabelProps
+    }
 };
 
 export default meta;

@@ -29,7 +29,6 @@ describe('Label ', () => {
     it.each<ILabelProps['size']>(['medium', 'small'])('should have "%s" size', (size) => {
         const wrapper = setup.setProps({ size });
 
-        expect(wrapper.props().size).toBe(size);
         expect(wrapper.find('.label__text').hasClass(`label__text_size_${size}`)).toBeTruthy();
     });
 

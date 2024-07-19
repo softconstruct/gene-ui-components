@@ -12,8 +12,9 @@ import './Label.scss';
 interface ILabelProps {
     /**
      * The id of the input element this label is associated with.
+     * If Label component used with form element this prop is required.
      */
-    htmlFor: string;
+    htmlFor?: string;
     /**
      *    Controls the size of the label.<br/>
      * Possible values: `medium | small`
@@ -52,7 +53,7 @@ interface ILabelProps {
 }
 
 /**
- * The Label component is a fundamental UI element used to display a text label. It is typically associated with input elements to provide information about what the input represents.
+ * Labels identify a component or group of components. Use them with elements such as checkboxes and input fields to guide users in providing specific information, or with plain text to organize information.
  */
 
 const Label: FC<ILabelProps> = ({
@@ -71,7 +72,7 @@ const Label: FC<ILabelProps> = ({
     const isTruncated: boolean = useEllipsisDetection(labelRef);
 
     return (
-        <div {...restProps} className={classnames('label', { className })}>
+        <div {...restProps} className={`label ${className || ''}`}>
             {isLoading ? (
                 'skeleton'
             ) : (
