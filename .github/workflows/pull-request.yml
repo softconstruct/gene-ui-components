@@ -37,3 +37,6 @@ jobs:
           uses: chromaui/action@latest
           with:
             projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+            exitZeroOnChanges: true
+        - name: Publish Summary
+          run: echo -e "| Results |  |\n| --- | --- |\n| Build URL | ${{steps.chromatic.outputs.buildUrl}} |\n| Storybook Preview URL | ${{steps.chromatic.outputs.storybookUrl}} |\n| Component Count | ${{steps.chromatic.outputs.componentCount}} |" >> $GITHUB_STEP_SUMMARY
