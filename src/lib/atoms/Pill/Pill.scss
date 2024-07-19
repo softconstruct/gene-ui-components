@@ -1,7 +1,8 @@
 .pillTestHolder {
-    display: inline-grid;
-    grid-template-columns: repeat(4, auto);
-    grid-gap: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 340px;
 }
 
 //todo
@@ -11,13 +12,26 @@
     display: inline-flex;
     vertical-align: top;
     align-items: center;
-    gap: var(--guit-ref-spacing-xs);
     user-select: none;
 
     &_size {
         &_medium {
             &:not(#{ $this }_icon_only) {
-                padding: var(--guit-ref-spacing-2xs) var(--guit-ref-spacing-m);
+                gap: var(--guit-ref-spacing-xs);
+                padding-top: var(--guit-ref-spacing-2xs);
+                padding-bottom: var(--guit-ref-spacing-2xs);
+            }
+            &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
+                padding-inline-start: var(--guit-ref-spacing-m);
+                padding-inline-end: var(--guit-ref-spacing-m);
+            }
+            &#{ $this }_icon_before {
+                padding-inline-start: var(--guit-ref-spacing-xs);
+                padding-inline-end: var(--guit-ref-spacing-m);
+            }
+            &#{ $this }_icon_after {
+                padding-inline-start: var(--guit-ref-spacing-m);
+                padding-inline-end: var(--guit-ref-spacing-xs);
             }
             &#{ $this }_icon_only {
                 padding: var(--guit-ref-spacing-2xs);
@@ -26,16 +40,61 @@
 
         &_small {
             &:not(#{ $this }_icon_only) {
-                padding: var(--guit-ref-spacing-4xs) var(--guit-ref-spacing-m);
+                gap: var(--guit-ref-spacing-xs);
+                padding-top: var(--guit-ref-spacing-4xs);
+                padding-bottom: var(--guit-ref-spacing-4xs);
+            }
+            &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
+                padding-inline-start: var(--guit-ref-spacing-m);
+                padding-inline-end: var(--guit-ref-spacing-m);
+            }
+            &#{ $this }_icon_before {
+                padding-inline-start: var(--guit-ref-spacing-4xs);
+                padding-inline-end: var(--guit-ref-spacing-xs);
+            }
+            &#{ $this }_icon_after {
+                padding-inline-start: var(--guit-ref-spacing-xs);
+                padding-inline-end: var(--guit-ref-spacing-4xs);
             }
             &#{ $this }_icon_only {
                 padding: var(--guit-ref-spacing-4xs);
             }
         }
 
-        &_small_nudge {
+        &_medium,
+        &_small {
             &:not(#{ $this }_icon_only) {
-                padding: var(--guit-ref-spacing-4xs) var(--guit-ref-spacing-xs);
+                font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+                font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+                line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+                font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+            }
+        }
+
+        &_small_nudge {
+            gap: var(--guit-ref-spacing-3xs);
+            padding-top: var(--guit-ref-spacing-4xs);
+            padding-bottom: var(--guit-ref-spacing-4xs);
+            &:not(#{ $this }_icon_only) {
+                font-family: var(--guit-sem-font-label-small-default-medium-font-family);
+                font-size: var(--guit-sem-font-label-small-default-medium-font-size);
+                line-height: var(--guit-sem-font-label-small-default-medium-line-height);
+                font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
+            }
+            &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
+                padding-inline-start: var(--guit-ref-spacing-xs);
+                padding-inline-end: var(--guit-ref-spacing-xs);
+            }
+            &#{ $this }_icon_before {
+                padding-inline-start: var(--guit-ref-spacing-4xs);
+                padding-inline-end: var(--guit-ref-spacing-xs);
+            }
+            &#{ $this }_icon_after {
+                padding-inline-start: var(--guit-ref-spacing-xs);
+                padding-inline-end: var(--guit-ref-spacing-4xs);
+            }
+            &#{ $this }_icon_only {
+                padding: var(--guit-ref-spacing-4xs);
             }
             &#{ $this }_icon_only {
                 padding: var(--guit-ref-spacing-4xs);
@@ -44,7 +103,13 @@
     }
 
     &_fill {
-        border-radius: var(--guit-ref-radius-xs);
+        &#{ $this }_size_medium,
+        &#{ $this }_size_small {
+            border-radius: var(--guit-ref-radius-3xs);
+        }
+        &#{ $this }_size_small_nudge {
+            border-radius: var(--guit-ref-radius-4xs);
+        }
         &#{ $this }_color_informative {
             background-color: var(--guit-sem-color-background-informative);
         }
@@ -122,11 +187,11 @@
     }
 
     &__text {
-        text-transform: capitalize;
-        font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
-        font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
-        line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
-        font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
+        font-size: inherit;
+        line-height: inherit;
+        font-family: inherit;
+        font-weight: inherit;
         color: inherit;
+        text-transform: capitalize;
     }
 }

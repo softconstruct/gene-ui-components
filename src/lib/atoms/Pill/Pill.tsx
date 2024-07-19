@@ -17,9 +17,13 @@ interface IPillProps {
 const Pill: FC<IPillProps> = ({ size }) => {
     return (
         <div className="pillTestHolder">
-            <div className="pill pill_size_medium pill_fill pill_color_informative">
+            <div className="pill pill_size_medium pill_fill pill_color_informative pill_icon_before">
                 <Icon type={'bc-icon-info'} />
                 <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_informative pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
             </div>
             <div className="pill pill_size_medium pill_fill pill_color_informative">
                 <span className="pill__text">pill</span>
@@ -32,9 +36,13 @@ const Pill: FC<IPillProps> = ({ size }) => {
                 <span className="pill__text">pill</span>
             </div>
             {/*todo color informative END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_neutral">
+            <div className="pill pill_size_medium pill_fill pill_color_neutral pill_icon_before">
                 <Icon type={'bc-icon-info'} />
                 <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_neutral pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
             </div>
             <div className="pill pill_size_medium pill_fill pill_color_neutral">
                 <span className="pill__text">pill</span>
@@ -47,9 +55,13 @@ const Pill: FC<IPillProps> = ({ size }) => {
                 <span className="pill__text">pill</span>
             </div>
             {/*todo color neutral END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_error">
+            <div className="pill pill_size_medium pill_fill pill_color_error pill_icon_before">
                 <Icon type={'bc-icon-info'} />
                 <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_error pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
             </div>
             <div className="pill pill_size_medium pill_fill pill_color_error">
                 <span className="pill__text">pill</span>
@@ -62,9 +74,13 @@ const Pill: FC<IPillProps> = ({ size }) => {
                 <span className="pill__text">pill</span>
             </div>
             {/*todo color error END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_success">
+            <div className="pill pill_size_medium pill_fill pill_color_success pill_icon_before">
                 <Icon type={'bc-icon-info'} />
                 <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_success pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
             </div>
             <div className="pill pill_size_medium pill_fill pill_color_success">
                 <span className="pill__text">pill</span>
@@ -77,9 +93,13 @@ const Pill: FC<IPillProps> = ({ size }) => {
                 <span className="pill__text">pill</span>
             </div>
             {/*todo color success END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_warning">
+            <div className="pill pill_size_medium pill_fill pill_color_warning pill_icon_before">
                 <Icon type={'bc-icon-info'} />
                 <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_warning pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
             </div>
             <div className="pill pill_size_medium pill_fill pill_color_warning">
                 <span className="pill__text">pill</span>
@@ -92,9 +112,13 @@ const Pill: FC<IPillProps> = ({ size }) => {
                 <span className="pill__text">pill</span>
             </div>
             {/*todo color warning END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_purple">
+            <div className="pill pill_size_medium pill_fill pill_color_purple pill_icon_before">
                 <Icon type={'bc-icon-info'} />
                 <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_purple pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
             </div>
             <div className="pill pill_size_medium pill_fill pill_color_purple">
                 <span className="pill__text">pill</span>
@@ -107,9 +131,13 @@ const Pill: FC<IPillProps> = ({ size }) => {
                 <span className="pill__text">pill</span>
             </div>
             {/*todo color purple END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_lagoon">
+            <div className="pill pill_size_medium pill_fill pill_color_lagoon pill_icon_before">
                 <Icon type={'bc-icon-info'} />
                 <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_lagoon pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
             </div>
             <div className="pill pill_size_medium pill_fill pill_color_lagoon">
                 <span className="pill__text">pill</span>
@@ -122,9 +150,13 @@ const Pill: FC<IPillProps> = ({ size }) => {
                 <span className="pill__text">pill</span>
             </div>
             {/*todo color lagoon END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_magenta">
+            <div className="pill pill_size_medium pill_fill pill_color_magenta pill_icon_before">
                 <Icon type={'bc-icon-info'} />
                 <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_magenta pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
             </div>
             <div className="pill pill_size_medium pill_fill pill_color_magenta">
                 <span className="pill__text">pill</span>
@@ -137,9 +169,13 @@ const Pill: FC<IPillProps> = ({ size }) => {
                 <span className="pill__text">pill</span>
             </div>
             {/*todo color magenta END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_slate">
+            <div className="pill pill_size_medium pill_fill pill_color_slate pill_icon_before">
                 <Icon type={'bc-icon-info'} />
                 <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_slate pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
             </div>
             <div className="pill pill_size_medium pill_fill pill_color_slate">
                 <span className="pill__text">pill</span>
@@ -152,9 +188,13 @@ const Pill: FC<IPillProps> = ({ size }) => {
                 <span className="pill__text">pill</span>
             </div>
             {/*todo color slate END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_inverse">
+            <div className="pill pill_size_medium pill_fill pill_color_inverse pill_icon_before">
                 <Icon type={'bc-icon-info'} />
                 <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_inverse pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
             </div>
             <div className="pill pill_size_medium pill_fill pill_color_inverse">
                 <span className="pill__text">pill</span>
@@ -166,6 +206,46 @@ const Pill: FC<IPillProps> = ({ size }) => {
                 <Icon type={'bc-icon-info'} />
                 <span className="pill__text">pill</span>
             </div>
+            {/*todo color inverse END*/}
+            <div className="pill pill_size_medium pill_fill pill_color_inverse pill_icon_before">
+                <Icon type={'bc-icon-info'} />
+                <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_inverse pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_inverse">
+                <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_medium pill_fill pill_color_inverse pill_icon_only">
+                <Icon type={'bc-icon-info'} />
+            </div>
+            <div className="pill pill_size_medium pill_color_inverse">
+                <Icon type={'bc-icon-info'} />
+                <span className="pill__text">pill</span>
+            </div>
+
+            {/*todo small_nudge START*/}
+            <div className="pill pill_size_small_nudge pill_fill pill_color_informative pill_icon_before">
+                <Icon type={'bc-icon-info'} />
+                <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_small_nudge pill_fill pill_color_informative pill_icon_after">
+                <span className="pill__text">pill</span>
+                <Icon type={'bc-icon-info'} />
+            </div>
+            <div className="pill pill_size_small_nudge pill_fill pill_color_informative">
+                <span className="pill__text">pill</span>
+            </div>
+            <div className="pill pill_size_small_nudge pill_fill pill_color_informative pill_icon_only">
+                <Icon type={'bc-icon-info'} />
+            </div>
+            <div className="pill pill_size_small_nudge pill_color_informative">
+                <Icon type={'bc-icon-info'} />
+                <span className="pill__text">pill</span>
+            </div>
+            {/*todo small_nudge END*/}
         </div>
     );
 };
