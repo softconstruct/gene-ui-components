@@ -1,77 +1,20 @@
-import React, { ReactNode, FC, HTMLAttributes } from 'react';
-import classnames from 'classnames';
+import React, { FC } from 'react';
 
 // Styles
 import './Badge.scss';
 
-interface IBadgeProps extends HTMLAttributes<HTMLDivElement> {
+interface IBadgeProps {
     /**
-     * Any custom class name
+     * size description
      */
-    className?: string;
-    /**
-     * Badge size <br/>
-     * Possible values: `default | medium | big | huge`
-     */
-    size?: 'default' | 'medium' | 'big' | 'huge';
-    /**
-     * Badge color <br/>
-     * Possible values: `danger | primary`
-     */
-    color?: 'danger' | 'primary';
-    /**
-     * Shows the specified number on the badge
-     */
-    count?: number;
-    /**
-     * Set this property to have only dot instead of number
-     */
-    dot?: boolean;
-    /**
-     * When the "count" is greater than "maxCount" Badge will show "maxCount" value and "+"
-     */
-    maxCount?: number;
-    /**
-     * Any valid React node
-     */
-    children?: ReactNode;
+    size?: unknown;
 }
 
-const getShowValue = (count?: number, maxCount?: number) => {
-    if (!count && count !== 0) return null;
-    if (!maxCount) return count;
-    return count > maxCount ? `${maxCount}+` : count;
-};
-
-const Badge: FC<IBadgeProps> = ({
-    size = 'default',
-    dot = false,
-    color = 'danger',
-    count,
-    maxCount,
-    className,
-    children,
-    ...restProps
-}) => {
-    const show = dot ? '' : getShowValue(count, maxCount);
-
-    return (
-        <div className="badge" {...restProps}>
-            {show !== null && (
-                <span
-                    className={classnames('badge__content', className, {
-                        [`badge__content-${size}`]: size,
-                        [`badge__content-${color}`]: color,
-                        [`badge__content-dot`]: dot,
-                        [`badge__content-children`]: children
-                    })}
-                >
-                    {show}
-                </span>
-            )}
-            {children}
-        </div>
-    );
+/**
+ * Numeric Badge component is a small, circular indicator that displays numerical information, often used to highlight counts or statuses. It is typically positioned adjacent to icons or labels, providing users with a quick visual cue about the number of notifications, messages, or items requiring attention.
+ */
+const Badge: FC<IBadgeProps> = ({ size }) => {
+    return <div className="badge">Badge</div>;
 };
 
 export { IBadgeProps, Badge as default };
