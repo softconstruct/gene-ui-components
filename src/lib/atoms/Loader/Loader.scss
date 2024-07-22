@@ -4,11 +4,11 @@
     justify-content: center;
 
     &_direction {
-        &_horizontal {
+        &_after {
             flex-direction: row;
         }
 
-        &_vertical {
+        &_below {
             flex-direction: column;
         }
     }

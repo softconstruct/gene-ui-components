@@ -28,8 +28,16 @@ describe('Loader ', () => {
         expect(wrapper.find('.loader').exists()).toBeFalsy();
     });
 
-    it.each<ILoaderProps['textDirection']>(['horizontal', 'vertical'])('should have %p direction', (textDirection) => {
-        const wrapper = setup.setProps({ textDirection });
-        expect(wrapper.find(`.loader_direction_${textDirection}`).exists()).toBeTruthy();
+    it.each<ILoaderProps['labelPosition']>(['after', 'below'])('should have %p position', (labelPosition) => {
+        const wrapper = setup.setProps({ labelPosition });
+        expect(wrapper.find(`.loader_direction_${labelPosition}`).exists()).toBeTruthy();
     });
+
+    it.each<ILoaderProps['size']>(['2xlarge', 'xlarge', 'large', 'medium', 'small', 'smallNudge'])(
+        'should have %p size',
+        (size) => {
+            const wrapper = setup.setProps({ size });
+            expect(wrapper.find(`.loader_size_${size}`).exists()).toBeTruthy();
+        }
+    );
 });

@@ -13,12 +13,14 @@ const meta: Meta<typeof Loader> = {
     argTypes: {
         show: args({ control: 'boolean', ...propCategory.others }),
         text: args({ control: 'text', ...propCategory.content }),
-        textDirection: args({ control: 'select', ...propCategory.appearance })
+        labelPosition: args({ control: 'select', ...propCategory.appearance }),
+        size: args({ control: 'select', ...propCategory.appearance })
     },
     args: {
         text: 'fill the text prop value',
         show: true,
-        textDirection: 'horizontal'
+        labelPosition: 'after',
+        size: 'medium'
     }
 };
 
