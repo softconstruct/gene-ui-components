@@ -4,7 +4,7 @@ import { ReactWrapper, mount } from 'enzyme';
 // Components
 import Loader, { ILoaderProps } from './index';
 
-describe('Loader ', () => {
+describe('Loader', () => {
     let setup: ReactWrapper<ILoaderProps>;
     beforeEach(() => (setup = mount(<Loader />)));
 
@@ -40,4 +40,9 @@ describe('Loader ', () => {
             expect(wrapper.find(`.loader_size_${size}`).exists()).toBeTruthy();
         }
     );
+
+    it.each<ILoaderProps['appearance']>(['brand', 'neutral', 'inverse'])('should have %p appearance', (appearance) => {
+        const wrapper = setup.setProps({ appearance });
+        expect(wrapper.find(`.loader_color_${appearance}`).exists()).toBeTruthy();
+    });
 });

@@ -14,13 +14,15 @@ const meta: Meta<typeof Loader> = {
         show: args({ control: 'boolean', ...propCategory.others }),
         text: args({ control: 'text', ...propCategory.content }),
         labelPosition: args({ control: 'select', ...propCategory.appearance }),
-        size: args({ control: 'select', ...propCategory.appearance })
+        size: args({ control: 'select', ...propCategory.appearance }),
+        appearance: { control: 'select', ...propCategory.appearance }
     },
     args: {
-        text: 'fill the text prop value',
+        text: 'Loading Info',
         show: true,
         labelPosition: 'after',
-        size: 'medium'
+        size: 'medium',
+        appearance: 'brand'
     }
 };
 

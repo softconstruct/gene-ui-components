@@ -13,10 +13,10 @@ interface ILoaderProps {
      */
     text?: string;
     /**
-     * <code> default | inverted</code> <br/>
+     * <code>brand | neutral | inverse</code> <br/>
      * The tooltip's visual appearance.
      */
-    appearance?: 'default' | 'inverted';
+    appearance?: 'brand' | 'neutral' | 'inverse';
     /**
      * Loader size <br/>
      * Possible values: `2xlarge | xlarge | large | medium | small | smallNudge`
@@ -32,14 +32,20 @@ interface ILoaderProps {
  *Loading Spinner is a visual indicator that informs users an operation is in progress. Typically displayed as a rotating icon or circular animation, it signals that the system is working on a task, such as loading data or processing a request, and that the user should wait until the process is complete.
  */
 
-const Loader: FC<ILoaderProps> = ({ show = true, text, labelPosition = 'after', size = 'medium' }) => {
+const Loader: FC<ILoaderProps> = ({
+    show = true,
+    text,
+    labelPosition = 'after',
+    size = 'medium',
+    appearance = 'brand'
+}) => {
     if (!show) return null;
     return (
-        <span className={`loader loader_direction_${labelPosition} loader_size_${size} loader_color_brand`}>
+        <span className={`loader loader_direction_${labelPosition} loader_size_${size} loader_color_${appearance}`}>
             <svg className="loader__spinner" viewBox="0 0 50 50">
                 <circle className="loader__spinner_path" cx="25" cy="25" r="20" fill="none" strokeWidth="5" />
             </svg>
-            {text && <span className="loader__text loader__text_color_brand">{text}</span>}
+            {text && <span className={`loader__text loader__text_color_${appearance}`}>{text}</span>}
         </span>
     );
 };
