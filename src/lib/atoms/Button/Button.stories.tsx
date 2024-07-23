@@ -14,8 +14,8 @@ const meta: Meta<typeof Button> = {
         size: args({ control: false, ...propCategory.others })
     },
     args: {
-        size: 'fill the size prop value'
-    } as IButtonProps
+        text: 'Button'
+    }
 };
 
 export default meta;
