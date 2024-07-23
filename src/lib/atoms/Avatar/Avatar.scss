@@ -21,6 +21,7 @@
         &_6Xlarge {
             width: var(--guit-sem-sizing-width-6xl);
             height: var(--guit-sem-sizing-height-6xl);
+            font-family: var(--guit-sem-font-heading-medium-semibold-font-family);
             font-size: var(--guit-sem-font-heading-small-bold-font-size);
             line-height: var(--guit-sem-font-heading-medium-semibold-line-height);
             font-weight: var(--guit-sem-font-heading-medium-semibold-font-weight);
@@ -29,25 +30,28 @@
         &_large {
             width: var(--guit-sem-sizing-width-l);
             height: var(--guit-sem-sizing-height-l);
-            font-size: var(--guit-sem-font-label-medium-default-bold-font-size);
-            line-height: var(--guit-sem-font-label-medium-default-bold-line-height);
-            font-weight: var(--guit-sem-font-label-medium-default-bold-font-weight);
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
         }
 
         &_medium {
             width: var(--guit-sem-sizing-width-m);
             height: var(--guit-sem-sizing-height-m);
-            font-size: var(--guit-sem-font-label-medium-default-bold-font-size);
-            line-height: var(--guit-sem-font-label-medium-default-bold-line-height);
-            font-weight: var(--guit-sem-font-label-medium-default-bold-font-weight);
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
         }
 
         &_small {
             width: var(--guit-sem-sizing-width-s);
             height: var(--guit-sem-sizing-height-s);
-            font-size: var(--guit-sem-font-label-small-default-bold-font-size);
-            line-height: var(--guit-sem-font-label-small-default-bold-line-height);
-            font-weight: var(--guit-sem-font-label-small-default-bold-font-weight);
+            font-family: var(--guit-sem-font-label-small-default-medium-font-family);
+            font-size: var(--guit-sem-font-label-small-default-medium-font-size);
+            line-height: var(--guit-sem-font-label-small-default-medium-line-height);
+            font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
         }
     }
 
@@ -63,7 +67,7 @@
         }
 
         &_red {
-            background-color: var(--guit-sem-color-background-accent-red);
+            background-color: var(--guit-sem-color-background-accent-red-1);
             color: var(--guit-sem-color-foreground-accent-red);
         }
 
@@ -107,7 +111,7 @@
     }
 
     &__text {
-        font-family: var(--guit-sem-font-heading-medium-semibold-font-family);
+        font-family: inherit;
         color: inherit;
         font-size: inherit;
         line-height: inherit;
