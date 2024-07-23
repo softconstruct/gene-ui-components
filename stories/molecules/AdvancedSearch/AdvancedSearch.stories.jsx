@@ -553,7 +553,7 @@ export const OpenStateControlled = ({ ...args }) => {
                 onOutsideClick={() => setIsOpen(false)}
             />
             <Divider size={32} />
-            <Time style={{ marginLeft: '10px' }} />
+            <Time data-chromatic="ignore" style={{ marginLeft: '10px' }} />
         </header>
     );
 };
