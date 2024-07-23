@@ -38,6 +38,11 @@ const Button = forwardRef<HTMLDivElement, IButtonProps>(
     ) => {
         return (
             <div className="buttonTestHolder" ref={ref} aria-label={accessibilityLabel}>
+                {/* Add following classes for button
+                    button_icon_before
+                    button_icon_after
+                    button_icon_only
+                */}
                 <button
                     name={name}
                     type="button"
