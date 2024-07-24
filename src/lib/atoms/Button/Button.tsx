@@ -1,123 +1,92 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, JSX, KeyboardEvent, MouseEvent, ReactNode } from 'react';
 
 // Styles
 import './Button.scss';
-import { Icon } from '../../../index';
+import classNames from 'classnames';
+import { Download } from 'lucide-react';
 
 interface IButtonProps {
     /**
-     * size description
+     * Specifies the name of the button, which can be useful for form submission to identify which button was clicked.
      */
     name?: string;
+    /**
+     * Loader size <br/>
+     * Possible values: <code>large | medium | small</code>
+     */
     size?: 'large' | 'medium' | 'small';
+    /**
+     * If set to true, the button will stretch to occupy the full width of its container.
+     */
     fullWidth?: boolean;
+    /**
+     * Indicates whether the button is disabled, preventing user interaction. When true, the button appears dimmed and cannot be clicked.
+     */
     disabled?: boolean;
+    /**
+     * Loader type <br/>
+     * Possible values: <code>fill | outline | text </code>
+     */
     type?: 'fill' | 'outline' | 'text';
-    color?: 'primary' | 'secondary' | 'danger' | 'success' | 'inverse' | 'transparent';
+    /**
+     * Loader color <br/>
+     * Possible values: <code>primary | secondary | danger | success | inverse | transparent</code>
+     */
+    loaderColor?: 'primary' | 'secondary' | 'danger' | 'success' | 'inverse' | 'transparent';
+    /**
+     * The text to be displayed on the button.
+     */
     text?: string;
-    icon?: string;
-    accessibilityLabel?: string;
+    /**
+     * Icon which we visible in the button.
+     */
+    Icon?: ReactNode;
+    /**
+     * A callback function that is called when the button is clicked. It receives an argument containing the event object, which can be a mouse or keyboard event.
+     */
+    onClick?: (event: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>) => void;
 }
 
 /**
  * Button initiates an action or event. Use buttons for key actions like submitting a form, saving changes, or advancing to the next step.
  */
-const Button = forwardRef<HTMLDivElement, IButtonProps>(
+const Button = forwardRef<HTMLButtonElement, IButtonProps>(
     (
         {
-            color = 'primary',
+            loaderColor = 'primary',
             disabled,
             fullWidth,
             name,
             size = 'medium',
             type = 'fill',
             text,
-            accessibilityLabel
+            Icon = <Download />,
+            onClick
         }: IButtonProps,
         ref
     ) => {
-        return (
-            <div className="buttonTestHolder" ref={ref} aria-label={accessibilityLabel}>
-                {/* Add following classes for button
+        {
+            /* Add following classes for button
                     button_icon_before
                     button_icon_after
                     button_icon_only
-                */}
-                <button
-                    name={name}
-                    type="button"
-                    className={`button button_size_${size} button_color_${color} button_type_${type}`}
-                    disabled={disabled}
-                >
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={disabled} isFilled={true} />
-                    <span className="button__text">{text}</span>
-                </button>
-                {/* <button type="button" className="button button_size_large button_color_primary button_type_outline">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-                <button type="button" className="button button_size_large button_color_primary button_type_text">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
+                */
+        }
+        return (
+            <button
+                ref={ref}
+                name={name}
+                type="button"
+                onClick={onClick}
+                className={classNames(`button button_size_${size} button_color_${loaderColor} button_type_${type}`, {
+                    button_full_width: fullWidth
+                })}
+                disabled={disabled}
+            >
+                {Icon && Icon}
 
-                <button type="button" className="button button_size_large button_color_secondary button_type_fill">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-                <button type="button" className="button button_size_large button_color_secondary button_type_outline">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-                <button type="button" className="button button_size_large button_color_secondary button_type_text">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-
-                <button type="button" className="button button_size_large button_color_danger button_type_fill">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-                <button type="button" className="button button_size_large button_color_danger button_type_outline">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-                <button type="button" className="button button_size_large button_color_danger button_type_text">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-
-                <button type="button" className="button button_size_large button_color_success button_type_fill">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-                <button type="button" className="button button_size_large button_color_success button_type_outline">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-                <button type="button" className="button button_size_large button_color_success button_type_text">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-
-                <button type="button" className="button button_size_large button_color_inverse button_type_fill">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-                <button type="button" className="button button_size_large button_color_inverse button_type_outline">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-                <button type="button" className="button button_size_large button_color_inverse button_type_text">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button>
-
-                <button type="button" className="button button_size_large button_color_transparent button_type_fill">
-                    <Icon className="button__icon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                    <span className="button__text">Button</span>
-                </button> */}
-            </div>
+                {text && <span className="button__text">{text}</span>}
+            </button>
         );
     }
 );
