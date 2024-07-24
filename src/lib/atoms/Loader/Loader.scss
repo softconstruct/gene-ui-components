@@ -16,6 +16,7 @@
     &_size {
         &_2xlarge,
         &_xlarge {
+            font-family: var(--guit-sem-font-label-large-default-medium-font-family);
             font-size: var(--guit-sem-font-label-large-default-semibold-font-size);
             font-weight: var(--guit-sem-font-caption-medium-medium-font-weight);
             line-height: var(--guit-sem-font-label-large-default-semibold-line-height);
@@ -25,6 +26,7 @@
         &_medium,
         &_small,
         &_smallNudge {
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
             font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
@@ -127,7 +129,6 @@
     }
 
     &__text {
-        font-family: var(--guit-sem-font-label-large-default-medium-font-family);
         font-size: inherit;
         font-weight: inherit;
         line-height: inherit;
