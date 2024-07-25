@@ -52,19 +52,19 @@ describe('Button ', () => {
         }
     );
 
-    it.each<IButtonProps['loaderColor']>(['primary', 'secondary', 'danger', 'success', 'inverse', 'transparent'])(
+    it.each<IButtonProps['appearance']>(['primary', 'secondary', 'danger', 'success', 'inverse', 'transparent'])(
         'checking a component with a prop loaderColor : %p ',
-        (loaderColor) => {
-            const wrapper = setup.setProps({ loaderColor });
-            expect(wrapper.find(`.button_color_${loaderColor}`).exists()).toBeTruthy();
+        (appearance) => {
+            const wrapper = setup.setProps({ appearance });
+            expect(wrapper.find(`.button_color_${appearance}`).exists()).toBeTruthy();
         }
     );
 
-    it.each<IButtonProps['type']>(['fill', 'outline', 'text'])(
+    it.each<IButtonProps['state']>(['fill', 'outline', 'text'])(
         'checking a component with a prop type : %p ',
-        (type) => {
-            const wrapper = setup.setProps({ type });
-            expect(wrapper.find(`.button_type_${type}`).exists()).toBeTruthy();
+        (state) => {
+            const wrapper = setup.setProps({ state });
+            expect(wrapper.find(`.button_type_${state}`).exists()).toBeTruthy();
         }
     );
 });

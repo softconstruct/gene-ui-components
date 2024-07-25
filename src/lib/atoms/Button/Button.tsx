@@ -27,12 +27,12 @@ interface IButtonProps {
      * Loader type <br/>
      * Possible values: <code>fill | outline | text </code>
      */
-    type?: 'fill' | 'outline' | 'text';
+    state?: 'fill' | 'outline' | 'text';
     /**
      * Loader color <br/>
      * Possible values: <code>primary | secondary | danger | success | inverse | transparent</code>
      */
-    loaderColor?: 'primary' | 'secondary' | 'danger' | 'success' | 'inverse' | 'transparent';
+    appearance?: 'primary' | 'secondary' | 'danger' | 'success' | 'inverse' | 'transparent';
     /**
      * The text to be displayed on the button.
      */
@@ -53,12 +53,12 @@ interface IButtonProps {
 const Button = forwardRef<HTMLButtonElement, IButtonProps>(
     (
         {
-            loaderColor = 'primary',
+            appearance = 'primary',
             disabled,
             fullWidth,
             name,
             size = 'medium',
-            type = 'fill',
+            state = 'fill',
             text,
             Icon = <Download />,
             onClick
@@ -78,7 +78,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 name={name}
                 type="button"
                 onClick={onClick}
-                className={classNames(`button button_size_${size} button_color_${loaderColor} button_type_${type}`, {
+                className={classNames(`button button_size_${size} button_color_${appearance} button_type_${state}`, {
                     button_full_width: fullWidth
                 })}
                 disabled={disabled}

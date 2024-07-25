@@ -12,9 +12,9 @@ const meta: Meta<typeof Button> = {
     component: Button,
     argTypes: {
         size: args({ control: 'select', ...propCategory.appearance }),
-        loaderColor: args({ control: 'select', ...propCategory.appearance }),
+        appearance: args({ control: 'select', ...propCategory.appearance }),
         text: args({ control: 'text', ...propCategory.content }),
-        type: args({ control: 'select', ...propCategory.appearance }),
+        state: args({ control: 'select', ...propCategory.appearance }),
         fullWidth: args({ control: 'boolean', ...propCategory.appearance }),
         disabled: args({ control: 'boolean', ...propCategory.functionality }),
         Icon: args({ control: 'false', ...propCategory.content }),
@@ -23,9 +23,9 @@ const meta: Meta<typeof Button> = {
     },
     args: {
         text: 'Button',
-        loaderColor: 'primary',
+        appearance: 'primary',
         size: 'large',
-        type: 'fill'
+        state: 'fill'
     }
 };
 
