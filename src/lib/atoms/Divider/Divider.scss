@@ -1,24 +1,5 @@
-@import 'src/assets/styles/variables';
-
 .divider {
-    width: rem(1);
-    height: rem(26);
-    background: sc(b, 0.05);
-
-    &:not(&-withNoSpace) {
-        margin: 0 rem(15);
-
-        &.type-horizontal {
-            margin: rem(15) 0;
-        }
-    }
-
-    &.type-horizontal {
-        width: rem(26);
-        height: rem(1);
-
-        &.full-width {
-            width: 100%;
-        }
-    }
+    // Your styles here
+    color: var(--guit-ref-color-magenta-500base);
+    font-size: var(--guit-sem-font-caption-large-medium-font-size);
 }
