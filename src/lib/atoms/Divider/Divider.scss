@@ -1,5 +1,96 @@
+// This component created partially because of missing many cases in design
+
+.dividerTestHolder {
+    display: inline-grid;
+    grid-template-columns: 12fr;
+    grid-auto-flow: row;
+    gap: 1rem;
+    width: 100%;
+}
+
+// TODO should remove dividerTestHolder
+
 .divider {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    display: flex;
+    align-items: center;
+    gap: var(--guit-ref-spacing-xs);
+
+    &::before,
+    &::after {
+        content: '';
+        display: block;
+        flex: 1;
+        min-width: 0;
+        border-block-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid);
+        pointer-events: none;
+    }
+
+    &_color {
+        &_default,
+        &_strong {
+            #{ $this }__labelText,
+            #{ $this }__labelIcon {
+                color: var(--guit-sem-color-foreground-neutral-1);
+            }
+        }
+
+        &_default {
+            &#{ $this }:before,
+            &#{ $this }:after {
+                border-block-color: var(--guit-sem-color-border-neutral-2);
+            }
+        }
+
+        &_strong {
+            &#{ $this }:before,
+            &#{ $this }:after {
+                border-block-color: var(--guit-sem-color-border-neutral-3);
+            }
+        }
+
+        &_brand {
+            &#{ $this }:before,
+            &#{ $this }:after {
+                border-block-color: var(--guit-sem-color-border-brand);
+            }
+
+            #{ $this }__labelText,
+            #{ $this }__labelIcon {
+                color: var(--guit-sem-color-foreground-brand);
+            }
+        }
+
+        &_inverse {
+            &#{ $this }:before,
+            &#{ $this }:after {
+                border-block-color: var(--guit-sem-color-border-inverse);
+            }
+
+            #{ $this }__labelText,
+            #{ $this }__labelIcon {
+                color: var(--guit-sem-color-foreground-inverse);
+            }
+        }
+    }
+
+    &__label {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xs);
+
+        &Text {
+            font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+            font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+            font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+            line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+        }
+
+        &Icon {
+            width: var(--guit-sem-sizing-width-s-nudge);
+            height: var(--guit-sem-sizing-height-s-nudge);
+        }
+    }
 }
