@@ -1,5 +1,67 @@
+.helperTextTestHolder {
+    display: inline-grid;
+    grid-template-columns: 12fr;
+    gap: 1rem;
+}
+
+// TODO Should remove helperTextTestHolder later
+
 .helperText {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    display: inline-flex;
+    align-items: center;
+    gap: var(--guit-ref-spacing-3xs);
+
+    &_size {
+        &_medium {
+            #{ $this }__text {
+                font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+                font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+                font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+                line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            }
+            #{ $this }__icon {
+                width: var(--guit-sem-sizing-width-s-nudge);
+                height: var(--guit-sem-sizing-height-s-nudge);
+            }
+        }
+
+        &_small {
+            #{ $this }__text {
+                font-family: var(--guit-sem-font-label-small-default-medium-font-family);
+                font-size: var(--guit-sem-font-label-small-default-medium-font-size);
+                font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
+                line-height: var(--guit-sem-font-label-small-default-medium-line-height);
+            }
+            #{ $this }__icon {
+                width: var(--guit-sem-sizing-width-xs);
+                height: var(--guit-sem-sizing-height-xs);
+            }
+        }
+    }
+
+    &_state {
+        &_rest {
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
+
+        &_danger {
+            color: var(--guit-sem-color-foreground-error);
+        }
+
+        &_warning {
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
+
+        &_disabled {
+            color: var(--guit-sem-color-foreground-disabled);
+            user-select: none;
+            pointer-events: none;
+        }
+    }
+
+    &__text {
+        text-transform: capitalize;
+    }
 }
