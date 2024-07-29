@@ -33,7 +33,7 @@ describe('Button ', () => {
         const wrapper = setup.setProps({ name });
         expect(wrapper.find('button').props().name).toBe(name);
     });
-    it('renders fullWidth onClick correctly', () => {
+    it('renders  onClick prop correctly', () => {
         const wrapper = setup.setProps({ onClick: mockFn });
         const event = {
             currentTarget: {
