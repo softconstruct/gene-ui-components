@@ -19,7 +19,7 @@ const TextLink: FC<ITextLinkProps> = ({ type }) => {
             <a className="textLink textLink_color_primary" href="#">
                 <span className="textLink__text">text link</span>
             </a>
-            <a className="textLink textLink_underline textLink_color_primary" href="#">
+            <a className="textLink textLink_state_underline textLink_color_primary" href="#">
                 <span className="textLink__text">text link</span>
             </a>
             <a className="textLink textLink_disabled textLink_color_primary" href="#">
@@ -28,7 +28,7 @@ const TextLink: FC<ITextLinkProps> = ({ type }) => {
             <a className="textLink textLink_color_secondary" href="#">
                 <span className="textLink__text">text link</span>
             </a>
-            <a className="textLink textLink_underline textLink_color_secondary" href="#">
+            <a className="textLink textLink_state_underline textLink_color_secondary" href="#">
                 <span className="textLink__text">text link</span>
             </a>
             <a className="textLink textLink_disabled textLink_color_secondary" href="#">
@@ -37,7 +37,7 @@ const TextLink: FC<ITextLinkProps> = ({ type }) => {
             <a className="textLink textLink_color_inverse" href="#">
                 <span className="textLink__text">text link</span>
             </a>
-            <a className="textLink textLink_underline textLink_color_inverse" href="#">
+            <a className="textLink textLink_state_underline textLink_color_inverse" href="#">
                 <span className="textLink__text">text link</span>
             </a>
             <a className="textLink textLink_disabled textLink_color_inverse" href="#">
