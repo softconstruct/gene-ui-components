@@ -19,13 +19,15 @@ const meta: Meta<typeof Button> = {
         disabled: args({ control: 'boolean', ...propCategory.functionality }),
         Icon: args({ control: 'false', ...propCategory.content }),
         name: args({ control: 'false', ...propCategory.functionality }),
-        onClick: args({ control: 'false', ...propCategory.functionality })
+        onClick: args({ control: 'false', ...propCategory.functionality }),
+        isIconAfter: { control: 'boolean', ...propCategory.functionality }
     },
     args: {
         text: 'Button',
         appearance: 'primary',
         size: 'large',
-        state: 'fill'
+        state: 'fill',
+        isIconAfter: false
     }
 };
 

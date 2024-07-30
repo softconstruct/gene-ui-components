@@ -45,6 +45,12 @@ interface IButtonProps {
      * A callback function that is called when the button is clicked. It receives an argument containing the event object, which can be a mouse or keyboard event.
      */
     onClick?: (event: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>) => void;
+    /**
+     * Show icon after text
+     */
+    isIconAfter?: boolean;
+
+    isLoading?: boolean;
 }
 
 /**
@@ -61,7 +67,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             state = 'fill',
             text,
             Icon = <Download />,
-            onClick
+            onClick,
+            isIconAfter
         }: IButtonProps,
         ref
     ) => {
@@ -79,7 +86,9 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 type="button"
                 onClick={onClick}
                 className={classNames(`button button_size_${size} button_color_${appearance} button_type_${state}`, {
-                    button_full_width: fullWidth
+                    button_full_width: fullWidth,
+                    button_icon_before: !isIconAfter,
+                    button_icon_after: isIconAfter
                 })}
                 disabled={disabled}
             >
