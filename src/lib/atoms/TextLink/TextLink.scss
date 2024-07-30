@@ -1,15 +1,7 @@
-.textLinkTestHolder {
-    display: inline-grid;
-    grid-template-rows: repeat(3, auto);
-    grid-auto-flow: column;
-    gap: 10px;
-}
-
-// todo
 .textLink {
     $this: &;
 
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: var(--guit-ref-spacing-3xs);
     user-select: none;
