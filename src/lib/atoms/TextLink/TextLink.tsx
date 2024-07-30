@@ -49,6 +49,11 @@ interface ITextLinkProps {
      * Callback triggered when the element gains focus.
      */
     onFocus?: (e: React.FocusEvent<HTMLAnchorElement>) => void;
+
+    /**
+     * show skeleton
+     */
+    skeleton?: boolean;
 }
 
 /**
