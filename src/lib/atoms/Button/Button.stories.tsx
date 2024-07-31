@@ -14,7 +14,7 @@ const meta: Meta<typeof Button> = {
         size: args({ control: 'select', ...propCategory.appearance }),
         appearance: args({ control: 'select', ...propCategory.appearance }),
         text: args({ control: 'text', ...propCategory.content }),
-        state: args({ control: 'select', ...propCategory.appearance }),
+        type: args({ control: 'select', ...propCategory.appearance }),
         fullWidth: args({ control: 'boolean', ...propCategory.appearance }),
         disabled: args({ control: 'boolean', ...propCategory.functionality }),
         Icon: args({ control: 'false', ...propCategory.content }),
@@ -26,7 +26,7 @@ const meta: Meta<typeof Button> = {
         text: 'Button',
         appearance: 'primary',
         size: 'large',
-        state: 'fill',
+        type: 'fill',
         isIconAfter: false
     }
 };

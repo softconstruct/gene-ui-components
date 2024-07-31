@@ -60,11 +60,11 @@ describe('Button ', () => {
         }
     );
 
-    it.each<IButtonProps['state']>(['fill', 'outline', 'text'])(
+    it.each<IButtonProps['type']>(['fill', 'outline', 'text'])(
         'checking a component with a prop type : %p ',
-        (state) => {
-            const wrapper = setup.setProps({ state });
-            expect(wrapper.find(`.button_type_${state}`).exists()).toBeTruthy();
+        (type) => {
+            const wrapper = setup.setProps({ type });
+            expect(wrapper.find(`.button_type_${type}`).exists()).toBeTruthy();
         }
     );
 });

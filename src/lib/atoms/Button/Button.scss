@@ -421,7 +421,7 @@
             color: var(--guit-sem-color-foreground-disabled);
         }
         #{ $this }__icon {
-            color: var(--guit-sem-color-foreground-disabled);
+            stroke: var(--guit-sem-color-foreground-disabled);
         }
     }
 

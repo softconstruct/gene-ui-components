@@ -1,4 +1,4 @@
-import React, { forwardRef, JSX, KeyboardEvent, MouseEvent, ReactNode } from 'react';
+import React, { cloneElement, forwardRef, JSX, KeyboardEvent, MouseEvent } from 'react';
 
 // Styles
 import './Button.scss';
@@ -27,7 +27,7 @@ interface IButtonProps {
      * Loader type <br/>
      * Possible values: <code>fill | outline | text </code>
      */
-    state?: 'fill' | 'outline' | 'text';
+    type?: 'fill' | 'outline' | 'text';
     /**
      * Loader color <br/>
      * Possible values: <code>primary | secondary | danger | success | inverse | transparent</code>
@@ -40,7 +40,7 @@ interface IButtonProps {
     /**
      * Icon which we visible in the button.
      */
-    Icon?: ReactNode;
+    Icon?: JSX.Element;
     /**
      * A callback function that is called when the button is clicked. It receives an argument containing the event object, which can be a mouse or keyboard event.
      */
@@ -64,7 +64,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             fullWidth,
             name,
             size = 'medium',
-            state = 'fill',
+            type = 'fill',
             text,
             Icon = <Download />,
             onClick,
@@ -85,14 +85,17 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 name={name}
                 type="button"
                 onClick={onClick}
-                className={classNames(`button button_size_${size} button_color_${appearance} button_type_${state}`, {
+                className={classNames(`button button_size_${size} button_color_${appearance} button_type_${type}`, {
                     button_full_width: fullWidth,
                     button_icon_before: !isIconAfter,
                     button_icon_after: isIconAfter
                 })}
                 disabled={disabled}
             >
-                {Icon && Icon}
+                {Icon &&
+                    cloneElement(Icon, {
+                        className: 'button__icon'
+                    })}
 
                 {text && <span className="button__text">{text}</span>}
             </button>
