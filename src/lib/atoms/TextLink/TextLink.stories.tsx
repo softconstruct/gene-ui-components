@@ -19,7 +19,8 @@ const meta: Meta<typeof TextLink> = {
         onFocus: args({ control: 'false', ...propCategory.functionality }),
         rel: args({ control: 'select', ...propCategory.options }),
         target: args({ control: 'select', ...propCategory.options }),
-        children: args({ control: 'text', ...propCategory.appearance })
+        children: args({ control: 'text', ...propCategory.appearance }),
+        skeleton: args({ control: 'boolean', ...propCategory.functionality })
     },
     args: {
         appearance: 'primary',

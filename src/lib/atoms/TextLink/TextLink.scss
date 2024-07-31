@@ -8,24 +8,20 @@
     cursor: pointer;
     border-radius: var(--guit-ref-radius-4xs);
 
-    &_state {
-        &_default {
-            #{ $this }__text {
-                font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
-                font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
-                font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
-                line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
-            }
-        }
+    #{ $this }__text {
+        font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+        font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+        font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+        line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+    }
 
-        &_underline {
-            #{ $this }__text {
-                font-family: var(--guit-sem-font-body-medium-underline-medium-font-family);
-                font-size: var(--guit-sem-font-body-medium-underline-medium-font-size);
-                line-height: var(--guit-sem-font-body-medium-underline-medium-line-height);
-                font-weight: var(--guit-sem-font-body-medium-underline-medium-font-weight);
-                text-decoration: var(--guit-sem-font-body-medium-underline-medium-text-decoration);
-            }
+    &_underline {
+        #{ $this }__text {
+            font-family: var(--guit-sem-font-body-medium-underline-medium-font-family);
+            font-size: var(--guit-sem-font-body-medium-underline-medium-font-size);
+            line-height: var(--guit-sem-font-body-medium-underline-medium-line-height);
+            font-weight: var(--guit-sem-font-body-medium-underline-medium-font-weight);
+            text-decoration: var(--guit-sem-font-body-medium-underline-medium-text-decoration);
         }
     }
 
