@@ -6,6 +6,7 @@
     gap: var(--guit-ref-spacing-3xs);
     user-select: none;
     cursor: pointer;
+    border-radius: var(--guit-ref-radius-4xs);
 
     &_state {
         &_default {
@@ -73,8 +74,7 @@
 
     &:focus-visible {
         outline-offset: var(--guit-ref-border-width-thin);
-        outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-            var(--guit-sem-color-border-focus-dark);
+        outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-focus);
     }
 
     &_disabled {
