@@ -1,0 +1,84 @@
+@import 'src/assets/styles/variables';
+
+.x-labels {
+    display: flex;
+    margin: 8px 0;
+
+    .label {
+        flex: 1;
+    }
+}
+
+.y-labels {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    margin: 0 16px 30px 4px;
+}
+
+.label {
+    color: rgb(102, 102, 102);
+    font-size: 11px;
+    line-height: 14px;
+    text-align: center;
+}
+
+.canvas-horizontal {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    margin-top: 16px;
+}
+
+.canvas-vertical {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.canvas-wrapper {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+
+    canvas {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+}
+
+.chart {
+    min-height: rem(700);
+    background-color: var(--background);
+}
+
+.proxy-content {
+    min-height: rem(700);
+
+    > .icon {
+        margin: auto;
+    }
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%;
+
+    .mapTitle {
+        font-size: 18px;
+        color: #333;
+    }
+
+    .mapSubTitle {
+        font-size: 12px;
+        color: #666;
+        margin-top: 8px;
+    }
+}

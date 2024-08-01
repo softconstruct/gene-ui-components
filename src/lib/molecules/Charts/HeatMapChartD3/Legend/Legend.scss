@@ -1,0 +1,49 @@
+.legend {
+    display: flex;
+    margin: 0 12px 30px;
+    height: 50%;
+    position: relative;
+    align-self: flex-end;
+}
+
+.legend-horizontal {
+    flex-direction: column;
+    width: 200px;
+}
+
+.gradient {
+    width: 12px;
+    height: 100%;
+}
+
+.gradient-horizontal {
+    width: 100%;
+    height: 100%;
+}
+
+.triangle {
+    position: absolute;
+    right: 38px;
+
+    i {
+        color: gray;
+    }
+}
+
+.triangle-horizontal {
+    top: -18px;
+    right: unset;
+    transform: rotate(90deg);
+}
+
+.yAxis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 16px;
+}
+
+.xAxis {
+    display: flex;
+    justify-content: space-between;
+}
