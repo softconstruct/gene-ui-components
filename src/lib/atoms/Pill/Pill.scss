@@ -1,10 +1,3 @@
-.pillTestHolder {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    max-width: 340px;
-}
-
 //todo
 .pill {
     $this: &;
@@ -13,6 +6,16 @@
     vertical-align: top;
     align-items: center;
     user-select: none;
+
+    &_icon {
+        &_before {
+            flex-direction: row;
+        }
+
+        &_after {
+            flex-direction: row-reverse;
+        }
+    }
 
     &_size {
         &_medium {

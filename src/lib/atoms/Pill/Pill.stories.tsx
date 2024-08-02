@@ -11,11 +11,20 @@ const meta: Meta<typeof Pill> = {
     title: 'Atoms/Pill',
     component: Pill,
     argTypes: {
-        size: args({ control: false, ...propCategory.others })
+        size: args({ control: 'select', ...propCategory.others }),
+        color: args({ control: 'select', ...propCategory.appearance }),
+        Icon: args({ control: 'false', ...propCategory.appearance }),
+        text: args({ control: 'text', ...propCategory.functionality }),
+        isFill: args({ control: 'boolean', ...propCategory.appearance }),
+        isIconAfter: args({ control: 'boolean', ...propCategory.appearance })
     },
     args: {
-        size: 'fill the size prop value'
-    } as IPillProps
+        size: 'medium',
+        color: 'informative',
+        isFill: true,
+        isIconAfter: false,
+        text: 'Pill'
+    }
 };
 
 export default meta;
@@ -23,5 +32,3 @@ export default meta;
 const Template: FC<IPillProps> = (args) => <Pill {...args} />;
 
 export const Default = Template.bind({});
-
-Default.args = {} as IPillProps;

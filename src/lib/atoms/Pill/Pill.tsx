@@ -1,251 +1,54 @@
-import React, { FC } from 'react';
+import React, { FC, JSX } from 'react';
 
 // Styles
 import './Pill.scss';
-import { Icon } from '../../../index';
+import classNames from 'classnames';
+
+// Components
+import IconComponent from '../Icon';
 
 interface IPillProps {
-    /**
-     * size description
-     */
-    size?: unknown;
+    text?: string;
+    isIconAfter?: boolean;
+    isFill?: boolean;
+    size?: 'small_nudge' | 'small' | 'medium';
+    Icon?: JSX.Element;
+    color?:
+        | 'informative'
+        | 'neutral'
+        | 'error'
+        | 'success'
+        | 'warning'
+        | 'purple'
+        | 'lagoon'
+        | 'magenta'
+        | 'slate'
+        | 'inverse';
 }
 
 /**
  * A Pill component used to display concise information or categorize content. Often used for labels or status indicators, Pill components are visually distinct and can convey different meanings through text and color coding.
  */
-const Pill: FC<IPillProps> = ({ size }) => {
+const Pill: FC<IPillProps> = ({
+    color,
+    size,
+    text,
+    isIconAfter,
+    isFill,
+    //@ts-ignore
+    Icon = <IconComponent type={'bc-icon-info'} />
+}) => {
     return (
-        <div className="pillTestHolder">
-            <div className="pill pill_size_medium pill_fill pill_color_informative pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_informative pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_informative">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_informative pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_color_informative">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            {/*todo color informative END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_neutral pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_neutral pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_neutral">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_neutral pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_color_neutral">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            {/*todo color neutral END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_error pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_error pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_error">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_error pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_color_error">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            {/*todo color error END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_success pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_success pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_success">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_success pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_color_success">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            {/*todo color success END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_warning pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_warning pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_warning">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_warning pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_color_warning">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            {/*todo color warning END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_purple pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_purple pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_purple">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_purple pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_color_purple">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            {/*todo color purple END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_lagoon pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_lagoon pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_lagoon">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_lagoon pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_color_lagoon">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            {/*todo color lagoon END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_magenta pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_magenta pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_magenta">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_magenta pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_color_magenta">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            {/*todo color magenta END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_slate pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_slate pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_slate">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_slate pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_color_slate">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            {/*todo color slate END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_inverse pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_inverse pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_inverse">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_inverse pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_color_inverse">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            {/*todo color inverse END*/}
-            <div className="pill pill_size_medium pill_fill pill_color_inverse pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_inverse pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_inverse">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_medium pill_fill pill_color_inverse pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_medium pill_color_inverse">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-
-            {/*todo small_nudge START*/}
-            <div className="pill pill_size_small_nudge pill_fill pill_color_informative pill_icon_before">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_small_nudge pill_fill pill_color_informative pill_icon_after">
-                <span className="pill__text">pill</span>
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_small_nudge pill_fill pill_color_informative">
-                <span className="pill__text">pill</span>
-            </div>
-            <div className="pill pill_size_small_nudge pill_fill pill_color_informative pill_icon_only">
-                <Icon type={'bc-icon-info'} />
-            </div>
-            <div className="pill pill_size_small_nudge pill_color_informative">
-                <Icon type={'bc-icon-info'} />
-                <span className="pill__text">pill</span>
-            </div>
-            {/*todo small_nudge END*/}
+        <div
+            className={classNames(`pill pill_size_${size}  pill_color_${color}`, {
+                pill_icon_before: !isIconAfter,
+                pill_icon_after: isIconAfter,
+                pill_icon_only: !text,
+                pill_fill: isFill
+            })}
+        >
+            {Icon && Icon}
+            {text && <span className="pill__text">{text}</span>}
         </div>
     );
 };
