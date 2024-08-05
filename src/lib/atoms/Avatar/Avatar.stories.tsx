@@ -11,11 +11,16 @@ const meta: Meta<typeof Avatar> = {
     title: 'Atoms/Avatar',
     component: Avatar,
     argTypes: {
-        size: args({ control: false, ...propCategory.others })
+        size: args({ control: 'select', ...propCategory.appearance }),
+        color: args({ control: 'select', ...propCategory.appearance }),
+        src: args({ control: 'text', ...propCategory.functionality }),
+        fullName: args({ control: 'text', ...propCategory.functionality })
     },
     args: {
-        size: 'fill the size prop value'
-    } as IAvatarProps
+        size: '6Xlarge',
+        color: 'lagoon',
+        fullName: 'name lastName'
+    }
 };
 
 export default meta;
