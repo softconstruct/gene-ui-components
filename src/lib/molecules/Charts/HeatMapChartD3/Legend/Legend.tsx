@@ -10,7 +10,7 @@ export enum LegendAppearances {
     Horizontal = 'horizontal'
 }
 
-interface ILegendProps {
+export interface ILegendProps {
     style?: CSSProperties;
     min: number;
     max: number;

@@ -11,7 +11,7 @@ import BusyLoader from '../../../atoms/BusyLoader';
 
 // Styles
 import './HeatMapChartD3.scss';
-import { ITooltipProps, Tooltip } from './Tooltip';
+import Tooltip, { ITooltipProps } from './Tooltip';
 
 HS_map(Highcharts);
 
@@ -29,7 +29,7 @@ export interface IColorBreakpoint {
 }
 
 export interface IHeatMapChartD3Props {
-    data: Data[];
+    data?: Data[];
     chartHeight?: string;
     legendHeight?: string;
     xAxisCategories: string[];
@@ -58,20 +58,19 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
     legendHeight = '50%',
     chartHeight = '40%',
     subTitle = '',
-    isLoading,
+    isLoading = false,
     emptyText = 'No data to display',
     colorBreakpoints = [],
     legendThresholds = 5
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [containerWidth, setContainerWidth] = useState(0);
-    const [hoveredCell, setHoveredCell] = useState<ITooltipProps | undefined>();
+    const [hoveredCell, setHoveredCell] = useState<(ITooltipProps & { value: number }) | undefined>();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const colorsSet = useRef(new Set());
 
     const uniqueData = useMemo(() => {
         const xySet = new Set();
-
         const reversedFilteredData = [...data].reverse().filter(([x, y]) => {
             const xy = `${x}${y}`;
             if (xySet.has(xy)) {
@@ -133,10 +132,6 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
 
         return filteredBreakpoints;
     }, [colorBreakpoints, min, max]);
-
-    if (!min || !max) {
-        return null;
-    }
 
     const colorScale = (value: number) => {
         const rangeForValue = normalizedBreakpoints.reduce(
@@ -284,7 +279,7 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
                                 </div>
                                 <div className="x-labels">{xLabels}</div>
                             </div>
-                            {enabledLegend && (
+                            {enabledLegend && min && max && (
                                 <Legend
                                     min={min}
                                     max={max}

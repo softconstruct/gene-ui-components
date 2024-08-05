@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 import './Tooltip.scss';
-import { CONTAINER_PADDING } from './HeatMapChartD3';
+import { CONTAINER_PADDING } from '../HeatMapChartD3';
 
 export interface ITooltipProps {
     x: number;
     y: number;
     text: string;
-    value: number;
 }
 
-export const Tooltip: React.FC<ITooltipProps> = ({ x, y, text }) => {
+const Tooltip: React.FC<ITooltipProps> = ({ x, y, text }) => {
     const [left, setLeft] = useState(0);
     const [top, setTop] = useState(y);
 
@@ -43,3 +42,5 @@ export const Tooltip: React.FC<ITooltipProps> = ({ x, y, text }) => {
         </div>
     );
 };
+
+export default Tooltip;
