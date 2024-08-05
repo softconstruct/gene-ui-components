@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 
 // Components
@@ -7,9 +7,14 @@ import Avatar, { IAvatarProps } from './index';
 describe('Avatar ', () => {
     let setup: ReactWrapper<IAvatarProps>;
     beforeEach(() => (setup = mount(<Avatar />)));
+    const mockFn = jest.fn();
 
     it('renders without crashing', () => {
         expect(setup.exists()).toBeTruthy();
+    });
+
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
     it('renders fullName prop correctly', () => {
@@ -17,12 +22,23 @@ describe('Avatar ', () => {
         expect(wrapper.text()).toBe('t d');
     });
 
-    it('renders src  rop correctly', () => {
+    it('renders src rop correctly', () => {
         const src = 'test';
         const wrapper = setup.setProps({ src });
 
         expect(wrapper.find('img').props().src).toBe(src);
         expect(wrapper.find('img').props().alt).toBe(src);
+    });
+
+    it('renders onClick prop correctly', () => {
+        const wrapper = setup.setProps({ onClick: mockFn });
+        const event = {
+            currentTarget: {
+                innerHTML: 'test'
+            }
+        } as MouseEvent<HTMLDivElement>;
+        wrapper.find('div').props().onClick!(event);
+        expect(mockFn).toHaveBeenCalledWith(event);
     });
 
     it.each<IAvatarProps['color']>(['blue', 'green', 'lagoon', 'neutral', 'orange', 'purple', 'red'])(

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, PointerEvent, useEffect, useState } from 'react';
 
 // Styles
 import './Avatar.scss';
@@ -11,12 +11,13 @@ interface IAvatarProps {
     color?: 'neutral' | 'blue' | 'red' | 'green' | 'purple' | 'orange' | 'lagoon';
     fullName?: string;
     src?: string;
+    onClick?: (e: PointerEvent<HTMLDivElement>) => void;
 }
 
 /**
  * An avatar is a graphical representation of a user, typically displayed as a small image or icon. It can be a photo, illustration, or initials, and is used to personalize the user experience by visually identifying the user in interfaces such as profiles, comment sections, and messaging apps.
  */
-const Avatar: FC<IAvatarProps> = ({ size, color, fullName, src }) => {
+const Avatar: FC<IAvatarProps> = ({ size, color, fullName, src, onClick }) => {
     const [cutFirstAndLastName, setCutFirstAndLastName] = useState<string>('');
 
     useEffect(() => {
@@ -29,7 +30,7 @@ const Avatar: FC<IAvatarProps> = ({ size, color, fullName, src }) => {
     }, [fullName]);
 
     return (
-        <div className={`avatar avatar_size_${size} avatar_color_${color}`} tabIndex={0}>
+        <div className={`avatar avatar_size_${size} avatar_color_${color}`} tabIndex={0} onClick={onClick}>
             {src && <img className="avatar__image" alt={src} src={src} />}
             {cutFirstAndLastName && !src && <span className="avatar__text">{cutFirstAndLastName}</span>}
         </div>
