@@ -15,12 +15,14 @@ const meta: Meta<typeof Avatar> = {
         color: args({ control: 'select', ...propCategory.appearance }),
         src: args({ control: 'text', ...propCategory.functionality }),
         fullName: args({ control: 'text', ...propCategory.functionality }),
-        onClick: args({ control: 'false', ...propCategory.functionality })
+        onClick: args({ control: 'false', ...propCategory.functionality }),
+        isDisabled: args({ control: 'boolean', ...propCategory.states })
     },
     args: {
         size: '6Xlarge',
         color: 'lagoon',
-        fullName: 'name lastName'
+        fullName: 'name lastName',
+        isDisabled: false
     }
 };
 

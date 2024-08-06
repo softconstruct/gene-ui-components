@@ -22,12 +22,17 @@ describe('Avatar ', () => {
         expect(wrapper.text()).toBe('t d');
     });
 
-    it('renders src rop correctly', () => {
+    it('renders src prop correctly', () => {
         const src = 'test';
         const wrapper = setup.setProps({ src });
 
         expect(wrapper.find('img').props().src).toBe(src);
         expect(wrapper.find('img').props().alt).toBe(src);
+    });
+    it('renders isDisabled prop correctly', () => {
+        const wrapper = setup.setProps({ isDisabled: true });
+
+        expect(wrapper.find('.avatar_disabled').exists).toBeTruthy();
     });
 
     it('renders onClick prop correctly', () => {
