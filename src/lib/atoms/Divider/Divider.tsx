@@ -17,36 +17,28 @@ interface IDividerProps {
 const Divider: FC<IDividerProps> = ({ type }) => {
     return (
         <div className="dividerTestHolder">
-            {/* This component created partially because of missing many cases in design */}
-            <div className="divider divider_color_default">
+            <div className="divider divider_horizontal divider_color_default divider_withLabel_before divider_align_right">
                 <div className="divider__label">
-                    <label htmlFor="#id" className="divider__labelText">
-                        Label
-                    </label>
+                    <span className="divider__labelText">Label</span>
+                    <Icon className="divider__labelIcon" type={'bc-icon-info'} disabled={false} isFilled={true} />
+                </div>
+                <div className="divider__element">swap</div>
+            </div>
+            <div className="divider divider_horizontal divider_color_strong divider_withLabel_center">
+                <div className="divider__label">
+                    <span className="divider__labelText">Label</span>
                     <Icon className="divider__labelIcon" type={'bc-icon-info'} disabled={false} isFilled={true} />
                 </div>
             </div>
-            <div className="divider divider_color_strong">
+            <div className="divider divider_horizontal divider_color_brand divider_withLabel_after">
                 <div className="divider__label">
-                    <label htmlFor="#id" className="divider__labelText">
-                        Label
-                    </label>
+                    <span className="divider__labelText">Label</span>
                     <Icon className="divider__labelIcon" type={'bc-icon-info'} disabled={false} isFilled={true} />
                 </div>
             </div>
-            <div className="divider divider_color_brand">
+            <div className="divider divider_horizontal divider_color_inverse divider_withLabel_before">
                 <div className="divider__label">
-                    <label htmlFor="#id" className="divider__labelText">
-                        Label
-                    </label>
-                    <Icon className="divider__labelIcon" type={'bc-icon-info'} disabled={false} isFilled={true} />
-                </div>
-            </div>
-            <div className="divider divider_color_inverse">
-                <div className="divider__label">
-                    <label htmlFor="#id" className="divider__labelText">
-                        Label
-                    </label>
+                    <span className="divider__labelText">Label</span>
                     <Icon className="divider__labelIcon" type={'bc-icon-info'} disabled={false} isFilled={true} />
                 </div>
             </div>

@@ -13,18 +13,52 @@
 .divider {
     $this: &;
 
-    display: flex;
-    align-items: center;
+    display: inline-flex;
     gap: var(--guit-ref-spacing-xs);
 
     &::before,
     &::after {
         content: '';
         display: block;
-        flex: 1;
         min-width: 0;
-        border-block-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid);
+        min-height: 0;
         pointer-events: none;
+    }
+
+    &_horizontal {
+        flex-direction: row;
+        align-items: center;
+        width: 100%;
+
+        &#{ $this }:before,
+        &#{ $this }:after {
+            border-block-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid);
+        }
+    }
+
+    &_vertical {
+        flex-direction: column;
+        align-items: flex-start;
+        height: 100%;
+
+        &#{ $this }:before,
+        &#{ $this }:after {
+            border-inline-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid);
+        }
+    }
+
+    &_align {
+        &_left {
+            #{ $this }__element {
+                order: -1;
+            }
+        }
+
+        &_right {
+            #{ $this }__element {
+                order: 1;
+            }
+        }
     }
 
     &_color {
@@ -39,6 +73,7 @@
         &_default {
             &#{ $this }:before,
             &#{ $this }:after {
+                border-inline-color: var(--guit-sem-color-border-neutral-2);
                 border-block-color: var(--guit-sem-color-border-neutral-2);
             }
         }
@@ -46,6 +81,7 @@
         &_strong {
             &#{ $this }:before,
             &#{ $this }:after {
+                border-inline-color: var(--guit-sem-color-border-neutral-3);
                 border-block-color: var(--guit-sem-color-border-neutral-3);
             }
         }
@@ -53,6 +89,7 @@
         &_brand {
             &#{ $this }:before,
             &#{ $this }:after {
+                border-inline-color: var(--guit-sem-color-border-brand);
                 border-block-color: var(--guit-sem-color-border-brand);
             }
 
@@ -65,12 +102,40 @@
         &_inverse {
             &#{ $this }:before,
             &#{ $this }:after {
+                border-inline-color: var(--guit-sem-color-border-inverse);
                 border-block-color: var(--guit-sem-color-border-inverse);
             }
 
             #{ $this }__labelText,
             #{ $this }__labelIcon {
                 color: var(--guit-sem-color-foreground-inverse);
+            }
+        }
+    }
+
+    &_withLabel {
+        &_before {
+            &#{ $this }::before {
+                display: none;
+            }
+            &#{ $this }::after {
+                flex: 1;
+            }
+        }
+
+        &_center {
+            &#{ $this }::before,
+            &#{ $this }::after {
+                flex: 1;
+            }
+        }
+
+        &_after {
+            &#{ $this }::before {
+                flex: 1;
+            }
+            &#{ $this }::after {
+                display: none;
             }
         }
     }
