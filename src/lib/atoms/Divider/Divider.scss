@@ -15,12 +15,13 @@
 
     display: inline-flex;
     gap: var(--guit-ref-spacing-xs);
+    overflow: hidden;
 
     &::before,
     &::after {
         content: '';
         display: block;
-        min-width: 0;
+        min-width: var(--guit-ref-sizing-m);
         min-height: 0;
         pointer-events: none;
     }
@@ -142,15 +143,18 @@
 
     &__label {
         display: flex;
-        flex-shrink: 0;
         align-items: center;
         gap: var(--guit-ref-spacing-3xs);
+        overflow: hidden;
 
         &Text {
             font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
             font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
             font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
             line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
 
         &Icon {
