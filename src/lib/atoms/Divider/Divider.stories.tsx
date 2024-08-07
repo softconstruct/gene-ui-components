@@ -11,16 +11,29 @@ const meta: Meta<typeof Divider> = {
     title: 'Atoms/Divider',
     component: Divider,
     argTypes: {
-        type: args({ control: false, ...propCategory.others })
+        alignContent: args({ control: 'select', ...propCategory.appearance }),
+        appearance: args({ control: 'select', ...propCategory.appearance }),
+        isVertical: args({ control: 'boolean', ...propCategory.functionality }),
+        Icon: args({ control: 'false', ...propCategory.others }),
+        label: args({ control: 'text', ...propCategory.appearance }),
+        labelPosition: args({ control: 'select', ...propCategory.appearance })
     },
     args: {
-        type: 'fill the type prop value'
-    } as IDividerProps
+        alignContent: 'left',
+        appearance: 'brand',
+        isVertical: false,
+        label: 'test',
+        labelPosition: 'before'
+    }
 };
 
 export default meta;
 
-const Template: FC<IDividerProps> = (args) => <Divider {...args} />;
+const Template: FC<IDividerProps> = (args) => (
+    <div style={{ height: 220 }}>
+        <Divider {...args} />
+    </div>
+);
 
 export const Default = Template.bind({});
 

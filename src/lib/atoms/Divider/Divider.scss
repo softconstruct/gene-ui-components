@@ -1,15 +1,5 @@
 // This component created partially because of missing many cases in design
 
-.dividerTestHolder {
-    display: inline-grid;
-    grid-template-columns: 12fr;
-    grid-auto-flow: row;
-    gap: 1rem;
-    width: 100%;
-}
-
-// TODO should remove dividerTestHolder
-
 .divider {
     $this: &;
 
@@ -50,13 +40,13 @@
 
     &_align {
         &_left {
-            #{ $this }__element {
+            #{ $this }__label {
                 order: -1;
             }
         }
 
         &_right {
-            #{ $this }__element {
+            #{ $this }__label {
                 order: 1;
             }
         }
