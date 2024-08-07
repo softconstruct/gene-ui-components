@@ -55,8 +55,8 @@
     &_color {
         &_default,
         &_strong {
-            #{ $this }__labelText,
-            #{ $this }__labelIcon {
+            .label__text,
+            .label__icon {
                 color: var(--guit-sem-color-foreground-neutral-1);
             }
         }
@@ -84,8 +84,8 @@
                 border-block-color: var(--guit-sem-color-border-brand);
             }
 
-            #{ $this }__labelText,
-            #{ $this }__labelIcon {
+            .label__text,
+            .label__icon {
                 color: var(--guit-sem-color-foreground-brand);
             }
         }
@@ -97,8 +97,8 @@
                 border-block-color: var(--guit-sem-color-border-inverse);
             }
 
-            #{ $this }__labelText,
-            #{ $this }__labelIcon {
+            .label__text,
+            .label__icon {
                 color: var(--guit-sem-color-foreground-inverse);
             }
         }
@@ -131,25 +131,29 @@
         }
     }
 
-    &__label {
-        display: flex;
-        align-items: center;
-        gap: var(--guit-ref-spacing-3xs);
+    &__element {
+        order: 1;
+    }
+}
+
+.label {
+    display: flex;
+    align-items: center;
+    gap: var(--guit-ref-spacing-3xs);
+    overflow: hidden;
+
+    &__text {
+        font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+        font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+        font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+        line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+        white-space: nowrap;
+        text-overflow: ellipsis;
         overflow: hidden;
+    }
 
-        &Text {
-            font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
-            font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
-            font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
-            line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-
-        &Icon {
-            width: var(--guit-sem-sizing-width-s-nudge);
-            height: var(--guit-sem-sizing-height-s-nudge);
-        }
+    &__icon {
+        width: var(--guit-sem-sizing-width-s-nudge);
+        height: var(--guit-sem-sizing-height-s-nudge);
     }
 }
