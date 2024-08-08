@@ -9,7 +9,7 @@ interface IDividerProps {
     appearance?: 'default' | 'strong' | 'brand' | 'inverse';
     alignContentPosition?: 'right' | 'left';
     isVertical?: boolean;
-    Icon?: JSX.Element;
+    Icon?: JSX.Element | null;
     label?: string;
     labelPosition?: 'before' | 'after' | 'center';
     alignContent?: JSX.Element | string;
@@ -22,12 +22,14 @@ interface IDividerProps {
 const Divider: FC<IDividerProps> = ({
     alignContentPosition,
     appearance,
-    Icon = <IconComponent className="divider__labelIcon" type={'bc-icon-info'} disabled={false} isFilled={true} />,
+    //@ts-ignore
+    Icon = <IconComponent className="divider__labelIcon" type={'bc-icon-info'} />,
     isVertical,
     label,
     labelPosition = 'before',
     alignContent
 }) => {
+    console.log(Icon);
     return (
         <div
             className={classNames(

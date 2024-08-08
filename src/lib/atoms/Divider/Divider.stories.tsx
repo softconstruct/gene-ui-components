@@ -61,3 +61,14 @@ export const WithAlignContent = WithAlignContentComponent.bind({});
 WithAlignContent.argTypes = {
     alignContent: args({ control: 'false', ...propCategory.functionality })
 };
+
+export const WithoutIconAndLabel = WithAlignContentComponent.bind({});
+
+WithoutIconAndLabel.args = {
+    Icon: null,
+    label: undefined
+} as IDividerProps;
+
+WithoutIconAndLabel.argTypes = {
+    label: args({ control: 'false', ...propCategory.appearance })
+};
