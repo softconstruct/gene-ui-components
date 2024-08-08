@@ -6,9 +6,7 @@ import Divider, { IDividerProps } from './index';
 
 describe('Divider ', () => {
     let setup: ReactWrapper<IDividerProps>;
-    beforeEach(
-        () => (setup = mount(<Divider appearance={'default'} alignContent={'center'} labelPosition={'center'} />))
-    );
+    beforeEach(() => (setup = mount(<Divider />)));
     it('renders without crashing', () => {
         expect(setup.exists()).toBeTruthy();
     });
@@ -21,6 +19,13 @@ describe('Divider ', () => {
         const wrapper = setup.setProps({ label });
         expect(wrapper.find('.divider').text()).toBe(label);
     });
+
+    it('renders alignContent prop correctly', () => {
+        const alignContent = 'test';
+        const wrapper = setup.setProps({ alignContent });
+        expect(wrapper.find('.divider__element').text()).toBe(alignContent);
+    });
+
     it.each<IDividerProps['appearance']>(['brand', 'default', 'inverse', 'strong'])(
         'checking a component with a prop appearance : %p',
         (appearance) => {
@@ -28,11 +33,11 @@ describe('Divider ', () => {
             expect(wrapper.find(`.divider_color_${appearance}`).exists()).toBeTruthy();
         }
     );
-    it.each<IDividerProps['alignContent']>(['center', 'left', 'right'])(
+    it.each<IDividerProps['alignContentPosition']>([, 'left', 'right'])(
         'checking a component with a prop alignContent : %p',
-        (alignContent) => {
-            const wrapper = setup.setProps({ alignContent });
-            expect(wrapper.find(`.divider_align_${alignContent}`).exists()).toBeTruthy();
+        (alignContentPosition) => {
+            const wrapper = setup.setProps({ alignContentPosition });
+            expect(wrapper.find(`.divider_align_${alignContentPosition}`).exists()).toBeTruthy();
         }
     );
     it.each<IDividerProps['labelPosition']>(['center', 'after', 'before'])(

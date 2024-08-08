@@ -7,11 +7,12 @@ import classNames from 'classnames';
 
 interface IDividerProps {
     appearance?: 'default' | 'strong' | 'brand' | 'inverse';
-    alignContent?: 'right' | 'center' | 'left';
+    alignContentPosition?: 'right' | 'left';
     isVertical?: boolean;
     Icon?: JSX.Element;
     label?: string;
     labelPosition?: 'before' | 'after' | 'center';
+    alignContent?: JSX.Element | string;
 }
 
 /**
@@ -19,20 +20,22 @@ interface IDividerProps {
  */
 
 const Divider: FC<IDividerProps> = ({
-    alignContent,
+    alignContentPosition,
     appearance,
     Icon = <IconComponent className="divider__labelIcon" type={'bc-icon-info'} disabled={false} isFilled={true} />,
     isVertical,
     label,
-    labelPosition = 'before'
+    labelPosition = 'before',
+    alignContent
 }) => {
     return (
         <div
             className={classNames(
-                `divider  divider_color_${appearance} divider_withLabel_${labelPosition} divider_align_${alignContent}`,
+                `divider  divider_color_${appearance} divider_withLabel_${labelPosition} divider_align_${alignContentPosition}`,
                 {
                     divider_horizontal: !isVertical,
-                    divider_vertical: isVertical
+                    divider_vertical: isVertical,
+                    [`divider_align_${alignContentPosition}`]: alignContent
                 }
             )}
         >
@@ -43,7 +46,7 @@ const Divider: FC<IDividerProps> = ({
                         {Icon && Icon}
                     </div>
                     {/**TODO: Add Button component (or any component) when finish refactoring */}
-                    {/* {label && <div className="divider__element">{label}</div>} */}
+                    {alignContent && <div className="divider__element">{alignContent}</div>}
                 </>
             )}
         </div>
