@@ -29,7 +29,6 @@ const Divider: FC<IDividerProps> = ({
     labelPosition = 'before',
     alignContent
 }) => {
-    console.log(Icon);
     return (
         <div
             className={classNames(
