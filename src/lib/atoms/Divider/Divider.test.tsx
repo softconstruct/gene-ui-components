@@ -36,7 +36,7 @@ describe('Divider ', () => {
     it.each<IDividerProps['alignContentPosition']>([, 'left', 'right'])(
         'checking a component with a prop alignContent : %p',
         (alignContentPosition) => {
-            const wrapper = setup.setProps({ alignContentPosition });
+            const wrapper = setup.setProps({ alignContentPosition, alignContent: 'test' });
             expect(wrapper.find(`.divider_align_${alignContentPosition}`).exists()).toBeTruthy();
         }
     );

@@ -31,19 +31,16 @@ const Divider: FC<IDividerProps> = ({
 }) => {
     return (
         <div
-            className={classNames(
-                `divider  divider_color_${appearance} divider_withLabel_${labelPosition} divider_align_${alignContentPosition}`,
-                {
-                    divider_horizontal: !isVertical,
-                    divider_vertical: isVertical,
-                    [`divider_align_${alignContentPosition}`]: alignContent
-                }
-            )}
+            className={classNames(`divider  divider_color_${appearance} divider_withLabel_${labelPosition}`, {
+                divider_horizontal: !isVertical,
+                divider_vertical: isVertical,
+                [`divider_align_${alignContentPosition}`]: alignContent
+            })}
         >
             {!isVertical && (
                 <>
                     <div className="divider__label">
-                        {label && <span className="divider__labelText">{label}</span>}
+                        {label && <span className="divider__label__text">{label}</span>}
                         {Icon && Icon}
                     </div>
                     {/**TODO: Add Button component (or any component) when finish refactoring */}
