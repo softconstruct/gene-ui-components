@@ -40,7 +40,7 @@ const Pill: FC<IPillProps> = ({
 }) => {
     return (
         <div
-            className={classNames(`pill pill_size_${size}  pill_color_${color}`, {
+            className={classNames(`pill pill_size_${size} pill_color_${color}`, {
                 pill_icon_before: !isIconAfter,
                 pill_icon_after: isIconAfter,
                 pill_icon_only: !text,

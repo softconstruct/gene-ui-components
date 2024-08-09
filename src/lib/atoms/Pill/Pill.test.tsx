@@ -23,7 +23,7 @@ describe('Pill', () => {
         expect(wrapper.find('.pill_icon_after').exists()).toBeTruthy();
     });
 
-    it('renders isIconAfter prop correctly', () => {
+    it('renders isFill prop correctly', () => {
         const wrapper = setup.setProps({ isFill: true });
         expect(wrapper.find('.pill_fill').exists()).toBeTruthy();
     });
