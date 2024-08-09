@@ -120,6 +120,7 @@
     }
 
     &__spinner {
+        flex: 0 0 auto;
         animation: loader-rotate 2s linear infinite;
 
         &_path {
