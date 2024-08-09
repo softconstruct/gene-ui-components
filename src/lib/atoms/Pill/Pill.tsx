@@ -48,7 +48,7 @@ const Pill: FC<IPillProps> = ({
             })}
         >
             {Icon && Icon}
-            {text && <span className="pill__text">{text}</span>}
+            {text && <span className="pill__text ellipsis-text">{text}</span>}
         </div>
     );
 };
