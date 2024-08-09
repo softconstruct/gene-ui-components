@@ -17,7 +17,6 @@
     }
 
     &_horizontal {
-        flex-direction: row;
         align-items: center;
         width: 100%;
 
@@ -119,6 +118,9 @@
             &#{ $this }::after {
                 flex: 1;
             }
+            #{ $this }__element {
+                max-width: calc(100% - var(--guit-ref-sizing-m) * 4);
+            }
         }
 
         &_after {
@@ -127,6 +129,13 @@
             }
             &#{ $this }::after {
                 display: none;
+            }
+        }
+
+        &_after,
+        &_before {
+            #{ $this }__element {
+                max-width: calc(100% - var(--guit-ref-sizing-m) * 2.8);
             }
         }
     }
@@ -142,10 +151,6 @@
             font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
             font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
             line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
-
-            &:not(:empty) {
-                min-width: var(--guit-sem-sizing-width-xs);
-            }
         }
 
         &__icon {
@@ -156,8 +161,9 @@
     }
 
     &__element {
-        flex: 0 0 auto;
-        display: flex;
         order: 1;
+        display: flex;
+        min-width: 0;
+        flex: 0 0 auto;
     }
 }
