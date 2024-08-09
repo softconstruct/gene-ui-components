@@ -23,7 +23,7 @@ const Divider: FC<IDividerProps> = ({
     alignContentPosition,
     appearance,
     //@ts-ignore
-    Icon = <IconComponent className="divider__labelIcon" type={'bc-icon-info'} />,
+    Icon = <IconComponent className="divider__label__icon" type={'bc-icon-info'} />,
     isVertical,
     label,
     labelPosition = 'before',
@@ -40,7 +40,7 @@ const Divider: FC<IDividerProps> = ({
             {!isVertical && (
                 <>
                     <div className="divider__label">
-                        {label && <span className="divider__label__text">{label}</span>}
+                        {label && <span className="divider__label__text ellipsis-text">{label}</span>}
                         {Icon && Icon}
                     </div>
                     {/**TODO: Add Button component (or any component) when finish refactoring */}
