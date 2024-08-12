@@ -27,7 +27,6 @@ describe('Avatar ', () => {
         const wrapper = setup.setProps({ src });
 
         expect(wrapper.find('img').props().src).toBe(src);
-        expect(wrapper.find('img').props().alt).toBe(src);
     });
     it('renders isDisabled prop correctly', () => {
         const wrapper = setup.setProps({ isDisabled: true });

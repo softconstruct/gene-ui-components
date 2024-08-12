@@ -15,7 +15,7 @@ const meta: Meta<typeof Avatar> = {
         color: args({ control: 'select', ...propCategory.appearance }),
         src: args({ control: 'text', ...propCategory.content }),
         fullName: args({ control: 'text', ...propCategory.content }),
-        onClick: args({ control: 'false', ...propCategory.Actions }),
+        onClick: args({ control: 'false', ...propCategory.action }),
         isDisabled: args({ control: 'boolean', ...propCategory.states })
     },
     args: {
