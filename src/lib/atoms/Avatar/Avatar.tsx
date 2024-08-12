@@ -1,8 +1,8 @@
 import React, { FC, PointerEvent, useEffect, useState } from 'react';
+import classNames from 'classnames';
 
 // Styles
 import './Avatar.scss';
-import classNames from 'classnames';
 
 interface IAvatarProps {
     size?: '6Xlarge' | 'large' | 'medium' | 'small';
@@ -36,7 +36,7 @@ const Avatar: FC<IAvatarProps> = ({ size, color, fullName, src, onClick, isDisab
             tabIndex={0}
             onClick={onClick}
         >
-            {src && <img className="avatar__image" alt={src} src={src} />}
+            {src && <img className="avatar__image" alt={'avatar'} src={src} />}
             {cutFirstAndLastName && !src && <span className="avatar__text">{cutFirstAndLastName}</span>}
         </div>
     );
