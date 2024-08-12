@@ -11,10 +11,18 @@ const meta: Meta<typeof HelperText> = {
     title: 'Atoms/HelperText',
     component: HelperText,
     argTypes: {
-        size: args({ control: false, ...propCategory.others })
+        size: args({ control: 'select', ...propCategory.appearance }),
+        type: args({ control: 'select', ...propCategory.appearance }),
+        text: args({ control: 'text', ...propCategory.content }),
+        icon: args({ control: 'text', ...propCategory.content }),
+        isDisabled: args({ control: 'boolean', ...propCategory.states }),
+        isLoading: args({ control: 'boolean', ...propCategory.states })
     },
     args: {
-        size: 'fill the size prop value'
+        size: 'medium',
+        text: 'Helper Text',
+        isDisabled: false,
+        type: 'rest'
     } as IHelperTextProps
 };
 
@@ -24,4 +32,12 @@ const Template: FC<IHelperTextProps> = (args) => <HelperText {...args} />;
 
 export const Default = Template.bind({});
 
-Default.args = {} as IHelperTextProps;
+export const Danger = Template.bind({});
+Danger.args = {
+    type: 'danger'
+} as IHelperTextProps;
+
+export const Warning = Template.bind({});
+Warning.args = {
+    type: 'warning'
+} as IHelperTextProps;
