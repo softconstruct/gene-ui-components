@@ -73,11 +73,6 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
         ref
     ) => {
         {
-            /* Add following classes for button
-                    button_icon_before
-                    button_icon_after
-                    button_icon_only
-                */
         }
         return (
             <button
@@ -88,7 +83,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 className={classNames(`button button_size_${size} button_color_${appearance} button_type_${type}`, {
                     button_full_width: fullWidth,
                     button_icon_before: !isIconAfter,
-                    button_icon_after: isIconAfter
+                    button_icon_after: isIconAfter,
+                    button_icon_only: !text
                 })}
                 disabled={disabled}
             >

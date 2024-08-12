@@ -8,10 +8,6 @@
     cursor: pointer;
     max-width: 100%;
 
-    // &_reverse {
-    //     flex-direction: row-reverse;
-    // }
-
     &#{ $this }_type {
         &_outline {
             border-width: var(--guit-ref-border-width-thin);

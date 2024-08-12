@@ -16,11 +16,11 @@ const meta: Meta<typeof Button> = {
         text: args({ control: 'text', ...propCategory.content }),
         type: args({ control: 'select', ...propCategory.appearance }),
         fullWidth: args({ control: 'boolean', ...propCategory.appearance }),
-        disabled: args({ control: 'boolean', ...propCategory.functionality }),
+        disabled: args({ control: 'boolean', ...propCategory.state }),
         Icon: args({ control: 'false', ...propCategory.content }),
         name: args({ control: 'false', ...propCategory.functionality }),
         onClick: args({ control: 'false', ...propCategory.functionality }),
-        isIconAfter: { control: 'boolean', ...propCategory.functionality }
+        isIconAfter: args({ control: 'boolean', ...propCategory.functionality })
     },
     args: {
         text: 'Button',
