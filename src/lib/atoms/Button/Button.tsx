@@ -97,7 +97,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                         className: 'button__icon'
                     })}
 
-                {text && <span className="button__text">{text}</span>}
+                {text && <span className="button__text ellipsis-text">{text}</span>}
             </button>
         );
     }

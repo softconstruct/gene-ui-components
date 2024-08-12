@@ -1,12 +1,12 @@
-// todo
-
 .button {
     $this: &;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    user-select: none;
     cursor: pointer;
+    max-width: 100%;
 
     // &_reverse {
     //     flex-direction: row-reverse;
