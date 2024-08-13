@@ -20,8 +20,8 @@ interface IDividerProps {
  */
 
 const Divider: FC<IDividerProps> = ({
-    alignContentPosition,
-    appearance,
+    alignContentPosition = 'left',
+    appearance = 'brand',
     //@ts-ignore
     Icon = <IconComponent className="divider__label__icon" type={'bc-icon-info'} />,
     isVertical,

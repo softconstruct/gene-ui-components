@@ -13,11 +13,11 @@ const meta: Meta<typeof Divider> = {
     argTypes: {
         alignContentPosition: args({ control: 'select', ...propCategory.appearance }),
         appearance: args({ control: 'select', ...propCategory.appearance }),
-        isVertical: args({ control: 'boolean', ...propCategory.functionality }),
-        Icon: args({ control: 'false', ...propCategory.others }),
-        label: args({ control: 'text', ...propCategory.appearance }),
+        isVertical: args({ control: 'boolean', ...propCategory.appearance }),
+        Icon: args({ control: 'false', ...propCategory.content }),
+        label: args({ control: 'text', ...propCategory.content }),
         labelPosition: args({ control: 'select', ...propCategory.appearance }),
-        alignContent: args({ control: 'text', ...propCategory.functionality })
+        alignContent: args({ control: 'text', ...propCategory.appearance })
     },
     args: {
         alignContentPosition: 'left',
