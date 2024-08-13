@@ -17,7 +17,7 @@ const meta: Meta<typeof Divider> = {
         Icon: args({ control: 'false', ...propCategory.content }),
         label: args({ control: 'text', ...propCategory.content }),
         labelPosition: args({ control: 'select', ...propCategory.appearance }),
-        alignContent: args({ control: 'text', ...propCategory.appearance })
+        alignContent: args({ control: 'false', ...propCategory.appearance })
     },
     args: {
         alignContentPosition: 'left',

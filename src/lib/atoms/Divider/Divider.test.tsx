@@ -3,6 +3,7 @@ import { ReactWrapper, mount } from 'enzyme';
 
 // Components
 import Divider, { IDividerProps } from './index';
+import Button from '../Button/Button';
 
 describe('Divider ', () => {
     let setup: ReactWrapper<IDividerProps>;
@@ -21,9 +22,10 @@ describe('Divider ', () => {
     });
 
     it('renders alignContent prop correctly', () => {
-        const alignContent = 'test';
+        //@ts-ignore
+        const alignContent = <Button>Test</Button>;
         const wrapper = setup.setProps({ alignContent });
-        expect(wrapper.find('.divider__element').text()).toBe(alignContent);
+        expect(wrapper.find(Button).text()).toBe('Test');
     });
 
     it.each<IDividerProps['appearance']>(['brand', 'default', 'inverse', 'strong'])(
@@ -36,7 +38,8 @@ describe('Divider ', () => {
     it.each<IDividerProps['alignContentPosition']>([, 'left', 'right'])(
         'checking a component with a prop alignContent : %p',
         (alignContentPosition) => {
-            const wrapper = setup.setProps({ alignContentPosition, alignContent: 'test' });
+            //@ts-ignore
+            const wrapper = setup.setProps({ alignContentPosition, alignContent: <Button>Test</Button> });
             expect(wrapper.find(`.divider_align_${alignContentPosition}`).exists()).toBeTruthy();
         }
     );

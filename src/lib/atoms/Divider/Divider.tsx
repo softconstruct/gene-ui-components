@@ -12,7 +12,7 @@ interface IDividerProps {
     Icon?: JSX.Element | null;
     label?: string;
     labelPosition?: 'before' | 'after' | 'center';
-    alignContent?: JSX.Element | string;
+    alignContent?: JSX.Element;
 }
 
 /**
