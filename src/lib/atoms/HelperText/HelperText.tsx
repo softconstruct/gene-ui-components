@@ -1,8 +1,11 @@
 import React, { FC, useRef } from 'react';
 import classnames from 'classnames';
 
+//Hooks
+import { useEllipsisDetection } from '../../../index';
+
 //Components
-import { Icon, Tooltip, useEllipsisDetection } from '../../../index';
+import { Icon, Tooltip } from '../../../index';
 
 // Styles
 import './HelperText.scss';

@@ -17,13 +17,13 @@ describe('HelperText ', () => {
     it.each<IHelperTextProps['size']>(['medium', 'small'])('should have "%s" size', (size) => {
         const wrapper = setup.setProps({ size });
 
-        expect(wrapper.find('.helperText').hasClass(`helperText_size_${size}`)).toBeTruthy();
+        expect(wrapper.find(`.helperText_size_${size}`).exists()).toBeTruthy();
     });
 
     it.each<IHelperTextProps['type']>(['rest', 'danger', 'warning'])('should have "%s" type', (type) => {
         const wrapper = setup.setProps({ type });
 
-        expect(wrapper.find('.helperText').hasClass(`helperText_type_${type}`)).toBeTruthy();
+        expect(wrapper.find(`.helperText_type_${type}`).exists()).toBeTruthy();
     });
 
     it('renders text prop correctly', () => {
@@ -37,7 +37,7 @@ describe('HelperText ', () => {
 
     it('renders isDisabled prop correctly', () => {
         const wrapper = setup.setProps({ isDisabled: true });
-        expect(wrapper.find('.helperText').hasClass('helperText_disabled')).toBeTruthy();
+        expect(wrapper.find('.helperText_disabled').exists()).toBeTruthy();
     });
 
     it('renders isLoading prop correctly', () => {
