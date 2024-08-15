@@ -1,9 +1,9 @@
 import React, { cloneElement, forwardRef, JSX, KeyboardEvent, MouseEvent } from 'react';
+import classNames from 'classnames';
+import { Download } from 'lucide-react';
 
 // Styles
 import './Button.scss';
-import classNames from 'classnames';
-import { Download } from 'lucide-react';
 
 interface IButtonProps {
     /**

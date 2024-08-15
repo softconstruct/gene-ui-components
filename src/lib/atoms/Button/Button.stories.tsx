@@ -18,9 +18,9 @@ const meta: Meta<typeof Button> = {
         fullWidth: args({ control: 'boolean', ...propCategory.appearance }),
         disabled: args({ control: 'boolean', ...propCategory.state }),
         Icon: args({ control: 'false', ...propCategory.content }),
-        name: args({ control: 'false', ...propCategory.functionality }),
-        onClick: args({ control: 'false', ...propCategory.functionality }),
-        isIconAfter: args({ control: 'boolean', ...propCategory.functionality })
+        name: args({ control: 'false', ...propCategory.content }),
+        onClick: args({ control: 'false', ...propCategory.action }),
+        isIconAfter: args({ control: 'boolean', ...propCategory.states })
     },
     args: {
         text: 'Button',
