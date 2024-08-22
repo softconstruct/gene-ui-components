@@ -23,7 +23,7 @@ const meta: Meta<typeof HelperText> = {
         text: 'Helper Text',
         isDisabled: false,
         type: 'rest'
-    } as IHelperTextProps
+    }
 };
 
 export default meta;
