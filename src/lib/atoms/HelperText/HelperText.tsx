@@ -2,7 +2,7 @@ import React, { FC, useRef } from 'react';
 import classnames from 'classnames';
 
 //Hooks
-import { useEllipsisDetection } from '../../../index';
+import { useEllipsisDetection } from '../../../hooks';
 
 //Components
 import { Icon, Tooltip } from '../../../index';
