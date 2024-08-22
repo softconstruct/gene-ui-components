@@ -19,7 +19,7 @@ interface IHelperTextProps {
     /**
      * Specifies the type of the helper text. <br>
      * Possible values: `rest | danger | warning`.
-     * 'rest' for default information, 'danger' for error messages, or 'warning' for cautions.
+     * `rest` for default information, `danger` for error messages, or `warning` for cautions.
      */
     type?: 'rest' | 'danger' | 'warning';
     /**
@@ -34,18 +34,18 @@ interface IHelperTextProps {
     icon?: string;
     /**
      * Determines whether the helper text is disabled.
-     * If true, the helper text will appear dimmed and non-interactive.
+     * If `true`, the helper text will appear dimmed and non-interactive.
      */
     isDisabled?: boolean;
     /**
      * Indicates whether the component is in a loading state.
-     * When true, a loading skeleton is displayed instead of the actual helper text.
+     * When `true`, a loading skeleton is displayed instead of the actual helper text.
      */
     isLoading?: boolean;
 }
 
 /**
- * The Helper Text provides users an additional information or guidance related to a specific input field in a form. This text helps users understand the expected format, requirements, or purpose of the input, thereby improving form completion accuracy and user confidence.
+ * The Helper Text provides users with additional information or guidance related to a specific input field in a form. This text helps users understand the expected format, requirements, or purpose of the input, thereby improving form completion accuracy and user confidence.
  */
 const HelperText: FC<IHelperTextProps> = ({ size = 'medium', type = 'rest', text, icon, isDisabled, isLoading }) => {
     const textRef = useRef(null);
