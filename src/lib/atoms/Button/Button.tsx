@@ -1,6 +1,6 @@
 import React, { cloneElement, forwardRef, JSX, KeyboardEvent, MouseEvent } from 'react';
 import classNames from 'classnames';
-import { Download } from 'lucide-react';
+import { Globe } from '@geneui/icons';
 
 // Styles
 import './Button.scss';
@@ -66,7 +66,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             size = 'medium',
             type = 'fill',
             text,
-            Icon = <Download />,
+            Icon = <Globe />,
             onClick,
             isIconAfter
         }: IButtonProps,
