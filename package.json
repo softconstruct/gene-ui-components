@@ -156,6 +156,7 @@
         "yargs": "^17.7.2"
     },
     "dependencies": {
+        "@geneui/icons": "^1.0.3",
         "@geneui/tokens": "^1.0.0-beta",
         "classnames": "^2.3.2",
         "dayjs": "^1.11.5",
