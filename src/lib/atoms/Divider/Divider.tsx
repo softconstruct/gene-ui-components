@@ -1,8 +1,8 @@
-import React, { FC, JSX } from 'react';
+import React, { cloneElement, FC, JSX } from 'react';
+import { CheckMark } from '@geneui/icons';
 
 // Styles
 import './Divider.scss';
-import { Icon as IconComponent } from '../../../index';
 import classNames from 'classnames';
 
 interface IDividerProps {
@@ -23,7 +23,7 @@ const Divider: FC<IDividerProps> = ({
     alignContentPosition = 'left',
     appearance = 'brand',
     //@ts-ignore
-    Icon = <IconComponent className="divider__label__icon" type={'bc-icon-info'} />,
+    Icon = <CheckMark />,
     isVertical,
     label,
     labelPosition = 'before',
@@ -41,7 +41,10 @@ const Divider: FC<IDividerProps> = ({
                 <>
                     <div className="divider__label">
                         {label && <span className="divider__label__text ellipsis-text">{label}</span>}
-                        {Icon && Icon}
+                        {Icon &&
+                            cloneElement(Icon, {
+                                className: ` ${Icon.props?.className} divider__label__icon`
+                            })}
                     </div>
                     {/**TODO: Add Button component (or any component) when finish refactoring */}
                     {alignContent && <div className="divider__element">{alignContent}</div>}
