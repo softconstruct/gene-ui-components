@@ -31,7 +31,7 @@ describe('Avatar ', () => {
     it('renders isDisabled prop correctly', () => {
         const wrapper = setup.setProps({ isDisabled: true });
 
-        expect(wrapper.find('.avatar_disabled').exists).toBeTruthy();
+        expect(wrapper.find('.avatar').hasClass('avatar_disabled')).toBeTruthy();
     });
 
     it('renders onClick prop correctly', () => {
@@ -49,7 +49,7 @@ describe('Avatar ', () => {
         'checking a component with a prop color : %p',
         (color) => {
             const wrapper = setup.setProps({ color });
-            expect(wrapper.find(`.avatar_color_${color}`).exists()).toBeTruthy();
+            expect(wrapper.find('.avatar').hasClass(`avatar_color_${color}`)).toBeTruthy();
         }
     );
 
@@ -58,7 +58,7 @@ describe('Avatar ', () => {
         (size) => {
             const wrapper = setup.setProps({ size });
 
-            expect(wrapper.find(`.avatar_size_${size}`).exists()).toBeTruthy();
+            expect(wrapper.find('.avatar').hasClass(`avatar_size_${size}`)).toBeTruthy();
         }
     );
 });

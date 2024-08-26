@@ -21,7 +21,6 @@ const Avatar: FC<IAvatarProps> = ({ size, color, fullName, src, onClick, isDisab
 
     useEffect(() => {
         if (!fullName) {
-            setCutFirstAndLastName('');
             return;
         }
         const [firstLetter, secondLetter] = fullName.split(' ');
