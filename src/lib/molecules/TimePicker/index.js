@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
@@ -92,6 +92,7 @@ function TimePicker({
     const [hourPopupValue, setHourPopupValue] = useState(null);
     const [minutePopupValue, setMinutePopupValue] = useState(null);
     const [secondPopupValue, setSecondPopupValue] = useState(null);
+    const childRef = useRef();
 
     // for replacing special symbols
     const numberRegExp = useMemo(() => {
@@ -344,6 +345,12 @@ function TimePicker({
     };
 
     useEffect(() => {
+        if ((disabled || readOnly) && childRef.current) {
+            childRef.current.toggleOpen(true);
+        }
+    }, [disabled, readOnly]);
+
+    useEffect(() => {
         if (hour) {
             const formattedHour = convertToFormat(hour, hourFormat);
             setHour(formattedHour);
@@ -464,6 +471,8 @@ function TimePicker({
         [second, secondFormat, minute, minuteFormat, showSeconds]
     );
 
+    const handleIconClick = () => childRef.current && !readOnly && !disabled && childRef.current.toggleOpen();
+
     return (
         <div
             className={classnames('time-picker-holder', className, {
@@ -559,6 +568,7 @@ function TimePicker({
                     toggleHandler={handlePopoverToggle}
                     readOnly={readOnly}
                     value={signleInputPopoverValue}
+                    ref={childRef}
                     Content={
                         <ul className="time-picker-drop-holder">
                             <li>{hours}</li>
@@ -579,6 +589,8 @@ function TimePicker({
                         itemsDirection="end"
                         readOnly={readOnly}
                         writeProtected={isMobile}
+                        onIconClick={handleIconClick}
+                        clickableIcon
                         onBlur={handleInputBlur}
                         {...restProps}
                     />

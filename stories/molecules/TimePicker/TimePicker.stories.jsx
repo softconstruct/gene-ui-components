@@ -34,8 +34,8 @@ export default {
         disabled: false,
         readOnly: false,
         showSeconds: true,
-        minuteFormat: ['mm', 'm'],
-        secondFormat: ['ss', 's'],
+        minuteFormat: 'mm',
+        secondFormat: 'ss',
         screenType: screenTypes[0],
         hourFormat: 'HH',
         appearance: timePickerConfig.appearance[1]
