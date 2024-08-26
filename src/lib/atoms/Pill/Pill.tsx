@@ -1,4 +1,5 @@
 import React, { FC, JSX } from 'react';
+import { Dot } from '@geneui/icons';
 
 // Styles
 import './Pill.scss';
@@ -36,7 +37,7 @@ const Pill: FC<IPillProps> = ({
     isIconAfter,
     isFill,
     //@ts-ignore
-    Icon = <IconComponent type={'bc-icon-info'} />
+    Icon = <Dot />
 }) => {
     return (
         <div
