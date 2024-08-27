@@ -17,7 +17,7 @@ const meta: Meta<typeof Divider> = {
         Icon: args({ control: 'false', ...propCategory.content }),
         label: args({ control: 'text', ...propCategory.content }),
         labelPosition: args({ control: 'select', ...propCategory.appearance }),
-        alignContent: args({ control: 'false', ...propCategory.appearance })
+        alignContent: args({ control: 'false', ...propCategory.content })
     },
     args: {
         alignContentPosition: 'left',
@@ -59,7 +59,7 @@ const WithAlignContentComponent: FC<IDividerProps> = (args) => (
 export const WithAlignContent = WithAlignContentComponent.bind({});
 
 WithAlignContent.argTypes = {
-    alignContent: args({ control: 'false', ...propCategory.functionality })
+    alignContent: args({ control: 'false', ...propCategory.content })
 };
 
 export const WithoutIconAndLabel = WithAlignContentComponent.bind({});

@@ -13,18 +13,20 @@ describe('Divider ', () => {
     });
     it('renders isVertical prop correctly', () => {
         const wrapper = setup.setProps({ isVertical: true });
-        expect(wrapper.find('.divider_vertical').exists()).toBeTruthy();
+        expect(wrapper.find('.divider').hasClass('divider_vertical')).toBeTruthy();
     });
     it('renders label prop correctly', () => {
+        const isVertical = false;
         const label = 'test';
-        const wrapper = setup.setProps({ label });
+        const wrapper = setup.setProps({ label, isVertical });
         expect(wrapper.find('.divider').text()).toBe(label);
     });
 
     it('renders alignContent prop correctly', () => {
         //@ts-ignore
         const alignContent = <Button>Test</Button>;
-        const wrapper = setup.setProps({ alignContent });
+        const isVertical = false;
+        const wrapper = setup.setProps({ alignContent, isVertical });
         expect(wrapper.find(Button).text()).toBe('Test');
     });
 
@@ -32,7 +34,7 @@ describe('Divider ', () => {
         'checking a component with a prop appearance : %p',
         (appearance) => {
             const wrapper = setup.setProps({ appearance });
-            expect(wrapper.find(`.divider_color_${appearance}`).exists()).toBeTruthy();
+            expect(wrapper.find('.divider').hasClass(`divider_color_${appearance}`)).toBeTruthy();
         }
     );
     it.each<IDividerProps['alignContentPosition']>([, 'left', 'right'])(
@@ -40,14 +42,14 @@ describe('Divider ', () => {
         (alignContentPosition) => {
             //@ts-ignore
             const wrapper = setup.setProps({ alignContentPosition, alignContent: <Button>Test</Button> });
-            expect(wrapper.find(`.divider_align_${alignContentPosition}`).exists()).toBeTruthy();
+            expect(wrapper.find('.divider').hasClass(`divider_align_${alignContentPosition}`)).toBeTruthy();
         }
     );
     it.each<IDividerProps['labelPosition']>(['center', 'after', 'before'])(
         'checking a component with a prop alignContent : %p',
         (labelPosition) => {
             const wrapper = setup.setProps({ labelPosition });
-            expect(wrapper.find(`.divider_withLabel_${labelPosition}`).exists()).toBeTruthy();
+            expect(wrapper.find('.divider').hasClass(`divider_withLabel_${labelPosition}`)).toBeTruthy();
         }
     );
 });
