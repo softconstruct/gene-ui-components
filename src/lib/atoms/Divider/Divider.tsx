@@ -1,18 +1,46 @@
 import React, { cloneElement, FC, JSX } from 'react';
 import { CheckMark } from '@geneui/icons';
+import classNames from 'classnames';
 
 // Styles
 import './Divider.scss';
-import classNames from 'classnames';
 
 interface IDividerProps {
+    /**
+     * Divider visual style <br/>
+     * Possible values: `default | strong | brand | inverse`
+     */
     appearance?: 'default' | 'strong' | 'brand' | 'inverse';
-    alignContentPosition?: 'right' | 'left';
-    isVertical?: boolean;
-    Icon?: JSX.Element | null;
-    label?: string;
-    labelPosition?: 'before' | 'after' | 'center';
+    /**
+     * Divider content <br/>
+     * The `alignContent` prop accepts a JSX element that will be displayed alongside the divider
+     */
     alignContent?: JSX.Element;
+    /**
+     * Divider `alignContent` position <br/>
+     * Possible values: `right | left`
+     */
+    alignContentPosition?: 'right' | 'left';
+    /**
+     * Divider direction <br/>
+     * If the `isVertical` prop is `true`, the `Divider` will be displayed vertically otherwise the `Divider` will be displayed horizontally
+     */
+    isVertical?: boolean;
+    /**
+     * Divider icon <br/>
+     * The `Icon` prop accepts a JSX element that will be displayed alongside the divider
+     */
+    Icon?: JSX.Element | null;
+    /**
+     * Divider label <br/>
+     * Text which will be displayed with `Divider`. The position of the `label` depends on `labelPosition` prop
+     */
+    label?: string;
+    /**
+     * Divider `label` position <br/>
+     * Possible values: `before | after | center`
+     */
+    labelPosition?: 'before' | 'after' | 'center';
 }
 
 /**
