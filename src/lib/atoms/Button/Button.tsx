@@ -72,8 +72,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
         }: IButtonProps,
         ref
     ) => {
-        {
-        }
+        const iconClassName = Icon.props?.className || '';
+
         return (
             <button
                 ref={ref}
@@ -90,7 +90,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             >
                 {Icon &&
                     cloneElement(Icon, {
-                        className: 'button__icon'
+                        className: `${iconClassName} button__icon`
                     })}
 
                 {text && <span className="button__text ellipsis-text">{text}</span>}

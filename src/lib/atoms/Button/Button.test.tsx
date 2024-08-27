@@ -1,5 +1,6 @@
 import React, { MouseEvent } from 'react';
 import { ReactWrapper, mount } from 'enzyme';
+import { Globe } from '@geneui/icons';
 
 // Components
 import Button, { IButtonProps } from './index';
@@ -28,6 +29,12 @@ describe('Button ', () => {
         const wrapper = setup.setProps({ fullWidth: true });
         expect(wrapper.find('.button_full_width').exists()).toBeTruthy();
     });
+
+    it('renders Icon prop correctly', () => {
+        const wrapper = setup.setProps({ Icon: <Globe /> });
+        expect(wrapper.find(Globe).exists()).toBeTruthy();
+    });
+
     it('renders name prop correctly', () => {
         const name = 'test';
         const wrapper = setup.setProps({ name });
