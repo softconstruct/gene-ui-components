@@ -5,9 +5,6 @@ import { Dot } from '@geneui/icons';
 import './Pill.scss';
 import classNames from 'classnames';
 
-// Components
-import IconComponent from '../Icon';
-
 interface IPillProps {
     text?: string;
     isIconAfter?: boolean;

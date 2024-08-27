@@ -1,5 +1,6 @@
 import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
+import { Dot } from '@geneui/icons';
 
 // Components
 import Pill, { IPillProps } from './index';
@@ -16,6 +17,11 @@ describe('Pill', () => {
         const text = 'test';
         const wrapper = setup.setProps({ text });
         expect(wrapper.text()).toBe(text);
+    });
+
+    it('renders Icon prop correctly', () => {
+        const wrapper = setup.setProps({ Icon: <Dot /> });
+        expect(wrapper.find(Dot).exists()).toBeTruthy();
     });
 
     it('renders isIconAfter prop correctly', () => {
