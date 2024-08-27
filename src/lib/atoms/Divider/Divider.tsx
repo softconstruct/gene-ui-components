@@ -57,6 +57,7 @@ const Divider: FC<IDividerProps> = ({
     labelPosition = 'before',
     alignContent
 }) => {
+    const iconClassName = Icon?.props?.className || '';
     return (
         <div
             className={classNames(`divider  divider_color_${appearance} divider_withLabel_${labelPosition}`, {
@@ -71,7 +72,7 @@ const Divider: FC<IDividerProps> = ({
                         {label && <span className="divider__label__text ellipsis-text">{label}</span>}
                         {Icon &&
                             cloneElement(Icon, {
-                                className: ` ${Icon.props?.className} divider__label__icon`
+                                className: ` ${iconClassName} divider__label__icon`
                             })}
                     </div>
                     {/**TODO: Add Button component (or any component) when finish refactoring */}

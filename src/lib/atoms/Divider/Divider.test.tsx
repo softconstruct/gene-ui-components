@@ -1,5 +1,6 @@
 import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
+import { CheckMark } from '@geneui/icons';
 
 // Components
 import Divider, { IDividerProps } from './index';
@@ -15,6 +16,12 @@ describe('Divider ', () => {
         const wrapper = setup.setProps({ isVertical: true });
         expect(wrapper.find('.divider').hasClass('divider_vertical')).toBeTruthy();
     });
+
+    it('renders Icon prop correctly', () => {
+        const wrapper = setup.setProps({ Icon: <CheckMark /> });
+        expect(wrapper.find(CheckMark).exists()).toBeTruthy();
+    });
+
     it('renders label prop correctly', () => {
         const isVertical = false;
         const label = 'test';
