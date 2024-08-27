@@ -1,6 +1,6 @@
 import React, { FC, PointerEvent, useEffect, useState } from 'react';
 import classNames from 'classnames';
-
+import { Square } from '@geneui/icons';
 // Styles
 import './Avatar.scss';
 
@@ -11,16 +11,18 @@ interface IAvatarProps {
     src?: string;
     onClick?: (e: PointerEvent<HTMLDivElement>) => void;
     isDisabled?: boolean;
+    Icon?: JSX.Element;
 }
 
 /**
  * An avatar is a graphical representation of a user, typically displayed as a small image or icon. It can be a photo, illustration, or initials, and is used to personalize the user experience by visually identifying the user in interfaces such as profiles, comment sections, and messaging apps.
  */
-const Avatar: FC<IAvatarProps> = ({ size, color, fullName, src, onClick, isDisabled }) => {
+const Avatar: FC<IAvatarProps> = ({ size, color, fullName, src, onClick, isDisabled, Icon = <Square /> }) => {
     const [cutFirstAndLastName, setCutFirstAndLastName] = useState<string>('');
 
     useEffect(() => {
         if (!fullName) {
+            setCutFirstAndLastName('');
             return;
         }
         const [firstLetter, secondLetter] = fullName.split(' ');
@@ -35,6 +37,7 @@ const Avatar: FC<IAvatarProps> = ({ size, color, fullName, src, onClick, isDisab
             tabIndex={0}
             onClick={onClick}
         >
+            {Icon && !cutFirstAndLastName && Icon}
             {src && <img className="avatar__image" alt={'avatar'} src={src} />}
             {cutFirstAndLastName && !src && <span className="avatar__text">{cutFirstAndLastName}</span>}
         </div>

@@ -16,7 +16,8 @@ const meta: Meta<typeof Avatar> = {
         src: args({ control: 'text', ...propCategory.content }),
         fullName: args({ control: 'text', ...propCategory.content }),
         onClick: args({ control: 'false', ...propCategory.action }),
-        isDisabled: args({ control: 'boolean', ...propCategory.states })
+        isDisabled: args({ control: 'boolean', ...propCategory.states }),
+        Icon: args({ control: 'false', ...propCategory.content })
     },
     args: {
         size: '6Xlarge',
