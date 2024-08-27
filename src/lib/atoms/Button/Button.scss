@@ -412,13 +412,7 @@
     &:disabled,
     &.disabled {
         pointer-events: none;
-
-        #{ $this }__text {
-            color: var(--guit-sem-color-foreground-disabled);
-        }
-        #{ $this }__icon {
-            stroke: var(--guit-sem-color-foreground-disabled);
-        }
+        color: var(--guit-sem-color-foreground-disabled);
     }
 
     &__text {
