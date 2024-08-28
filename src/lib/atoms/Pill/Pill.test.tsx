@@ -26,12 +26,12 @@ describe('Pill', () => {
 
     it('renders isIconAfter prop correctly', () => {
         const wrapper = setup.setProps({ isIconAfter: true });
-        expect(wrapper.find('.pill_icon_after').exists()).toBeTruthy();
+        expect(wrapper.find('.pill').hasClass('pill_icon_after')).toBeTruthy();
     });
 
     it('renders isFill prop correctly', () => {
         const wrapper = setup.setProps({ isFill: true });
-        expect(wrapper.find('.pill_fill').exists()).toBeTruthy();
+        expect(wrapper.find('.pill').hasClass('pill_fill')).toBeTruthy();
     });
 
     it('renders without text prop', () => {
@@ -43,7 +43,7 @@ describe('Pill', () => {
         'checking a component with a prop size : %p',
         (size) => {
             const wrapper = setup.setProps({ size });
-            expect(wrapper.find(`.pill_size_${size}`).exists()).toBeTruthy();
+            expect(wrapper.find('.pill').hasClass(`pill_size_${size}`)).toBeTruthy();
         }
     );
 
@@ -60,6 +60,6 @@ describe('Pill', () => {
         'inverse'
     ])('checking a component with a prop color : %p', (color) => {
         const wrapper = setup.setProps({ color });
-        expect(wrapper.find(`.pill_color_${color}`).exists()).toBeTruthy();
+        expect(wrapper.find('.pill').hasClass(`pill_color_${color}`)).toBeTruthy();
     });
 });

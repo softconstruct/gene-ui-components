@@ -1,9 +1,9 @@
 import React, { FC, JSX } from 'react';
 import { Dot } from '@geneui/icons';
+import classNames from 'classnames';
 
 // Styles
 import './Pill.scss';
-import classNames from 'classnames';
 
 interface IPillProps {
     text?: string;
