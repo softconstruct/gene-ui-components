@@ -8,7 +8,7 @@ export * from './lib/atoms/Switcher/index.mobile';
 export * from './lib/molecules/Alert/index.mobile';
 export * from './lib/molecules/Checkbox/index.mobile';
 export * from './lib/molecules/ExtendedInput/index.mobile';
-export * from './lib/molecules/Grid/index.mobile';
+export * from './lib/molecules/GridD/index.mobile';
 export * from './lib/molecules/Notification/index.mobile';
 export * from './lib/molecules/Pagination/index.mobile';
 export * from './lib/molecules/RadioGroup/index.mobile';

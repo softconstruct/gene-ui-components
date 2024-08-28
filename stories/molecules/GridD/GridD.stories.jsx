@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
-import Row from 'src/lib/molecules/Grid/row';
-import Col from 'src/lib/molecules/Grid/col';
+import Row from 'src/lib/molecules/GridD/row';
+import Col from 'src/lib/molecules/GridD/col';
 import Button from 'src/lib/atoms/Button';
 import { args, category } from '../../assets/storybook.globals';
 import './index.scss';
 
 export default {
-    title: 'Molecules/Grid',
+    title: 'Molecules/GridD',
     component: Col,
     subcomponents: { Row, Col },
     argTypes: {
@@ -91,9 +91,9 @@ const Template = ({ ...args }) => {
     );
 };
 
-export const Grid = Template.bind({});
+export const Gridd = Template.bind({});
 
-Grid.args = {
+Gridd.args = {
     span: 12,
     padding: 20,
     gutter: 20,

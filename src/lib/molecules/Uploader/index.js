@@ -19,7 +19,7 @@ import {
 // Components
 import Button from '../../atoms/Button';
 import ExtendedInput from '../ExtendedInput';
-import { Row, Col } from '../Grid';
+import { Row, Col } from '../GridD';
 
 // Local components
 import UploadedItem from './uploadedItem';

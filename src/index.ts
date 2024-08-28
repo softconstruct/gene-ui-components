@@ -32,9 +32,10 @@ export {
 } from './lib/atoms/Paper';
 export { default as Avatar } from './lib/atoms/Avatar/index';
 export { default as LinkButton } from './lib/atoms/LinkButton/index';
+export { default as Grid } from './lib/atoms/Grid';
 
 // Molecules
-export { Row, Col } from './lib/molecules/Grid';
+export { Row, Col } from './lib/molecules/GridD';
 export { Tab, Tabs } from './lib/molecules/Tabs';
 export { Step, Steps } from './lib/molecules/Steps';
 export { Timeline, TimelineItem, timelineColors, timelineAppearances } from './lib/molecules/Timeline';
