@@ -5,16 +5,16 @@ import './Loader.scss';
 
 interface ILoaderProps {
     /**
-     * Indicates if Spinner should be visible.
+     * Indicates if spinner should be visible.
      */
     show?: boolean;
     /**
-     * Label to provide more context around the Tooltip’s function or purpose. By default text is used but this prop allows you to override it.
+     * Label to provide more context around the Tooltip’s function or purpose. By default, `text` is used but this prop allows you to override it.
      */
     text?: string;
     /**
-     * <code>brand | neutral | inverse</code> <br/>
-     * The tooltip's visual appearance.
+     * Loader visual style. <br/>
+     * Possible values: `brand | neutral | inverse`
      */
     appearance?: 'brand' | 'neutral' | 'inverse';
     /**
@@ -23,13 +23,14 @@ interface ILoaderProps {
      */
     size?: '2xlarge' | 'xlarge' | 'large' | 'medium' | 'small' | 'smallNudge';
     /**
-     * <code>horizontal | vertical</code> to define text position after or below the spinner.
+     *  Loader text position. <br/>.
+     *  Possible values: `below | after`
      */
     labelPosition?: 'below' | 'after';
 }
 
 /**
- *Loading Spinner is a visual indicator that informs users an operation is in progress. Typically displayed as a rotating icon or circular animation, it signals that the system is working on a task, such as loading data or processing a request, and that the user should wait until the process is complete.
+ *Loading spinner is a visual indicator that informs users an operation is in progress. Typically displayed as a rotating icon or circular animation, it signals that the system is working on a task, such as loading data or processing a request, and that the user should wait until the process is complete.
  */
 
 const Loader: FC<ILoaderProps> = ({
