@@ -7,49 +7,53 @@ import './Button.scss';
 
 interface IButtonProps {
     /**
-     * Specifies the name of the button, which can be useful for form submission to identify which button was clicked.
+     * Specifies the name of the `button`, which can be useful for form submission to identify which button was clicked.
      */
     name?: string;
     /**
-     * Loader size <br/>
-     * Possible values: <code>large | medium | small</code>
+     * Button size <br/>
+     * Possible values: `large | medium | small`
      */
     size?: 'large' | 'medium' | 'small';
     /**
-     * If set to true, the button will stretch to occupy the full width of its container.
+     * If set to `true`, the `button` will stretch to occupy the full width of its container.
      */
     fullWidth?: boolean;
     /**
-     * Indicates whether the button is disabled, preventing user interaction. When true, the button appears dimmed and cannot be clicked.
+     * Indicates whether the `button` is `disabled`, preventing user interaction. When `true`, the `button` appears dimmed and can not be clicked.
      */
     disabled?: boolean;
     /**
-     * Loader type <br/>
-     * Possible values: <code>fill | outline | text </code>
+     * Button type <br/>
+     * Possible values: `fill | outline | text`
      */
     type?: 'fill' | 'outline' | 'text';
     /**
-     * Loader color <br/>
-     * Possible values: <code>primary | secondary | danger | success | inverse | transparent</code>
+     * Button visual style <br/>
+     * Possible values: `primary | secondary | danger | success | inverse | transparent`
      */
     appearance?: 'primary' | 'secondary' | 'danger' | 'success' | 'inverse' | 'transparent';
     /**
-     * The text to be displayed on the button.
+     * The text to be displayed on the `button`.
      */
     text?: string;
     /**
-     * Icon which we visible in the button.
+     * Button icon <br/>
+     * The `Icon` prop accepts a JSX element that will be displayed alongside the divider
      */
     Icon?: JSX.Element;
     /**
-     * A callback function that is called when the button is clicked. It receives an argument containing the event object, which can be a mouse or keyboard event.
+     * A callback function that is called when the `button` is clicked. It receives an argument containing the event object, which can be a mouse or keyboard event.
      */
     onClick?: (event: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>) => void;
     /**
-     * Show icon after text
+     * Button icon position
+     * If the `isIconAfter` is set as `true` the `Icon` will be shown after the `text` otherwise before the `text`.
      */
     isIconAfter?: boolean;
-
+    /**
+     * The prop responsible for showing the loading spinner if passed `true`. The default value is `false`
+     */
     isLoading?: boolean;
 }
 
