@@ -4,11 +4,8 @@ import { Meta } from '@storybook/react';
 // Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
-//Types
-import { IButtonProps } from './index';
-
 // Components
-import Button from './index';
+import Button, { IButtonProps } from './index';
 
 const meta: Meta<typeof forwardRef<HTMLButtonElement, IButtonProps>> = {
     title: 'Atoms/Button',
