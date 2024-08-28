@@ -1,13 +1,16 @@
-import React, { FC } from 'react';
+import React, { FC, forwardRef } from 'react';
 import { Meta } from '@storybook/react';
 
 // Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
-// Components
-import Button, { IButtonProps } from './index';
+//Types
+import { IButtonProps } from './index';
 
-const meta: Meta<typeof Button> = {
+// Components
+import Button from './index';
+
+const meta: Meta<typeof forwardRef<HTMLButtonElement, IButtonProps>> = {
     title: 'Atoms/Button',
     component: Button,
     argTypes: {
@@ -20,14 +23,16 @@ const meta: Meta<typeof Button> = {
         Icon: args({ control: 'false', ...propCategory.content }),
         name: args({ control: 'false', ...propCategory.content }),
         onClick: args({ control: 'false', ...propCategory.action }),
-        isIconAfter: args({ control: 'boolean', ...propCategory.states })
+        isIconAfter: args({ control: 'boolean', ...propCategory.states }),
+        isLoading: args({ control: 'boolean', ...propCategory.states })
     },
     args: {
         text: 'Button',
         appearance: 'primary',
         size: 'large',
         type: 'fill',
-        isIconAfter: false
+        isIconAfter: false,
+        isLoading: false
     }
 };
 

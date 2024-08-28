@@ -27,7 +27,7 @@ describe('Button ', () => {
 
     it('renders fullWidth prop correctly', () => {
         const wrapper = setup.setProps({ fullWidth: true });
-        expect(wrapper.find('.button_full_width').exists()).toBeTruthy();
+        expect(wrapper.find('.button').hasClass('button_full_width')).toBeTruthy();
     });
 
     it('renders Icon prop correctly', () => {
@@ -40,7 +40,7 @@ describe('Button ', () => {
         const wrapper = setup.setProps({ name });
         expect(wrapper.find('button').props().name).toBe(name);
     });
-    it('renders  onClick prop correctly', () => {
+    it('renders onClick prop correctly', () => {
         const wrapper = setup.setProps({ onClick: mockFn });
         const event = {
             currentTarget: {
@@ -55,7 +55,7 @@ describe('Button ', () => {
         'checking a component with a prop size : %p',
         (size) => {
             const wrapper = setup.setProps({ size });
-            expect(wrapper.find(`.button_size_${size}`).exists()).toBeTruthy();
+            expect(wrapper.find('.button').hasClass(`button_size_${size}`)).toBeTruthy();
         }
     );
 
@@ -63,7 +63,7 @@ describe('Button ', () => {
         'checking a component with a prop loaderColor : %p ',
         (appearance) => {
             const wrapper = setup.setProps({ appearance });
-            expect(wrapper.find(`.button_color_${appearance}`).exists()).toBeTruthy();
+            expect(wrapper.find('.button').hasClass(`button_color_${appearance}`)).toBeTruthy();
         }
     );
 
@@ -71,7 +71,7 @@ describe('Button ', () => {
         'checking a component with a prop type : %p ',
         (type) => {
             const wrapper = setup.setProps({ type });
-            expect(wrapper.find(`.button_type_${type}`).exists()).toBeTruthy();
+            expect(wrapper.find('.button').hasClass(`button_type_${type}`)).toBeTruthy();
         }
     );
 });
