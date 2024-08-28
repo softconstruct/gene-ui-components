@@ -1,45 +1,86 @@
-import React, { FC, HTMLAttributes, useMemo } from 'react';
-import classnames from 'classnames';
+import React, { cloneElement, FC, JSX } from 'react';
+import { CheckMark } from '@geneui/icons';
+import classNames from 'classnames';
 
 // Styles
 import './Divider.scss';
 
-export interface IDividerProps extends HTMLAttributes<HTMLDivElement> {
+interface IDividerProps {
     /**
-     * Divider direction. <br>
-     * Possible values: `horizontal | vertical`
+     * Divider visual style <br/>
+     * Possible values: `default | strong | brand | inverse`
      */
-    type: 'horizontal' | 'vertical';
+    appearance?: 'default' | 'strong' | 'brand' | 'inverse';
     /**
-     * Divider additional className
+     * Divider content <br/>
+     * The `alignContent` prop accepts a JSX element that will be displayed alongside the divider
      */
-    className?: string;
+    alignContent?: JSX.Element;
     /**
-     * Divider size will be applied to height(when "type" is set to "vertical") or to width(when "type" is set to "horizontal"). <br>
-     * Possible values: `string | number`
+     * Divider `alignContent` position <br/>
+     * Possible values: `right | left`
      */
-    size?: string | number;
+    alignContentPosition?: 'right' | 'left';
     /**
-     * withSpace by default true. If you want to remove the divider`s spacing, switch to false
+     * Divider direction <br/>
+     * If the `isVertical` prop is `true`, the `Divider` will be displayed vertically otherwise the `Divider` will be displayed horizontally
      */
-    withSpace: boolean;
+    isVertical?: boolean;
+    /**
+     * Divider icon <br/>
+     * The `Icon` prop accepts a JSX element that will be displayed alongside the divider
+     */
+    Icon?: JSX.Element | null;
+    /**
+     * Divider label <br/>
+     * Text which will be displayed with `Divider`. The position of the `label` depends on `labelPosition` prop
+     */
+    label?: string;
+    /**
+     * Divider `label` position <br/>
+     * Possible values: `before | after | center`
+     */
+    labelPosition?: 'before' | 'after' | 'center';
 }
 
-const Divider: FC<IDividerProps> = ({ type = 'vertical', className, size, withSpace = true, ...restProps }) => {
-    const modifiedSize = useMemo(() => (typeof size === 'number' ? `${size / 10}rem` : size), [size]);
+/**
+ * A divider separates sections of content to establish visual rhythm and hierarchy. Combine dividers with appropriate spacing and text hierarchy to effectively organize content within your layout.
+ */
 
-    const styles = useMemo(
-        () => (type === 'vertical' ? { height: modifiedSize } : { width: modifiedSize }),
-        [modifiedSize, type]
-    );
-
+const Divider: FC<IDividerProps> = ({
+    alignContentPosition = 'left',
+    appearance = 'brand',
+    //@ts-ignore
+    Icon = <CheckMark />,
+    isVertical,
+    label,
+    labelPosition = 'before',
+    alignContent
+}) => {
+    const iconClassName = Icon?.props?.className || '';
     return (
         <div
-            className={classnames('divider', `type-${type}`, { 'divider-withNoSpace': !withSpace }, className)}
-            style={styles}
-            {...restProps}
-        />
+            className={classNames(`divider  divider_color_${appearance} divider_withLabel_${labelPosition}`, {
+                divider_horizontal: !isVertical,
+                divider_vertical: isVertical,
+                [`divider_align_${alignContentPosition}`]: alignContent
+            })}
+        >
+            {!isVertical && (
+                <>
+                    <div className="divider__label">
+                        {label && <span className="divider__label__text ellipsis-text">{label}</span>}
+                        {Icon &&
+                            cloneElement(Icon, {
+                                className: ` ${iconClassName} divider__label__icon`
+                            })}
+                    </div>
+                    {/**TODO: Add Button component (or any component) when finish refactoring */}
+                    {alignContent && <div className="divider__element">{alignContent}</div>}
+                </>
+            )}
+        </div>
     );
 };
 
-export default Divider;
+export { IDividerProps, Divider as default };
