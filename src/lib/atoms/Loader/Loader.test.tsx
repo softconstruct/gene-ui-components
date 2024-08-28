@@ -30,19 +30,19 @@ describe('Loader', () => {
 
     it.each<ILoaderProps['labelPosition']>(['after', 'below'])('should have %p position', (labelPosition) => {
         const wrapper = setup.setProps({ labelPosition });
-        expect(wrapper.find(`.loader_direction_${labelPosition}`).exists()).toBeTruthy();
+        expect(wrapper.find('.loader').hasClass(`loader_direction_${labelPosition}`)).toBeTruthy();
     });
 
     it.each<ILoaderProps['size']>(['2xlarge', 'xlarge', 'large', 'medium', 'small', 'smallNudge'])(
         'should have %p size',
         (size) => {
             const wrapper = setup.setProps({ size });
-            expect(wrapper.find(`.loader_size_${size}`).exists()).toBeTruthy();
+            expect(wrapper.find('.loader').hasClass(`loader_size_${size}`)).toBeTruthy();
         }
     );
 
     it.each<ILoaderProps['appearance']>(['brand', 'neutral', 'inverse'])('should have %p appearance', (appearance) => {
         const wrapper = setup.setProps({ appearance });
-        expect(wrapper.find(`.loader_color_${appearance}`).exists()).toBeTruthy();
+        expect(wrapper.find('.loader').hasClass(`loader_color_${appearance}`)).toBeTruthy();
     });
 });

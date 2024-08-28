@@ -11,11 +11,11 @@ const meta: Meta<typeof Loader> = {
     title: 'Atoms/Loader',
     component: Loader,
     argTypes: {
-        show: args({ control: 'boolean', ...propCategory.others }),
+        show: args({ control: 'boolean', ...propCategory.state }),
         text: args({ control: 'text', ...propCategory.content }),
         labelPosition: args({ control: 'select', ...propCategory.appearance }),
         size: args({ control: 'select', ...propCategory.appearance }),
-        appearance: { control: 'select', ...propCategory.appearance }
+        appearance: args({ control: 'select', ...propCategory.appearance })
     },
     args: {
         text: 'Loading Info',
