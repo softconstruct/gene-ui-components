@@ -23,17 +23,15 @@ describe('Divider ', () => {
     });
 
     it('renders label prop correctly', () => {
-        const isVertical = false;
         const label = 'test';
-        const wrapper = setup.setProps({ label, isVertical });
+        const wrapper = setup.setProps({ label });
         expect(wrapper.find('.divider').text()).toBe(label);
     });
 
     it('renders alignContent prop correctly', () => {
         //@ts-ignore
         const alignContent = <Button>Test</Button>;
-        const isVertical = false;
-        const wrapper = setup.setProps({ alignContent, isVertical });
+        const wrapper = setup.setProps({ alignContent });
         expect(wrapper.find(Button).text()).toBe('Test');
     });
 
