@@ -5,7 +5,8 @@ import classnames from 'classnames';
 import { useEllipsisDetection } from '../../../hooks';
 
 //Components
-import { Icon, Tooltip } from '../../../index';
+import Icon from '../Icon';
+import Tooltip from '../../molecules/Tooltip';
 
 // Styles
 import './HelperText.scss';
