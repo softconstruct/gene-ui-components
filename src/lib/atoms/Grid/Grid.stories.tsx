@@ -25,19 +25,16 @@ const { Row, Col, GridContainer } = Grid;
 const Template: FC<IGridProps> = (args) => {
     return (
         <GridContainer>
-            <Row className="flexible">
-                <Col size={3}>
+            <Row>
+                <Col size={2} offset={5}>
                     <div>12312</div>
                 </Col>
-                <Col size={3}>
-                    <div>12312</div>
-                </Col>
-                <Col size={3}>
-                    <div>12312</div>
-                </Col>
-                <Col size={3}>
-                    <div>12312</div>
-                </Col>
+                {/*<Col size={4}>*/}
+                {/*    <div>12312</div>*/}
+                {/*</Col>*/}
+                {/*<Col size={3}>*/}
+                {/*    <div>12312</div>*/}
+                {/*</Col>*/}
             </Row>
             <Row>
                 <Col size={4}>

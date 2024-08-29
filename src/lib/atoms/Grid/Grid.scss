@@ -27,6 +27,13 @@
             .col-#{$i} {
                 background-color: red;
                 grid-column: span #{$i};
+
+                @for $j from 1 through 12 - $i {
+                    &.col-offset-#{$j} {
+                        grid-column-start: #{$j + 1};
+                        grid-column-end: #{$i + 1 + $j};
+                    }
+                }
             }
         }
     }
