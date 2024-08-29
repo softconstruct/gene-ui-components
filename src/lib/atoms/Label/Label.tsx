@@ -11,23 +11,23 @@ import './Label.scss';
 
 interface ILabelProps {
     /**
-     * The id of the input element this label is associated with.
-     * If Label component used with form element this prop is required.
+     * The `htmlFor` prop is associated with the `id` of the input element.
+     * If `Label` component is used with a form element this prop is required.
      */
     htmlFor?: string;
     /**
-     *    Controls the size of the label.<br/>
+     * Label size.<br/>
      * Possible values: `medium | small`
      */
     size?: 'medium' | 'small';
     /**
-     * The text content of the label.
-     * This is the main text displayed within the label.
+     * The text content of the `label`.
+     * This is the main text displayed within the `label`.
      */
     children: string;
     /**
-     * Indicates whether the label is for a required field.
-     * When set to true, a visual indicator (asterisk) will be added to denote that the field is required.
+     * Indicates whether the `label` is for a `required` field.
+     * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
      */
     required?: boolean;
     /**
@@ -36,18 +36,18 @@ interface ILabelProps {
      */
     infoText?: string;
     /**
-     * Indicates whether the label should be displayed as disabled.
-     * When set to true, the label will be styled to appear disabled, which can indicate that the associated input field is not editable.
+     * Indicates whether the `label` should be displayed as `disabled`.
+     * When set to `true`, the `label` will be styled to appear `disabled`, which can indicate that the associated input field is not editable.
      */
     disabled?: boolean;
     /**
-     * Indicates whether the label is in a loading state.
-     * When set to true, a skeleton indicator will be shown instead of the label text.
+     * Indicates whether the `label` is in a loading state.
+     * When set to `true` a `skeleton` indicator will be shown instead of the `label` text.
      */
     isLoading?: boolean;
     /**
-     * Custom class name(s) for the label.
-     * This allows for additional styling and customization of the label component.
+     * Custom `class` name(s) for the `label`.
+     * This allows for additional styling and customization of the `label` component.
      */
     className?: string;
 }
