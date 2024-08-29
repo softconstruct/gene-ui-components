@@ -1,5 +1,49 @@
-.grid {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+.grid-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    row-gap: var(--guit-ref-spacing-2xl);
+    width: 100%;
+}
+
+.row {
+    width: 100%;
+    padding-left: var(--guit-ref-spacing-2xl);
+    padding-right: var(--guit-ref-spacing-2xl);
+
+    @for $i from 1 through 12 {
+        &:has([class^='col-']:nth-child(1):nth-last-child(#{$i})) {
+            --column-count: #{$i};
+        }
+    }
+
+    &:not(.flexible) {
+        display: grid;
+        grid-column-gap: var(--guit-ref-spacing-2xl);
+        grid-template-columns: repeat(12, 1fr);
+
+        @for $i from 1 through 12 {
+            .col-#{$i} {
+                background-color: red;
+                grid-column: span #{$i};
+            }
+        }
+    }
+
+    &.flexible {
+        display: flex;
+        column-gap: var(--guit-ref-spacing-2xl);
+
+        @for $i from 1 through 12 {
+            .col-#{$i} {
+                background-color: red;
+                flex: #{$i};
+            }
+        }
+
+        .col-fixed {
+            flex: 0 0 auto;
+        }
+    }
 }

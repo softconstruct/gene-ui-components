@@ -9,7 +9,7 @@ import Grid, { IGridProps } from './index';
 
 const meta: Meta<typeof Grid> = {
     title: 'Atoms/Grid',
-    component: Grid,
+    component: Grid.Row,
     argTypes: {
         Col: args({ control: false, ...propCategory.others }),
         Row: args({ control: false, ...propCategory.others })
@@ -21,8 +21,48 @@ const meta: Meta<typeof Grid> = {
 };
 
 export default meta;
-
-const Template: FC<IGridProps> = (args) => <Grid {...args} />;
+const { Row, Col, GridContainer } = Grid;
+const Template: FC<IGridProps> = (args) => {
+    return (
+        <GridContainer>
+            <Row className="flexible">
+                <Col size={3}>
+                    <div>12312</div>
+                </Col>
+                <Col size={3}>
+                    <div>12312</div>
+                </Col>
+                <Col size={3}>
+                    <div>12312</div>
+                </Col>
+                <Col size={3}>
+                    <div>12312</div>
+                </Col>
+            </Row>
+            <Row>
+                <Col size={4}>
+                    <div>12312</div>
+                </Col>
+                <Col size={8}>
+                    <div>12312</div>
+                </Col>
+            </Row>
+            <Row>
+                <Col size={12}>
+                    <div>12312</div>
+                </Col>
+            </Row>
+            <Row>
+                <Col size="fixed">
+                    <div>12312</div>
+                </Col>
+                <Col size={12}>
+                    <div>12312</div>
+                </Col>
+            </Row>
+        </GridContainer>
+    );
+};
 
 export const Default = Template.bind({});
 

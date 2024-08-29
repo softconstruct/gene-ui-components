@@ -3,19 +3,30 @@ import React, { FC } from 'react';
 // Styles
 import './Grid.scss';
 
-interface IGridProps {
-    /**
-     * Col description
-     */
-    Col?: unknown;
-    /**
-     * Row description
-     */
-    Row?: unknown;
+interface IRow extends React.PropsWithChildren {
+    className?: string;
 }
 
-const Grid: FC<IGridProps> = ({ Col, Row }) => {
-    return <div className="grid">Grid</div>;
+interface ICol extends React.PropsWithChildren {
+    size: number | 'fixed';
+}
+
+interface IGridContainer extends React.PropsWithChildren {}
+
+const Row: FC<IRow> = ({ children, className }) => {
+    return <div className={`row ${className}`}>{children}</div>;
 };
 
-export { IGridProps, Grid as default };
+const Col: FC<ICol> = ({ children, size }) => {
+    return <div className={`col-${size}`}>{children}</div>;
+};
+
+const GridContainer: FC<IGridContainer> = ({ children }) => {
+    return <div className="grid-container">{children}</div>;
+};
+
+export default {
+    Row,
+    Col,
+    GridContainer
+};
