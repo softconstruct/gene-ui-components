@@ -1,10 +1,12 @@
-import React, { FC, HTMLAttributes, useRef } from 'react';
+import React, { FC, useRef } from 'react';
 import classnames from 'classnames';
-// @ts-ignore
-import { useEllipsisDetection } from 'hooks';
 
 // Components
-import { Tooltip, Icon } from '../../../index';
+import Icon from '../Icon';
+import Tooltip from '../../molecules/Tooltip';
+
+// Hooks
+import { useEllipsisDetection } from '../../../hooks';
 
 // Styles
 import './Label.scss';

@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
 
 // Helpers
-import { args, propCategory } from '../../../../stories/assets/storybook.globals.js';
+import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
 import Label, { ILabelProps } from './index';
