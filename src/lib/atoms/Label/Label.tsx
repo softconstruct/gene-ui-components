@@ -1,4 +1,5 @@
 import React, { FC, useRef } from 'react';
+import { InfoOutline } from '@geneui/icons';
 import classnames from 'classnames';
 
 // Components
@@ -72,6 +73,7 @@ const Label: FC<ILabelProps> = ({
     const labelRef = useRef<HTMLLabelElement | null>(null);
 
     const isTruncated: boolean = useEllipsisDetection(labelRef);
+    const iconSize = size === 'small' ? 16 : 20;
 
     return (
         <div {...restProps} className={`label ${className || ''}`}>
@@ -103,10 +105,11 @@ const Label: FC<ILabelProps> = ({
                     </Tooltip>
                     {infoText && (
                         <Tooltip text={infoText}>
-                            <Icon
-                                className={classnames('label__icon', { label__icon_disabled: disabled })}
-                                type={'bc-icon-info'}
-                                disabled={disabled}
+                            <InfoOutline
+                                className={classnames(`label__icon`, {
+                                    label__icon_disabled: disabled
+                                })}
+                                size={iconSize}
                             />
                         </Tooltip>
                     )}
