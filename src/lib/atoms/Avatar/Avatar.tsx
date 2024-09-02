@@ -1,17 +1,41 @@
-import React, { FC, PointerEvent, useEffect, useState } from 'react';
+import React, { FC, PointerEvent, useEffect, useState, JSX } from 'react';
 import classNames from 'classnames';
 import { Square } from '@geneui/icons';
 // Styles
 import './Avatar.scss';
 
 interface IAvatarProps {
-    size?: '6Xlarge' | 'large' | 'medium' | 'small';
-    color?: 'neutral' | 'blue' | 'red' | 'green' | 'purple' | 'orange' | 'lagoon' | 'magenta' | 'slate ';
-    fullName?: string;
+    /**
+     * Avatar background image source.
+     */
     src?: string;
-    onClick?: (e: PointerEvent<HTMLDivElement>) => void;
-    isDisabled?: boolean;
+    /**
+     * The `fullName` property will show first two letters in upper case. This will work when `src` property are not specified.
+     */
+    fullName?: string;
+    /**
+     * Avatar icon <br/>
+     * The `Icon` prop accepts a JSX element that will be displayed as an avatar.
+     */
     Icon?: JSX.Element;
+    /**
+     * This prop also has an effect on the `fullName` or `Icon` prop size <br/>
+     * Possible values: `6Xlarge | large | medium | small`
+     */
+    size?: '6Xlarge' | 'large' | 'medium' | 'small';
+    /**
+     * Avatar background color. This prop also has an effect on the `fullName` prop color <br/>
+     * Possible values: `neutral | blue | red | green | purple | orange | lagoon | magenta | slate `
+     */
+    color?: 'neutral' | 'blue' | 'red' | 'green' | 'purple' | 'orange' | 'lagoon' | 'magenta' | 'slate';
+    /**
+     * A callback function is called when the `avatar` is clicked. It receives an argument containing the event object, a mouse or keyboard event.
+     */
+    onClick?: (e: PointerEvent<HTMLDivElement>) => void;
+    /**
+     * Indicates whether the `avatar` is `disabled`, preventing user interaction. When `true`, the `avatar` appears dimmed and can not be clicked.
+     */
+    isDisabled?: boolean;
 }
 
 /**
