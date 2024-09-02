@@ -6,6 +6,7 @@ import { args, propCategory } from '../../../../stories/assets/storybook.globals
 
 // Components
 import HelperText, { IHelperTextProps } from './index';
+import { Close, ErrorAlertFill, Globe } from '@geneui/icons';
 
 const meta: Meta<typeof HelperText> = {
     title: 'Atoms/HelperText',
@@ -14,7 +15,7 @@ const meta: Meta<typeof HelperText> = {
         size: args({ control: 'select', ...propCategory.appearance }),
         type: args({ control: 'select', ...propCategory.appearance }),
         text: args({ control: 'text', ...propCategory.content }),
-        icon: args({ control: 'text', ...propCategory.content }),
+        Icon: args({ control: false, ...propCategory.content }),
         isDisabled: args({ control: 'boolean', ...propCategory.states }),
         isLoading: args({ control: 'boolean', ...propCategory.states })
     },
@@ -40,4 +41,9 @@ Danger.args = {
 export const Warning = Template.bind({});
 Warning.args = {
     type: 'warning'
+} as IHelperTextProps;
+
+export const WithCustomIcon = Template.bind({});
+WithCustomIcon.args = {
+    Icon: <Globe />
 } as IHelperTextProps;

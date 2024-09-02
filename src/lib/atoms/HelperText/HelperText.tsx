@@ -5,11 +5,15 @@ import classnames from 'classnames';
 import { useEllipsisDetection } from '../../../hooks';
 
 //Components
-import Icon from '../Icon';
 import Tooltip from '../../molecules/Tooltip';
+import { ErrorAlertFill, WarningFill } from '@geneui/icons';
 
 // Styles
 import './HelperText.scss';
+
+interface IconProps extends React.SVGProps<SVGSVGElement> {
+    size?: 16 | 20;
+}
 
 interface IHelperTextProps {
     /**
@@ -32,7 +36,7 @@ interface IHelperTextProps {
      * Optional. Icon to be displayed alongside the helper text.
      * If not provided, a default icon will be used based on the `type` prop.
      */
-    icon?: string;
+    Icon?: IconProps;
     /**
      * Determines whether the helper text is disabled.
      * If `true`, the helper text will appear dimmed and non-interactive.
@@ -48,19 +52,17 @@ interface IHelperTextProps {
 /**
  * The Helper Text provides users with additional information or guidance related to a specific input field in a form. This text helps users understand the expected format, requirements, or purpose of the input, thereby improving form completion accuracy and user confidence.
  */
-const HelperText: FC<IHelperTextProps> = ({ size = 'medium', type = 'rest', text, icon, isDisabled, isLoading }) => {
+const HelperText: FC<IHelperTextProps> = ({ size = 'medium', type = 'rest', text, Icon, isDisabled, isLoading }) => {
     const textRef = useRef(null);
     const isTruncated = useEllipsisDetection(textRef);
+    const iconSize = size === 'small' ? 16 : 20;
 
-    //temp solution , need to change after icons release
-    const iconMock =
-        type === 'danger' ? (
-            <Icon type={'bc-icon-info-48'} />
-        ) : type === 'warning' ? (
-            <Icon type={'bc-icon-strong-opinion-36'} />
-        ) : (
-            <Icon type={icon || 'bc-icon-blank'} />
-        );
+    const iconMap: { [key: string]: React.ReactNode } = {
+        danger: <ErrorAlertFill size={iconSize} />,
+        warning: <WarningFill size={iconSize} />
+    };
+
+    const iconMock = iconMap[type] || (Icon && { ...Icon, size: iconSize });
 
     return (
         <div
@@ -72,7 +74,7 @@ const HelperText: FC<IHelperTextProps> = ({ size = 'medium', type = 'rest', text
                 'skeleton'
             ) : (
                 <>
-                    <div className="helperText__icon">{iconMock}</div>
+                    {iconMock && <div className="helperText__icon">{iconMock}</div>}
                     <Tooltip text={text} isVisible={isTruncated}>
                         <p className="helperText__text ellipsis-text" ref={textRef}>
                             {text}
