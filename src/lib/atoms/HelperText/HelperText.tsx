@@ -1,4 +1,5 @@
-import React, { FC, useRef } from 'react';
+import React, { cloneElement, FC, JSX, ReactNode, useRef } from 'react';
+import { ErrorAlertFill, WarningFill } from '@geneui/icons';
 import classnames from 'classnames';
 
 //Hooks
@@ -6,14 +7,9 @@ import { useEllipsisDetection } from '../../../hooks';
 
 //Components
 import Tooltip from '../../molecules/Tooltip';
-import { ErrorAlertFill, WarningFill } from '@geneui/icons';
 
 // Styles
 import './HelperText.scss';
-
-interface IconProps extends React.SVGProps<SVGSVGElement> {
-    size?: 16 | 20;
-}
 
 interface IHelperTextProps {
     /**
@@ -36,7 +32,7 @@ interface IHelperTextProps {
      * Optional. Icon to be displayed alongside the helper text.
      * If not provided, a default icon will be used based on the `type` prop.
      */
-    Icon?: IconProps;
+    Icon?: JSX.Element;
     /**
      * Determines whether the helper text is disabled.
      * If `true`, the helper text will appear dimmed and non-interactive.
@@ -57,12 +53,17 @@ const HelperText: FC<IHelperTextProps> = ({ size = 'medium', type = 'rest', text
     const isTruncated = useEllipsisDetection(textRef);
     const iconSize = size === 'small' ? 16 : 20;
 
-    const iconMap: { [key: string]: React.ReactNode } = {
+    const iconMap: { [key: string]: ReactNode } = {
         danger: <ErrorAlertFill size={iconSize} />,
         warning: <WarningFill size={iconSize} />
     };
 
-    const iconMock = iconMap[type] || (Icon && { ...Icon, size: iconSize });
+    const iconMock =
+        iconMap[type] ||
+        (Icon &&
+            cloneElement(Icon, {
+                size: iconSize
+            }));
 
     return (
         <div

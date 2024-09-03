@@ -1,10 +1,10 @@
 import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
+import { Globe } from '@geneui/icons';
 
 // Components
 import HelperText, { IHelperTextProps } from './index';
 import GeneUIProvider from '../../providers/GeneUIProvider';
-import { Icon } from '../../../index';
 
 describe('HelperText ', () => {
     let setup: ReactWrapper<IHelperTextProps>;
@@ -30,9 +30,9 @@ describe('HelperText ', () => {
         expect(setup.find('.helperText__text').text()).toStrictEqual('test');
     });
 
-    //temp test , will change after icons release
-    it('renders icon prop correctly', () => {
-        expect(setup.find(Icon)).toBeTruthy();
+    it('renders Icon prop correctly', () => {
+        const wrapper = setup.setProps({ Icon: <Globe /> });
+        expect(wrapper.find(Globe)).toBeTruthy();
     });
 
     it('renders isDisabled prop correctly', () => {
