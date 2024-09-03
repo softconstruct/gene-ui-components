@@ -1,4 +1,4 @@
-import React, { cloneElement, FC, JSX, ReactNode, useRef } from 'react';
+import React, { cloneElement, FC, JSX, useRef } from 'react';
 import { ErrorAlertFill, WarningFill } from '@geneui/icons';
 import classnames from 'classnames';
 
@@ -53,7 +53,7 @@ const HelperText: FC<IHelperTextProps> = ({ size = 'medium', type = 'rest', text
     const isTruncated = useEllipsisDetection(textRef);
     const iconSize = size === 'small' ? 16 : 20;
 
-    const iconMap: { [key: string]: ReactNode } = {
+    const iconMap = {
         danger: <ErrorAlertFill size={iconSize} />,
         warning: <WarningFill size={iconSize} />
     };
