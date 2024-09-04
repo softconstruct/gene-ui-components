@@ -3,7 +3,6 @@ import { InfoOutline } from '@geneui/icons';
 import classnames from 'classnames';
 
 // Components
-import Icon from '../Icon';
 import Tooltip from '../../molecules/Tooltip';
 
 // Hooks
@@ -48,35 +47,20 @@ interface ILabelProps {
      * When set to `true` a `skeleton` indicator will be shown instead of the `label` text.
      */
     isLoading?: boolean;
-    /**
-     * Custom `class` name(s) for the `label`.
-     * This allows for additional styling and customization of the `label` component.
-     */
-    className?: string;
 }
 
 /**
  * Labels identify a component or group of components. Use them with elements such as checkboxes and input fields to guide users in providing specific information, or with plain text to organize information.
  */
 
-const Label: FC<ILabelProps> = ({
-    htmlFor,
-    size = 'medium',
-    children,
-    disabled,
-    required,
-    infoText,
-    isLoading,
-    className,
-    ...restProps
-}) => {
+const Label: FC<ILabelProps> = ({ htmlFor, size = 'medium', children, disabled, required, infoText, isLoading }) => {
     const labelRef = useRef<HTMLLabelElement | null>(null);
 
     const isTruncated: boolean = useEllipsisDetection(labelRef);
     const iconSize = size === 'small' ? 16 : 20;
 
     return (
-        <div {...restProps} className={`label ${className || ''}`}>
+        <div className={`label`}>
             {isLoading ? (
                 'skeleton'
             ) : (

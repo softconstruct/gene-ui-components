@@ -14,11 +14,10 @@ const meta: Meta<typeof Label> = {
         htmlFor: args({ control: false, ...propCategory.functionality }),
         size: args({ control: 'select', ...propCategory.appearance }),
         children: args({ control: 'text', ...propCategory.content }),
-        required: args({ control: 'boolean', ...propCategory.validation }),
+        required: args({ control: 'boolean', ...propCategory.content }),
         infoText: args({ control: 'text', ...propCategory.content }),
         disabled: args({ control: 'boolean', ...propCategory.states }),
-        isLoading: args({ control: 'boolean', ...propCategory.states }),
-        className: args({ control: false, ...propCategory.others })
+        isLoading: args({ control: 'boolean', ...propCategory.states })
     },
     args: {
         htmlFor: 'inputId',
