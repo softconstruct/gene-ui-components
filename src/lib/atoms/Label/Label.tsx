@@ -26,7 +26,7 @@ interface ILabelProps {
      * The text content of the `label`.
      * This is the main text displayed within the `label`.
      */
-    children: string;
+    labelText: string;
     /**
      * Indicates whether the `label` is for a `required` field.
      * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
@@ -53,7 +53,7 @@ interface ILabelProps {
  * Labels identify a component or group of components. Use them with elements such as checkboxes and input fields to guide users in providing specific information, or with plain text to organize information.
  */
 
-const Label: FC<ILabelProps> = ({ htmlFor, size = 'medium', children, disabled, required, infoText, isLoading }) => {
+const Label: FC<ILabelProps> = ({ htmlFor, size = 'medium', labelText, disabled, required, infoText, isLoading }) => {
     const labelRef = useRef<HTMLLabelElement | null>(null);
 
     const isTruncated: boolean = useEllipsisDetection(labelRef);
@@ -65,7 +65,7 @@ const Label: FC<ILabelProps> = ({ htmlFor, size = 'medium', children, disabled, 
                 'skeleton'
             ) : (
                 <>
-                    <Tooltip text={children} isVisible={isTruncated}>
+                    <Tooltip text={labelText} isVisible={isTruncated}>
                         <>
                             <label
                                 ref={labelRef}
@@ -74,7 +74,7 @@ const Label: FC<ILabelProps> = ({ htmlFor, size = 'medium', children, disabled, 
                                     label__text_disabled: disabled
                                 })}
                             >
-                                {children}
+                                {labelText}
                             </label>
                             {required && (
                                 <span

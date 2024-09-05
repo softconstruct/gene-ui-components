@@ -3,17 +3,17 @@ import { ReactWrapper, mount } from 'enzyme';
 
 // Components
 import Label, { ILabelProps } from './index';
-import { Icon } from '../../../index';
+import { InfoOutline } from '@geneui/icons';
 import GeneUIProvider from '../../providers/GeneUIProvider';
 
 describe('Label ', () => {
     let setup: ReactWrapper<ILabelProps>;
-    const children = 'label';
+    const labelText = 'label';
     const htmlFor = 'input';
 
     beforeEach(
         () =>
-            (setup = mount(<Label htmlFor={htmlFor}>{children}</Label>, {
+            (setup = mount(<Label htmlFor={htmlFor} labelText={labelText} />, {
                 wrappingComponent: GeneUIProvider
             }))
     );
@@ -32,8 +32,8 @@ describe('Label ', () => {
         expect(wrapper.find('.label__text').hasClass(`label__text_size_${size}`)).toBeTruthy();
     });
 
-    it('renders children prop correctly', () => {
-        expect(setup.find('label').text()).toStrictEqual(children);
+    it('renders labelText prop correctly', () => {
+        expect(setup.find('label').text()).toStrictEqual(labelText);
     });
 
     it('renders required prop correctly', () => {
@@ -43,7 +43,7 @@ describe('Label ', () => {
 
     it('renders infoText prop correctly', () => {
         const wrapper = setup.setProps({ infoText: 'text' });
-        expect(wrapper.find(Icon)).toBeTruthy();
+        expect(wrapper.find(InfoOutline)).toBeTruthy();
     });
 
     it('renders disabled prop correctly', () => {

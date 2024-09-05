@@ -13,7 +13,7 @@ const meta: Meta<typeof Label> = {
     argTypes: {
         htmlFor: args({ control: false, ...propCategory.functionality }),
         size: args({ control: 'select', ...propCategory.appearance }),
-        children: args({ control: 'text', ...propCategory.content }),
+        labelText: args({ control: 'text', ...propCategory.content }),
         required: args({ control: 'boolean', ...propCategory.content }),
         infoText: args({ control: 'text', ...propCategory.content }),
         disabled: args({ control: 'boolean', ...propCategory.states }),
@@ -22,14 +22,14 @@ const meta: Meta<typeof Label> = {
     args: {
         htmlFor: 'inputId',
         size: 'medium',
-        children: 'label',
+        labelText: 'label',
         required: false
     }
 };
 
 export default meta;
 
-const Template: FC<ILabelProps> = (args) => <Label {...args}>{args.children}</Label>;
+const Template: FC<ILabelProps> = (args) => <Label {...args} />;
 
 export const Default = Template.bind({});
 
