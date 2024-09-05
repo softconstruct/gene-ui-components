@@ -144,6 +144,7 @@ export { default as TransferList } from './lib/organisms/TransferList';
 export { default as RichEditor } from './lib/organisms/RichEditor';
 export { default as Drawer } from './lib/organisms/Drawer';
 export { default as ActionableList } from './lib/organisms/ActionableList';
+export { default as Header } from './lib/organisms/Header';
 
 // Providers
 export { default as GeneUIProvider, GeneUIDesignSystemContext } from './lib/providers/GeneUIProvider';
