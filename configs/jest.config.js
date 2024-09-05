@@ -36,6 +36,6 @@ module.exports = {
         '!src/**/*.stories.tsx'
     ], // TODO add .ts also for helpers
     coveragePathIgnorePatterns: ['/node_modules/', '/dist/'],
-    transformIgnorePatterns: ['<rootDir>/node_modules/(?!react-dnd|dnd-core|@react-dnd|@geneui/tokens)'],
+    transformIgnorePatterns: ['<rootDir>/node_modules/(?!react-dnd|dnd-core|@react-dnd|@geneui/tokens|@geneui/icons)'],
     modulePathIgnorePatterns: ['node_modules', 'jest-test-results.json']
 };
