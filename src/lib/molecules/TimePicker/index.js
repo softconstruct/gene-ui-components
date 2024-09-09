@@ -272,93 +272,77 @@ function TimePicker({
         [hour, minute, second, separator, showSeconds, handleChange, combinedValue]
     );
 
-    const handleInputChange = useCallback(
-        (e) => {
-            const { value } = e.target;
+    const handleInputChange = (e) => {
+        const { value } = e.target;
 
-            // replacing special chars that not allowed
-            const replacedValue = value.replace(numberRegExp, '');
-            const timeParts = replacedValue.split(separator);
+        // replacing special chars that not allowed
+        const replacedValue = value.replace(numberRegExp, '');
+        const timeParts = replacedValue.split(separator);
 
-            const lastChar = replacedValue[replacedValue.length - 1];
-            const secondLastChar = replacedValue[replacedValue.length - 2];
+        const lastChar = replacedValue[replacedValue.length - 1];
+        const secondLastChar = replacedValue[replacedValue.length - 2];
 
-            // Checking if last and second last chars are same and equal to separator then return
-            if (lastChar === separator && lastChar === secondLastChar) return;
+        if (lastChar === separator && lastChar === secondLastChar) return;
 
-            if (value === '') {
-                setHour('');
-                setMinute('');
-                setSecond('');
-                setInputValue('');
+        if (value === '') {
+            setHour('');
+            setMinute('');
+            setSecond('');
+            setInputValue('');
 
-                handleChange(e, '');
-                return;
+            handleChange(e, '');
+            return;
+        }
+
+        if (typeof timeParts[showSeconds ? 3 : 2] !== 'undefined') return;
+
+        if (timeParts.some((item) => item.length > 2)) return;
+
+        let outOfRange = false;
+
+        timeParts[0] && setHour(timeParts[0]);
+        timeParts[1] && setMinute(timeParts[1]);
+        showSeconds && timeParts[2] && setSecond(timeParts[2]);
+
+        if (typeof timeParts[0] !== 'undefined') {
+            const isInRange = checkHourRange(timeParts[0], hourFormat);
+
+            if (isInRange) {
+                setHour(timeParts[0]);
+            } else {
+                outOfRange = true;
             }
+        }
 
-            if (typeof timeParts[showSeconds ? 3 : 2] !== 'undefined') return;
+        if (typeof timeParts[1] !== 'undefined') {
+            const isInRange = checkRange(timeParts[1]);
 
-            if (timeParts.some((item) => item.length > 2)) return;
-
-            let outOfRange = false;
-
-            timeParts[0] && setHour(timeParts[0]);
-            timeParts[1] && setMinute(timeParts[1]);
-            showSeconds && timeParts[2] && setSecond(timeParts[2]);
-
-            if (typeof timeParts[0] !== 'undefined') {
-                const isInRange = checkHourRange(timeParts[0], hourFormat);
-
-                if (isInRange) {
-                    setHour(timeParts[0]);
-                } else {
-                    outOfRange = true;
-                }
+            if (isInRange) {
+                setMinute(timeParts[1]);
+            } else {
+                outOfRange = true;
             }
+        }
 
-            if (typeof timeParts[1] !== 'undefined') {
-                const isInRange = checkRange(timeParts[1]);
+        if (showSeconds && typeof timeParts[2] !== 'undefined') {
+            const isInRange = checkRange(timeParts[2]);
 
-                if (isInRange) {
-                    setMinute(timeParts[1]);
-                } else {
-                    outOfRange = true;
-                }
+            if (isInRange) {
+                setSecond(timeParts[2]);
+            } else {
+                outOfRange = true;
             }
+        }
 
-            if (showSeconds && typeof timeParts[2] !== 'undefined') {
-                const isInRange = checkRange(timeParts[2]);
+        !checkTimeValidation(timeParts[0], false) && setHourFieldError(false);
+        !checkMinuteValidation(timeParts[1], false) && setMinuteFieldError(false);
+        (!showSeconds || !checkSecondValidation(timeParts[2], false)) && setSecondFieldError(false);
 
-                if (isInRange) {
-                    setSecond(timeParts[2]);
-                } else {
-                    outOfRange = true;
-                }
-            }
-
-            // Make field valid when after typing field pass validation
-            // but we must set error only when user click outside or onBlur event fires
-            !checkTimeValidation(timeParts[0], false) && setHourFieldError(false);
-            !checkMinuteValidation(timeParts[1], false) && setMinuteFieldError(false);
-            (!showSeconds || !checkSecondValidation(timeParts[2], false)) && setSecondFieldError(false);
-
-            if (!outOfRange) {
-                setInputValue(replacedValue);
-                onChange(e);
-            }
-        },
-        [
-            numberRegExp,
-            separator,
-            showSeconds,
-            checkTimeValidation,
-            checkMinuteValidation,
-            checkSecondValidation,
-            handleChange,
-            hourFormat,
-            onChange
-        ]
-    );
+        if (!outOfRange) {
+            setInputValue(replacedValue);
+            onChange(e);
+        }
+    };
 
     useEffect(() => {
         if ((disabled || readOnly) && childRef.current) {
@@ -367,32 +351,44 @@ function TimePicker({
     }, [disabled, readOnly]);
 
     useEffect(() => {
-        // if hour format changes, convert value to that format
-        const formattedHour = convertToFormat(hour, hourFormat);
-        setHour(formattedHour);
-        setInputValue(combinedValue(formattedHour, minute, second, false));
-    }, [combinedValue, hour, hourFormat, minute, second]);
+        if (hour) {
+            const formattedHour = convertToFormat(hour, hourFormat);
+            setHour(formattedHour);
+            setInputValue(combinedValue(formattedHour, minute, second, false));
+        }
+    }, [hourFormat]);
 
     useEffect(() => {
-        // if minute format changes, convert value to that format
-        const formattedMinute = convertToFormat(minute, minuteFormat);
-        setMinute(formattedMinute);
-        setInputValue(combinedValue(hour, formattedMinute, second, false));
-    }, [combinedValue, hour, minute, minuteFormat, second]);
+        if (minute) {
+            const formattedMinute = convertToFormat(minute, minuteFormat);
+            setMinute(formattedMinute);
+            setInputValue(combinedValue(hour, formattedMinute, second, false));
+        }
+    }, [minuteFormat]);
 
     useEffect(() => {
-        // if second format changes, convert value to that format
-        const formattedSecond = convertToFormat(second, secondFormat);
-        setSecond(formattedSecond);
-        setInputValue(combinedValue(hour, minute, formattedSecond, false));
-    }, [combinedValue, hour, minute, second, secondFormat]);
+        if (second) {
+            const formattedSecond = convertToFormat(second, secondFormat);
+            setSecond(formattedSecond);
+            setInputValue(combinedValue(hour, minute, formattedSecond, false));
+        }
+    }, [secondFormat]);
+
+    useEffect(() => {
+        if (!inputValue) return;
+
+        const [splitHour, splitMinute, splitSecond] = inputValue.split(separator);
+        !showSeconds && setSecond('');
+        showSeconds && (inputValue || hour) && !second && setSecond(convertToFormat(second, secondFormat));
+        setInputValue(combinedValue(splitHour, splitMinute, splitSecond));
+    }, [showSeconds]);
 
     useEffect(() => {
         if (value) {
-            const timeParts = value.split(separator);
-            timeParts[0] && setHour(timeParts[0]);
-            timeParts[1] && setMinute(timeParts[1]);
-            showSeconds && timeParts[2] && setSecond(timeParts[2]);
+            const [splitHour, splitMinute, splitSecond] = value.split(separator);
+            splitHour && setHour(splitHour);
+            splitMinute && setMinute(splitMinute);
+            showSeconds && splitSecond && setSecond(splitSecond);
 
             setInputValue(value);
         }
