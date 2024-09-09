@@ -1,6 +1,4 @@
 import React, { MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
-import Highcharts from 'highcharts';
-import HS_map from 'highcharts/modules/treemap';
 import Legend, { LegendAppearances } from './Legend';
 
 import * as d3 from 'd3';
@@ -8,12 +6,13 @@ import * as d3 from 'd3';
 // Components
 import Empty from '../../../atoms/Empty';
 import BusyLoader from '../../../atoms/BusyLoader';
+import Tooltip from './Tooltip';
+
+// Types
+import { ITooltipProps } from './Tooltip';
 
 // Styles
 import './HeatMapChartD3.scss';
-import Tooltip, { ITooltipProps } from './Tooltip';
-
-HS_map(Highcharts);
 
 export const CONTAINER_PADDING = 8;
 const BORDER_WIDTH = 1;
