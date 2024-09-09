@@ -18,7 +18,7 @@ const meta: Meta<ITooltipProps> = {
         padding: args({ control: 'number', ...propCategory.appearance }),
         alwaysShow: args({ control: 'boolean', ...propCategory.states }),
         disableReposition: args({ control: 'boolean', ...propCategory.states }),
-        customPosition: args({ control: 'object', ...propCategory.appearance }),
+        customPosition: args({ control: 'object', ...propCategory.states }),
         isVisible: args({ control: 'boolean', ...propCategory.functionality }),
         position: args({ control: 'select', ...propCategory.appearance }),
         onClick: args({ control: false, ...propCategory.action }),
@@ -33,7 +33,7 @@ const meta: Meta<ITooltipProps> = {
         disableReposition: false,
         text: 'Tooltip some text',
         screenType: 'desktop'
-    } as ITooltipProps
+    }
 };
 
 export default meta;

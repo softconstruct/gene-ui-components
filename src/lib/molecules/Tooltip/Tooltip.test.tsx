@@ -47,12 +47,21 @@ describe('Tooltip', () => {
         setup.setProps({ alwaysShow: true });
         expect(document.querySelector('.tooltip-c-p')).toBeTruthy();
     });
+
+    it('renders position prop correct', () => {
+        const position = 'right';
+
+        setup.setProps({ alwaysShow: true, position, title: 'test', text: 'test' });
+        expect(document.querySelector(`.${position}`)).toBeTruthy();
+    });
+
     it('handle onClick', () => {
         const jestFn = jest.fn();
         const wrapper = setup.setProps({ onClick: jestFn });
         wrapper.find('.test').simulate('click');
         expect(jestFn).toHaveBeenCalled();
     });
+
     it('handle onMouseEnter', () => {
         setup.find('.test').simulate('mouseEnter');
         expect(document.querySelector('.tooltip-c-p')).toBeTruthy();

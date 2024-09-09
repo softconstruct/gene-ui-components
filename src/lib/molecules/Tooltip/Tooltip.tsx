@@ -55,7 +55,7 @@ export interface ITooltipProps {
      */
     style?: CSSProperties;
     /**
-     * The component will be visible without any action.
+     * If `true` the  component will be visible without any action.
      */
     alwaysShow?: boolean;
     /**
@@ -75,7 +75,7 @@ export interface ITooltipProps {
      */
     position?: 'top' | 'right' | 'bottom' | 'left';
     /**
-     * Tooltip padding from the target element
+     * Tooltip padding related to the target element
      */
     padding?: number;
     /**
@@ -139,10 +139,10 @@ const Tooltip: FC<ITooltipProps> = ({
     // @ts-ignore
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const { isMobile } = useDeviceType(screenType);
-    const [isPopoverOpen, setPopoverState] = useState(false);
-    const mouseEnterHandler = () => !alwaysShow && setPopoverState(true);
+    const [isPopoverOpen, setIsPopoverState] = useState(false);
+    const mouseEnterHandler = () => !alwaysShow && setIsPopoverState(true);
     const mouseLeaveHandler = () => {
-        !alwaysShow && setPopoverState(false);
+        !alwaysShow && setIsPopoverState(false);
     };
 
     const { refs, floatingStyles, context } = useFloating({
@@ -190,7 +190,7 @@ const Tooltip: FC<ITooltipProps> = ({
                 <FloatingPortal root={geneUIProviderRef.current}>
                     {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
                         <div
-                            className={`tooltip-c-p s-${size}`}
+                            className={`tooltip-c-p s-${size} ${position}`}
                             ref={refs.setFloating}
                             style={{
                                 ...style,
