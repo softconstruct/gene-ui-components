@@ -10,7 +10,7 @@ import { ITooltipProps } from './index';
 
 describe('Tooltip', () => {
     let setup: ReactWrapper<ITooltipProps>;
-    let Component = <Tooltip children={<div className="test">Test</div>} />;
+    const Component = <Tooltip children={<div className="test">Test</div>} />;
     const provider = () =>
         setup.getWrappingComponent().setProps({
             children: Component

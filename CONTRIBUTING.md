@@ -392,17 +392,21 @@ it('should open modal when button is clicked', () => {
 
 ```jsx
 it('Tooltip with Portal', () => {
-    let setup: ReactWrapper<ITooltipProps>;
-    let Component = <Tooltip  />;
-    const provider = () =>
-        setup.getWrappingComponent().setProps({
+    let setup: ReactWrapper<ITooltipProps>
+    const Component = <Tooltip/>
+
+    const provider = () => {
+         return setup.getWrappingComponent().setProps({
             children: Component
-        });
-    beforeEach(() => {
+         })
+    }
+
+     beforeEach(() => {
         setup = mount(Component, {
             wrappingComponent: GeneUIProvider
         });
     });
+
     it('renders text prop correctly inside the portal', () => {
         const text = 'Test Tooltip Content';
         setup.setProps({ text, alwaysShow: true });
