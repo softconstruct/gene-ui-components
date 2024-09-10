@@ -10,11 +10,15 @@ import { ITooltipProps } from './index';
 
 describe('Tooltip', () => {
     let setup: ReactWrapper<ITooltipProps>;
+    let Component = <Tooltip children={<div className="test">Test</div>} />;
+    const provider = () =>
+        setup.getWrappingComponent().setProps({
+            children: Component
+        });
 
     beforeEach(() => {
-        setup = mount(<Tooltip children={<div className="test">Test</div>} />, {
-            wrappingComponent: GeneUIProvider,
-            attachTo: document.body
+        setup = mount(Component, {
+            wrappingComponent: GeneUIProvider
         });
     });
 
@@ -25,34 +29,35 @@ describe('Tooltip', () => {
     it('renders without crashing', () => {
         expect(setup.exists()).toBeTruthy();
     });
-
-    it.each<ITooltipProps['size']>(['default', 'small'])('renders %p size prop correct', (size) => {
+    it.each<ITooltipProps['size']>(['default', 'small'])('renders %p size prop correct inside the portal', (size) => {
         setup.setProps({ size, alwaysShow: true });
-        expect(document.querySelector(`.s-${size}`)).toBeTruthy();
+
+        expect(provider().find(`.s-${size}`).exists()).toBeTruthy();
     });
 
-    it('renders text prop correct', () => {
+    it('renders text prop correct inside the portal', () => {
         const text = 'test';
         setup.setProps({ text, alwaysShow: true });
-        expect(document.querySelector('.tooltip-text')?.innerHTML).toEqual(text);
+
+        expect(provider().find('.tooltip-text')?.text()).toEqual(text);
     });
 
-    it('renders title prop correct', () => {
+    it('renders title prop correct inside the portal', () => {
         const title = 'test';
         setup.setProps({ title, alwaysShow: true });
-        expect(document.querySelector('.tooltip-title')?.innerHTML).toEqual(title);
+        expect(provider().find('.tooltip-title').text()).toEqual(title);
     });
 
-    it('renders alwaysShow prop correct', () => {
+    it('renders alwaysShow prop correct inside the portal', () => {
         setup.setProps({ alwaysShow: true });
-        expect(document.querySelector('.tooltip-c-p')).toBeTruthy();
+        expect(provider().find('.tooltip-c-p').exists()).toBeTruthy();
     });
 
-    it('renders position prop correct', () => {
+    it('renders position prop correct inside the portal', () => {
         const position = 'right';
 
         setup.setProps({ alwaysShow: true, position, title: 'test', text: 'test' });
-        expect(document.querySelector(`.${position}`)).toBeTruthy();
+        expect(provider().find(`.${position}`).exists()).toBeTruthy();
     });
 
     it('handle onClick', () => {
@@ -64,6 +69,6 @@ describe('Tooltip', () => {
 
     it('handle onMouseEnter', () => {
         setup.find('.test').simulate('mouseEnter');
-        expect(document.querySelector('.tooltip-c-p')).toBeTruthy();
+        expect(provider().find('.tooltip-c-p').exists()).toBeTruthy();
     });
 });

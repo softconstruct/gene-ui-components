@@ -175,7 +175,6 @@ const Tooltip: FC<ITooltipProps> = ({
     const childProps = {
         onMouseEnter: mouseEnterHandler,
         onMouseLeave: mouseLeaveHandler,
-
         onClick: (e: PointerEvent, el: JSX.Element) => {
             const { onClick: onClickHandler } = el?.props;
             typeof onClickHandler === 'function' && onClickHandler(e);

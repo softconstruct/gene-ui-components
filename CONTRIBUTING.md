@@ -388,6 +388,30 @@ it('should open modal when button is clicked', () => {
 });
 ```
 
+**Example (Portal and Wrapper Test)**
+
+```jsx
+it('Tooltip with Portal', () => {
+    let setup: ReactWrapper<ITooltipProps>;
+    let Component = <Tooltip  />;
+    const provider = () =>
+        setup.getWrappingComponent().setProps({
+            children: Component
+        });
+    beforeEach(() => {
+        setup = mount(Component, {
+            wrappingComponent: GeneUIProvider
+        });
+    });
+    it('renders text prop correctly inside the portal', () => {
+        const text = 'Test Tooltip Content';
+        setup.setProps({ text, alwaysShow: true });
+        expect(provider().text()).toEqual(text);
+    });
+});
+```
+
+
 ## 🚀 Git flow
 
 ![image](https://github.com/softconstruct/gene-ui-components/assets/150047343/418bc979-45ed-4fd6-b194-4c32511cbcb4)
