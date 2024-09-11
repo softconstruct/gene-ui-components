@@ -93,7 +93,7 @@ export type DataType = Record<string, IDataWithStyle | string>;
 type AllIndexType = Set<Record<string, string | number | IDataWithStyle>>;
 
 const transformData = {
-    font: {} as Record<string, unknown>,
+    font: {},
     fontSize(size: number) {
         this.font.size = size;
 
@@ -126,6 +126,23 @@ const transformData = {
         }
     })
 };
+
+const transformedData = (transformedStyles: Record<string, Record<string, IDataWithStyle['style']>>) => {
+    Object.keys(transformedStyles).forEach((el) => {
+        let styles = transformedStyles[el].style;
+        transformData.font = {};
+        Object.keys(styles).forEach((key) => {
+            if (typeof transformData[key] === 'function') {
+                transformedStyles[el].style = {
+                    ...transformedStyles[el].style,
+                    ...transformData[key](styles[key])
+                };
+            }
+            delete transformedStyles[el].style[key];
+        });
+    });
+};
+
 const tableFormats = async (
     data: DataType[],
     header?: ITableHeader[],
@@ -141,21 +158,6 @@ const tableFormats = async (
         const dataFromHeader: string[] = [];
         const allIndex: AllIndexType = new Set();
 
-        const transformedData = (transformedStyles: Record<string, Record<string, IDataWithStyle['style']>>) => {
-            Object.keys(transformedStyles).forEach((el) => {
-                let styles = transformedStyles[el].style;
-                transformData.font = {};
-                Object.keys(styles).forEach((key) => {
-                    if (typeof transformData[key] === 'function') {
-                        transformedStyles[el].style = {
-                            ...transformedStyles[el].style,
-                            ...transformData[key](styles[key])
-                        };
-                    }
-                    delete transformedStyles[el].style[key];
-                });
-            });
-        };
         const transformAllIndex = (allIndex: AllIndexType) => {
             allIndex.forEach((el) => {
                 if (typeof el.element === 'object') {
@@ -164,6 +166,7 @@ const tableFormats = async (
                 }
             });
         };
+
         const fillTransformedStyles = (key: string | number, style: IDataWithStyle['style']) => {
             transformedStyles = {
                 ...transformedStyles,
@@ -184,7 +187,6 @@ const tableFormats = async (
                     dataFromHeader.push(val);
                     return { header: val, key: val };
                 });
-
             worksheet.columns = [...new Set(createHeder)];
         } else {
             const headerWithoutStyles = header.map((el) => {
@@ -237,5 +239,6 @@ const tableFormats = async (
 
 export const xlsx = (data: DataType[], header?: ITableHeader[], documentName?: string) =>
     tableFormats(data, header, documentName);
+
 export const csv = (data: DataType[], header?: ITableHeader[], documentName?: string) =>
     tableFormats(data, header, documentName, 'csv');
