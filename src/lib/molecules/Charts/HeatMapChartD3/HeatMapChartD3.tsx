@@ -28,20 +28,67 @@ export interface IColorBreakpoint {
 }
 
 export interface IHeatMapChartD3Props {
+    /**
+     * Data of chart
+     */
     data?: Data[];
+    /**
+     * Height of chart
+     */
     chartHeight?: string;
+    /**
+     * Height of legend
+     */
     legendHeight?: string;
+    /**
+     * Labels for X axis
+     */
     xAxisCategories: string[];
+    /**
+     * Labels for Y axis
+     */
     yAxisCategories: string[];
+    /**
+     * Chart title
+     */
     title: string;
-    subTitle: string;
+    /**
+     * Chart subtitle
+     */
+    subTitle?: string;
+    /**
+     * Breakpoint values and colors for heatmap. For example to show values in range 0-10 from red to green color, and in range 10-20 from green to blue,
+     * colorBreakpoints should be [{ value: 0, color: "#ff0000" }, { value: 10: "#00ff00" }, { value: 20, color: "#0000ff" }]
+     */
     colorBreakpoints?: IColorBreakpoint[];
+    /**
+     * How many dividing points should have legend
+     */
     legendThresholds?: number;
+    /**
+     * If true y axis will be reversed
+     */
     yAxisNeedReverse?: boolean;
+    /**
+     * Is legend shown
+     */
     enabledLegend?: boolean;
+    /**
+     * Legend layout <br/>
+     * Possible values: `vertical | horizontal` <br/>
+     */
     legendLayout?: LegendAppearances;
+    /**
+     * Function to format heatmap's cell's tooltip content. By default shows cell's value
+     */
     tooltipFormatter?: (value: string, x: string, y: string) => string;
+    /**
+     * If true loading indicator is shown
+     */
     isLoading?: boolean;
+    /**
+     * Text to show when data is empty
+     */
     emptyText?: string;
 }
 

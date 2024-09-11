@@ -2,7 +2,7 @@
 
 .x-labels {
     display: flex;
-    margin: 8px 0;
+    margin: rem(8) 0;
 
     .label {
         flex: 1;
@@ -13,13 +13,13 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    margin: 0 16px 30px 4px;
+    margin: 0 rem(16) rem(30) rem(4);
 }
 
 .label {
     color: rgb(102, 102, 102);
-    font-size: 11px;
-    line-height: 14px;
+    font-size: rem(11);
+    line-height: rem(14);
     text-align: center;
 }
 
@@ -27,7 +27,7 @@
     display: flex;
     width: 100%;
     height: 100%;
-    margin-top: 16px;
+    margin-top: rem(16);
 }
 
 .canvas-vertical {
@@ -72,13 +72,13 @@
     width: 100%;
 
     .mapTitle {
-        font-size: 18px;
+        font-size: rem(18);
         color: #333;
     }
 
     .mapSubTitle {
-        font-size: 12px;
+        font-size: rem(12);
         color: #666;
-        margin-top: 8px;
+        margin-top: rem(8);
     }
 }

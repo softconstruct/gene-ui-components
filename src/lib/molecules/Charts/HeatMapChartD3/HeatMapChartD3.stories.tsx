@@ -1,7 +1,16 @@
-import React from 'react';
+import React, { FC } from 'react';
+import { Meta } from '@storybook/react';
 
-import HeatMapChartD3, { IHeatMapChartD3Props } from './HeatMapChartD3';
+// Helpers
 import { args, category } from '../../../../../stories/assets/storybook.globals';
+
+// Components
+import HeatMapChartD3 from './HeatMapChartD3';
+
+// Types
+import { IHeatMapChartD3Props } from './HeatMapChartD3';
+
+// Data
 import { ColorBreakpoints, HeadMapChartIndAxesData, HeatMapChartData } from '../../../../../stories/charts/data';
 
 const tooltipFormatter = (a, b, c) => `<b>${a}</b> gwei on <br><b>${b}</b> at <b>${c}</b>`;
@@ -11,7 +20,7 @@ const legendAppearances = {
     horizontal: 'horizontal'
 };
 
-export default {
+const meta: Meta<typeof HeatMapChartD3> = {
     title: 'Charts/HeatMapChartD3',
     component: HeatMapChartD3,
     argTypes: {
@@ -46,6 +55,9 @@ export default {
         emptyText: 'No data to display'
     }
 };
-const Template = ({ ...args }: IHeatMapChartD3Props) => <HeatMapChartD3 {...args} />;
+
+export default meta;
+
+const Template: FC<IHeatMapChartD3Props> = (args) => <HeatMapChartD3 {...args} />;
 
 export const Default = Template.bind({});
