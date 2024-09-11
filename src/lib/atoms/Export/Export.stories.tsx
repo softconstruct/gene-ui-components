@@ -39,6 +39,15 @@ export const ExelFormats = () => {
                 color: '#e91e63',
                 bold: true
             }
+        },
+        {
+            header: 'Zzzz',
+            key: 'test1',
+            style: {
+                fontSize: 20,
+                color: '#e91e63',
+                bold: true
+            }
         }
     ];
 
@@ -47,17 +56,17 @@ export const ExelFormats = () => {
             test1: {
                 value: 'Zzzzz',
                 style: {
-                    color: '#e91e63',
+                    color: '#bd8faa',
                     fontSize: 10
                 }
             },
+            test5: 'loyality',
+
             test2: {
                 value: 'TestWithStyle',
                 style: {
-                    bold: true,
                     color: '#e91e63',
-                    fontSize: 30,
-                    italic: true
+                    fontSize: 10
                 }
             },
             test3: 'test'
@@ -66,19 +75,14 @@ export const ExelFormats = () => {
             test1: {
                 value: 'Zzzzz2',
                 style: {
-                    color: '#e91e63',
-                    fontSize: 30,
-                    italic: true,
-                    bold: true
+                    fontSize: 10
                 }
             },
             test2: 'test',
             test4: 'test4',
-
             test3: {
                 value: 'Styled value',
                 style: {
-                    background: '#e91e63',
                     fontSize: 10
                 }
             }
@@ -89,8 +93,8 @@ export const ExelFormats = () => {
             test3: {
                 value: 'ffdggdgd',
                 style: {
-                    background: '#e91e63',
-                    fontSize: 25
+                    fontSize: 10,
+                    bold: true
                 }
             }
         }
@@ -148,7 +152,7 @@ export const ExportTableAsPdf = () => {
     ];
 
     const exportHandler = () => {
-        ExportHelper.exportToTablePdf(createExel, exelHeader);
+        ExportHelper.exportToTablePdf(createExel);
     };
 
     return (

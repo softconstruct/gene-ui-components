@@ -6,6 +6,13 @@ import { saveAs } from 'file-saver';
 import autoTable, { ColumnInput } from 'jspdf-autotable';
 //TODO: change file location after tests
 
+const createUniqueArr = (data: object[]) => {
+    return data.reduce((aggr: string[], val) => {
+        aggr = [...aggr, ...Object.keys(val)];
+        return [...new Set(aggr)];
+    }, []);
+};
+
 export const exportToTablePdf = (
     data: Record<string, string>[],
     columns?: Record<string, unknown>[],
@@ -18,15 +25,10 @@ export const exportToTablePdf = (
 
         const pdfColumns = columns
             ? columns.map((column) => ({ header: column.header, dataKey: column.key }))
-            : data
-                  .reduce((aggr: string[], val) => {
-                      aggr = [...aggr, ...Object.keys(val)];
-                      return aggr;
-                  }, [])
-                  .map((el) => ({ header: el, dataKey: el }));
+            : createUniqueArr(data).map((el) => ({ header: el, dataKey: el }));
 
         autoTable(doc, {
-            columns: [...new Set(pdfColumns)] as ColumnInput[],
+            columns: pdfColumns as ColumnInput[],
             body: data
         });
 
@@ -151,13 +153,11 @@ const tableFormats = async (
 ) => {
     try {
         let transformedStyles = {};
-
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet();
         const allRows: Record<number, ExcelJS.Row> = {};
         const dataFromHeader: string[] = [];
         const allIndex: AllIndexType = new Set();
-
         const transformAllIndex = (allIndex: AllIndexType) => {
             allIndex.forEach((el) => {
                 if (typeof el.element === 'object') {
@@ -166,7 +166,6 @@ const tableFormats = async (
                 }
             });
         };
-
         const fillTransformedStyles = (key: string | number, style: IDataWithStyle['style']) => {
             transformedStyles = {
                 ...transformedStyles,
@@ -176,18 +175,12 @@ const tableFormats = async (
                 }
             };
         };
-
         if (!header) {
-            const createHeder = data
-                .reduce((aggr: string[], val) => {
-                    aggr = [...aggr, ...Object.keys(val)];
-                    return aggr;
-                }, [])
-                .map((val) => {
-                    dataFromHeader.push(val);
-                    return { header: val, key: val };
-                });
-            worksheet.columns = [...new Set(createHeder)];
+            const createHeder = createUniqueArr(data).map((val) => {
+                dataFromHeader.push(val);
+                return { header: val, key: val };
+            });
+            worksheet.columns = createHeder;
         } else {
             const headerWithoutStyles = header.map((el) => {
                 dataFromHeader.push(el.key!);
@@ -205,6 +198,7 @@ const tableFormats = async (
                 }
             });
         }
+
         data.forEach((items, rowIndex) => {
             let rows = {};
             dataFromHeader.forEach((element, colIndex) => {
