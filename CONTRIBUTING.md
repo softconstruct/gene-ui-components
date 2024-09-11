@@ -392,14 +392,14 @@ it('should open modal when button is clicked', () => {
 
 ```jsx
 it('Tooltip with Portal', () => {
-    let setup: ReactWrapper<ITooltipProps>
-    const Component = <Tooltip/>
+    let setup: ReactWrapper<ITooltipProps>;
+    const Component = <Tooltip/>;
 
     const provider = () => {
          return setup.getWrappingComponent().setProps({
             children: Component
          })
-    }
+    };
 
      beforeEach(() => {
         setup = mount(Component, {
