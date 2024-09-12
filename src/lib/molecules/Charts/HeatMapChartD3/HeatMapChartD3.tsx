@@ -68,7 +68,7 @@ export interface IHeatMapChartD3Props {
     /**
      * If true y axis will be reversed
      */
-    yAxisNeedReverse?: boolean;
+    reverseYAxisOrder?: boolean;
     /**
      * Is legend shown
      */
@@ -98,7 +98,7 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
     enabledLegend,
     legendLayout = LegendAppearances.Vertical,
     tooltipFormatter = (value: string) => value,
-    yAxisNeedReverse,
+    reverseYAxisOrder,
     xAxisCategories = [],
     yAxisCategories = [],
     legendHeight = '50%',
@@ -128,8 +128,8 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
 
         return reversedFilteredData
             .reverse()
-            .sort(([aX, aY], [bX, bY]) => (aX === bX ? (yAxisNeedReverse ? bY - aY : aY - bY) : aX - bX));
-    }, [data, yAxisNeedReverse]);
+            .sort(([aX, aY], [bX, bY]) => (aX === bX ? (reverseYAxisOrder ? bY - aY : aY - bY) : aX - bX));
+    }, [data, reverseYAxisOrder]);
 
     const yGroups = useMemo(() => [...new Set(uniqueData.map(([x, y]) => y.toString()))], [uniqueData]);
     const xGroups = useMemo(() => [...new Set(uniqueData.map(([x]) => x.toString()))], [uniqueData]);
@@ -310,7 +310,7 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
     return (
         <div className="chart-overflow-holder whiteDrillDown chart">
             <BusyLoader isBusy={isLoading} className="proxy-content">
-                {!data?.length ? (
+                {!data.length ? (
                     // @ts-ignore
                     <Empty type="data" title={emptyText} className="proxy-content" />
                 ) : (

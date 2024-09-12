@@ -11,7 +11,7 @@ import HeatMapChartD3 from './HeatMapChartD3';
 import { IHeatMapChartD3Props } from './HeatMapChartD3';
 
 // Data
-import { ColorBreakpoints, HeadMapChartIndAxesData, HeatMapChartData } from '../../../../../stories/charts/data';
+import { colorBreakpoints, data, HeadMapChartIndAxesData } from '../../../../../stories/__data__/HeatMapChartD3';
 
 const tooltipFormatter = (a, b, c) => `<b>${a}</b> gwei on <br><b>${b}</b> at <b>${c}</b>`;
 
@@ -35,7 +35,7 @@ const meta: Meta<typeof HeatMapChartD3> = {
         legendLayout: args({ control: 'select', options: legendAppearances, category: category.appearance }),
         xAxisCategories: args({ control: 'object', category: category.content }),
         yAxisCategories: args({ control: 'object', category: category.content }),
-        yAxisNeedReverse: args({ control: 'boolean', category: category.appearance }),
+        reverseYAxisOrder: args({ control: 'boolean', category: category.appearance }),
         legendHeight: args({ control: 'text', category: category.appearance }),
         isLoading: args({ control: 'boolean', category: category.states }),
         emptyText: args({ control: 'text', category: category.content })
@@ -46,10 +46,10 @@ const meta: Meta<typeof HeatMapChartD3> = {
         tooltipFormatter: tooltipFormatter,
         subTitle: 'subTitle',
         enabledLegend: true,
-        data: HeatMapChartData,
+        data,
         xAxisCategories: HeadMapChartIndAxesData.XAxisData,
         yAxisCategories: HeadMapChartIndAxesData.YAxisData,
-        colorBreakpoints: ColorBreakpoints,
+        colorBreakpoints,
         isLoading: false,
         legendThresholds: 5,
         emptyText: 'No data to display'

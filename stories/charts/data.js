@@ -72,12 +72,6 @@ export const HeatMapChartAxisData = {
     ]
 };
 
-export const ColorBreakpoints = [
-    { value: 0, color: '#fffed3' },
-    { value: 50, color: '#ff8000' },
-    { value: 100, color: '#ff0000' }
-];
-
 export const HeatMapChartData = getDate([]).map((item) => [
     item.x,
     HeatMapChartAxisData.y.indexOf(item.y.split(':')[0]),

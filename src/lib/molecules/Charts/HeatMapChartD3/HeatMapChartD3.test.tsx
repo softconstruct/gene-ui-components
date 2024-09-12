@@ -1,8 +1,13 @@
 import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 import HeatMapChartD3, { IHeatMapChartD3Props } from './HeatMapChartD3';
-import { data, xAxisCategories, yAxisCategories, colorBreakpoints } from './test/data';
 import { LegendAppearances } from './Legend';
+import {
+    colorBreakpoints,
+    data,
+    xAxisCategories,
+    yAxisCategories
+} from '../../../../../stories/__data__/HeatMapChartD3';
 
 export const title = 'Test title';
 export const subTitle = 'Test sub title';

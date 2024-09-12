@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 import Tooltip, { ITooltipProps } from './Tooltip';
-import { tooltipData } from '../test/data';
+import { tooltipData } from '../../../../../../stories/__data__/HeatMapChartD3';
 
 describe('Tooltip', () => {
     let setup: ReactWrapper<ITooltipProps>;

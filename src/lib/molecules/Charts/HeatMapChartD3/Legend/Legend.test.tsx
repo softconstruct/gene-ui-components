@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 import Legend, { ILegendProps } from './Legend';
-import { legendData, tooltipData } from '../test/data';
+import { legendData } from '../../../../../../stories/__data__/HeatMapChartD3';
 
 describe('Legend', () => {
     let setup: ReactWrapper<ILegendProps>;
