@@ -2,12 +2,8 @@ import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 import HeatMapChartD3, { IHeatMapChartD3Props } from './HeatMapChartD3';
 import { LegendAppearances } from './Legend';
-import {
-    colorBreakpoints,
-    data,
-    xAxisCategories,
-    yAxisCategories
-} from '../../../../../stories/__data__/HeatMapChartD3';
+import { colorBreakpoints, data, HeadMapChartIndAxesData } from '../../../../../stories/__data__/HeatMapChartD3';
+import GeneUIProvider from '../../../providers/GeneUIProvider';
 
 export const title = 'Test title';
 export const subTitle = 'Test sub title';
@@ -20,11 +16,12 @@ describe('HeatMapChartD3', () => {
         setup = mount(
             <HeatMapChartD3
                 data={data}
-                xAxisCategories={xAxisCategories}
-                yAxisCategories={yAxisCategories}
+                xAxisCategories={HeadMapChartIndAxesData.XAxisData}
+                yAxisCategories={HeadMapChartIndAxesData.YAxisData}
                 title={title}
                 subTitle={subTitle}
-            />
+            />,
+            { wrappingComponent: GeneUIProvider }
         );
     });
 
@@ -33,11 +30,11 @@ describe('HeatMapChartD3', () => {
     });
 
     it('renders title prop correctly', () => {
-        expect(setup.find('.mapTitle').text()).toEqual(title);
+        expect(setup.find('.heatMap__title').text()).toEqual(title);
     });
 
     it('renders sub title prop correctly', () => {
-        expect(setup.find('.mapSubTitle').text()).toEqual(subTitle);
+        expect(setup.find('.heatMap__subTitle').text()).toEqual(subTitle);
     });
 
     it('should have data property', () => {
@@ -50,15 +47,15 @@ describe('HeatMapChartD3', () => {
     });
 
     it('should have xAxisCategories property', () => {
-        expect(setup.props().xAxisCategories).toEqual(xAxisCategories);
+        expect(setup.props().xAxisCategories).toEqual(HeadMapChartIndAxesData.XAxisData);
     });
 
     it('should have yAxisCategories property', () => {
-        expect(setup.props().yAxisCategories).toEqual(yAxisCategories);
+        expect(setup.props().yAxisCategories).toEqual(HeadMapChartIndAxesData.YAxisData);
     });
 
     it('renders canvas', () => {
-        expect(setup.find('.canvas-wrapper').exists()).toBeTruthy();
+        expect(setup.find('.heatMap__canvasWrapper').exists()).toBeTruthy();
     });
 
     it('renders legend vertical', () => {
@@ -68,13 +65,13 @@ describe('HeatMapChartD3', () => {
 
     it('renders legend horizontally', () => {
         setup.setProps({ enabledLegend: true, legendLayout: LegendAppearances.Horizontal });
-        expect(setup.find('.legend-horizontal').exists()).toBeTruthy();
+        expect(setup.find('.legend_direction_horizontal').exists()).toBeTruthy();
     });
 
     it('renders legend with correct thresholds', () => {
         const count = 3;
         setup.setProps({ enabledLegend: true, legendThresholds: count });
-        const thresholds = setup.find('div.legend > div.yAxis');
+        const thresholds = setup.find('div.legend > div.legend__yAxis');
         expect(thresholds.childAt(count - 1).exists()).toBeTruthy();
         expect(thresholds.childAt(count).exists()).toBeFalsy();
     });

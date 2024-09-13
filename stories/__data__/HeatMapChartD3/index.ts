@@ -49,10 +49,6 @@ const generateData = () => {
 };
 
 export const data = generateData();
-export const xAxisCategories = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-export const yAxisCategories = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(
-    (el) => `${el}:00 AMT`
-);
 
 export const colorBreakpoints = [
     { value: 0, color: '#fffed3' },

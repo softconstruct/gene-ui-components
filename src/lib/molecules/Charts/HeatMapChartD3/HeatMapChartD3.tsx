@@ -6,7 +6,8 @@ import * as d3 from 'd3';
 // Components
 import Empty from '../../../atoms/Empty';
 import BusyLoader from '../../../atoms/BusyLoader';
-import Tooltip from './Tooltip';
+import Tooltip from '../../Tooltip/Tooltip';
+import { default as HeatMapTooltip } from './Tooltip';
 
 // Types
 import { ITooltipProps } from './Tooltip';
@@ -20,8 +21,6 @@ const X_LABELS_HEIGHT = 30;
 const TOP_SPACE = 66;
 const LEFT_SPACE = 74;
 
-type Data = number[];
-
 export interface IColorBreakpoint {
     value: number;
     color: string;
@@ -31,7 +30,7 @@ export interface IHeatMapChartD3Props {
     /**
      * Data of chart
      */
-    data?: Data[];
+    data?: number[][];
     /**
      * Height of chart
      */
@@ -114,6 +113,8 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
     const [hoveredCell, setHoveredCell] = useState<(ITooltipProps & { value: number }) | undefined>();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const colorsSet = useRef(new Set());
+    const titleRef = useRef<HTMLDivElement>(null);
+    const subTitleRef = useRef<HTMLDivElement>(null);
 
     const uniqueData = useMemo(() => {
         const xySet = new Set();
@@ -246,7 +247,7 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
     const xLabels = useMemo(
         () =>
             xGroups.map((name, i) => (
-                <span className="label" key={i}>
+                <span className="heatMap__labels__text heatMap__labels_direction_x__text" key={i}>
                     {xAxisCategories[name]}
                 </span>
             )),
@@ -256,7 +257,7 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
     const yLabels = useMemo(
         () =>
             yGroups.reverse().map((name, i) => (
-                <span className="label" key={i}>
+                <span className="heatMap__labels__text" key={i}>
                     {yAxisCategories[name]}
                 </span>
             )),
@@ -270,6 +271,11 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
 
         return () => window.removeEventListener('resize', resizeHandler);
     }, [containerRef.current, legendLayout, enabledLegend]);
+
+    const isTitleTruncated = Boolean(titleRef.current && titleRef.current.offsetWidth < titleRef.current.scrollWidth);
+    const isSubTitleTruncated = Boolean(
+        subTitleRef.current && subTitleRef.current.offsetWidth < subTitleRef.current.scrollWidth
+    );
 
     const closeTooltip = () => setHoveredCell(undefined);
 
@@ -307,23 +313,45 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
         }
     };
 
+    const titleElement = (
+        <div ref={titleRef} className="heatMap__title">
+            {title}
+        </div>
+    );
+    const subtitleElement = (
+        <div ref={subTitleRef} className="heatMap__subTitle">
+            {subTitle}
+        </div>
+    );
     return (
-        <div className="chart-overflow-holder whiteDrillDown chart">
-            <BusyLoader isBusy={isLoading} className="proxy-content">
+        <div className="chart-overflow-holder whiteDrillDown heatMap" style={{ minHeight: chartHeight }}>
+            <BusyLoader isBusy={isLoading} className="heatMap__emptyContent">
                 {!data.length ? (
                     // @ts-ignore
-                    <Empty type="data" title={emptyText} className="proxy-content" />
+                    <Empty type="data" title={emptyText} className="heatMap__emptyContent" />
                 ) : (
-                    <div className="container" style={{ padding: CONTAINER_PADDING }} onMouseLeave={closeTooltip}>
-                        <div className="mapTitle">{title}</div>
-                        <div className="mapSubTitle">{subTitle}</div>
-                        <div style={{ height: chartHeight }} className="canvas-horizontal">
-                            <div className="y-labels">{yLabels}</div>
-                            <div className="canvas-vertical">
-                                <div className="canvas-wrapper" ref={containerRef}>
-                                    <canvas ref={canvasRef} onMouseMove={onMouseMoveOverCanvas}></canvas>
+                    <div
+                        className="heatMap__container"
+                        style={{ padding: CONTAINER_PADDING }}
+                        onMouseLeave={closeTooltip}
+                    >
+                        {title && (isSubTitleTruncated ? <Tooltip text={title}>{titleElement}</Tooltip> : titleElement)}
+                        {subTitle &&
+                            (subtitleElement ? <Tooltip text={subTitle}>{subtitleElement}</Tooltip> : subtitleElement)}
+                        <div
+                            style={{ height: chartHeight }}
+                            className="heatMap__canvasContainer heatMap__canvasContainer_direction_horizontal"
+                        >
+                            <div className="heatMap__labels heatMap__labels_direction_y">{yLabels}</div>
+                            <div className="heatMap__canvasContainer heatMap__canvasContainer_direction_vertical">
+                                <div className="heatMap__canvasWrapper" ref={containerRef}>
+                                    <canvas
+                                        className="heatMap__canvas"
+                                        ref={canvasRef}
+                                        onMouseMove={onMouseMoveOverCanvas}
+                                    ></canvas>
                                 </div>
-                                <div className="x-labels">{xLabels}</div>
+                                <div className="heatMap__labels heatMap__labels_direction_x">{xLabels}</div>
                             </div>
                             {enabledLegend && min && max && (
                                 <Legend
@@ -337,7 +365,7 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
                                 />
                             )}
                         </div>
-                        {hoveredCell && <Tooltip {...hoveredCell} />}
+                        {hoveredCell && <HeatMapTooltip {...hoveredCell} />}
                     </div>
                 )}
             </BusyLoader>

@@ -1,7 +1,9 @@
+@import 'src/assets/styles/variables';
+
 .heatMapTooltip {
     position: absolute;
-    background-color: rgba(0, 0, 0, 80%);
-    color: white;
+    background-color: sc(b, 0.8);
+    color: c(b);
     font-size: 12px;
     font-weight: 600;
     padding: 8px;

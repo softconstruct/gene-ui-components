@@ -75,23 +75,28 @@ const Legend: React.FC<ILegendProps> = ({
     );
 
     return (
-        <div className={classnames('legend', { 'legend-horizontal': isHorizontal })} style={{ height }}>
+        <div className={classnames('legend', { legend_direction_horizontal: isHorizontal })} style={{ height }}>
             <div
-                className={classnames('gradient', { 'gradient-horizontal': isHorizontal })}
+                className={classnames('legend__gradient', { legend__gradient_direction_horizontal: isHorizontal })}
                 style={{
                     background: gradient
                 }}
             />
-            <div className={isHorizontal ? 'xAxis' : 'yAxis'}>
+            <div className={isHorizontal ? 'legend__xAxis' : 'legend__yAxis'}>
                 {thresholds.map((threshold, index) => (
                     <span key={`${threshold}${index}`}>{Math.floor(threshold)}</span>
                 ))}
             </div>
             <div
-                className={classnames('triangle', { 'triangle-horizontal': isHorizontal })}
+                className={classnames('legend__triangle', { legend__triangle_direction_horizontal: isHorizontal })}
                 style={{ [isHorizontal ? 'left' : 'top']: `calc(${currentPosition}% - ${ICON_SIZE / 2}px)` }}
             >
-                <Icon type="bc-icon-arrow-right-nav" disabled={false} isFilled={true} className="" />
+                <Icon
+                    type="bc-icon-arrow-right-nav"
+                    disabled={false}
+                    isFilled={true}
+                    className="legend__triangle__icon"
+                />
             </div>
         </div>
     );
