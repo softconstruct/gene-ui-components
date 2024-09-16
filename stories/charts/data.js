@@ -87,12 +87,35 @@ const columnRangeDataCreator = (min, max) =>
         data: Array.from({ length: 4 }, () => Array.from({ length: 2 }, () => faker.datatype.number({ min, max })))
     }));
 
-export const columnRangeData = columnRangeDataCreator(-1500, 1500).map((elem) => {
-    elem.data.forEach((el) => {
-        if (el[0] > el[1]) el.reverse();
-    });
-    return elem;
-});
+export const columnRangeData = [
+    {
+        name: 'Lavinia',
+        data: [
+            [-565, 1456],
+            [287, 1122],
+            [-1161, -516],
+            [-693, -604]
+        ]
+    },
+    {
+        name: 'Lawson',
+        data: [
+            [-239, 669],
+            [596, 1006],
+            [379, 1469],
+            [-382, 943]
+        ]
+    },
+    {
+        name: 'Claudie',
+        data: [
+            [-1318, -1220],
+            [-387, 1031],
+            [-994, -755],
+            [-1427, 401]
+        ]
+    }
+];
 
 export const HeadMapChartIndAxesData = {
     YAxisData: HeatMapChartAxisData.y.map((el) => `${el}:00 AMT`),
