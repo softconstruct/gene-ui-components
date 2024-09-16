@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 // Helpers
 import { args, propCategory } from '../../assets/storybook.globals';
-import { advancedSearchConfig } from '../../../src/configs';
 
 // Data
 import { typeFilterData, userFilterData, data } from './data';
@@ -13,6 +12,9 @@ import Icon from 'src/lib/atoms/Icon';
 import Avatar from 'src/lib/atoms/Avatar';
 import Divider from 'src/lib/atoms/Divider';
 import NavigationMenu from 'src/lib/molecules/NavigationMenu';
+
+// Configs
+import { advancedSearchConfig } from '../../../src/configs';
 
 export default {
     title: 'Molecules/AdvancedSearch',
