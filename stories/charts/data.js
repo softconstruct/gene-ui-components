@@ -7,40 +7,45 @@ import dayjs from 'dayjs';
  * following the link https://github.com/faker-js/faker#readme
  */
 
-const stackedBarDataCreator = (min, max) => {
-    const stackedBarData = [];
-
-    function createStackedBarData() {
-        return {
-            name: faker.name.firstName(),
-            data: Array.from({ length: 5 }, () => faker.datatype.number({ min, max }))
-        };
+// StackedBarChart story data
+export const stackedBarDataPositive = [
+    {
+        name: 'Sylvia',
+        data: [-124, 639, 19, -269, -470]
+    },
+    {
+        name: 'Judson',
+        data: [-286, -870, 265, -487, -452]
+    },
+    {
+        name: 'General',
+        data: [716, -483, 419, -869, -639]
+    },
+    {
+        name: 'Flavie',
+        data: [145, -457, -916, 10, 30]
     }
-
-    Array.from({ length: 4 }).forEach(() => {
-        stackedBarData.push(createStackedBarData());
-    });
-    return stackedBarData;
-};
-
-export const stackedBarDataPositive = stackedBarDataCreator(0, 1000);
-export const stackedBarDataNegative = stackedBarDataCreator(-1000, 1000);
+];
+export const stackedBarDataNegative = [
+    {
+        name: 'Sylvia',
+        data: [-124, 639, 19, -269, -470]
+    },
+    {
+        name: 'Judson',
+        data: [-286, -870, 265, -487, -452]
+    },
+    {
+        name: 'General',
+        data: [716, -483, 419, -869, -639]
+    },
+    {
+        name: 'Flavie',
+        data: [145, -457, -916, 10, 30]
+    }
+];
 
 // HeatMapChart story data
-const getDate = (arr) => {
-    for (let i = 0; i <= 6; i++) {
-        for (let j = 0; j <= 12; j++) {
-            const result = dayjs().day(i).hour(j).format('YYYY-MM-DDTHH:mm:ss');
-            arr.push({
-                x: dayjs(result).get('day'),
-                y: dayjs(result).format('hh:mm'),
-                value: Math.random() * 100
-            });
-        }
-    }
-    return arr;
-};
-
 export const HeatMapChartAxisData = {
     x: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
     y: [
@@ -166,15 +171,7 @@ export const HeatMapChartData = [
     [6, 12, 94.18961827061125]
 ];
 
-/**
- * ColumnRangeChart story data
- */
-const columnRangeDataCreator = (min, max) =>
-    Array.from({ length: 3 }, () => ({
-        name: faker.name.firstName(),
-        data: Array.from({ length: 4 }, () => Array.from({ length: 2 }, () => faker.datatype.number({ min, max })))
-    }));
-
+// ColumnRangeChart story data
 export const columnRangeData = [
     {
         name: 'Lavinia',
