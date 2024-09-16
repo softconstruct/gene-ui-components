@@ -2,10 +2,10 @@ import React, { cloneElement, FC, JSX, useRef } from 'react';
 import { ErrorAlertFill, WarningFill } from '@geneui/icons';
 import classnames from 'classnames';
 
-//Hooks
+// Hooks
 import { useEllipsisDetection } from '../../../hooks';
 
-//Components
+// Components
 import Tooltip from '../../molecules/Tooltip';
 
 // Styles
@@ -30,7 +30,9 @@ interface IHelperTextProps {
     text: string;
     /**
      * Optional. Icon to be displayed alongside the helper text.
-     * If not provided, a default icon will be used based on the `type` prop.
+     * If the `type` prop is set to `danger` or `warning`, a default icon will be used (ErrorAlertFill for `danger` and WarningFill for `warning`) unless an `Icon` is explicitly provided.
+     * If `type` is `rest`, the provided `Icon` will be used (if supplied), otherwise no icon will be displayed.
+     * The size of the icon will automatically adjust based on the `size` prop (`small` or `medium`).
      */
     Icon?: JSX.Element;
     /**
@@ -51,18 +53,22 @@ interface IHelperTextProps {
 const HelperText: FC<IHelperTextProps> = ({ size = 'medium', type = 'rest', text, Icon, isDisabled, isLoading }) => {
     const textRef = useRef(null);
     const isTruncated = useEllipsisDetection(textRef);
-    const iconSize = size === 'small' ? 16 : 20;
+
+    const iconSize = {
+        small: 16,
+        medium: 20
+    };
 
     const iconMap = {
-        danger: <ErrorAlertFill size={iconSize} />,
-        warning: <WarningFill size={iconSize} />
+        danger: <ErrorAlertFill size={iconSize[size]} />,
+        warning: <WarningFill size={iconSize[size]} />
     };
 
     const iconMock =
         iconMap[type] ||
         (Icon &&
             cloneElement(Icon, {
-                size: iconSize
+                size: iconSize[size]
             }));
 
     return (
