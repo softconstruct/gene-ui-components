@@ -23,6 +23,7 @@ const meta: Meta<typeof HelperText> = {
         size: 'medium',
         text: 'Helper Text',
         isDisabled: false,
+        isLoading: false,
         type: 'rest'
     }
 };
