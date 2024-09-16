@@ -1,42 +1,47 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
+// Helpers
+import { args, propCategory } from '../../assets/storybook.globals';
+import { advancedSearchConfig } from '../../../src/configs';
+
+// Data
+import { typeFilterData, userFilterData, data } from './data';
+
+// Components
 import AdvancedSearchComponent from 'src/lib/molecules/AdvancedSearch';
 import Icon from 'src/lib/atoms/Icon';
+import Avatar from 'src/lib/atoms/Avatar';
 import Divider from 'src/lib/atoms/Divider';
 import NavigationMenu from 'src/lib/molecules/NavigationMenu';
-import { args, category } from '../../assets/storybook.globals';
-import { typeFilterData, userFilterData, data } from './data';
-import { advancedSearchConfig } from '../../../src/configs';
-import Time from '../../../src/lib/atoms/Time';
 
 export default {
     title: 'Molecules/AdvancedSearch',
     component: AdvancedSearchComponent,
     argTypes: {
-        data: args({ control: 'object', category: category.content }),
-        onSearch: args({ control: false, category: category.action }),
-        noDataText: args({ control: 'text', category: category.content }),
-        showMoreText: args({ control: 'text', category: category.content }),
-        totalCount: args({ control: 'number', category: category.content }),
-        onOutsideClick: args({ control: false, category: category.action }),
-        initialData: args({ control: 'object', category: category.content }),
-        onShowMoreClick: args({ control: false, category: category.action }),
-        totalCountText: args({ control: 'text', category: category.content }),
-        showMoreIsLoading: args({ control: false, category: category.states }),
-        isOpen: args({ control: 'boolean', category: category.functionality }),
-        primaryFilterData: args({ control: 'object', category: category.content }),
-        closedInputWidth: args({ control: 'number', category: category.appearance }),
-        openedInputWidth: args({ control: 'number', category: category.appearance }),
-        extendedInputConfigs: args({ control: 'object', category: category.others }),
-        totalCountMax: args({ control: 'number', category: category.functionality }),
-        secondaryFilterData: args({ control: 'object', category: category.content }),
-        initialDataDescription: args({ control: 'text', category: category.content }),
-        isSearchLoading: args({ control: 'boolean', category: category.functionality }),
-        hasActiveShowMore: args({ control: 'boolean', category: category.functionality }),
+        data: args({ control: 'object', ...propCategory.content }),
+        onSearch: args({ control: false, ...propCategory.action }),
+        noDataText: args({ control: 'text', ...propCategory.content }),
+        showMoreText: args({ control: 'text', ...propCategory.content }),
+        totalCount: args({ control: 'number', ...propCategory.content }),
+        onOutsideClick: args({ control: false, ...propCategory.action }),
+        initialData: args({ control: 'object', ...propCategory.content }),
+        onShowMoreClick: args({ control: false, ...propCategory.action }),
+        totalCountText: args({ control: 'text', ...propCategory.content }),
+        showMoreIsLoading: args({ control: false, ...propCategory.states }),
+        isOpen: args({ control: 'boolean', ...propCategory.functionality }),
+        primaryFilterData: args({ control: 'object', ...propCategory.content }),
+        closedInputWidth: args({ control: 'number', ...propCategory.appearance }),
+        openedInputWidth: args({ control: 'number', ...propCategory.appearance }),
+        extendedInputConfigs: args({ control: 'object', ...propCategory.others }),
+        totalCountMax: args({ control: 'number', ...propCategory.functionality }),
+        secondaryFilterData: args({ control: 'object', ...propCategory.content }),
+        initialDataDescription: args({ control: 'text', ...propCategory.content }),
+        isSearchLoading: args({ control: 'boolean', ...propCategory.functionality }),
+        hasActiveShowMore: args({ control: 'boolean', ...propCategory.functionality }),
         position: args({
             control: 'select',
             options: Object.values(advancedSearchConfig.positions),
-            category: category.appearance
+            ...propCategory.appearance
         })
     },
     args: {}
@@ -292,7 +297,7 @@ export const Default = ({ ...args }) => {
                 onSearch={onSearchHandler}
             />
             <Divider size={32} />
-            <Time style={{ marginLeft: '10px' }} />
+            <Avatar>A S</Avatar>
         </header>
     );
 };
@@ -553,7 +558,7 @@ export const OpenStateControlled = ({ ...args }) => {
                 onOutsideClick={() => setIsOpen(false)}
             />
             <Divider size={32} />
-            <Time data-chromatic="ignore" style={{ marginLeft: '10px' }} />
+            <Avatar>A S</Avatar>
         </header>
     );
 };
