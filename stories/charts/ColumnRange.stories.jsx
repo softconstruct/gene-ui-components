@@ -9,7 +9,6 @@ import ColumnRangeChart from 'src/lib/molecules/Charts/ColumnRangeChart';
 // Data
 import { columnRangeData, columnRangeDataFixed } from './data';
 
-console.log(columnRangeData, 8888);
 export default {
     title: 'Charts/ColumnRange',
     component: ColumnRangeChart,
