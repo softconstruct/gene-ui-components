@@ -17,7 +17,6 @@ const meta: Meta<ITooltipProps> = {
         size: args({ control: 'select', ...propCategory.appearance }),
         padding: args({ control: 'number', ...propCategory.appearance }),
         alwaysShow: args({ control: 'boolean', ...propCategory.states }),
-        disableReposition: args({ control: 'boolean', ...propCategory.functionality }),
         customPosition: args({ control: 'object', ...propCategory.functionality }),
         isVisible: args({ control: 'boolean', ...propCategory.functionality }),
         position: args({ control: 'select', ...propCategory.appearance }),
@@ -30,7 +29,6 @@ const meta: Meta<ITooltipProps> = {
         isVisible: true,
         alwaysShow: false,
         position: 'top',
-        disableReposition: false,
         text: 'Tooltip some text',
         screenType: 'desktop'
     }
