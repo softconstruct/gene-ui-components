@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
 
+//Helpers
+import { args, propCategory } from '../../assets/storybook.globals';
+
+// Components
 import UploaderComponent from 'src/lib/molecules/Uploader';
 import Tabs from 'src/lib/molecules/Tabs/Tabs';
 import Tab from 'src/lib/molecules/Tabs/Tab';
+
+// Configs
 import { uploaderConfig } from '../../../src/configs';
-import { args, category } from '../../assets/storybook.globals';
-
-const action = { category: category.action };
-const states = { category: category.states };
-const others = { category: category.others };
-const content = { category: category.content };
-const validation = { category: category.validation };
-const appearance = { category: category.appearance };
-const functionality = { category: category.functionality };
-
 const configs = {
     cornerRadius: ['round', 'smooth'],
     inputCornerRadius: ['full-radius', 'smooth-radius']
@@ -23,51 +19,55 @@ export default {
     title: 'Molecules/ImageUpload',
     component: UploaderComponent,
     argTypes: {
-        upload: args({ control: false, ...action }),
-        icon: args({ control: 'text', ...content }),
-        data: args({ control: 'object', ...content }),
-        onChange: args({ control: false, ...action }),
-        images: args({ control: 'array', ...content }),
-        className: args({ control: false, ...others }),
-        typesList: args({ control: 'array', ...states }),
-        required: args({ control: 'boolean', ...states }),
-        deleteAction: args({ control: false, ...action }),
-        browseLabel: args({ control: 'text', ...content }),
-        maxFileSize: args({ control: 'number', ...states }),
-        loadingLabel: args({ control: 'text', ...content }),
-        isDisabled: args({ control: 'boolean', ...states }),
-        isValid: args({ control: 'boolean', ...validation }),
-        maxFileCount: args({ control: 'number', ...states }),
-        dropHereLabel: args({ control: 'text', ...content }),
-        getInitialState: args({ control: false, ...action }),
-        initialImages: args({ control: 'array', ...content }),
-        chooseFileLabel: args({ control: 'text', ...content }),
-        isImageUpload: args({ control: 'boolean', ...states }),
-        customHeaders: args({ control: 'object', ...content }),
-        sizeErrorMsg: args({ control: 'text', ...validation }),
-        typeErrorMsg: args({ control: 'text', ...validation }),
-        startUploadLabel: args({ control: 'text', ...content }),
-        multiple: args({ control: 'boolean', ...functionality }),
-        additionalContext: args({ control: 'text', ...content }),
-        hideName: args({ control: 'boolean', ...functionality }),
-        allTypesAccepted: args({ control: 'boolean', ...states }),
-        uploadErrorText: args({ control: 'text', ...validation }),
-        informationMessage: args({ control: 'text', ...content }),
-        showTrash: args({ control: 'boolean', ...functionality }),
-        isActiveDrop: args({ control: 'boolean', ...functionality }),
-        showLocalErrors: args({ control: 'boolean', ...validation }),
-        metaDataHeaders: args({ control: 'object', ...functionality }),
-        showResetButton: args({ control: 'boolean', ...functionality }),
-        showPreviewButton: args({ control: 'boolean', ...functionality }),
-        showDownloadButton: args({ control: 'boolean', ...functionality }),
-        immediatelyUploadAfterSelect: args({ control: 'boolean', ...functionality }),
-        cornerRadius: args({ control: 'select', options: configs.inputCornerRadius, ...appearance }),
-        inputCornerRadius: args({ control: 'select', options: configs.inputCornerRadius, ...appearance }),
-        uploaderAppearance: args({ control: 'select', options: uploaderConfig.uploaderAppearance, ...appearance }),
+        upload: args({ control: false, ...propCategory.action }),
+        icon: args({ control: 'text', ...propCategory.content }),
+        data: args({ control: 'object', ...propCategory.content }),
+        onChange: args({ control: false, ...propCategory.action }),
+        images: args({ control: 'array', ...propCategory.content }),
+        className: args({ control: false, ...propCategory.others }),
+        typesList: args({ control: 'array', ...propCategory.states }),
+        required: args({ control: 'boolean', ...propCategory.states }),
+        deleteAction: args({ control: false, ...propCategory.action }),
+        browseLabel: args({ control: 'text', ...propCategory.content }),
+        maxFileSize: args({ control: 'number', ...propCategory.states }),
+        loadingLabel: args({ control: 'text', ...propCategory.content }),
+        isDisabled: args({ control: 'boolean', ...propCategory.states }),
+        isValid: args({ control: 'boolean', ...propCategory.validation }),
+        maxFileCount: args({ control: 'number', ...propCategory.states }),
+        dropHereLabel: args({ control: 'text', ...propCategory.content }),
+        getInitialState: args({ control: false, ...propCategory.action }),
+        initialImages: args({ control: 'array', ...propCategory.content }),
+        chooseFileLabel: args({ control: 'text', ...propCategory.content }),
+        isImageUpload: args({ control: 'boolean', ...propCategory.states }),
+        customHeaders: args({ control: 'object', ...propCategory.content }),
+        sizeErrorMsg: args({ control: 'text', ...propCategory.validation }),
+        typeErrorMsg: args({ control: 'text', ...propCategory.validation }),
+        startUploadLabel: args({ control: 'text', ...propCategory.content }),
+        multiple: args({ control: 'boolean', ...propCategory.functionality }),
+        additionalContext: args({ control: 'text', ...propCategory.content }),
+        hideName: args({ control: 'boolean', ...propCategory.functionality }),
+        allTypesAccepted: args({ control: 'boolean', ...propCategory.states }),
+        uploadErrorText: args({ control: 'text', ...propCategory.validation }),
+        informationMessage: args({ control: 'text', ...propCategory.content }),
+        showTrash: args({ control: 'boolean', ...propCategory.functionality }),
+        isActiveDrop: args({ control: 'boolean', ...propCategory.functionality }),
+        showLocalErrors: args({ control: 'boolean', ...propCategory.validation }),
+        metaDataHeaders: args({ control: 'object', ...propCategory.functionality }),
+        showResetButton: args({ control: 'boolean', ...propCategory.functionality }),
+        showPreviewButton: args({ control: 'boolean', ...propCategory.functionality }),
+        showDownloadButton: args({ control: 'boolean', ...propCategory.functionality }),
+        immediatelyUploadAfterSelect: args({ control: 'boolean', ...propCategory.functionality }),
+        cornerRadius: args({ control: 'select', options: configs.inputCornerRadius, ...propCategory.appearance }),
+        inputCornerRadius: args({ control: 'select', options: configs.inputCornerRadius, ...propCategory.appearance }),
+        uploaderAppearance: args({
+            control: 'select',
+            options: uploaderConfig.uploaderAppearance,
+            ...propCategory.appearance
+        }),
         uploadedItemsAppearance: args({
             control: 'select',
             options: uploaderConfig.uploadedItemsAppearance,
-            ...appearance
+            ...propCategory.appearance
         })
     },
     args: {
@@ -103,7 +103,7 @@ export default {
         inputCornerRadius: configs.inputCornerRadius[0],
         uploaderAppearance: uploaderConfig.uploaderAppearance[0],
         uploadedItemsAppearance: uploaderConfig.uploadedItemsAppearance[2],
-        initialImages: ['https://picsum.photos/800/1200', 'https://picsum.photos/200/300']
+        initialImages: ['https://picsum.photos/id/237/800/1200', 'https://picsum.photos/id/236/200/300']
     }
 };
 
