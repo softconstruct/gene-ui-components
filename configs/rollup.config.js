@@ -30,7 +30,8 @@ const TSComponentsList = [
     'Rating',
     'InteractiveWidget',
     'GeneUIProvider',
-    'HelperText'
+    'HelperText',
+    'Tooltip'
 ];
 
 const getInputs = (name, dir) => {

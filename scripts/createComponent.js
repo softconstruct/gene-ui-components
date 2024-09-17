@@ -59,7 +59,7 @@ const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => 
         ${description ? `/** \n* ${description}\n*/` : ''}
         const ${name}${!isWithForwardRef ? `: FC<${InterfaceName}>` : ''} = ${
         isWithForwardRef ? `forwardRef<unknown , ${InterfaceName}>((` : '('
-    }${props.length ? `{${[...props]}} ${isWithForwardRef ? `:${  InterfaceName}` : ''}` : 'props'}
+    }${props.length ? `{${[...props]}} ${isWithForwardRef ? `:${InterfaceName}` : ''}` : 'props'}
         ${isWithForwardRef ? ', ref' : ''}) => {
             return <div className="${firstLetterCase(name, false)}">
                 ${name}
