@@ -1,5 +1,21 @@
 # Changelog
 
+# [2.16.0](https://github.com/softconstruct/gene-ui-components/compare/v2.15.1...v2.16.0) (2024-09-17)
+
+
+### Bug Fixes
+
+* **CLI:** create component command TS and storybook to new version ([#139](https://github.com/softconstruct/gene-ui-components/issues/139)) ([b800577](https://github.com/softconstruct/gene-ui-components/commit/b800577fc3967db10b25df0e4ed76bf20334ce54))
+* **TimePciker:** open/close with clicking on icon ([#133](https://github.com/softconstruct/gene-ui-components/issues/133)) ([36aab18](https://github.com/softconstruct/gene-ui-components/commit/36aab18421fc551b73150cc721649590eacff046))
+* **TimePicker:** typing issue ([#134](https://github.com/softconstruct/gene-ui-components/issues/134)) ([12a636d](https://github.com/softconstruct/gene-ui-components/commit/12a636d8ce8832004e944dff2a7cd589ae6eb03c))
+* **Tooltip:** error when instance component is null ([#162](https://github.com/softconstruct/gene-ui-components/issues/162)) ([8a49120](https://github.com/softconstruct/gene-ui-components/commit/8a49120ce52e36384f31d623894dd3217179f92c))
+* **Tooltip:** scroll bug ([#135](https://github.com/softconstruct/gene-ui-components/issues/135)) ([7598c7a](https://github.com/softconstruct/gene-ui-components/commit/7598c7a263a131bdf4c430f39d8cdf78fd8fe4c7))
+
+
+### Features
+
+* **Tooltip:** adding floating ui package for tooltip ([#161](https://github.com/softconstruct/gene-ui-components/issues/161)) ([5d8a41a](https://github.com/softconstruct/gene-ui-components/commit/5d8a41ac1bcbb2e9f98bdd66efd640ba711c0c32))
+
 ## [2.15.1](https://github.com/softconstruct/gene-ui-components/compare/v2.15.0...v2.15.1) (2024-06-05)
 
 
