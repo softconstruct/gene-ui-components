@@ -1,23 +1,28 @@
 import React from 'react';
 
+// Helpers
+import { args, propCategory } from '../assets/storybook.globals';
+
+// Components
 import ColumnRangeChart from 'src/lib/molecules/Charts/ColumnRangeChart';
+
+// Data
 import { columnRangeData, columnRangeDataFixed } from './data';
-import { args, category } from '../assets/storybook.globals';
 
 export default {
     title: 'Charts/ColumnRange',
     component: ColumnRangeChart,
     argTypes: {
-        title: args({ control: 'text', category: category.content }),
-        subTitle: args({ control: 'text', category: category.content }),
-        showLegend: args({ control: 'boolean', category: category.states }),
-        showTooltip: args({ control: 'boolean', category: category.states }),
-        showColumnLabel: args({ control: 'boolean', category: category.content }),
-        showUnitOnTooltip: args({ control: 'boolean', category: category.appearance }),
-        categories: args({ control: 'array', category: category.content }),
-        data: args({ control: 'object', category: category.content }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        title: args({ control: 'text', ...propCategory.content }),
+        subTitle: args({ control: 'text', ...propCategory.content }),
+        showLegend: args({ control: 'boolean', ...propCategory.states }),
+        showTooltip: args({ control: 'boolean', ...propCategory.states }),
+        showColumnLabel: args({ control: 'boolean', ...propCategory.content }),
+        showUnitOnTooltip: args({ control: 'boolean', ...propCategory.appearance }),
+        categories: args({ control: 'array', ...propCategory.content }),
+        data: args({ control: 'object', ...propCategory.content }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     },
     args: {
         title: 'Column range chart story',

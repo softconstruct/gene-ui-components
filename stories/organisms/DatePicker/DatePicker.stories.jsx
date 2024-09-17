@@ -1,23 +1,27 @@
 import React from 'react';
-import { args, category } from '../../assets/storybook.globals';
+import dayjs from 'dayjs';
+
+// Helpers
+import { args, propCategory } from '../../assets/storybook.globals';
+
+//Components
 import DatePickerComponent from '../../../src/lib/organisms/DatePicker';
 import Toaster from '../../../src/lib/organisms/Toaster';
-import dayjs from 'dayjs';
 
 export default {
     title: 'Organisms/DatePickers',
     component: DatePickerComponent,
     subcomponents: {},
     argTypes: {
-        onChange: args({ control: false, category: category.action }),
-        className: args({ control: false, category: category.others }),
-        todayText: args({ control: 'text', category: category.content }),
-        max: args({ control: 'date', category: category.functionality }),
-        min: args({ control: 'date', category: category.functionality }),
-        defaultValue: args({ control: 'date', category: category.states }),
-        defaultPreview: args({ control: 'date', category: category.states }),
-        markedDate: args({ control: 'date', category: category.functionality }),
-        customOption: args({ control: 'text', category: category.functionality })
+        onChange: args({ control: false, ...propCategory.action }),
+        className: args({ control: false, ...propCategory.others }),
+        todayText: args({ control: 'text', ...propCategory.content }),
+        max: args({ control: 'date', ...propCategory.functionality }),
+        min: args({ control: 'date', ...propCategory.functionality }),
+        defaultValue: args({ control: 'date', ...propCategory.states }),
+        defaultPreview: args({ control: 'date', ...propCategory.states }),
+        markedDate: args({ control: 'date', ...propCategory.functionality }),
+        customOption: args({ control: 'text', ...propCategory.functionality })
     },
     args: {
         todayText: 'todayText'
@@ -33,7 +37,8 @@ export const Default = (args) => {
     return (
         <>
             <DatePickerComponent
-                defaultValue={dayjs().add(3, 'day')}
+                value={'2024-09-19T10:43:18.503Z'}
+                markedDate={'2024-09-19T10:43:18.503Z'}
                 {...args}
                 onChange={(date) => {
                     args.onChange(date);
