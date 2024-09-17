@@ -28,7 +28,8 @@ const TSComponentsList = [
     'Button',
     'Image',
     'Rating',
-    'InteractiveWidget'
+    'InteractiveWidget',
+    'Tooltip'
 ];
 
 const getInputs = (name, dir) => {
