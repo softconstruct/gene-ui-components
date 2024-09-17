@@ -57,7 +57,7 @@ const HelperText: FC<IHelperTextProps> = ({ size = 'medium', type = 'rest', text
     const iconSize = {
         small: 16,
         medium: 20
-    };
+    } as const;
 
     const iconMap = {
         danger: <ErrorAlertFill size={iconSize[size]} />,
