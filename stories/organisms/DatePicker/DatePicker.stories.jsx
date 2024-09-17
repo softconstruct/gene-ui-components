@@ -37,7 +37,8 @@ export const Default = (args) => {
     return (
         <>
             <DatePickerComponent
-                defaultValue={'2024-09-19T10:43:18.503Z'}
+                value={'2024-09-19T10:43:18.503Z'}
+                markedDate={'2024-09-19T10:43:18.503Z'}
                 {...args}
                 onChange={(date) => {
                     args.onChange(date);
