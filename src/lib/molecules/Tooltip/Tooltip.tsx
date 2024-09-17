@@ -113,7 +113,7 @@ const FindAndMergeRef = <T extends { onClick: (e: PointerEvent, el: JSX.Element)
             return FindAndMergeRef(el.type(el.props), newProps, componentRef);
         }
 
-        return cloneElement(el, newProps);
+        return el && cloneElement(el, newProps);
     });
 
 const Tooltip: FC<ITooltipProps> = ({
