@@ -31,6 +31,7 @@ const TSComponentsList = [
     'InteractiveWidget',
     'GeneUIProvider',
     'HelperText',
+    'Tooltip',
     'Label'
 ];
 
