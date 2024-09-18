@@ -4,7 +4,7 @@
     max-width: 100%;
     display: inline-flex;
     align-items: center;
-    gap: var(--guit-ref-spacing-3xs);
+    gap: var(--guit-ref-spacing-3xsmall);
 
     &_size {
         &_medium {
@@ -15,8 +15,8 @@
                 line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
             }
             #{ $this }__icon {
-                width: var(--guit-sem-sizing-width-s-nudge);
-                height: var(--guit-sem-sizing-height-s-nudge);
+                width: var(--guit-sem-sizing-width-small-nudge);
+                height: var(--guit-sem-sizing-height-small-nudge);
             }
         }
 
