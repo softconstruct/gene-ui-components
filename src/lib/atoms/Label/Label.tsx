@@ -28,13 +28,14 @@ interface ILabelProps {
      */
     labelText: string;
     /**
-     * Indicates whether the `label` is for a `required` field.
+     * Indicates whether the label represents a required field.
      * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
      */
     required?: boolean;
     /**
      * Additional informational text displayed alongside the label.
-     * This property can be used to provide extra context or instructions for the input field.
+     * When provided, an info icon will be displayed next to the label,
+     * which can be hovered over to reveal the additional context or instructions via a tooltip.
      */
     infoText?: string;
     /**
@@ -57,7 +58,10 @@ const Label: FC<ILabelProps> = ({ htmlFor, size = 'medium', labelText, disabled,
     const labelRef = useRef<HTMLLabelElement | null>(null);
 
     const isTruncated: boolean = useEllipsisDetection(labelRef);
-    const iconSize = size === 'small' ? 16 : 20;
+    const iconSize = {
+        small: 16,
+        medium: 20
+    } as const;
 
     return (
         <div className={`label`}>
@@ -93,7 +97,7 @@ const Label: FC<ILabelProps> = ({ htmlFor, size = 'medium', labelText, disabled,
                                 className={classnames(`label__icon`, {
                                     label__icon_disabled: disabled
                                 })}
-                                size={iconSize}
+                                size={iconSize[size]}
                             />
                         </Tooltip>
                     )}
