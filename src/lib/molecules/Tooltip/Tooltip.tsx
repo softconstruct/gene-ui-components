@@ -8,7 +8,10 @@ import React, {
     PointerEvent,
     cloneElement,
     Children,
-    Fragment
+    Fragment,
+    useEffect,
+    RefObject,
+    useMemo
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
 import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react';
@@ -29,6 +32,7 @@ import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
 // Styles
 import './Tooltip.scss';
+import { current } from 'immer';
 
 const positions: Placement[] = ['top', 'right', 'bottom', 'left'];
 
@@ -88,29 +92,34 @@ export interface ITooltipProps {
     onClick?: (e: MouseEvent) => void;
 }
 
-const FindAndMergeRef = <T extends { onClick: (e: PointerEvent, el: JSX.Element) => void }>(
+let saveRef = new WeakMap();
+const FindAndSetRef = <T extends { onClick: (e: PointerEvent, el: JSX.Element) => void }>(
     children: JSX.Element | JSX.Element[],
     childProps: T,
     componentRef: (node: ReferenceType | null) => void
 ) =>
-    Children.map(children, (el, i) => {
-        const newProps = {
+    Children.map(children, (node) => {
+        const el = node as JSX.Element & { ref: RefObject<unknown> };
+        let newProps = {
             ...childProps,
-            onClick: (e: PointerEvent) => childProps?.onClick(e, el),
-            ref: i === 0 ? componentRef : {}
+            onClick: (e: PointerEvent) => childProps?.onClick(e, el)
         };
-
         if (el?.type === Fragment && el.props.children) {
-            return FindAndMergeRef(el.props.children, childProps, componentRef);
+            return FindAndSetRef(el.props.children, newProps, componentRef);
         }
         if (isForwardRef(el)) {
-            return FindAndMergeRef(el.type.render(el.props), newProps, componentRef);
+            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef);
         }
         if (typeof el?.type === 'string') {
+            if (!el.ref) {
+                newProps['ref'] = componentRef;
+            } else {
+                saveRef.set(el, el);
+            }
             return cloneElement(el, newProps);
         }
         if (typeof el?.type === 'function') {
-            return FindAndMergeRef(el.type(el.props), newProps, componentRef);
+            return FindAndSetRef(el.type(el.props), newProps, componentRef);
         }
 
         return el && cloneElement(el, newProps);
@@ -176,11 +185,21 @@ const Tooltip: FC<ITooltipProps> = ({
             onClick(e);
         }
     };
+    let component = useMemo(() => FindAndSetRef(children, childProps, refs.setReference), [children, childProps]);
+
+    useEffect(() => {
+        component.forEach((element) => {
+            if (element?.ref?.current) {
+                refs.setReference(element?.ref?.current);
+            }
+        });
+    }, [component]);
 
     return (
         <>
-            {FindAndMergeRef(children, childProps, refs.setReference)}
+            {component}
             {isVisible && (alwaysShow || isPopoverOpen) && (
+                //@ts-ignore
                 <FloatingPortal root={geneUIProviderRef.current}>
                     {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
                         <div
