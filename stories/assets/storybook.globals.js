@@ -25,9 +25,10 @@ export const propCategory = {
 export const args = (obj) => {
     const { control, options, category, condition, defaultValue, truthy, name, action, ...rest } = obj;
     const isDefaultProvided = 'defaultValue' in obj;
+    const isControl = 'control' in obj;
 
     return {
-        ...(control && { control }),
+        ...(isControl && { control }),
         ...(options && { options }),
         ...(name && { name }),
         ...((category || isDefaultProvided) && {

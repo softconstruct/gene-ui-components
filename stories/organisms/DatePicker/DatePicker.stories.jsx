@@ -58,7 +58,9 @@ export const WeekPicker = (args) => {
         <>
             <DatePickerComponent.WeekPicker
                 {...args}
+                markedDate={'2024-09-19T10:43:18.503Z'}
                 onChange={(date) => {
+                    console.log(date);
                     toasterNotify(date);
                     args.onChange(date);
                 }}
@@ -89,6 +91,8 @@ export const RangePicker = (args) => {
         <>
             <DatePickerComponent.RangePicker
                 {...args}
+                markedDate={'2024-09-19T10:43:18.503Z'}
+                value={['2024-09-17T20:00:00.000Z', '2024-09-20T19:59:59.999Z']}
                 onApply={(date) => {
                     toasterNotify(date);
                 }}

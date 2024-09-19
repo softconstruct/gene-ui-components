@@ -31,7 +31,8 @@ const TSComponentsList = [
     'InteractiveWidget',
     'GeneUIProvider',
     'HelperText',
-    'Tooltip'
+    'Tooltip',
+    'Label'
 ];
 
 const getInputs = (name, dir) => {

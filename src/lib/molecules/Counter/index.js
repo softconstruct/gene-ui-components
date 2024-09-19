@@ -195,13 +195,7 @@ function Counter({
             onMouseLeave={() => isTruncated && setShowInputTooltip(false)}
             className={classnames('counter', className, `s-${size}`, `r-${cornerRadius}`)}
         >
-            {label && (
-                <Tooltip title={label}>
-                    <Label className="counter__label ellipsis-text" size="bodySmall">
-                        {label}
-                    </Label>
-                </Tooltip>
-            )}
+            {label && <Label size="medium" labelText={label} />}
             <div className="counter__wrapper">
                 {!readOnly && (
                     <Tooltip title={isDisableMinus && !isLoading ? minusTooltipText : ''}>

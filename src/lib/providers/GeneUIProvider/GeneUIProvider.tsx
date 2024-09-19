@@ -15,12 +15,13 @@ type TokensType = { [key: string]: string | number } | null;
 export interface IGeneUIDesignSystemContext {
     theme: ThemesTypes;
     tokens: TokensType;
-    geneUIProviderRef?: React.MutableRefObject<null>;
+    geneUIProviderRef: React.MutableRefObject<null>;
 }
 
 export const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
     theme: 'light',
-    tokens: {}
+    tokens: {},
+    geneUIProviderRef: { current: null }
 });
 
 export interface IGeneUIProviderProps {
