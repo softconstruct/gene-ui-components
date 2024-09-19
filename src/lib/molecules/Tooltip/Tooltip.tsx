@@ -5,10 +5,12 @@ import React, {
     JSX,
     MouseEvent,
     FC,
-    PointerEvent,
     cloneElement,
     Children,
-    Fragment
+    Fragment,
+    useEffect,
+    RefObject,
+    useMemo
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
 import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react';
@@ -82,36 +84,46 @@ export interface ITooltipProps {
      * In case of `false` value, the children component will rendered without Tooltip.
      */
     isVisible?: boolean;
+
+    //TODO:REmove after tests
     /**
      * The action will triggered when the Tooltip component will clicked.
      */
     onClick?: (e: MouseEvent) => void;
 }
 
-const FindAndMergeRef = <T extends { onClick: (e: PointerEvent, el: JSX.Element) => void }>(
+type JSXWithRef = JSX.Element & { ref: RefObject<unknown> };
+
+const FindAndSetRef = <T extends object>(
     children: JSX.Element | JSX.Element[],
     childProps: T,
     componentRef: (node: ReferenceType | null) => void
 ) =>
-    Children.map(children, (el, i) => {
-        const newProps = {
-            ...childProps,
-            onClick: (e: PointerEvent) => childProps?.onClick(e, el),
-            ref: i === 0 ? componentRef : {}
-        };
+    Children.map(children, (node) => {
+        const el = node as JSXWithRef;
 
+        let newProps = {
+            ...childProps
+        };
         if (el?.type === Fragment && el.props.children) {
-            return FindAndMergeRef(el.props.children, childProps, componentRef);
+            return FindAndSetRef(el.props.children, newProps, componentRef);
         }
         if (isForwardRef(el)) {
-            return FindAndMergeRef(el.type.render(el.props), newProps, componentRef);
+            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef);
         }
+
         if (typeof el?.type === 'string') {
+            if (!el.ref) {
+                newProps = { ...newProps, ref: componentRef };
+            }
+
             return cloneElement(el, newProps);
         }
-        if (typeof el?.type === 'function') {
-            return FindAndMergeRef(el.type(el.props), newProps, componentRef);
-        }
+
+        //TODO: Remove after tests
+        // if (typeof el?.type === 'function') {
+        //     // return FindAndSetRef(el.props.children, newProps, componentRef);
+        // }
 
         return el && cloneElement(el, newProps);
     });
@@ -135,7 +147,9 @@ const Tooltip: FC<ITooltipProps> = ({
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const { isMobile } = useDeviceType(screenType);
     const [isPopoverOpen, setIsPopoverState] = useState(false);
-    const mouseEnterHandler = () => !alwaysShow && setIsPopoverState(true);
+    const mouseEnterHandler = () => {
+        !alwaysShow && setIsPopoverState(true);
+    };
     const mouseLeaveHandler = () => {
         !alwaysShow && setIsPopoverState(false);
     };
@@ -169,18 +183,24 @@ const Tooltip: FC<ITooltipProps> = ({
 
     const childProps = {
         onMouseEnter: mouseEnterHandler,
-        onMouseLeave: mouseLeaveHandler,
-        onClick: (e: PointerEvent, el: JSX.Element) => {
-            const { onClick: onClickHandler } = el?.props;
-            typeof onClickHandler === 'function' && onClickHandler(e);
-            onClick(e);
-        }
+        onMouseLeave: mouseLeaveHandler
     };
 
+    let component = useMemo(() => FindAndSetRef(children, childProps, refs.setReference), [children, childProps]);
+
+    useEffect(() => {
+        component.forEach((element: JSX.Element) => {
+            const node = element as JSXWithRef;
+            if (node?.ref?.current) {
+                refs.setReference(node.ref.current as ReferenceType);
+            }
+        });
+    }, [component]);
     return (
         <>
-            {FindAndMergeRef(children, childProps, refs.setReference)}
+            {component}
             {isVisible && (alwaysShow || isPopoverOpen) && (
+                //@ts-ignore
                 <FloatingPortal root={geneUIProviderRef.current}>
                     {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
                         <div
@@ -188,7 +208,8 @@ const Tooltip: FC<ITooltipProps> = ({
                             ref={refs.setFloating}
                             style={{
                                 ...style,
-                                ...floatingStyles
+                                ...floatingStyles,
+                                zIndex: 400
                             }}
                             {...props}
                         >
