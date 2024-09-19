@@ -50,6 +50,11 @@ interface ILabelProps {
     isLoading?: boolean;
 }
 
+const iconSizes = {
+    small: 16,
+    medium: 20
+} as const;
+
 /**
  * Labels identify a component or group of components. Use them with elements such as checkboxes and input fields to guide users in providing specific information, or with plain text to organize information.
  */
@@ -58,10 +63,6 @@ const Label: FC<ILabelProps> = ({ htmlFor, size = 'medium', labelText, disabled,
     const labelRef = useRef<HTMLLabelElement | null>(null);
 
     const isTruncated: boolean = useEllipsisDetection(labelRef);
-    const iconSize = {
-        small: 16,
-        medium: 20
-    } as const;
 
     return (
         <div className={`label`}>
@@ -97,7 +98,7 @@ const Label: FC<ILabelProps> = ({ htmlFor, size = 'medium', labelText, disabled,
                                 className={classnames(`label__icon`, {
                                     label__icon_disabled: disabled
                                 })}
-                                size={iconSize[size]}
+                                size={iconSizes[size]}
                             />
                         </Tooltip>
                     )}
