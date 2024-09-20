@@ -87,16 +87,18 @@ const FindAndSetRef = <T extends object>(
     children: JSX.Element | JSX.Element[],
     childProps: T,
     componentRef: (node: ReferenceType | null) => void
-) =>
-    Children.map(children, (node, i) => {
+) => {
+    return Children.map(children, (node, i) => {
         const el = node as JSXWithRef;
 
         let newProps = {
             ...childProps
         };
+
         if (el?.type === Fragment && el.props.children) {
             return FindAndSetRef(el.props.children, newProps, componentRef);
         }
+
         if (isForwardRef(el)) {
             return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef);
         }
@@ -119,6 +121,7 @@ const FindAndSetRef = <T extends object>(
 
         return el && cloneElement(el, newProps);
     });
+};
 
 const Tooltip: FC<ITooltipProps> = ({
     children,
@@ -138,12 +141,9 @@ const Tooltip: FC<ITooltipProps> = ({
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const { isMobile } = useDeviceType(screenType);
     const [isPopoverOpen, setIsPopoverState] = useState(false);
-    const mouseEnterHandler = () => {
-        !alwaysShow && setIsPopoverState(true);
-    };
-    const mouseLeaveHandler = () => {
-        !alwaysShow && setIsPopoverState(false);
-    };
+
+    const mouseEnterHandler = () => !alwaysShow && setIsPopoverState(true);
+    const mouseLeaveHandler = () => !alwaysShow && setIsPopoverState(false);
 
     const { refs, floatingStyles, context } = useFloating({
         open: alwaysShow || isPopoverOpen,
@@ -177,7 +177,7 @@ const Tooltip: FC<ITooltipProps> = ({
         onMouseLeave: mouseLeaveHandler
     };
 
-    let component = useMemo(() => FindAndSetRef(children, childProps, refs.setReference), [children, childProps]);
+    const component = useMemo(() => FindAndSetRef(children, childProps, refs.setReference), [children, childProps]);
 
     useEffect(() => {
         component.forEach((element: JSX.Element) => {
@@ -192,7 +192,6 @@ const Tooltip: FC<ITooltipProps> = ({
         <>
             {component}
             {isVisible && (alwaysShow || isPopoverOpen) && (
-                //@ts-ignore
                 <FloatingPortal root={geneUIProviderRef.current}>
                     {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
                         <div
