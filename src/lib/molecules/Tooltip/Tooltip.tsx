@@ -84,12 +84,6 @@ export interface ITooltipProps {
      * In case of `false` value, the children component will rendered without Tooltip.
      */
     isVisible?: boolean;
-
-    //TODO:REmove after tests
-    /**
-     * The action will triggered when the Tooltip component will clicked.
-     */
-    onClick?: (e: MouseEvent) => void;
 }
 
 type JSXWithRef = JSX.Element & { ref: RefObject<unknown> };
@@ -140,7 +134,6 @@ const Tooltip: FC<ITooltipProps> = ({
     title,
     customPosition,
     alwaysShow,
-    onClick = noop,
     padding = 5,
     screenType = 'desktop',
     isVisible = true,
@@ -199,8 +192,6 @@ const Tooltip: FC<ITooltipProps> = ({
             }
         });
     }, [component]);
-
-    console.log(component);
 
     return (
         <>
