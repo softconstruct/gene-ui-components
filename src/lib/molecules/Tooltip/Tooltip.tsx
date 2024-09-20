@@ -99,7 +99,7 @@ const FindAndSetRef = <T extends object>(
     childProps: T,
     componentRef: (node: ReferenceType | null) => void
 ) =>
-    Children.map(children, (node) => {
+    Children.map(children, (node, i) => {
         const el = node as JSXWithRef;
 
         let newProps = {
@@ -113,17 +113,20 @@ const FindAndSetRef = <T extends object>(
         }
 
         if (typeof el?.type === 'string') {
-            if (!el.ref) {
+            if (!el.ref && i === 0) {
                 newProps = { ...newProps, ref: componentRef };
             }
 
             return cloneElement(el, newProps);
         }
 
-        //TODO: Remove after tests
-        // if (typeof el?.type === 'function') {
-        //     // return FindAndSetRef(el.props.children, newProps, componentRef);
-        // }
+        if (typeof el?.type === 'function') {
+            if (!el.ref) {
+                newProps = { ...newProps, ref: componentRef };
+            }
+
+            return cloneElement(el.type(el.props), newProps);
+        }
 
         return el && cloneElement(el, newProps);
     });
@@ -196,6 +199,9 @@ const Tooltip: FC<ITooltipProps> = ({
             }
         });
     }, [component]);
+
+    console.log(component);
+
     return (
         <>
             {component}
