@@ -200,7 +200,7 @@ const Tooltip: FC<ITooltipProps> = ({
                             style={{
                                 ...style,
                                 ...floatingStyles,
-                                zIndex: 400
+                                zIndex: 400 //TODO: Remove after 3.0.0
                             }}
                             {...props}
                         >
