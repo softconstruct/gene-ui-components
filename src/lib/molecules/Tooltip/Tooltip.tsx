@@ -3,7 +3,6 @@ import React, {
     useContext,
     CSSProperties,
     JSX,
-    MouseEvent,
     FC,
     cloneElement,
     Children,
@@ -17,10 +16,6 @@ import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
 import { ReferenceType } from '@floating-ui/react-dom';
 import { isForwardRef } from 'react-is';
-
-// Utils
-//@ts-ignore
-import { noop } from 'utils';
 
 // Hooks
 //@ts-ignore
