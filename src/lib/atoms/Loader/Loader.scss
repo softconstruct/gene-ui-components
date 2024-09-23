@@ -11,8 +11,8 @@
     }
 
     &_size {
-        &_2xlarge,
-        &_xlarge {
+        &_2xLarge,
+        &_xLarge {
             font-family: var(--guit-sem-font-label-large-default-medium-font-family);
             font-size: var(--guit-sem-font-label-large-default-semibold-font-size);
             font-weight: var(--guit-sem-font-caption-medium-medium-font-weight);
@@ -34,7 +34,7 @@
             gap: var(--guit-ref-spacing-xs);
         }
 
-        &_2xlarge {
+        &_2xLarge {
             gap: var(--guit-ref-spacing-2xl);
 
             .loader__spinner {
@@ -43,7 +43,7 @@
             }
         }
 
-        &_xlarge {
+        &_xLarge {
             gap: var(--guit-ref-spacing-xl);
 
             .loader__spinner {

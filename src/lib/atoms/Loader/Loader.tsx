@@ -21,7 +21,7 @@ interface ILoaderProps {
      * Loader size <br/>
      * Possible values: `2xlarge | xlarge | large | medium | small | smallNudge`
      */
-    size?: '2xlarge' | 'xlarge' | 'large' | 'medium' | 'small' | 'smallNudge';
+    size?: '2xLarge' | 'xLarge' | 'large' | 'medium' | 'small' | 'smallNudge';
     /**
      *  Loader text position. <br/>.
      *  Possible values: `below | after`
