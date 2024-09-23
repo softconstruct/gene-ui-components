@@ -31,56 +31,56 @@
 
         &_small,
         &_smallNudge {
-            gap: var(--guit-ref-spacing-xs);
+            gap: var(--guit-ref-spacing-xsmall);
         }
 
         &_2xLarge {
-            gap: var(--guit-ref-spacing-2xl);
+            gap: var(--guit-ref-spacing-2xlarge);
 
             .loader__spinner {
-                width: var(--guit-sem-sizing-width-2xl);
-                height: var(--guit-sem-sizing-height-2xl);
+                width: var(--guit-sem-sizing-width-2xlarge);
+                height: var(--guit-sem-sizing-height-2xlarge);
             }
         }
 
         &_xLarge {
-            gap: var(--guit-ref-spacing-xl);
+            gap: var(--guit-ref-spacing-xlarge);
 
             .loader__spinner {
-                width: var(--guit-sem-sizing-width-xl);
-                height: var(--guit-sem-sizing-height-xl);
+                width: var(--guit-sem-sizing-width-xlarge);
+                height: var(--guit-sem-sizing-height-xlarge);
             }
         }
 
         &_large {
-            gap: var(--guit-ref-spacing-l);
+            gap: var(--guit-ref-spacing-large);
 
             .loader__spinner {
-                width: var(--guit-sem-sizing-width-l);
-                height: var(--guit-sem-sizing-height-l);
+                width: var(--guit-sem-sizing-width-large);
+                height: var(--guit-sem-sizing-height-large);
             }
         }
 
         &_medium {
-            gap: var(--guit-ref-spacing-m);
+            gap: var(--guit-ref-spacing-medium);
 
             .loader__spinner {
-                width: var(--guit-sem-sizing-width-m);
-                height: var(--guit-sem-sizing-height-m);
+                width: var(--guit-sem-sizing-width-medium);
+                height: var(--guit-sem-sizing-height-medium);
             }
         }
 
         &_small {
             .loader__spinner {
-                width: var(--guit-sem-sizing-width-s);
-                height: var(--guit-sem-sizing-height-s);
+                width: var(--guit-sem-sizing-width-small);
+                height: var(--guit-sem-sizing-height-small);
             }
         }
 
         &_smallNudge {
             .loader__spinner {
-                width: var(--guit-sem-sizing-width-s-nudge);
-                height: var(--guit-sem-sizing-height-s-nudge);
+                width: var(--guit-sem-sizing-width-small-nudge);
+                height: var(--guit-sem-sizing-height-small-nudge);
             }
         }
     }
@@ -89,13 +89,13 @@
         &_brand,
         &_neutral {
             .loader__text {
-                color: var(--guit-sem-color-foreground-neutral-1-dark);
+                color: var(--guit-sem-color-foreground-neutral-1);
             }
         }
 
         &_brand {
             .loader__spinner_path {
-                stroke: var(--guit-sem-color-foreground-brand-dark);
+                stroke: var(--guit-sem-color-foreground-brand);
             }
         }
 
