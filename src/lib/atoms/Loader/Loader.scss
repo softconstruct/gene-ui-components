@@ -25,7 +25,7 @@
         &_smallNudge {
             font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
-            font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+            font-weight: var(--guit-sem-font-caption-medium-medium-font-weight);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
         }
 
@@ -89,13 +89,13 @@
         &_brand,
         &_neutral {
             .loader__text {
-                color: var(--guit-sem-color-foreground-neutral-1);
+                color: var(--guit-sem-color-foreground-neutral-1-dark);
             }
         }
 
         &_brand {
             .loader__spinner_path {
-                stroke: var(--guit-sem-color-foreground-brand);
+                stroke: var(--guit-sem-color-foreground-brand-dark);
             }
         }
 
