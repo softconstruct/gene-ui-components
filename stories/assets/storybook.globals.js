@@ -48,3 +48,5 @@ export const componentStage = {
     experimental: 'experimental',
     deprecated: 'deprecated'
 };
+
+export const SCREENSHOT_DELAY = 5000;

@@ -2,31 +2,34 @@ import React from 'react';
 
 import AreaChartComponent from 'src/lib/molecules/Charts/AreaChart';
 import { dashStyles } from './data';
-import { args, category } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 const categories = ['January', 'February', 'March', 'April', 'May', 'June'];
 
 export default {
     title: 'Charts/AreaChart',
     component: AreaChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        sharedTooltip: args({ control: 'text', category: category.content }),
-        tooltip: args({ control: false, category: category.content }),
-        screenType: args({ control: 'select', category: category.appearance }),
-        plotOptions: args({ control: false, category: category.others }),
-        title: args({ control: 'text', category: category.content }),
-        subtitle: args({ control: 'text', category: category.content }),
-        yAxisTitle: args({ control: 'text', category: category.content }),
-        withMarker: args({ control: false, category: category.appearance }),
-        showNavigator: args({ control: false, category: category.content }),
-        gridLineDashStyle: args({ control: false, category: category.appearance }),
-        yCrosshairStyle: args({ control: false, category: category.appearance }),
-        xCrosshairStyle: args({ control: false, category: category.appearance }),
-        emptyColor: args({ control: 'select', category: category.appearance }),
-        series: args({ control: 'object', category: category.content }),
-        categories: args({ control: 'object', defaultValue: categories, category: category.content }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        sharedTooltip: args({ control: 'text', ...propCategory.content }),
+        tooltip: args({ control: false, ...propCategory.content }),
+        screenType: args({ control: 'select', ...propCategory.appearance }),
+        plotOptions: args({ control: false, ...propCategory.others }),
+        title: args({ control: 'text', ...propCategory.content }),
+        subtitle: args({ control: 'text', ...propCategory.content }),
+        yAxisTitle: args({ control: 'text', ...propCategory.content }),
+        withMarker: args({ control: false, ...propCategory.appearance }),
+        showNavigator: args({ control: false, ...propCategory.content }),
+        gridLineDashStyle: args({ control: false, ...propCategory.appearance }),
+        yCrosshairStyle: args({ control: false, ...propCategory.appearance }),
+        xCrosshairStyle: args({ control: false, ...propCategory.appearance }),
+        emptyColor: args({ control: 'select', ...propCategory.appearance }),
+        series: args({ control: 'object', ...propCategory.content }),
+        categories: args({ control: 'object', defaultValue: categories, ...propCategory.content }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     },
     args: {
         label1: 'Channel 1',
