@@ -33,7 +33,7 @@ describe('Loader', () => {
         expect(wrapper.find('.loader').hasClass(`loader_direction_${labelPosition}`)).toBeTruthy();
     });
 
-    it.each<ILoaderProps['size']>(['2xlarge', 'xlarge', 'large', 'medium', 'small', 'smallNudge'])(
+    it.each<ILoaderProps['size']>(['2xLarge', 'xLarge', 'large', 'medium', 'small', 'smallNudge'])(
         'should have %p size',
         (size) => {
             const wrapper = setup.setProps({ size });
