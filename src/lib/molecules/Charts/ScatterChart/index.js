@@ -9,7 +9,7 @@ import Empty from '../../../atoms/Empty';
 import BusyLoader from '../../../atoms/BusyLoader';
 import Label from '../../../atoms/Label';
 import Button from '../../../atoms/Button';
-import Tag from '../../../molecules/Tag';
+import Tag from '../../Tag';
 
 // Styles
 import './index.scss';
@@ -152,11 +152,7 @@ function ScatterChart(props) {
                     <>
                         <div className="chart-overflow-header">
                             <div className="chart-label">
-                                {label && (
-                                    <Label size="body" font="bold">
-                                        {label}
-                                    </Label>
-                                )}
+                                {label && <Label size="medium" labelText={label} />}
                                 {showValue && <Tag size="small" appearance="light" name={getDataValue(data)} />}
                             </div>
                             {visibilityResetButton && (

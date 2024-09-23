@@ -30,6 +30,9 @@ const TSComponentsList = [
     'Rating',
     'InteractiveWidget',
     'GeneUIProvider',
+    'HelperText',
+    'Tooltip',
+    'Label',
     'Loader'
 ];
 
