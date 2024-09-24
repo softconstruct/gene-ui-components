@@ -67,10 +67,6 @@ export interface ITooltipProps {
      */
     children: JSX.Element | JSX.Element[];
     /**
-     * Disable/Enable auto repositions.
-     */
-    disableReposition?: boolean;
-    /**
      * Positions where will be displayed the Tooltip relates the child component.<br> Possible values: `top | right | bottom | left`
      */
     position?: 'top' | 'right' | 'bottom' | 'left';
@@ -117,7 +113,7 @@ const FindAndMergeRef = <T extends { onClick: (e: PointerEvent, el: JSX.Element)
             return FindAndMergeRef(el.type(el.props), newProps, componentRef);
         }
 
-        return cloneElement(el, newProps);
+        return el && cloneElement(el, newProps);
     });
 
 const Tooltip: FC<ITooltipProps> = ({
@@ -129,7 +125,6 @@ const Tooltip: FC<ITooltipProps> = ({
     title,
     customPosition,
     alwaysShow,
-    disableReposition = false,
     onClick = noop,
     padding = 5,
     screenType = 'desktop',
@@ -153,7 +148,7 @@ const Tooltip: FC<ITooltipProps> = ({
             flip({
                 fallbackAxisSideDirection: 'none',
                 fallbackPlacements: positions,
-                mainAxis: !disableReposition
+                mainAxis: true
             }),
             shift(),
             {
