@@ -24,6 +24,9 @@ const meta: Meta<typeof Label> = {
         size: 'medium',
         labelText: 'label',
         required: false
+    },
+    parameters: {
+        chromatic: { disableSnapshot: true }
     }
 };
 

@@ -25,6 +25,9 @@ const meta: Meta<typeof Loader> = {
         size: 'medium',
         appearance: 'brand',
         children: 'content is loaded'
+    },
+    parameters: {
+        chromatic: { disableSnapshot: true }
     }
 };
 

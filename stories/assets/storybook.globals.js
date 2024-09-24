@@ -1,3 +1,4 @@
+import React from 'react';
 // TODO: This object will be removed after refactoring
 // all stories to use `propCategory` instead of `category`
 export const category = {
@@ -50,3 +51,7 @@ export const componentStage = {
 };
 
 export const SCREENSHOT_DELAY = 5000;
+
+export function AllStoriesWrapper({ children }) {
+    return <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>{children}</div>;
+}
