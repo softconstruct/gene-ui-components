@@ -1,0 +1,170 @@
+.loader {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &_direction {
+        &_below {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    &_size {
+        &_2xLarge,
+        &_xLarge,
+        &_large,
+        &_medium,
+        &_small,
+        &_smallNudge {
+            font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+        }
+
+        &_2xLarge,
+        &_xLarge {
+            font-family: var(--guit-sem-font-label-large-default-medium-font-family);
+            font-size: var(--guit-sem-font-label-large-default-semibold-font-size);
+            line-height: var(--guit-sem-font-label-large-default-semibold-line-height);
+        }
+
+        &_large,
+        &_medium,
+        &_small,
+        &_smallNudge {
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+        }
+
+        &_small,
+        &_smallNudge {
+            gap: var(--guit-ref-spacing-xsmall);
+        }
+
+        &_2xLarge {
+            gap: var(--guit-ref-spacing-2xlarge);
+
+            .loader__spinner {
+                width: var(--guit-sem-sizing-width-2xlarge);
+                height: var(--guit-sem-sizing-height-2xlarge);
+            }
+        }
+
+        &_xLarge {
+            gap: var(--guit-ref-spacing-xlarge);
+
+            .loader__spinner {
+                width: var(--guit-sem-sizing-width-xlarge);
+                height: var(--guit-sem-sizing-height-xlarge);
+            }
+        }
+
+        &_large {
+            gap: var(--guit-ref-spacing-large);
+
+            .loader__spinner {
+                width: var(--guit-sem-sizing-width-large);
+                height: var(--guit-sem-sizing-height-large);
+            }
+        }
+
+        &_medium {
+            gap: var(--guit-ref-spacing-medium);
+
+            .loader__spinner {
+                width: var(--guit-sem-sizing-width-medium);
+                height: var(--guit-sem-sizing-height-medium);
+            }
+        }
+
+        &_small {
+            .loader__spinner {
+                width: var(--guit-sem-sizing-width-small);
+                height: var(--guit-sem-sizing-height-small);
+            }
+        }
+
+        &_smallNudge {
+            .loader__spinner {
+                width: var(--guit-sem-sizing-width-small-nudge);
+                height: var(--guit-sem-sizing-height-small-nudge);
+            }
+        }
+    }
+
+    &_color {
+        &_brand,
+        &_neutral {
+            .loader__text {
+                color: var(--guit-sem-color-foreground-neutral-1);
+            }
+        }
+
+        &_brand {
+            .loader__spinner_path {
+                stroke: var(--guit-sem-color-foreground-brand);
+            }
+        }
+
+        &_neutral {
+            .loader__spinner_path {
+                stroke: var(--guit-sem-color-foreground-neutral-2);
+            }
+        }
+
+        &_inverse {
+            .loader__spinner_path {
+                stroke: var(--guit-sem-color-foreground-inverse);
+            }
+
+            .loader__text {
+                color: var(--guit-sem-color-foreground-inverse);
+            }
+        }
+    }
+
+    &__spinner {
+        flex: 0 0 auto;
+        animation: loader-rotate 2s linear infinite;
+
+        &_path {
+            stroke-linecap: round;
+            animation: loader-dash 1.5s ease-in-out infinite;
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+    &__text {
+        font-size: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+        text-transform: capitalize;
+    }
+}
+
+@keyframes loader-rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes loader-dash {
+    0% {
+        stroke-dasharray: 1, 150;
+        stroke-dashoffset: 0;
+    }
+
+    50% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -35;
+    }
+
+    100% {
+        stroke-dasharray: 90, 150;
+        stroke-dashoffset: -124;
+    }
+}

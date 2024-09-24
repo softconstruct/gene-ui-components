@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ScatterChartComponent from 'src/lib/molecules/Charts/ScatterChart';
-import { args, category } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 const data = [
     51.6, 59.0, 49.2, 63.0, 53.6, 59.0, 47.6, 69.8, 66.8, 75.2, 55.2, 54.2, 62.5, 42.0, 50.0, 49.8, 49.2, 73.2, 47.8,
@@ -17,21 +17,24 @@ const zoomType = ['x', 'y', 'xy'];
 export default {
     title: 'Charts/ScatterChart',
     component: ScatterChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        label: args({ control: 'text', category: category.content }),
-        showValue: args({ control: 'boolean', category: category.states }),
-        tooltip: args({ control: 'text', category: category.content }),
-        zoomType: args({ control: 'select', options: zoomType, category: category.appearance }),
-        data: args({ control: 'object', category: category.content }),
-        color: args({ control: 'text', category: category.appearance }),
-        name: args({ control: 'text', category: category.content }),
-        yAxisText: args({ control: 'text', category: category.content }),
-        xAxisText: args({ control: 'text', category: category.content }),
-        title: args({ control: 'text', category: category.content }),
-        subtitle: args({ control: 'text', category: category.content }),
-        gridLineDashStyle: args({ control: false, category: category.appearance }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        label: args({ control: 'text', ...propCategory.content }),
+        showValue: args({ control: 'boolean', ...propCategory.states }),
+        tooltip: args({ control: 'text', ...propCategory.content }),
+        zoomType: args({ control: 'select', options: zoomType, ...propCategory.appearance }),
+        data: args({ control: 'object', ...propCategory.content }),
+        color: args({ control: 'text', ...propCategory.appearance }),
+        name: args({ control: 'text', ...propCategory.content }),
+        yAxisText: args({ control: 'text', ...propCategory.content }),
+        xAxisText: args({ control: 'text', ...propCategory.content }),
+        title: args({ control: 'text', ...propCategory.content }),
+        subtitle: args({ control: 'text', ...propCategory.content }),
+        gridLineDashStyle: args({ control: false, ...propCategory.appearance }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     }
 };
 

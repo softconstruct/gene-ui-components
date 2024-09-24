@@ -2,22 +2,25 @@ import React from 'react';
 
 import FunnelChartComponent from 'src/lib/molecules/Charts/FunnelChart';
 import { funnelChartData } from './data';
-import { args, category } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 export default {
     title: 'Charts/FunnelChart',
     component: FunnelChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        legend: args({ control: false, category: category.content }),
-        tooltip: args({ control: false, category: category.content }),
-        title: args({ control: 'text', category: category.content }),
-        funnelSizes: args({ control: false, category: category.appearance }),
-        subtitle: args({ control: 'text', category: category.content }),
-        opacity: args({ control: 'number', category: category.appearance }),
-        plotOptions: args({ control: false, category: category.others }),
-        data: args({ control: 'object', category: category.content }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        legend: args({ control: false, ...propCategory.content }),
+        tooltip: args({ control: false, ...propCategory.content }),
+        title: args({ control: 'text', ...propCategory.content }),
+        funnelSizes: args({ control: false, ...propCategory.appearance }),
+        subtitle: args({ control: 'text', ...propCategory.content }),
+        opacity: args({ control: 'number', ...propCategory.appearance }),
+        plotOptions: args({ control: false, ...propCategory.others }),
+        data: args({ control: 'object', ...propCategory.content }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     }
 };
 

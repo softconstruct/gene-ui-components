@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Helpers
-import { args, propCategory } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 // Components
 import HeatMapChartComponent from 'src/lib/molecules/Charts/HeatMapChart';
@@ -20,6 +20,9 @@ const tooltipFormatter = (a, b, c) => `<b>${a}</b> gwei on <br><b>${b}</b> at <b
 export default {
     title: 'Charts/HeatMapChart',
     component: HeatMapChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
         title: args({ control: 'text', ...propCategory.content }),
         chartHeight: args({ control: 'text', ...propCategory.appearance }),
