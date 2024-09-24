@@ -12,10 +12,18 @@
 
     &_size {
         &_2xLarge,
+        &_xLarge,
+        &_large,
+        &_medium,
+        &_small,
+        &_smallNudge {
+            font-weight: var(--guit-sem-font-caption-medium-medium-font-weight);
+        }
+
+        &_2xLarge,
         &_xLarge {
             font-family: var(--guit-sem-font-label-large-default-medium-font-family);
             font-size: var(--guit-sem-font-label-large-default-semibold-font-size);
-            font-weight: var(--guit-sem-font-caption-medium-medium-font-weight);
             line-height: var(--guit-sem-font-label-large-default-semibold-line-height);
         }
 
@@ -25,7 +33,6 @@
         &_smallNudge {
             font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
-            font-weight: var(--guit-sem-font-caption-medium-medium-font-weight);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
         }
 
