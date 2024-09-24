@@ -123,6 +123,7 @@
         &_path {
             stroke-linecap: round;
             animation: loader-dash 1.5s ease-in-out infinite;
+            transform: translate3d(0, 0, 0);
         }
     }
 
