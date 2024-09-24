@@ -7,7 +7,7 @@ module.exports = {
         './../stories/gettingStarted.mdx',
         './../src/lib/**/**/*.stories.tsx',
         './../stories/**/**/*.stories.jsx',
-        './../stories/**/*.stories.tsx',
+        './../stories/**/*.chromatic.stories.tsx',
         './../src/hooks/**/*.mdx'
     ],
     addons: [

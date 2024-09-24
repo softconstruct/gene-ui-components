@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
 
 // Helpers
-import { AllStoriesWrapper } from '../assets/storybook.globals';
+import { VariantsStoryGrid } from '../assets/storybook.globals';
 
 // Components
 import Label from '../../src/lib/atoms/Label';
@@ -41,10 +41,10 @@ const testTypes = [
 
 export const Template = () => {
     return (
-        <AllStoriesWrapper>
-            {testTypes.map((el) => {
-                return <Label {...el} />;
+        <VariantsStoryGrid>
+            {testTypes.map((el, index) => {
+                return <Label {...el} key={index} />;
             })}
-        </AllStoriesWrapper>
+        </VariantsStoryGrid>
     );
 };

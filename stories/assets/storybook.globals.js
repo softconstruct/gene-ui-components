@@ -52,6 +52,6 @@ export const componentStage = {
 
 export const SCREENSHOT_DELAY = 5000;
 
-export function AllStoriesWrapper({ children }) {
+export function VariantsStoryGrid({ children }) {
     return <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>{children}</div>;
 }
