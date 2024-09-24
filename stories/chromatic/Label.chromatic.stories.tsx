@@ -14,7 +14,7 @@ const meta: Meta<typeof Label> = {
 
 export default meta;
 const testTypes = [
-    // medium size, no infoText, not required, not disabled, not loading
+    // medium size, no infoText, not required, not disabled,
     { labelText: 'test', size: 'medium' },
     { labelText: 'test', size: 'medium', required: true },
     { labelText: 'test', size: 'medium', disabled: true },
@@ -26,7 +26,7 @@ const testTypes = [
     { labelText: 'test', size: 'medium', infoText: 'test info text', disabled: true },
     { labelText: 'test', size: 'medium', infoText: 'test info text', required: true, disabled: true },
 
-    // small size, no infoText, not required, not disabled, not loading
+    // small size, no infoText, not required, not disabled,
     { labelText: 'test', size: 'small' },
     { labelText: 'test', size: 'small', required: true },
     { labelText: 'test', size: 'small', disabled: true },

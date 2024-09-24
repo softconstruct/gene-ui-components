@@ -14,14 +14,14 @@ const meta: Meta<typeof Loader> = {
         isLoading: args({ control: 'boolean', ...propCategory.states }),
         text: args({ control: 'text', ...propCategory.content }),
         children: args({ control: 'text', ...propCategory.content }),
-        labelPosition: args({ control: 'select', ...propCategory.appearance }),
+        textPosition: args({ control: 'select', ...propCategory.appearance }),
         size: args({ control: 'select', ...propCategory.appearance }),
         appearance: args({ control: 'select', ...propCategory.appearance })
     },
     args: {
         text: 'Loading Info',
         isLoading: true,
-        labelPosition: 'after',
+        textPosition: 'after',
         size: 'medium',
         appearance: 'brand',
         children: 'content is loaded'

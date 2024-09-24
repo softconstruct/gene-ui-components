@@ -28,9 +28,9 @@ describe('Loader', () => {
         expect(wrapper.find('.loader').exists()).toBeFalsy();
     });
 
-    it.each<ILoaderProps['labelPosition']>(['after', 'below'])('should have %p position', (labelPosition) => {
-        const wrapper = setup.setProps({ labelPosition });
-        expect(wrapper.find('.loader').hasClass(`loader_direction_${labelPosition}`)).toBeTruthy();
+    it.each<ILoaderProps['textPosition']>(['after', 'below'])('should have %p position', (textPosition) => {
+        const wrapper = setup.setProps({ textPosition });
+        expect(wrapper.find('.loader').hasClass(`loader_direction_${textPosition}`)).toBeTruthy();
     });
 
     it.each<ILoaderProps['size']>(['2xLarge', 'xLarge', 'large', 'medium', 'small', 'smallNudge'])(
