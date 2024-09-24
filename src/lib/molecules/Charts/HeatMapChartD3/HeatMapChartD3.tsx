@@ -6,6 +6,7 @@ import * as d3 from 'd3';
 // Components
 import Empty from '../../../atoms/Empty';
 import BusyLoader from '../../../atoms/BusyLoader';
+import Popover from '../../../atoms/Popover';
 import Tooltip from '../../Tooltip/Tooltip';
 import { default as HeatMapTooltip } from './Tooltip';
 
@@ -109,12 +110,36 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
     legendThresholds = 5
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const heatMapRef = useRef<HTMLDivElement>(null);
     const [containerWidth, setContainerWidth] = useState(0);
     const [hoveredCell, setHoveredCell] = useState<(ITooltipProps & { value: number }) | undefined>();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const colorsSet = useRef(new Set());
     const titleRef = useRef<HTMLDivElement>(null);
     const subTitleRef = useRef<HTMLDivElement>(null);
+
+    const [tooltipLeft, setTooltipLeft] = useState(hoveredCell?.x);
+    const [tooltipTop, setTooltipTop] = useState(hoveredCell?.y);
+
+    const onRefBecomeAvailable = (element: HTMLDivElement) => {
+        if (!hoveredCell) {
+            return;
+        }
+
+        const { width, height } = element?.getBoundingClientRect() ?? {};
+
+        const { right: parentRight = 0 } = heatMapRef.current?.getBoundingClientRect() ?? {};
+
+        if (hoveredCell.x + width / 2 >= parentRight - CONTAINER_PADDING) {
+            setTooltipLeft(-1);
+        } else if (width) {
+            const leftPos = hoveredCell.x - width / 2;
+            setTooltipLeft(leftPos < 0 ? 0 : leftPos);
+        }
+        if (height) {
+            setTooltipTop(hoveredCell.y + yScale.bandwidth() / 2);
+        }
+    };
 
     const uniqueData = useMemo(() => {
         const xySet = new Set();
@@ -323,6 +348,7 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
             {subTitle}
         </div>
     );
+
     return (
         <div className="chart-overflow-holder whiteDrillDown heatMap" style={{ minHeight: chartHeight }}>
             <BusyLoader isBusy={isLoading} className="heatMap__emptyContent">
@@ -334,6 +360,7 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
                         className="heatMap__container"
                         style={{ padding: CONTAINER_PADDING }}
                         onMouseLeave={closeTooltip}
+                        ref={heatMapRef}
                     >
                         {title && (isSubTitleTruncated ? <Tooltip text={title}>{titleElement}</Tooltip> : titleElement)}
                         {subTitle &&
@@ -365,7 +392,32 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
                                 />
                             )}
                         </div>
-                        {hoveredCell && <HeatMapTooltip {...hoveredCell} />}
+                        {hoveredCell && (
+                            // @ts-ignore
+                            <Popover
+                                isOpen
+                                screenType="desktop"
+                                position="top"
+                                align={tooltipLeft && tooltipLeft < 0 ? 'end' : undefined}
+                                cornerRadius="smooth-radius"
+                                Content={
+                                    <div
+                                        className="heatMap__tooltip"
+                                        ref={onRefBecomeAvailable}
+                                        dangerouslySetInnerHTML={{ __html: hoveredCell.text }}
+                                    />
+                                }
+                            >
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        left: tooltipLeft === -1 ? undefined : tooltipLeft,
+                                        right: tooltipLeft === -1 ? 0 : undefined,
+                                        top: tooltipTop
+                                    }}
+                                />
+                            </Popover>
+                        )}
                     </div>
                 )}
             </BusyLoader>

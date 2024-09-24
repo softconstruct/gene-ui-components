@@ -100,4 +100,13 @@
             margin: auto;
         }
     }
+
+    &__tooltip {
+        background-color: sc(b, 0.8);
+        color: c(b);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 8px;
+        text-wrap: nowrap;
+    }
 }
