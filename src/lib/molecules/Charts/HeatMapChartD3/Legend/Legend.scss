@@ -1,0 +1,51 @@
+@import 'src/assets/styles/variables';
+
+.legend {
+    display: flex;
+    margin: 0 12px 30px;
+    height: 50%;
+    position: relative;
+    align-self: flex-end;
+
+    &_direction_horizontal {
+        flex-direction: column;
+        width: 200px;
+    }
+
+    &__gradient {
+        width: 12px;
+        height: 100%;
+
+        &_direction_horizontal {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &__triangle {
+        position: absolute;
+        right: 38px;
+
+        &__icon {
+            color: c(foreground, 0.75);
+        }
+
+        &_direction_horizontal {
+            top: -18px;
+            right: unset;
+            transform: rotate(90deg);
+        }
+    }
+
+    &__yAxis {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-left: 16px;
+    }
+
+    &__xAxis {
+        display: flex;
+        justify-content: space-between;
+    }
+}

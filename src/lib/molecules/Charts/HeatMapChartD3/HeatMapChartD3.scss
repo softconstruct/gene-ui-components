@@ -1,0 +1,112 @@
+@import 'src/assets/styles/variables';
+
+.heatMap {
+    display: flex;
+    justify-content: center;
+    background-color: var(--background);
+
+    &__container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        width: 100%;
+    }
+
+    &__title {
+        font-size: rem(18);
+        color: c(foreground);
+        text-overflow: ellipsis;
+        max-width: 70%;
+        overflow: hidden;
+    }
+
+    &__subTitle {
+        font-size: rem(12);
+        color: c(foreground, 0.7);
+        margin-top: rem(8);
+        text-overflow: ellipsis;
+        max-width: 70%;
+        overflow: hidden;
+    }
+
+    &__canvasContainer {
+        display: flex;
+        height: 100%;
+
+        &_direction {
+            &_horizontal {
+                width: 100%;
+                margin-top: rem(16);
+            }
+
+            &_vertical {
+                flex: 1;
+                flex-direction: column;
+                height: 100%;
+            }
+        }
+    }
+
+    &__canvasWrapper {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+    }
+
+    &__canvas {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+    &__labels {
+        display: flex;
+
+        &_direction {
+            &_x {
+                margin: rem(8) 0;
+
+                &__text {
+                    flex: 1;
+                }
+            }
+
+            &_y {
+                flex-direction: column;
+                justify-content: space-around;
+                margin: 0 rem(16) rem(30) rem(4);
+            }
+        }
+
+        &__text {
+            color: c(foreground);
+            font-size: rem(11);
+            line-height: rem(14);
+            text-align: center;
+        }
+    }
+
+    &__loader {
+        > .icon {
+            margin: auto;
+        }
+    }
+
+    &__empty {
+        > .icon {
+            margin: auto;
+        }
+    }
+
+    &__tooltip {
+        background-color: sc(b, 0.8);
+        color: c(b);
+        font-size: 12px;
+        font-weight: 600;
+        padding: 8px;
+        text-wrap: nowrap;
+    }
+}
