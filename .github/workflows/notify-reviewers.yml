@@ -6,6 +6,9 @@ jobs:
     send_notification:
         runs-on: ubuntu-latest
         steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
             - name: 🔔 Send Notification
               env:
                   INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT: ${{ secrets.INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT }}
@@ -13,9 +16,13 @@ jobs:
                   PR_ID=${{ github.event.pull_request.number }}
                   PR_URL=${{ github.event.pull_request.html_url }}
                   PR_AUTHOR=${{ github.event.pull_request.user.login }}
+                  PR_TITLE=${{ github.event.pull_request.title }}
                   REVIEWERS="${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}"
 
-                  MESSAGE="@channel\nPull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nRequested Reviewers: $REVIEWERS"
+                  # Retrieve the latest commit message and pusher
+                  LATEST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+                  PUSHER=$(git log -1 --pretty=%an)
+
+                  MESSAGE="@channel\nPull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nTitle: $PR_TITLE\nCommit Message: $LATEST_COMMIT_MESSAGE\nPusher: $PUSHER\nRequested Reviewers: $REVIEWERS"
 
                   curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\", \"username\": \"GitHub\", \"icon_url\": \"https://github.githubassets.com/favicons/favicon.png\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT
-                  
