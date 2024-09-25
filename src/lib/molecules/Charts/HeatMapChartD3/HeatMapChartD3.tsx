@@ -8,13 +8,15 @@ import Empty from '../../../atoms/Empty';
 import BusyLoader from '../../../atoms/BusyLoader';
 import Popover from '../../../atoms/Popover';
 import Tooltip from '../../Tooltip/Tooltip';
-import { default as HeatMapTooltip } from './Tooltip';
-
-// Types
-import { ITooltipProps } from './Tooltip';
 
 // Styles
 import './HeatMapChartD3.scss';
+
+interface IHoveredCell {
+    x: number;
+    y: number;
+    text: string;
+}
 
 export const CONTAINER_PADDING = 8;
 const BORDER_WIDTH = 1;
@@ -112,7 +114,7 @@ const HeatMapChartD3: React.FC<IHeatMapChartD3Props> = ({
     const containerRef = useRef<HTMLDivElement>(null);
     const heatMapRef = useRef<HTMLDivElement>(null);
     const [containerWidth, setContainerWidth] = useState(0);
-    const [hoveredCell, setHoveredCell] = useState<(ITooltipProps & { value: number }) | undefined>();
+    const [hoveredCell, setHoveredCell] = useState<(IHoveredCell & { value: number }) | undefined>();
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const colorsSet = useRef(new Set());
     const titleRef = useRef<HTMLDivElement>(null);
