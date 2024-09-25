@@ -145,10 +145,10 @@ const Rating: FC<IRatingProps> = (props) => {
     const [disableMouseMove, setDisableMouseMove] = useState(false);
 
     const calculateRegardingPosition = (e: MouseEvent<HTMLElement>) => {
-        const getClientPosition =
-            e.clientX -
-            (isRTLMode ? e.currentTarget.offsetLeft + e.currentTarget.clientWidth : e.currentTarget.offsetLeft);
-        const getRelativeWidth = Math.abs((getClientPosition / e.currentTarget.offsetWidth) * 100);
+        const { left, width } = e.currentTarget.getBoundingClientRect();
+        const getClientPosition = e.clientX - (isRTLMode ? left + width : left);
+
+        const getRelativeWidth = Math.abs((getClientPosition / width) * 100);
 
         return halfAllow && getRelativeWidth <= 50 ? 50 : 100;
     };
@@ -203,6 +203,7 @@ const Rating: FC<IRatingProps> = (props) => {
         if (readonly) return;
         setRegardingPosition(calculateRegardingPosition(e));
         const selected = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
+
         if (isControlled) {
             setDisableMouseMove(true);
             setHoveredValue(0);

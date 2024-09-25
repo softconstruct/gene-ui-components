@@ -2,30 +2,31 @@ import React from 'react';
 
 import StackedColumnChartComponent from 'src/lib/molecules/Charts/StackedColumnChart';
 import { dashStyles, weekDaysFullList } from './data';
-import { args, category } from '../assets/storybook.globals';
-
-const data = [75, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6];
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 export default {
     title: 'Charts/StackedColumnChart',
     component: StackedColumnChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        data: args({ control: false, category: category.content }),
-        title: args({ control: 'text', category: category.content }),
-        tooltip: args({ control: 'text', category: category.content }),
-        dataName: args({ control: false, category: category.content }),
-        withLegend: args({ control: 'boolean', category: category.states }),
-        categories: args({ control: 'array', category: category.content }),
-        pointWidth: args({ control: 'number', category: category.appearance }),
-        plotOptions: args({ control: false, category: category.others }),
-        subtitle: args({ control: 'text', category: category.content }),
-        opacity: args({ control: 'number', category: category.appearance }),
-        series: args({ control: 'array', category: category.content }),
-        emptyDataValue: args({ control: 'number', category: category.content }),
-        gridLineDashStyle: args({ control: 'text', category: category.appearance }),
-        min: args({ control: 'number', category: category.content }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        data: args({ control: false, ...propCategory.content }),
+        title: args({ control: 'text', ...propCategory.content }),
+        tooltip: args({ control: 'text', ...propCategory.content }),
+        dataName: args({ control: false, ...propCategory.content }),
+        withLegend: args({ control: 'boolean', ...propCategory.states }),
+        categories: args({ control: 'array', ...propCategory.content }),
+        pointWidth: args({ control: 'number', ...propCategory.appearance }),
+        plotOptions: args({ control: false, ...propCategory.others }),
+        subtitle: args({ control: 'text', ...propCategory.content }),
+        opacity: args({ control: 'number', ...propCategory.appearance }),
+        series: args({ control: 'array', ...propCategory.content }),
+        emptyDataValue: args({ control: 'number', ...propCategory.content }),
+        gridLineDashStyle: args({ control: 'text', ...propCategory.appearance }),
+        min: args({ control: 'number', ...propCategory.content }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     }
 };
 

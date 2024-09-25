@@ -1,64 +1,62 @@
 import React, { useState, useEffect } from 'react';
 
+//Helpers
+import { args, propCategory } from '../../assets/storybook.globals';
+
+// Components
 import WrappedCardList from 'src/lib/organisms/CardList/WrappedCardList';
 import CardListComponent from 'src/lib/organisms/CardList/DefaultCardList';
-
 import Breadcrumb from 'src/lib/molecules/Breadcrumb';
 import Button from 'src/lib/atoms/Button';
+
+// Data
 import { generateRows, columns, totals, breadcrumbData } from './data';
-import { args, category } from '../../assets/storybook.globals';
 
 const breadCrumb = <Breadcrumb collapsed data={breadcrumbData} />;
 
-const content = { category: category.content };
-const functionality = { category: category.functionality };
-const appearance = { category: category.appearance };
-const others = { category: category.others };
-const action = { category: category.action };
-const states = { category: category.states };
 export default {
     title: 'Organisms/CardList',
     component: CardListComponent,
     argTypes: {
-        rows: args({ control: false, ...content }),
-        totals: args({ control: false, ...content }),
-        columns: args({ control: false, ...content }),
-        className: args({ control: false, ...others }),
-        columnCount: args({ control: false, ...others }),
-        loading: args({ control: 'boolean', ...states }),
-        rowClassName: args({ control: false, ...others }),
-        expandText: args({ control: 'text', ...content }),
-        sortByText: args({ control: 'text', ...content }),
-        onSortChange: args({ control: false, ...action }),
-        resultText: args({ control: 'text', ...content }),
-        cancelText: args({ control: 'text', ...content }),
-        rowKey: args({ control: false, ...functionality }),
-        getPopupProps: args({ control: false, ...others }),
-        expandedText: args({ control: 'text', ...content }),
-        shadow: args({ control: 'boolean', ...appearance }),
-        border: args({ control: 'boolean', ...appearance }),
-        viewCardText: args({ control: 'text', ...content }),
-        columnKey: args({ control: false, ...functionality }),
-        customSubHeader: args({ control: 'text', ...content }),
-        sortType: args({ control: 'select', ...functionality }),
-        onPaginationChange: args({ control: false, ...action }),
-        expandedCloseText: args({ control: 'text', ...content }),
-        sortedColumn: args({ control: false, ...functionality }),
-        rowsCount: args({ control: 'number', ...functionality }),
-        rowActionBar: args({ control: false, ...functionality }),
-        rowExtraClick: args({ control: false, ...functionality }),
-        sortingPlaceholder: args({ control: 'text', ...content }),
-        isEditMode: args({ control: 'boolean', ...functionality }),
-        columnLimit: args({ control: 'number', ...functionality }),
-        rowsPerPage: args({ control: 'number', ...functionality }),
-        emptyContent: args({ control: 'boolean', ...functionality }),
-        rowExtraClickMenuTitle: args({ control: 'text', ...content }),
-        getExpandIconDisableState: args({ control: false, ...others }),
-        defaultSortType: args({ control: 'select', ...functionality }),
-        sortableColumns: args({ control: 'boolean', ...functionality }),
-        rowExtraClickNeeded: args({ control: false, ...functionality }),
-        renderRowNestedChildren: args({ control: false, ...functionality }),
-        defaultSortedColumn: args({ control: 'boolean', ...functionality })
+        rows: args({ control: false, ...propCategory.content }),
+        totals: args({ control: false, ...propCategory.content }),
+        columns: args({ control: false, ...propCategory.content }),
+        className: args({ control: false, ...propCategory.others }),
+        columnCount: args({ control: false, ...propCategory.others }),
+        loading: args({ control: 'boolean', ...propCategory.states }),
+        rowClassName: args({ control: false, ...propCategory.others }),
+        expandText: args({ control: 'text', ...propCategory.content }),
+        sortByText: args({ control: 'text', ...propCategory.content }),
+        onSortChange: args({ control: false, ...propCategory.action }),
+        resultText: args({ control: 'text', ...propCategory.content }),
+        cancelText: args({ control: 'text', ...propCategory.content }),
+        rowKey: args({ control: false, ...propCategory.functionality }),
+        getPopupProps: args({ control: false, ...propCategory.others }),
+        expandedText: args({ control: 'text', ...propCategory.content }),
+        shadow: args({ control: 'boolean', ...propCategory.appearance }),
+        border: args({ control: 'boolean', ...propCategory.appearance }),
+        viewCardText: args({ control: 'text', ...propCategory.content }),
+        columnKey: args({ control: false, ...propCategory.functionality }),
+        customSubHeader: args({ control: 'text', ...propCategory.content }),
+        sortType: args({ control: 'select', ...propCategory.functionality }),
+        onPaginationChange: args({ control: false, ...propCategory.action }),
+        expandedCloseText: args({ control: 'text', ...propCategory.content }),
+        sortedColumn: args({ control: false, ...propCategory.functionality }),
+        rowsCount: args({ control: 'number', ...propCategory.functionality }),
+        rowActionBar: args({ control: false, ...propCategory.functionality }),
+        rowExtraClick: args({ control: false, ...propCategory.functionality }),
+        sortingPlaceholder: args({ control: 'text', ...propCategory.content }),
+        isEditMode: args({ control: 'boolean', ...propCategory.functionality }),
+        columnLimit: args({ control: 'number', ...propCategory.functionality }),
+        rowsPerPage: args({ control: 'number', ...propCategory.functionality }),
+        emptyContent: args({ control: 'boolean', ...propCategory.functionality }),
+        rowExtraClickMenuTitle: args({ control: 'text', ...propCategory.content }),
+        getExpandIconDisableState: args({ control: false, ...propCategory.others }),
+        defaultSortType: args({ control: 'select', ...propCategory.functionality }),
+        sortableColumns: args({ control: 'boolean', ...propCategory.functionality }),
+        rowExtraClickNeeded: args({ control: false, ...propCategory.functionality }),
+        renderRowNestedChildren: args({ control: false, ...propCategory.functionality }),
+        defaultSortedColumn: args({ control: 'boolean', ...propCategory.functionality })
     },
     args: {
         shadow: true,

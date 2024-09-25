@@ -2,23 +2,26 @@ import React from 'react';
 
 import LineChartComponent from 'src/lib/molecules/Charts/LineChart';
 import { monthsList } from './data';
-import { args, category } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 export default {
     title: 'Charts/LineChart',
     component: LineChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        curved: args({ control: 'boolean', category: category.appearance }),
-        tooltip: args({ control: 'text', category: category.content }),
-        title: args({ control: 'text', category: category.content }),
-        categories: args({ control: 'object', category: category.content }),
-        plotOptions: args({ control: false, category: category.others }),
-        sharedTooltip: args({ control: 'boolean', category: category.states }),
-        subtitle: args({ control: 'text', category: category.content }),
-        gridLineDashStyle: args({ control: false, category: category.appearance }),
-        series: args({ control: 'object', category: category.content }),
-        isLoading: args({ content: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        curved: args({ control: 'boolean', ...propCategory.appearance }),
+        tooltip: args({ control: 'text', ...propCategory.content }),
+        title: args({ control: 'text', ...propCategory.content }),
+        categories: args({ control: 'object', ...propCategory.content }),
+        plotOptions: args({ control: false, ...propCategory.others }),
+        sharedTooltip: args({ control: 'boolean', ...propCategory.states }),
+        subtitle: args({ control: 'text', ...propCategory.content }),
+        gridLineDashStyle: args({ control: false, ...propCategory.appearance }),
+        series: args({ control: 'object', ...propCategory.content }),
+        isLoading: args({ content: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     }
 };
 
