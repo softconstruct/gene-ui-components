@@ -2,33 +2,36 @@ import React from 'react';
 
 import ColumnChartComponent from 'src/lib/molecules/Charts/ColumnChart';
 import { dashStyles, weekDaysList } from './data';
-import { args, category } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 const data = [80, 1, 120, 220, 80, 130, 60];
 
 export default {
     title: 'Charts/ColumnChart',
     component: ColumnChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        data: args({ control: 'object', category: category.content }),
-        color: args({ control: 'string', category: category.appearance }),
-        title: args({ control: 'text', category: category.content }),
-        width: args({ control: 'text', category: category.appearance }),
-        height: args({ control: 'text', category: category.appearance }),
-        prefix: args({ control: false, category: category.content }),
-        tooltip: args({ control: 'text', category: category.content }),
-        dataName: args({ control: 'text', category: category.content }),
-        subtitle: args({ control: 'text', category: category.content }),
-        withEmptyBG: args({ control: 'boolean', category: category.appearance }),
-        categories: args({ control: 'object', category: category.content }),
-        plotOptions: args({ control: 'object', category: category.others }),
-        gridLineDashStyle: args({ control: false, category: category.appearance }),
-        decimalNumberPrecision: args({ control: 'number', category: category.content }),
-        max: args({ control: 'number', category: category.content }),
-        min: args({ control: 'number', category: category.content }),
-        currency: args({ control: 'text', category: category.content }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        data: args({ control: 'object', ...propCategory.content }),
+        color: args({ control: 'string', ...propCategory.appearance }),
+        title: args({ control: 'text', ...propCategory.content }),
+        width: args({ control: 'text', ...propCategory.appearance }),
+        height: args({ control: 'text', ...propCategory.appearance }),
+        prefix: args({ control: false, ...propCategory.content }),
+        tooltip: args({ control: 'text', ...propCategory.content }),
+        dataName: args({ control: 'text', ...propCategory.content }),
+        subtitle: args({ control: 'text', ...propCategory.content }),
+        withEmptyBG: args({ control: 'boolean', ...propCategory.appearance }),
+        categories: args({ control: 'object', ...propCategory.content }),
+        plotOptions: args({ control: 'object', ...propCategory.others }),
+        gridLineDashStyle: args({ control: false, ...propCategory.appearance }),
+        decimalNumberPrecision: args({ control: 'number', ...propCategory.content }),
+        max: args({ control: 'number', ...propCategory.content }),
+        min: args({ control: 'number', ...propCategory.content }),
+        currency: args({ control: 'text', ...propCategory.content }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     }
 };
 

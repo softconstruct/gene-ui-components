@@ -21,3 +21,28 @@ jobs:
               run: npm run test
             - name: 🧑‍💻 Linting source code
               run: npm run lint-styles && npm run lint-scripts
+    chromatic:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 20
+        - name: 📥 Install dependencies
+          run: npm install
+        - name: Run Chromatic
+          id: chromatic
+          uses: chromaui/action@latest
+          with:
+            projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+            exitZeroOnChanges: true
+        - name: Update PR Description
+          uses: nefrob/pr-description@v1.1.2
+          with:
+            content: "### Chromatic Build Summary \n**Build URL:** ${{steps.chromatic.outputs.buildUrl}} \n**Storybook URL:** ${{steps.chromatic.outputs.storybookUrl}}"
+            regex: ".*"
+            regexFlags: s
+            token: ${{ secrets.GITHUB_TOKEN }}

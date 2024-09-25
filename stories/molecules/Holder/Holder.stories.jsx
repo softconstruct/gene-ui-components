@@ -1,40 +1,44 @@
 import React, { useEffect, useRef } from 'react';
 
+// Helpers
+import { args, propCategory } from '../../assets/storybook.globals';
+
+// Components
 import HolderComponent from 'src/lib/molecules/Holder';
-import Time from 'src/lib/atoms/Time';
 import ExtendedInput from 'src/lib/molecules/ExtendedInput/index';
 import Dropdown from 'src/lib/organisms/Dropdown/index';
+
+// Styles
 import './index.scss';
-import { args, category } from '../../assets/storybook.globals';
 
 export default {
     title: 'Molecules/Holder',
     component: HolderComponent,
     argTypes: {
-        title: args({ control: 'text', category: category.content }),
-        onApply: args({ control: false, category: category.action }),
-        onReset: args({ control: false, category: category.action }),
-        footer: args({ control: 'text', category: category.content }),
-        onChange: args({ control: false, category: category.action }),
-        className: args({ control: false, category: category.others }),
-        children: args({ control: 'text', category: category.content }),
-        opened: args({ control: 'boolean', category: category.states }),
-        resetText: args({ control: 'text', category: category.content }),
-        applyText: args({ control: 'text', category: category.content }),
-        expandText: args({ control: 'text', category: category.content }),
-        disabled: args({ control: 'boolean', category: category.states }),
-        withPortal: args({ control: 'boolean', category: category.states }),
-        leftIconType: args({ control: 'text', category: category.content }),
-        collapseText: args({ control: 'text', category: category.content }),
-        rightIconType: args({ control: 'text', category: category.content }),
-        position: args({ control: 'select', category: category.appearance }),
-        filterIconType: args({ control: 'text', category: category.content }),
-        portalContainer: args({ control: false, category: category.content }),
-        openedWidth: args({ control: 'text', category: category.appearance }),
-        defaultOpened: args({ control: 'boolean', category: category.states }),
-        applyDisabled: args({ control: 'boolean', category: category.states }),
-        resetDisabled: args({ control: 'boolean', category: category.states }),
-        disableOnHover: args({ control: 'boolean', category: category.states })
+        title: args({ control: 'text', ...propCategory.content }),
+        onApply: args({ control: false, ...propCategory.action }),
+        onReset: args({ control: false, ...propCategory.action }),
+        footer: args({ control: 'text', ...propCategory.content }),
+        onChange: args({ control: false, ...propCategory.action }),
+        className: args({ control: false, ...propCategory.others }),
+        children: args({ control: 'text', ...propCategory.content }),
+        opened: args({ control: 'boolean', ...propCategory.states }),
+        resetText: args({ control: 'text', ...propCategory.content }),
+        applyText: args({ control: 'text', ...propCategory.content }),
+        expandText: args({ control: 'text', ...propCategory.content }),
+        disabled: args({ control: 'boolean', ...propCategory.states }),
+        withPortal: args({ control: 'boolean', ...propCategory.states }),
+        leftIconType: args({ control: 'text', ...propCategory.content }),
+        collapseText: args({ control: 'text', ...propCategory.content }),
+        rightIconType: args({ control: 'text', ...propCategory.content }),
+        position: args({ control: 'select', ...propCategory.appearance }),
+        filterIconType: args({ control: 'text', ...propCategory.content }),
+        portalContainer: args({ control: false, ...propCategory.content }),
+        openedWidth: args({ control: 'text', ...propCategory.appearance }),
+        defaultOpened: args({ control: 'boolean', ...propCategory.states }),
+        applyDisabled: args({ control: 'boolean', ...propCategory.states }),
+        resetDisabled: args({ control: 'boolean', ...propCategory.states }),
+        disableOnHover: args({ control: 'boolean', ...propCategory.states })
     },
     args: {
         title: 'Title',
@@ -57,12 +61,7 @@ export default {
 };
 
 export const Default = ({ children, ...args }) => {
-    return (
-        <HolderComponent {...args}>
-            {children}
-            <Time />
-        </HolderComponent>
-    );
+    return <HolderComponent {...args}>{children}</HolderComponent>;
 };
 export const FilterHolder = ({ ...args }) => {
     let holRef = useRef(null);

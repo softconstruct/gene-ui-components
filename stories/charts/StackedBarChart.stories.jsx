@@ -1,24 +1,33 @@
 import React from 'react';
-import { args, category } from '../assets/storybook.globals';
+
+// Helpers
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
+
+// Components
 import StackedBarChart from 'src/lib/molecules/Charts/StackedBarChart';
+
+// Data
 import { stackedBarDataNegative, stackedBarDataPositive } from './data';
 
 export default {
     title: 'Charts/StackedBar',
     component: StackedBarChart,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        title: args({ control: 'text', category: category.content }),
-        subTitle: args({ control: 'text', category: category.content }),
-        background: args({ control: 'boolean', category: category.appearance }),
-        showLegend: args({ control: 'boolean', category: category.states }),
-        showTooltip: args({ control: 'boolean', category: category.states }),
-        showColumnLabel: args({ control: 'boolean', category: category.content }),
-        showUnitOnTooltip: args({ control: 'boolean', category: category.appearance }),
-        showByPercentage: args({ control: 'boolean', category: category.appearance }),
-        categories: args({ control: 'array', category: category.content }),
-        data: args({ control: 'object', category: category.content }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        title: args({ control: 'text', ...propCategory.content }),
+        subTitle: args({ control: 'text', ...propCategory.content }),
+        background: args({ control: 'boolean', ...propCategory.appearance }),
+        showLegend: args({ control: 'boolean', ...propCategory.states }),
+        showTooltip: args({ control: 'boolean', ...propCategory.states }),
+        showColumnLabel: args({ control: 'boolean', ...propCategory.content }),
+        showUnitOnTooltip: args({ control: 'boolean', ...propCategory.appearance }),
+        showByPercentage: args({ control: 'boolean', ...propCategory.appearance }),
+        categories: args({ control: 'array', ...propCategory.content }),
+        data: args({ control: 'object', ...propCategory.content }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     },
     args: {
         title: 'Title',

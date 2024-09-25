@@ -1,33 +1,43 @@
 import React from 'react';
 
+// Helpers
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
+
+// Components
 import HeatMapChartComponent from 'src/lib/molecules/Charts/HeatMapChart';
-import { args, category } from '../assets/storybook.globals';
+
+// Data
 import { HeatMapChartData, HeadMapChartIndAxesData } from './data';
-const tooltipFormatter = (a, b, c) => `<b>${a}</b> gwei on <br><b>${b}</b> at <b>${c}</b>`;
+
 const legendAppearances = {
     vertical: 'vertical',
     horizontal: 'horizontal',
     proximate: 'proximate'
 };
 
+const tooltipFormatter = (a, b, c) => `<b>${a}</b> gwei on <br><b>${b}</b> at <b>${c}</b>`;
+
 export default {
     title: 'Charts/HeatMapChart',
     component: HeatMapChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        title: args({ control: 'text', category: category.content }),
-        chartHeight: args({ control: 'text', category: category.appearance }),
-        subTitle: args({ control: 'text', category: category.content }),
-        enabledLegend: args({ control: 'boolean', category: category.states }),
-        data: args({ control: 'object', category: category.content }),
-        tooltipFormatter: args({ control: false, category: category.action }),
-        legendLayout: args({ control: 'select', options: legendAppearances, category: category.appearance }),
-        xAxisCategories: args({ control: 'object', category: category.content }),
-        yAxisCategories: args({ control: 'object', category: category.content }),
-        yAxisTitle: args({ control: false, category: category.content }),
-        yAxisNeedReverse: args({ control: 'boolean', category: category.appearance }),
-        legendHeight: args({ control: 'text', category: category.appearance }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        title: args({ control: 'text', ...propCategory.content }),
+        chartHeight: args({ control: 'text', ...propCategory.appearance }),
+        subTitle: args({ control: 'text', ...propCategory.content }),
+        enabledLegend: args({ control: 'boolean', ...propCategory.states }),
+        data: args({ control: 'object', ...propCategory.content }),
+        tooltipFormatter: args({ control: false, ...propCategory.action }),
+        legendLayout: args({ control: 'select', options: legendAppearances, ...propCategory.appearance }),
+        xAxisCategories: args({ control: 'object', ...propCategory.content }),
+        yAxisCategories: args({ control: 'object', ...propCategory.content }),
+        yAxisTitle: args({ control: false, ...propCategory.content }),
+        yAxisNeedReverse: args({ control: 'boolean', ...propCategory.appearance }),
+        legendHeight: args({ control: 'text', ...propCategory.appearance }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     },
     args: {
         chartHeight: '700px',

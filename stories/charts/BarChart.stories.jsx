@@ -2,26 +2,29 @@ import React from 'react';
 
 import BarChartComponent from 'src/lib/molecules/Charts/BarChart';
 import { dashStyles, monthsList } from './data';
-import { args, category } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 export default {
     title: 'Charts/BarChart',
     component: BarChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        gridLineDashStyle: args({ control: 'select', options: dashStyles, category: category.appearance }),
-        min: args({ control: 'number', category: category.content }),
-        max: args({ control: 'number', category: category.content }),
-        xAxisRest: args({ control: false, category: category.others }),
-        yAxisRest: args({ control: false, category: category.others }),
-        title: args({ control: 'text', category: category.content }),
-        categories: args({ control: 'object', category: category.content }),
-        subtitle: args({ control: 'text', category: category.content }),
-        sharedTooltip: args({ control: 'boolean', category: category.states }),
-        series: args({ control: 'object', category: category.content }),
-        colors: args({ control: 'select', category: category.appearance }),
-        plotOptions: args({ control: 'object', category: category.others }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        gridLineDashStyle: args({ control: 'select', options: dashStyles, ...propCategory.appearance }),
+        min: args({ control: 'number', ...propCategory.content }),
+        max: args({ control: 'number', ...propCategory.content }),
+        xAxisRest: args({ control: false, ...propCategory.others }),
+        yAxisRest: args({ control: false, ...propCategory.others }),
+        title: args({ control: 'text', ...propCategory.content }),
+        categories: args({ control: 'object', ...propCategory.content }),
+        subtitle: args({ control: 'text', ...propCategory.content }),
+        sharedTooltip: args({ control: 'boolean', ...propCategory.states }),
+        series: args({ control: 'object', ...propCategory.content }),
+        colors: args({ control: 'select', ...propCategory.appearance }),
+        plotOptions: args({ control: 'object', ...propCategory.others }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     },
     args: {
         label1: 'Channel 1',
