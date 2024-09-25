@@ -107,7 +107,10 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
                           )}`
                         : `// fill ${name} component args`
                 }
-            } as ${InterfaceName}
+            } as ${InterfaceName},
+            parameters: {
+                chromatic: { disableSnapshot: true }
+            }
         };
         
         export default meta;
@@ -137,7 +140,7 @@ const generateCmpStoryTemplateForChromatic = ({ name, level }) => `
         
         export default meta;
         
-        const testTypes = [{
+        const variants = [{
             //all posible props
         },{
             //for all variants
@@ -146,8 +149,8 @@ const generateCmpStoryTemplateForChromatic = ({ name, level }) => `
         export const Template = () => {
             return (
                 <VariantsStoryGrid>
-                    {testTypes.map((el, index) => {
-                        return <${name} {...el} key={index} />;
+                    {variants.map((variant, index) => {
+                        return <${name} {...variant} key={index} />;
                     })}
                 </VariantsStoryGrid>
             );
