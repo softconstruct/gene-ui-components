@@ -15,47 +15,47 @@
     &_size {
         &_medium {
             &:not(#{ $this }_icon_only) {
-                gap: var(--guit-ref-spacing-xs);
-                padding-top: var(--guit-ref-spacing-2xs);
-                padding-bottom: var(--guit-ref-spacing-2xs);
+                gap: var(--guit-ref-spacing-xsmall);
+                padding-top: var(--guit-ref-spacing-2xsmall);
+                padding-bottom: var(--guit-ref-spacing-2xsmall);
             }
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
-                padding-inline-start: var(--guit-ref-spacing-m);
-                padding-inline-end: var(--guit-ref-spacing-m);
+                padding-inline-start: var(--guit-ref-spacing-medium);
+                padding-inline-end: var(--guit-ref-spacing-medium);
             }
             &#{ $this }_icon_before {
-                padding-inline-start: var(--guit-ref-spacing-xs);
-                padding-inline-end: var(--guit-ref-spacing-m);
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
+                padding-inline-end: var(--guit-ref-spacing-medium);
             }
             &#{ $this }_icon_after {
-                padding-inline-start: var(--guit-ref-spacing-m);
-                padding-inline-end: var(--guit-ref-spacing-xs);
+                padding-inline-start: var(--guit-ref-spacing-medium);
+                padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
             &#{ $this }_icon_only {
-                padding: var(--guit-ref-spacing-2xs);
+                padding: var(--guit-ref-spacing-2xsmall);
             }
         }
 
         &_small {
             &:not(#{ $this }_icon_only) {
-                gap: var(--guit-ref-spacing-xs);
-                padding-top: var(--guit-ref-spacing-4xs);
-                padding-bottom: var(--guit-ref-spacing-4xs);
+                gap: var(--guit-ref-spacing-xsmall);
+                padding-top: var(--guit-ref-spacing-4xsmall);
+                padding-bottom: var(--guit-ref-spacing-4xsmall);
             }
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
-                padding-inline-start: var(--guit-ref-spacing-m);
-                padding-inline-end: var(--guit-ref-spacing-m);
+                padding-inline-start: var(--guit-ref-spacing-medium);
+                padding-inline-end: var(--guit-ref-spacing-medium);
             }
             &#{ $this }_icon_before {
-                padding-inline-start: var(--guit-ref-spacing-4xs);
-                padding-inline-end: var(--guit-ref-spacing-xs);
+                padding-inline-start: var(--guit-ref-spacing-4xsmall);
+                padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
             &#{ $this }_icon_after {
-                padding-inline-start: var(--guit-ref-spacing-xs);
-                padding-inline-end: var(--guit-ref-spacing-4xs);
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
+                padding-inline-end: var(--guit-ref-spacing-4xsmall);
             }
             &#{ $this }_icon_only {
-                padding: var(--guit-ref-spacing-4xs);
+                padding: var(--guit-ref-spacing-4xsmall);
             }
         }
 
@@ -80,22 +80,22 @@
                 font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
             }
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
-                padding-inline-start: var(--guit-ref-spacing-xs);
-                padding-inline-end: var(--guit-ref-spacing-xs);
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
+                padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
             &#{ $this }_icon_before {
-                padding-inline-start: var(--guit-ref-spacing-4xs);
-                padding-inline-end: var(--guit-ref-spacing-xs);
+                padding-inline-start: var(--guit-ref-spacing-4xsmall);
+                padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
             &#{ $this }_icon_after {
-                padding-inline-start: var(--guit-ref-spacing-xs);
-                padding-inline-end: var(--guit-ref-spacing-4xs);
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
+                padding-inline-end: var(--guit-ref-spacing-4xsmall);
             }
             &#{ $this }_icon_only {
-                padding: var(--guit-ref-spacing-4xs);
+                padding: var(--guit-ref-spacing-4xsmall);
             }
             &#{ $this }_icon_only {
-                padding: var(--guit-ref-spacing-4xs);
+                padding: var(--guit-ref-spacing-4xsmall);
             }
         }
     }
@@ -103,10 +103,10 @@
     &_fill {
         &#{ $this }_size_medium,
         &#{ $this }_size_small {
-            border-radius: var(--guit-ref-radius-3xs);
+            border-radius: var(--guit-ref-radius-3xsmall);
         }
         &#{ $this }_size_small_nudge {
-            border-radius: var(--guit-ref-radius-4xs);
+            border-radius: var(--guit-ref-radius-4xsmall);
         }
         &#{ $this }_color_informative {
             background-color: var(--guit-sem-color-background-informative);
@@ -124,16 +124,16 @@
             background-color: var(--guit-sem-color-background-warning-1);
         }
         &#{ $this }_color_purple {
-            background-color: var(--guit-sem-color-background-accent-purple);
+            background-color: var(--guit-sem-color-background-accent-purple-1);
         }
         &#{ $this }_color_lagoon {
-            background-color: var(--guit-sem-color-background-accent-lagoon);
+            background-color: var(--guit-sem-color-background-accent-lagoon-1);
         }
         &#{ $this }_color_magenta {
-            background-color: var(--guit-sem-color-background-accent-magenta);
+            background-color: var(--guit-sem-color-background-accent-magenta-1);
         }
         &#{ $this }_color_slate {
-            background-color: var(--guit-sem-color-background-accent-slate);
+            background-color: var(--guit-sem-color-background-accent-slate-1);
         }
         &#{ $this }_color_inverse {
             background-color: var(--guit-sem-color-background-inverse);
