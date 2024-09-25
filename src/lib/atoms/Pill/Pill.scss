@@ -1,17 +1,12 @@
-//todo
 .pill {
     $this: &;
 
     display: inline-flex;
     vertical-align: top;
     align-items: center;
-    user-select: none;
+    max-width: 100%;
 
     &_icon {
-        &_before {
-            flex-direction: row;
-        }
-
         &_after {
             flex-direction: row-reverse;
         }
@@ -195,6 +190,5 @@
         font-family: inherit;
         font-weight: inherit;
         color: inherit;
-        text-transform: capitalize;
     }
 }
