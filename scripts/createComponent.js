@@ -32,6 +32,7 @@ const messages = {
 let prettierConfig;
 
 const pathToLib = ['..', 'src', 'lib'];
+const pathToChromaticStories = ['..', 'stories', 'chromatic'];
 
 const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => {
     const InterfaceName = `I${name}Props`;
@@ -118,6 +119,39 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
         Default.args = {} as ${InterfaceName};
         `;
 };
+
+const generateCmpStoryTemplateForChromatic = ({ name, level }) => `
+        import React, { FC } from 'react';
+        import { Meta } from '@storybook/react';
+
+        // Helpers
+        import { VariantsStoryGrid } from '../assets/storybook.globals';
+        
+        // Components
+        import ${name} from '../../src/lib/${level}/${name}';
+        
+        const meta: Meta<typeof ${name}> = {
+            title: 'Chromatic/${name}',
+            component: ${name}
+        };
+        
+        export default meta;
+        
+        const testTypes = [{
+            //all posible props
+        },{
+            //for all variants
+        }]
+        
+        export const Template = () => {
+            return (
+                <VariantsStoryGrid>
+                    {testTypes.map((el, index) => {
+                        return <${name} {...el} key={index} />;
+                    })}
+                </VariantsStoryGrid>
+            );
+        };`;
 
 const generateCmpTestTemplate = ({ name, portal }) => {
     const beforeEach = portal
@@ -357,6 +391,26 @@ const createStoryFiles = async ({ name, level, props }) => {
     }
 };
 
+const createStoryFileForChromatic = async ({ name, level }) => {
+    try {
+        const storyCode = generateCmpStoryTemplateForChromatic({
+            name,
+            level
+        });
+
+        const storyDir = path.join(__dirname, ...pathToChromaticStories);
+        const storyPath = path.join(storyDir, `${name}.chromatic.stories.tsx`);
+        const formattedData = prettier.format(storyCode, { ...prettierConfig, parser: 'typescript' });
+
+        await fs.appendFile(storyPath, formattedData);
+    } catch (error) {
+        return {
+            hasError: true,
+            error
+        };
+    }
+};
+
 const createTestFiles = async ({ name, level, portal }) => {
     try {
         const srcCode = generateCmpTestTemplate({
@@ -444,6 +498,7 @@ const main = async () => {
     const componentCreationResult = await createComponentFiles(answers);
     const exportsAddingResult = await addExports(answers);
     const storyCreationResult = await createStoryFiles(answers);
+    const storyForChromaticCreationResult = await createStoryFileForChromatic(answers);
     const testCreationResult = await createTestFiles(answers);
     const addGlobalExportResult = await addGlobalExportToIndexTs(answers);
     // todo remove addTsInRollup after fix
@@ -453,6 +508,7 @@ const main = async () => {
         componentCreationResult?.hasError ||
         exportsAddingResult?.hasError ||
         storyCreationResult?.hasError ||
+        storyForChromaticCreationResult?.hasError ||
         tsInRollupResult?.hasError ||
         testCreationResult?.hasError ||
         addGlobalExportResult?.hasError
@@ -461,6 +517,7 @@ const main = async () => {
             componentCreationResult?.error ||
             exportsAddingResult?.error ||
             storyCreationResult?.error ||
+            storyForChromaticCreationResult?.error ||
             tsInRollupResult?.error ||
             testCreationResult?.error ||
             addGlobalExportResult?.error;
