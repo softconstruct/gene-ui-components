@@ -31,7 +31,7 @@ jobs:
                   PUSHER=$(git log -1 --pretty=%an)
 
                   # Construct the notification message
-                  MESSAGE="@channel\nPull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nTitle: $PR_TITLE\nCommit Message: $LATEST_COMMIT_MESSAGE\nPusher: $PUSHER\nRequested Reviewers: $REVIEWERS"
+                  MESSAGE="@channel\nPull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nTitle: $PR_TITLE\nCommit Message: $LATEST_COMMIT_MESSAGE\Commited by: $PUSHER\nRequested Reviewers: $REVIEWERS"
 
                   # Send the notification
                   curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\", \"username\": \"GitHub\", \"icon_url\": \"https://github.githubassets.com/favicons/favicon.png\"}" "$INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT"
