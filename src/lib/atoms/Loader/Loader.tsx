@@ -48,9 +48,11 @@ const Loader: FC<ILoaderProps> = ({
     if (isLoading) {
         return (
             <span className={`loader loader_direction_${textPosition} loader_size_${size} loader_color_${appearance}`}>
-                <svg className="loader__spinner" viewBox="0 0 50 50">
-                    <circle className="loader__spinner_path" cx="25" cy="25" r="20" fill="none" strokeWidth="5" />
-                </svg>
+                <span className="loader__spinner-wrapper">
+                    <svg className="loader__spinner" viewBox="0 0 50 50">
+                        <circle className="loader__spinner_path" cx="25" cy="25" r="22" fill="none" strokeWidth="5" />
+                    </svg>
+                </span>
                 {text && <span className={`loader__text loader__text_color_${appearance}`}>{text}</span>}
             </span>
         );
