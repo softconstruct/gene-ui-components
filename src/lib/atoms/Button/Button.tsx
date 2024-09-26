@@ -4,6 +4,7 @@ import { Globe } from '@geneui/icons';
 
 // Styles
 import './Button.scss';
+import Loader from '../Loader';
 
 interface IButtonProps {
     /**
@@ -84,14 +85,19 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 name={name}
                 type="button"
                 onClick={onClick}
-                className={classNames(`button button_size_${size} button_color_${appearance} button_type_${type}`, {
-                    button_full_width: fullWidth,
-                    button_icon_before: !isIconAfter,
-                    button_icon_after: isIconAfter,
-                    button_icon_only: !text
-                })}
+                className={classNames(
+                    `button button_size_${size} button_color_${appearance} button_type_${type} button_loading`,
+                    {
+                        button_full_width: fullWidth,
+                        button_icon_before: !isIconAfter,
+                        button_icon_after: isIconAfter,
+                        button_icon_only: !text
+                    }
+                )}
                 disabled={disabled}
             >
+                <Loader className={'button__loader'} size="smallNudge" />
+
                 {Icon &&
                     cloneElement(Icon, {
                         className: `${iconClassName} button__icon`
