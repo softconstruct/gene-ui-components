@@ -1,6 +1,6 @@
 import React from 'react';
 import { ReactWrapper, mount } from 'enzyme';
-import { Dot } from '@geneui/icons';
+import { Globe } from '@geneui/icons';
 
 // Components
 import Pill, { IPillProps } from './index';
@@ -20,13 +20,13 @@ describe('Pill', () => {
     });
 
     it('renders Icon prop correctly', () => {
-        const wrapper = setup.setProps({ Icon: <Dot /> });
-        expect(wrapper.find(Dot).exists()).toBeTruthy();
+        const wrapper = setup.setProps({ Icon: <Globe /> });
+        expect(wrapper.find(Globe).exists()).toBeTruthy();
     });
 
-    it('renders isIconAfter prop correctly', () => {
-        const wrapper = setup.setProps({ isIconAfter: true });
-        expect(wrapper.find('.pill').hasClass('pill_icon_after')).toBeTruthy();
+    it('renders withDot prop correctly', () => {
+        const wrapper = setup.setProps({ iconAlignment: 'after', withDot: true });
+        expect(wrapper.find('.pill').hasClass('pill_icon_before')).toBeTruthy();
     });
 
     it('renders isFill prop correctly', () => {
@@ -44,6 +44,15 @@ describe('Pill', () => {
         (size) => {
             const wrapper = setup.setProps({ size });
             expect(wrapper.find('.pill').hasClass(`pill_size_${size}`)).toBeTruthy();
+        }
+    );
+
+    it.each<IPillProps['iconAlignment']>(['after', 'before'])(
+        'renders iconAlignment : %p prop correctly ',
+        (iconAlignment) => {
+            const wrapper = setup.setProps({ iconAlignment, Icon: <Globe /> });
+            wrapper.update();
+            expect(wrapper.find('.pill').hasClass(`pill_icon_${iconAlignment}`)).toBeTruthy();
         }
     );
 
