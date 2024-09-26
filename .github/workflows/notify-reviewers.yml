@@ -6,7 +6,7 @@ jobs:
     send_notification:
         runs-on: ubuntu-latest
         steps:
-            - name: Send Notification
+            - name: 🔔 Send Notification
               env:
                   INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT: ${{ secrets.INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT }}
               run: |

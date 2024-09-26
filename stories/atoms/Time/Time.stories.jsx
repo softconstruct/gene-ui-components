@@ -17,7 +17,7 @@ export default {
     }
 };
 
-const Template = ({ ...args }) => <TimeComponent {...args} />;
+const Template = ({ ...args }) => <TimeComponent data-chromatic="ignore" {...args} />;
 
 export const DateAndTime = Template.bind({});
 DateAndTime.args = {

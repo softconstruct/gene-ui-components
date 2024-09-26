@@ -10,12 +10,12 @@ export const generateRows = (rowsCount) =>
                 userId: `userId ${index}`,
                 username: `User ${index}`,
                 firstName: `FirstName ${index}`,
-                lastName: `lastName ${Math.floor(Math.random() * 600)}${1}`,
+                lastName: `lastName ${index}`,
                 stakes: `Stakes ${index}`,
                 pla: `Pla ${index}`,
                 pl: `pl ${index}`,
                 status: `Status ${index}`,
-                cacheDeskName: `cach desk name cach desk name ${index}`,
+                deskName: `desk name ${index}`,
                 winning: `Winning ${index}`,
                 profitability: `${index}`
             }

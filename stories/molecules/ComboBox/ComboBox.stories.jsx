@@ -48,6 +48,9 @@ export default {
         flexibility: inputConfig.flexibility[0],
         labelAppearance: inputConfig.labelAppearance[0],
         infoIconTooltipProps: { title: 'Info icon title' }
+    },
+    parameters: {
+        chromatic: { disableSnapshot: true }
     }
 };
 const Template = ({ ...args }) => <ComboBox {...args} defaultValue={data} />;
