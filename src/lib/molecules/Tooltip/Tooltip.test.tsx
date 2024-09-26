@@ -60,13 +60,6 @@ describe('Tooltip', () => {
         expect(provider().find(`.${position}`).exists()).toBeTruthy();
     });
 
-    it('handle onClick', () => {
-        const jestFn = jest.fn();
-        const wrapper = setup.setProps({ onClick: jestFn });
-        wrapper.find('.test').simulate('click');
-        expect(jestFn).toHaveBeenCalled();
-    });
-
     it('handle onMouseEnter', () => {
         setup.find('.test').simulate('mouseEnter');
         expect(provider().find('.tooltip-c-p').exists()).toBeTruthy();

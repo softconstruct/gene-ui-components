@@ -255,7 +255,7 @@ function Profile(props) {
     const outsideClickHandler = useCallback(
         (e) => {
             onOutsideClick(e);
-            if (profileRef.current.contains(e.target)) {
+            if (profileRef.current?.contains(e.target)) {
                 toggle(!opened);
             } else {
                 toggle(false);
