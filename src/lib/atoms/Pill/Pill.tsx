@@ -103,12 +103,11 @@ const Pill: FC<IPillProps> = ({
     ) : (
         ''
     );
-    console.log(iconMock, 888);
 
     return (
         <div
             className={classNames(`pill pill_size_${size} pill_color_${color}`, className, {
-                [`pill_icon_${isWithDot ? 'before' : iconAlignment}`]: text,
+                [`pill_icon_${isWithDot ? 'before' : iconAlignment}`]: text && iconMock,
                 pill_icon_only: !text,
                 pill_fill: isFill
             })}
