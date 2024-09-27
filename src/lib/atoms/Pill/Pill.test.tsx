@@ -25,7 +25,7 @@ describe('Pill', () => {
     });
 
     it('renders withDot prop correctly', () => {
-        const wrapper = setup.setProps({ iconAlignment: 'after', withDot: true });
+        const wrapper = setup.setProps({ iconAlignment: 'after', withDot: true, text: 'test' });
         expect(wrapper.find('.pill').hasClass('pill_icon_before')).toBeTruthy();
     });
 
@@ -50,7 +50,7 @@ describe('Pill', () => {
     it.each<IPillProps['iconAlignment']>(['after', 'before'])(
         'renders iconAlignment : %p prop correctly ',
         (iconAlignment) => {
-            const wrapper = setup.setProps({ iconAlignment, Icon: <Globe /> });
+            const wrapper = setup.setProps({ iconAlignment, Icon: <Globe />, text: 'test' });
             wrapper.update();
             expect(wrapper.find('.pill').hasClass(`pill_icon_${iconAlignment}`)).toBeTruthy();
         }
