@@ -303,14 +303,14 @@
         &_medium,
         &_small {
             #{ $this }__icon {
-                width: var(--guit-sem-sizing-width-small-nudge);
-                height: var(--guit-sem-sizing-height-small-nudge);
+                width: var(--guit-sem-dimension-width-small-nudge);
+                height: var(--guit-sem-dimension-height-small-nudge);
             }
         }
 
         &_large {
             gap: var(--guit-ref-spacing-xsmall);
-            height: var(--guit-sem-sizing-height-large);
+            height: var(--guit-sem-dimension-height-large);
             border-radius: var(--guit-ref-radius-2xsmall);
 
             &:not(#{ $this }_icon_only) {
@@ -336,7 +336,7 @@
 
         &_medium {
             gap: var(--guit-ref-spacing-xsmall);
-            height: var(--guit-sem-sizing-height-medium);
+            height: var(--guit-sem-dimension-height-medium);
             border-radius: var(--guit-ref-radius-3xsmall);
 
             &:not(#{ $this }_icon_only) {
@@ -362,7 +362,7 @@
 
         &_small {
             gap: var(--guit-ref-spacing-2xsmall);
-            height: var(--guit-sem-sizing-height-small);
+            height: var(--guit-sem-dimension-height-small);
             border-radius: var(--guit-ref-radius-3xsmall);
 
             &:not(#{ $this }_icon_only) {
@@ -387,7 +387,7 @@
         }
 
         &_Xsmall {
-            height: var(--guit-sem-sizing-height-small-nudge);
+            height: var(--guit-sem-dimension-height-small-nudge);
             border-radius: var(--guit-ref-radius-3xsmall);
 
             &#{ $this }_icon_only {
@@ -395,8 +395,8 @@
             }
 
             #{ $this }__icon {
-                width: var(--guit-sem-sizing-width-xsmall);
-                height: var(--guit-sem-sizing-width-xsmall);
+                width: var(--guit-sem-dimension-width-xsmall);
+                height: var(--guit-sem-dimension-height-xsmall);
             }
         }
     }
