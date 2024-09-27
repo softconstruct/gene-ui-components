@@ -42,7 +42,7 @@
 
         &_small {
             &:not(#{ $this }_icon_only) {
-                gap: var(--guit-ref-spacing-xsmall);
+                gap: var(--guit-ref-spacing-2xsmall);
                 padding-top: var(--guit-ref-spacing-4xsmall);
                 padding-bottom: var(--guit-ref-spacing-4xsmall);
             }
@@ -53,13 +53,13 @@
             }
 
             &#{ $this }_icon_before {
-                padding-inline-start: var(--guit-ref-spacing-4xsmall);
-                padding-inline-end: var(--guit-ref-spacing-xsmall);
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
+                padding-inline-end: var(--guit-ref-spacing-medium);
             }
 
             &#{ $this }_icon_after {
-                padding-inline-start: var(--guit-ref-spacing-xsmall);
-                padding-inline-end: var(--guit-ref-spacing-4xsmall);
+                padding-inline-start: var(--guit-ref-spacing-medium);
+                padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
 
             &#{ $this }_icon_only {
@@ -95,17 +95,13 @@
             }
 
             &#{ $this }_icon_before {
-                padding-inline-start: var(--guit-ref-spacing-4xsmall);
+                padding-inline-start: var(--guit-ref-spacing-3xsmall);
                 padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
 
             &#{ $this }_icon_after {
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
-                padding-inline-end: var(--guit-ref-spacing-4xsmall);
-            }
-
-            &#{ $this }_icon_only {
-                padding: var(--guit-ref-spacing-4xsmall);
+                padding-inline-end: var(--guit-ref-spacing-3xsmall);
             }
 
             &#{ $this }_icon_only {
