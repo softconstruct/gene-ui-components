@@ -10,8 +10,8 @@
 
     &_size {
         &_6Xlarge {
-            width: var(--guit-sem-sizing-width-6xl);
-            height: var(--guit-sem-sizing-height-6xl);
+            width: var(--guit-sem-sizing-width-6xlarge);
+            height: var(--guit-sem-sizing-height-6xlarge);
             font-family: var(--guit-sem-font-heading-medium-semibold-font-family);
             font-size: var(--guit-sem-font-heading-medium-semibold-font-size);
             line-height: var(--guit-sem-font-heading-medium-semibold-line-height);
@@ -19,8 +19,8 @@
         }
 
         &_large {
-            width: var(--guit-sem-sizing-width-l);
-            height: var(--guit-sem-sizing-height-l);
+            width: var(--guit-sem-sizing-width-large);
+            height: var(--guit-sem-sizing-height-large);
             font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
@@ -28,8 +28,8 @@
         }
 
         &_medium {
-            width: var(--guit-sem-sizing-width-m);
-            height: var(--guit-sem-sizing-height-m);
+            width: var(--guit-sem-sizing-width-medium);
+            height: var(--guit-sem-sizing-height-medium);
             font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
@@ -37,8 +37,8 @@
         }
 
         &_small {
-            width: var(--guit-sem-sizing-width-s);
-            height: var(--guit-sem-sizing-height-s);
+            width: var(--guit-sem-sizing-width-small);
+            height: var(--guit-sem-sizing-height-small);
             font-family: var(--guit-sem-font-label-small-default-medium-font-family);
             font-size: var(--guit-sem-font-label-small-default-medium-font-size);
             line-height: var(--guit-sem-font-label-small-default-medium-line-height);
@@ -53,7 +53,7 @@
         }
 
         &_blue {
-            background-color: var(--guit-sem-color-background-accent-blue);
+            background-color: var(--guit-sem-color-background-accent-blue-1);
             color: var(--guit-sem-color-foreground-accent-blue);
         }
 
@@ -63,32 +63,32 @@
         }
 
         &_green {
-            background-color: var(--guit-sem-color-background-accent-green);
+            background-color: var(--guit-sem-color-background-accent-green-1);
             color: var(--guit-sem-color-foreground-accent-green);
         }
 
         &_purple {
-            background-color: var(--guit-sem-color-background-accent-purple);
+            background-color: var(--guit-sem-color-background-accent-purple-1);
             color: var(--guit-sem-color-foreground-accent-purple);
         }
 
         &_orange {
-            background-color: var(--guit-sem-color-background-accent-orange);
+            background-color: var(--guit-sem-color-background-accent-orange-1);
             color: var(--guit-sem-color-foreground-accent-orange);
         }
 
         &_lagoon {
-            background-color: var(--guit-sem-color-background-accent-lagoon);
+            background-color: var(--guit-sem-color-background-accent-lagoon-1);
             color: var(--guit-sem-color-foreground-accent-lagoon);
         }
 
         &_magenta {
-            background-color: var(--guit-sem-color-background-accent-magenta);
+            background-color: var(--guit-sem-color-background-accent-magenta-1);
             color: var(--guit-sem-color-foreground-accent-magenta);
         }
 
         &_slate {
-            background-color: var(--guit-sem-color-background-accent-slate);
+            background-color: var(--guit-sem-color-background-accent-slate-1);
             color: var(--guit-sem-color-foreground-accent-slate);
         }
     }
