@@ -59,6 +59,11 @@ interface IPillProps {
         | 'magenta'
         | 'slate'
         | 'inverse';
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
 }
 
 const iconSizes = {
@@ -77,7 +82,8 @@ const Pill: FC<IPillProps> = ({
     iconAlignment = 'before',
     isFill,
     withDot = true,
-    Icon
+    Icon,
+    className
 }) => {
     const [isWithDot, setIsWithDot] = useState(withDot);
     const textRef = useRef<HTMLSpanElement | null>(null);
@@ -89,23 +95,22 @@ const Pill: FC<IPillProps> = ({
 
     const iconMock = Icon ? (
         cloneElement(Icon, {
-            size: iconSizes[size]
+            size: iconSizes[size],
+            className: 'pill__icon'
         })
     ) : isWithDot ? (
-        <Dot size={iconSizes[size]} />
+        <Dot size={iconSizes[size]} className="pill__icon" />
     ) : (
         ''
     );
 
     return (
         <div
-            className={classNames(
-                `pill pill_size_${size} pill_color_${color} pill_icon_${isWithDot ? 'before' : iconAlignment}`,
-                {
-                    pill_icon_only: !text,
-                    pill_fill: isFill
-                }
-            )}
+            className={classNames(`pill pill_size_${size} pill_color_${color}`, className, {
+                [`pill_icon_${isWithDot ? 'before' : iconAlignment}`]: iconMock,
+                pill_icon_only: !text,
+                pill_fill: isFill
+            })}
         >
             {iconMock}
             {text && (
