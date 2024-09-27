@@ -19,18 +19,22 @@
                 padding-top: var(--guit-ref-spacing-2xsmall);
                 padding-bottom: var(--guit-ref-spacing-2xsmall);
             }
+
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
                 padding-inline-start: var(--guit-ref-spacing-medium);
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
+
             &#{ $this }_icon_before {
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
+
             &#{ $this }_icon_after {
                 padding-inline-start: var(--guit-ref-spacing-medium);
                 padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
+
             &#{ $this }_icon_only {
                 padding: var(--guit-ref-spacing-2xsmall);
             }
@@ -42,18 +46,22 @@
                 padding-top: var(--guit-ref-spacing-4xsmall);
                 padding-bottom: var(--guit-ref-spacing-4xsmall);
             }
+
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
                 padding-inline-start: var(--guit-ref-spacing-medium);
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
+
             &#{ $this }_icon_before {
                 padding-inline-start: var(--guit-ref-spacing-4xsmall);
                 padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
+
             &#{ $this }_icon_after {
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
                 padding-inline-end: var(--guit-ref-spacing-4xsmall);
             }
+
             &#{ $this }_icon_only {
                 padding: var(--guit-ref-spacing-4xsmall);
             }
@@ -70,30 +78,36 @@
         }
 
         &_small_nudge {
-            gap: var(--guit-ref-spacing-3xs);
-            padding-top: var(--guit-ref-spacing-4xs);
-            padding-bottom: var(--guit-ref-spacing-4xs);
+            gap: var(--guit-ref-spacing-3xsmall);
+            padding-top: var(--guit-ref-spacing-4xsmall);
+            padding-bottom: var(--guit-ref-spacing-4xsmall);
+
             &:not(#{ $this }_icon_only) {
                 font-family: var(--guit-sem-font-label-small-default-medium-font-family);
                 font-size: var(--guit-sem-font-label-small-default-medium-font-size);
                 line-height: var(--guit-sem-font-label-small-default-medium-line-height);
                 font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
             }
+
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
                 padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
+
             &#{ $this }_icon_before {
                 padding-inline-start: var(--guit-ref-spacing-4xsmall);
                 padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
+
             &#{ $this }_icon_after {
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
                 padding-inline-end: var(--guit-ref-spacing-4xsmall);
             }
+
             &#{ $this }_icon_only {
                 padding: var(--guit-ref-spacing-4xsmall);
             }
+
             &#{ $this }_icon_only {
                 padding: var(--guit-ref-spacing-4xsmall);
             }
@@ -105,36 +119,47 @@
         &#{ $this }_size_small {
             border-radius: var(--guit-ref-radius-3xsmall);
         }
+
         &#{ $this }_size_small_nudge {
             border-radius: var(--guit-ref-radius-4xsmall);
         }
+
         &#{ $this }_color_informative {
             background-color: var(--guit-sem-color-background-informative);
         }
+
         &#{ $this }_color_neutral {
             background-color: var(--guit-sem-color-background-neutral-3);
         }
+
         &#{ $this }_color_error {
             background-color: var(--guit-sem-color-background-error-1);
         }
+
         &#{ $this }_color_success {
             background-color: var(--guit-sem-color-background-success-1);
         }
+
         &#{ $this }_color_warning {
             background-color: var(--guit-sem-color-background-warning-1);
         }
+
         &#{ $this }_color_purple {
             background-color: var(--guit-sem-color-background-accent-purple-1);
         }
+
         &#{ $this }_color_lagoon {
             background-color: var(--guit-sem-color-background-accent-lagoon-1);
         }
+
         &#{ $this }_color_magenta {
             background-color: var(--guit-sem-color-background-accent-magenta-1);
         }
+
         &#{ $this }_color_slate {
             background-color: var(--guit-sem-color-background-accent-slate-1);
         }
+
         &#{ $this }_color_inverse {
             background-color: var(--guit-sem-color-background-inverse);
             color: var(--guit-sem-color-foreground-neutral-2);
@@ -178,6 +203,7 @@
             color: var(--guit-sem-color-foreground-accent-slate);
         }
     }
+
     &:not(#{ $this }_fill) {
         &#{ $this }_color_inverse {
             color: var(--guit-sem-color-foreground-inverse);
@@ -190,5 +216,9 @@
         font-family: inherit;
         font-weight: inherit;
         color: inherit;
+    }
+
+    &__icon {
+        flex: 0 0 auto;
     }
 }
