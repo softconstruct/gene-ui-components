@@ -10,8 +10,8 @@
 
     &_size {
         &_6Xlarge {
-            width: var(--guit-sem-sizing-width-6xlarge);
-            height: var(--guit-sem-sizing-height-6xlarge);
+            width: var(--guit-sem-dimension-width-6xlarge);
+            height: var(--guit-sem-dimension-height-6xlarge);
             font-family: var(--guit-sem-font-heading-medium-semibold-font-family);
             font-size: var(--guit-sem-font-heading-medium-semibold-font-size);
             line-height: var(--guit-sem-font-heading-medium-semibold-line-height);
@@ -19,8 +19,8 @@
         }
 
         &_large {
-            width: var(--guit-sem-sizing-width-large);
-            height: var(--guit-sem-sizing-height-large);
+            width: var(--guit-sem-dimension-width-large);
+            height: var(--guit-sem-dimension-height-large);
             font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
@@ -28,8 +28,8 @@
         }
 
         &_medium {
-            width: var(--guit-sem-sizing-width-medium);
-            height: var(--guit-sem-sizing-height-medium);
+            width: var(-guit-sem-dimension-width-medium);
+            height: var(--guit-sem-dimension-height-medium);
             font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
@@ -37,8 +37,8 @@
         }
 
         &_small {
-            width: var(--guit-sem-sizing-width-small);
-            height: var(--guit-sem-sizing-height-small);
+            width: var(--guit-sem-dimension-width-small);
+            height: var(--guit-sem-dimension-height-small);
             font-family: var(--guit-sem-font-label-small-default-medium-font-family);
             font-size: var(--guit-sem-font-label-small-default-medium-font-size);
             line-height: var(--guit-sem-font-label-small-default-medium-line-height);
