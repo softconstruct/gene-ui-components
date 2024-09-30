@@ -19,7 +19,7 @@ const meta: Meta<typeof Pill> = {
         isFill: args({ control: 'boolean', ...propCategory.appearance }),
         iconAlignment: args({ control: 'select', ...propCategory.appearance }),
         withDot: args({ control: 'boolean', ...propCategory.content }),
-        className: args({ control: false, ...propCategory.others })
+        className: args({ control: false, ...propCategory.appearance })
     },
     args: {
         size: 'medium',
