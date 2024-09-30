@@ -29,9 +29,9 @@ interface IPillProps {
     isFill?: boolean;
     /**
      * Pill size
-     * Possible values: `small_nudge | small | medium`
+     * Possible values: `smallNudge | small | medium`
      */
-    size?: 'small_nudge' | 'small' | 'medium';
+    size?: 'smallNudge' | 'small' | 'medium';
     /**
      * Pill icon <br/>
      * The `Icon` prop accepts a JSX element that will be displayed alongside the `text`
@@ -67,7 +67,7 @@ interface IPillProps {
 }
 
 const iconSizes = {
-    small_nudge: 16,
+    smallNudge: 16,
     small: 20,
     medium: 20
 } as const;
@@ -76,7 +76,7 @@ const iconSizes = {
  * A Pill component used to display concise information or categorize content. Often used for labels or status indicators, Pill components are visually distinct and can convey different meanings through text and color coding.
  */
 const Pill: FC<IPillProps> = ({
-    color,
+    color = 'informative',
     size = 'medium',
     text,
     iconAlignment = 'before',

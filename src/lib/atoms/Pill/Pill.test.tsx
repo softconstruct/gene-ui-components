@@ -25,6 +25,7 @@ describe('Pill', () => {
     });
 
     it('renders withDot prop correctly', () => {
+        // This prop (iconAlignment: 'after') should be passed and will be skipped by the component logic as it works only with the custom Icon prop.
         const wrapper = setup.setProps({ iconAlignment: 'after', withDot: true, text: 'test' });
         expect(wrapper.find('.pill').hasClass('pill_icon_before')).toBeTruthy();
     });
@@ -39,22 +40,16 @@ describe('Pill', () => {
         expect(wrapper.text()).toBeFalsy();
     });
 
-    it.each<IPillProps['size']>(['medium', 'small', 'small_nudge'])(
-        'checking a component with a prop size : %p',
-        (size) => {
-            const wrapper = setup.setProps({ size });
-            expect(wrapper.find('.pill').hasClass(`pill_size_${size}`)).toBeTruthy();
-        }
-    );
+    it.each<IPillProps['size']>(['medium', 'small', 'smallNudge'])('should have %s size', (size) => {
+        const wrapper = setup.setProps({ size });
+        expect(wrapper.find('.pill').hasClass(`pill_size_${size}`)).toBeTruthy();
+    });
 
-    it.each<IPillProps['iconAlignment']>(['after', 'before'])(
-        'renders iconAlignment : %p prop correctly ',
-        (iconAlignment) => {
-            const wrapper = setup.setProps({ iconAlignment, Icon: <Globe />, text: 'test' });
-            wrapper.update();
-            expect(wrapper.find('.pill').hasClass(`pill_icon_${iconAlignment}`)).toBeTruthy();
-        }
-    );
+    it.each<IPillProps['iconAlignment']>(['after', 'before'])('should have %s iconAlignment', (iconAlignment) => {
+        const wrapper = setup.setProps({ iconAlignment, Icon: <Globe />, text: 'test' });
+        wrapper.update();
+        expect(wrapper.find('.pill').hasClass(`pill_icon_${iconAlignment}`)).toBeTruthy();
+    });
 
     it.each<IPillProps['color']>([
         'informative',
@@ -67,7 +62,7 @@ describe('Pill', () => {
         'magenta',
         'slate',
         'inverse'
-    ])('checking a component with a prop color : %p', (color) => {
+    ])('should have %s color', (color) => {
         const wrapper = setup.setProps({ color });
         expect(wrapper.find('.pill').hasClass(`pill_color_${color}`)).toBeTruthy();
     });
