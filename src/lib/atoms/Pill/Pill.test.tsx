@@ -71,4 +71,11 @@ describe('Pill', () => {
         const wrapper = setup.setProps({ color });
         expect(wrapper.find('.pill').hasClass(`pill_color_${color}`)).toBeTruthy();
     });
+
+    it('renders className prop correctly', () => {
+        const className = 'test-class';
+        const wrapper = setup.setProps({ className });
+
+        expect(wrapper.hasClass(className)).toBeTruthy();
+    });
 });

@@ -14,11 +14,12 @@ const meta: Meta<typeof Pill> = {
     argTypes: {
         size: args({ control: 'select', ...propCategory.appearance }),
         color: args({ control: 'select', ...propCategory.appearance }),
-        Icon: args({ control: 'false', ...propCategory.content }),
+        Icon: args({ control: false, ...propCategory.content }),
         text: args({ control: 'text', ...propCategory.content }),
         isFill: args({ control: 'boolean', ...propCategory.appearance }),
         iconAlignment: args({ control: 'select', ...propCategory.appearance }),
-        withDot: args({ control: 'boolean', ...propCategory.content })
+        withDot: args({ control: 'boolean', ...propCategory.content }),
+        className: args({ control: false, ...propCategory.others })
     },
     args: {
         size: 'medium',
