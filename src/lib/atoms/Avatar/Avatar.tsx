@@ -1,6 +1,7 @@
-import React, { FC, PointerEvent, useEffect, useState, JSX, cloneElement } from 'react';
+import React, { FC, PointerEvent, useEffect, useState, JSX, cloneElement, KeyboardEvent } from 'react';
 import classNames from 'classnames';
 import { Square } from '@geneui/icons';
+
 // Styles
 import './Avatar.scss';
 
@@ -88,6 +89,12 @@ const Avatar: FC<IAvatarProps> = ({
             size: iconSizes[size]
         });
 
+    const keyDownHandler = (e: KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'Enter' && onClick) {
+            onClick(e as PointerEvent<HTMLDivElement>);
+        }
+    };
+
     return isLoading ? (
         <span>skeleton</span>
     ) : (
@@ -97,6 +104,7 @@ const Avatar: FC<IAvatarProps> = ({
             })}
             tabIndex={0}
             onClick={onClick}
+            onKeyDown={keyDownHandler}
         >
             {iconMock && !cutFirstAndLastName && iconMock}
             {src && <img className="avatar__image" alt={'avatar'} src={src} />}
