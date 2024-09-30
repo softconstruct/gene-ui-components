@@ -75,10 +75,10 @@ const Avatar: FC<IAvatarProps> = ({
             setCutFirstAndLastName('');
             return;
         }
-        const [firstName, secondName] = fullName.split(' ');
+        const [firstName, lastName] = fullName.split(' ');
 
         setCutFirstAndLastName(
-            `${firstName[0]} ${secondName && (size === '6Xlarge' || size === 'large') ? secondName[0] : ''}`
+            `${firstName[0]}${lastName && (size === '6Xlarge' || size === 'large') ? ' ' + lastName[0] : ''}`
         );
     }, [fullName, size]);
 

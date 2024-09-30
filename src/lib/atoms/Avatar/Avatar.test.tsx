@@ -18,8 +18,11 @@ describe('Avatar ', () => {
     });
 
     it('renders fullName prop correctly', () => {
-        const wrapper = setup.setProps({ fullName: 'test data' });
-        expect(wrapper.text()).toBe('t d');
+        const wrapperLarge = setup.setProps({ fullName: 'test data', size: 'large' });
+        expect(wrapperLarge.text()).toBe('t d');
+        setup.update();
+        const wrapperSmall = setup.setProps({ fullName: 'test data', size: 'small' });
+        expect(wrapperSmall.text()).toBe('t');
     });
 
     it('renders src prop correctly', () => {
@@ -28,10 +31,17 @@ describe('Avatar ', () => {
 
         expect(wrapper.find('img').props().src).toBe(src);
     });
+
     it('renders isDisabled prop correctly', () => {
         const wrapper = setup.setProps({ isDisabled: true });
 
         expect(wrapper.find('.avatar').hasClass('avatar_disabled')).toBeTruthy();
+    });
+
+    it('renders isLoading prop correctly', () => {
+        const wrapper = setup.setProps({ isLoading: true });
+
+        expect(wrapper.find('skeleton')).toBeTruthy();
     });
 
     it('renders onClick prop correctly', () => {
