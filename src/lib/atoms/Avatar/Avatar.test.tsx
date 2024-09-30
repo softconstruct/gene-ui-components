@@ -61,4 +61,11 @@ describe('Avatar ', () => {
             expect(wrapper.find('.avatar').hasClass(`avatar_size_${size}`)).toBeTruthy();
         }
     );
+
+    it('renders className prop correctly', () => {
+        const className = 'test-class';
+        const wrapper = setup.setProps({ className });
+
+        expect(wrapper.hasClass(className)).toBeTruthy();
+    });
 });

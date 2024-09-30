@@ -36,12 +36,26 @@ interface IAvatarProps {
      * Indicates whether the `avatar` is `disabled`, preventing user interaction. When `true`, the `avatar` appears dimmed and can not be clicked.
      */
     isDisabled?: boolean;
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
 }
 
 /**
  * An avatar is a graphical representation of a user, typically displayed as a small image or icon. It can be a photo, illustration, or initials, and is used to personalize the user experience by visually identifying the user in interfaces such as profiles, comment sections, and messaging apps.
  */
-const Avatar: FC<IAvatarProps> = ({ size, color, fullName, src, onClick, isDisabled, Icon = <Square /> }) => {
+const Avatar: FC<IAvatarProps> = ({
+    size,
+    color,
+    fullName,
+    src,
+    onClick,
+    isDisabled,
+    Icon = <Square />,
+    className
+}) => {
     const [cutFirstAndLastName, setCutFirstAndLastName] = useState<string>('');
 
     useEffect(() => {
@@ -55,7 +69,7 @@ const Avatar: FC<IAvatarProps> = ({ size, color, fullName, src, onClick, isDisab
 
     return (
         <div
-            className={classNames(`avatar avatar_size_${size} avatar_color_${color}`, {
+            className={classNames(`avatar avatar_size_${size} avatar_color_${color}`, className, {
                 avatar_disabled: isDisabled
             })}
             tabIndex={0}
