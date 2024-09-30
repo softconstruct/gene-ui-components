@@ -6,6 +6,7 @@ import { args, propCategory } from '../../../../stories/assets/storybook.globals
 
 // Components
 import Avatar, { IAvatarProps } from './index';
+import { Globe } from '@geneui/icons';
 
 const meta: Meta<typeof Avatar> = {
     title: 'Atoms/Avatar',
@@ -15,10 +16,11 @@ const meta: Meta<typeof Avatar> = {
         color: args({ control: 'select', ...propCategory.appearance }),
         src: args({ control: 'text', ...propCategory.content }),
         fullName: args({ control: 'text', ...propCategory.content }),
-        onClick: args({ control: false, ...propCategory.action }),
+        onClick: args({ control: 'false', ...propCategory.action }),
         isDisabled: args({ control: 'boolean', ...propCategory.states }),
-        Icon: args({ control: false, ...propCategory.content }),
-        className: args({ control: false, ...propCategory.appearance })
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        Icon: args({ control: 'false', ...propCategory.content }),
+        className: args({ control: 'false', ...propCategory.appearance })
     },
     args: {
         size: '6Xlarge',
@@ -33,3 +35,9 @@ export default meta;
 const Template: FC<IAvatarProps> = (args) => <Avatar {...args} />;
 
 export const Default = Template.bind({});
+
+export const WithIcon = Template.bind({});
+
+WithIcon.args = {
+    Icon: <Globe />
+};

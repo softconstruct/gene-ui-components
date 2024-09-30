@@ -46,21 +46,18 @@ describe('Avatar ', () => {
     });
 
     it.each<IAvatarProps['color']>(['blue', 'green', 'lagoon', 'neutral', 'orange', 'purple', 'red'])(
-        'checking a component with a prop color : %p',
+        'should have %s color',
         (color) => {
             const wrapper = setup.setProps({ color });
             expect(wrapper.find('.avatar').hasClass(`avatar_color_${color}`)).toBeTruthy();
         }
     );
 
-    it.each<IAvatarProps['size']>(['6Xlarge', 'large', 'medium', 'small'])(
-        'checking a component with a prop size : %p',
-        (size) => {
-            const wrapper = setup.setProps({ size });
+    it.each<IAvatarProps['size']>(['6Xlarge', 'large', 'medium', 'small'])('should have %s size', (size) => {
+        const wrapper = setup.setProps({ size });
 
-            expect(wrapper.find('.avatar').hasClass(`avatar_size_${size}`)).toBeTruthy();
-        }
-    );
+        expect(wrapper.find('.avatar').hasClass(`avatar_size_${size}`)).toBeTruthy();
+    });
 
     it('renders className prop correctly', () => {
         const className = 'test-class';
