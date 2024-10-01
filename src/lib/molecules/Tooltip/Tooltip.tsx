@@ -10,8 +10,7 @@ import React, {
     useEffect,
     RefObject,
     useMemo,
-    useRef,
-    ReactNode
+    useRef
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
 import { FloatingPortal, autoUpdate, useFloating, arrow, FloatingArrow } from '@floating-ui/react';
@@ -144,9 +143,9 @@ const Tooltip: FC<ITooltipProps> = ({
 
     const mouseEnterHandler = () => !alwaysShow && setIsPopoverState(true);
     const mouseLeaveHandler = () => !alwaysShow && setIsPopoverState(false);
-    const arrowRef = useRef(null);
+    const arrowRef = useRef<HTMLDivElement | null>(null);
 
-    const { refs, floatingStyles, context } = useFloating({
+    const { refs, floatingStyles, context, middlewareData, placement } = useFloating({
         open: alwaysShow || isPopoverOpen,
         placement: position,
         middleware: [
@@ -195,6 +194,13 @@ const Tooltip: FC<ITooltipProps> = ({
         }
     }, [component]);
 
+    const staticSide = {
+        top: 'bottom',
+        right: 'left',
+        bottom: 'top',
+        left: 'right'
+    }[placement];
+
     return (
         <>
             {component}
@@ -211,7 +217,19 @@ const Tooltip: FC<ITooltipProps> = ({
                             }}
                             {...props}
                         >
-                            <FloatingArrow ref={arrowRef} context={context} />
+                            <div
+                                ref={arrowRef}
+                                style={{
+                                    position: 'absolute',
+                                    left: middlewareData.arrow?.x,
+                                    top: middlewareData.arrow?.y,
+                                    [staticSide]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth}px` : 0,
+                                    transform: 'rotate(45deg)',
+                                    background: 'black',
+                                    width: 10,
+                                    height: 10
+                                }}
+                            />
                             {(title || text) && (
                                 <div className="tooltip-content">
                                     {title && <div className="tooltip-title">{title}</div>}
