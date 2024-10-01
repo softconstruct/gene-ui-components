@@ -2,7 +2,7 @@ import React from 'react';
 
 import MapChartComponent from 'src/lib/molecules/Charts/MapChart/index';
 
-import { args, category } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 import data from './Map/data';
 import testData from './Map/regionData';
 import worldMapData from './Map/woldMapData';
@@ -17,31 +17,34 @@ const regionData = [
 export default {
     title: 'Charts/MapChart',
     component: MapChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        title: args({ control: 'text', category: category.content }),
-        selectedData: args({ control: false, category: category.content }),
-        viewActivityText: args({ control: 'text', category: category.content }),
-        withNavigation: args({ control: 'boolean', category: category.content }),
-        withActivity: args({ control: 'boolean', category: category.states }),
-        withTooltip: args({ control: 'boolean', category: category.content }),
-        withLegend: args({ control: 'boolean', category: category.states }),
-        opacity: args({ control: 'number', category: category.appearance }),
-        data: args({ control: 'object', category: category.content }),
-        mapData: args({ control: 'object', category: category.content }),
-        colorAxis: args({ control: 'object', category: category.appearance }),
-        series: args({ control: 'object', category: category.content }),
-        joinBy: args({ control: false, category: category.others }),
-        width: args({ control: 'text', category: category.appearance }),
-        height: args({ control: 'number', category: category.appearance }),
-        screenType: args({ control: 'select', category: category.appearance }),
-        className: args({ control: false, category: category.others }),
-        chartData: args({ control: false, category: category.content }),
-        fixedTooltipContent: args({ control: 'text', category: category.content }),
-        onPointOver: args({ control: false, category: category.action }),
-        onPointClick: args({ control: false, category: category.functionality }),
-        positionerCord: args({ control: false, category: category.appearance }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        title: args({ control: 'text', ...propCategory.content }),
+        selectedData: args({ control: false, ...propCategory.content }),
+        viewActivityText: args({ control: 'text', ...propCategory.content }),
+        withNavigation: args({ control: 'boolean', ...propCategory.content }),
+        withActivity: args({ control: 'boolean', ...propCategory.states }),
+        withTooltip: args({ control: 'boolean', ...propCategory.content }),
+        withLegend: args({ control: 'boolean', ...propCategory.states }),
+        opacity: args({ control: 'number', ...propCategory.appearance }),
+        data: args({ control: 'object', ...propCategory.content }),
+        mapData: args({ control: 'object', ...propCategory.content }),
+        colorAxis: args({ control: 'object', ...propCategory.appearance }),
+        series: args({ control: 'object', ...propCategory.content }),
+        joinBy: args({ control: false, ...propCategory.others }),
+        width: args({ control: 'text', ...propCategory.appearance }),
+        height: args({ control: 'number', ...propCategory.appearance }),
+        screenType: args({ control: 'select', ...propCategory.appearance }),
+        className: args({ control: false, ...propCategory.others }),
+        chartData: args({ control: false, ...propCategory.content }),
+        fixedTooltipContent: args({ control: 'text', ...propCategory.content }),
+        onPointOver: args({ control: false, ...propCategory.action }),
+        onPointClick: args({ control: false, ...propCategory.functionality }),
+        positionerCord: args({ control: false, ...propCategory.appearance }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     },
     args: {
         title: 'Title',

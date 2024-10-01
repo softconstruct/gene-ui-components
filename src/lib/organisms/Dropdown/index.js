@@ -718,7 +718,7 @@ function Dropdown({
     );
 
     const handleParentFocus = () => {
-        inputRef.current.focus();
+        inputRef.current?.focus();
     };
 
     return (

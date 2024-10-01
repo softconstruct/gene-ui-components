@@ -32,6 +32,8 @@ export {
 } from './lib/atoms/Paper';
 export { default as Avatar } from './lib/atoms/Avatar/index';
 export { default as LinkButton } from './lib/atoms/LinkButton/index';
+export { default as HelperText } from './lib/atoms/HelperText';
+export { default as Loader } from './lib/atoms/Loader';
 
 // Molecules
 export { Row, Col } from './lib/molecules/Grid';

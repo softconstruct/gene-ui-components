@@ -1,34 +1,37 @@
 import React from 'react';
 
 import PieChartComponent from 'src/lib/molecules/Charts/PieChart';
-import { args, category } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 import { pieChartData } from './data';
 
 export default {
     title: 'Charts/PieChart',
     component: PieChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        showLegend: args({ control: 'boolean', category: category.states }),
-        customTooltipFormatter: args({ control: false, category: category.action }),
-        customLegendFormatter: args({ control: false, category: category.action }),
-        decimalNumberPrecision: args({ control: false, category: category.content }),
-        data: args({ control: 'object', category: category.content }),
-        fixedTooltipContent: args({ control: 'text', category: category.content }),
-        legendIsVertical: args({ control: 'boolean', category: category.appearance }),
-        seriesProps: args({ control: false, category: category.content }),
-        positionerCord: args({ control: false, category: category.appearance }),
-        tooltipContent: args({ control: 'text', category: category.content }),
-        subtitle: args({ control: 'text', category: category.content }),
-        opacity: args({ control: 'number', category: category.appearance }),
-        marginRight: args({ control: 'number', category: category.appearance }),
-        screenType: args({ control: 'select', category: category.appearance }),
-        className: args({ control: false, category: category.others }),
-        noActivityText: args({ control: 'text', category: category.content }),
-        title: args({ control: 'text', category: category.content }),
-        size: args({ control: 'number', category: category.appearance }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        showLegend: args({ control: 'boolean', ...propCategory.states }),
+        customTooltipFormatter: args({ control: false, ...propCategory.action }),
+        customLegendFormatter: args({ control: false, ...propCategory.action }),
+        decimalNumberPrecision: args({ control: false, ...propCategory.content }),
+        data: args({ control: 'object', ...propCategory.content }),
+        fixedTooltipContent: args({ control: 'text', ...propCategory.content }),
+        legendIsVertical: args({ control: 'boolean', ...propCategory.appearance }),
+        seriesProps: args({ control: false, ...propCategory.content }),
+        positionerCord: args({ control: false, ...propCategory.appearance }),
+        tooltipContent: args({ control: 'text', ...propCategory.content }),
+        subtitle: args({ control: 'text', ...propCategory.content }),
+        opacity: args({ control: 'number', ...propCategory.appearance }),
+        marginRight: args({ control: 'number', ...propCategory.appearance }),
+        screenType: args({ control: 'select', ...propCategory.appearance }),
+        className: args({ control: false, ...propCategory.others }),
+        noActivityText: args({ control: 'text', ...propCategory.content }),
+        title: args({ control: 'text', ...propCategory.content }),
+        size: args({ control: 'number', ...propCategory.appearance }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     }
 };
 
