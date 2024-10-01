@@ -32,7 +32,7 @@ interface IAvatarProps {
     /**
      * A callback function is called when the `avatar` is clicked. It receives an argument containing the event object, a mouse or keyboard event.
      */
-    onClick?: (e: PointerEvent<HTMLDivElement>) => void;
+    onClick?: (e: PointerEvent<HTMLButtonElement>) => void;
     /**
      * Indicates whether the `avatar` is `disabled`, preventing user interaction. When `true`, the `avatar` appears dimmed and can not be clicked.
      */
@@ -54,6 +54,16 @@ const iconSizes = {
     large: 20,
     '6Xlarge': 48
 } as const;
+
+const AvatarWrapper = ({ onClick, children, parentClass }) => {
+    return onClick ? (
+        <button onClick={onClick} className={`${parentClass} avatar_button`}>
+            {children}{' '}
+        </button>
+    ) : (
+        <div className={parentClass}>{children}</div>
+    );
+};
 
 /**
  * An avatar is a graphical representation of a user, typically displayed as a small image or icon. It can be a photo, illustration, or initials, and is used to personalize the user experience by visually identifying the user in interfaces such as profiles, comment sections, and messaging apps.
@@ -89,27 +99,19 @@ const Avatar: FC<IAvatarProps> = ({
             size: iconSizes[size]
         });
 
-    const keyDownHandler = (e: KeyboardEvent<HTMLDivElement>) => {
-        if (e.key === 'Enter' && onClick) {
-            onClick(e as PointerEvent<HTMLDivElement>);
-        }
-    };
-
     return isLoading ? (
         <span>skeleton</span>
     ) : (
-        <div
-            className={classNames(`avatar avatar_size_${size} avatar_color_${color}`, className, {
+        <AvatarWrapper
+            parentClass={classNames(`avatar avatar_size_${size} avatar_color_${color}`, className, {
                 avatar_disabled: isDisabled
             })}
-            tabIndex={0}
             onClick={onClick}
-            onKeyDown={keyDownHandler}
         >
             {iconMock && !cutFirstAndLastName && iconMock}
             {src && <img className="avatar__image" alt={'avatar'} src={src} />}
             {cutFirstAndLastName && !src && <span className="avatar__text">{cutFirstAndLastName}</span>}
-        </div>
+        </AvatarWrapper>
     );
 };
 

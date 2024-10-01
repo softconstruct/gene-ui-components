@@ -10,6 +10,7 @@ describe('Avatar ', () => {
     const mockFn = jest.fn();
 
     it('renders without crashing', () => {
+        console.log(setup.debug(), 88888);
         expect(setup.exists()).toBeTruthy();
     });
 
@@ -50,8 +51,8 @@ describe('Avatar ', () => {
             currentTarget: {
                 innerHTML: 'test'
             }
-        } as MouseEvent<HTMLDivElement>;
-        wrapper.find('div').props().onClick!(event);
+        } as MouseEvent<HTMLButtonElement>;
+        wrapper.find('button').props().onClick!(event);
         expect(mockFn).toHaveBeenCalledWith(event);
     });
 

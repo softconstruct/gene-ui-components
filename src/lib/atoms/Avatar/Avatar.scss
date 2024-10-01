@@ -5,7 +5,6 @@
     border-radius: var(--guit-ref-radius-full);
     overflow: hidden;
     user-select: none;
-    cursor: pointer;
     position: relative;
 
     &_size {
@@ -133,15 +132,19 @@
     // active, hover, focus common styles END
 
     // active and hover states START
-    &:hover {
-        &::before {
-            background-color: var(--guit-sem-color-background-transparent-1-hover);
-        }
-    }
+    &_button {
+        cursor: pointer;
 
-    &:active {
-        &::before {
-            background-color: var(--guit-sem-color-background-transparent-1-pressed);
+        &:hover {
+            &::before {
+                background-color: var(--guit-sem-color-background-transparent-1-hover);
+            }
+        }
+
+        &:active {
+            &::before {
+                background-color: var(--guit-sem-color-background-transparent-1-pressed);
+            }
         }
     }
 

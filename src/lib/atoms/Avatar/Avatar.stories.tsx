@@ -39,5 +39,7 @@ export const Default = Template.bind({});
 export const WithIcon = Template.bind({});
 
 WithIcon.args = {
-    Icon: <Globe />
+    fullName: '',
+    Icon: <Globe />,
+    onClick: undefined
 };
