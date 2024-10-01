@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Meta } from '@storybook/react';
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
@@ -20,7 +20,6 @@ const meta: Meta<ITooltipProps> = {
         customPosition: args({ control: 'object', ...propCategory.functionality }),
         isVisible: args({ control: 'boolean', ...propCategory.functionality }),
         position: args({ control: 'select', ...propCategory.appearance }),
-        onClick: args({ control: false, ...propCategory.action }),
         screenType: args({ control: 'select', ...propCategory.appearance })
     },
     args: {

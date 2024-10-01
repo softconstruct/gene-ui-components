@@ -9,10 +9,12 @@ import React, {
     Fragment,
     useEffect,
     RefObject,
-    useMemo
+    useMemo,
+    useRef,
+    ReactNode
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
-import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react';
+import { FloatingPortal, autoUpdate, useFloating, arrow, FloatingArrow } from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
 import { ReferenceType } from '@floating-ui/react-dom';
 import { isForwardRef } from 'react-is';
@@ -81,33 +83,25 @@ export interface ITooltipProps {
     isVisible?: boolean;
 }
 
-type JSXWithRef = JSX.Element & { ref: RefObject<unknown> };
+type JSXWithRef = JSX.Element & { ref: RefObject<HTMLElement> };
 
 const FindAndSetRef = <T extends object>(
     children: JSX.Element | JSX.Element[],
     childProps: T,
-    componentRef: (node: ReferenceType | null) => void
+    componentRef: (node: ReferenceType | null) => void,
+    checked: Boolean = false
 ) => {
     return Children.map(children, (node, i) => {
         const el = node as JSXWithRef;
-
         let newProps = {
             ...childProps
         };
 
-        if (el?.type === Fragment && el.props.children) {
-            return FindAndSetRef(el.props.children, newProps, componentRef);
-        }
-
-        if (isForwardRef(el)) {
-            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef);
-        }
-
         if (typeof el?.type === 'string') {
-            if (!el.ref && i === 0) {
+            if (!el.ref && i === 0 && !checked) {
+                checked = true;
                 newProps = { ...newProps, ref: componentRef };
             }
-
             return cloneElement(el, newProps);
         }
 
@@ -115,12 +109,18 @@ const FindAndSetRef = <T extends object>(
             if (!el.ref) {
                 newProps = { ...newProps, ref: componentRef };
             }
-
             return cloneElement(el.type(el.props), newProps);
         }
 
+        if (el?.type === Fragment && el.props.children) {
+            return FindAndSetRef(el.props.children, newProps, componentRef, checked);
+        }
+
+        if (isForwardRef(el)) {
+            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef, checked);
+        }
         return el && cloneElement(el, newProps);
-    });
+    }) as JSXWithRef[];
 };
 
 const Tooltip: FC<ITooltipProps> = ({
@@ -144,6 +144,7 @@ const Tooltip: FC<ITooltipProps> = ({
 
     const mouseEnterHandler = () => !alwaysShow && setIsPopoverState(true);
     const mouseLeaveHandler = () => !alwaysShow && setIsPopoverState(false);
+    const arrowRef = useRef(null);
 
     const { refs, floatingStyles, context } = useFloating({
         open: alwaysShow || isPopoverOpen,
@@ -155,6 +156,7 @@ const Tooltip: FC<ITooltipProps> = ({
                 fallbackPlacements: positions,
                 mainAxis: true
             }),
+            arrow({ element: arrowRef }),
             shift(),
             {
                 name: 'getCustomPosition',
@@ -180,12 +182,17 @@ const Tooltip: FC<ITooltipProps> = ({
     const component = useMemo(() => FindAndSetRef(children, childProps, refs.setReference), [children, childProps]);
 
     useEffect(() => {
-        component.forEach((element: JSX.Element) => {
-            const node = element as JSXWithRef;
+        for (let i = 0; i < component.length; i++) {
+            const node = component[i];
+            if (typeof node.ref === 'function' && node.ref === refs.setReference) {
+                break;
+            }
+
             if (node?.ref?.current) {
                 refs.setReference(node.ref.current as ReferenceType);
+                break;
             }
-        });
+        }
     }, [component]);
 
     return (
@@ -200,10 +207,11 @@ const Tooltip: FC<ITooltipProps> = ({
                             style={{
                                 ...style,
                                 ...floatingStyles,
-                                zIndex: 400 //TODO: Remove after 3.0.0
+                                zIndex: 400 // TODO: Remove after 3.0.0
                             }}
                             {...props}
                         >
+                            <FloatingArrow ref={arrowRef} context={context} />
                             {(title || text) && (
                                 <div className="tooltip-content">
                                     {title && <div className="tooltip-title">{title}</div>}
