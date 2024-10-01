@@ -33,7 +33,8 @@ const TSComponentsList = [
     'HelperText',
     'Tooltip',
     'Label',
-    'Loader'
+    'Loader',
+    'Checkbox'
 ];
 
 const getInputs = (name, dir) => {
