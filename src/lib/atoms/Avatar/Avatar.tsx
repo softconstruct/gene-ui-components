@@ -1,6 +1,6 @@
 import React, { FC, PointerEvent, useEffect, useState, JSX, cloneElement, KeyboardEvent } from 'react';
 import classNames from 'classnames';
-import { Square } from '@geneui/icons';
+import { Square } from '@geneui/icons'; // TODO: replace with the person icon
 
 // Styles
 import './Avatar.scss';
@@ -20,7 +20,7 @@ interface IAvatarProps {
      */
     Icon?: JSX.Element;
     /**
-     * This prop also has an effect on the `fullName` or `Icon` prop size <br/>
+     * This prop defines the width and height for the component <br/>
      * Possible values: `6Xlarge | large | medium | small`
      */
     size?: '6Xlarge' | 'large' | 'medium' | 'small';
@@ -55,10 +55,16 @@ const iconSizes = {
     '6Xlarge': 48
 } as const;
 
-const AvatarWrapper = ({ onClick, children, parentClass }) => {
+interface IAvatarWrapperProps {
+    onClick?: (e: PointerEvent<HTMLButtonElement>) => void;
+    children: JSX.Element;
+    parentClass: string;
+}
+
+const AvatarWrapper: FC<IAvatarWrapperProps> = ({ onClick, children, parentClass }) => {
     return onClick ? (
         <button onClick={onClick} className={`${parentClass} avatar_button`}>
-            {children}{' '}
+            {children}
         </button>
     ) : (
         <div className={parentClass}>{children}</div>
@@ -71,7 +77,7 @@ const AvatarWrapper = ({ onClick, children, parentClass }) => {
 const Avatar: FC<IAvatarProps> = ({
     size = 'medium',
     color = 'magenta',
-    fullName,
+    fullName = '',
     src,
     onClick,
     isDisabled,
@@ -79,17 +85,19 @@ const Avatar: FC<IAvatarProps> = ({
     Icon = <Square />,
     className
 }) => {
-    const [cutFirstAndLastName, setCutFirstAndLastName] = useState<string>('');
+    const [proceedFullName, setProceedFullName] = useState(fullName);
 
     useEffect(() => {
-        if (!fullName) {
-            setCutFirstAndLastName('');
-            return;
-        }
-        const [firstName, lastName] = fullName.split(' ');
+        const [firstName = '', lastName = ''] = fullName.split(' ');
+        const [firstNameFirstLetter] = firstName;
+        const [lastNameFirstLetter] = lastName || '';
 
-        setCutFirstAndLastName(
-            `${firstName[0]}${lastName && (size === '6Xlarge' || size === 'large') ? ' ' + lastName[0] : ''}`
+        setProceedFullName(
+            firstNameFirstLetter
+                ? `${firstNameFirstLetter}${
+                      !!lastNameFirstLetter && (size === '6Xlarge' || size === 'large') ? ' ' + lastNameFirstLetter : ''
+                  }`
+                : ``
         );
     }, [fullName, size]);
 
@@ -108,9 +116,13 @@ const Avatar: FC<IAvatarProps> = ({
             })}
             onClick={onClick}
         >
-            {iconMock && !cutFirstAndLastName && iconMock}
-            {src && <img className="avatar__image" alt={'avatar'} src={src} />}
-            {cutFirstAndLastName && !src && <span className="avatar__text">{cutFirstAndLastName}</span>}
+            {src ? (
+                <img className="avatar__image" alt={'avatar'} src={src} />
+            ) : proceedFullName ? (
+                <span className="avatar__text">{proceedFullName}</span>
+            ) : (
+                iconMock
+            )}
         </AvatarWrapper>
     );
 };

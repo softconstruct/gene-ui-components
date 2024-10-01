@@ -1,5 +1,6 @@
 import React, { MouseEvent } from 'react';
 import { ReactWrapper, mount } from 'enzyme';
+import { Square } from '@geneui/icons';
 
 // Components
 import Avatar, { IAvatarProps } from './index';
@@ -10,7 +11,6 @@ describe('Avatar ', () => {
     const mockFn = jest.fn();
 
     it('renders without crashing', () => {
-        console.log(setup.debug(), 88888);
         expect(setup.exists()).toBeTruthy();
     });
 
@@ -45,7 +45,13 @@ describe('Avatar ', () => {
         expect(wrapper.find('skeleton')).toBeTruthy();
     });
 
-    it('renders onClick prop correctly', () => {
+    it('renders Icon prop correctly', () => {
+        const wrapper = setup.setProps({ Icon: <Square /> });
+
+        expect(wrapper.find(Square)).toBeTruthy();
+    });
+
+    it("handles user's click", () => {
         const wrapper = setup.setProps({ onClick: mockFn });
         const event = {
             currentTarget: {
