@@ -1,6 +1,6 @@
 import React, { MouseEvent } from 'react';
 import { ReactWrapper, mount } from 'enzyme';
-import { Square } from '@geneui/icons';
+import { Square } from '@geneui/icons'; // TODO: replace with the person icon
 
 // Components
 import Avatar, { IAvatarProps } from './index';
@@ -47,6 +47,12 @@ describe('Avatar ', () => {
 
     it('renders Icon prop correctly', () => {
         const wrapper = setup.setProps({ Icon: <Square /> });
+
+        expect(wrapper.find(Square)).toBeTruthy();
+    });
+
+    it('renders Icon default prop correctly', () => {
+        const wrapper = setup.setProps({});
 
         expect(wrapper.find(Square)).toBeTruthy();
     });

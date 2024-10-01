@@ -59,11 +59,12 @@ interface IAvatarWrapperProps {
     onClick?: (e: PointerEvent<HTMLButtonElement>) => void;
     children: JSX.Element;
     parentClass: string;
+    isDisabled: boolean | undefined;
 }
 
-const AvatarWrapper: FC<IAvatarWrapperProps> = ({ onClick, children, parentClass }) => {
+const AvatarWrapper: FC<IAvatarWrapperProps> = ({ onClick, children, parentClass, isDisabled }) => {
     return onClick ? (
-        <button onClick={onClick} className={`${parentClass} avatar_button`}>
+        <button onClick={onClick} className={`${parentClass} avatar_button`} disabled={isDisabled}>
             {children}
         </button>
     ) : (
@@ -115,6 +116,7 @@ const Avatar: FC<IAvatarProps> = ({
                 avatar_disabled: isDisabled
             })}
             onClick={onClick}
+            isDisabled={isDisabled}
         >
             {src ? (
                 <img className="avatar__image" alt={'avatar'} src={src} />
