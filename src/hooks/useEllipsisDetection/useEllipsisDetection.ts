@@ -19,11 +19,11 @@ const useEllipsisDetection: IUseEllipsisDetection = (ref, externalDependencies =
     };
 
     useEffect(() => {
-        if (!ref.current || ref.current.classList.contains('ellipsis-text')) return;
+        if (!ref.current || !('classList' in ref.current) || ref.current.classList.contains('ellipsis-text')) return;
         ref.current.classList.add('ellipsis-text');
     }, [ref]);
 
-    useEffect(() => debounceCallback(handleResize, 100), [...externalDependencies]);
+    useEffect(() => handleResize(), [...externalDependencies]);
 
     useEffect(() => {
         const debounce = () => debounceCallback(handleResize, 100);
