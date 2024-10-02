@@ -87,7 +87,7 @@ const Pill: FC<IPillProps> = ({
 }) => {
     const [isWithDot, setIsWithDot] = useState(withDot);
     const textRef = useRef<HTMLSpanElement | null>(null);
-    const isTruncated: boolean = useEllipsisDetection(textRef);
+    const isTruncated: boolean = useEllipsisDetection(textRef, [text]);
 
     useEffect(() => {
         setIsWithDot(!Icon && withDot);
@@ -115,7 +115,7 @@ const Pill: FC<IPillProps> = ({
             {iconMock}
             {text && (
                 <Tooltip text={text} isVisible={isTruncated}>
-                    <span ref={textRef} className="pill__text ellipsis-text">
+                    <span ref={textRef} className="pill__text">
                         {text}
                     </span>
                 </Tooltip>
