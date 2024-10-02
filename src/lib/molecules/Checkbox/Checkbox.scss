@@ -1,5 +1,145 @@
+.testHolder {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+//todo remove testHolder
+
 .checkbox {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    display: flex;
+    flex-direction: column;
+
+    &__input {
+        background: none;
+        appearance: none;
+        border: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: -1;
+        border-radius: var(--guit-ref-radius-4xsmall);
+
+        &:focus-visible {
+            outline-offset: var(--guit-ref-border-width-thin);
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
+        }
+
+        &:checked,
+        &:indeterminate {
+            & + #{ $this }__imitation {
+                background-color: var(--guit-sem-color-background-selected-2);
+                border-color: var(--guit-sem-color-background-selected-2);
+
+                &:hover {
+                    background-color: var(--guit-sem-color-background-selected-2-hover);
+                    border-color: var(--guit-sem-color-background-selected-2-hover);
+                }
+
+                &:active {
+                    background-color: var(--guit-sem-color-background-selected-2-pressed);
+                    border-color: var(--guit-sem-color-background-selected-2-pressed);
+                }
+
+                #{ $this }__icon {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    &__label {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__imitationHolder {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--guit-sem-dimension-width-small);
+        height: var(--guit-sem-dimension-height-small);
+
+        #{ $this }__input {
+            &:not(:checked, :indeterminate) {
+                & + #{ $this }__imitation {
+                    &:hover {
+                        background-color: var(--guit-sem-color-background-transparent-1-hover);
+                    }
+
+                    &:active {
+                        background-color: var(--guit-sem-color-background-transparent-1-pressed);
+                    }
+                }
+            }
+        }
+    }
+
+    &__imitationHolderInner {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--guit-sem-dimension-width-xsmall);
+        height: var(--guit-sem-dimension-height-xsmall);
+        position: relative;
+    }
+
+    &__imitation {
+        width: 100%;
+        height: 100%;
+        border-radius: var(--guit-ref-radius-4xsmall);
+        border: var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-neutral-3);
+    }
+
+    &__icon {
+        flex: 0 0 auto;
+        width: 100%;
+        height: 100%;
+        color: var(--guit-sem-color-foreground-inverse);
+        opacity: 0;
+    }
+
+    &__infoContainer {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-4xsmall);
+        user-select: none;
+
+        &:not(:empty) {
+            padding-top: var(--guit-ref-spacing-4xsmall);
+        }
+    }
+
+    &_error {
+        #{ $this }__imitationHolder {
+            #{ $this }__imitationHolderInner {
+                #{ $this }__imitation {
+                    border-color: var(--guit-sem-color-border-error);
+                }
+            }
+        }
+    }
+
+    &_disabled {
+        pointer-events: none;
+        #{ $this }__imitationHolder {
+            #{ $this }__imitationHolderInner {
+                #{ $this }__imitation {
+                    border-color: var(--guit-sem-color-border-disabled-1);
+                    background-color: var(--guit-sem-color-background-disabled);
+                    #{ $this }__icon {
+                        color: var(--guit-sem-color-foreground-disabled);
+                    }
+                }
+            }
+        }
+    }
 }
