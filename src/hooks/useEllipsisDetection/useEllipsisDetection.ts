@@ -18,7 +18,12 @@ const useEllipsisDetection: IUseEllipsisDetection = (ref, externalDependencies =
         setIsTruncated(scrollWidth > clientWidth || scrollHeight > clientHeight + EQUAL_HEIGHT_DIFF);
     };
 
-    useEffect(() => handleResize(), []);
+    useEffect(() => {
+        if (!ref.current || ref.current.classList.contains('ellipsis-text')) return;
+        ref.current.classList.add('ellipsis-text');
+    }, [ref]);
+
+    useEffect(() => debounceCallback(handleResize, 100), [...externalDependencies]);
 
     useEffect(() => {
         const debounce = () => debounceCallback(handleResize, 100);
@@ -33,8 +38,7 @@ const useEllipsisDetection: IUseEllipsisDetection = (ref, externalDependencies =
         ref?.current?.scrollWidth,
         ref?.current?.clientWidth,
         ref?.current?.scrollHeight,
-        ref?.current?.clientHeight,
-        ...externalDependencies
+        ref?.current?.clientHeight
     ]);
 
     return isTruncated;
