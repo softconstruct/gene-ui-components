@@ -45,12 +45,25 @@ interface IHelperTextProps {
      * When `true`, a loading skeleton is displayed instead of the actual helper text.
      */
     isLoading?: boolean;
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
 }
 
 /**
  * The Helper Text provides users with additional information or guidance related to a specific input field in a form. This text helps users understand the expected format, requirements, or purpose of the input, thereby improving form completion accuracy and user confidence.
  */
-const HelperText: FC<IHelperTextProps> = ({ size = 'medium', type = 'rest', text, Icon, isDisabled, isLoading }) => {
+const HelperText: FC<IHelperTextProps> = ({
+    size = 'medium',
+    type = 'rest',
+    text,
+    Icon,
+    isDisabled,
+    isLoading,
+    className
+}) => {
     const textRef = useRef(null);
     const isTruncated = useEllipsisDetection(textRef);
 
@@ -73,7 +86,7 @@ const HelperText: FC<IHelperTextProps> = ({ size = 'medium', type = 'rest', text
 
     return (
         <div
-            className={classnames(`helperText helperText_type_${type} helperText_size_${size}`, {
+            className={classnames(`helperText helperText_type_${type} helperText_size_${size}`, className, {
                 helperText_disabled: isDisabled
             })}
         >
