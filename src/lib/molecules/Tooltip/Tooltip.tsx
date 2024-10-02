@@ -13,7 +13,7 @@ import React, {
     useRef
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
-import { FloatingPortal, autoUpdate, useFloating, arrow, FloatingArrow } from '@floating-ui/react';
+import { FloatingPortal, autoUpdate, useFloating, arrow } from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
 import { ReferenceType } from '@floating-ui/react-dom';
 import { isForwardRef } from 'react-is';
@@ -30,7 +30,20 @@ import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 // Styles
 import './Tooltip.scss';
 
-const positions: Placement[] = ['top', 'right', 'bottom', 'left'];
+const positions: Placement[] = [
+    'top',
+    'right',
+    'bottom',
+    'left',
+    'top-start',
+    'top-end',
+    'right-start',
+    'right-end',
+    'bottom-start',
+    'bottom-end',
+    'left-start',
+    'left-end'
+];
 
 interface ICustomPosition {
     left?: number;
@@ -46,10 +59,6 @@ export interface ITooltipProps {
      * Main content for the component.
      */
     text?: string;
-    /**
-     * Title for the component.
-     */
-    title?: string;
     /**
      * Style object, to have extra styles.
      */
@@ -69,7 +78,20 @@ export interface ITooltipProps {
     /**
      * Positions where will be displayed the Tooltip relates the child component.<br> Possible values: `top | right | bottom | left`
      */
-    position?: 'top' | 'right' | 'bottom' | 'left';
+    position?:
+        | 'top'
+        | 'right'
+        | 'bottom'
+        | 'left'
+        | 'top-start'
+        | 'top-end'
+        | 'right-start'
+        | 'right-end'
+        | 'bottom-start'
+        | 'bottom-end'
+        | 'left-start'
+        | 'left-end';
+
     /**
      * Tooltip padding related to the target element
      */
@@ -105,7 +127,6 @@ const FindAndSetRef = <T extends object>(
             }
             return cloneElement(el, newProps);
         }
-
         if (typeof el?.type === 'function') {
             if (!el.ref) {
                 newProps = { ...newProps, ref: componentRef };
@@ -130,7 +151,6 @@ const Tooltip: FC<ITooltipProps> = ({
     size = 'default',
     style,
     text,
-    title,
     customPosition,
     alwaysShow,
     padding = 5,
@@ -196,12 +216,23 @@ const Tooltip: FC<ITooltipProps> = ({
         }
     }, [component]);
 
+    const currentDirection = placement.split('-')[0];
+
     const staticSide = {
         top: 'bottom',
         right: 'left',
         bottom: 'top',
         left: 'right'
+    }[currentDirection];
+
+    const arrowPosition = {
+        'top-start': -8,
+        'top-end': 8,
+        'bottom-start': -8,
+        'bottom-end': 8
     }[placement];
+
+    const middlewareArrowData = middlewareData.arrow;
 
     return (
         <>
@@ -210,7 +241,7 @@ const Tooltip: FC<ITooltipProps> = ({
                 <FloatingPortal root={geneUIProviderRef.current}>
                     {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
                         <div
-                            className={`tooltip tooltip_color_inverse s-${size} tooltip_position_${position}`}
+                            className={`tooltip tooltip_color_inverse s-${size} tooltip_position_${currentDirection}`}
                             ref={refs.setFloating}
                             style={{
                                 ...style,
@@ -222,9 +253,9 @@ const Tooltip: FC<ITooltipProps> = ({
                                 className="tooltip__arrow"
                                 ref={arrowRef}
                                 style={{
-                                    left: middlewareData.arrow?.x,
-                                    top: middlewareData.arrow?.y,
-                                    [staticSide]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0
+                                    left: middlewareArrowData?.x ? middlewareArrowData.x + (arrowPosition || 0) : null,
+                                    top: middlewareArrowData?.y ? middlewareArrowData.y : null,
+                                    [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0
                                 }}
                             />
                             <p className="tooltip__text">{text}</p>

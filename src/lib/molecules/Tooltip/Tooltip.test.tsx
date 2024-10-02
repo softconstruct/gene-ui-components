@@ -39,29 +39,23 @@ describe('Tooltip', () => {
         const text = 'test';
         setup.setProps({ text, alwaysShow: true });
 
-        expect(provider().find('.tooltip-text')?.text()).toEqual(text);
-    });
-
-    it('renders title prop correct inside the portal', () => {
-        const title = 'test';
-        setup.setProps({ title, alwaysShow: true });
-        expect(provider().find('.tooltip-title').text()).toEqual(title);
+        expect(provider().find('.tooltip__text').text()).toEqual(text);
     });
 
     it('renders alwaysShow prop correct inside the portal', () => {
         setup.setProps({ alwaysShow: true });
-        expect(provider().find('.tooltip-c-p').exists()).toBeTruthy();
+        expect(provider().find('.tooltip').exists()).toBeTruthy();
     });
 
     it('renders position prop correct inside the portal', () => {
         const position = 'right';
 
-        setup.setProps({ alwaysShow: true, position, title: 'test', text: 'test' });
-        expect(provider().find(`.${position}`).exists()).toBeTruthy();
+        setup.setProps({ alwaysShow: true, position, text: 'test' });
+        expect(provider().find(`.tooltip_position_${position}`).exists()).toBeTruthy();
     });
 
     it('handle onMouseEnter', () => {
         setup.find('.test').simulate('mouseEnter');
-        expect(provider().find('.tooltip-c-p').exists()).toBeTruthy();
+        expect(provider().find('.tooltip').exists()).toBeTruthy();
     });
 });

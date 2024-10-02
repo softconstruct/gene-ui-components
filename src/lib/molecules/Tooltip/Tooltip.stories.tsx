@@ -11,7 +11,6 @@ const meta: Meta<ITooltipProps> = {
     component: TooltipComponent,
     argTypes: {
         text: args({ control: 'text', ...propCategory.content }),
-        title: args({ control: 'text', ...propCategory.content }),
         children: args({ control: 'text', ...propCategory.content }),
         style: args({ control: 'text', ...propCategory.appearance }),
         size: args({ control: 'select', ...propCategory.appearance }),
@@ -24,7 +23,6 @@ const meta: Meta<ITooltipProps> = {
     },
     args: {
         size: 'default',
-        title: 'Title',
         isVisible: true,
         alwaysShow: false,
         position: 'top',
@@ -40,7 +38,7 @@ export const Tooltip = ({ ...args }) => {
         <div style={{ height: '200px', padding: '200px' }}>
             <TooltipComponent {...args}>
                 <Button>Button with tooltip</Button>
-            </TooltipComponent>
+            </TooltipComponent>{' '}
         </div>
     );
 };
