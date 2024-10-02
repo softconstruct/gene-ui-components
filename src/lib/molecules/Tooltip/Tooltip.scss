@@ -1,39 +1,73 @@
 @import 'src/assets/styles/variables';
 
 .tooltip {
-    &-c-p {
-        pointer-events: none;
-        z-index: 10;
+    $this: &;
 
-        .s-small & {
-            padding: rem(15);
+    display: flex;
+    align-items: center;
+    gap: var(--guit-ref-spacing-3xsmall);
+    padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-medium);
+    border-radius: var(--guit-ref-radius-3xsmall);
+    box-shadow: var(--guit-sem-shadow-floating-2-position-x-1) var(--guit-sem-shadow-floating-2-position-y-1)
+            var(--guit-sem-shadow-floating-2-blur-1) var(--guit-sem-shadow-floating-2-spread-1)
+            var(--guit-sem-color-floating-2-rgba-1),
+        var(--guit-sem-shadow-floating-2-position-x-1) var(--guit-sem-shadow-floating-2-position-y-2)
+            var(--guit-sem-shadow-floating-2-blur-2) var(--guit-sem-shadow-floating-2-spread-2)
+            var(--guit-sem-color-floating-2-rgba-2);
+
+    &_position {
+        &_top,
+        &_bottom {
+            #{ $this }__arrow {
+                transform: rotateX(60deg) rotate(45deg);
+            }
+        }
+
+        &_left,
+        &_right {
+            #{ $this }__arrow {
+                transform: rotateY(60deg) rotate(45deg);
+            }
         }
     }
 
-    &-wrapper {
-        max-width: inherit;
-    }
+    &_color {
+        &_default {
+            background-color: var(--guit-sem-color-background-neutral-4);
 
-    &-content {
-        border-radius: rem(4);
-        padding: rem(6) rem(10);
-        font: 600 rem(12) / rem(16) $f;
-        background: sc(b, 0.6);
-        color: c(b, 0.7);
-        max-width: rem(200);
-        word-break: break-word;
+            #{ $this }__arrow {
+                background-color: var(--guit-sem-color-background-neutral-4);
+            }
 
-        > * + * {
-            margin: rem(2) 0 0;
+            #{ $this }__text {
+                color: var(--guit-sem-color-foreground-inverse-notheme);
+            }
         }
 
-        .s-small & {
-            padding: rem(6) rem(8);
-            font: 600 rem(10) / rem(14) $f;
+        &_inverse {
+            background-color: var(--guit-sem-color-background-neutral-1);
+
+            #{ $this }__arrow {
+                background-color: var(--guit-sem-color-background-neutral-1);
+            }
+
+            #{ $this }__text {
+                color: var(--guit-sem-color-foreground-neutral-2);
+            }
         }
     }
 
-    &-title {
-        color: c(b);
+    &__arrow {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+    }
+
+    &__text {
+        font-family: var(--guit-sem-font-caption-large-medium-font-family);
+        font-size: var(--guit-sem-font-caption-large-medium-font-size);
+        font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
+        line-height: var(--guit-sem-font-caption-large-medium-llne-height);
+        letter-spacing: var(--guit-sem-font-caption-large-medium-letter-spacing);
     }
 }

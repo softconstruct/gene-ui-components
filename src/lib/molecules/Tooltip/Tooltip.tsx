@@ -18,6 +18,8 @@ import { Placement } from '@floating-ui/utils';
 import { ReferenceType } from '@floating-ui/react-dom';
 import { isForwardRef } from 'react-is';
 
+import { InfoOutline } from '@geneui/icons';
+
 // Hooks
 //@ts-ignore
 import { useDeviceType } from 'hooks';
@@ -208,34 +210,25 @@ const Tooltip: FC<ITooltipProps> = ({
                 <FloatingPortal root={geneUIProviderRef.current}>
                     {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
                         <div
-                            className={`tooltip-c-p s-${size} ${position}`}
+                            className={`tooltip tooltip_color_inverse s-${size} tooltip_position_${position}`}
                             ref={refs.setFloating}
                             style={{
                                 ...style,
-                                ...floatingStyles,
-                                zIndex: 400 // TODO: Remove after 3.0.0
+                                ...floatingStyles
                             }}
                             {...props}
                         >
                             <div
+                                className="tooltip__arrow"
                                 ref={arrowRef}
                                 style={{
-                                    position: 'absolute',
                                     left: middlewareData.arrow?.x,
                                     top: middlewareData.arrow?.y,
-                                    [staticSide]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth}px` : 0,
-                                    transform: 'rotate(45deg)',
-                                    background: 'black',
-                                    width: 10,
-                                    height: 10
+                                    [staticSide]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0
                                 }}
                             />
-                            {(title || text) && (
-                                <div className="tooltip-content">
-                                    {title && <div className="tooltip-title">{title}</div>}
-                                    {text && <div className="tooltip-text">{text}</div>}
-                                </div>
-                            )}
+                            <p className="tooltip__text">{text}</p>
+                            <InfoOutline size={16} />
                         </div>
                     )}
                 </FloatingPortal>
