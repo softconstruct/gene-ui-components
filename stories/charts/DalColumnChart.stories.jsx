@@ -2,7 +2,7 @@ import React from 'react';
 
 import DalColumnChartComponent from 'src/lib/molecules/Charts/DalColumnChart';
 import { dalColumnData, dashStyles, drillDownData } from './data';
-import { args, category } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 const categories = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7'];
 
@@ -24,32 +24,35 @@ categories.forEach((i) => {
 export default {
     title: 'Charts/DalColumnChart',
     component: DalColumnChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
-        min: args({ control: 'number', category: category.content }),
-        max: args({ control: 'number', category: category.content }),
-        title: args({ control: 'text', category: category.content }),
-        columnData: args({ control: false, category: category.content }),
-        lineData: args({ control: 'object', category: category.content }),
-        sizes: args({ control: 'object', category: category.appearance }),
-        color: args({ control: 'text', category: category.appearance }),
-        dataName: args({ control: 'text', category: category.content }),
-        categories: args({ control: 'object', category: category.content }),
-        subtitle: args({ control: 'text', category: category.content }),
-        drilldownTitleXAxis: args({ control: 'text', category: category.content }),
-        drilldownTitleYAxis: args({ control: 'text', category: category.content }),
-        gridLineDashStyle: args({ control: false, category: category.appearance }),
-        resetButtonPosition: args({ control: false, category: category.appearance }),
-        drillUpText: args({ control: 'text', category: category.content }),
-        drillDown: args({ control: 'object', category: category.others }),
-        crosshair: args({ control: false, category: category.appearance }),
-        xAxisText: args({ control: 'text', category: category.content }),
-        yAxisText: args({ control: 'text', category: category.content }),
-        className: args({ control: false, category: category.others }),
-        tooltip: args({ control: 'text', category: category.content }),
-        plotOptions: args({ control: 'object', category: category.others }),
-        restProps: args({ control: false, category: category.others }),
-        isLoading: args({ control: 'boolean', category: category.states }),
-        emptyText: args({ control: 'text', category: category.content })
+        min: args({ control: 'number', ...propCategory.content }),
+        max: args({ control: 'number', ...propCategory.content }),
+        title: args({ control: 'text', ...propCategory.content }),
+        columnData: args({ control: false, ...propCategory.content }),
+        lineData: args({ control: 'object', ...propCategory.content }),
+        sizes: args({ control: 'object', ...propCategory.appearance }),
+        color: args({ control: 'text', ...propCategory.appearance }),
+        dataName: args({ control: 'text', ...propCategory.content }),
+        categories: args({ control: 'object', ...propCategory.content }),
+        subtitle: args({ control: 'text', ...propCategory.content }),
+        drilldownTitleXAxis: args({ control: 'text', ...propCategory.content }),
+        drilldownTitleYAxis: args({ control: 'text', ...propCategory.content }),
+        gridLineDashStyle: args({ control: false, ...propCategory.appearance }),
+        resetButtonPosition: args({ control: false, ...propCategory.appearance }),
+        drillUpText: args({ control: 'text', ...propCategory.content }),
+        drillDown: args({ control: 'object', ...propCategory.others }),
+        crosshair: args({ control: false, ...propCategory.appearance }),
+        xAxisText: args({ control: 'text', ...propCategory.content }),
+        yAxisText: args({ control: 'text', ...propCategory.content }),
+        className: args({ control: false, ...propCategory.others }),
+        tooltip: args({ control: 'text', ...propCategory.content }),
+        plotOptions: args({ control: 'object', ...propCategory.others }),
+        restProps: args({ control: false, ...propCategory.others }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        emptyText: args({ control: 'text', ...propCategory.content })
     }
 };
 

@@ -11,7 +11,7 @@ const meta: Meta<typeof Label> = {
     title: 'Atoms/Label',
     component: Label,
     argTypes: {
-        htmlFor: args({ control: false, ...propCategory.functionality }),
+        htmlFor: args({ control: 'false', ...propCategory.functionality }),
         size: args({ control: 'select', ...propCategory.appearance }),
         labelText: args({ control: 'text', ...propCategory.content }),
         required: args({ control: 'boolean', ...propCategory.content }),

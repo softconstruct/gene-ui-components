@@ -1,68 +1,160 @@
-@import 'src/assets/styles/variables';
+.avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--guit-ref-radius-full);
+    overflow: hidden;
+    user-select: none;
+    position: relative;
 
-.user-avatar-c {
-    --size: #{rem(26)};
+    &_size {
+        &_6Xlarge {
+            width: var(--guit-sem-dimension-width-6xlarge);
+            height: var(--guit-sem-dimension-height-6xlarge);
+            font-family: var(--guit-sem-font-heading-medium-semibold-font-family);
+            font-size: var(--guit-sem-font-heading-medium-semibold-font-size);
+            line-height: var(--guit-sem-font-heading-medium-semibold-line-height);
+            font-weight: var(--guit-sem-font-heading-medium-semibold-font-weight);
+        }
 
-    width: var(--size);
-    height: var(--size);
-    border-radius: rem(3);
-    text-align: center;
-    font: 600 calc(var(--size) / 2.3) / var(--size) $f;
-    transition: 300ms box-shadow;
-    color: c(b);
-    background: sc(b) no-repeat 50% 50% / cover;
-    box-shadow: 0 0 0 0 sc(b, 0.2);
+        &_large {
+            width: var(--guit-sem-dimension-width-large);
+            height: var(--guit-sem-dimension-height-large);
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+        }
 
-    &.clickable {
-        cursor: pointer;
+        &_medium {
+            width: var(--guit-sem-dimension-width-medium);
+            height: var(--guit-sem-dimension-height-medium);
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+        }
 
-        &:hover {
-            box-shadow: 0 0 0 rem(3) sc(b, 0.2);
+        &_small {
+            width: var(--guit-sem-dimension-width-small);
+            height: var(--guit-sem-dimension-height-small);
+            font-family: var(--guit-sem-font-label-small-default-medium-font-family);
+            font-size: var(--guit-sem-font-label-small-default-medium-font-size);
+            line-height: var(--guit-sem-font-label-small-default-medium-line-height);
+            font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
         }
     }
 
-    &:not(.color-default) {
-        color: sc(b);
-        background: c(b) no-repeat 50% 50% / cover;
-        box-shadow: 0 0 0 0 c(b, 0.2);
+    &_color {
+        &_neutral {
+            background-color: var(--guit-sem-color-background-neutral-2);
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
 
-        &.clickable {
-            &:hover {
-                box-shadow: 0 0 0 rem(3) c(b, 0.2);
+        &_blue {
+            background-color: var(--guit-sem-color-background-accent-blue-1);
+            color: var(--guit-sem-color-foreground-accent-blue);
+        }
+
+        &_red {
+            background-color: var(--guit-sem-color-background-accent-red-1);
+            color: var(--guit-sem-color-foreground-accent-red);
+        }
+
+        &_green {
+            background-color: var(--guit-sem-color-background-accent-green-1);
+            color: var(--guit-sem-color-foreground-accent-green);
+        }
+
+        &_purple {
+            background-color: var(--guit-sem-color-background-accent-purple-1);
+            color: var(--guit-sem-color-foreground-accent-purple);
+        }
+
+        &_orange {
+            background-color: var(--guit-sem-color-background-accent-orange-1);
+            color: var(--guit-sem-color-foreground-accent-orange);
+        }
+
+        &_lagoon {
+            background-color: var(--guit-sem-color-background-accent-lagoon-1);
+            color: var(--guit-sem-color-foreground-accent-lagoon);
+        }
+
+        &_magenta {
+            background-color: var(--guit-sem-color-background-accent-magenta-1);
+            color: var(--guit-sem-color-foreground-accent-magenta);
+        }
+
+        &_slate {
+            background-color: var(--guit-sem-color-background-accent-slate-1);
+            color: var(--guit-sem-color-foreground-accent-slate);
+        }
+    }
+
+    &__image {
+        display: block;
+        object-fit: cover;
+        object-position: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    &__text {
+        font-family: inherit;
+        color: inherit;
+        font-size: inherit;
+        line-height: inherit;
+        font-weight: inherit;
+        text-transform: uppercase;
+    }
+
+    &:focus-visible {
+        outline-offset: var(--guit-ref-border-width-thin);
+        outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-focus);
+    }
+
+    &:hover,
+    &:active,
+    &_disabled {
+        &::before {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+    }
+
+    // active, hover, focus common styles END
+
+    // active and hover states START
+    &_button {
+        cursor: pointer;
+
+        &:hover {
+            &::before {
+                background-color: var(--guit-sem-color-background-transparent-1-hover);
+            }
+        }
+
+        &:active {
+            &::before {
+                background-color: var(--guit-sem-color-background-transparent-1-pressed);
             }
         }
     }
 
-    &.color-green {
-        @include over(background, confirm);
+    &_disabled {
+        pointer-events: none;
+
+        &::before {
+            background-color: var(--guit-sem-color-background-transparent-inverse-disabled);
+        }
     }
 
-    &.color-red {
-        @include over(background, danger);
-    }
-
-    &.shape-circle {
-        border-radius: 100%;
-    }
-
-    &.text-small {
-        font-size: calc(var(--size) / 2.5);
-    }
-
-    &[class*='bc-icon-'] {
-        font-size: calc(var(--size) / 2);
-        line-height: var(--size);
-    }
-
-    &.size-small {
-        --size: #{rem(22)};
-    }
-
-    &.size-medium {
-        --size: #{rem(36)};
-    }
-
-    &.size-big {
-        --size: #{rem(46)};
-    }
+    // active and hover states END
 }

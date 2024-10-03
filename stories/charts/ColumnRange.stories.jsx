@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Helpers
-import { args, propCategory } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 // Components
 import ColumnRangeChart from 'src/lib/molecules/Charts/ColumnRangeChart';
@@ -12,6 +12,9 @@ import { columnRangeData, columnRangeDataFixed } from './data';
 export default {
     title: 'Charts/ColumnRange',
     component: ColumnRangeChart,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
         title: args({ control: 'text', ...propCategory.content }),
         subTitle: args({ control: 'text', ...propCategory.content }),

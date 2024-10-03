@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Helpers
-import { args, propCategory } from '../assets/storybook.globals';
+import { args, propCategory, SCREENSHOT_DELAY } from '../assets/storybook.globals';
 
 // Components
 import TreeMapChartComponent from 'src/lib/molecules/Charts/TreeMapChart';
@@ -16,6 +16,9 @@ const layoutAlgorithms = ['strip', 'stripes', 'squarified', 'sliceAndDice'];
 export default {
     title: 'Charts/TreeMapChart',
     component: TreeMapChartComponent,
+    parameters: {
+        chromatic: { delay: SCREENSHOT_DELAY }
+    },
     argTypes: {
         data: args({ control: 'array', ...propCategory.content }),
         title: args({ control: 'text', ...propCategory.content }),

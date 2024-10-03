@@ -18,6 +18,13 @@ addons.setConfig({
         collapsedRoots: ['other'],
         renderLabel: (item) => {
             return <SidebarLabelWrapper item={item} />;
+        },
+        filters: {
+            patterns: (item) => {
+                if (!item.title.startsWith('Chromatic')) {
+                    return item;
+                }
+            }
         }
     },
     toolbar: {
