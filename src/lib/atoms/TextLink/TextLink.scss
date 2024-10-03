@@ -4,9 +4,9 @@
     display: inline-flex;
     align-items: center;
     gap: var(--guit-ref-spacing-3xsmall);
-    user-select: none;
-    cursor: pointer;
     border-radius: var(--guit-ref-radius-4xsmall);
+    cursor: pointer;
+    user-select: none;
 
     &_underline {
         #{ $this }__text {
@@ -65,16 +65,13 @@
         }
     }
 
-    &:focus-visible {
-        outline-offset: var(--guit-ref-border-width-thin);
-        outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-focus);
-    }
-
     &_disabled {
         pointer-events: none;
+
         &:not(#{ $this }_color_inverse) {
             color: var(--guit-sem-color-foreground-disabled);
         }
+
         &#{ $this }_color_inverse {
             color: var(--guit-sem-color-foreground-inverse-disabled);
         }
@@ -83,5 +80,14 @@
     &__text {
         color: inherit;
         text-transform: capitalize;
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: var(--guit-sem-dimension-width-small-nudge);
+        height: var(--guit-sem-dimension-height-small-nudge);
     }
 }

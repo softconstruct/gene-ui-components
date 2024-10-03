@@ -82,8 +82,8 @@ const TextLink: FC<ITextLinkProps> = ({
         onFocus={onFocus}
         onClick={onClick}
     >
-        {Icon && Icon}
         <span className="textLink__text">{children}</span>
+        <span className="textLink__icon">{Icon && Icon}</span>
     </a>
 );
 
