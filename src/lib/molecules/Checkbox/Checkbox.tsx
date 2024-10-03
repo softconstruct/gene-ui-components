@@ -27,22 +27,198 @@ const Checkbox: FC<ICheckboxProps> = ({ size }) => {
 
     return (
         <div className="testHolder">
-            {/* todo modifier classnames "checkbox_error" "checkbox_disabled" "checkbox_readOnly"*/}
+            {/* todo modifier classnames "checkbox_labelTop" "checkbox_error" "checkbox_disabled" "checkbox_readOnly"*/}
             <div className="checkbox">
-                <label className="checkbox__label">
-                    <div className="checkbox__imitationHolder">
-                        <div className="checkbox__imitationHolderInner">
-                            <input type="checkbox" className="checkbox__input" />
-                            <div className="checkbox__imitation">
-                                <CheckMark className="checkbox__icon" size={16} />
-                            </div>
-                        </div>
-                    </div>
-                    <span>label</span>
-                </label>
-
+                <Label
+                    labelText="label"
+                    className="checkbox__label"
+                    children={
+                        <span className="checkbox__imitationHolder">
+                            <span className="checkbox__imitationHolderInner">
+                                <input type="checkbox" className="checkbox__input" />
+                                <span className="checkbox__imitation">
+                                    <CheckMark className="checkbox__icon" size={16} />
+                                </span>
+                            </span>
+                        </span>
+                    }
+                />
                 <div className="checkbox__infoContainer">
-                    <HelperText text="Helpeer Text" />
+                    <HelperText text="State Default" />
+                </div>
+            </div>
+            <div className="checkbox checkbox_error">
+                <Label
+                    labelText="label"
+                    className="checkbox__label"
+                    children={
+                        <span className="checkbox__imitationHolder">
+                            <span className="checkbox__imitationHolderInner">
+                                <input type="checkbox" className="checkbox__input" />
+                                <span className="checkbox__imitation">
+                                    <CheckMark className="checkbox__icon" size={16} />
+                                </span>
+                            </span>
+                        </span>
+                    }
+                />
+                <div className="checkbox__infoContainer">
+                    <HelperText text="State Error" type="danger" />
+                </div>
+            </div>
+            <div className="checkbox checkbox_warning">
+                <Label
+                    labelText="label"
+                    className="checkbox__label"
+                    children={
+                        <span className="checkbox__imitationHolder">
+                            <span className="checkbox__imitationHolderInner">
+                                <input type="checkbox" className="checkbox__input" />
+                                <span className="checkbox__imitation">
+                                    <CheckMark className="checkbox__icon" size={16} />
+                                </span>
+                            </span>
+                        </span>
+                    }
+                />
+                <div className="checkbox__infoContainer">
+                    <HelperText text="State Warning" type="warning" />
+                </div>
+            </div>
+            <div className="checkbox checkbox_disabled">
+                <Label
+                    disabled
+                    labelText="label"
+                    className="checkbox__label"
+                    children={
+                        <span className="checkbox__imitationHolder">
+                            <span className="checkbox__imitationHolderInner">
+                                <input type="checkbox" className="checkbox__input" />
+                                <span className="checkbox__imitation">
+                                    <CheckMark className="checkbox__icon" size={16} />
+                                </span>
+                            </span>
+                        </span>
+                    }
+                />
+                <div className="checkbox__infoContainer">
+                    <HelperText text="State Disabled" isDisabled />
+                </div>
+            </div>
+            <div className="checkbox checkbox_readOnly">
+                <Label
+                    labelText="label"
+                    className="checkbox__label"
+                    children={
+                        <span className="checkbox__imitationHolder">
+                            <span className="checkbox__imitationHolderInner">
+                                <input type="checkbox" className="checkbox__input" />
+                                <span className="checkbox__imitation">
+                                    <CheckMark className="checkbox__icon" size={16} />
+                                </span>
+                            </span>
+                        </span>
+                    }
+                />
+                <div className="checkbox__infoContainer">
+                    <HelperText text="State Read Only" />
+                </div>
+            </div>
+            {/*label top states START*/}
+            <div className="checkbox checkbox_labelTop">
+                <Label
+                    labelText="label"
+                    className="checkbox__label"
+                    children={
+                        <span className="checkbox__imitationHolder">
+                            <span className="checkbox__imitationHolderInner">
+                                <input type="checkbox" className="checkbox__input" />
+                                <span className="checkbox__imitation">
+                                    <CheckMark className="checkbox__icon" size={16} />
+                                </span>
+                            </span>
+                        </span>
+                    }
+                />
+                <div className="checkbox__infoContainer">
+                    <HelperText text="State Default" />
+                </div>
+            </div>
+            <div className="checkbox checkbox_labelTop checkbox_error">
+                <Label
+                    labelText="label"
+                    className="checkbox__label"
+                    children={
+                        <span className="checkbox__imitationHolder">
+                            <span className="checkbox__imitationHolderInner">
+                                <input type="checkbox" className="checkbox__input" />
+                                <span className="checkbox__imitation">
+                                    <CheckMark className="checkbox__icon" size={16} />
+                                </span>
+                            </span>
+                        </span>
+                    }
+                />
+                <div className="checkbox__infoContainer">
+                    <HelperText text="State Error" type="danger" />
+                </div>
+            </div>
+            <div className="checkbox checkbox_labelTop checkbox_warning">
+                <Label
+                    labelText="label"
+                    className="checkbox__label"
+                    children={
+                        <span className="checkbox__imitationHolder">
+                            <span className="checkbox__imitationHolderInner">
+                                <input type="checkbox" className="checkbox__input" />
+                                <span className="checkbox__imitation">
+                                    <CheckMark className="checkbox__icon" size={16} />
+                                </span>
+                            </span>
+                        </span>
+                    }
+                />
+                <div className="checkbox__infoContainer">
+                    <HelperText text="State Warning" type="warning" />
+                </div>
+            </div>
+            <div className="checkbox checkbox_labelTop checkbox_disabled">
+                <Label
+                    disabled
+                    labelText="label"
+                    className="checkbox__label"
+                    children={
+                        <span className="checkbox__imitationHolder">
+                            <span className="checkbox__imitationHolderInner">
+                                <input type="checkbox" className="checkbox__input" />
+                                <span className="checkbox__imitation">
+                                    <CheckMark className="checkbox__icon" size={16} />
+                                </span>
+                            </span>
+                        </span>
+                    }
+                />
+                <div className="checkbox__infoContainer">
+                    <HelperText text="State Disabled" isDisabled />
+                </div>
+            </div>
+            <div className="checkbox checkbox_labelTop checkbox_readOnly">
+                <Label
+                    labelText="label"
+                    className="checkbox__label"
+                    children={
+                        <span className="checkbox__imitationHolder">
+                            <span className="checkbox__imitationHolderInner">
+                                <input type="checkbox" className="checkbox__input" />
+                                <span className="checkbox__imitation">
+                                    <CheckMark className="checkbox__icon" size={16} />
+                                </span>
+                            </span>
+                        </span>
+                    }
+                />
+                <div className="checkbox__infoContainer">
+                    <HelperText text="State Read Only" />
                 </div>
             </div>
         </div>

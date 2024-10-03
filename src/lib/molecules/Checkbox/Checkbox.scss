@@ -1,7 +1,9 @@
 .testHolder {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(5, 1fr);
+    gap: 40px;
+    max-width: 400px;
 }
 
 //todo remove testHolder
@@ -9,8 +11,10 @@
 .checkbox {
     $this: &;
 
-    display: flex;
+    display: inline-flex;
+    max-width: 100%;
     flex-direction: column;
+    min-width: 0;
 
     &__input {
         background: none;
@@ -23,12 +27,6 @@
         top: 0;
         z-index: -1;
         border-radius: var(--guit-ref-radius-4xsmall);
-
-        &:focus-visible {
-            outline-offset: var(--guit-ref-border-width-thin);
-            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-                var(--guit-sem-color-border-focus);
-        }
 
         &:checked,
         &:indeterminate {
@@ -55,8 +53,6 @@
 
     &__label {
         display: flex;
-        align-items: center;
-        gap: var(--guit-ref-spacing-xsmall);
     }
 
     &__imitationHolder {
@@ -109,12 +105,23 @@
 
     &__infoContainer {
         display: flex;
-        flex-direction: column;
+    }
+    &:not(#{ $this }_labelTop) {
         gap: var(--guit-ref-spacing-4xsmall);
-        user-select: none;
+        #{ $this }__infoContainer {
+            padding-inline-start: var(--guit-ref-spacing-4xlarge);
+        }
+        #{ $this }__label {
+            gap: var(--guit-ref-spacing-xsmall);
+        }
+    }
 
-        &:not(:empty) {
-            padding-top: var(--guit-ref-spacing-4xsmall);
+    &_labelTop {
+        gap: var(--guit-ref-spacing-3xsmall);
+        #{ $this }__label {
+            flex-direction: column-reverse;
+            align-items: initial;
+            gap: var(--guit-ref-spacing-3xsmall);
         }
     }
 
@@ -130,13 +137,32 @@
 
     &_disabled {
         pointer-events: none;
+        user-select: none;
+
         #{ $this }__imitationHolder {
             #{ $this }__imitationHolderInner {
                 #{ $this }__imitation {
                     border-color: var(--guit-sem-color-border-disabled-1);
                     background-color: var(--guit-sem-color-background-disabled);
+
                     #{ $this }__icon {
                         color: var(--guit-sem-color-foreground-disabled);
+                    }
+                }
+            }
+        }
+    }
+
+    &_readOnly {
+        pointer-events: none;
+        #{ $this }__imitationHolder {
+            #{ $this }__imitationHolderInner {
+                #{ $this }__imitation {
+                    border-color: var(--guit-sem-color-border-neutral-2);
+                    background-color: var(--guit-sem-color-background-neutral-3);
+
+                    #{ $this }__icon {
+                        color: var(--guit-sem-color-foreground-neutral-1);
                     }
                 }
             }
