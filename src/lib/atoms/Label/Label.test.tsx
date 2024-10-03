@@ -9,11 +9,10 @@ import GeneUIProvider from '../../providers/GeneUIProvider';
 describe('Label ', () => {
     let setup: ReactWrapper<ILabelProps>;
     const labelText = 'label';
-    const htmlFor = 'input';
 
     beforeEach(
         () =>
-            (setup = mount(<Label htmlFor={htmlFor} labelText={labelText} />, {
+            (setup = mount(<Label labelText={labelText} />, {
                 wrappingComponent: GeneUIProvider
             }))
     );
@@ -34,7 +33,7 @@ describe('Label ', () => {
 
     it('renders required prop correctly', () => {
         const wrapper = setup.setProps({ required: true });
-        expect(wrapper.find('span').text()).toStrictEqual('*');
+        expect(wrapper.find('.label__asterisk').text()).toStrictEqual('*');
     });
 
     it('renders infoText prop correctly', () => {
@@ -57,5 +56,12 @@ describe('Label ', () => {
         const wrapper = setup.setProps({ className });
 
         expect(wrapper.hasClass(className)).toBeTruthy();
+    });
+
+    it('renders children prop correctly', () => {
+        const children = <span>test children</span>;
+        const wrapper = setup.setProps({ children });
+
+        expect(wrapper.contains('test children')).toBeTruthy();
     });
 });

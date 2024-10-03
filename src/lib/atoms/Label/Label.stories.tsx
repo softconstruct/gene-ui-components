@@ -17,7 +17,8 @@ const meta: Meta<typeof Label> = {
         infoText: args({ control: 'text', ...propCategory.content }),
         disabled: args({ control: 'boolean', ...propCategory.states }),
         isLoading: args({ control: 'boolean', ...propCategory.states }),
-        className: args({ control: 'false', ...propCategory.appearance })
+        className: args({ control: 'false', ...propCategory.appearance }),
+        children: args({ control: 'false', ...propCategory.content })
     },
     args: {
         size: 'medium',

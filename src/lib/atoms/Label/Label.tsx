@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react';
+import React, { FC, JSX, useRef } from 'react';
 import { InfoOutline } from '@geneui/icons';
 import classnames from 'classnames';
 
@@ -48,6 +48,11 @@ interface ILabelProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * The form element associated with the label, such as an input, checkbox, or radio button.
+     * The label will wrap around this element, ensuring proper association for accessibility.
+     */
+    children?: JSX.Element;
 }
 
 const iconSizes = {
@@ -59,30 +64,42 @@ const iconSizes = {
  * Labels identify a component or group of components. Use them with elements such as checkboxes and input fields to guide users in providing specific information, or with plain text to organize information.
  */
 
-const Label: FC<ILabelProps> = ({ size = 'medium', labelText, disabled, required, infoText, isLoading, className }) => {
+const Label: FC<ILabelProps> = ({
+    size = 'medium',
+    labelText,
+    disabled,
+    required,
+    infoText,
+    isLoading,
+    className,
+    children
+}) => {
     const labelRef = useRef<HTMLLabelElement | null>(null);
 
     const isTruncated: boolean = useEllipsisDetection(labelRef);
 
     return (
-        <div className={classnames(`label`, className)}>
+        <label className={classnames(`label`, className)}>
+            {children}
             {isLoading ? (
-                'skeleton'
+                <span>skelleton</span>
             ) : (
-                <>
-                    <Tooltip text={labelText} isVisible={isTruncated}>
+                <span className="label__container">
+                    <>
                         <>
-                            <label
-                                ref={labelRef}
-                                className={classnames('ellipsis-text', `label__text label__text_size_${size}`, {
-                                    label__text_disabled: disabled
-                                })}
-                            >
-                                {labelText}
-                            </label>
+                            <Tooltip text={labelText} isVisible={isTruncated}>
+                                <span
+                                    ref={labelRef}
+                                    className={classnames('ellipsis-text', `label__text label__text_size_${size}`, {
+                                        label__text_disabled: disabled
+                                    })}
+                                >
+                                    {labelText}
+                                </span>
+                            </Tooltip>
                             {required && (
                                 <span
-                                    className={classnames(`label__text label__text_size_${size}`, {
+                                    className={classnames(`label__asterisk label__text_size_${size} `, {
                                         label__text_disabled: disabled
                                     })}
                                 >
@@ -90,20 +107,20 @@ const Label: FC<ILabelProps> = ({ size = 'medium', labelText, disabled, required
                                 </span>
                             )}
                         </>
-                    </Tooltip>
-                    {infoText && (
-                        <Tooltip text={infoText}>
-                            <InfoOutline
-                                className={classnames(`label__icon`, {
-                                    label__icon_disabled: disabled
-                                })}
-                                size={iconSizes[size]}
-                            />
-                        </Tooltip>
-                    )}
-                </>
+                        {infoText && (
+                            <Tooltip text={infoText}>
+                                <InfoOutline
+                                    className={classnames(`label__icon`, {
+                                        label__icon_disabled: disabled
+                                    })}
+                                    size={iconSizes[size]}
+                                />
+                            </Tooltip>
+                        )}
+                    </>
+                </span>
             )}
-        </div>
+        </label>
     );
 };
 
