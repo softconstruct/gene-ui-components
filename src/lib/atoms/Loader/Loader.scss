@@ -1,17 +1,9 @@
 .loader {
+    $this: &;
+
     display: inline-flex;
     align-items: center;
     justify-content: center;
-
-    &__spinner-wrapper {
-        display: block;
-        padding: var(--guit-ref-spacing-4xsmall);
-    }
-
-    &__spinner {
-        width: 100%;
-        height: 100%;
-    }
 
     &_direction {
         &_below {
@@ -47,50 +39,50 @@
         &_2xLarge {
             gap: var(--guit-ref-spacing-2xlarge);
 
-            .loader__spinner-wrapper {
-                width: var(--guit-sem-sizing-width-2xlarge);
-                height: var(--guit-sem-sizing-height-2xlarge);
+            #{ $this }__spinnerWrapper {
+                width: var(--guit-sem-dimension-width-2xlarge);
+                height: var(--guit-sem-dimension-height-2xlarge);
             }
         }
 
         &_xLarge {
             gap: var(--guit-ref-spacing-xlarge);
 
-            .loader__spinner-wrapper {
-                width: var(--guit-sem-sizing-width-xlarge);
-                height: var(--guit-sem-sizing-height-xlarge);
+            #{ $this }__spinnerWrapper {
+                width: var(--guit-sem-dimension-width-xlarge);
+                height: var(--guit-sem-dimension-height-xlarge);
             }
         }
 
         &_large {
             gap: var(--guit-ref-spacing-large);
 
-            .loader__spinner-wrapper {
-                width: var(--guit-sem-sizing-width-large);
-                height: var(--guit-sem-sizing-height-large);
+            #{ $this }__spinnerWrapper {
+                width: var(--guit-sem-dimension-width-large);
+                height: var(--guit-sem-dimension-height-large);
             }
         }
 
         &_medium {
             gap: var(--guit-ref-spacing-medium);
 
-            .loader__spinner-wrapper {
-                width: var(--guit-sem-sizing-width-medium);
-                height: var(--guit-sem-sizing-height-medium);
+            #{ $this }__spinnerWrapper {
+                width: var(--guit-sem-dimension-width-medium);
+                height: var(--guit-sem-dimension-height-medium);
             }
         }
 
         &_small {
-            .loader__spinner-wrapper {
-                width: var(--guit-sem-sizing-width-small);
-                height: var(--guit-sem-sizing-height-small);
+            #{ $this }__spinnerWrapper {
+                width: var(--guit-sem-dimension-width-small);
+                height: var(--guit-sem-dimension-height-small);
             }
         }
 
         &_smallNudge {
-            .loader__spinner-wrapper {
-                width: var(--guit-sem-sizing-width-small-nudge);
-                height: var(--guit-sem-sizing-height-small-nudge);
+            #{ $this }__spinnerWrapper {
+                width: var(--guit-sem-dimension-width-small-nudge);
+                height: var(--guit-sem-dimension-height-small-nudge);
             }
         }
     }
@@ -98,43 +90,49 @@
     &_color {
         &_brand,
         &_neutral {
-            .loader__text {
+            #{ $this }__text {
                 color: var(--guit-sem-color-foreground-neutral-1);
             }
         }
 
         &_brand {
-            .loader__spinner_path {
+            #{ $this }__spinnerPath {
                 stroke: var(--guit-sem-color-foreground-brand);
             }
         }
 
         &_neutral {
-            .loader__spinner_path {
+            #{ $this }__spinnerPath {
                 stroke: var(--guit-sem-color-foreground-neutral-2);
             }
         }
 
         &_inverse {
-            .loader__spinner_path {
+            #{ $this }__spinnerPath {
                 stroke: var(--guit-sem-color-foreground-inverse);
             }
 
-            .loader__text {
+            #{ $this }__text {
                 color: var(--guit-sem-color-foreground-inverse);
             }
         }
     }
 
-    &__spinner {
+    &__spinnerWrapper {
         flex: 0 0 auto;
-        animation: loader-rotate 2s linear infinite;
+        padding: var(--guit-ref-spacing-4xsmall);
+    }
 
-        &_path {
-            stroke-linecap: round;
-            animation: loader-dash 1.5s ease-in-out infinite;
-            transform: translate3d(0, 0, 0);
-        }
+    &__spinner {
+        width: 100%;
+        height: 100%;
+        animation: loader-rotate 2s linear infinite;
+    }
+
+    &__spinnerPath {
+        stroke-linecap: round;
+        animation: loader-dash 1.5s ease-in-out infinite;
+        transform: translate3d(0, 0, 0);
     }
 
     &__text {
@@ -146,11 +144,11 @@
 }
 
 @keyframes loader-rotate {
-    0% {
+    from {
         transform: rotate(0deg);
     }
 
-    100% {
+    to {
         transform: rotate(360deg);
     }
 }
@@ -168,6 +166,6 @@
 
     100% {
         stroke-dasharray: 90, 150;
-        stroke-dashoffset: -124;
+        stroke-dashoffset: -136;
     }
 }
