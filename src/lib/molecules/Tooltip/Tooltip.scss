@@ -11,9 +11,12 @@
     box-shadow: var(--guit-sem-shadow-floating-2-position-x-1) var(--guit-sem-shadow-floating-2-position-y-1)
             var(--guit-sem-shadow-floating-2-blur-1) var(--guit-sem-shadow-floating-2-spread-1)
             var(--guit-sem-color-floating-2-rgba-1),
-        var(--guit-sem-shadow-floating-2-position-x-1) var(--guit-sem-shadow-floating-2-position-y-2)
+        var(--guit-sem-shadow-floating-2-position-x-2) var(--guit-sem-shadow-floating-2-position-y-2)
             var(--guit-sem-shadow-floating-2-blur-2) var(--guit-sem-shadow-floating-2-spread-2)
             var(--guit-sem-color-floating-2-rgba-2);
+
+    //filter: drop-shadow(0 4px 6px rgba(20, 20, 20, 0.1)) drop-shadow(0 -2px 4px rgba(20, 20, 20, 0.1));
+    //box-shadow: 0 4px 6px 4px rgba(20, 20, 20, 0.1), 0 -2px 4px 2px rgba(20, 20, 20, 0.1);
 
     &_position {
         &_top,
