@@ -22,10 +22,6 @@ describe('Label ', () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it('renders htmlFor prop correctly', () => {
-        expect(setup.find('label').prop('htmlFor')).toStrictEqual(htmlFor);
-    });
-
     it.each<ILabelProps['size']>(['medium', 'small'])('should have "%s" size', (size) => {
         const wrapper = setup.setProps({ size });
 

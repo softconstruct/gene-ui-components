@@ -13,11 +13,6 @@ import './Label.scss';
 
 interface ILabelProps {
     /**
-     * The `htmlFor` prop is associated with the `id` of the input element.
-     * If `Label` component is used with a form element this prop is required.
-     */
-    htmlFor?: string;
-    /**
      * Label size.<br/>
      * Possible values: `medium | small`
      */
@@ -64,16 +59,7 @@ const iconSizes = {
  * Labels identify a component or group of components. Use them with elements such as checkboxes and input fields to guide users in providing specific information, or with plain text to organize information.
  */
 
-const Label: FC<ILabelProps> = ({
-    htmlFor,
-    size = 'medium',
-    labelText,
-    disabled,
-    required,
-    infoText,
-    isLoading,
-    className
-}) => {
+const Label: FC<ILabelProps> = ({ size = 'medium', labelText, disabled, required, infoText, isLoading, className }) => {
     const labelRef = useRef<HTMLLabelElement | null>(null);
 
     const isTruncated: boolean = useEllipsisDetection(labelRef);
@@ -88,7 +74,6 @@ const Label: FC<ILabelProps> = ({
                         <>
                             <label
                                 ref={labelRef}
-                                htmlFor={htmlFor}
                                 className={classnames('ellipsis-text', `label__text label__text_size_${size}`, {
                                     label__text_disabled: disabled
                                 })}
