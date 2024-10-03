@@ -13,11 +13,10 @@ import React, {
     useRef
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
-import { FloatingPortal, autoUpdate, useFloating, arrow } from '@floating-ui/react';
+import { FloatingPortal, autoUpdate, useFloating, arrow, useHover, useInteractions } from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
 import { ReferenceType } from '@floating-ui/react-dom';
 import { isForwardRef } from 'react-is';
-
 import { InfoOutline } from '@geneui/icons';
 
 // Hooks
@@ -44,6 +43,20 @@ const positions: Placement[] = [
     'left-start',
     'left-end'
 ];
+
+export const correctPosition = {
+    'bottom-center': 'bottom',
+    'bottom-left': 'bottom-start',
+    'bottom-right': 'bottom-end',
+    'left-bottom': 'left-end',
+    'left-center': 'left',
+    'left-top': 'left-start',
+    'right-bottom': 'right-end',
+    'right-center': 'right',
+    'top-center': 'top',
+    'top-left': 'top-start',
+    'top-right': 'top-end'
+};
 
 interface ICustomPosition {
     left?: number;
@@ -79,18 +92,19 @@ export interface ITooltipProps {
      * Positions where will be displayed the Tooltip relates the child component.<br> Possible values: `top | right | bottom | left`
      */
     position?:
-        | 'top'
-        | 'right'
-        | 'bottom'
-        | 'left'
-        | 'top-start'
-        | 'top-end'
-        | 'right-start'
-        | 'right-end'
-        | 'bottom-start'
-        | 'bottom-end'
-        | 'left-start'
-        | 'left-end';
+        | 'top-center'
+        | 'top-left'
+        | 'top-right'
+        | 'right-center'
+        | 'right-bottom'
+        | 'right-top'
+        | 'bottom-center'
+        | 'bottom-left'
+        | 'bottom-right'
+        | 'left-center'
+        | 'left-bottom'
+        | 'left-top'
+        | 'left-bottom';
 
     /**
      * Tooltip padding related to the target element
@@ -160,16 +174,17 @@ const Tooltip: FC<ITooltipProps> = ({
 }) => {
     // @ts-ignore
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
-    const { isMobile } = useDeviceType(screenType);
-    const [isPopoverOpen, setIsPopoverState] = useState(false);
 
-    const mouseEnterHandler = () => !alwaysShow && setIsPopoverState(true);
-    const mouseLeaveHandler = () => !alwaysShow && setIsPopoverState(false);
+    const { isMobile } = useDeviceType(screenType);
+
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
     const arrowRef = useRef<HTMLDivElement | null>(null);
 
     const { refs, floatingStyles, context, middlewareData, placement } = useFloating({
         open: alwaysShow || isPopoverOpen,
-        placement: position,
+        placement: correctPosition[position],
+        onOpenChange: setIsPopoverOpen,
         middleware: [
             offset(padding),
             flip({
@@ -193,11 +208,14 @@ const Tooltip: FC<ITooltipProps> = ({
         whileElementsMounted: autoUpdate
     });
 
+    const hover = useHover(context);
+
+    const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
+
     const checkNudged = ({ nudgedLeft, nudgedTop }) => (isMobile ? !(nudgedTop || nudgedLeft) : true);
 
     const childProps = {
-        onMouseEnter: mouseEnterHandler,
-        onMouseLeave: mouseLeaveHandler
+        ...getReferenceProps()
     };
 
     const component = useMemo(() => FindAndSetRef(children, childProps, refs.setReference), [children, childProps]);
@@ -225,11 +243,13 @@ const Tooltip: FC<ITooltipProps> = ({
         left: 'right'
     }[currentDirection];
 
-    const arrowPosition = {
-        'top-start': -8,
-        'top-end': 8,
-        'bottom-start': -8,
-        'bottom-end': 8
+    const offsetFromEdge = 8;
+
+    const arrowOffset = {
+        'top-start': -offsetFromEdge,
+        'top-end': offsetFromEdge,
+        'bottom-start': -offsetFromEdge,
+        'bottom-end': offsetFromEdge
     }[placement];
 
     const middlewareArrowData = middlewareData.arrow;
@@ -248,13 +268,16 @@ const Tooltip: FC<ITooltipProps> = ({
                                 ...floatingStyles
                             }}
                             {...props}
+                            {...getFloatingProps()}
                         >
                             <div
                                 className="tooltip__arrow"
                                 ref={arrowRef}
                                 style={{
-                                    left: middlewareArrowData?.x ? middlewareArrowData.x + (arrowPosition || 0) : null,
-                                    top: middlewareArrowData?.y ? middlewareArrowData.y : null,
+                                    left: middlewareArrowData?.x
+                                        ? middlewareArrowData.x + (arrowOffset || 0)
+                                        : undefined,
+                                    top: middlewareArrowData?.y ? middlewareArrowData.y : undefined,
                                     [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0
                                 }}
                             />

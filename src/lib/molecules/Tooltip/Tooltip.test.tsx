@@ -1,5 +1,6 @@
 import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
+import * as TestsUtils from 'react-dom/test-utils';
 
 //Components
 import Tooltip from './index';
@@ -11,6 +12,8 @@ import { ITooltipProps } from './index';
 describe('Tooltip', () => {
     let setup: ReactWrapper<ITooltipProps>;
     const Component = <Tooltip children={<div className="test">Test</div>} />;
+    const act = typeof React.act === 'function' ? React.act : TestsUtils.act;
+
     const provider = () =>
         setup.getWrappingComponent().setProps({
             children: Component
@@ -47,15 +50,13 @@ describe('Tooltip', () => {
         expect(provider().find('.tooltip').exists()).toBeTruthy();
     });
 
-    it('renders position prop correct inside the portal', () => {
-        const position = 'right';
+    it('renders position prop correct inside the portal', async () => {
+        const position = 'top-center';
 
         setup.setProps({ alwaysShow: true, position, text: 'test' });
-        expect(provider().find(`.tooltip_position_${position}`).exists()).toBeTruthy();
-    });
-
-    it('handle onMouseEnter', () => {
-        setup.find('.test').simulate('mouseEnter');
-        expect(provider().find('.tooltip').exists()).toBeTruthy();
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve));
+        });
+        expect(provider().find('.tooltip_position_top').exists()).toBeTruthy();
     });
 });

@@ -25,7 +25,7 @@ const meta: Meta<ITooltipProps> = {
         size: 'default',
         isVisible: true,
         alwaysShow: false,
-        position: 'top',
+        position: 'top-center',
         text: 'Tooltip some text',
         screenType: 'desktop'
     }
