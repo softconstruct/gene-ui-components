@@ -55,4 +55,11 @@ describe('Label ', () => {
         const wrapper = setup.setProps({ isLoading: true });
         expect(wrapper.find('.label').hasClass('label__text')).toBeFalsy();
     });
+
+    it('renders className prop correctly', () => {
+        const className = 'test-class';
+        const wrapper = setup.setProps({ className });
+
+        expect(wrapper.hasClass(className)).toBeTruthy();
+    });
 });

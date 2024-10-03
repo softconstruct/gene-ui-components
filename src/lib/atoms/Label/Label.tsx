@@ -48,6 +48,11 @@ interface ILabelProps {
      * When set to `true` a `skeleton` indicator will be shown instead of the `label` text.
      */
     isLoading?: boolean;
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
 }
 
 const iconSizes = {
@@ -59,13 +64,22 @@ const iconSizes = {
  * Labels identify a component or group of components. Use them with elements such as checkboxes and input fields to guide users in providing specific information, or with plain text to organize information.
  */
 
-const Label: FC<ILabelProps> = ({ htmlFor, size = 'medium', labelText, disabled, required, infoText, isLoading }) => {
+const Label: FC<ILabelProps> = ({
+    htmlFor,
+    size = 'medium',
+    labelText,
+    disabled,
+    required,
+    infoText,
+    isLoading,
+    className
+}) => {
     const labelRef = useRef<HTMLLabelElement | null>(null);
 
     const isTruncated: boolean = useEllipsisDetection(labelRef);
 
     return (
-        <div className={`label`}>
+        <div className={classnames(`label`, className)}>
             {isLoading ? (
                 'skeleton'
             ) : (
