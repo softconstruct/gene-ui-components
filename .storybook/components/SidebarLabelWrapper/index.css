@@ -37,6 +37,17 @@ button[data-action='collapse-root'] {
     max-height: 16px;
 }
 
+/*loading storybook dark mode*/
+.dark #preview-loader {
+    background: #1a1c1d;
+    border-color: #eb118a;
+    border-top-color: #1a1c1d;
+    mix-blend-mode: lighten;
+}
+.dark .css-mzrf51 {
+    background: #1a1c1d;
+}
+
 /*******************************************/
 /*addons icons change and display none*/
 /******************************************/
