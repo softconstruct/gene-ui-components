@@ -1,5 +1,5 @@
 import React, { cloneElement, FC, JSX } from 'react';
-import { CheckMark } from '@geneui/icons';
+import { InfoOutline } from '@geneui/icons';
 import classNames from 'classnames';
 
 // Styles
@@ -51,7 +51,7 @@ const Divider: FC<IDividerProps> = ({
     alignContentPosition = 'left',
     appearance = 'brand',
     //@ts-ignore
-    Icon = <CheckMark />,
+    Icon = <InfoOutline />,
     isVertical,
     label,
     labelPosition = 'before',
@@ -69,10 +69,10 @@ const Divider: FC<IDividerProps> = ({
             {!isVertical && (
                 <>
                     <div className="divider__label">
-                        {label && <span className="divider__label__text ellipsis-text">{label}</span>}
+                        {label && <span className="divider__text ellipsis-text">{label}</span>}
                         {Icon &&
                             cloneElement(Icon, {
-                                className: ` ${iconClassName} divider__label__icon`
+                                className: ` ${iconClassName} divider__icon`
                             })}
                     </div>
                     {/**TODO: Add Button component (or any component) when finish refactoring */}
