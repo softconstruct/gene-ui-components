@@ -35,6 +35,11 @@ describe('Divider ', () => {
         expect(wrapper.find(Button).text()).toBe('Test');
     });
 
+    it('renders inset  prop correctly', () => {
+        const wrapper = setup.setProps({ inset: true });
+        expect(wrapper.find('.divider').hasClass(`divider_inset`)).toBeTruthy();
+    });
+
     it.each<IDividerProps['appearance']>(['brand', 'default', 'inverse', 'strong'])(
         'checking a component with a prop appearance : %p',
         (appearance) => {
@@ -42,6 +47,7 @@ describe('Divider ', () => {
             expect(wrapper.find('.divider').hasClass(`divider_color_${appearance}`)).toBeTruthy();
         }
     );
+
     it.each<IDividerProps['alignContentPosition']>([, 'left', 'right'])(
         'checking a component with a prop alignContent : %p',
         (alignContentPosition) => {

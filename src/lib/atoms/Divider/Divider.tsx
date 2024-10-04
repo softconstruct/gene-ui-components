@@ -41,6 +41,10 @@ interface IDividerProps {
      * Possible values: `before | after | center`
      */
     labelPosition?: 'before' | 'after' | 'center';
+    /**
+     * provides space between the edge and the divider
+     */
+    inset?: boolean;
 }
 
 /**
@@ -55,13 +59,16 @@ const Divider: FC<IDividerProps> = ({
     isVertical,
     label,
     labelPosition = 'before',
-    alignContent
+    alignContent,
+    inset = false
 }) => {
     const iconClassName = Icon?.props?.className || '';
     return (
         <div
             className={classNames(
-                `divider divider_inset divider_color_${appearance} divider_withLabel_${labelPosition}`,
+                `divider divider_${
+                    inset ? 'inset' : 'block'
+                } divider_color_${appearance} divider_withLabel_${labelPosition}`,
                 {
                     divider_horizontal: !isVertical,
                     divider_vertical: isVertical,
