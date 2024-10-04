@@ -32,11 +32,6 @@ describe('Tooltip', () => {
     it('renders without crashing', () => {
         expect(setup.exists()).toBeTruthy();
     });
-    it.each<ITooltipProps['size']>(['default', 'small'])('renders %p size prop correct inside the portal', (size) => {
-        setup.setProps({ size, alwaysShow: true });
-
-        expect(provider().find(`.s-${size}`).exists()).toBeTruthy();
-    });
 
     it('renders text prop correct inside the portal', () => {
         const text = 'test';
@@ -48,6 +43,18 @@ describe('Tooltip', () => {
     it('renders alwaysShow prop correct inside the portal', () => {
         setup.setProps({ alwaysShow: true });
         expect(provider().find('.tooltip').exists()).toBeTruthy();
+    });
+
+    it('renders appearance prop correct inside the portal', () => {
+        const appearance = 'inverse';
+        setup.setProps({ alwaysShow: true, appearance });
+        expect(provider().find(`.tooltip_color_${appearance}`).exists()).toBeTruthy();
+    });
+
+    it('renders withArrow  prop correct inside the portal', async () => {
+        setup.setProps({ alwaysShow: true, withArrow: true, text: 'test' });
+
+        expect(provider().find('.tooltip__arrow').exists()).toBeTruthy();
     });
 
     it('renders position prop correct inside the portal', async () => {

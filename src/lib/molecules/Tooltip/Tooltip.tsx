@@ -19,10 +19,6 @@ import { ReferenceType } from '@floating-ui/react-dom';
 import { isForwardRef } from 'react-is';
 import { InfoOutline } from '@geneui/icons';
 
-// Hooks
-//@ts-ignore
-import { useDeviceType } from 'hooks';
-
 // Components
 import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
@@ -53,6 +49,7 @@ export const correctPosition = {
     'left-top': 'left-start',
     'right-bottom': 'right-end',
     'right-center': 'right',
+    'right-top': 'right-start',
     'top-center': 'top',
     'top-left': 'top-start',
     'top-right': 'top-end'
@@ -64,10 +61,6 @@ interface ICustomPosition {
 }
 
 export interface ITooltipProps {
-    /**
-     * The Tooltip component size<br> Possible values: `default | small`
-     */
-    size?: 'default' | 'small';
     /**
      * Main content for the component.
      */
@@ -110,14 +103,20 @@ export interface ITooltipProps {
      * Tooltip padding related to the target element
      */
     padding?: number;
-    /**
-     * Control with screenType  appearance of component
-     */
-    screenType?: 'desktop' | 'mobile';
+
     /**
      * In case of `false` value, the children component will rendered without Tooltip.
      */
     isVisible?: boolean;
+    /**
+     * Available style varieties of Empty atom to display <br/>
+     * Possible values: `inverse | default`
+     */
+    appearance?: 'inverse' | 'default';
+    /**
+     * show with an arrow the direction from which the tooltip will open
+     */
+    withArrow?: boolean;
 }
 
 type JSXWithRef = JSX.Element & { ref: RefObject<HTMLElement> };
@@ -162,21 +161,17 @@ const FindAndSetRef = <T extends object>(
 const Tooltip: FC<ITooltipProps> = ({
     children,
     position = 'top',
-    size = 'default',
     style,
     text,
     customPosition,
     alwaysShow,
-    padding = 5,
-    screenType = 'desktop',
+    padding = 10,
     isVisible = true,
+    appearance = 'default',
+    withArrow = false,
     ...props
 }) => {
-    // @ts-ignore
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
-
-    const { isMobile } = useDeviceType(screenType);
-
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
     const arrowRef = useRef<HTMLDivElement | null>(null);
@@ -212,8 +207,6 @@ const Tooltip: FC<ITooltipProps> = ({
 
     const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
 
-    const checkNudged = ({ nudgedLeft, nudgedTop }) => (isMobile ? !(nudgedTop || nudgedLeft) : true);
-
     const childProps = {
         ...getReferenceProps()
     };
@@ -223,6 +216,7 @@ const Tooltip: FC<ITooltipProps> = ({
     useEffect(() => {
         for (let i = 0; i < component.length; i++) {
             const node = component[i];
+
             if (typeof node.ref === 'function' && node.ref === refs.setReference) {
                 break;
             }
@@ -259,17 +253,17 @@ const Tooltip: FC<ITooltipProps> = ({
             {component}
             {isVisible && (alwaysShow || isPopoverOpen) && (
                 <FloatingPortal root={geneUIProviderRef.current}>
-                    {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
-                        <div
-                            className={`tooltip tooltip_color_inverse s-${size} tooltip_position_${currentDirection}`}
-                            ref={refs.setFloating}
-                            style={{
-                                ...style,
-                                ...floatingStyles
-                            }}
-                            {...props}
-                            {...getFloatingProps()}
-                        >
+                    <div
+                        className={`tooltip tooltip_color_${appearance}  tooltip_position_${currentDirection}`}
+                        ref={refs.setFloating}
+                        style={{
+                            ...style,
+                            ...floatingStyles
+                        }}
+                        {...props}
+                        {...getFloatingProps()}
+                    >
+                        {withArrow && (
                             <div
                                 className="tooltip__arrow"
                                 ref={arrowRef}
@@ -281,12 +275,12 @@ const Tooltip: FC<ITooltipProps> = ({
                                     [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0
                                 }}
                             />
-                            <p className="tooltip__text">{text}</p>
-                            <div className="tooltip__icon">
-                                <InfoOutline size={16} />
-                            </div>
+                        )}
+                        <p className="tooltip__text">{text}</p>
+                        <div className="tooltip__icon">
+                            <InfoOutline size={16} />
                         </div>
-                    )}
+                    </div>
                 </FloatingPortal>
             )}
         </>
