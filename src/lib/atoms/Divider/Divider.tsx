@@ -60,11 +60,14 @@ const Divider: FC<IDividerProps> = ({
     const iconClassName = Icon?.props?.className || '';
     return (
         <div
-            className={classNames(`divider  divider_color_${appearance} divider_withLabel_${labelPosition}`, {
-                divider_horizontal: !isVertical,
-                divider_vertical: isVertical,
-                [`divider_align_${alignContentPosition}`]: alignContent
-            })}
+            className={classNames(
+                `divider divider_inset divider_color_${appearance} divider_withLabel_${labelPosition}`,
+                {
+                    divider_horizontal: !isVertical,
+                    divider_vertical: isVertical,
+                    [`divider_align_${alignContentPosition}`]: alignContent
+                }
+            )}
         >
             {!isVertical && (
                 <>

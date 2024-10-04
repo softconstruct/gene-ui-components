@@ -17,11 +17,16 @@
     &_horizontal {
         align-items: center;
         width: 100%;
+        padding-block: var(--guit-ref-spacing-4xsmall);
 
         &#{ $this }:before,
         &#{ $this }:after {
             min-width: var(--guit-sem-dimension-width-medium);
             border-block-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid);
+        }
+
+        &#{ $this }_inset {
+            padding-inline: var(--guit-ref-spacing-large);
         }
     }
 
@@ -34,6 +39,10 @@
         &#{ $this }:before,
         &#{ $this }:after {
             border-inline-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid);
+        }
+
+        &#{ $this }_inset {
+            padding-block: var(--guit-ref-spacing-large);
         }
     }
 
@@ -161,7 +170,6 @@
     }
 
     &__element {
-        order: 1;
         display: flex;
         min-width: 0;
         flex: 0 0 auto;
