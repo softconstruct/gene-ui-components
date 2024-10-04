@@ -282,7 +282,9 @@ const Tooltip: FC<ITooltipProps> = ({
                                 }}
                             />
                             <p className="tooltip__text">{text}</p>
-                            <InfoOutline size={16} />
+                            <div className="tooltip__icon">
+                                <InfoOutline size={16} />
+                            </div>
                         </div>
                     )}
                 </FloatingPortal>
