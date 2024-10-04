@@ -263,19 +263,17 @@ const Tooltip: FC<ITooltipProps> = ({
                         {...props}
                         {...getFloatingProps()}
                     >
-                        {withArrow && (
-                            <div
-                                className="tooltip__arrow"
-                                ref={arrowRef}
-                                style={{
-                                    left: middlewareArrowData?.x
-                                        ? middlewareArrowData.x + (arrowOffset || 0)
-                                        : undefined,
-                                    top: middlewareArrowData?.y ? middlewareArrowData.y : undefined,
-                                    [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0
-                                }}
-                            />
-                        )}
+                        <div
+                            className="tooltip__arrow"
+                            ref={arrowRef}
+                            style={{
+                                left: middlewareArrowData?.x ? middlewareArrowData.x + (arrowOffset || 0) : undefined,
+                                top: middlewareArrowData?.y ? middlewareArrowData.y : undefined,
+                                [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0,
+                                visibility: withArrow ? 'visible' : 'hidden'
+                            }}
+                        />
+
                         <p className="tooltip__text">{text}</p>
                         <div className="tooltip__icon">
                             <InfoOutline size={16} />
