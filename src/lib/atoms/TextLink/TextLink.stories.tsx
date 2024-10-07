@@ -19,12 +19,12 @@ const meta: Meta<typeof TextLink> = {
         onFocus: args({ control: 'false', ...propCategory.functionality }),
         rel: args({ control: 'select', ...propCategory.options }),
         target: args({ control: 'select', ...propCategory.options }),
-        children: args({ control: 'text', ...propCategory.appearance }),
+        text: args({ control: 'text', ...propCategory.content }),
         skeleton: args({ control: 'boolean', ...propCategory.functionality })
     },
     args: {
         appearance: 'primary',
-        children: 'LinkText',
+        text: 'LinkText',
         href: 'test',
         disabled: false,
         rel: 'nofollow',

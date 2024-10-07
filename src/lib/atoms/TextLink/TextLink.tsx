@@ -8,13 +8,13 @@ import { Link } from 'lucide-react';
 
 interface ITextLinkProps {
     /**
+     * fill the description
+     */
+    text: string;
+    /**
      * Specifies a link URL.
      */
     href?: string;
-    /**
-     * Link is a wrapper around components (or children), most commonly text, so that they become hyperlinks.
-     */
-    children: ReactNode;
     /**
      * rovides hints for SEO.
      */
@@ -60,10 +60,10 @@ interface ITextLinkProps {
  * A link is styled text that navigates users to another location, either within the current experience or to a different app or website.
  */
 const TextLink: FC<ITextLinkProps> = ({
+    text = 'LinkText',
     rel,
     target,
     underline,
-    children = 'LinkText',
     href,
     appearance,
     disabled,
@@ -82,7 +82,7 @@ const TextLink: FC<ITextLinkProps> = ({
         onFocus={onFocus}
         onClick={onClick}
     >
-        <span className="textLink__text">{children}</span>
+        <span className="textLink__text">{text}</span>
         <span className="textLink__icon">{Icon && Icon}</span>
     </a>
 );

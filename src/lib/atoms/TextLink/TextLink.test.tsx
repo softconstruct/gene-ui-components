@@ -7,16 +7,17 @@ import TextLink, { ITextLinkProps } from './index';
 describe('TextLink', () => {
     let setup: ReactWrapper<ITextLinkProps>;
     const mockFn = jest.fn();
-    beforeEach(() => (setup = mount(<TextLink children="test" />)));
+    beforeEach(() => (setup = mount(<TextLink text="test" />)));
 
     afterEach(() => {
         jest.clearAllMocks();
     });
+
     it('renders without crashing', () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it('renders children prop correctly', () => {
+    it('renders text prop correctly', () => {
         expect(setup.text()).toBe('test');
     });
     it('renders disabled prop correctly', () => {
