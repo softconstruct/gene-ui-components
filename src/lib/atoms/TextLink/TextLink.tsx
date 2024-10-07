@@ -20,18 +20,17 @@ interface ITextLinkProps {
      */
     iconBefore?: boolean;
     /**
-     * rovides hints for SEO.
+     * fill the description.
      */
     rel?: 'none' | 'nofollow';
+    /**
+     * fill the description.
+     */
+    target?: 'self' | 'blank';
     /**
      * When underline is supplied, we override the underline style internally managed by the component.
      */
     underline?: boolean;
-    /**
-     * Indicates the browsing context where an href will be opened:
-     * Possible values: <code>self | blank</code>
-     */
-    target?: 'self' | 'blank';
     /**
      * TextLink color <br/>
      * Possible values: <code>primary | secondary | inverse </code>
@@ -68,7 +67,7 @@ const TextLink: FC<ITextLinkProps> = ({
     href,
     iconBefore,
     rel,
-    target,
+    target = 'self',
     underline,
     appearance,
     disabled,

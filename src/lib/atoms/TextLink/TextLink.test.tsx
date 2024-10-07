@@ -76,7 +76,7 @@ describe('TextLink', () => {
             expect(wrapper.find(`textLink_color_${appearance}`)).toBeTruthy();
         }
     );
-    it.each<ITextLinkProps['target']>(['blank', 'self'])('checking a component with a prop target : %p', (target) => {
+    it.each<ITextLinkProps['target']>(['blank', 'self'])('should have "%s" target', (target) => {
         const wrapper = setup.setProps({ target });
         expect(wrapper.find('.textLink').props().target).toBe(`_${target}`);
     });
