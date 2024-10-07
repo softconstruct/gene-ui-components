@@ -1,10 +1,9 @@
 import React, { FocusEvent, MouseEvent } from 'react';
 import { ReactWrapper, mount } from 'enzyme';
-import * as TestsUtils from 'react-dom/test-utils';
+
 // Components
 import TextLink, { ITextLinkProps } from './index';
 
-const act = typeof React.act === 'function' ? React.act : TestsUtils.act;
 describe('TextLink', () => {
     let setup: ReactWrapper<ITextLinkProps>;
     const mockFn = jest.fn();
@@ -50,6 +49,11 @@ describe('TextLink', () => {
         } as MouseEvent<HTMLAnchorElement>;
         wrapper.find('a').props().onClick!(event);
         expect(mockFn).toHaveBeenCalledWith(event);
+    });
+
+    it('renders isLoading prop correctly', () => {
+        const wrapper = setup.setProps({ isLoading: true });
+        expect(setup.text()).toStrictEqual('skeleton');
     });
 
     it.each<ITextLinkProps['rel']>(['nofollow', 'none'])('checking a component with a prop rel : %p', (rel) => {

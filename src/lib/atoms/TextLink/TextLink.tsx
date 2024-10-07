@@ -47,7 +47,7 @@ interface ITextLinkProps {
     /**
      * show skeleton
      */
-    skeleton?: boolean;
+    isLoading?: boolean;
     /**
      * Icon which we visible in the component.
      */
@@ -67,22 +67,29 @@ const TextLink: FC<ITextLinkProps> = ({
     appearance = 'primary',
     disabled,
     onClick,
+    isLoading,
     Icon = <Link />
 }) => (
-    <a
-        target={`_${target}`}
-        rel={rel}
-        className={classNames(`textLink textLink_color_${appearance}`, {
-            textLink_underline: underline,
-            textLink_disabled: disabled,
-            textLink_iconBefore: iconBefore
-        })}
-        href={href}
-        onClick={onClick}
-    >
-        <span className="textLink__text">{text}</span>
-        <span className="textLink__icon">{Icon && Icon}</span>
-    </a>
+    <>
+        {isLoading ? (
+            <span>skeleton</span>
+        ) : (
+            <a
+                target={`_${target}`}
+                rel={rel}
+                className={classNames(`textLink textLink_color_${appearance}`, {
+                    textLink_underline: underline,
+                    textLink_disabled: disabled,
+                    textLink_iconBefore: iconBefore
+                })}
+                href={href}
+                onClick={onClick}
+            >
+                <span className="textLink__text">{text}</span>
+                <span className="textLink__icon">{Icon && Icon}</span>
+            </a>
+        )}
+    </>
 );
 
 export { ITextLinkProps, TextLink as default };

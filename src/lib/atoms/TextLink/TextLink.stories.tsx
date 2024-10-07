@@ -20,7 +20,7 @@ const meta: Meta<typeof TextLink> = {
         rel: args({ control: 'select', ...propCategory.others }),
         target: args({ control: 'select', ...propCategory.functionality }),
         text: args({ control: 'text', ...propCategory.content }),
-        skeleton: args({ control: 'boolean', ...propCategory.functionality }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
         iconBefore: args({ control: 'boolean', ...propCategory.appearance })
     },
     args: {
@@ -29,7 +29,8 @@ const meta: Meta<typeof TextLink> = {
         href: 'javascript:void(0)',
         disabled: false,
         target: 'self',
-        iconBefore: false
+        iconBefore: false,
+        onClick: undefined
     } as ITextLinkProps
 };
 
