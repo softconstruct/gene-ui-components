@@ -70,7 +70,7 @@ describe('TextLink', () => {
     });
 
     it.each<ITextLinkProps['appearance']>(['inverse', 'secondary', 'primary'])(
-        'checking a component with a prop appearance : %p',
+        'should have "%s" appearance',
         (appearance) => {
             const wrapper = setup.setProps({ appearance });
             expect(wrapper.find(`textLink_color_${appearance}`)).toBeTruthy();

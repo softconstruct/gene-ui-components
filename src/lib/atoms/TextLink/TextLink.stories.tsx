@@ -11,7 +11,7 @@ const meta: Meta<typeof TextLink> = {
     title: 'Atoms/TextLink',
     component: TextLink,
     argTypes: {
-        appearance: args({ control: 'select', ...propCategory.options }),
+        appearance: args({ control: 'select', ...propCategory.appearance }),
         disabled: args({ control: 'boolean', ...propCategory.functionality }),
         href: args({ control: 'text', ...propCategory.content }),
         underline: args({ control: 'boolean', ...propCategory.appearance }),

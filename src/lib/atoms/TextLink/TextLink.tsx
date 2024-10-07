@@ -32,7 +32,7 @@ interface ITextLinkProps {
      */
     underline?: boolean;
     /**
-     * TextLink color <br/>
+     * fill the description. <br/>
      * Possible values: <code>primary | secondary | inverse </code>
      */
     appearance?: 'primary' | 'secondary' | 'inverse';
@@ -69,7 +69,7 @@ const TextLink: FC<ITextLinkProps> = ({
     rel,
     target = 'self',
     underline,
-    appearance,
+    appearance = 'primary',
     disabled,
     onFocus,
     onClick,
