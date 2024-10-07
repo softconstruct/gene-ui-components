@@ -13,7 +13,7 @@ const meta: Meta<typeof TextLink> = {
     argTypes: {
         appearance: args({ control: 'select', ...propCategory.options }),
         disabled: args({ control: 'boolean', ...propCategory.functionality }),
-        href: args({ control: 'text', ...propCategory.functionality }),
+        href: args({ control: 'text', ...propCategory.content }),
         Icon: args({ control: 'false', ...propCategory.appearance }),
         onClick: args({ control: 'false', ...propCategory.functionality }),
         onFocus: args({ control: 'false', ...propCategory.functionality }),
@@ -25,7 +25,7 @@ const meta: Meta<typeof TextLink> = {
     args: {
         appearance: 'primary',
         text: 'LinkText',
-        href: 'test',
+        href: 'javascript:void(0)',
         disabled: false,
         rel: 'nofollow',
         target: 'self'

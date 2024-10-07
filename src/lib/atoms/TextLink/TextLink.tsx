@@ -12,7 +12,7 @@ interface ITextLinkProps {
      */
     text: string;
     /**
-     * Specifies a link URL.
+     * fill the description
      */
     href?: string;
     /**
@@ -61,10 +61,10 @@ interface ITextLinkProps {
  */
 const TextLink: FC<ITextLinkProps> = ({
     text = 'LinkText',
+    href,
     rel,
     target,
     underline,
-    href,
     appearance,
     disabled,
     onFocus,
