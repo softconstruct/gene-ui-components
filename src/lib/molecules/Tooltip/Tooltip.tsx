@@ -274,7 +274,9 @@ const Tooltip: FC<ITooltipProps> = ({
                             }}
                         />
 
-                        <p className="tooltip__text">{text}</p>
+                        <div className="tooltip__textWrapper">
+                            <p className="tooltip__text">{text}</p>
+                        </div>
                         <div className="tooltip__icon">
                             <InfoOutline size={16} />
                         </div>

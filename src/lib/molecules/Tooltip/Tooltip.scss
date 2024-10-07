@@ -42,7 +42,8 @@
                 background-color: var(--guit-sem-color-background-neutral-4);
             }
 
-            #{ $this }__text {
+            #{ $this }__text,
+            #{ $this }__icon {
                 color: var(--guit-sem-color-foreground-inverse-notheme);
             }
         }
@@ -54,7 +55,8 @@
                 background-color: var(--guit-sem-color-background-neutral-1);
             }
 
-            #{ $this }__text {
+            #{ $this }__text,
+            #{ $this }__icon {
                 color: var(--guit-sem-color-foreground-neutral-2);
             }
         }
@@ -64,6 +66,12 @@
         position: absolute;
         width: 10px;
         height: 10px;
+    }
+
+    &__textWrapper {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-sem-font-caption-large-medium-paragraph-spacing);
     }
 
     &__text {
