@@ -51,18 +51,6 @@ describe('TextLink', () => {
         wrapper.find('a').props().onClick!(event);
         expect(mockFn).toHaveBeenCalledWith(event);
     });
-    it('renders onFocus prop correctly', () => {
-        const wrapper = setup.setProps({ onFocus: mockFn });
-        const event = {
-            currentTarget: {
-                innerHTML: 'test'
-            }
-        } as FocusEvent<HTMLAnchorElement>;
-
-        wrapper.find('a').props().onFocus!(event);
-
-        expect(mockFn).toHaveBeenCalledWith(event);
-    });
 
     it.each<ITextLinkProps['rel']>(['nofollow', 'none'])('checking a component with a prop rel : %p', (rel) => {
         const wrapper = setup.setProps({ rel });

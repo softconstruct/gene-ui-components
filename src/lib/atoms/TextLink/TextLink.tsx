@@ -41,22 +41,17 @@ interface ITextLinkProps {
      */
     disabled?: boolean;
     /**
-     * Icon which we visible in the component.
-     */
-    Icon?: ReactNode;
-    /**
      * Callback invoked when the user clicks (press and release) on ButtonLink with the mouse or keyboard.
      */
     onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
     /**
-     * Callback triggered when the element gains focus.
-     */
-    onFocus?: (e: React.FocusEvent<HTMLAnchorElement>) => void;
-
-    /**
      * show skeleton
      */
     skeleton?: boolean;
+    /**
+     * Icon which we visible in the component.
+     */
+    Icon?: ReactNode;
 }
 
 /**
@@ -71,7 +66,6 @@ const TextLink: FC<ITextLinkProps> = ({
     underline,
     appearance = 'primary',
     disabled,
-    onFocus,
     onClick,
     Icon = <Link />
 }) => (
@@ -84,7 +78,6 @@ const TextLink: FC<ITextLinkProps> = ({
             textLink_iconBefore: iconBefore
         })}
         href={href}
-        onFocus={onFocus}
         onClick={onClick}
     >
         <span className="textLink__text">{text}</span>

@@ -17,7 +17,6 @@ const meta: Meta<typeof TextLink> = {
         underline: args({ control: 'boolean', ...propCategory.appearance }),
         Icon: args({ control: 'false', ...propCategory.appearance }),
         onClick: args({ control: 'false', ...propCategory.functionality }),
-        onFocus: args({ control: 'false', ...propCategory.functionality }),
         rel: args({ control: 'select', ...propCategory.others }),
         target: args({ control: 'select', ...propCategory.functionality }),
         text: args({ control: 'text', ...propCategory.content }),
