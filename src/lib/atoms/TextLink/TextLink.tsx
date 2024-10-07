@@ -37,7 +37,7 @@ interface ITextLinkProps {
      */
     appearance?: 'primary' | 'secondary' | 'inverse';
     /**
-     * Indicates whether the button is disabled, preventing user interaction. When true, the button appears dimmed and cannot be clicked.
+     * fill the description.
      */
     disabled?: boolean;
     /**
