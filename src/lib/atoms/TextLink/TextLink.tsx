@@ -16,6 +16,10 @@ interface ITextLinkProps {
      */
     href?: string;
     /**
+     * fill the description
+     */
+    iconBefore?: boolean;
+    /**
      * rovides hints for SEO.
      */
     rel?: 'none' | 'nofollow';
@@ -62,6 +66,7 @@ interface ITextLinkProps {
 const TextLink: FC<ITextLinkProps> = ({
     text = 'LinkText',
     href,
+    iconBefore,
     rel,
     target,
     underline,
@@ -76,7 +81,8 @@ const TextLink: FC<ITextLinkProps> = ({
         rel={rel}
         className={classNames(`textLink textLink_color_${appearance}`, {
             textLink_underline: underline,
-            textLink_disabled: disabled
+            textLink_disabled: disabled,
+            textLink_iconBefore: iconBefore
         })}
         href={href}
         onFocus={onFocus}

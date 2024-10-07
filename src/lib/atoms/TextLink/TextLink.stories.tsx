@@ -20,15 +20,16 @@ const meta: Meta<typeof TextLink> = {
         rel: args({ control: 'select', ...propCategory.options }),
         target: args({ control: 'select', ...propCategory.options }),
         text: args({ control: 'text', ...propCategory.content }),
-        skeleton: args({ control: 'boolean', ...propCategory.functionality })
+        skeleton: args({ control: 'boolean', ...propCategory.functionality }),
+        iconBefore: args({ control: 'boolean', ...propCategory.appearance })
     },
     args: {
         appearance: 'primary',
         text: 'LinkText',
         href: 'javascript:void(0)',
         disabled: false,
-        rel: 'nofollow',
-        target: 'self'
+        target: 'self',
+        iconBefore: false
     } as ITextLinkProps
 };
 

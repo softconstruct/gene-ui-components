@@ -3,6 +3,7 @@
 
     display: inline-flex;
     align-items: center;
+    flex-direction: row;
     gap: var(--guit-ref-spacing-3xsmall);
     border-radius: var(--guit-ref-radius-4xsmall);
     cursor: pointer;
@@ -75,6 +76,10 @@
         &#{ $this }_color_inverse {
             color: var(--guit-sem-color-foreground-inverse-disabled);
         }
+    }
+
+    &_iconBefore {
+        flex-direction: row-reverse;
     }
 
     &__text {
