@@ -11,42 +11,45 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 
 interface ITextLinkProps {
     /**
-     * fill the description
+     * The text displayed within the link.
      */
     text: string;
     /**
-     * fill the description
+     * The URL the link navigates to when clicked.
      */
     href?: string;
     /**
-     * fill the description
+     * Determines if the icon (if provided) should appear before the link text.
+     * When `true`, the icon appears before the text, otherwise it appears after the text.
      */
     iconBefore?: boolean;
     /**
-     * fill the description.
+     * Specifies the relationship between the current document and the linked resource.<br>
+     * Possible values: <code> none | nofollow  </code>
      */
     rel?: 'none' | 'nofollow';
     /**
-     * fill the description.<br>
+     * Specifies where to open the linked document.<br>
      * Default is <code> self </code> <br>
      * Possible values: <code> self | blank  </code>
      */
     target?: 'self' | 'blank';
     /**
-     * fill the description.
+     * Determines whether to underline the link text.
+     * When `true`, the text will be underlined.
      */
     underline?: boolean;
     /**
-     * fill the description. <br/>
+     * Specifies the appearance of the link. <br/>
      * Possible values: <code>primary | secondary | inverse </code>
      */
     appearance?: 'primary' | 'secondary' | 'inverse';
     /**
-     * fill the description.
+     * When `true`, the link is disabled and not clickable.
      */
     disabled?: boolean;
     /**
-     * fill the description
+     * Function that gets called when the link is clicked. Receives the click event as an argument.
      */
     onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
     /**
@@ -54,7 +57,7 @@ interface ITextLinkProps {
      */
     isLoading?: boolean;
     /**
-     * fill the description.
+     * An optional icon to display alongside the link text.
      */
     Icon?: React.FC<IconProps>; //todo need to change to interface IconProps after Icon new version release
 }
