@@ -1,46 +1,45 @@
-import { Meta, StoryObj } from '@storybook/react';
-import AvatarComponent from './index';
-import { args, category } from '../../../../stories/assets/storybook.globals';
+import React, { FC } from 'react';
+import { Meta } from '@storybook/react';
 
-const meta = {
+// Helpers
+import { args, propCategory } from '../../../../stories/assets/storybook.globals';
+
+// Components
+import Avatar, { IAvatarProps } from './index';
+import { Globe } from '@geneui/icons';
+
+const meta: Meta<typeof Avatar> = {
     title: 'Atoms/Avatar',
-    component: AvatarComponent,
+    component: Avatar,
     argTypes: {
-        children: args({ control: 'text', category: category.content }),
-        size: args({ control: 'select', category: category.appearance }),
-        shape: args({ control: 'select', defaultValue: 'circle', category: category.appearance }),
-        color: args({ control: 'select', defaultValue: 'default', category: category.appearance }),
-        icon: args({ control: 'text', category: category.content }),
-        src: args({ control: 'text', category: category.content }),
-        onClick: args({ control: false, category: category.action })
+        size: args({ control: 'select', ...propCategory.appearance }),
+        color: args({ control: 'select', ...propCategory.appearance }),
+        src: args({ control: 'text', ...propCategory.content }),
+        fullName: args({ control: 'text', ...propCategory.content }),
+        onClick: args({ control: 'false', ...propCategory.action }),
+        isDisabled: args({ control: 'boolean', ...propCategory.states }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        Icon: args({ control: 'false', ...propCategory.content }),
+        className: args({ control: 'false', ...propCategory.appearance })
+    },
+    args: {
+        size: '6Xlarge',
+        color: 'lagoon',
+        fullName: 'name lastName',
+        isDisabled: false
     }
-} satisfies Meta<typeof AvatarComponent>;
+};
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+const Template: FC<IAvatarProps> = (args) => <Avatar {...args} />;
 
-export const Default: Story = {
-    args: {
-        children: 'US',
-        size: 'default',
-        shape: 'circle'
-    }
-};
+export const Default = Template.bind({});
 
-export const Square: Story = {
-    args: {
-        icon: 'bc-icon-monospace',
-        size: 'medium',
-        shape: 'square',
-        color: 'green'
-    }
-};
+export const WithIcon = Template.bind({});
 
-export const Circled: Story = {
-    args: {
-        src: 'https://www.w3schools.com/howto/img_avatar.png',
-        size: 'big',
-        shape: 'circle'
-    }
+WithIcon.args = {
+    fullName: '',
+    Icon: <Globe />,
+    onClick: undefined
 };
