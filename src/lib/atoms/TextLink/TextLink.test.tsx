@@ -1,8 +1,9 @@
-import React, { FocusEvent, MouseEvent } from 'react';
+import React, { MouseEvent } from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 
 // Components
 import TextLink, { ITextLinkProps } from './index';
+import { Globe } from '@geneui/icons';
 
 describe('TextLink', () => {
     let setup: ReactWrapper<ITextLinkProps>;
@@ -40,6 +41,11 @@ describe('TextLink', () => {
         expect(wrapper.find('.textLink_disabled').exists()).toBeTruthy();
     });
 
+    it('renders Icon prop correctly', () => {
+        const wrapper = setup.setProps({ Icon: Globe });
+        expect(wrapper.find(Globe)).toBeTruthy();
+    });
+
     it('renders onClick prop correctly', () => {
         const wrapper = setup.setProps({ onClick: mockFn });
         const event = {
@@ -56,7 +62,7 @@ describe('TextLink', () => {
         expect(setup.text()).toStrictEqual('skeleton');
     });
 
-    it.each<ITextLinkProps['rel']>(['nofollow', 'none'])('checking a component with a prop rel : %p', (rel) => {
+    it.each<ITextLinkProps['rel']>(['nofollow', 'none'])('should have "%s" rel', (rel) => {
         const wrapper = setup.setProps({ rel });
         expect(wrapper.find('.textLink').props().rel).toBe(rel);
     });

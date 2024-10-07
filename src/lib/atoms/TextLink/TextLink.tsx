@@ -1,10 +1,13 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC } from 'react';
 
 // Styles
 import './TextLink.scss';
 import classNames from 'classnames';
 
-import { Link } from 'lucide-react';
+interface IconProps extends React.SVGProps<SVGSVGElement> {
+    size?: 16 | 20 | 24 | 28 | 32 | 48;
+    color?: string;
+}
 
 interface ITextLinkProps {
     /**
@@ -24,7 +27,9 @@ interface ITextLinkProps {
      */
     rel?: 'none' | 'nofollow';
     /**
-     * fill the description.
+     * fill the description.<br>
+     * Default is <code> self </code> <br>
+     * Possible values: <code> self | blank  </code>
      */
     target?: 'self' | 'blank';
     /**
@@ -41,17 +46,17 @@ interface ITextLinkProps {
      */
     disabled?: boolean;
     /**
-     * Callback invoked when the user clicks (press and release) on ButtonLink with the mouse or keyboard.
+     * fill the description
      */
     onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
     /**
-     * show skeleton
+     * Indicates whether the component is in a loading state. When set to true a skeleton indicator will be shown instead of the component.
      */
     isLoading?: boolean;
     /**
-     * Icon which we visible in the component.
+     * fill the description.
      */
-    Icon?: ReactNode;
+    Icon?: React.FC<IconProps>; //todo need to change to interface IconProps after Icon new version release
 }
 
 /**
@@ -68,7 +73,7 @@ const TextLink: FC<ITextLinkProps> = ({
     disabled,
     onClick,
     isLoading,
-    Icon = <Link />
+    Icon
 }) => (
     <>
         {isLoading ? (
@@ -86,7 +91,12 @@ const TextLink: FC<ITextLinkProps> = ({
                 onClick={onClick}
             >
                 <span className="textLink__text">{text}</span>
-                <span className="textLink__icon">{Icon && Icon}</span>
+                {Icon && (
+                    <span className="textLink__icon">
+                        {' '}
+                        <Icon size={20} />
+                    </span>
+                )}
             </a>
         )}
     </>

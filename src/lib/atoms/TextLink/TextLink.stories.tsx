@@ -6,6 +6,7 @@ import { args, propCategory } from '../../../../stories/assets/storybook.globals
 
 // Components
 import TextLink, { ITextLinkProps } from './index';
+import { Globe } from '@geneui/icons';
 
 const meta: Meta<typeof TextLink> = {
     title: 'Atoms/TextLink',
@@ -15,7 +16,7 @@ const meta: Meta<typeof TextLink> = {
         disabled: args({ control: 'boolean', ...propCategory.states }),
         href: args({ control: 'text', ...propCategory.content }),
         underline: args({ control: 'boolean', ...propCategory.appearance }),
-        Icon: args({ control: 'false', ...propCategory.appearance }),
+        Icon: args({ control: 'false', ...propCategory.content }),
         onClick: args({ control: 'false', ...propCategory.functionality }),
         rel: args({ control: 'select', ...propCategory.others }),
         target: args({ control: 'select', ...propCategory.functionality }),
@@ -30,7 +31,8 @@ const meta: Meta<typeof TextLink> = {
         disabled: false,
         target: 'self',
         iconBefore: false,
-        onClick: undefined
+        onClick: undefined,
+        Icon: Globe
     } as ITextLinkProps
 };
 
