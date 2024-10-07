@@ -14,11 +14,12 @@ const meta: Meta<typeof TextLink> = {
         appearance: args({ control: 'select', ...propCategory.options }),
         disabled: args({ control: 'boolean', ...propCategory.functionality }),
         href: args({ control: 'text', ...propCategory.content }),
+        underline: args({ control: 'boolean', ...propCategory.appearance }),
         Icon: args({ control: 'false', ...propCategory.appearance }),
         onClick: args({ control: 'false', ...propCategory.functionality }),
         onFocus: args({ control: 'false', ...propCategory.functionality }),
         rel: args({ control: 'select', ...propCategory.options }),
-        target: args({ control: 'select', ...propCategory.options }),
+        target: args({ control: 'select', ...propCategory.functionality }),
         text: args({ control: 'text', ...propCategory.content }),
         skeleton: args({ control: 'boolean', ...propCategory.functionality }),
         iconBefore: args({ control: 'boolean', ...propCategory.appearance })

@@ -28,7 +28,7 @@ interface ITextLinkProps {
      */
     target?: 'self' | 'blank';
     /**
-     * When underline is supplied, we override the underline style internally managed by the component.
+     * fill the description.
      */
     underline?: boolean;
     /**

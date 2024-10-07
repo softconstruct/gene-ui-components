@@ -31,14 +31,14 @@ describe('TextLink', () => {
         expect(wrapper.find('.textLink_iconBefore').exists()).toBeTruthy();
     });
 
-    it('renders disabled prop correctly', () => {
-        const wrapper = setup.setProps({ disabled: true });
-        expect(wrapper.find('.textLink_disabled').exists()).toBeTruthy();
-    });
-
     it('renders underline prop correctly', () => {
         const wrapper = setup.setProps({ underline: true });
         expect(wrapper.find('.textLink_underline').exists()).toBeTruthy();
+    });
+
+    it('renders disabled prop correctly', () => {
+        const wrapper = setup.setProps({ disabled: true });
+        expect(wrapper.find('.textLink_disabled').exists()).toBeTruthy();
     });
 
     it('renders onClick prop correctly', () => {
