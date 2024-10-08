@@ -34,6 +34,7 @@ const TSComponentsList = [
     'Tooltip',
     'Label',
     'Loader',
+    'Pill',
     'Checkbox'
 ];
 
