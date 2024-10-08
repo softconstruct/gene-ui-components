@@ -8,6 +8,7 @@ import GeneUIProvider from '../../providers/GeneUIProvider';
 
 //Types
 import { ITooltipProps } from './index';
+import { InfoOutline } from '@geneui/icons';
 
 describe('Tooltip', () => {
     let setup: ReactWrapper<ITooltipProps>;
@@ -33,11 +34,16 @@ describe('Tooltip', () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it('renders text prop correct inside the portal', () => {
+    it('renders text prop correct inside the portal', async () => {
         const text = 'test';
         setup.setProps({ text, alwaysShow: true });
 
         expect(provider().find('.tooltip__text').text()).toEqual(text);
+    });
+
+    it('renders Icon prop correct inside the portal', () => {
+        setup.setProps({ alwaysShow: true, Icon: <InfoOutline /> });
+        expect(provider().find('.tooltip__icon').exists()).toBeTruthy();
     });
 
     it('renders alwaysShow prop correct inside the portal', () => {

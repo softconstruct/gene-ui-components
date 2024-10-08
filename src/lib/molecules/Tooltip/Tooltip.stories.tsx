@@ -1,6 +1,7 @@
 import React from 'react';
 import { Meta } from '@storybook/react';
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
+import { InfoOutline } from '@geneui/icons';
 
 // Components
 import TooltipComponent, { ITooltipProps } from './index';
@@ -19,7 +20,8 @@ const meta: Meta<ITooltipProps> = {
         isVisible: args({ control: 'boolean', ...propCategory.functionality }),
         position: args({ control: 'select', ...propCategory.appearance }),
         appearance: args({ control: 'select', ...propCategory.appearance }),
-        withArrow: args({ control: 'boolean', ...propCategory.functionality })
+        withArrow: args({ control: 'boolean', ...propCategory.functionality }),
+        Icon: args({ control: 'false', ...propCategory.content })
     },
     args: {
         isVisible: true,
@@ -27,7 +29,8 @@ const meta: Meta<ITooltipProps> = {
         position: 'top-center',
         text: 'Tooltip some text',
         appearance: 'default',
-        padding: 10
+        padding: 10,
+        Icon: <InfoOutline size={16} />
     }
 };
 

@@ -10,15 +10,14 @@ import React, {
     useEffect,
     RefObject,
     useMemo,
-    useRef
+    useRef,
+    ReactNode
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
 import { FloatingPortal, autoUpdate, useFloating, arrow, useHover, useInteractions } from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
 import { ReferenceType } from '@floating-ui/react-dom';
 import { isForwardRef } from 'react-is';
-import { InfoOutline } from '@geneui/icons';
-
 // Components
 import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
@@ -117,6 +116,10 @@ export interface ITooltipProps {
      * show with an arrow the direction from which the tooltip will open
      */
     withArrow?: boolean;
+
+    //the icon that will appear after the text
+
+    Icon?: ReactNode;
 }
 
 type JSXWithRef = JSX.Element & { ref: RefObject<HTMLElement> };
@@ -169,6 +172,7 @@ const Tooltip: FC<ITooltipProps> = ({
     isVisible = true,
     appearance = 'default',
     withArrow = false,
+    Icon,
     ...props
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
@@ -277,9 +281,8 @@ const Tooltip: FC<ITooltipProps> = ({
                         <div className="tooltip__textWrapper">
                             <p className="tooltip__text">{text}</p>
                         </div>
-                        <div className="tooltip__icon">
-                            <InfoOutline size={16} />
-                        </div>
+
+                        {Icon && <div className="tooltip__icon">{Icon}</div>}
                     </div>
                 </FloatingPortal>
             )}
