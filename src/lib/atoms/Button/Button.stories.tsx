@@ -16,7 +16,7 @@ const meta: Meta<typeof forwardRef<HTMLButtonElement, IButtonProps>> = {
         text: args({ control: 'text', ...propCategory.content }),
         type: args({ control: 'select', ...propCategory.appearance }),
         fullWidth: args({ control: 'boolean', ...propCategory.appearance }),
-        disabled: args({ control: 'boolean', ...propCategory.state }),
+        disabled: args({ control: 'boolean', ...propCategory.states }),
         Icon: args({ control: 'false', ...propCategory.content }),
         name: args({ control: 'false', ...propCategory.content }),
         onClick: args({ control: 'false', ...propCategory.action }),

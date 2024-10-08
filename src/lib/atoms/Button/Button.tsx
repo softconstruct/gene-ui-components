@@ -46,7 +46,7 @@ interface IButtonProps {
     /**
      * A callback function that is called when the `button` is clicked. It receives an argument containing the event object, which can be a mouse or keyboard event.
      */
-    onClick?: (event: MouseEvent<HTMLButtonElement> | KeyboardEvent<HTMLButtonElement>) => void;
+    onClick: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Button icon position
      * If the `isIconAfter` is set as `true` the `Icon` will be shown after the `text` otherwise before the `text`.
@@ -56,6 +56,10 @@ interface IButtonProps {
      * The prop responsible for showing the loading spinner if passed `true`. The default value is `false`
      */
     isLoading?: boolean;
+    /**
+     * Additional className
+     */
+    className?: string;
 }
 
 /**
@@ -71,13 +75,23 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             size = 'medium',
             type = 'fill',
             text,
-            Icon = <Globe />,
+            Icon = <Globe size={16} />,
             onClick,
-            isIconAfter
+            className = '',
+            isIconAfter,
+            isLoading
         }: IButtonProps,
         ref
     ) => {
         const iconClassName = Icon.props?.className || '';
+
+        const loadingTypes = {
+            primary: 'inverse',
+            secondary: 'neutral',
+            danger: 'neutral',
+            success: 'neutral',
+            transparent: 'inverse'
+        };
 
         return (
             <button
@@ -86,22 +100,28 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 type="button"
                 onClick={onClick}
                 className={classNames(
-                    `button button_size_${size} button_color_${appearance} button_type_${type} button_loading`,
+                    `button button_size_${size} button_color_${appearance} button_type_${type} ${className}`,
                     {
-                        button_full_width: fullWidth,
+                        button_fullWidth: fullWidth,
                         button_icon_before: !isIconAfter,
                         button_icon_after: isIconAfter,
-                        button_icon_only: !text
+                        button_icon_only: !text,
+                        button_loading: isLoading
                     }
                 )}
                 disabled={disabled}
             >
-                <Loader className={'button__loader'} size="smallNudge" />
+                {isLoading && (
+                    <Loader size="smallNudge" className="button__loader" appearance={loadingTypes[appearance]} />
+                )}
 
-                {Icon &&
-                    cloneElement(Icon, {
-                        className: `${iconClassName} button__icon`
-                    })}
+                {Icon && (
+                    <span className="button__icon">
+                        {cloneElement(Icon, {
+                            className: `${iconClassName}`
+                        })}
+                    </span>
+                )}
 
                 {text && <span className="button__text ellipsis-text">{text}</span>}
             </button>

@@ -415,11 +415,6 @@
         }
     }
 
-    &:focus-visible {
-        outline-offset: var(--guit-ref-border-width-thin);
-        outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-focus);
-    }
-
     &:disabled,
     &.disabled {
         pointer-events: none;
@@ -435,6 +430,9 @@
 
     &__icon {
         flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     &__loader {
