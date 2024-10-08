@@ -86,7 +86,7 @@ const Label: FC<ILabelProps> = ({
             ) : (
                 <span className="label__container">
                     <>
-                        <>
+                        <div className="label__container-inner">
                             <Tooltip text={labelText} isVisible={isTruncated}>
                                 <span
                                     ref={labelRef}
@@ -106,7 +106,7 @@ const Label: FC<ILabelProps> = ({
                                     *
                                 </span>
                             )}
-                        </>
+                        </div>
                         {infoText && (
                             <Tooltip text={infoText}>
                                 <InfoOutline

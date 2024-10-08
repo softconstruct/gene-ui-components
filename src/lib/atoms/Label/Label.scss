@@ -12,6 +12,12 @@
         min-width: 0;
     }
 
+    &__container-inner {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-4xsmall);
+    }
+
     &__text,
     &__asterisk {
         color: var(--guit-sem-color-foreground-neutral-2);
