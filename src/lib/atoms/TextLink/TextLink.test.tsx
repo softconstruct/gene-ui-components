@@ -1,9 +1,9 @@
 import React, { MouseEvent } from 'react';
 import { ReactWrapper, mount } from 'enzyme';
+import { Globe } from '@geneui/icons';
 
 // Components
 import TextLink, { ITextLinkProps } from './index';
-import { Globe } from '@geneui/icons';
 
 describe('TextLink', () => {
     let setup: ReactWrapper<ITextLinkProps>;
@@ -77,5 +77,12 @@ describe('TextLink', () => {
     it.each<ITextLinkProps['target']>(['blank', 'self'])('should have "%s" target', (target) => {
         const wrapper = setup.setProps({ target });
         expect(wrapper.find('.textLink').props().target).toBe(`_${target}`);
+    });
+
+    it('renders className prop correctly', () => {
+        const className = 'test-class';
+        const wrapper = setup.setProps({ className });
+
+        expect(wrapper.hasClass(className)).toBeTruthy();
     });
 });

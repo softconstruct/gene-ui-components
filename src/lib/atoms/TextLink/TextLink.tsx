@@ -60,6 +60,11 @@ interface ITextLinkProps {
      * An optional icon to display alongside the link text.
      */
     Icon?: React.FC<IconProps>; //todo need to change to interface IconProps after Icon new version release
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
 }
 
 /**
@@ -76,7 +81,8 @@ const TextLink: FC<ITextLinkProps> = ({
     disabled,
     onClick,
     isLoading,
-    Icon
+    Icon,
+    className
 }) => (
     <>
         {isLoading ? (
@@ -85,7 +91,7 @@ const TextLink: FC<ITextLinkProps> = ({
             <a
                 target={`_${target}`}
                 rel={rel}
-                className={classNames(`textLink textLink_color_${appearance}`, {
+                className={classNames(`textLink textLink_color_${appearance}`, className, {
                     textLink_underline: underline,
                     textLink_disabled: disabled,
                     textLink_iconBefore: iconBefore
