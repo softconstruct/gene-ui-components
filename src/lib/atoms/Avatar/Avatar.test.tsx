@@ -1,32 +1,91 @@
-import React from 'react';
-import { shallow } from 'enzyme';
-import Avatar from './index';
+import React, { MouseEvent } from 'react';
+import { ReactWrapper, mount } from 'enzyme';
+import { Square } from '@geneui/icons'; // TODO: replace with the person icon
 
-describe('Avatar Component', () => {
+// Components
+import Avatar, { IAvatarProps } from './index';
+
+describe('Avatar ', () => {
+    let setup: ReactWrapper<IAvatarProps>;
+    beforeEach(() => (setup = mount(<Avatar />)));
+    const mockFn = jest.fn();
+
     it('renders without crashing', () => {
-        const wrapper = shallow(<Avatar />);
-        expect(wrapper.exists()).toBeTruthy();
+        expect(setup.exists()).toBeTruthy();
     });
 
-    it('renders with an image when src prop is provided', () => {
-        const wrapper = shallow(<Avatar src="test-image.jpg" />);
-        expect(wrapper.find('.user-avatar-c').prop('style')).toHaveProperty('backgroundImage', 'url(test-image.jpg)');
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
-    it('renders with an icon when icon prop is provided', () => {
-        const wrapper = shallow(<Avatar icon="icon-test" />);
-        expect(wrapper.find('.user-avatar-c').hasClass('icon-test')).toBeTruthy();
+    it('renders fullName prop correctly', () => {
+        const wrapperLarge = setup.setProps({ fullName: 'test data', size: 'large' });
+        expect(wrapperLarge.text()).toBe('t d');
+        setup.update();
+        const wrapperSmall = setup.setProps({ fullName: 'test data', size: 'small' });
+        expect(wrapperSmall.text()).toBe('t');
     });
 
-    it('renders with initials when children prop is provided', () => {
-        const wrapper = shallow(<Avatar children="John Doe" />);
-        expect(wrapper.text()).toBe('JD'); // Assuming getInitials returns 'JD'
+    it('renders src prop correctly', () => {
+        const src = 'test';
+        const wrapper = setup.setProps({ src });
+
+        expect(wrapper.find('img').props().src).toBe(src);
     });
 
-    it('calls onClick prop when clicked', () => {
-        const onClickMock = jest.fn();
-        const wrapper = shallow(<Avatar onClick={onClickMock} />);
-        wrapper.simulate('click');
-        expect(onClickMock).toHaveBeenCalled();
+    it('renders isDisabled prop correctly', () => {
+        const wrapper = setup.setProps({ isDisabled: true });
+
+        expect(wrapper.find('.avatar').hasClass('avatar_disabled')).toBeTruthy();
+    });
+
+    it('renders isLoading prop correctly', () => {
+        const wrapper = setup.setProps({ isLoading: true });
+
+        expect(wrapper.find('skeleton')).toBeTruthy();
+    });
+
+    it('renders Icon prop correctly', () => {
+        const wrapper = setup.setProps({ Icon: <Square /> });
+
+        expect(wrapper.find(Square)).toBeTruthy();
+    });
+
+    it('renders Icon default prop correctly', () => {
+        const wrapper = setup.setProps({});
+
+        expect(wrapper.find(Square)).toBeTruthy();
+    });
+
+    it("handles user's click", () => {
+        const wrapper = setup.setProps({ onClick: mockFn });
+        const event = {
+            currentTarget: {
+                innerHTML: 'test'
+            }
+        } as MouseEvent<HTMLButtonElement>;
+        wrapper.find('button').props().onClick!(event);
+        expect(mockFn).toHaveBeenCalledWith(event);
+    });
+
+    it.each<IAvatarProps['color']>(['blue', 'green', 'lagoon', 'neutral', 'orange', 'purple', 'red'])(
+        'should have %s color',
+        (color) => {
+            const wrapper = setup.setProps({ color });
+            expect(wrapper.find('.avatar').hasClass(`avatar_color_${color}`)).toBeTruthy();
+        }
+    );
+
+    it.each<IAvatarProps['size']>(['6Xlarge', 'large', 'medium', 'small'])('should have %s size', (size) => {
+        const wrapper = setup.setProps({ size });
+
+        expect(wrapper.find('.avatar').hasClass(`avatar_size_${size}`)).toBeTruthy();
+    });
+
+    it('renders className prop correctly', () => {
+        const className = 'test-class';
+        const wrapper = setup.setProps({ className });
+
+        expect(wrapper.hasClass(className)).toBeTruthy();
     });
 });

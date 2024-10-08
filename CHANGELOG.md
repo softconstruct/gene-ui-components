@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.16.1](https://github.com/softconstruct/gene-ui-components/compare/v2.16.0...v2.16.1) (2024-09-18)
+
+
+### Bug Fixes
+
+* **Dropdown:** inputRef current null case ([#166](https://github.com/softconstruct/gene-ui-components/issues/166)) ([20052e0](https://github.com/softconstruct/gene-ui-components/commit/20052e06710cca2ffd21ee67e0d6cab09e85f224))
+* **Profile:** ref current null case ([#165](https://github.com/softconstruct/gene-ui-components/issues/165)) ([61a83b1](https://github.com/softconstruct/gene-ui-components/commit/61a83b10a5b39d9e99273c9d1e452af724559b2b))
+
 # [2.16.0](https://github.com/softconstruct/gene-ui-components/compare/v2.15.1...v2.16.0) (2024-09-17)
 
 
