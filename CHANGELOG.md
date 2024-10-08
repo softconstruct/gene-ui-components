@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.2](https://github.com/softconstruct/gene-ui-components/compare/v2.16.1...v2.16.2) (2024-09-20)
+
+
+### Bug Fixes
+
+* **Tooltip:** loss of ref ([#170](https://github.com/softconstruct/gene-ui-components/issues/170)) ([2fdb7a9](https://github.com/softconstruct/gene-ui-components/commit/2fdb7a949bc5c362cd0e7573dedbc3688bbab625))
+
 ## [2.16.1](https://github.com/softconstruct/gene-ui-components/compare/v2.16.0...v2.16.1) (2024-09-18)
 
 
