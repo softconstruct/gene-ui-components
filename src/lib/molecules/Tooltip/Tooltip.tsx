@@ -54,11 +54,6 @@ export const correctPosition = {
     'top-right': 'top-end'
 };
 
-interface ICustomPosition {
-    left?: number;
-    top?: number;
-}
-
 export interface ITooltipProps {
     /**
      * Main content for the component.
@@ -75,7 +70,10 @@ export interface ITooltipProps {
     /**
      * Will display the component in the specified location.
      */
-    customPosition?: ICustomPosition;
+    customPosition?: {
+        left?: number;
+        top?: number;
+    };
     /**
      * Any valid React node.
      */
@@ -160,6 +158,10 @@ const FindAndSetRef = <T extends object>(
         return el && cloneElement(el, newProps);
     }) as JSXWithRef[];
 };
+/**
+A tooltip is a small, elevated surface that appears to provide contextual information when a user hovers over or focuses on a UI element.
+Tooltips should be used to offer helpful plaintext information, not to communicate system feedback. Use a popover instead if you need to deliver structured information or enable interactions. 
+*/
 
 const Tooltip: FC<ITooltipProps> = ({
     children,

@@ -20,7 +20,7 @@ const meta: Meta<ITooltipProps> = {
         isVisible: args({ control: 'boolean', ...propCategory.functionality }),
         position: args({ control: 'select', ...propCategory.appearance }),
         appearance: args({ control: 'select', ...propCategory.appearance }),
-        withArrow: args({ control: 'boolean', ...propCategory.functionality }),
+        withArrow: args({ control: 'boolean', ...propCategory.appearance }),
         Icon: args({ control: 'false', ...propCategory.content })
     },
     args: {
