@@ -17,12 +17,13 @@ const meta: Meta<typeof TextLink> = {
         href: args({ control: 'text', ...propCategory.content }),
         underline: args({ control: 'boolean', ...propCategory.appearance }),
         Icon: args({ control: 'false', ...propCategory.content }),
-        onClick: args({ control: 'false', ...propCategory.functionality }),
+        onClick: args({ control: 'false', ...propCategory.action }),
         rel: args({ control: 'select', ...propCategory.others }),
         target: args({ control: 'select', ...propCategory.functionality }),
         text: args({ control: 'text', ...propCategory.content }),
         isLoading: args({ control: 'boolean', ...propCategory.states }),
-        iconBefore: args({ control: 'boolean', ...propCategory.appearance })
+        iconBefore: args({ control: 'boolean', ...propCategory.appearance }),
+        className: args({ control: 'boolean', ...propCategory.appearance })
     },
     args: {
         appearance: 'primary',
@@ -31,7 +32,6 @@ const meta: Meta<typeof TextLink> = {
         disabled: false,
         target: 'self',
         iconBefore: false,
-        onClick: undefined,
         Icon: Globe
     } as ITextLinkProps
 };
