@@ -1,6 +1,7 @@
 import React from 'react';
 import { Meta } from '@storybook/react';
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
+import { InfoOutline } from '@geneui/icons';
 
 // Components
 import TooltipComponent, { ITooltipProps } from './index';
@@ -11,26 +12,23 @@ const meta: Meta<ITooltipProps> = {
     component: TooltipComponent,
     argTypes: {
         text: args({ control: 'text', ...propCategory.content }),
-        title: args({ control: 'text', ...propCategory.content }),
-        children: args({ control: 'text', ...propCategory.content }),
-        style: args({ control: 'text', ...propCategory.appearance }),
-        size: args({ control: 'select', ...propCategory.appearance }),
+        children: args({ control: 'false', ...propCategory.content }),
         padding: args({ control: 'number', ...propCategory.appearance }),
         alwaysShow: args({ control: 'boolean', ...propCategory.states }),
         customPosition: args({ control: 'object', ...propCategory.functionality }),
         isVisible: args({ control: 'boolean', ...propCategory.functionality }),
         position: args({ control: 'select', ...propCategory.appearance }),
-        onClick: args({ control: false, ...propCategory.action }),
-        screenType: args({ control: 'select', ...propCategory.appearance })
+        appearance: args({ control: 'select', ...propCategory.appearance }),
+        Icon: args({ control: 'false', ...propCategory.content })
     },
     args: {
-        size: 'default',
-        title: 'Title',
         isVisible: true,
         alwaysShow: false,
-        position: 'top',
+        position: 'top-center',
         text: 'Tooltip some text',
-        screenType: 'desktop'
+        appearance: 'default',
+        padding: 10,
+        Icon: <InfoOutline size={16} />
     }
 };
 

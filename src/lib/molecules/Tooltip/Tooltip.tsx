@@ -9,48 +9,64 @@ import React, {
     Fragment,
     useEffect,
     RefObject,
-    useMemo
+    useMemo,
+    useRef,
+    ReactNode
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
-import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react';
+import {
+    FloatingPortal,
+    autoUpdate,
+    useFloating,
+    arrow,
+    useHover,
+    useInteractions,
+    platform
+} from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
 import { ReferenceType } from '@floating-ui/react-dom';
 import { isForwardRef } from 'react-is';
-
-// Hooks
-//@ts-ignore
-import { useDeviceType } from 'hooks';
-
 // Components
 import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
 // Styles
 import './Tooltip.scss';
 
-const positions: Placement[] = ['top', 'right', 'bottom', 'left'];
+const positions: Placement[] = [
+    'top',
+    'right',
+    'bottom',
+    'left',
+    'top-start',
+    'top-end',
+    'right-start',
+    'right-end',
+    'bottom-start',
+    'bottom-end',
+    'left-start',
+    'left-end'
+];
 
-interface ICustomPosition {
-    left?: number;
-    top?: number;
-}
+export const correctPosition = {
+    'bottom-center': 'bottom',
+    'bottom-left': 'bottom-start',
+    'bottom-right': 'bottom-end',
+    'left-bottom': 'left-end',
+    'left-center': 'left',
+    'left-top': 'left-start',
+    'right-bottom': 'right-end',
+    'right-center': 'right',
+    'right-top': 'right-start',
+    'top-center': 'top',
+    'top-left': 'top-start',
+    'top-right': 'top-end'
+};
 
 export interface ITooltipProps {
-    /**
-     * The Tooltip component size<br> Possible values: `default | small`
-     */
-    size?: 'default' | 'small';
     /**
      * Main content for the component.
      */
     text?: string;
-    /**
-     * Title for the component.
-     */
-    title?: string;
-    /**
-     * Style object, to have extra styles.
-     */
-    style?: CSSProperties;
     /**
      * If `true` the  component will be visible without any action.
      */
@@ -58,7 +74,10 @@ export interface ITooltipProps {
     /**
      * Will display the component in the specified location.
      */
-    customPosition?: ICustomPosition;
+    customPosition?: {
+        left?: number;
+        top?: number;
+    };
     /**
      * Any valid React node.
      */
@@ -66,88 +85,109 @@ export interface ITooltipProps {
     /**
      * Positions where will be displayed the Tooltip relates the child component.<br> Possible values: `top | right | bottom | left`
      */
-    position?: 'top' | 'right' | 'bottom' | 'left';
+    position?:
+        | 'top-center'
+        | 'top-left'
+        | 'top-right'
+        | 'right-center'
+        | 'right-bottom'
+        | 'right-top'
+        | 'bottom-center'
+        | 'bottom-left'
+        | 'bottom-right'
+        | 'left-center'
+        | 'left-bottom'
+        | 'left-top'
+        | 'left-bottom';
+
     /**
      * Tooltip padding related to the target element
      */
     padding?: number;
-    /**
-     * Control with screenType  appearance of component
-     */
-    screenType?: 'desktop' | 'mobile';
+
     /**
      * In case of `false` value, the children component will rendered without Tooltip.
      */
     isVisible?: boolean;
+    /**
+     * Available style varieties of Empty atom to display <br/>
+     * Possible values: `inverse | default`
+     */
+    appearance?: 'inverse' | 'default';
+
+    //the icon that will appear after the text
+
+    Icon?: ReactNode;
 }
 
-type JSXWithRef = JSX.Element & { ref: RefObject<unknown> };
+type JSXWithRef = JSX.Element & { ref: RefObject<HTMLElement> };
 
 const FindAndSetRef = <T extends object>(
     children: JSX.Element | JSX.Element[],
     childProps: T,
-    componentRef: (node: ReferenceType | null) => void
+    componentRef: (node: ReferenceType | null) => void,
+    checked: Boolean = false
 ) => {
     return Children.map(children, (node, i) => {
         const el = node as JSXWithRef;
-
         let newProps = {
             ...childProps
         };
 
-        if (el?.type === Fragment && el.props.children) {
-            return FindAndSetRef(el.props.children, newProps, componentRef);
-        }
-
-        if (isForwardRef(el)) {
-            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef);
-        }
-
         if (typeof el?.type === 'string') {
-            if (!el.ref && i === 0) {
+            if (!el.ref && i === 0 && !checked) {
+                checked = true;
                 newProps = { ...newProps, ref: componentRef };
             }
-
             return cloneElement(el, newProps);
         }
-
         if (typeof el?.type === 'function') {
             if (!el.ref) {
                 newProps = { ...newProps, ref: componentRef };
             }
-
             return cloneElement(el.type(el.props), newProps);
         }
 
+        if (el?.type === Fragment && el.props.children) {
+            return FindAndSetRef(el.props.children, newProps, componentRef, checked);
+        }
+
+        if (isForwardRef(el)) {
+            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef, checked);
+        }
         return el && cloneElement(el, newProps);
-    });
+    }) as JSXWithRef[];
 };
+/**
+A tooltip is a small, elevated surface that appears to provide contextual information when a user hovers over or focuses on a UI element.
+Tooltips should be used to offer helpful plaintext information, not to communicate system feedback. Use a popover instead if you need to deliver structured information or enable interactions. 
+*/
 
 const Tooltip: FC<ITooltipProps> = ({
     children,
     position = 'top',
-    size = 'default',
-    style,
     text,
-    title,
     customPosition,
     alwaysShow,
-    padding = 5,
-    screenType = 'desktop',
+    padding = 10,
     isVisible = true,
+    appearance = 'default',
+    Icon,
     ...props
 }) => {
-    // @ts-ignore
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
-    const { isMobile } = useDeviceType(screenType);
-    const [isPopoverOpen, setIsPopoverState] = useState(false);
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-    const mouseEnterHandler = () => !alwaysShow && setIsPopoverState(true);
-    const mouseLeaveHandler = () => !alwaysShow && setIsPopoverState(false);
+    const arrowRef = useRef<HTMLDivElement | null>(null);
 
-    const { refs, floatingStyles, context } = useFloating({
+    const { refs, floatingStyles, context, middlewareData, placement } = useFloating({
         open: alwaysShow || isPopoverOpen,
-        placement: position,
+        placement: correctPosition[position],
+        onOpenChange: setIsPopoverOpen,
+        platform: {
+            ...platform,
+            isRTL: () => false
+        },
         middleware: [
             offset(padding),
             flip({
@@ -155,6 +195,7 @@ const Tooltip: FC<ITooltipProps> = ({
                 fallbackPlacements: positions,
                 mainAxis: true
             }),
+            arrow({ element: arrowRef }),
             shift(),
             {
                 name: 'getCustomPosition',
@@ -170,48 +211,82 @@ const Tooltip: FC<ITooltipProps> = ({
         whileElementsMounted: autoUpdate
     });
 
-    const checkNudged = ({ nudgedLeft, nudgedTop }) => (isMobile ? !(nudgedTop || nudgedLeft) : true);
+    const hover = useHover(context);
+
+    const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
 
     const childProps = {
-        onMouseEnter: mouseEnterHandler,
-        onMouseLeave: mouseLeaveHandler
+        ...getReferenceProps()
     };
 
     const component = useMemo(() => FindAndSetRef(children, childProps, refs.setReference), [children, childProps]);
 
     useEffect(() => {
-        component.forEach((element: JSX.Element) => {
-            const node = element as JSXWithRef;
+        for (let i = 0; i < component.length; i++) {
+            const node = component[i];
+
+            if (typeof node.ref === 'function' && node.ref === refs.setReference) {
+                break;
+            }
+
             if (node?.ref?.current) {
                 refs.setReference(node.ref.current as ReferenceType);
+                break;
             }
-        });
+        }
     }, [component]);
+
+    const currentDirection = placement.split('-')[0];
+
+    const staticSide = {
+        top: 'bottom',
+        right: 'left',
+        bottom: 'top',
+        left: 'right'
+    }[currentDirection];
+    const middlewareArrowData = middlewareData.arrow;
+
+    const offsetFromEdge = 8;
+
+    const arrowPositions = {
+        'top-start': 'left',
+        'top-end': 'right',
+        'bottom-end': 'right',
+        'bottom-start': 'left'
+    }[placement];
+
+    const getCorrectPosition = arrowPositions
+        ? { [arrowPositions]: offsetFromEdge }
+        : { 'inset-inline-start': middlewareArrowData?.x || undefined };
 
     return (
         <>
             {component}
             {isVisible && (alwaysShow || isPopoverOpen) && (
                 <FloatingPortal root={geneUIProviderRef.current}>
-                    {checkNudged({ nudgedLeft: context.x, nudgedTop: context.y }) && (
+                    <div
+                        className={`tooltip tooltip_color_${appearance}  tooltip_position_${currentDirection}`}
+                        ref={refs.setFloating}
+                        style={floatingStyles}
+                        {...props}
+                        {...getFloatingProps()}
+                    >
                         <div
-                            className={`tooltip-c-p s-${size} ${position}`}
-                            ref={refs.setFloating}
+                            className="tooltip__arrow"
+                            ref={arrowRef}
                             style={{
-                                ...style,
-                                ...floatingStyles,
-                                zIndex: 400 //TODO: Remove after 3.0.0
+                                ...getCorrectPosition,
+                                top: middlewareArrowData?.y || undefined,
+                                [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0
                             }}
-                            {...props}
-                        >
-                            {(title || text) && (
-                                <div className="tooltip-content">
-                                    {title && <div className="tooltip-title">{title}</div>}
-                                    {text && <div className="tooltip-text">{text}</div>}
-                                </div>
-                            )}
+                        />
+
+                        <div className="tooltip__textWrapper">
+                            <p className="tooltip__text">{text}</p>
                         </div>
-                    )}
+
+                        {Icon && <div className="tooltip__icon">{Icon}</div>}
+                    </div>
                 </FloatingPortal>
             )}
         </>
