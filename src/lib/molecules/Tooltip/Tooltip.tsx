@@ -60,10 +60,6 @@ export interface ITooltipProps {
      */
     text?: string;
     /**
-     * Style object, to have extra styles.
-     */
-    style?: CSSProperties;
-    /**
      * If `true` the  component will be visible without any action.
      */
     alwaysShow?: boolean;
@@ -110,10 +106,6 @@ export interface ITooltipProps {
      * Possible values: `inverse | default`
      */
     appearance?: 'inverse' | 'default';
-    /**
-     * show with an arrow the direction from which the tooltip will open
-     */
-    withArrow?: boolean;
 
     //the icon that will appear after the text
 
@@ -166,14 +158,12 @@ Tooltips should be used to offer helpful plaintext information, not to communica
 const Tooltip: FC<ITooltipProps> = ({
     children,
     position = 'top',
-    style,
     text,
     customPosition,
     alwaysShow,
     padding = 10,
     isVisible = true,
     appearance = 'default',
-    withArrow = false,
     Icon,
     ...props
 }) => {
@@ -242,17 +232,20 @@ const Tooltip: FC<ITooltipProps> = ({
         bottom: 'top',
         left: 'right'
     }[currentDirection];
+    const middlewareArrowData = middlewareData.arrow;
 
     const offsetFromEdge = 8;
 
-    const arrowOffset = {
-        'top-start': -offsetFromEdge,
-        'top-end': offsetFromEdge,
-        'bottom-start': -offsetFromEdge,
-        'bottom-end': offsetFromEdge
+    const arrowPositions = {
+        'top-start': 'left',
+        'top-end': 'right',
+        'bottom-end': 'right',
+        'bottom-start': 'left'
     }[placement];
 
-    const middlewareArrowData = middlewareData.arrow;
+    const getCorrectPosition = arrowPositions
+        ? { [arrowPositions]: offsetFromEdge }
+        : { left: middlewareArrowData?.x || undefined };
 
     return (
         <>
@@ -263,7 +256,6 @@ const Tooltip: FC<ITooltipProps> = ({
                         className={`tooltip tooltip_color_${appearance}  tooltip_position_${currentDirection}`}
                         ref={refs.setFloating}
                         style={{
-                            ...style,
                             ...floatingStyles
                         }}
                         {...props}
@@ -273,10 +265,9 @@ const Tooltip: FC<ITooltipProps> = ({
                             className="tooltip__arrow"
                             ref={arrowRef}
                             style={{
-                                left: middlewareArrowData?.x ? middlewareArrowData.x + (arrowOffset || 0) : undefined,
-                                top: middlewareArrowData?.y ? middlewareArrowData.y : undefined,
-                                [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0,
-                                visibility: withArrow ? 'visible' : 'hidden'
+                                ...getCorrectPosition,
+                                top: middlewareArrowData?.y || undefined,
+                                [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0
                             }}
                         />
 

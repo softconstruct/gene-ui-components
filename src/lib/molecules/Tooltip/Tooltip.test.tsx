@@ -57,12 +57,6 @@ describe('Tooltip', () => {
         expect(provider().find(`.tooltip_color_${appearance}`).exists()).toBeTruthy();
     });
 
-    it('renders withArrow  prop correct inside the portal', async () => {
-        setup.setProps({ alwaysShow: true, withArrow: true, text: 'test' });
-
-        expect(provider().find('.tooltip__arrow').exists()).toBeTruthy();
-    });
-
     it('renders position prop correct inside the portal', async () => {
         const position = 'top-center';
 

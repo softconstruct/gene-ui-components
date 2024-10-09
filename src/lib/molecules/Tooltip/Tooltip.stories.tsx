@@ -13,14 +13,12 @@ const meta: Meta<ITooltipProps> = {
     argTypes: {
         text: args({ control: 'text', ...propCategory.content }),
         children: args({ control: 'false', ...propCategory.content }),
-        style: args({ control: 'false', ...propCategory.appearance }),
         padding: args({ control: 'number', ...propCategory.appearance }),
         alwaysShow: args({ control: 'boolean', ...propCategory.states }),
         customPosition: args({ control: 'object', ...propCategory.functionality }),
         isVisible: args({ control: 'boolean', ...propCategory.functionality }),
         position: args({ control: 'select', ...propCategory.appearance }),
         appearance: args({ control: 'select', ...propCategory.appearance }),
-        withArrow: args({ control: 'boolean', ...propCategory.appearance }),
         Icon: args({ control: 'false', ...propCategory.content })
     },
     args: {
