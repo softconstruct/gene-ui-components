@@ -1,144 +1,132 @@
-import React, { HTMLAttributes, ReactNode, forwardRef } from 'react';
-import classnames from 'classnames';
-
-// Components
-import Icon from '../Icon';
+import React, { cloneElement, forwardRef, JSX, KeyboardEvent, MouseEvent } from 'react';
+import classNames from 'classnames';
+import { Globe } from '@geneui/icons';
 
 // Styles
 import './Button.scss';
+import Loader from '../Loader';
 
-export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
+interface IButtonProps {
     /**
-     * Any valid React node <br>
-     * Possible values: `ReactNode | string`
+     * Specifies the name of the `button`, which can be useful for form submission to identify which button was clicked.
      */
-    children: ReactNode | string;
-    /**
-     * The way how the Button should be displayed <br/>
-     * Possible values: `default | outline | minimal | grayscale | clean`
-     */
-    appearance?: 'default' | 'outline' | 'minimal' | 'grayscale' | 'clean';
+    name?: string;
     /**
      * Button size <br/>
-     * Possible values: `default | medium | big`
+     * Possible values: `large | medium | small`
      */
-    size?: 'default' | 'medium' | 'big';
+    size?: 'large' | 'medium' | 'small';
     /**
-     * How to display inscription in relation to it's parent in Button <br/>
-     * Possible values: `default | content-size | full-width`
+     * If set to `true`, the `button` will stretch to occupy the full width of its container.
      */
-    flexibility?: 'default' | 'content-size' | 'full-width';
+    fullWidth?: boolean;
     /**
-     * Button color <br/>
-     * Possible values: `primary | confirm | danger | default`
-     */
-    color?: 'primary' | 'confirm' | 'danger' | 'default';
-    /**
-     * Button children direction either from the start, or from the end <br/>
-     * Possible values: `start | end`
-     */
-    itemsDirection?: 'start' | 'end';
-    /**
-     * Button corner radius <br/>
-     * Possible values: `round | smooth`
-     */
-    cornerRadius?: 'round' | 'smooth';
-    /**
-     * The property will add an "Icon" as Button child. The valid values can be found in "Icon" atom <br>
-     * Possible values: `ReactNode | string`
-     */
-    icon?: ReactNode | string;
-    /**
-     * Button disabled state
+     * Indicates whether the `button` is `disabled`, preventing user interaction. When `true`, the `button` appears dimmed and can not be clicked.
      */
     disabled?: boolean;
     /**
-     * Button active state
+     * Button type <br/>
+     * Possible values: `fill | outline | text`
      */
-    active?: boolean;
+    type?: 'fill' | 'outline' | 'text';
     /**
-     * Adding shadow to button
+     * Button visual style <br/>
+     * Possible values: `primary | secondary | danger | success | inverse | transparent`
      */
-    withShadow?: boolean;
+    appearance?: 'primary' | 'secondary' | 'danger' | 'success' | 'inverse' | 'transparent';
     /**
-     * Button additional className
+     * The text to be displayed on the `button`.
+     */
+    text?: string;
+    /**
+     * Button icon <br/>
+     * The `Icon` prop accepts a JSX element that will be displayed alongside the divider
+     */
+    Icon?: JSX.Element;
+    /**
+     * A callback function that is called when the `button` is clicked. It receives an argument containing the event object, which can be a mouse or keyboard event.
+     */
+    onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Button icon position
+     * If the `isIconAfter` is set as `true` the `Icon` will be shown after the `text` otherwise before the `text`.
+     */
+    isIconAfter?: boolean;
+    /**
+     * The prop responsible for showing the loading spinner if passed `true`. The default value is `false`
+     */
+    isLoading?: boolean;
+    /**
+     * Additional className
      */
     className?: string;
-    /**
-     * Button text transforms to spinner
-     */
-    loading?: boolean;
-    /**
-     * aria-label for button.
-     */
-    ariaLabel?: string;
 }
 
+/**
+ * Button initiates an action or event. Use buttons for key actions like submitting a form, saving changes, or advancing to the next step.
+ */
 const Button = forwardRef<HTMLButtonElement, IButtonProps>(
     (
         {
-            children,
-            appearance = 'default',
-            size = 'default',
-            flexibility = 'default',
-            color = 'primary',
-            cornerRadius = 'round',
-            itemsDirection = 'start',
-            icon,
-            active,
-            className,
-            withShadow,
-            loading,
-            ariaLabel,
-            ...restProps
+            appearance = 'primary',
+            disabled,
+            fullWidth,
+            name,
+            size = 'medium',
+            type = 'fill',
+            text,
+            Icon = <Globe size={16} />,
+            onClick,
+            className = '',
+            isIconAfter,
+            isLoading
         }: IButtonProps,
         ref
     ) => {
-        const noChildren = !children && children !== 0;
+        const iconClassName = Icon.props?.className || '';
+
+        const loadingTypes = {
+            primary: 'inverse',
+            secondary: 'neutral',
+            danger: 'neutral',
+            success: 'neutral',
+            transparent: 'inverse'
+        };
 
         return (
             <button
-                className={classnames(
-                    'btn',
-                    className,
-                    `a-${appearance}`,
-                    `s-${size}`,
-                    `f-${flexibility}`,
-                    `c-${color}`,
-                    `id-${itemsDirection}`,
-                    `cr-${cornerRadius}`,
+                ref={ref}
+                name={name}
+                type="button"
+                onClick={onClick}
+                className={classNames(
+                    `button button_size_${size} button_color_${appearance} button_type_${type} ${className}`,
                     {
-                        active,
-                        'c-icon': !!icon && noChildren,
-                        'with-shadow': withShadow,
-                        'loading-padding': !noChildren && !icon && loading
+                        button_fullWidth: fullWidth,
+                        button_icon_before: !isIconAfter,
+                        button_icon_after: isIconAfter,
+                        button_icon_only: !text,
+                        button_loading: isLoading
                     }
                 )}
-                ref={ref}
-                {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
-                {...restProps}
+                disabled={disabled}
             >
-                {/*@ts-ignore*/}
-                {icon && (loading ? <Icon type="bc-icon-loader" /> : <Icon type={icon} />)}
-                {!noChildren &&
-                    (!icon && loading ? (
-                        <>
-                            {/*@ts-ignore*/}
-                            <Icon type="bc-icon-loader" />
-                            <span>{children}</span>
-                        </>
-                    ) : (
-                        <span className="ellipsis-text">{children}</span>
-                    ))}
-                {loading && noChildren && (
-                    <div className="btn-loader-holder">
-                        {/*@ts-ignore*/}
-                        <Icon type="bc-icon-loader" />
-                    </div>
+                {isLoading && (
+                    <Loader size="smallNudge" className="button__loader" appearance={loadingTypes[appearance]} />
                 )}
+
+                {Icon && (
+                    <span className="button__icon">
+                        {cloneElement(Icon, {
+                            className: `${iconClassName}`
+                        })}
+                    </span>
+                )}
+
+                {text && <span className="button__text ellipsis-text">{text}</span>}
             </button>
         );
     }
 );
 
-export default Button;
+export { IButtonProps, Button as default };
