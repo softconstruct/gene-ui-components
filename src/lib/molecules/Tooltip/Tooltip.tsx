@@ -14,7 +14,15 @@ import React, {
     ReactNode
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
-import { FloatingPortal, autoUpdate, useFloating, arrow, useHover, useInteractions } from '@floating-ui/react';
+import {
+    FloatingPortal,
+    autoUpdate,
+    useFloating,
+    arrow,
+    useHover,
+    useInteractions,
+    platform
+} from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
 import { ReferenceType } from '@floating-ui/react-dom';
 import { isForwardRef } from 'react-is';
@@ -176,6 +184,10 @@ const Tooltip: FC<ITooltipProps> = ({
         open: alwaysShow || isPopoverOpen,
         placement: correctPosition[position],
         onOpenChange: setIsPopoverOpen,
+        platform: {
+            ...platform,
+            isRTL: () => false
+        },
         middleware: [
             offset(padding),
             flip({
@@ -245,7 +257,7 @@ const Tooltip: FC<ITooltipProps> = ({
 
     const getCorrectPosition = arrowPositions
         ? { [arrowPositions]: offsetFromEdge }
-        : { left: middlewareArrowData?.x || undefined };
+        : { 'inset-inline-start': middlewareArrowData?.x || undefined };
 
     return (
         <>
@@ -255,9 +267,7 @@ const Tooltip: FC<ITooltipProps> = ({
                     <div
                         className={`tooltip tooltip_color_${appearance}  tooltip_position_${currentDirection}`}
                         ref={refs.setFloating}
-                        style={{
-                            ...floatingStyles
-                        }}
+                        style={floatingStyles}
                         {...props}
                         {...getFloatingProps()}
                     >
