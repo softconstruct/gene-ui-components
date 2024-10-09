@@ -18,7 +18,7 @@ describe('Divider ', () => {
     });
 
     it('renders Icon prop correctly', () => {
-        const wrapper = setup.setProps({ Icon: <CheckMark /> });
+        const wrapper = setup.setProps({ Icon: CheckMark });
         expect(wrapper.find(CheckMark).exists()).toBeTruthy();
     });
 
@@ -30,8 +30,8 @@ describe('Divider ', () => {
 
     it('renders alignContent prop correctly', () => {
         //@ts-ignore
-        const alignContent = <Button>Test</Button>;
-        const wrapper = setup.setProps({ alignContent });
+        const content = <Button>Test</Button>;
+        const wrapper = setup.setProps({ content });
         expect(wrapper.find(Button).text()).toBe('Test');
     });
 
@@ -48,14 +48,6 @@ describe('Divider ', () => {
         }
     );
 
-    it.each<IDividerProps['alignContentPosition']>([, 'left', 'right'])(
-        'checking a component with a prop alignContent : %p',
-        (alignContentPosition) => {
-            //@ts-ignore
-            const wrapper = setup.setProps({ alignContentPosition, alignContent: <Button>Test</Button> });
-            expect(wrapper.find('.divider').hasClass(`divider_align_${alignContentPosition}`)).toBeTruthy();
-        }
-    );
     it.each<IDividerProps['labelPosition']>(['center', 'after', 'before'])(
         'checking a component with a prop alignContent : %p',
         (labelPosition) => {

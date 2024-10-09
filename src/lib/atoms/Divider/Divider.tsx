@@ -1,6 +1,6 @@
-import React, { cloneElement, FC, JSX } from 'react';
-import { InfoOutline } from '@geneui/icons';
+import React, { FC, JSX } from 'react';
 import classNames from 'classnames';
+import { IconProps } from '@geneui/icons';
 
 // Styles
 import './Divider.scss';
@@ -15,12 +15,7 @@ interface IDividerProps {
      * Divider content <br/>
      * The `alignContent` prop accepts a JSX element that will be displayed alongside the divider
      */
-    alignContent?: JSX.Element;
-    /**
-     * Divider `alignContent` position <br/>
-     * Possible values: `right | left`
-     */
-    alignContentPosition?: 'right' | 'left';
+    content?: JSX.Element;
     /**
      * Divider direction <br/>
      * If the `isVertical` prop is `true`, the `Divider` will be displayed vertically otherwise the `Divider` will be displayed horizontally
@@ -30,7 +25,7 @@ interface IDividerProps {
      * Divider icon <br/>
      * The `Icon` prop accepts a JSX element that will be displayed alongside the divider
      */
-    Icon?: JSX.Element | null;
+    Icon?: FC<IconProps> | null;
     /**
      * Divider label <br/>
      * Text which will be displayed with `Divider`. The position of the `label` depends on `labelPosition` prop
@@ -52,17 +47,15 @@ interface IDividerProps {
  */
 
 const Divider: FC<IDividerProps> = ({
-    alignContentPosition = 'left',
     appearance = 'brand',
     //@ts-ignore
-    Icon = <InfoOutline />,
+    Icon,
     isVertical,
     label,
     labelPosition = 'before',
-    alignContent,
+    content,
     inset = false
 }) => {
-    const iconClassName = Icon?.props?.className || '';
     return (
         <div
             className={classNames(
@@ -71,22 +64,17 @@ const Divider: FC<IDividerProps> = ({
                 } divider_color_${appearance} divider_withLabel_${labelPosition}`,
                 {
                     divider_horizontal: !isVertical,
-                    divider_vertical: isVertical,
-                    [`divider_align_${alignContentPosition}`]: alignContent
+                    divider_vertical: isVertical
                 }
             )}
         >
             {!isVertical && (
                 <>
+                    {content && <div className="divider__element">{content}</div>}
                     <div className="divider__label">
                         {label && <span className="divider__text ellipsis-text">{label}</span>}
-                        {Icon &&
-                            cloneElement(Icon, {
-                                className: ` ${iconClassName} divider__icon`
-                            })}
+                        {Icon && <Icon className={'divider__icon'} size={20} />}
                     </div>
-                    {/**TODO: Add Button component (or any component) when finish refactoring */}
-                    {alignContent && <div className="divider__element">{alignContent}</div>}
                 </>
             )}
         </div>

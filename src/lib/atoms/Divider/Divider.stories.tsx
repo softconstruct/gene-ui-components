@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
+import { InfoOutline } from '@geneui/icons';
 
 // Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
@@ -11,21 +12,20 @@ const meta: Meta<typeof Divider> = {
     title: 'Atoms/Divider',
     component: Divider,
     argTypes: {
-        alignContentPosition: args({ control: 'select', ...propCategory.appearance }),
         appearance: args({ control: 'select', ...propCategory.appearance }),
         isVertical: args({ control: 'boolean', ...propCategory.appearance }),
         Icon: args({ control: 'false', ...propCategory.content }),
         label: args({ control: 'text', ...propCategory.content }),
         labelPosition: args({ control: 'select', ...propCategory.appearance }),
-        alignContent: args({ control: 'false', ...propCategory.content }),
+        content: args({ control: 'false', ...propCategory.content }),
         inset: args({ control: 'boolean', ...propCategory.appearance })
     },
     args: {
-        alignContentPosition: 'left',
         appearance: 'brand',
         isVertical: false,
         label: 'test',
-        labelPosition: 'before'
+        labelPosition: 'before',
+        Icon: InfoOutline
     }
 };
 
@@ -43,7 +43,8 @@ const WithAlignContentComponent: FC<IDividerProps> = (args) => (
     <div style={{ height: 220 }}>
         <Divider
             {...args}
-            alignContent={
+            //TODO: Add Button component (or any component) when finish refactoring
+            content={
                 <Button
                     title="swap"
                     icon={'bc-icon-refresh'}
