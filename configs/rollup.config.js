@@ -34,7 +34,8 @@ const TSComponentsList = [
     'Tooltip',
     'Label',
     'Loader',
-    'Pill'
+    'Pill',
+    'TextLink'
 ];
 
 const getInputs = (name, dir) => {
