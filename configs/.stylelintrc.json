@@ -2,7 +2,8 @@
     "extends": ["stylelint-config-standard-scss", "stylelint-config-prettier"],
     "rules": {
         "property-no-vendor-prefix": null,
-        "selector-class-pattern": null
+        "selector-class-pattern": null,
+        "value-no-vendor-prefix": null
     },
     "ignoreFiles": ["../coverage/**/*.css", "../storybook-static/**/*.css", "../.storybook/storybookReset.scss"]
 }
