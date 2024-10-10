@@ -7,7 +7,7 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--guit-ref-spacing-3xsmall);
-    min-width: 10rem;
+    min-width: var(--guit-sem-dimension-width-3xlarge);
     max-width: 24rem;
     padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-medium);
     border-radius: var(--guit-ref-radius-3xsmall);
@@ -19,17 +19,27 @@
             var(--guit-sem-color-floating-2-rgba-2);
 
     &_position {
-        &_top,
-        &_bottom {
+        &_top {
             #{ $this }__arrow {
-                transform: rotateX(60deg) rotate(45deg);
+                transform: rotate(0deg);
             }
         }
 
-        &_left,
+        &_bottom {
+            #{ $this }__arrow {
+                transform: rotate(180deg);
+            }
+        }
+
+        &_left {
+            #{ $this }__arrow {
+                transform: rotate(-90deg);
+            }
+        }
+
         &_right {
             #{ $this }__arrow {
-                transform: rotateY(60deg) rotate(45deg);
+                transform: rotate(90deg);
             }
         }
     }
@@ -38,8 +48,8 @@
         &_default {
             background-color: var(--guit-sem-color-background-neutral-4);
 
-            #{ $this }__arrow {
-                background-color: var(--guit-sem-color-background-neutral-4);
+            #{ $this }__arrowPath {
+                fill: var(--guit-sem-color-background-neutral-4);
             }
 
             #{ $this }__text,
@@ -51,8 +61,8 @@
         &_inverse {
             background-color: var(--guit-sem-color-background-neutral-1);
 
-            #{ $this }__arrow {
-                background-color: var(--guit-sem-color-background-neutral-1);
+            #{ $this }__arrowPath {
+                fill: var(--guit-sem-color-background-neutral-1);
             }
 
             #{ $this }__text,
@@ -64,8 +74,8 @@
 
     &__arrow {
         position: absolute;
-        width: 10px;
-        height: 10px;
+        width: 12px;
+        height: 4px;
     }
 
     &__textWrapper {
