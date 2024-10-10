@@ -1,11 +1,11 @@
 .avatar {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: var(--guit-ref-radius-full);
     overflow: hidden;
     user-select: none;
-    position: relative;
 
     &_size {
         &_6Xlarge {
@@ -66,14 +66,14 @@
             color: var(--guit-sem-color-foreground-accent-green);
         }
 
-        &_purple {
-            background-color: var(--guit-sem-color-background-accent-purple-1);
-            color: var(--guit-sem-color-foreground-accent-purple);
-        }
-
         &_orange {
             background-color: var(--guit-sem-color-background-accent-orange-1);
             color: var(--guit-sem-color-foreground-accent-orange);
+        }
+
+        &_purple {
+            background-color: var(--guit-sem-color-background-accent-purple-1);
+            color: var(--guit-sem-color-foreground-accent-purple);
         }
 
         &_lagoon {
@@ -89,6 +89,45 @@
         &_slate {
             background-color: var(--guit-sem-color-background-accent-slate-1);
             color: var(--guit-sem-color-foreground-accent-slate);
+        }
+    }
+
+    &:hover,
+    &:active,
+    &_disabled {
+        &::before {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+    }
+
+    &_disabled {
+        pointer-events: none;
+
+        &::before {
+            background-color: var(--guit-sem-color-background-transparent-inverse-disabled);
+        }
+    }
+
+    &_button {
+        cursor: pointer;
+
+        &:hover {
+            &::before {
+                background-color: var(--guit-sem-color-background-transparent-1-hover);
+            }
+        }
+
+        &:active {
+            &::before {
+                background-color: var(--guit-sem-color-background-transparent-1-pressed);
+            }
         }
     }
 
@@ -108,48 +147,4 @@
         font-weight: inherit;
         text-transform: uppercase;
     }
-
-    &:hover,
-    &:active,
-    &_disabled {
-        &::before {
-            content: '';
-            display: block;
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-    }
-
-    // active, hover, focus common styles END
-
-    // active and hover states START
-    &_button {
-        cursor: pointer;
-
-        &:hover {
-            &::before {
-                background-color: var(--guit-sem-color-background-transparent-1-hover);
-            }
-        }
-
-        &:active {
-            &::before {
-                background-color: var(--guit-sem-color-background-transparent-1-pressed);
-            }
-        }
-    }
-
-    &_disabled {
-        pointer-events: none;
-
-        &::before {
-            background-color: var(--guit-sem-color-background-transparent-inverse-disabled);
-        }
-    }
-
-    // active and hover states END
 }
