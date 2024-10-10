@@ -97,8 +97,7 @@ export interface ITooltipProps {
         | 'bottom-right'
         | 'left-center'
         | 'left-bottom'
-        | 'left-top'
-        | 'left-bottom';
+        | 'left-top';
 
     /**
      * Tooltip padding related to the target element
@@ -160,7 +159,7 @@ const FindAndSetRef = <T extends object>(
 };
 /**
 A tooltip is a small, elevated surface that appears to provide contextual information when a user hovers over or focuses on a UI element.
-Tooltips should be used to offer helpful plaintext information, not to communicate system feedback. Use a popover instead if you need to deliver structured information or enable interactions. 
+Tooltips should be used to offer helpful plaintext information, not to communicate system feedback. Use a popover instead if you need to deliver structured information or enable interactions.
 */
 
 const Tooltip: FC<ITooltipProps> = ({
