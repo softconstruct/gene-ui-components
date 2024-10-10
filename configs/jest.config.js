@@ -21,8 +21,6 @@ module.exports = {
         '.svg': '<rootDir>/tests/__mocks__/svg.js',
         '^src': '<rootDir>/src',
         '^utils$': '<rootDir>/src/utils/',
-        '^wrappers$': '<rootDir>/src/wrappers/',
-        '^configs$': '<rootDir>/src/configs.js',
         '^hooks$': '<rootDir>/src/hooks/',
         '^components$': '<rootDir>/src/index.ts'
     },
@@ -36,6 +34,6 @@ module.exports = {
         '!src/**/*.stories.tsx'
     ], // TODO add .ts also for helpers
     coveragePathIgnorePatterns: ['/node_modules/', '/dist/'],
-    transformIgnorePatterns: ['<rootDir>/node_modules/(?!react-dnd|dnd-core|@react-dnd|@geneui/tokens|@geneui/icons)'],
+    transformIgnorePatterns: ['<rootDir>/node_modules/(?!@geneui/tokens|@geneui/icons)'],
     modulePathIgnorePatterns: ['node_modules', 'jest-test-results.json']
 };

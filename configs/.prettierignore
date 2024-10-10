@@ -6,6 +6,7 @@ node_modules
 # Ignore artifacts:
 dist
 stats
+storybook-static
 
 coverage
 docs

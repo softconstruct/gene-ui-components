@@ -5,8 +5,6 @@
             "src": ["./"],
             "components": ["./index.ts"],
             "utils": ["./utils/index.js"],
-            "wrappers": ["./wrappers/index.js"],
-            "configs": ["./configs.js"],
             "hooks": ["./hooks/index.js"]
         },
         "outDir": "../dist",

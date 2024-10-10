@@ -15,37 +15,12 @@ import { getDirectories, getFiles } from '../scripts/utils';
 
 const packageJson = require('../package.json');
 
-const TSComponentsList = [
-    'Avatar',
-    'LinkButton',
-    'Copy',
-    'Badge',
-    'Empty',
-    'KeyValue',
-    'BusyLoader',
-    'Divider',
-    'ImagePreview',
-    'Button',
-    'Image',
-    'Rating',
-    'InteractiveWidget',
-    'GeneUIProvider',
-    'HelperText',
-    'Tooltip',
-    'Label',
-    'Loader',
-    'Pill'
-];
-
-const getInputs = (name, dir) => {
+const getInputs = (_name, dir) => {
     const inputs = getDirectories(dir).reduce((obj, item) => {
         const [name] = item.split('/').reverse();
-        // Tmp solution should be removed after full
-        // typescript migration
-        const extension = TSComponentsList.includes(name) ? 'tsx' : 'js';
         return {
             ...obj,
-            [name]: `${item}/index.${extension}`
+            [name]: `${item}/index.tsx`
         };
     }, {});
 
@@ -55,10 +30,10 @@ const getInputs = (name, dir) => {
 };
 
 const componentsInputs = Object.entries({
-    atoms: 'src/lib/atoms',
-    molecules: 'src/lib/molecules',
-    organisms: 'src/lib/organisms',
-    providers: 'src/lib/providers'
+    atoms: 'src/components/atoms',
+    molecules: 'src/components/molecules',
+    organisms: 'src/components/organisms',
+    providers: 'src/components/providers'
 }).reduce((obj, entry) => ({ ...obj, ...getInputs(...entry) }), {});
 
 const hooks = getFiles('src/hooks').reduce((acc, path) => {
@@ -68,28 +43,11 @@ const hooks = getFiles('src/hooks').reduce((acc, path) => {
     return acc;
 }, {});
 
-const getFormableInputs = (name, dir) =>
-    getFiles(dir).reduce((obj, item) => {
-        const [name] = item.split('/').reverse();
-        const [nameWithoutExt] = name.split('.');
-        return {
-            ...obj,
-            [nameWithoutExt]: item
-        };
-    }, {});
-
-const formableInputs = Object.entries({
-    formables: 'src/lib/organisms/Form/Formables',
-    validatable: 'src/lib/molecules/ValidatableElements/Elements'
-}).reduce((obj, entry) => ({ ...obj, ...getFormableInputs(...entry) }), {});
-
 export default {
     input: {
         ...componentsInputs,
-        ...formableInputs,
         ...hooks,
-        index: 'src/index.ts',
-        configs: 'src/configs.js'
+        index: 'src/index.ts'
     },
     output: [
         {
@@ -125,10 +83,7 @@ export default {
             entries: {
                 src: 'src',
                 utils: 'src/utils/index.js',
-                wrappers: 'src/wrappers/index.js',
-                configs: 'src/configs.js',
                 hooks: 'src/hooks/index.ts',
-                indexof: 'src/utils/indexof.js',
                 components: 'src/index.ts'
             }
         }),
@@ -157,7 +112,7 @@ export default {
                 prefixSelector({
                     prefix: `[data-gene-ui-version="${packageJson.version}"]`,
                     // To prevent global styles isolation
-                    exclude: [new RegExp(/^(html|:root|body|\*)/)],
+                    exclude: [/^(html|:root|body|\*)/],
                     transform: (prefix, selector, prefixedSelector, file) =>
                         file.includes('src/lib/') ? prefixedSelector : selector
                 })

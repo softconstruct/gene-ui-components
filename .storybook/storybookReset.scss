@@ -1,4 +1,18 @@
-@import 'src/assets/styles/variables';
+@function rem($size) {
+    $remSize: calc($size / 10);
+    @if $size == 1 {
+        @return #{$size}px;
+    }
+    @return #{$remSize}rem;
+}
+
+@function -rem($size) {
+    $remSize: calc($size / 10);
+    @if $size == 1 {
+        @return -#{$size}px;
+    }
+    @return -#{$remSize}rem;
+}
 
 $sb-hero: #14a4ff;
 @mixin sbMobile {

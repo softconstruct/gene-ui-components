@@ -1,18 +1,5 @@
 import React from 'react';
-// TODO: This object will be removed after refactoring
-// all stories to use `propCategory` instead of `category`
-export const category = {
-    functionality: 'Functionality',
-    validation: 'Validation',
-    appearance: 'Appearance',
-    content: 'Content',
-    action: 'Actions',
-    states: 'States',
-    others: 'Others'
-};
 
-// TODO: This comment can be removed after refactoring
-// all stories to use this object instead of `category`
 export const propCategory = {
     functionality: { category: 'Functionality' },
     validation: { category: 'Validation' },
@@ -43,7 +30,6 @@ export const args = (obj) => {
         ...rest
     };
 };
-// control: 'text','boolean','number','select',
 
 export const componentStage = {
     experimental: 'experimental',
