@@ -284,7 +284,7 @@ const Tooltip: FC<ITooltipProps> = ({
                                 fill="none"
                                 xmlns="http://www.w3.org/2000/svg"
                             >
-                                <path className="tooltip__arrowPath" d="M6 4L0 0L12 0L6 4Z" fill="white" />
+                                <path className="tooltip__arrowPath" d="M6 4L0 0L12 0L6 4Z" />
                             </svg>
                         </div>
 
