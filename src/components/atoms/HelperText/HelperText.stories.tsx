@@ -14,6 +14,7 @@ const meta: Meta<typeof HelperText> = {
     argTypes: {
         size: args({ control: 'select', ...propCategory.appearance }),
         type: args({ control: 'select', ...propCategory.appearance }),
+        className: args({ control: 'false', ...propCategory.appearance }),
         text: args({ control: 'text', ...propCategory.content }),
         Icon: args({ control: false, ...propCategory.content }),
         isDisabled: args({ control: 'boolean', ...propCategory.states }),

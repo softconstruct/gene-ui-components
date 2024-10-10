@@ -5,6 +5,7 @@ import { InfoOutline } from '@geneui/icons';
 
 // Components
 import TooltipComponent, { ITooltipProps } from './index';
+import Pill from '../../atoms/Pill';
 
 const meta: Meta<ITooltipProps> = {
     title: 'Molecules/Tooltip',
@@ -37,7 +38,7 @@ export const Tooltip = ({ ...args }) => {
     return (
         <div style={{ height: '200px', padding: '200px' }}>
             <TooltipComponent {...args}>
-                <span>text with tooltip</span>
+                <Pill text={'tooltip target'} color={'warning'} isFill />
             </TooltipComponent>
         </div>
     );
