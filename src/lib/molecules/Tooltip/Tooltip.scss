@@ -7,7 +7,7 @@
     align-items: flex-start;
     justify-content: space-between;
     gap: var(--guit-ref-spacing-3xsmall);
-    min-width: 10rem;
+    min-width: var(--guit-sem-dimension-width-3xlarge);
     max-width: 24rem;
     padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-medium);
     border-radius: var(--guit-ref-radius-3xsmall);
@@ -22,14 +22,14 @@
         &_top,
         &_bottom {
             #{ $this }__arrow {
-                transform: rotateX(60deg) rotate(45deg);
+                transform: rotateX(45deg) rotate(45deg);
             }
         }
 
         &_left,
         &_right {
             #{ $this }__arrow {
-                transform: rotateY(60deg) rotate(45deg);
+                transform: rotateY(45deg) rotate(45deg);
             }
         }
     }
@@ -64,8 +64,8 @@
 
     &__arrow {
         position: absolute;
-        width: 10px;
-        height: 10px;
+        width: 9px;
+        height: 9px;
     }
 
     &__textWrapper {
