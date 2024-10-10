@@ -1,7 +1,6 @@
 import React, {
     useState,
     useContext,
-    CSSProperties,
     JSX,
     FC,
     cloneElement,
@@ -26,6 +25,7 @@ import {
 import { Placement } from '@floating-ui/utils';
 import { ReferenceType } from '@floating-ui/react-dom';
 import { isForwardRef } from 'react-is';
+
 // Components
 import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
@@ -103,7 +103,6 @@ export interface ITooltipProps {
      * Tooltip padding related to the target element
      */
     padding?: number;
-
     /**
      * In case of `false` value, the children component will rendered without Tooltip.
      */
@@ -113,8 +112,6 @@ export interface ITooltipProps {
      * Possible values: `inverse | default`
      */
     appearance?: 'inverse' | 'default';
-
-    //the icon that will appear after the text
 
     Icon?: ReactNode;
 }
@@ -157,11 +154,11 @@ const FindAndSetRef = <T extends object>(
         return el && cloneElement(el, newProps);
     }) as JSXWithRef[];
 };
+
 /**
 A tooltip is a small, elevated surface that appears to provide contextual information when a user hovers over or focuses on a UI element.
 Tooltips should be used to offer helpful plaintext information, not to communicate system feedback. Use a popover instead if you need to deliver structured information or enable interactions.
 */
-
 const Tooltip: FC<ITooltipProps> = ({
     children,
     position = 'top',
@@ -235,7 +232,7 @@ const Tooltip: FC<ITooltipProps> = ({
         }
     }, [component]);
 
-    const currentDirection = placement.split('-')[0];
+    const [currentDirection] = placement.split('-');
 
     const staticSide = {
         top: 'bottom',
@@ -243,6 +240,7 @@ const Tooltip: FC<ITooltipProps> = ({
         bottom: 'top',
         left: 'right'
     }[currentDirection];
+
     const middlewareArrowData = middlewareData.arrow;
 
     const offsetFromEdge = 8;
@@ -278,7 +276,17 @@ const Tooltip: FC<ITooltipProps> = ({
                                 top: middlewareArrowData?.y || undefined,
                                 [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0
                             }}
-                        />
+                        >
+                            <svg
+                                width="12"
+                                height="4"
+                                viewBox="0 0 12 4"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path className="tooltip__arrowPath" d="M6 4L0 0L12 0L6 4Z" fill="white" />
+                            </svg>
+                        </div>
 
                         <div className="tooltip__textWrapper">
                             <p className="tooltip__text">{text}</p>
