@@ -1,4 +1,4 @@
-import React, { FC, PointerEvent, useEffect, useState, JSX, cloneElement, KeyboardEvent } from 'react';
+import React, { FC, PointerEvent, useEffect, useState, JSX, cloneElement } from 'react';
 import classNames from 'classnames';
 import { Square } from '@geneui/icons'; // TODO: replace with the person icon
 
