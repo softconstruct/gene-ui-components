@@ -84,6 +84,7 @@
         font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
         line-height: var(--guit-sem-font-caption-large-medium-llne-height);
         letter-spacing: var(--guit-sem-font-caption-large-medium-letter-spacing);
+        word-break: break-word;
     }
 
     &__icon {

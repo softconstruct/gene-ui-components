@@ -10,15 +10,22 @@ import React, {
     useEffect,
     RefObject,
     useMemo,
-    useRef
+    useRef,
+    ReactNode
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
-import { FloatingPortal, autoUpdate, useFloating, arrow, useHover, useInteractions } from '@floating-ui/react';
+import {
+    FloatingPortal,
+    autoUpdate,
+    useFloating,
+    arrow,
+    useHover,
+    useInteractions,
+    platform
+} from '@floating-ui/react';
 import { Placement } from '@floating-ui/utils';
 import { ReferenceType } from '@floating-ui/react-dom';
 import { isForwardRef } from 'react-is';
-import { InfoOutline } from '@geneui/icons';
-
 // Components
 import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
@@ -55,20 +62,11 @@ export const correctPosition = {
     'top-right': 'top-end'
 };
 
-interface ICustomPosition {
-    left?: number;
-    top?: number;
-}
-
 export interface ITooltipProps {
     /**
      * Main content for the component.
      */
     text?: string;
-    /**
-     * Style object, to have extra styles.
-     */
-    style?: CSSProperties;
     /**
      * If `true` the  component will be visible without any action.
      */
@@ -76,7 +74,10 @@ export interface ITooltipProps {
     /**
      * Will display the component in the specified location.
      */
-    customPosition?: ICustomPosition;
+    customPosition?: {
+        left?: number;
+        top?: number;
+    };
     /**
      * Any valid React node.
      */
@@ -113,10 +114,10 @@ export interface ITooltipProps {
      * Possible values: `inverse | default`
      */
     appearance?: 'inverse' | 'default';
-    /**
-     * show with an arrow the direction from which the tooltip will open
-     */
-    withArrow?: boolean;
+
+    //the icon that will appear after the text
+
+    Icon?: ReactNode;
 }
 
 type JSXWithRef = JSX.Element & { ref: RefObject<HTMLElement> };
@@ -157,18 +158,21 @@ const FindAndSetRef = <T extends object>(
         return el && cloneElement(el, newProps);
     }) as JSXWithRef[];
 };
+/**
+A tooltip is a small, elevated surface that appears to provide contextual information when a user hovers over or focuses on a UI element.
+Tooltips should be used to offer helpful plaintext information, not to communicate system feedback. Use a popover instead if you need to deliver structured information or enable interactions. 
+*/
 
 const Tooltip: FC<ITooltipProps> = ({
     children,
     position = 'top',
-    style,
     text,
     customPosition,
     alwaysShow,
     padding = 10,
     isVisible = true,
     appearance = 'default',
-    withArrow = false,
+    Icon,
     ...props
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
@@ -180,6 +184,10 @@ const Tooltip: FC<ITooltipProps> = ({
         open: alwaysShow || isPopoverOpen,
         placement: correctPosition[position],
         onOpenChange: setIsPopoverOpen,
+        platform: {
+            ...platform,
+            isRTL: () => false
+        },
         middleware: [
             offset(padding),
             flip({
@@ -236,17 +244,20 @@ const Tooltip: FC<ITooltipProps> = ({
         bottom: 'top',
         left: 'right'
     }[currentDirection];
+    const middlewareArrowData = middlewareData.arrow;
 
     const offsetFromEdge = 8;
 
-    const arrowOffset = {
-        'top-start': -offsetFromEdge,
-        'top-end': offsetFromEdge,
-        'bottom-start': -offsetFromEdge,
-        'bottom-end': offsetFromEdge
+    const arrowPositions = {
+        'top-start': 'left',
+        'top-end': 'right',
+        'bottom-end': 'right',
+        'bottom-start': 'left'
     }[placement];
 
-    const middlewareArrowData = middlewareData.arrow;
+    const getCorrectPosition = arrowPositions
+        ? { [arrowPositions]: offsetFromEdge }
+        : { 'inset-inline-start': middlewareArrowData?.x || undefined };
 
     return (
         <>
@@ -256,10 +267,7 @@ const Tooltip: FC<ITooltipProps> = ({
                     <div
                         className={`tooltip tooltip_color_${appearance}  tooltip_position_${currentDirection}`}
                         ref={refs.setFloating}
-                        style={{
-                            ...style,
-                            ...floatingStyles
-                        }}
+                        style={floatingStyles}
                         {...props}
                         {...getFloatingProps()}
                     >
@@ -267,19 +275,17 @@ const Tooltip: FC<ITooltipProps> = ({
                             className="tooltip__arrow"
                             ref={arrowRef}
                             style={{
-                                left: middlewareArrowData?.x ? middlewareArrowData.x + (arrowOffset || 0) : undefined,
-                                top: middlewareArrowData?.y ? middlewareArrowData.y : undefined,
-                                [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0,
-                                visibility: withArrow ? 'visible' : 'hidden'
+                                ...getCorrectPosition,
+                                top: middlewareArrowData?.y || undefined,
+                                [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0
                             }}
                         />
 
                         <div className="tooltip__textWrapper">
                             <p className="tooltip__text">{text}</p>
                         </div>
-                        <div className="tooltip__icon">
-                            <InfoOutline size={16} />
-                        </div>
+
+                        {Icon && <div className="tooltip__icon">{Icon}</div>}
                     </div>
                 </FloatingPortal>
             )}
