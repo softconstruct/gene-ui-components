@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
+import { Globe } from '@geneui/icons';
 
 // Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
 import TextLink, { ITextLinkProps } from './index';
-import { Globe } from '@geneui/icons';
 
 const meta: Meta<typeof TextLink> = {
     title: 'Atoms/TextLink',

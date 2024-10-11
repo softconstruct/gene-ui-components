@@ -22,7 +22,7 @@ describe('TextLink', () => {
         expect(setup.text()).toBe('test');
     });
 
-    it('renders href prop correctly', () => {
+    it('should have href prop', () => {
         expect(setup.find('a').prop('href')).toBe('testHref');
     });
 
@@ -59,7 +59,7 @@ describe('TextLink', () => {
 
     it('renders isLoading prop correctly', () => {
         const wrapper = setup.setProps({ isLoading: true });
-        expect(setup.text()).toStrictEqual('skeleton');
+        expect(wrapper.text()).toStrictEqual('skeleton');
     });
 
     it.each<ITextLinkProps['rel']>(['nofollow', 'none'])('should have "%s" rel', (rel) => {
@@ -74,6 +74,7 @@ describe('TextLink', () => {
             expect(wrapper.find(`textLink_color_${appearance}`)).toBeTruthy();
         }
     );
+
     it.each<ITextLinkProps['target']>(['blank', 'self'])('should have "%s" target', (target) => {
         const wrapper = setup.setProps({ target });
         expect(wrapper.find('.textLink').props().target).toBe(`_${target}`);

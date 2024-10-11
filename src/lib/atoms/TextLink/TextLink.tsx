@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
+import classNames from 'classnames';
 
 // Styles
 import './TextLink.scss';
-import classNames from 'classnames';
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {
     size?: 16 | 20 | 24 | 28 | 32 | 48;
@@ -11,16 +11,16 @@ interface IconProps extends React.SVGProps<SVGSVGElement> {
 
 interface ITextLinkProps {
     /**
-     * The text displayed within the link.
+     * Main visible content in the link.
      */
     text: string;
     /**
-     * The URL the link navigates to when clicked.
+     * The URL address where will be redirected a user.
      */
-    href?: string;
+    href: string;
     /**
-     * Determines if the icon (if provided) should appear before the link text.
-     * When `true`, the icon appears before the text, otherwise it appears after the text.
+     * if `Icon` provided, it will be visible after the text by default.
+     * When `true`, the icon appears before the text.
      */
     iconBefore?: boolean;
     /**
@@ -40,7 +40,7 @@ interface ITextLinkProps {
      */
     underline?: boolean;
     /**
-     * Specifies the appearance of the link. <br/>
+     * Specifies the appearance of the link. <br>
      * Possible values: <code>primary | secondary | inverse </code>
      */
     appearance?: 'primary' | 'secondary' | 'inverse';
@@ -49,11 +49,13 @@ interface ITextLinkProps {
      */
     disabled?: boolean;
     /**
-     * Function that gets called when the link is clicked. Receives the click event as an argument.
+     * Function that will called after user click or press enter button.
+     * Receives the event as an argument.
      */
     onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
     /**
-     * Indicates whether the component is in a loading state. When set to true a skeleton indicator will be shown instead of the component.
+     * Indicates whether the component is in a loading state.
+     * When set to `true` a skeleton indicator will be shown instead of the component.
      */
     isLoading?: boolean;
     /**
@@ -71,7 +73,7 @@ interface ITextLinkProps {
  * A link is styled text that navigates users to another location, either within the current experience or to a different app or website.
  */
 const TextLink: FC<ITextLinkProps> = ({
-    text = 'LinkText',
+    text,
     href,
     iconBefore,
     rel,
