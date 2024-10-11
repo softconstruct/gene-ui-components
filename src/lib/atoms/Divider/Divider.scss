@@ -34,11 +34,12 @@
         align-items: center;
         height: 100%;
 
-        &#{ $this }:before,
-        &#{ $this }:after {
+        &#{ $this }:before {
             border-inline-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid);
         }
-
+        &#{ $this }:after {
+            display: none;
+        }
         &#{ $this }_inset {
             padding-block: var(--guit-ref-spacing-large);
         }

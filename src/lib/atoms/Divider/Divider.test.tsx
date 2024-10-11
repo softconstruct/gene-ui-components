@@ -28,7 +28,7 @@ describe('Divider ', () => {
         expect(wrapper.find('.divider').text()).toBe(label);
     });
 
-    it('renders alignContent prop correctly', () => {
+    it('renders content prop correctly', () => {
         //@ts-ignore
         const content = <Button>Test</Button>;
         const wrapper = setup.setProps({ content });

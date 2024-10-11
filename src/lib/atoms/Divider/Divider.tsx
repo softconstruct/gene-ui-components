@@ -71,10 +71,12 @@ const Divider: FC<IDividerProps> = ({
             {!isVertical && (
                 <>
                     {content && <div className="divider__element">{content}</div>}
-                    <div className="divider__label">
-                        {label && <span className="divider__text ellipsis-text">{label}</span>}
-                        {Icon && <Icon className={'divider__icon'} size={20} />}
-                    </div>
+                    {(label || Icon) && (
+                        <div className="divider__label">
+                            {label && <span className="divider__text ellipsis-text">{label}</span>}
+                            {Icon && <Icon className={'divider__icon'} size={20} />}
+                        </div>
+                    )}
                 </>
             )}
         </div>
