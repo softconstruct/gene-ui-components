@@ -58,15 +58,11 @@ const Divider: FC<IDividerProps> = ({
 }) => {
     return (
         <div
-            className={classNames(
-                `divider divider_${
-                    inset ? 'inset' : 'block'
-                } divider_color_${appearance} divider_withLabel_${labelPosition}`,
-                {
-                    divider_horizontal: !isVertical,
-                    divider_vertical: isVertical
-                }
-            )}
+            className={classNames(`divider divider_${inset ? 'inset' : 'block'} divider_color_${appearance}  `, {
+                divider_horizontal: !isVertical,
+                divider_vertical: isVertical,
+                [` divider_withLabel_${labelPosition}`]: !(label || Icon || content) || !isVertical
+            })}
         >
             {!isVertical && (
                 <>

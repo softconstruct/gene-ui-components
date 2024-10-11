@@ -12,12 +12,12 @@
         content: '';
         display: block;
         pointer-events: none;
+        flex: 1;
     }
 
     &_horizontal {
         align-items: center;
         width: 100%;
-
         &#{ $this }:before,
         &#{ $this }:after {
             min-width: var(--guit-sem-dimension-width-medium);
@@ -26,6 +26,11 @@
 
         &#{ $this }_inset {
             padding-inline: var(--guit-ref-spacing-large);
+        }
+        &#{ $this }:empty {
+            &::after {
+                display: none;
+            }
         }
     }
 
@@ -108,10 +113,6 @@
         }
 
         &_center {
-            &#{ $this }::before,
-            &#{ $this }::after {
-                flex: 1;
-            }
             #{ $this }__element {
                 max-width: calc(100% - var(--guit-sem-dimension-width-medium) * 4);
             }
