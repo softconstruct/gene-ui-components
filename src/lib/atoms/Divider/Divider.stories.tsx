@@ -25,7 +25,20 @@ const meta: Meta<typeof Divider> = {
         isVertical: false,
         label: 'test',
         labelPosition: 'before',
-        Icon: InfoOutline
+        Icon: InfoOutline,
+        //TODO: Add Button component (or any component) when finish refactoring
+
+        content: (
+            <Button
+                title="swap"
+                icon={'bc-icon-refresh'}
+                flexibility={'content-size'}
+                appearance="outline"
+                cornerRadius="smooth"
+            >
+                Swap
+            </Button>
+        )
     }
 };
 
@@ -41,21 +54,7 @@ export const Default = Template.bind({});
 
 const WithAlignContentComponent: FC<IDividerProps> = (args) => (
     <div style={{ height: 220 }}>
-        <Divider
-            {...args}
-            //TODO: Add Button component (or any component) when finish refactoring
-            content={
-                <Button
-                    title="swap"
-                    icon={'bc-icon-refresh'}
-                    flexibility={'content-size'}
-                    appearance="outline"
-                    cornerRadius="smooth"
-                >
-                    Swap
-                </Button>
-            }
-        />
+        <Divider {...args} />
     </div>
 );
 export const WithAlignContent = WithAlignContentComponent.bind({});
@@ -73,4 +72,16 @@ WithoutIconAndLabel.args = {
 
 WithoutIconAndLabel.argTypes = {
     label: args({ control: 'false', ...propCategory.appearance })
+};
+export const Solid = WithAlignContentComponent.bind({});
+
+Solid.args = {
+    Icon: null,
+    label: undefined,
+    content: undefined,
+    labelPosition: 'after'
+} as IDividerProps;
+
+Solid.argTypes = {
+    labelPosition: args({ control: 'false', ...propCategory.appearance })
 };
