@@ -60,6 +60,7 @@ export const WeekPicker = (args) => {
                 {...args}
                 markedDate={'2024-09-19T10:43:18.503Z'}
                 onChange={(date) => {
+                    console.log(date);
                     toasterNotify(date);
                     args.onChange(date);
                 }}
