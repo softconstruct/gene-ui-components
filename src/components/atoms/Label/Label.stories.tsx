@@ -11,22 +11,19 @@ const meta: Meta<typeof Label> = {
     title: 'Atoms/Label',
     component: Label,
     argTypes: {
-        htmlFor: args({ control: false, ...propCategory.functionality }),
         size: args({ control: 'select', ...propCategory.appearance }),
         labelText: args({ control: 'text', ...propCategory.content }),
         required: args({ control: 'boolean', ...propCategory.content }),
         infoText: args({ control: 'text', ...propCategory.content }),
         disabled: args({ control: 'boolean', ...propCategory.states }),
-        isLoading: args({ control: 'boolean', ...propCategory.states })
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        className: args({ control: 'false', ...propCategory.appearance }),
+        children: args({ control: 'false', ...propCategory.content })
     },
     args: {
-        htmlFor: 'inputId',
         size: 'medium',
         labelText: 'label',
         required: false
-    },
-    parameters: {
-        chromatic: { disableSnapshot: true }
     }
 };
 
