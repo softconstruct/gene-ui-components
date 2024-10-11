@@ -28,7 +28,7 @@ const meta: Meta<ITooltipProps> = {
         text: 'Tooltip some text',
         appearance: 'default',
         padding: 10,
-        Icon: <InfoOutline size={16} />
+        Icon: InfoOutline
     }
 };
 
@@ -36,7 +36,7 @@ export default meta;
 
 export const Tooltip = ({ ...args }) => {
     return (
-        <div style={{ height: '200px', padding: '200px' }}>
+        <div style={{ height: '200px', padding: '200px 300px' }}>
             <TooltipComponent {...args}>
                 <Pill text={'tooltip target'} color={'warning'} isFill />
             </TooltipComponent>

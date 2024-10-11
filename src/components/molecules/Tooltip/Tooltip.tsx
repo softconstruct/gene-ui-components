@@ -9,8 +9,7 @@ import React, {
     useEffect,
     RefObject,
     useMemo,
-    useRef,
-    ReactNode
+    useRef
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
 import {
@@ -31,6 +30,7 @@ import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
 
 // Styles
 import './Tooltip.scss';
+import { IconProps } from '@geneui/icons';
 
 const positions: Placement[] = [
     'top',
@@ -112,8 +112,10 @@ export interface ITooltipProps {
      * Possible values: `inverse | default`
      */
     appearance?: 'inverse' | 'default';
-
-    Icon?: ReactNode;
+    /**
+     * The `Icon` prop accepts a JSX element that will be displayed as an tooltip.
+     */
+    Icon?: FC<IconProps>;
 }
 
 type JSXWithRef = JSX.Element & { ref: RefObject<HTMLElement> };
@@ -135,12 +137,14 @@ const FindAndSetRef = <T extends object>(
                 checked = true;
                 newProps = { ...newProps, ref: componentRef };
             }
+
             return cloneElement(el, newProps);
         }
         if (typeof el?.type === 'function') {
             if (!el.ref) {
                 newProps = { ...newProps, ref: componentRef };
             }
+
             return cloneElement(el.type(el.props), newProps);
         }
 
@@ -152,7 +156,7 @@ const FindAndSetRef = <T extends object>(
             return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef, checked);
         }
         return el && cloneElement(el, newProps);
-    }) as JSXWithRef[];
+    });
 };
 
 /**
@@ -168,8 +172,7 @@ const Tooltip: FC<ITooltipProps> = ({
     padding = 10,
     isVisible = true,
     appearance = 'default',
-    Icon,
-    ...props
+    Icon
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
@@ -211,11 +214,9 @@ const Tooltip: FC<ITooltipProps> = ({
 
     const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
 
-    const childProps = {
-        ...getReferenceProps()
-    };
-
-    const component = useMemo(() => FindAndSetRef(children, childProps, refs.setReference), [children, childProps]);
+    const component = useMemo(() => {
+        return FindAndSetRef(children, getReferenceProps(), refs.setReference);
+    }, [children, getReferenceProps()]);
 
     useEffect(() => {
         for (let i = 0; i < component.length; i++) {
@@ -265,7 +266,6 @@ const Tooltip: FC<ITooltipProps> = ({
                         className={`tooltip tooltip_color_${appearance}  tooltip_position_${currentDirection}`}
                         ref={refs.setFloating}
                         style={floatingStyles}
-                        {...props}
                         {...getFloatingProps()}
                     >
                         <div
@@ -274,7 +274,7 @@ const Tooltip: FC<ITooltipProps> = ({
                             style={{
                                 ...getCorrectPosition,
                                 top: middlewareArrowData?.y || undefined,
-                                [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 5}px` : 0
+                                [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 6}px` : 0
                             }}
                         >
                             <svg
@@ -292,7 +292,7 @@ const Tooltip: FC<ITooltipProps> = ({
                             <p className="tooltip__text">{text}</p>
                         </div>
 
-                        {Icon && <div className="tooltip__icon">{Icon}</div>}
+                        {Icon && <div className="tooltip__icon">{<Icon size={16} />}</div>}
                     </div>
                 </FloatingPortal>
             )}

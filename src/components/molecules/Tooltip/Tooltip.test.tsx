@@ -42,7 +42,7 @@ describe('Tooltip', () => {
     });
 
     it('renders Icon prop correct inside the portal', () => {
-        setup.setProps({ alwaysShow: true, Icon: <InfoOutline /> });
+        setup.setProps({ alwaysShow: true, Icon: InfoOutline });
         expect(provider().find('.tooltip__icon').exists()).toBeTruthy();
     });
 
