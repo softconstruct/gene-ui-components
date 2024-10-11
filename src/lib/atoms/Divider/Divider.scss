@@ -45,20 +45,6 @@
         }
     }
 
-    &_align {
-        &_left {
-            #{ $this }__element {
-                order: -1;
-            }
-        }
-
-        &_right {
-            #{ $this }__element {
-                order: 1;
-            }
-        }
-    }
-
     &_color {
         &_default,
         &_strong {
@@ -169,6 +155,7 @@
     }
 
     &__element {
+        order: 1;
         display: flex;
         min-width: 0;
         flex: 0 0 auto;
