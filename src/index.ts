@@ -14,5 +14,5 @@ export { default as Tooltip } from './components/molecules/Tooltip';
 export { default as GeneUIProvider, GeneUIDesignSystemContext } from './components/providers/GeneUIProvider';
 
 // Hooks
-export { default as useDebounce } from './hooks/useDebounce';
+export { default as useDebounce } from './hooks/useDebounceCallback';
 export { default as useEllipsisDetection } from './hooks/useEllipsisDetection';
