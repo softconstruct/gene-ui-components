@@ -15,7 +15,7 @@ const meta: Meta<typeof Info> = {
         appearance: args({ control: 'select', ...propCategory.appearance }),
         disabled: args({ control: 'boolean', ...propCategory.states }),
         size: args({ control: 'select', ...propCategory.appearance }),
-        className: args({ control: false, ...propCategory.appearance })
+        className: args({ control: 'false', ...propCategory.appearance })
     },
     args: {
         infoText: 'info text'

@@ -54,7 +54,7 @@ const Info: FC<IInfoProps> = ({ infoText, disabled, size = 'smallNudge', appeara
     const handleBlur = () => !disabled && alwaysShow && setAlwaysShow(false);
 
     return (
-        <Tooltip text={infoText} alwaysShow={alwaysShow}>
+        <Tooltip text={infoText} alwaysShow={alwaysShow} appearance={appearance === 'inverse' ? 'inverse' : 'default'}>
             <button
                 disabled={disabled}
                 className={classnames('info', className, {
