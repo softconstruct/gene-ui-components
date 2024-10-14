@@ -88,11 +88,6 @@
     }
 
     &__icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
         flex: 0 0 auto;
-        width: var(--guit-sem-dimension-width-small-nudge);
-        height: var(--guit-sem-dimension-height-small-nudge);
     }
 }

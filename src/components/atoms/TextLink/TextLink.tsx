@@ -103,11 +103,7 @@ const TextLink: FC<ITextLinkProps> = ({
                 {...(disabled && { tabIndex: -1 })}
             >
                 <span className="textLink__text">{text}</span>
-                {Icon && (
-                    <span className="textLink__icon">
-                        <Icon size={20} />
-                    </span>
-                )}
+                {Icon && <Icon className="textLink__icon" size={20} />}
             </a>
         )}
     </>
