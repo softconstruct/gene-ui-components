@@ -40,6 +40,11 @@ interface IDividerProps {
      * provides space between the edge and the divider
      */
     inset?: boolean;
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
 }
 
 /**
@@ -48,21 +53,25 @@ interface IDividerProps {
 
 const Divider: FC<IDividerProps> = ({
     appearance = 'brand',
-    //@ts-ignore
     Icon,
     isVertical,
     label,
     labelPosition = 'before',
     content,
-    inset = false
+    inset = false,
+    className
 }) => {
     return (
         <div
-            className={classNames(`divider divider_${inset ? 'inset' : 'block'} divider_color_${appearance}  `, {
-                divider_horizontal: !isVertical,
-                divider_vertical: isVertical,
-                [` divider_withLabel_${labelPosition}`]: !(label || Icon || content) || !isVertical
-            })}
+            className={classNames(
+                `divider divider_${inset ? 'inset' : 'block'} divider_color_${appearance}  `,
+                className,
+                {
+                    divider_horizontal: !isVertical,
+                    divider_vertical: isVertical,
+                    [` divider_withLabel_${labelPosition}`]: (label || Icon) && !isVertical
+                }
+            )}
         >
             {!isVertical && (
                 <>

@@ -4,14 +4,16 @@ import { CheckMark } from '@geneui/icons';
 
 // Components
 import Divider, { IDividerProps } from './index';
-import Button from '../Button/Button';
+import { Avatar } from '../../../index';
 
 describe('Divider ', () => {
     let setup: ReactWrapper<IDividerProps>;
     beforeEach(() => (setup = mount(<Divider />)));
+
     it('renders without crashing', () => {
         expect(setup.exists()).toBeTruthy();
     });
+
     it('renders isVertical prop correctly', () => {
         const wrapper = setup.setProps({ isVertical: true });
         expect(wrapper.find('.divider').hasClass('divider_vertical')).toBeTruthy();
@@ -29,19 +31,18 @@ describe('Divider ', () => {
     });
 
     it('renders content prop correctly', () => {
-        //@ts-ignore
-        const content = <Button>Test</Button>;
+        const content = <Avatar />;
         const wrapper = setup.setProps({ content });
-        expect(wrapper.find(Button).text()).toBe('Test');
+        expect(wrapper.find(Avatar)).toBeTruthy();
     });
 
-    it('renders inset  prop correctly', () => {
+    it('renders inset prop correctly', () => {
         const wrapper = setup.setProps({ inset: true });
         expect(wrapper.find('.divider').hasClass(`divider_inset`)).toBeTruthy();
     });
 
     it.each<IDividerProps['appearance']>(['brand', 'default', 'inverse', 'strong'])(
-        'checking a component with a prop appearance : %p',
+        'should have %s appearance',
         (appearance) => {
             const wrapper = setup.setProps({ appearance });
             expect(wrapper.find('.divider').hasClass(`divider_color_${appearance}`)).toBeTruthy();
@@ -49,10 +50,17 @@ describe('Divider ', () => {
     );
 
     it.each<IDividerProps['labelPosition']>(['center', 'after', 'before'])(
-        'checking a component with a prop alignContent : %p',
+        'should have %s labelPosition',
         (labelPosition) => {
-            const wrapper = setup.setProps({ labelPosition });
+            const wrapper = setup.setProps({ labelPosition, label: 'test' });
             expect(wrapper.find('.divider').hasClass(`divider_withLabel_${labelPosition}`)).toBeTruthy();
         }
     );
+
+    it('renders className prop correctly', () => {
+        const className = 'test-class';
+        const wrapper = setup.setProps({ className });
+
+        expect(wrapper.hasClass(className)).toBeTruthy();
+    });
 });
