@@ -57,10 +57,10 @@
         }
 
         &_inverse {
-            background-color: var(--guit-sem-color-background-neutral-1);
+            background-color: var(--guit-sem-color-background-neutral-1-nudge);
 
             #{ $this }__arrowPath {
-                fill: var(--guit-sem-color-background-neutral-1);
+                fill: var(--guit-sem-color-background-neutral-1-nudge);
             }
 
             #{ $this }__text,
@@ -94,9 +94,6 @@
     }
 
     &__icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
         flex: 0 0 auto;
     }
 }
