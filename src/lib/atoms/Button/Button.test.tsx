@@ -5,6 +5,7 @@ import { Globe } from '@geneui/icons';
 //@ts-ignore
 // Helpers
 import { noop } from 'utils';
+
 // Components
 import Button, { IButtonProps } from './index';
 import GeneUIProvider from '../../providers/GeneUIProvider';
@@ -34,7 +35,7 @@ describe('Button ', () => {
     });
 
     it('renders Icon prop correctly', () => {
-        const wrapper = setup.setProps({ Icon: <Globe /> });
+        const wrapper = setup.setProps({ Icon: Globe });
         expect(wrapper.find(Globe).exists()).toBeTruthy();
     });
 
@@ -43,6 +44,7 @@ describe('Button ', () => {
         const wrapper = setup.setProps({ name });
         expect(wrapper.find('button').props().name).toBe(name);
     });
+
     it('renders onClick prop correctly', () => {
         const wrapper = setup.setProps({ onClick: mockFn });
         const event = {
