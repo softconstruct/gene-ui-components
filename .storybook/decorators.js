@@ -86,6 +86,8 @@ const CustomDecorator = ({ children }) => {
           --background-rgb: 23,28,38;
           --background-sc-rgb: 255,255,255;
           --page-background: #0b1017;
+          color-scheme: dark; // todo remove 'color-scheme' after provide theme function form GeneUIProvider
+          
           }`}
                 </style>
             ) : (

@@ -9,7 +9,7 @@ import Empty from '../../../atoms/Empty';
 import BusyLoader from '../../../atoms/BusyLoader';
 import Label from '../../../atoms/Label';
 import Button from '../../../atoms/Button';
-import Tag from '../../../molecules/Tag';
+import Tag from '../../Tag';
 
 // Styles
 import './index.scss';

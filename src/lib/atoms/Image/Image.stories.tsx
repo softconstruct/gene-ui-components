@@ -25,7 +25,7 @@ const meta: Meta<typeof Image> = {
         emptyText: args({ control: 'text', ...propCategory.content })
     },
     args: {
-        src: 'https://picsum.photos/1920/1080',
+        src: 'https://picsum.photos/id/237/1920/1080',
         title: 'Placeholder Image'
     }
 };

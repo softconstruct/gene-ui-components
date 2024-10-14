@@ -1,3 +1,4 @@
+import React from 'react';
 // TODO: This object will be removed after refactoring
 // all stories to use `propCategory` instead of `category`
 export const category = {
@@ -25,9 +26,10 @@ export const propCategory = {
 export const args = (obj) => {
     const { control, options, category, condition, defaultValue, truthy, name, action, ...rest } = obj;
     const isDefaultProvided = 'defaultValue' in obj;
+    const isControl = 'control' in obj;
 
     return {
-        ...(control && { control }),
+        ...(isControl && { control }),
         ...(options && { options }),
         ...(name && { name }),
         ...((category || isDefaultProvided) && {
@@ -47,3 +49,9 @@ export const componentStage = {
     experimental: 'experimental',
     deprecated: 'deprecated'
 };
+
+export const SCREENSHOT_DELAY = 5000;
+
+export function VariantsStoryGrid({ children }) {
+    return <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>{children}</div>;
+}
