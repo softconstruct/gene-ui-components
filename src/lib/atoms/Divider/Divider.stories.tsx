@@ -1,35 +1,57 @@
 import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
+import { Globe, Search } from '@geneui/icons';
+
+// Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
-import DividerComponent, { IDividerProps } from './index';
+import Divider, { IDividerProps } from './index';
+import { Avatar } from '../../../index';
 
-const meta: Meta<typeof DividerComponent> = {
+const meta: Meta<typeof Divider> = {
     title: 'Atoms/Divider',
-    component: DividerComponent,
+    component: Divider,
     argTypes: {
-        type: args({ control: 'select', ...propCategory.appearance }),
-        size: args({ control: 'text', ...propCategory.appearance }),
-        withSpace: args({ control: 'boolean', ...propCategory.appearance }),
-        className: args({ control: false, ...propCategory.others })
+        appearance: args({ control: 'select', ...propCategory.appearance }),
+        vertical: args({ control: 'boolean', ...propCategory.appearance }),
+        Icon: args({ control: 'false', ...propCategory.content }),
+        label: args({ control: 'text', ...propCategory.content }),
+        labelPosition: args({ control: 'select', ...propCategory.appearance }),
+        content: args({ control: 'false', ...propCategory.content }),
+        inset: args({ control: 'boolean', ...propCategory.appearance }),
+        className: args({ control: 'false', ...propCategory.appearance })
     },
     args: {
-        size: '50px',
-        withSpace: true
+        appearance: 'brand',
+        vertical: false,
+        label: 'test',
+        labelPosition: 'before',
+        Icon: Globe,
+        content: <Avatar Icon={<Search />} color={'slate'} />
     }
 };
 
 export default meta;
 
-const Template: FC<IDividerProps> = ({ ...args }) => <DividerComponent {...args} />;
+const Template: FC<IDividerProps> = (args) => (
+    <div style={{ height: 220 }}>
+        <Divider {...args} />
+    </div>
+);
 
 export const Default = Template.bind({});
-Default.args = {
-    type: 'horizontal'
-};
 
-export const Vertical = Template.bind({});
-Vertical.args = {
-    type: 'vertical'
-};
+const WithAlignContentComponent: FC<IDividerProps> = (args) => (
+    <div style={{ height: 220 }}>
+        <Divider {...args} />
+    </div>
+);
+
+export const Solid = WithAlignContentComponent.bind({});
+
+Solid.args = {
+    Icon: null,
+    content: undefined,
+    labelPosition: 'after'
+} as IDividerProps;

@@ -1,45 +1,89 @@
-import React, { FC, HTMLAttributes, useMemo } from 'react';
-import classnames from 'classnames';
+import React, { FC, JSX } from 'react';
+import classNames from 'classnames';
+import { IconProps } from '@geneui/icons';
 
 // Styles
 import './Divider.scss';
 
-export interface IDividerProps extends HTMLAttributes<HTMLDivElement> {
+interface IDividerProps {
     /**
-     * Divider direction. <br>
-     * Possible values: `horizontal | vertical`
+     * Divider visual style <br/>
+     * Possible values: `default | strong | brand | inverse`
      */
-    type: 'horizontal' | 'vertical';
+    appearance?: 'default' | 'strong' | 'brand' | 'inverse';
     /**
-     * Divider additional className
+     * Divider content <br/>
+     * The `alignContent` prop accepts a JSX element that will be displayed alongside the divider
+     */
+    content?: JSX.Element;
+    /**
+     * Divider direction <br/>
+     * If the `vertical` prop is `true`, the `Divider` will be displayed vertically otherwise the `Divider` will be displayed horizontally
+     */
+    vertical?: boolean;
+    /**
+     * The `Icon` prop accepts a React Functional Component that will be displayed alongside the divider.
+     */
+    Icon?: FC<IconProps> | null;
+    /**
+     * Divider label <br/>
+     * Text which will be displayed with `Divider`. The position of the `label` depends on `labelPosition` prop
+     */
+    label?: string;
+    /**
+     * Divider `label` position <br/>
+     * Possible values: `before | after | center`
+     */
+    labelPosition?: 'before' | 'after' | 'center';
+    /**
+     * provides space between the edge and the divider
+     */
+    inset?: boolean;
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    /**
-     * Divider size will be applied to height(when "type" is set to "vertical") or to width(when "type" is set to "horizontal"). <br>
-     * Possible values: `string | number`
-     */
-    size?: string | number;
-    /**
-     * withSpace by default true. If you want to remove the divider`s spacing, switch to false
-     */
-    withSpace: boolean;
 }
 
-const Divider: FC<IDividerProps> = ({ type = 'vertical', className, size, withSpace = true, ...restProps }) => {
-    const modifiedSize = useMemo(() => (typeof size === 'number' ? `${size / 10}rem` : size), [size]);
-
-    const styles = useMemo(
-        () => (type === 'vertical' ? { height: modifiedSize } : { width: modifiedSize }),
-        [modifiedSize, type]
-    );
-
+/**
+ * A divider separates sections of content to establish visual rhythm and hierarchy. Combine dividers with appropriate spacing and text hierarchy to effectively organize content within your layout.
+ */
+const Divider: FC<IDividerProps> = ({
+    appearance = 'default',
+    Icon,
+    vertical,
+    label,
+    labelPosition = 'before',
+    content,
+    inset = false,
+    className
+}) => {
     return (
         <div
-            className={classnames('divider', `type-${type}`, { 'divider-withNoSpace': !withSpace }, className)}
-            style={styles}
-            {...restProps}
-        />
+            className={classNames(
+                `divider divider_${inset ? 'inset' : 'block'} divider_color_${appearance}  `,
+                className,
+                {
+                    divider_horizontal: !vertical,
+                    divider_vertical: vertical,
+                    [` divider_withLabel_${labelPosition}`]: (label || Icon) && !vertical
+                }
+            )}
+        >
+            {!vertical && (
+                <>
+                    {content && <div className="divider__element">{content}</div>}
+                    {(label || Icon) && (
+                        <div className="divider__label">
+                            {label && <span className="divider__text ellipsis-text">{label}</span>}
+                            {Icon && <Icon className="divider__icon" size={20} />}
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
     );
 };
 
-export default Divider;
+export { IDividerProps, Divider as default };
