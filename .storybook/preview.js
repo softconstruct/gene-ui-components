@@ -20,6 +20,23 @@ export const decorators = [
         document.documentElement.dir = dir.toString();
         return customDecorators(Story);
     },
+    (Story, context) => {
+        const { inverse } = context.globals;
+
+        const [inverseMode, setInverseMode] = useState(inverse === 'inverse');
+        useEffect(() => {
+            setInverseMode(inverse === 'inverse');
+        }, [inverse]);
+        const body = document.querySelector('body');
+        if (inverseMode) {
+            if (body) {
+                body.style.background = '#3273e6';
+            }
+        } else {
+            body.style.background = 'initial';
+        }
+        return customDecorators(Story);
+    },
     withTests({ results })
 ];
 
@@ -96,6 +113,19 @@ export const globalTypes = {
             items: [
                 { value: 'ltr', right: '⇒', title: 'LTR' },
                 { value: 'rtl', right: '⇐', title: 'RTL' }
+            ]
+        }
+    },
+    inverse: {
+        name: 'inverse',
+        description: 'inverse mode',
+        defaultValue: 'default',
+        toolbar: {
+            icon: 'mirror',
+            dynamicTitle: true,
+            items: [
+                { value: 'default', right: '◯', title: 'default' },
+                { value: 'inverse', right: '🔵', title: 'inverse' }
             ]
         }
     }
