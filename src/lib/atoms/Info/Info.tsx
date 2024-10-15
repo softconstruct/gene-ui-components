@@ -1,12 +1,18 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useMemo, KeyboardEvent } from 'react';
 import classnames from 'classnames';
-import { InfoOutline } from '@geneui/icons';
+import { InfoOutline, IconProps } from '@geneui/icons';
 
 // Components
 import Tooltip from '../../molecules/Tooltip';
 
 // Styles
 import './Info.scss';
+
+const iconSizes: Record<'small' | 'smallNudge' | 'XSmall', IconProps['size']> = {
+    small: 24,
+    smallNudge: 20,
+    XSmall: 16
+} as const;
 
 interface IInfoProps {
     /**
@@ -19,15 +25,12 @@ interface IInfoProps {
      */
     disabled?: boolean;
     /**
-     * Defines the size of the info icon. Available options: <br>
-     * - `small`: 24px
-     * - `smallNudge`: 20px (default)
-     * - `XSmall`: 16px <br>
+     * Defines the size of the info icon.<br>
      * Possible values: `small | smallNudge | XSmall`
      */
-    size?: 'small' | 'smallNudge' | 'XSmall';
+    size?: keyof typeof iconSizes;
     /**
-     * Determines the visual appearance of the info icon. Available options:<br>
+     * Determines the visual appearance of the info icon.<br>
      * Possible values: `default | brand | inverse`
      */
     appearance?: 'default' | 'brand' | 'inverse';
@@ -38,33 +41,40 @@ interface IInfoProps {
     className?: string;
 }
 
-const iconSizes = {
-    small: 24,
-    smallNudge: 20,
-    XSmall: 16
-} as const;
-
 /**
  * Info icon component used to provide additional contextual information to users. It appears as a small icon, and is placed near elements where further explanation or clarification is useful.
  */
 const Info: FC<IInfoProps> = ({ infoText, disabled, size = 'smallNudge', appearance = 'default', className }) => {
     const [alwaysShow, setAlwaysShow] = useState(false);
 
-    const keyDownHandler = () => !disabled && setAlwaysShow((prev) => !prev);
+    const keyDownHandler = (event: KeyboardEvent<HTMLButtonElement>) => {
+        if (disabled) return;
+        if (event.key === 'Enter') {
+            setAlwaysShow((prev) => !prev);
+        }
+    };
+
     const handleBlur = () => !disabled && alwaysShow && setAlwaysShow(false);
+
+    const buttonClassNames = useMemo(
+        () =>
+            classnames('info', className, {
+                [`info_appearance_${appearance}`]: appearance,
+                info_disabled: disabled
+            }),
+        [appearance, className, disabled]
+    );
 
     return (
         <Tooltip text={infoText} alwaysShow={alwaysShow} appearance={appearance === 'inverse' ? 'inverse' : 'default'}>
             <button
                 disabled={disabled}
-                className={classnames('info', className, {
-                    [`info_appearance_${appearance}`]: appearance,
-                    info_disabled: disabled
-                })}
+                aria-pressed={alwaysShow}
+                className={buttonClassNames}
                 onKeyDown={keyDownHandler}
                 onBlur={handleBlur}
             >
-                <InfoOutline className={classnames(`info__icon`)} size={iconSizes[size]} />
+                <InfoOutline className="info__icon" size={iconSizes[size]} />
             </button>
         </Tooltip>
     );

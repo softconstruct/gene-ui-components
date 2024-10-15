@@ -3,7 +3,6 @@ import { ReactWrapper, mount } from 'enzyme';
 
 // Components
 import Info, { IInfoProps } from './index';
-import { ILabelProps } from '../Label';
 import { InfoOutline } from '@geneui/icons';
 
 describe('Info ', () => {
