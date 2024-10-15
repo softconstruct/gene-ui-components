@@ -14,7 +14,7 @@ const meta: Meta<typeof Divider> = {
     component: Divider,
     argTypes: {
         appearance: args({ control: 'select', ...propCategory.appearance }),
-        isVertical: args({ control: 'boolean', ...propCategory.appearance }),
+        vertical: args({ control: 'boolean', ...propCategory.appearance }),
         Icon: args({ control: 'false', ...propCategory.content }),
         label: args({ control: 'text', ...propCategory.content }),
         labelPosition: args({ control: 'select', ...propCategory.appearance }),
@@ -24,7 +24,7 @@ const meta: Meta<typeof Divider> = {
     },
     args: {
         appearance: 'brand',
-        isVertical: false,
+        vertical: false,
         label: 'test',
         labelPosition: 'before',
         Icon: Globe,

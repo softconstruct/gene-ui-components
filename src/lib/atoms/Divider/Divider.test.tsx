@@ -14,8 +14,8 @@ describe('Divider ', () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it('renders isVertical prop correctly', () => {
-        const wrapper = setup.setProps({ isVertical: true });
+    it('renders vertical prop correctly', () => {
+        const wrapper = setup.setProps({ vertical: true });
         expect(wrapper.find('.divider').hasClass('divider_vertical')).toBeTruthy();
     });
 

@@ -18,12 +18,11 @@ interface IDividerProps {
     content?: JSX.Element;
     /**
      * Divider direction <br/>
-     * If the `isVertical` prop is `true`, the `Divider` will be displayed vertically otherwise the `Divider` will be displayed horizontally
+     * If the `vertical` prop is `true`, the `Divider` will be displayed vertically otherwise the `Divider` will be displayed horizontally
      */
-    isVertical?: boolean;
+    vertical?: boolean;
     /**
-     * Divider icon <br/>
-     * The `Icon` prop accepts a JSX element that will be displayed alongside the divider
+     * The `Icon` prop accepts a React Functional Component that will be displayed alongside the divider.
      */
     Icon?: FC<IconProps> | null;
     /**
@@ -50,11 +49,10 @@ interface IDividerProps {
 /**
  * A divider separates sections of content to establish visual rhythm and hierarchy. Combine dividers with appropriate spacing and text hierarchy to effectively organize content within your layout.
  */
-
 const Divider: FC<IDividerProps> = ({
-    appearance = 'brand',
+    appearance = 'default',
     Icon,
-    isVertical,
+    vertical,
     label,
     labelPosition = 'before',
     content,
@@ -67,19 +65,19 @@ const Divider: FC<IDividerProps> = ({
                 `divider divider_${inset ? 'inset' : 'block'} divider_color_${appearance}  `,
                 className,
                 {
-                    divider_horizontal: !isVertical,
-                    divider_vertical: isVertical,
-                    [` divider_withLabel_${labelPosition}`]: (label || Icon) && !isVertical
+                    divider_horizontal: !vertical,
+                    divider_vertical: vertical,
+                    [` divider_withLabel_${labelPosition}`]: (label || Icon) && !vertical
                 }
             )}
         >
-            {!isVertical && (
+            {!vertical && (
                 <>
                     {content && <div className="divider__element">{content}</div>}
                     {(label || Icon) && (
                         <div className="divider__label">
                             {label && <span className="divider__text ellipsis-text">{label}</span>}
-                            {Icon && <Icon className={'divider__icon'} size={20} />}
+                            {Icon && <Icon className="divider__icon" size={20} />}
                         </div>
                     )}
                 </>
