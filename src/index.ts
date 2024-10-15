@@ -35,6 +35,7 @@ export { default as LinkButton } from './lib/atoms/LinkButton/index';
 export { default as HelperText } from './lib/atoms/HelperText';
 export { default as Loader } from './lib/atoms/Loader';
 export { default as Pill } from './lib/atoms/Pill';
+export { default as Info } from './lib/atoms/Info';
 
 // Molecules
 export { Row, Col } from './lib/molecules/Grid';
