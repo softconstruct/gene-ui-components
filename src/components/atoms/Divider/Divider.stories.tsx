@@ -28,7 +28,7 @@ const meta: Meta<typeof Divider> = {
         label: 'test',
         labelPosition: 'before',
         Icon: Globe,
-        content: <Avatar Icon={<Search />} color={'slate'} />
+        content: <Avatar Icon={Search} color={'slate'} />
     }
 };
 
