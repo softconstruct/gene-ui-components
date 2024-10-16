@@ -46,7 +46,7 @@ describe('Avatar ', () => {
     });
 
     it('renders Icon prop correctly', () => {
-        const wrapper = setup.setProps({ Icon: <Square /> });
+        const wrapper = setup.setProps({ Icon: Square });
 
         expect(wrapper.find(Square)).toBeTruthy();
     });

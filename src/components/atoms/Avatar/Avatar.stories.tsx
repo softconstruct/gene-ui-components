@@ -1,12 +1,12 @@
 import React, { FC } from 'react';
 import { Meta } from '@storybook/react';
+import { Globe } from '@geneui/icons';
 
 // Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
 import Avatar, { IAvatarProps } from './index';
-import { Globe } from '@geneui/icons';
 
 const meta: Meta<typeof Avatar> = {
     title: 'Atoms/Avatar',
@@ -40,6 +40,6 @@ export const WithIcon = Template.bind({});
 
 WithIcon.args = {
     fullName: '',
-    Icon: <Globe />,
+    Icon: Globe,
     onClick: undefined
 };

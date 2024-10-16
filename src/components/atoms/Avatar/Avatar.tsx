@@ -1,9 +1,16 @@
 import React, { FC, PointerEvent, useEffect, useState, JSX, cloneElement } from 'react';
 import classNames from 'classnames';
-import { Square } from '@geneui/icons'; // TODO: replace with the person icon
+import { IconProps, Square } from '@geneui/icons'; // TODO: replace with the person icon
 
 // Styles
 import './Avatar.scss';
+
+const iconSizes: Record<'small' | 'large' | 'medium' | '6Xlarge', IconProps['size']> = {
+    small: 16,
+    large: 20,
+    medium: 20,
+    '6Xlarge': 48
+} as const;
 
 interface IAvatarProps {
     /**
@@ -18,7 +25,7 @@ interface IAvatarProps {
      * Avatar icon <br/>
      * The `Icon` prop accepts a JSX element that will be displayed as an avatar.
      */
-    Icon?: JSX.Element;
+    Icon?: React.FC<IconProps>;
     /**
      * This prop defines the width and height for the component <br/>
      * Possible values: `6Xlarge | large | medium | small`
@@ -49,12 +56,6 @@ interface IAvatarProps {
     className?: string;
 }
 
-const iconSizes = {
-    small: 16,
-    large: 20,
-    '6Xlarge': 48
-} as const;
-
 interface IAvatarWrapperProps {
     onClick?: (e: PointerEvent<HTMLButtonElement>) => void;
     children: JSX.Element;
@@ -83,7 +84,7 @@ const Avatar: FC<IAvatarProps> = ({
     onClick,
     isDisabled,
     isLoading,
-    Icon = <Square />,
+    Icon = Square, //todo need to change to User icon after releasing icons
     className
 }) => {
     const [proceedFullName, setProceedFullName] = useState(fullName);
@@ -102,12 +103,6 @@ const Avatar: FC<IAvatarProps> = ({
         );
     }, [fullName, size]);
 
-    const iconMock =
-        Icon &&
-        cloneElement(Icon, {
-            size: iconSizes[size]
-        });
-
     return isLoading ? (
         <span>skeleton</span>
     ) : (
@@ -123,7 +118,7 @@ const Avatar: FC<IAvatarProps> = ({
             ) : proceedFullName ? (
                 <span className="avatar__text">{proceedFullName}</span>
             ) : (
-                iconMock
+                Icon && <Icon className="avatar__icon" size={iconSizes[size]} />
             )}
         </AvatarWrapper>
     );
