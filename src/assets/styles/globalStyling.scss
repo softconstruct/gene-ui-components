@@ -1,5 +1,5 @@
 @import 'variables';
-@import 'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap';
 
 :root {
     --font-family: 'Open Sans', 'Arial', 'Helvetica Neue', sans-serif;
@@ -157,12 +157,6 @@ h6 {
 
 li {
     display: block;
-}
-
-.ellipsis-text {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }
 
 .capitalize-text {

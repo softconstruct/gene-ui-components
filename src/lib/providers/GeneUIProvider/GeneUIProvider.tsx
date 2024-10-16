@@ -7,6 +7,7 @@ import pgk from '../../../../package.json';
 
 // Styles
 import 'src/assets/styles/globalStyling.scss';
+import 'src/assets/styles/utils.scss';
 
 type ThemesTypes = 'light' | 'dark';
 

@@ -152,7 +152,11 @@ function ScatterChart(props) {
                     <>
                         <div className="chart-overflow-header">
                             <div className="chart-label">
-                                {label && <Label size="medium" labelText={label} />}
+                                {label && (
+                                    <Label size="body" font="bold">
+                                        {label}
+                                    </Label>
+                                )}
                                 {showValue && <Tag size="small" appearance="light" name={getDataValue(data)} />}
                             </div>
                             {visibilityResetButton && (

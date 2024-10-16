@@ -33,7 +33,10 @@ const TSComponentsList = [
     'HelperText',
     'Tooltip',
     'Label',
-    'Loader'
+    'Loader',
+    'Pill',
+    'TextLink',
+    'Info'
 ];
 
 const getInputs = (name, dir) => {
