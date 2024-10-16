@@ -30,7 +30,7 @@ interface IAvatarProps {
      */
     color?: 'neutral' | 'blue' | 'red' | 'green' | 'purple' | 'orange' | 'lagoon' | 'magenta' | 'slate';
     /**
-     * A callback function is called when the `avatar` is clicked. It receives an argument containing the event object, a mouse or keyboard event.
+     * A callback function is called when the `avatar` is clicked. It receives an argument containing the event object, a mouse or keyboard event. If onClick is not passed, the Avatar component becomes a non-interactable element.
      */
     onClick?: (e: PointerEvent<HTMLButtonElement>) => void;
     /**
