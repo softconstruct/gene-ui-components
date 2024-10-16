@@ -1,7 +1,7 @@
 {
     "name": "@geneui/components",
     "description": "The Gene UI components library designed for BI tools",
-    "version": "2.16.1",
+    "version": "2.16.3",
     "author": "SoftConstruct",
     "homepage": "https://github.com/softconstruct/gene-ui-components#readme",
     "repository": {
@@ -31,8 +31,7 @@
         "build:watch": "watch 'npm run build' ./src",
         "commit": "cross-env DISABLE_SCOPE_LOWERCASE=true git-cz",
         "changelog": "conventional-changelog -i CHANGELOG.md -s",
-        "add-lib-version-to-docs": "babel-node --config-file ./configs/.babelrc ./scripts/addVersionHistory.js",
-        "build-storybook": "npm run add-lib-version-to-docs && npm run test && storybook build",
+        "build-storybook": "npm run test && storybook build",
         "semantic-release": "semantic-release --extends ./configs/.releaserc.json --no-ci",
         "create-component": "babel-node --config-file ./configs/.babelrc ./scripts/createComponent.js",
         "find-component-usage": "babel-node --config-file ./configs/.babelrc ./scripts/findComponentUsage.js",
@@ -162,7 +161,6 @@
         "@geneui/icons": "^1.0.4",
         "@geneui/tokens": "^1.6.0-beta",
         "classnames": "^2.3.2",
-        "npm": "^9.4.1",
         "react-is": "^17.0.2"
     },
     "husky": {

@@ -275,3 +275,40 @@ body {
 #storybook-root {
     height: 100%;
 }
+
+//loading storybook dark mode
+.dark .sb-preparing-docs,
+.dark .sb-preparing-story,
+.dark .sb-nopreview {
+    background: #1a1c1d;
+}
+
+.dark .sb-previewBlock {
+    background: #222525;
+}
+
+.dark .sb-previewBlock .sb-previewBlock_icon {
+    background: rgba(235, 17, 138, 34%);
+}
+
+.dark .sb-argstableBlock tbody tr td,
+.dark .sb-argstableBlock thead tr th {
+    background: #222525;
+}
+
+.dark .sb-argstableBlock tbody tr {
+    border-color: rgba(235, 17, 138, 34%);
+}
+
+.dark .sb-argstableBlock tr td span,
+.dark .sb-argstableBlock tr th span,
+.dark .sb-argstableBlock tr td button {
+    background: rgba(235, 17, 138, 34%);
+}
+
+.dark .sb-loader {
+    background: #222525;
+    border-color: #eb118a;
+    border-top-color: #222525;
+    mix-blend-mode: lighten;
+}
