@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.3](https://github.com/softconstruct/gene-ui-components/compare/v2.16.2...v2.16.3) (2024-10-16)
+
+
+### Bug Fixes
+
+* **Holder:** closed case content interaction ([#200](https://github.com/softconstruct/gene-ui-components/issues/200)) ([e162e3a](https://github.com/softconstruct/gene-ui-components/commit/e162e3a545b91719623076e6c3a277e62831f527))
+
 ## [2.16.2](https://github.com/softconstruct/gene-ui-components/compare/v2.16.1...v2.16.2) (2024-09-20)
 
 
