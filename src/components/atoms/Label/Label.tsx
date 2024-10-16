@@ -10,6 +10,7 @@ import { useEllipsisDetection } from '../../../hooks';
 
 // Styles
 import './Label.scss';
+import Info from '../Info';
 
 interface ILabelProps {
     /**
@@ -56,8 +57,8 @@ interface ILabelProps {
 }
 
 const iconSizes = {
-    small: 16,
-    medium: 20
+    small: 'XSmall',
+    medium: 'smallNudge'
 } as const;
 
 /**
@@ -107,16 +108,7 @@ const Label: FC<ILabelProps> = ({
                                 </span>
                             )}
                         </div>
-                        {infoText && (
-                            <Tooltip text={infoText}>
-                                <InfoOutline
-                                    className={classnames(`label__icon`, {
-                                        label__icon_disabled: disabled
-                                    })}
-                                    size={iconSizes[size]}
-                                />
-                            </Tooltip>
-                        )}
+                        {infoText && <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} />}
                     </>
                 </span>
             )}
