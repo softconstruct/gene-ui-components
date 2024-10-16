@@ -83,7 +83,11 @@ function Holder({
         >
             <div className="holder-c-wrapper" ref={parentContainer}>
                 <div className="holder-wrapper" onMouseEnter={() => handleHover(true)}>
-                    <div className="holder-content">
+                    <div
+                        className={classnames('holder-content', {
+                            'holder-content-disable': !holderOpened && disableOnHover
+                        })}
+                    >
                         {title && <ModuleTitle title={title} size="extra-big" />}
                         <div className="holder-body">
                             <Scrollbar>
