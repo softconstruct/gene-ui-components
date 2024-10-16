@@ -2,6 +2,10 @@ import React, { MouseEvent } from 'react';
 import { ReactWrapper, mount } from 'enzyme';
 import { Globe } from '@geneui/icons';
 
+//@ts-ignore
+// Helpers
+import { noop } from 'utils';
+
 // Components
 import Button, { IButtonProps } from './index';
 import GeneUIProvider from '../../providers/GeneUIProvider';
@@ -10,7 +14,7 @@ describe('Button ', () => {
     let setup: ReactWrapper<IButtonProps>;
     const mockFn = jest.fn();
 
-    beforeEach(() => (setup = mount(<Button />, { wrappingComponent: GeneUIProvider })));
+    beforeEach(() => (setup = mount(<Button onClick={noop} />, { wrappingComponent: GeneUIProvider })));
 
     afterEach(() => {
         jest.clearAllMocks();
@@ -27,11 +31,11 @@ describe('Button ', () => {
 
     it('renders fullWidth prop correctly', () => {
         const wrapper = setup.setProps({ fullWidth: true });
-        expect(wrapper.find('.button').hasClass('button_full_width')).toBeTruthy();
+        expect(wrapper.find('.button').hasClass('button_fullWidth')).toBeTruthy();
     });
 
     it('renders Icon prop correctly', () => {
-        const wrapper = setup.setProps({ Icon: <Globe /> });
+        const wrapper = setup.setProps({ Icon: Globe });
         expect(wrapper.find(Globe).exists()).toBeTruthy();
     });
 
@@ -40,6 +44,7 @@ describe('Button ', () => {
         const wrapper = setup.setProps({ name });
         expect(wrapper.find('button').props().name).toBe(name);
     });
+
     it('renders onClick prop correctly', () => {
         const wrapper = setup.setProps({ onClick: mockFn });
         const event = {

@@ -16,19 +16,18 @@ const meta: Meta<typeof forwardRef<HTMLButtonElement, IButtonProps>> = {
         text: args({ control: 'text', ...propCategory.content }),
         type: args({ control: 'select', ...propCategory.appearance }),
         fullWidth: args({ control: 'boolean', ...propCategory.appearance }),
-        disabled: args({ control: 'boolean', ...propCategory.state }),
+        iconAfter: args({ control: 'boolean', ...propCategory.appearance }),
+        disabled: args({ control: 'boolean', ...propCategory.states }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
         Icon: args({ control: 'false', ...propCategory.content }),
-        name: args({ control: 'false', ...propCategory.content }),
-        onClick: args({ control: 'false', ...propCategory.action }),
-        isIconAfter: args({ control: 'boolean', ...propCategory.states }),
-        isLoading: args({ control: 'boolean', ...propCategory.states })
+        name: args({ control: 'false', ...propCategory.functionality }),
+        onClick: args({ control: 'false', ...propCategory.action })
     },
     args: {
         text: 'Button',
         appearance: 'primary',
         size: 'large',
         type: 'fill',
-        isIconAfter: false,
         isLoading: false
     }
 };
