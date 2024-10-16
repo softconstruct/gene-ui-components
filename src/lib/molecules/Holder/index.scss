@@ -158,6 +158,10 @@
     grid-template-areas: 'head' 'body' 'footer';
     overflow: hidden;
 
+    &-disable {
+        pointer-events: none;
+    }
+
     .module-header {
         grid-area: head;
     }
