@@ -83,7 +83,7 @@ const Label: FC<ILabelProps> = ({
         <label className={classnames(`label`, className)}>
             {children}
             {isLoading ? (
-                <span>skelleton</span>
+                <span>skeleton</span>
             ) : (
                 <span className="label__container">
                     <>
@@ -91,7 +91,7 @@ const Label: FC<ILabelProps> = ({
                             <Tooltip text={labelText} isVisible={isTruncated}>
                                 <span
                                     ref={labelRef}
-                                    className={classnames('ellipsis-text', `label__text label__text_size_${size}`, {
+                                    className={classnames(`label__text label__text_size_${size}`, {
                                         label__text_disabled: disabled
                                     })}
                                 >
