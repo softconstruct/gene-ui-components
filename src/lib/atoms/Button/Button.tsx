@@ -1,144 +1,154 @@
-import React, { HTMLAttributes, ReactNode, forwardRef } from 'react';
-import classnames from 'classnames';
-
-// Components
-import Icon from '../Icon';
+import React, { FC, forwardRef, MouseEvent, useMemo } from 'react';
+import classNames from 'classnames';
+import { IconProps } from '@geneui/icons';
 
 // Styles
 import './Button.scss';
 
-export interface IButtonProps extends HTMLAttributes<HTMLButtonElement> {
+//components
+import Loader, { ILoaderProps } from '../Loader';
+
+const iconSizes: Record<'large' | 'medium' | 'small' | 'XSmall', IconProps['size']> = {
+    large: 20,
+    medium: 20,
+    small: 20,
+    XSmall: 16
+} as const;
+
+interface IButtonProps {
     /**
-     * Any valid React node <br>
-     * Possible values: `ReactNode | string`
+     * Specifies the name of the `button`, which can be useful for form submission to identify which button was clicked.
      */
-    children: ReactNode | string;
+    name?: string;
     /**
-     * The way how the Button should be displayed <br/>
-     * Possible values: `default | outline | minimal | grayscale | clean`
+     * Size <br>
+     * Possible values: `large | medium | small`
      */
-    appearance?: 'default' | 'outline' | 'minimal' | 'grayscale' | 'clean';
+    size?: 'large' | 'medium' | 'small' | 'XSmall';
     /**
-     * Button size <br/>
-     * Possible values: `default | medium | big`
+     * If `true`, the `button` will stretch to occupy the full width of its container.
      */
-    size?: 'default' | 'medium' | 'big';
+    fullWidth?: boolean;
     /**
-     * How to display inscription in relation to it's parent in Button <br/>
-     * Possible values: `default | content-size | full-width`
-     */
-    flexibility?: 'default' | 'content-size' | 'full-width';
-    /**
-     * Button color <br/>
-     * Possible values: `primary | confirm | danger | default`
-     */
-    color?: 'primary' | 'confirm' | 'danger' | 'default';
-    /**
-     * Button children direction either from the start, or from the end <br/>
-     * Possible values: `start | end`
-     */
-    itemsDirection?: 'start' | 'end';
-    /**
-     * Button corner radius <br/>
-     * Possible values: `round | smooth`
-     */
-    cornerRadius?: 'round' | 'smooth';
-    /**
-     * The property will add an "Icon" as Button child. The valid values can be found in "Icon" atom <br>
-     * Possible values: `ReactNode | string`
-     */
-    icon?: ReactNode | string;
-    /**
-     * Button disabled state
+     * Indicates whether the `button` is `disabled`, preventing user interaction, focus, click etc...
      */
     disabled?: boolean;
     /**
-     * Button active state
+     * Affect form styling point of view. <br>
+     * Possible values: `fill | outline | text`
      */
-    active?: boolean;
+    displayType?: 'fill' | 'outline' | 'text';
     /**
-     * Adding shadow to button
+     * Indicates the action meaning. <br>
+     * Possible values: `primary | secondary | danger | success | inverse | transparent`
      */
-    withShadow?: boolean;
+    appearance?: 'primary' | 'secondary' | 'danger' | 'success' | 'inverse' | 'transparent';
     /**
-     * Button additional className
+     * The text will shown as content of the `button`.
+     */
+    text?: string;
+    /**
+     * The `Icon` prop accepts a React Functional Component that will be displayed alongside the button text.
+     */
+    Icon?: FC<IconProps>;
+    /**
+     * A callback function that is called when the `button` is clicked or entered. <br>
+     * It receives an argument containing the event object, which can be a mouse or keyboard event.
+     */
+    onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Icon position <br>
+     * If the prop is `true` the `Icon` will be shown after the `text` otherwise before the `text`.
+     */
+    iconAfter?: boolean;
+    /**
+     * The prop responsible for showing the loading spinner if passed `true`. The default value is `false`
+     */
+    isLoading?: boolean;
+    /**
+     * Additional class for the parent element.<br>
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    /**
-     * Button text transforms to spinner
-     */
-    loading?: boolean;
-    /**
-     * aria-label for button.
-     */
-    ariaLabel?: string;
 }
 
+interface ILoadingTypes
+    extends Record<
+        NonNullable<IButtonProps['appearance']>,
+        Record<NonNullable<IButtonProps['displayType']>, NonNullable<ILoaderProps['appearance']>>
+    > {}
+
+const loadingTypes: ILoadingTypes = {
+    primary: { fill: 'inverse', outline: 'brand', text: 'brand' },
+    secondary: { fill: 'neutral', outline: 'neutral', text: 'neutral' },
+    danger: { fill: 'inverse', outline: 'neutral', text: 'neutral' },
+    success: { fill: 'neutral', outline: 'neutral', text: 'neutral' },
+    inverse: { fill: 'neutral', outline: 'inverse', text: 'inverse' },
+    transparent: { fill: 'inverse', outline: 'inverse', text: 'inverse' }
+};
+
+/**
+ * Button initiates an action or event. Use buttons for key actions like submitting a form, saving changes, or advancing to the next step.
+ */
 const Button = forwardRef<HTMLButtonElement, IButtonProps>(
     (
         {
-            children,
-            appearance = 'default',
-            size = 'default',
-            flexibility = 'default',
-            color = 'primary',
-            cornerRadius = 'round',
-            itemsDirection = 'start',
-            icon,
-            active,
+            appearance = 'primary',
+            disabled,
+            fullWidth,
+            name,
+            size = 'medium',
+            displayType = 'fill',
+            text,
+            Icon,
+            onClick,
             className,
-            withShadow,
-            loading,
-            ariaLabel,
-            ...restProps
+            iconAfter,
+            isLoading
         }: IButtonProps,
         ref
     ) => {
-        const noChildren = !children && children !== 0;
+        const sizeIsXS = size === 'XSmall';
 
         return (
             <button
-                className={classnames(
-                    'btn',
+                ref={ref}
+                name={name}
+                type="button"
+                onClick={onClick}
+                disabled={disabled}
+                className={classNames(
+                    `button button_size_${size} 
+                    button_color_${appearance} 
+                    button_type_${displayType}`,
                     className,
-                    `a-${appearance}`,
-                    `s-${size}`,
-                    `f-${flexibility}`,
-                    `c-${color}`,
-                    `id-${itemsDirection}`,
-                    `cr-${cornerRadius}`,
                     {
-                        active,
-                        'c-icon': !!icon && noChildren,
-                        'with-shadow': withShadow,
-                        'loading-padding': !noChildren && !icon && loading
+                        button_fullWidth: fullWidth,
+                        button_icon_before: !iconAfter && Icon,
+                        button_icon_after: iconAfter && Icon,
+                        button_icon_only: (!text || sizeIsXS) && Icon,
+                        button_loading: isLoading
                     }
                 )}
-                ref={ref}
-                {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
-                {...restProps}
             >
-                {/*@ts-ignore*/}
-                {icon && (loading ? <Icon type="bc-icon-loader" /> : <Icon type={icon} />)}
-                {!noChildren &&
-                    (!icon && loading ? (
-                        <>
-                            {/*@ts-ignore*/}
-                            <Icon type="bc-icon-loader" />
-                            <span>{children}</span>
-                        </>
-                    ) : (
-                        <span className="ellipsis-text">{children}</span>
-                    ))}
-                {loading && noChildren && (
-                    <div className="btn-loader-holder">
-                        {/*@ts-ignore*/}
-                        <Icon type="bc-icon-loader" />
-                    </div>
+                {isLoading && (
+                    <Loader
+                        size="smallNudge"
+                        className="button__loader"
+                        appearance={loadingTypes[appearance][displayType]}
+                    />
                 )}
+
+                {Icon && (
+                    <span className="button__icon">
+                        <Icon size={iconSizes[size]} />
+                    </span>
+                )}
+
+                {text && !sizeIsXS && <span className="button__text">{text}</span>}
             </button>
         );
     }
 );
 
-export default Button;
+export { IButtonProps, Button as default };
