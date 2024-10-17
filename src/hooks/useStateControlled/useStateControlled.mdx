@@ -1,0 +1,78 @@
+import { Markdown, Meta } from '@storybook/blocks';
+import useStateControlled from './useStateControlled';
+
+<Meta title="Hooks/useStateControlled" />
+
+<div style={{ paddingInlineStart: '20px' }}>
+
+## useStateControlled
+
+This hook helps manage a component's state, supporting both controlled and uncontrolled modes. It simplifies scenarios where a component can be controlled externally via props or manage its state internally.
+
+#### Parameters
+
+-   **`controlledValue`**: The external value that controls the component's state. If provided, the component is in controlled mode, and this value determines the state.
+
+-   **`defaultValue`**: The default value used when the component is in uncontrolled mode (i.e., when `controlledValue` is `undefined`). This value initializes the state internally.
+
+#### Returns
+
+-   **`state`**: The current state value, which can either reflect the `controlledValue` if provided or the internally managed state in uncontrolled mode.
+
+-   **`setState`**: A function to update the state. In uncontrolled mode, this updates the internal state, while in controlled mode, it typically won't be used (since the parent controls the state).
+
+#### Usage
+
+This example demonstrates how `useStateControlled` can be used in both controlled and uncontrolled scenarios. We create two toggle components: one that manages its state internally (uncontrolled) and another that is controlled by a parent component.
+
+```tsx
+import React, { FC, useState } from 'react';
+import { useStateControlled } from '@geneui/hooks';
+
+// Uncontrolled toggle component using internal state
+const UncontrolledToggle: FC = () => {
+    const [isToggled, setIsToggled] = useStateControlled(undefined, false); // Uncontrolled mode
+
+    return (
+        <div>
+            <p>{isToggled ? 'Toggled ON' : 'Toggled OFF'}</p>
+            <button onClick={() => setIsToggled((prev) => !prev)}>
+                {isToggled ? 'Turn OFF' : 'Turn ON'}
+            </button>
+        </div>
+    );
+};
+
+// Controlled toggle component, where the state is passed from a parent component
+const ControlledToggle: FC<{ isToggled: boolean, onToggle: (value: boolean) => void }> = ({ isToggled, onToggle }) => {
+    const [state] = useStateControlled(isToggled, false); // Controlled mode
+
+    return (
+        <div>
+            <p>{state ? 'Toggled ON' : 'Toggled OFF'}</p>
+            <button onClick={() => onToggle(!state)}>
+                {state ? 'Turn OFF' : 'Turn ON'}
+            </button>
+        </div>
+    );
+};
+
+// Parent component managing the controlled state
+const ParentComponent: FC = () => {
+    const [isToggled, setIsToggled] = useState(false);
+
+    return (
+        <div>
+            <h3>Controlled Toggle</h3>
+            <ControlledToggle isToggled={isToggled} onToggle={setIsToggled} />
+
+            <h3>Uncontrolled Toggle</h3>
+            <UncontrolledToggle />
+        </div>
+    );
+};
+
+export default ParentComponent;
+```
+
+</div>

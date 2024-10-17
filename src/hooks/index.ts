@@ -17,4 +17,5 @@ export { default as useDidMount } from './useDidMount';
 export { default as useBodyScroll } from './useBodyScroll';
 export { default as useImgDownload } from './useImgDownload';
 export { default as useEllipsisDetection } from './useEllipsisDetection';
+export { default as useStateControlled } from './useStateControlled';
 export { default as useHover } from './useHover';
