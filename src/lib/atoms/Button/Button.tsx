@@ -1,10 +1,19 @@
-import React, { FC, forwardRef, MouseEvent } from 'react';
+import React, { FC, forwardRef, MouseEvent, useMemo } from 'react';
 import classNames from 'classnames';
 import { IconProps } from '@geneui/icons';
 
 // Styles
 import './Button.scss';
-import Loader from '../Loader';
+
+//components
+import Loader, { ILoaderProps } from '../Loader';
+
+const iconSizes: Record<'large' | 'medium' | 'small' | 'XSmall', IconProps['size']> = {
+    large: 20,
+    medium: 20,
+    small: 20,
+    XSmall: 16
+} as const;
 
 interface IButtonProps {
     /**
@@ -15,7 +24,7 @@ interface IButtonProps {
      * Size <br>
      * Possible values: `large | medium | small`
      */
-    size?: 'large' | 'medium' | 'small';
+    size?: 'large' | 'medium' | 'small' | 'XSmall';
     /**
      * If `true`, the `button` will stretch to occupy the full width of its container.
      */
@@ -28,7 +37,7 @@ interface IButtonProps {
      * Affect form styling point of view. <br>
      * Possible values: `fill | outline | text`
      */
-    type?: 'fill' | 'outline' | 'text';
+    displayType?: 'fill' | 'outline' | 'text';
     /**
      * Indicates the action meaning. <br>
      * Possible values: `primary | secondary | danger | success | inverse | transparent`
@@ -57,10 +66,26 @@ interface IButtonProps {
      */
     isLoading?: boolean;
     /**
-     * Additional className
+     * Additional class for the parent element.<br>
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
 }
+
+interface ILoadingTypes
+    extends Record<
+        NonNullable<IButtonProps['appearance']>,
+        Record<NonNullable<IButtonProps['displayType']>, NonNullable<ILoaderProps['appearance']>>
+    > {}
+
+const loadingTypes: ILoadingTypes = {
+    primary: { fill: 'inverse', outline: 'brand', text: 'brand' },
+    secondary: { fill: 'neutral', outline: 'neutral', text: 'neutral' },
+    danger: { fill: 'inverse', outline: 'neutral', text: 'neutral' },
+    success: { fill: 'neutral', outline: 'neutral', text: 'neutral' },
+    inverse: { fill: 'neutral', outline: 'inverse', text: 'inverse' },
+    transparent: { fill: 'inverse', outline: 'inverse', text: 'inverse' }
+};
 
 /**
  * Button initiates an action or event. Use buttons for key actions like submitting a form, saving changes, or advancing to the next step.
@@ -73,23 +98,17 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             fullWidth,
             name,
             size = 'medium',
-            type = 'fill',
+            displayType = 'fill',
             text,
             Icon,
             onClick,
-            className = '',
+            className,
             iconAfter,
             isLoading
         }: IButtonProps,
         ref
     ) => {
-        const loadingTypes = {
-            primary: 'inverse',
-            secondary: 'neutral',
-            danger: 'neutral',
-            success: 'neutral',
-            transparent: 'inverse'
-        };
+        const sizeIsXS = size === 'XSmall';
 
         return (
             <button
@@ -97,29 +116,36 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 name={name}
                 type="button"
                 onClick={onClick}
+                disabled={disabled}
                 className={classNames(
-                    `button button_size_${size} button_color_${appearance} button_type_${type} ${className}`,
+                    `button button_size_${size} 
+                    button_color_${appearance} 
+                    button_type_${displayType}`,
+                    className,
                     {
                         button_fullWidth: fullWidth,
-                        button_icon_before: !iconAfter,
-                        button_icon_after: iconAfter,
-                        button_icon_only: !text,
+                        button_icon_before: !iconAfter && Icon,
+                        button_icon_after: iconAfter && Icon,
+                        button_icon_only: (!text || sizeIsXS) && Icon,
                         button_loading: isLoading
                     }
                 )}
-                disabled={disabled}
             >
                 {isLoading && (
-                    <Loader size="smallNudge" className="button__loader" appearance={loadingTypes[appearance]} />
+                    <Loader
+                        size="smallNudge"
+                        className="button__loader"
+                        appearance={loadingTypes[appearance][displayType]}
+                    />
                 )}
 
                 {Icon && (
                     <span className="button__icon">
-                        <Icon size={16} />
+                        <Icon size={iconSizes[size]} />
                     </span>
                 )}
 
-                {text && <span className="button__text ellipsis-text">{text}</span>}
+                {text && !sizeIsXS && <span className="button__text">{text}</span>}
             </button>
         );
     }

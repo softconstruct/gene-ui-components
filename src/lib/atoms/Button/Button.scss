@@ -5,7 +5,7 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    max-width: 100%;
+    min-width: max-content;
     cursor: pointer;
     user-select: none;
 
@@ -307,23 +307,28 @@
                 padding-top: var(--guit-ref-spacing-small);
                 padding-bottom: var(--guit-ref-spacing-small);
             }
+
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
                 min-width: var(--guit-sem-dimension-width-2xlarge);
                 padding-inline-start: var(--guit-ref-spacing-large);
                 padding-inline-end: var(--guit-ref-spacing-large);
             }
+
             &#{ $this }_icon_before,
             &#{ $this }_icon_after {
                 min-width: var(--guit-sem-dimension-width-5xlarge);
             }
+
             &#{ $this }_icon_before {
                 padding-inline-start: var(--guit-ref-spacing-medium);
                 padding-inline-end: var(--guit-ref-spacing-large);
             }
+
             &#{ $this }_icon_after {
                 padding-inline-start: var(--guit-ref-spacing-large);
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
+
             &#{ $this }_icon_only {
                 min-width: var(--guit-sem-dimension-width-large);
                 padding: var(--guit-ref-spacing-small);
@@ -339,23 +344,28 @@
                 padding-top: var(--guit-ref-spacing-2xsmall);
                 padding-bottom: var(--guit-ref-spacing-2xsmall);
             }
+
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
                 min-width: var(--guit-sem-dimension-width-2xlarge);
                 padding-inline-start: var(--guit-ref-spacing-medium);
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
+
             &#{ $this }_icon_before,
             &#{ $this }_icon_after {
                 min-width: var(--guit-sem-dimension-width-3xlarge);
             }
+
             &#{ $this }_icon_before {
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
+
             &#{ $this }_icon_after {
                 padding-inline-start: var(--guit-ref-spacing-medium);
                 padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
+
             &#{ $this }_icon_only {
                 min-width: var(--guit-sem-dimension-width-medium);
                 padding: var(--guit-ref-spacing-2xsmall);
@@ -371,30 +381,30 @@
                 padding-top: var(--guit-ref-spacing-4xsmall);
                 padding-bottom: var(--guit-ref-spacing-4xsmall);
             }
+
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
                 min-width: var(--guit-sem-dimension-width-2xlarge);
                 padding-inline-start: var(--guit-ref-spacing-medium);
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
-            &#{ $this }_icon_before,
-            &#{ $this }_icon_after {
-                min-width: var(--guit-sem-dimension-width-3xlarge);
-            }
+
             &#{ $this }_icon_before {
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
+
             &#{ $this }_icon_after {
                 padding-inline-start: var(--guit-ref-spacing-medium);
                 padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
+
             &#{ $this }_icon_only {
                 min-width: var(--guit-sem-dimension-width-small);
                 padding: var(--guit-ref-spacing-4xsmall);
             }
         }
 
-        &_Xsmall {
+        &_XSmall {
             height: var(--guit-sem-dimension-height-small-nudge);
             border-radius: var(--guit-ref-radius-4xsmall);
 
@@ -413,6 +423,7 @@
         #{ $this }__loader {
             visibility: visible;
         }
+
         #{ $this }__text,
         #{ $this }__icon {
             visibility: hidden;

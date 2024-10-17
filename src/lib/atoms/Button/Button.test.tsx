@@ -45,7 +45,7 @@ describe('Button ', () => {
         expect(wrapper.find('button').props().name).toBe(name);
     });
 
-    it('renders onClick prop correctly', () => {
+    it("handles user's click", () => {
         const wrapper = setup.setProps({ onClick: mockFn });
         const event = {
             currentTarget: {
@@ -56,27 +56,28 @@ describe('Button ', () => {
         expect(mockFn).toHaveBeenCalledWith(event);
     });
 
-    it.each<IButtonProps['size']>(['large', 'medium', 'small'])(
-        'checking a component with a prop size : %p',
-        (size) => {
-            const wrapper = setup.setProps({ size });
-            expect(wrapper.find('.button').hasClass(`button_size_${size}`)).toBeTruthy();
-        }
-    );
+    it.each<IButtonProps['size']>(['large', 'medium', 'small', 'XSmall'])('should have %s size', (size) => {
+        const wrapper = setup.setProps({ size });
+        expect(wrapper.find('.button').hasClass(`button_size_${size}`)).toBeTruthy();
+    });
 
     it.each<IButtonProps['appearance']>(['primary', 'secondary', 'danger', 'success', 'inverse', 'transparent'])(
-        'checking a component with a prop loaderColor : %p ',
+        'should have %s appearance',
         (appearance) => {
             const wrapper = setup.setProps({ appearance });
             expect(wrapper.find('.button').hasClass(`button_color_${appearance}`)).toBeTruthy();
         }
     );
 
-    it.each<IButtonProps['type']>(['fill', 'outline', 'text'])(
-        'checking a component with a prop type : %p ',
-        (type) => {
-            const wrapper = setup.setProps({ type });
-            expect(wrapper.find('.button').hasClass(`button_type_${type}`)).toBeTruthy();
-        }
-    );
+    it.each<IButtonProps['displayType']>(['fill', 'outline', 'text'])('should have %s displayType', (displayType) => {
+        const wrapper = setup.setProps({ displayType });
+        expect(wrapper.find('.button').hasClass(`button_type_${displayType}`)).toBeTruthy();
+    });
+
+    it('renders className prop correctly', () => {
+        const className = 'test-class';
+        const wrapper = setup.setProps({ className });
+
+        expect(wrapper.hasClass(className)).toBeTruthy();
+    });
 });
