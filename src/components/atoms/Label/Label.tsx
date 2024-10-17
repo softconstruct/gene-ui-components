@@ -91,7 +91,7 @@ const Label: FC<ILabelProps> = ({
                             <Tooltip text={labelText} isVisible={isTruncated}>
                                 <span
                                     ref={labelRef}
-                                    className={classnames(`label__text label__text_size_${size}`, {
+                                    className={classnames(`ellipsis-text label__text label__text_size_${size}`, {
                                         label__text_disabled: disabled
                                     })}
                                 >
