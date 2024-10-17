@@ -1,10 +1,17 @@
+// For banner need to change @media queries!!!!
+
 .banner {
     $this: &;
 
     display: flex;
-    align-items: center;
-    gap: var(--guit-ref-spacing-large);
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--guit-ref-spacing-xsmall);
     padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-large);
+
+    @media screen and (max-width: 1024px) {
+        gap: var(--guit-sem-spacing-medium);
+    }
 
     &_state {
         &_informative,
@@ -33,24 +40,24 @@
         }
     }
 
-    &__content,
-    &__actions {
-        display: flex;
-        align-items: center;
-        gap: var(--guit-ref-spacing-xsmall);
-    }
-
     &__content {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--guit-ref-spacing-xsmall);
         flex: 1;
         min-width: 0;
     }
 
     &__actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--guit-ref-spacing-xsmall);
         flex: 0 0 auto;
-    }
 
-    &__icon {
-        flex: 0 0 auto;
+        @media screen and (max-width: 1024px) {
+            width: 100%;
+            order: 3;
+        }
     }
 
     &__text {
@@ -58,8 +65,10 @@
         font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
         font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
         line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+    }
+
+    &__icon,
+    &__button {
+        flex: 0 0 auto;
     }
 }
