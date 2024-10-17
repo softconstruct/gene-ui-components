@@ -39,11 +39,16 @@ const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => 
 
     return `
         import React${isWithForwardRef ? ', { forwardRef }' : ', { FC }'} from 'react';
-
+        import classNames from 'classnames';
         // Styles
         import './${name}.scss';
         
         interface ${InterfaceName} {
+                /**
+                * Additional class for the parent element.
+                * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+                */
+                className?: string;
             ${
                 props.length
                     ? `${props.map(
@@ -60,9 +65,9 @@ const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => 
         ${description ? `/** \n* ${description}\n*/` : ''}
         const ${name}${!isWithForwardRef ? `: FC<${InterfaceName}>` : ''} = ${
         isWithForwardRef ? `forwardRef<unknown , ${InterfaceName}>((` : '('
-    }${props.length ? `{${[...props]}} ${isWithForwardRef ? `:${InterfaceName}` : ''}` : 'props'}
+    }${props.length ? `{${[...props]}, className} ${isWithForwardRef ? `:${InterfaceName}` : ''}` : '{ className }'}
         ${isWithForwardRef ? ', ref' : ''}) => {
-            return <div className="${firstLetterCase(name, false)}">
+            return <div className={classNames("${firstLetterCase(name, false)}", className)}>
                 ${name}
             </div>
         }${isWithForwardRef ? ')' : ''};
@@ -88,6 +93,7 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
             title: '${firstLetterCase(level)}/${name}',
             component: ${name},
             argTypes: {
+                className: args({ control: 'false', ...propCategory.appearance }),
                  ${
                      props.length
                          ? `${props.map(
@@ -177,6 +183,13 @@ const generateCmpTestTemplate = ({ name, portal }) => {
 
                 it('renders without crashing', () => {
                     expect(setup.exists()).toBeTruthy();
+                });
+                
+                it('renders className prop correctly', () => {
+                    const className = 'test-class';
+                    const wrapper = setup.setProps({ className });
+
+                    expect(wrapper.hasClass(className)).toBeTruthy();
                 });
 
                 // Your tests here

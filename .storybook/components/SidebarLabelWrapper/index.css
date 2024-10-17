@@ -37,115 +37,17 @@ button[data-action='collapse-root'] {
     max-height: 16px;
 }
 
-/*******************************************/
-/*version option select*/
-/******************************************/
-/*this .sto-80pces is for sidebar container height⬇️*/
-.sto-80pces {
-    min-height: 100%;
+/*loading storybook dark mode*/
+.dark #preview-loader {
+    background: #1a1c1d;
+    border-color: #eb118a;
+    border-top-color: #1a1c1d;
+    mix-blend-mode: lighten;
+}
+.dark .css-mzrf51 {
+    background: #1a1c1d;
 }
 
-.versions {
-    position: absolute;
-    bottom: 29px;
-    background: #f6f9fc;
-    width: 88%;
-    box-shadow: 1px -5px 31px 0 rgba(0, 0, 0, 0.1);
-    z-index: 9999999;
-}
-.dark .versions {
-    background: #2f2f2f;
-}
-.versions:before {
-    content: '';
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    outline: 10px solid #f6f9fc;
-    box-shadow: -1px 44px 0 44px #f6f9fc;
-}
-
-.dark .versions:before {
-    outline-color: #2f2f2f;
-    box-shadow: -1px 44px 0 44px #2f2f2f;
-}
-
-.versions:after {
-    content: '';
-    -webkit-mask-image: url('../../assets/arrow-down.svg');
-    mask-image: url('../../assets/arrow-down.svg');
-    height: 12px;
-    width: 12px;
-    margin-left: 4px;
-    position: absolute;
-    top: 40px;
-    right: 10px;
-    z-index: 8888;
-    background-color: #535353;
-    pointer-events: none;
-}
-
-.dark .versions:after {
-    background-color: #e5e2e2;
-}
-
-.versions__select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    -ms-appearance: none;
-    appearance: none;
-    border: 1px solid transparent;
-    box-sizing: border-box;
-    display: block;
-    margin: 10px 0 0 0;
-    padding: 5px 10px;
-    font-size: 13px;
-    position: relative;
-    width: 100%;
-    color: var(--background-sc);
-    border-radius: 4px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0 0 0 1px;
-    line-height: 20px;
-    font-family: inherit;
-    border-collapse: collapse;
-    border-spacing: 0;
-    outline: none;
-    background: #ffffff;
-    max-height: 30px;
-}
-
-.dark .versions__select {
-    background: #3f3f3f;
-}
-
-.versions__select:focus {
-    border: 1px solid #e90789;
-}
-
-.versions__label {
-    color: rgb(153, 153, 153);
-    font-weight: 900;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-}
-.versions__label:before {
-    content: '';
-    position: absolute;
-    height: 100%;
-    width: calc(100% + 40px);
-    transform: translateX(-20px);
-    top: -10px;
-    left: 0;
-    border-top: 1px solid #dde0e2;
-}
-.dark .versions__label:before {
-    border-color: #404040;
-}
-
-#storybook-explorer-menu {
-    margin-bottom: 100px;
-}
 /*******************************************/
 /*addons icons change and display none*/
 /******************************************/
