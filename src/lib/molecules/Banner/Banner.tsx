@@ -1,76 +1,61 @@
-import React, { FC, useState } from 'react';
-import classNames from 'classnames';
+import React, { FC } from 'react';
 
-import { WarningOutline, InfoOutline, ErrorAlertOutline } from '@geneui/icons';
+import { WarningOutline, InfoOutline, ErrorAlertOutline, IconProps } from '@geneui/icons';
+
+// Hooks
+import { useStateControlled } from '../../../hooks';
 
 // Styles
 import './Banner.scss';
 
 interface IBannerProps {
     /**
-     * Title of the banner
+     * Text of the banner
      */
-    title: string;
+    text: string;
     /**
      * Type of banner <br/>
      * Possible values: `informational | warning | error`
      */
     type?: 'informational' | 'warning' | 'error';
     /**
-     * If pass `isVisible` property then component will become controlled, otherwise it is uncontrolled <br/>
-     * If `isVisible=true` then it will be shown, and to hide it you will need to pass `isVisible=false` <br/>
-     * If don't pass `isVisible` at all component will be shown until close button is pressed
+     * Determines is component works with their internal state or the state should be controlled from parent component
      */
-    isVisible?: Boolean;
+    visible?: boolean;
     /**
-     * Callback which calls when close button is pressed
+     * Callback which calls when close button is pressed, in case of controlled mode the hide function should be controlled from parent using this function
      */
     onClose?: () => void;
 }
 
-const getIconComponent = (type: IBannerProps['title']) => {
-    switch (type) {
-        case 'error':
-            return ErrorAlertOutline;
-        case 'warning':
-            return WarningOutline;
-        default:
-            return InfoOutline;
-    }
-};
+const typeIcons: Record<Exclude<IBannerProps['type'], undefined>, React.FC<IconProps>> = {
+    error: ErrorAlertOutline,
+    warning: WarningOutline,
+    informational: InfoOutline
+} as const;
 
 /**
  * Banner component is a prominent, horizontally-oriented message box designed to capture the user's attention and convey important information across the top of a page. It is used for announcements, alerts, promotions, or updates that need to be immediately visible to users.
  */
-const Banner: FC<IBannerProps> = ({ type = 'informational', title, isVisible, onClose }) => {
-    const [isOpen, setIsOpen] = useState(true);
-    const isUncontrolled = isVisible === undefined;
+const Banner: FC<IBannerProps> = ({ type = 'informational', text, visible, onClose }) => {
+    const [isOpen, setIsOpen] = useStateControlled(visible, true);
 
     const close = () => {
-        if (isUncontrolled) {
-            setIsOpen(false);
-        }
+        setIsOpen(false);
         onClose?.();
     };
 
-    if (isVisible === false || !isOpen) {
+    if (!isOpen) {
         return null;
     }
 
-    const Icon = getIconComponent(type);
+    const Icon = typeIcons[type];
 
     return (
-        <div
-            className={classNames({
-                'banner banner_state_informative': type === 'informational',
-                'banner banner_state_warning': type === 'warning',
-                'banner banner_state_error': type === 'error'
-            })}
-        >
-            {/* there are following states banner_state_informative // banner_state_warning // banner_state_error */}
+        <div className={`banner banner_state_${type}`}>
             <div className="banner__content">
                 <Icon className="banner__icon" />
-                <p className="banner__text">{title}</p>
+                <p className="banner__text">{text}</p>
             </div>
             <div className="banner__actions"></div>
         </div>

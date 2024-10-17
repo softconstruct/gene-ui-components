@@ -7,7 +7,7 @@
     padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-large);
 
     &_state {
-        &_informative,
+        &_informational,
         &_error {
             #{ $this }__icon,
             #{ $this }__text {
@@ -15,7 +15,7 @@
             }
         }
 
-        &_informative {
+        &_informational {
             background-color: var(--guit-sem-color-background-brand-2);
         }
 

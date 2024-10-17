@@ -4,22 +4,22 @@ import { ReactWrapper, mount } from 'enzyme';
 // Components
 import Banner, { IBannerProps } from './index';
 
-const title = 'Title';
+const text = 'Title';
 
 describe('Banner ', () => {
     let setup: ReactWrapper<IBannerProps>;
-    beforeEach(() => (setup = mount(<Banner title={title} />)));
+    beforeEach(() => (setup = mount(<Banner text={text} type="informational" />)));
 
     it('renders without crashing', () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it('renders title', () => {
-        expect(setup.find('.banner__text').text()).toEqual(title);
+    it('renders text', () => {
+        expect(setup.find('.banner__text').text()).toEqual(text);
     });
 
-    it('renders type informative', () => {
-        expect(setup.find('.banner_state_informative').exists()).toBeTruthy();
+    it('renders type informational', () => {
+        expect(setup.find('.banner_state_informational').exists()).toBeTruthy();
     });
 
     it('renders type warning', () => {
@@ -33,7 +33,8 @@ describe('Banner ', () => {
     });
 
     it('should not be visible', () => {
-        const wrapper = setup.setProps({ isVisible: false });
+        const wrapper = setup.setProps({ visible: false });
+        wrapper.update();
         expect(wrapper.find('.banner').exists()).toBeFalsy();
     });
 });

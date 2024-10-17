@@ -11,18 +11,15 @@ const meta: Meta<typeof Banner> = {
     title: 'Molecules/Banner',
     component: Banner,
     argTypes: {
-        title: args({ control: 'text', ...propCategory.content }),
+        text: args({ control: 'text', ...propCategory.content }),
         type: args({ control: 'select', ...propCategory.appearance }),
-        isVisible: args({ control: 'boolean', ...propCategory.functionality }),
+        visible: args({ control: 'boolean', ...propCategory.functionality }),
         onClose: args({ control: false, ...propCategory.action })
     },
     args: {
-        title: 'Description text goes here.',
+        text: 'Description text goes here.',
         type: 'informational'
-    } as IBannerProps,
-    parameters: {
-        chromatic: { disableSnapshot: true }
-    }
+    } as IBannerProps
 };
 
 export default meta;
