@@ -31,8 +31,7 @@ const messages = {
 
 let prettierConfig;
 
-const pathToLib = ['..', 'src', 'lib'];
-const pathToChromaticStories = ['..', 'stories', 'chromatic'];
+const pathToComponents = ['..', 'src', 'components'];
 
 const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => {
     const InterfaceName = `I${name}Props`;
@@ -113,10 +112,7 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
                           )}`
                         : `// fill ${name} component args`
                 }
-            } as ${InterfaceName},
-            parameters: {
-                chromatic: { disableSnapshot: true }
-            }
+            } as ${InterfaceName}
         };
         
         export default meta;
@@ -128,39 +124,6 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
         Default.args = {} as ${InterfaceName};
         `;
 };
-
-const generateCmpStoryTemplateForChromatic = ({ name, level }) => `
-        import React, { FC } from 'react';
-        import { Meta } from '@storybook/react';
-
-        // Helpers
-        import { VariantsStoryGrid } from '../assets/storybook.globals';
-        
-        // Components
-        import ${name} from '../../src/lib/${level}/${name}';
-        
-        const meta: Meta<typeof ${name}> = {
-            title: 'Chromatic/${name}',
-            component: ${name}
-        };
-        
-        export default meta;
-        
-        const variants = [{
-            //all posible props
-        },{
-            //for all variants
-        }]
-        
-        export const Template = () => {
-            return (
-                <VariantsStoryGrid>
-                    {variants.map((variant, index) => {
-                        return <${name} {...variant} key={index} />;
-                    })}
-                </VariantsStoryGrid>
-            );
-        };`;
 
 const generateCmpTestTemplate = ({ name, portal }) => {
     const beforeEach = portal
@@ -236,9 +199,9 @@ const askQuestions = () => {
                     return false;
                 }
 
-                const atoms = await fs.readdir(path.join(__dirname, ...pathToLib, 'atoms'));
-                const molecules = await fs.readdir(path.join(__dirname, ...pathToLib, 'molecules'));
-                const organisms = await fs.readdir(path.join(__dirname, ...pathToLib, 'organisms'));
+                const atoms = await fs.readdir(path.join(__dirname, ...pathToComponents, 'atoms'));
+                const molecules = await fs.readdir(path.join(__dirname, ...pathToComponents, 'molecules'));
+                const organisms = await fs.readdir(path.join(__dirname, ...pathToComponents, 'organisms'));
 
                 const components = [...atoms, ...molecules, ...organisms];
 
@@ -337,7 +300,7 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
             files,
             ...restData
         });
-        const cmpDir = path.join(__dirname, ...pathToLib, level, name);
+        const cmpDir = path.join(__dirname, ...pathToComponents, level, name);
 
         // Create component folder
         await fs.mkdir(cmpDir);
@@ -374,7 +337,7 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
 
 const addExports = async ({ level, name }) => {
     try {
-        const cmpDir = path.join(__dirname, ...pathToLib, `${level}`, `${name}`);
+        const cmpDir = path.join(__dirname, ...pathToComponents, `${level}`, `${name}`);
         const indexContent = `export { I${name}Props, default as default } from './${name}';`;
 
         await fs.writeFile(`${cmpDir}/index.tsx`, indexContent, { flag: 'a+' });
@@ -394,28 +357,8 @@ const createStoryFiles = async ({ name, level, props }) => {
             props
         });
 
-        const storyDir = path.join(__dirname, ...pathToLib, level, name);
+        const storyDir = path.join(__dirname, ...pathToComponents, level, name);
         const storyPath = path.join(storyDir, `${name}.stories.tsx`);
-        const formattedData = prettier.format(storyCode, { ...prettierConfig, parser: 'typescript' });
-
-        await fs.appendFile(storyPath, formattedData);
-    } catch (error) {
-        return {
-            hasError: true,
-            error
-        };
-    }
-};
-
-const createStoryFileForChromatic = async ({ name, level }) => {
-    try {
-        const storyCode = generateCmpStoryTemplateForChromatic({
-            name,
-            level
-        });
-
-        const storyDir = path.join(__dirname, ...pathToChromaticStories);
-        const storyPath = path.join(storyDir, `${name}.chromatic.stories.tsx`);
         const formattedData = prettier.format(storyCode, { ...prettierConfig, parser: 'typescript' });
 
         await fs.appendFile(storyPath, formattedData);
@@ -434,29 +377,9 @@ const createTestFiles = async ({ name, level, portal }) => {
             portal
         });
 
-        const testDir = path.join(__dirname, ...pathToLib, `${level}`, `${name}`, `${name}.test.tsx`);
+        const testDir = path.join(__dirname, ...pathToComponents, `${level}`, `${name}`, `${name}.test.tsx`);
         const formattedData = prettier.format(srcCode, { ...prettierConfig, parser: 'typescript' });
         await fs.writeFile(testDir, formattedData);
-    } catch (error) {
-        return {
-            hasError: true,
-            error
-        };
-    }
-};
-
-const addTsInRollup = async ({ name }) => {
-    try {
-        const rollupPath = path.join(__dirname, '..', 'configs', 'rollup.config.js');
-        const data = await fs.readFile(rollupPath, 'utf-8');
-        const regex = /const TSComponentsList = \[(.*?)\]/s;
-        const [match] = data.match(regex);
-        let dataForReplace = '';
-        if (match) {
-            dataForReplace = match.replace(']', `, '${name}']`);
-        }
-        const newData = data.replace(match, dataForReplace);
-        await fs.writeFile(rollupPath, prettier.format(newData, prettierConfig));
     } catch (error) {
         return {
             hasError: true,
@@ -482,7 +405,7 @@ const addGlobalExportToIndexTs = async ({ level, name }) => {
         const match = data.match(regex)?.[0];
 
         if (match) {
-            const exportStatement = `export { default as ${name} } from './lib/${level}/${name}';`;
+            const exportStatement = `export { default as ${name} } from './components/${level}/${name}';`;
             const lastIndex = match.lastIndexOf(';');
             if (lastIndex !== -1) {
                 const beforeSeparator = match.substring(0, lastIndex + 1);
@@ -514,18 +437,13 @@ const main = async () => {
     const componentCreationResult = await createComponentFiles(answers);
     const exportsAddingResult = await addExports(answers);
     const storyCreationResult = await createStoryFiles(answers);
-    const storyForChromaticCreationResult = await createStoryFileForChromatic(answers);
     const testCreationResult = await createTestFiles(answers);
     const addGlobalExportResult = await addGlobalExportToIndexTs(answers);
-    // todo remove addTsInRollup after fix
-    const tsInRollupResult = await addTsInRollup(answers);
 
     if (
         componentCreationResult?.hasError ||
         exportsAddingResult?.hasError ||
         storyCreationResult?.hasError ||
-        storyForChromaticCreationResult?.hasError ||
-        tsInRollupResult?.hasError ||
         testCreationResult?.hasError ||
         addGlobalExportResult?.hasError
     ) {
@@ -533,8 +451,6 @@ const main = async () => {
             componentCreationResult?.error ||
             exportsAddingResult?.error ||
             storyCreationResult?.error ||
-            storyForChromaticCreationResult?.error ||
-            tsInRollupResult?.error ||
             testCreationResult?.error ||
             addGlobalExportResult?.error;
         spinner.fail(messages.ERROR(errorMessage));
