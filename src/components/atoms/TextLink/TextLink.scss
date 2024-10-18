@@ -2,12 +2,9 @@
     $this: &;
 
     display: inline-flex;
-    align-items: center;
-    flex-direction: row;
-    gap: var(--guit-ref-spacing-3xsmall);
     border-radius: var(--guit-ref-radius-4xsmall);
     cursor: pointer;
-    user-select: none;
+    word-break: break-word;
 
     &_underline {
         #{ $this }__text {
@@ -78,16 +75,20 @@
         }
     }
 
-    &_iconBefore {
-        flex-direction: row-reverse;
-    }
-
     &__text {
         color: inherit;
-        text-transform: capitalize;
     }
 
     &__icon {
         flex: 0 0 auto;
+        vertical-align: middle;
+
+        &_before {
+            margin-inline-end: var(--guit-ref-spacing-3xsmall);
+        }
+
+        &_after {
+            margin-inline-start: var(--guit-ref-spacing-3xsmall);
+        }
     }
 }

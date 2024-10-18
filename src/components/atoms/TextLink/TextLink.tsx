@@ -95,15 +95,17 @@ const TextLink: FC<ITextLinkProps> = ({
                 rel={rel}
                 className={classNames(`textLink textLink_color_${appearance}`, className, {
                     textLink_underline: underline,
-                    textLink_disabled: disabled,
-                    textLink_iconBefore: iconBefore
+                    textLink_disabled: disabled
                 })}
                 href={href}
                 onClick={onClick}
                 {...(disabled && { tabIndex: -1 })}
             >
-                <span className="textLink__text">{text}</span>
-                {Icon && <Icon className="textLink__icon" size={20} />}
+                <span className="textLink__text">
+                    {Icon && iconBefore && <Icon className="textLink__icon textLink__icon_before" size={20} />}
+                    {text}
+                    {Icon && !iconBefore && <Icon className="textLink__icon textLink__icon_after" size={20} />}
+                </span>
             </a>
         )}
     </>

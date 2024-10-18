@@ -27,8 +27,11 @@ describe('TextLink', () => {
     });
 
     it('renders iconBefore prop correctly', async () => {
-        const wrapper = setup.setProps({ iconBefore: true });
-        expect(wrapper.find('.textLink_iconBefore').exists()).toBeTruthy();
+        const wrapper = setup.setProps({ iconBefore: true, Icon: Globe });
+        expect(wrapper.find('.textLink__icon_before').exists()).toBeTruthy();
+
+        const wrapperAfter = setup.setProps({ iconBefore: false, Icon: Globe });
+        expect(wrapperAfter.find('.textLink__icon_after').exists()).toBeTruthy();
     });
 
     it('renders underline prop correctly', () => {
