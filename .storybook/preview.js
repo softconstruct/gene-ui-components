@@ -18,16 +18,18 @@ export const decorators = [
             setDir(RTL);
         }, [RTL]);
         document.documentElement.dir = dir.toString();
-        return customDecorators(Story);
-    },
-    (Story, context) => {
+
+        // Inverse logic part
         const { inverse } = context.globals;
 
         const [inverseMode, setInverseMode] = useState(inverse === 'inverse');
+
         useEffect(() => {
             setInverseMode(inverse === 'inverse');
         }, [inverse]);
+
         const body = document.querySelector('body');
+
         if (inverseMode) {
             if (body) {
                 body.style.background = '#3273e6';
@@ -35,6 +37,7 @@ export const decorators = [
         } else {
             body.style.background = 'initial';
         }
+
         return customDecorators(Story);
     },
     withTests({ results })
