@@ -52,12 +52,18 @@ const Banner: FC<IBannerProps> = ({ type = 'informational', text, visible, onClo
     const Icon = typeIcons[type];
 
     return (
+        // For banner add banner_desktop, banner_tablet or banner_mobile
         <div className={`banner banner_state_${type}`}>
             <div className="banner__content">
                 <Icon className="banner__icon" />
                 <p className="banner__text">{text}</p>
             </div>
-            <div className="banner__actions"></div>
+            // For banner__actions add banner_mobile
+            <div className="banner__actions">
+                <button>Action 1</button>
+                <button>Action 2</button>
+            </div>
+            {/*  Here should be close button which has banner__button*/}
         </div>
     );
 };
