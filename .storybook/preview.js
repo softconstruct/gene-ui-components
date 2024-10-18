@@ -106,10 +106,8 @@ export const globalTypes = {
     RTL: {
         name: 'RTL',
         description: 'Controls RTL mode',
-        defaultValue: 'LRT',
         toolbar: {
             icon: 'transfer',
-            dynamicTitle: true,
             items: [
                 { value: 'ltr', right: '⇒', title: 'LTR' },
                 { value: 'rtl', right: '⇐', title: 'RTL' }
@@ -119,10 +117,8 @@ export const globalTypes = {
     inverse: {
         name: 'inverse',
         description: 'inverse mode',
-        defaultValue: 'default',
         toolbar: {
             icon: 'mirror',
-            dynamicTitle: true,
             items: [
                 { value: 'default', right: '◯', title: 'default' },
                 { value: 'inverse', right: '🔵', title: 'inverse' }

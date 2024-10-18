@@ -76,3 +76,12 @@ button[data-action='collapse-root'] {
     height: 16px;
     width: 16px;
 }
+
+/*******************************************/
+/*story frame borders remove*/
+/******************************************/
+
+.css-mt2ehb {
+    border-top-left-radius: unset !important;
+    border-bottom-left-radius: unset !important;
+}
