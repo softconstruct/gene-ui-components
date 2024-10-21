@@ -124,8 +124,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                     className,
                     {
                         button_fullWidth: fullWidth,
-                        button_icon_before: !iconAfter && Icon,
-                        button_icon_after: iconAfter && Icon,
+                        button_icon_before: !iconAfter && Icon && text,
+                        button_icon_after: iconAfter && Icon && text,
                         button_icon_only: (!text || sizeIsXS) && Icon,
                         button_loading: isLoading
                     }
