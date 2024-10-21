@@ -21,8 +21,14 @@
             }
 
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
+                min-width: var(--guit-sem-dimension-width-large);
                 padding-inline-start: var(--guit-ref-spacing-medium);
                 padding-inline-end: var(--guit-ref-spacing-medium);
+            }
+
+            &#{ $this }_icon_before,
+            &#{ $this }_icon_after {
+                min-width: var(--guit-sem-dimension-width-3xlarge);
             }
 
             &#{ $this }_icon_before {
@@ -36,6 +42,7 @@
             }
 
             &#{ $this }_icon_only {
+                min-width: var(--guit-sem-dimension-width-medium);
                 padding: var(--guit-ref-spacing-2xsmall);
             }
         }
@@ -48,8 +55,14 @@
             }
 
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
+                min-width: var(--guit-sem-dimension-width-large);
                 padding-inline-start: var(--guit-ref-spacing-medium);
                 padding-inline-end: var(--guit-ref-spacing-medium);
+            }
+
+            &#{ $this }_icon_before,
+            &#{ $this }_icon_after {
+                min-width: var(--guit-sem-dimension-width-3xlarge);
             }
 
             &#{ $this }_icon_before {
@@ -63,6 +76,7 @@
             }
 
             &#{ $this }_icon_only {
+                min-width: var(--guit-sem-dimension-width-small);
                 padding: var(--guit-ref-spacing-4xsmall);
             }
         }
@@ -90,8 +104,14 @@
             }
 
             &:not(#{ $this }_icon_before, &#{ $this }_icon_after, &#{ $this }_icon_only) {
+                min-width: var(--guit-sem-dimension-width-medium);
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
                 padding-inline-end: var(--guit-ref-spacing-xsmall);
+            }
+
+            &#{ $this }_icon_before,
+            &#{ $this }_icon_after {
+                min-width: var(--guit-sem-dimension-width-large);
             }
 
             &#{ $this }_icon_before {
@@ -105,6 +125,7 @@
             }
 
             &#{ $this }_icon_only {
+                min-width: var(--guit-sem-dimension-width-small-nudge);
                 padding: var(--guit-ref-spacing-4xsmall);
             }
         }
