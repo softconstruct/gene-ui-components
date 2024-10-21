@@ -388,6 +388,11 @@
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
 
+            &#{ $this }_icon_before,
+            &#{ $this }_icon_after {
+                min-width: var(--guit-sem-dimension-width-3xlarge);
+            }
+
             &#{ $this }_icon_before {
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
                 padding-inline-end: var(--guit-ref-spacing-medium);
