@@ -123,8 +123,8 @@ export const globalTypes = {
         toolbar: {
             icon: 'mirror',
             items: [
-                { value: 'default', right: '◯', title: 'default' },
-                { value: 'inverse', right: '🔵', title: 'inverse' }
+                { value: 'default', title: 'default' },
+                { value: 'inverse', title: 'inverse' }
             ]
         }
     }
