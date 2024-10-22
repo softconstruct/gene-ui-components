@@ -1,12 +1,6 @@
-import React, { cloneElement, FC, useRef } from 'react';
+import React, { FC } from 'react';
 import { ErrorAlertFill, IconProps, WarningFill } from '@geneui/icons';
 import classnames from 'classnames';
-
-// Hooks
-import { useEllipsisDetection } from '../../../hooks';
-
-// Components
-import Tooltip from '../../molecules/Tooltip';
 
 // Styles
 import './HelperText.scss';
@@ -64,9 +58,6 @@ const HelperText: FC<IHelperTextProps> = ({
     isLoading,
     className
 }) => {
-    const textRef = useRef(null);
-    const isTruncated = useEllipsisDetection(textRef);
-
     const iconSize = {
         small: 16,
         medium: 20
@@ -90,11 +81,7 @@ const HelperText: FC<IHelperTextProps> = ({
             ) : (
                 <>
                     {iconMock && <div className="helperText__icon">{iconMock}</div>}
-                    <Tooltip text={text} isVisible={isTruncated}>
-                        <p className="helperText__text ellipsis-text" ref={textRef}>
-                            {text}
-                        </p>
-                    </Tooltip>
+                    <p className="helperText__text">{text}</p>
                 </>
             )}
         </div>
