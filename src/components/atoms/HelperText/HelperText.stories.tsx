@@ -47,5 +47,5 @@ Warning.args = {
 
 export const WithCustomIcon = Template.bind({});
 WithCustomIcon.args = {
-    Icon: <Globe />
+    Icon: Globe
 } as IHelperTextProps;

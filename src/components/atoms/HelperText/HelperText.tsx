@@ -1,5 +1,5 @@
-import React, { cloneElement, FC, JSX, useRef } from 'react';
-import { ErrorAlertFill, WarningFill } from '@geneui/icons';
+import React, { cloneElement, FC, useRef } from 'react';
+import { ErrorAlertFill, IconProps, WarningFill } from '@geneui/icons';
 import classnames from 'classnames';
 
 // Hooks
@@ -34,7 +34,7 @@ interface IHelperTextProps {
      * If `type` is `rest`, the provided `Icon` will be used (if supplied), otherwise no icon will be displayed.
      * The size of the icon will automatically adjust based on the `size` prop (`small` or `medium`).
      */
-    Icon?: JSX.Element;
+    Icon?: React.FC<IconProps>;
     /**
      * Determines whether the helper text is disabled.
      * If `true`, the helper text will appear dimmed and non-interactive.
@@ -77,12 +77,7 @@ const HelperText: FC<IHelperTextProps> = ({
         warning: <WarningFill size={iconSize[size]} />
     };
 
-    const iconMock =
-        iconMap[type] ||
-        (Icon &&
-            cloneElement(Icon, {
-                size: iconSize[size]
-            }));
+    const iconMock = iconMap[type] || (Icon && <Icon size={iconSize[size]} />);
 
     return (
         <div

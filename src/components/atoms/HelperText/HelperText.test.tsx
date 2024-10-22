@@ -31,7 +31,7 @@ describe('HelperText ', () => {
     });
 
     it('renders Icon prop correctly', () => {
-        const wrapper = setup.setProps({ Icon: <Globe /> });
+        const wrapper = setup.setProps({ Icon: Globe });
         expect(wrapper.find(Globe)).toBeTruthy();
     });
 
