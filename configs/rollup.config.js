@@ -32,7 +32,7 @@ const getInputs = (_name, dir) => {
 const componentsInputs = Object.entries({
     atoms: 'src/components/atoms',
     molecules: 'src/components/molecules',
-    organisms: 'src/components/organisms',
+    // organisms: 'src/components/organisms', TODO: Comment out after first organism will be created
     providers: 'src/components/providers'
 }).reduce((obj, entry) => ({ ...obj, ...getInputs(...entry) }), {});
 
