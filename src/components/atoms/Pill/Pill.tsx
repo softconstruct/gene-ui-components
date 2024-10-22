@@ -115,7 +115,7 @@ const Pill: FC<IPillProps> = ({
             {iconMock}
             {text && (
                 <Tooltip text={text} isVisible={isTruncated}>
-                    <span ref={textRef} className="pill__text">
+                    <span ref={textRef} className="pill__text ellipsis-text">
                         {text}
                     </span>
                 </Tooltip>
