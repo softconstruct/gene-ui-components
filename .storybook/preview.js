@@ -17,7 +17,7 @@ export const decorators = [
         useEffect(() => {
             setDir(RTL);
         }, [RTL]);
-        document.documentElement.dir = dir.toString();
+        document.documentElement.dir = dir ? dir.toString() : 'ltr';
 
         // Inverse logic part
         const { inverse } = context.globals;
