@@ -1,31 +1,30 @@
-import React, { createContext, useEffect, useRef, useState, JSX } from 'react';
-import { bootstrap } from '@geneui/tokens';
+import React, { createContext, useEffect, useRef, useState, JSX, useMemo } from "react";
+import { bootstrap } from "@geneui/tokens";
 
 // Statics
-// @ts-ignore
-import pgk from '../../../../package.json';
+import pgk from "../../../../package.json";
 
 // Styles
-import 'src/assets/styles/reset.scss';
-import 'src/assets/styles/utils.scss';
+import "../../../assets/styles/reset.scss";
+import "../../../assets/styles/utils.scss";
 
-type ThemesTypes = 'light' | 'dark';
+type ThemesTypes = "light" | "dark";
 
 type TokensType = { [key: string]: string | number } | null;
 
-export interface IGeneUIDesignSystemContext {
+interface IGeneUIDesignSystemContext {
     theme: ThemesTypes;
     tokens: TokensType;
     geneUIProviderRef: React.MutableRefObject<null>;
 }
 
-export const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
-    theme: 'light',
+const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
+    theme: "light",
     tokens: {},
     geneUIProviderRef: { current: null }
 });
 
-export interface IGeneUIProviderProps {
+interface IGeneUIProviderProps {
     /**
      * Any valid React node
      */
@@ -41,27 +40,32 @@ export interface IGeneUIProviderProps {
     theme?: ThemesTypes;
 }
 
-const GeneUIProvider = ({ children, tokens = null, theme = 'light' }: IGeneUIProviderProps): JSX.Element => {
+function GeneUIProvider({ children, tokens = null, theme = "light" }: IGeneUIProviderProps): JSX.Element {
     const geneUIProviderRef = useRef(null);
     const [isRefExist, setIsRefExist] = useState(false);
 
-    const contextValue = {
-        theme,
-        tokens: tokens ? tokens : bootstrap(),
-        geneUIProviderRef
-    };
+    const contextValue = useMemo(
+        () => ({
+            theme,
+            tokens: tokens || bootstrap(),
+            geneUIProviderRef
+        }),
+        [theme, tokens, geneUIProviderRef]
+    );
 
     useEffect(() => {
-        geneUIProviderRef.current && !isRefExist && setIsRefExist(true);
+        if (geneUIProviderRef.current && !isRefExist) {
+            setIsRefExist(true);
+        }
     }, [geneUIProviderRef.current]);
 
     return (
         <GeneUIDesignSystemContext.Provider value={contextValue}>
-            <div data-gene-ui-version={pgk.version} ref={geneUIProviderRef} style={{ height: '100%' }}>
+            <div data-gene-ui-version={pgk.version} ref={geneUIProviderRef} style={{ height: "100%" }}>
                 {isRefExist && children}
             </div>
         </GeneUIDesignSystemContext.Provider>
     );
-};
+}
 
-export default GeneUIProvider;
+export { IGeneUIProviderProps, IGeneUIDesignSystemContext, GeneUIDesignSystemContext, GeneUIProvider as default };

@@ -1,14 +1,14 @@
-import React, { FC, useState, useMemo, KeyboardEvent } from 'react';
-import classnames from 'classnames';
-import { InfoOutline, IconProps } from '@geneui/icons';
+import React, { FC, useState, useMemo, KeyboardEvent } from "react";
+import classnames from "classnames";
+import { InfoOutline, IconProps } from "@geneui/icons";
 
 // Components
-import Tooltip from '../../molecules/Tooltip';
+import Tooltip from "../../molecules/Tooltip";
 
 // Styles
-import './Info.scss';
+import "./Info.scss";
 
-const iconSizes: Record<'small' | 'smallNudge' | 'XSmall', IconProps['size']> = {
+const iconSizes: Record<"small" | "smallNudge" | "XSmall", IconProps["size"]> = {
     small: 24,
     smallNudge: 20,
     XSmall: 16
@@ -33,7 +33,7 @@ interface IInfoProps {
      * Determines the visual appearance of the info icon.<br>
      * Possible values: `default | brand | inverse`
      */
-    appearance?: 'default' | 'brand' | 'inverse';
+    appearance?: "default" | "brand" | "inverse";
     /**
      * Additional class for the parent element.<br>
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -44,12 +44,12 @@ interface IInfoProps {
 /**
  * Info icon component used to provide additional contextual information to users. It appears as a small icon, and is placed near elements where further explanation or clarification is useful.
  */
-const Info: FC<IInfoProps> = ({ infoText, disabled, size = 'smallNudge', appearance = 'default', className }) => {
+const Info: FC<IInfoProps> = ({ infoText, disabled, size = "smallNudge", appearance = "default", className }) => {
     const [alwaysShow, setAlwaysShow] = useState(false);
 
     const keyDownHandler = (event: KeyboardEvent<HTMLButtonElement>) => {
         if (disabled) return;
-        if (event.key === 'Enter') {
+        if (event.key === "Enter") {
             setAlwaysShow((prev) => !prev);
         }
     };
@@ -58,7 +58,7 @@ const Info: FC<IInfoProps> = ({ infoText, disabled, size = 'smallNudge', appeara
 
     const buttonClassNames = useMemo(
         () =>
-            classnames('info', className, {
+            classnames("info", className, {
                 [`info_appearance_${appearance}`]: appearance,
                 info_disabled: disabled
             }),
@@ -66,8 +66,9 @@ const Info: FC<IInfoProps> = ({ infoText, disabled, size = 'smallNudge', appeara
     );
 
     return (
-        <Tooltip text={infoText} alwaysShow={alwaysShow} appearance={appearance === 'inverse' ? 'inverse' : 'default'}>
+        <Tooltip text={infoText} alwaysShow={alwaysShow} appearance={appearance === "inverse" ? "inverse" : "default"}>
             <button
+                type="button"
                 disabled={disabled}
                 aria-pressed={alwaysShow}
                 className={buttonClassNames}

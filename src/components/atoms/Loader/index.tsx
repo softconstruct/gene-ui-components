@@ -1,1 +1,1 @@
-export { ILoaderProps, default as default } from './Loader';
+export { ILoaderProps, default } from "./Loader";

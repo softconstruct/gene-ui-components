@@ -1,1 +1,1 @@
-export { IPillProps, default as default } from './Pill';
+export { IPillProps, default } from "./Pill";

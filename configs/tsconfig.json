@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": "../src",
         "paths": {
-            "src": ["./"],
+            "src": ["./src"],
             "components": ["./index.ts"],
             "utils": ["./utils/index.js"],
             "hooks": ["./hooks/index.js"]
@@ -17,8 +17,7 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "strict": true,
-        "noImplicitAny": false // TODO remove after typescript migration
+        "strict": true
     },
     "include": ["../src/**/*.ts", "../src/**/index.tsx"]
 }

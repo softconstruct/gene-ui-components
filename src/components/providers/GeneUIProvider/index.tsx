@@ -1,6 +1,1 @@
-export {
-    IGeneUIProviderProps,
-    IGeneUIDesignSystemContext,
-    GeneUIDesignSystemContext,
-    default as default
-} from './GeneUIProvider';
+export { IGeneUIProviderProps, IGeneUIDesignSystemContext, GeneUIDesignSystemContext, default } from "./GeneUIProvider";

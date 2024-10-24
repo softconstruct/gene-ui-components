@@ -1,1 +1,1 @@
-export { ILabelProps, default as default } from './Label';
+export { ILabelProps, default } from "./Label";

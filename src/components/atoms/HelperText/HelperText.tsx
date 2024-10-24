@@ -1,22 +1,22 @@
-import React, { FC } from 'react';
-import { ErrorAlertFill, IconProps, WarningFill } from '@geneui/icons';
-import classnames from 'classnames';
+import React, { FC } from "react";
+import { ErrorAlertFill, IconProps, WarningFill } from "@geneui/icons";
+import classnames from "classnames";
 
 // Styles
-import './HelperText.scss';
+import "./HelperText.scss";
 
 interface IHelperTextProps {
     /**
      * Defines the size of the helper text.<br>
      * Possible values: `medium | small`.
      */
-    size?: 'medium' | 'small';
+    size?: "medium" | "small";
     /**
      * Specifies the type of the helper text. <br>
      * Possible values: `rest | danger | warning`.
      * `rest` for default information, `danger` for error messages, or `warning` for cautions.
      */
-    type?: 'rest' | 'danger' | 'warning';
+    type?: "rest" | "danger" | "warning";
     /**
      * The actual text content to be displayed as helper text.
      * This provides guidance or additional information related to the input field.
@@ -50,8 +50,8 @@ interface IHelperTextProps {
  * The Helper Text provides users with additional information or guidance related to a specific input field in a form. This text helps users understand the expected format, requirements, or purpose of the input, thereby improving form completion accuracy and user confidence.
  */
 const HelperText: FC<IHelperTextProps> = ({
-    size = 'medium',
-    type = 'rest',
+    size = "medium",
+    type = "rest",
     text,
     Icon,
     isDisabled,
@@ -68,7 +68,7 @@ const HelperText: FC<IHelperTextProps> = ({
         warning: <WarningFill size={iconSize[size]} />
     };
 
-    const iconMock = iconMap[type] || (Icon && <Icon size={iconSize[size]} />);
+    const iconContent = iconMap[type] || (Icon && <Icon size={iconSize[size]} />);
 
     return (
         <div
@@ -77,10 +77,10 @@ const HelperText: FC<IHelperTextProps> = ({
             })}
         >
             {isLoading ? (
-                'skeleton'
+                "skeleton"
             ) : (
                 <>
-                    {iconMock && <div className="helperText__icon">{iconMock}</div>}
+                    {iconContent && <div className="helperText__icon">{iconContent}</div>}
                     <p className="helperText__text">{text}</p>
                 </>
             )}

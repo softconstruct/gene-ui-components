@@ -1,1 +1,1 @@
-export { IAvatarProps, default as default } from './Avatar';
+export { IAvatarProps, default } from "./Avatar";

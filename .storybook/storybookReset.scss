@@ -9,7 +9,7 @@
         max-width: none !important;
     }
 
-    & [role='tablist'] .tabbutton-active {
+    & [role="tablist"] .tabbutton-active {
         color: #c41d7f;
         border-bottom-color: #c41d7f;
 
@@ -43,7 +43,7 @@
                 display: grid;
                 grid-template-columns: 1fr;
 
-                &:not([title*='items']) {
+                &:not([title*="items"]) {
                     grid-template-columns: 1fr 3fr 1fr;
                 }
 

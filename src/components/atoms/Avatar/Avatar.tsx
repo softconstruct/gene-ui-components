@@ -1,15 +1,15 @@
-import React, { FC, PointerEvent, useEffect, useState, JSX, cloneElement } from 'react';
-import classNames from 'classnames';
-import { IconProps, Square } from '@geneui/icons'; // TODO: replace with the person icon
+import React, { FC, PointerEvent, useEffect, useState, JSX } from "react";
+import classNames from "classnames";
+import { IconProps, Square } from "@geneui/icons"; // TODO: replace with the person icon
 
 // Styles
-import './Avatar.scss';
+import "./Avatar.scss";
 
-const iconSizes: Record<'small' | 'large' | 'medium' | '6Xlarge', IconProps['size']> = {
+const iconSizes: Record<"small" | "large" | "medium" | "6Xlarge", IconProps["size"]> = {
     small: 16,
     large: 20,
     medium: 20,
-    '6Xlarge': 48
+    "6Xlarge": 48
 } as const;
 
 interface IAvatarProps {
@@ -30,12 +30,12 @@ interface IAvatarProps {
      * This prop defines the width and height for the component <br/>
      * Possible values: `6Xlarge | large | medium | small`
      */
-    size?: '6Xlarge' | 'large' | 'medium' | 'small';
+    size?: "6Xlarge" | "large" | "medium" | "small";
     /**
      * Avatar background color. This prop also has an effect on the `fullName` prop color <br/>
      * Possible values: `neutral | blue | red | green | purple | orange | lagoon | magenta | slate `
      */
-    color?: 'neutral' | 'blue' | 'red' | 'green' | 'purple' | 'orange' | 'lagoon' | 'magenta' | 'slate';
+    color?: "neutral" | "blue" | "red" | "green" | "purple" | "orange" | "lagoon" | "magenta" | "slate";
     /**
      * A callback function is called when the `avatar` is clicked. It receives an argument containing the event object, a mouse or keyboard event. If onClick is not passed, the Avatar component becomes a non-interactable element.
      */
@@ -65,7 +65,7 @@ interface IAvatarWrapperProps {
 
 const AvatarWrapper: FC<IAvatarWrapperProps> = ({ onClick, children, parentClass, isDisabled }) => {
     return onClick ? (
-        <button onClick={onClick} className={`${parentClass} avatar_button`} disabled={isDisabled}>
+        <button type="button" onClick={onClick} className={`${parentClass} avatar_button`} disabled={isDisabled}>
             {children}
         </button>
     ) : (
@@ -77,31 +77,39 @@ const AvatarWrapper: FC<IAvatarWrapperProps> = ({ onClick, children, parentClass
  * An avatar is a graphical representation of a user, typically displayed as a small image or icon. It can be a photo, illustration, or initials, and is used to personalize the user experience by visually identifying the user in interfaces such as profiles, comment sections, and messaging apps.
  */
 const Avatar: FC<IAvatarProps> = ({
-    size = 'medium',
-    color = 'magenta',
-    fullName = '',
+    size = "medium",
+    color = "magenta",
+    fullName = "",
     src,
     onClick,
     isDisabled,
     isLoading,
-    Icon = Square, //todo need to change to User icon after releasing icons
+    Icon = Square, // todo need to change to User icon after releasing icons
     className
 }) => {
     const [proceedFullName, setProceedFullName] = useState(fullName);
 
     useEffect(() => {
-        const [firstName = '', lastName = ''] = fullName.split(' ');
+        const [firstName = "", lastName = ""] = fullName.split(" ");
         const [firstNameFirstLetter] = firstName;
-        const [lastNameFirstLetter] = lastName || '';
+        const [lastNameFirstLetter] = lastName || "";
 
         setProceedFullName(
             firstNameFirstLetter
                 ? `${firstNameFirstLetter}${
-                      !!lastNameFirstLetter && (size === '6Xlarge' || size === 'large') ? ' ' + lastNameFirstLetter : ''
+                      !!lastNameFirstLetter && (size === "6Xlarge" || size === "large") ? ` ${lastNameFirstLetter}` : ""
                   }`
                 : ``
         );
     }, [fullName, size]);
+
+    let content = <Icon className="avatar__icon" size={iconSizes[size]} />;
+
+    if (src) {
+        content = <img className="avatar__image" alt="avatar" src={src} />;
+    } else if (proceedFullName) {
+        content = <span className="avatar__text">{proceedFullName}</span>;
+    }
 
     return isLoading ? (
         <span>skeleton</span>
@@ -113,13 +121,7 @@ const Avatar: FC<IAvatarProps> = ({
             onClick={onClick}
             isDisabled={isDisabled}
         >
-            {src ? (
-                <img className="avatar__image" alt={'avatar'} src={src} />
-            ) : proceedFullName ? (
-                <span className="avatar__text">{proceedFullName}</span>
-            ) : (
-                Icon && <Icon className="avatar__icon" size={iconSizes[size]} />
-            )}
+            {content}
         </AvatarWrapper>
     );
 };

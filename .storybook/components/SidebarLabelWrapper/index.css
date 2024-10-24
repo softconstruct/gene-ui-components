@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;0,800;1,300;1,400;1,600;1,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,700;0,800;1,300;1,400;1,600;1,700&display=swap");
 
 .sidebar-subheading {
     border-top: 1px solid #e6e6e6;
@@ -20,7 +20,7 @@
     margin-top: -1px;
 }
 
-button[data-action='collapse-root'] {
+button[data-action="collapse-root"] {
     display: flex;
     align-items: center;
 }
@@ -51,28 +51,28 @@ button[data-action='collapse-root'] {
 /*******************************************/
 /*addons icons change and display none*/
 /******************************************/
-[title='Vision simulator'],
-[title='Enable measure'],
-[title='Apply outlines to the preview'] {
+[title="Vision simulator"],
+[title="Enable measure"],
+[title="Apply outlines to the preview"] {
     display: none !important;
 }
 
-[title='Change the size of the preview'] > svg,
-[title='Rotate viewport'] > svg {
+[title="Change the size of the preview"] > svg,
+[title="Rotate viewport"] > svg {
     display: none;
 }
 
-[title='Change the size of the preview']:after {
-    content: '';
-    background: url('../../assets/tablet-telephone.svg') center center/cover;
+[title="Change the size of the preview"]:after {
+    content: "";
+    background: url("../../assets/tablet-telephone.svg") center center/cover;
     height: 14px;
     width: 14px;
     margin-left: 4px;
 }
 
-[title='Rotate viewport']:after {
-    content: '';
-    background: url('../../assets/screen-rotation-icon.svg') center center/cover;
+[title="Rotate viewport"]:after {
+    content: "";
+    background: url("../../assets/screen-rotation-icon.svg") center center/cover;
     height: 16px;
     width: 16px;
 }
@@ -80,8 +80,7 @@ button[data-action='collapse-root'] {
 /*******************************************/
 /*story frame borders remove*/
 /******************************************/
-
-.css-mt2ehb {
+[role="main"] > :first-child {
     border-top-left-radius: unset !important;
     border-bottom-left-radius: unset !important;
 }

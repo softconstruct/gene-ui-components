@@ -1,16 +1,16 @@
-import React, { FC, JSX } from 'react';
-import classNames from 'classnames';
-import { IconProps } from '@geneui/icons';
+import React, { FC, JSX } from "react";
+import classNames from "classnames";
+import { IconProps } from "@geneui/icons";
 
 // Styles
-import './Divider.scss';
+import "./Divider.scss";
 
 interface IDividerProps {
     /**
      * Divider visual style <br/>
      * Possible values: `default | strong | brand | inverse`
      */
-    appearance?: 'default' | 'strong' | 'brand' | 'inverse';
+    appearance?: "default" | "strong" | "brand" | "inverse";
     /**
      * Divider content <br/>
      * The `alignContent` prop accepts a JSX element that will be displayed alongside the divider
@@ -34,7 +34,7 @@ interface IDividerProps {
      * Divider `label` position <br/>
      * Possible values: `before | after | center`
      */
-    labelPosition?: 'before' | 'after' | 'center';
+    labelPosition?: "before" | "after" | "center";
     /**
      * provides space between the edge and the divider
      */
@@ -50,11 +50,11 @@ interface IDividerProps {
  * A divider separates sections of content to establish visual rhythm and hierarchy. Combine dividers with appropriate spacing and text hierarchy to effectively organize content within your layout.
  */
 const Divider: FC<IDividerProps> = ({
-    appearance = 'default',
+    appearance = "default",
     Icon,
     vertical,
     label,
-    labelPosition = 'before',
+    labelPosition = "before",
     content,
     inset = false,
     className
@@ -62,7 +62,7 @@ const Divider: FC<IDividerProps> = ({
     return (
         <div
             className={classNames(
-                `divider divider_${inset ? 'inset' : 'block'} divider_color_${appearance}  `,
+                `divider divider_${inset ? "inset" : "block"} divider_color_${appearance}  `,
                 className,
                 {
                     divider_horizontal: !vertical,

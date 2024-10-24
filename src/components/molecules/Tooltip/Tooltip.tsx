@@ -10,8 +10,8 @@ import React, {
     RefObject,
     useMemo,
     useRef
-} from 'react';
-import { shift, flip, offset } from '@floating-ui/core';
+} from "react";
+import { shift, flip, offset } from "@floating-ui/core";
 import {
     FloatingPortal,
     autoUpdate,
@@ -20,49 +20,49 @@ import {
     useHover,
     useInteractions,
     platform
-} from '@floating-ui/react';
-import { Placement } from '@floating-ui/utils';
-import { ReferenceType } from '@floating-ui/react-dom';
-import { isForwardRef } from 'react-is';
+} from "@floating-ui/react";
+import { Placement } from "@floating-ui/utils";
+import { ReferenceType } from "@floating-ui/react-dom";
+import { isForwardRef } from "react-is";
 
 // Components
-import { GeneUIDesignSystemContext } from '../../providers/GeneUIProvider';
+import { IconProps } from "@geneui/icons";
+import { GeneUIDesignSystemContext } from "../../providers/GeneUIProvider";
 
 // Styles
-import './Tooltip.scss';
-import { IconProps } from '@geneui/icons';
+import "./Tooltip.scss";
 
 const positions: Placement[] = [
-    'top',
-    'right',
-    'bottom',
-    'left',
-    'top-start',
-    'top-end',
-    'right-start',
-    'right-end',
-    'bottom-start',
-    'bottom-end',
-    'left-start',
-    'left-end'
+    "top",
+    "right",
+    "bottom",
+    "left",
+    "top-start",
+    "top-end",
+    "right-start",
+    "right-end",
+    "bottom-start",
+    "bottom-end",
+    "left-start",
+    "left-end"
 ];
 
-export const correctPosition = {
-    'bottom-center': 'bottom',
-    'bottom-left': 'bottom-start',
-    'bottom-right': 'bottom-end',
-    'left-bottom': 'left-end',
-    'left-center': 'left',
-    'left-top': 'left-start',
-    'right-bottom': 'right-end',
-    'right-center': 'right',
-    'right-top': 'right-start',
-    'top-center': 'top',
-    'top-left': 'top-start',
-    'top-right': 'top-end'
-};
+const correctPosition = {
+    "bottom-center": "bottom",
+    "bottom-left": "bottom-start",
+    "bottom-right": "bottom-end",
+    "left-bottom": "left-end",
+    "left-center": "left",
+    "left-top": "left-start",
+    "right-bottom": "right-end",
+    "right-center": "right",
+    "right-top": "right-start",
+    "top-center": "top",
+    "top-left": "top-start",
+    "top-right": "top-end"
+} as const;
 
-export interface ITooltipProps {
+interface ITooltipProps {
     /**
      * Main content for the component.
      */
@@ -83,22 +83,10 @@ export interface ITooltipProps {
      */
     children: JSX.Element | JSX.Element[];
     /**
-     * Positions where will be displayed the Tooltip relates the child component.<br> Possible values: `top | right | bottom | left`
+     * Positions where will be displayed the Tooltip relates the child component.<br>
+     * Possible values: `top | right | bottom | left`
      */
-    position?:
-        | 'top-center'
-        | 'top-left'
-        | 'top-right'
-        | 'right-center'
-        | 'right-bottom'
-        | 'right-top'
-        | 'bottom-center'
-        | 'bottom-left'
-        | 'bottom-right'
-        | 'left-center'
-        | 'left-bottom'
-        | 'left-top';
-
+    position?: keyof typeof correctPosition;
     /**
      * Tooltip padding related to the target element
      */
@@ -111,7 +99,7 @@ export interface ITooltipProps {
      * Available style varieties of Empty atom to display <br/>
      * Possible values: `inverse | default`
      */
-    appearance?: 'inverse' | 'default';
+    appearance?: "inverse" | "default";
     /**
      * The `Icon` prop accepts a JSX element that will be displayed as an tooltip.
      */
@@ -124,23 +112,25 @@ const FindAndSetRef = <T extends object>(
     children: JSX.Element | JSX.Element[],
     childProps: T,
     componentRef: (node: ReferenceType | null) => void,
-    checked: Boolean = false
+    checked: boolean = false
 ) => {
+    let isChecked = checked;
+
     return Children.map(children, (node, i) => {
         const el = node as JSXWithRef;
         let newProps = {
             ...childProps
         };
 
-        if (typeof el?.type === 'string') {
-            if (!el.ref && i === 0 && !checked) {
-                checked = true;
+        if (typeof el?.type === "string") {
+            if (!el.ref && i === 0 && !isChecked) {
+                isChecked = true;
                 newProps = { ...newProps, ref: componentRef };
             }
 
             return cloneElement(el, newProps);
         }
-        if (typeof el?.type === 'function') {
+        if (typeof el?.type === "function") {
             if (!el.ref) {
                 newProps = { ...newProps, ref: componentRef };
             }
@@ -149,11 +139,11 @@ const FindAndSetRef = <T extends object>(
         }
 
         if (el?.type === Fragment && el.props.children) {
-            return FindAndSetRef(el.props.children, newProps, componentRef, checked);
+            return FindAndSetRef(el.props.children, newProps, componentRef, isChecked);
         }
 
         if (isForwardRef(el)) {
-            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef, checked);
+            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef, isChecked);
         }
         return el && cloneElement(el, newProps);
     });
@@ -165,13 +155,13 @@ Tooltips should be used to offer helpful plaintext information, not to communica
 */
 const Tooltip: FC<ITooltipProps> = ({
     children,
-    position = 'top',
+    position = "top-right",
     text,
     customPosition,
     alwaysShow,
     padding = 10,
     isVisible = true,
-    appearance = 'default',
+    appearance = "default",
     Icon
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
@@ -190,14 +180,14 @@ const Tooltip: FC<ITooltipProps> = ({
         middleware: [
             offset(padding),
             flip({
-                fallbackAxisSideDirection: 'none',
+                fallbackAxisSideDirection: "none",
                 fallbackPlacements: positions,
                 mainAxis: true
             }),
             arrow({ element: arrowRef }),
             shift(),
             {
-                name: 'getCustomPosition',
+                name: "getCustomPosition",
                 fn: () =>
                     customPosition
                         ? {
@@ -222,7 +212,7 @@ const Tooltip: FC<ITooltipProps> = ({
         for (let i = 0; i < component.length; i++) {
             const node = component[i];
 
-            if (typeof node.ref === 'function' && node.ref === refs.setReference) {
+            if (typeof node.ref === "function" && node.ref === refs.setReference) {
                 break;
             }
 
@@ -233,13 +223,13 @@ const Tooltip: FC<ITooltipProps> = ({
         }
     }, [component]);
 
-    const [currentDirection] = placement.split('-');
+    const [currentDirection] = placement.split("-");
 
     const staticSide = {
-        top: 'bottom',
-        right: 'left',
-        bottom: 'top',
-        left: 'right'
+        top: "bottom",
+        right: "left",
+        bottom: "top",
+        left: "right"
     }[currentDirection];
 
     const middlewareArrowData = middlewareData.arrow;
@@ -247,10 +237,10 @@ const Tooltip: FC<ITooltipProps> = ({
     const offsetFromEdge = 8;
 
     const arrowPositions = {
-        'top-start': 'left',
-        'top-end': 'right',
-        'bottom-end': 'right',
-        'bottom-start': 'left'
+        "top-start": "left",
+        "top-end": "right",
+        "bottom-end": "right",
+        "bottom-start": "left"
     }[placement];
 
     const getCorrectPosition = arrowPositions
@@ -274,7 +264,7 @@ const Tooltip: FC<ITooltipProps> = ({
                             style={{
                                 ...getCorrectPosition,
                                 top: middlewareArrowData?.y || undefined,
-                                [staticSide!]: arrowRef.current ? `${-arrowRef?.current?.offsetWidth + 6}px` : 0
+                                [staticSide!]: arrowRef.current ? `${-arrowRef.current.offsetWidth + 6}px` : 0
                             }}
                         >
                             <svg
@@ -292,7 +282,11 @@ const Tooltip: FC<ITooltipProps> = ({
                             <p className="tooltip__text">{text}</p>
                         </div>
 
-                        {Icon && <div className="tooltip__icon">{<Icon size={16} />}</div>}
+                        {Icon && (
+                            <div className="tooltip__icon">
+                                <Icon size={16} />
+                            </div>
+                        )}
                     </div>
                 </FloatingPortal>
             )}
@@ -300,4 +294,4 @@ const Tooltip: FC<ITooltipProps> = ({
     );
 };
 
-export default Tooltip;
+export { ITooltipProps, Tooltip as default };

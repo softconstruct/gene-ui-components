@@ -1,1 +1,1 @@
-export { ITextLinkProps, default as default } from './TextLink';
+export { ITextLinkProps, default } from "./TextLink";

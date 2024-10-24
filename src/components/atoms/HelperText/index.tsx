@@ -1,1 +1,1 @@
-export { IHelperTextProps, default as default } from './HelperText';
+export { IHelperTextProps, default } from "./HelperText";

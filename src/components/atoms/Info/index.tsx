@@ -1,1 +1,1 @@
-export { IInfoProps, default as default } from './Info';
+export { IInfoProps, default } from "./Info";

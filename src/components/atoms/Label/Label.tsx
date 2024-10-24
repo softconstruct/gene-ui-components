@@ -1,23 +1,22 @@
-import React, { FC, JSX, useRef } from 'react';
-import { InfoOutline } from '@geneui/icons';
-import classnames from 'classnames';
+import React, { FC, JSX, useRef } from "react";
+import classnames from "classnames";
 
 // Components
-import Tooltip from '../../molecules/Tooltip';
+import Tooltip from "../../molecules/Tooltip";
 
 // Hooks
-import { useEllipsisDetection } from '../../../hooks';
+import { useEllipsisDetection } from "../../../hooks";
 
 // Styles
-import './Label.scss';
-import Info from '../Info';
+import "./Label.scss";
+import Info from "../Info";
 
 interface ILabelProps {
     /**
      * Label size.<br/>
      * Possible values: `medium | small`
      */
-    size?: 'medium' | 'small';
+    size?: "medium" | "small";
     /**
      * The text content of the `label`.
      * This is the main text displayed within the `label`.
@@ -57,8 +56,8 @@ interface ILabelProps {
 }
 
 const iconSizes = {
-    small: 'XSmall',
-    medium: 'smallNudge'
+    small: "XSmall",
+    medium: "smallNudge"
 } as const;
 
 /**
@@ -66,7 +65,7 @@ const iconSizes = {
  */
 
 const Label: FC<ILabelProps> = ({
-    size = 'medium',
+    size = "medium",
     labelText,
     disabled,
     required,
@@ -86,30 +85,28 @@ const Label: FC<ILabelProps> = ({
                 <span>skeleton</span>
             ) : (
                 <span className="label__container">
-                    <>
-                        <div className="label__container-inner">
-                            <Tooltip text={labelText} isVisible={isTruncated}>
-                                <span
-                                    ref={labelRef}
-                                    className={classnames(`ellipsis-text label__text label__text_size_${size}`, {
-                                        label__text_disabled: disabled
-                                    })}
-                                >
-                                    {labelText}
-                                </span>
-                            </Tooltip>
-                            {required && (
-                                <span
-                                    className={classnames(`label__asterisk label__text_size_${size} `, {
-                                        label__text_disabled: disabled
-                                    })}
-                                >
-                                    *
-                                </span>
-                            )}
-                        </div>
-                        {infoText && <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} />}
-                    </>
+                    <div className="label__container-inner">
+                        <Tooltip text={labelText} isVisible={isTruncated}>
+                            <span
+                                ref={labelRef}
+                                className={classnames(`ellipsis-text label__text label__text_size_${size}`, {
+                                    label__text_disabled: disabled
+                                })}
+                            >
+                                {labelText}
+                            </span>
+                        </Tooltip>
+                        {required && (
+                            <span
+                                className={classnames(`label__asterisk label__text_size_${size} `, {
+                                    label__text_disabled: disabled
+                                })}
+                            >
+                                *
+                            </span>
+                        )}
+                    </div>
+                    {infoText && <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} />}
                 </span>
             )}
         </label>

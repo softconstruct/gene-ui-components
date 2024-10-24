@@ -1,8 +1,8 @@
-import React, { FC } from 'react';
-import classNames from 'classnames';
+import React, { FC } from "react";
+import classNames from "classnames";
 
 // Styles
-import './TextLink.scss';
+import "./TextLink.scss";
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {
     size?: 16 | 20 | 24 | 28 | 32 | 48;
@@ -27,13 +27,13 @@ interface ITextLinkProps {
      * Specifies the relationship between the current document and the linked resource.<br>
      * Possible values: <code> none | nofollow  </code>
      */
-    rel?: 'none' | 'nofollow';
+    rel?: "none" | "nofollow";
     /**
      * Specifies where to open the linked document.<br>
      * Default is <code> self </code> <br>
      * Possible values: <code> self | blank  </code>
      */
-    target?: 'self' | 'blank';
+    target?: "self" | "blank";
     /**
      * Determines whether to underline the link text.
      * When `true`, the text will be underlined.
@@ -43,7 +43,7 @@ interface ITextLinkProps {
      * Specifies the appearance of the link. <br>
      * Possible values: <code>primary | secondary | inverse </code>
      */
-    appearance?: 'primary' | 'secondary' | 'inverse';
+    appearance?: "primary" | "secondary" | "inverse";
     /**
      * When `true`, the link is disabled and not clickable.
      */
@@ -61,7 +61,7 @@ interface ITextLinkProps {
     /**
      * An optional icon to display alongside the link text.
      */
-    Icon?: React.FC<IconProps>; //todo need to change to interface IconProps after Icon new version release
+    Icon?: React.FC<IconProps>; // todo need to change to interface IconProps after Icon new version release
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -77,38 +77,35 @@ const TextLink: FC<ITextLinkProps> = ({
     href,
     iconBefore,
     rel,
-    target = 'self',
+    target = "self",
     underline,
-    appearance = 'primary',
+    appearance = "primary",
     disabled,
     onClick,
     isLoading,
     Icon,
     className
-}) => (
-    <>
-        {isLoading ? (
-            <span>skeleton</span>
-        ) : (
-            <a
-                target={`_${target}`}
-                rel={rel}
-                className={classNames(`textLink textLink_color_${appearance}`, className, {
-                    textLink_underline: underline,
-                    textLink_disabled: disabled
-                })}
-                href={href}
-                onClick={onClick}
-                {...(disabled && { tabIndex: -1 })}
-            >
-                <span className="textLink__text">
-                    {Icon && iconBefore && <Icon className="textLink__icon textLink__icon_before" size={20} />}
-                    {text}
-                    {Icon && !iconBefore && <Icon className="textLink__icon textLink__icon_after" size={20} />}
-                </span>
-            </a>
-        )}
-    </>
-);
+}) =>
+    isLoading ? (
+        <span>skeleton</span>
+    ) : (
+        <a
+            target={`_${target}`}
+            rel={rel}
+            className={classNames(`textLink textLink_color_${appearance}`, className, {
+                textLink_underline: underline,
+                textLink_disabled: disabled
+            })}
+            href={href}
+            onClick={onClick}
+            {...(disabled && { tabIndex: -1 })}
+        >
+            <span className="textLink__text">
+                {Icon && iconBefore && <Icon className="textLink__icon textLink__icon_before" size={20} />}
+                {text}
+                {Icon && !iconBefore && <Icon className="textLink__icon textLink__icon_after" size={20} />}
+            </span>
+        </a>
+    );
 
 export { ITextLinkProps, TextLink as default };

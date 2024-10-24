@@ -1,10 +1,10 @@
-import React, { useRef, useCallback } from 'react';
+import { useRef, useCallback } from "react";
 
-const useDebouncedCallback = <T extends (...args: any[]) => void>(func: T, wait?: number) => {
+const useDebouncedCallback = <T extends (...args: unknown[]) => void>(func: T, wait?: number) => {
     const timeout = useRef<number | undefined>(undefined);
 
     return useCallback(
-        (...args: any[]) => {
+        (...args: unknown[]) => {
             const later = () => {
                 clearTimeout(timeout.current);
                 func(...args);

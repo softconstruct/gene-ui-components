@@ -1,19 +1,19 @@
-import React from 'react';
+import React from "react";
 
 export const propCategory = {
-    functionality: { category: 'Functionality' },
-    validation: { category: 'Validation' },
-    appearance: { category: 'Appearance' },
-    content: { category: 'Content' },
-    action: { category: 'Actions' },
-    states: { category: 'States' },
-    others: { category: 'Others' }
+    functionality: { category: "Functionality" },
+    validation: { category: "Validation" },
+    appearance: { category: "Appearance" },
+    content: { category: "Content" },
+    action: { category: "Actions" },
+    states: { category: "States" },
+    others: { category: "Others" }
 };
 
 export const args = (obj) => {
     const { control, options, category, condition, defaultValue, truthy, name, action, ...rest } = obj;
-    const isDefaultProvided = 'defaultValue' in obj;
-    const isControl = 'control' in obj;
+    const isDefaultProvided = "defaultValue" in obj;
+    const isControl = "control" in obj;
 
     return {
         ...(isControl && { control }),
@@ -32,12 +32,12 @@ export const args = (obj) => {
 };
 
 export const componentStage = {
-    experimental: 'experimental',
-    deprecated: 'deprecated'
+    experimental: "experimental",
+    deprecated: "deprecated"
 };
 
 export const SCREENSHOT_DELAY = 5000;
 
 export function VariantsStoryGrid({ children }) {
-    return <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>{children}</div>;
+    return <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>{children}</div>;
 }

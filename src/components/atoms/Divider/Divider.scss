@@ -6,7 +6,7 @@
     overflow: hidden;
 
     &::before {
-        content: '';
+        content: "";
         display: block;
         pointer-events: none;
         flex: 1;
@@ -110,7 +110,7 @@
             }
 
             &#{ $this }::after {
-                content: '';
+                content: "";
                 flex: 1;
             }
         }
@@ -119,7 +119,7 @@
             &#{ $this } {
                 &::after {
                     flex: 1;
-                    content: '';
+                    content: "";
                 }
             }
 
