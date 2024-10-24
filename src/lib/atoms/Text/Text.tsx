@@ -9,7 +9,13 @@ interface ITextProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * The HTML tag with which text will be rendered.
+     */
     as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
+    /**
+     * Style variants
+     */
     variant?:
         | 'headingXLargeSemibold'
         | 'headingMediumSemibold'
@@ -47,6 +53,9 @@ interface ITextProps {
         | 'captionMediumMedium'
         | 'captionMediumRegular';
 
+    /**
+     * Text
+     */
     children: string;
 }
 
@@ -67,7 +76,7 @@ const element = {
 const Text: FC<ITextProps> = ({ className, variant, children, as = 'span' }) => {
     const Element = (element[as] ?? 'span') as React.ElementType;
     return (
-        <div className={classNames(`text_${variant}`, className)}>
+        <div className={classNames(variant ? `text_${variant}` : 'text', className)}>
             <Element>{children}</Element>
         </div>
     );

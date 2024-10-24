@@ -12,7 +12,9 @@ const meta: Meta<typeof Text> = {
     component: Text,
     argTypes: {
         className: args({ control: 'false', ...propCategory.appearance }),
-        children: args({ control: 'text', ...propCategory.content })
+        children: args({ control: 'text', ...propCategory.content }),
+        variant: args({ control: 'select', ...propCategory.appearance }),
+        as: args({ control: 'select', ...propCategory.appearance })
     },
     args: {
         children: 'Text content'
