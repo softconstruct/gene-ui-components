@@ -215,6 +215,19 @@
                         border-color: var(--guit-sem-color-border-disabled-1);
                     }
                 }
+
+                &_text {
+                    background-color: var(--guit-sem-color-background-transparent-1);
+                    color: var(--guit-sem-color-foreground-success);
+
+                    &:hover {
+                        background-color: var(--guit-sem-color-background-success-1-hover);
+                    }
+
+                    &:active {
+                        background-color: var(--guit-sem-color-background-success-1-pressed);
+                    }
+                }
             }
         }
 
@@ -291,6 +304,41 @@
 
                     &:disabled {
                         background-color: var(--guit-sem-color-background-disabled);
+                    }
+                }
+
+                &_outline {
+                    border-color: var(--guit-sem-color-border-inverse);
+                    color: var(--guit-sem-color-foreground-inverse);
+
+                    &:hover {
+                        background-color: var(--guit-sem-color-background-transparent-inverse-2-hover);
+                    }
+
+                    &:active {
+                        background-color: var(--guit-sem-color-background-transparent-inverse-2-pressed);
+                    }
+
+                    &:disabled {
+                        border-color: var(--guit-sem-color-border-inverse-disabled);
+                        color: var(--guit-sem-color-foreground-disabled);
+                    }
+                }
+
+                &_text {
+                    background-color: var(--guit-sem-color-background-transparent-inverse-1);
+                    color: var(--guit-sem-color-foreground-inverse);
+
+                    &:hover {
+                        background-color: var(--guit-sem-color-background-transparent-inverse-2-hover);
+                    }
+
+                    &:active {
+                        background-color: var(--guit-sem-color-background-transparent-inverse-2-pressed);
+                    }
+
+                    &:disabled {
+                        color: var(--guit-sem-color-foreground-disabled);
                     }
                 }
             }
