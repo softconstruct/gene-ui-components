@@ -1,72 +1,47 @@
-import React, { FC } from 'react';
+import React, { FC, forwardRef } from 'react';
 import { Meta } from '@storybook/react';
 
 // Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
-import ButtonComponent, { IButtonProps } from './index';
+import Button, { IButtonProps } from './index';
+import { Search } from '@geneui/icons';
 
-const meta: Meta<typeof ButtonComponent> = {
+const meta: Meta<typeof forwardRef<HTMLButtonElement, IButtonProps>> = {
     title: 'Atoms/Button',
-    component: ButtonComponent,
+    component: Button,
     argTypes: {
-        icon: args({ control: 'text', ...propCategory.content }),
-        onClick: args({ control: false, ...propCategory.action }),
-        className: args({ control: false, ...propCategory.others }),
-        ariaLabel: args({ control: 'text', ...propCategory.others }),
-        active: args({ control: 'boolean', ...propCategory.states }),
-        children: args({ control: 'text', ...propCategory.content }),
-        loading: args({ control: 'boolean', ...propCategory.states }),
-        disabled: args({ control: 'boolean', ...propCategory.states }),
-        appearance: args({ control: 'select', defaultValue: 'default', ...propCategory.appearance }),
-        withShadow: args({ control: 'boolean', ...propCategory.appearance }),
-        color: args({ control: 'select', ...propCategory.appearance }),
         size: args({ control: 'select', ...propCategory.appearance }),
-        cornerRadius: args({ control: 'select', defaultValue: 'round', ...propCategory.appearance }),
-        flexibility: args({ control: 'select', defaultValue: 'default', ...propCategory.appearance }),
-        itemsDirection: args({ control: 'select', defaultValue: 'start', ...propCategory.appearance })
+        appearance: args({ control: 'select', ...propCategory.appearance }),
+        text: args({ control: 'text', ...propCategory.content }),
+        displayType: args({ control: 'select', ...propCategory.appearance }),
+        fullWidth: args({ control: 'boolean', ...propCategory.appearance }),
+        iconAfter: args({ control: 'boolean', ...propCategory.appearance }),
+        className: args({ control: 'false', ...propCategory.appearance }),
+        disabled: args({ control: 'boolean', ...propCategory.states }),
+        isLoading: args({ control: 'boolean', ...propCategory.states }),
+        Icon: args({ control: 'false', ...propCategory.content }),
+        name: args({ control: 'false', ...propCategory.functionality }),
+        onClick: args({ control: 'false', ...propCategory.action })
     },
     args: {
-        appearance: 'default',
-        size: 'default',
-        cornerRadius: 'round',
-        flexibility: 'default',
-        itemsDirection: 'start'
+        text: 'Button',
+        appearance: 'primary',
+        size: 'large',
+        displayType: 'fill',
+        isLoading: false
     }
 };
 
 export default meta;
 
-const Template: FC<IButtonProps> = ({ children, ...args }) => {
-    return <ButtonComponent {...args}>{children}</ButtonComponent>;
-};
+const Template: FC<IButtonProps> = (args) => <Button {...args} />;
 
 export const Default = Template.bind({});
-Default.args = {
-    children: 'Button'
-} as IButtonProps;
 
-export const Outline = Template.bind({});
-Outline.args = {
-    appearance: 'outline',
-    children: 'Button Outline'
-} as IButtonProps;
+Default.args = {} as IButtonProps;
 
-export const Minimal = Template.bind({});
-Minimal.args = {
-    appearance: 'minimal',
-    children: 'Button Minimal'
-} as IButtonProps;
+export const WithIcon = Template.bind({});
 
-export const Grayscale = Template.bind({});
-Grayscale.args = {
-    appearance: 'grayscale',
-    children: 'Button Grayscale'
-} as IButtonProps;
-
-export const Clean = Template.bind({});
-Clean.args = {
-    appearance: 'clean',
-    children: 'Button Clean'
-} as IButtonProps;
+WithIcon.args = { Icon: Search } as IButtonProps;
