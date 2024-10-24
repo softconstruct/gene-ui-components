@@ -36,7 +36,8 @@ const TSComponentsList = [
     'Loader',
     'Pill',
     'TextLink',
-    'Info'
+    'Info',
+    'Text'
 ];
 
 const getInputs = (name, dir) => {
