@@ -1,3 +1,10 @@
+// TODO: implement fonts passing via provider
+@import "https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap";
+
+html {
+    font-size: 10px;
+}
+
 .ellipsis-text {
     overflow: hidden;
     white-space: nowrap;

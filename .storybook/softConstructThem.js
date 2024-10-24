@@ -1,13 +1,13 @@
-import logo from './assets/logo.svg';
+import logo from "./assets/logo.svg";
 const colorPrimary = `#E90789`;
 
 //for all theming adjustable features visit -> https://storybook.js.org/docs/react/configure/theming
 const baseConfig = {
     // Typography
     fontBase: '"Open Sans", sans-serif',
-    fontCode: 'monospace',
+    fontCode: "monospace",
 
-    brandTitle: 'Gene UI by SoftConstruct',
+    brandTitle: "Gene UI by SoftConstruct",
     barSelectedColor: colorPrimary,
     colorSecondary: colorPrimary,
     brandImage: logo

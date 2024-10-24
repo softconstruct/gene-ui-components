@@ -1,22 +1,22 @@
-import React, { useMemo } from 'react';
-import experimental from '../../assets/experimental.svg';
-import deprecated from '../../assets/deprecated.svg';
-import './index.css';
+import React, { useMemo } from "react";
+import experimental from "../../assets/experimental.svg";
+import deprecated from "../../assets/deprecated.svg";
+import "./index.css";
 
 const cmpStages = {
-    '-e': {
+    "-e": {
         src: experimental,
-        alt: 'The component is experimental'
+        alt: "The component is experimental"
     },
-    '-d': {
+    "-d": {
         src: deprecated,
-        alt: 'The component is deprecated'
+        alt: "The component is deprecated"
     }
 };
 
 const SidebarLabelWrapper = ({ item }) => {
-    const stage = useMemo(() => (item.id[item.id.length - 2] === '-' ? item.name.slice(-2) : null), []);
-    const name = useMemo(() => (stage ? item.name.replace(stage, '') : item.name), []);
+    const stage = useMemo(() => (item.id[item.id.length - 2] === "-" ? item.name.slice(-2) : null), []);
+    const name = useMemo(() => (stage ? item.name.replace(stage, "") : item.name), []);
 
     return (
         <div className="sidebarLabel">

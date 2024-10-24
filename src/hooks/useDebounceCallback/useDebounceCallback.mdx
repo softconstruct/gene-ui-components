@@ -1,0 +1,48 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Hooks/useDebouncedCallback" />
+
+<div style={{ paddingInlineStart: '20px' }}>
+
+    ## useDebouncedCallback
+
+    Custom hook that creates a debounced version of a callback function. This helps prevent a function from being called too frequently, useful in scenarios like handling scroll events, window resizing, or search input, where multiple rapid calls to a function might be costly or unnecessary.
+
+    #### Parameters
+
+    - **`func`**: The callback function you want to debounce. It will only be executed after the debounce period.
+
+    - **`wait`** (optional): The delay time in milliseconds before the callback function is invoked. If not provided, the default is typically a short delay, but you can set it as per your needs.
+
+    #### Returns
+
+    - Returns a debounced version of the provided `func` that will be triggered after the specified `wait` period.
+
+    #### Usage
+
+    ```js
+    import React, { useCallback } from 'react';
+    import useDebouncedCallback from './useDebouncedCallback';
+
+    const MyComponent = () => {
+    const handleClick = (event) => {
+        console.log('Button clicked', event);
+    };
+
+    const debouncedHandleClick = useDebouncedCallback(handleClick, 300); // Debounce with a 300ms delay.
+
+    return (
+        <button onClick={debouncedHandleClick}>Click Me</button>
+        )
+        };
+
+    export default MyComponent;
+```
+#### Notes
+
+-   The debounce logic ensures that the func is only executed once after the user has stopped triggering the event for a specified wait period.
+-   It's useful for improving performance when functions are called in quick succession (e.g., input events, scrolling, resizing).
+-   This hook uses window.setTimeout to delay the invocation of the function and clearTimeout to cancel any pending invocations if the function is called again before the delay completes.
+
+
+</div>

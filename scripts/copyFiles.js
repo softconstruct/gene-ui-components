@@ -1,3 +1,3 @@
-import { copyStaticFilesToDist } from './utils';
+import { copyStaticFilesToDist } from "./utils";
 
 copyStaticFilesToDist();
