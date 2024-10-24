@@ -5,7 +5,7 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 
 // Components
 import TooltipComponent, { ITooltipProps } from "./index";
-import Pill from "../../atoms/Pill";
+import HelperText from "../../atoms/HelperText";
 
 const meta: Meta<ITooltipProps> = {
     title: "Molecules/Tooltip",
@@ -38,7 +38,7 @@ export function Tooltip({ ...props }) {
     return (
         <div style={{ height: "200px", padding: "200px 300px" }}>
             <TooltipComponent {...props}>
-                <Pill text="tooltip target" color="warning" isFill />
+                <HelperText text="hover for tooltip" type="warning" />
             </TooltipComponent>
         </div>
     );

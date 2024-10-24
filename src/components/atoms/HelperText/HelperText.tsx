@@ -65,10 +65,9 @@ const HelperText: FC<IHelperTextProps> = ({
 
     const iconMap = {
         danger: <ErrorAlertFill size={iconSize[size]} />,
-        warning: <WarningFill size={iconSize[size]} />
+        warning: <WarningFill size={iconSize[size]} />,
+        rest: Icon && <Icon size={iconSize[size]} />
     };
-
-    const iconContent = iconMap[type] || (Icon && <Icon size={iconSize[size]} />);
 
     return (
         <div
@@ -80,7 +79,7 @@ const HelperText: FC<IHelperTextProps> = ({
                 "skeleton"
             ) : (
                 <>
-                    {iconContent && <div className="helperText__icon">{iconContent}</div>}
+                    {iconMap[type] && <div className="helperText__icon">{iconMap[type]}</div>}
                     <p className="helperText__text">{text}</p>
                 </>
             )}

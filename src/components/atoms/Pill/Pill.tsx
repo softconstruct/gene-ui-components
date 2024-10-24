@@ -111,7 +111,7 @@ const Pill: FC<IPillProps> = ({
         >
             {iconContent}
             {text && (
-                <Tooltip text={text} isVisible={isTruncated}>
+                <Tooltip text={text} isVisible={isTruncated} appearance={color === "inverse" ? "inverse" : "default"}>
                     <span ref={textRef} className="pill__text ellipsis-text">
                         {text}
                     </span>

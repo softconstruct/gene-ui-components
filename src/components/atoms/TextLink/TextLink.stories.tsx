@@ -28,11 +28,12 @@ const meta: Meta<typeof TextLink> = {
     args: {
         appearance: "primary",
         text: "LinkText",
-        href: "javascript:void(0)",
+        href: "#",
         disabled: false,
         target: "self",
         iconBefore: false,
-        Icon: Globe
+        Icon: Globe,
+        onClick: (e) => e.preventDefault()
     } as ITextLinkProps
 };
 

@@ -113,7 +113,7 @@ const FindAndSetRef = <T extends object>(
     childProps: T,
     componentRef: (node: ReferenceType | null) => void,
     checked: boolean = false
-) => {
+): any[] => {
     let isChecked = checked;
 
     return Children.map(children, (node, i) => {
@@ -239,8 +239,16 @@ const Tooltip: FC<ITooltipProps> = ({
     const arrowPositions = {
         "top-start": "left",
         "top-end": "right",
+        "left-start": "top",
+        "left-end": "bottom",
         "bottom-end": "right",
-        "bottom-start": "left"
+        "bottom-start": "left",
+        "right-end": "top",
+        "right-start": "bottom",
+        top: "bottom",
+        right: "left",
+        bottom: "top",
+        left: "right"
     }[placement];
 
     const getCorrectPosition = arrowPositions
