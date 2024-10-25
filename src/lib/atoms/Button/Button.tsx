@@ -108,7 +108,9 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
         }: IButtonProps,
         ref
     ) => {
-        const sizeIsXS = size === 'XSmall';
+        const isSizeXS = size === 'XSmall';
+        const isTextDisplayForXS =
+            (appearance === 'primary' || appearance === 'danger' || appearance === 'success') && isSizeXS;
 
         return (
             <button
@@ -120,13 +122,13 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 className={classNames(
                     `button button_size_${size} 
                     button_color_${appearance} 
-                    button_type_${displayType}`,
+                    button_type_${isTextDisplayForXS ? 'text' : displayType}`,
                     className,
                     {
                         button_fullWidth: fullWidth,
                         button_icon_before: !iconAfter && Icon && text,
                         button_icon_after: iconAfter && Icon && text,
-                        button_icon_only: (!text || sizeIsXS) && Icon,
+                        button_icon_only: (!text || isSizeXS) && Icon,
                         button_loading: isLoading
                     }
                 )}
@@ -145,7 +147,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                     </span>
                 )}
 
-                {text && !sizeIsXS && <span className="button__text">{text}</span>}
+                {text && !isSizeXS && <span className="button__text">{text}</span>}
             </button>
         );
     }
