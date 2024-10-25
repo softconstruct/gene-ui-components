@@ -8,12 +8,11 @@
     min-width: max-content;
     cursor: pointer;
     user-select: none;
+    border-width: var(--guit-ref-border-width-thin);
+    border-style: var(--guit-ref-border-style-solid);
 
-    &#{ $this }_type {
-        &_outline {
-            border-width: var(--guit-ref-border-width-thin);
-            border-style: var(--guit-ref-border-style-solid);
-        }
+    &:not(#{ $this }_type_outline) {
+        border-color: var(--guit-ref-color-transparent-neutral-0-0);
     }
 
     &_icon {
