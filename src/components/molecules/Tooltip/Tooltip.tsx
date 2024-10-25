@@ -8,7 +8,6 @@ import React, {
     Fragment,
     useEffect,
     RefObject,
-    useMemo,
     useRef
 } from "react";
 import { shift, flip, offset } from "@floating-ui/core";
@@ -113,7 +112,7 @@ const FindAndSetRef = <T extends object>(
     childProps: T,
     componentRef: (node: ReferenceType | null) => void,
     checked: boolean = false
-): any[] => {
+): JSX.Element[] => {
     let isChecked = checked;
 
     return Children.map(children, (node, i) => {
@@ -135,7 +134,7 @@ const FindAndSetRef = <T extends object>(
                 newProps = { ...newProps, ref: componentRef };
             }
 
-            return cloneElement(el.type(el.props), newProps);
+            return FindAndSetRef(cloneElement(el.type(el.props), newProps), newProps, componentRef, isChecked);
         }
 
         if (el?.type === Fragment && el.props.children) {
@@ -146,9 +145,22 @@ const FindAndSetRef = <T extends object>(
             return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef, isChecked);
         }
         return el && cloneElement(el, newProps);
-    });
+    }) as JSX.Element[];
 };
 
+const arrowPositions = {
+    "top-start": "left",
+    "top-end": "right",
+    "bottom-end": "right",
+    "bottom-start": "left"
+} as Record<string, string>;
+
+const staticSides = {
+    top: "bottom",
+    right: "left",
+    bottom: "top",
+    left: "right"
+};
 /**
 A tooltip is a small, elevated surface that appears to provide contextual information when a user hovers over or focuses on a UI element.
 Tooltips should be used to offer helpful plaintext information, not to communicate system feedback. Use a popover instead if you need to deliver structured information or enable interactions.
@@ -204,13 +216,11 @@ const Tooltip: FC<ITooltipProps> = ({
 
     const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
 
-    const component = useMemo(() => {
-        return FindAndSetRef(children, getReferenceProps(), refs.setReference);
-    }, [children, getReferenceProps()]);
+    const component = FindAndSetRef(children, getReferenceProps(), refs.setReference);
 
     useEffect(() => {
         for (let i = 0; i < component.length; i++) {
-            const node = component[i];
+            const node = component[i] as JSXWithRef;
 
             if (typeof node.ref === "function" && node.ref === refs.setReference) {
                 break;
@@ -225,35 +235,16 @@ const Tooltip: FC<ITooltipProps> = ({
 
     const [currentDirection] = placement.split("-");
 
-    const staticSide = {
-        top: "bottom",
-        right: "left",
-        bottom: "top",
-        left: "right"
-    }[currentDirection];
+    const staticSide = staticSides[currentDirection];
 
     const middlewareArrowData = middlewareData.arrow;
 
     const offsetFromEdge = 8;
 
-    const arrowPositions = {
-        "top-start": "left",
-        "top-end": "right",
-        "left-start": "top",
-        "left-end": "bottom",
-        "bottom-end": "right",
-        "bottom-start": "left",
-        "right-end": "top",
-        "right-start": "bottom",
-        top: "bottom",
-        right: "left",
-        bottom: "top",
-        left: "right"
-    }[placement];
-
-    const getCorrectPosition = arrowPositions
-        ? { [arrowPositions]: offsetFromEdge }
-        : { insetInlineStart: middlewareArrowData?.x || undefined };
+    const arrowPosition = arrowPositions[placement];
+    const getCorrectPosition = arrowPosition
+        ? { [arrowPosition]: offsetFromEdge }
+        : { insetInlineStart: middlewareArrowData?.x };
 
     return (
         <>
@@ -271,7 +262,7 @@ const Tooltip: FC<ITooltipProps> = ({
                             ref={arrowRef}
                             style={{
                                 ...getCorrectPosition,
-                                top: middlewareArrowData?.y || undefined,
+                                top: middlewareArrowData?.y,
                                 [staticSide!]: arrowRef.current ? `${-arrowRef.current.offsetWidth + 6}px` : 0
                             }}
                         >
