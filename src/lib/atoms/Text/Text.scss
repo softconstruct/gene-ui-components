@@ -1,5 +1,270 @@
 .text {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    &_headingXLargeSemibold {
+        font-family: var(--guit-sem-font-heading-xlarge-semibold-font-family);
+        font-size: var(--guit-sem-font-heading-xlarge-semibold-font-size);
+        font-weight: var(--guit-sem-font-heading-xlarge-semibold-font-weight);
+        line-height: var(--guit-sem-font-heading-xlarge-semibold-line-height);
+    }
+
+    &_headingLargeSemibold {
+        font-family: var(--guit-sem-font-heading-large-semibold-font-family);
+        font-size: var(--guit-sem-font-heading-large-semibold-font-size);
+        font-weight: var(--guit-sem-font-heading-large-semibold-font-weight);
+        line-height: var(--guit-sem-font-heading-large-semibold-line-height);
+    }
+
+    &_headingMediumSemibold {
+        font-family: var(--guit-sem-font-heading-medium-semibold-font-family);
+        font-size: var(--guit-sem-font-heading-medium-semibold-font-size);
+        font-weight: var(--guit-sem-font-heading-medium-semibold-font-weight);
+        line-height: var(--guit-sem-font-heading-medium-semibold-line-height);
+    }
+
+    &_headingSmallSemibold {
+        font-family: var(--guit-sem-font-heading-small-semibold-font-family);
+        font-size: var(--guit-sem-font-heading-small-semibold-font-size);
+        font-weight: var(--guit-sem-font-heading-small-semibold-font-weight);
+        line-height: var(--guit-sem-font-heading-small-semibold-line-height);
+    }
+
+    &_headingXSmallSemibold {
+        font-family: var(--guit-sem-font-heading-xsmall-semibold-font-family);
+        font-size: var(--guit-sem-font-heading-xsmall-semibold-font-size);
+        font-weight: var(--guit-sem-font-heading-xsmall-semibold-font-weight);
+        line-height: var(--guit-sem-font-heading-xsmall-semibold-line-height);
+    }
+
+    &_subheadingLargeSemibold {
+        font-family: var(--guit-sem-font-subheading-large-semibold-font-family);
+        font-size: var(--guit-sem-font-subheading-large-semibold-font-size);
+        font-weight: var(--guit-sem-font-subheading-large-semibold-font-weight);
+        line-height: var(--guit-sem-font-subheading-large-semibold-line-height);
+    }
+
+    &_subheadingMediumSemibold {
+        font-family: var(--guit-sem-font-subheading-medium-semibold-font-family);
+        font-size: var(--guit-sem-font-subheading-medium-semibold-font-size);
+        font-weight: var(--guit-sem-font-subheading-medium-semibold-font-weight);
+        line-height: var(--guit-sem-font-subheading-medium-semibold-line-height);
+    }
+
+    &_labelLargeSemibold {
+        font-family: var(--guit-sem-font-label-large-default-semibold-font-family);
+        font-size: var(--guit-sem-font-label-large-default-semibold-font-size);
+        font-weight: var(--guit-sem-font-label-large-default-semibold-font-weight);
+        line-height: var(--guit-sem-font-label-large-default-semibold-line-height);
+    }
+
+    &_labelLargeMedium {
+        font-family: var(--guit-sem-font-label-large-default-medium-font-family);
+        font-size: var(--guit-sem-font-label-large-default-medium-font-size);
+        font-weight: var(--guit-sem-font-label-large-default-medium-font-weight);
+        line-height: var(--guit-sem-font-label-large-default-medium-line-height);
+    }
+
+    &_labelLargeUnderlineSemibold {
+        font-family: var(--guit-sem-font-label-large-underline-semibold-font-family);
+        font-size: var(--guit-sem-font-label-large-underline-semibold-font-size);
+        font-weight: var(--guit-sem-font-label-large-underline-semibold-font-weight);
+        line-height: var(--guit-sem-font-label-large-underline-semibold-line-height);
+        text-decoration: var(--guit-sem-font-label-large-underline-semibold-text-decoration);
+    }
+
+    &_labelLargeUnderlineMedium {
+        font-family: var(--guit-sem-font-label-large-underline-medium-font-family);
+        font-size: var(--guit-sem-font-label-large-underline-medium-font-size);
+        font-weight: var(--guit-sem-font-label-large-underline-medium-font-weight);
+        line-height: var(--guit-sem-font-label-large-underline-medium-line-height);
+        text-decoration: var(--guit-sem-font-label-large-underline-medium-text-decoration);
+    }
+
+    &_labelMediumSemibold {
+        font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+        font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+        font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
+        line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+    }
+
+    &_labelMediumMedium {
+        font-family: var(--guit-sem-font-label-medium-default-medium-font-family);
+        font-size: var(--guit-sem-font-label-medium-default-medium-font-size);
+        font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+        line-height: var(--guit-sem-font-label-medium-default-medium-line-height);
+    }
+
+    &_labelMediumUnderlineSemibold {
+        font-family: var(--guit-sem-font-label-medium-underline-semibold-font-family);
+        font-size: var(--guit-sem-font-label-medium-underline-semibold-font-size);
+        font-weight: var(--guit-sem-font-label-medium-underline-semibold-font-weight);
+        line-height: var(--guit-sem-font-label-medium-underline-semibold-line-height);
+        text-decoration: var(--guit-sem-font-label-medium-underline-semibold-text-decoration);
+    }
+
+    &_labelMediumUnderlineMedium {
+        font-family: var(--guit-sem-font-label-medium-underline-medium-font-family);
+        font-size: var(--guit-sem-font-label-medium-underline-medium-font-size);
+        font-weight: var(--guit-sem-font-label-medium-underline-medium-font-weight);
+        line-height: var(--guit-sem-font-label-medium-underline-medium-line-height);
+        text-decoration: var(--guit-sem-font-label-medium-underline-medium-text-decoration);
+    }
+
+    &_labelSmallSemibold {
+        font-family: var(--guit-sem-font-label-small-default-semibold-font-family);
+        font-size: var(--guit-sem-font-label-small-default-semibold-font-size);
+        font-weight: var(--guit-sem-font-label-small-default-semibold-font-weight);
+        line-height: var(--guit-sem-font-label-small-default-semibold-line-height);
+    }
+
+    &_labelSmallMedium {
+        font-family: var(--guit-sem-font-label-small-default-medium-font-family);
+        font-size: var(--guit-sem-font-label-small-default-medium-font-size);
+        font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
+        line-height: var(--guit-sem-font-label-small-default-medium-line-height);
+    }
+
+    &_labelSmallUnderlineSemibold {
+        font-family: var(--guit-sem-font-label-small-underline-semibold-font-family);
+        font-size: var(--guit-sem-font-label-small-underline-semibold-font-size);
+        font-weight: var(--guit-sem-font-label-small-underline-semibold-font-weight);
+        line-height: var(--guit-sem-font-label-small-underline-semibold-line-height);
+        text-decoration: var(--guit-sem-font-label-small-underline-semibold-text-decoration);
+    }
+
+    &_labelSmallUnderlineMedium {
+        font-family: var(--guit-sem-font-label-small-underline-medium-font-family);
+        font-size: var(--guit-sem-font-label-small-underline-medium-font-size);
+        font-weight: var(--guit-sem-font-label-small-underline-medium-font-weight);
+        line-height: var(--guit-sem-font-label-small-underline-medium-line-height);
+        text-decoration: var(--guit-sem-font-label-small-underline-medium-text-decoration);
+    }
+
+    &_bodyLargeSemibold {
+        font-family: var(--guit-sem-font-body-large-default-semibold-font-family);
+        font-size: var(--guit-sem-font-body-large-default-semibold-font-size);
+        font-weight: var(--guit-sem-font-body-large-default-semibold-font-weight);
+        line-height: var(--guit-sem-font-body-large-default-semibold-line-height);
+    }
+
+    &_bodyLargeMedium {
+        font-family: var(--guit-sem-font-body-large-default-medium-font-family);
+        font-size: var(--guit-sem-font-body-large-default-medium-font-size);
+        font-weight: var(--guit-sem-font-body-large-default-medium-font-weight);
+        line-height: var(--guit-sem-font-body-large-default-medium-line-height);
+    }
+
+    &_bodyLargeRegular {
+        font-family: var(--guit-sem-font-body-large-default-regular-font-family);
+        font-size: var(--guit-sem-font-body-large-default-regular-font-size);
+        font-weight: var(--guit-sem-font-body-large-default-regular-font-weight);
+        line-height: var(--guit-sem-font-body-large-default-regular-line-height);
+    }
+
+    &_bodyLargeUnderlineSemibold {
+        font-family: var(--guit-sem-font-body-large-underline-semibold-font-family);
+        font-size: var(--guit-sem-font-body-large-underline-semibold-font-size);
+        font-weight: var(--guit-sem-font-body-large-underline-semibold-font-weight);
+        line-height: var(--guit-sem-font-body-large-underline-semibold-line-height);
+        text-decoration: var(--guit-sem-font-body-large-underline-semibold-text-decoration);
+    }
+
+    &_bodyLargeUnderlineMedium {
+        font-family: var(--guit-sem-font-body-large-underline-medium-font-family);
+        font-size: var(--guit-sem-font-body-large-underline-medium-font-size);
+        font-weight: var(--guit-sem-font-body-large-underline-medium-font-weight);
+        line-height: var(--guit-sem-font-body-large-underline-medium-line-height);
+        text-decoration: var(--guit-sem-font-body-large-underline-medium-text-decoration);
+    }
+
+    &_bodyLargeUnderlineRegular {
+        font-family: var(--guit-sem-font-body-large-underline-regular-font-family);
+        font-size: var(--guit-sem-font-body-large-underline-regular-font-size);
+        font-weight: var(--guit-sem-font-body-large-underline-regular-font-weight);
+        line-height: var(--guit-sem-font-body-large-underline-regular-line-height);
+        text-decoration: var(--guit-sem-font-body-large-underline-regular-text-decoration);
+    }
+
+    &_bodyMediumSemibold {
+        font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
+        font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
+        font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
+        line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
+    }
+
+    &_bodyMediumMedium {
+        font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+        font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+        font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+        line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+    }
+
+    &_bodyMediumRegular {
+        font-family: var(--guit-sem-font-body-medium-default-regular-font-family);
+        font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
+        font-weight: var(--guit-sem-font-body-medium-default-regular-font-weight);
+        line-height: var(--guit-sem-font-body-medium-default-regular-line-height);
+    }
+
+    &_bodyMediumUnderlineSemibold {
+        font-family: var(--guit-sem-font-body-medium-underline-semibold-font-family);
+        font-size: var(--guit-sem-font-body-medium-underline-semibold-font-size);
+        font-weight: var(--guit-sem-font-body-medium-underline-semibold-font-weight);
+        line-height: var(--guit-sem-font-body-medium-underline-semibold-line-height);
+        text-decoration: var(--guit-sem-font-body-medium-underline-semibold-text-decoration);
+    }
+
+    &_bodyMediumUnderlineMedium {
+        font-family: var(--guit-sem-font-body-medium-underline-medium-font-family);
+        font-size: var(--guit-sem-font-body-medium-underline-medium-font-size);
+        font-weight: var(--guit-sem-font-body-medium-underline-medium-font-weight);
+        line-height: var(--guit-sem-font-body-medium-underline-medium-line-height);
+        text-decoration: var(--guit-sem-font-body-medium-underline-medium-text-decoration);
+    }
+
+    &_bodyMediumUnderlineRegular {
+        font-family: var(--guit-sem-font-body-medium-underline-regular-font-family);
+        font-size: var(--guit-sem-font-body-medium-underline-regular-font-size);
+        font-weight: var(--guit-sem-font-body-medium-underline-regular-font-weight);
+        line-height: var(--guit-sem-font-body-medium-underline-regular-line-height);
+        text-decoration: var(--guit-sem-font-body-medium-underline-regular-text-decoration);
+    }
+
+    &_captionLargeSemibold {
+        font-family: var(--guit-sem-font-caption-large-semibold-font-family);
+        font-size: var(--guit-sem-font-caption-large-semibold-font-size);
+        font-weight: var(--guit-sem-font-caption-large-semibold-font-weight);
+        line-height: var(--guit-sem-font-caption-large-semibold-line-height);
+        letter-spacing: var(--guit-sem-font-caption-large-semibold-letter-spacing);
+    }
+
+    &_captionLargeMedium {
+        font-family: var(--guit-sem-font-caption-large-medium-font-family);
+        font-size: var(--guit-sem-font-caption-large-medium-font-size);
+        font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
+        line-height: var(--guit-sem-font-caption-large-medium-line-height);
+        letter-spacing: var(--guit-sem-font-caption-large-medium-letter-spacing);
+    }
+
+    &_captionLargeRegular {
+        font-family: var(--guit-sem-font-caption-large-regular-font-family);
+        font-size: var(--guit-sem-font-caption-large-regular-font-size);
+        font-weight: var(--guit-sem-font-caption-large-regular-font-weight);
+        line-height: var(--guit-sem-font-caption-large-regular-line-height);
+        letter-spacing: var(--guit-sem-font-caption-large-regular-letter-spacing);
+    }
+
+    &_captionMediumMedium {
+        font-family: var(--guit-sem-font-caption-medium-medium-font-family);
+        font-size: var(--guit-sem-font-caption-medium-medium-font-size);
+        font-weight: var(--guit-sem-font-caption-medium-medium-font-weight);
+        line-height: var(--guit-sem-font-caption-medium-medium-line-height);
+        letter-spacing: var(--guit-sem-font-caption-medium-medium-letter-spacing);
+    }
+
+    &_captionMediumRegular {
+        font-family: var(--guit-sem-font-caption-medium-regular-font-family);
+        font-size: var(--guit-sem-font-caption-medium-regular-font-size);
+        font-weight: var(--guit-sem-font-caption-medium-regular-font-weight);
+        line-height: var(--guit-sem-font-caption-medium-regular-line-height);
+        letter-spacing: var(--guit-sem-font-caption-medium-regular-letter-spacing);
+    }
 }

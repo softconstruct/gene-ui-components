@@ -18,6 +18,7 @@ interface ITextProps {
      */
     variant?:
         | 'headingXLargeSemibold'
+        | 'headingLargeSemibold'
         | 'headingMediumSemibold'
         | 'headingSmallSemibold'
         | 'headingXSmallSemibold'
