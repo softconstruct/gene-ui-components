@@ -77,8 +77,8 @@ const element = {
 const Text: FC<ITextProps> = ({ className, variant, children, as = 'span' }) => {
     const Element = (element[as] ?? 'span') as React.ElementType;
     return (
-        <div className={classNames(variant ? `text_${variant}` : 'text', className)}>
-            <Element>{children}</Element>
+        <div className={classNames('text', className)}>
+            <Element className={classNames({ [`text_${variant}`]: Boolean(variant) })}>{children}</Element>
         </div>
     );
 };
