@@ -130,6 +130,7 @@ const FindAndSetRef = <T extends object>(
         let newProps = {
             ...childProps
         };
+        if (!React.isValidElement(el)) return null;
 
         if (typeof el?.type === 'string') {
             if (!el.ref && i === 0 && !checked) {
@@ -216,7 +217,7 @@ const Tooltip: FC<ITooltipProps> = ({
         ...getReferenceProps()
     };
 
-    const component = useMemo(() => FindAndSetRef(children, childProps, refs.setReference), [children, childProps]);
+    const component = FindAndSetRef(children, childProps, refs.setReference, false, Tooltip);
 
     useEffect(() => {
         for (let i = 0; i < component.length; i++) {
