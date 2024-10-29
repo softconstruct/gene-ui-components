@@ -8,8 +8,7 @@ import React, {
     Children,
     Fragment,
     useEffect,
-    RefObject,
-    useMemo
+    RefObject
 } from 'react';
 import { shift, flip, offset } from '@floating-ui/core';
 import { FloatingPortal, autoUpdate, useFloating } from '@floating-ui/react';
@@ -86,41 +85,45 @@ type JSXWithRef = JSX.Element & { ref: RefObject<unknown> };
 const FindAndSetRef = <T extends object>(
     children: JSX.Element | JSX.Element[],
     childProps: T,
-    componentRef: (node: ReferenceType | null) => void
-) => {
+    componentRef: (node: ReferenceType | null) => void,
+    checked: boolean,
+    Tooltip: FC<ITooltipProps>
+): JSX.Element[] => {
+    let isChecked = checked;
     return Children.map(children, (node, i) => {
         const el = node as JSXWithRef;
-
         let newProps = {
             ...childProps
         };
+        if (!React.isValidElement(el)) return null;
 
-        if (el?.type === Fragment && el.props.children) {
-            return FindAndSetRef(el.props.children, newProps, componentRef);
-        }
-
-        if (isForwardRef(el)) {
-            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef);
+        if (el.type === Tooltip) {
+            return null;
         }
 
         if (typeof el?.type === 'string') {
-            if (!el.ref && i === 0) {
+            if (!el.ref && i === 0 && !isChecked) {
+                isChecked = true;
                 newProps = { ...newProps, ref: componentRef };
             }
-
             return cloneElement(el, newProps);
         }
-
         if (typeof el?.type === 'function') {
             if (!el.ref) {
                 newProps = { ...newProps, ref: componentRef };
             }
-
-            return cloneElement(el.type(el.props), newProps);
+            return FindAndSetRef(cloneElement(el.type(el.props), newProps), newProps, componentRef, isChecked, Tooltip);
         }
 
+        if (el?.type === Fragment && el.props.children) {
+            return FindAndSetRef(el.props.children, newProps, componentRef, isChecked, Tooltip);
+        }
+
+        if (isForwardRef(el)) {
+            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef, isChecked, Tooltip);
+        }
         return el && cloneElement(el, newProps);
-    });
+    }) as JSX.Element[];
 };
 
 const Tooltip: FC<ITooltipProps> = ({
@@ -141,7 +144,6 @@ const Tooltip: FC<ITooltipProps> = ({
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const { isMobile } = useDeviceType(screenType);
     const [isPopoverOpen, setIsPopoverState] = useState(false);
-
     const mouseEnterHandler = () => !alwaysShow && setIsPopoverState(true);
     const mouseLeaveHandler = () => !alwaysShow && setIsPopoverState(false);
 
@@ -177,16 +179,28 @@ const Tooltip: FC<ITooltipProps> = ({
         onMouseLeave: mouseLeaveHandler
     };
 
-    const component = useMemo(() => FindAndSetRef(children, childProps, refs.setReference), [children, childProps]);
+    const component = FindAndSetRef(children, childProps, refs.setReference, false, Tooltip);
 
     useEffect(() => {
-        component.forEach((element: JSX.Element) => {
-            const node = element as JSXWithRef;
-            if (node?.ref?.current) {
-                refs.setReference(node.ref.current as ReferenceType);
+        if (component.length) {
+            for (let i = 0; i < component.length; i++) {
+                const node = component[i] as JSXWithRef;
+
+                if (typeof node.ref === 'function' && node.ref === refs.setReference) {
+                    break;
+                }
+
+                if (node?.ref?.current) {
+                    refs.setReference(node.ref.current as ReferenceType);
+                    break;
+                }
             }
-        });
+        }
     }, [component]);
+
+    if (!component.length) {
+        return children;
+    }
 
     return (
         <>
