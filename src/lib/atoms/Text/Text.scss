@@ -62,22 +62,6 @@
         line-height: var(--guit-sem-font-label-large-default-medium-line-height);
     }
 
-    &_labelLargeUnderlineSemibold {
-        font-family: var(--guit-sem-font-label-large-underline-semibold-font-family);
-        font-size: var(--guit-sem-font-label-large-underline-semibold-font-size);
-        font-weight: var(--guit-sem-font-label-large-underline-semibold-font-weight);
-        line-height: var(--guit-sem-font-label-large-underline-semibold-line-height);
-        text-decoration: var(--guit-sem-font-label-large-underline-semibold-text-decoration);
-    }
-
-    &_labelLargeUnderlineMedium {
-        font-family: var(--guit-sem-font-label-large-underline-medium-font-family);
-        font-size: var(--guit-sem-font-label-large-underline-medium-font-size);
-        font-weight: var(--guit-sem-font-label-large-underline-medium-font-weight);
-        line-height: var(--guit-sem-font-label-large-underline-medium-line-height);
-        text-decoration: var(--guit-sem-font-label-large-underline-medium-text-decoration);
-    }
-
     &_labelMediumSemibold {
         font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
         font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
@@ -92,22 +76,6 @@
         line-height: var(--guit-sem-font-label-medium-default-medium-line-height);
     }
 
-    &_labelMediumUnderlineSemibold {
-        font-family: var(--guit-sem-font-label-medium-underline-semibold-font-family);
-        font-size: var(--guit-sem-font-label-medium-underline-semibold-font-size);
-        font-weight: var(--guit-sem-font-label-medium-underline-semibold-font-weight);
-        line-height: var(--guit-sem-font-label-medium-underline-semibold-line-height);
-        text-decoration: var(--guit-sem-font-label-medium-underline-semibold-text-decoration);
-    }
-
-    &_labelMediumUnderlineMedium {
-        font-family: var(--guit-sem-font-label-medium-underline-medium-font-family);
-        font-size: var(--guit-sem-font-label-medium-underline-medium-font-size);
-        font-weight: var(--guit-sem-font-label-medium-underline-medium-font-weight);
-        line-height: var(--guit-sem-font-label-medium-underline-medium-line-height);
-        text-decoration: var(--guit-sem-font-label-medium-underline-medium-text-decoration);
-    }
-
     &_labelSmallSemibold {
         font-family: var(--guit-sem-font-label-small-default-semibold-font-family);
         font-size: var(--guit-sem-font-label-small-default-semibold-font-size);
@@ -120,22 +88,6 @@
         font-size: var(--guit-sem-font-label-small-default-medium-font-size);
         font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
         line-height: var(--guit-sem-font-label-small-default-medium-line-height);
-    }
-
-    &_labelSmallUnderlineSemibold {
-        font-family: var(--guit-sem-font-label-small-underline-semibold-font-family);
-        font-size: var(--guit-sem-font-label-small-underline-semibold-font-size);
-        font-weight: var(--guit-sem-font-label-small-underline-semibold-font-weight);
-        line-height: var(--guit-sem-font-label-small-underline-semibold-line-height);
-        text-decoration: var(--guit-sem-font-label-small-underline-semibold-text-decoration);
-    }
-
-    &_labelSmallUnderlineMedium {
-        font-family: var(--guit-sem-font-label-small-underline-medium-font-family);
-        font-size: var(--guit-sem-font-label-small-underline-medium-font-size);
-        font-weight: var(--guit-sem-font-label-small-underline-medium-font-weight);
-        line-height: var(--guit-sem-font-label-small-underline-medium-line-height);
-        text-decoration: var(--guit-sem-font-label-small-underline-medium-text-decoration);
     }
 
     &_bodyLargeSemibold {
@@ -159,30 +111,6 @@
         line-height: var(--guit-sem-font-body-large-default-regular-line-height);
     }
 
-    &_bodyLargeUnderlineSemibold {
-        font-family: var(--guit-sem-font-body-large-underline-semibold-font-family);
-        font-size: var(--guit-sem-font-body-large-underline-semibold-font-size);
-        font-weight: var(--guit-sem-font-body-large-underline-semibold-font-weight);
-        line-height: var(--guit-sem-font-body-large-underline-semibold-line-height);
-        text-decoration: var(--guit-sem-font-body-large-underline-semibold-text-decoration);
-    }
-
-    &_bodyLargeUnderlineMedium {
-        font-family: var(--guit-sem-font-body-large-underline-medium-font-family);
-        font-size: var(--guit-sem-font-body-large-underline-medium-font-size);
-        font-weight: var(--guit-sem-font-body-large-underline-medium-font-weight);
-        line-height: var(--guit-sem-font-body-large-underline-medium-line-height);
-        text-decoration: var(--guit-sem-font-body-large-underline-medium-text-decoration);
-    }
-
-    &_bodyLargeUnderlineRegular {
-        font-family: var(--guit-sem-font-body-large-underline-regular-font-family);
-        font-size: var(--guit-sem-font-body-large-underline-regular-font-size);
-        font-weight: var(--guit-sem-font-body-large-underline-regular-font-weight);
-        line-height: var(--guit-sem-font-body-large-underline-regular-line-height);
-        text-decoration: var(--guit-sem-font-body-large-underline-regular-text-decoration);
-    }
-
     &_bodyMediumSemibold {
         font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
         font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
@@ -202,30 +130,6 @@
         font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
         font-weight: var(--guit-sem-font-body-medium-default-regular-font-weight);
         line-height: var(--guit-sem-font-body-medium-default-regular-line-height);
-    }
-
-    &_bodyMediumUnderlineSemibold {
-        font-family: var(--guit-sem-font-body-medium-underline-semibold-font-family);
-        font-size: var(--guit-sem-font-body-medium-underline-semibold-font-size);
-        font-weight: var(--guit-sem-font-body-medium-underline-semibold-font-weight);
-        line-height: var(--guit-sem-font-body-medium-underline-semibold-line-height);
-        text-decoration: var(--guit-sem-font-body-medium-underline-semibold-text-decoration);
-    }
-
-    &_bodyMediumUnderlineMedium {
-        font-family: var(--guit-sem-font-body-medium-underline-medium-font-family);
-        font-size: var(--guit-sem-font-body-medium-underline-medium-font-size);
-        font-weight: var(--guit-sem-font-body-medium-underline-medium-font-weight);
-        line-height: var(--guit-sem-font-body-medium-underline-medium-line-height);
-        text-decoration: var(--guit-sem-font-body-medium-underline-medium-text-decoration);
-    }
-
-    &_bodyMediumUnderlineRegular {
-        font-family: var(--guit-sem-font-body-medium-underline-regular-font-family);
-        font-size: var(--guit-sem-font-body-medium-underline-regular-font-size);
-        font-weight: var(--guit-sem-font-body-medium-underline-regular-font-weight);
-        line-height: var(--guit-sem-font-body-medium-underline-regular-line-height);
-        text-decoration: var(--guit-sem-font-body-medium-underline-regular-text-decoration);
     }
 
     &_captionLargeSemibold {
@@ -280,10 +184,6 @@
         &_end {
             text-align: end;
         }
-
-        &_justify {
-            text-align: justify;
-        }
     }
 
     &_case {
@@ -299,12 +199,6 @@
 
         &_lineThrough {
             text-decoration: line-through;
-        }
-    }
-
-    &_style {
-        &_italic {
-            font-style: italic;
         }
     }
 }
