@@ -107,47 +107,6 @@ interface ITooltipProps {
 
 type JSXWithRef = JSX.Element & { ref: RefObject<HTMLElement> };
 
-const FindAndSetRef = <T extends object>(
-    children: JSX.Element | JSX.Element[],
-    childProps: T,
-    componentRef: (node: ReferenceType | null) => void,
-    checked: boolean = false
-): JSX.Element[] => {
-    let isChecked = checked;
-
-    return Children.map(children, (node, i) => {
-        const el = node as JSXWithRef;
-        let newProps = {
-            ...childProps
-        };
-
-        if (typeof el?.type === "string") {
-            if (!el.ref && i === 0 && !isChecked) {
-                isChecked = true;
-                newProps = { ...newProps, ref: componentRef };
-            }
-
-            return cloneElement(el, newProps);
-        }
-        if (typeof el?.type === "function") {
-            if (!el.ref) {
-                newProps = { ...newProps, ref: componentRef };
-            }
-
-            return FindAndSetRef(cloneElement(el.type(el.props), newProps), newProps, componentRef, isChecked);
-        }
-
-        if (el?.type === Fragment && el.props.children) {
-            return FindAndSetRef(el.props.children, newProps, componentRef, isChecked);
-        }
-
-        if (isForwardRef(el)) {
-            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef, isChecked);
-        }
-        return el && cloneElement(el, newProps);
-    }) as JSX.Element[];
-};
-
 const arrowPositions = {
     "top-start": "left",
     "top-end": "right",
@@ -161,6 +120,52 @@ const staticSides = {
     bottom: "top",
     left: "right"
 };
+
+const FindAndSetRef = <T extends object>(
+    children: JSX.Element | JSX.Element[],
+    childProps: T,
+    componentRef: (node: ReferenceType | null) => void,
+    checked: boolean,
+    Tooltip: FC<ITooltipProps>
+): JSX.Element[] => {
+    let isChecked = checked;
+
+    return Children.map(children, (node, i) => {
+        const el = node as JSXWithRef;
+        let newProps = {
+            ...childProps
+        };
+        if (!React.isValidElement(el)) return null;
+
+        if (el.type === Tooltip) {
+            return null;
+        }
+
+        if (typeof el?.type === "string") {
+            if (!el.ref && i === 0 && !isChecked) {
+                isChecked = true;
+                newProps = { ...newProps, ref: componentRef };
+            }
+            return cloneElement(el, newProps);
+        }
+        if (typeof el?.type === "function") {
+            if (!el.ref) {
+                newProps = { ...newProps, ref: componentRef };
+            }
+            return FindAndSetRef(cloneElement(el.type(el.props), newProps), newProps, componentRef, isChecked, Tooltip);
+        }
+
+        if (el?.type === Fragment && el.props.children) {
+            return FindAndSetRef(el.props.children, newProps, componentRef, isChecked, Tooltip);
+        }
+
+        if (isForwardRef(el)) {
+            return FindAndSetRef(el.type.render(el.props, el.ref), newProps, componentRef, isChecked, Tooltip);
+        }
+        return el && cloneElement(el, newProps);
+    }) as JSX.Element[];
+};
+
 /**
 A tooltip is a small, elevated surface that appears to provide contextual information when a user hovers over or focuses on a UI element.
 Tooltips should be used to offer helpful plaintext information, not to communicate system feedback. Use a popover instead if you need to deliver structured information or enable interactions.
@@ -216,24 +221,28 @@ const Tooltip: FC<ITooltipProps> = ({
 
     const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
 
-    const component = FindAndSetRef(children, getReferenceProps(), refs.setReference);
-
+    const component = FindAndSetRef(children, getReferenceProps(), refs.setReference, false, Tooltip);
     useEffect(() => {
-        for (let i = 0; i < component.length; i++) {
-            const node = component[i] as JSXWithRef;
+        if (component.length) {
+            for (let i = 0; i < component.length; i++) {
+                const node = component[i] as JSXWithRef;
 
-            if (typeof node.ref === "function" && node.ref === refs.setReference) {
-                break;
-            }
+                if (typeof node.ref === "function" && node.ref === refs.setReference) {
+                    break;
+                }
 
-            if (node?.ref?.current) {
-                refs.setReference(node.ref.current as ReferenceType);
-                break;
+                if (node?.ref?.current) {
+                    refs.setReference(node.ref.current as ReferenceType);
+                    break;
+                }
             }
         }
     }, [component]);
 
-    const [currentDirection] = placement.split("-");
+    if (!component.length) {
+        return children;
+    }
+    const [currentDirection] = placement.split("-") as [keyof typeof staticSides];
 
     const staticSide = staticSides[currentDirection];
 
