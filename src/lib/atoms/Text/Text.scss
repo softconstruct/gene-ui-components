@@ -267,4 +267,44 @@
         line-height: var(--guit-sem-font-caption-medium-regular-line-height);
         letter-spacing: var(--guit-sem-font-caption-medium-regular-letter-spacing);
     }
+
+    &_alignment {
+        &_start {
+            text-align: start;
+        }
+
+        &_center {
+            text-align: center;
+        }
+
+        &_end {
+            text-align: end;
+        }
+
+        &_justify {
+            text-align: justify;
+        }
+    }
+
+    &_case {
+        &_uppercase {
+            text-transform: uppercase;
+        }
+    }
+
+    &_decoration {
+        &_underline {
+            text-decoration: underline;
+        }
+
+        &_lineThrough {
+            text-decoration: line-through;
+        }
+    }
+
+    &_style {
+        &_italic {
+            font-style: italic;
+        }
+    }
 }
