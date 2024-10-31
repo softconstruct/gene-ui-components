@@ -2,8 +2,7 @@ import typescript from "@rollup/plugin-typescript";
 import { resolve as resolvePath } from "path";
 import { visualizer } from "rollup-plugin-visualizer";
 import resolve from "@rollup/plugin-node-resolve";
-import alias from "@rollup/plugin-alias";
-import babel from "@rollup/plugin-babel";
+// import alias from "@rollup/plugin-alias";
 // import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import commonjs from "@rollup/plugin-commonjs";
 import image from "@rollup/plugin-image";
@@ -53,24 +52,7 @@ export default {
         {
             dir: "dist",
             format: "esm",
-            exports: "named",
-            entryFileNames: ({ facadeModuleId }) => {
-                // Check if the module is one of the components that require nested structure
-
-                const folders = ["atoms", "molecules", "organisms", "providers"];
-                const isComponent = folders.some((folder) => facadeModuleId.includes(`/src/lib/${folder}/`));
-                const isHook = facadeModuleId.includes(`/src/hooks/`);
-
-                let filePath = "[name].js";
-
-                if (isComponent) {
-                    filePath = `[name]/index.js`;
-                } else if (isHook) {
-                    filePath = `hooks/[name].js`;
-                }
-
-                return filePath;
-            }
+            exports: "named"
         }
     ],
     external: ["react", "react-dom", "prop-types"],
@@ -79,29 +61,20 @@ export default {
         //     packageJsonPath: resolvePath(__dirname, '../package.json'),
         //     includeDependencies: false
         // }),
-        alias({
-            entries: {
-                src: "src",
-                utils: "src/utils/index.js",
-                hooks: "src/hooks/index.ts",
-                components: "src/index.ts"
-            }
-        }),
+        // alias({
+        //     entries: {
+        //         src: "src",
+        //         utils: "src/utils/index.js",
+        //         hooks: "src/hooks/index.ts",
+        //         components: "src/index.ts"
+        //     }
+        // }),
         resolve(),
         typescript({
-            tsconfig: resolvePath(__dirname, "tsconfig.json")
-        }),
-        babel({
-            babelHelpers: "bundled",
-            babelrc: true,
-            configFile: resolvePath(__dirname, ".babelrc"),
-            extensions: [".js"],
-            exclude: "node_modules/**"
+            tsconfig: resolvePath(__dirname, "tsconfig.json") // Ensure it uses the original tsconfig
         }),
         image(),
-        commonjs({
-            sourceMap: true
-        }),
+        commonjs({ sourceMap: true }),
         json(),
         postcss({
             inject: true,

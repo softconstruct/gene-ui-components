@@ -1,17 +1,8 @@
 {
     "compilerOptions": {
         "baseUrl": "../src",
-        "paths": {
-            "src": ["./src"],
-            "components": ["./index.ts"],
-            "utils": ["./utils/index.js"],
-            "hooks": ["./hooks/index.js"]
-        },
-        "outDir": "../dist",
         "target": "es6",
         "module": "esnext",
-        "declaration": true,
-        "emitDeclarationOnly": true,
         "moduleResolution": "node",
         "jsx": "react",
         "esModuleInterop": true,
