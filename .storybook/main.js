@@ -1,51 +1,45 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = {
     stories: [
-        './../stories/introduction.mdx',
-        './../stories/changelog.mdx',
-        './../stories/gettingStarted.mdx',
-        './../src/lib/**/**/*.stories.tsx',
-        './../stories/**/**/*.stories.jsx',
-        './../stories/**/*.chromatic.stories.tsx',
-        './../src/hooks/**/*.mdx'
+        "./../stories/introduction.mdx",
+        "./../stories/changelog.mdx",
+        "./../stories/gettingStarted.mdx",
+        "./../src/components/**/**/*.stories.tsx",
+        "./../src/hooks/**/*.mdx"
     ],
     addons: [
-        '@storybook/preset-scss',
-        'storybook-dark-mode',
+        "@storybook/preset-scss",
+        "storybook-dark-mode",
         {
-            name: '@storybook/addon-essentials',
+            name: "@storybook/addon-essentials",
             options: {
                 backgrounds: true
             }
         },
-        '@storybook/addon-a11y',
-        '@storybook/addon-jest'
+        "@storybook/addon-a11y",
+        "@storybook/addon-jest"
     ],
-    staticDirs: ['./public'],
+    staticDirs: ["./public"],
     framework: {
-        name: '@storybook/react-webpack5',
+        name: "@storybook/react-webpack5",
         options: {
             fastRefresh: true
         }
     },
     core: {
-        builder: 'webpack5'
+        builder: "webpack5"
     },
     typescript: {
-        reactDocgen: 'react-docgen-typescript-plugin'
+        reactDocgen: "react-docgen-typescript-plugin"
     },
     webpackFinal: async (config, options) => {
         const aliasPaths = {
-            src: '../src/',
-            utils: '../src/utils',
-            lib: '../src/lib/',
-            wrappers: '../src/wrappers/index.js',
-            configs: '../src/configs.js',
-            hooks: '../src/hooks/index.ts',
-            indexof: '../src/utils/indexof.js',
-            stories: '../stories/',
-            components: '../src/index.ts'
+            src: "../src/",
+            utils: "../src/utils",
+            hooks: "../src/hooks/index.ts",
+            stories: "../stories/",
+            components: "../src/index.ts"
         };
 
         for (let aliasPath in aliasPaths) {
@@ -58,7 +52,7 @@ module.exports = {
         babelLoader.options = {
             ...babelLoader.options,
             babelrc: true,
-            configFile: './.storybook/.babelrc'
+            configFile: "./.storybook/.babelrc"
         };
         options.cache.set = () => Promise.resolve();
 

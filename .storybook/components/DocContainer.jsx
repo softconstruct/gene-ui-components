@@ -1,15 +1,15 @@
-import React, { useMemo } from 'react';
-import { DocsContainer as BaseContainer } from '@storybook/blocks';
-import { useDarkMode } from 'storybook-dark-mode';
-import { themes } from '@storybook/theming';
+import React, { useMemo } from "react";
+import { DocsContainer as BaseContainer } from "@storybook/blocks";
+import { useDarkMode } from "storybook-dark-mode";
+import { themes } from "@storybook/theming";
 
 export const DocsContainer = ({ children, context }) => {
     let contextTitle = context?.primaryStory?.title;
 
     const title = useMemo(() => {
         if (contextTitle) {
-            return contextTitle[contextTitle.length - 2] === '-'
-                ? contextTitle.replace(contextTitle.slice(-2), '')
+            return contextTitle[contextTitle.length - 2] === "-"
+                ? contextTitle.replace(contextTitle.slice(-2), "")
                 : contextTitle;
         }
     }, [contextTitle]);

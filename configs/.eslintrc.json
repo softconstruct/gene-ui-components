@@ -1,86 +1,97 @@
 {
+    "ignorePatterns": [".git/", ".github/", "node_modules/", "dist/", "stats/", "coverage/", "docs/"],
     "env": {
-        "browser": true
+        "browser": true,
+        "es2021": true,
+        "node": true,
+        "jest": true
     },
-    "parser": "@babel/eslint-parser",
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "babelOptions": {
-            "configFile": "./configs/.babelrc"
+        "ecmaVersion": 12,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
         }
     },
-    "extends": ["airbnb", "airbnb/hooks", "prettier"],
+    "extends": [
+        "eslint:recommended", // Base ESLint recommended rules
+        "plugin:@typescript-eslint/recommended", // TypeScript recommended rules
+        "plugin:react/recommended", // React recommended rules
+        "plugin:react-hooks/recommended", // React hooks linting
+        "plugin:jsx-a11y/recommended", // Accessibility best practices
+        "airbnb", // Airbnb style guide for consistent code
+        "airbnb/hooks", // Airbnb hooks rules
+        "prettier", // Disables ESLint rules that conflict with Prettier
+        "plugin:prettier/recommended" // Enables eslint-plugin-prettier and eslint-config-prettier
+    ],
+    "plugins": [
+        "react", // React plugin
+        "react-hooks", // React hooks plugin
+        "@typescript-eslint", // TypeScript plugin
+        "jsx-a11y", // Accessibility plugin
+        "prettier" // Prettier plugin
+    ],
     "rules": {
-        "class-methods-use-this": "off",
-        "func-names": "off",
-        "consistent-return": "off",
-        "prefer-rest-params": "off",
-        "prefer-regex-literals": "off",
-        "default-param-last": "off",
-        "default-case": "off",
-        "guard-for-in": "off",
-        "camelcase": "off",
-        "radix": "off",
-
-        "import/prefer-default-export": "off",
-        "import/no-unresolved": "off",
-        "import/no-extraneous-dependencies": "off",
-        "import/export": "off",
-        "import/no-named-as-default": "off",
-        "import/no-named-as-default-member": "off",
-        "import/no-cycle": "off",
-        "import/no-webpack-loader-syntax": "off",
-        "import/extensions": "off",
-        "import/no-absolute-path": "off",
-
-        "no-plusplus": "off",
-        "no-restricted-globals": "off",
-        "no-unused-expressions": "off",
-        "no-prototype-builtins": "off",
-        "no-restricted-syntax": "off",
-        "no-undef": "off",
-        "no-unused-vars": "off",
-        "no-console": "off",
-        "no-return-await": "off",
-        "no-nested-ternary": "off",
-        "no-shadow": "off",
-        "no-param-reassign": "off",
-        "no-return-assign": "off",
-        "no-use-before-define": "off",
-        "no-bitwise": "off",
-        "no-underscore-dangle": "off",
-        "no-useless-escape": "off",
-        "no-void": "off",
-        "no-unsafe-optional-chaining": "off",
-        "no-await-in-loop": "off",
-        "no-sequences": "off",
-
-        "react-hooks/rules-of-hooks": "off",
-        "react/prop-types": "off",
-        "react/require-default-props": "off",
-        "react/forbid-prop-types": "off",
-        "react/jsx-no-bind": "off",
-        "react/jsx-filename-extension": "off",
+        // Prettier
+        "prettier/prettier": [
+            "error",
+            {
+                "endOfLine": "auto",
+                "tabWidth": 4,
+                "trailingComma": "none",
+                "printWidth": 120
+            }
+        ],
+        // React
+        "react/react-in-jsx-scope": "off", // Not needed for React 17+
+        "react/prop-types": "off", // Disable prop-types (handled by TypeScript)
+        "react/jsx-filename-extension": [1, { "extensions": [".jsx", ".tsx"] }], // Allow JSX in TSX files
         "react/jsx-props-no-spreading": "off",
-        "react/no-children-prop": "off",
-        "react/default-props-match-prop-types": "off",
-        "react-hooks/exhaustive-deps": "off",
-        "react/no-unused-prop-types": "off",
-        "react/no-array-index-key": "off",
-        "react/button-has-type": "off",
-        "react/no-danger": "off",
-        "react/jsx-no-constructed-context-values": "off",
-        "react/destructuring-assignment": "off",
-        "react/no-unstable-nested-components": "off",
-        "react/no-this-in-sfc": "off",
-        "react/jsx-no-useless-fragment": "off",
-
-        "jsx-a11y/no-static-element-interactions": "off",
-        "jsx-a11y/click-events-have-key-events": "off",
-        "jsx-a11y/tabindex-no-positive": "off",
-        "jsx-a11y/no-noninteractive-element-interactions": "off",
+        "react-hooks/exhaustive-deps": "off", // Allow prop spreading (optional)
+        "react/require-default-props": "off",
+        "react/function-component-definition": "off",
+        // TypeScript
+        "@typescript-eslint/explicit-function-return-type": "off", // Optional return types
+        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }], // Allow unused vars with underscore prefix
+        "@typescript-eslint/no-explicit-any": "warn", // Warn on `any` type usage
+        "@typescript-eslint/explicit-module-boundary-types": "off", // Optional boundary types
+        // Accessibility
+        "jsx-a11y/anchor-is-valid": "off",
         "jsx-a11y/label-has-associated-control": "off",
-        "jsx-a11y/mouse-events-have-key-events": "off",
-        "jsx-a11y/no-noninteractive-tabindex": "off",
-        "jsx-a11y/control-has-associated-label": "off"
+        // JEST
+        "import/no-extraneous-dependencies": [
+            "error",
+            {
+                "devDependencies": ["**/*.test.tsx", "**/*.stories.tsx", "**/*.js", "*/test/setup.ts"]
+            }
+        ],
+        // General
+        "no-console": "warn", // Warn on console usage
+        "no-debugger": "error", // Disallow debugger
+        "no-plusplus": "off",
+        "import/prefer-default-export": "off", // Allow named exports
+        "import/no-unresolved": "off",
+        "import/extensions": "off",
+        "no-restricted-exports": "off"
+    },
+    "overrides": [
+        {
+            "files": ["*.stories.tsx"], // Target story files
+            "rules": {
+                "no-script-url": "off" // Disable the no-script-url rule only for story files
+            }
+        },
+        {
+            "files": ["*.js"],
+            "rules": {
+                "@typescript-eslint/no-require-imports": "off"
+            }
+        }
+    ],
+    "settings": {
+        "react": {
+            "version": "detect" // Automatically detect the react version
+        }
     }
 }
