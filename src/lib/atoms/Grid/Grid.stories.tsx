@@ -1,66 +1,145 @@
-import React, { FC } from 'react';
+import React, { CSSProperties, FC } from 'react';
 import { Meta } from '@storybook/react';
 
-// Helpers
+//Helpers
 import { args, propCategory } from '../../../../stories/assets/storybook.globals';
 
 // Components
-import Grid, { IGridProps } from './index';
+import Grid, { ICol, IRow } from './index';
 
-const meta: Meta<typeof Grid> = {
+const { Row, Col, GridContainer } = Grid;
+
+const meta: Meta<ICol & IRow> = {
     title: 'Atoms/Grid',
-    component: Grid.Row,
+    component: GridContainer,
     argTypes: {
-        Col: args({ control: false, ...propCategory.others }),
-        Row: args({ control: false, ...propCategory.others })
+        size: args({ control: 'false', ...propCategory.content }),
+        offset: args({ control: 'false', ...propCategory.content }),
+        children: args({ control: 'false', ...propCategory.others }),
+        flexible: args({ control: 'false', ...propCategory.appearance })
     },
-    args: {
-        Col: 'fill the Col prop value',
-        Row: 'fill the Row prop value'
-    } as IGridProps
+    args: {}
 };
 
 export default meta;
-const { Row, Col, GridContainer } = Grid;
-const Template: FC<IGridProps> = (args) => {
+
+const style: CSSProperties = {
+    backgroundColor: '#0092ff',
+    height: 200,
+    padding: '8px 0',
+    color: '#fff',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+};
+
+const Template = () => {
     return (
         <GridContainer>
             <Row>
-                <Col size={2} offset={5}>
-                    <div>12312</div>
-                </Col>
-                {/*<Col size={4}>*/}
-                {/*    <div>12312</div>*/}
-                {/*</Col>*/}
-                {/*<Col size={3}>*/}
-                {/*    <div>12312</div>*/}
-                {/*</Col>*/}
-            </Row>
-            <Row>
                 <Col size={4}>
-                    <div>12312</div>
+                    <div style={style}>Col 4</div>
                 </Col>
                 <Col size={8}>
-                    <div>12312</div>
+                    <div style={style}>Col 8</div>
                 </Col>
             </Row>
             <Row>
                 <Col size={12}>
-                    <div>12312</div>
+                    <div style={style}>Col-12</div>
                 </Col>
             </Row>
             <Row>
-                <Col size="fixed">
-                    <div>12312</div>
+                <Col size={10}>
+                    <div style={style}>Col-10</div>
                 </Col>
-                <Col size={12}>
-                    <div>12312</div>
+                <Col size={2}>
+                    <div style={style}>Col-2</div>
+                </Col>
+            </Row>
+            <Row>
+                <Col size={6}>
+                    <div style={style}>Col-6</div>
+                </Col>
+                <Col size={6}>
+                    <div style={style}>Col-6</div>
                 </Col>
             </Row>
         </GridContainer>
     );
 };
 
-export const Default = Template.bind({});
+export const StandardGridLayout = Template.bind({});
 
-Default.args = {} as IGridProps;
+StandardGridLayout.args = {};
+
+export const ColumnsWithOffset = () => {
+    return (
+        <GridContainer>
+            <Row>
+                <Col size={2} offset={2}>
+                    <div style={style}>Col-2 offset-2</div>
+                </Col>
+                <Col size={6} offset={0}>
+                    <div style={style}>Col-6 offset-0</div>
+                </Col>
+            </Row>
+
+            <Row>
+                <Col size={5} offset={2}>
+                    <div style={style}>Col-5 offset-2</div>
+                </Col>
+                <Col size={3} offset={0}>
+                    <div style={style}>Col-3 offset-0</div>
+                </Col>
+            </Row>
+
+            <Row>
+                <Col size={8} offset={2}>
+                    <div style={style}>Col-8 offset-2</div>
+                </Col>
+            </Row>
+            <Row>
+                <Col size={4} offset={2}>
+                    <div style={style}>Col-4 offset-2</div>
+                </Col>
+                <Col size={4} offset={0}>
+                    <div style={style}>Col-4 offset-0</div>
+                </Col>
+            </Row>
+        </GridContainer>
+    );
+};
+
+export const AdaptiveGridRow = () => {
+    return (
+        <GridContainer>
+            <Row flexible>
+                <Col size={3}>
+                    <div style={style}>Col-1 </div>
+                </Col>
+                <Col size={7}>
+                    <div style={style}>Col-7 </div>
+                </Col>
+            </Row>
+
+            <Row flexible>
+                <Col size={4}>
+                    <div style={style}>Col-7 </div>
+                </Col>
+                <Col size={1}>
+                    <div style={style}>Col-2</div>
+                </Col>
+            </Row>
+
+            <Row flexible>
+                <Col size={4}>
+                    <div style={style}>Col-4</div>
+                </Col>
+                <Col size={4}>
+                    <div style={style}>Col-4 </div>
+                </Col>
+            </Row>
+        </GridContainer>
+    );
+};

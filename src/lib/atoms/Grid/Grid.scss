@@ -25,7 +25,6 @@
 
         @for $i from 1 through 12 {
             .col-#{$i} {
-                background-color: red;
                 grid-column: span #{$i};
 
                 @for $j from 1 through 12 - $i {
@@ -44,7 +43,6 @@
 
         @for $i from 1 through 12 {
             .col-#{$i} {
-                background-color: red;
                 flex: #{$i};
             }
         }

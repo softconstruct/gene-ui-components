@@ -1,1 +1,1 @@
-export { IGridProps, default as default } from './Grid';
+export { ICol, IRow, default as default } from './Grid';
