@@ -324,9 +324,7 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
         await fs.appendFile(scssPath, scssFormattedData);
 
         // Create extra ts files in the component dir
-        for (let i = 0; i < files.length; i++) {
-            await fs.appendFile(`${cmpDir}/${files[i]}.ts`, "");
-        }
+        await Promise.all(files.map((extraFile) => fs.appendFile(`${cmpDir}/${extraFile}.ts`, "")));
     } catch (error) {
         return {
             hasError: true,
@@ -338,7 +336,7 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
 const addExports = async ({ level, name }) => {
     try {
         const cmpDir = path.join(__dirname, ...pathToComponents, `${level}`, `${name}`);
-        const indexContent = `export { I${name}Props, default as ${name} } from './${name}';`;
+        const indexContent = `export { I${name}Props, default } from './${name}';`;
 
         await fs.writeFile(`${cmpDir}/index.tsx`, indexContent, { flag: "a+" });
     } catch (error) {
