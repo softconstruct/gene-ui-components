@@ -9,6 +9,7 @@ export { default as Info, IInfoProps } from "./components/atoms/Info";
 
 // Molecules
 export { default as Tooltip } from "./components/molecules/Tooltip";
+export { default as ProgressBar } from "./components/molecules/ProgressBar";
 
 // Organisms
 
