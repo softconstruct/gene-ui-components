@@ -11,13 +11,9 @@ const meta: Meta<typeof Notification> = {
     title: "Molecules/Notification",
     component: Notification,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance }),
-
-        type: args({ control: false, ...propCategory.others })
+        className: args({ control: "false", ...propCategory.appearance })
     },
-    args: {
-        type: "fill the type prop value"
-    } as INotificationProps
+    args: {} as INotificationProps
 };
 
 export default meta;
