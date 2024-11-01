@@ -270,7 +270,7 @@ const askQuestions = () => {
             type: "list",
             message: "Do you need to wrap the component in forwardRef: ",
             prefix: "[?]",
-            choices: ["Yes", "No"],
+            choices: ["No", "Yes"],
             filter: (value) => value === "Yes"
         },
         {
@@ -278,7 +278,7 @@ const askQuestions = () => {
             type: "list",
             prefix: "[?]",
             message: "Is this component with portal: ",
-            choices: ["Yes", "No"],
+            choices: ["No", "Yes"],
             filter: (value) => value === "Yes"
         },
         {
@@ -306,7 +306,7 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
         await fs.mkdir(cmpDir);
 
         const componentPath = path.join(`${cmpDir}`, `${name}.tsx`);
-        const componentFormattedData = prettier.format(srcCode, { ...prettierConfig, parser: "typescript" });
+        const componentFormattedData = await prettier.format(srcCode, { ...prettierConfig, parser: "typescript" });
 
         // Create index.tsx file with code
         await fs.appendFile(componentPath, componentFormattedData);
@@ -320,13 +320,11 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
             font-size: var(--guit-sem-font-caption-large-medium-font-size);
         }`;
         const scssPath = path.join(`${cmpDir}`, `${name}.scss`);
-        const scssFormattedData = prettier.format(scssContent, { ...prettierConfig, parser: "scss" });
+        const scssFormattedData = await prettier.format(scssContent, { ...prettierConfig, parser: "scss" });
         await fs.appendFile(scssPath, scssFormattedData);
 
         // Create extra ts files in the component dir
-        for (let i = 0; i < files.length; i++) {
-            await fs.appendFile(`${cmpDir}/${files[i]}.ts`, "");
-        }
+        await Promise.all(files.map((extraFile) => fs.appendFile(`${cmpDir}/${extraFile}.ts`, "")));
     } catch (error) {
         return {
             hasError: true,
@@ -338,7 +336,7 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
 const addExports = async ({ level, name }) => {
     try {
         const cmpDir = path.join(__dirname, ...pathToComponents, `${level}`, `${name}`);
-        const indexContent = `export { I${name}Props, default as ${name} } from './${name}';`;
+        const indexContent = `export { I${name}Props, default } from './${name}';`;
 
         await fs.writeFile(`${cmpDir}/index.tsx`, indexContent, { flag: "a+" });
     } catch (error) {
@@ -359,7 +357,7 @@ const createStoryFiles = async ({ name, level, props }) => {
 
         const storyDir = path.join(__dirname, ...pathToComponents, level, name);
         const storyPath = path.join(storyDir, `${name}.stories.tsx`);
-        const formattedData = prettier.format(storyCode, { ...prettierConfig, parser: "typescript" });
+        const formattedData = await prettier.format(storyCode, { ...prettierConfig, parser: "typescript" });
 
         await fs.appendFile(storyPath, formattedData);
     } catch (error) {
@@ -378,7 +376,7 @@ const createTestFiles = async ({ name, level, portal }) => {
         });
 
         const testDir = path.join(__dirname, ...pathToComponents, `${level}`, `${name}`, `${name}.test.tsx`);
-        const formattedData = prettier.format(srcCode, { ...prettierConfig, parser: "typescript" });
+        const formattedData = await prettier.format(srcCode, { ...prettierConfig, parser: "typescript" });
         await fs.writeFile(testDir, formattedData);
     } catch (error) {
         return {
@@ -412,7 +410,7 @@ const addGlobalExportToIndexTs = async ({ level, name }) => {
                 const afterSeparator = match.substring(lastIndex + 1);
                 const newMatch = beforeSeparator + exportStatement + afterSeparator;
                 const newData = data.replace(match, newMatch);
-                const formattedData = prettier.format(newData, { ...prettierConfig, parser: "typescript" });
+                const formattedData = await prettier.format(newData, { ...prettierConfig, parser: "typescript" });
                 await fs.writeFile(indexTsPath, formattedData);
             }
         }
