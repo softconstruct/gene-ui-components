@@ -1,5 +1,12 @@
 .buttonGroup {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    display: inline-flex;
+    gap: var(--guit-ref-spacing-xsmall);
+
+    &_horizontal {
+        flex-direction: row;
+    }
+
+    &_vertical {
+        flex-direction: column;
+    }
 }

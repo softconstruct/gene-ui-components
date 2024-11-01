@@ -16,7 +16,9 @@ interface IButtonGroupProps {
  * A button group clusters multiple buttons together. Use button groups in toolbars, forms, and modals, etc.
  */
 const ButtonGroup: FC<IButtonGroupProps> = ({ className }) => {
-    return <div className={classNames("buttonGroup", className)}>ButtonGroup</div>;
+    return (
+        <div className={classNames("buttonGroup buttonGroup_vertical", className)}>{/* Here should be buttons */}</div>
+    );
 };
 
 export { IButtonGroupProps, ButtonGroup as default };
