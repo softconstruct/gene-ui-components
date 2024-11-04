@@ -1,0 +1,23 @@
+.info {
+    border-radius: var(--guit-ref-radius-3xsmall);
+    line-height: 0;
+
+    &_appearance {
+        &_default {
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
+
+        &_brand {
+            color: var(--guit-sem-color-foreground-brand);
+        }
+
+        &_inverse {
+            color: var(--guit-sem-color-foreground-inverse);
+        }
+    }
+
+    &_disabled {
+        color: var(--guit-sem-color-foreground-disabled);
+        pointer-events: none;
+    }
+}
