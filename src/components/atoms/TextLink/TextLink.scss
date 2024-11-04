@@ -1,0 +1,94 @@
+.textLink {
+    $this: &;
+
+    display: inline-flex;
+    border-radius: var(--guit-ref-radius-4xsmall);
+    cursor: pointer;
+    word-break: break-word;
+
+    &_underline {
+        #{ $this }__text {
+            font-family: var(--guit-sem-font-body-medium-underline-medium-font-family);
+            font-size: var(--guit-sem-font-body-medium-underline-medium-font-size);
+            line-height: var(--guit-sem-font-body-medium-underline-medium-line-height);
+            font-weight: var(--guit-sem-font-body-medium-underline-medium-font-weight);
+            text-decoration: var(--guit-sem-font-body-medium-underline-medium-text-decoration);
+        }
+    }
+
+    &:not(#{ $this }_underline) {
+        #{ $this }__text {
+            font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+            font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+            font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+            line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+        }
+    }
+
+    &_color {
+        &_primary {
+            color: var(--guit-sem-color-foreground-brand);
+
+            &:hover {
+                color: var(--guit-sem-color-foreground-brand-hover);
+            }
+
+            &:active {
+                color: var(--guit-sem-color-foreground-brand-pressed);
+            }
+        }
+
+        &_secondary {
+            color: var(--guit-sem-color-foreground-neutral-2);
+
+            &:hover {
+                color: var(--guit-sem-color-foreground-neutral-2-hover);
+            }
+
+            &:active {
+                color: var(--guit-sem-color-foreground-neutral-2-pressed);
+            }
+        }
+
+        &_inverse {
+            color: var(--guit-sem-color-foreground-inverse);
+
+            &:hover {
+                color: var(--guit-sem-color-foreground-inverse-hover);
+            }
+
+            &:active {
+                color: var(--guit-sem-color-foreground-inverse-pressed);
+            }
+        }
+    }
+
+    &_disabled {
+        pointer-events: none;
+
+        &:not(#{ $this }_color_inverse) {
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+
+        &#{ $this }_color_inverse {
+            color: var(--guit-sem-color-foreground-inverse-disabled);
+        }
+    }
+
+    &__text {
+        color: inherit;
+    }
+
+    &__icon {
+        flex: 0 0 auto;
+        vertical-align: middle;
+
+        &_before {
+            margin-inline-end: var(--guit-ref-spacing-3xsmall);
+        }
+
+        &_after {
+            margin-inline-start: var(--guit-ref-spacing-3xsmall);
+        }
+    }
+}

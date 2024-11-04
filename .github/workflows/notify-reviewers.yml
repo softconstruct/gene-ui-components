@@ -6,16 +6,32 @@ jobs:
     send_notification:
         runs-on: ubuntu-latest
         steps:
-            - name: Send Notification
+            - name: Checkout repository
+              uses: actions/checkout@v3
+              with:
+                  # Fetch the specific commit that triggered the workflow
+                  ref: ${{ github.event.pull_request.head.sha }}
+                  # Fetch full history to ensure git commands have access to all commits
+                  fetch-depth: 0
+
+            - name: 🔔 Send Notification
               env:
                   INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT: ${{ secrets.INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT }}
+                  PR_ID: ${{ github.event.pull_request.number }}
+                  PR_URL: ${{ github.event.pull_request.html_url }}
+                  PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+                  PR_TITLE: ${{ github.event.pull_request.title }}
+                  REVIEWERS: ${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}
               run: |
-                  PR_ID=${{ github.event.pull_request.number }}
-                  PR_URL=${{ github.event.pull_request.html_url }}
-                  PR_AUTHOR=${{ github.event.pull_request.user.login }}
-                  REVIEWERS="${{ join(github.event.pull_request.requested_reviewers.*.login, ', ') }}"
+                  # Enable strict error handling
+                  set -euo pipefail
 
-                  MESSAGE="@channel\nPull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nRequested Reviewers: $REVIEWERS"
+                  # Retrieve the latest commit message and pusher from the PR's head commit
+                  LATEST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+                  PUSHER=$(git log -1 --pretty=%an)
 
-                  curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\", \"username\": \"GitHub\", \"icon_url\": \"https://github.githubassets.com/favicons/favicon.png\"}" $INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT
-                  
+                  # Construct the notification message
+                  MESSAGE="@channel\nPull Request: [#$PR_ID]($PR_URL) by @$PR_AUTHOR\nTitle: $PR_TITLE\nCommit Message: $LATEST_COMMIT_MESSAGE\nCommited by: $PUSHER\nRequested Reviewers: $REVIEWERS"
+
+                  # Send the notification
+                  curl -X POST -H "Content-Type: application/json" -d "{\"text\": \"$MESSAGE\", \"username\": \"GitHub\", \"icon_url\": \"https://github.githubassets.com/favicons/favicon.png\"}" "$INTERNAL_NOTIFICATION_CHANNEL_API_ENDPOINT"

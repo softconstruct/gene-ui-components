@@ -1,110 +1,170 @@
-import fs from 'fs/promises';
-import path from 'path';
-import inquirer from 'inquirer';
-import chalk from 'chalk';
-import figlet from 'figlet';
-import process from 'process';
-import ora from 'ora';
-import prettier from 'prettier';
+import fs from "fs/promises";
+import path from "path";
+import inquirer from "inquirer";
+import chalk from "chalk";
+import figlet from "figlet";
+import process from "process";
+import ora from "ora";
+import prettier from "prettier";
+
+const firstLetterCase = (str = "", toUpperCase = true) => {
+    const [firstChar, ...remainingChars] = str;
+    return (toUpperCase ? firstChar.toUpperCase() : firstChar.toLowerCase()) + remainingChars.join("");
+};
 
 const spinner = ora({
-    color: 'yellow',
-    text: 'Creating the component...',
-    fail: 'Something went wrong please see errors bellow!'
+    color: "yellow",
+    text: "Creating the component...",
+    fail: "Something went wrong please see errors bellow!"
 });
-
-const comments = {
-    STORY_CMP_IMPORTS_START: '/** Start components imports */',
-    STORY_CMP_IMPORTS_END: '/** End components imports */',
-    ADD_STORY_START: '/** Start stories adding */',
-    ADD_STORY_END: '/** End stories adding */'
-};
 
 const messages = {
     ERROR_NAME_EMPTY: chalk.white.redBright.bold("error: Component's name can't be empty!"),
     ERROR_NAME_IS_NOT_CORRECT: chalk.white.redBright.bold("error: Component's name should start with upper case!"),
-    ERROR_COMPONENT_EXISTS: chalk.white.redBright.bold('error: Component with this name already exists.'),
+    ERROR_PROPS_IS_NOT_CORRECT: chalk.white.redBright.bold("error: Component's props should not contain any symbol!"),
+    ERROR_COMPONENT_EXISTS: chalk.white.redBright.bold("error: Component with this name already exists."),
     ERROR_DUPLICATE_NAME: (value) => chalk.white.redBright.bold(`error: ${value} names should be unique.`),
-    SUCCESS: (componentName, isStory) =>
-        chalk.white.green.bold(
-            `success: The ${componentName} ${isStory ? 'story' : 'component'} is successfully created!`
-        ),
+    SUCCESS: (componentName) =>
+        chalk.white.green.bold(`success: The ${componentName} component is successfully created!`),
     ERROR: (error) => chalk.white.redBright.bold(`error: ${error}.`)
 };
 
 let prettierConfig;
 
-const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => `
-    import React${isWithForwardRef ? ', { forwardRef }' : ''} from 'react';
-    import PropTypes from 'prop-types';
+const pathToComponents = ["..", "src", "components"];
 
-    import 'src/assets/styles/globalStyling.scss';
-    import './index.scss';
+const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => {
+    const InterfaceName = `I${name}Props`;
 
-    ${description ? `/** \n* ${description}\n*/` : ''}
-    const ${name} = ${isWithForwardRef ? 'forwardRef((' : '('}
-    ${props.length ? `{${[...props]}}` : 'props'}
-    ${isWithForwardRef ? ', ref' : ''}) => {
-        return '${name}';
-    }${isWithForwardRef ? ')' : ''};
-
-    ${name}.propTypes = {
-        // fill props types and comment each prop type
-    };
-
-    ${name}.defaultProps = {
-        // fill default prop values
-    };
-
-    ${name}.displayName = '${name}';
-
-    export default ${name};
-`;
-
-const generateCmpStoryTemplate = ({ title }, { name }) => `
-    import React from 'react';
-    
-    import { ${name} } from 'src';
-
-    import data from './data';
-    import { CodeBox } from 'storyUtils';
-
-    const ${name}Story = ({ ...restProps }) => (
-        <CodeBox
-            title="${name}"
-            withSandbox={false}
-        >
-            <${name} {...restProps}></${name}>
-        </CodeBox>
-    );
-
-    const story = { 
-        info: { 
-            text: '${title}'
+    return `
+        import React${isWithForwardRef ? ", { forwardRef }" : ", { FC }"} from 'react';
+        import classNames from 'classnames';
+        // Styles
+        import './${name}.scss';
+        
+        interface ${InterfaceName} {
+                /**
+                * Additional class for the parent element.
+                * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+                */
+                className?: string;
+            ${
+                props.length
+                    ? `${props.map(
+                          (prop) => `
+                                /**
+                                * ${prop} description
+                                */
+                                ${prop}?: unknown`
+                      )}`
+                    : `// fill ${name} component props interface`
+            }
         }
-    };
 
-    const ${name}StoryWrapper = () => <${name}Story/>
+        ${description ? `/** \n* ${description}\n*/` : ""}
+        const ${name}${!isWithForwardRef ? `: FC<${InterfaceName}>` : ""} = ${
+            isWithForwardRef ? `forwardRef<unknown , ${InterfaceName}>((` : "("
+        }${props.length ? `{${[...props]}, className} ${isWithForwardRef ? `:${InterfaceName}` : ""}` : "{ className }"}
+        ${isWithForwardRef ? ", ref" : ""}) => {
+            return <div className={classNames("${firstLetterCase(name, false)}", className)}>
+                ${name}
+            </div>
+        }${isWithForwardRef ? ")" : ""};
 
-    export default [
-        ${name}StoryWrapper,
-        story,
-    ];
-`;
+        export { ${InterfaceName}, ${name} as default };
+    `;
+};
 
-const getLevelIndexPaths = (level, isStory = false) => {
-    const basePath = isStory ? 'stories' : 'src/lib';
-    return {
-        desktop: path.join(__dirname, `../${basePath}/${level}/index.js`),
-        mobile: path.join(__dirname, `../${basePath}/${level}/index.mobile.js`)
-    };
+const generateCmpStoryTemplate = ({ name, level, props }) => {
+    const InterfaceName = `I${name}Props`;
+
+    return `
+        import React, { FC } from 'react';
+        import { Meta } from '@storybook/react';
+        
+        // Helpers
+        import { args, propCategory } from '../../../../stories/assets/storybook.globals';
+        
+        // Components
+        import ${name}, { ${InterfaceName} } from './index';
+        
+        const meta: Meta<typeof ${name}> = {
+            title: '${firstLetterCase(level)}/${name}',
+            component: ${name},
+            argTypes: {
+                className: args({ control: 'false', ...propCategory.appearance }),
+                 ${
+                     props.length
+                         ? `${props.map(
+                               (prop) => `
+                         ${prop}: args({ control: false, ...propCategory.others })`
+                           )}`
+                         : `// fill ${name} component argTypes`
+                 }
+         
+            },
+            args: {
+                ${
+                    props.length
+                        ? `${[...props].map(
+                              (prop) => `
+                           ${prop}: "fill the ${prop} prop value"`
+                          )}`
+                        : `// fill ${name} component args`
+                }
+            } as ${InterfaceName}
+        };
+        
+        export default meta;
+        
+        const Template: FC<${InterfaceName}> = (props) => <${name} {...props} />;
+        
+        export const Default = Template.bind({});
+        
+        Default.args = {} as ${InterfaceName};
+        `;
+};
+
+const generateCmpTestTemplate = ({ name, portal }) => {
+    const beforeEach = portal
+        ? `beforeEach(() => (setup = mount(<${name} />, { wrappingComponent: GeneUIProvider })));`
+        : `beforeEach(() => (setup = mount(<${name} />)));`;
+
+    const InterfaceName = `I${name}Props`;
+
+    return `
+            import React from 'react';
+            import { ReactWrapper, mount } from 'enzyme';
+
+            // Components
+            import ${name}, { ${InterfaceName} } from './index';
+            ${portal ? `import GeneUIProvider from '../../providers/GeneUIProvider';` : ""}
+            
+            describe('${name} ', () => {
+                let setup: ReactWrapper<${InterfaceName}>;
+                ${beforeEach}
+
+                it('renders without crashing', () => {
+                    expect(setup.exists()).toBeTruthy();
+                });
+                
+                it('renders className prop correctly', () => {
+                    const className = 'test-class';
+                    const wrapper = setup.setProps({ className });
+
+                    expect(wrapper.hasClass(className)).toBeTruthy();
+                });
+
+                // Your tests here
+            });
+        `;
 };
 
 const init = () => {
     console.log(
         chalk.yellow(
-            figlet.textSync('Add new component', {
-                font: 'small'
+            figlet.textSync("Add new component", {
+                font: "small"
             })
         )
     );
@@ -113,39 +173,37 @@ const init = () => {
 const askQuestions = () => {
     const questions = [
         {
-            name: 'level',
-            type: 'list',
-            prefix: '[?]',
-            message: 'Please choose a level of the component: ',
-            choices: ['Atom', 'Molecule', 'Organism'],
+            name: "level",
+            type: "list",
+            prefix: "[?]",
+            message: "Please choose a level of the component: ",
+            choices: ["Atom", "Molecule", "Organism"],
             filter: (value) => `${value.toLowerCase()}s`
         },
         {
-            name: 'name',
-            type: 'input',
-            message: 'Please enter the component name: ',
-            prefix: '[?]',
-            filter: (inputValue) =>
-                // Todo
-                inputValue.trim(),
+            name: "name",
+            type: "input",
+            message: "Please enter the component name: ",
+            prefix: "[?]",
+            filter: (inputValue) => inputValue.replace(/\s/g, ""),
             validate: async (componentName) => {
-                if (typeof componentName !== 'string' || componentName.trim() === '') {
+                if (componentName === "") {
                     console.log(`\n${messages.ERROR_NAME_EMPTY}`);
                     return false;
                 }
-                if (componentName[0].toUpperCase() !== componentName[0]) {
+
+                const [firstCharOfName] = componentName;
+
+                if (firstCharOfName.toUpperCase() !== firstCharOfName) {
                     console.log(`\n${messages.ERROR_NAME_IS_NOT_CORRECT}`);
                     return false;
                 }
 
-                const atoms = await fs.readdir(path.join(__dirname, '../src/lib/atoms'));
-                const molecules = await fs.readdir(path.join(__dirname, '../src/lib/molecules'));
-                const organisms = await fs.readdir(path.join(__dirname, '../src/lib/organisms'));
+                const atoms = await fs.readdir(path.join(__dirname, ...pathToComponents, "atoms"));
+                const molecules = await fs.readdir(path.join(__dirname, ...pathToComponents, "molecules"));
+                const organisms = await fs.readdir(path.join(__dirname, ...pathToComponents, "organisms"));
 
-                const components = atoms
-                    .filter((atom) => !atom.startsWith('index.'))
-                    .concat(molecules.filter((molecule) => !molecule.startsWith('index.')))
-                    .concat(organisms.filter((organism) => !organism.startsWith('index.')));
+                const components = [...atoms, ...molecules, ...organisms];
 
                 for (let i = 0; i < components.length; i++) {
                     if (components[i].toLowerCase() === componentName.toLowerCase()) {
@@ -158,20 +216,28 @@ const askQuestions = () => {
             }
         },
         {
-            name: 'props',
-            type: 'input',
+            name: "props",
+            type: "input",
             message:
                 "Please enter props of the component separated by ',' in case you don't know yet what props you need leave the input empty: ",
-            prefix: '[?]',
-            filter: (value) => (value ? value.split(',').map((prop) => prop.trim()) : []),
-            validate: async (componentProps) => {
+            prefix: "[?]",
+            filter: (value) => (value ? value.split(",").map((prop) => prop.trim()) : []),
+            validate: (componentProps) => {
                 const propDict = {};
+
                 for (let i = 0; i < componentProps.length; i++) {
                     const key = componentProps[i];
+
                     if (propDict.hasOwnProperty(key)) {
-                        console.log(`\n${messages.ERROR_DUPLICATE_NAME('Props')}`);
+                        console.log(`\n${messages.ERROR_DUPLICATE_NAME("Props")}`);
                         return false;
                     }
+
+                    if (!/^[a-zA-Z0-9_]+$/.test(key)) {
+                        console.log(`\n${messages.ERROR_PROPS_IS_NOT_CORRECT}`);
+                        return false;
+                    }
+
                     propDict[key] = key;
                 }
 
@@ -179,18 +245,18 @@ const askQuestions = () => {
             }
         },
         {
-            name: 'files',
-            type: 'input',
+            name: "files",
+            type: "input",
             message:
-                "If you need extra .js files in the component folder type files names separated by ',' else leave the input empty: ",
-            prefix: '[?]',
-            filter: (value) => (value ? value.split(',').map((prop) => prop.trim()) : []),
-            validate: async (files) => {
+                "If you need extra .ts files in the component folder type files names separated by ',' else leave the input empty: ",
+            prefix: "[?]",
+            filter: (value) => (value ? value.split(",").map((prop) => prop.trim()) : []),
+            validate: (files) => {
                 const propDict = {};
                 for (let i = 0; i < files.length; i++) {
                     const key = files[i];
                     if (propDict.hasOwnProperty(key)) {
-                        console.log(`\n${messages.ERROR_DUPLICATE_NAME('Files')}`);
+                        console.log(`\n${messages.ERROR_DUPLICATE_NAME("Files")}`);
                         return false;
                     }
                     propDict[key] = key;
@@ -200,79 +266,65 @@ const askQuestions = () => {
             }
         },
         {
-            name: 'isWithForwardRef',
-            type: 'list',
-            message: 'Do you need to wrap the component in forwardRef: ',
-            prefix: '[?]',
-            choices: ['Yes', 'No'],
-            filter: (value) => value === 'Yes'
+            name: "isWithForwardRef",
+            type: "list",
+            message: "Do you need to wrap the component in forwardRef: ",
+            prefix: "[?]",
+            choices: ["No", "Yes"],
+            filter: (value) => value === "Yes"
         },
         {
-            name: 'description',
-            type: 'input',
-            message: 'Please enter the component description (you can copy it from the issue): ',
-            prefix: '[?]'
+            name: "portal",
+            type: "list",
+            prefix: "[?]",
+            message: "Is this component with portal: ",
+            choices: ["No", "Yes"],
+            filter: (value) => value === "Yes"
         },
         {
-            name: 'hasMobileView',
-            type: 'list',
-            message: 'Is the component has a mobile view: ',
-            prefix: '[?]',
-            choices: ['Yes', 'No'],
-            filter: (value) => value === 'Yes'
-        },
-        {
-            name: 'hasStory',
-            type: 'list',
-            message: 'Do you want to create story for the component: ',
-            prefix: '[?]',
-            choices: ['Yes', 'No'],
-            filter: (value) => value === 'Yes'
+            name: "description",
+            type: "input",
+            message: "Please enter the component description (you can copy it from the issue): ",
+            prefix: "[?]"
         }
     ];
 
     return inquirer.prompt(questions);
 };
 
-const askStoryQuestions = () => {
-    // @TODO tuning for the best view of storybook
-    const questions = [
-        {
-            name: 'title',
-            type: 'input',
-            message: 'Please enter the component story title: ',
-            prefix: '[?]'
-        }
-    ];
-
-    return inquirer.prompt(questions);
-};
-
-const createComponentFiles = async ({ level, name, hasMobileView, files, ...restData }) => {
+const createComponentFiles = async ({ level, name, files, ...restData }) => {
     try {
         const srcCode = generateCmpTemplate({
             level,
             name,
-            hasMobileView,
             files,
             ...restData
         });
-        const cmpDir = path.join(__dirname, `../src/lib/${level}/${name}`);
+        const cmpDir = path.join(__dirname, ...pathToComponents, level, name);
 
         // Create component folder
         await fs.mkdir(cmpDir);
-        // Create index.js file with code
-        await fs.appendFile(`${cmpDir}/index.js`, prettier.format(srcCode, prettierConfig));
-        // Create scss file for the component
-        await fs.appendFile(`${cmpDir}/index.scss`, '@import "src/assets/styles/variables";');
-        // Create index.mobile.js file if has mobile view
-        if (hasMobileView) {
-            await fs.appendFile(`${cmpDir}/index.mobile.js`, "export * from './index';");
-        }
-        // Create extra js files in the component dir
-        for (let i = 0; i < files.length; i++) {
-            await fs.appendFile(`${cmpDir}/${files[i]}.js`, '');
-        }
+
+        const componentPath = path.join(`${cmpDir}`, `${name}.tsx`);
+        const componentFormattedData = await prettier.format(srcCode, { ...prettierConfig, parser: "typescript" });
+
+        // Create index.tsx file with code
+        await fs.appendFile(componentPath, componentFormattedData);
+
+        // Create SCSS file for the component
+        const scssContent = `
+        
+        .${firstLetterCase(name, false)} {
+            // Your styles here
+            color: var(--guit-ref-color-magenta-500base);
+            font-size: var(--guit-sem-font-caption-large-medium-font-size);
+        }`;
+        const scssPath = path.join(`${cmpDir}`, `${name}.scss`);
+        const scssFormattedData = await prettier.format(scssContent, { ...prettierConfig, parser: "scss" });
+        await fs.appendFile(scssPath, scssFormattedData);
+
+        // Create extra ts files in the component dir
+        await Promise.all(files.map((extraFile) => fs.appendFile(`${cmpDir}/${extraFile}.ts`, "")));
     } catch (error) {
         return {
             hasError: true,
@@ -281,15 +333,12 @@ const createComponentFiles = async ({ level, name, hasMobileView, files, ...rest
     }
 };
 
-const addExports = async ({ level, name, hasMobileView }) => {
+const addExports = async ({ level, name }) => {
     try {
-        const levelPaths = getLevelIndexPaths(level);
-        // Add export to the level index.js file for desktop view
-        await fs.writeFile(levelPaths.desktop, `export ${name} from './${name}';`, { flag: 'a+' });
-        // Add export to the level index.mobile.js for mobile view
-        if (hasMobileView) {
-            await fs.writeFile(levelPaths.mobile, `export * from './${name}/index.mobile';`, { flag: 'a+' });
-        }
+        const cmpDir = path.join(__dirname, ...pathToComponents, `${level}`, `${name}`);
+        const indexContent = `export { I${name}Props, default } from './${name}';`;
+
+        await fs.writeFile(`${cmpDir}/index.tsx`, indexContent, { flag: "a+" });
     } catch (error) {
         return {
             hasError: true,
@@ -298,51 +347,19 @@ const addExports = async ({ level, name, hasMobileView }) => {
     }
 };
 
-const createStoryFiles = async (storyData, { name, level, ...restCmpData }) => {
-    // @TODO tuning for the controls and actions
+const createStoryFiles = async ({ name, level, props }) => {
     try {
-        const storyCode = generateCmpStoryTemplate(storyData, {
+        const storyCode = generateCmpStoryTemplate({
             name,
             level,
-            ...restCmpData
+            props
         });
-        const storyDir = path.join(__dirname, `../stories/${level}/${name}`);
 
-        // Create component folder
-        await fs.mkdir(storyDir);
-        // Create index.js file with code
-        await fs.appendFile(`${storyDir}/index.js`, prettier.format(storyCode, prettierConfig));
-        // Create data source file for the component
-        const componentDataSource = `
-            import { faker } from '@faker-js/faker';
+        const storyDir = path.join(__dirname, ...pathToComponents, level, name);
+        const storyPath = path.join(storyDir, `${name}.stories.tsx`);
+        const formattedData = await prettier.format(storyCode, { ...prettierConfig, parser: "typescript" });
 
-            /** 
-             * Example how to generate the test data
-             * you can discover more functionality by 
-             * following the link https://github.com/faker-js/faker#readme
-             */
-
-            // export const USERS: User[] = [];
-
-            // export function createRandomUser(): User {
-            //     return {
-            //         userId: faker.datatype.uuid(),
-            //         username: faker.internet.userName(),
-            //         email: faker.internet.email(),
-            //         avatar: faker.image.avatar(),
-            //         password: faker.internet.password(),
-            //         birthdate: faker.date.birthdate(),
-            //         registeredAt: faker.date.past(),
-            //     };
-            // }
-            
-            // Array.from({ length: 10 }).forEach(() => {
-            //     USERS.push(createRandomUser());
-            // });
-
-            export default [];
-        `;
-        await fs.appendFile(`${storyDir}/data.js`, prettier.format(componentDataSource, prettierConfig));
+        await fs.appendFile(storyPath, formattedData);
     } catch (error) {
         return {
             hasError: true,
@@ -351,70 +368,53 @@ const createStoryFiles = async (storyData, { name, level, ...restCmpData }) => {
     }
 };
 
-// @TODO implement test files generation
-const createTestFiles = async () => {};
-
-const addStoryExports = async ({ level, name }) => {
+const createTestFiles = async ({ name, level, portal }) => {
     try {
-        const levelPaths = getLevelIndexPaths(level, true);
+        const srcCode = generateCmpTestTemplate({
+            name,
+            portal
+        });
 
-        // Add export to the level index.js file for desktop view
-        const data = await fs.readFile(levelPaths.desktop, 'utf-8');
-        const fileRows = data.split('\n');
+        const testDir = path.join(__dirname, ...pathToComponents, `${level}`, `${name}`, `${name}.test.tsx`);
+        const formattedData = await prettier.format(srcCode, { ...prettierConfig, parser: "typescript" });
+        await fs.writeFile(testDir, formattedData);
+    } catch (error) {
+        return {
+            hasError: true,
+            error
+        };
+    }
+};
 
-        const distributedData = {
-            components: {
-                isLetPush: false,
-                list: []
-            },
-            stories: {
-                isLetPush: false,
-                list: []
-            }
+const addGlobalExportToIndexTs = async ({ level, name }) => {
+    try {
+        const indexTsPath = path.join(__dirname, "..", "src", "index.ts");
+        const data = await fs.readFile(indexTsPath, "utf-8");
+        const fromTo = {
+            atoms: ["// Atoms", "// Molecules"],
+            molecules: ["// Molecules", "// Organisms"],
+            organisms: ["// Organisms", "// Providers"]
         };
 
-        for (let i = 0; i < fileRows.length; i++) {
-            const row = fileRows[i];
+        const [from, to] = fromTo[level];
 
-            // Add the component import
-            if (row === comments.STORY_CMP_IMPORTS_START) {
-                distributedData.components.isLetPush = true;
-            }
-            if (distributedData.components.isLetPush && row !== comments.STORY_CMP_IMPORTS_END) {
-                distributedData.components.list.push(row);
-            }
-            if (row === comments.STORY_CMP_IMPORTS_END) {
-                distributedData.components.list.push(`import ${name} from './${name}';`);
-                distributedData.components.list.push(row);
-                distributedData.components.isLetPush = false;
-            }
+        const regex = new RegExp(`${from}[\\s\\S]*?${to}`, "g");
 
-            // Add new story
-            if (row === comments.ADD_STORY_START) {
-                distributedData.stories.isLetPush = true;
-            }
-            if (distributedData.stories.isLetPush && row !== comments.ADD_STORY_END) {
-                distributedData.stories.list.push(row.replace(';', ''));
-            }
-            if (row === comments.ADD_STORY_END) {
-                distributedData.stories.list.push(`.add('${name}', ...${name});`);
-                distributedData.stories.list.push(row);
-                distributedData.stories.isLetPush = false;
+        const match = data.match(regex)?.[0];
+
+        if (match) {
+            const exportStatement = `export { default as ${name} } from './components/${level}/${name}';`;
+            const lastIndex = match.lastIndexOf(";");
+            if (lastIndex !== -1) {
+                const beforeSeparator = match.substring(0, lastIndex + 1);
+                const afterSeparator = match.substring(lastIndex + 1);
+                const newMatch = beforeSeparator + exportStatement + afterSeparator;
+                const newData = data.replace(match, newMatch);
+                const formattedData = await prettier.format(newData, { ...prettierConfig, parser: "typescript" });
+                await fs.writeFile(indexTsPath, formattedData);
             }
         }
-
-        const fileContent = [
-            "/** Please don't touch to this file manually as file is generates by CLI */",
-            "import { storiesOf } from '@storybook/react';",
-            '\n',
-            ...distributedData.components.list,
-            '\n',
-            ...distributedData.stories.list
-        ].join('\n');
-
-        await fs.writeFile(levelPaths.desktop, prettier.format(fileContent, prettierConfig));
     } catch (error) {
-        console.log(error);
         return {
             hasError: true,
             error
@@ -426,7 +426,7 @@ const main = async () => {
     // Show script introduction
     init();
 
-    prettierConfig = await prettier.resolveConfig(path.join(__dirname, `../.prettierrc`));
+    prettierConfig = await prettier.resolveConfig(path.join(__dirname, "..", "configs", ".prettierrc"));
 
     // Ask questions
     const answers = await askQuestions();
@@ -434,34 +434,31 @@ const main = async () => {
 
     const componentCreationResult = await createComponentFiles(answers);
     const exportsAddingResult = await addExports(answers);
+    const storyCreationResult = await createStoryFiles(answers);
+    const testCreationResult = await createTestFiles(answers);
+    const addGlobalExportResult = await addGlobalExportToIndexTs(answers);
 
-    if (componentCreationResult?.hasError || exportsAddingResult?.hasError) {
-        const errorMessage = componentCreationResult?.error || exportsAddingResult?.error;
+    if (
+        componentCreationResult?.hasError ||
+        exportsAddingResult?.hasError ||
+        storyCreationResult?.hasError ||
+        testCreationResult?.hasError ||
+        addGlobalExportResult?.hasError
+    ) {
+        const errorMessage =
+            componentCreationResult?.error ||
+            exportsAddingResult?.error ||
+            storyCreationResult?.error ||
+            testCreationResult?.error ||
+            addGlobalExportResult?.error;
         spinner.fail(messages.ERROR(errorMessage));
         process.exit(1);
     } else {
         spinner.succeed(messages.SUCCESS(answers.name));
     }
-
-    // Ask story questions
-    if (answers.hasStory) {
-        const storyAnswers = await askStoryQuestions();
-        spinner.start();
-
-        const storyCreationResult = await createStoryFiles(storyAnswers, answers);
-        const storyExportsAddingResult = addStoryExports(answers);
-
-        if (storyCreationResult?.hasError || storyExportsAddingResult?.hasError) {
-            const errorMessage = storyCreationResult?.error || storyExportsAddingResult?.error;
-            spinner.fail(messages.ERROR(errorMessage));
-            process.exit(1);
-        } else {
-            spinner.succeed(messages.SUCCESS(answers.name, true));
-        }
-    }
 };
 
-process.on('exit', (code) => {
+process.on("exit", (code) => {
     if (code !== 0) {
         spinner.fail(messages.ERROR(`process exited with ${code} status code`));
     }
