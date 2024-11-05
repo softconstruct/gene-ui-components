@@ -1,5 +1,21 @@
 .counterField {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-3xsmall);
+
+    &__wrapper {
+        display: flex;
+        align-items: center;
+
+        &_size {
+            &_large,
+            &_medium {
+                gap: var(--guit-ref-spacing-xsmall);
+            }
+
+            &_small {
+                gap: var(--guit-ref-spacing-3xsmall);
+            }
+        }
+    }
 }
