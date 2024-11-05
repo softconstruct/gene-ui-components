@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import classNames from "classnames";
 // Styles
 import "./Skeleton.scss";
 
@@ -8,15 +7,24 @@ interface ISkeletonProps {
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
-    className?: string;
+    // isInverse?: boolean;
+    width?: number;
+    height?: number;
+    // isFlexible?: boolean;
     // fill Skeleton component props interface
 }
 
 /**
  * Skeleton is a placeholder UI element that mimics the layout of content while it is still loading.
  */
-const Skeleton: FC<ISkeletonProps> = ({ className }) => {
-    return <div className={classNames("skeleton", className)}>Skeleton</div>;
+
+// Border Radius classes
+// skeleton_rounded4X, skeleton_rounded3X, skeleton_rounded2X, skeleton_circle
+
+const Skeleton: FC<ISkeletonProps> = ({ height = 40, width = "100%" }) => {
+    return (
+        <div className="skeleton skeleton_backInverse skeleton_flexible skeleton_rounded2X" style={{ width, height }} />
+    );
 };
 
 export { ISkeletonProps, Skeleton as default };

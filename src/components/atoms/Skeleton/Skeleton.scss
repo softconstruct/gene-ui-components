@@ -1,5 +1,27 @@
 .skeleton {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    background-color: var(--guit-sem-color-background-transparent-2);
+
+    &_flexible {
+        width: 100%;
+    }
+
+    &_backInverse {
+        background-color: var(--guit-sem-color-background-transparent-inverse-2);
+    }
+
+    &_circle {
+        border-radius: 50%;
+    }
+
+    &_rounded4X {
+        border-radius: var(--guit-ref-radius-4xsmall);
+    }
+
+    &_rounded3X {
+        border-radius: var(--guit-ref-radius-3xsmall);
+    }
+
+    &_rounded2X {
+        border-radius: var(--guit-ref-radius-2xsmall);
+    }
 }
