@@ -1,16 +1,16 @@
-import chalk from 'chalk';
-import { lstatSync, readdirSync } from 'fs';
-import { copyFile, stat, readFile, writeFile } from 'fs/promises';
-import { join, resolve } from 'path';
-import { exec } from 'child_process';
-import dayjs from 'dayjs';
+import chalk from "chalk";
+import { lstatSync, readdirSync } from "fs";
+import { copyFile, stat, readFile, writeFile } from "fs/promises";
+import { join, resolve } from "path";
+import { exec } from "child_process";
+import dayjs from "dayjs";
 
 /**
  * Executes a shell command and return it as a Promise.
  * @param cmd {string}
  * @return {Promise<string>}
  */
-const execCommand = (cmd, messageNamespace = '') =>
+const execCommand = (cmd, messageNamespace = "") =>
     new Promise((resolve, reject) => {
         exec(cmd, (error, stdout, stderr) => {
             if (error) {
@@ -30,10 +30,10 @@ const isDirectory = (source) => lstatSync(source).isDirectory();
 const isFile = (source) => lstatSync(source).isFile();
 
 const copyStaticFilesToDist = async () => {
-    const filesToCopy = ['package.json', 'README.md', 'CHANGELOG.md', 'LICENSE'];
+    const filesToCopy = ["package.json", "README.md", "CHANGELOG.md", "LICENSE"];
     const copyPromises = filesToCopy.map(async (fileName) => {
-        const sourcePath = join(__dirname, '..', fileName);
-        const destinationPath = join(__dirname, '..', 'dist', fileName);
+        const sourcePath = join(__dirname, "..", fileName);
+        const destinationPath = join(__dirname, "..", "dist", fileName);
         await copyFile(sourcePath, destinationPath);
     });
 
@@ -55,7 +55,7 @@ const isFileExists = async (filePath) => {
         await stat(filePath);
         return true;
     } catch (error) {
-        if (error.code === 'ENOENT') {
+        if (error.code === "ENOENT") {
             return false;
         }
         throw error;
@@ -64,13 +64,13 @@ const isFileExists = async (filePath) => {
 
 const replaceVersionInDistPGK = async (newVersion, commitSHA, tag) => {
     try {
-        const [version] = newVersion.split('/').reverse();
-        const packageJsonFile = await readFile(resolve(__dirname, '../dist/package.json'), 'utf8');
+        const [version] = newVersion.split("/").reverse();
+        const packageJsonFile = await readFile(resolve(__dirname, "../dist/package.json"), "utf8");
         const packageJson = JSON.parse(packageJsonFile);
-        packageJson.version = `${version}-${tag}-${commitSHA}-${dayjs().format('DDMMYYYY')}`;
-        await writeFile(resolve(__dirname, '../dist/package.json'), JSON.stringify(packageJson, null, 4), 'utf8');
+        packageJson.version = `${version}-${tag}-${commitSHA}-${dayjs().format("DDMMYYYY")}`;
+        await writeFile(resolve(__dirname, "../dist/package.json"), JSON.stringify(packageJson, null, 4), "utf8");
     } catch (error) {
-        if (error.code === 'ENOENT') {
+        if (error.code === "ENOENT") {
             return false;
         }
         throw error;
