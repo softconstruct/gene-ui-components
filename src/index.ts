@@ -6,6 +6,7 @@ export { default as Loader, ILoaderProps } from "./components/atoms/Loader";
 export { default as Pill, IPillProps } from "./components/atoms/Pill";
 export { default as Divider, IDividerProps } from "./components/atoms/Divider";
 export { default as Info, IInfoProps } from "./components/atoms/Info";
+export { default as Layout } from "./components/atoms/Layout";
 
 // Molecules
 export { default as Tooltip } from "./components/molecules/Tooltip";
