@@ -79,7 +79,7 @@ const loadingTypes = {
     success: { fill: "neutral", outline: "neutral", text: "neutral" },
     inverse: { fill: "neutral", outline: "inverse", text: "inverse" },
     transparent: { fill: "inverse", outline: "inverse", text: "inverse" }
-};
+} as const;
 
 /**
  * Button initiates an action or event. Use buttons for key actions like submitting a form, saving changes, or advancing to the next step.
@@ -135,11 +135,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                     />
                 )}
 
-                {Icon && (
-                    <span className="button__icon">
-                        <Icon size={iconSizes[size]} />
-                    </span>
-                )}
+                {Icon && <Icon size={iconSizes[size]} className="button__icon" />}
 
                 {text && !isSizeXS && <span className="button__text">{text}</span>}
             </button>
