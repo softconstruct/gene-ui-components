@@ -1,5 +1,117 @@
 .layout {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    display: grid;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    min-height: 0;
+
+    &_noSidebar {
+        grid-template-columns: 12fr;
+        grid-template-rows: auto 11fr;
+        grid-template-areas:
+            "header"
+            "content";
+    }
+
+    &_leftSidebar {
+        grid-template-columns: auto 11fr;
+        grid-template-rows: auto 11fr;
+        grid-template-areas:
+            "header header"
+            "sidebarLeft content";
+    }
+
+    &_leftSidebarOverlay {
+        grid-template-columns: auto 11fr;
+        grid-template-rows: auto 11fr;
+        grid-template-areas:
+            "sidebarLeft header"
+            "sidebarLeft content";
+    }
+
+    &_doubleSidebars {
+        grid-template-columns: auto 10fr auto;
+        grid-template-rows: auto 11fr;
+        grid-template-areas:
+            "header header header"
+            "sidebarLeft content sidebarRight";
+    }
+
+    &_doubleSidebarsOverlay {
+        grid-template-columns: auto 10fr auto;
+        grid-template-rows: auto 11fr;
+        grid-template-areas:
+            "sidebarLeft header sidebarRight"
+            "sidebarLeft content sidebarRight";
+    }
+
+    &_rightSidebar {
+        grid-template-columns: 11fr auto;
+        grid-template-rows: auto 11fr;
+        grid-template-areas:
+            "header header"
+            "content sidebarRight";
+    }
+
+    &_rightSidebarOverlay {
+        grid-template-columns: 11fr auto;
+        grid-template-rows: auto 11fr;
+        grid-template-areas:
+            "header sidebarRight"
+            "content sidebarRight";
+    }
+}
+
+.header,
+.content,
+.sidebar {
+    min-width: 0;
+    min-height: 0;
+}
+
+.header {
+    grid-area: header;
+}
+
+.content {
+    grid-area: content;
+}
+
+.sidebar {
+    transition: width var(--guit-ref-motion-duration-moderate-macro) var(--guit-ref-motion-easing-standard);
+
+    &_left {
+        grid-area: sidebarLeft;
+
+        @media screen and (min-width: 768px) {
+            width: 26.4rem;
+
+            &_collapsed {
+                width: 6.4rem;
+            }
+        }
+    }
+
+    &_right {
+        grid-area: sidebarRight;
+
+        @media screen and (min-width: 768px) and (max-width: 1199px) {
+            width: 480px;
+        }
+        @media screen and (min-width: 1200px) {
+            width: 720px;
+        }
+    }
+
+    &_hasAside {
+        position: relative;
+    }
+
+    &__aside {
+        position: absolute;
+        top: 0;
+        left: 100%;
+        width: 100%;
+        height: 100%;
+    }
 }
