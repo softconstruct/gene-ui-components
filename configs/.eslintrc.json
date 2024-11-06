@@ -15,36 +15,22 @@
         }
     },
     "extends": [
-        "eslint:recommended",
-        // Base ESLint recommended rules
-        "plugin:@typescript-eslint/recommended",
-        // TypeScript recommended rules
-        "plugin:react/recommended",
-        // React recommended rules
-        "plugin:react-hooks/recommended",
-        // React hooks linting
-        "plugin:jsx-a11y/recommended",
-        // Accessibility best practices
-        "airbnb",
-        // Airbnb style guide for consistent code
-        "airbnb/hooks",
-        // Airbnb hooks rules
-        "prettier",
-        // Disables ESLint rules that conflict with Prettier
-        "plugin:prettier/recommended"
-        // Enables eslint-plugin-prettier and eslint-config-prettier
+        "eslint:recommended", // Base ESLint recommended rules
+        "plugin:@typescript-eslint/recommended", // TypeScript recommended rules
+        "plugin:react/recommended", // React recommended rules
+        "plugin:react-hooks/recommended", // React hooks linting
+        "plugin:jsx-a11y/recommended", // Accessibility best practices
+        "airbnb", // Airbnb style guide for consistent code
+        "airbnb/hooks", // Airbnb hooks rules
+        "prettier", // Disables ESLint rules that conflict with Prettier
+        "plugin:prettier/recommended" // Enables eslint-plugin-prettier and eslint-config-prettier
     ],
     "plugins": [
-        "react",
-        // React plugin
-        "react-hooks",
-        // React hooks plugin
-        "@typescript-eslint",
-        // TypeScript plugin
-        "jsx-a11y",
-        // Accessibility plugin
-        "prettier"
-        // Prettier plugin
+        "react", // React plugin
+        "react-hooks", // React hooks plugin
+        "@typescript-eslint", // TypeScript plugin
+        "jsx-a11y", // Accessibility plugin
+        "prettier" // Prettier plugin
     ],
     "rules": {
         // Prettier
@@ -58,37 +44,29 @@
             }
         ],
         // React
-        "react/react-in-jsx-scope": "off",
-        // Not needed for React 17+
-        "react/prop-types": "off",
-        // Disable prop-types (handled by TypeScript)
+        "react/react-in-jsx-scope": "off", // Not needed for React 17+
+        "react/prop-types": "off", // Disable prop-types (handled by TypeScript)
         "react/jsx-filename-extension": [
             1,
             {
                 "extensions": [".jsx", ".tsx"]
             }
-        ],
-        // Allow JSX in TSX files
+        ], // Allow JSX in TSX files
         "react/jsx-props-no-spreading": "off",
-        "react-hooks/exhaustive-deps": "off",
-        // Allow prop spreading (optional)
+        "react-hooks/exhaustive-deps": "off", // Allow prop spreading (optional)
         "react/require-default-props": "off",
         "react/function-component-definition": "off",
         "react/jsx-no-useless-fragment": "off",
         // TypeScript
-        "@typescript-eslint/explicit-function-return-type": "off",
-        // Optional return types
+        "@typescript-eslint/explicit-function-return-type": "off", // Optional return types
         "@typescript-eslint/no-unused-vars": [
             "error",
             {
                 "argsIgnorePattern": "^_"
             }
-        ],
-        // Allow unused vars with underscore prefix
-        "@typescript-eslint/no-explicit-any": "warn",
-        // Warn on `any` type usage
-        "@typescript-eslint/explicit-module-boundary-types": "off",
-        // Optional boundary types
+        ], // Allow unused vars with underscore prefix
+        "@typescript-eslint/no-explicit-any": "warn", // Warn on `any` type usage
+        "@typescript-eslint/explicit-module-boundary-types": "off", // Optional boundary types
         // Accessibility
         "jsx-a11y/anchor-is-valid": "off",
         "jsx-a11y/label-has-associated-control": "off",
@@ -100,24 +78,19 @@
             }
         ],
         // General
-        "no-console": "warn",
-        // Warn on console usage
-        "no-debugger": "error",
-        // Disallow debugger
+        "no-console": "warn", // Warn on console usage
+        "no-debugger": "error", // Disallow debugger
         "no-plusplus": "off",
-        "import/prefer-default-export": "off",
-        // Allow named exports
+        "import/prefer-default-export": "off", // Allow named exports
         "import/no-unresolved": "off",
         "import/extensions": "off",
         "no-restricted-exports": "off"
     },
     "overrides": [
         {
-            "files": ["*.stories.tsx"],
-            // Target story files
+            "files": ["*.stories.tsx"], // Target story files
             "rules": {
-                "no-script-url": "off"
-                // Disable the no-script-url rule only for story files
+                "no-script-url": "off" // Disable the no-script-url rule only for story files
             }
         },
         {
@@ -129,8 +102,7 @@
     ],
     "settings": {
         "react": {
-            "version": "detect"
-            // Automatically detect the react version
+            "version": "detect" // Automatically detect the react version
         }
     }
 }

@@ -5,7 +5,7 @@ import { IconProps } from "@geneui/icons";
 // Styles
 import "./Button.scss";
 
-// components
+// Components
 import Loader from "../Loader";
 
 const iconSizes: Record<"large" | "medium" | "small" | "XSmall", IconProps["size"]> = {

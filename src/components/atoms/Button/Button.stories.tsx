@@ -40,8 +40,6 @@ const Template: FC<IButtonProps> = (props) => <Button {...props} />;
 
 export const Default = Template.bind({});
 
-Default.args = {} as IButtonProps;
-
 export const WithIcon = Template.bind({});
 
 WithIcon.args = { Icon: Search } as IButtonProps;
