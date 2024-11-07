@@ -42,4 +42,4 @@ WithIcon.args = {
     fullName: "",
     Icon: Globe,
     onClick: undefined
-};
+} as IAvatarProps;
