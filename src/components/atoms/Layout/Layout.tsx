@@ -17,13 +17,125 @@ interface ILayoutProps {
  */
 const Layout: FC<ILayoutProps> = ({ className }) => {
     return (
-        <div className={classNames("layout layout_doubleSidebars", className)}>
-            <header className="header" />
-            <main className="content" />
-            <aside className="sidebar sidebar_left sidebar_left_collapsed sidebar_hasAside">
-                <div className="sidebar__aside" />
-            </aside>
-            <aside className="sidebar sidebar_right" />
+        <div className="testWrapper">
+            <div style={{ display: "none" }} className={classNames("layout layout_noSidebar", className)}>
+                <header className="header" style={{ backgroundColor: "#F6E5EF" }}>
+                    Header
+                </header>
+                <main className="content" style={{ backgroundColor: "#F1D9E7" }}>
+                    Content
+                </main>
+            </div>
+            <div className={classNames("layout layout_leftSidebar", className)}>
+                <header className="header" style={{ backgroundColor: "#F6E5EF" }}>
+                    Header
+                </header>
+                <main className="content" style={{ backgroundColor: "#F1D9E7" }}>
+                    Content
+                </main>
+                <aside
+                    className="sidebar sidebar_left sidebar_left_collapsed sidebar_hasAside"
+                    style={{ backgroundColor: "#E9BFD7" }}
+                >
+                    Left Sider
+                </aside>
+            </div>
+            <div style={{ display: "none" }} className={classNames("layout layout_leftSidebarOverlay", className)}>
+                <header className="header" style={{ backgroundColor: "#F6E5EF" }}>
+                    Header
+                </header>
+                <main className="content" style={{ backgroundColor: "#F1D9E7" }}>
+                    Content
+                </main>
+                <aside
+                    className="sidebar sidebar_left sidebar_left_collapsed sidebar_hasAside"
+                    style={{ backgroundColor: "#E9BFD7" }}
+                >
+                    Left Sider
+                    <div className="sidebar__aside" style={{ backgroundColor: "#DFA3C7" }}>
+                        Slider Overlay
+                    </div>
+                </aside>
+                <aside className="sidebar sidebar_right" style={{ backgroundColor: "#E9BFD7" }}>
+                    Right Sider
+                </aside>
+            </div>
+            <div style={{ display: "none" }} className={classNames("layout layout_doubleSidebars", className)}>
+                <header className="header" style={{ backgroundColor: "#F6E5EF" }}>
+                    Header
+                </header>
+                <main className="content" style={{ backgroundColor: "#F1D9E7" }}>
+                    Content
+                </main>
+                <aside
+                    className="sidebar sidebar_left sidebar_left_collapsed sidebar_hasAside"
+                    style={{ backgroundColor: "#E9BFD7" }}
+                >
+                    Left Sider
+                </aside>
+                <aside className="sidebar sidebar_right" style={{ backgroundColor: "#E9BFD7" }}>
+                    Right Sider
+                </aside>
+            </div>
+            <div style={{ display: "none" }} className={classNames("layout layout_doubleSidebarsOverlay", className)}>
+                <header className="header" style={{ backgroundColor: "#F6E5EF" }}>
+                    Header
+                </header>
+                <main className="content" style={{ backgroundColor: "#F1D9E7" }}>
+                    Content
+                </main>
+                <aside
+                    className="sidebar sidebar_left sidebar_left_collapsed sidebar_hasAside"
+                    style={{ backgroundColor: "#E9BFD7" }}
+                >
+                    Left Sider
+                </aside>
+                <aside className="sidebar sidebar_right" style={{ backgroundColor: "#E9BFD7" }}>
+                    Right Sider
+                </aside>
+            </div>
+            <div style={{ display: "none" }} className={classNames("layout layout_rightSidebar", className)}>
+                <header className="header" style={{ backgroundColor: "#F6E5EF" }}>
+                    Header
+                </header>
+                <main className="content" style={{ backgroundColor: "#F1D9E7" }}>
+                    Content
+                </main>
+                <aside className="sidebar sidebar_right" style={{ backgroundColor: "#E9BFD7" }}>
+                    Right Sider
+                </aside>
+            </div>
+            <div style={{ display: "none" }} className={classNames("layout layout_rightSidebarOverlay", className)}>
+                <header className="header" style={{ backgroundColor: "#F6E5EF" }}>
+                    Header
+                </header>
+                <main className="content" style={{ backgroundColor: "#F1D9E7" }}>
+                    Content
+                </main>
+                <aside className="sidebar sidebar_right" style={{ backgroundColor: "#E9BFD7" }}>
+                    Right Sider
+                </aside>
+            </div>
+            <div style={{ display: "none" }} className={classNames("layout layout_doubleSidebarsOverlay", className)}>
+                <header className="header" style={{ backgroundColor: "#F6E5EF" }}>
+                    Header
+                </header>
+                <main className="content" style={{ backgroundColor: "#F1D9E7" }}>
+                    Content
+                </main>
+                <aside
+                    className="sidebar sidebar_left sidebar_left_collapsed sidebar_hasAside"
+                    style={{ backgroundColor: "#E9BFD7" }}
+                >
+                    Left Sider
+                    <div className="sidebar__aside" style={{ backgroundColor: "#DFA3C7" }}>
+                        Slider Overlay
+                    </div>
+                </aside>
+                <aside className="sidebar sidebar_right" style={{ backgroundColor: "#E9BFD7" }}>
+                    Right Sider
+                </aside>
+            </div>
         </div>
     );
 };
