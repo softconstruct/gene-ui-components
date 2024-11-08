@@ -10,6 +10,7 @@ export { default as Button, IButtonProps } from "./components/atoms/Button";
 
 // Molecules
 export { default as Tooltip } from "./components/molecules/Tooltip";
+export { default as Notification } from "./components/molecules/Notification";
 
 // Organisms
 
