@@ -1,28 +1,28 @@
-import fs from 'fs/promises';
-import path from 'path';
-import inquirer from 'inquirer';
-import chalk from 'chalk';
-import figlet from 'figlet';
-import process from 'process';
-import ora from 'ora';
-import prettier from 'prettier';
+import fs from "fs/promises";
+import path from "path";
+import inquirer from "inquirer";
+import chalk from "chalk";
+import figlet from "figlet";
+import process from "process";
+import ora from "ora";
+import prettier from "prettier";
 
-const firstLetterCase = (str = '', toUpperCase = true) => {
+const firstLetterCase = (str = "", toUpperCase = true) => {
     const [firstChar, ...remainingChars] = str;
-    return (toUpperCase ? firstChar.toUpperCase() : firstChar.toLowerCase()) + remainingChars.join('');
+    return (toUpperCase ? firstChar.toUpperCase() : firstChar.toLowerCase()) + remainingChars.join("");
 };
 
 const spinner = ora({
-    color: 'yellow',
-    text: 'Creating the component...',
-    fail: 'Something went wrong please see errors bellow!'
+    color: "yellow",
+    text: "Creating the component...",
+    fail: "Something went wrong please see errors bellow!"
 });
 
 const messages = {
     ERROR_NAME_EMPTY: chalk.white.redBright.bold("error: Component's name can't be empty!"),
     ERROR_NAME_IS_NOT_CORRECT: chalk.white.redBright.bold("error: Component's name should start with upper case!"),
     ERROR_PROPS_IS_NOT_CORRECT: chalk.white.redBright.bold("error: Component's props should not contain any symbol!"),
-    ERROR_COMPONENT_EXISTS: chalk.white.redBright.bold('error: Component with this name already exists.'),
+    ERROR_COMPONENT_EXISTS: chalk.white.redBright.bold("error: Component with this name already exists."),
     ERROR_DUPLICATE_NAME: (value) => chalk.white.redBright.bold(`error: ${value} names should be unique.`),
     SUCCESS: (componentName) =>
         chalk.white.green.bold(`success: The ${componentName} component is successfully created!`),
@@ -31,14 +31,13 @@ const messages = {
 
 let prettierConfig;
 
-const pathToLib = ['..', 'src', 'lib'];
-const pathToChromaticStories = ['..', 'stories', 'chromatic'];
+const pathToComponents = ["..", "src", "components"];
 
 const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => {
     const InterfaceName = `I${name}Props`;
 
     return `
-        import React${isWithForwardRef ? ', { forwardRef }' : ', { FC }'} from 'react';
+        import React${isWithForwardRef ? ", { forwardRef }" : ", { FC }"} from 'react';
         import classNames from 'classnames';
         // Styles
         import './${name}.scss';
@@ -62,15 +61,15 @@ const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => 
             }
         }
 
-        ${description ? `/** \n* ${description}\n*/` : ''}
-        const ${name}${!isWithForwardRef ? `: FC<${InterfaceName}>` : ''} = ${
-        isWithForwardRef ? `forwardRef<unknown , ${InterfaceName}>((` : '('
-    }${props.length ? `{${[...props]}, className} ${isWithForwardRef ? `:${InterfaceName}` : ''}` : '{ className }'}
-        ${isWithForwardRef ? ', ref' : ''}) => {
+        ${description ? `/** \n* ${description}\n*/` : ""}
+        const ${name}${!isWithForwardRef ? `: FC<${InterfaceName}>` : ""} = ${
+            isWithForwardRef ? `forwardRef<unknown , ${InterfaceName}>((` : "("
+        }${props.length ? `{${[...props]}, className} ${isWithForwardRef ? `:${InterfaceName}` : ""}` : "{ className }"}
+        ${isWithForwardRef ? ", ref" : ""}) => {
             return <div className={classNames("${firstLetterCase(name, false)}", className)}>
                 ${name}
             </div>
-        }${isWithForwardRef ? ')' : ''};
+        }${isWithForwardRef ? ")" : ""};
 
         export { ${InterfaceName}, ${name} as default };
     `;
@@ -113,15 +112,12 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
                           )}`
                         : `// fill ${name} component args`
                 }
-            } as ${InterfaceName},
-            parameters: {
-                chromatic: { disableSnapshot: true }
-            }
+            } as ${InterfaceName}
         };
         
         export default meta;
         
-        const Template: FC<${InterfaceName}> = (args) => <${name} {...args} />;
+        const Template: FC<${InterfaceName}> = (props) => <${name} {...props} />;
         
         export const Default = Template.bind({});
         
@@ -129,43 +125,14 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
         `;
 };
 
-const generateCmpStoryTemplateForChromatic = ({ name, level }) => `
-        import React, { FC } from 'react';
-        import { Meta } from '@storybook/react';
-
-        // Helpers
-        import { VariantsStoryGrid } from '../assets/storybook.globals';
-        
-        // Components
-        import ${name} from '../../src/lib/${level}/${name}';
-        
-        const meta: Meta<typeof ${name}> = {
-            title: 'Chromatic/${name}',
-            component: ${name}
-        };
-        
-        export default meta;
-        
-        const variants = [{
-            //all posible props
-        },{
-            //for all variants
-        }]
-        
-        export const Template = () => {
-            return (
-                <VariantsStoryGrid>
-                    {variants.map((variant, index) => {
-                        return <${name} {...variant} key={index} />;
-                    })}
-                </VariantsStoryGrid>
-            );
-        };`;
-
 const generateCmpTestTemplate = ({ name, portal }) => {
     const beforeEach = portal
-        ? `beforeEach(() => (setup = mount(<${name} />, { wrappingComponent: GeneUIProvider })));`
-        : `beforeEach(() => (setup = mount(<${name} />)));`;
+        ? `beforeEach(() => {
+                setup = mount(<${name} />, { wrappingComponent: GeneUIProvider })
+            });`
+        : `beforeEach(() => {
+                setup = mount(<${name} />)
+            });`;
 
     const InterfaceName = `I${name}Props`;
 
@@ -175,7 +142,7 @@ const generateCmpTestTemplate = ({ name, portal }) => {
 
             // Components
             import ${name}, { ${InterfaceName} } from './index';
-            ${portal ? `import GeneUIProvider from '../../providers/GeneUIProvider';` : ''}
+            ${portal ? `import GeneUIProvider from '../../providers/GeneUIProvider';` : ""}
             
             describe('${name} ', () => {
                 let setup: ReactWrapper<${InterfaceName}>;
@@ -200,8 +167,8 @@ const generateCmpTestTemplate = ({ name, portal }) => {
 const init = () => {
     console.log(
         chalk.yellow(
-            figlet.textSync('Add new component', {
-                font: 'small'
+            figlet.textSync("Add new component", {
+                font: "small"
             })
         )
     );
@@ -210,21 +177,21 @@ const init = () => {
 const askQuestions = () => {
     const questions = [
         {
-            name: 'level',
-            type: 'list',
-            prefix: '[?]',
-            message: 'Please choose a level of the component: ',
-            choices: ['Atom', 'Molecule', 'Organism'],
+            name: "level",
+            type: "list",
+            prefix: "[?]",
+            message: "Please choose a level of the component: ",
+            choices: ["Atom", "Molecule", "Organism"],
             filter: (value) => `${value.toLowerCase()}s`
         },
         {
-            name: 'name',
-            type: 'input',
-            message: 'Please enter the component name: ',
-            prefix: '[?]',
-            filter: (inputValue) => inputValue.replace(/\s/g, ''),
+            name: "name",
+            type: "input",
+            message: "Please enter the component name: ",
+            prefix: "[?]",
+            filter: (inputValue) => inputValue.replace(/\s/g, ""),
             validate: async (componentName) => {
-                if (componentName === '') {
+                if (componentName === "") {
                     console.log(`\n${messages.ERROR_NAME_EMPTY}`);
                     return false;
                 }
@@ -236,9 +203,9 @@ const askQuestions = () => {
                     return false;
                 }
 
-                const atoms = await fs.readdir(path.join(__dirname, ...pathToLib, 'atoms'));
-                const molecules = await fs.readdir(path.join(__dirname, ...pathToLib, 'molecules'));
-                const organisms = await fs.readdir(path.join(__dirname, ...pathToLib, 'organisms'));
+                const atoms = await fs.readdir(path.join(__dirname, ...pathToComponents, "atoms"));
+                const molecules = await fs.readdir(path.join(__dirname, ...pathToComponents, "molecules"));
+                const organisms = await fs.readdir(path.join(__dirname, ...pathToComponents, "organisms"));
 
                 const components = [...atoms, ...molecules, ...organisms];
 
@@ -253,12 +220,12 @@ const askQuestions = () => {
             }
         },
         {
-            name: 'props',
-            type: 'input',
+            name: "props",
+            type: "input",
             message:
                 "Please enter props of the component separated by ',' in case you don't know yet what props you need leave the input empty: ",
-            prefix: '[?]',
-            filter: (value) => (value ? value.split(',').map((prop) => prop.trim()) : []),
+            prefix: "[?]",
+            filter: (value) => (value ? value.split(",").map((prop) => prop.trim()) : []),
             validate: (componentProps) => {
                 const propDict = {};
 
@@ -266,7 +233,7 @@ const askQuestions = () => {
                     const key = componentProps[i];
 
                     if (propDict.hasOwnProperty(key)) {
-                        console.log(`\n${messages.ERROR_DUPLICATE_NAME('Props')}`);
+                        console.log(`\n${messages.ERROR_DUPLICATE_NAME("Props")}`);
                         return false;
                     }
 
@@ -282,18 +249,18 @@ const askQuestions = () => {
             }
         },
         {
-            name: 'files',
-            type: 'input',
+            name: "files",
+            type: "input",
             message:
                 "If you need extra .ts files in the component folder type files names separated by ',' else leave the input empty: ",
-            prefix: '[?]',
-            filter: (value) => (value ? value.split(',').map((prop) => prop.trim()) : []),
+            prefix: "[?]",
+            filter: (value) => (value ? value.split(",").map((prop) => prop.trim()) : []),
             validate: (files) => {
                 const propDict = {};
                 for (let i = 0; i < files.length; i++) {
                     const key = files[i];
                     if (propDict.hasOwnProperty(key)) {
-                        console.log(`\n${messages.ERROR_DUPLICATE_NAME('Files')}`);
+                        console.log(`\n${messages.ERROR_DUPLICATE_NAME("Files")}`);
                         return false;
                     }
                     propDict[key] = key;
@@ -303,26 +270,26 @@ const askQuestions = () => {
             }
         },
         {
-            name: 'isWithForwardRef',
-            type: 'list',
-            message: 'Do you need to wrap the component in forwardRef: ',
-            prefix: '[?]',
-            choices: ['Yes', 'No'],
-            filter: (value) => value === 'Yes'
+            name: "isWithForwardRef",
+            type: "list",
+            message: "Do you need to wrap the component in forwardRef: ",
+            prefix: "[?]",
+            choices: ["No", "Yes"],
+            filter: (value) => value === "Yes"
         },
         {
-            name: 'portal',
-            type: 'list',
-            prefix: '[?]',
-            message: 'Is this component with portal: ',
-            choices: ['Yes', 'No'],
-            filter: (value) => value === 'Yes'
+            name: "portal",
+            type: "list",
+            prefix: "[?]",
+            message: "Is this component with portal: ",
+            choices: ["No", "Yes"],
+            filter: (value) => value === "Yes"
         },
         {
-            name: 'description',
-            type: 'input',
-            message: 'Please enter the component description (you can copy it from the issue): ',
-            prefix: '[?]'
+            name: "description",
+            type: "input",
+            message: "Please enter the component description (you can copy it from the issue): ",
+            prefix: "[?]"
         }
     ];
 
@@ -337,13 +304,13 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
             files,
             ...restData
         });
-        const cmpDir = path.join(__dirname, ...pathToLib, level, name);
+        const cmpDir = path.join(__dirname, ...pathToComponents, level, name);
 
         // Create component folder
         await fs.mkdir(cmpDir);
 
         const componentPath = path.join(`${cmpDir}`, `${name}.tsx`);
-        const componentFormattedData = prettier.format(srcCode, { ...prettierConfig, parser: 'typescript' });
+        const componentFormattedData = await prettier.format(srcCode, { ...prettierConfig, parser: "typescript" });
 
         // Create index.tsx file with code
         await fs.appendFile(componentPath, componentFormattedData);
@@ -357,13 +324,11 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
             font-size: var(--guit-sem-font-caption-large-medium-font-size);
         }`;
         const scssPath = path.join(`${cmpDir}`, `${name}.scss`);
-        const scssFormattedData = prettier.format(scssContent, { ...prettierConfig, parser: 'scss' });
+        const scssFormattedData = await prettier.format(scssContent, { ...prettierConfig, parser: "scss" });
         await fs.appendFile(scssPath, scssFormattedData);
 
         // Create extra ts files in the component dir
-        for (let i = 0; i < files.length; i++) {
-            await fs.appendFile(`${cmpDir}/${files[i]}.ts`, '');
-        }
+        await Promise.all(files.map((extraFile) => fs.appendFile(`${cmpDir}/${extraFile}.ts`, "")));
     } catch (error) {
         return {
             hasError: true,
@@ -374,10 +339,10 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
 
 const addExports = async ({ level, name }) => {
     try {
-        const cmpDir = path.join(__dirname, ...pathToLib, `${level}`, `${name}`);
-        const indexContent = `export { I${name}Props, default as default } from './${name}';`;
+        const cmpDir = path.join(__dirname, ...pathToComponents, `${level}`, `${name}`);
+        const indexContent = `export { I${name}Props, default } from './${name}';`;
 
-        await fs.writeFile(`${cmpDir}/index.tsx`, indexContent, { flag: 'a+' });
+        await fs.writeFile(`${cmpDir}/index.tsx`, indexContent, { flag: "a+" });
     } catch (error) {
         return {
             hasError: true,
@@ -394,29 +359,9 @@ const createStoryFiles = async ({ name, level, props }) => {
             props
         });
 
-        const storyDir = path.join(__dirname, ...pathToLib, level, name);
+        const storyDir = path.join(__dirname, ...pathToComponents, level, name);
         const storyPath = path.join(storyDir, `${name}.stories.tsx`);
-        const formattedData = prettier.format(storyCode, { ...prettierConfig, parser: 'typescript' });
-
-        await fs.appendFile(storyPath, formattedData);
-    } catch (error) {
-        return {
-            hasError: true,
-            error
-        };
-    }
-};
-
-const createStoryFileForChromatic = async ({ name, level }) => {
-    try {
-        const storyCode = generateCmpStoryTemplateForChromatic({
-            name,
-            level
-        });
-
-        const storyDir = path.join(__dirname, ...pathToChromaticStories);
-        const storyPath = path.join(storyDir, `${name}.chromatic.stories.tsx`);
-        const formattedData = prettier.format(storyCode, { ...prettierConfig, parser: 'typescript' });
+        const formattedData = await prettier.format(storyCode, { ...prettierConfig, parser: "typescript" });
 
         await fs.appendFile(storyPath, formattedData);
     } catch (error) {
@@ -434,29 +379,9 @@ const createTestFiles = async ({ name, level, portal }) => {
             portal
         });
 
-        const testDir = path.join(__dirname, ...pathToLib, `${level}`, `${name}`, `${name}.test.tsx`);
-        const formattedData = prettier.format(srcCode, { ...prettierConfig, parser: 'typescript' });
+        const testDir = path.join(__dirname, ...pathToComponents, `${level}`, `${name}`, `${name}.test.tsx`);
+        const formattedData = await prettier.format(srcCode, { ...prettierConfig, parser: "typescript" });
         await fs.writeFile(testDir, formattedData);
-    } catch (error) {
-        return {
-            hasError: true,
-            error
-        };
-    }
-};
-
-const addTsInRollup = async ({ name }) => {
-    try {
-        const rollupPath = path.join(__dirname, '..', 'configs', 'rollup.config.js');
-        const data = await fs.readFile(rollupPath, 'utf-8');
-        const regex = /const TSComponentsList = \[(.*?)\]/s;
-        const [match] = data.match(regex);
-        let dataForReplace = '';
-        if (match) {
-            dataForReplace = match.replace(']', `, '${name}']`);
-        }
-        const newData = data.replace(match, dataForReplace);
-        await fs.writeFile(rollupPath, prettier.format(newData, prettierConfig));
     } catch (error) {
         return {
             hasError: true,
@@ -467,29 +392,29 @@ const addTsInRollup = async ({ name }) => {
 
 const addGlobalExportToIndexTs = async ({ level, name }) => {
     try {
-        const indexTsPath = path.join(__dirname, '..', 'src', 'index.ts');
-        const data = await fs.readFile(indexTsPath, 'utf-8');
+        const indexTsPath = path.join(__dirname, "..", "src", "index.ts");
+        const data = await fs.readFile(indexTsPath, "utf-8");
         const fromTo = {
-            atoms: ['// Atoms', '// Molecules'],
-            molecules: ['// Molecules', '// Organisms'],
-            organisms: ['// Organisms', '// Providers']
+            atoms: ["// Atoms", "// Molecules"],
+            molecules: ["// Molecules", "// Organisms"],
+            organisms: ["// Organisms", "// Providers"]
         };
 
         const [from, to] = fromTo[level];
 
-        const regex = new RegExp(`${from}[\\s\\S]*?${to}`, 'g');
+        const regex = new RegExp(`${from}[\\s\\S]*?${to}`, "g");
 
         const match = data.match(regex)?.[0];
 
         if (match) {
-            const exportStatement = `export { default as ${name} } from './lib/${level}/${name}';`;
-            const lastIndex = match.lastIndexOf(';');
+            const exportStatement = `export { default as ${name} } from './components/${level}/${name}';`;
+            const lastIndex = match.lastIndexOf(";");
             if (lastIndex !== -1) {
                 const beforeSeparator = match.substring(0, lastIndex + 1);
                 const afterSeparator = match.substring(lastIndex + 1);
                 const newMatch = beforeSeparator + exportStatement + afterSeparator;
                 const newData = data.replace(match, newMatch);
-                const formattedData = prettier.format(newData, { ...prettierConfig, parser: 'typescript' });
+                const formattedData = await prettier.format(newData, { ...prettierConfig, parser: "typescript" });
                 await fs.writeFile(indexTsPath, formattedData);
             }
         }
@@ -505,7 +430,7 @@ const main = async () => {
     // Show script introduction
     init();
 
-    prettierConfig = await prettier.resolveConfig(path.join(__dirname, '..', 'configs', '.prettierrc'));
+    prettierConfig = await prettier.resolveConfig(path.join(__dirname, "..", "configs", ".prettierrc"));
 
     // Ask questions
     const answers = await askQuestions();
@@ -514,18 +439,13 @@ const main = async () => {
     const componentCreationResult = await createComponentFiles(answers);
     const exportsAddingResult = await addExports(answers);
     const storyCreationResult = await createStoryFiles(answers);
-    const storyForChromaticCreationResult = await createStoryFileForChromatic(answers);
     const testCreationResult = await createTestFiles(answers);
     const addGlobalExportResult = await addGlobalExportToIndexTs(answers);
-    // todo remove addTsInRollup after fix
-    const tsInRollupResult = await addTsInRollup(answers);
 
     if (
         componentCreationResult?.hasError ||
         exportsAddingResult?.hasError ||
         storyCreationResult?.hasError ||
-        storyForChromaticCreationResult?.hasError ||
-        tsInRollupResult?.hasError ||
         testCreationResult?.hasError ||
         addGlobalExportResult?.hasError
     ) {
@@ -533,8 +453,6 @@ const main = async () => {
             componentCreationResult?.error ||
             exportsAddingResult?.error ||
             storyCreationResult?.error ||
-            storyForChromaticCreationResult?.error ||
-            tsInRollupResult?.error ||
             testCreationResult?.error ||
             addGlobalExportResult?.error;
         spinner.fail(messages.ERROR(errorMessage));
@@ -544,7 +462,7 @@ const main = async () => {
     }
 };
 
-process.on('exit', (code) => {
+process.on("exit", (code) => {
     if (code !== 0) {
         spinner.fail(messages.ERROR(`process exited with ${code} status code`));
     }

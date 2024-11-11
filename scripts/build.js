@@ -1,43 +1,43 @@
-import chalk from 'chalk';
-import process from 'process';
-import ora from 'ora';
-import yargs from 'yargs';
+import chalk from "chalk";
+import process from "process";
+import ora from "ora";
+import yargs from "yargs";
 
-import { rmSync } from 'fs';
-import { resolve } from 'path';
-import { execCommand, copyStaticFilesToDist, replaceVersionInDistPGK } from './utils';
+import { rmSync } from "fs";
+import { resolve } from "path";
+import { execCommand, copyStaticFilesToDist, replaceVersionInDistPGK } from "./utils";
 
 // In case of true the build script should skip lint and semver steps
-const { pure: isBuildRunInPureMode } = yargs.option('pure', {
-    describe: 'If --pure option specified then lint and semver steps will be skipped from build job.',
-    type: 'boolean',
+const { pure: isBuildRunInPureMode } = yargs.option("pure", {
+    describe: "If --pure option specified then lint and semver steps will be skipped from build job.",
+    type: "boolean",
     default: false
 }).argv;
 
 // The canary version branch name. If provided package json file version will be replaced
-const { canary: canaryVersion } = yargs.option('canary', {
-    describe: 'If --canary argument is specified then package json version will be generated as canary version.',
-    type: 'string',
+const { canary: canaryVersion } = yargs.option("canary", {
+    describe: "If --canary argument is specified then package json version will be generated as canary version.",
+    type: "string",
     default: null
 }).argv;
 
 // The next version branch name. If provided package json file version will be replaced
-const { next: nextVersion } = yargs.option('next', {
-    describe: 'If --next argument is specified then package json version will be generated as next version.',
-    type: 'string',
+const { next: nextVersion } = yargs.option("next", {
+    describe: "If --next argument is specified then package json version will be generated as next version.",
+    type: "string",
     default: null
 }).argv;
 
 // The commit SHA. It should be provided for canary and next versions only
-const { commitSHA } = yargs.option('commitSHA', {
-    describe: 'If --canary or --next versions is provided this argument should be provided too --commitSHA.',
-    type: 'string',
+const { commitSHA } = yargs.option("commitSHA", {
+    describe: "If --canary or --next versions is provided this argument should be provided too --commitSHA.",
+    type: "string",
     default: null
 }).argv;
 
 const spinner = ora({
-    color: 'yellow',
-    fail: 'Something went wrong please see errors bellow!'
+    color: "yellow",
+    fail: "Something went wrong please see errors bellow!"
 });
 
 const messages = {
@@ -46,19 +46,21 @@ const messages = {
 
 const build = async () => {
     try {
-        rmSync(resolve(__dirname, '../dist'), { recursive: true, force: true });
+        rmSync(resolve(__dirname, "../dist"), { recursive: true, force: true });
 
-        await execCommand('rollup -c ./configs/rollup.config.js --bundleConfigAsCjs', 'rollup.config');
+        await execCommand("tsc -p ./configs/tsconfig.build.json");
+
+        await execCommand("rollup -c ./configs/rollup.config.js --bundleConfigAsCjs", "rollup.config");
 
         await copyStaticFilesToDist();
 
         if (commitSHA) {
             if (canaryVersion) {
-                await replaceVersionInDistPGK(canaryVersion, commitSHA, 'canary');
+                await replaceVersionInDistPGK(canaryVersion, commitSHA, "canary");
             }
 
             if (nextVersion) {
-                await replaceVersionInDistPGK(nextVersion, commitSHA, 'next');
+                await replaceVersionInDistPGK(nextVersion, commitSHA, "next");
             }
         }
     } catch (error) {
@@ -71,7 +73,7 @@ const build = async () => {
 
 const lint = async () => {
     try {
-        await execCommand('npm run fix-code-style');
+        await execCommand("npm run fix-code-style");
     } catch (error) {
         return {
             hasError: true,
@@ -82,7 +84,7 @@ const lint = async () => {
 
 const semanticRelease = async () => {
     try {
-        await execCommand('npm run semantic-release');
+        await execCommand("npm run semantic-release");
     } catch (error) {
         return {
             hasError: true,
@@ -93,7 +95,7 @@ const semanticRelease = async () => {
 
 const main = async () => {
     if (!isBuildRunInPureMode) {
-        spinner.start('Linting source code of the @geneui/components package...');
+        spinner.start("Linting source code of the @geneui/components package...");
         const lintResult = await lint();
 
         if (lintResult?.hasError) {
@@ -103,7 +105,7 @@ const main = async () => {
             spinner.succeed();
         }
 
-        spinner.start('Semantic versioning and changelog generation of the @geneui/components package...');
+        spinner.start("Semantic versioning and changelog generation of the @geneui/components package...");
         const semanticReleaseResult = await semanticRelease();
 
         if (semanticReleaseResult?.hasError) {
@@ -114,7 +116,7 @@ const main = async () => {
         }
     }
 
-    spinner.start('Rollup build of the @geneui/components package...');
+    spinner.start("Rollup build of the @geneui/components package...");
     const buildResult = await build();
 
     if (buildResult?.hasError) {
@@ -125,7 +127,7 @@ const main = async () => {
     }
 };
 
-process.on('exit', (code) => {
+process.on("exit", (code) => {
     if (code !== 0) {
         spinner.fail(messages.ERROR(`process exited with ${code} status code`));
     }
