@@ -14,10 +14,16 @@ const meta: Meta<typeof Text> = {
         className: args({ control: "false", ...propCategory.appearance }),
         children: args({ control: "text", ...propCategory.content }),
         variant: args({ control: "select", ...propCategory.appearance }),
-        as: args({ control: "select", ...propCategory.appearance })
+        as: args({ control: "select", ...propCategory.appearance }),
+        color: args({ control: "text", ...propCategory.appearance }),
+        alignment: args({ control: "select", ...propCategory.appearance }),
+        fontWeight: args({ control: "select", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
+        display: args({ control: "select", ...propCategory.appearance })
     },
     args: {
-        children: "Text content"
+        children: "Text content",
+        variant: "headingLargeSemibold"
     } as ITextProps,
     parameters: {
         chromatic: { disableSnapshot: true }

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { CSSProperties, FC } from "react";
 import classNames from "classnames";
 // Styles
 import "./Text.scss";
@@ -10,11 +10,36 @@ interface ITextProps {
      */
     className?: string;
     /**
-     * The HTML tag with which text will be rendered.
+     * The HTML tag with which text will be rendered.<br/>
+     * Possible values: `h1 | h2 | h3 | h4 | h5 | h6 | p | span`
      */
     as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span";
     /**
      * Style variants
+     * Possible values: `headingXLargeSemibold |`
+        <br/> `headingLargeSemibold |`
+        <br/> `headingMediumSemibold |`
+        <br/> `headingSmallSemibold |`
+        <br/> `headingXSmallSemibold |`
+        <br/> `subheadingLargeSemibold |`
+        <br/> `subheadingMediumSemibold |`
+        <br/> `labelLargeSemibold |`
+        <br/> `labelLargeMedium |`
+        <br/> `labelMediumSemibold |`
+        <br/> `labelMediumMedium |`
+        <br/> `labelSmallSemibold |`
+        <br/> `labelSmallMedium |`
+        <br/> `bodyLargeSemibold |`
+        <br/> `bodyLargeMedium |`
+        <br/> `bodyLargeRegular |`
+        <br/> `bodyMediumSemibold |`
+        <br/> `bodyMediumMedium |`
+        <br/> `bodyMediumRegular |`
+        <br/> `captionLargeSemibold |`
+        <br/> `captionLargeMedium |`
+        <br/> `captionLargeRegular |`
+        <br/> `captionMediumMedium |`
+        <br/> `captionMediumRegular`
      */
     variant?:
         | "headingXLargeSemibold"
@@ -41,7 +66,30 @@ interface ITextProps {
         | "captionLargeRegular"
         | "captionMediumMedium"
         | "captionMediumRegular";
-
+    /**
+     * Color of text
+     */
+    color?: CSSProperties["color"];
+    /**
+     * Text alignment
+     * Possible values: `left | center | right`
+     */
+    alignment?: "left" | "center" | "right";
+    /**
+     * Text font weight
+     * Possible values: `normal | bold`
+     */
+    fontWeight?: "normal" | "bold";
+    /**
+     * Text font size
+     * Possible values: `small | medium | large`
+     */
+    size?: "small" | "medium" | "large";
+    /**
+     * Text display option
+     * Possible values: `inline | block`
+     */
+    display?: "inline" | "block";
     /**
      * Text
      */
@@ -62,10 +110,23 @@ const element = {
 /**
  * Text component which has predefined tokens
  */
-const Text: FC<ITextProps> = ({ className, variant, children, as = "span" }) => {
+const Text: FC<ITextProps> = ({
+    className,
+    variant,
+    children,
+    as = "span",
+    color,
+    alignment,
+    fontWeight,
+    size,
+    display
+}) => {
     const Element = (element[as] ?? "span") as React.ElementType;
     return (
-        <Element className={classNames("text", { [`text_${variant}`]: Boolean(variant) }, className)}>
+        <Element
+            className={classNames("text", { [`text_${variant}`]: Boolean(variant) }, className)}
+            style={{ display, color, textAlign: alignment, fontWeight, fontSize: size }}
+        >
             {children}
         </Element>
     );

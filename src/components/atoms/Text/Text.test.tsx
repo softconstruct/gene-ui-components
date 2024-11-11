@@ -45,4 +45,34 @@ describe("Text ", () => {
     it("should not render variant if it is not passed", () => {
         expect(setup.find(".text").exists()).toBeTruthy();
     });
+
+    it("should set color", () => {
+        const color = "red";
+        const wrapper = setup.setProps({ color });
+        expect(wrapper.find(".text").props().style?.color).toEqual(color);
+    });
+
+    it("should set alignment", () => {
+        const alignment = "right";
+        const wrapper = setup.setProps({ alignment });
+        expect(wrapper.find(".text").props().style?.textAlign).toEqual(alignment);
+    });
+
+    it("should set font weight", () => {
+        const fontWeight = "bold";
+        const wrapper = setup.setProps({ fontWeight });
+        expect(wrapper.find(".text").props().style?.fontWeight).toEqual(fontWeight);
+    });
+
+    it("should set font size", () => {
+        const size = "large";
+        const wrapper = setup.setProps({ size });
+        expect(wrapper.find(".text").props().style?.fontSize).toEqual(size);
+    });
+
+    it("should set display", () => {
+        const display = "inline";
+        const wrapper = setup.setProps({ display });
+        expect(wrapper.find(".text").props().style?.display).toEqual(display);
+    });
 });
