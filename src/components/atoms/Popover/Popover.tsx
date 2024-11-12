@@ -132,8 +132,6 @@ const Popover: FC<IPopoverProps> = ({ position = "top-right", padding = 10, isOp
         ? { [arrowPosition]: offsetFromEdge }
         : { insetInlineStart: middlewareArrowData?.x };
 
-    console.log(arrowPosition, placement);
-
     return (
         <>
             {(alwaysShow || popoverOpened) && (
