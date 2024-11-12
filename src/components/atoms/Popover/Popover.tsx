@@ -75,7 +75,7 @@ export interface IPopoverProps {
     setProps: Dispatch<SetStateAction<Record<string, unknown>>>;
 }
 
-const Popover: FC<IPopoverProps> = ({ position = "top", padding = 10, isOpen = false, alwaysShow, setProps }) => {
+const Popover: FC<IPopoverProps> = ({ position = "top-right", padding = 10, isOpen = false, alwaysShow, setProps }) => {
     const popoverState = isOpen || false;
     const [popoverOpened, setPopoverOpened] = useState(popoverState);
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
@@ -83,7 +83,6 @@ const Popover: FC<IPopoverProps> = ({ position = "top", padding = 10, isOpen = f
         open: popoverOpened,
         onOpenChange: setPopoverOpened,
         placement: correctPosition[position],
-
         platform: {
             ...platform,
             isRTL: () => false
@@ -133,6 +132,8 @@ const Popover: FC<IPopoverProps> = ({ position = "top", padding = 10, isOpen = f
         ? { [arrowPosition]: offsetFromEdge }
         : { insetInlineStart: middlewareArrowData?.x };
 
+    console.log(arrowPosition, placement);
+
     return (
         <>
             {(alwaysShow || popoverOpened) && (
@@ -151,7 +152,9 @@ const Popover: FC<IPopoverProps> = ({ position = "top", padding = 10, isOpen = f
                                 top: middlewareArrowData?.y,
                                 [staticSide!]: arrowRef.current ? `${-arrowRef.current.offsetWidth + 6}px` : 0,
                                 // Remove after adding styles
-                                background: "red"
+                                background: "red",
+                                width: 5,
+                                position: "absolute"
                             }}
                         >
                             <svg
@@ -164,6 +167,7 @@ const Popover: FC<IPopoverProps> = ({ position = "top", padding = 10, isOpen = f
                                 <path className="popover__arrowPath" d="M6 4L0 0L12 0L6 4Z" />
                             </svg>
                         </div>
+
                         <h1> Popover </h1>
                     </div>
                 </FloatingPortal>

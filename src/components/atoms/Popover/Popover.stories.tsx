@@ -34,7 +34,10 @@ const Template: FC<IPopoverProps> = (props) => {
     return (
         <div style={{ margin: "200px 200px" }}>
             <Popover {...props} setProps={setPropsForContent} />
-            <Button text="Click" onClick={() => {}} {...propsForContent} />
+            <Button onClick={() => {}} {...propsForContent}>
+                {" "}
+                Click for open
+            </Button>
         </div>
     );
 };
