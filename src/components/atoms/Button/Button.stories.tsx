@@ -14,7 +14,7 @@ const meta: Meta<typeof forwardRef<HTMLButtonElement, IButtonProps>> = {
     argTypes: {
         size: args({ control: "select", ...propCategory.appearance }),
         appearance: args({ control: "select", ...propCategory.appearance }),
-        text: args({ control: "text", ...propCategory.content }),
+        children: args({ control: "text", ...propCategory.content }),
         displayType: args({ control: "select", ...propCategory.appearance }),
         fullWidth: args({ control: "boolean", ...propCategory.appearance }),
         iconAfter: args({ control: "boolean", ...propCategory.appearance }),
@@ -26,7 +26,7 @@ const meta: Meta<typeof forwardRef<HTMLButtonElement, IButtonProps>> = {
         onClick: args({ control: "false", ...propCategory.action })
     },
     args: {
-        text: "Button",
+        children: "Button",
         appearance: "primary",
         size: "large",
         displayType: "fill",
