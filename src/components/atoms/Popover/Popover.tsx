@@ -13,9 +13,12 @@ import {
     platform
 } from "@floating-ui/react";
 import { Placement } from "@floating-ui/utils";
+import { Close, InfoOutline } from "@geneui/icons";
 
 // Components
 import { GeneUIDesignSystemContext } from "../../providers/GeneUIProvider";
+import HelperText from "../HelperText";
+import Button from "../Button";
 
 // Styles
 import "./Popover.scss";
@@ -136,37 +139,79 @@ const Popover: FC<IPopoverProps> = ({ position = "top-right", padding = 10, isOp
         <>
             {(alwaysShow || popoverOpened) && (
                 <FloatingPortal root={geneUIProviderRef.current}>
+                    {/* todo: switch in the next classNames in case popover size: "popover_size_xLarge", "popover_size_large", "popover_size_medium", "popover_size_small", "popover_size_mobile" */}
+                    {/* todo: switch in the next classNames in case popover position: "popover_position_top", "popover_position_bottom", "popover_position_start", "popover_position_end" */}
                     <div
                         style={floatingStyles}
-                        className="popover-positioner"
+                        className="popover popover_position_bottom popover_size_medium"
                         ref={refs.setFloating}
                         {...getFloatingProps()}
                     >
-                        <div
-                            className="popover__arrow"
+                        {/* todo: switch in the next classNames in case arrow position: "popover__arrow_start", "popover__arrow_end", "popover__arrow_center" */}
+                        <span
+                            className="popover__arrow popover__arrow_start"
                             ref={arrowRef}
                             style={{
                                 ...getCorrectPosition,
                                 top: middlewareArrowData?.y,
-                                [staticSide!]: arrowRef.current ? `${-arrowRef.current.offsetWidth + 6}px` : 0,
-                                // Remove after adding styles
-                                background: "red",
-                                width: 5,
-                                position: "absolute"
+                                [staticSide!]: arrowRef.current ? `${-arrowRef.current.offsetWidth + 6}px` : 0
                             }}
-                        >
-                            <svg
-                                width="12"
-                                height="4"
-                                viewBox="0 0 12 4"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path className="popover__arrowPath" d="M6 4L0 0L12 0L6 4Z" />
-                            </svg>
-                        </div>
+                        />
+                        <div className="popover__container">
+                            {/* todo: conditionally show 'popover__header' block */}
+                            <div className="popover__header">
+                                <HelperText text="Title" Icon={InfoOutline} />
+                                <Button
+                                    Icon={Close}
+                                    size="small"
+                                    appearance="secondary"
+                                    displayType="text"
+                                    onClick={() => {
+                                        setPopoverOpened(false);
+                                    }}
+                                />
+                            </div>
+                            <div className="popover__body">
+                                <div className="popover__content">
+                                    {/* todo: replace it with any component using the “Component Instance” swapper */}
+                                    <div
+                                        className="swapComponent"
+                                        style={{ minHeight: "100%", background: "#F4E1EC" }}
+                                    />
+                                </div>
+                            </div>
 
-                        <h1> Popover </h1>
+                            {/* todo: conditionally show 'popover__footer' block */}
+                            <div className="popover__footer">
+                                {/* todo: replace it with any component using the “Component Instance” swapper */}
+                                <div
+                                    className="swapComponent"
+                                    style={{ height: "2.8rem", width: "6.4rem", background: "#F4E1EC" }}
+                                />
+                                <div className="popover__footer_buttons">
+                                    <Button
+                                        size="medium"
+                                        appearance="secondary"
+                                        displayType="text"
+                                        onClick={() => {
+                                            setPopoverOpened(false);
+                                        }}
+                                    >
+                                        Secondary
+                                    </Button>
+                                    <Button
+                                        size="medium"
+                                        appearance="primary"
+                                        displayType="fill"
+                                        onClick={() => {
+                                            setPopoverOpened(false);
+                                        }}
+                                    >
+                                        Primary
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </FloatingPortal>
             )}

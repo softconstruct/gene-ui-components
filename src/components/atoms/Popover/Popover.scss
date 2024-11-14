@@ -1,5 +1,175 @@
 .popover {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    border-top-left-radius: var(--guit-ref-radius-2xsmall);
+    border-top-right-radius: var(--guit-ref-radius-2xsmall);
+    filter: drop-shadow(
+            var(--guit-sem-shadow-floating-2-position-x-1) var(--guit-sem-shadow-floating-2-position-y-1)
+                var(--guit-sem-shadow-floating-2-blur-1) var(--guit-sem-color-floating-2-rgba-1)
+        )
+        drop-shadow(
+            var(--guit-sem-shadow-floating-2-position-x-2) var(--guit-sem-shadow-floating-2-position-y-2)
+                var(--guit-sem-shadow-floating-2-blur-2) var(--guit-sem-color-floating-2-rgba-2)
+        );
+
+    &:not(&_size_mobile) {
+        border-bottom-right-radius: var(--guit-ref-radius-2xsmall);
+        border-bottom-left-radius: var(--guit-ref-radius-2xsmall);
+
+        // arrow positioning
+        #{ $this }__arrow {
+            width: 1.28rem;
+            height: 1.28rem;
+            background-color: var(--guit-sem-color-background-neutral-1-nudge);
+            border-radius: 0.2rem;
+            position: absolute;
+            transform: skew(-3deg, -3deg);
+        }
+
+        &#{ $this }_position {
+            // vertical positioning
+            &_top #{ $this }__arrow {
+                bottom: -0.6rem;
+            }
+            &_bottom #{ $this }__arrow {
+                top: -0.6rem;
+            }
+            &_top #{ $this }__arrow,
+            &_bottom #{ $this }__arrow {
+                rotate: 45deg;
+
+                &_start {
+                    inset-inline-start: 1.2rem;
+                }
+
+                &_end {
+                    inset-inline-end: 1.2rem;
+                }
+
+                &_center {
+                    left: 50%;
+                    translate: -50% 0;
+                }
+            }
+
+            // horizontal positioning
+            &_start #{ $this }__arrow {
+                inset-inline-end: -0.6rem;
+            }
+            &_end #{ $this }__arrow {
+                inset-inline-start: -0.6rem;
+            }
+            &_start #{ $this }__arrow,
+            &_end #{ $this }__arrow {
+                rotate: 135deg;
+
+                &_start {
+                    top: 1.2rem;
+                }
+
+                &_end {
+                    bottom: 1.2rem;
+                }
+
+                &_center {
+                    top: 50%;
+                    translate: 0 -50%;
+                }
+            }
+        }
+    }
+
+    // popover size
+    &_size {
+        &_xLarge {
+            width: 72rem;
+            #{ $this }__body {
+                height: 15.4rem;
+            }
+            #{ $this }__footer {
+                height: 6.4rem;
+            }
+        }
+
+        &_large {
+            width: 48rem;
+        }
+
+        &_medium {
+            width: 36rem;
+        }
+
+        &_large,
+        &_medium {
+            #{ $this }__body {
+                height: 17.2rem;
+            }
+            #{ $this }__footer {
+                height: 5.6rem;
+            }
+        }
+
+        &_small {
+            width: 24rem;
+            #{ $this }__body {
+                height: 8.8rem;
+            }
+            #{ $this }__footer {
+                height: 5.6rem;
+            }
+        }
+
+        &_mobile {
+            min-width: 36rem;
+            width: 100%;
+            #{ $this }__body {
+                height: 17.2rem;
+            }
+            #{ $this }__footer {
+                height: 6.4rem;
+            }
+        }
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom-style: var(--guit-ref-border-style-solid);
+        border-bottom-width: var(--guit-ref-border-width-thin);
+        border-bottom-color: var(--guit-sem-color-border-neutral-2);
+        padding-inline: var(--guit-ref-spacing-large);
+        height: 4.8rem;
+    }
+
+    &__body {
+        padding-block: var(--guit-ref-spacing-large);
+        padding-inline: var(--guit-ref-spacing-large);
+    }
+
+    &__content {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: var(--guit-ref-spacing-xsmall);
+        border-top-style: var(--guit-ref-border-style-solid);
+        border-top-width: var(--guit-ref-border-width-thin);
+        border-top-color: var(--guit-sem-color-border-neutral-2);
+        padding-block: var(--guit-ref-spacing-large);
+        padding-inline: var(--guit-ref-spacing-large);
+
+        &_buttons {
+            display: flex;
+            align-items: center;
+            column-gap: var(--guit-ref-spacing-xsmall);
+            margin-inline-start: auto;
+        }
+    }
 }
