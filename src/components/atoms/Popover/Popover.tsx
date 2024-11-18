@@ -28,7 +28,6 @@ import { Close, InfoOutline } from "@geneui/icons";
 
 // Components
 import { GeneUIDesignSystemContext } from "../../providers/GeneUIProvider";
-import HelperText from "../HelperText";
 import Button, { IButtonProps } from "../Button";
 
 // Styles
@@ -263,7 +262,10 @@ const Popover: FC<IPopoverProps> = ({
                         <div className="popover__container">
                             {title && (
                                 <div className="popover__header">
-                                    <HelperText text={title} Icon={InfoOutline} />
+                                    <p className="popover__title">
+                                        <InfoOutline className="popover__title_icon" size={20} />
+                                        <span className="popover__title_text">{title}</span>
+                                    </p>
                                     <Button
                                         Icon={Close}
                                         size="small"

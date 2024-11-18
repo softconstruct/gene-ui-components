@@ -112,6 +112,24 @@
         height: 4.8rem;
     }
 
+    &__title {
+        display: flex;
+        align-items: center;
+        column-gap: var(--guit-ref-spacing-xsmall);
+        color: var(--guit-sem-color-foreground-neutral-2);
+
+        &_icon {
+            flex: 0 0 auto;
+        }
+
+        &_text {
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+            font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
+            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+        }
+    }
+
     &__body {
         padding-block: var(--guit-ref-spacing-large);
         padding-inline: var(--guit-ref-spacing-large);
