@@ -17,70 +17,40 @@
         border-bottom-right-radius: var(--guit-ref-radius-2xsmall);
         border-bottom-left-radius: var(--guit-ref-radius-2xsmall);
 
-        // arrow positioning
         #{ $this }__arrow {
-            width: 1.28rem;
-            height: 1.28rem;
-            background-color: var(--guit-sem-color-background-neutral-1-nudge);
-            border-radius: 0.2rem;
             position: absolute;
-            transform: skew(-3deg, -3deg);
+        }
+        #{ $this }__arrowPath {
+            fill: var(--guit-sem-color-background-neutral-1-nudge);
+        }
+    }
+
+    &_position {
+        &_top {
+            #{ $this }__arrow {
+                transform: rotate(0deg);
+            }
         }
 
-        &#{ $this }_position {
-            // vertical positioning
-            &_top #{ $this }__arrow {
-                bottom: -0.6rem;
+        &_bottom {
+            #{ $this }__arrow {
+                transform: rotate(180deg);
             }
-            &_bottom #{ $this }__arrow {
-                top: -0.6rem;
+        }
+
+        &_left {
+            #{ $this }__arrow {
+                transform: rotate(-90deg);
             }
-            &_top #{ $this }__arrow,
-            &_bottom #{ $this }__arrow {
-                rotate: 45deg;
+        }
 
-                &_start {
-                    inset-inline-start: 1.2rem;
-                }
-
-                &_end {
-                    inset-inline-end: 1.2rem;
-                }
-
-                &_center {
-                    left: 50%;
-                    translate: -50% 0;
-                }
-            }
-
-            // horizontal positioning
-            &_start #{ $this }__arrow {
-                inset-inline-end: -0.6rem;
-            }
-            &_end #{ $this }__arrow {
-                inset-inline-start: -0.6rem;
-            }
-            &_start #{ $this }__arrow,
-            &_end #{ $this }__arrow {
-                rotate: 135deg;
-
-                &_start {
-                    top: 1.2rem;
-                }
-
-                &_end {
-                    bottom: 1.2rem;
-                }
-
-                &_center {
-                    top: 50%;
-                    translate: 0 -50%;
-                }
+        &_right {
+            #{ $this }__arrow {
+                transform: rotate(90deg);
             }
         }
     }
 
-    // popover size
     &_size {
         &_xLarge {
             width: 72rem;
@@ -136,9 +106,8 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        border-bottom-style: var(--guit-ref-border-style-solid);
-        border-bottom-width: var(--guit-ref-border-width-thin);
-        border-bottom-color: var(--guit-sem-color-border-neutral-2);
+        border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
         padding-inline: var(--guit-ref-spacing-large);
         height: 4.8rem;
     }
@@ -159,9 +128,8 @@
         align-items: center;
         justify-content: space-between;
         column-gap: var(--guit-ref-spacing-xsmall);
-        border-top-style: var(--guit-ref-border-style-solid);
-        border-top-width: var(--guit-ref-border-width-thin);
-        border-top-color: var(--guit-sem-color-border-neutral-2);
+        border-top: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
         padding-block: var(--guit-ref-spacing-large);
         padding-inline: var(--guit-ref-spacing-large);
 
