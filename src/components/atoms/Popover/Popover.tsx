@@ -266,16 +266,6 @@ const Popover: FC<IPopoverProps> = ({
                                     className="popover__arrowPath"
                                 />
                             </svg>
-
-                            {/* <svg
-                                width="12"
-                                height="4"
-                                viewBox="0 0 12 4"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path className="popover__arrowPath" d="M6 4L0 0L12 0L6 4Z" />
-                            </svg> */}
                         </div>
 
                         <div className="popover__container">
