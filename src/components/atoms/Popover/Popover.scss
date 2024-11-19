@@ -28,25 +28,25 @@
     &_position {
         &_top {
             #{ $this }__arrow {
-                transform: rotate(0deg);
+                transform: rotate(180deg);
             }
         }
 
         &_bottom {
             #{ $this }__arrow {
-                transform: rotate(180deg);
+                transform: rotate(0deg);
             }
         }
 
         &_left {
             #{ $this }__arrow {
-                transform: rotate(-90deg);
+                transform: rotate(90deg);
             }
         }
 
         &_right {
             #{ $this }__arrow {
-                transform: rotate(90deg);
+                transform: rotate(-90deg);
             }
         }
     }

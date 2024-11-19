@@ -209,7 +209,7 @@ const Popover: FC<IPopoverProps> = ({
 
     const middlewareArrowData = middlewareData.arrow;
 
-    const staticSide = staticSides[currentDirection];
+    const staticSide = staticSides[currentDirection] as keyof typeof staticSides;
 
     const arrowPosition = arrowPositions[placement];
 
@@ -225,13 +225,17 @@ const Popover: FC<IPopoverProps> = ({
               }
             : floatingStyles;
 
-    const isScrollable = size === "mobile" && popoverOpened;
+    const isShowPopover = alwaysShow || popoverOpened;
+
+    const isScrollable = size === "mobile" && isShowPopover;
 
     useBodyScrollBlock(isScrollable);
 
+    const arrowOffsetFromEdge = staticSide === "left" || staticSide === "right" ? 7 : 11;
+
     return (
         <>
-            {(alwaysShow || popoverOpened) && (
+            {isShowPopover && (
                 <FloatingPortal root={geneUIProviderRef.current}>
                     <div
                         style={styles}
@@ -245,10 +249,25 @@ const Popover: FC<IPopoverProps> = ({
                             style={{
                                 ...getCorrectPosition,
                                 top: middlewareArrowData?.y,
-                                [staticSide!]: arrowRef.current ? `${-arrowRef.current.offsetWidth + 6}px` : 0
+                                [staticSide!]: arrowRef.current
+                                    ? `${-arrowRef.current.offsetWidth + arrowOffsetFromEdge}px`
+                                    : 0
                             }}
                         >
                             <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="20"
+                                height="8"
+                                viewBox="0 0 20 8"
+                                fill="none"
+                            >
+                                <path
+                                    d="M8.75061 0.999513C9.48105 0.415163 10.519 0.415162 11.2494 0.999512L20 8H0L8.75061 0.999513Z"
+                                    className="popover__arrowPath"
+                                />
+                            </svg>
+
+                            {/* <svg
                                 width="12"
                                 height="4"
                                 viewBox="0 0 12 4"
@@ -256,7 +275,7 @@ const Popover: FC<IPopoverProps> = ({
                                 xmlns="http://www.w3.org/2000/svg"
                             >
                                 <path className="popover__arrowPath" d="M6 4L0 0L12 0L6 4Z" />
-                            </svg>
+                            </svg> */}
                         </div>
 
                         <div className="popover__container">
