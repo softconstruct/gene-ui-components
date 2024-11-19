@@ -18,7 +18,8 @@ const meta: Meta<typeof Label> = {
         disabled: args({ control: "boolean", ...propCategory.states }),
         isLoading: args({ control: "boolean", ...propCategory.states }),
         className: args({ control: "false", ...propCategory.appearance }),
-        children: args({ control: "false", ...propCategory.content })
+        children: args({ control: "false", ...propCategory.content }),
+        readOnly: args({ control: "false", ...propCategory.state })
     },
     args: {
         size: "medium",

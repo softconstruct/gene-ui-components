@@ -11,10 +11,27 @@ const meta: Meta<typeof Checkbox> = {
     title: "Molecules/Checkbox",
     component: Checkbox,
     argTypes: {
-        size: args({ control: false, ...propCategory.others })
+        label: args({ control: "text", ...propCategory.content }),
+        infoText: args({ control: "text", ...propCategory.content }),
+        disabled: args({ control: "boolean", ...propCategory.states }),
+        checked: args({ control: "boolean", ...propCategory.states }),
+        defaultChecked: args({ control: "boolean", ...propCategory.states }),
+        indeterminate: args({ control: "boolean", ...propCategory.states }),
+        required: args({ control: "boolean", ...propCategory.content }),
+        helperText: args({ control: "text", ...propCategory.content }),
+        readOnly: args({ control: "boolean", ...propCategory.states }),
+        type: args({ control: "select", ...propCategory.appearance }),
+        vertical: args({ control: "boolean", ...propCategory.appearance }),
+        autoFocus: args({ control: "boolean", ...propCategory.functionality }),
+        name: args({ control: "text", ...propCategory.others }),
+        onChange: args({ control: "false", ...propCategory.action }),
+        onBlur: args({ control: "false", ...propCategory.action }),
+        onFocus: args({ control: "false", ...propCategory.action })
     },
     args: {
-        size: "fill the size prop value"
+        label: "Label",
+        infoText: "info text",
+        helperText: "helper text"
     } as ICheckboxProps
 };
 
