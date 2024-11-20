@@ -243,7 +243,7 @@ const Popover: FC<IPopoverProps> = ({
                         ref={refs.setFloating}
                         {...getFloatingProps()}
                     >
-                        {size === "mobile" && (
+                        {size !== "mobile" && (
                             <div
                                 className="popover__arrow"
                                 ref={arrowRef}
