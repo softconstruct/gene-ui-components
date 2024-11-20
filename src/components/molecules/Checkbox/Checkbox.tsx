@@ -55,8 +55,8 @@ interface ICheckboxProps {
      */
     defaultChecked?: boolean;
     /**
-     *  Determines the checkboxes appearance based on its status.
-     *  Possible values: "rest" | "warning" | "error"
+     *  Determines the checkboxes appearance based on its status.<br>
+     *  Possible values: `rest | warning | error`
      */
     type?: "rest" | "warning" | "error";
     /**
