@@ -76,6 +76,11 @@ interface ICheckboxProps {
      *  Event handler for when the checkbox input element receives focus. Provides the focus event as a callback's argument.
      */
     onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
 }
 
 /**
@@ -97,7 +102,8 @@ const Checkbox: FC<ICheckboxProps> = ({
     name,
     indeterminate,
     checked,
-    defaultChecked
+    defaultChecked,
+    className
 }) => {
     const interRef = useRef<HTMLInputElement>(null);
     const isControlled = checked !== undefined;
@@ -136,11 +142,16 @@ const Checkbox: FC<ICheckboxProps> = ({
 
     return (
         <div
-            className={classNames("checkbox ", `checkbox_${type}`, {
-                checkbox_disabled: disabled,
-                checkbox_readOnly: readOnly,
-                checkbox_labelTop: vertical
-            })}
+            className={classNames(
+                "checkbox ",
+                `checkbox_${type}`,
+                {
+                    checkbox_disabled: disabled,
+                    checkbox_readOnly: readOnly,
+                    checkbox_labelTop: vertical
+                },
+                className
+            )}
             {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             <Label

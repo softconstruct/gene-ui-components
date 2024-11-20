@@ -114,4 +114,11 @@ describe("Checkbox ", () => {
 
         expect(wrapper.find(".checkbox").hasClass(`checkbox_${type}`)).toBeTruthy();
     });
+
+    it("renders className prop correctly", () => {
+        const className = "test-class";
+        const wrapper = setup.setProps({ className });
+
+        expect(wrapper.hasClass(className)).toBeTruthy();
+    });
 });

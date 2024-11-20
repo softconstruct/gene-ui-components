@@ -26,7 +26,8 @@ const meta: Meta<typeof Checkbox> = {
         name: args({ control: "text", ...propCategory.others }),
         onChange: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
-        onFocus: args({ control: "false", ...propCategory.action })
+        onFocus: args({ control: "false", ...propCategory.action }),
+        className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
         label: "Label",
