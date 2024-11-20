@@ -243,30 +243,32 @@ const Popover: FC<IPopoverProps> = ({
                         ref={refs.setFloating}
                         {...getFloatingProps()}
                     >
-                        <div
-                            className="popover__arrow"
-                            ref={arrowRef}
-                            style={{
-                                ...getCorrectPosition,
-                                top: middlewareArrowData?.y,
-                                [staticSide!]: arrowRef.current
-                                    ? `${-arrowRef.current.offsetWidth + arrowOffsetFromEdge}px`
-                                    : 0
-                            }}
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="20"
-                                height="8"
-                                viewBox="0 0 20 8"
-                                fill="none"
+                        {size === "mobile" && (
+                            <div
+                                className="popover__arrow"
+                                ref={arrowRef}
+                                style={{
+                                    ...getCorrectPosition,
+                                    top: middlewareArrowData?.y,
+                                    [staticSide!]: arrowRef.current
+                                        ? `${-arrowRef.current.offsetWidth + arrowOffsetFromEdge}px`
+                                        : 0
+                                }}
                             >
-                                <path
-                                    d="M8.75061 0.999513C9.48105 0.415163 10.519 0.415162 11.2494 0.999512L20 8H0L8.75061 0.999513Z"
-                                    className="popover__arrowPath"
-                                />
-                            </svg>
-                        </div>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="20"
+                                    height="8"
+                                    viewBox="0 0 20 8"
+                                    fill="none"
+                                >
+                                    <path
+                                        d="M8.75061 0.999513C9.48105 0.415163 10.519 0.415162 11.2494 0.999512L20 8H0L8.75061 0.999513Z"
+                                        className="popover__arrowPath"
+                                    />
+                                </svg>
+                            </div>
+                        )}
 
                         <div className="popover__container">
                             {title && (
