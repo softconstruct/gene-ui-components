@@ -141,6 +141,14 @@
                 }
             }
         }
+
+        #{ $this }__input {
+            &:not(:checked, :indeterminate) {
+                & + #{ $this }__imitation {
+                    background-color: var(--guit-sem-color-background-transparent-1);
+                }
+            }
+        }
     }
 
     &_readOnly {
@@ -148,12 +156,19 @@
         #{ $this }__imitationHolder {
             #{ $this }__imitationHolderInner {
                 #{ $this }__imitation {
-                    border-color: var(--guit-sem-color-border-neutral-2);
+                    border-color: transparent;
                     background-color: var(--guit-sem-color-background-neutral-3);
-
                     #{ $this }__icon {
                         color: var(--guit-sem-color-foreground-neutral-1);
                     }
+                }
+            }
+        }
+
+        #{ $this }__input {
+            &:not(:checked, :indeterminate) {
+                & + #{ $this }__imitation {
+                    border-color: var(--guit-sem-color-border-neutral-2);
                 }
             }
         }
