@@ -60,7 +60,7 @@ describe("Checkbox ", () => {
         expect(wrapper.find(HelperText).text()).toStrictEqual(helperText);
     });
 
-    it("renders helperText prop correctly", () => {
+    it("renders defaultChecked prop correctly", () => {
         const wrapper = setup.setProps({ defaultChecked: true });
 
         expect(wrapper.find(CheckMark)).toBeTruthy();
