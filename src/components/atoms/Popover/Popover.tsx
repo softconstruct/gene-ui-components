@@ -275,7 +275,7 @@ const Popover: FC<IPopoverProps> = ({
                                 <div className="popover__header">
                                     <p className="popover__title">
                                         <InfoOutline className="popover__title_icon" size={20} />
-                                        <span className="popover__title_text">{title}</span>
+                                        <span className="popover__title_text ellipsis-text">{title}</span>
                                     </p>
                                     <Button
                                         Icon={Close}

@@ -117,6 +117,7 @@
         align-items: center;
         column-gap: var(--guit-ref-spacing-xsmall);
         color: var(--guit-sem-color-foreground-neutral-2);
+        overflow: hidden;
 
         &_icon {
             flex: 0 0 auto;
