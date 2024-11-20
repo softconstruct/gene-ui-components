@@ -57,9 +57,8 @@
         &_medium {
             #{ $this }__track {
                 height: var(--guit-sem-dimension-height-2xsmall);
+                border-radius: var(--guit-ref-radius-2xsmall);
             }
-
-            border-radius: var(--guit-ref-radius-2xsmall);
         }
 
         &_small {
@@ -118,13 +117,16 @@
 
     &__info {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: space-between;
         gap: var(--guit-ref-spacing-xsmall);
+        width: 100%;
     }
 
     &__status {
+        margin-left: auto;
         color: var(--guit-sem-color-foreground-neutral-2);
+        flex: 0 0 auto;
     }
 }
 

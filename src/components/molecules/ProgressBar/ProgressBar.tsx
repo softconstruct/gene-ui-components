@@ -1,42 +1,120 @@
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import classNames from "classnames";
-// Styles
-import "./ProgressBar.scss";
+
+// Components
 import HelperText from "../../atoms/HelperText";
 import Label from "../../atoms/Label";
 
+// Styles
+import "./ProgressBar.scss";
+
 interface IProgressBarProps {
+    /**
+     * Specifies the progress percentage displayed by the progress bar.
+     */
+    percent?: number;
+    /**
+     * Text displayed alongside the progress percentage.
+     */
+    uploadingText?: string;
+    /**
+     * Defines the size of the progress bar.<br>
+     * Possible values: `large | medium | small`
+     */
+    size?: "large" | "medium" | "small";
+    /**
+     * Sets the behavior of the bar for measurable or ongoing processes.<br>
+     * Possible values: `determinate | indeterminate`
+     */
+    type?: "determinate" | "indeterminate";
+    /**
+     * Adjusts the bar's appearance to signal progress feedback.<br>
+     * Possible values: `default | success | error`
+     */
+    color?: "default" | "success" | "error";
+    /**
+     *  Adds supplementary information below the progress bar.
+     */
+    helperText?: string;
+    /**
+     *  Additional descriptive text shown with info icon and tooltip.
+     */
+    infoText?: string;
+    /**
+     *  The main label text describing the progress bar's purpose.
+     */
+    label?: string;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    // fill ProgressBar component props interface
 }
 
 /**
  * A progress bar offers visual feedback on the status and duration of a process, such as a download, file transfer, or installation, helping users understand how much longer they need to wait.
  */
-const ProgressBar: FC<IProgressBarProps> = ({ className }) => {
-    // Sizes / large / medium / small
-    // Types / determinate / indeterminate
-    // Colors / default / success / error
+const ProgressBar: FC<IProgressBarProps> = ({
+    className,
+    size = "medium",
+    type = "determinate",
+    color = "default",
+    helperText,
+    percent,
+    uploadingText,
+    infoText,
+    label
+}) => {
+    const helperTextTypeMap = {
+        default: "rest",
+        success: "rest",
+        error: "danger"
+    } as const;
+
+    const helperTextAndLabelSizeMap = {
+        large: "medium",
+        medium: "medium",
+        small: "small"
+    } as const;
+
+    const showPercent = type === "determinate" && percent !== undefined;
+
+    const processedPercent = useMemo(() => {
+        let result = percent;
+        if (percent === undefined || percent < 0) {
+            result = 0;
+        }
+        if (percent && percent > 100) {
+            result = 100;
+        }
+        return `${result}%`;
+    }, [percent]);
 
     return (
         <div
             className={classNames(
-                "progressBar progressBar_type_indeterminate progressBar_size_large progressBar_color_default",
+                `progressBar progressBar_type_${type} progressBar_size_${size} progressBar_color_${color}`,
                 className
             )}
         >
-            <Label required labelText="Label" />
+            <Label labelText={label} size={helperTextAndLabelSizeMap[size]} infoText={infoText} />
             <div className="progressBar__track">
-                <div className="progressBar__fill" style={{ width: "50%" }} />
+                {showPercent && <div className="progressBar__fill" style={{ width: processedPercent }} />}
                 <div className="progressBar__loadingBar" />
             </div>
             <div className="progressBar__info">
-                <HelperText text="Helper Text" />
-                <p className="progressBar__status">Uploading 10%</p>
+                {helperText && (
+                    <HelperText
+                        text={helperText}
+                        size={helperTextAndLabelSizeMap[size]}
+                        type={helperTextTypeMap[color]}
+                    />
+                )}
+                {showPercent && (
+                    <p className="progressBar__status">
+                        {uploadingText} {processedPercent}
+                    </p>
+                )}
             </div>
         </div>
     );
