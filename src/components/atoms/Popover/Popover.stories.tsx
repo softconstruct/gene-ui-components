@@ -49,11 +49,11 @@ const Template: FC<IPopoverProps> = (props) => {
     );
 };
 
+export const WithHeaderAndFooter = Template.bind({});
+
 export const WithoutFooter = Template.bind({});
 
-export const WithHeader = Template.bind({});
-
-WithHeader.args = {
+WithHeaderAndFooter.args = {
     primaryButton: {
         onClick: () => {},
         title: "Primary"
@@ -61,16 +61,17 @@ WithHeader.args = {
     secondaryButton: {
         onClick: () => {},
         title: "Secondary"
-    }
-} as IPopoverProps;
-
-export const WithHeaderAndFooter = WithHeader.bind({});
-
-WithHeaderAndFooter.args = {
-    ...WithHeader.args,
+    },
     footerContent: (
         <div className="swapComponent" style={{ height: "2.8rem", width: "6.4rem", background: "#F4E1EC" }} />
     )
+};
+
+export const WithoutHeader = WithHeaderAndFooter.bind({});
+
+WithoutHeader.args = {
+    ...WithHeaderAndFooter.args,
+    title: ""
 };
 
 export const WithoutHeaderAndFooter = Template.bind({});
