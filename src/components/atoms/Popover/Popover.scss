@@ -115,6 +115,7 @@
     &__title {
         display: flex;
         align-items: center;
+        flex: 1;
         column-gap: var(--guit-ref-spacing-xsmall);
         color: var(--guit-sem-color-foreground-neutral-2);
         overflow: hidden;
@@ -129,6 +130,10 @@
             font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
         }
+    }
+
+    &__close {
+        flex: 0 0 auto;
     }
 
     &__body {

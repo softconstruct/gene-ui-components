@@ -282,6 +282,7 @@ const Popover: FC<IPopoverProps> = ({
                                         size="small"
                                         appearance="secondary"
                                         displayType="text"
+                                        className="popover__close"
                                         onClick={() => setPopoverOpened(false)}
                                     />
                                 </div>
