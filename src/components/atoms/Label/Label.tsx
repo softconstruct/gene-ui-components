@@ -90,7 +90,7 @@ const Label: FC<ILabelProps> = ({
             {isLoading ? (
                 <span>skeleton</span>
             ) : (
-                (infoText || labelText || required) && (
+                labelText && (
                     <span
                         className={classnames("label__container", { label__container_readOnly: readOnly && !disabled })}
                     >
