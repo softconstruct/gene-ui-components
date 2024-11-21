@@ -13,7 +13,7 @@
     padding-right: var(--guit-ref-spacing-2xl);
 
     @for $i from 1 through 12 {
-        &:has([class^='col-']:nth-child(1):nth-last-child(#{$i})) {
+        &:has([class^="col-"]:nth-child(1):nth-last-child(#{$i})) {
             --column-count: #{$i};
         }
     }
@@ -29,8 +29,7 @@
 
                 @for $j from 1 through 12 - $i {
                     &.col-offset-#{$j} {
-                        grid-column-start: #{$j + 1};
-                        grid-column-end: #{$i + 1 + $j};
+                        grid-column: #{$j + 1} / #{$i + 1 + $j};
                     }
                 }
             }
