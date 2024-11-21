@@ -59,7 +59,7 @@ describe("ProgressBar ", () => {
 
     it("renders error prop correctly", () => {
         const wrapper = setup.setProps({ error: true });
-
+        wrapper.update();
         expect(wrapper.find(".progressBar").hasClass(`progressBar_color_error`)).toBeTruthy();
     });
 
