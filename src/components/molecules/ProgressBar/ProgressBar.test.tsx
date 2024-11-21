@@ -57,6 +57,12 @@ describe("ProgressBar ", () => {
         expect(wrapper.find(".progressBar__status").text()).toStrictEqual(` ${percent}%`);
     });
 
+    it("renders error prop correctly", () => {
+        const wrapper = setup.setProps({ error: true });
+
+        expect(wrapper.find(".progressBar").hasClass(`progressBar_color_error`)).toBeTruthy();
+    });
+
     it.each<IProgressBarProps["size"]>(["large", "medium", "small"])("should have %s size", (size) => {
         const wrapper = setup.setProps({ size });
 
@@ -67,11 +73,5 @@ describe("ProgressBar ", () => {
         const wrapper = setup.setProps({ type });
 
         expect(wrapper.find(".progressBar").hasClass(`progressBar_type_${type}`)).toBeTruthy();
-    });
-
-    it.each<IProgressBarProps["color"]>(["default", "success", "error"])("should have %s color", (color) => {
-        const wrapper = setup.setProps({ color });
-
-        expect(wrapper.find(".progressBar").hasClass(`progressBar_color_${color}`)).toBeTruthy();
     });
 });

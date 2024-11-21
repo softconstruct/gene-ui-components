@@ -14,19 +14,20 @@ const meta: Meta<typeof ProgressBar> = {
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.functionality }),
-        color: args({ control: "select", ...propCategory.appearance }),
         helperText: args({ control: "text", ...propCategory.appearance }),
         uploadingText: args({ control: "text", ...propCategory.content }),
         percent: args({ control: "number", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
-        label: args({ control: "text", ...propCategory.content })
+        label: args({ control: "text", ...propCategory.content }),
+        error: args({ control: "boolean", ...propCategory.states })
     },
     args: {
         uploadingText: "Uploading",
         type: "determinate",
         helperText: "Helper Text",
         percent: 44,
-        size: "medium"
+        size: "medium",
+        label: "Label"
     } as IProgressBarProps
 };
 
