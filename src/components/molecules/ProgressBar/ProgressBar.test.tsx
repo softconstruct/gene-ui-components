@@ -47,14 +47,14 @@ describe("ProgressBar ", () => {
         const percent = 33;
         const wrapper = setup.setProps({ uploadingText, percent });
 
-        expect(wrapper.find(".progressBar__status").text()).toStrictEqual(`${uploadingText} ${percent}%`);
+        expect(wrapper.find(".progressBar__uploadingText").text()).toStrictEqual(`${uploadingText}`);
     });
 
     it("renders percent prop correctly", () => {
         const percent = 33;
         const wrapper = setup.setProps({ percent });
 
-        expect(wrapper.find(".progressBar__status").text()).toStrictEqual(` ${percent}%`);
+        expect(wrapper.find(".progressBar__percent").text()).toStrictEqual(`${percent}%`);
     });
 
     it("renders error prop correctly", () => {

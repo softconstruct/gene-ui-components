@@ -83,38 +83,39 @@ const ProgressBar: FC<IProgressBarProps> = ({
 
     const isDeterminate = type === "determinate";
     const isTypeDefault = status === "default";
+    const isPercentLowerThanMax = percent !== undefined && percent < 100;
 
     const processedPercent = useMemo(() => {
-        let result = percent ?? 0;
+        let result = percent || 0;
 
         if (result < 0 && !error) result = 0;
-        if (result > 100 || error) result = 100;
+        if (result >= 100 || error) result = 100;
 
         return `${result}%`;
     }, [percent, error, isDeterminate]);
 
     useEffect(() => {
-        if (error && status !== "error" && isDeterminate) {
+        if (error && status !== "error") {
             setStatus("error");
         } else if (percent !== undefined && !error) {
             if (percent >= 100 && status !== "success" && isDeterminate) {
                 setStatus("success");
-            } else if (!isTypeDefault && (percent < 100 || !isDeterminate)) {
+            } else if ((!isTypeDefault && isPercentLowerThanMax && isDeterminate) || !isDeterminate) {
                 setStatus("default");
             }
         }
-    }, [error, isTypeDefault, status, percent, isDeterminate]);
+    }, [error, isTypeDefault, status, percent, isDeterminate, type]);
 
     return (
         <div
             className={classNames(
-                `progressBar progressBar_type_${type} progressBar_size_${size} progressBar_color_${status}`,
+                `progressBar progressBar_type_${error ? "determinate" : type} progressBar_size_${size} progressBar_color_${status}`,
                 className
             )}
         >
             <Label labelText={label} size={helperTextAndLabelSizeMap[size]} infoText={infoText} />
             <div className="progressBar__track">
-                {isDeterminate && <div className="progressBar__fill" style={{ width: processedPercent }} />}
+                {(isDeterminate || error) && <div className="progressBar__fill" style={{ width: processedPercent }} />}
                 <div className="progressBar__loadingBar" />
             </div>
             <div className="progressBar__info">
@@ -126,9 +127,10 @@ const ProgressBar: FC<IProgressBarProps> = ({
                         className="progressBar__helperText"
                     />
                 )}
-                {isDeterminate && isTypeDefault && !error && (
+                {isDeterminate && isTypeDefault && isPercentLowerThanMax && (
                     <p className="progressBar__status">
-                        {uploadingText} {processedPercent}
+                        <span className="progressBar__uploadingText">{uploadingText}</span>
+                        <span className="progressBar__percent">{processedPercent}</span>
                     </p>
                 )}
             </div>

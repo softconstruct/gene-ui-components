@@ -131,6 +131,12 @@
         margin-inline-start: auto;
         color: var(--guit-sem-color-foreground-neutral-2);
         flex: 0 0 auto;
+        display: inline-flex;
+        gap: 0.4rem;
+    }
+
+    &__uploadingText {
+        display: inline-block;
     }
 }
 
