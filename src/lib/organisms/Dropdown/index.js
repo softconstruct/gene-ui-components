@@ -675,7 +675,7 @@ function Dropdown({
                     onSearch(e.target.value);
                     return !isMultiSelect ? handleSearchChange(e) : noop;
                 }}
-                writeProtected={!hasSearch || isMobile || isMultiSelect}
+                writeProtected={!hasSearch || isMobile}
                 isDropdown={readOnly ? isMultiSelect : true}
                 showClickableTooltipOnError={false}
                 showIconOnValid={showIconOnValid}
