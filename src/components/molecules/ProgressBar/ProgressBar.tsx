@@ -11,8 +11,9 @@ import "./ProgressBar.scss";
 interface IProgressBarProps {
     /**
      * Specifies the progress percentage displayed by the progress bar.<br>
-     * Valid values are between `0` and `100`. Values less than `0` will default to `0`,
-     * and values greater than `100` will default to `100`.
+     * Valid values are between `0` and `100`. Values less than `0` will fallback to `0`,
+     * and values greater than `100` will fallback to `100`.<br>
+     * In case of value is `100` or greater the style of the component will be changed to success.
      */
     percent?: number;
     /**
@@ -39,7 +40,7 @@ interface IProgressBarProps {
      */
     helperText?: string;
     /**
-     *  Additional descriptive text shown with info icon and tooltip.
+     *  Additional descriptive text shown with info icon and tooltip alongside of the label component.
      */
     infoText?: string;
     /**
@@ -52,6 +53,18 @@ interface IProgressBarProps {
      */
     className?: string;
 }
+
+const helperTextTypeMap = {
+    default: "rest",
+    success: "rest",
+    error: "danger"
+} as const;
+
+const helperTextAndLabelSizeMap = {
+    large: "medium",
+    medium: "medium",
+    small: "small"
+} as const;
 
 /**
  * A progress bar offers visual feedback on the status and duration of a process, such as a download, file transfer, or installation, helping users understand how much longer they need to wait.
@@ -69,18 +82,6 @@ const ProgressBar: FC<IProgressBarProps> = ({
 }) => {
     const [status, setStatus] = useState<"default" | "success" | "error">("default");
 
-    const helperTextTypeMap = {
-        default: "rest",
-        success: "rest",
-        error: "danger"
-    } as const;
-
-    const helperTextAndLabelSizeMap = {
-        large: "medium",
-        medium: "medium",
-        small: "small"
-    } as const;
-
     const isDeterminate = type === "determinate";
     const isTypeDefault = status === "default";
     const isPercentLowerThanMax = percent !== undefined && percent < 100;
@@ -92,7 +93,7 @@ const ProgressBar: FC<IProgressBarProps> = ({
         if (result >= 100 || error) result = 100;
 
         return `${result}%`;
-    }, [percent, error, isDeterminate]);
+    }, [percent, error]);
 
     useEffect(() => {
         if (error && status !== "error") {
@@ -104,7 +105,7 @@ const ProgressBar: FC<IProgressBarProps> = ({
                 setStatus("default");
             }
         }
-    }, [error, isTypeDefault, status, percent, isDeterminate, type]);
+    }, [error, isTypeDefault, status, percent, isDeterminate]);
 
     return (
         <div

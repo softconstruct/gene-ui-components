@@ -14,7 +14,7 @@ const meta: Meta<typeof ProgressBar> = {
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.functionality }),
-        helperText: args({ control: "text", ...propCategory.appearance }),
+        helperText: args({ control: "text", ...propCategory.content }),
         uploadingText: args({ control: "text", ...propCategory.content }),
         percent: args({ control: "number", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),

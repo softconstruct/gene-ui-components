@@ -46,6 +46,11 @@ interface IHelperTextProps {
     className?: string;
 }
 
+const iconSize = {
+    small: 16,
+    medium: 20
+} as const;
+
 /**
  * The Helper Text provides users with additional information or guidance related to a specific input field in a form. This text helps users understand the expected format, requirements, or purpose of the input, thereby improving form completion accuracy and user confidence.
  */
@@ -58,11 +63,6 @@ const HelperText: FC<IHelperTextProps> = ({
     isLoading,
     className
 }) => {
-    const iconSize = {
-        small: 16,
-        medium: 20
-    } as const;
-
     const iconMap = {
         danger: <ErrorAlertFill size={iconSize[size]} />,
         warning: <WarningFill size={iconSize[size]} />,
