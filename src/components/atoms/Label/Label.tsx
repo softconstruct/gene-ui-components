@@ -21,7 +21,7 @@ interface ILabelProps {
      * The text content of the `label`.
      * This is the main text displayed within the `label`.
      */
-    labelText: string;
+    labelText?: string;
     /**
      * Indicates whether the label represents a required field.
      * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
