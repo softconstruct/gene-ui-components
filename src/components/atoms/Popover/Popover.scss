@@ -106,6 +106,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        column-gap: var(--guit-ref-spacing-xsmall);
         border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
         padding-inline: var(--guit-ref-spacing-large);
