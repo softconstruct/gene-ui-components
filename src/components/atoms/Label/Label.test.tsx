@@ -45,6 +45,11 @@ describe("Label ", () => {
         expect(wrapper.find(".label__text").hasClass("label__text_disabled")).toBeTruthy();
     });
 
+    it("renders readOnly prop correctly", () => {
+        const wrapper = setup.setProps({ readOnly: true });
+        expect(wrapper.find(".label__container").hasClass("label__container_readOnly")).toBeTruthy();
+    });
+
     it("renders isLoading prop correctly", () => {
         const wrapper = setup.setProps({ isLoading: true });
         expect(wrapper.find(".label").hasClass("label__text")).toBeFalsy();

@@ -35,9 +35,9 @@ const Template: FC<IHelperTextProps> = (props) => <HelperText {...props} />;
 
 export const Default = Template.bind({});
 
-export const Danger = Template.bind({});
-Danger.args = {
-    type: "danger"
+export const Error = Template.bind({});
+Error.args = {
+    type: "error"
 } as IHelperTextProps;
 
 export const Warning = Template.bind({});

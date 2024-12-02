@@ -13,10 +13,10 @@ interface IHelperTextProps {
     size?: "medium" | "small";
     /**
      * Specifies the type of the helper text. <br>
-     * Possible values: `rest | danger | warning`.
-     * `rest` for default information, `danger` for error messages, or `warning` for cautions.
+     * Possible values: `rest | error | warning`.
+     * `rest` for default information, `error` for error messages, or `warning` for cautions.
      */
-    type?: "rest" | "danger" | "warning";
+    type?: "rest" | "error" | "warning";
     /**
      * The actual text content to be displayed as helper text.
      * This provides guidance or additional information related to the input field.
@@ -24,7 +24,7 @@ interface IHelperTextProps {
     text: string;
     /**
      * Optional. Icon to be displayed alongside the helper text.
-     * If the `type` prop is set to `danger` or `warning`, a default icon will be used (ErrorAlertFill for `danger` and WarningFill for `warning`) unless an `Icon` is explicitly provided.
+     * If the `type` prop is set to `error` or `warning`, a default icon will be used (ErrorAlertFill for `error` and WarningFill for `warning`) unless an `Icon` is explicitly provided.
      * If `type` is `rest`, the provided `Icon` will be used (if supplied), otherwise no icon will be displayed.
      * The size of the icon will automatically adjust based on the `size` prop (`small` or `medium`).
      */
@@ -64,7 +64,7 @@ const HelperText: FC<IHelperTextProps> = ({
     className
 }) => {
     const iconMap = {
-        danger: <ErrorAlertFill size={iconSize[size]} />,
+        error: <ErrorAlertFill size={iconSize[size]} />,
         warning: <WarningFill size={iconSize[size]} />,
         rest: Icon && <Icon size={iconSize[size]} />
     };
