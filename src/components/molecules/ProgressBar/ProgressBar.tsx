@@ -57,7 +57,7 @@ interface IProgressBarProps {
 const helperTextTypeMap = {
     default: "rest",
     success: "rest",
-    error: "danger"
+    error: "error"
 } as const;
 
 const helperTextAndLabelSizeMap = {
