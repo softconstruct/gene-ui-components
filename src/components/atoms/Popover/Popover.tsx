@@ -32,7 +32,12 @@ import Button, { IButtonProps } from "../Button";
 
 // Styles
 import "./Popover.scss";
+
+// Hooks
 import { useBodyScrollBlock } from "../../../hooks";
+
+// Helper
+import { calculateOverlap, getPositionRect } from "./Helper";
 
 const positions: Placement[] = [
     "top",
@@ -40,16 +45,16 @@ const positions: Placement[] = [
     "bottom",
     "left",
     "top-start",
-    "top-end",
     "right-start",
-    "right-end",
     "bottom-start",
-    "bottom-end",
     "left-start",
+    "top-end",
+    "right-end",
+    "bottom-end",
     "left-end"
 ];
 
-const correctPosition = {
+export const correctPosition = {
     "bottom-center": "bottom",
     "bottom-left": "bottom-start",
     "bottom-right": "bottom-end",
@@ -61,7 +66,8 @@ const correctPosition = {
     "right-top": "right-start",
     "top-center": "top",
     "top-left": "top-start",
-    "top-right": "top-end"
+    "top-right": "top-end",
+    auto: "auto"
 } as const;
 
 const arrowPositions = {
@@ -69,14 +75,14 @@ const arrowPositions = {
     "top-end": "right",
     "bottom-end": "right",
     "bottom-start": "left"
-} as Record<string, string>;
+} as const;
 
 const staticSides = {
     top: "bottom",
     right: "left",
     bottom: "top",
     left: "right"
-};
+} as const;
 
 interface IButtons extends Omit<IButtonProps, "children"> {
     title: string;
@@ -86,8 +92,8 @@ export interface IPopoverProps {
     /**
      * Whether the popover is open initially. Defaults to `false`.
      */
-    isOpen?: boolean;
 
+    isOpen?: boolean;
     /**
      * Size of the popover: `xLarge`, `large`, `medium`, `small`, or `mobile`.
      */
@@ -137,7 +143,10 @@ export interface IPopoverProps {
      * The content displayed inside the popover.
      */
     children: ReactNode;
+
+    withArrow?: boolean;
 }
+
 /**
  Popover displays additional content or information in an overlay box.
  It appears on top of the main content when triggered by a user action, 
@@ -156,17 +165,18 @@ const Popover: FC<IPopoverProps> = ({
     primaryButton,
     secondaryButton,
     footerContent,
+    withArrow = true,
     children
 }) => {
     const popoverState = isOpen || false;
     const [popoverOpened, setPopoverOpened] = useState(popoverState);
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
+    const [currentPosition, setCurrentPosition] = useState(correctPosition[position]);
     const arrowRef = useRef<HTMLDivElement | null>(null);
-
     const { refs, floatingStyles, context, middlewareData, placement } = useFloating({
         open: popoverOpened,
         onOpenChange: setPopoverOpened,
-        placement: correctPosition[position],
+        placement: currentPosition as Placement,
         platform: {
             ...platform,
             isRTL: () => false
@@ -174,13 +184,15 @@ const Popover: FC<IPopoverProps> = ({
         middleware: [
             offset(padding),
             flip({
-                mainAxis: true,
+                mainAxis: position !== "auto",
                 fallbackAxisSideDirection: "none",
-                fallbackPlacements: positions
+                fallbackPlacements: position === "auto" ? [] : positions
             }),
             arrow({ element: arrowRef }),
 
-            shift()
+            shift({
+                mainAxis: false
+            })
         ],
         whileElementsMounted: autoUpdate
     });
@@ -204,19 +216,13 @@ const Popover: FC<IPopoverProps> = ({
     }, [setProps, getReferenceProps, refs.setReference]);
 
     const [currentDirection] = placement.split("-") as [keyof typeof staticSides];
-
     const offsetFromEdge = 8;
-
     const middlewareArrowData = middlewareData.arrow;
-
     const staticSide = staticSides[currentDirection] as keyof typeof staticSides;
-
     const arrowPosition = arrowPositions[placement];
-
     const getCorrectPosition = arrowPosition
         ? { [arrowPosition]: offsetFromEdge }
         : { insetInlineStart: middlewareArrowData?.x };
-
     const styles: CSSProperties =
         size === "mobile"
             ? {
@@ -224,12 +230,60 @@ const Popover: FC<IPopoverProps> = ({
                   bottom: "0"
               }
             : floatingStyles;
-
     const isShowPopover = alwaysShow || popoverOpened;
-
     const isScrollable = size === "mobile" && isShowPopover;
+    useEffect(() => {
+        setCurrentPosition(correctPosition[position]);
+    }, [position]);
 
     useBodyScrollBlock(isScrollable);
+
+    /* eslint consistent-return: off */
+    useEffect(() => {
+        if (!refs.floating.current || position !== "auto") return;
+
+        const currentPopoverRect = refs.floating.current.getBoundingClientRect();
+        const otherPopovers = document.querySelectorAll(".popover");
+        let bestPosition = correctPosition[currentPosition];
+        let leastOverlap = Infinity;
+        let hasOverlap = false;
+
+        const updatePopoverPosition = () => {
+            positions.forEach((possiblePositions) => {
+                const rect = getPositionRect(currentPopoverRect, possiblePositions);
+                let overlap = 0;
+                otherPopovers.forEach((otherPopover) => {
+                    if (otherPopover === refs.floating.current) return;
+                    const otherRect = otherPopover.getBoundingClientRect();
+                    overlap += calculateOverlap(rect as DOMRect, otherRect);
+                });
+
+                if (overlap < leastOverlap) {
+                    leastOverlap = overlap;
+                    bestPosition = possiblePositions;
+                }
+            });
+
+            if (leastOverlap > 0) {
+                hasOverlap = true;
+            } else {
+                hasOverlap = false;
+            }
+
+            if (bestPosition && !hasOverlap) {
+                setCurrentPosition(bestPosition);
+            }
+        };
+
+        const checkInterval = setInterval(() => {
+            updatePopoverPosition();
+            if (!hasOverlap) {
+                clearInterval(checkInterval);
+            }
+        });
+
+        return () => clearInterval(checkInterval);
+    }, [popoverOpened, refs.floating.current?.className, placement, alwaysShow]);
 
     const arrowOffsetFromEdge = staticSide === "left" || staticSide === "right" ? 7 : 11;
 
@@ -243,7 +297,7 @@ const Popover: FC<IPopoverProps> = ({
                         ref={refs.setFloating}
                         {...getFloatingProps()}
                     >
-                        {size !== "mobile" && (
+                        {size !== "mobile" && withArrow && (
                             <div
                                 className="popover__arrow"
                                 ref={arrowRef}
@@ -292,11 +346,11 @@ const Popover: FC<IPopoverProps> = ({
                             </div>
                             {primaryButton && (
                                 <div className="popover__footer">
-                                    {footerContent && footerContent}
+                                    {size !== "small" && footerContent && footerContent}
 
                                     <div className="popover__footer_buttons">
                                         {secondaryButton && (
-                                            <Button {...secondaryButton} size="medium" appearance="secondary">
+                                            <Button {...secondaryButton} size="medium" appearance="inverse">
                                                 {secondaryButton.title}
                                             </Button>
                                         )}
