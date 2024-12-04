@@ -41,8 +41,8 @@ import { calculateOverlap, getPositionRect } from "./Helper";
 
 const positions: Placement[] = [
     "top",
-    "right",
     "bottom",
+    "right",
     "left",
     "top-start",
     "right-start",
@@ -234,7 +234,7 @@ const Popover: FC<IPopoverProps> = ({
     const isScrollable = size === "mobile" && isShowPopover;
     useEffect(() => {
         setCurrentPosition(correctPosition[position]);
-    }, [position]);
+    }, [position, withArrow]);
 
     useBodyScrollBlock(isScrollable);
 
@@ -257,6 +257,7 @@ const Popover: FC<IPopoverProps> = ({
                     const otherRect = otherPopover.getBoundingClientRect();
                     overlap += calculateOverlap(rect as DOMRect, otherRect);
                 });
+                console.log(possiblePositions);
 
                 if (overlap < leastOverlap) {
                     leastOverlap = overlap;
