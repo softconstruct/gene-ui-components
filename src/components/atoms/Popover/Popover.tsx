@@ -172,7 +172,10 @@ const Popover: FC<IPopoverProps> = ({
     const [popoverOpened, setPopoverOpened] = useState(popoverState);
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const [currentPosition, setCurrentPosition] = useState(correctPosition[position]);
+
     const arrowRef = useRef<HTMLDivElement | null>(null);
+
+    const wosPosed = useRef(new Map());
     const { refs, floatingStyles, context, middlewareData, placement } = useFloating({
         open: popoverOpened,
         onOpenChange: setPopoverOpened,
@@ -191,7 +194,14 @@ const Popover: FC<IPopoverProps> = ({
             arrow({ element: arrowRef }),
 
             shift({
-                mainAxis: false
+                mainAxis: false,
+                crossAxis: false,
+                limiter: {
+                    fn: ({ x, y }) => ({
+                        x: Math.max(0, x),
+                        y: Math.max(0, y)
+                    })
+                }
             })
         ],
         whileElementsMounted: autoUpdate
@@ -233,8 +243,12 @@ const Popover: FC<IPopoverProps> = ({
     const isShowPopover = alwaysShow || popoverOpened;
     const isScrollable = size === "mobile" && isShowPopover;
     useEffect(() => {
-        setCurrentPosition(correctPosition[position]);
-    }, [position, withArrow]);
+        if (position !== "auto") setCurrentPosition(correctPosition[position]);
+
+        return () => {
+            wosPosed.current.clear();
+        };
+    }, [position, alwaysShow]);
 
     useBodyScrollBlock(isScrollable);
 
@@ -244,9 +258,10 @@ const Popover: FC<IPopoverProps> = ({
 
         const currentPopoverRect = refs.floating.current.getBoundingClientRect();
         const otherPopovers = document.querySelectorAll(".popover");
-        let bestPosition = correctPosition[currentPosition];
+        let bestPosition = correctPosition[position] as Placement;
         let leastOverlap = Infinity;
         let hasOverlap = false;
+        const preventPosition = correctPosition[currentPosition];
 
         const updatePopoverPosition = () => {
             positions.forEach((possiblePositions) => {
@@ -257,7 +272,6 @@ const Popover: FC<IPopoverProps> = ({
                     const otherRect = otherPopover.getBoundingClientRect();
                     overlap += calculateOverlap(rect as DOMRect, otherRect);
                 });
-                console.log(possiblePositions);
 
                 if (overlap < leastOverlap) {
                     leastOverlap = overlap;
@@ -271,7 +285,9 @@ const Popover: FC<IPopoverProps> = ({
                 hasOverlap = false;
             }
 
-            if (bestPosition && !hasOverlap) {
+            if (preventPosition !== bestPosition && !hasOverlap && !wosPosed.current.has(bestPosition)) {
+                wosPosed.current.set(bestPosition, true);
+
                 setCurrentPosition(bestPosition);
             }
         };
@@ -281,10 +297,13 @@ const Popover: FC<IPopoverProps> = ({
             if (!hasOverlap) {
                 clearInterval(checkInterval);
             }
-        });
+        }, 20);
 
-        return () => clearInterval(checkInterval);
-    }, [popoverOpened, refs.floating.current?.className, placement, alwaysShow]);
+        return () => {
+            clearInterval(checkInterval);
+            leastOverlap = Infinity;
+        };
+    }, [popoverOpened, refs.floating.current, placement, alwaysShow, position, currentPosition]);
 
     const arrowOffsetFromEdge = staticSide === "left" || staticSide === "right" ? 7 : 11;
 
