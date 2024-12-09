@@ -7,14 +7,15 @@ import "./Tag.scss";
 import Button from "../../atoms/Button/Button";
 
 const icons = {
-    info: TagOutline,
+    rest: TagOutline,
     warning: WarningFill,
-    error: ErrorAlertFill
+    error: ErrorAlertFill,
+    disabled: TagOutline
 };
 
 interface ITagProps {
     text: string;
-    type?: "error" | "warning" | "info";
+    state?: "rest" | "error" | "warning" | "disabled";
     size?: "medium" | "small";
     onClose: () => void;
     /**
@@ -28,13 +29,29 @@ interface ITagProps {
 /**
  * Tag component
  */
-const Tag: FC<ITagProps> = ({ className, text, type = "info", size = "medium", onClose }) => {
-    const Icon = icons[type];
+const Tag: FC<ITagProps> = ({ className, text, state = "rest", size = "medium", onClose }) => {
+    const Icon = icons[state];
     return (
-        <div className={classNames("tag", className, { size })}>
-            <Icon />
-            {text}
-            <Button Icon={Close} onClick={onClose} />
+        <div
+            className={classNames(
+                "tag",
+                `tag_state_${state}`,
+                `tag_size_${size}`,
+                `tag_icon_${size === "small"}`,
+                className
+            )}
+        >
+            <Icon size={20} />
+            <span className="tag__text">{text}</span>
+            <Button
+                className="tag__button"
+                appearance="secondary"
+                displayType="text"
+                Icon={Close}
+                size={size}
+                onClick={onClose}
+                disabled={state === "disabled"}
+            />
         </div>
     );
 };
