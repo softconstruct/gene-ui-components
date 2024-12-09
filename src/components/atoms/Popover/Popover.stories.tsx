@@ -17,13 +17,15 @@ const meta: Meta<IPopoverProps> = {
         size: args({ control: "select", ...propCategory.appearance }),
         alwaysShow: args({ control: "boolean", ...propCategory.states }),
         isOpen: args({ control: "boolean", ...propCategory.states }),
+        withArrow: args({ control: "boolean", ...propCategory.states }),
+
         children: args({ control: "false", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),
         footerContent: args({ control: "false", ...propCategory.content }),
 
         setProps: args({ control: "false", ...propCategory.functionality }),
-        primaryButton: { control: "false", ...propCategory.functionality },
-        secondaryButton: { control: "false", ...propCategory.functionality }
+        primaryButton: args({ control: "false", ...propCategory.functionality }),
+        secondaryButton: args({ control: "false", ...propCategory.functionality })
     },
     args: {
         padding: 15,
