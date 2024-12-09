@@ -15,26 +15,14 @@ interface ITagProps {
  */
 const Tag: FC<ITagProps> = ({ size }) => {
     return (
-        <div className="tagTestHolder">
-            <div className="tag tag_size_medium tag_state_rest tag_icon_false">
-                <p className="tag__text">Tag</p>
-                <button className="tag__button"></button>
-            </div>
-
-            <div className="tag tag_size_medium tag_state_error tag_icon_false">
-                <p className="tag__text">Tag</p>
-                <button className="tag__button"></button>
-            </div>
-
-            <div className="tag tag_size_medium tag_state_warning tag_icon_false">
-                <p className="tag__text">Tag</p>
-                <button className="tag__button"></button>
-            </div>
-
-            <div className="tag tag_size_medium tag_state_disabled tag_icon_false">
-                <p className="tag__text">Tag</p>
-                <button className="tag__button"></button>
-            </div>
+        <div className="tag tag_size_medium tag_state_rest tag_icon_false">
+            {/* className={classNames("tag", className, { size })} */}
+            {/* States - tag_state_rest // tag_state_error // tag_state_warning // tag_state_disabled */}
+            {/* size - tag_size_medium  // tag_size_small */}
+            {/* for icon add class // tag__icon */}
+            <Icon />
+            <p className="tag__text">{text}</p>
+            <Button className="tag__button" Icon={Close} onClick={onClose} />
         </div>
     );
 };

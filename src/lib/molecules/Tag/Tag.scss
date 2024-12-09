@@ -1,12 +1,3 @@
-.tagTestHolder {
-    display: inline-grid;
-    grid-template-rows: repeat(4, auto);
-    grid-auto-flow: column;
-    gap: 1rem;
-}
-
-// todo should remove splitButtonTestHolder later
-
 .tag {
     $this: &;
 
@@ -16,15 +7,15 @@
     &_size {
         &_medium,
         &_small {
-            border-radius: var(--guit-ref-radius-3xs);
+            border-radius: var(--guit-ref-radius-3xsmall);
 
             &#{ $this }_icon {
                 &_true {
-                    padding-inline-start: var(--guit-ref-spacing-xs);
+                    padding-inline-start: var(--guit-ref-spacing-xsmall);
                 }
 
                 &_false {
-                    padding-inline-start: var(--guit-ref-spacing-m);
+                    padding-inline-start: var(--guit-ref-spacing-medium);
                 }
             }
 
@@ -34,59 +25,14 @@
                 font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
                 line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
             }
-
-            #{ $this }__button {
-                border-radius: var(--guit-ref-radius-3xs);
-            }
         }
 
         &_medium {
-            gap: var(--guit-ref-spacing-xs);
-
-            #{ $this }__button {
-                width: var(--guit-sem-sizing-width-m);
-                height: var(--guit-sem-sizing-height-m);
-                padding: var(--guit-ref-spacing-2xs);
-            }
+            gap: var(--guit-ref-spacing-xsmall);
         }
 
         &_small {
-            gap: var(--guit-ref-spacing-2xs);
-
-            #{ $this }__button {
-                width: var(--guit-sem-sizing-width-s);
-                height: var(--guit-sem-sizing-height-s);
-                padding: var(--guit-ref-spacing-4xs);
-            }
-        }
-
-        &_smallNudge {
-            gap: var(--guit-ref-spacing-3xs);
-            border-radius: var(--guit-ref-radius-4xs);
-
-            &#{ $this }_icon {
-                &_true {
-                    padding-inline-start: var(--guit-ref-spacing-3xs);
-                }
-
-                &_false {
-                    padding-inline-start: var(--guit-ref-spacing-xs);
-                }
-            }
-
-            #{ $this }__text {
-                font-family: var(--guit-sem-font-label-small-default-medium-font-family);
-                font-size: var(--guit-sem-font-label-small-default-medium-font-size);
-                font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
-                line-height: var(--guit-sem-font-label-small-default-medium-line-height);
-            }
-
-            #{ $this }__button {
-                width: var(--guit-sem-sizing-width-s-nudge);
-                height: var(--guit-sem-sizing-height-s-nudge);
-                padding: var(--guit-ref-spacing-4xs);
-                border-radius: var(--guit-ref-radius-4xs);
-            }
+            gap: var(--guit-ref-spacing-2xsmall);
         }
     }
 
@@ -96,23 +42,6 @@
 
             #{ $this }__text {
                 color: var(--guit-sem-color-foreground-neutral-2);
-            }
-
-            #{ $this }__button {
-                &:hover {
-                    background-color: var(--guit-sem-color-background-transparent-1-hover);
-                }
-
-                &:active {
-                    background-color: var(--guit-sem-color-background-transparent-1-pressed);
-                }
-
-                &:focus-visible {
-                    z-index: 1;
-                    outline-offset: var(--guit-ref-border-width-thin);
-                    outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-                        var(--guit-sem-color-border-focus);
-                }
             }
         }
 
@@ -142,10 +71,13 @@
         }
     }
 
+    &__icon,
     &__button {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
+        flex: 0 0 auto;
+    }
+
+    &__text {
+        flex: 1;
+        min-width: 0;
     }
 }
