@@ -7,6 +7,7 @@ export { default as Pill, IPillProps } from "./components/atoms/Pill";
 export { default as Divider, IDividerProps } from "./components/atoms/Divider";
 export { default as Info, IInfoProps } from "./components/atoms/Info";
 export { default as Button, IButtonProps } from "./components/atoms/Button";
+export { default as SegmentedControl } from "./components/atoms/SegmentedControl";
 
 // Molecules
 export { default as Tooltip } from "./components/molecules/Tooltip";
