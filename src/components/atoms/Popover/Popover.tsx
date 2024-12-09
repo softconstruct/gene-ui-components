@@ -144,6 +144,9 @@ export interface IPopoverProps {
      */
     children: ReactNode;
 
+    /**
+     * show or hide arrows
+     */
     withArrow?: boolean;
 }
 
