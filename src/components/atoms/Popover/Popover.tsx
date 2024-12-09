@@ -246,7 +246,12 @@ const Popover: FC<IPopoverProps> = ({
     const isShowPopover = alwaysShow || popoverOpened;
     const isScrollable = size === "mobile" && isShowPopover;
     useEffect(() => {
-        if (position !== "auto") setCurrentPosition(correctPosition[position]);
+        if (position === "auto") {
+            setCurrentPosition("bottom");
+            return;
+        }
+
+        setCurrentPosition(correctPosition[position]);
 
         return () => {
             wosPosed.current.clear();
@@ -300,7 +305,7 @@ const Popover: FC<IPopoverProps> = ({
             if (!hasOverlap) {
                 clearInterval(checkInterval);
             }
-        }, 20);
+        });
 
         return () => {
             clearInterval(checkInterval);
@@ -320,10 +325,10 @@ const Popover: FC<IPopoverProps> = ({
                         ref={refs.setFloating}
                         {...getFloatingProps()}
                     >
-                        {size !== "mobile" && withArrow && (
+                        {size !== "mobile" && (
                             <div
-                                className="popover__arrow"
                                 ref={arrowRef}
+                                className="popover__arrow"
                                 style={{
                                     ...getCorrectPosition,
                                     top: middlewareArrowData?.y,
@@ -339,10 +344,12 @@ const Popover: FC<IPopoverProps> = ({
                                     viewBox="0 0 20 8"
                                     fill="none"
                                 >
-                                    <path
-                                        d="M8.75061 0.999513C9.48105 0.415163 10.519 0.415162 11.2494 0.999512L20 8H0L8.75061 0.999513Z"
-                                        className="popover__arrowPath"
-                                    />
+                                    {withArrow && (
+                                        <path
+                                            d="M8.75061 0.999513C9.48105 0.415163 10.519 0.415162 11.2494 0.999512L20 8H0L8.75061 0.999513Z"
+                                            className="popover__arrowPath"
+                                        />
+                                    )}
                                 </svg>
                             </div>
                         )}
