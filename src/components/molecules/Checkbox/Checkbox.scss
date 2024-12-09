@@ -1,0 +1,176 @@
+.checkbox {
+    $this: &;
+
+    display: inline-flex;
+    max-width: 100%;
+    flex-direction: column;
+    min-width: 0;
+
+    &__input {
+        background: none;
+        appearance: none;
+        border: none;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: -1;
+        border-radius: var(--guit-ref-radius-4xsmall);
+
+        &:checked,
+        &:indeterminate {
+            & + #{ $this }__imitation {
+                background-color: var(--guit-sem-color-background-selected-2);
+                border-color: var(--guit-sem-color-background-selected-2);
+
+                &:hover {
+                    background-color: var(--guit-sem-color-background-selected-2-hover);
+                    border-color: var(--guit-sem-color-background-selected-2-hover);
+                }
+
+                &:active {
+                    background-color: var(--guit-sem-color-background-selected-2-pressed);
+                    border-color: var(--guit-sem-color-background-selected-2-pressed);
+                }
+
+                #{ $this }__icon {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+    &__label {
+        display: flex;
+    }
+
+    &__imitationHolder {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--guit-sem-dimension-width-small);
+        height: var(--guit-sem-dimension-height-small);
+
+        #{ $this }__input {
+            &:not(:checked, :indeterminate) {
+                & + #{ $this }__imitation {
+                    &:hover {
+                        background-color: var(--guit-sem-color-background-transparent-1-hover);
+                    }
+
+                    &:active {
+                        background-color: var(--guit-sem-color-background-transparent-1-pressed);
+                    }
+                }
+            }
+        }
+    }
+
+    &__imitationHolderInner {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--guit-sem-dimension-width-xsmall);
+        height: var(--guit-sem-dimension-height-xsmall);
+        position: relative;
+    }
+
+    &__imitation {
+        width: 100%;
+        height: 100%;
+        border-radius: var(--guit-ref-radius-4xsmall);
+        border: var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-neutral-3);
+    }
+
+    &__icon {
+        flex: 0 0 auto;
+        width: 100%;
+        height: 100%;
+        color: var(--guit-sem-color-foreground-inverse);
+        opacity: 0;
+    }
+
+    &__infoContainer {
+        display: flex;
+    }
+    &:not(#{ $this }_labelTop) {
+        gap: var(--guit-ref-spacing-4xsmall);
+        #{ $this }__infoContainer {
+            padding-inline-start: var(--guit-ref-spacing-4xlarge);
+        }
+        #{ $this }__label {
+            gap: var(--guit-ref-spacing-xsmall);
+        }
+    }
+
+    &_labelTop {
+        gap: var(--guit-ref-spacing-3xsmall);
+        #{ $this }__label {
+            flex-direction: column-reverse;
+            align-items: initial;
+            gap: var(--guit-ref-spacing-3xsmall);
+        }
+    }
+
+    &_error {
+        #{ $this }__imitationHolder {
+            #{ $this }__imitationHolderInner {
+                #{ $this }__imitation {
+                    border-color: var(--guit-sem-color-border-error);
+                }
+            }
+        }
+    }
+
+    &_disabled {
+        pointer-events: none;
+        user-select: none;
+
+        #{ $this }__imitationHolder {
+            #{ $this }__imitationHolderInner {
+                #{ $this }__imitation {
+                    border-color: var(--guit-sem-color-border-disabled-1);
+                    background-color: var(--guit-sem-color-background-disabled);
+
+                    #{ $this }__icon {
+                        color: var(--guit-sem-color-foreground-disabled);
+                    }
+                }
+            }
+        }
+
+        #{ $this }__input {
+            &:not(:checked, :indeterminate) {
+                & + #{ $this }__imitation {
+                    background-color: var(--guit-sem-color-background-transparent-1);
+                }
+            }
+        }
+    }
+
+    &_readOnly {
+        pointer-events: none;
+        #{ $this }__imitationHolder {
+            #{ $this }__imitationHolderInner {
+                #{ $this }__imitation {
+                    border-color: transparent;
+                    background-color: var(--guit-sem-color-background-neutral-3);
+                    #{ $this }__icon {
+                        color: var(--guit-sem-color-foreground-neutral-1);
+                    }
+                }
+            }
+        }
+
+        #{ $this }__input {
+            &:not(:checked, :indeterminate) {
+                & + #{ $this }__imitation {
+                    border-color: var(--guit-sem-color-border-neutral-2);
+                }
+            }
+        }
+    }
+}

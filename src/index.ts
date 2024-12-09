@@ -10,6 +10,7 @@ export { default as Grid, ICol, IRow } from "./components/atoms/Grid";
 
 // Molecules
 export { default as Tooltip } from "./components/molecules/Tooltip";
+export { default as ProgressBar } from "./components/molecules/ProgressBar";
 
 // Organisms
 

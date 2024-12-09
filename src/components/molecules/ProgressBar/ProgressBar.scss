@@ -1,0 +1,161 @@
+.progressBar {
+    $this: &;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-3xsmall);
+    width: 100%;
+    min-width: 24rem;
+
+    &_type {
+        &_determinate {
+            #{ $this }__loadingBar {
+                display: none;
+            }
+        }
+
+        &_indeterminate {
+            #{ $this }__fill {
+                display: none;
+            }
+
+            #{ $this }__loadingBar {
+                animation-duration: 1.6s;
+                animation-timing-function: var(--guit-ref-motion-easing-standard);
+                animation-iteration-count: infinite;
+                will-change: transform;
+
+                [dir="ltr"] & {
+                    animation-name: progress-bar-loading-from-left;
+                }
+
+                [dir="rtl"] & {
+                    animation-name: progress-bar-loading-from-right;
+                }
+            }
+        }
+    }
+
+    &_size {
+        &_large,
+        &_medium {
+            #{ $this }__status {
+                font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+                font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+                font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+                line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            }
+        }
+
+        &_large {
+            #{ $this }__track {
+                height: var(--guit-sem-dimension-height-xsmall);
+                border-radius: var(--guit-ref-radius-xsmall);
+            }
+        }
+
+        &_medium {
+            #{ $this }__track {
+                height: var(--guit-sem-dimension-height-2xsmall);
+                border-radius: var(--guit-ref-radius-2xsmall);
+            }
+        }
+
+        &_small {
+            #{ $this }__track {
+                height: var(--guit-sem-dimension-height-3xsmall);
+                border-radius: var(--guit-ref-radius-3xsmall);
+            }
+
+            #{ $this }__status {
+                font-family: var(--guit-sem-font-label-small-default-medium-font-family);
+                font-size: var(--guit-sem-font-label-small-default-medium-font-size);
+                font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
+                line-height: var(--guit-sem-font-label-small-default-medium-line-height);
+            }
+        }
+    }
+
+    &_color {
+        &_default {
+            #{ $this }__fill,
+            #{ $this }__loadingBar {
+                background-color: var(--guit-sem-color-background-brand-2);
+            }
+        }
+
+        &_success {
+            #{ $this }__fill,
+            #{ $this }__loadingBar {
+                background-color: var(--guit-sem-color-background-success-2);
+            }
+        }
+
+        &_error {
+            #{ $this }__fill,
+            #{ $this }__loadingBar {
+                background-color: var(--guit-sem-color-background-error-2);
+            }
+        }
+    }
+
+    &__track {
+        width: 100%;
+        background-color: var(--guit-sem-color-background-neutral-2);
+        overflow: hidden;
+    }
+
+    &__fill,
+    &__loadingBar {
+        height: 100%;
+        border-radius: inherit;
+    }
+
+    &__loadingBar {
+        width: 50%;
+    }
+
+    &__info {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: var(--guit-ref-spacing-xsmall);
+        width: 100%;
+    }
+
+    &__helperText {
+        word-break: break-word;
+    }
+
+    &__status {
+        margin-inline-start: auto;
+        color: var(--guit-sem-color-foreground-neutral-2);
+        flex: 0 0 auto;
+        display: inline-flex;
+        gap: 0.4rem;
+    }
+
+    &__uploadingText {
+        display: inline-block;
+    }
+}
+
+@keyframes progress-bar-loading-from-left {
+    0% {
+        transform: translate3d(-100%, 0, 0);
+    }
+
+    100% {
+        transform: translate3d(200%, 0, 0);
+    }
+}
+
+@keyframes progress-bar-loading-from-right {
+    0% {
+        transform: translate3d(100%, 0, 0);
+    }
+
+    100% {
+        transform: translate3d(-200%, 0, 0);
+    }
+}

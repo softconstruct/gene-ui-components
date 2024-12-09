@@ -21,7 +21,7 @@ interface ILabelProps {
      * The text content of the `label`.
      * This is the main text displayed within the `label`.
      */
-    labelText: string;
+    labelText?: string;
     /**
      * Indicates whether the label represents a required field.
      * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
@@ -43,6 +43,11 @@ interface ILabelProps {
      * When set to `true` a `skeleton` indicator will be shown instead of the `label` text.
      */
     isLoading?: boolean;
+    /**
+     * Indicates whether the `label` should be read-only.
+     * This prop will not make visual changes but sets `pointer-events: auto` to prevent triggering label click events.
+     */
+    readOnly?: boolean;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -72,7 +77,8 @@ const Label: FC<ILabelProps> = ({
     infoText,
     isLoading,
     className,
-    children
+    children,
+    readOnly
 }) => {
     const labelRef = useRef<HTMLLabelElement | null>(null);
 
@@ -84,30 +90,36 @@ const Label: FC<ILabelProps> = ({
             {isLoading ? (
                 <span>skeleton</span>
             ) : (
-                <span className="label__container">
-                    <div className="label__container-inner">
-                        <Tooltip text={labelText} isVisible={isTruncated}>
-                            <span
-                                ref={labelRef}
-                                className={classnames(`ellipsis-text label__text label__text_size_${size}`, {
-                                    label__text_disabled: disabled
-                                })}
-                            >
-                                {labelText}
-                            </span>
-                        </Tooltip>
-                        {required && (
-                            <span
-                                className={classnames(`label__asterisk label__text_size_${size} `, {
-                                    label__text_disabled: disabled
-                                })}
-                            >
-                                *
-                            </span>
-                        )}
-                    </div>
-                    {infoText && <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} />}
-                </span>
+                labelText && (
+                    <span
+                        className={classnames("label__container", { label__container_readOnly: readOnly && !disabled })}
+                    >
+                        <div className="label__container-inner">
+                            {labelText && (
+                                <Tooltip text={labelText} isVisible={isTruncated}>
+                                    <span
+                                        ref={labelRef}
+                                        className={classnames(`ellipsis-text label__text label__text_size_${size}`, {
+                                            label__text_disabled: disabled
+                                        })}
+                                    >
+                                        {labelText}
+                                    </span>
+                                </Tooltip>
+                            )}
+                            {required && (
+                                <span
+                                    className={classnames(`label__asterisk label__text_size_${size} `, {
+                                        label__text_disabled: disabled
+                                    })}
+                                >
+                                    *
+                                </span>
+                            )}
+                        </div>
+                        {infoText && <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} />}
+                    </span>
+                )
             )}
         </label>
     );

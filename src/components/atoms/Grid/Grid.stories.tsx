@@ -1,22 +1,22 @@
-import React, { CSSProperties } from 'react';
-import { Meta } from '@storybook/react';
+import React, { CSSProperties } from "react";
+import { Meta } from "@storybook/react";
 
-//Helpers
-import { args, propCategory } from '../../../../stories/assets/storybook.globals';
+// Helpers
+import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 
 // Components
-import Grid, { ICol, IRow } from './index';
+import Grid, { ICol, IRow } from "./index";
 
 const { Row, Col, GridContainer } = Grid;
 
 const meta: Meta<ICol & IRow> = {
-    title: 'Atoms/Grid',
+    title: "Atoms/Grid",
     component: GridContainer,
     argTypes: {
-        size: args({ control: 'false', ...propCategory.content }),
-        offset: args({ control: 'false', ...propCategory.content }),
-        children: args({ control: 'false', ...propCategory.others }),
-        flexible: args({ control: 'false', ...propCategory.appearance })
+        size: args({ control: "false", ...propCategory.content }),
+        offset: args({ control: "false", ...propCategory.content }),
+        children: args({ control: "false", ...propCategory.others }),
+        flexible: args({ control: "false", ...propCategory.appearance })
     },
     args: {}
 };
@@ -24,14 +24,14 @@ const meta: Meta<ICol & IRow> = {
 export default meta;
 
 const style: CSSProperties = {
-    backgroundColor: '#0092ff',
+    backgroundColor: "#0092ff",
     height: 200,
-    margin: '3px',
-    color: '#fff',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize:15
+    margin: "3px",
+    color: "#fff",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 15
 };
 
 const Template = () => {

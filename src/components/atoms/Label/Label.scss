@@ -8,8 +8,11 @@
         display: flex;
         align-items: center;
         gap: var(--guit-ref-spacing-3xsmall);
-        width: 100%;
         min-width: 0;
+
+        &_readOnly {
+            pointer-events: auto;
+        }
     }
 
     &__container-inner {
