@@ -7,7 +7,8 @@ import React, {
     Dispatch,
     SetStateAction,
     ReactNode,
-    CSSProperties
+    CSSProperties,
+    useLayoutEffect
 } from "react";
 import {
     autoUpdate,
@@ -54,7 +55,22 @@ const positions: Placement[] = [
     "left-end"
 ];
 
-export const correctPosition = {
+type Positions =
+    | "bottom"
+    | "bottom-start"
+    | "bottom-end"
+    | "left-end"
+    | "left"
+    | "left-start"
+    | "right-end"
+    | "right"
+    | "right-start"
+    | "top"
+    | "top-start"
+    | "top-end"
+    | "auto";
+
+export const correctPosition: Record<string, Positions> = {
     "bottom-center": "bottom",
     "bottom-left": "bottom-start",
     "bottom-right": "bottom-end",
@@ -70,14 +86,18 @@ export const correctPosition = {
     auto: "auto"
 } as const;
 
-const arrowPositions = {
+type ArrowPositions = "left" | "right";
+
+const arrowPositions: Record<string, ArrowPositions> = {
     "top-start": "left",
     "top-end": "right",
     "bottom-end": "right",
     "bottom-start": "left"
 } as const;
 
-const staticSides = {
+export type StaticSides = "bottom" | "left" | "right" | "top";
+
+export const staticSides: Record<string, StaticSides> = {
     top: "bottom",
     right: "left",
     bottom: "top",
@@ -159,7 +179,7 @@ export interface IPopoverProps {
 
 const Popover: FC<IPopoverProps> = ({
     size,
-    position = "top-right",
+    position = "bottom-center",
     padding = 10,
     isOpen = false,
     alwaysShow,
@@ -228,14 +248,20 @@ const Popover: FC<IPopoverProps> = ({
         });
     }, [setProps, getReferenceProps, refs.setReference]);
 
-    const [currentDirection] = placement.split("-") as [keyof typeof staticSides];
+    const [currentDirection] = placement.split("-") as [StaticSides];
+
     const offsetFromEdge = 8;
+
     const middlewareArrowData = middlewareData.arrow;
-    const staticSide = staticSides[currentDirection] as keyof typeof staticSides;
-    const arrowPosition = arrowPositions[placement];
+
+    const staticSide: StaticSides = staticSides[currentDirection];
+
+    const arrowPosition: (typeof arrowPositions)[keyof typeof arrowPositions] = arrowPositions[placement];
+
     const getCorrectPosition = arrowPosition
         ? { [arrowPosition]: offsetFromEdge }
         : { insetInlineStart: middlewareArrowData?.x };
+
     const styles: CSSProperties =
         size === "mobile"
             ? {
@@ -243,11 +269,13 @@ const Popover: FC<IPopoverProps> = ({
                   bottom: "0"
               }
             : floatingStyles;
+
     const isShowPopover = alwaysShow || popoverOpened;
+
     const isScrollable = size === "mobile" && isShowPopover;
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (position === "auto") {
-            setCurrentPosition("bottom");
+            setCurrentPosition(size === "small" ? "auto" : "bottom");
             return;
         }
 
@@ -256,7 +284,7 @@ const Popover: FC<IPopoverProps> = ({
         return () => {
             wosPosed.current.clear();
         };
-    }, [position, alwaysShow]);
+    }, [position, size]);
 
     useBodyScrollBlock(isScrollable);
 
@@ -269,7 +297,7 @@ const Popover: FC<IPopoverProps> = ({
         let bestPosition = correctPosition[position] as Placement;
         let leastOverlap = Infinity;
         let hasOverlap = false;
-        const preventPosition = correctPosition[currentPosition];
+        const preventPosition: Positions = correctPosition[currentPosition];
 
         const updatePopoverPosition = () => {
             positions.forEach((possiblePositions) => {
