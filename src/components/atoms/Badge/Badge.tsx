@@ -5,6 +5,7 @@ import classNames from "classnames";
 import "./Badge.scss";
 
 const getValue = (value?: number, maxValue?: number, size?: string) => {
+    if (!Number(value)) return null;
     if (size !== "small") return null;
     if (!value && value !== 0) return null;
     if (!maxValue) return value;
