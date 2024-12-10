@@ -47,7 +47,7 @@ describe("Popover", () => {
     });
 
     it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "mobile"])(
-        "renders size prop correct inside the portal",
+        "should have %p size inside the portal",
         (size) => {
             setup.setProps({ alwaysShow: true, size });
             expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
