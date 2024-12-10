@@ -6,8 +6,13 @@ import Scrollbar, { IScrollbarProps } from "./index";
 
 describe("Scrollbar ", () => {
     let setup: ReactWrapper<IScrollbarProps>;
+    const TestComponent = () => <span>test</span>;
     beforeEach(() => {
-        setup = mount(<Scrollbar />);
+        setup = mount(
+            <Scrollbar>
+                <TestComponent />
+            </Scrollbar>
+        );
     });
 
     it("renders without crashing", () => {
