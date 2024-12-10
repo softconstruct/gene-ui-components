@@ -33,7 +33,7 @@
 
     &_state {
         &_rest {
-            background-color: var(--guit-sem-color-background-neutral-3);
+            background-color: var(--guit-sem-color-background-neutral-4);
 
             #{ $this }__icon,
             #{ $this }__text {
@@ -62,6 +62,7 @@
         &_disabled {
             background-color: var(--guit-sem-color-background-disabled);
             pointer-events: none;
+            user-select: none;
 
             #{ $this }__icon,
             #{ $this }__text {
