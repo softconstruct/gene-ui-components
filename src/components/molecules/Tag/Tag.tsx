@@ -14,22 +14,39 @@ const icons = {
 };
 
 interface ITagProps {
+    /**
+     * Tag content text
+     */
     text: string;
+    /**
+     * Tag state <br/>
+     * Possible values: `rest | error | warning | disabled`
+     */
     state?: "rest" | "error" | "warning" | "disabled";
+    /**
+     * Tag size <br/>
+     * Possible values: `medium | small`
+     */
     size?: "medium" | "small";
+    /**
+     * Hides or shows left icon
+     */
+    withIcon?: boolean;
+    /**
+     * Callback function that calls when close button is pressed
+     */
     onClose: () => void;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    // fill Tag component props interface
 }
 
 /**
  * Tag component
  */
-const Tag: FC<ITagProps> = ({ className, text, state = "rest", size = "medium", onClose }) => {
+const Tag: FC<ITagProps> = ({ className, text, state = "rest", size = "medium", withIcon = true, onClose }) => {
     const Icon = icons[state];
     return (
         <div
@@ -37,11 +54,11 @@ const Tag: FC<ITagProps> = ({ className, text, state = "rest", size = "medium", 
                 "tag",
                 `tag_state_${state}`,
                 `tag_size_${size}`,
-                `tag_icon_${size === "small"}`,
+                { tag_withIcon: withIcon },
                 className
             )}
         >
-            <Icon size={20} />
+            {withIcon && <Icon className="tag__icon" size={20} />}
             <span className="tag__text">{text}</span>
             <Button
                 className="tag__button"

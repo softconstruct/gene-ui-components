@@ -21,9 +21,10 @@ describe("Tag ", () => {
     it("renders className prop correctly", () => {
         const className = "test-class";
         const wrapper = setup.setProps({ className });
-
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    // Your tests here
+    it("renders content text correctly", () => {
+        expect(setup.find(".tag__text").contains(tagText)).toBeTruthy();
+    });
 });

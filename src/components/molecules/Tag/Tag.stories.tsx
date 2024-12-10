@@ -14,12 +14,12 @@ const meta: Meta<typeof Tag> = {
         className: args({ control: "false", ...propCategory.appearance }),
         state: args({ control: "select", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
+        withIcon: args({ control: "boolean", ...propCategory.appearance }),
         text: args({ control: "text", ...propCategory.content })
-        // fill Tag component argTypes
     },
     args: {
-        text: "Tag"
-        // fill Tag component args
+        text: "Tag",
+        withIcon: true
     } as ITagProps
 };
 

@@ -8,15 +8,10 @@
         &_medium,
         &_small {
             border-radius: var(--guit-ref-radius-3xsmall);
+            padding-inline-start: var(--guit-ref-spacing-medium);
 
-            &#{ $this }_icon {
-                &_true {
-                    padding-inline-start: var(--guit-ref-spacing-xsmall);
-                }
-
-                &_false {
-                    padding-inline-start: var(--guit-ref-spacing-medium);
-                }
+            &#{ $this }_withIcon {
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
             }
 
             #{ $this }__text {
