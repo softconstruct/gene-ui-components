@@ -1,5 +1,241 @@
 .segmentedControl {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-3xsmall);
+
+    &__wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    &__block {
+        $this: &;
+
+        position: relative;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        min-width: max-content;
+        border-width: var(--guit-ref-border-width-thin);
+        border-style: var(--guit-ref-border-style-solid);
+        cursor: pointer;
+        user-select: none;
+
+        &:not(&#{ $this }_selected) {
+            border-color: var(--guit-sem-color-border-neutral-2);
+            background-color: var(--guit-sem-color-background-transparent-1);
+            color: var(--guit-sem-color-foreground-neutral-2);
+
+            &:hover {
+                background-color: var(--guit-sem-color-background-transparent-1-hover);
+            }
+
+            &:active {
+                background-color: var(--guit-sem-color-background-transparent-1-pressed);
+            }
+        }
+
+        &:focus-visible {
+            z-index: 1;
+        }
+
+        &:first-child {
+            &#{ $this }_size {
+                &_large {
+                    border-start-start-radius: var(--guit-ref-radius-2xsmall);
+                    border-end-start-radius: var(--guit-ref-radius-2xsmall);
+                }
+
+                &_medium {
+                    border-start-start-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-start-radius: var(--guit-ref-radius-3xsmall);
+                }
+
+                &_small {
+                    border-start-start-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-start-radius: var(--guit-ref-radius-3xsmall);
+                }
+            }
+        }
+
+        &:last-child {
+            &#{ $this }_size {
+                &_large {
+                    border-start-end-radius: var(--guit-ref-radius-2xsmall);
+                    border-end-end-radius: var(--guit-ref-radius-2xsmall);
+                }
+
+                &_medium {
+                    border-start-start-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-start-radius: var(--guit-ref-radius-3xsmall);
+                }
+
+                &_small {
+                    border-start-start-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-start-radius: var(--guit-ref-radius-3xsmall);
+                }
+            }
+        }
+
+        &:not(:last-child) {
+            border-inline-end-width: 0;
+        }
+
+        &_icon {
+            &_before {
+                flex-direction: row;
+            }
+
+            &_after {
+                flex-direction: row-reverse;
+            }
+        }
+
+        &_size {
+            &_large {
+                gap: var(--guit-ref-spacing-xsmall);
+                height: var(--guit-sem-dimension-height-large);
+
+                &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
+                    min-width: var(--guit-sem-dimension-width-2xlarge);
+                    padding-inline-start: var(--guit-ref-spacing-large);
+                    padding-inline-end: var(--guit-ref-spacing-large);
+                }
+
+                &:not(#{ $this }_icon_only) {
+                    padding-top: var(--guit-ref-spacing-small);
+                    padding-bottom: var(--guit-ref-spacing-small);
+                }
+
+                &#{ $this }_icon_before,
+                &#{ $this }_icon_after {
+                    min-width: var(--guit-sem-dimension-width-5xlarge);
+                }
+
+                &#{ $this }_icon_before {
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-large);
+                }
+
+                &#{ $this }_icon_after {
+                    padding-inline-start: var(--guit-ref-spacing-large);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
+                }
+
+                &#{ $this }_icon_only {
+                    min-width: var(--guit-sem-dimension-width-large);
+                    padding: var(--guit-ref-spacing-small);
+                }
+            }
+
+            &_medium {
+                gap: var(--guit-ref-spacing-xsmall);
+                height: var(--guit-sem-dimension-height-medium);
+
+                &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
+                    min-width: var(--guit-sem-dimension-width-2xlarge);
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
+                }
+
+                &:not(#{ $this }_icon_only) {
+                    padding-top: var(--guit-ref-spacing-2xsmall);
+                    padding-bottom: var(--guit-ref-spacing-2xsmall);
+                }
+
+                &#{ $this }_icon_before,
+                &#{ $this }_icon_after {
+                    min-width: var(--guit-sem-dimension-width-5xlarge);
+                }
+
+                &#{ $this }_icon_before {
+                    padding-inline-start: var(--guit-ref-spacing-xsmall);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
+                }
+
+                &#{ $this }_icon_after {
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-xsmall);
+                }
+
+                &#{ $this }_icon_only {
+                    min-width: var(--guit-sem-dimension-width-medium);
+                    padding: var(--guit-ref-spacing-2xsmall);
+                }
+            }
+
+            &_small {
+                gap: var(--guit-ref-spacing-2xsmall);
+                height: var(--guit-sem-dimension-height-small);
+
+                &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
+                    min-width: var(--guit-sem-dimension-width-2xlarge);
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
+                }
+
+                &:not(#{ $this }_icon_only) {
+                    padding-top: var(--guit-ref-spacing-4xsmall);
+                    padding-bottom: var(--guit-ref-spacing-4xsmall);
+                }
+
+                &#{ $this }_icon_before,
+                &#{ $this }_icon_after {
+                    min-width: var(--guit-sem-dimension-width-5xlarge);
+                }
+
+                &#{ $this }_icon_before {
+                    padding-inline-start: var(--guit-ref-spacing-xsmall);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
+                }
+
+                &#{ $this }_icon_after {
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-xsmall);
+                }
+
+                &#{ $this }_icon_only {
+                    min-width: var(--guit-sem-dimension-width-small);
+                    padding: var(--guit-ref-spacing-4xsmall);
+                }
+            }
+        }
+
+        &_selected {
+            background-color: var(--guit-sem-color-background-selected-2);
+            border-color: var(--guit-sem-color-background-selected-2);
+            color: var(--guit-sem-color-foreground-inverse);
+
+            &:hover {
+                background-color: var(--guit-sem-color-background-selected-2-hover);
+                border-color: var(--guit-sem-color-background-selected-2-hover);
+            }
+
+            &:active {
+                background-color: var(--guit-sem-color-background-selected-2-pressed);
+                border-color: var(--guit-sem-color-background-selected-2-pressed);
+            }
+        }
+
+        &:disabled,
+        &_disabled {
+            background-color: var(--guit-sem-color-background-transparent-1);
+            border-color: var(--guit-sem-color-border-disabled-1);
+            color: var(--guit-sem-color-foreground-disabled);
+            pointer-events: none;
+        }
+    }
+
+    &__icon {
+        flex: 0 0 auto;
+    }
+
+    &__text {
+        font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+        font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+        font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
+        line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+    }
 }
