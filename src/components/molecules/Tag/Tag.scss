@@ -40,6 +40,7 @@
         &_rest {
             background-color: var(--guit-sem-color-background-neutral-3);
 
+            #{ $this }__icon,
             #{ $this }__text {
                 color: var(--guit-sem-color-foreground-neutral-2);
             }
@@ -48,6 +49,7 @@
         &_error {
             background-color: var(--guit-sem-color-background-error-1);
 
+            #{ $this }__icon,
             #{ $this }__text {
                 color: var(--guit-sem-color-foreground-error);
             }
@@ -56,6 +58,7 @@
         &_warning {
             background-color: var(--guit-sem-color-background-warning-1);
 
+            #{ $this }__icon,
             #{ $this }__text {
                 color: var(--guit-sem-color-foreground-warning);
             }
@@ -65,13 +68,15 @@
             background-color: var(--guit-sem-color-background-disabled);
             pointer-events: none;
 
+            #{ $this }__icon,
             #{ $this }__text {
                 color: var(--guit-sem-color-foreground-disabled);
             }
         }
     }
 
-    &__icon &__button {
+    &__icon,
+    &__button {
         flex: 0 0 auto;
     }
 
