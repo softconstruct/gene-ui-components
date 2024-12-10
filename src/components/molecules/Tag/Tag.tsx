@@ -4,6 +4,8 @@ import { Close, TagOutline, WarningFill, ErrorAlertFill } from "@geneui/icons";
 
 // Styles
 import "./Tag.scss";
+
+// Components
 import Button from "../../atoms/Button/Button";
 
 const icons = {
@@ -44,7 +46,7 @@ interface ITagProps {
 }
 
 /**
- * Tag component
+ * Tag is used to label, categorize, and organize content within an interface. It can be used to highlight keywords, topics, or attributes related to an item. Tags enhance user navigation and search functionality by providing a quick way to filter and identify relevant information.
  */
 const Tag: FC<ITagProps> = ({ className, text, state = "rest", size = "medium", withIcon = true, onClose }) => {
     const Icon = icons[state];
