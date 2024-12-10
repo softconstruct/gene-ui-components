@@ -482,8 +482,7 @@
         }
     }
 
-    &:disabled,
-    &.disabled {
+    &:disabled {
         pointer-events: none;
         color: var(--guit-sem-color-foreground-disabled);
     }
