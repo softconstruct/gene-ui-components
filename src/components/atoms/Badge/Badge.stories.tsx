@@ -12,11 +12,11 @@ const meta: Meta<typeof Badge> = {
     title: "Atoms/Badge",
     component: Badge,
     argTypes: {
-        withBorder: args({ control: "boolean", ...propCategory.states }),
+        withBorder: args({ control: "boolean", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         appearance: args({ control: "select", ...propCategory.appearance }),
         value: args({ control: "number", ...propCategory.content }),
-        maxValue: args({ control: "number", ...propCategory.content }),
+        maxValue: args({ control: "number", ...propCategory.functionality }),
         className: args({ control: "false", ...propCategory.appearance }),
         children: args({ control: "false", ...propCategory.content })
     },
@@ -44,5 +44,6 @@ WithBorder.args = {
 export const withChildren = Template.bind({});
 
 withChildren.args = {
-    children: <Button appearance="danger" text="Button" />
+    size: "3xSmall",
+    children: <Button appearance="danger" text="Button" size="medium" />
 } as IBadgeProps;

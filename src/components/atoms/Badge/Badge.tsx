@@ -8,7 +8,15 @@ const getValue = (value?: number, maxValue?: number, size?: string) => {
     if (size !== "small") return null;
     if (!value && value !== 0) return null;
     if (!maxValue) return value;
-    return value > maxValue ? `${maxValue}+` : value;
+
+    const calculatedMaxValue = maxValue < 99 ? maxValue : 99;
+
+    return value > calculatedMaxValue ? `${calculatedMaxValue}+` : value;
+};
+
+const getSize = (withChildren: boolean, size?: string) => {
+    if (!withChildren || (withChildren && (size === "xSmall" || size === "3xSmall"))) return size;
+    return "3xSmall";
 };
 
 interface IBadgeProps {
@@ -32,7 +40,9 @@ interface IBadgeProps {
      */
     value?: number;
     /**
-     *  When the `value` is greater than `maxValue` `badge` will show `maxValue` value and `+`
+     *  Specifies the maximum value to display inside the `badge`.
+     *  If the badge's `value` exceeds this maximum, it will display as `{maxValue}+`.
+     *  The maximum allowable value for `maxValue` is capped at `99`.
      */
     maxValue?: number;
     /**
@@ -43,6 +53,10 @@ interface IBadgeProps {
     /**
      * Specifies the element or component on which the `badge` will be displayed.
      * The `badge` is positioned `relative` to this child `element`, allowing it to overlay or attach to the `element`.
+     *
+     * **Note**: When using the `children` prop, only `xSmall` and `3xSmall` sizes are supported for the `badge`.
+     *
+     * The default size for the badge when `children` is provided is `3xSmall`.
      */
     children?: JSX.Element;
 }
@@ -57,16 +71,17 @@ const Badge: FC<IBadgeProps> = ({
     withBorder,
     size = "small",
     value,
-    maxValue,
+    maxValue = 99,
     children
 }) => {
-    const badgeValue = getValue(value, maxValue, size);
+    const badgeSize = getSize(!!children, size);
+    const badgeValue = getValue(value, maxValue, badgeSize);
 
     return (
         <div className={classNames("badge", className)}>
             <div
                 className={classNames(
-                    `badge__content badge__content_color_${appearance} badge__content_size_${size}`,
+                    `badge__content badge__content_color_${appearance} badge__content_size_${badgeSize}`,
                     className,
                     {
                         badge__content_bordered: withBorder,
