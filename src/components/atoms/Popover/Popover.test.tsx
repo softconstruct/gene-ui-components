@@ -35,26 +35,23 @@ describe("Popover", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it("renders children prop correct inside the portal", async () => {
+    it("renders children prop correct", () => {
         setup.setProps({ alwaysShow: true });
         expect(provider().find(".swapComponent").exists()).toBeTruthy();
     });
 
-    it("renders title prop correct inside the portal", () => {
+    it("renders title prop correct", () => {
         const title = "test";
         setup.setProps({ alwaysShow: true, title });
         expect(provider().find(".popover__header").text()).toBe(title);
     });
 
-    it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "mobile"])(
-        "should have %p size inside the portal",
-        (size) => {
-            setup.setProps({ alwaysShow: true, size });
-            expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
-        }
-    );
+    it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "mobile"])("should have %p size", (size) => {
+        setup.setProps({ alwaysShow: true, size });
+        expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
+    });
 
-    it("renders primaryButton prop correct inside the portal", async () => {
+    it("renders primaryButton prop correct", () => {
         setup.setProps({
             alwaysShow: true,
             primaryButton: {
@@ -65,7 +62,7 @@ describe("Popover", () => {
         expect(provider().find(Button).props().appearance).toBe("primary");
         expect(provider().find(Button).props().title).toBe("test");
     });
-    it("renders secondaryButton prop correct inside the portal", async () => {
+    it("renders secondaryButton prop correct", () => {
         setup.setProps({
             alwaysShow: true,
             primaryButton: { title: "test", onClick: () => {} },
@@ -76,5 +73,30 @@ describe("Popover", () => {
         });
         expect(provider().find(Button).first().props().appearance).toBe("inverse");
         expect(provider().find(Button).first().props().title).toBe("test");
+    });
+
+    it("renders withArrow prop correct", () => {
+        setup.setProps({
+            withArrow: true,
+            alwaysShow: true
+        });
+
+        expect(provider().find(".popover__arrowPath").exists()).toBeTruthy();
+    });
+
+    it("renders footerContent prop correct", () => {
+        const footerContent = <div className="test">test</div>;
+
+        setup.setProps({
+            alwaysShow: true,
+            footerContent,
+            size: "medium",
+            primaryButton: {
+                title: "test",
+                onClick: () => {}
+            }
+        });
+
+        expect(provider().find(".test").exists()).toBeTruthy();
     });
 });
