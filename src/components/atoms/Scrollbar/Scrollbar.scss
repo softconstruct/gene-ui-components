@@ -1,29 +1,18 @@
 .scrollbar {
     height: 100%;
     width: 100%;
-    position: relative;
-    font-size: 20px;
+    min-width: 0;
+    min-height: 0;
 
     &__wrapper {
         height: 100%;
         width: 100%;
+    }
 
-        .ScrollbarsCustom-Scroller {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
-
-        .ScrollbarsCustom-Scroller::-webkit-scrollbar-thumb {
-            width: 0;
-            height: 0;
-        }
-
-        .ScrollbarsCustom-Scroller::-webkit-scrollbar-track {
-            width: 0;
-            height: 0;
-        }
-
-        .ScrollbarsCustom-Scroller::-webkit-scrollbar {
+    &__scroller {
+        &::-webkit-scrollbar-thumb,
+        &::-webkit-scrollbar-track,
+        &::-webkit-scrollbar {
             width: 0;
             height: 0;
         }
@@ -32,8 +21,7 @@
     &__track {
         position: absolute;
         overflow: hidden;
-        border-radius: 4px;
-        user-select: none;
+        border-radius: var(--guit-ref-radius-3xsmall);
         inset-inline-end: 0;
 
         &_direction {
@@ -55,8 +43,6 @@
         position: absolute;
         overflow: hidden;
         background: var(--guit-sem-color-background-transparent-2);
-        user-select: none;
-        transition: background-color 10ms ease-in-out;
         border-radius: var(--guit-ref-radius-3xsmall);
 
         &_direction {
@@ -70,7 +56,7 @@
             &_x {
                 width: 100%;
                 bottom: 0;
-                left: 0;
+                inset-inline-start: 0;
                 height: var(--guit-sem-dimension-height-4xsmall);
             }
         }
