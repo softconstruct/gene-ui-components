@@ -7,7 +7,7 @@ import KeyValue, { IKeyValueProps } from "./index";
 describe("KeyValue ", () => {
     let setup: ReactWrapper<IKeyValueProps>;
     beforeEach(() => {
-        setup = mount(<KeyValue keyText="key" value="value" />);
+        setup = mount(<KeyValue title="key" value="value" />);
     });
 
     it("renders without crashing", () => {

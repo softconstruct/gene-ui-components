@@ -8,6 +8,7 @@ import "./KeyValue.scss";
 
 // Components
 import Pill, { IPillProps } from "../../atoms/Pill";
+import Info, { IInfoProps } from "../../atoms/Info";
 
 interface IKeyValueProps {
     /**
@@ -15,17 +16,77 @@ interface IKeyValueProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Icon before title in the key
+     */
     IconBefore?: FC<IconProps>;
-    keyText: string;
-    IconAfter?: FC<IconProps>;
+    /**
+     * Key title
+     */
+    title: string;
+    /**
+     * Info icon after title in the key
+     * Possible values: <br/>
+     * Icon - `{
+     * infoText?: string;
+     * disabled?: boolean;
+     * appearance?: default" | "brand" | "inverse";
+     * className?: string;
+     * }` Info component's props
+     */
+    iconInfo?: IInfoProps;
+    /**
+     * Value
+     * Possible values: <br/>
+     * Pill - `{
+     * text?: string;
+     * iconAlignment?: "before" | "after";
+     * isFill?: boolean;
+     * size?: "smallNudge" | "small" | "medium";
+     * Icon?: React.FC<IconProps>; (Icon component)
+     * withDot?: boolean;
+     * color?: "informative" | "neutral" | "error" | "success" | "warning" | "purple" | "lagoon" | "magenta" | "slate" | "inverse";
+     * className?: string;
+     * }` Pill component's props
+     * <br/><br/>
+     * Icon - Icon component
+     * <br/><br/>
+     * Text - string
+     */
     value: IPillProps | FC<IconProps> | string;
+    /**
+     * Key - value direction <br/>
+     * Possible values: `vertical | horizontal`
+     */
     direction?: "vertical" | "horizontal";
+    /**
+     * Size
+     * Possible values: `large | medium | small`;
+     */
     size?: "large" | "medium" | "small";
 }
 
-const valueComponent = (value: IKeyValueProps["value"]) => {
+const infoSize: { [key: string]: IInfoProps["size"] } = {
+    large: "small",
+    medium: "smallNudge",
+    small: "XSmall"
+};
+
+const iconSize: { [key: string]: IconProps["size"] } = {
+    large: 24,
+    medium: 20,
+    small: 16
+};
+
+const pillSize: { [key: string]: IPillProps["size"] } = {
+    large: "medium",
+    medium: "small",
+    small: "smallNudge"
+};
+
+const valueComponent = (value: IKeyValueProps["value"], size: IKeyValueProps["size"] = "medium") => {
     if ((value as IPillProps)?.text) {
-        return <Pill {...(value as IPillProps)} />;
+        return <Pill {...(value as IPillProps)} size={pillSize[size]} />;
     }
 
     if (typeof value === "string") {
@@ -34,7 +95,7 @@ const valueComponent = (value: IKeyValueProps["value"]) => {
 
     const Icon = value as FC<IconProps>;
 
-    return <Icon />;
+    return <Icon size={iconSize[size]} />;
 };
 
 /**
@@ -42,8 +103,8 @@ const valueComponent = (value: IKeyValueProps["value"]) => {
  */
 const KeyValue: FC<IKeyValueProps> = ({
     IconBefore,
-    keyText,
-    IconAfter,
+    title,
+    iconInfo,
     value,
     className,
     direction = "vertical",
@@ -52,11 +113,11 @@ const KeyValue: FC<IKeyValueProps> = ({
     return (
         <div className={classNames("keyValue", className, direction, size)}>
             <div>
-                {IconBefore && <IconBefore />}
-                <span>{keyText}</span>
-                {IconAfter && <IconAfter />}
+                {IconBefore && <IconBefore size={iconSize[size]} />}
+                <span>{title}</span>
+                {iconInfo && <Info {...iconInfo} size={infoSize[size]} />}
             </div>
-            {valueComponent(value)}
+            {valueComponent(value, size)}
         </div>
     );
 };

@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Meta } from "@storybook/react";
 
-import { Globe, InfoOutline } from "@geneui/icons";
+import { Globe } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -17,14 +17,14 @@ const meta: Meta<typeof KeyValue> = {
         direction: args({ control: "select", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         IconBefore: args({ control: false, ...propCategory.content }),
-        keyText: args({ control: "text", ...propCategory.content }),
-        IconAfter: args({ control: false, ...propCategory.content })
-        // value: args({ control: "text", ...propCategory.content })
+        title: args({ control: "text", ...propCategory.content }),
+        iconInfo: args({ control: "object", ...propCategory.content }),
+        value: args({ control: "text", ...propCategory.content })
     },
     args: {
         IconBefore: Globe,
-        keyText: "Key",
-        IconAfter: InfoOutline,
+        title: "Title",
+        iconInfo: { infoText: "Info text" },
         // value: "Value",
         // value: WarningFill,
         value: { text: "Pill", isFill: true },
