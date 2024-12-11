@@ -11,11 +11,12 @@ const meta: Meta<typeof Tag> = {
     title: "Molecules/Tag",
     component: Tag,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance }),
+        className: args({ control: false, ...propCategory.appearance }),
         state: args({ control: "select", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         withIcon: args({ control: "boolean", ...propCategory.appearance }),
-        text: args({ control: "text", ...propCategory.content })
+        text: args({ control: "text", ...propCategory.content }),
+        onClose: args({ control: false, ...propCategory.action })
     },
     args: {
         text: "Tag",
