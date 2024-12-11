@@ -23,7 +23,7 @@ describe("SegmentedControl ", () => {
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({
             disabled: true
-        } as ISegmentedControlProps);
+        });
         expect(wrapper.find(Control).find(".segmentedControl__block").props().disabled).toBeTruthy();
     });
     it("renders helperText prop correctly", () => {
@@ -53,7 +53,8 @@ describe("SegmentedControl ", () => {
     });
 
     it("renders isSelected prop correctly", () => {
-        const wrapper = setup.setProps({ isSelected: true });
+        const children = <Control name="test" isSelected />;
+        const wrapper = setup.setProps({ children });
         expect(wrapper.find(Control).find(".segmentedControl__block_selected").exists()).toBeTruthy();
     });
 

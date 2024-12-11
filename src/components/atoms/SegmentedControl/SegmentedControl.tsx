@@ -16,7 +16,7 @@ import { HelperText, Label } from "../../../index";
 // Types
 import { IGlobalProps } from "./types";
 
-interface ISegmentedControlProps extends Omit<IGlobalProps, "name" | "children"> {
+interface ISegmentedControlProps extends Omit<IGlobalProps, "name" | "children" | "isSelected"> {
     /**
      * The text content of the `label`.
      * This is the main text displayed within the `label`.

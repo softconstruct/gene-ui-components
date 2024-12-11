@@ -16,7 +16,6 @@ const meta: Meta<typeof SegmentedControl> = {
     argTypes: {
         disabled: args({ control: "boolean", ...propCategory.states }),
         iconBefore: args({ control: "boolean", ...propCategory.states }),
-        isSelected: args({ control: "boolean", ...propCategory.appearance }),
         helperText: args({ control: "text", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         label: args({ control: "text", ...propCategory.appearance }),
@@ -39,10 +38,10 @@ export default meta;
 const Template: FC<ISegmentedControlProps> = (props) => {
     return (
         <SegmentedControl {...props} Icon={TagOutline}>
-            <Control name="data1" isSelected>
-                Data1
+            <Control name="data1">Data1</Control>
+            <Control name="data2" isSelected>
+                Data2
             </Control>
-            <Control name="data2"> Data2</Control>
             <Control name="data3">Data3 </Control>
         </SegmentedControl>
     );
