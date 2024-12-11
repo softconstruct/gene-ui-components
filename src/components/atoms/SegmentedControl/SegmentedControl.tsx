@@ -1,55 +1,81 @@
-import React, { FC } from "react";
-import classNames from "classnames";
+import React, {
+    Children,
+    cloneElement,
+    FC,
+    FunctionComponentElement,
+    KeyboardEvent,
+    MouseEvent,
+    useState
+} from "react";
 // Styles
 import "./SegmentedControl.scss";
-// import {ArrowBigLeft} from "lucide-react";
-import { TagOutline } from "@geneui/icons";
+
+// Component
 import { HelperText, Label } from "../../../index";
 
-interface ISegmentedControlProps {
+// Types
+import { IGlobalProps } from "./types";
+
+interface ISegmentedControlProps extends Omit<IGlobalProps, "name" | "children"> {
     /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     * The text content of the `label`.
+     * This is the main text displayed within the `label`.
      */
-    className?: string;
-    // fill SegmentedControl component props interface
+    label?: string;
+    /**
+     * Control component. Renders inside the component
+     */
+    children: FunctionComponentElement<IGlobalProps> | FunctionComponentElement<IGlobalProps>[];
+    /**
+     * The actual text content to be displayed as helper text.
+     */
+    helperText?: string;
+    /**
+     * Works when the user clicks on one of the buttons. Returns the value that was written as a name in the Control component.
+     */
+    onChange: (name: string) => void;
 }
 
-const SegmentedControl: FC<ISegmentedControlProps> = ({ className }) => {
+const SegmentedControl: FC<ISegmentedControlProps> = ({ children, onChange, helperText, label, ...props }) => {
+    const [selectedElementName, setSelectedElementName] = useState("");
+    const clickHandler = (e: MouseEvent<HTMLDivElement> | KeyboardEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        const target = e.target as HTMLElement;
+        const name =
+            target.tagName === "BUTTON" ? target.getAttribute("name") : target.parentElement?.getAttribute("name");
+        if (name) {
+            onChange(name);
+            setSelectedElementName(name);
+        }
+    };
+
+    const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            clickHandler(e);
+        }
+    };
+
     return (
-        <div className={classNames("segmentedControl", className)}>
-            <Label labelText="Label" required />
-            <div className="segmentedControl__wrapper">
-                <button
-                    type="button"
-                    className="segmentedControl__block segmentedControl__block_size_large segmentedControl__block_icon_before segmentedControl__block_selected"
-                >
-                    <TagOutline />
-                    <span className="segmentedControl__text">Button</span>
-                </button>
-                <button
-                    type="button"
-                    className="segmentedControl__block segmentedControl__block_size_large segmentedControl__block_icon_before"
-                >
-                    <span className="segmentedControl__text">Button</span>
-                </button>
-                <button type="button" className="segmentedControl__block segmentedControl__block_size_large">
-                    <TagOutline />
-                    <span className="segmentedControl__text">Button</span>
-                </button>
-                <button type="button" className="segmentedControl__block segmentedControl__block_size_large">
-                    <span className="segmentedControl__text">Button</span>
-                </button>
-                <button
-                    type="button"
-                    className="segmentedControl__block segmentedControl__block_size_large segmentedControl__block_icon_after segmentedControl__block_selected"
-                    disabled
-                >
-                    <TagOutline />
-                    <span className="segmentedControl__text">Button</span>
-                </button>
+        <div className="segmentedControl">
+            <Label labelText={label} required />
+            <div
+                className="segmentedControl__wrapper"
+                onClick={clickHandler}
+                onKeyDown={onKeyDown}
+                tabIndex={0}
+                aria-label="segmented control"
+                role="button"
+            >
+                {Children.map(children, (el) => {
+                    return cloneElement(el, {
+                        ...props,
+                        ...el.props,
+                        isSelected: selectedElementName ? selectedElementName === el.props.name : el.props.isSelected
+                    });
+                })}
             </div>
-            <HelperText text="Helper text" />
+            {helperText && <HelperText text={helperText} />}
         </div>
     );
 };
