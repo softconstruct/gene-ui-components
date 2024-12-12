@@ -28,16 +28,17 @@ describe("Tag ", () => {
         expect(setup.find(".tag__text").contains(tagText)).toBeTruthy();
     });
 
-    it("renders passed state correctly", () => {
-        expect(setup.find(".tag_state_rest").exists()).toBeTruthy();
-        const wrapper = setup.setProps({ state: "error" });
-        expect(wrapper.find(".tag_state_error").exists()).toBeTruthy();
-    });
+    it.each<ITagProps["state"]>(["rest", "error", "warning", "disabled"])(
+        "should render %s state correctly",
+        (state) => {
+            const wrapper = setup.setProps({ state });
+            expect(wrapper.find(`.tag_state_${state}`).exists()).toBeTruthy();
+        }
+    );
 
-    it("renders passed size correctly", () => {
-        expect(setup.find(".tag_size_medium").exists()).toBeTruthy();
-        const wrapper = setup.setProps({ size: "small" });
-        expect(wrapper.find(".tag_size_small").exists()).toBeTruthy();
+    it.each<ITagProps["size"]>(["medium", "small"])("should render %s size correctly", (size) => {
+        const wrapper = setup.setProps({ size });
+        expect(wrapper.find(`.tag_size_${size}`).exists()).toBeTruthy();
     });
 
     it("renders with icon", () => {
