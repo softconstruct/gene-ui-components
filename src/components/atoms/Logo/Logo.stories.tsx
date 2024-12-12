@@ -11,11 +11,15 @@ const meta: Meta<typeof Logo> = {
     title: "Atoms/Logo",
     component: Logo,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance })
-        // fill Logo component argTypes
+        className: args({ control: "false", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
+        type: args({ control: "select", ...propCategory.states }),
+        appearance: args({ control: "select", ...propCategory.appearance })
     },
     args: {
-        // fill Logo component args
+        size: "medium",
+        type: "logotype",
+        appearance: "brand"
     } as ILogoProps
 };
 
@@ -24,5 +28,10 @@ export default meta;
 const Template: FC<ILogoProps> = (props) => <Logo {...props} />;
 
 export const Default = Template.bind({});
+
+export const LogoMark = Template.bind({});
+LogoMark.args = {
+    type: "logomark"
+} as ILogoProps;
 
 Default.args = {} as ILogoProps;
