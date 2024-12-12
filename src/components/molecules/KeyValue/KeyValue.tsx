@@ -90,7 +90,7 @@ const valueComponent = (value: IKeyValueProps["value"], size: IKeyValueProps["si
     }
 
     if (typeof value === "string") {
-        return <span>{value}</span>;
+        return <span className="keyValue__value">{value}</span>;
     }
 
     const Icon = value as FC<IconProps>;
@@ -111,10 +111,10 @@ const KeyValue: FC<IKeyValueProps> = ({
     size = "medium"
 }) => {
     return (
-        <div className={classNames("keyValue", className, direction, size)}>
-            <div>
+        <div className={classNames(`keyValue keyValue_${direction} keyValue_${size}`, className)}>
+            <div className="keyValue__content">
                 {IconBefore && <IconBefore size={iconSize[size]} />}
-                <span>{title}</span>
+                <span className="keyValue__title">{title}</span>
                 {iconInfo && <Info {...iconInfo} size={infoSize[size]} />}
             </div>
             {valueComponent(value, size)}
