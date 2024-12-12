@@ -28,29 +28,23 @@ describe("Tag ", () => {
         expect(setup.find(".tag__text").contains(tagText)).toBeTruthy();
     });
 
-    it.each<ITagProps["state"]>(["rest", "error", "warning", "disabled"])(
-        "should render %s state correctly",
-        (state) => {
-            const wrapper = setup.setProps({ state });
-            expect(wrapper.find(`.tag_state_${state}`).exists()).toBeTruthy();
-        }
-    );
+    it.each<ITagProps["state"]>(["rest", "error", "warning", "disabled"])("should have %s state", (state) => {
+        const wrapper = setup.setProps({ state });
+        expect(wrapper.find(`.tag_state_${state}`).exists()).toBeTruthy();
+    });
 
-    it.each<ITagProps["size"]>(["medium", "small"])("should render %s size correctly", (size) => {
+    it.each<ITagProps["size"]>(["medium", "small"])("should have %s size", (size) => {
         const wrapper = setup.setProps({ size });
         expect(wrapper.find(`.tag_size_${size}`).exists()).toBeTruthy();
     });
 
-    it("renders with icon", () => {
+    it("renders withIcon prop correctly", () => {
         expect(setup.find(".tag__icon").exists()).toBeTruthy();
-    });
-
-    it("renders without icon", () => {
         const wrapper = setup.setProps({ withIcon: false });
         expect(wrapper.find(".tag__icon").exists()).toBeFalsy();
     });
 
-    it("should call onClose when close button is pressed", () => {
+    it("handles close button's click", () => {
         setup.find(".tag__button .button_icon_only").simulate("click");
         expect(mockFn).toHaveBeenCalled();
     });
