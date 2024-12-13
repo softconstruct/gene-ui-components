@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Meta } from "@storybook/react";
 
-import { Globe } from "@geneui/icons";
+import { Globe, WarningFill } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -25,9 +25,7 @@ const meta: Meta<typeof KeyValue> = {
         IconBefore: Globe,
         title: "Title",
         iconInfo: { infoText: "Info text" },
-        // value: "Value",
-        // value: WarningFill,
-        value: { text: "Pill", isFill: true },
+        value: "Description",
         direction: "vertical",
         size: "medium"
     } as IKeyValueProps
@@ -40,3 +38,11 @@ const Template: FC<IKeyValueProps> = (props) => <KeyValue {...props} />;
 export const Default = Template.bind({});
 
 Default.args = {} as IKeyValueProps;
+
+export const WithPillValue = Template.bind({});
+
+WithPillValue.args = { value: { text: "Pill", isFill: true } } as IKeyValueProps;
+
+export const WithIconValue = Template.bind({});
+
+WithIconValue.args = { value: WarningFill } as IKeyValueProps;
