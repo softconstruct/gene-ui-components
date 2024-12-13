@@ -3,12 +3,12 @@ import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
 
-// Styles
-import "./KeyValue.scss";
-
 // Components
 import Pill, { IPillProps } from "../../atoms/Pill";
 import Info, { IInfoProps } from "../../atoms/Info";
+
+// Styles
+import "./KeyValue.scss";
 
 interface IKeyValueProps {
     /**
