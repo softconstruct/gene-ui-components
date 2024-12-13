@@ -113,7 +113,7 @@ const KeyValue: FC<IKeyValueProps> = ({
     return (
         <div className={classNames(`keyValue keyValue_${direction} keyValue_${size}`, className)}>
             <div className="keyValue__content">
-                {KeyIcon && <KeyIcon size={iconSize[size]} />}
+                {KeyIcon && <KeyIcon size={iconSize[size]} className="keyValue__icon" />}
                 <span className="keyValue__title">{title}</span>
                 {iconInfo && <Info {...iconInfo} size={infoSize[size]} />}
             </div>
