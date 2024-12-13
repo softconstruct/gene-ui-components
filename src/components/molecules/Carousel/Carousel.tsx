@@ -1,6 +1,6 @@
 import React, { FC, JSX, useState } from "react";
 import classNames from "classnames";
-import { ChevronLeft, ChevronRight, Dot } from "@geneui/icons";
+import { ChevronLeft, ChevronRight } from "@geneui/icons";
 
 // Styles
 import "./Carousel.scss";
@@ -14,8 +14,8 @@ interface ICarouselProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    direction?: "vertical" | "horizontal";
-    size?: "large" | "medium" | "small";
+    direction?: "horizontal" | "vertical";
+    size?: "large" | "small";
     children?: JSX.Element[];
     // fill Carousel component props interface
 }
@@ -32,13 +32,27 @@ const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "h
         setSelectedIndex((prev) => (prev === children.length - 1 ? children.length - 1 : prev + 1));
 
     return (
-        <div className={classNames("carousel", className, direction, size)}>
-            <Button Icon={ChevronLeft} appearance="secondary" onClick={onPrevClick} />
+        <div className={classNames(`carousel carousel_${size} carousel_${direction}`, className)}>
+            <Button
+                className="carousel__button carousel__button_back"
+                Icon={ChevronLeft}
+                appearance="secondary"
+                onClick={onPrevClick}
+            />
             {children[selectedIndex]}
-            <Button Icon={ChevronRight} appearance="secondary" onClick={onNextClick} />
-            <div>
+            <Button
+                className="carousel__button carousel__button_forward"
+                Icon={ChevronRight}
+                appearance="secondary"
+                onClick={onNextClick}
+            />
+            <div className="carousel__dots">
                 {Array.from(Array(count).keys()).map((index) => (
-                    <Dot key={index} />
+                    // todo: add 'carousel__dot_small' for small dots
+                    <span
+                        key={index}
+                        className={`carousel__dot ${index === selectedIndex ? "carousel__dot_active" : ""}`}
+                    />
                 ))}
             </div>
         </div>
