@@ -13,7 +13,7 @@ const meta: Meta<typeof SegmentedControl> = {
     title: "Atoms/SegmentedControl",
     component: SegmentedControl,
     argTypes: {
-        disabled: args({ control: "boolean", ...propCategory.states }),
+        disabled: args({ control: "false", ...propCategory.states }),
         iconBefore: args({ control: "boolean", ...propCategory.states }),
         helperText: args({ control: "text", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
@@ -61,3 +61,16 @@ const WithoutText: FC<ISegmentedControlProps> = (props) => {
     );
 };
 export const OnlyIcon = WithoutText.bind({});
+
+const WithoutIcons: FC<ISegmentedControlProps> = (props) => {
+    return (
+        <SegmentedControl {...props}>
+            <Control name="data1">Data1</Control>
+            <Control name="data2" isSelected>
+                Data2
+            </Control>
+            <Control name="data3">Data3 </Control>
+        </SegmentedControl>
+    );
+};
+export const OnlyText = WithoutIcons.bind({});

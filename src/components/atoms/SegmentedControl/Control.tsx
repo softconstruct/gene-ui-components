@@ -21,14 +21,14 @@ const Control: FC<IGlobalProps> = ({
             name={name}
             type="button"
             className={classNames(`segmentedControl__block segmentedControl__block_size_${size}`, {
-                segmentedControl__block_icon_before: Icon && iconBefore,
-                segmentedControl__block_icon_after: Icon && !iconBefore,
+                segmentedControl__block_icon_before: Icon && children && iconBefore,
+                segmentedControl__block_icon_after: Icon && children && !iconBefore,
                 segmentedControl__block_icon_only: Icon && !children,
                 segmentedControl__block_selected: isSelected
             })}
             disabled={disabled}
         >
-            {Icon && <Icon />}
+            {Icon && <Icon size={16} />}
             {children && <span className="segmentedControl__text">{children}</span>}
         </button>
     );

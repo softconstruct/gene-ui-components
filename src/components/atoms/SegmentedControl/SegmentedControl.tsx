@@ -88,7 +88,7 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({ children, onChange, help
                 className="segmentedControl__wrapper"
                 onClick={clickHandler}
                 onKeyDown={onKeyDown}
-                tabIndex={0}
+                tabIndex={-1}
                 aria-label="segmented control"
                 role="button"
             >
