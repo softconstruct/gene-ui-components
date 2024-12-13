@@ -36,13 +36,11 @@ export default meta;
 const Template: FC<IKeyValueProps> = (props) => <KeyValue {...props} />;
 
 export const Default = Template.bind({});
-
 Default.args = {} as IKeyValueProps;
 
 export const WithPillValue = Template.bind({});
-
-WithPillValue.args = { value: { text: "Pill", isFill: true } } as IKeyValueProps;
+WithPillValue.args = { value: { text: "Any text", isFill: true } } as IKeyValueProps;
+WithPillValue.argTypes = { value: args({ control: "object", ...propCategory.content }) } as IKeyValueProps;
 
 export const WithIconValue = Template.bind({});
-
 WithIconValue.args = { value: WarningFill } as IKeyValueProps;
