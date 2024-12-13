@@ -11,6 +11,7 @@ import React, {
 import "./SegmentedControl.scss";
 
 // Component
+import { IconProps } from "@geneui/icons";
 import { HelperText, Label } from "../../../index";
 
 // Types
@@ -34,6 +35,30 @@ interface ISegmentedControlProps extends Omit<IGlobalProps, "name" | "children" 
      * Works when the user clicks on one of the buttons. Returns the value that was written as a name in the Control component.
      */
     onChange: (name: string) => void;
+
+    // TODO:remove duplicate types after tests
+    /**
+     * The `Icon` prop accepts a React Functional Component that will be displayed alongside the button text.
+     */
+    Icon?: FC<IconProps>;
+    /**
+     * Size <br>
+     * Possible values: `large | medium | small`
+     */
+    size?: "large" | "medium" | "small";
+    /**
+     * Icon position <br>
+     * If the prop is `true` the `Icon` will be shown before  the `text` otherwise after   the `text`.
+     */
+    iconBefore?: boolean;
+    /**
+     * Indicates whether the `button` is `disabled`, preventing user interaction, focus, click etc...
+     */
+    disabled?: boolean;
+    /**
+     *Displays the selected item
+     */
+    isSelected?: boolean;
 }
 
 const SegmentedControl: FC<ISegmentedControlProps> = ({ children, onChange, helperText, label, ...props }) => {

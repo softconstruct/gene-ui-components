@@ -8,7 +8,6 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 // Components
 import SegmentedControl, { ISegmentedControlProps } from "./index";
 import Control from "./Control";
-import { IGlobalProps } from "./types";
 
 const meta: Meta<typeof SegmentedControl> = {
     title: "Atoms/SegmentedControl",
@@ -19,6 +18,7 @@ const meta: Meta<typeof SegmentedControl> = {
         helperText: args({ control: "text", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         label: args({ control: "text", ...propCategory.appearance }),
+        isSelected: args({ control: false, ...propCategory.appearance }),
         Icon: args({ control: false, ...propCategory.content }),
         children: args({ control: false, ...propCategory.content }),
         onChange: args({ control: false, ...propCategory.action })
@@ -30,7 +30,7 @@ const meta: Meta<typeof SegmentedControl> = {
         iconBefore: true,
         isSelected: true,
         size: "medium"
-    } as IGlobalProps & ISegmentedControlProps
+    } as ISegmentedControlProps
 };
 
 export default meta;
@@ -49,13 +49,7 @@ const Template: FC<ISegmentedControlProps> = (props) => {
 
 export const Default = Template.bind({});
 
-Default.args = {
-    id: "default-id",
-    className: "default-class",
-    style: { backgroundColor: "lightgray" },
-    label: "Default Label",
-    helperText: "Default Helper Text"
-};
+Default.args = {};
 
 const WithoutText: FC<ISegmentedControlProps> = (props) => {
     return (

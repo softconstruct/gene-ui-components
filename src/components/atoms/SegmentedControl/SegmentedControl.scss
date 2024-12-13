@@ -22,19 +22,16 @@
         border-style: var(--guit-ref-border-style-solid);
         cursor: pointer;
         user-select: none;
+        border-color: var(--guit-sem-color-border-neutral-2);
+        background-color: var(--guit-sem-color-background-transparent-1);
+        color: var(--guit-sem-color-foreground-neutral-2);
 
-        &:not(&#{ $this }_selected) {
-            border-color: var(--guit-sem-color-border-neutral-2);
-            background-color: var(--guit-sem-color-background-transparent-1);
-            color: var(--guit-sem-color-foreground-neutral-2);
+        &:hover {
+            background-color: var(--guit-sem-color-background-transparent-1-hover);
+        }
 
-            &:hover {
-                background-color: var(--guit-sem-color-background-transparent-1-hover);
-            }
-
-            &:active {
-                background-color: var(--guit-sem-color-background-transparent-1-pressed);
-            }
+        &:active {
+            background-color: var(--guit-sem-color-background-transparent-1-pressed);
         }
 
         &:focus-visible {
@@ -68,13 +65,13 @@
                 }
 
                 &_medium {
-                    border-start-start-radius: var(--guit-ref-radius-3xsmall);
-                    border-end-start-radius: var(--guit-ref-radius-3xsmall);
+                    border-start-end-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-end-radius: var(--guit-ref-radius-3xsmall);
                 }
 
                 &_small {
-                    border-start-start-radius: var(--guit-ref-radius-3xsmall);
-                    border-end-start-radius: var(--guit-ref-radius-3xsmall);
+                    border-start-end-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-end-radius: var(--guit-ref-radius-3xsmall);
                 }
             }
         }
