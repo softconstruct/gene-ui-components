@@ -12,7 +12,8 @@ const meta: Meta<typeof Tag> = {
     component: Tag,
     argTypes: {
         className: args({ control: false, ...propCategory.appearance }),
-        state: args({ control: "select", ...propCategory.appearance }),
+        type: args({ control: "select", ...propCategory.appearance }),
+        isDisabled: args({ control: "boolean", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         withIcon: args({ control: "boolean", ...propCategory.appearance }),
         text: args({ control: "text", ...propCategory.content }),

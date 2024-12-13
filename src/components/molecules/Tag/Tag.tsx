@@ -2,17 +2,16 @@ import React, { FC } from "react";
 import classNames from "classnames";
 import { Close, TagOutline, WarningFill, ErrorAlertFill } from "@geneui/icons";
 
-// Styles
-import "./Tag.scss";
-
 // Components
 import Button from "../../atoms/Button/Button";
+
+// Styles
+import "./Tag.scss";
 
 const icons = {
     rest: TagOutline,
     warning: WarningFill,
-    error: ErrorAlertFill,
-    disabled: TagOutline
+    error: ErrorAlertFill
 };
 
 interface ITagProps {
@@ -21,10 +20,14 @@ interface ITagProps {
      */
     text: string;
     /**
-     * Tag state <br/>
-     * Possible values: `rest | error | warning | disabled`
+     * Tag type <br/>
+     * Possible values: `rest | error | warning`
      */
-    state?: "rest" | "error" | "warning" | "disabled";
+    type?: "rest" | "error" | "warning";
+    /**
+     * Disables tag
+     */
+    isDisabled?: boolean;
     /**
      * Tag size <br/>
      * Possible values: `medium | small`
@@ -48,14 +51,23 @@ interface ITagProps {
 /**
  * Tag is used to label, categorize, and organize content within an interface. It can be used to highlight keywords, topics, or attributes related to an item. Tags enhance user navigation and search functionality by providing a quick way to filter and identify relevant information.
  */
-const Tag: FC<ITagProps> = ({ className, text, state = "rest", size = "medium", withIcon = true, onClose }) => {
-    const Icon = icons[state];
+const Tag: FC<ITagProps> = ({
+    className,
+    text,
+    type = "rest",
+    isDisabled,
+    size = "medium",
+    withIcon = true,
+    onClose
+}) => {
+    const Icon = icons[type];
     return (
         <div
             className={classNames(
                 "tag",
-                `tag_state_${state}`,
                 `tag_size_${size}`,
+                { [`tag_state_${type}`]: !isDisabled },
+                { tag_state_disabled: isDisabled },
                 { tag_withIcon: withIcon },
                 className
             )}
@@ -69,7 +81,7 @@ const Tag: FC<ITagProps> = ({ className, text, state = "rest", size = "medium", 
                 Icon={Close}
                 size={size}
                 onClick={onClose}
-                disabled={state === "disabled"}
+                disabled={isDisabled}
             />
         </div>
     );

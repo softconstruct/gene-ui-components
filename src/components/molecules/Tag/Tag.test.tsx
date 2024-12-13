@@ -3,6 +3,7 @@ import { ReactWrapper, mount } from "enzyme";
 
 // Components
 import Tag, { ITagProps } from "./index";
+import Button from "../../atoms/Button/Button";
 
 const tagText = "tag";
 
@@ -28,9 +29,14 @@ describe("Tag ", () => {
         expect(setup.find(".tag__text").contains(tagText)).toBeTruthy();
     });
 
-    it.each<ITagProps["state"]>(["rest", "error", "warning", "disabled"])("should have %s state", (state) => {
-        const wrapper = setup.setProps({ state });
-        expect(wrapper.find(`.tag_state_${state}`).exists()).toBeTruthy();
+    it.each<ITagProps["type"]>(["rest", "error", "warning"])("should have %s state", (type) => {
+        const wrapper = setup.setProps({ type });
+        expect(wrapper.find(`.tag_state_${type}`).exists()).toBeTruthy();
+    });
+
+    it("renders isDisabled prop correctly", () => {
+        const wrapper = setup.setProps({ isDisabled: true });
+        expect(wrapper.find(".tag_state_disabled").exists()).toBeTruthy();
     });
 
     it.each<ITagProps["size"]>(["medium", "small"])("should have %s size", (size) => {
@@ -45,7 +51,7 @@ describe("Tag ", () => {
     });
 
     it("handles close button's click", () => {
-        setup.find(".tag__button .button_icon_only").simulate("click");
+        setup.find(Button).simulate("click");
         expect(mockFn).toHaveBeenCalled();
     });
 });
