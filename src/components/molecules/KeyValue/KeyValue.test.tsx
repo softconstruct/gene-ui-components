@@ -27,7 +27,7 @@ describe("KeyValue ", () => {
     });
 
     it("renders IconBefore prop correctly", () => {
-        const wrapper = setup.setProps({ IconBefore: Globe });
+        const wrapper = setup.setProps({ KeyIcon: Globe });
         expect(wrapper.find(Globe).exists()).toBeTruthy();
     });
 

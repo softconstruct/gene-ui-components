@@ -19,7 +19,7 @@ interface IKeyValueProps {
     /**
      * Icon before title in the key
      */
-    IconBefore?: FC<IconProps>;
+    KeyIcon?: FC<IconProps>;
     /**
      * Key title
      */
@@ -102,7 +102,7 @@ const valueComponent = (value: IKeyValueProps["value"], size: IKeyValueProps["si
  * Key Value components present data in a key-value format, typically used to display information obtained from other components. A common use case is setting up a Key Value component to show detailed information from a selected table row.
  */
 const KeyValue: FC<IKeyValueProps> = ({
-    IconBefore,
+    KeyIcon,
     title,
     iconInfo,
     value,
@@ -113,7 +113,7 @@ const KeyValue: FC<IKeyValueProps> = ({
     return (
         <div className={classNames(`keyValue keyValue_${direction} keyValue_${size}`, className)}>
             <div className="keyValue__content">
-                {IconBefore && <IconBefore size={iconSize[size]} />}
+                {KeyIcon && <KeyIcon size={iconSize[size]} />}
                 <span className="keyValue__title">{title}</span>
                 {iconInfo && <Info {...iconInfo} size={infoSize[size]} />}
             </div>
