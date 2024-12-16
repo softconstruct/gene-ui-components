@@ -16,7 +16,7 @@ const meta: Meta<typeof KeyValue> = {
         className: args({ control: false, ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
-        KeyIcon: args({ control: false, ...propCategory.content }),
+        KeyIcon: args({ control: "object", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),
         iconInfo: args({ control: "object", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content })
