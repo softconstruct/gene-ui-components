@@ -60,7 +60,7 @@ const Tag: FC<ITagProps> = ({
     withIcon = true,
     onClose
 }) => {
-    const Icon = isDisabled ? icons.rest : icons[type];
+    const Icon = icons[type];
     return (
         <div
             className={classNames(
