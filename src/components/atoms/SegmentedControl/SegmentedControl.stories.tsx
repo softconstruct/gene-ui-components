@@ -14,21 +14,19 @@ const meta: Meta<typeof SegmentedControl> = {
     component: SegmentedControl,
     argTypes: {
         disabled: args({ control: "false", ...propCategory.states }),
-        iconBefore: args({ control: "boolean", ...propCategory.states }),
-        helperText: args({ control: "text", ...propCategory.appearance }),
+        selected: args({ control: false, ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
-        label: args({ control: "text", ...propCategory.appearance }),
-        isSelected: args({ control: false, ...propCategory.appearance }),
         Icon: args({ control: false, ...propCategory.content }),
         children: args({ control: false, ...propCategory.content }),
+        helperText: args({ control: "text", ...propCategory.content }),
+        label: args({ control: "text", ...propCategory.content }),
+        infoText: args({ control: "text", ...propCategory.content }),
         onChange: args({ control: false, ...propCategory.action })
     },
     args: {
         disabled: false,
         helperText: "helperText",
         label: "label",
-        iconBefore: true,
-        isSelected: true,
         size: "medium"
     } as ISegmentedControlProps
 };

@@ -42,15 +42,6 @@ describe("SegmentedControl ", () => {
 
         expect(wrapper.find(Icon).exists()).toBeTruthy();
     });
-    it("renders iconBefore prop correctly", () => {
-        const Icon = TagOutline;
-        const wrapper = setup.setProps({
-            iconBefore: true,
-            Icon
-        });
-
-        expect(wrapper.find(Control).find(".segmentedControl__block_icon_before").exists()).toBeTruthy();
-    });
 
     it("renders isSelected prop correctly", () => {
         const children = <Control name="test" isSelected />;
@@ -64,6 +55,14 @@ describe("SegmentedControl ", () => {
             label
         });
         expect(wrapper.find(Label).find(".label__text").text()).toBe(label);
+    });
+
+    it("renders infoText prop correctly", () => {
+        const infoText = "test";
+        const wrapper = setup.setProps({
+            infoText
+        });
+        expect(wrapper.find(Label).props().infoText).toBe(infoText);
     });
 
     it.each<"large" | "medium" | "small">(["large", "medium", "small"])("should have %p size", (size) => {
