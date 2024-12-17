@@ -14,7 +14,6 @@ const meta: Meta<typeof SegmentedControl> = {
     component: SegmentedControl,
     argTypes: {
         disabled: args({ control: "false", ...propCategory.states }),
-        iconBefore: args({ control: "boolean", ...propCategory.states }),
         selected: args({ control: false, ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         Icon: args({ control: false, ...propCategory.content }),
@@ -28,7 +27,6 @@ const meta: Meta<typeof SegmentedControl> = {
         disabled: false,
         helperText: "helperText",
         label: "label",
-        iconBefore: true,
         size: "medium"
     } as ISegmentedControlProps
 };
