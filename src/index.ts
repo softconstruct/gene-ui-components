@@ -11,6 +11,7 @@ export { default as Button, IButtonProps } from "./components/atoms/Button";
 // Molecules
 export { default as Tooltip } from "./components/molecules/Tooltip";
 export { default as ProgressBar } from "./components/molecules/ProgressBar";
+export { default as KeyValue } from "./components/molecules/KeyValue";
 
 // Organisms
 
