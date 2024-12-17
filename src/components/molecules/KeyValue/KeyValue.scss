@@ -2,8 +2,16 @@
     $this: &;
 
     display: inline-flex;
-    align-items: flex-start;
     max-width: 100%;
+
+    &_horizontal {
+        #{ $this }__content_align_top {
+            align-items: flex-start;
+        }
+        #{ $this }__content_align_center {
+            align-items: center;
+        }
+    }
 
     &_vertical {
         flex-direction: column;
@@ -64,7 +72,7 @@
         #{ $this }__title,
         #{ $this }__value {
             font-family: var(--guit-sem-font-label-small-default-medium-font-family);
-            font-weight: var(--guit-sem-font-label-large-default-medium-font-weight);
+            font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
             font-size: var(--guit-sem-font-label-small-default-medium-font-size);
             line-height: var(--guit-sem-font-label-small-default-medium-line-height);
         }
