@@ -1,17 +1,20 @@
 .carousel {
     $this: &;
 
-    max-width: 100%;
-    aspect-ratio: 2 / 1;
+    display: grid;
+    height: 100%;
+    width: 100%;
     position: relative;
     overflow: hidden;
 
     &_large {
-        width: 72rem;
+        min-height: 28rem;
+        max-height: 52rem;
     }
 
     &_small {
-        width: 30.4rem;
+        min-height: 12rem;
+        max-height: 24rem;
     }
 
     &_horizontal {

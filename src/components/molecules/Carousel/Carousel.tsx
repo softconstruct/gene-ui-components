@@ -77,7 +77,10 @@ const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "h
                 appearance="secondary"
                 onClick={onPrevClick}
             />
+
+            {/* todo: add 'height: 100%;' to the first level child element */}
             {children[selectedIndex]}
+
             <Button
                 className="carousel__button carousel__button_forward"
                 Icon={ChevronRight}
