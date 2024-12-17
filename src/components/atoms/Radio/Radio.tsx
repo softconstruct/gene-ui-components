@@ -1,5 +1,5 @@
 import React, { ChangeEvent, FC, useEffect, useRef, FocusEvent, useState } from "react";
-import { CheckMark, MinusOutline } from "@geneui/icons";
+import { Dot } from "@geneui/icons";
 import classNames from "classnames";
 
 // Components
@@ -11,35 +11,35 @@ import "./Radio.scss";
 
 interface IRadioProps {
     /**
-     *  The text displayed as the label for the checkbox, describing its purpose or function.
+     *  The text displayed as the label for the radio, describing its purpose or function.
      */
     label?: string;
     /**
-     *  Toggles the label's and HelperText position between above or beside the checkbox.
+     *  Toggles the label's and HelperText position between above or beside the radio.
      */
     vertical?: boolean;
     /**
-     *  Specifies whether the checkbox is mandatory for completing a form.
+     *  Specifies whether the radio is mandatory for completing a form.
      */
     required?: boolean;
     /**
-     *  Disables the checkbox, preventing it from being interacted with.
+     *  Disables the radio, preventing it from being interacted with.
      */
     disabled?: boolean;
     /**
-     *  Displays the checkbox as read-only, where users cannot modify its value.
+     *  Displays the radio as read-only, where users cannot modify its value.
      */
     readOnly?: boolean;
     /**
-     *  Activates a visual state indicating partial selection within a checkbox group.
+     *  Activates a visual state indicating partial selection within a radio group.
      */
     indeterminate?: boolean;
     /**
-     *  Manages the checked state of the checkbox in a controlled way.
+     *  Manages the checked state of the radio in a controlled way.
      */
     checked?: boolean;
     /**
-     *  Automatically focuses the checkbox when the component mounts.
+     *  Automatically focuses the radio when the component mounts.
      */
     autoFocus?: boolean;
     /**
@@ -47,33 +47,33 @@ interface IRadioProps {
      */
     infoText?: string;
     /**
-     *  Helper text to provide context or explain any errors, warnings related to the checkbox.
+     *  Helper text to provide context or explain any errors, warnings related to the radio.
      */
     helperText?: string;
     /**
-     *  The initial checked state of the checkbox before user interaction.
+     *  The initial checked state of the radio before user interaction.
      */
     defaultChecked?: boolean;
     /**
-     *  Determines the checkboxes appearance based on its status.<br>
+     *  Determines the radioes appearance based on its status.<br>
      *  Possible values: `rest | warning | error`
      */
     type?: "rest" | "warning" | "error";
     /**
      *  HTML name attribute for the input element.<br>
-     *  A unique identifier for the checkbox within a form.
+     *  A unique identifier for the radio within a form.
      */
     name?: string;
     /**
-     *  Fires when the user changes the checkbox state. Provides the change event as a callback's argument.
+     *  Fires when the user changes the radio state. Provides the change event as a callback's argument.
      */
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     /**
-     *  Event handler for when the checkbox input element loses focus. Provides the focus event as a callback's argument.
+     *  Event handler for when the radio input element loses focus. Provides the focus event as a callback's argument.
      */
     onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
     /**
-     *  Event handler for when the checkbox input element receives focus. Provides the focus event as a callback's argument.
+     *  Event handler for when the radio input element receives focus. Provides the focus event as a callback's argument.
      */
     onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
     /**
@@ -84,7 +84,7 @@ interface IRadioProps {
 }
 
 /**
- * Checkbox component allows users to select one or more options from a set of choices. Each checkbox can be either checked or unchecked, indicating a binary state. Checkboxes are commonly used in forms, settings, and lists where multiple selections are needed.
+ * radio component allows users to select one or more options from a set of choices. Each radio can be either checked or unchecked, indicating a binary state. radioes are commonly used in forms, settings, and lists where multiple selections are needed.
  */
 const Radio: FC<IRadioProps> = ({
     label,
@@ -129,12 +129,12 @@ const Radio: FC<IRadioProps> = ({
     return (
         <div
             className={classNames(
-                "checkbox ",
-                `checkbox_${type}`,
+                "radio ",
+                `radio_${type}`,
                 {
-                    checkbox_disabled: disabled,
-                    checkbox_readOnly: readOnly,
-                    checkbox_labelTop: vertical
+                    radio_disabled: disabled,
+                    radio_readOnly: readOnly,
+                    radio_labelTop: vertical
                 },
                 className
             )}
@@ -142,17 +142,17 @@ const Radio: FC<IRadioProps> = ({
         >
             <Label
                 labelText={label}
-                className="checkbox__label"
+                className="radio__label"
                 required={required}
                 infoText={infoText}
                 disabled={disabled}
                 readOnly={readOnly}
             >
-                <span className="checkbox__imitationHolder">
-                    <span className="checkbox__imitationHolderInner">
+                <span className="radio__imitationHolder">
+                    <span className="radio__imitationHolderInner">
                         <input
-                            type="checkbox"
-                            className="checkbox__input"
+                            type="radio"
+                            className="radio__input"
                             onChange={onChangeHandler}
                             onFocus={onFocusHandler}
                             onBlur={onBlurHandler}
@@ -162,18 +162,14 @@ const Radio: FC<IRadioProps> = ({
                             {...(autoFocus && { autoFocus })}
                             {...((disabled || readOnly) && { tabIndex: -1 })}
                         />
-                        <span className="checkbox__imitation">
-                            {!checked ? (
-                                <MinusOutline className="checkbox__icon" size={16} />
-                            ) : (
-                                <CheckMark className="checkbox__icon" size={16} />
-                            )}
+                        <span className="radio__imitation">
+                            <Dot className="radio__icon" size={16} />
                         </span>
                     </span>
                 </span>
             </Label>
             {helperText && (
-                <div className="checkbox__infoContainer">
+                <div className="radio__infoContainer">
                     <HelperText text={helperText} isDisabled={disabled} type={type} />
                 </div>
             )}
