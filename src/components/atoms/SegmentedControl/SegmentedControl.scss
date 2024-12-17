@@ -215,6 +215,20 @@
                 background-color: var(--guit-sem-color-background-selected-2-pressed);
                 border-color: var(--guit-sem-color-background-selected-2-pressed);
             }
+
+            &:not(:first-child) {
+                &::before {
+                    content: "";
+                    display: block;
+                    position: absolute;
+                    top: -0.1rem;
+                    bottom: -0.1rem;
+                    inset-inline-start: -0.2rem;
+                    width: 0.1rem;
+                    background-color: var(--guit-sem-color-border-neutral-2);
+                    pointer-events: none;
+                }
+            }
         }
 
         &:disabled,
@@ -223,6 +237,14 @@
             border-color: var(--guit-sem-color-border-disabled-1);
             color: var(--guit-sem-color-foreground-disabled);
             pointer-events: none;
+
+            &#{ $this }_selected {
+                &:not(:first-child) {
+                    &::before {
+                        opacity: 0;
+                    }
+                }
+            }
         }
     }
 
