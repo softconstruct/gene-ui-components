@@ -4,6 +4,7 @@
     display: inline-flex;
     flex-direction: column;
     gap: var(--guit-ref-spacing-3xsmall);
+    max-width: 100%;
 
     &__wrapper {
         display: flex;
