@@ -7,8 +7,9 @@
 
     &__content {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: var(--guit-ref-spacing-3xsmall);
+        justify-content: flex-end;
     }
 
     &__item {
@@ -50,6 +51,9 @@
     }
 
     &__svg {
+        position: absolute;
+        top: 0;
+        left: 0;
         cursor: pointer;
 
         &:hover {

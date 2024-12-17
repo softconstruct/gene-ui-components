@@ -1,655 +1,234 @@
-import React, { FC } from "react";
-import classNames from "classnames";
+import React, { FC, MouseEvent, useLayoutEffect, useMemo, useState } from "react";
+
 // Styles
 import "./Rate.scss";
 import { HelperText, Label } from "../../../index";
 
+type Enumerate<N extends number, Acc extends number[] = []> = Acc["length"] extends N
+    ? Acc[number]
+    : Enumerate<N, [...Acc, Acc["length"]]>;
+
+export type IntRange<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>;
 interface IRateProps {
-    /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+    /*
+     * The default rating value is selected when the component is first rendered.
      */
-    className?: string;
-    // fill Rate component props interface
+    defaultValue?: number;
+
+    /**
+     * The currently selected rating value. Use this to control the component from the outside.<br>
+     * If this prop is used the component will lose default behavior related to rating state.
+     */
+    value?: number;
+    /**
+     * The number of rating elements to render.
+     * Start from 5 to 10.
+     */
+    count?: IntRange<5, 11>;
+
+    /**
+     * Allows users to select half values in the rating component, enabling finer granularity.<br>
+     * For example, if `count` is 5, users can select 1, 1.5, 2, 2.5, and so on up to 5.
+     */
+    halfAllow?: boolean;
+
+    /**
+     * When set to `true`, the rating component becomes read-only, preventing any interaction.
+     */
+    readonly?: boolean;
+
+    /**
+     * The size of the rating elements.<br>
+     * Possible values: `small | medium | big`
+     */
+    size?: "small" | "medium";
+
+    /**
+     * Callback function that is called when the rating value changes.<br>
+     * Receives the new rating value as an argument.
+     */
+    onChange?: (rating: number) => void;
 }
 
-const Rate: FC<IRateProps> = ({ className }) => {
+const calculatePosition = (position: number) => (position - Math.floor(position)) * 100;
+
+const Rate: FC<IRateProps> = (props) => {
+    const { readonly, halfAllow = true, defaultValue, value, onChange, size = "small", count = 5 } = props;
+
+    const isControlled = "value" in props;
+    const isDefaultValueExist = "defaultValue" in props;
+    const isRTLMode = document.dir === "rtl";
+    const currentValue = value || defaultValue || 0;
+    const [rating, setRating] = useState(currentValue);
+    const [hoveredValue, setHoveredValue] = useState(0);
+    const [regardingPosition, setRegardingPosition] = useState(0);
+    const [remainingRating, setRemainingRating] = useState(0);
+    const [temporaryRating, setTemporaryRating] = useState(0);
+    const [disableMouseMove, setDisableMouseMove] = useState(false);
+
+    const calculateRegardingPosition = (e: MouseEvent<HTMLElement>) => {
+        const { left, width } = e.currentTarget.getBoundingClientRect();
+        const getClientPosition = e.clientX - (isRTLMode ? left + width : left);
+
+        const getRelativeWidth = Math.abs((getClientPosition / width) * 100);
+
+        return halfAllow && getRelativeWidth <= 50 ? 50 : 100;
+    };
+    const mouseEnterHandler = () => {
+        setTemporaryRating(rating);
+    };
+
+    const ratingController = (currentRating: number, state: number, blockMouseMovie = true) => {
+        setHoveredValue(currentRating);
+        setRating(0);
+        setRemainingRating(calculatePosition(state));
+        setTemporaryRating((prev: number) => {
+            if (state !== prev) return state;
+            setHoveredValue(0);
+            setRating(currentValue);
+            setRemainingRating(calculatePosition(currentValue));
+            setDisableMouseMove(blockMouseMovie);
+            return currentValue;
+        });
+    };
+
+    const handleMouseMoveForElement = (e: MouseEvent<HTMLButtonElement>, currentRating: number) => {
+        if (readonly) return;
+        const regradingPosition = calculateRegardingPosition(e);
+        setRegardingPosition(regradingPosition);
+        if (disableMouseMove) return;
+        setHoveredValue(currentRating);
+    };
+
+    const mouseLeaveHandler = () => {
+        setHoveredValue(0);
+        setRegardingPosition(0);
+        setDisableMouseMove(false);
+        setRating(temporaryRating);
+    };
+
+    const getRating = (e: MouseEvent<HTMLButtonElement>, currentRating: number) => {
+        if (readonly) return;
+        setRegardingPosition(calculateRegardingPosition(e));
+        const selected = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
+
+        if (isControlled) {
+            setDisableMouseMove(true);
+            setHoveredValue(0);
+            setRating(selected);
+            onChange?.(selected);
+            return;
+        }
+
+        ratingController(currentRating, selected);
+    };
+
+    useLayoutEffect(() => {
+        if (isControlled || isDefaultValueExist) {
+            setRating(currentValue);
+            setTemporaryRating(currentValue);
+        }
+        const ratingDecimalParts = Math.round((currentValue % Math.floor(currentValue)) * 100);
+
+        if (ratingDecimalParts > 0) {
+            setRemainingRating(ratingDecimalParts);
+        }
+
+        if (currentValue < 1) {
+            setRemainingRating(Math.ceil(currentValue * 100));
+        }
+    }, [defaultValue, isDefaultValueExist, value, isControlled, currentValue]);
+
+    let elementsCount = 0;
+    if (count > 10) {
+        elementsCount = 10;
+    } else if (count < 5) {
+        elementsCount = 5;
+    } else {
+        elementsCount = count;
+    }
+
+    const elements = useMemo(() => new Array(elementsCount).fill(null), [count]);
+    /* eslint-disable react/no-array-index-key */
     return (
-        <div className={classNames("rate", className)}>
-            <Label labelText="Label" />
+        <div
+            className="rate"
+            onMouseLeave={mouseLeaveHandler}
+            onMouseEnter={mouseEnterHandler}
+            onBlur={() => setDisableMouseMove(false)}
+        >
+            <Label labelText="Label" size={size} />
             {/* STARS */}
             <div className="rate__content">
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__star rate__star_unfilled rate__star_color_default">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__starStroke"
-                                d="M11.9987 17.34C11.7787 17.34 11.5687 17.39 11.3687 17.5L6.84874 19.87L7.70874 14.84C7.78874 14.4 7.63874 13.96 7.31874 13.65L3.66874 10.09L8.71874 9.35998C9.15874 9.29998 9.53874 9.01998 9.73874 8.61998L11.9987 4.03998V2.34998C11.5187 2.34998 11.0387 2.59998 10.7887 3.09998L8.42874 7.87998L3.15874 8.64998C2.04874 8.80998 1.60874 10.17 2.40874 10.95L6.22874 14.67L5.32874 19.92C5.13874 21.02 6.29874 21.86 7.28874 21.34L12.0087 18.86V17.34H11.9987Z"
-                            />
-                            <path
-                                className="rate__starStroke"
-                                d="M12.01 17.34C12.23 17.34 12.44 17.39 12.64 17.5L17.16 19.87L16.3 14.84C16.22 14.4 16.37 13.96 16.69 13.65L20.34 10.09L15.29 9.35998C14.85 9.29998 14.47 9.01998 14.27 8.61998L12.01 4.03998V2.34998C12.49 2.34998 12.97 2.59998 13.22 3.09998L15.58 7.87998L20.85 8.64998C21.96 8.80998 22.4 10.17 21.6 10.95L17.78 14.67L18.68 19.92C18.87 21.02 17.71 21.86 16.72 21.34L12 18.86V17.34H12.01Z"
-                            />
-                            <path
-                                className="rate__starLeft"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C11.9998 2.34998 11.9995 2.34998 11.9993 2.34998C11.5175 2.34967 11.0356 2.60052 10.7878 3.10251L8.42987 7.88024L3.15735 8.64638C2.05005 8.80728 1.60791 10.168 2.40916 10.9491L6.2244 14.668L5.32374 19.9192C5.17402 20.7921 5.86803 21.501 6.65504 21.5004C6.86293 21.5006 7.07736 21.4513 7.28448 21.3424L11.9994 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                            <path
-                                className="rate__starRight"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C12.0002 2.34998 12.0005 2.34998 12.0007 2.34998C12.4825 2.34967 12.9644 2.60052 13.2122 3.10251L15.5701 7.88024L20.8427 8.64638C21.95 8.80728 22.3921 10.168 21.5908 10.9491L17.7756 14.668L18.6763 19.9192C18.826 20.7921 18.132 21.501 17.345 21.5004C17.1371 21.5006 16.9226 21.4513 16.7155 21.3424L12.0006 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__star rate__star_unfilled rate__star_color_orange">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__starStroke"
-                                d="M11.9987 17.34C11.7787 17.34 11.5687 17.39 11.3687 17.5L6.84874 19.87L7.70874 14.84C7.78874 14.4 7.63874 13.96 7.31874 13.65L3.66874 10.09L8.71874 9.35998C9.15874 9.29998 9.53874 9.01998 9.73874 8.61998L11.9987 4.03998V2.34998C11.5187 2.34998 11.0387 2.59998 10.7887 3.09998L8.42874 7.87998L3.15874 8.64998C2.04874 8.80998 1.60874 10.17 2.40874 10.95L6.22874 14.67L5.32874 19.92C5.13874 21.02 6.29874 21.86 7.28874 21.34L12.0087 18.86V17.34H11.9987Z"
-                            />
-                            <path
-                                className="rate__starStroke"
-                                d="M12.01 17.34C12.23 17.34 12.44 17.39 12.64 17.5L17.16 19.87L16.3 14.84C16.22 14.4 16.37 13.96 16.69 13.65L20.34 10.09L15.29 9.35998C14.85 9.29998 14.47 9.01998 14.27 8.61998L12.01 4.03998V2.34998C12.49 2.34998 12.97 2.59998 13.22 3.09998L15.58 7.87998L20.85 8.64998C21.96 8.80998 22.4 10.17 21.6 10.95L17.78 14.67L18.68 19.92C18.87 21.02 17.71 21.86 16.72 21.34L12 18.86V17.34H12.01Z"
-                            />
-                            <path
-                                className="rate__starLeft"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C11.9998 2.34998 11.9995 2.34998 11.9993 2.34998C11.5175 2.34967 11.0356 2.60052 10.7878 3.10251L8.42987 7.88024L3.15735 8.64638C2.05005 8.80728 1.60791 10.168 2.40916 10.9491L6.2244 14.668L5.32374 19.9192C5.17402 20.7921 5.86803 21.501 6.65504 21.5004C6.86293 21.5006 7.07736 21.4513 7.28448 21.3424L11.9994 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                            <path
-                                className="rate__starRight"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C12.0002 2.34998 12.0005 2.34998 12.0007 2.34998C12.4825 2.34967 12.9644 2.60052 13.2122 3.10251L15.5701 7.88024L20.8427 8.64638C21.95 8.80728 22.3921 10.168 21.5908 10.9491L17.7756 14.668L18.6763 19.9192C18.826 20.7921 18.132 21.501 17.345 21.5004C17.1371 21.5006 16.9226 21.4513 16.7155 21.3424L12.0006 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__star rate__star_half rate__star_color_default">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__starStroke"
-                                d="M11.9987 17.34C11.7787 17.34 11.5687 17.39 11.3687 17.5L6.84874 19.87L7.70874 14.84C7.78874 14.4 7.63874 13.96 7.31874 13.65L3.66874 10.09L8.71874 9.35998C9.15874 9.29998 9.53874 9.01998 9.73874 8.61998L11.9987 4.03998V2.34998C11.5187 2.34998 11.0387 2.59998 10.7887 3.09998L8.42874 7.87998L3.15874 8.64998C2.04874 8.80998 1.60874 10.17 2.40874 10.95L6.22874 14.67L5.32874 19.92C5.13874 21.02 6.29874 21.86 7.28874 21.34L12.0087 18.86V17.34H11.9987Z"
-                            />
-                            <path
-                                className="rate__starStroke"
-                                d="M12.01 17.34C12.23 17.34 12.44 17.39 12.64 17.5L17.16 19.87L16.3 14.84C16.22 14.4 16.37 13.96 16.69 13.65L20.34 10.09L15.29 9.35998C14.85 9.29998 14.47 9.01998 14.27 8.61998L12.01 4.03998V2.34998C12.49 2.34998 12.97 2.59998 13.22 3.09998L15.58 7.87998L20.85 8.64998C21.96 8.80998 22.4 10.17 21.6 10.95L17.78 14.67L18.68 19.92C18.87 21.02 17.71 21.86 16.72 21.34L12 18.86V17.34H12.01Z"
-                            />
-                            <path
-                                className="rate__starLeft"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C11.9998 2.34998 11.9995 2.34998 11.9993 2.34998C11.5175 2.34967 11.0356 2.60052 10.7878 3.10251L8.42987 7.88024L3.15735 8.64638C2.05005 8.80728 1.60791 10.168 2.40916 10.9491L6.2244 14.668L5.32374 19.9192C5.17402 20.7921 5.86803 21.501 6.65504 21.5004C6.86293 21.5006 7.07736 21.4513 7.28448 21.3424L11.9994 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                            <path
-                                className="rate__starRight"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C12.0002 2.34998 12.0005 2.34998 12.0007 2.34998C12.4825 2.34967 12.9644 2.60052 13.2122 3.10251L15.5701 7.88024L20.8427 8.64638C21.95 8.80728 22.3921 10.168 21.5908 10.9491L17.7756 14.668L18.6763 19.9192C18.826 20.7921 18.132 21.501 17.345 21.5004C17.1371 21.5006 16.9226 21.4513 16.7155 21.3424L12.0006 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__star rate__star_half rate__star_color_orange">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__starStroke"
-                                d="M11.9987 17.34C11.7787 17.34 11.5687 17.39 11.3687 17.5L6.84874 19.87L7.70874 14.84C7.78874 14.4 7.63874 13.96 7.31874 13.65L3.66874 10.09L8.71874 9.35998C9.15874 9.29998 9.53874 9.01998 9.73874 8.61998L11.9987 4.03998V2.34998C11.5187 2.34998 11.0387 2.59998 10.7887 3.09998L8.42874 7.87998L3.15874 8.64998C2.04874 8.80998 1.60874 10.17 2.40874 10.95L6.22874 14.67L5.32874 19.92C5.13874 21.02 6.29874 21.86 7.28874 21.34L12.0087 18.86V17.34H11.9987Z"
-                            />
-                            <path
-                                className="rate__starStroke"
-                                d="M12.01 17.34C12.23 17.34 12.44 17.39 12.64 17.5L17.16 19.87L16.3 14.84C16.22 14.4 16.37 13.96 16.69 13.65L20.34 10.09L15.29 9.35998C14.85 9.29998 14.47 9.01998 14.27 8.61998L12.01 4.03998V2.34998C12.49 2.34998 12.97 2.59998 13.22 3.09998L15.58 7.87998L20.85 8.64998C21.96 8.80998 22.4 10.17 21.6 10.95L17.78 14.67L18.68 19.92C18.87 21.02 17.71 21.86 16.72 21.34L12 18.86V17.34H12.01Z"
-                            />
-                            <path
-                                className="rate__starLeft"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C11.9998 2.34998 11.9995 2.34998 11.9993 2.34998C11.5175 2.34967 11.0356 2.60052 10.7878 3.10251L8.42987 7.88024L3.15735 8.64638C2.05005 8.80728 1.60791 10.168 2.40916 10.9491L6.2244 14.668L5.32374 19.9192C5.17402 20.7921 5.86803 21.501 6.65504 21.5004C6.86293 21.5006 7.07736 21.4513 7.28448 21.3424L11.9994 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                            <path
-                                className="rate__starRight"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C12.0002 2.34998 12.0005 2.34998 12.0007 2.34998C12.4825 2.34967 12.9644 2.60052 13.2122 3.10251L15.5701 7.88024L20.8427 8.64638C21.95 8.80728 22.3921 10.168 21.5908 10.9491L17.7756 14.668L18.6763 19.9192C18.826 20.7921 18.132 21.501 17.345 21.5004C17.1371 21.5006 16.9226 21.4513 16.7155 21.3424L12.0006 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__star rate__star_filled rate__star_color_default">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__starStroke"
-                                d="M11.9987 17.34C11.7787 17.34 11.5687 17.39 11.3687 17.5L6.84874 19.87L7.70874 14.84C7.78874 14.4 7.63874 13.96 7.31874 13.65L3.66874 10.09L8.71874 9.35998C9.15874 9.29998 9.53874 9.01998 9.73874 8.61998L11.9987 4.03998V2.34998C11.5187 2.34998 11.0387 2.59998 10.7887 3.09998L8.42874 7.87998L3.15874 8.64998C2.04874 8.80998 1.60874 10.17 2.40874 10.95L6.22874 14.67L5.32874 19.92C5.13874 21.02 6.29874 21.86 7.28874 21.34L12.0087 18.86V17.34H11.9987Z"
-                            />
-                            <path
-                                className="rate__starStroke"
-                                d="M12.01 17.34C12.23 17.34 12.44 17.39 12.64 17.5L17.16 19.87L16.3 14.84C16.22 14.4 16.37 13.96 16.69 13.65L20.34 10.09L15.29 9.35998C14.85 9.29998 14.47 9.01998 14.27 8.61998L12.01 4.03998V2.34998C12.49 2.34998 12.97 2.59998 13.22 3.09998L15.58 7.87998L20.85 8.64998C21.96 8.80998 22.4 10.17 21.6 10.95L17.78 14.67L18.68 19.92C18.87 21.02 17.71 21.86 16.72 21.34L12 18.86V17.34H12.01Z"
-                            />
-                            <path
-                                className="rate__starLeft"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C11.9998 2.34998 11.9995 2.34998 11.9993 2.34998C11.5175 2.34967 11.0356 2.60052 10.7878 3.10251L8.42987 7.88024L3.15735 8.64638C2.05005 8.80728 1.60791 10.168 2.40916 10.9491L6.2244 14.668L5.32374 19.9192C5.17402 20.7921 5.86803 21.501 6.65504 21.5004C6.86293 21.5006 7.07736 21.4513 7.28448 21.3424L11.9994 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                            <path
-                                className="rate__starRight"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C12.0002 2.34998 12.0005 2.34998 12.0007 2.34998C12.4825 2.34967 12.9644 2.60052 13.2122 3.10251L15.5701 7.88024L20.8427 8.64638C21.95 8.80728 22.3921 10.168 21.5908 10.9491L17.7756 14.668L18.6763 19.9192C18.826 20.7921 18.132 21.501 17.345 21.5004C17.1371 21.5006 16.9226 21.4513 16.7155 21.3424L12.0006 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__star rate__star_filled rate__star_color_orange">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__starStroke"
-                                d="M11.9987 17.34C11.7787 17.34 11.5687 17.39 11.3687 17.5L6.84874 19.87L7.70874 14.84C7.78874 14.4 7.63874 13.96 7.31874 13.65L3.66874 10.09L8.71874 9.35998C9.15874 9.29998 9.53874 9.01998 9.73874 8.61998L11.9987 4.03998V2.34998C11.5187 2.34998 11.0387 2.59998 10.7887 3.09998L8.42874 7.87998L3.15874 8.64998C2.04874 8.80998 1.60874 10.17 2.40874 10.95L6.22874 14.67L5.32874 19.92C5.13874 21.02 6.29874 21.86 7.28874 21.34L12.0087 18.86V17.34H11.9987Z"
-                            />
-                            <path
-                                className="rate__starStroke"
-                                d="M12.01 17.34C12.23 17.34 12.44 17.39 12.64 17.5L17.16 19.87L16.3 14.84C16.22 14.4 16.37 13.96 16.69 13.65L20.34 10.09L15.29 9.35998C14.85 9.29998 14.47 9.01998 14.27 8.61998L12.01 4.03998V2.34998C12.49 2.34998 12.97 2.59998 13.22 3.09998L15.58 7.87998L20.85 8.64998C21.96 8.80998 22.4 10.17 21.6 10.95L17.78 14.67L18.68 19.92C18.87 21.02 17.71 21.86 16.72 21.34L12 18.86V17.34H12.01Z"
-                            />
-                            <path
-                                className="rate__starLeft"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C11.9998 2.34998 11.9995 2.34998 11.9993 2.34998C11.5175 2.34967 11.0356 2.60052 10.7878 3.10251L8.42987 7.88024L3.15735 8.64638C2.05005 8.80728 1.60791 10.168 2.40916 10.9491L6.2244 14.668L5.32374 19.9192C5.17402 20.7921 5.86803 21.501 6.65504 21.5004C6.86293 21.5006 7.07736 21.4513 7.28448 21.3424L11.9994 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                            <path
-                                className="rate__starRight"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C12.0002 2.34998 12.0005 2.34998 12.0007 2.34998C12.4825 2.34967 12.9644 2.60052 13.2122 3.10251L15.5701 7.88024L20.8427 8.64638C21.95 8.80728 22.3921 10.168 21.5908 10.9491L17.7756 14.668L18.6763 19.9192C18.826 20.7921 18.132 21.501 17.345 21.5004C17.1371 21.5006 16.9226 21.4513 16.7155 21.3424L12.0006 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__star rate__star_unfilled rate__star_color_orange rate__star_disabled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__starStroke"
-                                d="M11.9987 17.34C11.7787 17.34 11.5687 17.39 11.3687 17.5L6.84874 19.87L7.70874 14.84C7.78874 14.4 7.63874 13.96 7.31874 13.65L3.66874 10.09L8.71874 9.35998C9.15874 9.29998 9.53874 9.01998 9.73874 8.61998L11.9987 4.03998V2.34998C11.5187 2.34998 11.0387 2.59998 10.7887 3.09998L8.42874 7.87998L3.15874 8.64998C2.04874 8.80998 1.60874 10.17 2.40874 10.95L6.22874 14.67L5.32874 19.92C5.13874 21.02 6.29874 21.86 7.28874 21.34L12.0087 18.86V17.34H11.9987Z"
-                            />
-                            <path
-                                className="rate__starStroke"
-                                d="M12.01 17.34C12.23 17.34 12.44 17.39 12.64 17.5L17.16 19.87L16.3 14.84C16.22 14.4 16.37 13.96 16.69 13.65L20.34 10.09L15.29 9.35998C14.85 9.29998 14.47 9.01998 14.27 8.61998L12.01 4.03998V2.34998C12.49 2.34998 12.97 2.59998 13.22 3.09998L15.58 7.87998L20.85 8.64998C21.96 8.80998 22.4 10.17 21.6 10.95L17.78 14.67L18.68 19.92C18.87 21.02 17.71 21.86 16.72 21.34L12 18.86V17.34H12.01Z"
-                            />
-                            <path
-                                className="rate__starLeft"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C11.9998 2.34998 11.9995 2.34998 11.9993 2.34998C11.5175 2.34967 11.0356 2.60052 10.7878 3.10251L8.42987 7.88024L3.15735 8.64638C2.05005 8.80728 1.60791 10.168 2.40916 10.9491L6.2244 14.668L5.32374 19.9192C5.17402 20.7921 5.86803 21.501 6.65504 21.5004C6.86293 21.5006 7.07736 21.4513 7.28448 21.3424L11.9994 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                            <path
-                                className="rate__starRight"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C12.0002 2.34998 12.0005 2.34998 12.0007 2.34998C12.4825 2.34967 12.9644 2.60052 13.2122 3.10251L15.5701 7.88024L20.8427 8.64638C21.95 8.80728 22.3921 10.168 21.5908 10.9491L17.7756 14.668L18.6763 19.9192C18.826 20.7921 18.132 21.501 17.345 21.5004C17.1371 21.5006 16.9226 21.4513 16.7155 21.3424L12.0006 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__star rate__star_half rate__star_color_orange rate__star_disabled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__starStroke"
-                                d="M11.9987 17.34C11.7787 17.34 11.5687 17.39 11.3687 17.5L6.84874 19.87L7.70874 14.84C7.78874 14.4 7.63874 13.96 7.31874 13.65L3.66874 10.09L8.71874 9.35998C9.15874 9.29998 9.53874 9.01998 9.73874 8.61998L11.9987 4.03998V2.34998C11.5187 2.34998 11.0387 2.59998 10.7887 3.09998L8.42874 7.87998L3.15874 8.64998C2.04874 8.80998 1.60874 10.17 2.40874 10.95L6.22874 14.67L5.32874 19.92C5.13874 21.02 6.29874 21.86 7.28874 21.34L12.0087 18.86V17.34H11.9987Z"
-                            />
-                            <path
-                                className="rate__starStroke"
-                                d="M12.01 17.34C12.23 17.34 12.44 17.39 12.64 17.5L17.16 19.87L16.3 14.84C16.22 14.4 16.37 13.96 16.69 13.65L20.34 10.09L15.29 9.35998C14.85 9.29998 14.47 9.01998 14.27 8.61998L12.01 4.03998V2.34998C12.49 2.34998 12.97 2.59998 13.22 3.09998L15.58 7.87998L20.85 8.64998C21.96 8.80998 22.4 10.17 21.6 10.95L17.78 14.67L18.68 19.92C18.87 21.02 17.71 21.86 16.72 21.34L12 18.86V17.34H12.01Z"
-                            />
-                            <path
-                                className="rate__starLeft"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C11.9998 2.34998 11.9995 2.34998 11.9993 2.34998C11.5175 2.34967 11.0356 2.60052 10.7878 3.10251L8.42987 7.88024L3.15735 8.64638C2.05005 8.80728 1.60791 10.168 2.40916 10.9491L6.2244 14.668L5.32374 19.9192C5.17402 20.7921 5.86803 21.501 6.65504 21.5004C6.86293 21.5006 7.07736 21.4513 7.28448 21.3424L11.9994 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                            <path
-                                className="rate__starRight"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C12.0002 2.34998 12.0005 2.34998 12.0007 2.34998C12.4825 2.34967 12.9644 2.60052 13.2122 3.10251L15.5701 7.88024L20.8427 8.64638C21.95 8.80728 22.3921 10.168 21.5908 10.9491L17.7756 14.668L18.6763 19.9192C18.826 20.7921 18.132 21.501 17.345 21.5004C17.1371 21.5006 16.9226 21.4513 16.7155 21.3424L12.0006 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__star rate__star_filled rate__star_color_orange rate__star_disabled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__starStroke"
-                                d="M11.9987 17.34C11.7787 17.34 11.5687 17.39 11.3687 17.5L6.84874 19.87L7.70874 14.84C7.78874 14.4 7.63874 13.96 7.31874 13.65L3.66874 10.09L8.71874 9.35998C9.15874 9.29998 9.53874 9.01998 9.73874 8.61998L11.9987 4.03998V2.34998C11.5187 2.34998 11.0387 2.59998 10.7887 3.09998L8.42874 7.87998L3.15874 8.64998C2.04874 8.80998 1.60874 10.17 2.40874 10.95L6.22874 14.67L5.32874 19.92C5.13874 21.02 6.29874 21.86 7.28874 21.34L12.0087 18.86V17.34H11.9987Z"
-                            />
-                            <path
-                                className="rate__starStroke"
-                                d="M12.01 17.34C12.23 17.34 12.44 17.39 12.64 17.5L17.16 19.87L16.3 14.84C16.22 14.4 16.37 13.96 16.69 13.65L20.34 10.09L15.29 9.35998C14.85 9.29998 14.47 9.01998 14.27 8.61998L12.01 4.03998V2.34998C12.49 2.34998 12.97 2.59998 13.22 3.09998L15.58 7.87998L20.85 8.64998C21.96 8.80998 22.4 10.17 21.6 10.95L17.78 14.67L18.68 19.92C18.87 21.02 17.71 21.86 16.72 21.34L12 18.86V17.34H12.01Z"
-                            />
-                            <path
-                                className="rate__starLeft"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C11.9998 2.34998 11.9995 2.34998 11.9993 2.34998C11.5175 2.34967 11.0356 2.60052 10.7878 3.10251L8.42987 7.88024L3.15735 8.64638C2.05005 8.80728 1.60791 10.168 2.40916 10.9491L6.2244 14.668L5.32374 19.9192C5.17402 20.7921 5.86803 21.501 6.65504 21.5004C6.86293 21.5006 7.07736 21.4513 7.28448 21.3424L11.9994 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                            <path
-                                className="rate__starRight"
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M12 2.34998C12.0002 2.34998 12.0005 2.34998 12.0007 2.34998C12.4825 2.34967 12.9644 2.60052 13.2122 3.10251L15.5701 7.88024L20.8427 8.64638C21.95 8.80728 22.3921 10.168 21.5908 10.9491L17.7756 14.668L18.6763 19.9192C18.826 20.7921 18.132 21.501 17.345 21.5004C17.1371 21.5006 16.9226 21.4513 16.7155 21.3424L12.0006 18.8636L12 18.8639V17.3436V4.04212V2.34998Z"
-                            />
-                        </svg>
-                    </div>
+                <div className={`rate__item rate__item_size_${size}`}>
+                    {elements.map((_, i) => {
+                        const currentRating = i + 1;
+
+                        let calculatedWidthFor = 0;
+
+                        if (currentRating < hoveredValue) {
+                            calculatedWidthFor = 100;
+                        } else if (hoveredValue === currentRating) {
+                            calculatedWidthFor = regardingPosition;
+                        } else if (!hoveredValue && currentRating <= rating) {
+                            calculatedWidthFor = 100;
+                        } else if (!hoveredValue && currentRating === Math.ceil(rating)) {
+                            calculatedWidthFor = remainingRating;
+                        } else {
+                            calculatedWidthFor = 0;
+                        }
+
+                        const clipPath = isRTLMode
+                            ? `polygon(${100 - calculatedWidthFor}% 0, 100% 0, 100% 100%, ${100 - calculatedWidthFor}% 100%)`
+                            : `polygon( 0  0, ${calculatedWidthFor}% 0,  ${calculatedWidthFor}% 100%,0  100%)`;
+
+                        return (
+                            <div className={`rate__item rate__item_size_${size}`} key={i}>
+                                <button
+                                    type="button"
+                                    aria-label="rate"
+                                    className="rate__heart rate__heart_color_orange rate__star_filled"
+                                    onMouseMove={(e) => handleMouseMoveForElement(e, currentRating)}
+                                    onMouseLeave={mouseLeaveHandler}
+                                    onMouseEnter={mouseEnterHandler}
+                                    onBlur={() => setDisableMouseMove(false)}
+                                    onClick={(e) => getRating(e, currentRating)}
+                                >
+                                    <svg
+                                        className="rate__svg"
+                                        version="1.1"
+                                        id="Layer_1"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            className="rate__heartPath2"
+                                            d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961ZM19.3684 12.1211L12.0002 19.4846L4.63514 12.1196C3.12186 10.6063 3.12186 8.15281 4.63514 6.63952C6.14843 5.12624 8.60194 5.12624 10.1152 6.63952L11.4727 7.99697C11.7705 8.29483 12.2552 8.28903 12.5459 7.98412L13.8805 6.64027C15.3976 5.12317 17.8528 5.12316 19.3699 6.64027C20.8835 8.15391 20.8809 10.6001 19.3684 12.1211Z"
+                                        />
+                                    </svg>
+
+                                    <svg
+                                        className="rate__svg"
+                                        version="1.1"
+                                        id="Layer_1"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        x="0px"
+                                        y="0px"
+                                        viewBox="0 0 24 24"
+                                        style={{ clipPath }}
+                                    >
+                                        <path
+                                            className="rate__heartPath1"
+                                            d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961Z"
+                                        />
+                                    </svg>
+                                </button>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
-            {/* HEARTS */}
-            <div className="rate__content">
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__heart rate__heart_color_default rate__heart_unfilled ">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__heartPath1"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961Z"
-                            />
-                            <path
-                                className="rate__heartPath2"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961ZM19.3684 12.1211L12.0002 19.4846L4.63514 12.1196C3.12186 10.6063 3.12186 8.15281 4.63514 6.63952C6.14843 5.12624 8.60194 5.12624 10.1152 6.63952L11.4727 7.99697C11.7705 8.29483 12.2552 8.28903 12.5459 7.98412L13.8805 6.64027C15.3976 5.12317 17.8528 5.12316 19.3699 6.64027C20.8835 8.15391 20.8809 10.6001 19.3684 12.1211Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__heart rate__heart_color_orange rate__heart_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__heartPath1"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961Z"
-                            />
-                            <path
-                                className="rate__heartPath2"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961ZM19.3684 12.1211L12.0002 19.4846L4.63514 12.1196C3.12186 10.6063 3.12186 8.15281 4.63514 6.63952C6.14843 5.12624 8.60194 5.12624 10.1152 6.63952L11.4727 7.99697C11.7705 8.29483 12.2552 8.28903 12.5459 7.98412L13.8805 6.64027C15.3976 5.12317 17.8528 5.12316 19.3699 6.64027C20.8835 8.15391 20.8809 10.6001 19.3684 12.1211Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__heart rate__heart_color_default rate__heart_filled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__heartPath1"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961Z"
-                            />
-                            <path
-                                className="rate__heartPath2"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961ZM19.3684 12.1211L12.0002 19.4846L4.63514 12.1196C3.12186 10.6063 3.12186 8.15281 4.63514 6.63952C6.14843 5.12624 8.60194 5.12624 10.1152 6.63952L11.4727 7.99697C11.7705 8.29483 12.2552 8.28903 12.5459 7.98412L13.8805 6.64027C15.3976 5.12317 17.8528 5.12316 19.3699 6.64027C20.8835 8.15391 20.8809 10.6001 19.3684 12.1211Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__heart rate__heart_color_orange rate__heart_filled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__heartPath1"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961Z"
-                            />
-                            <path
-                                className="rate__heartPath2"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961ZM19.3684 12.1211L12.0002 19.4846L4.63514 12.1196C3.12186 10.6063 3.12186 8.15281 4.63514 6.63952C6.14843 5.12624 8.60194 5.12624 10.1152 6.63952L11.4727 7.99697C11.7705 8.29483 12.2552 8.28903 12.5459 7.98412L13.8805 6.64027C15.3976 5.12317 17.8528 5.12316 19.3699 6.64027C20.8835 8.15391 20.8809 10.6001 19.3684 12.1211Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__heart rate__heart_color_orange rate__heart_filled rate__heart_disabled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__heartPath1"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961Z"
-                            />
-                            <path
-                                className="rate__heartPath2"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961ZM19.3684 12.1211L12.0002 19.4846L4.63514 12.1196C3.12186 10.6063 3.12186 8.15281 4.63514 6.63952C6.14843 5.12624 8.60194 5.12624 10.1152 6.63952L11.4727 7.99697C11.7705 8.29483 12.2552 8.28903 12.5459 7.98412L13.8805 6.64027C15.3976 5.12317 17.8528 5.12316 19.3699 6.64027C20.8835 8.15391 20.8809 10.6001 19.3684 12.1211Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__heart rate__heart_color_orange rate__heart_unfilled rate__heart_disabled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__heartPath1"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961Z"
-                            />
-                            <path
-                                className="rate__heartPath2"
-                                d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961ZM19.3684 12.1211L12.0002 19.4846L4.63514 12.1196C3.12186 10.6063 3.12186 8.15281 4.63514 6.63952C6.14843 5.12624 8.60194 5.12624 10.1152 6.63952L11.4727 7.99697C11.7705 8.29483 12.2552 8.28903 12.5459 7.98412L13.8805 6.64027C15.3976 5.12317 17.8528 5.12316 19.3699 6.64027C20.8835 8.15391 20.8809 10.6001 19.3684 12.1211Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            {/* NUMBERS */}
-            <div className="rate__content">
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_orange rate__num_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <path
-                                className="rate__numPath3"
-                                d="M13.1,17h-1.6v-6.4c0-0.2,0-0.4,0-0.6s0-0.4,0-0.6c0-0.2,0-0.4,0-0.6c-0.1,0.1-0.2,0.2-0.4,0.3c-0.1,0.1-0.3,0.2-0.4,0.4l-1.1,0.9l-0.8-1l3-2.3h1.3L13.1,17L13.1,17z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_default rate__num_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <path
-                                className="rate__numPath3"
-                                d="m15.38,17.07h-6.77v-1.21l2.59-2.62c.5-.51.91-.95,1.24-1.32.32-.37.56-.73.72-1.06s.24-.7.24-1.09c0-.48-.14-.85-.42-1.09-.28-.25-.64-.38-1.1-.38s-.83.09-1.2.26c-.36.17-.74.41-1.13.72l-.88-1.06c.28-.24.57-.45.89-.65.32-.2.67-.35,1.07-.46.39-.12.84-.18,1.34-.18.63,0,1.18.11,1.64.34.46.22.81.54,1.06.94s.38.87.38,1.4-.11,1.03-.32,1.49-.52.91-.92,1.35c-.4.44-.87.92-1.42,1.44l-1.73,1.69v.08h4.73v1.41h0Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_orange rate__num_filled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <path
-                                className="rate__numPath3"
-                                d="m15.07,9.29c0,.45-.09.84-.27,1.18-.18.33-.43.61-.75.82-.31.21-.68.36-1.09.45v.05c.8.1,1.4.35,1.8.75.41.4.62.93.62,1.59,0,.58-.14,1.1-.42,1.55s-.7.81-1.28,1.07c-.57.26-1.31.39-2.21.39-.54,0-1.05-.04-1.51-.13s-.9-.23-1.31-.42v-1.43c.42.21.88.37,1.35.49.48.11.93.17,1.36.17.83,0,1.43-.15,1.78-.46.36-.31.53-.75.53-1.3,0-.36-.09-.65-.28-.88-.18-.23-.47-.4-.85-.51-.38-.11-.88-.17-1.48-.17h-.88v-1.29h.89c.58,0,1.04-.07,1.39-.21s.6-.33.76-.58.24-.53.24-.86c0-.43-.14-.76-.42-1s-.69-.36-1.24-.36c-.34,0-.64.04-.92.12-.27.08-.53.18-.76.29-.23.12-.45.25-.66.38l-.77-1.11c.38-.28.83-.52,1.35-.72.52-.2,1.13-.29,1.83-.29,1.03,0,1.82.22,2.37.66.56.44.83,1.03.83,1.76Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_default rate__num_filled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <path
-                                className="rate__numPath3"
-                                d="m15.74,14.82h-1.35v2.19h-1.59v-2.19h-4.55v-1.22l4.57-6.61h1.57v6.49h1.35v1.33h0Zm-2.94-1.33v-3.1c0-.21.02-.42.03-.62,0-.2.02-.38.03-.54,0-.17.02-.31.02-.42h-.05c-.09.18-.18.37-.29.56-.1.19-.22.37-.33.55l-2.46,3.57h3.06-.01Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_default rate__num_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <path
-                                className="rate__numPath3"
-                                d="m11.99,10.68c.64,0,1.21.12,1.7.35.49.23.88.57,1.15,1.01.27.44.41.98.41,1.63,0,.7-.15,1.31-.44,1.82-.3.51-.73.9-1.31,1.17-.57.27-1.27.41-2.1.41-.52,0-1.01-.05-1.47-.14-.45-.09-.84-.23-1.17-.41v-1.45c.34.19.75.35,1.23.47.48.12.94.18,1.37.18.46,0,.86-.07,1.2-.2.33-.14.59-.35.77-.63s.27-.64.27-1.07c0-.57-.18-1.02-.55-1.33-.36-.31-.94-.47-1.72-.47-.27,0-.57.02-.88.08-.31.05-.56.1-.77.15l-.7-.42.38-4.89h5.2v1.42h-3.78l-.22,2.49c.16-.04.36-.07.59-.1.23-.04.51-.05.85-.05v-.02Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_default rate__num_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <path
-                                className="rate__numPath3"
-                                d="m8.6,12.73c0-.59.04-1.17.12-1.74.09-.57.23-1.1.44-1.6s.49-.93.85-1.31c.36-.38.82-.67,1.37-.89s1.21-.33,1.99-.33c.2,0,.43,0,.68.03.25.02.46.05.62.09v1.33c-.18-.05-.37-.09-.59-.12-.21-.03-.42-.04-.63-.04-.84,0-1.49.16-1.96.48-.47.31-.8.75-1,1.3s-.32,1.17-.35,1.88h.08c.14-.23.31-.43.51-.61.21-.18.46-.32.75-.42.3-.11.64-.16,1.03-.16.58,0,1.09.12,1.52.37.43.24.77.59,1,1.05.24.46.36,1.02.36,1.67,0,.71-.13,1.31-.4,1.83-.26.51-.64.9-1.13,1.18-.49.27-1.07.41-1.74.41-.5,0-.96-.09-1.39-.27-.42-.18-.8-.46-1.11-.82-.32-.36-.57-.82-.75-1.37s-.27-1.2-.27-1.93h0Zm3.49,3.07c.52,0,.94-.17,1.25-.51.32-.34.48-.86.48-1.57,0-.57-.14-1.02-.42-1.35s-.7-.5-1.26-.5c-.38,0-.72.08-1,.25-.29.16-.51.37-.67.62s-.23.51-.23.77.04.53.12.8.19.52.35.75c.15.22.35.4.58.54s.5.2.81.2h-.01Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_default rate__num_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <polygon
-                                className="rate__numPath3"
-                                points="13.73 8.41 9.81 17 11.54 17 15.46 8.1 15.46 7 8.54 7 8.54 8.41 13.73 8.41"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_default rate__num_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <path
-                                className="rate__numPath3"
-                                d="m12,6.13c.66,0,1.26.1,1.79.31.53.2.95.51,1.27.91.31.41.47.91.47,1.51,0,.46-.1.87-.29,1.21s-.44.65-.77.91c-.32.26-.68.48-1.09.68.45.22.86.47,1.23.76.38.28.68.61.91.99s.35.83.35,1.34c0,.64-.16,1.2-.49,1.66-.32.46-.77.82-1.35,1.08-.58.25-1.25.38-2.02.38-.83,0-1.53-.12-2.12-.37-.58-.24-1.03-.59-1.33-1.05s-.45-1.01-.45-1.64c0-.53.1-.98.31-1.37s.49-.72.84-1c.35-.28.74-.52,1.16-.71-.36-.21-.69-.45-.98-.72-.3-.27-.53-.58-.71-.93-.17-.35-.26-.76-.26-1.23,0-.59.16-1.09.48-1.49.32-.41.74-.71,1.27-.92.54-.21,1.13-.31,1.77-.31h.01Zm-2.13,8.61c0,.5.18.91.53,1.23.35.32.88.48,1.59.48s1.23-.16,1.59-.48c.36-.32.55-.74.55-1.26,0-.33-.09-.63-.28-.88-.18-.26-.43-.48-.74-.68-.31-.2-.65-.39-1.02-.56l-.25-.1c-.41.17-.76.37-1.05.59-.29.21-.52.46-.68.73-.16.27-.23.58-.23.93h-.01Zm2.12-7.2c-.51,0-.92.12-1.25.38-.32.24-.48.6-.48,1.06,0,.33.08.61.23.84.16.23.38.44.65.61.27.17.57.32.9.47.32-.14.6-.29.86-.46.26-.17.47-.38.62-.61.16-.24.23-.53.23-.86,0-.46-.16-.81-.49-1.05-.32-.25-.74-.38-1.27-.38Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_default rate__num_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <path
-                                className="rate__numPath3"
-                                d="m15.89,11.15c0,.68-.05,1.34-.15,1.99-.09.65-.26,1.26-.5,1.83-.23.57-.56,1.07-.98,1.51-.41.43-.93.77-1.56,1.02-.63.24-1.39.37-2.28.37-.22,0-.48-.01-.78-.04-.29-.02-.53-.05-.72-.09v-1.53c.2.06.42.1.66.14.25.03.5.05.74.05.96,0,1.71-.18,2.25-.54s.92-.85,1.15-1.48c.23-.63.36-1.35.39-2.15h-.09c-.15.25-.34.48-.57.69-.23.2-.51.37-.85.49s-.75.18-1.23.18c-.66,0-1.23-.14-1.72-.41-.48-.28-.86-.68-1.13-1.2-.27-.53-.4-1.17-.4-1.91,0-.81.15-1.5.46-2.09.31-.58.74-1.03,1.3-1.34.56-.32,1.22-.48,1.98-.48.57,0,1.1.1,1.59.31.49.2.92.52,1.28.94s.65.94.85,1.57c.2.62.3,1.36.3,2.2v-.03Zm-4-3.5c-.58,0-1.05.2-1.41.59-.36.39-.55.98-.55,1.78,0,.65.16,1.17.47,1.55s.79.57,1.44.57c.45,0,.83-.09,1.16-.27.33-.19.58-.42.76-.71s.27-.58.27-.88-.04-.61-.13-.92c-.08-.31-.21-.59-.39-.84-.18-.26-.4-.46-.67-.62s-.58-.24-.94-.24h-.01Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_default rate__num_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <g>
-                                <path
-                                    className="rate__numPath3"
-                                    d="m5.29,8.96l.92,1.16,1.31-1.05c.18-.15.34-.3.5-.44s.3-.27.41-.39c-.02.21-.03.44-.04.67,0,.23-.01.47-.02.72v8.08h1.84V6.3h-1.53l-3.39,2.66Z"
-                                />
-                                <path
-                                    className="rate__numPath3"
-                                    d="m18.29,8.84c-.28-.88-.7-1.55-1.28-2.02-.57-.47-1.3-.7-2.19-.7-.94,0-1.69.23-2.26.7s-.98,1.14-1.23,2.02-.38,1.93-.38,3.16.14,2.28.41,3.16c.28.88.7,1.55,1.27,2.02.57.46,1.3.7,2.18.7.7,0,1.3-.13,1.8-.4.49-.27.9-.65,1.2-1.16s.53-1.12.67-1.84c.15-.73.22-1.55.22-2.48,0-1.23-.14-2.29-.42-3.16h.01Zm-1.64,5.59c-.13.65-.34,1.13-.64,1.45s-.69.48-1.19.48-.89-.16-1.19-.48-.51-.81-.64-1.45c-.12-.65-.19-1.45-.19-2.41s.06-1.76.19-2.41c.13-.65.34-1.13.63-1.45.3-.33.7-.49,1.2-.49s.9.16,1.2.49c.3.32.51.81.64,1.45.13.65.2,1.45.2,2.41s-.07,1.78-.2,2.42h0Z"
-                                />
-                            </g>
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_default rate__num_unfilled rate__num_disabled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <g>
-                                <path
-                                    className="rate__numPath3"
-                                    d="m5.29,8.96l.92,1.16,1.31-1.05c.18-.15.34-.3.5-.44s.3-.27.41-.39c-.02.21-.03.44-.04.67,0,.23-.01.47-.02.72v8.08h1.84V6.3h-1.53l-3.39,2.66Z"
-                                />
-                                <path
-                                    className="rate__numPath3"
-                                    d="m18.29,8.84c-.28-.88-.7-1.55-1.28-2.02-.57-.47-1.3-.7-2.19-.7-.94,0-1.69.23-2.26.7s-.98,1.14-1.23,2.02-.38,1.93-.38,3.16.14,2.28.41,3.16c.28.88.7,1.55,1.27,2.02.57.46,1.3.7,2.18.7.7,0,1.3-.13,1.8-.4.49-.27.9-.65,1.2-1.16s.53-1.12.67-1.84c.15-.73.22-1.55.22-2.48,0-1.23-.14-2.29-.42-3.16h.01Zm-1.64,5.59c-.13.65-.34,1.13-.64,1.45s-.69.48-1.19.48-.89-.16-1.19-.48-.51-.81-.64-1.45c-.12-.65-.19-1.45-.19-2.41s.06-1.76.19-2.41c.13-.65.34-1.13.63-1.45.3-.33.7-.49,1.2-.49s.9.16,1.2.49c.3.32.51.81.64,1.45.13.65.2,1.45.2,2.41s-.07,1.78-.2,2.42h0Z"
-                                />
-                            </g>
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__num rate__num_color_default rate__num_filled rate__num_disabled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <circle className="rate__numPath2" cx="12" cy="12" r="10" />
-                            <circle className="rate__numPath1" cx="12" cy="12" r="10" />
-                            <g>
-                                <path
-                                    className="rate__numPath3"
-                                    d="m5.29,8.96l.92,1.16,1.31-1.05c.18-.15.34-.3.5-.44s.3-.27.41-.39c-.02.21-.03.44-.04.67,0,.23-.01.47-.02.72v8.08h1.84V6.3h-1.53l-3.39,2.66Z"
-                                />
-                                <path
-                                    className="rate__numPath3"
-                                    d="m18.29,8.84c-.28-.88-.7-1.55-1.28-2.02-.57-.47-1.3-.7-2.19-.7-.94,0-1.69.23-2.26.7s-.98,1.14-1.23,2.02-.38,1.93-.38,3.16.14,2.28.41,3.16c.28.88.7,1.55,1.27,2.02.57.46,1.3.7,2.18.7.7,0,1.3-.13,1.8-.4.49-.27.9-.65,1.2-1.16s.53-1.12.67-1.84c.15-.73.22-1.55.22-2.48,0-1.23-.14-2.29-.42-3.16h.01Zm-1.64,5.59c-.13.65-.34,1.13-.64,1.45s-.69.48-1.19.48-.89-.16-1.19-.48-.51-.81-.64-1.45c-.12-.65-.19-1.45-.19-2.41s.06-1.76.19-2.41c.13-.65.34-1.13.63-1.45.3-.33.7-.49,1.2-.49s.9.16,1.2.49c.3.32.51.81.64,1.45.13.65.2,1.45.2,2.41s-.07,1.78-.2,2.42h0Z"
-                                />
-                            </g>
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            {/* EMOJIES */}
-            <div className="rate__content">
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__emoji rate__emoji_color_default rate__emoji_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__emojiPath1"
-                                d="m12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2Zm0,1.5C7.3,3.5,3.5,7.31,3.5,12s3.81,8.5,8.5,8.5,8.5-3.81,8.5-8.5S16.7,3.5,12,3.5Zm0,10c1.63,0,3.16.65,4.28,1.8.29.3.29.77,0,1.06-.3.29-.77.29-1.06,0-.84-.86-1.99-1.35-3.21-1.35s-2.37.49-3.22,1.35c-.29.3-.76.3-1.06.01-.3-.29-.3-.76-.01-1.06,1.12-1.15,2.65-1.8,4.29-1.8Zm-3-4.75c.69,0,1.25.56,1.25,1.25s-.56,1.25-1.25,1.25-1.25-.56-1.25-1.25.56-1.25,1.25-1.25Zm6,0c.69,0,1.25.56,1.25,1.25s-.56,1.25-1.25,1.25-1.25-.56-1.25-1.25.56-1.25,1.25-1.25Z"
-                            />
-                            <path
-                                className="rate__emojiPath2"
-                                d="m12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2Zm0,11.5c-1.63,0-3.17.66-4.29,1.8-.29.3-.28.77.01,1.06.3.29.77.28,1.06-.01.84-.86,1.99-1.35,3.22-1.35s2.37.49,3.21,1.35c.29.3.77.3,1.06,0,.3-.29.3-.77,0-1.06-1.12-1.14-2.65-1.8-4.28-1.8Zm-3-4.75c-.69,0-1.25.56-1.25,1.25s.56,1.25,1.25,1.25,1.25-.56,1.25-1.25-.56-1.25-1.25-1.25Zm6,0c-.69,0-1.25.56-1.25,1.25s.56,1.25,1.25,1.25,1.25-.56,1.25-1.25-.56-1.25-1.25-1.25Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__emoji rate__emoji_color_default rate__emoji_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__emojiPath1"
-                                d="m9,8.75c.69,0,1.25.56,1.25,1.25s-.56,1.25-1.25,1.25-1.25-.56-1.25-1.25.56-1.25,1.25-1.25Zm6,0c.69,0,1.25.56,1.25,1.25s-.56,1.25-1.25,1.25-1.25-.56-1.25-1.25.56-1.25,1.25-1.25Zm-6.75,6.25c-.41,0-.75.34-.75.75s.34.75.75.75h7.5c.41,0,.75-.34.75-.75s-.34-.75-.75-.75h-7.5Zm-6.25-3C2,6.48,6.48,2,12,2s10,4.48,10,10-4.48,10-10,10S2,17.52,2,12ZM12,3.5C7.31,3.5,3.5,7.31,3.5,12s3.81,8.5,8.5,8.5,8.5-3.81,8.5-8.5S16.69,3.5,12,3.5Z"
-                            />
-                            <path
-                                className="rate__emojiPath2"
-                                d="m12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2Zm-1.75,8c0,.69-.56,1.25-1.25,1.25s-1.25-.56-1.25-1.25.56-1.25,1.25-1.25,1.25.56,1.25,1.25Zm6,0c0,.69-.56,1.25-1.25,1.25s-1.25-.56-1.25-1.25.56-1.25,1.25-1.25,1.25.56,1.25,1.25Zm-8.75,5.75c0-.41.34-.75.75-.75h7.5c.41,0,.75.34.75.75s-.34.75-.75.75h-7.5c-.41,0-.75-.34-.75-.75Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__emoji rate__emoji_color_default rate__emoji_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__emojiPath1"
-                                d="m6.75,12c-.21,0-.41.09-.55.24-.14.16-.21.36-.19.57.28,3.07,2.55,5.68,6,5.68s5.72-2.61,6-5.68c.02-.21-.05-.42-.19-.57-.14-.16-.34-.24-.55-.24H6.75Zm5.25,5c-2.26,0-3.87-1.48-4.37-3.5h8.74c-.5,2.02-2.11,3.5-4.37,3.5Zm3.25-8.25c-.41,0-.71.29-.76.61-.06.41-.44.69-.85.63-.41-.06-.69-.44-.63-.85.16-1.09,1.12-1.89,2.24-1.89s2.08.8,2.24,1.89c.06.41-.22.79-.63.85-.41.06-.79-.22-.85-.63-.05-.32-.35-.61-.76-.61Zm-7.26.61c.05-.32.35-.61.76-.61s.71.29.76.61c.06.41.44.69.85.63.41-.06.69-.44.63-.85-.16-1.09-1.12-1.89-2.24-1.89s-2.08.8-2.24,1.89c-.06.41.22.79.63.85.41.06.79-.22.85-.63Zm4.01-7.36C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2ZM3.5,12C3.5,7.31,7.31,3.5,12,3.5s8.5,3.81,8.5,8.5-3.81,8.5-8.5,8.5S3.5,16.69,3.5,12Z"
-                            />
-                            <path
-                                className="rate__emojiPath2"
-                                d="m12,2C6.48,2,2,6.48,2,12s4.48,10,10,10,10-4.48,10-10S17.52,2,12,2Zm2.49,7.36c-.06.41-.44.69-.85.63-.41-.06-.69-.44-.63-.85.16-1.09,1.12-1.89,2.24-1.89s2.08.8,2.24,1.89c.06.41-.22.79-.63.85-.41.06-.79-.22-.85-.63-.05-.32-.35-.61-.76-.61s-.71.29-.76.61Zm-2.49,8.64c-3.14,0-5.24-2.36-5.5-5.25h11c-.26,2.89-2.36,5.25-5.5,5.25Zm-3.25-9.25c-.41,0-.71.29-.76.61-.06.41-.44.69-.85.63-.41-.06-.69-.44-.63-.85.16-1.09,1.12-1.89,2.24-1.89s2.08.8,2.24,1.89c.06.41-.22.79-.63.85-.41.06-.79-.22-.85-.63-.05-.32-.35-.61-.76-.61Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__emoji rate__emoji_color_default rate__emoji_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__emojiPath1"
-                                d="m12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2Zm0,1.5C7.3,3.5,3.5,7.31,3.5,12s3.81,8.5,8.5,8.5,8.5-3.81,8.5-8.5S16.7,3.5,12,3.5Zm-3.54,11.28c.85,1.08,2.14,1.72,3.54,1.72s2.69-.64,3.53-1.71c.26-.33.73-.38,1.05-.12.33.26.38.73.12,1.05-1.13,1.43-2.85,2.28-4.71,2.28s-3.59-.85-4.72-2.29c-.26-.33-.2-.8.12-1.05.33-.26.8-.2,1.05.12Zm.54-6.03c.69,0,1.25.56,1.25,1.25s-.56,1.25-1.25,1.25-1.25-.56-1.25-1.25.56-1.25,1.25-1.25Zm6,0c.69,0,1.25.56,1.25,1.25s-.56,1.25-1.25,1.25-1.25-.56-1.25-1.25.56-1.25,1.25-1.25Z"
-                            />
-                            <path
-                                className="rate__emojiPath2"
-                                d="m12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2Zm-3.54,12.78c-.26-.33-.73-.38-1.05-.12-.33.26-.38.73-.12,1.05,1.13,1.43,2.85,2.29,4.72,2.29s3.58-.85,4.71-2.28c.26-.33.2-.8-.12-1.05-.33-.26-.8-.2-1.05.12-.85,1.08-2.14,1.71-3.53,1.71s-2.69-.64-3.54-1.72Zm.54-6.03c-.69,0-1.25.56-1.25,1.25s.56,1.25,1.25,1.25,1.25-.56,1.25-1.25-.56-1.25-1.25-1.25Zm6,0c-.69,0-1.25.56-1.25,1.25s.56,1.25,1.25,1.25,1.25-.56,1.25-1.25-.56-1.25-1.25-1.25Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__emoji rate__emoji_color_default rate__emoji_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__emojiPath1"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2Zm0,1.5C7.31,3.5,3.5,7.31,3.5,12s3.81,8.5,8.5,8.5,8.5-3.81,8.5-8.5S16.69,3.5,12,3.5Zm0,9.99c1.63,0,3.16,.65,4.28,1.8,.29,.3,.29,.77,0,1.06-.3,.29-.77,.29-1.06,0-.84-.86-1.99-1.35-3.21-1.35s-2.37,.49-3.22,1.35c-.29,.3-.76,.3-1.06,.01-.3-.29-.3-.76-.01-1.06,1.12-1.14,2.65-1.8,4.29-1.8ZM7.16,6.78c.24-.29,.65-.36,.96-.18l.09,.06,2.5,2c.32,.26,.38,.73,.12,1.05-.15,.19-.37,.28-.59,.28,0,.69-.56,1.25-1.25,1.25s-1.25-.56-1.25-1.25c0-.53,.33-.98,.79-1.16l-1.26-1c-.32-.26-.38-.73-.12-1.05Zm6.12,1.88l2.5-2c.32-.26,.8-.21,1.05,.12,.24,.29,.21,.71-.04,.98l-.08,.08-1.26,1c.46,.18,.79,.63,.79,1.16,0,.69-.56,1.25-1.25,1.25-.65,0-1.18-.49-1.24-1.12v-.13c-.23,0-.44-.09-.59-.28-.24-.29-.21-.71,.04-.98l.08-.08,2.5-2-2.5,2Z"
-                            />
-                            <path
-                                className="rate__emojiPath2"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.53,2,12,6.48,2,12,2Zm0,11.49c-1.63,0-3.17,.66-4.29,1.8-.29,.3-.28,.77,.01,1.06,.3,.29,.77,.28,1.06-.01,.84-.86,1.99-1.35,3.22-1.35s2.37,.49,3.21,1.35c.29,.3,.77,.3,1.06,0,.3-.29,.3-.77,0-1.06-1.12-1.14-2.65-1.8-4.28-1.8Zm-3.78-6.83l-.09-.06c-.32-.18-.73-.11-.96,.18-.24,.29-.21,.71,.04,.98l.08,.08,1.26,1c-.46,.18-.79,.63-.79,1.16,0,.69,.56,1.25,1.25,1.25s1.25-.56,1.25-1.25c.22,0,.44-.1,.59-.28,.24-.29,.21-.71-.04-.98l-.08-.08-2.5-2-.09-.06,.09,.06Zm8.62,.12c-.24-.29-.65-.36-.96-.18l-.09,.06-2.5,2-.08,.08c-.25,.27-.27,.68-.04,.98,.12,.15,.3,.25,.48,.27h.11c0,.7,.56,1.26,1.25,1.26s1.25-.56,1.25-1.25c0-.48-.27-.9-.67-1.11l-.11-.05,1.26-1,.08-.08c.25-.27,.27-.68,.04-.98Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__emoji rate__emoji_color_orange rate__emoji_unfilled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__emojiPath1"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2Zm0,1.5C7.31,3.5,3.5,7.31,3.5,12s3.81,8.5,8.5,8.5,8.5-3.81,8.5-8.5S16.69,3.5,12,3.5Zm0,9.99c1.63,0,3.16,.65,4.28,1.8,.29,.3,.29,.77,0,1.06-.3,.29-.77,.29-1.06,0-.84-.86-1.99-1.35-3.21-1.35s-2.37,.49-3.22,1.35c-.29,.3-.76,.3-1.06,.01-.3-.29-.3-.76-.01-1.06,1.12-1.14,2.65-1.8,4.29-1.8ZM7.16,6.78c.24-.29,.65-.36,.96-.18l.09,.06,2.5,2c.32,.26,.38,.73,.12,1.05-.15,.19-.37,.28-.59,.28,0,.69-.56,1.25-1.25,1.25s-1.25-.56-1.25-1.25c0-.53,.33-.98,.79-1.16l-1.26-1c-.32-.26-.38-.73-.12-1.05Zm6.12,1.88l2.5-2c.32-.26,.8-.21,1.05,.12,.24,.29,.21,.71-.04,.98l-.08,.08-1.26,1c.46,.18,.79,.63,.79,1.16,0,.69-.56,1.25-1.25,1.25-.65,0-1.18-.49-1.24-1.12v-.13c-.23,0-.44-.09-.59-.28-.24-.29-.21-.71,.04-.98l.08-.08,2.5-2-2.5,2Z"
-                            />
-                            <path
-                                className="rate__emojiPath2"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.53,2,12,6.48,2,12,2Zm0,11.49c-1.63,0-3.17,.66-4.29,1.8-.29,.3-.28,.77,.01,1.06,.3,.29,.77,.28,1.06-.01,.84-.86,1.99-1.35,3.22-1.35s2.37,.49,3.21,1.35c.29,.3,.77,.3,1.06,0,.3-.29,.3-.77,0-1.06-1.12-1.14-2.65-1.8-4.28-1.8Zm-3.78-6.83l-.09-.06c-.32-.18-.73-.11-.96,.18-.24,.29-.21,.71,.04,.98l.08,.08,1.26,1c-.46,.18-.79,.63-.79,1.16,0,.69,.56,1.25,1.25,1.25s1.25-.56,1.25-1.25c.22,0,.44-.1,.59-.28,.24-.29,.21-.71-.04-.98l-.08-.08-2.5-2-.09-.06,.09,.06Zm8.62,.12c-.24-.29-.65-.36-.96-.18l-.09,.06-2.5,2-.08,.08c-.25,.27-.27,.68-.04,.98,.12,.15,.3,.25,.48,.27h.11c0,.7,.56,1.26,1.25,1.26s1.25-.56,1.25-1.25c0-.48-.27-.9-.67-1.11l-.11-.05,1.26-1,.08-.08c.25-.27,.27-.68,.04-.98Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__emoji rate__emoji_color_default rate__emoji_filled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__emojiPath1"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2Zm0,1.5C7.31,3.5,3.5,7.31,3.5,12s3.81,8.5,8.5,8.5,8.5-3.81,8.5-8.5S16.69,3.5,12,3.5Zm0,9.99c1.63,0,3.16,.65,4.28,1.8,.29,.3,.29,.77,0,1.06-.3,.29-.77,.29-1.06,0-.84-.86-1.99-1.35-3.21-1.35s-2.37,.49-3.22,1.35c-.29,.3-.76,.3-1.06,.01-.3-.29-.3-.76-.01-1.06,1.12-1.14,2.65-1.8,4.29-1.8ZM7.16,6.78c.24-.29,.65-.36,.96-.18l.09,.06,2.5,2c.32,.26,.38,.73,.12,1.05-.15,.19-.37,.28-.59,.28,0,.69-.56,1.25-1.25,1.25s-1.25-.56-1.25-1.25c0-.53,.33-.98,.79-1.16l-1.26-1c-.32-.26-.38-.73-.12-1.05Zm6.12,1.88l2.5-2c.32-.26,.8-.21,1.05,.12,.24,.29,.21,.71-.04,.98l-.08,.08-1.26,1c.46,.18,.79,.63,.79,1.16,0,.69-.56,1.25-1.25,1.25-.65,0-1.18-.49-1.24-1.12v-.13c-.23,0-.44-.09-.59-.28-.24-.29-.21-.71,.04-.98l.08-.08,2.5-2-2.5,2Z"
-                            />
-                            <path
-                                className="rate__emojiPath2"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.53,2,12,6.48,2,12,2Zm0,11.49c-1.63,0-3.17,.66-4.29,1.8-.29,.3-.28,.77,.01,1.06,.3,.29,.77,.28,1.06-.01,.84-.86,1.99-1.35,3.22-1.35s2.37,.49,3.21,1.35c.29,.3,.77,.3,1.06,0,.3-.29,.3-.77,0-1.06-1.12-1.14-2.65-1.8-4.28-1.8Zm-3.78-6.83l-.09-.06c-.32-.18-.73-.11-.96,.18-.24,.29-.21,.71,.04,.98l.08,.08,1.26,1c-.46,.18-.79,.63-.79,1.16,0,.69,.56,1.25,1.25,1.25s1.25-.56,1.25-1.25c.22,0,.44-.1,.59-.28,.24-.29,.21-.71-.04-.98l-.08-.08-2.5-2-.09-.06,.09,.06Zm8.62,.12c-.24-.29-.65-.36-.96-.18l-.09,.06-2.5,2-.08,.08c-.25,.27-.27,.68-.04,.98,.12,.15,.3,.25,.48,.27h.11c0,.7,.56,1.26,1.25,1.26s1.25-.56,1.25-1.25c0-.48-.27-.9-.67-1.11l-.11-.05,1.26-1,.08-.08c.25-.27,.27-.68,.04-.98Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__emoji rate__emoji_color_orange rate__emoji_filled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__emojiPath1"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2Zm0,1.5C7.31,3.5,3.5,7.31,3.5,12s3.81,8.5,8.5,8.5,8.5-3.81,8.5-8.5S16.69,3.5,12,3.5Zm0,9.99c1.63,0,3.16,.65,4.28,1.8,.29,.3,.29,.77,0,1.06-.3,.29-.77,.29-1.06,0-.84-.86-1.99-1.35-3.21-1.35s-2.37,.49-3.22,1.35c-.29,.3-.76,.3-1.06,.01-.3-.29-.3-.76-.01-1.06,1.12-1.14,2.65-1.8,4.29-1.8ZM7.16,6.78c.24-.29,.65-.36,.96-.18l.09,.06,2.5,2c.32,.26,.38,.73,.12,1.05-.15,.19-.37,.28-.59,.28,0,.69-.56,1.25-1.25,1.25s-1.25-.56-1.25-1.25c0-.53,.33-.98,.79-1.16l-1.26-1c-.32-.26-.38-.73-.12-1.05Zm6.12,1.88l2.5-2c.32-.26,.8-.21,1.05,.12,.24,.29,.21,.71-.04,.98l-.08,.08-1.26,1c.46,.18,.79,.63,.79,1.16,0,.69-.56,1.25-1.25,1.25-.65,0-1.18-.49-1.24-1.12v-.13c-.23,0-.44-.09-.59-.28-.24-.29-.21-.71,.04-.98l.08-.08,2.5-2-2.5,2Z"
-                            />
-                            <path
-                                className="rate__emojiPath2"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.53,2,12,6.48,2,12,2Zm0,11.49c-1.63,0-3.17,.66-4.29,1.8-.29,.3-.28,.77,.01,1.06,.3,.29,.77,.28,1.06-.01,.84-.86,1.99-1.35,3.22-1.35s2.37,.49,3.21,1.35c.29,.3,.77,.3,1.06,0,.3-.29,.3-.77,0-1.06-1.12-1.14-2.65-1.8-4.28-1.8Zm-3.78-6.83l-.09-.06c-.32-.18-.73-.11-.96,.18-.24,.29-.21,.71,.04,.98l.08,.08,1.26,1c-.46,.18-.79,.63-.79,1.16,0,.69,.56,1.25,1.25,1.25s1.25-.56,1.25-1.25c.22,0,.44-.1,.59-.28,.24-.29,.21-.71-.04-.98l-.08-.08-2.5-2-.09-.06,.09,.06Zm8.62,.12c-.24-.29-.65-.36-.96-.18l-.09,.06-2.5,2-.08,.08c-.25,.27-.27,.68-.04,.98,.12,.15,.3,.25,.48,.27h.11c0,.7,.56,1.26,1.25,1.26s1.25-.56,1.25-1.25c0-.48-.27-.9-.67-1.11l-.11-.05,1.26-1,.08-.08c.25-.27,.27-.68,.04-.98Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__emoji rate__emoji_color_orange rate__emoji_unfilled rate__emoji_disabled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__emojiPath1"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2Zm0,1.5C7.31,3.5,3.5,7.31,3.5,12s3.81,8.5,8.5,8.5,8.5-3.81,8.5-8.5S16.69,3.5,12,3.5Zm0,9.99c1.63,0,3.16,.65,4.28,1.8,.29,.3,.29,.77,0,1.06-.3,.29-.77,.29-1.06,0-.84-.86-1.99-1.35-3.21-1.35s-2.37,.49-3.22,1.35c-.29,.3-.76,.3-1.06,.01-.3-.29-.3-.76-.01-1.06,1.12-1.14,2.65-1.8,4.29-1.8ZM7.16,6.78c.24-.29,.65-.36,.96-.18l.09,.06,2.5,2c.32,.26,.38,.73,.12,1.05-.15,.19-.37,.28-.59,.28,0,.69-.56,1.25-1.25,1.25s-1.25-.56-1.25-1.25c0-.53,.33-.98,.79-1.16l-1.26-1c-.32-.26-.38-.73-.12-1.05Zm6.12,1.88l2.5-2c.32-.26,.8-.21,1.05,.12,.24,.29,.21,.71-.04,.98l-.08,.08-1.26,1c.46,.18,.79,.63,.79,1.16,0,.69-.56,1.25-1.25,1.25-.65,0-1.18-.49-1.24-1.12v-.13c-.23,0-.44-.09-.59-.28-.24-.29-.21-.71,.04-.98l.08-.08,2.5-2-2.5,2Z"
-                            />
-                            <path
-                                className="rate__emojiPath2"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.53,2,12,6.48,2,12,2Zm0,11.49c-1.63,0-3.17,.66-4.29,1.8-.29,.3-.28,.77,.01,1.06,.3,.29,.77,.28,1.06-.01,.84-.86,1.99-1.35,3.22-1.35s2.37,.49,3.21,1.35c.29,.3,.77,.3,1.06,0,.3-.29,.3-.77,0-1.06-1.12-1.14-2.65-1.8-4.28-1.8Zm-3.78-6.83l-.09-.06c-.32-.18-.73-.11-.96,.18-.24,.29-.21,.71,.04,.98l.08,.08,1.26,1c-.46,.18-.79,.63-.79,1.16,0,.69,.56,1.25,1.25,1.25s1.25-.56,1.25-1.25c.22,0,.44-.1,.59-.28,.24-.29,.21-.71-.04-.98l-.08-.08-2.5-2-.09-.06,.09,.06Zm8.62,.12c-.24-.29-.65-.36-.96-.18l-.09,.06-2.5,2-.08,.08c-.25,.27-.27,.68-.04,.98,.12,.15,.3,.25,.48,.27h.11c0,.7,.56,1.26,1.25,1.26s1.25-.56,1.25-1.25c0-.48-.27-.9-.67-1.11l-.11-.05,1.26-1,.08-.08c.25-.27,.27-.68,.04-.98Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-                <div className="rate__item rate__item_size_medium">
-                    <div className="rate__emoji rate__emoji_color_orange rate__emoji_filled rate__emoji_disabled">
-                        <svg className="rate__svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                className="rate__emojiPath1"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.52,2,12,6.48,2,12,2Zm0,1.5C7.31,3.5,3.5,7.31,3.5,12s3.81,8.5,8.5,8.5,8.5-3.81,8.5-8.5S16.69,3.5,12,3.5Zm0,9.99c1.63,0,3.16,.65,4.28,1.8,.29,.3,.29,.77,0,1.06-.3,.29-.77,.29-1.06,0-.84-.86-1.99-1.35-3.21-1.35s-2.37,.49-3.22,1.35c-.29,.3-.76,.3-1.06,.01-.3-.29-.3-.76-.01-1.06,1.12-1.14,2.65-1.8,4.29-1.8ZM7.16,6.78c.24-.29,.65-.36,.96-.18l.09,.06,2.5,2c.32,.26,.38,.73,.12,1.05-.15,.19-.37,.28-.59,.28,0,.69-.56,1.25-1.25,1.25s-1.25-.56-1.25-1.25c0-.53,.33-.98,.79-1.16l-1.26-1c-.32-.26-.38-.73-.12-1.05Zm6.12,1.88l2.5-2c.32-.26,.8-.21,1.05,.12,.24,.29,.21,.71-.04,.98l-.08,.08-1.26,1c.46,.18,.79,.63,.79,1.16,0,.69-.56,1.25-1.25,1.25-.65,0-1.18-.49-1.24-1.12v-.13c-.23,0-.44-.09-.59-.28-.24-.29-.21-.71,.04-.98l.08-.08,2.5-2-2.5,2Z"
-                            />
-                            <path
-                                className="rate__emojiPath2"
-                                d="M12,2c5.52,0,10,4.48,10,10s-4.48,10-10,10S2,17.53,2,12,6.48,2,12,2Zm0,11.49c-1.63,0-3.17,.66-4.29,1.8-.29,.3-.28,.77,.01,1.06,.3,.29,.77,.28,1.06-.01,.84-.86,1.99-1.35,3.22-1.35s2.37,.49,3.21,1.35c.29,.3,.77,.3,1.06,0,.3-.29,.3-.77,0-1.06-1.12-1.14-2.65-1.8-4.28-1.8Zm-3.78-6.83l-.09-.06c-.32-.18-.73-.11-.96,.18-.24,.29-.21,.71,.04,.98l.08,.08,1.26,1c-.46,.18-.79,.63-.79,1.16,0,.69,.56,1.25,1.25,1.25s1.25-.56,1.25-1.25c.22,0,.44-.1,.59-.28,.24-.29,.21-.71-.04-.98l-.08-.08-2.5-2-.09-.06,.09,.06Zm8.62,.12c-.24-.29-.65-.36-.96-.18l-.09,.06-2.5,2-.08,.08c-.25,.27-.27,.68-.04,.98,.12,.15,.3,.25,.48,.27h.11c0,.7,.56,1.26,1.25,1.26s1.25-.56,1.25-1.25c0-.48-.27-.9-.67-1.11l-.11-.05,1.26-1,.08-.08c.25-.27,.27-.68,.04-.98Z"
-                            />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            <HelperText text="Helper text" />
+            <HelperText text="Helper text" size={size} />
         </div>
     );
 };

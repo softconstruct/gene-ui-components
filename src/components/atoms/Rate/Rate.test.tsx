@@ -6,6 +6,7 @@ import Rate, { IRateProps } from "./index";
 
 describe("Rate ", () => {
     let setup: ReactWrapper<IRateProps>;
+    // const jestFn = jest.fn();
     beforeEach(() => {
         setup = mount(<Rate />);
     });
@@ -14,12 +15,26 @@ describe("Rate ", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it("renders className prop correctly", () => {
-        const className = "test-class";
-        const wrapper = setup.setProps({ className });
+    // it("renders count prop correctly", () => {
+    //     const count = 5;
+    //     const wrapper = setup.setProps({ count });
+    //     expect(wrapper.find(".rating__wrapper")).toHaveLength(count);
+    // });
 
-        expect(wrapper.hasClass(className)).toBeTruthy();
-    });
+    // it("renders readonly prop correctly", () => {
+    //     const wrapper = setup.setProps({ readonly: true });
+    //     expect(wrapper.find(".rating__wrapper-readonly")).toBeDefined();
+    // });
 
-    // Your tests here
+    // it("renders size prop correctly", () => {
+    //     const size = "medium";
+    //     const wrapper = setup.setProps({ size });
+    //     expect(wrapper.find(".rating__wrapper").first().hasClass(`rating__wrapper-${size}`)).toBeTruthy();
+    // });
+
+    // it("renders onChange prop correctly", () => {
+    //     const wrapper = setup.setProps({ onChange: jestFn, value: 3, defaultValue: 3 });
+    //     wrapper.find(".rating__wrapper").first().simulate("click");
+    //     expect(jestFn).toHaveBeenCalledWith(1);
+    // });
 });
