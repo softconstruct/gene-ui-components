@@ -28,7 +28,7 @@ const Control: FC<IGlobalProps> = ({
             })}
             disabled={disabled}
         >
-            {Icon && <Icon size={16} />}
+            {Icon && <Icon />}
             {children && <span className="segmentedControl__text">{children}</span>}
         </button>
     );

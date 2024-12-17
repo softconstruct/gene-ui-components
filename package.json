@@ -20,7 +20,7 @@
     "main": "index.js",
     "typings": "index.d.ts",
     "scripts": {
-        "start": "npm run test && storybook dev -p 6006",
+        "start": "storybook dev -p 6006",
         "dev": "concurrently --kill-others -g \"npm:test:watch\" \"npm:start\"",
         "test": "jest --config ./configs/jest.config.js --rootDir ./ --coverage --json --outputFile=./coverage/.jest-test-results.json",
         "test:watch": "npm run test -- --watchAll --json",

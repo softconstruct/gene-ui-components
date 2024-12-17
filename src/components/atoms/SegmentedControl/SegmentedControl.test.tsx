@@ -66,6 +66,14 @@ describe("SegmentedControl ", () => {
         expect(wrapper.find(Label).find(".label__text").text()).toBe(label);
     });
 
+    it("renders infoText prop correctly", () => {
+        const infoText = "test";
+        const wrapper = setup.setProps({
+            infoText
+        });
+        expect(wrapper.find(Label).props().infoText).toBe(infoText);
+    });
+
     it.each<"large" | "medium" | "small">(["large", "medium", "small"])("should have %p size", (size) => {
         const wrapper = setup.setProps({
             size

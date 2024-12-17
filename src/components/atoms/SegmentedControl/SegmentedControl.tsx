@@ -58,10 +58,21 @@ interface ISegmentedControlProps extends Omit<IGlobalProps, "name" | "children" 
     /**
      *Displays the selected item
      */
-    isSelected?: boolean;
+    selected?: boolean;
+    /**
+     * Additional descriptive text shown with info icon and tooltip alongside of the label component.
+     */
+    infoText?: string;
 }
 
-const SegmentedControl: FC<ISegmentedControlProps> = ({ children, onChange, helperText, label, ...props }) => {
+const SegmentedControl: FC<ISegmentedControlProps> = ({
+    children,
+    onChange,
+    helperText,
+    label,
+    infoText,
+    ...props
+}) => {
     const [selectedElementName, setSelectedElementName] = useState("");
     const clickHandler = (e: MouseEvent<HTMLDivElement> | KeyboardEvent<HTMLDivElement>) => {
         e.stopPropagation();
@@ -81,9 +92,11 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({ children, onChange, help
         }
     };
 
+    const textSizes = props.size === "large" ? "medium" : props.size;
+
     return (
         <div className="segmentedControl">
-            <Label labelText={label} required />
+            <Label labelText={label} required size={textSizes} infoText={infoText} />
             <div
                 className="segmentedControl__wrapper"
                 onClick={clickHandler}
@@ -100,7 +113,7 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({ children, onChange, help
                     });
                 })}
             </div>
-            {helperText && <HelperText text={helperText} />}
+            {helperText && <HelperText text={helperText} size={textSizes} />}
         </div>
     );
 };
