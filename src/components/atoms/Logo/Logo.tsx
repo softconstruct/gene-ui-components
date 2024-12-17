@@ -1,17 +1,15 @@
-import React, { FC } from "react";
+import React, { FC, ReactElement, SVGProps } from "react";
 import classNames from "classnames";
 
-import LogoMark from "./LogoMark";
-import LogoType from "./LogoType";
 // Styles
 import "./Logo.scss";
 
-const LogoComponent = {
-    logomark: LogoMark,
-    logotype: LogoType
-};
-
 interface ILogoProps {
+    /**
+     * Specifies the SVG icon to render.<br/>
+     * Accepts a valid SVG element or its name as a string.
+     */
+    svg: ReactElement<SVGProps<SVGSVGElement>>;
     /**
      * Defines the size of the Logo.<br/>
      * Possible values: `large | medium | small`
@@ -34,19 +32,15 @@ interface ILogoProps {
     className?: string;
 }
 
-type LogoComponentProps = Omit<ILogoProps, "className" | "type">;
-
 /**
  * A logo component displays a Gene UI’s emblem or trademark, serving as a visual representation. It reinforces brand identity and recognition, typically placed in prominent locations such as the header, footer, or login page of an application or website.
  */
-const Logo: FC<ILogoProps> = ({ size = "medium", type = "logotype", appearance = "brand", className }) => {
-    const LogoSVG: FC<LogoComponentProps> = LogoComponent[type];
-
+const Logo: FC<ILogoProps> = ({ svg, size = "medium", type = "logotype", appearance = "brand", className }) => {
     return (
         <div className={classNames("logo", className)}>
-            <LogoSVG size={size} appearance={appearance} />
+            <div className={`logo__${type} logo__${type}_size_${size} logo__${type}_color_${appearance}`}>{svg}</div>
         </div>
     );
 };
 
-export { ILogoProps, LogoComponentProps, Logo as default };
+export { ILogoProps, Logo as default };
