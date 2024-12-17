@@ -13,7 +13,7 @@ const meta: Meta<typeof Tag> = {
     argTypes: {
         className: args({ control: false, ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance }),
-        isDisabled: args({ control: "boolean", ...propCategory.appearance }),
+        disabled: args({ control: "boolean", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         withIcon: args({ control: "boolean", ...propCategory.appearance }),
         text: args({ control: "text", ...propCategory.content }),

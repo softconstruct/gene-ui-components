@@ -3,7 +3,7 @@ import { ReactWrapper, mount } from "enzyme";
 
 // Components
 import Tag, { ITagProps } from "./index";
-import Button from "../../atoms/Button/Button";
+import Button from "../../atoms/Button";
 
 const tagText = "tag";
 
@@ -34,8 +34,8 @@ describe("Tag ", () => {
         expect(wrapper.find(`.tag_state_${type}`).exists()).toBeTruthy();
     });
 
-    it("renders isDisabled prop correctly", () => {
-        const wrapper = setup.setProps({ isDisabled: true });
+    it("renders disabled prop correctly", () => {
+        const wrapper = setup.setProps({ disabled: true });
         expect(wrapper.find(".tag_state_disabled").exists()).toBeTruthy();
     });
 

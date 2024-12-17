@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { Close, TagOutline, WarningFill, ErrorAlertFill } from "@geneui/icons";
 
 // Components
-import Button from "../../atoms/Button/Button";
+import Button from "../../atoms/Button";
 
 // Styles
 import "./Tag.scss";
@@ -27,7 +27,7 @@ interface ITagProps {
     /**
      * Disables tag
      */
-    isDisabled?: boolean;
+    disabled?: boolean;
     /**
      * Tag size <br/>
      * Possible values: `medium | small`
@@ -55,7 +55,7 @@ const Tag: FC<ITagProps> = ({
     className,
     text,
     type = "rest",
-    isDisabled,
+    disabled,
     size = "medium",
     withIcon = true,
     onClose
@@ -66,8 +66,8 @@ const Tag: FC<ITagProps> = ({
             className={classNames(
                 "tag",
                 `tag_size_${size}`,
-                { [`tag_state_${type}`]: !isDisabled },
-                { tag_state_disabled: isDisabled },
+                { [`tag_state_${type}`]: !disabled },
+                { tag_state_disabled: disabled },
                 { tag_withIcon: withIcon },
                 className
             )}
@@ -81,7 +81,7 @@ const Tag: FC<ITagProps> = ({
                 Icon={Close}
                 size={size}
                 onClick={onClose}
-                disabled={isDisabled}
+                disabled={disabled}
             />
         </div>
     );
