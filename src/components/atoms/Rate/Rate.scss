@@ -8,7 +8,6 @@
     &__content {
         display: flex;
         align-items: flex-start;
-        gap: var(--guit-ref-spacing-3xsmall);
         justify-content: flex-end;
     }
 
@@ -20,6 +19,22 @@
         flex: 0 0 auto;
         padding: var(--guit-ref-spacing-4xsmall);
         border-radius: var(--guit-ref-radius-3xsmall);
+        cursor: pointer;
+
+        &:not(:last-child) {
+            margin-inline-end: var(--guit-ref-radius-3xsmall);
+        }
+
+        &::after {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            right: calc(var(--guit-ref-radius-3xsmall) / -1);
+            bottom: 0;
+            width: calc(var(--guit-ref-radius-3xsmall) * 2);
+            background-color: transparent;
+        }
 
         &_size {
             &_medium {
@@ -43,22 +58,15 @@
             }
         }
 
-        &:focus-visible {
-            outline-offset: var(--guit-ref-border-width-thin);
-            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-                var(--guit-sem-color-border-focus);
+        &:hover {
+            transform: scale(1.1);
         }
     }
 
     &__svg {
         position: absolute;
-        top: 0;
-        left: 0;
-        cursor: pointer;
-
-        &:hover {
-            transform: scale(1.1);
-        }
+        inset: 0;
+        margin: auto;
     }
 
     &__star,
@@ -83,107 +91,15 @@
 
         &_color {
             &_default {
-                #{ $this }__starStroke {
-                    fill: var(--guit-sem-color-foreground-neutral-1);
-                }
+                color: var(--guit-sem-color-foreground-neutral-1);
             }
 
             &_orange {
-                #{ $this }__starStroke {
-                    fill: var(--guit-sem-color-foreground-accent-orange-1);
-                }
+                color: var(--guit-sem-color-foreground-accent-orange-1);
             }
         }
 
-        &_filled {
-            &#{ $the }_disabled {
-                &#{ $the }_color {
-                    &_default,
-                    &_orange {
-                        #{ $this }__starLeft,
-                        #{ $this }__starRight {
-                            fill: var(--guit-sem-color-foreground-disabled);
-                        }
-                    }
-                }
-            }
-
-            &#{ $the }_color {
-                &_default {
-                    #{ $this }__starLeft,
-                    #{ $this }__starRight {
-                        fill: var(--guit-sem-color-foreground-neutral-1);
-                    }
-                }
-
-                &_orange {
-                    #{ $this }__starLeft,
-                    #{ $this }__starRight {
-                        fill: var(--guit-sem-color-foreground-accent-orange-1);
-                    }
-                }
-            }
-        }
-
-        &_half {
-            &#{ $the }_disabled {
-                &#{ $the }_color {
-                    &_default,
-                    &_orange {
-                        #{ $this }__starLeft,
-                        #{ $this }__starStroke {
-                            fill: var(--guit-sem-color-foreground-disabled);
-                        }
-                    }
-                }
-            }
-
-            &#{ $the }_color {
-                &_default,
-                &_orange {
-                    #{ $this }__starRight {
-                        fill: transparent;
-                    }
-                }
-
-                &_default {
-                    #{ $this }__starLeft {
-                        fill: var(--guit-sem-color-foreground-neutral-1);
-                    }
-                }
-
-                &_orange {
-                    #{ $this }__starLeft {
-                        fill: var(--guit-sem-color-foreground-accent-orange-1);
-                    }
-                }
-            }
-        }
-
-        &_unfilled {
-            &#{ $the }_disabled {
-                &#{ $the }_color {
-                    &_default,
-                    &_orange {
-                        #{ $this }__starStroke {
-                            fill: var(--guit-sem-color-foreground-disabled);
-                        }
-                    }
-                }
-            }
-
-            &#{ $the }_color {
-                &_default,
-                &_orange {
-                    #{ $this }__starLeft,
-                    #{ $this }__starRight {
-                        fill: transparent;
-                    }
-                }
-            }
-        }
-
-        &_disabled {
+        &:disabled {
             pointer-events: none;
             user-select: none;
         }
@@ -195,68 +111,31 @@
     &__heart {
         $the: &;
 
-        &_filled {
-            &#{ $the }_disabled {
-                &#{ $the }_color {
-                    &_default,
-                    &_orange {
-                        #{ $this }__heartPath1,
-                        #{ $this }__heartPath2 {
-                            fill: var(--guit-sem-color-foreground-disabled);
+        &_color {
+            &_default,
+            &_orange {
+                &#{ $the }:disabled {
+                    &#{ $the }_color {
+                        &_default,
+                        &_orange {
+                            color: var(--guit-sem-color-foreground-disabled);
                         }
                     }
                 }
             }
 
-            &#{ $the }_color {
-                &_default {
-                    #{ $this }__heartPath1,
-                    #{ $this }__heartPath2 {
-                        fill: var(--guit-sem-color-foreground-neutral-1);
-                    }
-                }
+            &_default {
+                color: var(--guit-sem-color-foreground-neutral-1);
+            }
 
-                &_orange {
-                    #{ $this }__heartPath1,
-                    #{ $this }__heartPath2 {
-                        fill: var(--guit-sem-color-foreground-accent-orange-1);
-                    }
-                }
+            &_orange {
+                color: var(--guit-sem-color-foreground-accent-orange-1);
             }
         }
 
-        &_unfilled {
-            &#{ $the }_disabled {
-                &#{ $the }_color {
-                    &_default,
-                    &_orange {
-                        #{ $this }__heartPath2 {
-                            fill: var(--guit-sem-color-foreground-disabled);
-                        }
-                    }
-                }
-            }
-
-            &#{ $the }_color {
-                &_default,
-                &_orange {
-                    #{ $this }__heartPath1 {
-                        fill: transparent;
-                    }
-                }
-
-                &_default {
-                    #{ $this }__heartPath2 {
-                        fill: var(--guit-sem-color-foreground-neutral-1);
-                    }
-                }
-
-                &_orange {
-                    #{ $this }__heartPath2 {
-                        fill: var(--guit-sem-color-foreground-accent-orange-1);
-                    }
-                }
-            }
+        &:disabled {
+            pointer-events: none;
+            user-select: none;
         }
     }
 

@@ -1,5 +1,5 @@
 import React, { FC, MouseEvent, useLayoutEffect, useMemo, useState } from "react";
-
+import { Heart, HeartFilled } from "@geneui/icons";
 // Styles
 import "./Rate.scss";
 import { HelperText, Label } from "../../../index";
@@ -160,7 +160,7 @@ const Rate: FC<IRateProps> = (props) => {
             <Label labelText="Label" size={size} />
             {/* STARS */}
             <div className="rate__content">
-                <div className={`rate__item rate__item_size_${size}`}>
+                <>
                     {elements.map((_, i) => {
                         const currentRating = i + 1;
 
@@ -183,50 +183,24 @@ const Rate: FC<IRateProps> = (props) => {
                             : `polygon( 0  0, ${calculatedWidthFor}% 0,  ${calculatedWidthFor}% 100%,0  100%)`;
 
                         return (
-                            <div className={`rate__item rate__item_size_${size}`} key={i}>
-                                <button
-                                    type="button"
-                                    aria-label="rate"
-                                    className="rate__heart rate__heart_color_orange rate__star_filled"
-                                    onMouseMove={(e) => handleMouseMoveForElement(e, currentRating)}
-                                    onMouseLeave={mouseLeaveHandler}
-                                    onMouseEnter={mouseEnterHandler}
-                                    onBlur={() => setDisableMouseMove(false)}
-                                    onClick={(e) => getRating(e, currentRating)}
-                                >
-                                    <svg
-                                        className="rate__svg"
-                                        version="1.1"
-                                        id="Layer_1"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            className="rate__heartPath2"
-                                            d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961ZM19.3684 12.1211L12.0002 19.4846L4.63514 12.1196C3.12186 10.6063 3.12186 8.15281 4.63514 6.63952C6.14843 5.12624 8.60194 5.12624 10.1152 6.63952L11.4727 7.99697C11.7705 8.29483 12.2552 8.28903 12.5459 7.98412L13.8805 6.64027C15.3976 5.12317 17.8528 5.12316 19.3699 6.64027C20.8835 8.15391 20.8809 10.6001 19.3684 12.1211Z"
-                                        />
-                                    </svg>
-
-                                    <svg
-                                        className="rate__svg"
-                                        version="1.1"
-                                        id="Layer_1"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        x="0px"
-                                        y="0px"
-                                        viewBox="0 0 24 24"
-                                        style={{ clipPath }}
-                                    >
-                                        <path
-                                            className="rate__heartPath1"
-                                            d="M12.8199 5.57961L11.9991 6.40211L11.1759 5.57886C9.07681 3.4798 5.67355 3.4798 3.57448 5.57886C1.47542 7.67793 1.47542 11.0812 3.57448 13.1803L11.4699 21.0756C11.7627 21.3685 12.2376 21.3685 12.5305 21.0756L20.432 13.1788C22.5264 11.0728 22.53 7.67906 20.4305 5.57961C18.3276 3.47672 14.9227 3.47672 12.8199 5.57961Z"
-                                        />
-                                    </svg>
-                                </button>
-                            </div>
+                            <button
+                                className={`rate__item rate__item_size_${size}`}
+                                onMouseLeave={mouseLeaveHandler}
+                                onMouseEnter={mouseEnterHandler}
+                                onMouseMove={(e) => handleMouseMoveForElement(e, currentRating)}
+                                onBlur={() => setDisableMouseMove(false)}
+                                onClick={(e) => getRating(e, currentRating)}
+                                key={i}
+                                type="button"
+                            >
+                                <span aria-label="rate" className="rate__heart rate__heart_color_orange">
+                                    <Heart className="rate__svg" />
+                                    <HeartFilled style={{ clipPath }} className="rate__svg" />
+                                </span>
+                            </button>
                         );
                     })}
-                </div>
+                </>
             </div>
             <HelperText text="Helper text" size={size} />
         </div>
