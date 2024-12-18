@@ -1,64 +1,50 @@
-import React, {
-    Children,
-    cloneElement,
-    FC,
-    FunctionComponentElement,
-    KeyboardEvent,
-    MouseEvent,
-    useState
-} from "react";
+import React, { Children, cloneElement, FC, FunctionComponentElement, useEffect, useState } from "react";
 // Styles
 import "./SegmentedControl.scss";
 
 // Component
-import { IconProps } from "@geneui/icons";
 import { HelperText, Label } from "../../../index";
+import { ISegmentedControlItemProps } from "./SegmentedControlItem ";
 
-// Types
-import { IGlobalProps } from "./types";
-
-interface ISegmentedControlProps extends Omit<IGlobalProps, "name" | "children" | "isSelected"> {
+interface ISegmentedControlProps {
+    /**
+     * Additional descriptive text shown with info icon and tooltip alongside of the label component.
+     */
+    infoText?: string;
     /**
      * The text content of the `label`.
      * This is the main text displayed within the `label`.
      */
     label?: string;
     /**
-     * Control component. Renders inside the component
+     * SegmentedControlItem component. Renders inside the component
      */
-    children: FunctionComponentElement<IGlobalProps> | FunctionComponentElement<IGlobalProps>[];
+
+    children:
+        | FunctionComponentElement<ISegmentedControlItemProps>
+        | FunctionComponentElement<ISegmentedControlItemProps>[];
     /**
      * The actual text content to be displayed as helper text.
      */
     helperText?: string;
     /**
-     * Works when the user clicks on one of the buttons. Returns the value that was written as a name in the Control component.
+     *  It works when the user clicks on one of the control items. Returns the value of the `name` prop from the `SegmentedControlItem`.
      */
     onChange: (name: string) => void;
-
-    // TODO:remove duplicate types after tests
-    /**
-     * The `Icon` prop accepts a React Functional Component that will be displayed alongside the button text.
-     */
-    Icon?: FC<IconProps>;
     /**
      * Size <br>
      * Possible values: `large | medium | small`
      */
     size?: "large" | "medium" | "small";
-
     /**
-     * Indicates whether the `button` is `disabled`, preventing user interaction, focus, click etc...
+     * Indicates whether the `SegmentedControlItem` is `disabled`, preventing user interaction, focus, click etc...
      */
     disabled?: boolean;
     /**
-     *Displays the selected item
+     * Indicates whether the label represents a required field.
+     * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
      */
-    selected?: boolean;
-    /**
-     * Additional descriptive text shown with info icon and tooltip alongside of the label component.
-     */
-    infoText?: string;
+    required?: boolean;
 }
 
 const SegmentedControl: FC<ISegmentedControlProps> = ({
@@ -67,45 +53,33 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     helperText,
     label,
     infoText,
-    ...props
+    required,
+    disabled,
+    size
 }) => {
     const [selectedElementName, setSelectedElementName] = useState("");
-    const clickHandler = (e: MouseEvent<HTMLDivElement> | KeyboardEvent<HTMLDivElement>) => {
-        e.stopPropagation();
-        const target = e.target as HTMLElement;
-        const name =
-            target.tagName === "BUTTON" ? target.getAttribute("name") : target.parentElement?.getAttribute("name");
-        if (name) {
-            onChange(name);
-            setSelectedElementName(name);
-        }
+
+    const onSelect = (name: string) => {
+        setSelectedElementName(name);
     };
 
-    const onKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            clickHandler(e);
-        }
-    };
+    useEffect(() => {
+        onChange(selectedElementName);
+    }, [selectedElementName]);
 
-    const textSizes = props.size === "large" ? "medium" : props.size;
+    const textSizes = size === "large" ? "medium" : size;
 
     return (
         <div className="segmentedControl">
-            <Label labelText={label} required size={textSizes} infoText={infoText} />
-            <div
-                className="segmentedControl__wrapper"
-                onClick={clickHandler}
-                onKeyDown={onKeyDown}
-                tabIndex={-1}
-                aria-label="segmented control"
-                role="button"
-            >
+            <Label labelText={label} required={required} size={textSizes} infoText={infoText} />
+            <div className="segmentedControl__wrapper">
                 {Children.map(children, (el) => {
                     return cloneElement(el, {
-                        ...props,
                         ...el.props,
-                        isSelected: selectedElementName ? selectedElementName === el.props.name : el.props.isSelected
+                        selected: selectedElementName ? selectedElementName === el.props.name : el.props.selected,
+                        size,
+                        onSelect,
+                        disabled
                     });
                 })}
             </div>

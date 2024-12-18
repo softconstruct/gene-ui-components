@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { ComponentType, FC } from "react";
 import { Meta } from "@storybook/react";
 import { TagOutline } from "@geneui/icons";
 
@@ -6,17 +6,14 @@ import { TagOutline } from "@geneui/icons";
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 
 // Components
-import SegmentedControl, { ISegmentedControlProps } from "./index";
-import Control from "./Control";
+import SegmentedControl, { ISegmentedControlProps, SegmentedControlItem } from "./index";
 
 const meta: Meta<typeof SegmentedControl> = {
     title: "Atoms/SegmentedControl",
     component: SegmentedControl,
     argTypes: {
-        disabled: args({ control: "false", ...propCategory.states }),
-        selected: args({ control: false, ...propCategory.states }),
+        disabled: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
-        Icon: args({ control: false, ...propCategory.content }),
         children: args({ control: false, ...propCategory.content }),
         helperText: args({ control: "text", ...propCategory.content }),
         label: args({ control: "text", ...propCategory.content }),
@@ -28,19 +25,24 @@ const meta: Meta<typeof SegmentedControl> = {
         helperText: "helperText",
         label: "label",
         size: "medium"
-    } as ISegmentedControlProps
+    },
+    subcomponents: { SegmentedControlItem: SegmentedControlItem as ComponentType<unknown> }
 };
 
 export default meta;
 
 const Template: FC<ISegmentedControlProps> = (props) => {
     return (
-        <SegmentedControl {...props} Icon={TagOutline}>
-            <Control name="data1">Data1</Control>
-            <Control name="data2" isSelected>
+        <SegmentedControl {...props}>
+            <SegmentedControlItem name="data1" Icon={TagOutline}>
+                Data1
+            </SegmentedControlItem>
+            <SegmentedControlItem name="data2" Icon={TagOutline} selected>
                 Data2
-            </Control>
-            <Control name="data3">Data3 </Control>
+            </SegmentedControlItem>
+            <SegmentedControlItem name="data3" Icon={TagOutline}>
+                Data3
+            </SegmentedControlItem>
         </SegmentedControl>
     );
 };
@@ -51,10 +53,10 @@ Default.args = {};
 
 const WithoutText: FC<ISegmentedControlProps> = (props) => {
     return (
-        <SegmentedControl {...props} Icon={TagOutline}>
-            <Control name="data1" isSelected />
-            <Control name="data2" />
-            <Control name="data3" />
+        <SegmentedControl {...props}>
+            <SegmentedControlItem name="data1" selected Icon={TagOutline} />
+            <SegmentedControlItem name="data2" Icon={TagOutline} />
+            <SegmentedControlItem name="data3" Icon={TagOutline} />
         </SegmentedControl>
     );
 };
@@ -63,11 +65,11 @@ export const OnlyIcon = WithoutText.bind({});
 const WithoutIcons: FC<ISegmentedControlProps> = (props) => {
     return (
         <SegmentedControl {...props}>
-            <Control name="data1">Data1</Control>
-            <Control name="data2" isSelected>
+            <SegmentedControlItem name="data1">Data1</SegmentedControlItem>
+            <SegmentedControlItem name="data2" selected>
                 Data2
-            </Control>
-            <Control name="data3">Data3 </Control>
+            </SegmentedControlItem>
+            <SegmentedControlItem name="data3">Data3 </SegmentedControlItem>
         </SegmentedControl>
     );
 };

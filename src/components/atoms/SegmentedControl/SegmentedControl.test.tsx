@@ -3,29 +3,32 @@ import { ReactWrapper, mount } from "enzyme";
 import { TagOutline } from "@geneui/icons";
 
 // Components
-import SegmentedControl, { ISegmentedControlProps } from "./index";
-import Control from "./Control";
+import SegmentedControl, { ISegmentedControlProps, SegmentedControlItem } from "./index";
 import HelperText from "../HelperText";
 import Label from "../Label";
 
 describe("SegmentedControl ", () => {
     let setup: ReactWrapper<ISegmentedControlProps>;
+
     beforeEach(() => {
         setup = mount(
             <SegmentedControl size="large" onChange={jest.fn}>
-                <Control name="test1" />
+                <SegmentedControlItem name="test1" Icon={TagOutline} />
             </SegmentedControl>
         );
     });
+
     it("renders without crashing", () => {
         expect(setup.exists()).toBeTruthy();
     });
+
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({
             disabled: true
         });
-        expect(wrapper.find(Control).find(".segmentedControl__block").props().disabled).toBeTruthy();
+        expect(wrapper.find(SegmentedControlItem).find(".segmentedControl__block").props().disabled).toBeTruthy();
     });
+
     it("renders helperText prop correctly", () => {
         const helperText = "test";
         const wrapper = setup.setProps({
@@ -35,21 +38,16 @@ describe("SegmentedControl ", () => {
     });
 
     it("renders Icon prop correctly", () => {
-        const Icon = TagOutline;
-        const wrapper = setup.setProps({
-            Icon
-        });
-
-        expect(wrapper.find(Icon).exists()).toBeTruthy();
+        expect(setup.find(TagOutline).exists()).toBeTruthy();
     });
 
-    it("renders isSelected prop correctly", () => {
-        const children = <Control name="test" isSelected />;
+    it("renders selected  prop correctly", () => {
+        const children = <SegmentedControlItem name="test" selected />;
         const wrapper = setup.setProps({ children });
-        expect(wrapper.find(Control).find(".segmentedControl__block_selected").exists()).toBeTruthy();
+        expect(wrapper.find(SegmentedControlItem).find(".segmentedControl__block_selected").exists()).toBeTruthy();
     });
 
-    it("renders Label prop correctly", () => {
+    it("renders label prop correctly", () => {
         const label = "test";
         const wrapper = setup.setProps({
             label
@@ -65,11 +63,19 @@ describe("SegmentedControl ", () => {
         expect(wrapper.find(Label).props().infoText).toBe(infoText);
     });
 
+    it("renders required prop correctly", () => {
+        const wrapper = setup.setProps({
+            required: true,
+            label: "test"
+        });
+        expect(wrapper.find(Label).find(".label__asterisk").exists()).toBeTruthy();
+    });
+
     it.each<"large" | "medium" | "small">(["large", "medium", "small"])("should have %p size", (size) => {
         const wrapper = setup.setProps({
             size
         });
-        expect(wrapper.find(Control).find(`.segmentedControl__block_size_${size}`).exists()).toBeTruthy();
+        expect(wrapper.find(SegmentedControlItem).find(`.segmentedControl__block_size_${size}`).exists()).toBeTruthy();
     });
 
     it("renders onChange prop correctly", () => {
