@@ -40,9 +40,8 @@ const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "h
     const [dotsRange, setDotsRange] = useState([0, DOTS_LIMIT]);
     const count = children.length;
 
-    const onPrevClick = () => setSelectedIndex((prev) => (prev === 0 ? 0 : prev - 1));
-    const onNextClick = () =>
-        setSelectedIndex((prev) => (prev === children.length - 1 ? children.length - 1 : prev + 1));
+    const onPrevClick = () => setSelectedIndex((prev) => (prev === 0 ? children.length - 1 : prev - 1));
+    const onNextClick = () => setSelectedIndex((prev) => (prev === children.length - 1 ? 0 : prev + 1));
 
     useLayoutEffect(
         () =>
@@ -52,6 +51,10 @@ const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "h
 
                 if (selectedIndex === 0) {
                     return [0, DOTS_LIMIT];
+                }
+
+                if (selectedIndex === count - 1) {
+                    return [count - DOTS_LIMIT > 0 ? count - DOTS_LIMIT : 0, count];
                 }
 
                 if (selectedIndex >= max - 1 && max !== count) {
