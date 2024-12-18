@@ -17,6 +17,7 @@
         position: relative;
         display: inline-flex;
         justify-content: center;
+        flex-direction: row;
         align-items: center;
         min-width: max-content;
         border-width: var(--guit-ref-border-width-thin);
@@ -81,22 +82,12 @@
             border-inline-end-width: 0;
         }
 
-        &_icon {
-            &_before {
-                flex-direction: row;
-            }
-
-            &_after {
-                flex-direction: row-reverse;
-            }
-        }
-
         &_size {
             &_large {
                 gap: var(--guit-ref-spacing-xsmall);
                 height: var(--guit-sem-dimension-height-large);
 
-                &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
+                &:not(#{ $this }_withIcon, #{ $this }_icon_only) {
                     min-width: var(--guit-sem-dimension-width-2xlarge);
                     padding-inline-start: var(--guit-ref-spacing-large);
                     padding-inline-end: var(--guit-ref-spacing-large);
@@ -107,19 +98,10 @@
                     padding-bottom: var(--guit-ref-spacing-small);
                 }
 
-                &#{ $this }_icon_before,
-                &#{ $this }_icon_after {
+                &#{ $this }_withIcon {
                     min-width: var(--guit-sem-dimension-width-5xlarge);
-                }
-
-                &#{ $this }_icon_before {
                     padding-inline-start: var(--guit-ref-spacing-medium);
                     padding-inline-end: var(--guit-ref-spacing-large);
-                }
-
-                &#{ $this }_icon_after {
-                    padding-inline-start: var(--guit-ref-spacing-large);
-                    padding-inline-end: var(--guit-ref-spacing-medium);
                 }
 
                 &#{ $this }_icon_only {
@@ -132,7 +114,7 @@
                 gap: var(--guit-ref-spacing-xsmall);
                 height: var(--guit-sem-dimension-height-medium);
 
-                &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
+                &:not(#{ $this }_withIcon, #{ $this }_icon_only) {
                     min-width: var(--guit-sem-dimension-width-2xlarge);
                     padding-inline-start: var(--guit-ref-spacing-medium);
                     padding-inline-end: var(--guit-ref-spacing-medium);
@@ -143,19 +125,10 @@
                     padding-bottom: var(--guit-ref-spacing-2xsmall);
                 }
 
-                &#{ $this }_icon_before,
-                &#{ $this }_icon_after {
+                &#{ $this }_withIcon {
                     min-width: var(--guit-sem-dimension-width-5xlarge);
-                }
-
-                &#{ $this }_icon_before {
                     padding-inline-start: var(--guit-ref-spacing-xsmall);
                     padding-inline-end: var(--guit-ref-spacing-medium);
-                }
-
-                &#{ $this }_icon_after {
-                    padding-inline-start: var(--guit-ref-spacing-medium);
-                    padding-inline-end: var(--guit-ref-spacing-xsmall);
                 }
 
                 &#{ $this }_icon_only {
@@ -168,7 +141,7 @@
                 gap: var(--guit-ref-spacing-2xsmall);
                 height: var(--guit-sem-dimension-height-small);
 
-                &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
+                &:not(#{ $this }_withIcon, #{ $this }_icon_only) {
                     min-width: var(--guit-sem-dimension-width-2xlarge);
                     padding-inline-start: var(--guit-ref-spacing-medium);
                     padding-inline-end: var(--guit-ref-spacing-medium);
@@ -179,19 +152,10 @@
                     padding-bottom: var(--guit-ref-spacing-4xsmall);
                 }
 
-                &#{ $this }_icon_before,
-                &#{ $this }_icon_after {
+                &#{ $this }_withIcon {
                     min-width: var(--guit-sem-dimension-width-5xlarge);
-                }
-
-                &#{ $this }_icon_before {
                     padding-inline-start: var(--guit-ref-spacing-xsmall);
                     padding-inline-end: var(--guit-ref-spacing-medium);
-                }
-
-                &#{ $this }_icon_after {
-                    padding-inline-start: var(--guit-ref-spacing-medium);
-                    padding-inline-end: var(--guit-ref-spacing-xsmall);
                 }
 
                 &#{ $this }_icon_only {
