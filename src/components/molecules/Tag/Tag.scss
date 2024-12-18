@@ -1,0 +1,84 @@
+.tag {
+    $this: &;
+
+    display: inline-flex;
+    align-items: center;
+    max-width: 28rem;
+
+    &_size {
+        &_medium,
+        &_small {
+            border-radius: var(--guit-ref-radius-3xsmall);
+            padding-inline-start: var(--guit-ref-spacing-medium);
+
+            &#{ $this }_withIcon {
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
+            }
+
+            #{ $this }__text {
+                font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+                font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+                font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+                line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            }
+        }
+
+        &_medium {
+            gap: var(--guit-ref-spacing-xsmall);
+        }
+
+        &_small {
+            gap: var(--guit-ref-spacing-2xsmall);
+        }
+    }
+
+    &_state {
+        &_rest {
+            background-color: var(--guit-sem-color-background-neutral-4);
+
+            #{ $this }__icon,
+            #{ $this }__text {
+                color: var(--guit-sem-color-foreground-neutral-2);
+            }
+        }
+
+        &_error {
+            background-color: var(--guit-sem-color-background-error-1);
+
+            #{ $this }__icon,
+            #{ $this }__text {
+                color: var(--guit-sem-color-foreground-error);
+            }
+        }
+
+        &_warning {
+            background-color: var(--guit-sem-color-background-warning-1);
+
+            #{ $this }__icon,
+            #{ $this }__text {
+                color: var(--guit-sem-color-foreground-warning);
+            }
+        }
+
+        &_disabled {
+            background-color: var(--guit-sem-color-background-disabled);
+            pointer-events: none;
+            user-select: none;
+
+            #{ $this }__icon,
+            #{ $this }__text {
+                color: var(--guit-sem-color-foreground-disabled);
+            }
+        }
+    }
+
+    &__icon,
+    &__button {
+        flex: 0 0 auto;
+    }
+
+    &__text {
+        flex: 1;
+        min-width: 0;
+    }
+}
