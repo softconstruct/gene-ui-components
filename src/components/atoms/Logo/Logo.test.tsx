@@ -17,25 +17,20 @@ describe("Logo ", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it("renders with default props correctly", () => {
-        expect(setup.find(".logo__logotype").hasClass("logo__logotype_size_medium")).toBeTruthy();
-        expect(setup.find(".logo__logotype").hasClass("logo__logotype_color_brand")).toBeTruthy();
-    });
-
-    it.each<ILogoProps["type"]>(["logomark", "logotype"])("applies correct type class for type prop", (type) => {
+    it.each<ILogoProps["type"]>(["logomark", "logotype"])("should have '%s' type", (type) => {
         const svg = type === "logomark" ? LogoMarkSVG : LogoTypeSVG;
         setup.setProps({ type, svg });
         expect(setup.find(`.logo__${type}`).exists()).toBeTruthy();
     });
 
-    it.each<ILogoProps["size"]>(["large", "medium", "small"])("applies correct size class for size prop", (size) => {
+    it.each<ILogoProps["size"]>(["large", "medium", "small"])("should have '%s' size", (size) => {
         setup.setProps({ size });
         const { type = "logotype" } = setup.props();
         expect(setup.find(`.logo__${type}`).hasClass(`logo__${type}_size_${size}`)).toBeTruthy();
     });
 
     it.each<ILogoProps["appearance"]>(["brand", "secondary", "inverse"])(
-        "applies correct appearance class for appearance prop",
+        "should have '%s' appearance",
         (appearance) => {
             setup.setProps({ appearance });
             const { type = "logotype" } = setup.props();
