@@ -53,7 +53,8 @@ const SegmentedControlItem: FC<ISegmentedControlItemProps> = ({
             onClick={() => onSelect?.(name)}
             className={classNames(`segmentedControl__block segmentedControl__block_size_${size}`, {
                 segmentedControl__block_icon_only: Icon && !children,
-                segmentedControl__block_selected: selected
+                segmentedControl__block_selected: selected,
+                segmentedControl__block_withIcon: Icon && children
             })}
             disabled={disabled}
         >
