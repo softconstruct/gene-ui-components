@@ -1,9 +1,13 @@
-import React, { FC } from "react";
+import React, { FC, useRef } from "react";
 import classNames from "classnames";
 import { Close, TagOutline, WarningFill, ErrorAlertFill } from "@geneui/icons";
 
 // Components
 import Button from "../../atoms/Button";
+import Tooltip from "../Tooltip";
+
+// Hooks
+import { useEllipsisDetection } from "../../../hooks";
 
 // Styles
 import "./Tag.scss";
@@ -60,6 +64,9 @@ const Tag: FC<ITagProps> = ({
     withIcon = true,
     onClose
 }) => {
+    const textRef = useRef<HTMLSpanElement | null>(null);
+    const isTruncated: boolean = useEllipsisDetection(textRef, [text]);
+
     const Icon = icons[type];
     return (
         <div
@@ -73,7 +80,11 @@ const Tag: FC<ITagProps> = ({
             )}
         >
             {withIcon && <Icon className="tag__icon" size={20} />}
-            <span className="tag__text">{text}</span>
+            <Tooltip text={text} isVisible={isTruncated}>
+                <span ref={textRef} className="tag__text ellipsis-text">
+                    {text}
+                </span>
+            </Tooltip>
             <Button
                 className="tag__button"
                 appearance="secondary"
