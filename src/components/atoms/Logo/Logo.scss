@@ -27,6 +27,8 @@
     }
 
     &__logotype {
+        padding: var(--guit-ref-spacing-4xsmall);
+
         &_size {
             &_large {
                 height: var(--guit-sem-dimension-height-large);
