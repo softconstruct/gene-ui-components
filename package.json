@@ -20,7 +20,7 @@
     "main": "index.js",
     "typings": "index.d.ts",
     "scripts": {
-        "start": "npm run test && storybook dev -p 6006",
+        "start": "storybook dev -p 6006",
         "dev": "concurrently --kill-others -g \"npm:test:watch\" \"npm:start\"",
         "test": "jest --config ./configs/jest.config.js --rootDir ./ --coverage --json --outputFile=./coverage/.jest-test-results.json",
         "test:watch": "npm run test -- --watchAll --json",
@@ -165,7 +165,7 @@
         "@floating-ui/react": "^0.26.16",
         "@floating-ui/react-dom": "^2.1.2",
         "@floating-ui/utils": "^0.2.8",
-        "@geneui/icons": "^1.0.4",
+        "@geneui/icons": "^1.0.6",
         "@geneui/tokens": "^1.8.0-beta",
         "classnames": "^2.3.2",
         "react-is": "^17.0.2"

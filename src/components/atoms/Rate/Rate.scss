@@ -1,0 +1,321 @@
+.rate {
+    $this: &;
+
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-3xsmall);
+
+    &__content {
+        display: flex;
+        align-items: flex-start;
+        justify-content: flex-end;
+    }
+
+    &__item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        padding: var(--guit-ref-spacing-4xsmall);
+        border-radius: var(--guit-ref-radius-3xsmall);
+        cursor: pointer;
+
+        &:not(:last-child) {
+            margin-inline-end: var(--guit-ref-radius-3xsmall);
+        }
+
+        &::after {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            right: calc(var(--guit-ref-radius-3xsmall) / -1);
+            bottom: 0;
+            width: calc(var(--guit-ref-radius-3xsmall) * 2);
+            background-color: transparent;
+        }
+
+        &_size {
+            &_medium {
+                width: 3.2rem;
+                height: 3.2rem;
+
+                #{ $this }__svg {
+                    width: 2.4rem;
+                    height: 2.4rem;
+                }
+            }
+
+            &_small {
+                width: 2.4rem;
+                height: 2.4rem;
+
+                #{ $this }__svg {
+                    width: 2rem;
+                    height: 2rem;
+                }
+            }
+        }
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+
+    &__svg {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+    }
+
+    &__star,
+    &__heart,
+    &__num,
+    &__emoji {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+
+        &_disabled {
+            pointer-events: none;
+            user-select: none;
+        }
+    }
+
+    // Star START
+    &__star {
+        $the: &;
+
+        &_color {
+            &_default {
+                color: var(--guit-sem-color-foreground-neutral-1);
+            }
+
+            &_orange {
+                color: var(--guit-sem-color-foreground-accent-orange-1);
+            }
+        }
+
+        &:disabled {
+            pointer-events: none;
+            user-select: none;
+        }
+    }
+
+    // Star END
+
+    // Heart START
+    &__heart {
+        $the: &;
+
+        &_color {
+            &_default,
+            &_orange {
+                &#{ $the }:disabled {
+                    &#{ $the }_color {
+                        &_default,
+                        &_orange {
+                            color: var(--guit-sem-color-foreground-disabled);
+                        }
+                    }
+                }
+            }
+
+            &_default {
+                color: var(--guit-sem-color-foreground-neutral-1);
+            }
+
+            &_orange {
+                color: var(--guit-sem-color-foreground-accent-orange-1);
+            }
+        }
+
+        &:disabled {
+            pointer-events: none;
+            user-select: none;
+        }
+    }
+
+    // Heart END
+
+    // Num START
+    &__num {
+        $the: &;
+
+        &_filled {
+            &#{ $the }_disabled {
+                &#{ $the }_color {
+                    &_default,
+                    &_orange {
+                        #{ $this }__numPath1 {
+                            stroke: var(--guit-sem-color-foreground-disabled);
+                        }
+
+                        #{ $this }__numPath2 {
+                            fill: var(--guit-sem-color-foreground-disabled);
+                        }
+                    }
+                }
+            }
+
+            &#{ $the }_color {
+                &_default,
+                &_orange {
+                    #{ $this }__numPath3 {
+                        fill: #fff;
+                    }
+                }
+
+                &_default {
+                    #{ $this }__numPath1 {
+                        stroke: var(--guit-sem-color-foreground-neutral-1);
+                    }
+
+                    #{ $this }__numPath2 {
+                        fill: var(--guit-sem-color-foreground-neutral-1);
+                    }
+                }
+
+                &_orange {
+                    #{ $this }__numPath1 {
+                        stroke: var(--guit-sem-color-foreground-accent-orange-1);
+                    }
+
+                    #{ $this }__numPath2 {
+                        fill: var(--guit-sem-color-foreground-accent-orange-1);
+                    }
+                }
+            }
+        }
+
+        &_unfilled {
+            &#{ $the }_disabled {
+                &#{ $the }_color {
+                    &_default,
+                    &_orange {
+                        #{ $this }__numPath1 {
+                            stroke: var(--guit-sem-color-foreground-disabled);
+                        }
+
+                        #{ $this }__numPath3 {
+                            fill: var(--guit-sem-color-foreground-disabled);
+                        }
+                    }
+                }
+            }
+
+            &#{ $the }_color {
+                &_default {
+                    #{ $this }__numPath1 {
+                        stroke: var(--guit-sem-color-foreground-neutral-1);
+                    }
+
+                    #{ $this }__numPath3 {
+                        fill: var(--guit-sem-color-foreground-neutral-1);
+                    }
+                }
+
+                &_orange {
+                    #{ $this }__numPath1 {
+                        stroke: var(--guit-sem-color-foreground-accent-orange-1);
+                    }
+
+                    #{ $this }__numPath3 {
+                        fill: var(--guit-sem-color-foreground-accent-orange-1);
+                    }
+                }
+            }
+        }
+    }
+
+    &__numPath1 {
+        fill: none;
+        stroke: var(--guit-sem-color-foreground-neutral-1);
+        stroke-miterlimit: 10;
+        stroke-width: 0.15rem;
+    }
+
+    &__numPath2 {
+        fill: transparent;
+    }
+
+    // Num END
+
+    // Emoji START
+    &__emoji {
+        $the: &;
+
+        &_filled {
+            &#{ $the }_disabled {
+                &#{ $the }_color {
+                    &_default,
+                    &_orange {
+                        #{ $this }__emojiPath2 {
+                            fill: var(--guit-sem-color-foreground-disabled);
+                        }
+                    }
+                }
+            }
+
+            &#{ $the }_color {
+                &_default,
+                &_orange {
+                    #{ $this }__emojiPath1 {
+                        fill: none;
+                    }
+                }
+
+                &_default {
+                    #{ $this }__emojiPath2 {
+                        fill: var(--guit-sem-color-foreground-neutral-1);
+                    }
+                }
+
+                &_orange {
+                    #{ $this }__emojiPath2 {
+                        fill: var(--guit-sem-color-foreground-accent-orange-1);
+                    }
+                }
+            }
+        }
+
+        &_unfilled {
+            &#{ $the }_disabled {
+                &#{ $the }_color {
+                    &_default,
+                    &_orange {
+                        #{ $this }__emojiPath1 {
+                            fill: var(--guit-sem-color-foreground-disabled);
+                        }
+                    }
+                }
+            }
+
+            &#{ $the }_color {
+                &_default,
+                &_orange {
+                    #{ $this }__emojiPath2 {
+                        fill: none;
+                    }
+                }
+
+                &_default {
+                    #{ $this }__emojiPath1 {
+                        fill: var(--guit-sem-color-foreground-neutral-1);
+                    }
+                }
+
+                &_orange {
+                    #{ $this }__emojiPath1 {
+                        fill: var(--guit-sem-color-foreground-accent-orange-1);
+                    }
+                }
+            }
+        }
+    }
+
+    // Emoji END
+}
