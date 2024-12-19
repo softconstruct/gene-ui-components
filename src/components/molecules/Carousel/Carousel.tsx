@@ -1,4 +1,4 @@
-import React, { FC, JSX, useLayoutEffect, useState } from "react";
+import React, { FC, ReactElement, useLayoutEffect, useState } from "react";
 import classNames from "classnames";
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
 
@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight } from "@geneui/icons";
 import "./Carousel.scss";
 
 // Components
+import CarouselItem from "./CarouselItem";
 import Button from "../../atoms/Button";
 
 interface ICarouselProps {
@@ -27,7 +28,7 @@ interface ICarouselProps {
     /**
      * Content elements
      */
-    children?: JSX.Element[];
+    children?: ReactElement<typeof CarouselItem>[];
 }
 
 const DOTS_LIMIT = 6;
