@@ -17,14 +17,12 @@ const meta: Meta<typeof HelperText> = {
         className: args({ control: "false", ...propCategory.appearance }),
         text: args({ control: "text", ...propCategory.content }),
         Icon: args({ control: false, ...propCategory.content }),
-        isDisabled: args({ control: "boolean", ...propCategory.states }),
-        isLoading: args({ control: "boolean", ...propCategory.states })
+        isDisabled: args({ control: "boolean", ...propCategory.states })
     },
     args: {
         size: "medium",
         text: "Helper Text",
         isDisabled: false,
-        isLoading: false,
         type: "rest"
     }
 };
