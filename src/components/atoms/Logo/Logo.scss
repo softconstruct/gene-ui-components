@@ -1,0 +1,65 @@
+.logo {
+    $this: &;
+
+    &__logotype,
+    &__logomark {
+        display: inline-flex;
+
+        &_color {
+            &_brand {
+                #{ $this }__path {
+                    fill: var(--guit-sem-color-foreground-brand);
+                }
+            }
+
+            &_secondary {
+                #{ $this }__path {
+                    fill: var(--guit-sem-color-foreground-neutral-2);
+                }
+            }
+
+            &_inverse {
+                #{ $this }__path {
+                    fill: var(--guit-sem-color-foreground-inverse);
+                }
+            }
+        }
+    }
+
+    &__logotype {
+        padding: var(--guit-ref-spacing-4xsmall);
+
+        &_size {
+            &_large {
+                height: var(--guit-sem-dimension-height-large);
+            }
+
+            &_medium {
+                height: var(--guit-sem-dimension-height-medium);
+            }
+
+            &_small {
+                height: var(--guit-sem-dimension-height-small);
+            }
+        }
+    }
+
+    &__logomark {
+        &_size {
+            &_large {
+                width: var(--guit-sem-dimension-width-large);
+                height: var(--guit-sem-dimension-height-large);
+            }
+
+            &_medium {
+                width: var(--guit-sem-dimension-width-medium);
+                height: var(--guit-sem-dimension-height-medium);
+            }
+
+            &_small {
+                width: var(--guit-sem-dimension-width-small);
+                height: var(--guit-sem-dimension-height-small);
+            }
+        }
+    }
+}
