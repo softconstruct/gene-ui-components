@@ -46,7 +46,7 @@ const textContent = texts.map(({ title, description }) => (
                 alignItems: "center",
                 width: "100%",
                 height: "100%",
-                padding: "0 22px",
+                padding: "0 16px",
                 backgroundColor: "#F4E1EC",
                 border: "1px solid #A60063",
                 fontFamily: "var(--guit-sem-font-heading-medium-semibold-font-family)"
