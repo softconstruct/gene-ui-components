@@ -8,13 +8,13 @@
     overflow: hidden;
 
     &_large {
-        min-height: 28rem;
-        max-height: 52rem;
+        width: 72rem;
+        height: 36rem;
     }
 
     &_small {
-        min-height: 12rem;
-        max-height: 24rem;
+        width: 30.4rem;
+        height: 15.2rem;
     }
 
     &_horizontal {
@@ -78,19 +78,33 @@
     &__dot {
         $this: &;
 
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: var(--guit-sem-dimension-width-3xsmall);
         height: var(--guit-sem-dimension-width-3xsmall);
-        border-radius: var(--guit-ref-radius-full);
 
-        &:not(#{ $this }_active):not(#{ $this }_small) {
+        &:not(#{ $this }_active):before {
             background: var(--guit-sem-color-background-neutral-3);
         }
-        &_active:not(& #{ $this }_small) {
+
+        &_active::before {
             background: var(--guit-sem-color-background-selected-2);
         }
 
-        &_small {
-            background: radial-gradient(circle, var(--guit-sem-color-background-neutral-3) 40%, transparent 60%);
+        &:not(&#{ $this }_small):before {
+            width: var(--guit-sem-dimension-width-3xsmall);
+            height: var(--guit-sem-dimension-width-3xsmall);
+        }
+
+        &_small::before {
+            width: var(--guit-sem-dimension-width-4xsmall);
+            height: var(--guit-sem-dimension-width-4xsmall);
+        }
+
+        &::before {
+            content: "";
+            border-radius: var(--guit-ref-radius-full);
         }
     }
 }
