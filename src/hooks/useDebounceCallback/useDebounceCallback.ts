@@ -2,6 +2,7 @@ import { useRef, useCallback } from "react";
 
 const useDebouncedCallback = <T extends (...args: unknown[]) => void>(func: T, wait?: number) => {
     const timeout = useRef<number | undefined>(undefined);
+    const waitTime = wait === undefined ? 0 : wait;
 
     const debouncedCallback = useCallback(
         (...args: unknown[]) => {
@@ -11,9 +12,9 @@ const useDebouncedCallback = <T extends (...args: unknown[]) => void>(func: T, w
             };
 
             clearTimeout(timeout.current);
-            timeout.current = window.setTimeout(later, wait);
+            timeout.current = window.setTimeout(later, waitTime);
         },
-        [func, wait]
+        [func, waitTime]
     );
 
     const clearDebounce = useCallback(() => {

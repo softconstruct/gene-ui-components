@@ -1,4 +1,4 @@
-import React, { FC, JSX, useRef, useState, UIEvent, useEffect } from "react";
+import React, { FC, useRef, useState, UIEvent, useEffect, ReactNode } from "react";
 import classNames from "classnames";
 
 // Components
@@ -19,7 +19,7 @@ interface IScrollbarProps {
     /**
      *The content to be rendered inside the scrollable area.
      */
-    children: JSX.Element;
+    children: ReactNode;
     /**
      * Automatically scrolls the container to a specific vertical position (in pixels).
      */
@@ -31,7 +31,7 @@ interface IScrollbarProps {
     /**
      * Callback function triggered during scroll events. Receives the scroll event as an argument.
      */
-    onScroll?: (e: UIEvent<HTMLSpanElement>) => void;
+    onScroll?: (e: UIEvent<HTMLDivElement>) => void;
     /**
      * 	Custom height for the scrollable container.<br>
      * 	Default is 100%.<br>
@@ -68,9 +68,9 @@ const Scrollbar: FC<IScrollbarProps> = ({
 
     const { debouncedCallback, clearDebounce } = useDebouncedCallback(scrollStateResetHandler, 1000);
 
-    const scrollHandler = (e: UIEvent<HTMLSpanElement>) => {
+    const scrollHandler = (e: UIEvent<HTMLDivElement>) => {
         onScroll?.(e);
-        const target = e.target as HTMLSpanElement;
+        const target = e.target as HTMLDivElement;
 
         const { scrollTop, scrollLeft } = target;
 
@@ -90,7 +90,7 @@ const Scrollbar: FC<IScrollbarProps> = ({
         debouncedCallback();
     };
 
-    const showScrollbarHandler = (direction: "x" | "y") => {
+    const showScrollbarHandler = (direction: "x" | "y" | null) => {
         if (scrollDirection === direction) {
             setScrollDirection(direction);
             clearDebounce();
@@ -103,15 +103,38 @@ const Scrollbar: FC<IScrollbarProps> = ({
 
     // autoScrollTo Top and Left
     useEffect(() => {
+        const hasAutoScrollTopTo = typeof autoScrollTopTo === "number";
+        const hasAutoScrollLeftTo = typeof autoScrollTopTo === "number";
+
         const scrollRefCurrent = scrollbarsRef.current;
-        if (scrollRefCurrent?.contentElement?.parentElement && (autoScrollTopTo || autoScrollLeftTo)) {
-            scrollRefCurrent.contentElement.parentElement?.scrollTo({
-                ...(autoScrollTopTo ? { top: autoScrollTopTo } : {}),
-                ...(autoScrollLeftTo ? { left: autoScrollLeftTo } : {}),
+        if (scrollRefCurrent?.scrollerElement && (hasAutoScrollTopTo || hasAutoScrollLeftTo)) {
+            scrollRefCurrent.scrollerElement?.scrollTo({
+                ...(hasAutoScrollTopTo ? { top: autoScrollTopTo } : {}),
+                ...(hasAutoScrollLeftTo ? { left: autoScrollLeftTo } : {}),
                 behavior: "smooth"
             });
         }
     }, [autoScrollTopTo, autoScrollLeftTo]);
+
+    const trackProps = (direction: "x" | "y" | null) => {
+        return {
+            onMouseEnter: () => showScrollbarHandler(direction),
+            onMouseLeave: () => hideScrollbarHandler(),
+            className: classNames("scrollbar__track", {
+                [`scrollbar__track_direction_${direction}`]: scrollDirection === direction
+            })
+        };
+    };
+
+    const thumbProps = (direction: "x" | "y" | null) => {
+        return {
+            onDragStart: () => showScrollbarHandler(direction),
+            onDragEnd: () => hideScrollbarHandler(),
+            className: classNames("scrollbar__thumb", {
+                [`scrollbar__thumb_direction_${direction}`]: scrollDirection === direction
+            })
+        };
+    };
 
     return (
         <Scrollbars
@@ -120,78 +143,23 @@ const Scrollbar: FC<IScrollbarProps> = ({
             scrollerProps={{
                 className: "scrollbar__scroller"
             }}
+            role="scrollbar"
+            aria-valuenow={0}
+            contentProps={{
+                tabIndex: 0,
+                className: "scrollbar__content"
+            }}
             style={{ height: customHeight, width: customWidth }}
             minimalThumbSize={30}
             ref={scrollbarsRef}
-            wrapperProps={{ className: "scrollbar__wrapper", onScroll: scrollHandler }}
-            trackYProps={{
-                renderer: (props) => {
-                    const { elementRef, ...restProps } = props;
-                    return (
-                        <span
-                            {...restProps}
-                            ref={elementRef}
-                            onMouseEnter={() => showScrollbarHandler("y")}
-                            onMouseLeave={hideScrollbarHandler}
-                            className={classNames("scrollbar__track", {
-                                scrollbar__track_direction_y: scrollDirection === "y"
-                            })}
-                        />
-                    );
-                }
+            wrapperProps={{
+                className: "scrollbar__wrapper",
+                onScroll: scrollHandler
             }}
-            thumbYProps={{
-                renderer: (props) => {
-                    const { elementRef, ...restProps } = props;
-                    return (
-                        <span
-                            {...restProps}
-                            onDragStart={() => {
-                                showScrollbarHandler("y");
-                            }}
-                            onDragEnd={hideScrollbarHandler}
-                            ref={elementRef}
-                            className={classNames("scrollbar__thumb", {
-                                scrollbar__thumb_direction_y: scrollDirection === "y"
-                            })}
-                        />
-                    );
-                }
-            }}
-            trackXProps={{
-                renderer: (props) => {
-                    const { elementRef, ...restProps } = props;
-                    return (
-                        <span
-                            {...restProps}
-                            ref={elementRef}
-                            onMouseEnter={() => showScrollbarHandler("x")}
-                            onMouseLeave={hideScrollbarHandler}
-                            className={classNames("scrollbar__track", {
-                                scrollbar__track_direction_x: scrollDirection === "x"
-                            })}
-                        />
-                    );
-                }
-            }}
-            thumbXProps={{
-                renderer: (props) => {
-                    const { elementRef, ...restProps } = props;
-                    return (
-                        <span
-                            {...restProps}
-                            onDragStart={() => {
-                                showScrollbarHandler("x");
-                            }}
-                            onDragEnd={hideScrollbarHandler}
-                            ref={elementRef}
-                            className={classNames("scrollbar__thumb", {
-                                scrollbar__thumb_direction_x: scrollDirection === "x"
-                            })}
-                        />
-                    );
-                }
-            }}
+            trackYProps={trackProps("y")}
+            trackXProps={trackProps("x")}
+            thumbYProps={thumbProps("y")}
+            thumbXProps={thumbProps("x")}
         >
             {children}
         </Scrollbars>
