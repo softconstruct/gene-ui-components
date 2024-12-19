@@ -8,18 +8,18 @@ describe("Rate ", () => {
     let setup: ReactWrapper<IRateProps>;
     // const jestFn = jest.fn();
     beforeEach(() => {
-        setup = mount(<Rate />);
+        setup = mount(<Rate iconType="star" />);
     });
 
     it("renders without crashing", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    // it("renders count prop correctly", () => {
-    //     const count = 5;
-    //     const wrapper = setup.setProps({ count });
-    //     expect(wrapper.find(".rating__wrapper")).toHaveLength(count);
-    // });
+    it("renders count prop correctly", () => {
+        const count = 5;
+        const wrapper = setup.setProps({ count });
+        expect(wrapper.find(".rate__item")).toHaveLength(count);
+    });
 
     // it("renders readonly prop correctly", () => {
     //     const wrapper = setup.setProps({ readonly: true });
