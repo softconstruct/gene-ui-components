@@ -78,14 +78,14 @@ const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "h
             <Button
                 className="carousel__button carousel__button_back"
                 Icon={ChevronLeft}
-                appearance="secondary"
+                appearance="inverse"
                 onClick={onPrevClick}
             />
             {children[selectedIndex]}
             <Button
                 className="carousel__button carousel__button_forward"
                 Icon={ChevronRight}
-                appearance="secondary"
+                appearance="inverse"
                 onClick={onNextClick}
             />
             <div className="carousel__dots">
