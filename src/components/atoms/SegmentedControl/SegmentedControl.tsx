@@ -56,7 +56,7 @@ interface ISegmentedControlProps {
     required?: boolean;
 }
 
-interface MyCustomCSS extends CSSProperties {
+interface CSSVariableType extends CSSProperties {
     "--segmented-wrapper-width": string;
 }
 
@@ -76,11 +76,8 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
 
     const onSelect = (name: string) => {
         setSelectedElementName(name);
+        onChange(name);
     };
-
-    useEffect(() => {
-        onChange(selectedElementName);
-    }, [selectedElementName]);
 
     const textSizes = size === "large" ? "medium" : size;
 
@@ -90,13 +87,13 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
         }
     }, [ref.current]);
 
-    const cssWitVariable: MyCustomCSS = {
+    const cssWitVariable: CSSVariableType = {
         "--segmented-wrapper-width": `${contentWidth}px`
     };
 
     return (
         <div className="segmentedControl" style={cssWitVariable}>
-            <Label labelText={label} required={required} size={textSizes} infoText={infoText} />
+            <Label labelText={label} required={required} size={textSizes} infoText={infoText} disabled={disabled} />
             <div className="segmentedControl__wrapper" ref={ref}>
                 {Children.map(children, (el) => {
                     return cloneElement(el, {
@@ -108,7 +105,7 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
                     });
                 })}
             </div>
-            {helperText && <HelperText text={helperText} size={textSizes} />}
+            {helperText && <HelperText text={helperText} size={textSizes} isDisabled={disabled} />}
         </div>
     );
 };

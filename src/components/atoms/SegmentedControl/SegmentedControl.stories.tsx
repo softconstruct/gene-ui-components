@@ -13,6 +13,7 @@ const meta: Meta<typeof SegmentedControl> = {
     component: SegmentedControl,
     argTypes: {
         disabled: args({ control: "boolean", ...propCategory.states }),
+        required: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         children: args({ control: false, ...propCategory.content }),
         helperText: args({ control: "text", ...propCategory.content }),
