@@ -22,13 +22,6 @@ describe("SegmentedControl ", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it("renders disabled prop correctly", () => {
-        const wrapper = setup.setProps({
-            disabled: true
-        });
-        expect(wrapper.find(SegmentedControlItem).find(".segmentedControl__block").props().disabled).toBeTruthy();
-    });
-
     it("renders helperText prop correctly", () => {
         const helperText = "test";
         const wrapper = setup.setProps({

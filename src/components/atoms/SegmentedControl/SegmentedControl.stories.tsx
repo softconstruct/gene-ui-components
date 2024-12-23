@@ -12,7 +12,6 @@ const meta: Meta<typeof SegmentedControl> = {
     title: "Atoms/SegmentedControl",
     component: SegmentedControl,
     argTypes: {
-        disabled: args({ control: "boolean", ...propCategory.states }),
         required: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         children: args({ control: false, ...propCategory.content }),
@@ -22,7 +21,6 @@ const meta: Meta<typeof SegmentedControl> = {
         onChange: args({ control: false, ...propCategory.action })
     },
     args: {
-        disabled: false,
         helperText: "helperText",
         label: "label",
         size: "medium"

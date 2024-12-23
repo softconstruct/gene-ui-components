@@ -194,22 +194,6 @@
                 }
             }
         }
-
-        &:disabled,
-        &_disabled {
-            background-color: var(--guit-sem-color-background-transparent-1);
-            border-color: var(--guit-sem-color-border-disabled-1);
-            color: var(--guit-sem-color-foreground-disabled);
-            pointer-events: none;
-
-            &#{ $this }_selected {
-                &:not(:first-child) {
-                    &::before {
-                        opacity: 0;
-                    }
-                }
-            }
-        }
     }
 
     &__icon {

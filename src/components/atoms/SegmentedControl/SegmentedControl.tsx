@@ -46,10 +46,6 @@ interface ISegmentedControlProps {
      */
     size?: "large" | "medium" | "small";
     /**
-     * Indicates whether the `SegmentedControlItem` is `disabled`, preventing user interaction, focus, click etc...
-     */
-    disabled?: boolean;
-    /**
      * Indicates whether the label represents a required field.
      * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
      */
@@ -67,7 +63,6 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     label,
     infoText,
     required,
-    disabled,
     size
 }) => {
     const [selectedElementName, setSelectedElementName] = useState("");
@@ -93,19 +88,18 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
 
     return (
         <div className="segmentedControl" style={cssWitVariable}>
-            <Label labelText={label} required={required} size={textSizes} infoText={infoText} disabled={disabled} />
+            <Label labelText={label} required={required} size={textSizes} infoText={infoText} />
             <div className="segmentedControl__wrapper" ref={ref}>
                 {Children.map(children, (el) => {
                     return cloneElement(el, {
                         ...el.props,
                         selected: selectedElementName ? selectedElementName === el.props.name : el.props.selected,
                         size,
-                        onSelect,
-                        disabled
+                        onSelect
                     });
                 })}
             </div>
-            {helperText && <HelperText text={helperText} size={textSizes} isDisabled={disabled} />}
+            {helperText && <HelperText text={helperText} size={textSizes} />}
         </div>
     );
 };

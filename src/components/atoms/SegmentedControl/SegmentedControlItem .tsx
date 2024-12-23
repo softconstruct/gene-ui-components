@@ -28,10 +28,6 @@ interface ISegmentedControlItemProps {
      */
     onSelect?: (name: string) => void;
     /**
-     * Indicates whether the `button` is `disabled`, preventing user interaction, focus, click etc...
-     */
-    disabled?: boolean;
-    /**
      *Displays the selected item
      */
     selected?: boolean;
@@ -42,7 +38,6 @@ const SegmentedControlItem: FC<ISegmentedControlItemProps> = ({
     name,
     Icon,
     size = "medium",
-    disabled = false,
     selected = false,
     onSelect
 }) => {
@@ -56,7 +51,6 @@ const SegmentedControlItem: FC<ISegmentedControlItemProps> = ({
                 segmentedControl__block_selected: selected,
                 segmentedControl__block_withIcon: Icon && children
             })}
-            disabled={disabled}
         >
             {Icon && <Icon size={20} />}
             {children && <span className="segmentedControl__text">{children}</span>}
