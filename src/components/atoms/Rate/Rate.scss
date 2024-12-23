@@ -4,12 +4,11 @@
     display: inline-flex;
     flex-direction: column;
     gap: var(--guit-ref-spacing-3xsmall);
-    max-width: var(--rate-width);
+    max-width: var(--rate-wrapper-width);
 
     &__content {
         display: flex;
         align-items: flex-start;
-        justify-content: flex-end;
         gap: var(--guit-ref-radius-3xsmall);
     }
 

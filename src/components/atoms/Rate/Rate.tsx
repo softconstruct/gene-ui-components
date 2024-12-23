@@ -145,6 +145,11 @@ const halfAllowAccess = {
     num: false
 };
 
+const iconsWidth = {
+    small: 24,
+    medium: 32
+};
+
 const Rate: FC<IRateProps> = (props) => {
     const {
         readonly,
@@ -256,6 +261,10 @@ const Rate: FC<IRateProps> = (props) => {
 
     const elements = useMemo(() => new Array(elementsCount).fill(null), [count, elementsCount]);
 
+    const gapBetweenElements = 4;
+
+    const contentWidth = count * (iconsWidth[size] + gapBetweenElements);
+
     /* eslint-disable react/no-array-index-key */
     return (
         <div
@@ -263,6 +272,9 @@ const Rate: FC<IRateProps> = (props) => {
             onMouseLeave={mouseLeaveHandler}
             onMouseEnter={mouseEnterHandler}
             onBlur={() => setDisableMouseMove(false)}
+            style={{
+                "--rate-wrapper-width": `${contentWidth}px`
+            }}
         >
             <Label labelText={label} size={size} required={required} infoText={infoText} />
             <div className="rate__content">
