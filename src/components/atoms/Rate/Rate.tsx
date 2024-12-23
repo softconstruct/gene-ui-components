@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent, useLayoutEffect, useMemo, useState } from "react";
+import React, { CSSProperties, FC, MouseEvent, ReactNode, useLayoutEffect, useMemo, useState } from "react";
 import {
     Heart,
     HeartFilled,
@@ -26,7 +26,7 @@ type Enumerate<N extends number, Acc extends number[] = []> = Acc["length"] exte
 
 export type IntRange<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>;
 
-const Icons = {
+export const Icons = {
     star: {
         Filled: StarFilled,
         Default: Star
@@ -60,12 +60,12 @@ const Icons = {
         }
     ],
     num: {
-        Default: ({ children, className }) => {
-            return <span className={className}> {children}</span>;
+        Default: ({ children, className }: { className: string; children: ReactNode }) => {
+            return <span className={`${className} rate__numPath`}> {children}</span>;
         },
-        Filled: ({ children, className, style }) => {
+        Filled: ({ children, className, style }: { className: string; children: ReactNode; style: CSSProperties }) => {
             return (
-                <span className={`${className} rate__num_filled`} style={style}>
+                <span className={`${className} rate__num_filled rate__numPath`} style={style}>
                     {children}
                 </span>
             );
@@ -149,6 +149,9 @@ const iconsWidth = {
     small: 24,
     medium: 32
 };
+interface CSSVariableType extends CSSProperties {
+    "--rate-wrapper-width": string;
+}
 
 const Rate: FC<IRateProps> = (props) => {
     const {
@@ -264,7 +267,9 @@ const Rate: FC<IRateProps> = (props) => {
     const gapBetweenElements = 4;
 
     const contentWidth = count * (iconsWidth[size] + gapBetweenElements);
-
+    const cssWitVariable: CSSVariableType = {
+        "--rate-wrapper-width": `${contentWidth}px`
+    };
     /* eslint-disable react/no-array-index-key */
     return (
         <div
@@ -272,9 +277,7 @@ const Rate: FC<IRateProps> = (props) => {
             onMouseLeave={mouseLeaveHandler}
             onMouseEnter={mouseEnterHandler}
             onBlur={() => setDisableMouseMove(false)}
-            style={{
-                "--rate-wrapper-width": `${contentWidth}px`
-            }}
+            style={cssWitVariable}
         >
             <Label labelText={label} size={size} required={required} infoText={infoText} />
             <div className="rate__content">
@@ -320,13 +323,12 @@ const Rate: FC<IRateProps> = (props) => {
                             >
                                 <span
                                     aria-label="rate"
-                                    className={classNames(
-                                        `rate__${iconType} rate__${iconType} rate__${iconType}_color_orange`,
-                                        {
-                                            [`rate__${iconType}_disabled`]: disable,
-                                            [`rate__${iconType}_readOnly`]: readonly
-                                        }
-                                    )}
+                                    className={classNames(`rate__${iconType} rate__${iconType} `, {
+                                        [`rate__${iconType}_disabled`]: disable,
+                                        [`rate__${iconType}_readOnly`]: readonly,
+                                        [`rate__${iconType}_color_orange`]: (hoveredValue || rating) > i,
+                                        [`rate__${iconType}_color_default`]: (hoveredValue || rating) <= i
+                                    })}
                                 >
                                     <Default className="rate__svg" style={hoverStyle}>
                                         {i + 1}

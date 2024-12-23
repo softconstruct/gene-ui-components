@@ -63,8 +63,8 @@
                 }
 
                 #{ $this }__num {
-                    width: var(--guit-sem-dimension-width-small);
-                    height: var(--guit-sem-dimension-height-small);
+                    width: var(--guit-sem-dimension-width-small-nudge);
+                    height: var(--guit-sem-dimension-height-small-nudge);
                     font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
                     font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
                     font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
@@ -197,13 +197,14 @@
             }
         }
 
-        &_path {
-            border-radius: inherit;
-        }
-
         &:hover {
             transform: scale(1.1);
         }
+    }
+
+    &__numPath {
+        flex: 0 0 auto;
+        border-radius: inherit;
     }
 
     &__emoji {

@@ -11,9 +11,9 @@ const meta: Meta<typeof Rating> = {
     argTypes: {
         defaultValue: args({ control: "number", defaultValue: 0, ...propCategory.content }),
         value: args({ control: "false", ...propCategory.content }),
-        helperText: args({ control: "string", ...propCategory.content }),
-        infoText: args({ control: "string", ...propCategory.content }),
-        label: args({ control: "string", ...propCategory.content }),
+        helperText: args({ control: "text", ...propCategory.content }),
+        infoText: args({ control: "text", ...propCategory.content }),
+        label: args({ control: "text", ...propCategory.content }),
         onChange: args({ control: "false", ...propCategory.action }),
         count: args({ control: "number", defaultValue: 5, ...propCategory.appearance }),
         size: args({ control: "select", defaultValue: "small", ...propCategory.appearance }),
