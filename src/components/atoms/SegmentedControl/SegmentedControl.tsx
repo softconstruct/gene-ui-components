@@ -50,6 +50,11 @@ interface ISegmentedControlProps {
      * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
      */
     required?: boolean;
+    /**
+     *  Determines the component appearance based on its status.<br>
+     *  Possible values: `rest | warning | error`
+     */
+    type?: "rest" | "warning" | "error";
 }
 
 interface CSSVariableType extends CSSProperties {
@@ -63,7 +68,8 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     label,
     infoText,
     required,
-    size
+    size,
+    type = "rest" as const
 }) => {
     const [selectedElementName, setSelectedElementName] = useState("");
     const [contentWidth, setContentWidth] = useState<number | null>(null);
@@ -99,7 +105,9 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
                     });
                 })}
             </div>
-            {helperText && <HelperText text={helperText} size={textSizes} />}
+            {helperText && (
+                <HelperText text={helperText} className="segmentedControl__helperText" size={textSizes} type={type} />
+            )}
         </div>
     );
 };

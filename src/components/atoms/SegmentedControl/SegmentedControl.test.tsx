@@ -79,4 +79,10 @@ describe("SegmentedControl ", () => {
         wrapper.find(".segmentedControl__block").simulate("click");
         expect(onChange).toHaveBeenCalledWith("test1");
     });
+
+    it.each<ISegmentedControlProps["type"]>(["rest", "warning", "error"])('should have "%s" type', (type) => {
+        const wrapper = setup.setProps({ type, helperText: "test" } as ISegmentedControlProps);
+
+        expect(wrapper.find(HelperText).find(`.helperText`).hasClass(`helperText_type_${type}`)).toBeTruthy();
+    });
 });
