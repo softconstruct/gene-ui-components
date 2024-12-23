@@ -324,7 +324,7 @@ const Rate: FC<IRateProps> = (props) => {
                                         `rate__${iconType} rate__${iconType} rate__${iconType}_color_orange`,
                                         {
                                             [`rate__${iconType}_disabled`]: disable,
-                                            rate__item_readOnly: readonly
+                                            [`rate__${iconType}_readOnly`]: readonly
                                         }
                                     )}
                                 >

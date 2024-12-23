@@ -1,14 +1,14 @@
 .rate {
     $this: &;
 
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
     gap: var(--guit-ref-spacing-3xsmall);
     max-width: var(--rate-wrapper-width);
 
     &__content {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         gap: var(--guit-ref-radius-3xsmall);
     }
 
@@ -20,7 +20,7 @@
         flex: 0 0 auto;
         padding: var(--guit-ref-spacing-4xsmall);
         border-radius: var(--guit-ref-radius-3xsmall);
-        cursor: pointer;
+        cursor: default;
 
         &::after {
             content: "";
@@ -35,36 +35,47 @@
 
         &_size {
             &_medium {
-                width: 3.2rem;
-                height: 3.2rem;
+                width: var(--guit-sem-dimension-width-medium);
+                height: var(--guit-sem-dimension-height-medium);
 
                 #{ $this }__svg {
-                    width: 2.4rem;
-                    height: 2.4rem;
+                    width: var(--guit-sem-dimension-width-small);
+                    height: var(--guit-sem-dimension-height-small);
                 }
+
                 #{ $this }__num {
-                    width: 2.4rem;
-                    height: 2.4rem;
+                    width: var(--guit-sem-dimension-width-small);
+                    height: var(--guit-sem-dimension-height-small);
+                    font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
+                    font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
+                    font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
+                    line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
                 }
             }
 
             &_small {
-                width: 2.4rem;
-                height: 2.4rem;
+                width: var(--guit-sem-dimension-width-small);
+                height: var(--guit-sem-dimension-height-small);
 
                 #{ $this }__svg {
-                    width: 2rem;
-                    height: 2rem;
+                    width: var(--guit-sem-dimension-width-small-nudge);
+                    height: var(--guit-sem-dimension-height-small-nudge);
                 }
+
                 #{ $this }__num {
-                    width: 2rem;
-                    height: 2rem;
+                    width: var(--guit-sem-dimension-width-small);
+                    height: var(--guit-sem-dimension-height-small);
+                    font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
+                    font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
+                    font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
+                    line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
                 }
             }
         }
     }
 
     &__svg {
+        flex: 0 0 auto;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -75,132 +86,103 @@
 
     &__star,
     &__heart,
+    &__num,
     &__emoji {
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%;
         height: 100%;
+        cursor: pointer;
+
+        &_readOnly {
+            pointer-events: none;
+            cursor: default;
+        }
 
         &_disabled {
             pointer-events: none;
             user-select: none;
+            cursor: default;
         }
     }
 
-    // Star START
     &__star {
         $the: &;
 
-        &:hover {
-            transform: scale(1.1);
-        }
-
         &_color {
             &_default {
                 color: var(--guit-sem-color-foreground-neutral-1);
-
-                &#{ $the }_disabled {
-                    color: var(--guit-sem-color-foreground-disabled);
-                }
             }
 
             &_orange {
                 color: var(--guit-sem-color-foreground-accent-orange-1);
+            }
 
+            &_default,
+            &_orange {
                 &#{ $the }_disabled {
                     color: var(--guit-sem-color-foreground-disabled);
                 }
             }
         }
 
-        &:disabled {
-            pointer-events: none;
-            user-select: none;
+        &:hover {
+            transform: scale(1.1);
         }
     }
 
-    // Star END
-
-    // Heart START
     &__heart {
         $the: &;
 
-        &:hover {
-            transform: scale(1.1);
-        }
-
         &_color {
             &_default {
                 color: var(--guit-sem-color-foreground-neutral-1);
-                &#{ $the }_disabled {
-                    color: var(--guit-sem-color-foreground-disabled);
-                }
             }
 
             &_orange {
                 color: var(--guit-sem-color-foreground-accent-orange-1);
+            }
+
+            &_default,
+            &_orange {
                 &#{ $the }_disabled {
                     color: var(--guit-sem-color-foreground-disabled);
                 }
             }
         }
 
-        &:disabled {
-            pointer-events: none;
-            user-select: none;
-        }
-    }
-
-    // Heart END
-
-    // Num START
-    &__num {
-        $the: &;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        &_disabled {
-            pointer-events: none;
-            user-select: none;
-        }
-
         &:hover {
             transform: scale(1.1);
         }
+    }
 
-        font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
-        font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
-        font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
-        line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
-        box-shadow: inset 0 0 0 0.15rem var(--guit-sem-color-foreground-neutral-1);
+    &__num {
+        $the: &;
+
         border-radius: 50%;
-        overflow: hidden;
-
-        & > span {
-            border-radius: inherit;
-        }
 
         &#{ $the }_color {
+            &_default,
+            &_orange {
+                &#{ $the }_disabled {
+                    box-shadow: inset 0 0 0 0.15rem var(--guit-sem-color-foreground-disabled);
+                    color: var(--guit-sem-color-foreground-disabled);
+
+                    #{ $the }_filled {
+                        background-color: var(--guit-sem-color-foreground-disabled);
+                        color: #fff;
+                    }
+                }
+            }
+
             &_default {
                 box-shadow: inset 0 0 0 0.15rem var(--guit-sem-color-foreground-neutral-1);
                 color: var(--guit-sem-color-foreground-neutral-1);
 
-                &#{ $the }_disabled {
-                    box-shadow: inset 0 0 0 0.15rem var(--guit-sem-color-foreground-disabled);
-                    color: var(--guit-sem-color-foreground-disabled);
-                }
-
                 #{ $the }_filled {
                     background-color: var(--guit-sem-color-foreground-neutral-1);
                     color: #fff;
-
-                    &#{ $the }_disabled {
-                        background-color: var(--guit-sem-color-foreground-disabled);
-                        color: var(--guit-sem-color-foreground-disabled);
-                    }
                 }
             }
 
@@ -208,33 +190,24 @@
                 box-shadow: inset 0 0 0 0.15rem var(--guit-sem-color-foreground-accent-orange-1);
                 color: var(--guit-sem-color-foreground-accent-orange-1);
 
-                &#{ $the }_disabled {
-                    box-shadow: inset 0 0 0 0.15rem var(--guit-sem-color-foreground-disabled);
-                    color: var(--guit-sem-color-foreground-disabled);
-                }
-
                 #{ $the }_filled {
                     background-color: var(--guit-sem-color-foreground-accent-orange-1);
                     color: #fff;
-
-                    &#{ $the }_disabled {
-                        background-color: var(--guit-sem-color-foreground-disabled);
-                        color: var(--guit-sem-color-foreground-disabled);
-                    }
                 }
             }
         }
-    }
 
-    // Num END
-
-    // Emoji START
-    &__emoji {
-        $the: &;
+        &_path {
+            border-radius: inherit;
+        }
 
         &:hover {
             transform: scale(1.1);
         }
+    }
+
+    &__emoji {
+        $the: &;
 
         &_color {
             &_default {
@@ -253,7 +226,9 @@
                 }
             }
         }
-    }
 
-    // Emoji END
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
 }
