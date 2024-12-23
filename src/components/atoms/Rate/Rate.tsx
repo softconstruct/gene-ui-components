@@ -40,6 +40,7 @@ const Icons = {
             Filled: EmojiAngryFilled,
             Default: EmojiAngry
         },
+
         {
             Filled: EmojiSadFilled,
             Default: EmojiSad
@@ -64,7 +65,7 @@ const Icons = {
         },
         Filled: ({ children, className, style }) => {
             return (
-                <span className={className} style={style}>
+                <span className={`${className} rate__num_filled`} style={style}>
                     {children}
                 </span>
             );
@@ -296,10 +297,7 @@ const Rate: FC<IRateProps> = (props) => {
 
                         return (
                             <button
-                                className={classNames(`rate__item  rate__item_size_${size}`, {
-                                    rate__item_readOnly: readonly,
-                                    [`rate__${iconType}_disabled`]: disable
-                                })}
+                                className={`rate__item  rate__item_size_${size}`}
                                 onMouseLeave={mouseLeaveHandler}
                                 onMouseEnter={mouseEnterHandler}
                                 onMouseMove={(e) => handleMouseMoveForElement(e, currentRating)}
@@ -310,18 +308,18 @@ const Rate: FC<IRateProps> = (props) => {
                             >
                                 <span
                                     aria-label="rate"
-                                    className={`rate__${iconType} rate__${iconType} rate__${iconType}_color_orange`}
+                                    className={classNames(
+                                        `rate__${iconType} rate__${iconType} rate__${iconType}_color_orange`,
+                                        {
+                                            [`rate__${iconType}_disabled`]: disable,
+                                            rate__item_readOnly: readonly
+                                        }
+                                    )}
                                 >
-                                    <Default
-                                        className={`rate__svg  rate_unfilled  rate__${iconType}_color_default`}
-                                        style={hoverStyle}
-                                    >
+                                    <Default className="rate__svg" style={hoverStyle}>
                                         {i + 1}
                                     </Default>
-                                    <Filled
-                                        style={{ clipPath }}
-                                        className={`rate__svg rate__${iconType}_filled rate__${iconType}_color_orange`}
-                                    >
+                                    <Filled style={{ clipPath }} className={`rate__svg `}>
                                         {i + 1}
                                     </Filled>
                                 </span>
