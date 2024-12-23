@@ -187,6 +187,7 @@ const Rate: FC<IRateProps> = (props) => {
         return halfAllow && halfAllowAccess[iconType] && getRelativeWidth <= 50 ? 50 : 100;
     };
     const mouseEnterHandler = () => {
+        if (!rating) return;
         setTemporaryRating(rating);
     };
 
