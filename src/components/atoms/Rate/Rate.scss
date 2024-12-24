@@ -1,0 +1,235 @@
+.rate {
+    $this: &;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-3xsmall);
+    max-width: var(--rate-wrapper-width);
+
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-radius-3xsmall);
+    }
+
+    &__item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        padding: var(--guit-ref-spacing-4xsmall);
+        border-radius: var(--guit-ref-radius-3xsmall);
+        cursor: default;
+
+        &::after {
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            inset-inline-end: calc(var(--guit-ref-radius-3xsmall) / -1);
+            bottom: 0;
+            width: var(--guit-ref-radius-3xsmall);
+            background-color: transparent;
+        }
+
+        &_size {
+            &_medium {
+                width: var(--guit-sem-dimension-width-medium);
+                height: var(--guit-sem-dimension-height-medium);
+
+                #{ $this }__svg {
+                    width: var(--guit-sem-dimension-width-small);
+                    height: var(--guit-sem-dimension-height-small);
+                }
+
+                #{ $this }__num {
+                    width: var(--guit-sem-dimension-width-small);
+                    height: var(--guit-sem-dimension-height-small);
+                    font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
+                    font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
+                    font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
+                    line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
+                }
+            }
+
+            &_small {
+                width: var(--guit-sem-dimension-width-small);
+                height: var(--guit-sem-dimension-height-small);
+
+                #{ $this }__svg {
+                    width: var(--guit-sem-dimension-width-small-nudge);
+                    height: var(--guit-sem-dimension-height-small-nudge);
+                }
+
+                #{ $this }__num {
+                    width: var(--guit-sem-dimension-width-small-nudge);
+                    height: var(--guit-sem-dimension-height-small-nudge);
+                    font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
+                    font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
+                    font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
+                    line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
+                }
+            }
+        }
+    }
+
+    &__svg {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        inset: 0;
+        margin: auto;
+    }
+
+    &__star,
+    &__heart,
+    &__num,
+    &__emoji {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        cursor: pointer;
+
+        &_readOnly {
+            pointer-events: none;
+            cursor: default;
+        }
+
+        &_disabled {
+            pointer-events: none;
+            user-select: none;
+            cursor: default;
+        }
+    }
+
+    &__star {
+        $the: &;
+
+        &_color {
+            &_default {
+                color: var(--guit-sem-color-foreground-neutral-1);
+            }
+
+            &_orange {
+                color: var(--guit-sem-color-foreground-accent-orange-1);
+            }
+
+            &_default,
+            &_orange {
+                &#{ $the }_disabled {
+                    color: var(--guit-sem-color-foreground-disabled);
+                }
+            }
+        }
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+
+    &__heart {
+        $the: &;
+
+        &_color {
+            &_default {
+                color: var(--guit-sem-color-foreground-neutral-1);
+            }
+
+            &_orange {
+                color: var(--guit-sem-color-foreground-accent-orange-1);
+            }
+
+            &_default,
+            &_orange {
+                &#{ $the }_disabled {
+                    color: var(--guit-sem-color-foreground-disabled);
+                }
+            }
+        }
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+
+    &__num {
+        $the: &;
+
+        border-radius: 50%;
+
+        &#{ $the }_color {
+            &_default,
+            &_orange {
+                &#{ $the }_disabled {
+                    box-shadow: inset 0 0 0 0.15rem var(--guit-sem-color-foreground-disabled);
+                    color: var(--guit-sem-color-foreground-disabled);
+
+                    #{ $the }_filled {
+                        background-color: var(--guit-sem-color-foreground-disabled);
+                        color: #fff;
+                    }
+                }
+            }
+
+            &_default {
+                box-shadow: inset 0 0 0 0.15rem var(--guit-sem-color-foreground-neutral-1);
+                color: var(--guit-sem-color-foreground-neutral-1);
+
+                #{ $the }_filled {
+                    background-color: var(--guit-sem-color-foreground-neutral-1);
+                    color: #fff;
+                }
+            }
+
+            &_orange {
+                box-shadow: inset 0 0 0 0.15rem var(--guit-sem-color-foreground-accent-orange-1);
+                color: var(--guit-sem-color-foreground-accent-orange-1);
+
+                #{ $the }_filled {
+                    background-color: var(--guit-sem-color-foreground-accent-orange-1);
+                    color: #fff;
+                }
+            }
+        }
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+
+    &__numPath {
+        flex: 0 0 auto;
+        border-radius: inherit;
+    }
+
+    &__emoji {
+        $the: &;
+
+        &_color {
+            &_default {
+                color: var(--guit-sem-color-foreground-neutral-1);
+
+                &#{ $the }_disabled {
+                    color: var(--guit-sem-color-foreground-disabled);
+                }
+            }
+
+            &_orange {
+                color: var(--guit-sem-color-foreground-accent-orange-1);
+
+                &#{ $the }_disabled {
+                    color: var(--guit-sem-color-foreground-disabled);
+                }
+            }
+        }
+
+        &:hover {
+            transform: scale(1.1);
+        }
+    }
+}
