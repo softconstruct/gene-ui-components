@@ -1,6 +1,9 @@
-import React, { FC, ReactElement, useLayoutEffect, useState } from "react";
+import React, { FC, KeyboardEvent, ReactElement, useLayoutEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
+
+// Hooks
+import useSwipe from "../../../hooks/useSwipe";
 
 // Styles
 import "./Carousel.scss";
@@ -44,6 +47,16 @@ const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "h
     const onPrevClick = () => setSelectedIndex((prev) => (prev === 0 ? children.length - 1 : prev - 1));
     const onNextClick = () => setSelectedIndex((prev) => (prev === children.length - 1 ? 0 : prev + 1));
 
+    const swipeCallbacks = useMemo(() => {
+        if (direction === "horizontal") {
+            return { onSlideLeft: onPrevClick, onSlideRight: onNextClick };
+        }
+
+        return { onSlideUp: onPrevClick, onSlideDown: onNextClick };
+    }, [direction]);
+
+    const ref = useSwipe<HTMLDivElement>(swipeCallbacks);
+
     useLayoutEffect(
         () =>
             setDotsRange(([min, max]) => {
@@ -73,20 +86,55 @@ const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "h
         [selectedIndex, count]
     );
 
+    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (direction === "horizontal") {
+            if (event.key === "ArrowLeft") {
+                onPrevClick();
+                return;
+            }
+            if (event.key === "ArrowRight") {
+                onNextClick();
+                return;
+            }
+            return;
+        }
+
+        if (event.key === "ArrowUp") {
+            onPrevClick();
+            return;
+        }
+
+        if (event.key === "ArrowDown") {
+            onNextClick();
+        }
+    };
+
     return (
         <div className={classNames(`carousel carousel_${size} carousel_${direction}`, className)}>
+            <div
+                className="carousel_slider"
+                ref={ref}
+                onKeyDown={onKeyDown}
+                role="slider"
+                aria-valuenow={selectedIndex}
+                aria-label="carousel"
+                tabIndex={0}
+            >
+                {children[selectedIndex]}
+            </div>
             <Button
                 className="carousel__button carousel__button_back"
                 Icon={ChevronLeft}
                 appearance="inverse"
                 onClick={onPrevClick}
+                ariaLabel="select-previews"
             />
-            {children[selectedIndex]}
             <Button
                 className="carousel__button carousel__button_forward"
                 Icon={ChevronRight}
                 appearance="inverse"
                 onClick={onNextClick}
+                ariaLabel="select-next"
             />
             <div className="carousel__dots">
                 {Array.from(Array(count).keys())
@@ -94,7 +142,7 @@ const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "h
                     .map((index) => (
                         <button
                             type="button"
-                            aria-labelledby="dot-selector"
+                            aria-label={`select slide ${index + 1}`}
                             onClick={() => setSelectedIndex(index)}
                             key={index}
                             className={classNames(

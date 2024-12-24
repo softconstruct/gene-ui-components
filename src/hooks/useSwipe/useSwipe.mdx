@@ -1,0 +1,41 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Hooks/useSwipe" />
+
+<div style={{ paddingInlineStart: '20px' }}>
+
+    ## useSwipe
+
+    Custom hook that handles swipe gesture for mobile and desktop versions.
+
+    #### Parameters
+
+    - **`object`**: An object containing callback functions `onSlideLeft, onSlideRight, onSlideTop, onSlideDown` that are invoked based on the corresponding gesture direction.
+
+    #### Returns
+
+    - Returns a `ref` that should be assigned to the desired HTML element to enable gesture functionality.
+
+    #### Usage
+
+    ```js
+    import React, { useCallback } from 'react';
+    import useSwipe from './useSwipe';
+
+    const MyComponent = () => {
+
+    const onSlideLeft = useCallback(() => {},[]);
+    const onSlideRight = useCallback(() => {},[]);
+    const onSlideTop = useCallback(() => {},[]);
+    const onSlideDown = useCallback(() => {},[]);
+
+    const ref = useSwipe<HTMLDivElement>({onSlideLeft, onSlideRight, onSlideTop, onSlideDown});
+
+    return (
+        <div ref={ref}>/*Content*/</div>
+        )
+    };
+
+    export default MyComponent;
+```
+</div>

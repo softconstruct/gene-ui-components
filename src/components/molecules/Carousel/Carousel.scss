@@ -1,11 +1,15 @@
 .carousel {
     $this: &;
 
-    display: grid;
-    height: 100%;
-    width: 100%;
     position: relative;
-    overflow: hidden;
+
+    &_slider {
+        display: grid;
+        height: 100%;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
 
     &_large {
         width: 72rem;
