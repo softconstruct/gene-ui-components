@@ -321,6 +321,7 @@ const Rate: FC<IRateProps> = (props) => {
                                 onClick={(e) => getRating(e, currentRating)}
                                 key={i}
                                 type="button"
+                                disabled={disable || readonly}
                             >
                                 <span
                                     aria-label="rate"
