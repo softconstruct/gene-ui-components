@@ -70,6 +70,11 @@ interface IButtonProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+
+    /**
+     *  Defines a string value that labels the current element.
+     */
+    ariaLabel?: string;
 }
 
 const loadingTypes = {
@@ -98,7 +103,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             onClick,
             className,
             iconAfter,
-            isLoading
+            isLoading,
+            ariaLabel
         }: IButtonProps,
         ref
     ) => {
@@ -126,6 +132,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                         button_loading: isLoading
                     }
                 )}
+                aria-label={ariaLabel}
             >
                 {isLoading && (
                     <Loader
