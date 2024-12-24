@@ -2,6 +2,8 @@
     $this: &;
 
     display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
 
     &_horizontal {
         #{ $this }__nav {
@@ -50,7 +52,8 @@
     }
 
     &_vertical {
-        #{ $this }__nav {
+        #{ $this }__nav,
+        #{ $this }__list {
             flex-direction: column;
         }
 
@@ -96,13 +99,33 @@
 
     &__nav {
         display: inline-flex;
+        align-items: center;
         background-color: var(--guit-sem-color-background-neutral-1);
+        max-width: 100%;
+        overflow: hidden;
 
         &_button {
+            flex: 0 0 auto;
+
             [dir="rtl"] & {
                 rotate: 180deg;
             }
         }
+    }
+
+    &__list {
+        display: flex;
+        flex: 1;
+        overflow-x: auto;
+        overflow-y: hidden;
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
     }
 
     &__button {
@@ -110,6 +133,7 @@
 
         display: flex;
         align-items: center;
+        justify-content: flex-end;
         column-gap: var(--guit-ref-spacing-xsmall);
         background-color: var(--guit-sem-color-background-neutral-1);
 

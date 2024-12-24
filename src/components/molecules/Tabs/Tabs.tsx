@@ -49,57 +49,149 @@ const Tabs: FC<ITabsProps> = ({ className, direction = "vertical", size = "large
                     onClick={() => {}}
                 />
 
-                <button
-                    type="button"
-                    role="tab"
-                    tabIndex={0}
-                    className={classNames(`tabs__button tabs__button_selected tabs__button_${size}`, size)}
-                >
-                    <TagOutline className="tabs__button_icon" size={24} />
-                    <span className="tabs__button_text">Tab</span>
-                </button>
-                <button
-                    type="button"
-                    role="tab"
-                    tabIndex={0}
-                    className={classNames(`tabs__button tabs__button_${size}`, size)}
-                >
-                    <TagOutline className="tabs__button_icon" size={24} />
-                    <span className="tabs__button_text">Tab</span>
-                </button>
-                <button
-                    type="button"
-                    role="tab"
-                    tabIndex={0}
-                    className={classNames(`tabs__button tabs__button_${size}`, size)}
-                >
-                    <TagOutline className="tabs__button_icon" size={24} />
-                    <span className="tabs__button_text">Tab</span>
+                <div className="tabs__list">
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_selected tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
 
-                    {/* todo: use element only if has a 'slot' content */}
-                    <div className="tabs__button_slot" />
-                </button>
-                <button
-                    type="button"
-                    role="tab"
-                    tabIndex={0}
-                    className={classNames(`tabs__button tabs__button_error tabs__button_${size}`, size)}
-                >
-                    <TagOutline className="tabs__button_icon" size={24} />
-                    <span className="tabs__button_text">Tab</span>
+                        {/* todo: use element only if has a 'slot' content */}
+                        <div className="tabs__button_slot" />
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_error tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
 
-                    {/* todo: use icon only for 'state: error' */}
-                    <InfoFill className="tabs__button_iconError" size={24} />
-                </button>
-                <button
-                    type="button"
-                    role="tab"
-                    tabIndex={0}
-                    className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
-                >
-                    <TagOutline className="tabs__button_icon" size={24} />
-                    <span className="tabs__button_text">Tab</span>
-                </button>
+                        {/* todo: use icon only for 'state: error' */}
+                        <InfoFill className="tabs__button_iconError" size={24} />
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                    <button
+                        type="button"
+                        role="tab"
+                        tabIndex={0}
+                        className={classNames(`tabs__button tabs__button_disabled tabs__button_${size}`, size)}
+                    >
+                        <TagOutline className="tabs__button_icon" size={24} />
+                        <span className="tabs__button_text">Tab</span>
+                    </button>
+                </div>
 
                 {/* todo: use button only for 'horizontal' direction */}
                 <Button
