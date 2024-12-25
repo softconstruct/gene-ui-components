@@ -4,6 +4,7 @@
     position: relative;
     display: inline-flex;
     background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    transform: translate3d(0, 0, 0);
 
     &_isWeb {
         border: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style)
@@ -20,7 +21,7 @@
             &_large {
                 border-radius: var(--guit-ref-radius-2xsmall);
 
-                #{ $this }__item {
+                #{ $this }__list {
                     width: 36rem;
 
                     &:first-child {
@@ -45,7 +46,7 @@
             &_medium {
                 border-radius: var(--guit-ref-radius-3xsmall);
 
-                #{ $this }__item {
+                #{ $this }__list {
                     width: 24rem;
 
                     &:first-child {
@@ -70,7 +71,7 @@
             &_small {
                 border-radius: var(--guit-ref-radius-3xsmall);
 
-                #{ $this }__item {
+                #{ $this }__list {
                     width: 16rem;
 
                     &:first-child {
@@ -103,7 +104,7 @@
             padding-inline-end: var(--guit-ref-spacing-4xsmall);
         }
 
-        #{ $this }__item {
+        #{ $this }__list {
             &:not(:first-child) {
                 border-inline-start: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style)
                     var(--guit-sem-color-border-neutral-2);
@@ -113,37 +114,31 @@
 
     &_isMobile {
         width: 100%;
-        height: 38.4rem; // height: 100%
+        height: 100%;
+        border-top-left-radius: var(--guit-ref-radius-2xsmall);
+        border-top-right-radius: var(--guit-ref-radius-2xsmall);
         box-shadow: var(--guit-sem-shadow-floating-2-position-x-2) var(--guit-sem-shadow-floating-2-position-y-2)
             var(--guit-sem-shadow-floating-2-blur-1) var(--guit-sem-shadow-floating-1-spread-1)
             var(--guit-sem-color-floating-2-rgba-1);
 
-        &#{ $this }_size {
-            &_mobile {
-                border-top-left-radius: var(--guit-ref-radius-2xsmall);
-                border-top-right-radius: var(--guit-ref-radius-2xsmall);
-
-                #{ $this }__header {
-                    padding-inline-start: var(--guit-ref-spacing-large);
-                    padding-inline-end: var(--guit-ref-spacing-large);
-                    border-top-left-radius: var(--guit-ref-radius-2xsmall);
-                    border-top-right-radius: var(--guit-ref-radius-2xsmall);
-                }
-            }
-        }
-
         #{ $this }__header {
             gap: var(--guit-ref-spacing-xsmall);
             height: 4.8rem;
+            padding-inline-start: var(--guit-ref-spacing-large);
+            padding-inline-end: var(--guit-ref-spacing-large);
+            border-top-left-radius: var(--guit-ref-radius-2xsmall);
+            border-top-right-radius: var(--guit-ref-radius-2xsmall);
         }
 
         #{ $this }__content {
             padding-inline-start: var(--guit-ref-spacing-3xsmall);
             padding-inline-end: var(--guit-ref-spacing-3xsmall);
         }
+    }
 
-        #{ $this }__item {
-            position: absolute;
+    &_isSwappable {
+        #{ $this }__list {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -151,12 +146,16 @@
         }
     }
 
-    &__item {
+    &__list {
         display: flex;
         flex-direction: column;
 
         &_current {
             z-index: 1;
+        }
+
+        &_notCurrent {
+            opacity: 0;
         }
 
         &_swipeLeft {
@@ -204,7 +203,7 @@
         }
     }
 
-    &__headerIcon {
+    &__icon {
         flex: 0 0 auto;
     }
 
@@ -227,7 +226,7 @@
         padding-bottom: var(--guit-ref-spacing-xsmall);
     }
 
-    &__row {
+    &__item {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -266,10 +265,6 @@
         &:not(:last-child) {
             margin-bottom: var(--guit-ref-spacing-3xsmall);
         }
-    }
-
-    &__rowIcon {
-        flex: 0 0 auto;
     }
 
     &__cell {
