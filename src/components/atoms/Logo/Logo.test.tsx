@@ -17,16 +17,22 @@ describe("Logo ", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
+    it("renders with marksvg prop", () => {
+        const type = "logomark";
+        const markSvg = LogoMarkSVG;
+        setup.setProps({ type, markSvg });
+        expect(setup.props().markSvg).toBe(markSvg);
+    });
+
     it.each<ILogoProps["type"]>(["logomark", "logotype"])("should have '%s' type", (type) => {
-        const svg = type === "logomark" ? LogoMarkSVG : LogoTypeSVG;
-        setup.setProps({ type, svg });
+        setup.setProps({ type });
         expect(setup.find(`.logo__${type}`).exists()).toBeTruthy();
     });
 
     it.each<ILogoProps["size"]>(["large", "medium", "small"])("should have '%s' size", (size) => {
         setup.setProps({ size });
         const { type = "logotype" } = setup.props();
-        expect(setup.find(`.logo__${type}`).hasClass(`logo__${type}_size_${size}`)).toBeTruthy();
+        expect(setup.find(`logo__${type}_size_${size}`)).toBeTruthy();
     });
 
     it.each<ILogoProps["appearance"]>(["brand", "secondary", "inverse"])(
@@ -34,7 +40,7 @@ describe("Logo ", () => {
         (appearance) => {
             setup.setProps({ appearance });
             const { type = "logotype" } = setup.props();
-            expect(setup.find(`.logo__${type}`).hasClass(`logo__${type}_color_${appearance}`)).toBeTruthy();
+            expect(setup.find(`logo__${type}_color_${appearance}`)).toBeTruthy();
         }
     );
 

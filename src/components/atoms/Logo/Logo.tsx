@@ -11,6 +11,11 @@ interface ILogoProps {
      */
     svg: ReactElement<SVGProps<SVGSVGElement>>;
     /**
+     * Specifies the SVG icon to render when the `type` is set to `'logomark'`. <br/>
+     * This prop is optional and can accept either a valid SVG element or its name as a string.
+     */
+    markSvg?: ReactElement<SVGProps<SVGSVGElement>>;
+    /**
      * Defines the size of the Logo.<br/>
      * Possible values: `large | medium | small`
      */
@@ -35,10 +40,19 @@ interface ILogoProps {
 /**
  * A logo component displays a Gene UI’s emblem or trademark, serving as a visual representation. It reinforces brand identity and recognition, typically placed in prominent locations such as the header, footer, or login page of an application or website.
  */
-const Logo: FC<ILogoProps> = ({ svg, size = "medium", type = "logotype", appearance = "brand", className }) => {
+const Logo: FC<ILogoProps> = ({
+    svg,
+    size = "medium",
+    type = "logotype",
+    appearance = "brand",
+    className,
+    markSvg
+}) => {
     return (
         <div className={classNames("logo", className)}>
-            <div className={`logo__${type} logo__${type}_size_${size} logo__${type}_color_${appearance}`}>{svg}</div>
+            <div className={`logo__${type} logo__${type}_size_${size} logo__${type}_color_${appearance}`}>
+                {type === "logomark" ? markSvg || svg : svg}
+            </div>
         </div>
     );
 };
