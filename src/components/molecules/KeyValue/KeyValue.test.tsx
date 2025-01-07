@@ -1,18 +1,24 @@
 import React from "react";
 import { ReactWrapper, mount } from "enzyme";
-import { Globe, WarningFill } from "@geneui/icons";
 
 // Components
 import KeyValue, { IKeyValueProps } from "./index";
-import Info from "../../atoms/Info";
 import Pill from "../../atoms/Pill";
+import Key from "./Key";
+import Value from "./Value";
+import TextLink from "../../atoms/TextLink/TextLink";
 
 const title = "title";
 
 describe("KeyValue ", () => {
     let setup: ReactWrapper<IKeyValueProps>;
     beforeEach(() => {
-        setup = mount(<KeyValue title={title} value="value" />);
+        setup = mount(
+            <KeyValue>
+                <Key>{title}</Key>
+                <Value>Description</Value>
+            </KeyValue>
+        );
     });
 
     it("renders without crashing", () => {
@@ -26,41 +32,35 @@ describe("KeyValue ", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    it("renders IconBefore prop correctly", () => {
-        const wrapper = setup.setProps({ KeyIcon: Globe });
-        expect(wrapper.find(Globe).exists()).toBeTruthy();
-    });
-
-    it("renders title prop correctly", () => {
+    it("renders key text correctly", () => {
         expect(setup.find(".keyValue__title").contains(title)).toBeTruthy();
     });
 
-    it("renders title prop correctly", () => {
-        expect(setup.find(".keyValue__title").contains(title)).toBeTruthy();
-    });
-
-    it("renders info icon correctly", () => {
-        const wrapper = setup.setProps({ iconInfo: { infoText: "info" } });
-        expect(wrapper.find(Info).exists()).toBeTruthy();
-    });
-
-    it("renders pill value correctly", () => {
-        const wrapper = setup.setProps({ value: { text: "Pill", isFill: true } });
+    it("renders Pill correctly", () => {
+        const wrapper = mount(
+            <KeyValue>
+                <Key>{title}</Key>
+                <Value>
+                    <Pill text="Pill" isFill />
+                </Value>
+            </KeyValue>
+        );
         expect(wrapper.find(Pill).exists()).toBeTruthy();
     });
 
-    it("renders icon value correctly", () => {
-        const wrapper = setup.setProps({ value: WarningFill });
-        expect(wrapper.find(WarningFill).exists()).toBeTruthy();
+    it("renders TextLink correctly", () => {
+        const wrapper = mount(
+            <KeyValue>
+                <Key>{title}</Key>
+                <Value>
+                    <TextLink text="Link text" href="#" />
+                </Value>
+            </KeyValue>
+        );
+        expect(wrapper.find(TextLink).exists()).toBeTruthy();
     });
 
-    it("renders text value correctly", () => {
-        const value = "Value";
-        const wrapper = setup.setProps({ value });
-        expect(wrapper.find(".keyValue__value").contains(value)).toBeTruthy();
-    });
-
-    it.each<IKeyValueProps["size"]>(["large", "medium", "small"])("should have %s size", (size) => {
+    it.each<IKeyValueProps["size"]>(["large", "medium"])("should have %s size", (size) => {
         const wrapper = setup.setProps({ size });
         expect(wrapper.find(".keyValue").hasClass(`keyValue_${size}`)).toBeTruthy();
     });

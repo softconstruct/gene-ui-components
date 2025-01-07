@@ -1,13 +1,17 @@
 import React, { FC } from "react";
 import { Meta } from "@storybook/react";
 
-import { Globe, WarningFill } from "@geneui/icons";
-
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 
 // Components
 import KeyValue, { IKeyValueProps } from "./index";
+import Key from "./Key";
+import Value from "./Value";
+import Pill from "../../atoms/Pill";
+import TextLink from "../../atoms/TextLink/TextLink";
+
+const key = <Key infoText="Info text">Title</Key>;
 
 const meta: Meta<typeof KeyValue> = {
     title: "Molecules/KeyValue",
@@ -16,18 +20,12 @@ const meta: Meta<typeof KeyValue> = {
         className: args({ control: false, ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
-        KeyIcon: args({ control: "object", ...propCategory.content }),
-        title: args({ control: "text", ...propCategory.content }),
-        iconInfo: args({ control: "object", ...propCategory.content }),
-        value: args({ control: "text", ...propCategory.content })
+        children: args({ control: false, ...propCategory.content })
     },
     args: {
-        KeyIcon: Globe,
-        title: "Title",
-        iconInfo: { infoText: "Info text" },
-        value: "Description",
         direction: "vertical",
-        size: "medium"
+        size: "large",
+        children: [key, <Value>Description</Value>]
     } as IKeyValueProps
 };
 
@@ -39,8 +37,21 @@ export const Default = Template.bind({});
 Default.args = {} as IKeyValueProps;
 
 export const WithPillValue = Template.bind({});
-WithPillValue.args = { value: { text: "Any text", isFill: true } } as IKeyValueProps;
-WithPillValue.argTypes = { value: args({ control: "object", ...propCategory.content }) } as IKeyValueProps;
+WithPillValue.args = {
+    children: [
+        key,
+        <Value>
+            <Pill text="Pill" isFill />
+        </Value>
+    ]
+};
 
-export const WithIconValue = Template.bind({});
-WithIconValue.args = { value: WarningFill } as IKeyValueProps;
+export const WithTextLinkValue = Template.bind({});
+WithTextLinkValue.args = {
+    children: [
+        key,
+        <Value>
+            <TextLink text="Text Link" href="" />
+        </Value>
+    ]
+};
