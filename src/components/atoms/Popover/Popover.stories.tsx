@@ -18,6 +18,7 @@ const meta: Meta<IPopoverProps> = {
         alwaysShow: args({ control: "boolean", ...propCategory.states }),
         isOpen: args({ control: "boolean", ...propCategory.states }),
         withArrow: args({ control: "boolean", ...propCategory.states }),
+        disableReposition: args({ control: "boolean", ...propCategory.states }),
 
         children: args({ control: "false", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),

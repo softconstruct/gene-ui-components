@@ -168,6 +168,13 @@ export interface IPopoverProps {
      * show or hide arrows
      */
     withArrow?: boolean;
+
+    /**
+     * If this property is enabled, rather than the popover content repositioning on a boundary collision,
+     * the popover content container will move beyond the window's bounds.
+     * You are, however, supplied with nudgedLeft and nudgedTop values, so you may choose to handle content overflow as you wish.
+     */
+    disableReposition?: boolean;
 }
 
 /**
@@ -189,10 +196,10 @@ const Popover: FC<IPopoverProps> = ({
     secondaryButton,
     footerContent,
     withArrow = true,
-    children
+    children,
+    disableReposition = true
 }) => {
-    const popoverState = isOpen || false;
-    const [popoverOpened, setPopoverOpened] = useState(popoverState);
+    const [popoverOpened, setPopoverOpened] = useState(isOpen);
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const [currentPosition, setCurrentPosition] = useState(correctPosition[position]);
 
@@ -210,7 +217,7 @@ const Popover: FC<IPopoverProps> = ({
         middleware: [
             offset(padding),
             flip({
-                mainAxis: position !== "auto",
+                mainAxis: position !== "auto" && !disableReposition,
                 fallbackAxisSideDirection: "none",
                 fallbackPlacements: position === "auto" ? [] : positions
             }),
