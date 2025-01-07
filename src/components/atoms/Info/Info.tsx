@@ -69,6 +69,7 @@ const Info: FC<IInfoProps> = ({ infoText, disabled, size = "smallNudge", appeara
         <Tooltip text={infoText} alwaysShow={alwaysShow} appearance={appearance === "inverse" ? "inverse" : "default"}>
             <button
                 type="button"
+                aria-label="press enter to open tooltip"
                 disabled={disabled}
                 aria-pressed={alwaysShow}
                 className={buttonClassNames}
