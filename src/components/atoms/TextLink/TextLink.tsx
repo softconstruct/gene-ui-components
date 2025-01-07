@@ -45,6 +45,11 @@ interface ITextLinkProps {
      */
     appearance?: "primary" | "secondary" | "inverse";
     /**
+     * Defines the size of the Text Link.<br>
+     * Possible values: `large | medium`
+     */
+    size?: "medium" | "large";
+    /**
      * When `true`, the link is disabled and not clickable.
      */
     disabled?: boolean;
@@ -80,6 +85,7 @@ const TextLink: FC<ITextLinkProps> = ({
     target = "self",
     underline,
     appearance = "primary",
+    size = "medium",
     disabled,
     onClick,
     isLoading,
@@ -92,7 +98,7 @@ const TextLink: FC<ITextLinkProps> = ({
         <a
             target={`_${target}`}
             rel={rel}
-            className={classNames(`textLink textLink_color_${appearance}`, className, {
+            className={classNames(`textLink textLink_size_${size} textLink_color_${appearance}`, className, {
                 textLink_underline: underline,
                 textLink_disabled: disabled
             })}
