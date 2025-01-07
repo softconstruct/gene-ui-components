@@ -3,11 +3,7 @@ import classNames from "classnames";
 
 // Styles
 import "./TextLink.scss";
-
-interface IconProps extends React.SVGProps<SVGSVGElement> {
-    size?: 16 | 20 | 24 | 28 | 32 | 48;
-    color?: string;
-}
+import { IconProps } from "@geneui/icons";
 
 interface ITextLinkProps {
     /**
@@ -46,7 +42,7 @@ interface ITextLinkProps {
     appearance?: "primary" | "secondary" | "inverse";
     /**
      * Defines the size of the Text Link.<br>
-     * Possible values: `large | medium`
+     * Possible values: `medium | large`
      */
     size?: "medium" | "large";
     /**

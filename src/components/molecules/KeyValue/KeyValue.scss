@@ -4,8 +4,10 @@
     display: inline-flex;
     max-width: 100%;
 
-    &_vertical {
-        flex-direction: column;
+    &_direction {
+        &_vertical {
+            flex-direction: column;
+        }
     }
 
     &__content {
@@ -20,48 +22,35 @@
         word-break: break-word;
     }
 
-    &_large {
-        gap: var(--guit-ref-spacing-medium);
+    &_size {
+        &_large {
+            gap: var(--guit-ref-spacing-medium);
 
-        #{ $this }__content {
-            gap: var(--guit-ref-spacing-xsmall);
+            #{ $this }__content {
+                gap: var(--guit-ref-spacing-xsmall);
+            }
+            #{ $this }__title,
+            #{ $this }__value {
+                font-family: var(--guit-sem-font-label-large-default-medium-font-family), sans-serif;
+                font-weight: var(--guit-sem-font-label-large-default-medium-font-weight);
+                font-size: var(--guit-sem-font-label-large-default-semibold-font-size);
+                line-height: var(--guit-sem-font-label-large-default-semibold-line-height);
+            }
         }
-        #{ $this }__title,
-        #{ $this }__value {
-            font-family: var(--guit-sem-font-label-large-default-medium-font-family);
-            font-weight: var(--guit-sem-font-label-large-default-medium-font-weight);
-            font-size: var(--guit-sem-font-label-large-default-semibold-font-size);
-            line-height: var(--guit-sem-font-label-large-default-semibold-line-height);
-        }
-    }
 
-    &_medium {
-        gap: var(--guit-ref-spacing-medium);
+        &_medium {
+            gap: var(--guit-ref-spacing-medium);
 
-        #{ $this }__content {
-            gap: var(--guit-ref-spacing-xsmall);
-        }
-        #{ $this }__title,
-        #{ $this }__value {
-            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
-            font-weight: var(--guit-sem-font-label-large-default-medium-font-weight);
-            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
-            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
-        }
-    }
-
-    &_small {
-        gap: var(--guit-ref-spacing-xsmall);
-
-        #{ $this }__content {
-            gap: var(--guit-ref-spacing-2xsmall);
-        }
-        #{ $this }__title,
-        #{ $this }__value {
-            font-family: var(--guit-sem-font-label-small-default-medium-font-family);
-            font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
-            font-size: var(--guit-sem-font-label-small-default-medium-font-size);
-            line-height: var(--guit-sem-font-label-small-default-medium-line-height);
+            #{ $this }__content {
+                gap: var(--guit-ref-spacing-xsmall);
+            }
+            #{ $this }__title,
+            #{ $this }__value {
+                font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
+                font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+                font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+                line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            }
         }
     }
 }

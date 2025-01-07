@@ -22,9 +22,9 @@ interface IKeyValueProps {
     direction?: "vertical" | "horizontal";
     /**
      * Size
-     * Possible values: `large | medium`;
+     * Possible values: `medium | large`;
      */
-    size?: "large" | "medium";
+    size?: "medium" | "large";
     children: [ReactElement<IKeyProps>, ReactElement<IValueProps>];
 }
 
@@ -37,7 +37,7 @@ const pillSize: { [key: string]: IPillProps["size"] } = {
 export const elementWithType = (
     element: ReactElement,
     type: string,
-    keyValueSize: IKeyValueProps["size"] = "large"
+    keyValueSize: IKeyValueProps["size"] = "medium"
 ) => {
     const typeCastedElement = element as unknown as { type: { name: string } };
     const size = typeCastedElement.type.name === "Pill" ? pillSize[keyValueSize] : keyValueSize;
@@ -52,11 +52,11 @@ export const elementWithType = (
 const KeyValue: FC<IKeyValueProps> = ({
     className,
     direction = "vertical",
-    size = "large",
+    size = "medium",
     children: [key, value]
 }) => {
     return (
-        <div className={classNames(`keyValue keyValue_${direction} keyValue_${size}`, className)}>
+        <div className={classNames(`keyValue keyValue_direction_${direction} keyValue_size_${size}`, className)}>
             {elementWithType(key, "Key", size)}
             {elementWithType(value, "Value", size)}
         </div>

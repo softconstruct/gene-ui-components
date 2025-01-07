@@ -24,7 +24,7 @@ const meta: Meta<typeof KeyValue> = {
     },
     args: {
         direction: "vertical",
-        size: "large",
+        size: "medium",
         children: [key, <Value>Description</Value>]
     } as IKeyValueProps
 };
