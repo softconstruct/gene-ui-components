@@ -62,11 +62,11 @@ describe("KeyValue ", () => {
 
     it.each<IKeyValueProps["size"]>(["large", "medium"])("should have %s size", (size) => {
         const wrapper = setup.setProps({ size });
-        expect(wrapper.find(".keyValue").hasClass(`keyValue_${size}`)).toBeTruthy();
+        expect(wrapper.find(".keyValue").hasClass(`keyValue_size_${size}`)).toBeTruthy();
     });
 
     it.each<IKeyValueProps["direction"]>(["vertical", "horizontal"])("should have %s direction", (direction) => {
         const wrapper = setup.setProps({ direction });
-        expect(wrapper.find(".keyValue").hasClass(`keyValue_${direction}`)).toBeTruthy();
+        expect(wrapper.find(".keyValue").hasClass(`keyValue_direction_${direction}`)).toBeTruthy();
     });
 });
