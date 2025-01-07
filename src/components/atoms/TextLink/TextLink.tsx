@@ -74,6 +74,11 @@ interface ITextLinkProps {
     className?: string;
 }
 
+const iconSize = {
+    medium: 20,
+    large: 24
+} as const;
+
 /**
  * A link is styled text that navigates users to another location, either within the current experience or to a different app or website.
  */
@@ -106,11 +111,9 @@ const TextLink: FC<ITextLinkProps> = ({
             onClick={onClick}
             {...(disabled && { tabIndex: -1 })}
         >
-            <span className="textLink__text">
-                {Icon && iconBefore && <Icon className="textLink__icon textLink__icon_before" size={20} />}
-                {text}
-                {Icon && !iconBefore && <Icon className="textLink__icon textLink__icon_after" size={20} />}
-            </span>
+            {Icon && iconBefore && <Icon className="textLink__icon textLink__icon_before" size={iconSize[size]} />}
+            <span className="textLink__text">{text}</span>
+            {Icon && !iconBefore && <Icon className="textLink__icon textLink__icon_after" size={iconSize[size]} />}
         </a>
     );
 
