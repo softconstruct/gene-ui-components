@@ -1,4 +1,4 @@
-import React, { FC, KeyboardEvent, ReactElement, useLayoutEffect, useMemo, useState } from "react";
+import React, { FC, ReactElement, useLayoutEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
 
@@ -86,42 +86,11 @@ const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "h
         [selectedIndex, count]
     );
 
-    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (direction === "horizontal") {
-            if (event.key === "ArrowLeft") {
-                onPrevClick();
-                return;
-            }
-            if (event.key === "ArrowRight") {
-                onNextClick();
-                return;
-            }
-            return;
-        }
-
-        if (event.key === "ArrowUp") {
-            onPrevClick();
-            return;
-        }
-
-        if (event.key === "ArrowDown") {
-            onNextClick();
-        }
-    };
-
     return (
-        <div className={classNames(`carousel carousel_${size} carousel_${direction}`, className)}>
-            <div
-                className="carousel_slider"
-                ref={ref}
-                onKeyDown={onKeyDown}
-                role="slider"
-                aria-valuenow={selectedIndex}
-                aria-label="carousel"
-                tabIndex={0}
-            >
-                {children[selectedIndex]}
-            </div>
+        <div
+            className={classNames(`carousel carousel_slider carousel_${size} carousel_${direction}`, className)}
+            ref={ref}
+        >
             <Button
                 className="carousel__button carousel__button_back"
                 Icon={ChevronLeft}
@@ -129,6 +98,7 @@ const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "h
                 onClick={onPrevClick}
                 ariaLabel="select-previews"
             />
+            {children[selectedIndex]}
             <Button
                 className="carousel__button carousel__button_forward"
                 Icon={ChevronRight}
