@@ -3,131 +3,137 @@
 
     display: inline-flex;
 
-    // horizontal view styles
-    &_horizontal {
-        flex-direction: row;
-
-        &#{ $this }__element {
-            min-height: var(--guit-sem-dimension-height-xlarge);
-        }
-
-        &#{ $this }_top {
-            #{ $this }__element {
-                grid-template-rows: 1fr auto;
-                #{ $this }__status {
-                    order: 2;
-                }
-            }
-        }
-
-        &#{ $this }_bottom {
-            #{ $this }__element {
-                grid-template-rows: auto 1fr;
-            }
-        }
-
-        &#{ $this }_alternate {
-            #{ $this }__element {
-                grid-template-rows: 1fr auto 1fr;
-
-                &::before {
-                    content: "";
-                    display: block;
-                }
-
-                &:nth-child(odd) {
-                    &::before {
-                        order: 3;
-                    }
-                    #{ $this }__status {
-                        order: 2;
-                    }
-                }
-            }
-        }
-
-        #{ $this }__status {
+    &_direction {
+        // horizontal direction styles
+        &_horizontal {
             flex-direction: row;
 
-            &_loading {
-                padding-inline-start: var(--guit-ref-spacing-4xsmall);
+            &#{ $this }__element {
+                min-height: var(--guit-sem-dimension-height-xlarge);
             }
-        }
 
-        #{ $this }__content {
-            padding-inline-end: var(--guit-ref-spacing-xsmall);
-        }
-    }
-
-    // vertical view styles
-    &_vertical {
-        flex-direction: column;
-        min-width: var(--guit-sem-dimension-width-3xlarge);
-
-        &#{ $this }__element {
-            min-height: var(--guit-sem-dimension-height-3xlarge);
-        }
-
-        &#{ $this }_after {
-            #{ $this }__element {
-                grid-template-columns: auto 1fr;
-            }
-            #{ $this }__content {
-                text-align: start;
-            }
-        }
-
-        &#{ $this }_before {
-            #{ $this }__element {
-                grid-template-columns: 1fr auto;
-                #{ $this }__status {
-                    order: 2;
-                }
-            }
-            #{ $this }__content {
-                text-align: end;
-            }
-        }
-
-        &#{ $this }_alternate {
-            #{ $this }__element {
-                grid-template-columns: 1fr auto 1fr;
-
-                &::before {
-                    content: "";
-                    display: block;
+            &#{ $this }_position {
+                &_top {
+                    #{ $this }__element {
+                        grid-template-rows: 1fr auto;
+                        #{ $this }__status {
+                            order: 2;
+                        }
+                    }
                 }
 
-                &:nth-child(even) {
+                &_bottom {
+                    #{ $this }__element {
+                        grid-template-rows: auto 1fr;
+                    }
+                }
+
+                &_alternate {
+                    #{ $this }__element {
+                        grid-template-rows: 1fr auto 1fr;
+
+                        &::before {
+                            content: "";
+                            display: block;
+                        }
+
+                        &:nth-child(odd) {
+                            &::before {
+                                order: 3;
+                            }
+                            #{ $this }__status {
+                                order: 2;
+                            }
+                        }
+                    }
+                }
+            }
+
+            #{ $this }__status {
+                flex-direction: row;
+
+                &_loading {
+                    padding-inline-start: var(--guit-ref-spacing-4xsmall);
+                }
+            }
+
+            #{ $this }__content {
+                padding-inline-end: var(--guit-ref-spacing-xsmall);
+            }
+        }
+
+        // vertical direction styles
+        &_vertical {
+            flex-direction: column;
+            min-width: var(--guit-sem-dimension-width-3xlarge);
+
+            &#{ $this }__element {
+                min-height: var(--guit-sem-dimension-height-3xlarge);
+            }
+
+            &#{ $this }_position {
+                &_after {
+                    #{ $this }__element {
+                        grid-template-columns: auto 1fr;
+                    }
                     #{ $this }__content {
                         text-align: start;
                     }
                 }
 
-                &:nth-child(odd) {
-                    &::before {
-                        order: 3;
-                    }
-                    #{ $this }__status {
-                        order: 2;
+                &_before {
+                    #{ $this }__element {
+                        grid-template-columns: 1fr auto;
+                        #{ $this }__status {
+                            order: 2;
+                        }
                     }
                     #{ $this }__content {
                         text-align: end;
                     }
                 }
+
+                &_alternate {
+                    #{ $this }__element {
+                        grid-template-columns: 1fr auto 1fr;
+
+                        &::before {
+                            content: "";
+                            display: block;
+                        }
+
+                        &:nth-child(even) {
+                            #{ $this }__content {
+                                text-align: start;
+                            }
+                        }
+
+                        &:nth-child(odd) {
+                            &::before {
+                                order: 3;
+                            }
+                            #{ $this }__status {
+                                order: 2;
+                            }
+                            #{ $this }__content {
+                                text-align: end;
+                            }
+                        }
+                    }
+                }
             }
-        }
 
-        #{ $this }__status {
-            flex-direction: column;
+            #{ $this }__status {
+                flex-direction: column;
 
-            &_loading {
-                padding-top: var(--guit-ref-spacing-4xsmall);
+                &_loading {
+                    padding-top: var(--guit-ref-spacing-4xsmall);
+                }
             }
-        }
 
-        #{ $this }__content {
-            padding-bottom: var(--guit-ref-spacing-xsmall);
+            #{ $this }__content {
+                padding-bottom: var(--guit-ref-spacing-xsmall);
+            }
         }
     }
 

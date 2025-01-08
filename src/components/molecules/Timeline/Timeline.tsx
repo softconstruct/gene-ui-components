@@ -46,7 +46,9 @@ const Timeline: FC<ITimelineProps> = ({
     className
 }) => {
     return (
-        <div className={classNames(`timeline timeline_${direction} timeline_${position}`, className)}>
+        <div
+            className={classNames(`timeline timeline_direction_${direction} timeline_position_${position}`, className)}
+        >
             <div className="timeline__element">
                 {/* todo: use "timeline__status_*" classname for each status */}
                 <div className="timeline__status timeline__status_defailt">
