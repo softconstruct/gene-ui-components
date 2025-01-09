@@ -58,4 +58,14 @@ describe("Carousel ", () => {
         expect(setup.find(".carousel__dots").childAt(0).hasClass("carousel__dot_active")).toBeFalsy();
         expect(setup.find(".carousel__dots").childAt(1).hasClass("carousel__dot_active")).toBeTruthy();
     });
+
+    it("doesn't render indicators when withIndicators is false", () => {
+        const wrapper = setup.setProps({ withIndicators: false });
+        expect(wrapper.find(".carousel__dots").exists()).toBeFalsy();
+    });
+
+    it("doesn't render slide arrow buttons when withSlideArrows is false", () => {
+        const wrapper = setup.setProps({ withSlideArrows: false });
+        expect(wrapper.find(".carousel__button").exists()).toBeFalsy();
+    });
 });

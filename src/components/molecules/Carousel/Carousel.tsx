@@ -29,6 +29,14 @@ interface ICarouselProps {
      */
     size?: "large" | "small";
     /**
+     * Enables the display of arrows for navigation between slides <br/>
+     */
+    withSlideArrows?: boolean;
+    /**
+     * Enables the display of indicators <br/>
+     */
+    withIndicators?: boolean;
+    /**
      * Content elements
      */
     children?: ReactElement<typeof CarouselItem>[];
@@ -39,13 +47,25 @@ const DOTS_LIMIT = 6;
 /**
  * The Carousel component is ideal for displaying multiple content items, such as images, product highlights, or customer testimonials, in a limited space. By using navigation arrows, pagination dots, or autoplay, users can engage with content sequentially and interactively.
  */
-const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "horizontal", size = "large" }) => {
+const Carousel: FC<ICarouselProps> = ({
+    className,
+    children = [],
+    direction = "horizontal",
+    size = "large",
+    withSlideArrows = true,
+    withIndicators = true
+}) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [dotsRange, setDotsRange] = useState([0, DOTS_LIMIT]);
     const count = children.length;
 
     const onPrevClick = () => setSelectedIndex((prev) => (prev === 0 ? children.length - 1 : prev - 1));
     const onNextClick = () => setSelectedIndex((prev) => (prev === children.length - 1 ? 0 : prev + 1));
+
+    // TODO: Implement mobile detection and use it to set isMobile value
+    const isMobile = false;
+
+    const areArrowsVisible = withSlideArrows && !isMobile;
 
     const swipeCallbacks = useMemo(() => {
         if (direction === "horizontal") {
@@ -91,40 +111,46 @@ const Carousel: FC<ICarouselProps> = ({ className, children = [], direction = "h
             className={classNames(`carousel carousel_slider carousel_${size} carousel_${direction}`, className)}
             ref={ref}
         >
-            <Button
-                className="carousel__button carousel__button_back"
-                Icon={ChevronLeft}
-                appearance="inverse"
-                onClick={onPrevClick}
-                ariaLabel="select-previews"
-            />
+            {areArrowsVisible && (
+                <Button
+                    className="carousel__button carousel__button_back"
+                    Icon={ChevronLeft}
+                    appearance="inverse"
+                    onClick={onPrevClick}
+                    ariaLabel="select-previews"
+                />
+            )}
             {children[selectedIndex]}
-            <Button
-                className="carousel__button carousel__button_forward"
-                Icon={ChevronRight}
-                appearance="inverse"
-                onClick={onNextClick}
-                ariaLabel="select-next"
-            />
-            <div className="carousel__dots">
-                {Array.from(Array(count).keys())
-                    .slice(...dotsRange)
-                    .map((index) => (
-                        <button
-                            type="button"
-                            aria-label={`select slide ${index + 1}`}
-                            onClick={() => setSelectedIndex(index)}
-                            key={index}
-                            className={classNames(
-                                `carousel__dot ${index === selectedIndex ? "carousel__dot_active" : ""}`,
-                                {
-                                    carousel__dot_small:
-                                        count > 4 && (index < selectedIndex - 1 || index > selectedIndex + 1)
-                                }
-                            )}
-                        />
-                    ))}
-            </div>
+            {areArrowsVisible && (
+                <Button
+                    className="carousel__button carousel__button_forward"
+                    Icon={ChevronRight}
+                    appearance="inverse"
+                    onClick={onNextClick}
+                    ariaLabel="select-next"
+                />
+            )}
+            {withIndicators && (
+                <div className="carousel__dots">
+                    {Array.from(Array(count).keys())
+                        .slice(...dotsRange)
+                        .map((index) => (
+                            <button
+                                type="button"
+                                aria-label={`select slide ${index + 1}`}
+                                onClick={() => setSelectedIndex(index)}
+                                key={index}
+                                className={classNames(
+                                    `carousel__dot ${index === selectedIndex ? "carousel__dot_active" : ""}`,
+                                    {
+                                        carousel__dot_small:
+                                            count > 4 && (index < selectedIndex - 1 || index > selectedIndex + 1)
+                                    }
+                                )}
+                            />
+                        ))}
+                </div>
+            )}
         </div>
     );
 };

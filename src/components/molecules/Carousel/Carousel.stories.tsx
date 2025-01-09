@@ -76,12 +76,16 @@ const meta: Meta<typeof Carousel> = {
         className: args({ control: false, ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
+        withSlideArrows: args({ control: "boolean", ...propCategory.appearance }),
+        withIndicators: args({ control: "boolean", ...propCategory.appearance }),
         children: args({ control: false, ...propCategory.appearance })
     },
     args: {
         children: textContent,
         direction: "horizontal",
-        size: "large"
+        size: "large",
+        withSlideArrows: true,
+        withIndicators: true
     } as ICarouselProps
 };
 
