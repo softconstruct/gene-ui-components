@@ -341,10 +341,10 @@ function SuggestionList({ onChange, onHover, elemRef, data = [] }) {
         if (!elemRef) return;
         const handlePasteAnywhere = () => setSuggestionData(null);
 
-        elemRef.current.addEventListener('paste', handlePasteAnywhere);
+        elemRef.current?.addEventListener('paste', handlePasteAnywhere);
 
         return () => {
-            elemRef.current.removeEventListener('paste', handlePasteAnywhere);
+            elemRef.current?.removeEventListener('paste', handlePasteAnywhere);
         };
     }, [elemRef]);
 
