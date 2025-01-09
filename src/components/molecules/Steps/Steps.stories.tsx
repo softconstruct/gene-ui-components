@@ -11,10 +11,18 @@ const meta: Meta<typeof Steps> = {
     title: "Molecules/Steps",
     component: Steps,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance })
+        className: args({ control: "false", ...propCategory.appearance }),
+        label: args({ control: "text", ...propCategory.content }),
+        description: args({ control: "text", ...propCategory.content }),
+        direction: args({ control: "select", ...propCategory.appearance }),
+        isLinear: args({ control: "boolean", ...propCategory.states })
         // fill Steps component argTypes
     },
     args: {
+        label: "Label",
+        description: "Description",
+        direction: "vertical",
+        isLinear: false
         // fill Steps component args
     } as IStepsProps
 };

@@ -1,5 +1,169 @@
 .steps {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    display: inline-block;
+
+    &_direction {
+        // horizontal direction styles
+        &_horizontal {
+            #{ $this }__wrapper {
+                flex-direction: row;
+                margin-bottom: var(--guit-ref-spacing-large);
+            }
+            #{ $this }__step {
+                grid-template-rows: auto 1fr;
+            }
+            #{ $this }__status {
+                flex-direction: row;
+            }
+            #{ $this }__content {
+                padding-inline-end: var(--guit-ref-spacing-medium);
+            }
+        }
+
+        // vertical direction styles
+        &_vertical {
+            #{ $this }__wrapper {
+                flex-direction: column;
+            }
+            #{ $this }__step {
+                grid-template-columns: auto 1fr;
+            }
+            #{ $this }__status {
+                flex-direction: column;
+            }
+            #{ $this }__swap {
+                align-self: stretch;
+                margin-block: var(--guit-ref-spacing-large);
+                margin-inline: var(--guit-ref-spacing-3xsmall);
+            }
+        }
+    }
+
+    // styles for linear and non-linear cases
+    &_linear {
+        #{ $this }__label {
+            pointer-events: none;
+
+            &:focus-visible {
+                outline: none;
+            }
+        }
+    }
+
+    &:not(#{ $this }_linear) {
+        #{ $this }__label {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
+
+            &:active {
+                background-color: var(--guit-sem-color-background-neutral-1-pressed);
+            }
+        }
+    }
+
+    // main styles
+    &__wrapper {
+        display: flex;
+    }
+
+    &__step {
+        display: inline-grid;
+        grid-gap: var(--guit-ref-spacing-xsmall);
+        min-width: var(--guit-sem-dimension-width-3xlarge);
+        min-height: var(--guit-sem-dimension-height-3xlarge);
+
+        &#{ $this }__step_disabled {
+            #{ $this }__label,
+            #{ $this }__description,
+            #{ $this }__status_icon {
+                color: var(--guit-sem-color-foreground-disabled);
+            }
+
+            #{ $this }__label {
+                pointer-events: none;
+
+                &:focus-visible {
+                    outline: none;
+                }
+            }
+        }
+
+        &:not(#{ $this }__step_disabled) {
+            #{ $this }__label,
+            #{ $this }__description {
+                color: var(--guit-sem-color-foreground-neutral-2);
+            }
+
+            #{ $this }__status_icon {
+                &:not(&_current, &_success, &_error) {
+                    color: var(--guit-sem-color-foreground-neutral-1);
+                }
+
+                &_current,
+                &_success {
+                    color: var(--guit-sem-color-foreground-selected);
+                }
+
+                &_error {
+                    color: var(--guit-sem-color-foreground-error);
+                }
+            }
+        }
+
+        &:last-child {
+            #{ $this }__status_divider {
+                display: none;
+            }
+        }
+    }
+
+    &__status {
+        display: flex;
+
+        &_icon {
+            flex: 0 0 auto;
+        }
+
+        &_divider {
+            flex: 1;
+        }
+    }
+
+    &__content {
+        display: flex;
+        align-items: flex-start;
+        flex-direction: column;
+        border-radius: var(--guit-ref-radius-3xsmall);
+    }
+
+    &__label,
+    &__description {
+        padding-block: var(--guit-ref-spacing-4xsmall);
+        padding-inline: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__label {
+        font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
+        font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+        font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+        line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+        border-radius: var(--guit-ref-radius-3xsmall);
+    }
+
+    &__description {
+        font-family: var(--guit-sem-font-body-medium-default-regular-font-family), sans-serif;
+        font-weight: var(--guit-sem-font-body-medium-default-regular-font-weight);
+        font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
+        line-height: var(--guit-sem-font-body-medium-default-regular-line-height);
+    }
+
+    &__swap {
+        height: 2.4rem;
+
+        // todo: remove those styles after inserting 'swap' component
+        background: #f4e1ec;
+        border: 0.1rem solid #a60063;
+    }
 }
