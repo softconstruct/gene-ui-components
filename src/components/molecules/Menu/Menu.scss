@@ -149,13 +149,16 @@
     &__list {
         display: flex;
         flex-direction: column;
+        visibility: hidden;
+        height: 100%;
+        z-index: 0;
 
         &_current {
             z-index: 1;
-        }
+            visibility: visible;
+            background: #000;
 
-        &_notCurrent {
-            opacity: 0;
+            // opacity: 1;
         }
 
         &_swipeLeft {
