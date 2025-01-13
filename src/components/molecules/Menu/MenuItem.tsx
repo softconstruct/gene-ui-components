@@ -36,11 +36,11 @@ const MenuItem: FC<IMenuItemProps> = ({
                             controlHandler(index, false, true);
                         }}
                     >
-                        {IconBefore && <IconBefore className="menu__icon" size={16} />}
                         <span className="menu__cell">
-                            <span className="menu__rowTitle">{title}</span>
+                            {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />}
+                            <span className="menu__itemTitle">{title}</span>
                         </span>
-                        <ChevronRight className="menu__rowIcon" size={16} />
+                        <ChevronRight className="menu__icon menu__icon_after" size={20} />
                     </button>
                     {/* menu list wrapper */}
                     <div
@@ -54,7 +54,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                             className="menu__header"
                             onClick={() => controlHandler(index, true, true)}
                         >
-                            <ChevronLeft className="menu__icon" size={16} />
+                            <ChevronLeft className="menu__icon menu__icon_before" size={20} />
                             <p className="menu__headerTitle">{title}</p>
                         </button>
                         <div className="menu__content">{children}</div>
@@ -63,12 +63,12 @@ const MenuItem: FC<IMenuItemProps> = ({
             ) : (
                 // Simple menu item
                 <button type="button" className="menu__item" onClick={() => controlHandler(index, false)}>
-                    {IconBefore && <IconBefore className="menu__icon" size={16} />}
                     <span className="menu__cell">
-                        <span className="menu__rowTitle">{children}</span>
+                        {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />}
+                        <span className="menu__itemTitle">{children}</span>
                     </span>
-                    {(selected && <CheckMark className="menu__rowIcon" size={16} />) ||
-                        (IconAfter && <IconAfter className="menu__icon" size={16} />)}
+                    {(selected && <CheckMark className="menu__icon menu__icon_after" size={20} />) ||
+                        (IconAfter && <IconAfter className="menu__icon menu__icon_after" size={20} />)}
                 </button>
             )}
         </>

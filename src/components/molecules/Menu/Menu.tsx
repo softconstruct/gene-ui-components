@@ -8,7 +8,7 @@ const stepBackArray = (arr) => {
 };
 
 const findPathOfDefaultOpened = (menu, path = []) => {
-    for (let i = 0; i < menu.length; i++) {
+    for (let i = 0; i < menu?.length; i++) {
         const item = menu[i];
 
         if (item.props.defaultOpened) {
