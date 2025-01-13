@@ -15,6 +15,7 @@ const meta: Meta<typeof Steps> = {
         label: args({ control: "text", ...propCategory.content }),
         description: args({ control: "text", ...propCategory.content }),
         direction: args({ control: "select", ...propCategory.appearance }),
+        style: args({ control: "select", ...propCategory.appearance }),
         isLinear: args({ control: "boolean", ...propCategory.states })
         // fill Steps component argTypes
     },
@@ -22,6 +23,7 @@ const meta: Meta<typeof Steps> = {
         label: "Label",
         description: "Description",
         direction: "vertical",
+        style: "dot",
         isLinear: false
         // fill Steps component args
     } as IStepsProps

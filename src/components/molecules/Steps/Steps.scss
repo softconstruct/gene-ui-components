@@ -1,8 +1,6 @@
 .steps {
     $this: &;
 
-    display: inline-block;
-
     &_direction {
         // horizontal direction styles
         &_horizontal {
@@ -11,7 +9,7 @@
                 margin-bottom: var(--guit-ref-spacing-large);
             }
             #{ $this }__step {
-                grid-template-rows: auto 1fr;
+                grid-template-rows: 2.4rem 1fr;
             }
             #{ $this }__status {
                 flex-direction: row;
@@ -23,11 +21,13 @@
 
         // vertical direction styles
         &_vertical {
+            display: inline-block;
+
             #{ $this }__wrapper {
                 flex-direction: column;
             }
             #{ $this }__step {
-                grid-template-columns: auto 1fr;
+                grid-template-columns: 2.4rem 1fr;
             }
             #{ $this }__status {
                 flex-direction: column;
@@ -69,12 +69,15 @@
     }
 
     &__step {
+        $that: &;
+
         display: inline-grid;
+        flex: 1;
         grid-gap: var(--guit-ref-spacing-xsmall);
         min-width: var(--guit-sem-dimension-width-3xlarge);
         min-height: var(--guit-sem-dimension-height-3xlarge);
 
-        &#{ $this }__step_disabled {
+        &#{ $that }_disabled {
             #{ $this }__label,
             #{ $this }__description,
             #{ $this }__status_icon {
@@ -90,23 +93,27 @@
             }
         }
 
-        &:not(#{ $this }__step_disabled) {
+        &:not(#{ $that }_disabled) {
             #{ $this }__label,
             #{ $this }__description {
                 color: var(--guit-sem-color-foreground-neutral-2);
             }
 
-            #{ $this }__status_icon {
-                &:not(&_current, &_success, &_error) {
+            &:not(#{ $this }__step_current, #{ $this }__step_success, #{ $this }__step_error) {
+                #{ $this }__status_icon {
                     color: var(--guit-sem-color-foreground-neutral-1);
                 }
+            }
 
-                &_current,
-                &_success {
+            &#{ $that }_current,
+            &#{ $that }_success {
+                #{ $this }__status_icon {
                     color: var(--guit-sem-color-foreground-selected);
                 }
+            }
 
-                &_error {
+            &#{ $that }_error {
+                #{ $this }__status_icon {
                     color: var(--guit-sem-color-foreground-error);
                 }
             }
@@ -119,6 +126,12 @@
         }
     }
 
+    &__status,
+    &__content {
+        max-width: 100%;
+        overflow: hidden;
+    }
+
     &__status {
         display: flex;
 
@@ -128,6 +141,22 @@
 
         &_divider {
             flex: 1;
+        }
+
+        &_numeric {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            margin: 0.2rem;
+            font-family: var(--guit-sem-font-body-medium-default-semibold-font-family), sans-serif;
+            font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
+            font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
+            line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
+            border-radius: var(--guit-ref-radius-full);
+            border-width: var(--guit-ref-border-width-thin);
+            border-style: var(--guit-ref-border-style-solid);
         }
     }
 
@@ -142,6 +171,7 @@
     &__description {
         padding-block: var(--guit-ref-spacing-4xsmall);
         padding-inline: var(--guit-ref-spacing-3xsmall);
+        word-break: break-word;
     }
 
     &__label {
