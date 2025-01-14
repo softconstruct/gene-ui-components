@@ -12,6 +12,8 @@
 
         &#{ $this }_line {
             #{ $this }__button {
+                transition: transform 0.1s linear;
+
                 &_selected {
                     box-shadow: 0 calc(-1 * var(--guit-ref-border-width-thick)) 0 0
                         var(--guit-sem-color-border-selected) inset;
@@ -118,6 +120,7 @@
         flex: 1;
         overflow-x: auto;
         overflow-y: hidden;
+        scroll-behavior: smooth;
 
         /* Hide scrollbar for Chrome, Safari and Opera */
         &::-webkit-scrollbar {

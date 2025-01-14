@@ -3,11 +3,16 @@ import { ReactWrapper, mount } from "enzyme";
 
 // Components
 import Tabs, { ITabsProps } from "./index";
+import Tab from "./Tab";
 
 describe("Tabs ", () => {
     let setup: ReactWrapper<ITabsProps>;
     beforeEach(() => {
-        setup = mount(<Tabs />);
+        setup = mount(
+            <Tabs>
+                <Tab> 123</Tab>
+            </Tabs>
+        );
     });
 
     it("renders without crashing", () => {
