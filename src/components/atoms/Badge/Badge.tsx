@@ -4,22 +4,6 @@ import classNames from "classnames";
 // Styles
 import "./Badge.scss";
 
-const getValue = (value?: number, maxValue?: number, size?: string) => {
-    if (!Number(value)) return null;
-    if (size !== "small") return null;
-    if (!value && value !== 0) return null;
-    if (!maxValue) return value;
-
-    const calculatedMaxValue = maxValue < 99 ? maxValue : 99;
-
-    return value > calculatedMaxValue ? `${calculatedMaxValue}+` : value;
-};
-
-const getSize = (withChildren: boolean, size?: string) => {
-    if (!withChildren || (withChildren && (size === "xSmall" || size === "3xSmall"))) return size;
-    return "3xSmall";
-};
-
 interface IBadgeProps {
     /**
      * Determines whether the badge component should display a border around it.
@@ -62,6 +46,22 @@ interface IBadgeProps {
     children?: JSX.Element;
 }
 
+const MAX_VALUE = 99;
+
+const getValue = (value?: number, maxValue?: number, size?: IBadgeProps["size"]) => {
+    if (!Number(value) || size !== "small" || !value) return null;
+    if (!maxValue) return value;
+
+    const calculatedMaxValue = maxValue > 0 && maxValue < MAX_VALUE ? maxValue : MAX_VALUE;
+
+    return value > calculatedMaxValue ? `${calculatedMaxValue}+` : value;
+};
+
+const getSize = (withChildren: boolean, size?: IBadgeProps["size"]) => {
+    if (!withChildren || size === "xSmall") return size;
+    return "3xSmall";
+};
+
 /**
  * Numeric Badge component is a small, circular indicator that displays numerical information, often used to highlight counts or statuses. It is typically positioned adjacent to icons or labels, providing users with a quick visual cue about the number of notifications, messages, or items requiring attention.
  */
@@ -83,7 +83,6 @@ const Badge: FC<IBadgeProps> = ({
             <div
                 className={classNames(
                     `badge__content badge__content_color_${appearance} badge__content_size_${badgeSize}`,
-                    className,
                     {
                         badge__content_bordered: withBorder,
                         badge__content_position_absolute: children

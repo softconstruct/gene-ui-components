@@ -34,10 +34,13 @@ describe("Badge ", () => {
         expect(wrapper.find(".badge__content").hasClass(`badge__content_size_${size}`)).toBeTruthy();
     });
 
-    it.each<IBadgeProps["appearance"]>(["brand", "neutral", "red", "inverse"])("should have %s size", (appearance) => {
-        const wrapper = setup.setProps({ appearance });
-        expect(wrapper.find(".badge__content").hasClass(`badge__content_color_${appearance}`)).toBeTruthy();
-    });
+    it.each<IBadgeProps["appearance"]>(["brand", "neutral", "red", "inverse"])(
+        "should have %s appearance",
+        (appearance) => {
+            const wrapper = setup.setProps({ appearance });
+            expect(wrapper.find(".badge__content").hasClass(`badge__content_color_${appearance}`)).toBeTruthy();
+        }
+    );
 
     it("renders value prop correctly", () => {
         const value = 8;
@@ -58,7 +61,6 @@ describe("Badge ", () => {
         const children = <Avatar />;
 
         const wrapper = setup.setProps({ children });
-
         expect(wrapper.find(".badge__content").hasClass(`badge__content_position_absolute`)).toBeTruthy();
 
         expect(wrapper.contains(children)).toBeTruthy();

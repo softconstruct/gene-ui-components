@@ -45,5 +45,5 @@ export const withChildren = Template.bind({});
 
 withChildren.args = {
     size: "3xSmall",
-    children: <Button appearance="danger" text="Button" size="medium" />
+    children: <Button onClick={() => {}} appearance="danger" text="Button" size="medium" />
 } as IBadgeProps;
