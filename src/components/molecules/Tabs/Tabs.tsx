@@ -88,6 +88,7 @@ const Tabs: FC<ITabsProps> = ({
     const swipedElements = useRef<number>(0);
 
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+    const [showArrows, setShowArrows] = useState(true);
 
     const leftButtonRef = useRef<HTMLButtonElement | null>(null);
     const rightButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -102,6 +103,20 @@ const Tabs: FC<ITabsProps> = ({
         if (leftButtonRef.current) {
             leftButtonRef.current.disabled = true;
         }
+    }, []);
+
+    /* eslint consistent-return: off */
+    useEffect(() => {
+        if (!parentRef.current) return;
+
+        const animationFrame = requestAnimationFrame(() => {
+            if (!parentRef.current) return;
+            setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
+        });
+
+        return () => {
+            cancelAnimationFrame(animationFrame);
+        };
     }, []);
 
     const slideShift = (isLeft?: boolean) => {
@@ -140,7 +155,6 @@ const Tabs: FC<ITabsProps> = ({
             rightButtonRef.current.disabled = false;
             leftButtonRef.current.disabled = false;
         }
-
         const delta = e.deltaY;
         swipedElements.current = Math.max(0, swipedElements.current + delta);
     };
@@ -171,7 +185,7 @@ const Tabs: FC<ITabsProps> = ({
         <TabsContext.Provider value={memoizedContextValues}>
             <div className={classNames(`tabs tabs_${direction} tabs_${type}`, className, direction, type)}>
                 <div className="tabs__nav" role="tablist" aria-label="Sample Tabs">
-                    {isHorizontal && (
+                    {isHorizontal && showArrows && (
                         <Button
                             className="tabs__nav_button"
                             Icon={ChevronLeft}
@@ -188,7 +202,8 @@ const Tabs: FC<ITabsProps> = ({
                             cloneElement(child, { iconBefore, ...child.props, index })
                         )}
                     </div>
-                    {isHorizontal && (
+
+                    {isHorizontal && showArrows && (
                         <Button
                             className="tabs__nav_button"
                             Icon={ChevronRight}
@@ -202,7 +217,7 @@ const Tabs: FC<ITabsProps> = ({
                 </div>
 
                 <div className="tabs__stage">
-                    {(React.Children.toArray(children)[selectedTabIndex] as JSX.Element)?.props.children}
+                    {(React.Children.toArray(children)[selectedTabIndex] as JSX.Element).props.children}
                 </div>
             </div>
         </TabsContext.Provider>
