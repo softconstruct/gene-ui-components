@@ -150,7 +150,7 @@ const Tabs: FC<ITabsProps> = ({
         }
     };
 
-    const a = useMemo(
+    const memoizedContextValues = useMemo(
         () => ({
             size,
             getChildrenAndIndex,
@@ -166,7 +166,7 @@ const Tabs: FC<ITabsProps> = ({
     }
 
     return (
-        <TabsContext.Provider value={a}>
+        <TabsContext.Provider value={memoizedContextValues}>
             <div className={classNames(`tabs tabs_${direction} tabs_${type}`, className, direction, type)}>
                 <div className="tabs__nav" role="tablist" aria-label="Sample Tabs">
                     {isHorizontal && (
