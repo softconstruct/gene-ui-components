@@ -166,9 +166,10 @@
         "@floating-ui/react-dom": "^2.1.2",
         "@floating-ui/utils": "^0.2.8",
         "@geneui/icons": "^1.0.4",
-        "@geneui/tokens": "^1.8.0-beta",
+        "@geneui/tokens": "^1.0.0",
         "classnames": "^2.3.2",
-        "react-is": "^17.0.2"
+        "react-is": "^17.0.2",
+        "react-scrollbars-custom": "^4.1.1"
     },
     "husky": {
         "hooks": {

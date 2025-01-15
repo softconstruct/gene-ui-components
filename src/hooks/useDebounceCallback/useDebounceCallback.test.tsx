@@ -10,7 +10,7 @@ describe("useDebouncedCallback", () => {
         const wait = 500;
 
         function Component() {
-            const debouncedFunc = useDebouncedCallback(mockFunc, wait);
+            const { debouncedCallback: debouncedFunc } = useDebouncedCallback(mockFunc, wait);
             return (
                 <button type="button" onClick={() => debouncedFunc("test")}>
                     Click me
@@ -35,9 +35,9 @@ describe("useDebouncedCallback", () => {
         const wait = 500;
 
         function Component() {
-            const debouncedFunc = useDebouncedCallback(mockFunc, wait);
+            const { debouncedCallback } = useDebouncedCallback(mockFunc, wait);
             return (
-                <button type="button" onClick={() => debouncedFunc("test")}>
+                <button type="button" onClick={() => debouncedCallback("test")}>
                     Click me
                 </button>
             );
@@ -53,5 +53,34 @@ describe("useDebouncedCallback", () => {
 
         expect(mockFunc).toHaveBeenCalledTimes(1);
         expect(mockFunc).toHaveBeenCalledWith("test");
+    });
+
+    it("should clearDebounce", () => {
+        const mockFunc = jest.fn();
+        const wait = 500;
+
+        function Component() {
+            const { debouncedCallback: debouncedFunc, clearDebounce } = useDebouncedCallback(mockFunc, wait);
+            return (
+                <>
+                    <button type="button" onClick={() => debouncedFunc("test")}>
+                        Click me
+                    </button>
+                    <button type="button" onClick={clearDebounce}>
+                        clearDebounce
+                    </button>
+                </>
+            );
+        }
+
+        const wrapper = mount(<Component />);
+
+        wrapper.find("button").at(0).simulate("click");
+
+        wrapper.find("button").at(1).simulate("click");
+
+        jest.advanceTimersByTime(wait);
+
+        expect(mockFunc).not.toHaveBeenCalled();
     });
 });
