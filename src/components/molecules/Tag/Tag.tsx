@@ -1,6 +1,6 @@
 import React, { FC, useRef } from "react";
 import classNames from "classnames";
-import { Close, TagOutline, WarningFill, ErrorAlertFill } from "@geneui/icons";
+import { Close, TagOutline, WarningFill, ErrorAlertFill, IconProps } from "@geneui/icons";
 
 // Components
 import Button from "../../atoms/Button";
@@ -12,7 +12,9 @@ import { useEllipsisDetection } from "../../../hooks";
 // Styles
 import "./Tag.scss";
 
-const icons = {
+type TagTypes = "rest" | "error" | "warning";
+
+const icons: Record<TagTypes, React.FC<IconProps>> = {
     rest: TagOutline,
     warning: WarningFill,
     error: ErrorAlertFill
@@ -27,7 +29,7 @@ interface ITagProps {
      * Tag type <br/>
      * Possible values: `rest | error | warning`
      */
-    type?: "rest" | "error" | "warning";
+    type?: TagTypes;
     /**
      * Disables tag
      */
@@ -65,19 +67,17 @@ const Tag: FC<ITagProps> = ({
     onClose
 }) => {
     const textRef = useRef<HTMLSpanElement | null>(null);
-    const isTruncated: boolean = useEllipsisDetection(textRef, [text]);
+    const isTruncated = useEllipsisDetection(textRef, [text]);
 
     const Icon = icons[type];
+
     return (
         <div
-            className={classNames(
-                "tag",
-                `tag_size_${size}`,
-                { [`tag_state_${type}`]: !disabled },
-                { tag_state_disabled: disabled },
-                { tag_withIcon: withIcon },
-                className
-            )}
+            className={classNames("tag", `tag_size_${size}`, className, {
+                [`tag_state_${type}`]: !disabled,
+                tag_state_disabled: disabled,
+                tag_withIcon: withIcon
+            })}
         >
             {withIcon && <Icon className="tag__icon" size={20} />}
             <Tooltip text={text} isVisible={isTruncated}>
