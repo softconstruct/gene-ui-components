@@ -12,6 +12,7 @@ export { default as Scrollbar } from "./components/atoms/Scrollbar";
 // Molecules
 export { default as Tooltip } from "./components/molecules/Tooltip";
 export { default as ProgressBar } from "./components/molecules/ProgressBar";
+export { default as Tag } from "./components/molecules/Tag";
 
 // Organisms
 
