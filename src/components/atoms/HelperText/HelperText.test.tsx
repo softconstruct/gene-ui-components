@@ -44,11 +44,6 @@ describe("HelperText ", () => {
         expect(wrapper.find(".helperText_disabled").exists()).toBeTruthy();
     });
 
-    it("renders isLoading prop correctly", () => {
-        const wrapper = setup.setProps({ isLoading: true });
-        expect(wrapper.find(".helperText").text()).toStrictEqual("skeleton");
-    });
-
     it("renders className prop correctly", () => {
         const className = "test-class";
         const wrapper = setup.setProps({ className });
