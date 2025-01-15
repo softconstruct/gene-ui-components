@@ -136,8 +136,10 @@ const Tabs: FC<ITabsProps> = ({
 
     const scrollHandler = (e: React.WheelEvent<HTMLDivElement>) => {
         e.preventDefault();
-        rightButtonRef.current!.disabled = false;
-        leftButtonRef.current!.disabled = false;
+        if (rightButtonRef.current && leftButtonRef.current) {
+            rightButtonRef.current.disabled = false;
+            leftButtonRef.current.disabled = false;
+        }
 
         const delta = e.deltaY;
         swipedElements.current = Math.max(0, swipedElements.current + delta);
