@@ -68,7 +68,7 @@ interface ITabsProps {
  */
 
 interface IContextProps extends Pick<ITabsProps, "size"> {
-    getChildrenAndIndex: (i: number) => void;
+    getIndex: (i: number) => void;
     selectedTabIndex?: number;
 }
 
@@ -143,7 +143,7 @@ const Tabs: FC<ITabsProps> = ({
         swipedElements.current = Math.max(0, swipedElements.current + delta);
     };
 
-    const getChildrenAndIndex = (index: number) => {
+    const getIndex = (index: number) => {
         setSelectedTabIndex(index);
         if (onChange && index) {
             onChange(index);
@@ -153,10 +153,10 @@ const Tabs: FC<ITabsProps> = ({
     const memoizedContextValues = useMemo(
         () => ({
             size,
-            getChildrenAndIndex,
+            getIndex,
             selectedTabIndex
         }),
-        [size, getChildrenAndIndex, selectedTabIndex]
+        [size, getIndex, selectedTabIndex]
     );
 
     const isHorizontal = direction === "horizontal";

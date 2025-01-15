@@ -14,15 +14,15 @@ export interface ITabProps extends PropsWithChildren {
 }
 
 const Tab: FC<ITabProps> = ({ title, Icon = TagOutline, iconBefore = true, defaultSelected, isError, index }) => {
-    const { getChildrenAndIndex, size, selectedTabIndex } = useContext(TabsContext);
+    const { getIndex, size, selectedTabIndex } = useContext(TabsContext);
 
     const provideChildren = () => {
-        getChildrenAndIndex(index!);
+        getIndex(index!);
     };
 
     useEffect(() => {
         if (defaultSelected && index) {
-            getChildrenAndIndex(index);
+            getIndex(index);
         }
     }, []);
 
