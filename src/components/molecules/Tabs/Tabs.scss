@@ -1,11 +1,13 @@
 .tabs {
     $this: &;
 
-    display: inline-block;
+    display: flex;
     max-width: 100%;
     overflow: hidden;
 
     &_horizontal {
+        flex-direction: column;
+
         #{ $this }__nav {
             box-shadow: 0 calc(-1 * var(--guit-ref-border-width-thin)) 0 0 var(--guit-sem-color-border-neutral-2) inset;
         }
@@ -102,6 +104,7 @@
     &__nav {
         display: inline-flex;
         align-items: center;
+        flex: 0 0 auto;
         background-color: var(--guit-sem-color-background-neutral-1);
         max-width: 100%;
         overflow: hidden;
@@ -229,5 +232,13 @@
             background-color: #f4e1ec;
             border: 0.1rem solid #a60063;
         }
+    }
+
+    &__stage {
+        flex: 1;
+
+        // todo: remove this styles after stage component implementation
+        padding: var(--guit-ref-spacing-xlarge);
+        background-color: var(--guit-sem-color-background-neutral-3);
     }
 }
