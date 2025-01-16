@@ -23,7 +23,8 @@ interface ISkeletonProps {
 
 const Skeleton: FC<ISkeletonProps> = ({ height = 40, width = "100%" }) => {
     return (
-        <div className="skeleton skeleton_backInverse skeleton_flexible skeleton_rounded2X" style={{ width, height }} />
+        // skeleton_backInverse class for inverse
+        <div className="skeleton skeleton_flexible skeleton_rounded3X" style={{ width, height }} />
     );
 };
 
