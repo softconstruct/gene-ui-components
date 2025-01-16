@@ -127,12 +127,8 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
 
 const generateCmpTestTemplate = ({ name, portal }) => {
     const beforeEach = portal
-        ? `beforeEach(() => {
-                setup = mount(<${name} />, { wrappingComponent: GeneUIProvider })
-            });`
-        : `beforeEach(() => {
-                setup = mount(<${name} />)
-            });`;
+        ? `beforeEach(() => (setup = mount(<${name} />, { wrappingComponent: GeneUIProvider })));`
+        : `beforeEach(() => (setup = mount(<${name} />)));`;
 
     const InterfaceName = `I${name}Props`;
 

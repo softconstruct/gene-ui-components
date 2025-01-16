@@ -9,6 +9,7 @@ export { default as Info, IInfoProps } from "./components/atoms/Info";
 export { default as Button, IButtonProps } from "./components/atoms/Button";
 export { default as Badge, IBadgeProps } from "./components/atoms/Badge";
 export { default as Scrollbar, IScrollbarProps } from "./components/atoms/Scrollbar";
+export { default as Grid, ICol, IRow } from "./components/atoms/Grid";
 
 // Molecules
 export { default as Tooltip, ITooltipProps } from "./components/molecules/Tooltip";
