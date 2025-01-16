@@ -7,7 +7,7 @@ import { TabsContext } from "./Tabs";
 export interface ITabProps extends PropsWithChildren {
     title?: string | number;
     iconBefore?: boolean;
-    Icon?: FC<IconProps>;
+    Icon?: FC<IconProps> | null;
     defaultSelected?: boolean;
     isError?: boolean;
     index?: number;
@@ -37,9 +37,9 @@ const Tab: FC<ITabProps> = ({ title, Icon = TagOutline, iconBefore = true, defau
             })}
             onClick={provideChildren}
         >
-            {iconBefore && <Icon className="tabs__button_icon" size={24} />}
+            {iconBefore && Icon && <Icon className="tabs__button_icon" size={24} />}
             {title && <span className="tabs__button_text"> {title}</span>}
-            {!iconBefore && <Icon className="tabs__button_icon" size={24} />}
+            {!iconBefore && Icon && <Icon className="tabs__button_icon" size={24} />}
         </button>
     );
 };

@@ -2,7 +2,6 @@ import React, { FC, FunctionComponent } from "react";
 import { Meta } from "@storybook/react";
 
 // Helpers
-import { ChevronLeft, CheckMark, Close } from "@geneui/icons";
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 
 // Components
@@ -33,29 +32,36 @@ export default meta;
 const Template: FC<ITabsProps> = (props) => {
     return (
         <Tabs {...props}>
-            <Tab> Tab1</Tab>
-            <Tab Icon={ChevronLeft} title="data1" iconBefore={false}>
-                Tab2
-            </Tab>
-            <Tab Icon={Close} title="data2" iconBefore={false}>
-                Tab3
-            </Tab>
-            <Tab Icon={CheckMark} title="data3" iconBefore={false} isError>
-                Tab4
-            </Tab>
-            <Tab title="data4" iconBefore={false}>
-                Tab5
-            </Tab>
-            <Tab title="data5" iconBefore={false}>
-                Tab6
-            </Tab>
-            <Tab title="data6" iconBefore={false}>
-                Tab7
-            </Tab>
+            {new Array(25).fill(null).map((_, i) => (
+                <Tab title={i + 1} iconBefore={false}>
+                    tab {i + 1}
+                </Tab>
+            ))}
         </Tabs>
     );
 };
 
 export const Default = Template.bind({});
-
 Default.args = {} as ITabsProps;
+
+export const IconOnly: FC<ITabsProps> = (props) => {
+    return (
+        <Tabs {...props}>
+            {new Array(25).fill(null).map((_, i) => (
+                <Tab iconBefore={false}>tab {i + 1} </Tab>
+            ))}
+        </Tabs>
+    );
+};
+
+export const TextOnly: FC<ITabsProps> = (props) => {
+    return (
+        <Tabs {...props}>
+            {new Array(25).fill(null).map((_, i) => (
+                <Tab iconBefore={false} title={`tab${i + 1}`} Icon={null}>
+                    tab {i + 1}
+                </Tab>
+            ))}
+        </Tabs>
+    );
+};
