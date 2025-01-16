@@ -6,11 +6,15 @@ export { default as Loader, ILoaderProps } from "./components/atoms/Loader";
 export { default as Pill, IPillProps } from "./components/atoms/Pill";
 export { default as Divider, IDividerProps } from "./components/atoms/Divider";
 export { default as Info, IInfoProps } from "./components/atoms/Info";
+export { default as Button, IButtonProps } from "./components/atoms/Button";
+export { default as Badge, IBadgeProps } from "./components/atoms/Badge";
+export { default as Scrollbar, IScrollbarProps } from "./components/atoms/Scrollbar";
 export { default as Grid, ICol, IRow } from "./components/atoms/Grid";
 
 // Molecules
-export { default as Tooltip } from "./components/molecules/Tooltip";
-export { default as ProgressBar } from "./components/molecules/ProgressBar";
+export { default as Tooltip, ITooltipProps } from "./components/molecules/Tooltip";
+export { default as ProgressBar, IProgressBarProps } from "./components/molecules/ProgressBar";
+export { default as Tag, ITagProps } from "./components/molecules/Tag";
 
 // Organisms
 
