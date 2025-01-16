@@ -1,0 +1,114 @@
+.carousel {
+    $this: &;
+
+    position: relative;
+
+    &_slider {
+        display: grid;
+        height: 100%;
+        width: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    &_large {
+        width: 72rem;
+        height: 36rem;
+    }
+
+    &_small {
+        width: 30.4rem;
+        height: 15.2rem;
+    }
+
+    &_horizontal {
+        #{ $this }__button {
+            top: 50%;
+            transform: translateY(-50%);
+            transform-origin: top center;
+
+            [dir="rtl"] & {
+                rotate: 180deg;
+            }
+
+            &_back {
+                inset-inline-start: 1.6rem;
+            }
+
+            &_forward {
+                inset-inline-end: 1.6rem;
+            }
+        }
+        #{ $this }__dots {
+            bottom: 1.6rem;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+
+    &_vertical {
+        #{ $this }__button {
+            left: 50%;
+            transform: translateX(-50%);
+            transform-origin: left center;
+            rotate: 90deg;
+
+            &_back {
+                top: 1.6rem;
+            }
+
+            &_forward {
+                bottom: 1.6rem;
+            }
+        }
+        #{ $this }__dots {
+            flex-direction: column;
+            inset-inline-end: 1.6rem;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+
+    &__button {
+        position: absolute;
+    }
+
+    &__dots {
+        display: flex;
+        gap: var(--guit-ref-spacing-3xsmall);
+        position: absolute;
+    }
+
+    &__dot {
+        $this: &;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--guit-sem-dimension-width-3xsmall);
+        height: var(--guit-sem-dimension-width-3xsmall);
+
+        &:not(#{ $this }_active):before {
+            background: var(--guit-sem-color-background-neutral-3);
+        }
+
+        &_active::before {
+            background: var(--guit-sem-color-background-selected-2);
+        }
+
+        &:not(&#{ $this }_small):before {
+            width: var(--guit-sem-dimension-width-3xsmall);
+            height: var(--guit-sem-dimension-width-3xsmall);
+        }
+
+        &_small::before {
+            width: var(--guit-sem-dimension-width-4xsmall);
+            height: var(--guit-sem-dimension-width-4xsmall);
+        }
+
+        &::before {
+            content: "";
+            border-radius: var(--guit-ref-radius-full);
+        }
+    }
+}
