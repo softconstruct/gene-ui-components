@@ -35,7 +35,7 @@ import Button, { IButtonProps } from "../Button";
 import "./Popover.scss";
 
 // Hooks
-import { useBodyScrollBlock } from "../../../hooks";
+import { useScrollLock } from "../../../hooks";
 
 // Helper
 import { calculateOverlap, getPositionRect } from "./Helper";
@@ -110,12 +110,13 @@ interface IButtons extends Omit<IButtonProps, "children"> {
 
 export interface IPopoverProps {
     /**
-     * Whether the popover is open initially. Defaults to `false`.
+     * Whether the popover is open initially. Defaults value is `false`.
      */
 
     isOpen?: boolean;
     /**
-     * Size of the popover: `xLarge`, `large`, `medium`, `small`, or `mobile`.
+     * Define width and height of the popover.<br>
+     * Possible values: <code> xLarge | large | medium | small </code>
      */
     size: "xLarge" | "large" | "medium" | "small" | "mobile";
 
@@ -125,12 +126,13 @@ export interface IPopoverProps {
     title?: string;
 
     /**
-     * Position of the popover relative to the target (e.g., `top`, `bottom-right`).
+     * Position of the popover, relative to the target.<br><br>
+     * Possible values: <code> bottom-center | bottom-left | bottom-right | left-bottom | left-center | left-top | <br><br> right-bottom | right-center | right-top | top-center | top-left | top-right | auto </code>
      */
     position?: keyof typeof correctPosition;
 
     /**
-     * Padding between the popover and the target element.
+     * Padding between the popover and its target element.
      */
     padding: number;
 
@@ -155,7 +157,7 @@ export interface IPopoverProps {
     secondaryButton?: IButtons;
 
     /**
-     * Additional content displayed in the popover footer.
+     * Content that will be placed in the popover bottom as footer content.
      */
     footerContent?: ReactNode;
 
@@ -165,7 +167,7 @@ export interface IPopoverProps {
     children: ReactNode;
 
     /**
-     * show or hide arrows
+     * Show or hide arrows
      */
     withArrow?: boolean;
 
@@ -199,6 +201,8 @@ const Popover: FC<IPopoverProps> = ({
     children,
     disableReposition = true
 }) => {
+    const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useScrollLock(document.body);
+
     const [popoverOpened, setPopoverOpened] = useState(isOpen);
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const [currentPosition, setCurrentPosition] = useState(correctPosition[position]);
@@ -236,6 +240,7 @@ const Popover: FC<IPopoverProps> = ({
         ],
         whileElementsMounted: autoUpdate
     });
+
     useDismiss(context, {
         outsidePressEvent: "click"
     });
@@ -279,7 +284,20 @@ const Popover: FC<IPopoverProps> = ({
 
     const isShowPopover = alwaysShow || popoverOpened;
 
-    const isScrollable = size === "mobile" && isShowPopover;
+    useEffect(() => {
+        if (size === "mobile" && isShowPopover) {
+            lockBodyScroll();
+        } else {
+            unlockBodyScroll();
+        }
+    }, [size, isShowPopover]);
+
+    useEffect(() => {
+        return () => {
+            unlockBodyScroll();
+        };
+    }, []);
+
     useLayoutEffect(() => {
         if (position === "auto") {
             setCurrentPosition(size === "small" ? "auto" : "bottom");
@@ -292,8 +310,6 @@ const Popover: FC<IPopoverProps> = ({
             wosPosed.current.clear();
         };
     }, [position, size]);
-
-    useBodyScrollBlock(isScrollable);
 
     /* eslint consistent-return: off */
     useEffect(() => {
