@@ -61,6 +61,8 @@ interface ITabsProps {
      *  It works when the user clicks on one of the control items. Returns  the `index`  from the `Tab`.
      */
     onChange?: (index: number) => void;
+
+    isClosable?: boolean;
 }
 
 /**
@@ -70,6 +72,7 @@ interface ITabsProps {
 interface IContextProps extends Pick<ITabsProps, "size"> {
     getIndex: (i: number) => void;
     selectedTabIndex?: number;
+    removeTabHandler: (index: number) => void;
 }
 
 export const TabsContext = createContext<IContextProps>({} as IContextProps);
@@ -82,13 +85,16 @@ const Tabs: FC<ITabsProps> = ({
     iconBefore,
     isLoading,
     className,
-    onChange
+    onChange,
+    isClosable
 }) => {
     const parentRef = useRef<HTMLDivElement | null>(null);
     const swipedElements = useRef<number>(0);
 
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
     const [showArrows, setShowArrows] = useState(true);
+
+    const [AllChildren, setAllChildren] = useState<ITabProps["children"][]>(Children.toArray(children));
 
     const leftButtonRef = useRef<HTMLButtonElement | null>(null);
     const rightButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -159,6 +165,15 @@ const Tabs: FC<ITabsProps> = ({
         swipedElements.current = Math.max(0, swipedElements.current + delta);
     };
 
+    const removeTabHandler = (index: number) => {
+        const removedChildFromData = [...AllChildren];
+        removedChildFromData.splice(index, 1);
+        setAllChildren(removedChildFromData);
+
+        if (!parentRef.current) return;
+        setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
+    };
+
     const getIndex = (index: number) => {
         setSelectedTabIndex(index);
         if (onChange && index) {
@@ -170,9 +185,10 @@ const Tabs: FC<ITabsProps> = ({
         () => ({
             size,
             getIndex,
-            selectedTabIndex
+            selectedTabIndex,
+            removeTabHandler
         }),
-        [size, getIndex, selectedTabIndex]
+        [size, getIndex, selectedTabIndex, removeTabHandler]
     );
 
     const isHorizontal = direction === "horizontal";
@@ -198,8 +214,13 @@ const Tabs: FC<ITabsProps> = ({
                     )}
 
                     <div className="tabs__list" ref={parentRef} onWheel={scrollHandler}>
-                        {Children.map(children, (child, index) =>
-                            cloneElement(child, { iconBefore, ...child.props, index })
+                        {Children.map(AllChildren, (child, index) =>
+                            cloneElement(child as JSX.Element, {
+                                iconBefore,
+                                isClosable,
+                                ...(child as JSX.Element).props,
+                                index
+                            })
                         )}
                     </div>
 
@@ -216,9 +237,7 @@ const Tabs: FC<ITabsProps> = ({
                     )}
                 </div>
 
-                <div className="tabs__stage">
-                    {(React.Children.toArray(children)[selectedTabIndex] as JSX.Element).props.children}
-                </div>
+                <div className="tabs__stage">{(AllChildren[selectedTabIndex] as JSX.Element).props.children}</div>
             </div>
         </TabsContext.Provider>
     );
