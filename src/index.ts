@@ -14,6 +14,7 @@ export { default as Scrollbar, IScrollbarProps } from "./components/atoms/Scroll
 export { default as Tooltip, ITooltipProps } from "./components/molecules/Tooltip";
 export { default as ProgressBar, IProgressBarProps } from "./components/molecules/ProgressBar";
 export { default as Tag, ITagProps } from "./components/molecules/Tag";
+export { default as KeyValue } from "./components/molecules/KeyValue";
 
 // Organisms
 

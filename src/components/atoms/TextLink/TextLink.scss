@@ -6,22 +6,47 @@
     cursor: pointer;
     word-break: break-word;
 
-    &_underline {
-        #{ $this }__text {
-            font-family: var(--guit-sem-font-body-medium-underline-medium-font-family);
-            font-size: var(--guit-sem-font-body-medium-underline-medium-font-size);
-            line-height: var(--guit-sem-font-body-medium-underline-medium-line-height);
-            font-weight: var(--guit-sem-font-body-medium-underline-medium-font-weight);
-            text-decoration: var(--guit-sem-font-body-medium-underline-medium-text-decoration);
-        }
-    }
+    &_size {
+        &_large {
+            &#{ $this }_underline {
+                #{ $this }__text {
+                    font-family: var(--guit-sem-font-body-large-underline-medium-font-family), sans-serif;
+                    font-weight: var(--guit-sem-font-body-large-underline-medium-font-weight);
+                    font-size: var(--guit-sem-font-body-large-underline-medium-font-size);
+                    line-height: var(--guit-sem-font-body-large-underline-medium-line-height);
+                    text-decoration: var(--guit-ref-font-text-decoration-underline);
+                }
+            }
 
-    &:not(#{ $this }_underline) {
-        #{ $this }__text {
-            font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
-            font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
-            font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
-            line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+            &:not(#{ $this }_underline) {
+                #{ $this }__text {
+                    font-family: var(--guit-sem-font-body-large-default-medium-font-family), sans-serif;
+                    font-weight: var(--guit-sem-font-body-large-default-medium-font-weight);
+                    font-size: var(--guit-sem-font-body-large-default-medium-font-size);
+                    line-height: var(--guit-sem-font-body-large-default-medium-line-height);
+                }
+            }
+        }
+
+        &_medium {
+            &#{ $this }_underline {
+                #{ $this }__text {
+                    font-family: var(--guit-sem-font-body-medium-underline-medium-font-family), sans-serif;
+                    font-weight: var(--guit-sem-font-body-medium-underline-medium-font-weight);
+                    font-size: var(--guit-sem-font-body-medium-underline-medium-font-size);
+                    line-height: var(--guit-sem-font-body-medium-underline-medium-line-height);
+                    text-decoration: var(--guit-ref-font-text-decoration-underline);
+                }
+            }
+
+            &:not(#{ $this }_underline) {
+                #{ $this }__text {
+                    font-family: var(--guit-sem-font-body-medium-default-medium-font-family), sans-serif;
+                    font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+                    font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+                    line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+                }
+            }
         }
     }
 
@@ -73,10 +98,6 @@
         &#{ $this }_color_inverse {
             color: var(--guit-sem-color-foreground-inverse-disabled);
         }
-    }
-
-    &__text {
-        color: inherit;
     }
 
     &__icon {

@@ -80,6 +80,11 @@ describe("TextLink", () => {
         }
     );
 
+    it.each<ITextLinkProps["size"]>(["large", "medium"])('should have "%s" appearance', (size) => {
+        const wrapper = setup.setProps({ size });
+        expect(wrapper.find(`textLink_size_${size}`)).toBeTruthy();
+    });
+
     it.each<ITextLinkProps["target"]>(["blank", "self"])('should have "%s" target', (target) => {
         const wrapper = setup.setProps({ target });
         expect(wrapper.find(".textLink").props().target).toBe(`_${target}`);

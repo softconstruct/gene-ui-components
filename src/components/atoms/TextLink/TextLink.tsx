@@ -3,11 +3,7 @@ import classNames from "classnames";
 
 // Styles
 import "./TextLink.scss";
-
-interface IconProps extends React.SVGProps<SVGSVGElement> {
-    size?: 16 | 20 | 24 | 28 | 32 | 48;
-    color?: string;
-}
+import { IconProps } from "@geneui/icons";
 
 interface ITextLinkProps {
     /**
@@ -45,6 +41,11 @@ interface ITextLinkProps {
      */
     appearance?: "primary" | "secondary" | "inverse";
     /**
+     * Defines the size of the Text Link.<br>
+     * Possible values: `medium | large`
+     */
+    size?: "medium" | "large";
+    /**
      * When `true`, the link is disabled and not clickable.
      */
     disabled?: boolean;
@@ -69,6 +70,11 @@ interface ITextLinkProps {
     className?: string;
 }
 
+const iconSize = {
+    medium: 20,
+    large: 24
+} as const;
+
 /**
  * A link is styled text that navigates users to another location, either within the current experience or to a different app or website.
  */
@@ -80,6 +86,7 @@ const TextLink: FC<ITextLinkProps> = ({
     target = "self",
     underline,
     appearance = "primary",
+    size = "medium",
     disabled,
     onClick,
     isLoading,
@@ -92,7 +99,7 @@ const TextLink: FC<ITextLinkProps> = ({
         <a
             target={`_${target}`}
             rel={rel}
-            className={classNames(`textLink textLink_color_${appearance}`, className, {
+            className={classNames(`textLink textLink_size_${size} textLink_color_${appearance}`, className, {
                 textLink_underline: underline,
                 textLink_disabled: disabled
             })}
@@ -100,11 +107,9 @@ const TextLink: FC<ITextLinkProps> = ({
             onClick={onClick}
             {...(disabled && { tabIndex: -1 })}
         >
-            <span className="textLink__text">
-                {Icon && iconBefore && <Icon className="textLink__icon textLink__icon_before" size={20} />}
-                {text}
-                {Icon && !iconBefore && <Icon className="textLink__icon textLink__icon_after" size={20} />}
-            </span>
+            {Icon && iconBefore && <Icon className="textLink__icon textLink__icon_before" size={iconSize[size]} />}
+            <span className="textLink__text">{text}</span>
+            {Icon && !iconBefore && <Icon className="textLink__icon textLink__icon_after" size={iconSize[size]} />}
         </a>
     );
 
