@@ -1,6 +1,8 @@
 .logo {
     $this: &;
 
+    display: inline-flex;
+
     &__logotype,
     &__logomark {
         display: inline-flex;
@@ -8,7 +10,7 @@
         &_color {
             &_brand {
                 #{ $this }__path {
-                    fill: var(--guit-sem-color-foreground-brand);
+                    fill: var(--guit-sem-color-foreground-accent-magenta);
                 }
             }
 
