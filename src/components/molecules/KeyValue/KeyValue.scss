@@ -8,6 +8,10 @@
         &_vertical {
             flex-direction: column;
         }
+
+        &_horizontal {
+            width: 100%;
+        }
     }
 
     &__content {
