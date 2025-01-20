@@ -13,168 +13,161 @@
     &__button {
         $this: &;
 
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
 
+        &:first-child:not(:only-child) {
+            border-inline-end-width: 0;
+
+            &::after {
+                content: '';
+                display: block;
+                position: absolute;
+                top: -0.1rem;
+                bottom: -0.1rem;
+                inset-inline-end: 0;
+                width: 0.1rem;
+
+                //height: 100%;
+                z-index: 10;
+                pointer-events: none;
+            }
+        }
+
+        &:last-child:not(:only-child) {
+            border-inline-start-width: 0;
+        }
+
         &_size {
             &_large {
-                gap: var(--guit-ref-spacing-xs);
-                height: var(--guit-sem-sizing-height-l);
+                gap: var(--guit-ref-spacing-xsmall);
+                height: var(--guit-sem-dimension-height-large);
 
                 &:only-child {
-                    border-radius: var(--guit-ref-radius-2xs);
+                    border-radius: var(--guit-ref-radius-2xsmall);
                 }
 
                 &:first-child:not(:only-child) {
-                    [dir='ltr'] & {
-                        border-radius: var(--guit-ref-radius-2xs) 0 0 var(--guit-ref-radius-2xs);
-                    }
-
-                    [dir='rtl'] & {
-                        border-radius: 0 var(--guit-ref-radius-2xs) var(--guit-ref-radius-2xs) 0;
-                    }
+                    border-start-start-radius: var(--guit-ref-radius-2xsmall);
+                    border-end-start-radius: var(--guit-ref-radius-2xsmall);
                 }
 
                 &:last-child:not(:only-child) {
-                    [dir='ltr'] & {
-                        border-radius: 0 var(--guit-ref-radius-2xs) var(--guit-ref-radius-2xs) 0;
-                    }
-
-                    [dir='rtl'] & {
-                        border-radius: var(--guit-ref-radius-2xs) 0 0 var(--guit-ref-radius-2xs);
-                    }
+                    border-start-end-radius: var(--guit-ref-radius-2xsmall);
+                    border-end-end-radius: var(--guit-ref-radius-2xsmall);
                 }
 
                 &:not(#{ $this }_icon_only) {
-                    padding-top: var(--guit-ref-spacing-s);
-                    padding-bottom: var(--guit-ref-spacing-s);
+                    padding-top: var(--guit-ref-spacing-small);
+                    padding-bottom: var(--guit-ref-spacing-small);
                 }
 
                 &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
-                    padding-inline-start: var(--guit-ref-spacing-l);
-                    padding-inline-end: var(--guit-ref-spacing-l);
+                    padding-inline-start: var(--guit-ref-spacing-large);
+                    padding-inline-end: var(--guit-ref-spacing-large);
                 }
 
                 &#{ $this }_icon_before {
-                    padding-inline-start: var(--guit-ref-spacing-m);
-                    padding-inline-end: var(--guit-ref-spacing-l);
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-large);
                 }
 
                 &#{ $this }_icon_after {
-                    padding-inline-start: var(--guit-ref-spacing-l);
-                    padding-inline-end: var(--guit-ref-spacing-m);
+                    padding-inline-start: var(--guit-ref-spacing-large);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
                 }
 
                 &#{ $this }_icon_only {
-                    padding: var(--guit-ref-spacing-s);
+                    padding: var(--guit-ref-spacing-small);
                 }
             }
 
             &_medium {
-                gap: var(--guit-ref-spacing-xs);
-                height: var(--guit-sem-sizing-height-m);
+                gap: var(--guit-ref-spacing-xsmall);
+                height: var(--guit-sem-dimension-height-medium);
 
                 &:only-child {
-                    border-radius: var(--guit-ref-radius-3xs);
+                    border-radius: var(--guit-ref-radius-3xsmall);
                 }
 
                 &:first-child:not(:only-child) {
-                    [dir='ltr'] & {
-                        border-radius: var(--guit-ref-radius-3xs) 0 0 var(--guit-ref-radius-3xs);
-                    }
-
-                    [dir='rtl'] & {
-                        border-radius: 0 var(--guit-ref-radius-3xs) var(--guit-ref-radius-3xs) 0;
-                    }
+                    border-start-start-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-start-radius: var(--guit-ref-radius-3xsmall);
                 }
 
                 &:last-child:not(:only-child) {
-                    [dir='ltr'] & {
-                        border-radius: 0 var(--guit-ref-radius-3xs) var(--guit-ref-radius-3xs) 0;
-                    }
-
-                    [dir='rtl'] & {
-                        border-radius: var(--guit-ref-radius-3xs) 0 0 var(--guit-ref-radius-3xs);
-                    }
+                    border-start-end-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-end-radius: var(--guit-ref-radius-3xsmall);
                 }
 
                 &:not(#{ $this }_icon_only) {
-                    padding-top: var(--guit-ref-spacing-2xs);
-                    padding-bottom: var(--guit-ref-spacing-2xs);
+                    padding-top: var(--guit-ref-spacing-2xsmall);
+                    padding-bottom: var(--guit-ref-spacing-2xsmall);
                 }
 
                 &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
-                    padding-inline-start: var(--guit-ref-spacing-m);
-                    padding-inline-end: var(--guit-ref-spacing-m);
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
                 }
 
                 &#{ $this }_icon_before {
-                    padding-inline-start: var(--guit-ref-spacing-xs);
-                    padding-inline-end: var(--guit-ref-spacing-m);
+                    padding-inline-start: var(--guit-ref-spacing-xsmall);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
                 }
 
                 &#{ $this }_icon_after {
-                    padding-inline-start: var(--guit-ref-spacing-m);
-                    padding-inline-end: var(--guit-ref-spacing-xs);
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-xsmall);
                 }
 
                 &#{ $this }_icon_only {
-                    padding: var(--guit-ref-spacing-2xs);
+                    padding: var(--guit-ref-spacing-2xsmall);
                 }
             }
 
             &_small {
-                gap: var(--guit-ref-spacing-2xs);
-                height: var(--guit-sem-sizing-height-s);
+                gap: var(--guit-ref-spacing-2xsmall);
+                height: var(--guit-sem-dimension-height-small);
 
                 &:only-child {
-                    border-radius: var(--guit-ref-radius-3xs);
+                    border-radius: var(--guit-ref-radius-3xsmall);
                 }
 
                 &:first-child:not(:only-child) {
-                    [dir='ltr'] & {
-                        border-radius: var(--guit-ref-radius-3xs) 0 0 var(--guit-ref-radius-3xs);
-                    }
-
-                    [dir='rtl'] & {
-                        border-radius: 0 var(--guit-ref-radius-3xs) var(--guit-ref-radius-3xs) 0;
-                    }
+                    border-start-start-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-start-radius: var(--guit-ref-radius-3xsmall);
                 }
 
                 &:last-child:not(:only-child) {
-                    [dir='ltr'] & {
-                        border-radius: 0 var(--guit-ref-radius-3xs) var(--guit-ref-radius-3xs) 0;
-                    }
-
-                    [dir='rtl'] & {
-                        border-radius: var(--guit-ref-radius-3xs) 0 0 var(--guit-ref-radius-3xs);
-                    }
+                    border-start-end-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-end-radius: var(--guit-ref-radius-3xsmall);
                 }
 
                 &:not(#{ $this }_icon_only) {
-                    padding-top: var(--guit-ref-spacing-4xs);
-                    padding-bottom: var(--guit-ref-spacing-4xs);
+                    padding-top: var(--guit-ref-spacing-4xsmall);
+                    padding-bottom: var(--guit-ref-spacing-4xsmall);
                 }
 
                 &:not(#{ $this }_icon_before, &#{ $this }_icon_after, #{ $this }_icon_only) {
-                    padding-inline-start: var(--guit-ref-spacing-m);
-                    padding-inline-end: var(--guit-ref-spacing-m);
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
                 }
 
                 &#{ $this }_icon_before {
-                    padding-inline-start: var(--guit-ref-spacing-xs);
-                    padding-inline-end: var(--guit-ref-spacing-m);
+                    padding-inline-start: var(--guit-ref-spacing-xsmall);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
                 }
 
                 &#{ $this }_icon_after {
-                    padding-inline-start: var(--guit-ref-spacing-m);
-                    padding-inline-end: var(--guit-ref-spacing-xs);
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-xsmall);
                 }
 
                 &#{ $this }_icon_only {
-                    padding: var(--guit-ref-spacing-4xs);
+                    padding: var(--guit-ref-spacing-4xsmall);
                 }
             }
         }
@@ -183,51 +176,35 @@
             &_primary,
             &_secondary,
             &_inverse {
+                border-width: var(--guit-ref-border-width-thin);
+                border-style: var(--guit-ref-border-style-solid);
                 &#{ $this }_type {
-                    &_fill {
-                        &:first-child:not(:only-child) {
-                            [dir='ltr'] & {
-                                border-right-width: var(--guit-ref-border-width-thin);
-                                border-right-style: var(--guit-ref-border-style-solid);
-                            }
-
-                            [dir='rtl'] & {
-                                border-left-width: var(--guit-ref-border-width-thin);
-                                border-left-style: var(--guit-ref-border-style-solid);
-                            }
-                        }
-                    }
-
-                    &_outline {
-                        border-width: var(--guit-ref-border-width-thin);
-                        border-style: var(--guit-ref-border-style-solid);
-
-                        &:last-child:not(:only-child) {
-                            [dir='ltr'] & {
-                                border-left-width: 0;
-                            }
-
-                            [dir='rtl'] & {
-                                border-right-width: 0;
-                            }
-                        }
-                    }
+                    //&_outline {
+                    //    border-width: var(--guit-ref-border-width-thin);
+                    //    border-style: var(--guit-ref-border-style-solid);
+                    //}
                 }
             }
 
             &_primary {
                 &#{ $this }_type {
                     &_fill {
-                        border-right-color: var(--guit-sem-color-border-inverse);
+                        &#{ $this }:after {
+                            background-color: var(--guit-sem-color-border-inverse);
+                        }
+
+                        border-color: var(--guit-sem-color-background-brand-2);
                         background-color: var(--guit-sem-color-background-brand-2);
                         color: var(--guit-sem-color-foreground-inverse);
 
                         &:hover {
                             background-color: var(--guit-sem-color-background-brand-2-hover);
+                            border-color: var(--guit-sem-color-background-brand-2-hover);
                         }
 
                         &:active {
                             background-color: var(--guit-sem-color-background-brand-2-pressed);
+                            border-color: var(--guit-sem-color-background-brand-2-pressed);
                         }
 
                         &:disabled {
@@ -236,6 +213,10 @@
                     }
 
                     &_outline {
+                        &#{ $this }:after {
+                            background-color: var(--guit-sem-color-border-brand);
+                        }
+
                         border-color: var(--guit-sem-color-border-brand);
                         color: var(--guit-sem-color-foreground-brand);
 
@@ -257,7 +238,11 @@
             &_secondary {
                 &#{ $this }_type {
                     &_fill {
-                        border-right-color: var(--guit-sem-color-border-neutral-2);
+                        &#{ $this }:after {
+                            background-color: var(--guit-sem-color-border-neutral-2);
+                        }
+
+                        border-color: var(--guit-sem-color-border-neutral-2);
                         background-color: var(--guit-sem-color-background-neutral-2);
                         color: var(--guit-sem-color-foreground-neutral-2);
 
@@ -275,6 +260,10 @@
                     }
 
                     &_outline {
+                        &#{ $this }:after {
+                            background-color: var(--guit-sem-color-border-neutral-2);
+                        }
+
                         background-color: var(--guit-sem-color-background-transparent-1);
                         border-color: var(--guit-sem-color-border-neutral-2);
                         color: var(--guit-sem-color-foreground-neutral-2);
@@ -297,7 +286,11 @@
             &_inverse {
                 &#{ $this }_type {
                     &_fill {
-                        border-right-color: var(--guit-sem-color-border-neutral-2);
+                        &#{ $this }:after {
+                            background-color: var(--guit-sem-color-border-neutral-2);
+                        }
+
+                        border-color: transparent;
                         background-color: var(--guit-sem-color-background-inverse);
                         color: var(--guit-sem-color-foreground-neutral-2);
 
@@ -315,6 +308,10 @@
                     }
 
                     &_outline {
+                        &#{ $this }:after {
+                            background-color: var(--guit-sem-color-border-inverse);
+                        }
+
                         background-color: var(--guit-sem-color-background-transparent-1);
                         border-color: var(--guit-sem-color-border-inverse);
                         color: var(--guit-sem-color-foreground-inverse);
@@ -362,8 +359,6 @@
     }
 
     &__icon {
-        display: block;
-        width: var(--guit-sem-sizing-width-s-nudge);
-        height: var(--guit-sem-sizing-height-s-nudge);
+        flex: 0 0 auto;
     }
 }
