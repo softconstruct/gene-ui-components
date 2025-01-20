@@ -1,5 +1,63 @@
 .products {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    display: inline-flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-large);
+
+    &__list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-3xsmall);
+        width: 100%;
+        min-width: 0;
+        padding: var(--guit-ref-spacing-xsmall);
+        border-radius: var(--guit-ref-radius-3xsmall);
+        color: var(--guit-sem-color-foreground-neutral-2);
+        cursor: pointer;
+        text-align: center;
+        user-select: none;
+
+        &:hover {
+            background-color: var(--guit-sem-color-background-neutral-1-hover);
+        }
+
+        &:active {
+            background-color: var(--guit-sem-color-background-neutral-1-pressed);
+        }
+
+        &:focus-visible {
+            outline-offset: var(--guit-ref-border-width-thin);
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
+        }
+
+        &_disabled {
+            pointer-events: none;
+            user-select: none;
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+
+    &__item-logo {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--guit-sem-dimension-width-xlarge);
+        height: var(--guit-sem-dimension-height-xlarge);
+    }
+
+    &__item-title {
+        font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+        font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+        font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
+        line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+        overflow-wrap: anywhere;
+    }
 }
