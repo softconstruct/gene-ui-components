@@ -35,9 +35,7 @@ export default meta;
 
 type Story = StoryObj<IButtonProps>;
 
-export const Default: Story = {
-    // This story uses the default args from the meta export.
-};
+export const Default: Story = {};
 
 export const WithIcon: Story = {
     args: {

@@ -1,12 +1,10 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
+import Button from "../Button";
 // Components
 import Badge, { IBadgeProps } from "./index";
-import Button from "../Button";
 
 const meta: Meta<typeof Badge> = {
     title: "Atoms/Badge",
@@ -29,21 +27,19 @@ const meta: Meta<typeof Badge> = {
 
 export default meta;
 
-const Template: FC<IBadgeProps> = (props) => <Badge {...props} />;
+type Story = StoryObj<typeof Badge>;
 
-export const Default = Template.bind({});
+export const Default: Story = {};
 
-Default.args = {} as IBadgeProps;
+export const WithBorder: Story = {
+    args: {
+        withBorder: true
+    }
+};
 
-export const WithBorder = Template.bind({});
-
-WithBorder.args = {
-    withBorder: true
-} as IBadgeProps;
-
-export const withChildren = Template.bind({});
-
-withChildren.args = {
-    size: "3xSmall",
-    children: <Button onClick={() => {}} appearance="danger" text="Button" size="medium" />
-} as IBadgeProps;
+export const withChildren: Story = {
+    args: {
+        size: "3xSmall",
+        children: <Button onClick={() => {}} appearance="danger" text="Button" size="medium" />
+    }
+};

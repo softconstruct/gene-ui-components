@@ -1,9 +1,7 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import ProgressBar, { IProgressBarProps } from "./index";
 
@@ -33,8 +31,6 @@ const meta: Meta<typeof ProgressBar> = {
 
 export default meta;
 
-const Template: FC<IProgressBarProps> = (props) => <ProgressBar {...props} />;
+type Story = StoryObj<typeof ProgressBar>;
 
-export const Default = Template.bind({});
-
-Default.args = {} as IProgressBarProps;
+export const Default: Story = {};

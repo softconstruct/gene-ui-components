@@ -1,13 +1,13 @@
 import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
+
 import { Globe, Search } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
-// Components
-import Divider, { IDividerProps } from "./index";
 import Avatar from "../Avatar";
+// Components
+import Divider from "./index";
 
 const meta: Meta<typeof Divider> = {
     title: "Atoms/Divider",
@@ -34,24 +34,25 @@ const meta: Meta<typeof Divider> = {
 
 export default meta;
 
-const Template: FC<IDividerProps> = (props) => (
-    <div style={{ height: 220 }}>
-        <Divider {...props} />
-    </div>
-);
+type Story = StoryObj<typeof Divider>;
 
-export const Default = Template.bind({});
+const StoryComponent: FC = (props) => {
+    return (
+        <div style={{ height: 220 }}>
+            <Divider {...props} />
+        </div>
+    );
+};
 
-const WithAlignContentComponent: FC<IDividerProps> = (props) => (
-    <div style={{ height: 220 }}>
-        <Divider {...props} />
-    </div>
-);
+export const Default: Story = {
+    render: (props) => <StoryComponent {...props} />
+};
 
-export const Solid = WithAlignContentComponent.bind({});
-
-Solid.args = {
-    Icon: null,
-    content: undefined,
-    labelPosition: "after"
-} as IDividerProps;
+export const Solid: Story = {
+    render: (props) => <StoryComponent {...props} />,
+    args: {
+        Icon: null,
+        content: undefined,
+        labelPosition: "after"
+    }
+};

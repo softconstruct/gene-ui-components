@@ -1,9 +1,7 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import Info, { IInfoProps } from "./index";
 
@@ -24,8 +22,6 @@ const meta: Meta<typeof Info> = {
 
 export default meta;
 
-const Template: FC<IInfoProps> = (props) => <Info {...props} />;
+type Story = StoryObj<typeof Info>;
 
-export const Default = Template.bind({});
-
-Default.args = {} as IInfoProps;
+export const Default: Story = {};

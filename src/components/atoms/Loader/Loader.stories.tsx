@@ -1,11 +1,9 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
-import Loader, { ILoaderProps } from "./index";
+import Loader from "./index";
 
 const meta: Meta<typeof Loader> = {
     title: "Atoms/Loader",
@@ -33,8 +31,6 @@ const meta: Meta<typeof Loader> = {
 
 export default meta;
 
-const Template: FC<ILoaderProps> = (props) => <Loader {...props} />;
+type Story = StoryObj<typeof Loader>;
 
-export const Default = Template.bind({});
-
-Default.args = {} as ILoaderProps;
+export const Default: Story = {};
