@@ -2,7 +2,6 @@ import React, { useMemo, useState, useEffect } from "react";
 import "./storybookReset.scss";
 import { useDarkMode } from "storybook-dark-mode";
 import { GeneUIProvider } from "components";
-import { Alert } from "src";
 import { componentStage } from "../stories/assets/storybook.globals";
 
 const ComponentStageMessage = ({ stage, currentVersion }) => (
@@ -65,12 +64,12 @@ const CustomDecorator = ({ children }) => {
             <GeneUIProvider>
                 {componentStageProp && (
                     <div data-stage-alert style={{ padding: "16px 16px 0" }}>
-                        <Alert
-                            title={componentStageProp?.type.replace(/^\w/, (c) => c.toUpperCase())}
-                            message={alertMessage}
-                            style={{ marginBottom: "10px" }}
-                            type={type}
-                        />
+                        {/*<Alert*/}
+                        {/*    title={componentStageProp?.type.replace(/^\w/, (c) => c.toUpperCase())}*/}
+                        {/*    message={alertMessage}*/}
+                        {/*    style={{ marginBottom: "10px" }}*/}
+                        {/*    type={type}*/}
+                        {/*/>*/}
                     </div>
                 )}
                 <div style={{ position: "relative", height: "100%", padding: "8px 16px" }}>
