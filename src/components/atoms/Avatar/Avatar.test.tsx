@@ -1,5 +1,6 @@
 import React, { MouseEvent } from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
 import { Square } from "@geneui/icons"; // TODO: replace with the person icon
 
 // Components
