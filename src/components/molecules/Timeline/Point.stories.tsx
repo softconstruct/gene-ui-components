@@ -32,6 +32,7 @@ const Template: FC<ITimelineProps> = (props) => {
     return (
         <Timelines direction={direction}>
             <TimelinePoint {...props} />
+            <TimelinePoint {...props} />
         </Timelines>
     );
 };
