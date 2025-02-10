@@ -1,5 +1,5 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
 import QRCode, { IQRCodeProps } from "./index";
@@ -32,10 +32,6 @@ describe("QRCode ", () => {
 
     beforeEach(() => {
         setup = mount(<QRCode value="https://geneui-storybook.softconstruct.com/" />);
-    });
-
-    afterEach(() => {
-        jest.clearAllMocks();
     });
 
     it("renders without crashing", () => {

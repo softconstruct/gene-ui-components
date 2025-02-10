@@ -1,6 +1,5 @@
-import React, { FC, JSX, useEffect, useRef, useState } from "react";
+import React, { cloneElement, FC, JSX, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-
 // components
 import { QRCodeSVG } from "qrcode.react";
 
@@ -81,7 +80,11 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "L", appearance = "magenta", 
                           }
                         : {})}
                 />
-                {!!EmbeddedIcon && <div className="qRCode__logo">{EmbeddedIcon}</div>}
+                {!!EmbeddedIcon && (
+                    <div className="qRCode__logo" style={{ "--qr-code-logo-width": `${qrLogoSize * 0.2}px` }}>
+                        {cloneElement(EmbeddedIcon, { className: "qRCode__logoSvg" })}
+                    </div>
+                )}
             </>
         </div>
     );
