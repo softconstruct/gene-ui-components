@@ -1,16 +1,11 @@
 {
-    "prettier.configPath": "./configs/.prettierrc",
-    "prettier.ignorePath": "./configs/.prettierignore",
     "editor.formatOnSave": true,
 
     "stylelint.enable": true,
-    "stylelint.configFile": "./configs/.stylelintrc.json",
     "stylelint.validate": ["css", "scss"],
 
     "eslint.enable": true,
-    "eslint.options": {
-        "overrideConfigFile": "./configs/.eslintrc.json"
-    },
+
     "eslint.workingDirectories": ["./"],
     "eslint.nodePath": "./node_modules/eslint",
 

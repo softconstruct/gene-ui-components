@@ -30,9 +30,25 @@
         "react-hooks", // React hooks plugin
         "@typescript-eslint", // TypeScript plugin
         "jsx-a11y", // Accessibility plugin
-        "prettier" // Prettier plugin
+        "prettier", // Prettier plugin
+        "simple-import-sort"
     ],
     "rules": {
+        "simple-import-sort/imports": [
+            "error",
+            {
+                "groups": [
+                    ["^react$", "^react-dom$", "^(?!@components|@hooks|@types|@assets|@geneui)@?\\w"],
+                    ["^@geneui"],
+                    ["^@components"],
+                    ["^@hooks"],
+                    ["^@types"],
+                    ["^@assets"],
+                    ["\\.scss$"],
+                    ["\\.svg$", "\\.(png|jpe?g|gif)$"]
+                ]
+            }
+        ],
         // Prettier
         "prettier/prettier": [
             "error",
