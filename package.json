@@ -22,24 +22,24 @@
     "scripts": {
         "start": "npm run test && storybook dev -p 6006",
         "dev": "concurrently --kill-others -g \"npm:test:watch\" \"npm:start\"",
-        "test": "jest --config ./configs/jest.config.js --rootDir ./ --coverage --json --outputFile=./coverage/.jest-test-results.json",
+        "test": "jest --config ./jest.config.js --rootDir ./ --coverage --json --outputFile=./coverage/.jest-test-results.json",
         "test:watch": "npm run test -- --watchAll --json",
-        "test-report": "babel-node --config-file ./configs/.babelrc ./scripts/testReport.js",
-        "build": "babel-node --config-file ./configs/.babelrc ./scripts/build.js",
-        "copy-build-statics-files": "babel-node --config-file ./configs/.babelrc ./scripts/copyFiles.js",
-        "bump-up-commit": "babel-node --config-file ./configs/.babelrc ./scripts/postPublish.js",
+        "test-report": "babel-node --config-file ./.babelrc ./scripts/testReport.js",
+        "build": "babel-node --config-file ./.babelrc ./scripts/build.js",
+        "copy-build-statics-files": "babel-node --config-file ./.babelrc ./scripts/copyFiles.js",
+        "bump-up-commit": "babel-node --config-file ./.babelrc ./scripts/postPublish.js",
         "build:watch": "watch 'npm run build' ./src",
         "commit": "cross-env DISABLE_SCOPE_LOWERCASE=true git-cz",
         "changelog": "conventional-changelog -i CHANGELOG.md -s",
         "build-storybook": "npm run test && storybook build",
-        "semantic-release": "semantic-release --extends ./configs/.releaserc.json --no-ci",
-        "create-component": "babel-node --config-file ./configs/.babelrc ./scripts/createComponent.js",
-        "find-component-usage": "babel-node --config-file ./configs/.babelrc ./scripts/findComponentUsage.js",
-        "format-code": "prettier --config ./configs/.prettierrc --write . --ignore-path ./configs/.prettierignore",
-        "lint-styles": "stylelint **/*.{css,scss,sass} --config ./configs/.stylelintrc.json --fix",
-        "lint-scripts": "eslint --config ./configs/.eslintrc.json src --ignore-path ./configs/.eslintignore --fix",
+        "semantic-release": "semantic-release --extends ./.releaserc.json --no-ci",
+        "create-component": "babel-node --config-file ./.babelrc ./scripts/createComponent.js",
+        "find-component-usage": "babel-node --config-file ./.babelrc ./scripts/findComponentUsage.js",
+        "format-code": "prettier --config ./.prettierrc --write . --ignore-path ./.prettierignore",
+        "lint-styles": "stylelint **/*.{css,scss,sass} --config ./.stylelintrc.json --fix",
+        "lint-scripts": "eslint --config ./.eslintrc.json src --ignore-path ./.eslintignore --fix",
         "fix-code-style": "npm run format-code && npm run lint-styles && npm run lint-scripts",
-        "analyze-bundle-size": "babel-node --config-file ./configs/.babelrc ./scripts/analyzeBundleSize.js"
+        "analyze-bundle-size": "babel-node --config-file ./.babelrc ./scripts/analyzeBundleSize.js"
     },
     "peerDependencies": {
         "prop-types": "^15.8.1",
@@ -62,6 +62,7 @@
         "@commitlint/cli": "^17.1.2",
         "@commitlint/config-conventional": "^17.1.0",
         "@faker-js/faker": "^7.6.0",
+        "@rollup/plugin-alias": "^5.1.1",
         "@rollup/plugin-commonjs": "^23.0.0",
         "@rollup/plugin-image": "^3.0.1",
         "@rollup/plugin-json": "^6.0.0",
@@ -93,6 +94,7 @@
         "autoprefixer": "^10.4.13",
         "babel-jest": "^29.7.0",
         "babel-loader": "^8.2.5",
+        "babel-plugin-module-resolver": "^5.0.2",
         "chalk": "^4.1.2",
         "chromatic": "^11.5.5",
         "commitizen": "^4.2.5",
@@ -116,6 +118,7 @@
         "eslint-plugin-prettier": "^5.2.1",
         "eslint-plugin-react": "^7.37.1",
         "eslint-plugin-react-hooks": "^4.6.2",
+        "eslint-plugin-simple-import-sort": "^12.1.1",
         "figlet": "^1.5.2",
         "file-loader": "^6.2.0",
         "git-cz": "^4.9.0",
@@ -175,8 +178,8 @@
     },
     "husky": {
         "hooks": {
-            "pre-commit": "lint-staged --concurrent false --config ./configs/.lintstagedrc.json",
-            "commit-msg": "commitlint --config ./configs/commitlint.config.js -E HUSKY_GIT_PARAMS"
+            "pre-commit": "lint-staged --concurrent false --config ./.lintstagedrc.json",
+            "commit-msg": "commitlint --config ./commitlint.config.js -E HUSKY_GIT_PARAMS"
         }
     },
     "browserslist": [

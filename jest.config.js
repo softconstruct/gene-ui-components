@@ -5,13 +5,13 @@ module.exports = {
         "^.+\\.tsx?$": [
             "ts-jest",
             {
-                tsconfig: "./configs/tsconfig.json"
+                tsconfig: "./tsconfig.json"
             }
         ],
         "^.+\\.js$": [
             "babel-jest",
             {
-                configFile: "./configs/.babelrc"
+                configFile: "./.babelrc"
             }
         ]
     },
@@ -20,9 +20,10 @@ module.exports = {
         "\\.(css|scss)$": "identity-obj-proxy",
         ".svg": "<rootDir>/tests/__mocks__/svg.js",
         "^src": "<rootDir>/src",
-        "^utils$": "<rootDir>/src/utils/",
-        "^hooks$": "<rootDir>/src/hooks/",
-        "^components$": "<rootDir>/src/index.ts"
+        "^@components/(.*)$": "<rootDir>/src/components/$1",
+        "^@hooks/(.*)$": "<rootDir>/src/hooks/$1",
+        "^@assets/(.*)$": "<rootDir>/src/assets/$1",
+        "^@types/(.*)$": "<rootDir>/src/types/$1"
     },
     setupFilesAfterEnv: ["<rootDir>/tests/setup.ts"],
     testMatch: ["**/?(*.)+(test).tsx"], // TODO add .ts also for helpers

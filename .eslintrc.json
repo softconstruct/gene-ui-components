@@ -31,6 +31,7 @@
         "@typescript-eslint", // TypeScript plugin
         "jsx-a11y", // Accessibility plugin
         "prettier", // Prettier plugin
+        "simple-import-sort",
         "enforce-children"
     ],
     "rules": {
@@ -42,6 +43,22 @@
                     "Grid": ["Row"],
                     "Row": ["Col"]
                 }
+            }
+        ],
+        // Import orders definition
+        "simple-import-sort/imports": [
+            "error",
+            {
+                "groups": [
+                    ["^react$", "^react-dom$", "^(?!@components|@hooks|@types|@assets|@geneui)@?\\w"],
+                    ["^@geneui"],
+                    ["^@components"],
+                    ["^@hooks"],
+                    ["^@types"],
+                    ["^@assets"],
+                    ["\\.scss$"],
+                    ["\\.svg$", "\\.(png|jpe?g|gif)$"]
+                ]
             }
         ],
         // Prettier
