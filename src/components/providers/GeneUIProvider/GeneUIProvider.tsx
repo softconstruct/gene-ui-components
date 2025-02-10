@@ -5,6 +5,7 @@ import { bootstrap } from "@geneui/tokens";
 // Styles
 import "../../../assets/styles/reset.scss";
 import "../../../assets/styles/utils.scss";
+import "./GeneUIProvider.scss";
 
 // Statics
 import pgk from "../../../../package.json";
@@ -62,7 +63,12 @@ function GeneUIProvider({ children, tokens = null, theme = "light" }: IGeneUIPro
 
     return (
         <GeneUIDesignSystemContext.Provider value={contextValue}>
-            <div data-gene-ui-version={pgk.version} ref={geneUIProviderRef} style={{ height: "100%" }}>
+            <div
+                className="gene-ui-provider"
+                data-gene-ui-version={pgk.version}
+                ref={geneUIProviderRef}
+                style={{ height: "100%" }}
+            >
                 {isRefExist && children}
             </div>
         </GeneUIDesignSystemContext.Provider>
