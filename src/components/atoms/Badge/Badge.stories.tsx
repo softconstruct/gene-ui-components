@@ -7,7 +7,7 @@ import Button from "../Button";
 // Components
 import Badge, { IBadgeProps } from "./index";
 
-const meta: Meta<typeof Badge> = {
+const meta: Meta<IBadgeProps> = {
     title: "Atoms/Badge",
     component: Badge,
     argTypes: {
@@ -23,12 +23,12 @@ const meta: Meta<typeof Badge> = {
         withBorder: false,
         appearance: "brand",
         size: "small"
-    } as IBadgeProps
+    }
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Badge>;
+type Story = StoryObj<IBadgeProps>;
 
 export const Default: Story = {};
 

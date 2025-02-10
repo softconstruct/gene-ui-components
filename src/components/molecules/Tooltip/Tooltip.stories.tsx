@@ -35,7 +35,7 @@ const meta: Meta<ITooltipProps> = {
 
 export default meta;
 
-type Story = StoryObj<typeof TooltipComponent>;
+type Story = StoryObj<ITooltipProps>;
 
 export const WithIcons: Story = {
     render: (props) => {

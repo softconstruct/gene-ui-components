@@ -7,9 +7,9 @@ import { Globe, Search } from "@geneui/icons";
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import Avatar from "../Avatar";
 // Components
-import Divider from "./index";
+import Divider, { IDividerProps } from "./index";
 
-const meta: Meta<typeof Divider> = {
+const meta: Meta<IDividerProps> = {
     title: "Atoms/Divider",
     component: Divider,
     argTypes: {
@@ -34,7 +34,7 @@ const meta: Meta<typeof Divider> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Divider>;
+type Story = StoryObj<IDividerProps>;
 
 const StoryComponent: FC = (props) => {
     return (

@@ -4,9 +4,9 @@ import { Meta, StoryObj } from "@storybook/react";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import Scrollbar from "./index";
+import Scrollbar, { IScrollbarProps } from "./index";
 
-const meta: Meta<typeof Scrollbar> = {
+const meta: Meta<IScrollbarProps> = {
     title: "Atoms/Scrollbar",
     component: Scrollbar,
     argTypes: {
@@ -25,7 +25,7 @@ const meta: Meta<typeof Scrollbar> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Scrollbar>;
+type Story = StoryObj<IScrollbarProps>;
 
 export const Default: Story = {
     render: (props) => {

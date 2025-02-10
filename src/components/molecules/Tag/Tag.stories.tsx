@@ -3,9 +3,9 @@ import { Meta, StoryObj } from "@storybook/react";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import Tag from "./index";
+import Tag, { ITagProps } from "./index";
 
-const meta: Meta<typeof Tag> = {
+const meta: Meta<ITagProps> = {
     title: "Molecules/Tag",
     component: Tag,
     argTypes: {
@@ -25,6 +25,6 @@ const meta: Meta<typeof Tag> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Tag>;
+type Story = StoryObj<ITagProps>;
 
 export const Default: Story = {};

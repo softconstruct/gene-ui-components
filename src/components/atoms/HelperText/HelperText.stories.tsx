@@ -5,9 +5,9 @@ import { Globe } from "@geneui/icons";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import HelperText from "./index";
+import HelperText, { IHelperTextProps } from "./index";
 
-const meta: Meta<typeof HelperText> = {
+const meta: Meta<IHelperTextProps> = {
     title: "Atoms/HelperText",
     component: HelperText,
     argTypes: {
@@ -28,7 +28,7 @@ const meta: Meta<typeof HelperText> = {
 
 export default meta;
 
-type Story = StoryObj<typeof HelperText>;
+type Story = StoryObj<IHelperTextProps>;
 
 export const Default: Story = {};
 

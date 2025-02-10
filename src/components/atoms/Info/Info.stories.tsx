@@ -5,7 +5,7 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 // Components
 import Info, { IInfoProps } from "./index";
 
-const meta: Meta<typeof Info> = {
+const meta: Meta<IInfoProps> = {
     title: "Atoms/Info",
     component: Info,
     argTypes: {
@@ -17,11 +17,11 @@ const meta: Meta<typeof Info> = {
     },
     args: {
         infoText: "info text"
-    } as IInfoProps
+    }
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Info>;
+type Story = StoryObj<IInfoProps>;
 
 export const Default: Story = {};

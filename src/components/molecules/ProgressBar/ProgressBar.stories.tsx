@@ -5,7 +5,7 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 // Components
 import ProgressBar, { IProgressBarProps } from "./index";
 
-const meta: Meta<typeof ProgressBar> = {
+const meta: Meta<IProgressBarProps> = {
     title: "Molecules/ProgressBar",
     component: ProgressBar,
     argTypes: {
@@ -26,11 +26,11 @@ const meta: Meta<typeof ProgressBar> = {
         percent: 44,
         size: "medium",
         label: "Label"
-    } as IProgressBarProps
+    }
 };
 
 export default meta;
 
-type Story = StoryObj<typeof ProgressBar>;
+type Story = StoryObj<IProgressBarProps>;
 
 export const Default: Story = {};

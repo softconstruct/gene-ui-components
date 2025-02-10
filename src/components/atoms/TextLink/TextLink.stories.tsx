@@ -5,9 +5,9 @@ import { Globe } from "@geneui/icons";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import TextLink from "./index";
+import TextLink, { ITextLinkProps } from "./index";
 
-const meta: Meta<typeof TextLink> = {
+const meta: Meta<ITextLinkProps> = {
     title: "Atoms/TextLink",
     component: TextLink,
     argTypes: {
@@ -38,6 +38,6 @@ const meta: Meta<typeof TextLink> = {
 
 export default meta;
 
-type Story = StoryObj<typeof TextLink>;
+type Story = StoryObj<ITextLinkProps>;
 
 export const Default: Story = {};

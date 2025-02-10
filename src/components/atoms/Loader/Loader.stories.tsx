@@ -3,9 +3,9 @@ import { Meta, StoryObj } from "@storybook/react";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import Loader from "./index";
+import Loader, { ILoaderProps } from "./index";
 
-const meta: Meta<typeof Loader> = {
+const meta: Meta<ILoaderProps> = {
     title: "Atoms/Loader",
     component: Loader,
     argTypes: {
@@ -31,6 +31,6 @@ const meta: Meta<typeof Loader> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Loader>;
+type Story = StoryObj<ILoaderProps>;
 
 export const Default: Story = {};

@@ -5,7 +5,7 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 // Components
 import Checkbox, { ICheckboxProps } from "./index";
 
-const meta: Meta<typeof Checkbox> = {
+const meta: Meta<ICheckboxProps> = {
     title: "Molecules/Checkbox",
     component: Checkbox,
     argTypes: {
@@ -31,11 +31,11 @@ const meta: Meta<typeof Checkbox> = {
         label: "Label",
         infoText: "info text",
         helperText: "helper text"
-    } as ICheckboxProps
+    }
 };
 
 export default meta;
 
-type Story = StoryObj<typeof Checkbox>;
+type Story = StoryObj<ICheckboxProps>;
 
 export const Default: Story = {};

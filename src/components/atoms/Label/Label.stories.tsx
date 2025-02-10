@@ -3,9 +3,9 @@ import { Meta, StoryObj } from "@storybook/react";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import Label from "./index";
+import Label, { ILabelProps } from "./index";
 
-const meta: Meta<typeof Label> = {
+const meta: Meta<ILabelProps> = {
     title: "Atoms/Label",
     component: Label,
     argTypes: {
@@ -28,7 +28,7 @@ const meta: Meta<typeof Label> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Label>;
+type Story = StoryObj<ILabelProps>;
 
 export const Default: Story = {};
 

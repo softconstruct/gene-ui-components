@@ -5,9 +5,9 @@ import { Globe } from "@geneui/icons";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import Avatar from "./index";
+import Avatar, { IAvatarProps } from "./index";
 
-const meta: Meta<typeof Avatar> = {
+const meta: Meta<IAvatarProps> = {
     title: "Atoms/Avatar",
     component: Avatar,
     argTypes: {
@@ -31,7 +31,7 @@ const meta: Meta<typeof Avatar> = {
 
 export default meta;
 
-type Story = StoryObj<typeof Avatar>;
+type Story = StoryObj<IAvatarProps>;
 
 export const Default: Story = {};
 
