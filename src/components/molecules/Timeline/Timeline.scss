@@ -8,10 +8,6 @@
         &_horizontal {
             flex-direction: row;
 
-            &#{ $this }__element {
-                min-height: var(--guit-sem-dimension-height-xlarge);
-            }
-
             &#{ $this }_position {
                 &_top {
                     #{ $this }__element {
@@ -49,6 +45,10 @@
                 }
             }
 
+            #{ $this }__element {
+                min-height: var(--guit-sem-dimension-height-xlarge);
+            }
+
             #{ $this }__status {
                 flex-direction: row;
 
@@ -66,10 +66,6 @@
         &_vertical {
             flex-direction: column;
             min-width: var(--guit-sem-dimension-width-3xlarge);
-
-            &#{ $this }__element {
-                min-height: var(--guit-sem-dimension-height-3xlarge);
-            }
 
             &#{ $this }_position {
                 &_after {
@@ -121,6 +117,10 @@
                         }
                     }
                 }
+            }
+
+            #{ $this }__element {
+                min-height: var(--guit-sem-dimension-height-3xlarge);
             }
 
             #{ $this }__status {
