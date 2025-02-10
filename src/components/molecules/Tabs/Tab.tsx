@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, PropsWithChildren } from "react";
+import React, { JSX, FC, useContext, useEffect, PropsWithChildren } from "react";
 
 import { IconProps, Close, InfoFill } from "@geneui/icons";
 import classNames from "classnames";
@@ -12,9 +12,10 @@ export interface ITabProps extends PropsWithChildren {
     isError?: boolean;
     index?: number;
     closable?: boolean;
+    content?: JSX.Element;
 }
 
-const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, closable }) => {
+const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, closable = false, content }) => {
     const { getIndex, size, selectedTabIndex, removeTabHandler } = useContext(TabsContext);
 
     const provideChildren = () => {
@@ -50,13 +51,14 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, clos
                     size="XSmall"
                     onClick={(e) => {
                         e.stopPropagation();
-                        if (!index) return;
+                        if (index === undefined) return;
                         removeTabHandler(index);
                     }}
                     Icon={Close}
                 />
             )}
             {isError && <InfoFill className="tabs__button_iconError" size={24} />}
+            {content}
         </button>
     );
 };

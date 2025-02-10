@@ -8,7 +8,8 @@ import React, {
     useEffect,
     useMemo,
     useRef,
-    useState
+    useState,
+    WheelEventHandler
 } from "react";
 import classNames from "classnames";
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
@@ -43,12 +44,6 @@ interface ITabsProps {
     type?: "line" | "contained";
 
     /**
-     * Icon position
-     * If the prop is true the Icon will be shown before the text otherwise after the text.
-     * boolean
-     */
-    iconBefore?: boolean;
-    /**
      * The prop responsible for showing the loading skeleton if passed true. The default value is false
      * boolean
      */
@@ -61,7 +56,10 @@ interface ITabsProps {
      *  It works when the user clicks on one of the control items. Returns  the `index`  from the `Tab`.
      */
     onChange?: (index: number) => void;
-
+    /**
+     * The prop responsible for showing  close icon fro every tab true. The default value is false
+     * boolean
+     */
     closable?: boolean;
 }
 
@@ -82,7 +80,6 @@ const Tabs: FC<ITabsProps> = ({
     size = "large",
     type = "line",
     children,
-    iconBefore,
     isLoading,
     className,
     onChange,
@@ -155,11 +152,38 @@ const Tabs: FC<ITabsProps> = ({
         updateTransform(swipedElements.current);
     };
 
-    const scrollHandler = (e: React.WheelEvent<HTMLDivElement>) => {
+    const removeTabHandler = (index: number) => {
+        const removedChildFromData = [...AllChildren];
+        removedChildFromData.splice(index, 1);
+        setAllChildren(removedChildFromData);
+        if (!parentRef.current) return;
+        setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
+    };
+
+    const getIndex = (index: number) => {
+        setSelectedTabIndex(index);
+
+        if (onChange && index) {
+            onChange(index);
+        }
+    };
+
+    const memoizedContextValues = useMemo(
+        () => ({
+            size,
+            getIndex,
+            selectedTabIndex,
+            removeTabHandler
+        }),
+        [size, getIndex, selectedTabIndex, removeTabHandler]
+    );
+
+    const isHorizontal = direction === "horizontal";
+
+    const scrollEvent: WheelEventHandler<HTMLDivElement> = (e) => {
         e.preventDefault();
 
-        const delta = e.deltaY;
-        swipedElements.current = Math.max(0, swipedElements.current + delta);
+        swipedElements.current = e.currentTarget.scrollLeft;
 
         if (!rightButtonRef.current || !leftButtonRef.current || !parentRef.current) return;
 
@@ -177,33 +201,6 @@ const Tabs: FC<ITabsProps> = ({
             rightButtonRef.current.disabled = false;
         }
     };
-
-    const removeTabHandler = (index: number) => {
-        const removedChildFromData = [...AllChildren];
-        removedChildFromData.splice(index, 1);
-        setAllChildren(removedChildFromData);
-        if (!parentRef.current) return;
-        setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
-    };
-
-    const getIndex = (index: number) => {
-        setSelectedTabIndex(index);
-        if (onChange && index) {
-            onChange(index);
-        }
-    };
-
-    const memoizedContextValues = useMemo(
-        () => ({
-            size,
-            getIndex,
-            selectedTabIndex,
-            removeTabHandler
-        }),
-        [size, getIndex, selectedTabIndex, removeTabHandler]
-    );
-
-    const isHorizontal = direction === "horizontal";
 
     if (isLoading) {
         return <div>Skeleton </div>;
@@ -225,12 +222,10 @@ const Tabs: FC<ITabsProps> = ({
                             />
                         </div>
                     )}
-
                     <div className="tabs__wrapper">
-                        <div className="tabs__list" ref={parentRef} onWheel={scrollHandler}>
+                        <div className="tabs__list" ref={parentRef} onScroll={scrollEvent}>
                             {Children.map(AllChildren, (child, index) =>
                                 cloneElement(child as JSX.Element, {
-                                    iconBefore,
                                     closable,
                                     ...(child as JSX.Element).props,
                                     index

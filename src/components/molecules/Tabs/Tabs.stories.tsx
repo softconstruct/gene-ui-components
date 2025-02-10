@@ -14,7 +14,6 @@ const meta: Meta<typeof Tabs> = {
     argTypes: {
         isLoading: args({ control: "boolean", ...propCategory.states }),
         className: args({ control: "false", ...propCategory.appearance }),
-        iconBefore: args({ control: "boolean", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance })
