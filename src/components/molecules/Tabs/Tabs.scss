@@ -66,6 +66,20 @@
                     inset;
             }
         }
+
+        &#{ $this }_large {
+            #{ $this }__nav_button {
+                width: var(--guit-sem-dimension-width-large);
+                height: var(--guit-sem-dimension-height-large);
+            }
+        }
+
+        &#{ $this }_medium {
+            #{ $this }__nav_button {
+                width: var(--guit-sem-dimension-width-medium);
+                height: var(--guit-sem-dimension-height-medium);
+            }
+        }
     }
 
     &_vertical {

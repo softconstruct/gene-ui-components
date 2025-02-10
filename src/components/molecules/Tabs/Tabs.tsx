@@ -211,16 +211,17 @@ const Tabs: FC<ITabsProps> = ({
 
     return (
         <TabsContext.Provider value={memoizedContextValues}>
-            <div className={classNames(`tabs tabs_${direction} tabs_${type}`, className, direction, type)}>
+            <div className={classNames(`tabs tabs_${direction} tabs_${type} tabs_${size}`, className, direction, type)}>
                 <div className="tabs__nav" role="tablist" aria-label="Sample Tabs">
                     {isHorizontal && showArrows && (
                         <div className="tabs__nav_button">
                             <Button
-                                Icon={ChevronLeft}
-                                size={size}
                                 ref={leftButtonRef}
+                                size={size}
                                 appearance="secondary"
                                 displayType="text"
+                                fullWidth
+                                Icon={ChevronLeft}
                                 onClick={() => slideShift()}
                             />
                         </div>
@@ -242,12 +243,12 @@ const Tabs: FC<ITabsProps> = ({
                     {isHorizontal && showArrows && (
                         <div className="tabs__nav_button">
                             <Button
-                                className=""
-                                Icon={ChevronRight}
+                                ref={rightButtonRef}
                                 size={size}
                                 appearance="secondary"
                                 displayType="text"
-                                ref={rightButtonRef}
+                                fullWidth
+                                Icon={ChevronRight}
                                 onClick={() => slideShift(true)}
                             />
                         </div>
