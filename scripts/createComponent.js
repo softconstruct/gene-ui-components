@@ -80,19 +80,19 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
     const InterfaceName = `I${name}Props`;
 
     return `
-        import React, { FC } from "react";
+        import React from "react";
         import { Meta, StoryObj } from "@storybook/react";
         
         // Helpers
         import { args, propCategory } from "../../../../stories/assets/storybook.globals";
         // Components
-        import ${name}, { ${InterfaceName} } from './index';
+        import ${name}, { ${InterfaceName} } from "./index";
         
-        const meta: Meta<typeof ${name}> = {
-            title: '${firstLetterCase(level)}/${name}',
+        const meta: Meta<${InterfaceName}> = {
+            title: "${firstLetterCase(level)}/${name}",
             component: ${name},
             argTypes: {
-                className: args({ control: 'false', ...propCategory.appearance }),
+                className: args({ control: "false", ...propCategory.appearance }),
                  ${
                      props.length
                          ? `${props.map(
@@ -117,7 +117,7 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
         
         export default meta;
         
-        type Story = StoryObj<typeof ${name}>;
+        type Story = StoryObj<${InterfaceName}>;
         
         export const Default: Story = {};
         `;
