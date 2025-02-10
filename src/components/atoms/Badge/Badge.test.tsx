@@ -1,9 +1,9 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import Badge, { IBadgeProps } from "./index";
 import Avatar from "../Avatar";
+import Badge, { IBadgeProps } from "./index";
 
 describe("Badge ", () => {
     let setup: ReactWrapper<IBadgeProps>;

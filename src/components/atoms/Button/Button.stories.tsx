@@ -5,7 +5,7 @@ import { Search } from "@geneui/icons";
 
 import Button, { IButtonProps } from "./index";
 
-const meta: Meta<typeof Button> = {
+const meta: Meta<IButtonProps> = {
     title: "Atoms/Button",
     component: Button,
     argTypes: {
@@ -35,9 +35,7 @@ export default meta;
 
 type Story = StoryObj<IButtonProps>;
 
-export const Default: Story = {
-    // This story uses the default args from the meta export.
-};
+export const Default: Story = {};
 
 export const WithIcon: Story = {
     args: {

@@ -1,12 +1,13 @@
-import React, { createContext, useEffect, useRef, useState, JSX, useMemo } from "react";
-import { bootstrap } from "@geneui/tokens";
+import React, { createContext, JSX, useEffect, useMemo, useRef, useState } from "react";
 
-// Statics
-import pgk from "../../../../package.json";
+import { bootstrap } from "@geneui/tokens";
 
 // Styles
 import "../../../assets/styles/reset.scss";
 import "../../../assets/styles/utils.scss";
+
+// Statics
+import pgk from "../../../../package.json";
 
 type ThemesTypes = "light" | "dark";
 
