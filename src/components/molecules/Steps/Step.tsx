@@ -1,10 +1,11 @@
 import React, { FC } from "react";
-import { ErrorAlertFill, SuccessFill, UnavailableOutline } from "@geneui/icons";
 import classNames from "classnames";
 
+import { ErrorAlertFill, SuccessFill, UnavailableOutline } from "@geneui/icons";
+
 // Components
-import Divider from "../../atoms/Divider";
-import { Loader } from "../../../index";
+import Divider from "@components/atoms/Divider";
+import Loader from "@components/atoms/Loader";
 
 interface IStepProps {
     /**
