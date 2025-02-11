@@ -1,4 +1,4 @@
-import React, { Children, cloneElement, FC, ReactNode } from "react";
+import React, { Children, createContext, FC, isValidElement, ReactNode, useMemo } from "react";
 import classNames from "classnames";
 
 // Styles
@@ -37,30 +37,41 @@ interface IStepsProps {
     onChange?: (e: string | number) => void;
 }
 
+interface IStepsContextProps {
+    direction: "vertical" | "horizontal";
+    onChange?: (e: string | number) => void;
+}
+
+export const StepsContext = createContext<IStepsContextProps>({} as IStepsContextProps);
+
 /**
  * Step component is used to guide users through a sequential process by breaking it down into distinct steps. It is commonly employed in multi-step forms, checkout processes, or workflows that require users to complete tasks in a specific order.
  */
 const Steps: FC<IStepsProps> = ({ direction = "horizontal", type, isLinear, className, children, onChange }) => {
-    return (
-        <div className={classNames(`steps steps_direction_${direction}`, { steps_linear: isLinear }, className)}>
-            {Children.map(children, (step, i) => {
-                if (!React.isValidElement<IStepProps>(step)) return step;
+    const memoizedStepsContextValue = useMemo(
+        () => ({
+            direction,
+            onChange
+        }),
+        [direction]
+    );
 
-                return cloneElement(step, {
-                    direction,
-                    onChange,
-                    label: step.props.label,
-                    error: step.props.error,
-                    state: step.props.state,
-                    isLoading: step.props.isLoading,
-                    stepNumber: step.props.stepNumber || i + 1,
-                    type: step.props.type || type,
-                    description: step.props.description,
-                    disabled: step.props.disabled,
-                    id: step.props.id || i + 1
-                });
-            })}
-        </div>
+    return (
+        <StepsContext.Provider value={memoizedStepsContextValue as IStepsContextProps}>
+            <div className={classNames(`steps steps_direction_${direction}`, { steps_linear: isLinear }, className)}>
+                {Children.toArray(children).map((child, i) => {
+                    if (!isValidElement<IStepProps>(child)) return child;
+
+                    const stepProps: Partial<IStepProps> = {
+                        stepNumber: child.props.stepNumber ?? i + 1,
+                        type: child.props.type ?? type,
+                        id: child.props.id ?? i + 1
+                    };
+
+                    return <child.type {...child.props} {...stepProps} key={child.props.id || i} />;
+                })}
+            </div>
+        </StepsContext.Provider>
     );
 };
 

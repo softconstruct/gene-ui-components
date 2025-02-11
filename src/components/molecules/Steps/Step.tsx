@@ -1,10 +1,12 @@
-import React, { FC } from "react";
-import { ErrorAlertFill, SuccessFill, UnavailableOutline } from "@geneui/icons";
+import React, { FC, useContext } from "react";
 import classNames from "classnames";
 
+import { ErrorAlertFill, SuccessFill, UnavailableOutline } from "@geneui/icons";
+
 // Components
-import Divider from "../../atoms/Divider";
-import { Loader } from "../../../index";
+import Divider from "@components/atoms/Divider";
+import Loader from "@components/atoms/Loader";
+import { StepsContext } from "@components/molecules/Steps/Steps";
 
 interface IStepProps {
     /**
@@ -46,8 +48,6 @@ interface IStepProps {
      * Change the icon for step to mention the Step state.
      */
     state?: "incomplete" | "current" | "complete";
-    direction?: "vertical" | "horizontal";
-    onChange?: (id: string | number) => void;
 }
 
 interface ITypesProps {
@@ -86,19 +86,8 @@ const Types: FC<ITypesProps> = ({ type, stepNumber, error, isLoading, state }) =
     return <span className="step_type steps__status_icon steps__status_numeric">{stepCount(stepNumber)}</span>;
 };
 
-const Step: FC<IStepProps> = ({
-    type,
-    direction = "vertical",
-    description,
-    label,
-    onChange,
-    id,
-    isLoading,
-    stepNumber,
-    disabled,
-    error,
-    state
-}) => {
+const Step: FC<IStepProps> = ({ type, description, label, id, isLoading, stepNumber, disabled, error, state }) => {
+    const { direction, onChange } = useContext(StepsContext);
     const changeHandler = () => onChange?.(id!);
 
     return (

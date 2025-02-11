@@ -59,9 +59,7 @@ const StepStory: StoryStep = storyObjBuilder({
         id: args({ control: "false", ...propCategory.content }),
         state: args({ control: "select", ...propCategory.appearance }),
         label: args({ control: "text", ...propCategory.content }),
-        description: args({ control: "text", ...propCategory.content }),
-        stepNumber: args({ control: "number", ...propCategory.content }),
-        onChange: args({ control: "false", ...propCategory.functionality })
+        stepNumber: args({ control: "number", ...propCategory.content })
     },
     args: {
         label: "Label",
