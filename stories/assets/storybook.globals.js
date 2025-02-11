@@ -36,6 +36,17 @@ export const componentStage = {
     deprecated: "deprecated"
 };
 
+export const storyObjBuilder = (storyObj) => {
+    return {
+        parameters: {
+            controls: {
+                include: Object.keys(storyObj.argTypes)
+            }
+        },
+        ...storyObj
+    };
+};
+
 export const SCREENSHOT_DELAY = 5000;
 
 export function VariantsStoryGrid({ children }) {

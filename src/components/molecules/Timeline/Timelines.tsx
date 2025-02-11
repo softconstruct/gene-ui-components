@@ -39,7 +39,8 @@ const Timelines: FC<ITimelinesProps> = ({ direction = "vertical", position = "af
                 if (!React.isValidElement<ITimelineProps>(timeline)) return timeline;
 
                 return cloneElement(timeline, {
-                    direction
+                    direction,
+                    ...timeline.props
                 });
             })}
         </div>
