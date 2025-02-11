@@ -1,11 +1,11 @@
 import React, { Children, cloneElement, FC, ReactNode } from "react";
 import classNames from "classnames";
 
-// Components
-import { IStepProps } from "./Step";
-
 // Styles
 import "./Steps.scss";
+
+// Types
+import { IStepProps } from "./Step";
 
 interface IStepsProps {
     /**
@@ -35,29 +35,12 @@ interface IStepsProps {
      * Fires when the user interact with Step label. Provides the Step id as a callback's argument.
      */
     onChange?: (e: string | number) => void;
-    /**
-     * Loading state for Steps.
-     */
-    isLoading?: boolean;
-    /**
-     * Disable state for Steps.
-     */
-    disabled?: boolean;
 }
 
 /**
  * Step component is used to guide users through a sequential process by breaking it down into distinct steps. It is commonly employed in multi-step forms, checkout processes, or workflows that require users to complete tasks in a specific order.
  */
-const Steps: FC<IStepsProps> = ({
-    direction = "horizontal",
-    type,
-    isLinear,
-    className,
-    children,
-    onChange,
-    isLoading,
-    disabled
-}) => {
+const Steps: FC<IStepsProps> = ({ direction = "horizontal", type, isLinear, className, children, onChange }) => {
     return (
         <div className={classNames(`steps steps_direction_${direction}`, { steps_linear: isLinear }, className)}>
             {Children.map(children, (step, i) => {
@@ -69,11 +52,11 @@ const Steps: FC<IStepsProps> = ({
                     label: step.props.label,
                     error: step.props.error,
                     state: step.props.state,
-                    isLoading: step.props.isLoading || isLoading,
+                    isLoading: step.props.isLoading,
                     stepNumber: step.props.stepNumber || i + 1,
                     type: step.props.type || type,
                     description: step.props.description,
-                    disabled: step.props.disabled || disabled,
+                    disabled: step.props.disabled,
                     id: step.props.id || i + 1
                 });
             })}

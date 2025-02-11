@@ -31,8 +31,6 @@ const StepsStory: Story = {
         direction: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance }),
         isLinear: args({ control: "boolean", ...propCategory.functionality }),
-        isLoading: args({ control: "boolean", ...propCategory.states }),
-        disabled: args({ control: "boolean", ...propCategory.states }),
         onChange: args({ control: "false", ...propCategory.action }),
         children: args({ control: "false", ...propCategory.content })
     },

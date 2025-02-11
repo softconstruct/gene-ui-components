@@ -1,11 +1,11 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
 import { SuccessFill, UnavailableOutline } from "@geneui/icons";
 
 // Components
-import Steps, { IStepsProps } from "./Steps";
 import Step, { IStepProps } from "./Step";
-import { Loader } from "../../../index";
+import Steps, { IStepsProps } from "./Steps";
 
 describe("Steps ", () => {
     let setup: ReactWrapper<IStepsProps>;
@@ -49,16 +49,6 @@ describe("Steps ", () => {
         expect(wrapper.find(".steps").hasClass("steps_linear")).toBeTruthy();
     });
 
-    it("renders isLoading prop correctly", () => {
-        const wrapper = setup.setProps({ isLoading: true });
-        expect(wrapper.find(Loader)).toBeTruthy();
-    });
-
-    it("renders disabled prop correctly", () => {
-        const wrapper = setup.setProps({ disabled: true });
-        expect(wrapper.find(".steps__step").hasClass("steps__step_disabled")).toBeTruthy();
-    });
-
     it("renders error prop correctly", () => {
         const wrapper = mount(
             <Steps>
@@ -69,15 +59,11 @@ describe("Steps ", () => {
     });
 
     it("renders label prop correctly", () => {
-        const wrapper = setup.setProps({ disabled: true });
-
-        expect(wrapper.find(".steps__label").text()).toStrictEqual("test label");
+        expect(setup.find(".steps__label").text()).toStrictEqual("test label");
     });
 
     it("renders description prop correctly", () => {
-        const wrapper = setup.setProps({ disabled: true });
-
-        expect(wrapper.find(".steps__description").text()).toStrictEqual("test description");
+        expect(setup.find(".steps__description").text()).toStrictEqual("test description");
     });
 
     it.each<IStepProps["state"]>(["incomplete", "current", "complete"])('should have "%s" state', (state) => {
