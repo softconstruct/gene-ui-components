@@ -3,20 +3,17 @@ import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
-
+import Step, { IStepProps } from "./Step";
 // Components
-import StepsComponent, { IStepsProps } from "./Steps";
-import StepComponent, { IStepProps } from "./Step";
+import Steps, { IStepsProps } from "./Steps";
 
-const meta: Meta = {
+const meta: Meta<IStepsProps> = {
     title: "Molecules/Steps",
-    component: StepsComponent,
+    component: Steps,
     subcomponents: {
-        Step: StepComponent
+        Step
     }
 };
-
-export default meta;
 
 const testSteps = [
     { label: "Step 1", description: "description 1", id: 1, state: "complete" },
@@ -28,7 +25,7 @@ const testSteps = [
 type Story = StoryObj<IStepsProps>;
 type StoryStep = StoryObj<IStepProps>;
 
-export const Steps: Story = {
+const StepsStory: Story = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
@@ -45,15 +42,16 @@ export const Steps: Story = {
     },
     render: (props) => {
         return (
-            <StepsComponent {...props}>
+            <Steps {...props}>
                 {testSteps.map((step) => {
-                    return <StepComponent {...step} key={step.id} />;
+                    return <Step {...step} key={step.id} />;
                 })}
-            </StepsComponent>
+            </Steps>
         );
     }
 };
-export const Step: StoryStep = storyObjBuilder({
+
+const StepStory: StoryStep = storyObjBuilder({
     argTypes: {
         direction: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance }),
@@ -74,10 +72,13 @@ export const Step: StoryStep = storyObjBuilder({
     render: (props) => {
         const { direction } = props;
         return (
-            <StepsComponent direction={direction}>
-                <StepComponent {...props} id={11} />
-                <StepComponent {...props} id={12} />
-            </StepsComponent>
+            <Steps direction={direction}>
+                <Step {...props} id={11} />
+                <Step {...props} id={12} />
+            </Steps>
         );
     }
 });
+
+export default meta;
+export { StepsStory as Steps, StepStory as Step };

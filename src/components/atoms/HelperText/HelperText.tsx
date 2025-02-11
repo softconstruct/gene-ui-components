@@ -1,6 +1,7 @@
 import React, { FC } from "react";
-import { ErrorAlertFill, IconProps, WarningFill } from "@geneui/icons";
 import classnames from "classnames";
+
+import { ErrorAlertFill, IconProps, WarningFill } from "@geneui/icons";
 
 // Styles
 import "./HelperText.scss";

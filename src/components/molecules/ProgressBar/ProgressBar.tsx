@@ -2,8 +2,8 @@ import React, { FC, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 
 // Components
-import HelperText from "../../atoms/HelperText";
-import Label from "../../atoms/Label";
+import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
 
 // Styles
 import "./ProgressBar.scss";
