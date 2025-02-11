@@ -109,6 +109,7 @@
         "eslint-config-airbnb": "^19.0.4",
         "eslint-config-prettier": "^9.1.0",
         "eslint-import-resolver-typescript": "^3.6.3",
+        "eslint-plugin-enforce-children": "^1.1.0",
         "eslint-plugin-import": "^2.31.0",
         "eslint-plugin-jsx-a11y": "^6.10.1",
         "eslint-plugin-prettier": "^5.2.1",
@@ -168,7 +169,6 @@
         "@geneui/icons": "^1.0.4",
         "@geneui/tokens": "^1.0.0",
         "classnames": "^2.3.2",
-        "eslint-plugin-enforce-children": "^1.1.0",
         "react-is": "^17.0.2",
         "react-scrollbars-custom": "^4.1.1"
     },
