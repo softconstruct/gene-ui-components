@@ -1,11 +1,10 @@
-import React, { FC, useRef, useState, UIEvent, useEffect, ReactNode } from "react";
+import React, { FC, ReactNode, UIEvent, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-
 // Components
 import Scrollbars, { Scrollbar as ScrollBarTypes } from "react-scrollbars-custom";
 
 // Hooks
-import useDebouncedCallback from "../../../hooks/useDebounceCallback";
+import useDebouncedCallback from "@hooks/useDebounceCallback";
 
 // Styles
 import "./Scrollbar.scss";
