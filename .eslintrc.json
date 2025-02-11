@@ -6,6 +6,7 @@
         "node": true,
         "jest": true
     },
+    "root": true,
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": 12,
@@ -30,9 +31,37 @@
         "react-hooks", // React hooks plugin
         "@typescript-eslint", // TypeScript plugin
         "jsx-a11y", // Accessibility plugin
-        "prettier" // Prettier plugin
+        "prettier", // Prettier plugin
+        "simple-import-sort",
+        "enforce-children"
     ],
     "rules": {
+        // Gene UI components children rules
+        "enforce-children/enforce-children": [
+            "error",
+            {
+                "rules": {
+                    "Grid": ["Row"],
+                    "Row": ["Col"]
+                }
+            }
+        ],
+        // Import orders definition
+        "simple-import-sort/imports": [
+            "error",
+            {
+                "groups": [
+                    ["^react$", "^react-dom$", "^(?!@components|@hooks|@types|@assets|@geneui)@?\\w"],
+                    ["^@geneui"],
+                    ["^@components"],
+                    ["^@hooks"],
+                    ["^@types"],
+                    ["^@assets"],
+                    ["\\.scss$"],
+                    ["\\.svg$", "\\.(png|jpe?g|gif)$"]
+                ]
+            }
+        ],
         // Prettier
         "prettier/prettier": [
             "error",

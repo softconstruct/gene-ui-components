@@ -48,9 +48,9 @@ const build = async () => {
     try {
         rmSync(resolve(__dirname, "../dist"), { recursive: true, force: true });
 
-        await execCommand("tsc -p ./configs/tsconfig.build.json");
+        await execCommand("tsc -p ./tsconfig.build.json");
 
-        await execCommand("rollup -c ./configs/rollup.config.js --bundleConfigAsCjs", "rollup.config");
+        await execCommand("rollup -c ./rollup.config.js --bundleConfigAsCjs", "rollup.config");
 
         await copyStaticFilesToDist();
 

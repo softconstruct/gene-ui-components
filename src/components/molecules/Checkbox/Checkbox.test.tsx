@@ -1,10 +1,11 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
+import { CheckMark, MinusOutline } from "@geneui/icons";
 
 // Components
-import { CheckMark, MinusOutline } from "@geneui/icons";
-import Checkbox, { ICheckboxProps } from "./index";
 import { HelperText, Label } from "../../../index";
+import Checkbox, { ICheckboxProps } from "./index";
 
 describe("Checkbox ", () => {
     let setup: ReactWrapper<ICheckboxProps>;
