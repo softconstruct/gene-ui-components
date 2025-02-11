@@ -1,13 +1,11 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import Info, { IInfoProps } from "./index";
 
-const meta: Meta<typeof Info> = {
+const meta: Meta<IInfoProps> = {
     title: "Atoms/Info",
     component: Info,
     argTypes: {
@@ -19,13 +17,11 @@ const meta: Meta<typeof Info> = {
     },
     args: {
         infoText: "info text"
-    } as IInfoProps
+    }
 };
 
 export default meta;
 
-const Template: FC<IInfoProps> = (props) => <Info {...props} />;
+type Story = StoryObj<IInfoProps>;
 
-export const Default = Template.bind({});
-
-Default.args = {} as IInfoProps;
+export const Default: Story = {};

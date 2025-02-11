@@ -36,10 +36,9 @@ module.exports = {
     webpackFinal: async (config, options) => {
         const aliasPaths = {
             src: "../src/",
-            utils: "../src/utils",
             hooks: "../src/hooks/index.ts",
-            stories: "../stories/",
-            components: "../src/index.ts"
+            components: "../src/index.ts",
+            stories: "../stories/"
         };
 
         for (let aliasPath in aliasPaths) {

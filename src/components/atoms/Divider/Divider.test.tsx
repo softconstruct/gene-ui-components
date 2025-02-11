@@ -1,10 +1,11 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
 import { CheckMark } from "@geneui/icons";
 
 // Components
-import Divider, { IDividerProps } from "./index";
 import Avatar from "../Avatar";
+import Divider, { IDividerProps } from "./index";
 
 describe("Divider ", () => {
     let setup: ReactWrapper<IDividerProps>;
