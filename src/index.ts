@@ -29,3 +29,4 @@ export {
 // Hooks
 export { default as useDebounce } from "./hooks/useDebounceCallback";
 export { default as useEllipsisDetection } from "./hooks/useEllipsisDetection";
+export { default as useWindowSize } from "./hooks/useWindowSize";
