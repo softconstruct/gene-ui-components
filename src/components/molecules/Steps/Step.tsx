@@ -86,7 +86,17 @@ const Types: FC<ITypesProps> = ({ type, stepNumber, error, isLoading, state }) =
     return <span className="step_type steps__status_icon steps__status_numeric">{stepCount(stepNumber)}</span>;
 };
 
-const Step: FC<IStepProps> = ({ type, description, label, id, isLoading, stepNumber, disabled, error, state }) => {
+const Step: FC<IStepProps> = ({
+    type,
+    description,
+    label,
+    id,
+    isLoading,
+    stepNumber,
+    disabled,
+    error,
+    state = "incomplete"
+}) => {
     const { direction, onChange } = useContext(StepsContext);
     const changeHandler = () => onChange?.(id!);
 
