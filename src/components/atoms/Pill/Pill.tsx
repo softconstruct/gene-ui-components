@@ -1,12 +1,13 @@
 import React, { FC, JSX, useEffect, useRef, useState } from "react";
-import { IconProps, CircleFilled } from "@geneui/icons";
 import classNames from "classnames";
 
+import { CircleFilled, IconProps } from "@geneui/icons";
+
 // Components
-import Tooltip from "../../molecules/Tooltip";
+import Tooltip from "@components/molecules/Tooltip";
 
 // Hooks
-import { useEllipsisDetection } from "../../../hooks";
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./Pill.scss";

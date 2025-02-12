@@ -1,10 +1,12 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
 import { InfoOutlined } from "@geneui/icons";
-import Label, { ILabelProps } from "./index";
+
+// Components
 import GeneUIProvider from "../../providers/GeneUIProvider";
+import Label, { ILabelProps } from "./index";
 
 describe("Label ", () => {
     let setup: ReactWrapper<ILabelProps>;

@@ -1,6 +1,7 @@
 import React, { FC } from "react";
-import { Error, IconProps, TriangleAlert } from "@geneui/icons";
 import classnames from "classnames";
+
+import { Error, IconProps, TriangleAlert } from "@geneui/icons";
 
 // Styles
 import "./HelperText.scss";

@@ -1,8 +1,9 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
 import { InfoOutlined } from "@geneui/icons";
+
 import Info, { IInfoProps } from "./index";
 
 describe("Info ", () => {

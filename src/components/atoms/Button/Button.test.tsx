@@ -1,10 +1,12 @@
 import React, { MouseEvent } from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
 import { Globe } from "@geneui/icons";
 
 // Components
+import GeneUIProvider from "@components/providers/GeneUIProvider";
+
 import Button, { IButtonProps } from "./index";
-import GeneUIProvider from "../../providers/GeneUIProvider";
 
 describe("Button ", () => {
     let setup: ReactWrapper<IButtonProps>;

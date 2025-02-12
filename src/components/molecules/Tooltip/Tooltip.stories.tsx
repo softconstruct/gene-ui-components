@@ -1,11 +1,12 @@
 import React from "react";
-import { Meta } from "@storybook/react";
-import { InfoOutlined } from "@geneui/icons";
-import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import { Meta, StoryObj } from "@storybook/react";
 
+import { InfoOutlined } from "@geneui/icons";
+
+import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import HelperText from "../../atoms/HelperText";
 // Components
 import TooltipComponent, { ITooltipProps } from "./index";
-import HelperText from "../../atoms/HelperText";
 
 const meta: Meta<ITooltipProps> = {
     title: "Molecules/Tooltip",
@@ -34,12 +35,16 @@ const meta: Meta<ITooltipProps> = {
 
 export default meta;
 
-export function Tooltip({ ...props }) {
-    return (
-        <div style={{ height: "200px", padding: "200px 300px" }}>
-            <TooltipComponent {...props}>
-                <HelperText text="hover for tooltip" type="warning" />
-            </TooltipComponent>
-        </div>
-    );
-}
+type Story = StoryObj<ITooltipProps>;
+
+export const WithIcons: Story = {
+    render: (props) => {
+        return (
+            <div style={{ height: "200px", padding: "200px 300px" }}>
+                <TooltipComponent {...props}>
+                    <HelperText text="hover for tooltip" type="warning" />
+                </TooltipComponent>
+            </div>
+        );
+    }
+};

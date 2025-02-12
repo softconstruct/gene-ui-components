@@ -1,9 +1,10 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
+import Button from "@components/atoms/Button";
+
 import Tag, { ITagProps } from "./index";
-import Button from "../../atoms/Button";
 
 const tagText = "tag";
 

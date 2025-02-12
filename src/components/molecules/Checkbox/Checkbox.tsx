@@ -1,10 +1,11 @@
-import React, { ChangeEvent, FC, useEffect, useRef, FocusEvent, useState, useMemo } from "react";
-import { CheckMark, Minus } from "@geneui/icons";
+import React, { ChangeEvent, FC, FocusEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
+import { CheckMark, Minus } from "@geneui/icons";
+
 // Components
-import Label from "../../atoms/Label";
-import HelperText from "../../atoms/HelperText";
+import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
 
 // Styles
 import "./Checkbox.scss";

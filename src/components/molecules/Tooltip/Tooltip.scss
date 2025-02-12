@@ -16,6 +16,11 @@
         var(--guit-sem-shadow-floating-2-position-x-2) var(--guit-sem-shadow-floating-2-position-y-2)
             var(--guit-sem-shadow-floating-2-blur-2) var(--guit-sem-shadow-floating-2-spread-2)
             var(--guit-sem-color-floating-2-rgba-2);
+    font-family: var(--guit-sem-font-caption-large-medium-font-family);
+    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
+    line-height: var(--guit-sem-font-caption-large-medium-line-height);
+    letter-spacing: var(--guit-sem-font-caption-large-medium-letter-spacing);
 
     &_position {
         &_top {
@@ -86,12 +91,12 @@
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        font-family: var(--guit-sem-font-caption-large-medium-font-family);
-        font-size: var(--guit-sem-font-caption-large-medium-font-size);
-        font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
-        line-height: var(--guit-sem-font-caption-large-medium-llne-height);
-        letter-spacing: var(--guit-sem-font-caption-large-medium-letter-spacing);
         word-break: break-word;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+        letter-spacing: inherit;
     }
 
     &__icon {
