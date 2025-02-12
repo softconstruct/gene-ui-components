@@ -3,9 +3,8 @@ import { Meta } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
-import { Grid, Row, Col } from "./index";
+import { Col, Grid, Row } from "./index";
 
 const meta: Meta = {
     title: "Atoms/Grid",
