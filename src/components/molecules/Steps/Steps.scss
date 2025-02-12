@@ -16,6 +16,9 @@
             }
             #{ $this }__content {
                 padding-inline-end: var(--guit-ref-spacing-medium);
+
+                // todo: can be added dynamic "max-width" value
+                max-width: 20rem;
             }
         }
 
@@ -61,10 +64,21 @@
         $that: &;
 
         display: inline-grid;
-        flex: 1;
         grid-gap: var(--guit-ref-spacing-xsmall);
         min-width: var(--guit-sem-dimension-width-3xlarge);
         min-height: var(--guit-sem-dimension-height-3xlarge);
+
+        &:not(:last-child) {
+            flex: 1;
+        }
+
+        &:last-child {
+            flex: 0 0 auto;
+
+            #{ $this }__status_divider {
+                display: none;
+            }
+        }
 
         &#{ $that }_disabled {
             #{ $this }__label,
@@ -105,12 +119,6 @@
                 #{ $this }__status_icon {
                     color: var(--guit-sem-color-foreground-error);
                 }
-            }
-        }
-
-        &:last-child {
-            #{ $this }__status_divider {
-                display: none;
             }
         }
     }
