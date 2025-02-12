@@ -8,12 +8,27 @@ import Divider from "@components/atoms/Divider";
 import Loader from "@components/atoms/Loader";
 import { StepsContext } from "@components/molecules/Steps/Steps";
 
-interface IStepProps {
+interface IPointTypesProps {
     /**
-     * Steps type <br/>
-     * Possible values: `dot | numeric`
+     * If type is numeric you can provide the number.<br>
+     * By default starts with 1.
      */
-    type?: "dot" | "numeric";
+    stepNumber?: number;
+    /**
+     * Error state for Step.
+     */
+    error?: boolean;
+    /**
+     * Loading state for Step.
+     */
+    isLoading?: boolean;
+    /**
+     * Change the icon for step to mention the Step state.
+     */
+    state?: "incomplete" | "current" | "complete";
+}
+
+interface IStepProps extends IPointTypesProps {
     /**
      * The text displayed as the label for the Step, describing its purpose.<br>
      * The Label can be clickable on not. For more information see the isLinear prop.
@@ -28,37 +43,13 @@ interface IStepProps {
      */
     id: string | number;
     /**
-     * Loading state for Step.
-     */
-    isLoading?: boolean;
-    /**
-     * If type is numeric you can provide the number.<br>
-     * By default starts with 1.
-     */
-    stepNumber?: number;
-    /**
      * Disable state for Steps.
      */
     disabled?: boolean;
-    /**
-     * Error state for Step.
-     */
-    error?: boolean;
-    /**
-     * Change the icon for step to mention the Step state.
-     */
-    state?: "incomplete" | "current" | "complete";
 }
 
-interface ITypesProps {
-    type?: "dot" | "numeric";
-    stepNumber: number;
-    error?: boolean;
-    isLoading?: boolean;
-    state?: "incomplete" | "current" | "complete";
-}
-
-const Types: FC<ITypesProps> = ({ type, stepNumber, error, isLoading, state }) => {
+const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, isLoading, state }) => {
+    const { type } = useContext(StepsContext);
     const stepCount = (num: number) => {
         if (!num || num <= 0) return 1;
         if (num > 9) return 9;
@@ -87,7 +78,6 @@ const Types: FC<ITypesProps> = ({ type, stepNumber, error, isLoading, state }) =
 };
 
 const Step: FC<IStepProps> = ({
-    type,
     description,
     label,
     id,
@@ -110,7 +100,7 @@ const Step: FC<IStepProps> = ({
             })}
         >
             <div className="steps__status">
-                <Types type={type} stepNumber={stepNumber ?? 1} error={error} isLoading={isLoading} state={state} />
+                <PointTypes stepNumber={stepNumber ?? 1} error={error} isLoading={isLoading} state={state} />
 
                 <Divider
                     className="steps__status_divider"

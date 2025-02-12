@@ -69,7 +69,7 @@ describe("Steps ", () => {
     it.each<IStepProps["state"]>(["incomplete", "current", "complete"])('should have "%s" state', (state) => {
         const wrapper = mount(
             <Steps>
-                <Step id={33} state={state} type="dot" />
+                <Step id={33} state={state} />
             </Steps>
         );
         if (state === "incomplete") {

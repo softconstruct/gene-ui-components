@@ -36,7 +36,8 @@ const StepsStory: Story = {
     },
     args: {
         direction: "vertical",
-        isLinear: false
+        isLinear: false,
+        type: "dot"
     },
     render: (props) => {
         return (
@@ -51,7 +52,6 @@ const StepsStory: Story = {
 
 const StepStory: StoryStep = storyObjBuilder({
     argTypes: {
-        type: args({ control: "select", ...propCategory.appearance }),
         isLoading: args({ control: "boolean", ...propCategory.states }),
         error: args({ control: "boolean", ...propCategory.states }),
         disabled: args({ control: "boolean", ...propCategory.states }),
@@ -63,7 +63,6 @@ const StepStory: StoryStep = storyObjBuilder({
     },
     args: {
         state: "incomplete",
-        type: "dot",
         label: "Label",
         description: "description"
     },
