@@ -113,7 +113,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 name={name}
                 type="button"
                 onClick={onClick}
-                disabled={disabled}
+                disabled={disabled && !isLoading}
+                {...(isLoading ? { tabIndex: -1 } : {})}
                 className={classNames(
                     `button button_size_${size} 
                     button_color_${appearance} 
