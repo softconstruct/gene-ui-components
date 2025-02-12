@@ -18,8 +18,8 @@ const meta: Meta<IStepsProps> = {
 const testSteps = [
     { label: "Step 1", description: "description 1", id: 1, state: "complete" },
     { label: "Step 2", description: "description 2", id: 2, state: "complete" },
-    { label: "Step 3", description: "description 3", id: 3, state: "current" },
-    { label: "Step 4", id: 4, isLoading: false }
+    { label: "Step 3", description: "description 3", id: 3, state: "current", isLoading: true },
+    { label: "Step 4", id: 4, isLoading: false, state: "incomplete", disabled: true }
 ];
 
 type Story = StoryObj<IStepsProps>;
@@ -51,19 +51,20 @@ const StepsStory: Story = {
 
 const StepStory: StoryStep = storyObjBuilder({
     argTypes: {
-        direction: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance }),
         isLoading: args({ control: "boolean", ...propCategory.states }),
         error: args({ control: "boolean", ...propCategory.states }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         id: args({ control: "false", ...propCategory.content }),
-        state: args({ control: "select", ...propCategory.appearance }),
+        state: args({ control: "select", ...propCategory.appearance, options: ["incomplete", "current", "complete"] }),
         label: args({ control: "text", ...propCategory.content }),
         stepNumber: args({ control: "number", ...propCategory.content })
     },
     args: {
         label: "Label",
-        description: "Description"
+        description: "Description",
+        state: "incomplete",
+        type: "dot"
     },
     render: (props) => {
         const { direction } = props;
