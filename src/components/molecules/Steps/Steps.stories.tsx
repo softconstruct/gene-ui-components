@@ -55,23 +55,24 @@ const StepStory: StoryStep = storyObjBuilder({
         isLoading: args({ control: "boolean", ...propCategory.states }),
         error: args({ control: "boolean", ...propCategory.states }),
         disabled: args({ control: "boolean", ...propCategory.states }),
-        id: args({ control: "false", ...propCategory.content }),
-        state: args({ control: "select", ...propCategory.appearance, options: ["incomplete", "current", "complete"] }),
         label: args({ control: "text", ...propCategory.content }),
-        stepNumber: args({ control: "number", ...propCategory.content })
+        stepNumber: args({ control: "number", ...propCategory.content }),
+        id: args({ control: "false", ...propCategory.others }),
+        description: args({ control: "text", ...propCategory.content }),
+        state: args({ control: "select", ...propCategory.appearance, options: ["incomplete", "current", "complete"] })
     },
     args: {
-        label: "Label",
-        description: "Description",
         state: "incomplete",
-        type: "dot"
+        type: "dot",
+        label: "Label",
+        description: "description"
     },
     render: (props) => {
         const { direction } = props;
         return (
             <Steps direction={direction}>
-                <Step {...props} id={11} />
-                <Step {...props} id={12} />
+                <Step {...props} />
+                <Step {...props} />
             </Steps>
         );
     }
