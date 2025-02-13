@@ -1,6 +1,6 @@
-import React, { PropsWithChildren } from "react";
+import React, { FC, PropsWithChildren } from "react";
 
-const PopoverBody = ({ children }: PropsWithChildren) => {
+const PopoverBody: FC<PropsWithChildren> = ({ children }) => {
     return (
         <div className="popover__body">
             <div className="popover__content">{children} </div>

@@ -3,14 +3,9 @@ import { Meta } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
-import Popover, { IPopoverProps } from "./index";
 import Button from "../Button";
-import PopoverBody from "./PopoverBody";
-import PopoverFooter from "./PopoverFooter";
-import PopoverFooterActions from "./PopoverFooterActions";
-import PopoverFooterSwap from "./PopoverFooterSwap";
+import { IPopoverProps, Popover, PopoverBody, PopoverFooter, PopoverFooterActions } from "./index";
 
 const meta: Meta<IPopoverProps> = {
     title: "Atoms/Popover",
@@ -46,13 +41,13 @@ const Template: FC<IPopoverProps> = (props) => {
                 <PopoverBody>
                     <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
                 </PopoverBody>
+
                 <PopoverFooter>
-                    <PopoverFooterSwap>
-                        <div
-                            className="swapComponent"
-                            style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
-                        />
-                    </PopoverFooterSwap>
+                    <div
+                        className="swapComponent"
+                        style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
+                    />
+
                     <PopoverFooterActions>
                         <Button onClick={() => {}} size="medium" appearance="inverse">
                             Primary

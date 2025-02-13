@@ -1,10 +1,10 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
-// Components
-import Popover, { IPopoverProps } from "./index";
 import GeneUIProvider from "../../providers/GeneUIProvider";
 import Button from "../Button";
+// Components
+import { IPopoverProps, Popover, PopoverBody } from "./index";
 import PopoverFooter from "./PopoverFooter";
 import PopoverFooterActions from "./PopoverFooterActions";
 
@@ -13,7 +13,9 @@ describe("Popover", () => {
 
     const Component = (
         <Popover size="small" padding={0} setProps={() => {}}>
-            <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
+            <PopoverBody>
+                <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
+            </PopoverBody>
         </Popover>
     );
 

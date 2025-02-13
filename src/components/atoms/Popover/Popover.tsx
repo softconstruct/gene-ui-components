@@ -1,42 +1,41 @@
 import React, {
-    useState,
-    useRef,
-    useContext,
-    FC,
-    useEffect,
-    Dispatch,
-    SetStateAction,
-    ReactNode,
     CSSProperties,
-    useLayoutEffect
+    Dispatch,
+    FC,
+    ReactNode,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useLayoutEffect,
+    useRef,
+    useState
 } from "react";
 import {
+    arrow,
     autoUpdate,
     flip,
+    FloatingPortal,
     offset,
+    platform,
     shift,
+    useClick,
     useDismiss,
     useFloating,
-    FloatingPortal,
-    useClick,
     useInteractions,
-    useRole,
-    platform,
-    arrow
+    useRole
 } from "@floating-ui/react";
 import { Placement } from "@floating-ui/utils";
-import { Close, InfoOutline } from "@geneui/icons";
 
-// Components
-import { GeneUIDesignSystemContext } from "../../providers/GeneUIProvider";
-import Button from "../Button";
+import { Close, InfoOutline } from "@geneui/icons";
 
 // Styles
 import "./Popover.scss";
 
 // Hooks
 import { useScrollLock } from "../../../hooks";
-
+// Components
+import { GeneUIDesignSystemContext } from "../../providers/GeneUIProvider";
+import Button from "../Button";
 // Helper
 import { calculateOverlap, getPositionRect } from "./Helper";
 

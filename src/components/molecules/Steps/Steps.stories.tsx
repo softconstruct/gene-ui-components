@@ -15,7 +15,7 @@ const meta: Meta<IStepsProps> = {
     }
 };
 
-const testSteps = [
+const stepsMockData: IStepProps[] = [
     { label: "Step 1", description: "description 1", id: 1, state: "complete" },
     { label: "Step 2", description: "description 2", id: 2, state: "complete" },
     { label: "Step 3", description: "description 3", id: 3, state: "current", isLoading: true },
@@ -42,7 +42,7 @@ const StepsStory: Story = {
     render: (props) => {
         return (
             <Steps {...props}>
-                {testSteps.map((step) => {
+                {stepsMockData.map((step) => {
                     return <Step {...step} key={step.id} />;
                 })}
             </Steps>
@@ -67,11 +67,10 @@ const StepStory: StoryStep = storyObjBuilder({
         description: "description"
     },
     render: (props) => {
-        const { direction } = props;
         return (
-            <Steps direction={direction}>
-                <Step {...props} />
-                <Step {...props} />
+            <Steps>
+                <Step id={0} {...props} />
+                <Step id={1} {...props} />
             </Steps>
         );
     }

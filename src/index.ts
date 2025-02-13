@@ -7,7 +7,7 @@ export { default as Pill, IPillProps } from "./components/atoms/Pill";
 export { default as Divider, IDividerProps } from "./components/atoms/Divider";
 export { default as Info, IInfoProps } from "./components/atoms/Info";
 export { default as Button, IButtonProps } from "./components/atoms/Button";
-export { default as Popover } from "./components/atoms/Popover";
+export { Popover, PopoverBody, PopoverFooter, PopoverFooterActions, IPopoverProps } from "./components/atoms/Popover";
 export { default as Badge, IBadgeProps } from "./components/atoms/Badge";
 export { default as Scrollbar, IScrollbarProps } from "./components/atoms/Scrollbar";
 export { Grid, Col, Row, IColProps, IRowProps } from "./components/atoms/Grid";
