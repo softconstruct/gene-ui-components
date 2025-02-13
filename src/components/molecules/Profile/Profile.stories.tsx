@@ -32,15 +32,11 @@ type Story = StoryObj<IProfileProps>;
 
 export const Default: Story = {
     render: (props) => {
-        const toggleHandler = (e, isOpen) => {
-            console.log(e, isOpen);
-        };
-
         return (
             <div
                 style={{ width: "100%", background: "var(--guit-sem-color-background-neutral-5)", padding: "5px 10px" }}
             >
-                <Profile {...props} onToggle={toggleHandler} />
+                <Profile {...props} />
             </div>
         );
     }
