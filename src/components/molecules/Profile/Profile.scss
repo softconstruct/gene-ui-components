@@ -2,6 +2,7 @@
     $this: &;
 
     display: inline-flex;
+    vertical-align: top;
     align-items: center;
     gap: var(--guit-ref-spacing-2xsmall);
     height: 3.2rem;
@@ -34,7 +35,7 @@
         display: flex;
         align-items: center;
         gap: var(--guit-ref-spacing-4xsmall);
-        color: var(--guit-sem-color-foreground-inverse);
+        color: var(--guit-sem-color-foreground-inverse-notheme);
     }
 
     &__text {

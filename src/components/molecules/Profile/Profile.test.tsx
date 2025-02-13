@@ -1,5 +1,7 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
+import { Globe } from "@geneui/icons";
 
 // Components
 import Profile, { IProfileProps } from "./index";
@@ -21,5 +23,29 @@ describe("Profile ", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    // Your tests here
+    it("renders name prop correctly", () => {
+        const name = "testName";
+        const wrapper = setup.setProps({ name });
+
+        expect(wrapper.find(".profile").text()).toStrictEqual(name);
+    });
+
+    it("renders avatarProps prop correctly", () => {
+        const wrapper = setup.setProps({ avatarProps: { Icon: Globe } });
+
+        expect(wrapper.find(Globe)).toBeTruthy();
+    });
+
+    it("renders onToggle prop correctly", () => {
+        const onToggleMock = jest.fn();
+
+        const wrapper = setup.setProps({ onToggle: onToggleMock });
+
+        const stepLabel = wrapper.find(".profile");
+
+        stepLabel.simulate("click");
+
+        expect(onToggleMock).toHaveBeenCalledTimes(1);
+        expect(onToggleMock).toHaveBeenCalledWith(expect.any(Object), false);
+    });
 });
