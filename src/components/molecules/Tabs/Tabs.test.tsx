@@ -8,7 +8,7 @@ import Button from "../../atoms/Button";
 import Tab from "./Tab";
 import Tabs, { ITabsProps } from "./Tabs";
 
-describe("Tabs Component", () => {
+describe("Tabs", () => {
     let setup: ReactWrapper<ITabsProps>;
 
     beforeEach(() => {
