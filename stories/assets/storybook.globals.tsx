@@ -1,4 +1,6 @@
 import React, { JSX, ReactNode } from "react";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { StoryObj } from "@storybook/react";
 
 // Input interface for the args function.
 // We allow additional properties via the index signature.
@@ -88,3 +90,14 @@ interface VariantsStoryGridProps {
 export function VariantsStoryGrid({ children }: VariantsStoryGridProps): JSX.Element {
     return <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>{children}</div>;
 }
+
+export const storyObjBuilder = (storyObj: StoryObj) => {
+    return {
+        parameters: {
+            controls: {
+                include: Object.keys(storyObj.argTypes)
+            }
+        },
+        ...storyObj
+    };
+};

@@ -42,7 +42,8 @@
             {
                 "rules": {
                     "Grid": ["Row"],
-                    "Row": ["Col"]
+                    "Row": ["Col"],
+                    "Steps": ["Step"]
                 }
             }
         ],
