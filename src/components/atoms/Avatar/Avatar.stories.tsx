@@ -1,14 +1,13 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
+
 import { Globe } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import Avatar, { IAvatarProps } from "./index";
 
-const meta: Meta<typeof Avatar> = {
+const meta: Meta<IAvatarProps> = {
     title: "Atoms/Avatar",
     component: Avatar,
     argTypes: {
@@ -32,14 +31,14 @@ const meta: Meta<typeof Avatar> = {
 
 export default meta;
 
-const Template: FC<IAvatarProps> = (props) => <Avatar {...props} />;
+type Story = StoryObj<IAvatarProps>;
 
-export const Default = Template.bind({});
+export const Default: Story = {};
 
-export const WithIcon = Template.bind({});
-
-WithIcon.args = {
-    fullName: "",
-    Icon: Globe,
-    onClick: undefined
-} as IAvatarProps;
+export const WithIcons: Story = {
+    args: {
+        fullName: "",
+        Icon: Globe,
+        onClick: undefined
+    }
+};

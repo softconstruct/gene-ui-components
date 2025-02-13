@@ -1,17 +1,53 @@
-import React, { JSX, FC, useContext, useEffect, PropsWithChildren } from "react";
-
-import { IconProps, Close, InfoFill } from "@geneui/icons";
+import React, { FC, JSX, PropsWithChildren, useContext, useEffect } from "react";
 import classNames from "classnames";
-import { TabsContext } from "./Tabs";
+
+import { Close, IconProps, InfoFill } from "@geneui/icons";
+
+// Components
 import Button from "../../atoms/Button";
+import { TabsContext } from "./Tabs";
 
 export interface ITabProps extends PropsWithChildren {
+    /**
+     * The title of the tab, displayed as the tab label.
+     * Accepts a string or a number.
+     */
     title?: string | number;
+
+    /**
+     * An optional icon component to display next to the title.
+     * Accepts a functional component with `IconProps` or `null` if no icon is needed.
+     */
     Icon?: FC<IconProps> | null;
+
+    /**
+     * Determines if the tab is selected by default when the component mounts.
+     * The default value is `false`.
+     */
     defaultSelected?: boolean;
+
+    /**
+     * Indicates whether the tab should be marked as an error state.
+     * The default value is `false`.
+     */
     isError?: boolean;
+
+    /**
+     * The index of the tab within the parent `Tabs` component.
+     */
     index?: number;
+
+    /**
+     * Determines if the tab can be closed.
+     * When set to `true`, a close button will appear on the tab.
+     * The default value is `false`.
+     */
     closable?: boolean;
+
+    /**
+     * The content of the tab, rendered when the tab is active.
+     * Accepts a JSX element.
+     */
     content?: JSX.Element;
 }
 
@@ -58,7 +94,7 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, clos
                 />
             )}
             {isError && <InfoFill className="tabs__button_iconError" size={24} />}
-            {content}
+            {!closable && content}
         </button>
     );
 };

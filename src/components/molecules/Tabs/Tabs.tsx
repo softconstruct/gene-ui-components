@@ -12,7 +12,11 @@ import React, {
     WheelEventHandler
 } from "react";
 import classNames from "classnames";
+
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
+
+// Hooks
+import useWindowSize from "@hooks/useWindowSize";
 
 // Styles
 import "./Tabs.scss";
@@ -93,6 +97,8 @@ const Tabs: FC<ITabsProps> = ({
 
     const [AllChildren, setAllChildren] = useState<ITabProps["children"][]>(Children.toArray(children));
 
+    const { width } = useWindowSize();
+
     const leftButtonRef = useRef<HTMLButtonElement | null>(null);
     const rightButtonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -120,7 +126,7 @@ const Tabs: FC<ITabsProps> = ({
         return () => {
             cancelAnimationFrame(animationFrame);
         };
-    }, [parentRef.current, closable]);
+    }, [parentRef.current, closable, width]);
 
     const slideShift = (isLeft?: boolean) => {
         if (!parentRef.current || !leftButtonRef.current || !rightButtonRef.current) return;

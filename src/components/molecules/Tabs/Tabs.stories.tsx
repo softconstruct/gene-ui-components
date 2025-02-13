@@ -1,10 +1,12 @@
 import React, { FC, FunctionComponent } from "react";
 import { Meta } from "@storybook/react";
 
-// Helpers
 import { TagOutline } from "@geneui/icons";
-import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 
+import Pill from "@components/atoms/Pill";
+
+// Helpers
+import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
 import Tabs, { ITabsProps, Tab } from ".";
 
@@ -39,7 +41,6 @@ const Template: FC<ITabsProps> = (props) => {
 };
 
 export const Default = Template.bind({});
-Default.args = {} as ITabsProps;
 
 export const IconOnly: FC<ITabsProps> = (props) => {
     return (
@@ -56,6 +57,18 @@ export const TextOnly: FC<ITabsProps> = (props) => {
         <Tabs {...props}>
             {new Array(25).fill(null).map((_, i) => (
                 <Tab title={`tab${i + 1}`} Icon={null}>
+                    tab {i + 1}
+                </Tab>
+            ))}
+        </Tabs>
+    );
+};
+
+export const TemplateWithSwap: FC<ITabsProps> = (props) => {
+    return (
+        <Tabs {...props}>
+            {new Array(25).fill(null).map((_, i) => (
+                <Tab title={`TAB ${i + 1}`} content={<Pill size="medium" text={`${i}`} />}>
                     tab {i + 1}
                 </Tab>
             ))}
