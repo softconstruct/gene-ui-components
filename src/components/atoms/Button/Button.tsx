@@ -1,12 +1,13 @@
 import React, { FC, forwardRef, MouseEvent } from "react";
 import classNames from "classnames";
+
 import { IconProps } from "@geneui/icons";
+
+// Components
+import Loader from "@components/atoms/Loader";
 
 // Styles
 import "./Button.scss";
-
-// Components
-import Loader from "../Loader";
 
 const iconSizes: Record<"large" | "medium" | "small" | "XSmall", IconProps["size"]> = {
     large: 20,
@@ -112,7 +113,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 name={name}
                 type="button"
                 onClick={onClick}
-                disabled={disabled}
+                disabled={disabled && !isLoading}
+                {...(isLoading ? { tabIndex: -1 } : {})}
                 className={classNames(
                     `button button_size_${size} 
                     button_color_${appearance} 
