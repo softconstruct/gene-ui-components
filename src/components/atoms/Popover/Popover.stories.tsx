@@ -1,5 +1,5 @@
-import React, { FC, useState } from "react";
-import { Meta } from "@storybook/react";
+import React, { useState } from "react";
+import { Meta, StoryObj } from "@storybook/react/";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -33,73 +33,96 @@ const meta: Meta<IPopoverProps> = {
 
 export default meta;
 
-const Template: FC<IPopoverProps> = (props) => {
-    const [propsForContent, setPropsForContent] = useState({});
-    return (
-        <div style={{ margin: "500px 500px", height: 7000 }}>
-            <Popover {...props} setProps={setPropsForContent}>
-                <PopoverBody>
-                    <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
-                </PopoverBody>
+type Story = StoryObj<IPopoverProps>;
 
-                <PopoverFooter>
-                    <div
-                        className="swapComponent"
-                        style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
-                    />
+export const popoverStory: Story = {
+    render: (props) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const [propsForContent, setPropsForContent] = useState({});
+        return (
+            <div style={{ margin: "500px 500px", height: 7000 }}>
+                <Popover {...props} setProps={setPropsForContent}>
+                    <PopoverBody>
+                        <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
+                    </PopoverBody>
 
-                    <PopoverFooterActions>
-                        <Button onClick={() => {}} size="medium" appearance="inverse">
-                            Primary
-                        </Button>
-                        <Button onClick={() => {}} size="medium" appearance="primary">
-                            Secondary
-                        </Button>
-                    </PopoverFooterActions>
-                </PopoverFooter>
-            </Popover>
-            <Button onClick={() => {}} {...propsForContent}>
-                Click for open
-            </Button>
-        </div>
-    );
-};
-export const WithHeaderAndFooter = Template.bind({});
+                    <PopoverFooter>
+                        <div
+                            className="swapComponent"
+                            style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
+                        />
 
-export const WithoutFooter: FC<IPopoverProps> = (props) => {
-    const [propsForContent, setPropsForContent] = useState({});
-    return (
-        <div style={{ margin: "500px 500px", height: 7000 }}>
-            <Popover {...props} setProps={setPropsForContent}>
-                <PopoverBody>
-                    <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
-                </PopoverBody>
-            </Popover>
-            <Button onClick={() => {}} {...propsForContent}>
-                Click for open
-            </Button>
-        </div>
-    );
+                        <PopoverFooterActions>
+                            <Button onClick={() => {}} size="medium" appearance="inverse">
+                                Primary
+                            </Button>
+                            <Button onClick={() => {}} size="medium" appearance="primary">
+                                Secondary
+                            </Button>
+                        </PopoverFooterActions>
+                    </PopoverFooter>
+                </Popover>
+                <Button onClick={() => {}} {...propsForContent}>
+                    Click for open
+                </Button>
+            </div>
+        );
+    }
 };
 
-export const WithoutHeader = WithHeaderAndFooter.bind({});
-
-WithoutHeader.args = {
-    title: ""
+export const WithoutFooter: Story = {
+    render: (props) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const [propsForContent, setPropsForContent] = useState({});
+        return (
+            <div style={{ margin: "500px 500px", height: 7000 }}>
+                <Popover {...props} setProps={setPropsForContent}>
+                    <PopoverBody>
+                        <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
+                    </PopoverBody>
+                </Popover>
+                <Button onClick={() => {}} {...propsForContent}>
+                    Click for open
+                </Button>
+            </div>
+        );
+    }
 };
 
-export const WithoutHeaderAndFooter = (props) => {
-    const [propsForContent, setPropsForContent] = useState({});
-    return (
-        <div style={{ margin: "500px 500px", height: 7000 }}>
-            <Popover {...props} setProps={setPropsForContent} title="">
-                <PopoverBody>
-                    <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
-                </PopoverBody>
-            </Popover>
-            <Button onClick={() => {}} {...propsForContent}>
-                Click for open
-            </Button>
-        </div>
-    );
+export const WithoutHeader: Story = {
+    render: (props) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const [propsForContent, setPropsForContent] = useState({});
+        return (
+            <div style={{ margin: "500px 500px", height: 7000 }}>
+                <Popover {...props} setProps={setPropsForContent} title="">
+                    <PopoverBody>
+                        <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
+                    </PopoverBody>
+                </Popover>
+                <Button onClick={() => {}} {...propsForContent}>
+                    Click for open
+                </Button>
+            </div>
+        );
+    }
+};
+
+export const WithoutHeaderAndFooter: Story = {
+    render: (props) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        const [propsForContent, setPropsForContent] = useState({});
+        return (
+            <div style={{ margin: "500px 500px", height: 7000 }}>
+                <Popover {...props} setProps={setPropsForContent} title="">
+                    <PopoverBody>
+                        <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
+                    </PopoverBody>
+                </Popover>
+                <Button onClick={() => {}} {...propsForContent}>
+                    Click for open
+                </Button>
+            </div>
+        );
+    }
 };

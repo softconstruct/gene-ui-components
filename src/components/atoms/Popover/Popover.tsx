@@ -129,7 +129,7 @@ export interface IPopoverProps {
     /**
      * Padding between the popover and its target element.
      */
-    padding: number;
+    padding?: number;
 
     /**
      * If `true`, the popover is always visible.
