@@ -71,9 +71,10 @@ const Template = () => {
     );
 };
 
-export const StandardGridLayout = Template.bind({});
-
-StandardGridLayout.args = {};
+export const StandardGridLayout = {
+    render: Template,
+    args: {}
+};
 
 export const ColumnsWithOffset = () => {
     return (

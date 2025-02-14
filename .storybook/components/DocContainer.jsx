@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { DocsContainer as BaseContainer } from "@storybook/blocks";
-import { useDarkMode } from "storybook-dark-mode";
+// import { useDarkMode } from "storybook-dark-mode";
 import { themes } from "@storybook/theming";
 
 export const DocsContainer = ({ children, context }) => {
@@ -15,8 +15,9 @@ export const DocsContainer = ({ children, context }) => {
     }, [contextTitle]);
 
     if (contextTitle) context.primaryStory.title = title;
+
     return (
-        <BaseContainer context={context} theme={useDarkMode() ? themes.dark : themes.normal}>
+        <BaseContainer context={context} theme={false ? themes.dark : themes.normal}>
             {children}
         </BaseContainer>
     );

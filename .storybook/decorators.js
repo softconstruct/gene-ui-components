@@ -1,6 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
 import "./storybookReset.scss";
-import { useDarkMode } from "storybook-dark-mode";
+// import { useDarkMode } from "storybook-dark-mode";
 import { GeneUIProvider } from "components";
 import { componentStage } from "../stories/assets/storybook.globals";
 
@@ -15,7 +15,7 @@ const currentVersionRegex = /v\d\.\d\.\d/;
 
 const CustomDecorator = ({ children }) => {
     const [allowRenderChildren, setAllowRenderChildren] = useState(false);
-    const isDarkMode = useDarkMode();
+    const isDarkMode = false;
     let type;
     const componentStageGetter = (children, num) => {
         return (
