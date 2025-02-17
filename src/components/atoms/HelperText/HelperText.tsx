@@ -1,6 +1,7 @@
 import React, { FC } from "react";
-import { ErrorAlertFill, IconProps, WarningFill } from "@geneui/icons";
 import classnames from "classnames";
+
+import { ErrorAlertFill, IconProps, WarningFill } from "@geneui/icons";
 
 // Styles
 import "./HelperText.scss";
@@ -35,11 +36,6 @@ interface IHelperTextProps {
      */
     isDisabled?: boolean;
     /**
-     * Indicates whether the component is in a loading state.
-     * When `true`, a loading skeleton is displayed instead of the actual helper text.
-     */
-    isLoading?: boolean;
-    /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
@@ -54,15 +50,7 @@ const iconSize = {
 /**
  * The Helper Text provides users with additional information or guidance related to a specific input field in a form. This text helps users understand the expected format, requirements, or purpose of the input, thereby improving form completion accuracy and user confidence.
  */
-const HelperText: FC<IHelperTextProps> = ({
-    size = "medium",
-    type = "rest",
-    text,
-    Icon,
-    isDisabled,
-    isLoading,
-    className
-}) => {
+const HelperText: FC<IHelperTextProps> = ({ size = "medium", type = "rest", text, Icon, isDisabled, className }) => {
     const iconMap = {
         error: <ErrorAlertFill size={iconSize[size]} />,
         warning: <WarningFill size={iconSize[size]} />,
@@ -75,14 +63,8 @@ const HelperText: FC<IHelperTextProps> = ({
                 helperText_disabled: isDisabled
             })}
         >
-            {isLoading ? (
-                "skeleton"
-            ) : (
-                <>
-                    {iconMap[type] && <div className="helperText__icon">{iconMap[type]}</div>}
-                    <p className="helperText__text">{text}</p>
-                </>
-            )}
+            {iconMap[type] && <div className="helperText__icon">{iconMap[type]}</div>}
+            <p className="helperText__text">{text}</p>
         </div>
     );
 };

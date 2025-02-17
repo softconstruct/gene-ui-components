@@ -5,5 +5,5 @@
         "selector-class-pattern": null,
         "value-no-vendor-prefix": null
     },
-    "ignoreFiles": ["../coverage/**/*.css", "../storybook-static/**/*.css", "../.storybook/storybookReset.scss"]
+    "ignoreFiles": ["./coverage/**/*.css", "./storybook-static/**/*.css", "./.storybook/storybookReset.scss"]
 }

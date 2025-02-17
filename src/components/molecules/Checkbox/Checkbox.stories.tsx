@@ -1,13 +1,11 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import Checkbox, { ICheckboxProps } from "./index";
 
-const meta: Meta<typeof Checkbox> = {
+const meta: Meta<ICheckboxProps> = {
     title: "Molecules/Checkbox",
     component: Checkbox,
     argTypes: {
@@ -33,13 +31,11 @@ const meta: Meta<typeof Checkbox> = {
         label: "Label",
         infoText: "info text",
         helperText: "helper text"
-    } as ICheckboxProps
+    }
 };
 
 export default meta;
 
-const Template: FC<ICheckboxProps> = (props) => <Checkbox {...props} />;
+type Story = StoryObj<ICheckboxProps>;
 
-export const Default = Template.bind({});
-
-Default.args = {} as ICheckboxProps;
+export const Default: Story = {};
