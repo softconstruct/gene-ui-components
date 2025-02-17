@@ -11,6 +11,7 @@ export { Popover, PopoverBody, PopoverFooter, PopoverFooterActions, IPopoverProp
 export { default as Badge, IBadgeProps } from "./components/atoms/Badge";
 export { default as Scrollbar, IScrollbarProps } from "./components/atoms/Scrollbar";
 export { Grid, Col, Row, IColProps, IRowProps } from "./components/atoms/Grid";
+export { default as SplitButton } from "./components/atoms/SplitButton";
 
 // Molecules
 export { default as Tooltip } from "./components/molecules/Tooltip";
