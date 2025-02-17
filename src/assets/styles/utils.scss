@@ -11,6 +11,10 @@ html {
     text-overflow: ellipsis;
 }
 
+.scroll-lock {
+    overflow: hidden;
+}
+
 *:focus-visible {
     outline-offset: var(--guit-ref-border-width-thin);
     outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-focus);

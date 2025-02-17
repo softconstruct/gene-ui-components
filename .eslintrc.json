@@ -43,7 +43,9 @@
                 "rules": {
                     "Grid": ["Row"],
                     "Row": ["Col"],
-                    "Steps": ["Step"]
+                    "Steps": ["Step"],
+                    "Popover": ["PopoverBody", "PopoverFooter"],
+                    "PopoverFooterActions": ["Button"]
                 }
             }
         ],
