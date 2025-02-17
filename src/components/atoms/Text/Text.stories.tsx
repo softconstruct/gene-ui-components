@@ -1,13 +1,11 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import Text, { ITextProps } from "./index";
 
-const meta: Meta<typeof Text> = {
+const meta: Meta<ITextProps> = {
     title: "Atoms/Text",
     component: Text,
     argTypes: {
@@ -20,18 +18,15 @@ const meta: Meta<typeof Text> = {
     args: {
         children: "Text content",
         variant: "headingLargeSemibold"
-    } as ITextProps
+    }
 };
 
 export default meta;
 
-const Template: FC<ITextProps> = (props) => {
-    const { children } = props;
-    return (
-        <Text as="h1" {...props}>
-            {children}
-        </Text>
-    );
-};
+type Story = StoryObj<ITextProps>;
 
-export const Default = Template.bind({});
+export const Default: Story = {
+    args: {
+        as: "h1"
+    }
+};
