@@ -1,0 +1,59 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Hooks/useScrollLock" />
+
+<div style={{ paddingInlineStart: '20px' }}>
+
+    ## useScrollLock
+
+    Custom hook that enables or disables scrolling on a given HTML element (e.g., `document.body` or a React-ref’d element). This is particularly useful for modals, sidebars, or any situation where you need to lock the user’s scroll temporarily.
+
+    #### Parameters
+
+    - **`target`**: A DOM element (e.g., `document.body`) or a React ref (e.g., `useRef<HTMLElement>()`). This is the element on which scroll will be locked or unlocked.
+
+    #### Returns
+
+    - Returns an object with two methods:
+        
+        - **`lock`**: Adds a CSS class (e.g., `"scroll-lock"`) to the target element, preventing scroll.
+        - **`unlock`**: Removes that CSS class, restoring scroll.
+
+    #### Usage
+
+    ```jsx
+    import React, { useRef, FC } from 'react';
+    import { useScrollLock } from '@geneui/components';
+
+    const ExampleComponent:FC = () => {
+
+        // Example 1: Locking <body>
+        const { lock: lockBody, unlock: unlockBody } = useScrollLock(document.body);
+
+        // Example 2: Locking a specific div element
+        const divRef = useRef<HTMLDivElement>(null);
+        const { lock: lockDiv, unlock: unlockDiv } = useScrollLock(divRef);
+
+        return (
+            <div>
+                <button onClick={lockBody}>Lock Body Scroll</button>
+                <button onClick={unlockBody}>Unlock Body Scroll</button>
+
+                <div ref={divRef} style={{ maxHeight: '150px', overflow: 'auto' }}>
+                    <p>Some scrollable content...</p>
+                </div>
+                <button onClick={lockDiv}>Lock Div Scroll</button>
+                <button onClick={unlockDiv}>Unlock Div Scroll</button>
+            </div>
+        );
+    }
+
+    export default ExampleComponent;
+```
+#### Notes
+
+-   The hook automatically unlocks the scroll when the component using it unmounts, preventing stale locked states.
+-   Locking scroll at appropriate times can enhance user experience, especially when you want to focus the user’s attention on a modal or a side panel.
+
+
+</div>

@@ -1,10 +1,11 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
 import { Globe } from "@geneui/icons";
 
+import GeneUIProvider from "../../providers/GeneUIProvider";
 // Components
 import HelperText, { IHelperTextProps } from "./index";
-import GeneUIProvider from "../../providers/GeneUIProvider";
 
 describe("HelperText ", () => {
     let setup: ReactWrapper<IHelperTextProps>;

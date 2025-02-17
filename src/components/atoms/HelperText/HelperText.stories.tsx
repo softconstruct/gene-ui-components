@@ -1,14 +1,13 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
+
 import { Globe } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import HelperText, { IHelperTextProps } from "./index";
 
-const meta: Meta<typeof HelperText> = {
+const meta: Meta<IHelperTextProps> = {
     title: "Atoms/HelperText",
     component: HelperText,
     argTypes: {
@@ -16,7 +15,7 @@ const meta: Meta<typeof HelperText> = {
         type: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
         text: args({ control: "text", ...propCategory.content }),
-        Icon: args({ control: false, ...propCategory.content }),
+        Icon: args({ control: "false", ...propCategory.content }),
         isDisabled: args({ control: "boolean", ...propCategory.states })
     },
     args: {
@@ -29,21 +28,24 @@ const meta: Meta<typeof HelperText> = {
 
 export default meta;
 
-const Template: FC<IHelperTextProps> = (props) => <HelperText {...props} />;
+type Story = StoryObj<IHelperTextProps>;
 
-export const Default = Template.bind({});
+export const Default: Story = {};
 
-export const Error = Template.bind({});
-Error.args = {
-    type: "error"
-} as IHelperTextProps;
+export const Error: Story = {
+    args: {
+        type: "error"
+    }
+};
 
-export const Warning = Template.bind({});
-Warning.args = {
-    type: "warning"
-} as IHelperTextProps;
+export const Warning: Story = {
+    args: {
+        type: "warning"
+    }
+};
 
-export const WithCustomIcon = Template.bind({});
-WithCustomIcon.args = {
-    Icon: Globe
-} as IHelperTextProps;
+export const WithCustomIcon: Story = {
+    args: {
+        Icon: Globe
+    }
+};

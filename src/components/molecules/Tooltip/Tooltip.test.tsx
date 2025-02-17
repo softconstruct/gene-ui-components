@@ -4,8 +4,9 @@ import * as TestsUtils from "react-dom/test-utils";
 
 // Components
 import { InfoOutline } from "@geneui/icons";
-import Tooltip, { ITooltipProps } from "./index";
+
 import GeneUIProvider from "../../providers/GeneUIProvider";
+import Tooltip, { ITooltipProps } from "./index";
 
 describe("Tooltip", () => {
     let setup: ReactWrapper<ITooltipProps>;
