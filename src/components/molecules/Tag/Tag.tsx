@@ -1,16 +1,18 @@
 import React, { FC, useRef } from "react";
 import classNames from "classnames";
-import { Close, TagOutline, WarningFill, ErrorAlertFill, IconProps } from "@geneui/icons";
+
+import { Close, ErrorAlertFill, IconProps, TagOutline, WarningFill } from "@geneui/icons";
 
 // Components
-import Button from "../../atoms/Button";
-import Tooltip from "../Tooltip";
+import Button from "@components/atoms/Button";
 
 // Hooks
-import { useEllipsisDetection } from "../../../hooks";
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./Tag.scss";
+
+import Tooltip from "../Tooltip";
 
 type TagTypes = "rest" | "error" | "warning";
 

@@ -1,0 +1,6 @@
+{
+    "*.ts": ["eslint --config ./.eslintrc.json --ignore-path ./.eslintignore --fix"],
+    "*.tsx": ["eslint --config ./.eslintrc.json --ignore-path ./.eslintignore --fix"],
+    "*.scss": ["stylelint **/*.{css,scss,sass} --config ./.stylelintrc.json --fix"],
+    "*": ["prettier --config ./.prettierrc --ignore-path ./.prettierignore --write"]
+}
