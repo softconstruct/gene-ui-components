@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useRef, useCallback } from "react";
+import { RefObject, useCallback, useEffect, useRef } from "react";
 
 const SCROLL_LOCK_CLASS = "scroll-lock";
 
