@@ -1,24 +1,27 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DocsContainer as BaseContainer } from "@storybook/blocks";
-// import { useDarkMode } from "storybook-dark-mode";
+import { DARK_MODE_EVENT_NAME } from "storybook-dark-mode";
 import { themes } from "@storybook/theming";
+import { addons } from "@storybook/preview-api";
 
-export const DocsContainer = ({ children, context }) => {
-    let contextTitle = context?.primaryStory?.title;
+const channel = addons.getChannel();
 
-    const title = useMemo(() => {
-        if (contextTitle) {
-            return contextTitle[contextTitle.length - 2] === "-"
-                ? contextTitle.replace(contextTitle.slice(-2), "")
-                : contextTitle;
+export const DocsContainer = (props) => {
+    const [isDark, setDark] = useState(false);
+
+    useEffect(() => {
+        channel.on(DARK_MODE_EVENT_NAME, setDark);
+        const currentThem = JSON.parse(localStorage.getItem("sb-addon-themes-3"));
+        channel.on(DARK_MODE_EVENT_NAME, setDark);
+        if (currentThem) {
+            setDark(currentThem.current === "dark");
         }
-    }, [contextTitle]);
-
-    if (contextTitle) context.primaryStory.title = title;
+        return () => channel.off(DARK_MODE_EVENT_NAME, setDark);
+    }, [channel]);
 
     return (
-        <BaseContainer context={context} theme={false ? themes.dark : themes.normal}>
-            {children}
+        <BaseContainer {...props} theme={isDark ? themes.dark : themes.normal}>
+            {props.children}
         </BaseContainer>
     );
 };
