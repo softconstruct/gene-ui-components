@@ -26,6 +26,11 @@ describe("Text ", () => {
         expect(wrapper.find("h1").exists()).toBeTruthy();
     });
 
+    it("renders `truncate` prop correctly", () => {
+        const wrapper = setup.setProps({ truncate: true });
+        expect(wrapper.find(".ellipsis-text").exists()).toBeTruthy();
+    });
+
     it.each<ITextProps["variant"]>([
         "headingXLargeSemibold",
         "headingLargeSemibold",
@@ -57,7 +62,7 @@ describe("Text ", () => {
         expect(wrapper.find(`.text_variant_${variant}`).exists()).toBeTruthy();
     });
 
-    it.each<ITextProps["alignment"]>(["left", "center", "right"])('should have "%s" alignment', (alignment) => {
+    it.each<ITextProps["alignment"]>(["start", "center", "end"])('should have "%s" alignment', (alignment) => {
         const wrapper = setup.setProps({ alignment });
 
         expect(wrapper.find(`.text_alignment_${alignment}`).exists()).toBeTruthy();
