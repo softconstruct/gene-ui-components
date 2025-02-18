@@ -1,8 +1,8 @@
 import React, { PropsWithChildren } from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import { Grid, Col, Row } from "./index";
+import { Col, Grid, Row } from "./index";
 
 describe("Grid ", () => {
     let setup: (children: PropsWithChildren) => ReactWrapper<unknown>;
