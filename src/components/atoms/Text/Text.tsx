@@ -1,4 +1,4 @@
-import React, { cloneElement, FC, useRef } from "react";
+import React, { FC, useRef } from "react";
 import classNames from "classnames";
 
 import Tooltip from "@components/molecules/Tooltip";
@@ -103,10 +103,10 @@ const Text: FC<ITextProps> = ({
     children,
     as,
     alignment = "start",
-    truncate,
+    truncate = false,
     withTooltip = true
 }) => {
-    const textRef = useRef<HTMLElement | null>(null);
+    const textRef = useRef(null);
 
     const isTruncated = useEllipsisDetection(textRef);
     const Component = as;
@@ -123,11 +123,9 @@ const Text: FC<ITextProps> = ({
 
     return (
         <Tooltip text={children} isVisible={isTruncated && withTooltip}>
-            {cloneElement(<Component />, {
-                className: computedClassNames,
-                ref: textRef,
-                children
-            })}
+            <Component ref={textRef} className={computedClassNames}>
+                {children}
+            </Component>
         </Tooltip>
     );
 };
