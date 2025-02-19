@@ -11,7 +11,7 @@ const meta: Meta<IButtonProps> = {
     argTypes: {
         size: args({ control: "select", ...propCategory.appearance }),
         appearance: args({ control: "select", ...propCategory.appearance }),
-        text: args({ control: "text", ...propCategory.content }),
+        children: args({ control: "text", ...propCategory.content }),
         displayType: args({ control: "select", ...propCategory.appearance }),
         fullWidth: args({ control: "boolean", ...propCategory.appearance }),
         iconAfter: args({ control: "boolean", ...propCategory.appearance }),
@@ -23,7 +23,7 @@ const meta: Meta<IButtonProps> = {
         onClick: args({ control: "false", ...propCategory.action })
     },
     args: {
-        text: "Button",
+        children: "Button",
         appearance: "primary",
         size: "large",
         displayType: "fill",
