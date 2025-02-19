@@ -21,12 +21,12 @@ describe("Text ", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    it("renders `as` prop correctly", () => {
-        const wrapper = setup.setProps({ as: "h1" });
-        expect(wrapper.find("h1").exists()).toBeTruthy();
+    it.each<ITextProps["as"]>(["h1", "h2", "h3", "h4", "h5", "h6", "p", "span"])('should have "%s" as', (as) => {
+        const wrapper = setup.setProps({ as });
+        expect(wrapper.find(as).exists()).toBeTruthy();
     });
 
-    it("renders `truncate` prop correctly", () => {
+    it("renders truncate prop correctly", () => {
         const wrapper = setup.setProps({ truncate: true });
         expect(wrapper.find(".ellipsis-text").exists()).toBeTruthy();
     });
