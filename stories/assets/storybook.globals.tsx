@@ -1,4 +1,8 @@
 import React, { JSX, ReactNode } from "react";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ArgTypes } from "@storybook/csf";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { StoryObj } from "@storybook/react";
 
 // Input interface for the args function.
 // We allow additional properties via the index signature.
@@ -32,7 +36,7 @@ export interface ArgResult extends Record<string, unknown> {
 
 // A helper function that conditionally builds an object
 // for use as Storybook arg types.
-export const args = (obj: ArgOptions): ArgResult => {
+export const args = (obj: ArgOptions): ArgTypes => {
     const { control, options, category, condition, defaultValue, truthy, name, action, ...rest } = obj;
 
     const isDefaultProvided = "defaultValue" in obj;
@@ -88,3 +92,14 @@ interface VariantsStoryGridProps {
 export function VariantsStoryGrid({ children }: VariantsStoryGridProps): JSX.Element {
     return <div style={{ display: "flex", gap: "20px", flexWrap: "wrap" }}>{children}</div>;
 }
+
+export const storyObjBuilder = (storyObj: StoryObj) => {
+    return {
+        parameters: {
+            controls: {
+                include: Object.keys(storyObj.argTypes)
+            }
+        },
+        ...storyObj
+    };
+};
