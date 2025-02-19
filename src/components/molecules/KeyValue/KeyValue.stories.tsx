@@ -3,9 +3,9 @@ import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
+// Components
 import Pill from "../../atoms/Pill";
 import TextLink from "../../atoms/TextLink/TextLink";
-// Components
 import { IKeyProps, IKeyValueProps, Key, KeyValue, Value } from "./index";
 
 const meta: Meta<IKeyValueProps> = {
