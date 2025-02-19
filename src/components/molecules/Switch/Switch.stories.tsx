@@ -1,11 +1,11 @@
 import React, { FC } from "react";
 import { Meta } from "@storybook/react";
 
+// Components
+import Switch, { ISwitchProps } from "@components/molecules/Switch";
+
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
-// Components
-import Switch, { ISwitchProps } from "./index";
 
 const meta: Meta<typeof Switch> = {
     title: "Molecules/Switch",

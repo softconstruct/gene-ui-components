@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import classNames from "classnames";
 
 // Components
-import HelperText from "../../atoms/HelperText";
+import HelperText from "@components/atoms/HelperText";
 
 // Styles
 import "./Switch.scss";

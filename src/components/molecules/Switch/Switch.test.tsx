@@ -1,9 +1,9 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import Switch, { ISwitchProps } from "./index";
-import HelperText from "../../atoms/HelperText";
+import HelperText from "@components/atoms/HelperText";
+import Switch, { ISwitchProps } from "@components/molecules/Switch";
 
 describe("Switch ", () => {
     let setup: ReactWrapper<ISwitchProps>;
