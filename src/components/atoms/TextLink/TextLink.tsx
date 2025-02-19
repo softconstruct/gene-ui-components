@@ -1,9 +1,10 @@
 import React, { FC } from "react";
 import classNames from "classnames";
 
+import { IconProps } from "@geneui/icons";
+
 // Styles
 import "./TextLink.scss";
-import { IconProps } from "@geneui/icons";
 
 interface ITextLinkProps {
     /**

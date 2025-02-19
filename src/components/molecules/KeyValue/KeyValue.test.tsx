@@ -1,12 +1,12 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import KeyValue, { IKeyValueProps } from "./index";
-import Pill from "../../atoms/Pill";
-import Key from "./Key";
-import Value from "./Value";
-import TextLink from "../../atoms/TextLink/TextLink";
+import Pill from "@components/atoms/Pill";
+import TextLink from "@components/atoms/TextLink";
+import KeyValue, { IKeyValueProps } from "@components/molecules/KeyValue";
+import Key from "@components/molecules/KeyValue/Key";
+import Value from "@components/molecules/KeyValue/Value";
 
 const title = "title";
 
