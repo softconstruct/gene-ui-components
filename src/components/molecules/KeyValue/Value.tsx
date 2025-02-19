@@ -1,25 +1,30 @@
-import React, { FC, ReactElement } from "react";
+import React, { cloneElement, FC, ReactElement, useContext } from "react";
 
-// Content
-import { IPillProps } from "../../atoms/Pill";
-import { ITextLinkProps } from "../../atoms/TextLink/TextLink";
-import { elementWithType } from "./KeyValue";
+import { IPillProps } from "@components/atoms/Pill";
 
-export interface IValueProps {
-    size?: "large" | "medium";
-    children: ReactElement<IPillProps | ITextLinkProps> | string;
+import { KeyValueContext } from "./KeyValue";
+
+const pillSize: { [key: string]: IPillProps["size"] } = {
+    large: "medium",
+    medium: "small"
+};
+
+interface IValueProps {
+    children: ReactElement | string;
 }
-const Value: FC<IValueProps> = ({ size, children }) => {
-    if (typeof children === "string") {
-        return <span className="keyValue__value">{children}</span>;
-    }
+
+const Value: FC<IValueProps> = ({ children }) => {
+    const { size } = useContext(KeyValueContext);
 
     return (
         <>
-            {elementWithType(children, "Pill", size)}
-            {elementWithType(children, "TextLink", size)}
+            {typeof children === "string" ? (
+                <span className="keyValue__value">{children}</span>
+            ) : (
+                size && cloneElement(children, { size: pillSize[size] })
+            )}
         </>
     );
 };
 
-export default Value;
+export { IValueProps, Value as default };

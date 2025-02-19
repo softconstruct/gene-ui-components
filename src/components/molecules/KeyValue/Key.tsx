@@ -1,24 +1,28 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 
-// Content
-import Info, { IInfoProps } from "../../atoms/Info";
+import Info, { IInfoProps } from "@components/atoms/Info";
+
+import { KeyValueContext } from "./KeyValue";
 
 const infoSize: { [key: string]: IInfoProps["size"] } = {
     large: "small",
-    medium: "smallNudge",
-    small: "XSmall"
+    medium: "smallNudge"
 };
 
-export interface IKeyProps {
+interface IKeyProps {
     infoText?: string;
     children: string;
-    size?: "large" | "medium";
 }
-const Key: FC<IKeyProps> = ({ infoText, children, size = "large" }) => (
-    <div className="keyValue__content">
-        <span className="keyValue__title">{children}</span>
-        {infoText && <Info className="keyValue__icon" infoText={infoText} size={infoSize[size]} />}
-    </div>
-);
 
-export default Key;
+const Key: FC<IKeyProps> = ({ infoText, children }) => {
+    const { size } = useContext(KeyValueContext);
+
+    return (
+        <div className="keyValue__content">
+            <span className="keyValue__title">{children}</span>
+            {infoText && size && <Info className="keyValue__icon" infoText={infoText} size={infoSize[size]} />}
+        </div>
+    );
+};
+
+export { IKeyProps, Key as default };
