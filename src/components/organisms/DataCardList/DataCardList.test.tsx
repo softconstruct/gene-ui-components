@@ -1,11 +1,11 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
-
+import { mount, ReactWrapper } from "enzyme";
 // Components
 import { InfiniteLoader } from "react-virtualized";
-import DataCardList, { IDataCardListProps } from "./index";
-import DataCard from "./DataCard";
-import Loader from "../../atoms/Loader";
+
+import Loader from "@components/atoms/Loader";
+import DataCardList, { IDataCardListProps } from "@components/organisms/DataCardList";
+import DataCard from "@components/organisms/DataCardList/DataCard";
 
 const ELEMENTS_COUNT = 5;
 

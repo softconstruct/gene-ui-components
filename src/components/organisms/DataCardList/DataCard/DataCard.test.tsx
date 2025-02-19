@@ -1,9 +1,9 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import DataCard, { IDataCardProps } from "./index";
-import KeyValue from "../../../molecules/KeyValue";
+import KeyValue from "@components/molecules/KeyValue";
+import DataCard, { IDataCardProps } from "@components/organisms/DataCardList/DataCard";
 
 const cardTextData: IDataCardProps["cardData"] = Array.from(Array(8).keys()).map((index) => ({
     key: `Title ${index + 1}`,

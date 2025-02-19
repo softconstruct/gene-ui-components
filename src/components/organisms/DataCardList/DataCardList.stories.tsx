@@ -3,7 +3,6 @@ import { Meta } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import DataCardList, { IDataCardListProps } from "./index";
 
@@ -15,10 +14,10 @@ const meta: Meta<typeof DataCardList> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance, options: ["medium", "large"] }),
-        data: args({ control: false, ...propCategory.content }),
-        hasNextPage: args({ control: false, ...propCategory.others }),
-        isNextPageLoading: args({ control: false, ...propCategory.others }),
-        loadNextPage: args({ control: false, ...propCategory.action })
+        data: args({ control: "false", ...propCategory.content }),
+        hasNextPage: args({ control: "false", ...propCategory.others }),
+        isNextPageLoading: args({ control: "false", ...propCategory.others }),
+        loadNextPage: args({ control: "false", ...propCategory.action })
     },
     args: {
         size: "medium"
@@ -57,7 +56,7 @@ const TemplateHOC: FC<IDataCardListProps & { dataCount: number; setDataCount: Di
     );
 };
 
-const Template: FC<IDataCardListProps> = (props) => {
+export const Default: FC<IDataCardListProps> = (props) => {
     const [dataCount, setDataCount] = useState(10);
 
     const data: IDataCardListProps["data"] = useMemo(
@@ -73,11 +72,7 @@ const Template: FC<IDataCardListProps> = (props) => {
     return <TemplateHOC {...props} data={data} dataCount={dataCount} setDataCount={setDataCount} />;
 };
 
-export const Default = Template.bind({});
-
-Default.args = {} as IDataCardListProps;
-
-const TemplateWithPill: FC<IDataCardListProps> = (props) => {
+export const WithPillValue: FC<IDataCardListProps> = (props) => {
     const [dataCount, setDataCount] = useState(10);
 
     const data: IDataCardListProps["data"] = useMemo(
@@ -94,9 +89,7 @@ const TemplateWithPill: FC<IDataCardListProps> = (props) => {
     return <TemplateHOC {...props} data={data} dataCount={dataCount} setDataCount={setDataCount} />;
 };
 
-export const WithPillValue = TemplateWithPill.bind({});
-
-const TemplateWithTextLink: FC<IDataCardListProps> = (props) => {
+export const WithTextLink: FC<IDataCardListProps> = (props) => {
     const [dataCount, setDataCount] = useState(10);
 
     const data: IDataCardListProps["data"] = useMemo(
@@ -111,5 +104,3 @@ const TemplateWithTextLink: FC<IDataCardListProps> = (props) => {
     );
     return <TemplateHOC {...props} data={data} dataCount={dataCount} setDataCount={setDataCount} />;
 };
-
-export const WithTextLink = TemplateWithTextLink.bind({});
