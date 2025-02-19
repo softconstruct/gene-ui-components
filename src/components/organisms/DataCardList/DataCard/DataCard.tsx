@@ -1,16 +1,16 @@
 import React, { AriaRole, FC, useState } from "react";
 import classNames from "classnames";
 
-// Component
-import KeyValue, { IKeyValueProps } from "../../../molecules/KeyValue";
-import Button from "../../../atoms/Button";
-import Key from "../../../molecules/KeyValue/Key";
-import Value from "../../../molecules/KeyValue/Value";
-import Pill, { IPillProps } from "../../../atoms/Pill";
-import TextLink, { ITextLinkProps } from "../../../atoms/TextLink/TextLink";
-
 // Styles
 import "./DataCard.scss";
+
+import Button from "../../../atoms/Button";
+import Pill, { IPillProps } from "../../../atoms/Pill";
+import TextLink, { ITextLinkProps } from "../../../atoms/TextLink/TextLink";
+// Component
+import KeyValue, { IKeyValueProps } from "../../../molecules/KeyValue";
+import Key from "../../../molecules/KeyValue/Key";
+import Value from "../../../molecules/KeyValue/Value";
 
 interface TextValue {
     text: string;
@@ -92,15 +92,18 @@ const DataCard: FC<IDataCardProps> = ({ cardData, role, className, size = "mediu
             <div className="dataCard__buttons">
                 {isShowMoreVisible && (
                     <Button
-                        text="Show more"
                         appearance="secondary"
                         displayType="text"
                         size="large"
                         fullWidth
                         onClick={() => setIsShowMoreMenuOpen(true)}
-                    />
+                    >
+                        Show more
+                    </Button>
                 )}
-                <Button text="Actions" appearance="secondary" size="large" fullWidth onClick={() => {}} />
+                <Button appearance="secondary" size="large" fullWidth onClick={() => {}}>
+                    Actions
+                </Button>
             </div>
         </div>
     );

@@ -1,13 +1,13 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
-
 // Components
 import { Index, IndexRange, InfiniteLoader, List, ListRowProps } from "react-virtualized";
-import DataCard, { IDataCardProps } from "./DataCard";
 
 // Styles
 import "./DataCardList.scss";
+
 import Loader from "../../atoms/Loader";
+import DataCard, { IDataCardProps } from "./DataCard";
 
 const noop = () => Promise.resolve();
 type Data = IDataCardProps["cardData"][];
@@ -90,7 +90,7 @@ const DataCardList: FC<IDataCardListProps> = ({
                             onRowsRendered={onRowsRendered}
                             rowRenderer={(props) => rowRenderer(props, size)}
                             height={dimensions.height}
-                            rowHeight={308}
+                            rowHeight={304}
                             rowCount={data.length}
                             width={dimensions.width}
                         />

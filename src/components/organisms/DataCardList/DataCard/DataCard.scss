@@ -5,14 +5,8 @@
     flex-direction: column;
     row-gap: var(--guit-ref-spacing-large);
     border-radius: var(--guit-ref-radius-2xsmall);
+    border: 1px solid var(--guit-sem-color-border-neutral-2);
     padding: var(--guit-ref-spacing-large);
-    box-shadow:
-        var(--guit-sem-shadow-floating-2-position-x-1) var(--guit-sem-shadow-floating-2-position-y-1)
-            var(--guit-sem-shadow-floating-2-blur-1) var(--guit-sem-shadow-floating-2-spread-1)
-            var(--guit-sem-color-floating-2-rgba-1),
-        var(--guit-sem-shadow-floating-2-position-x-2) var(--guit-sem-shadow-floating-2-position-y-2)
-            var(--guit-sem-shadow-floating-2-blur-2) var(--guit-sem-shadow-floating-2-spread-2)
-            var(--guit-sem-color-floating-2-rgba-2);
 
     // dataCard alignment styles for dataCardList
     margin-inline: var(--guit-ref-spacing-medium);
