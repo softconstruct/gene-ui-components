@@ -1,18 +1,18 @@
-import typescript from "@rollup/plugin-typescript";
-import { resolve as resolvePath } from "path";
-import { visualizer } from "rollup-plugin-visualizer";
-import resolve from "@rollup/plugin-node-resolve";
-// import alias from "@rollup/plugin-alias";
-// import peerDepsExternal from 'rollup-plugin-peer-deps-external';
+import alias from "@rollup/plugin-alias";
 import commonjs from "@rollup/plugin-commonjs";
 import image from "@rollup/plugin-image";
 import json from "@rollup/plugin-json";
-import postcss from "rollup-plugin-postcss";
-import prefixSelector from "postcss-prefix-selector";
+import resolve from "@rollup/plugin-node-resolve";
+import typescript from "@rollup/plugin-typescript";
 import autoprefixer from "autoprefixer";
-import { getDirectories, getFiles } from "../scripts/utils";
+import { resolve as resolvePath } from "path";
+import prefixSelector from "postcss-prefix-selector";
+import postcss from "rollup-plugin-postcss";
+import { visualizer } from "rollup-plugin-visualizer";
 
-const packageJson = require("../package.json");
+import { getDirectories, getFiles } from "./scripts/utils";
+
+const packageJson = require("./package.json");
 
 const getInputs = (_name, dir) => {
     const inputs = getDirectories(dir).reduce((obj, item) => {
@@ -61,14 +61,13 @@ export default {
         //     packageJsonPath: resolvePath(__dirname, '../package.json'),
         //     includeDependencies: false
         // }),
-        // alias({
-        //     entries: {
-        //         src: "src",
-        //         utils: "src/utils/index.js",
-        //         hooks: "src/hooks/index.ts",
-        //         components: "src/index.ts"
-        //     }
-        // }),
+        alias({
+            entries: [
+                { find: "@components", replacement: resolvePath(__dirname, "./src/components") },
+                { find: "@hooks", replacement: resolvePath(__dirname, "./src/hooks") },
+                { find: "@assets", replacement: resolvePath(__dirname, "./src/assets") }
+            ]
+        }),
         resolve(),
         typescript({
             tsconfig: resolvePath(__dirname, "tsconfig.json") // Ensure it uses the original tsconfig

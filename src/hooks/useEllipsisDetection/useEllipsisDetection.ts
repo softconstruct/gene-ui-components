@@ -1,4 +1,5 @@
-import { useEffect, useState, RefObject } from "react";
+import { RefObject, useEffect, useState } from "react";
+
 import useDebouncedCallback from "../useDebounceCallback";
 
 const EQUAL_HEIGHT_DIFF = 3;

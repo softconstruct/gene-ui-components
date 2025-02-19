@@ -1,5 +1,5 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
 import Scrollbar, { IScrollbarProps } from "./index";

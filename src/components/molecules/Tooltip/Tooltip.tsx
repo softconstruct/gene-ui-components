@@ -1,35 +1,36 @@
 import React, {
-    useState,
-    useContext,
-    JSX,
-    FC,
-    cloneElement,
     Children,
+    cloneElement,
+    FC,
     Fragment,
-    useEffect,
+    JSX,
     RefObject,
-    useRef
+    useContext,
+    useEffect,
+    useRef,
+    useState
 } from "react";
-import { shift, flip, offset } from "@floating-ui/core";
+import { flip, offset, shift } from "@floating-ui/core";
 import {
-    FloatingPortal,
-    autoUpdate,
-    useFloating,
     arrow,
+    autoUpdate,
+    FloatingPortal,
+    platform,
+    useFloating,
     useHover,
-    useInteractions,
-    platform
+    useInteractions
 } from "@floating-ui/react";
-import { Placement } from "@floating-ui/utils";
 import { ReferenceType } from "@floating-ui/react-dom";
+import { Placement } from "@floating-ui/utils";
 import { isForwardRef } from "react-is";
 
 // Components
 import { IconProps } from "@geneui/icons";
-import { GeneUIDesignSystemContext } from "../../providers/GeneUIProvider";
 
 // Styles
 import "./Tooltip.scss";
+
+import { GeneUIDesignSystemContext } from "../../providers/GeneUIProvider";
 
 const positions: Placement[] = [
     "top",
