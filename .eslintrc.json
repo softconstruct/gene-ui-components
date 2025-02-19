@@ -46,7 +46,8 @@
                     "Steps": ["Step"],
                     "Popover": ["PopoverBody", "PopoverFooter"],
                     "PopoverFooterActions": ["Button"],
-                    "KeyValue": ["Key", "Value"]
+                    "KeyValue": ["Key", "Value"],
+                    "Value": ["Pill", "TextLink", "Text"]
                 }
             }
         ],
