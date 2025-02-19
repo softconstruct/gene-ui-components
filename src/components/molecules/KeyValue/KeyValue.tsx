@@ -2,9 +2,9 @@ import React, { FC, ReactElement } from "react";
 import classNames from "classnames";
 
 // Components
-import { IKeyProps } from "./Key";
-import { IValueProps } from "./Value";
-import { IPillProps } from "../../atoms/Pill";
+import { IPillProps } from "@components/atoms/Pill";
+import { IKeyProps } from "@components/molecules/KeyValue/Key";
+import { IValueProps } from "@components/molecules/KeyValue/Value";
 
 // Styles
 import "./KeyValue.scss";
