@@ -45,7 +45,8 @@
                     "Row": ["Col"],
                     "Steps": ["Step"],
                     "Popover": ["PopoverBody", "PopoverFooter"],
-                    "PopoverFooterActions": ["Button"]
+                    "PopoverFooterActions": ["Button"],
+                    "KeyValue": ["Key", "Value"]
                 }
             }
         ],
