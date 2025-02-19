@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
@@ -20,6 +18,7 @@ const meta: Meta<IKeyValueProps> = {
 };
 
 type Story = StoryObj<IKeyValueProps>;
+type KeyStoryType = StoryObj<IKeyProps>;
 
 const KeyValueStory: Story = {
     argTypes: {
@@ -44,7 +43,7 @@ const KeyValueStory: Story = {
     }
 };
 
-const KeyStory: Story = storyObjBuilder({
+const KeyStory: KeyStoryType = storyObjBuilder({
     argTypes: {
         infoText: args({ control: "text", ...propCategory.content })
     },
@@ -65,11 +64,19 @@ const KeyStory: Story = storyObjBuilder({
 });
 
 const WithPillValue: Story = storyObjBuilder({
-    argTypes: {},
-    args: {},
+    argTypes: {
+        direction: args({ control: "select", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
+        spaceBetween: args({ control: "boolean", ...propCategory.appearance })
+    },
+    args: {
+        direction: "vertical",
+        size: "medium",
+        spaceBetween: false
+    },
     render: (props) => {
         return (
-            <KeyValue>
+            <KeyValue {...props}>
                 <Key>Title</Key>
                 <Value>
                     <Pill text="Pill" isFill />
@@ -80,11 +87,19 @@ const WithPillValue: Story = storyObjBuilder({
 });
 
 const WithTextLinkValue: Story = storyObjBuilder({
-    argTypes: {},
-    args: {},
+    argTypes: {
+        direction: args({ control: "select", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
+        spaceBetween: args({ control: "boolean", ...propCategory.appearance })
+    },
+    args: {
+        direction: "vertical",
+        size: "medium",
+        spaceBetween: false
+    },
     render: (props) => {
         return (
-            <KeyValue>
+            <KeyValue {...props}>
                 <Key>Title</Key>
                 <Value>
                     <TextLink text="Text Link" href="" />
