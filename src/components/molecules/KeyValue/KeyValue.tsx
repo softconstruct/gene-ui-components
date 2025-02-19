@@ -38,7 +38,7 @@ interface IKeyValueProps extends IKeyValueContextProps {
     children: [ReactElement<IKeyProps>, ReactElement<IValueProps>];
 }
 
-const KeyValueContext = createContext<IKeyValueContextProps>({});
+export const KeyValueContext = createContext<IKeyValueContextProps>({});
 
 /**
  * Key Value components present data in a key-value format, typically used to display information obtained from other components. A common use case is setting up a Key Value component to show detailed information from a selected table row.
@@ -70,4 +70,4 @@ const KeyValue: FC<IKeyValueProps> = ({
     );
 };
 
-export { IKeyValueProps, KeyValueContext, KeyValue as default };
+export { IKeyValueProps, KeyValue as default };

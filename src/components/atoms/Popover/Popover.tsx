@@ -342,7 +342,7 @@ const Popover: FC<IPopoverProps> = ({
         };
     }, [popoverOpened, refs.floating.current, placement, alwaysShow, position, currentPosition]);
 
-    const arrowOffsetFromEdge = staticSide === "left" || staticSide === "right" ? 7 : 11;
+    const arrowOffsetFromEdge = 5;
 
     return (
         <>
