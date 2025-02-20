@@ -220,6 +220,7 @@ const Tabs: FC<ITabsProps> = ({
     return (
         <TabsContext.Provider value={memoizedContextValues}>
             <div className={classNames(`tabs tabs_${direction} tabs_${type} tabs_${size}`, className, direction, type)}>
+                {/* todo: add classnames for shadows in the mobile view - "tabs__shadow_before" or "tabs__shadow_after" */}
                 <div className="tabs__nav" role="tablist" aria-label="Sample Tabs">
                     {isHorizontal && showArrows && (
                         <div className="tabs__nav_button">

@@ -167,6 +167,40 @@
         }
     }
 
+    &__shadow {
+        position: relative;
+
+        &_before::before,
+        &_after::after {
+            content: "";
+            width: 8.5rem;
+            height: 100%;
+            inset-block: 0;
+            pointer-events: none;
+            position: absolute;
+            z-index: 1;
+        }
+
+        &_before::before {
+            background: linear-gradient(
+                90deg,
+                var(--guit-sem-color-background-neutral-1) 0%,
+                var(--guit-sem-color-background-transparent-inverse-1) 100%
+            );
+            inset-inline-start: 0;
+        }
+
+        &_after::after {
+            content: "";
+            background: linear-gradient(
+                -90deg,
+                var(--guit-sem-color-background-neutral-1) 0%,
+                var(--guit-sem-color-background-transparent-inverse-1) 100%
+            );
+            inset-inline-end: 0;
+        }
+    }
+
     &__wrapper {
         display: flex;
         flex: 1;
