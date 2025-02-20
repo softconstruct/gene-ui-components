@@ -78,6 +78,11 @@
 
     &__arrow {
         position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.2rem;
+        height: 0.4rem;
     }
 
     &__textWrapper {

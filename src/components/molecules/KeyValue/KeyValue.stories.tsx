@@ -1,21 +1,26 @@
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-// Components
-import Pill from "@components/atoms/Pill";
-import TextLink from "@components/atoms/TextLink";
-import KeyValue, { IKeyValueProps } from "@components/molecules/KeyValue";
-import Key from "@components/molecules/KeyValue/Key";
-import Value from "@components/molecules/KeyValue/Value";
-
 // Helpers
-import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
+// Components
+import Pill from "../../atoms/Pill";
+import TextLink from "../../atoms/TextLink/TextLink";
+import { IKeyProps, IKeyValueProps, Key, KeyValue, Value } from "./index";
 
-const key = <Key infoText="Info text">Title</Key>;
-
-const meta: Meta<typeof KeyValue> = {
+const meta: Meta<IKeyValueProps> = {
     title: "Molecules/KeyValue",
     component: KeyValue,
+    subcomponents: {
+        Key,
+        Value
+    }
+};
+
+type Story = StoryObj<IKeyValueProps>;
+type KeyStoryType = StoryObj<IKeyProps>;
+
+const KeyValueStory: Story = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
@@ -26,36 +31,83 @@ const meta: Meta<typeof KeyValue> = {
     args: {
         direction: "vertical",
         size: "medium",
-        children: [key, <Value>Description</Value>],
         spaceBetween: false
-    } as IKeyValueProps
+    },
+    render: (props) => {
+        return (
+            <KeyValue {...props}>
+                <Key>Title</Key>
+                <Value>example value</Value>
+            </KeyValue>
+        );
+    }
 };
+
+const KeyStory: KeyStoryType = storyObjBuilder({
+    argTypes: {
+        infoText: args({ control: "text", ...propCategory.content })
+    },
+    args: {
+        infoText:
+            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quas sapiente odit eaque assumenda expedita amet laborum iure est omnis aspernatur voluptate, quaerat minima tenetur quis. Aliquam, molestias! Corporis, in dolore?"
+    },
+    render: (props) => {
+        const { infoText, ...rest } = props as IKeyProps;
+
+        return (
+            <KeyValue {...rest}>
+                <Key infoText={infoText}>Title</Key>
+                <Value>example value</Value>
+            </KeyValue>
+        );
+    }
+});
+
+const WithPillValue: Story = storyObjBuilder({
+    argTypes: {
+        direction: args({ control: "select", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
+        spaceBetween: args({ control: "boolean", ...propCategory.appearance })
+    },
+    args: {
+        direction: "vertical",
+        size: "medium",
+        spaceBetween: false
+    },
+    render: (props) => {
+        return (
+            <KeyValue {...props}>
+                <Key>Title</Key>
+                <Value>
+                    <Pill text="Pill" isFill />
+                </Value>
+            </KeyValue>
+        );
+    }
+});
+
+const WithTextLinkValue: Story = storyObjBuilder({
+    argTypes: {
+        direction: args({ control: "select", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
+        spaceBetween: args({ control: "boolean", ...propCategory.appearance })
+    },
+    args: {
+        direction: "vertical",
+        size: "medium",
+        spaceBetween: false
+    },
+    render: (props) => {
+        return (
+            <KeyValue {...props}>
+                <Key>Title</Key>
+                <Value>
+                    <TextLink text="Text Link" href="" />
+                </Value>
+            </KeyValue>
+        );
+    }
+});
 
 export default meta;
-
-type Story = StoryObj<IKeyValueProps>;
-
-export const Default: Story = {};
-Default.args = {} as IKeyValueProps;
-
-export const WithPillValue: Story = {
-    args: {
-        children: [
-            key,
-            <Value>
-                <Pill text="Pill" isFill />
-            </Value>
-        ]
-    }
-};
-
-export const WithTextLinkValue: Story = {
-    args: {
-        children: [
-            key,
-            <Value>
-                <TextLink text="Text Link" href="" />
-            </Value>
-        ]
-    }
-};
+export { KeyValueStory as KeyValue, KeyStory as Key, WithPillValue, WithTextLinkValue };
