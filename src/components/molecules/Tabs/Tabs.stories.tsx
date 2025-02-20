@@ -1,5 +1,5 @@
-import React, { FC, FunctionComponent } from "react";
-import { Meta } from "@storybook/react";
+import React, { FunctionComponent } from "react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import { TagOutline } from "@geneui/icons";
 
@@ -10,7 +10,7 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 // Components
 import Tabs, { ITabsProps, Tab } from ".";
 
-const meta: Meta<typeof Tabs> = {
+const meta: Meta<ITabsProps> = {
     title: "Molecules/Tabs",
     component: Tabs,
     argTypes: {
@@ -29,31 +29,30 @@ const meta: Meta<typeof Tabs> = {
 };
 
 export default meta;
+type Story = StoryObj<ITabsProps>;
 
-const Template: FC<ITabsProps> = (props) => {
-    return (
+export const popoverStory: Story = {
+    render: (props) => (
         <Tabs {...props}>
             {new Array(25).fill(null).map((_, i) => (
                 <Tab title={`TAB ${i + 1}`}>tab {i + 1}</Tab>
             ))}
         </Tabs>
-    );
+    )
 };
 
-export const Default = Template.bind({});
-
-export const IconOnly: FC<ITabsProps> = (props) => {
-    return (
+export const IconOnly: Story = {
+    render: (props) => (
         <Tabs {...props}>
             {new Array(25).fill(null).map((_, i) => (
                 <Tab Icon={TagOutline}>tab {i + 1} </Tab>
             ))}
         </Tabs>
-    );
+    )
 };
 
-export const TextOnly: FC<ITabsProps> = (props) => {
-    return (
+export const TextOnly: Story = {
+    render: (props) => (
         <Tabs {...props}>
             {new Array(25).fill(null).map((_, i) => (
                 <Tab title={`tab${i + 1}`} Icon={null}>
@@ -61,11 +60,11 @@ export const TextOnly: FC<ITabsProps> = (props) => {
                 </Tab>
             ))}
         </Tabs>
-    );
+    )
 };
 
-export const TemplateWithSwap: FC<ITabsProps> = (props) => {
-    return (
+export const TemplateWithSwap: Story = {
+    render: (props) => (
         <Tabs {...props}>
             {new Array(25).fill(null).map((_, i) => (
                 <Tab title={`TAB ${i + 1}`} content={<Pill size="medium" text={`${i}`} />}>
@@ -73,5 +72,5 @@ export const TemplateWithSwap: FC<ITabsProps> = (props) => {
                 </Tab>
             ))}
         </Tabs>
-    );
+    )
 };

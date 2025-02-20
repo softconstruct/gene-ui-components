@@ -162,6 +162,11 @@ const Tabs: FC<ITabsProps> = ({
         const removedChildFromData = [...AllChildren];
         removedChildFromData.splice(index, 1);
         setAllChildren(removedChildFromData);
+
+        if (index < selectedTabIndex) {
+            setSelectedTabIndex((prev) => prev - 1);
+        }
+
         if (!parentRef.current) return;
         setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
     };
