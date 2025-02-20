@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -18,8 +18,6 @@ const meta: Meta<typeof Menu> = {
     },
     args: {} as IMenuProps
 };
-
-export default meta;
 
 const MenuItemRecursion = (menuData) => {
     return menuData.map((el, i) => {
@@ -47,15 +45,17 @@ const MenuItemRecursion = (menuData) => {
     });
 };
 
-const TemplateNext: FC<IMenuProps> = (props) => {
+export default meta;
+
+type Story = StoryObj<IMenuProps>;
+
+const StoryComponent: FC = (props) => {
     const [menuData, setMenuData] = useState(data);
+
     const updateSelection = (menu, id) => {
         return menu.map((item) => {
             const isSelected = item.id === id;
-            const updatedItem = {
-                ...item,
-                selected: isSelected
-            };
+            const updatedItem = { ...item, selected: isSelected };
 
             if (item.children) {
                 updatedItem.children = updateSelection(item.children, id);
@@ -71,6 +71,7 @@ const TemplateNext: FC<IMenuProps> = (props) => {
     };
 
     const Elements = MenuItemRecursion(menuData);
+
     return (
         <div style={{ height: "98vh" }}>
             <Menu {...props} onChange={onChange}>
@@ -80,6 +81,6 @@ const TemplateNext: FC<IMenuProps> = (props) => {
     );
 };
 
-export const Default = TemplateNext.bind({});
-
-Default.args = {} as IMenuProps;
+export const Default: Story = {
+    render: (prop) => <StoryComponent {...prop} />
+};

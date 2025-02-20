@@ -39,8 +39,15 @@ const findPathOfDefaultOpened = (menu: ReactNode | ReactElement[], path: number[
     return null;
 };
 
+export interface OnchangeHandlerType {
+    index: number;
+    id: number | string;
+    isBack?: boolean;
+    routeAction?: boolean;
+}
+
 interface IMenuContextProps {
-    onChangeHandler: (OnchangeHandlerType) => void;
+    onChangeHandler: (props: OnchangeHandlerType) => void;
 }
 
 interface IMenuProps {
@@ -68,13 +75,6 @@ interface IMenuProps {
 //     disabled?: boolean;
 //     children: ReactNode | IMenuData[];
 // }
-
-export interface OnchangeHandlerType {
-    index: number;
-    id: number | string;
-    isBack?: boolean;
-    routeAction?: boolean;
-}
 
 /**
  * Menu component provides a list of options or actions available to the user within a specific context. Menus are used to offer additional functionality without cluttering the interface, allowing users to access commands, navigate to different sections, or modify settings quickly and efficiently.

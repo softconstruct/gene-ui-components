@@ -4,14 +4,14 @@ import { isValidElementType } from "react-is";
 
 import { CheckMark, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
 
+// components
 import Divider from "../../atoms/Divider";
-import { MenuContext, OnchangeHandlerType } from "./Menu";
+import { MenuContext } from "./Menu";
 
 interface IMenuItemProps {
     selected?: boolean;
     children: ReactNode;
     title?: string;
-    onChangeHandler?: (change: OnchangeHandlerType) => void;
     activeElement?: boolean;
     index: number;
     defaultOpened?: never;
