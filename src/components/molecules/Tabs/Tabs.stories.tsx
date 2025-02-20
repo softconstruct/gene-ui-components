@@ -15,10 +15,16 @@ const meta: Meta<ITabsProps> = {
     component: Tabs,
     argTypes: {
         isLoading: args({ control: "boolean", ...propCategory.states }),
-        className: args({ control: "false", ...propCategory.appearance }),
+        closable: args({ control: "boolean", ...propCategory.states }),
+
         size: args({ control: "select", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
-        type: args({ control: "select", ...propCategory.appearance })
+        type: args({ control: "select", ...propCategory.appearance }),
+        className: args({ control: "false", ...propCategory.appearance }),
+
+        onChange: args({ control: "false", ...propCategory.action }),
+
+        children: args({ control: "false", ...propCategory.content })
     },
     args: {
         direction: "horizontal",
