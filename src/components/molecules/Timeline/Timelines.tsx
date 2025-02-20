@@ -1,10 +1,14 @@
-import React, { Children, FC, ReactNode, cloneElement } from "react";
+import React, { Children, cloneElement, FC, ReactNode } from "react";
 import classNames from "classnames";
+
+import useWindowSize from "@hooks/useWindowSize";
+
 // Styles
 import "./Timeline.scss";
 
 import { ITimelineProps } from "./TimelinePoint";
 
+const mobileWidth = 480;
 interface ITimelinesProps {
     /**
      * Additional class for the parent element.
@@ -32,14 +36,25 @@ interface ITimelinesProps {
  */
 
 const Timelines: FC<ITimelinesProps> = ({ direction = "vertical", position = "after", className, children }) => {
-    const result = direction === "vertical" && (position === "top" || position === "bottom") ? "after" : position;
+    const { width } = useWindowSize();
+    const result =
+        (direction === "vertical" || width <= mobileWidth) && (position === "top" || position === "bottom")
+            ? "after"
+            : position;
+    const contentDirection = width <= mobileWidth ? "vertical" : direction;
+
     return (
-        <div className={classNames(`timeline timeline_direction_${direction} timeline_position_${result}`, className)}>
+        <div
+            className={classNames(
+                `timeline timeline_direction_${contentDirection} timeline_position_${result}`,
+                className
+            )}
+        >
             {Children.map(children, (timeline) => {
                 if (!React.isValidElement<ITimelineProps>(timeline)) return timeline;
 
                 return cloneElement(timeline, {
-                    direction,
+                    direction: contentDirection,
                     ...timeline.props
                 });
             })}
