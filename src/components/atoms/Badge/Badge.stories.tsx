@@ -41,6 +41,10 @@ export const WithBorder: Story = {
 export const withChildren: Story = {
     args: {
         size: "3xSmall",
-        children: <Button onClick={() => {}} appearance="danger" text="Button" size="medium" />
+        children: (
+            <Button onClick={() => {}} appearance="danger" size="medium">
+                Button
+            </Button>
+        )
     }
 };
