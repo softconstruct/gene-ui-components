@@ -1,9 +1,11 @@
-import React, { FC, ReactNode } from "react";
-import { CheckMark, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
+import React, { FC, ReactNode, useContext } from "react";
 import classNames from "classnames";
 import { isValidElementType } from "react-is";
-import { OnchangeHandlerType } from "./Menu";
+
+import { CheckMark, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
+
 import Divider from "../../atoms/Divider";
+import { MenuContext, OnchangeHandlerType } from "./Menu";
 
 interface IMenuItemProps {
     selected?: boolean;
@@ -28,7 +30,6 @@ interface IMenuItemProps {
 const MenuItem: FC<IMenuItemProps> = ({
     children,
     title,
-    onChangeHandler,
     activeElement,
     index,
     selected,
@@ -45,6 +46,7 @@ const MenuItem: FC<IMenuItemProps> = ({
             <ComponentRender />
         </div>
     );
+    const { onChangeHandler } = useContext(MenuContext);
     return (
         <>
             {typeof children !== "string" ? (

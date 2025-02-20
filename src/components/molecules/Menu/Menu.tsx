@@ -1,16 +1,20 @@
 import React, {
     Children,
     cloneElement,
+    createContext,
     FC,
     FunctionComponentElement,
     ReactElement,
     ReactNode,
     useEffect,
+    useMemo,
     useState
 } from "react";
 import classNames from "classnames";
+
 // Styles
 import "./Menu.scss";
+
 // import { IconProps } from "@geneui/icons";
 import Loader from "../../atoms/Loader";
 import { IMenuItemProps } from "./MenuItem";
@@ -34,6 +38,10 @@ const findPathOfDefaultOpened = (menu: ReactNode | ReactElement[], path: number[
 
     return null;
 };
+
+interface IMenuContextProps {
+    onChangeHandler: (OnchangeHandlerType) => void;
+}
 
 interface IMenuProps {
     /**
@@ -74,7 +82,6 @@ export interface OnchangeHandlerType {
 
 const cloneChildrenRecursive = (
     children: React.JSX.Element | React.JSX.Element[],
-    onChangeHandler: (change: OnchangeHandlerType) => void,
     paths: number[],
     props = {},
     regardingPaths: number[] = [],
@@ -108,7 +115,6 @@ const cloneChildrenRecursive = (
                       activeElement: paths.length === 1,
                       children: cloneChildrenRecursive(
                           child.props?.children,
-                          onChangeHandler,
                           paths.slice(1),
                           props,
                           [...regardingPaths, i],
@@ -123,11 +129,12 @@ const cloneChildrenRecursive = (
         return cloneElement(child, {
             ...child.props,
             ...childProps,
-            onChangeHandler,
             regardingPaths
         });
     });
 };
+
+export const MenuContext = createContext<IMenuContextProps>({} as IMenuContextProps);
 
 const Menu: FC<IMenuProps> = ({ className, onChange, children, isLoading, loadingText }) => {
     const [path, setPath] = useState<number[]>([]);
@@ -155,10 +162,17 @@ const Menu: FC<IMenuProps> = ({ className, onChange, children, isLoading, loadin
         }
     };
 
-    const clonedChildren = cloneChildrenRecursive(children, onChangeHandler, path);
+    const memoizedMenuContextValue: IMenuContextProps = useMemo(
+        () => ({
+            onChangeHandler
+        }),
+        [onChangeHandler]
+    );
+
+    const clonedChildren = cloneChildrenRecursive(children, path);
 
     return (
-        <>
+        <MenuContext.Provider value={memoizedMenuContextValue}>
             <div className={classNames("menu menu_isMobile menu_isSwappable", className)}>
                 <div className="menu__list menu__list_current">
                     <div className="menu__content">
@@ -172,7 +186,7 @@ const Menu: FC<IMenuProps> = ({ className, onChange, children, isLoading, loadin
                     </div>
                 </div>
             </div>
-        </>
+        </MenuContext.Provider>
     );
 };
 

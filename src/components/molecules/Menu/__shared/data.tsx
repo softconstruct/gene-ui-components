@@ -1,5 +1,7 @@
-import { Globe, LightBulb } from "@geneui/icons";
 import React from "react";
+
+import { Globe, LightBulb } from "@geneui/icons";
+
 import Checkbox from "../../Checkbox";
 
 export const data = [

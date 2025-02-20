@@ -3,11 +3,10 @@ import { Meta } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
+import { data } from "./__shared/data";
 // Components
 import Menu, { IMenuProps } from "./index";
 import MenuItem from "./MenuItem";
-import { data } from "./__shared/data";
 
 const meta: Meta<typeof Menu> = {
     title: "Molecules/Menu",
