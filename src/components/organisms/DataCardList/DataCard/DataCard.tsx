@@ -1,16 +1,14 @@
 import React, { AriaRole, FC, useState } from "react";
 import classNames from "classnames";
 
+// Component
+import Button from "@components/atoms/Button";
+import Pill, { IPillProps } from "@components/atoms/Pill";
+import TextLink, { ITextLinkProps } from "@components/atoms/TextLink";
+import { IKeyValueProps, Key, KeyValue, Value } from "@components/molecules/KeyValue";
+
 // Styles
 import "./DataCard.scss";
-
-import Button from "../../../atoms/Button";
-import Pill, { IPillProps } from "../../../atoms/Pill";
-import TextLink, { ITextLinkProps } from "../../../atoms/TextLink/TextLink";
-// Component
-import KeyValue, { IKeyValueProps } from "../../../molecules/KeyValue";
-import Key from "../../../molecules/KeyValue/Key";
-import Value from "../../../molecules/KeyValue/Value";
 
 interface TextValue {
     text: string;
@@ -83,8 +81,14 @@ const DataCard: FC<IDataCardProps> = ({ cardData, role, className, size = "mediu
     return (
         <div className={classNames("dataCard", className)} role={role}>
             {cardData.slice(0, SHOWING_ROWS_COUNT).map(({ key, value, infoText }, index) => (
-                // eslint-disable-next-line react/no-array-index-key
-                <KeyValue key={index} direction="horizontal" spaceBetween size={size}>
+                <KeyValue
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={index}
+                    className={`dataCard__row_${size}`}
+                    direction="horizontal"
+                    spaceBetween
+                    size={size}
+                >
                     <Key infoText={infoText}>{key}</Key>
                     <Value>{valueRenderer(value)}</Value>
                 </KeyValue>

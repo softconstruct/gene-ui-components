@@ -2,7 +2,7 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import KeyValue from "@components/molecules/KeyValue";
+import { KeyValue } from "@components/molecules/KeyValue";
 import DataCard, { IDataCardProps } from "@components/organisms/DataCardList/DataCard";
 
 const cardTextData: IDataCardProps["cardData"] = Array.from(Array(8).keys()).map((index) => ({

@@ -18,4 +18,14 @@
         justify-content: flex-end;
         gap: var(--guit-ref-spacing-xsmall);
     }
+
+    &__row {
+        &_medium {
+            height: 2.4rem;
+        }
+
+        &_large {
+            height: 3.2rem;
+        }
+    }
 }

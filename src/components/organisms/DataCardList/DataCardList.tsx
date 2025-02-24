@@ -90,7 +90,7 @@ const DataCardList: FC<IDataCardListProps> = ({
                             onRowsRendered={onRowsRendered}
                             rowRenderer={(props) => rowRenderer(props, size)}
                             height={dimensions.height}
-                            rowHeight={304}
+                            rowHeight={size === "medium" ? 326 : 374}
                             rowCount={data.length}
                             width={dimensions.width}
                         />
