@@ -111,7 +111,7 @@ export interface IPopoverProps {
     isOpen?: boolean;
     /**
      * Define width and height of the popover.<br>
-     * Possible values: <code> xLarge | large | medium | small </code>
+     * Possible values: <code> xLarge | large | medium | small | mobile </code>
      */
     size?: "xLarge" | "large" | "medium" | "small" | "mobile";
 

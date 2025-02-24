@@ -138,8 +138,10 @@
     }
 
     &__body {
-        padding-block: var(--guit-ref-spacing-large);
-        padding-inline: var(--guit-ref-spacing-large);
+        &_withPadding {
+            padding-block: var(--guit-ref-spacing-large);
+            padding-inline: var(--guit-ref-spacing-large);
+        }
     }
 
     &__content {
