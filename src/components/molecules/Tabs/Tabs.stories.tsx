@@ -37,7 +37,7 @@ const meta: Meta<ITabsProps> = {
 export default meta;
 type Story = StoryObj<ITabsProps>;
 
-export const popoverStory: Story = {
+export const Default: Story = {
     render: (props) => (
         <div style={{ height: 550 }}>
             <Tabs {...props}>
