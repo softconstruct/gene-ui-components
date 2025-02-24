@@ -4,6 +4,7 @@ import React, {
     createContext,
     FC,
     FunctionComponentElement,
+    JSX,
     ReactElement,
     ReactNode,
     useEffect,
@@ -11,6 +12,8 @@ import React, {
     useState
 } from "react";
 import classNames from "classnames";
+
+import { Popover, PopoverBody } from "@components/atoms/Popover";
 
 // Styles
 import "./Menu.scss";
@@ -81,7 +84,7 @@ interface IMenuProps {
  */
 
 const cloneChildrenRecursive = (
-    children: React.JSX.Element | React.JSX.Element[],
+    children: JSX.Element | JSX.Element[],
     paths: number[],
     props = {},
     regardingPaths: number[] = [],
@@ -173,19 +176,23 @@ const Menu: FC<IMenuProps> = ({ className, onChange, children, isLoading, loadin
 
     return (
         <MenuContext.Provider value={memoizedMenuContextValue}>
-            <div className={classNames("menu menu_isMobile menu_isSwappable", className)}>
-                <div className="menu__list menu__list_current">
-                    <div className="menu__content">
-                        {isLoading ? (
-                            <div className="menu__loader">
-                                <Loader text={loadingText} textPosition="below" />
+            <Popover setProps={() => {}} alwaysShow size="mobile">
+                <PopoverBody withPadding={false}>
+                    <div className={classNames("menu menu_isMobile menu_isSwappable", className)}>
+                        <div className="menu__list menu__list_current">
+                            <div className="menu__content">
+                                {isLoading ? (
+                                    <div className="menu__loader">
+                                        <Loader text={loadingText} textPosition="below" />
+                                    </div>
+                                ) : (
+                                    clonedChildren
+                                )}
                             </div>
-                        ) : (
-                            clonedChildren
-                        )}
+                        </div>
                     </div>
-                </div>
-            </div>
+                </PopoverBody>
+            </Popover>
         </MenuContext.Provider>
     );
 };

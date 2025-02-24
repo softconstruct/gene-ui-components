@@ -84,3 +84,22 @@ const StoryComponent: FC = (props) => {
 export const Default: Story = {
     render: (prop) => <StoryComponent {...prop} />
 };
+
+export const Single: Story = {
+    render: (prop) => {
+        return (
+            <Menu
+                {...prop}
+                onChange={(a, b) => {
+                    console.log(a, b);
+                }}
+            >
+                <MenuItem index={0} id={12} title="test">
+                    <MenuItem index={2} id={128}>
+                        test
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+        );
+    }
+};
