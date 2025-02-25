@@ -162,6 +162,10 @@ export interface IPopoverProps {
      * You are, however, supplied with nudgedLeft and nudgedTop values, so you may choose to handle content overflow as you wish.
      */
     disableReposition?: boolean;
+    /**
+     * A callback function that is called when the popover needs to be closed.
+     */
+    onClose?: () => void;
 }
 
 /**
@@ -181,7 +185,8 @@ const Popover: FC<IPopoverProps> = ({
     title,
     withArrow = true,
     children,
-    disableReposition = true
+    disableReposition = false,
+    onClose
 }) => {
     const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useScrollLock(document.body);
 
@@ -222,6 +227,12 @@ const Popover: FC<IPopoverProps> = ({
         ],
         whileElementsMounted: autoUpdate
     });
+
+    useEffect(() => {
+        if (!popoverOpened && onClose) {
+            onClose();
+        }
+    }, [popoverOpened]);
 
     useDismiss(context, {
         outsidePressEvent: "click"
