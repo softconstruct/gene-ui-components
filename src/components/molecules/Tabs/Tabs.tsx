@@ -236,7 +236,7 @@ const Tabs: FC<ITabsProps> = ({
         }
     };
 
-    const isMobile = useWindowSize().width <= 767;
+    const isMobile = width <= 767;
 
     if (isLoading) {
         return <div>Skeleton </div>;
