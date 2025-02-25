@@ -113,10 +113,10 @@ const Tabs: FC<ITabsProps> = ({
         });
     };
 
-    const disableButton = (ref: MutableRefObject<HTMLButtonElement | null>, disableState: boolean) => {
+    const disableButton = (ref: MutableRefObject<HTMLButtonElement | null>, isDisabled: boolean) => {
         if (ref.current) {
             // eslint-disable-next-line no-param-reassign
-            ref.current.disabled = disableState;
+            ref.current.disabled = isDisabled;
         }
     };
 
@@ -128,17 +128,17 @@ const Tabs: FC<ITabsProps> = ({
 
     /* eslint consistent-return: off */
     useEffect(() => {
-        if (!parentRef.current) return;
-
         const animationFrame = requestAnimationFrame(() => {
-            if (!parentRef.current) return;
-            setShowArrows(parentRef.current.scrollWidth > width);
+            return requestAnimationFrame(() => {
+                if (!parentRef.current) return;
+                setShowArrows(parentRef.current.scrollWidth > width);
+            });
         });
 
         return () => {
             cancelAnimationFrame(animationFrame);
         };
-    }, [parentRef.current, closable, width]);
+    }, [closable]);
 
     const slideShift = (isLeft?: boolean) => {
         if (!parentRef.current || !leftButtonRef.current || !rightButtonRef.current) return;
@@ -188,7 +188,7 @@ const Tabs: FC<ITabsProps> = ({
     const getIndex = (index: number) => {
         setSelectedTabIndex(index);
 
-        if (onChange && index) {
+        if (onChange && index !== undefined) {
             onChange(index);
         }
     };
