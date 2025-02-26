@@ -100,7 +100,7 @@
         display: flex;
     }
     &:not(#{ $this }_labelTop) {
-        gap: var(--guit-ref-spacing-4xsmall);
+        gap: var(--guit-ref-spacing-3xsmall);
 
         #{ $this }__infoContainer {
             padding-inline-start: var(--guit-ref-spacing-3xlarge);
