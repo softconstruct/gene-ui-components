@@ -132,11 +132,6 @@ export interface IPopoverProps {
     padding?: number;
 
     /**
-     * If `true`, the popover is always visible.
-     */
-    alwaysShow?: boolean;
-
-    /**
      * Function to update popover props dynamically.
      */
     setProps: Dispatch<SetStateAction<Record<string, unknown>>>;
@@ -182,7 +177,6 @@ const Popover: FC<IPopoverProps> = ({
     position = "bottom-center",
     padding = 10,
     initialState = false,
-    alwaysShow,
     setProps,
     title,
     withArrow = true,
@@ -250,7 +244,7 @@ const Popover: FC<IPopoverProps> = ({
     const { getReferenceProps, getFloatingProps } = useInteractions([click, role]);
 
     useEffect(() => {
-        const internalControl = isOpen === undefined && !alwaysShow ? getReferenceProps() : {};
+        const internalControl = isOpen === undefined ? getReferenceProps() : {};
 
         setProps({
             ref: refs.setReference,
@@ -280,7 +274,7 @@ const Popover: FC<IPopoverProps> = ({
               }
             : floatingStyles;
 
-    const isShowPopover = alwaysShow || isOpen || popoverOpened;
+    const isShowPopover = isOpen || popoverOpened;
 
     useEffect(() => {
         if (size === "mobile" && isShowPopover) {
@@ -356,7 +350,7 @@ const Popover: FC<IPopoverProps> = ({
             clearInterval(checkInterval);
             leastOverlap = Infinity;
         };
-    }, [popoverOpened, refs.floating.current, placement, alwaysShow, position, currentPosition]);
+    }, [popoverOpened, refs.floating.current, placement, position, currentPosition]);
 
     const arrowOffsetFromEdge = 5;
 
