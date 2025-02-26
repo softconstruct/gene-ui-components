@@ -108,7 +108,7 @@ export interface IPopoverProps {
      * Whether the popover is open initially. Defaults value is `false`.
      */
 
-    isOpen?: boolean;
+    initialState?: boolean;
     /**
      * Define width and height of the popover.<br>
      * Possible values: <code> xLarge | large | medium | small | mobile </code>
@@ -166,6 +166,8 @@ export interface IPopoverProps {
      * A callback function that is called when the popover needs to be closed.
      */
     onClose?: () => void;
+
+    isOpen?: boolean;
 }
 
 /**
@@ -179,18 +181,19 @@ const Popover: FC<IPopoverProps> = ({
     size = "medium",
     position = "bottom-center",
     padding = 10,
-    isOpen = false,
+    initialState = false,
     alwaysShow,
     setProps,
     title,
     withArrow = true,
     children,
     disableReposition = false,
-    onClose
+    onClose,
+    isOpen
 }) => {
     const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useScrollLock(document.body);
 
-    const [popoverOpened, setPopoverOpened] = useState(isOpen);
+    const [popoverOpened, setPopoverOpened] = useState(initialState);
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const [currentPosition, setCurrentPosition] = useState(correctPosition[position]);
 
@@ -247,11 +250,13 @@ const Popover: FC<IPopoverProps> = ({
     const { getReferenceProps, getFloatingProps } = useInteractions([click, role]);
 
     useEffect(() => {
+        const internalControl = isOpen === undefined && !alwaysShow ? getReferenceProps() : {};
+
         setProps({
             ref: refs.setReference,
-            ...getReferenceProps()
+            ...internalControl
         });
-    }, [setProps, getReferenceProps, refs.setReference]);
+    }, [setProps, getReferenceProps, isOpen, refs.setReference]);
 
     const [currentDirection] = placement.split("-") as [StaticSides];
 
@@ -275,7 +280,7 @@ const Popover: FC<IPopoverProps> = ({
               }
             : floatingStyles;
 
-    const isShowPopover = alwaysShow || popoverOpened;
+    const isShowPopover = alwaysShow || isOpen || popoverOpened;
 
     useEffect(() => {
         if (size === "mobile" && isShowPopover) {

@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { Meta, StoryObj } from "@storybook/react/";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -16,7 +16,7 @@ const meta: Meta<IPopoverProps> = {
         padding: args({ control: "number", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         alwaysShow: args({ control: "boolean", ...propCategory.states }),
-        isOpen: args({ control: "boolean", ...propCategory.states }),
+        isOpen: args({ control: "false", ...propCategory.states, defaultValue: undefined }),
         withArrow: args({ control: "boolean", ...propCategory.states }),
         disableReposition: args({ control: "boolean", ...propCategory.states }),
         children: args({ control: "false", ...propCategory.content }),
@@ -36,11 +36,15 @@ export default meta;
 
 type Story = StoryObj<IPopoverProps>;
 
-const PopoverStoryComponent: FC = (props) => {
+const PopoverStoryComponent: FC<IPopoverProps> = (...props) => {
     const [propsForContent, setPropsForContent] = useState({});
+    const [isOpen, setIsOpen] = useState(false);
+    const openHandler = () => {
+        setIsOpen((prev) => !prev);
+    };
     return (
         <div style={{ margin: "500px 500px", height: 7000 }}>
-            <Popover {...props} setProps={setPropsForContent}>
+            <Popover {...props} setProps={setPropsForContent} isOpen={isOpen}>
                 <PopoverBody>
                     <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
                 </PopoverBody>
@@ -61,7 +65,7 @@ const PopoverStoryComponent: FC = (props) => {
                     </PopoverFooterActions>
                 </PopoverFooter>
             </Popover>
-            <Button onClick={() => {}} {...propsForContent}>
+            <Button onClick={openHandler} {...propsForContent}>
                 Click for open
             </Button>
         </div>
@@ -69,10 +73,10 @@ const PopoverStoryComponent: FC = (props) => {
 };
 
 export const popoverStory: Story = {
-    render: (props) => <PopoverStoryComponent {...props} />
+    render: (props: IPopoverProps) => <PopoverStoryComponent {...props} />
 };
 
-const WithoutFooterComponent: FC = (props) => {
+const WithoutFooterComponent: FC<IPopoverProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
     return (
         <div style={{ margin: "500px 500px", height: 7000 }}>
@@ -88,10 +92,10 @@ const WithoutFooterComponent: FC = (props) => {
     );
 };
 export const WithoutFooter: Story = {
-    render: (props) => <WithoutFooterComponent {...props} />
+    render: (props: IPopoverProps) => <WithoutFooterComponent {...props} />
 };
 
-const WithoutHeaderComponent: FC = (props) => {
+const WithoutHeaderComponent: FC<IPopoverProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
     return (
         <div style={{ margin: "500px 500px", height: 7000 }}>
@@ -108,10 +112,10 @@ const WithoutHeaderComponent: FC = (props) => {
 };
 
 export const WithoutHeader: Story = {
-    render: (props) => <WithoutHeaderComponent {...props} />
+    render: (props: IPopoverProps) => <WithoutHeaderComponent {...props} />
 };
 
-const WithoutHeaderAndFooterComponent: FC = (props) => {
+const WithoutHeaderAndFooterComponent: FC<IPopoverProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
     return (
         <div style={{ margin: "500px 500px", height: 7000 }}>
@@ -128,5 +132,5 @@ const WithoutHeaderAndFooterComponent: FC = (props) => {
 };
 
 export const WithoutHeaderAndFooter: Story = {
-    render: (props) => <WithoutHeaderAndFooterComponent {...props} />
+    render: (props: IPopoverProps) => <WithoutHeaderAndFooterComponent {...props} />
 };
