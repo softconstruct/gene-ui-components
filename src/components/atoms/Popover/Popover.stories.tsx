@@ -15,7 +15,6 @@ const meta: Meta<IPopoverProps> = {
         position: args({ control: "select", ...propCategory.appearance }),
         padding: args({ control: "number", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
-        alwaysShow: args({ control: "boolean", ...propCategory.states }),
         isOpen: args({ control: "false", ...propCategory.states, defaultValue: undefined }),
         withArrow: args({ control: "boolean", ...propCategory.states }),
         disableReposition: args({ control: "boolean", ...propCategory.states }),

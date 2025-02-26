@@ -40,25 +40,25 @@ describe("Popover", () => {
     });
 
     it("renders children prop correct", () => {
-        setup.setProps({ alwaysShow: true });
+        setup.setProps({ isOpen: true });
         expect(provider().find(".swapComponent").exists()).toBeTruthy();
     });
 
     it("renders title prop correct", () => {
         const title = "test";
-        setup.setProps({ alwaysShow: true, title });
+        setup.setProps({ isOpen: true, title });
         expect(provider().find(".popover__header").text()).toBe(title);
     });
 
     it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "mobile"])("should have %p size", (size) => {
-        setup.setProps({ alwaysShow: true, size });
+        setup.setProps({ isOpen: true, size });
         expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
     });
 
     it("renders PopoverFooterActions child correct", () => {
         const child = "test";
         setup.setProps({
-            alwaysShow: true,
+            isOpen: true,
             children: (
                 <PopoverFooter>
                     <PopoverFooterActions>
@@ -73,7 +73,7 @@ describe("Popover", () => {
     it("renders withArrow prop correct", () => {
         setup.setProps({
             withArrow: true,
-            alwaysShow: true
+            isOpen: true
         });
         expect(provider().find(".popover__arrowPath").exists()).toBeTruthy();
     });
