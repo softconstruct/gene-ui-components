@@ -5,17 +5,19 @@
     display: inline-flex;
     background-color: var(--guit-sem-color-background-neutral-1-nudge);
     transform: translate3d(0, 0, 0);
+    width: 100%;
+    height: 100%;
 
     &_isWeb {
-        border: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style)
-            var(--guit-sem-color-border-neutral-2);
-        box-shadow:
-            var(--guit-sem-shadow-floating-2-position-x-1) var(--guit-sem-shadow-floating-2-position-y-1)
-                var(--guit-sem-shadow-floating-2-blur-1) var(--guit-sem-shadow-floating-2-spread-1)
-                var(--guit-sem-color-floating-2-rgba-1),
-            var(--guit-sem-shadow-floating-2-position-x-2) var(--guit-sem-shadow-floating-2-position-y-2)
-                var(--guit-sem-shadow-floating-2-blur-2) var(--guit-sem-shadow-floating-2-spread-2)
-                var(--guit-sem-color-floating-2-rgba-2);
+        // border: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style)
+        //    var(--guit-sem-color-border-neutral-2);
+        // box-shadow:
+        //    var(--guit-sem-shadow-floating-2-position-x-1) var(--guit-sem-shadow-floating-2-position-y-1)
+        //        var(--guit-sem-shadow-floating-2-blur-1) var(--guit-sem-shadow-floating-2-spread-1)
+        //        var(--guit-sem-color-floating-2-rgba-1),
+        //    var(--guit-sem-shadow-floating-2-position-x-2) var(--guit-sem-shadow-floating-2-position-y-2)
+        //        var(--guit-sem-shadow-floating-2-blur-2) var(--guit-sem-shadow-floating-2-spread-2)
+        //        var(--guit-sem-color-floating-2-rgba-2);
 
         &#{ $this }_size {
             &_large {
@@ -112,7 +114,7 @@
         }
     }
 
-    &_isMobile {
+    &_swappable {
         width: 100%;
         height: 100%;
         border-top-left-radius: var(--guit-ref-radius-2xsmall);
@@ -131,8 +133,8 @@
         }
 
         #{ $this }__content {
-            padding-inline-start: var(--guit-ref-spacing-3xsmall);
-            padding-inline-end: var(--guit-ref-spacing-3xsmall);
+            // padding-inline-start: var(--guit-ref-spacing-3xsmall);
+            // padding-inline-end: var(--guit-ref-spacing-3xsmall);
         }
     }
 
@@ -149,9 +151,10 @@
     &__list {
         display: flex;
         flex-direction: column;
+        height: 100%;
 
         &:not(&_current) {
-            visibility: hidden;
+            // visibility: hidden;
         }
 
         &_current {
@@ -272,6 +275,10 @@
             pointer-events: none;
             user-select: none;
             color: var(--guit-sem-color-foreground-disabled);
+        }
+
+        &_active {
+            background-color: var(--guit-sem-color-background-neutral-1-nudge-hover);
         }
 
         &:hover {

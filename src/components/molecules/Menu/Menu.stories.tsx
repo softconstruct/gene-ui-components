@@ -1,6 +1,8 @@
 import React, { FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import Button from "@components/atoms/Button";
+
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import { data } from "./__shared/data";
@@ -51,6 +53,7 @@ type Story = StoryObj<IMenuProps>;
 
 const StoryComponent: FC = (props) => {
     const [menuData, setMenuData] = useState(data);
+    const [propsForPopover, setPropsForPopover] = useState({});
 
     const updateSelection = (menu, id) => {
         return menu.map((item) => {
@@ -74,7 +77,8 @@ const StoryComponent: FC = (props) => {
 
     return (
         <div style={{ height: "98vh" }}>
-            <Menu {...props} onChange={onChange}>
+            <Button {...propsForPopover}>test</Button>
+            <Menu {...props} onChange={onChange} setPropsForPopover={setPropsForPopover}>
                 {Elements}
             </Menu>
         </div>
@@ -85,21 +89,29 @@ export const Default: Story = {
     render: (prop) => <StoryComponent {...prop} />
 };
 
-export const Single: Story = {
-    render: (prop) => {
-        return (
-            <Menu
-                {...prop}
-                onChange={(a, b) => {
-                    console.log(a, b);
-                }}
-            >
+export const Swappable: Story = {
+    render: (prop) => <StoryComponent {...prop} />,
+    args: { swappable: true }
+};
+
+const SimpleComponent: FC = (prop) => {
+    const [propsForPopover, setPropsForPopover] = useState({});
+    return (
+        <>
+            <Button onClick={() => {}} {...propsForPopover}>
+                test
+            </Button>
+            <Menu {...prop} setPropsForPopover={setPropsForPopover} onChange={() => {}}>
                 <MenuItem index={0} id={12} title="test">
                     <MenuItem index={2} id={128}>
                         test
                     </MenuItem>
                 </MenuItem>
             </Menu>
-        );
-    }
+        </>
+    );
+};
+
+export const Simple: Story = {
+    render: (props) => <SimpleComponent {...props} />
 };

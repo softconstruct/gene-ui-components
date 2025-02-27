@@ -1,8 +1,11 @@
-import React, { FC, ReactNode, useContext } from "react";
+import React, { Children, FC, ReactNode, useContext, useState } from "react";
 import classNames from "classnames";
 import { isValidElementType } from "react-is";
 
 import { CheckMark, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
+
+import { Popover, PopoverBody } from "@components/atoms/Popover";
+import Scrollbar from "@components/atoms/Scrollbar";
 
 // components
 import Divider from "../../atoms/Divider";
@@ -39,15 +42,110 @@ const MenuItem: FC<IMenuItemProps> = ({
     disabled,
     id,
     divider,
-    ComponentRender
+    ComponentRender,
+    emptyText
 }) => {
+    const [propsForPopover, setPropsForPopover] = useState({});
+    const { onChangeHandler, swappable } = useContext(MenuContext);
+
     const customElement = isValidElementType(ComponentRender) && (
         <div className="menu__item_custom">
             <ComponentRender />
         </div>
     );
-    const { onChangeHandler } = useContext(MenuContext);
-    return (
+
+    return swappable ? (
+        <>
+            {/* {typeof children !== "string" ? ( */}
+            {/*    <> */}
+            {/*        /!* Parent menu item *!/ */}
+            {/*        <button */}
+            {/*            type="button" */}
+            {/*            className={classNames("menu__item", { */}
+            {/*                menu__item_danger: danger, */}
+            {/*                menu__item_disabled: disabled */}
+            {/*            })} */}
+            {/*            {...(disabled ? { tabIndex: -1 } : {})} */}
+            {/*            {...propsForPopover} */}
+            {/*            onClick={() => { */}
+            {/*                if (onChangeHandler) { */}
+            {/*                    onChangeHandler({ index, id, isBack: false, routeAction: true }); */}
+            {/*                } */}
+            {/*            }} */}
+            {/*        > */}
+            {/*            <span className="menu__cell"> */}
+            {/*                {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />} */}
+            {/*                <span className="menu__itemTitle">{title}</span> */}
+            {/*            </span> */}
+
+            {/*            <ChevronRight className="menu__icon menu__icon_after" size={20} /> */}
+            {/*        </button> */}
+            {/*        {divider && <Divider />} */}
+            {/*        /!* menu list wrapper *!/ */}
+            {/*        <div */}
+            {/*            className={classNames("menu__list  ", { */}
+            {/*                menu__list_current: activeElement, */}
+            {/*                menu__item_disabled: disabled */}
+            {/*            })} */}
+            {/*        > */}
+            {/*            /!* header *!/ */}
+            {/*            {swappable && ( */}
+            {/*                <button */}
+            {/*                    type="button" */}
+            {/*                    className="menu__header" */}
+            {/*                    onClick={() => { */}
+            {/*                        if (onChangeHandler) { */}
+            {/*                            onChangeHandler({ index, id, isBack: true, routeAction: true }); */}
+            {/*                        } */}
+            {/*                    }} */}
+            {/*                > */}
+            {/*                    <ChevronLeft className="menu__icon menu__icon_before" size={20} /> */}
+            {/*                    <p className="menu__headerTitle">{title}</p> */}
+            {/*                </button> */}
+            {/*            )} */}
+
+            {/*            <Scrollbar className="menu__content"> */}
+            {/*                {Children.count(children) > 0 ? ( */}
+            {/*                    <span className="menu__itemTitle">{children}</span> */}
+            {/*                ) : ( */}
+            {/*                    <div className="menu__empty"> */}
+            {/*                        <h1>{emptyText || "No data to show"} e</h1> */}
+            {/*                    </div> */}
+            {/*                )} */}
+            {/*            </Scrollbar> */}
+            {/*        </div> */}
+            {/*    </> */}
+            {/* ) : ( */}
+            {/*    // Simple menu item */}
+            {/*    <> */}
+            {/*        {customElement || ( */}
+            {/*            <button */}
+            {/*                type="button" */}
+            {/*                className={classNames("menu__item", { */}
+            {/*                    menu__item_danger: danger, */}
+            {/*                    menu__item_selected: selected, */}
+            {/*                    menu__item_disabled: disabled */}
+            {/*                })} */}
+            {/*                onClick={() => { */}
+            {/*                    if (onChangeHandler) { */}
+            {/*                        onChangeHandler({ index, id, isBack: false, routeAction: false }); */}
+            {/*                    } */}
+            {/*                }} */}
+            {/*                {...(disabled ? { tabIndex: -1 } : {})} */}
+            {/*            > */}
+            {/*                <span className="menu__cell"> */}
+            {/*                    {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />} */}
+            {/*                    <span className="menu__itemTitle">{children}</span> */}
+            {/*                </span> */}
+            {/*                {(selected && <CheckMark className="menu__icon menu__icon_after" size={20} />) || */}
+            {/*                    (IconAfter && <IconAfter className="menu__icon menu__icon_after" size={20} />)} */}
+            {/*            </button> */}
+            {/*        )} */}
+            {/*        {divider && <Divider />} */}
+            {/*    </> */}
+            {/* )} */}
+        </>
+    ) : (
         <>
             {typeof children !== "string" ? (
                 <>
@@ -56,12 +154,14 @@ const MenuItem: FC<IMenuItemProps> = ({
                         type="button"
                         className={classNames("menu__item", {
                             menu__item_danger: danger,
-                            menu__item_disabled: disabled
+                            menu__item_disabled: disabled,
+                            menu__item_active: activeElement
                         })}
                         {...(disabled ? { tabIndex: -1 } : {})}
+                        {...propsForPopover}
                         onClick={() => {
                             if (onChangeHandler) {
-                                onChangeHandler({ index, id, isBack: false, routeAction: true });
+                                onChangeHandler({ index, id, isBack: activeElement, routeAction: true });
                             }
                         }}
                     >
@@ -74,27 +174,50 @@ const MenuItem: FC<IMenuItemProps> = ({
                     </button>
                     {divider && <Divider />}
                     {/* menu list wrapper */}
-                    <div
-                        className={classNames("menu__list  ", {
-                            menu__list_current: activeElement,
-                            menu__item_disabled: disabled
-                        })}
+                    <Popover
+                        setProps={setPropsForPopover}
+                        size={swappable ? "mobile" : "small"}
+                        disableReposition
+                        position="right-top"
+                        withArrow={false}
+                        padding={5}
+                        open={activeElement}
                     >
-                        {/* header */}
-                        <button
-                            type="button"
-                            className="menu__header"
-                            onClick={() => {
-                                if (onChangeHandler) {
-                                    onChangeHandler({ index, id, isBack: true, routeAction: true });
-                                }
-                            }}
-                        >
-                            <ChevronLeft className="menu__icon menu__icon_before" size={20} />
-                            <p className="menu__headerTitle">{title}</p>
-                        </button>
-                        <div className="menu__content">{children}</div>
-                    </div>
+                        <PopoverBody withPadding={false}>
+                            <div
+                                className={classNames("menu__list  ", {
+                                    menu__list_current: activeElement,
+                                    menu__item_disabled: disabled
+                                })}
+                            >
+                                {/* header */}
+                                {swappable && (
+                                    <button
+                                        type="button"
+                                        className="menu__header"
+                                        onClick={() => {
+                                            if (onChangeHandler) {
+                                                onChangeHandler({ index, id, isBack: true, routeAction: true });
+                                            }
+                                        }}
+                                    >
+                                        <ChevronLeft className="menu__icon menu__icon_before" size={20} />
+                                        <p className="menu__headerTitle">{title}</p>
+                                    </button>
+                                )}
+
+                                <Scrollbar className="menu__content">
+                                    {Children.count(children) > 0 ? (
+                                        <span className="menu__itemTitle">{children}</span>
+                                    ) : (
+                                        <div className="menu__empty">
+                                            <h1>{emptyText || "No data to show"} e</h1>
+                                        </div>
+                                    )}
+                                </Scrollbar>
+                            </div>
+                        </PopoverBody>
+                    </Popover>
                 </>
             ) : (
                 // Simple menu item

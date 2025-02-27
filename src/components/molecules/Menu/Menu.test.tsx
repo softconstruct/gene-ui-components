@@ -1,16 +1,16 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
+import GeneUIProvider from "../../providers/GeneUIProvider";
 // Components
 import Menu, { IMenuProps } from "./index";
-import GeneUIProvider from "../../providers/GeneUIProvider";
 import MenuItem from "./MenuItem";
 
 describe("Menu ", () => {
     let setup: ReactWrapper<IMenuProps>;
     beforeEach(() => {
         setup = mount(
-            <Menu onChange={() => {}}>
+            <Menu onChange={() => {}} setPropsForPopover={() => {}}>
                 <MenuItem selected={false} index={0} danger={false} disabled={false} id="testId">
                     test
                 </MenuItem>
