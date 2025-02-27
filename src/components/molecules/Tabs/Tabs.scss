@@ -8,14 +8,15 @@
         flex-direction: column;
 
         #{ $this }__wrapper {
-            overflow: hidden;
+            // overflow: hidden;
             white-space: nowrap;
-            margin: calc(-1 * var(--guit-ref-spacing-4xsmall));
+
+            // margin: calc(-1 * var(--guit-ref-spacing-4xsmall));
         }
 
         #{ $this }__list {
-            overflow-x: auto;
-            overflow-y: hidden;
+            // overflow-x: auto;
+            // overflow-y: hidden;
         }
 
         &#{ $this }_line {
@@ -159,7 +160,7 @@
 
         &_button {
             flex: 0 0 auto;
-            box-shadow: 0 calc(-1 * var(--guit-ref-border-width-thin)) 0 0 var(--guit-sem-color-border-neutral-2) inset;
+            box-shadow: 0 -0.1rem 0 0 var(--guit-sem-color-border-neutral-2) inset;
 
             [dir="rtl"] & {
                 rotate: 180deg;
@@ -210,16 +211,8 @@
         display: flex;
         flex: 1;
         box-sizing: border-box;
-        padding: var(--guit-ref-spacing-4xsmall);
+        padding-top: var(--guit-ref-spacing-4xsmall);
         scroll-behavior: smooth;
-
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        &::-webkit-scrollbar {
-            display: none;
-        }
-
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
     }
 
     &__button {

@@ -22,6 +22,7 @@ import useWindowSize from "@hooks/useWindowSize";
 // Styles
 import "./Tabs.scss";
 
+import { Scrollbar } from "../../../index";
 // Components
 import Button from "../../atoms/Button";
 import { ITabProps } from ".";
@@ -266,17 +267,19 @@ const Tabs: FC<ITabsProps> = ({
                             />
                         </div>
                     )}
-                    <div className="tabs__wrapper">
-                        <div className="tabs__list" ref={parentRef} onScroll={scrollEvent}>
-                            {Children.map(AllChildren, (child, index) =>
-                                cloneElement(child as JSX.Element, {
-                                    closable,
-                                    ...(child as JSX.Element).props,
-                                    index
-                                })
-                            )}
+                    <Scrollbar>
+                        <div className="tabs__wrapper">
+                            <div className="tabs__list" ref={parentRef} onScroll={scrollEvent}>
+                                {Children.map(AllChildren, (child, index) =>
+                                    cloneElement(child as JSX.Element, {
+                                        closable,
+                                        ...(child as JSX.Element).props,
+                                        index
+                                    })
+                                )}
+                            </div>
                         </div>
-                    </div>
+                    </Scrollbar>
 
                     {isHorizontal && showArrows && !isMobile && (
                         <div className="tabs__nav_button">
