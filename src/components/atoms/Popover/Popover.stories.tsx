@@ -15,19 +15,22 @@ const meta: Meta<IPopoverProps> = {
         position: args({ control: "select", ...propCategory.appearance }),
         padding: args({ control: "number", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
-        isOpen: args({ control: "false", ...propCategory.states, defaultValue: undefined }),
+        open: args({ control: "boolean", ...propCategory.states, defaultValue: undefined }),
         withArrow: args({ control: "boolean", ...propCategory.states }),
         disableReposition: args({ control: "boolean", ...propCategory.states }),
         children: args({ control: "false", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),
         footerContent: args({ control: "false", ...propCategory.content }),
-        setProps: args({ control: "false", ...propCategory.functionality })
+        setProps: args({ control: "false", ...propCategory.functionality }),
+        onClose: args({ control: "false", ...propCategory.action }),
+        defaultOpen: args({ control: "boolean", ...propCategory.states })
     },
     args: {
         padding: 15,
         position: "bottom-left",
         size: "medium",
-        title: "Popover"
+        title: "Popover",
+        onClose: () => {}
     }
 };
 
@@ -35,15 +38,12 @@ export default meta;
 
 type Story = StoryObj<IPopoverProps>;
 
-const PopoverStoryComponent: FC<IPopoverProps> = (...props) => {
+const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
-    const [isOpen, setIsOpen] = useState(false);
-    const openHandler = () => {
-        setIsOpen((prev) => !prev);
-    };
+
     return (
         <div style={{ margin: "500px 500px", height: 7000 }}>
-            <Popover {...props} setProps={setPropsForContent} isOpen={isOpen}>
+            <Popover {...props} setProps={setPropsForContent}>
                 <PopoverBody>
                     <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
                 </PopoverBody>
@@ -64,7 +64,7 @@ const PopoverStoryComponent: FC<IPopoverProps> = (...props) => {
                     </PopoverFooterActions>
                 </PopoverFooter>
             </Popover>
-            <Button onClick={openHandler} {...propsForContent}>
+            <Button onClick={() => {}} {...propsForContent}>
                 Click for open
             </Button>
         </div>

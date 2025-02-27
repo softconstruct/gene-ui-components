@@ -108,7 +108,7 @@ export interface IPopoverProps {
      * Whether the popover is open initially. Defaults value is `false`.
      */
 
-    initialState?: boolean;
+    defaultOpen?: boolean;
     /**
      * Define width and height of the popover.<br>
      * Possible values: <code> xLarge | large | medium | small | mobile </code>
@@ -161,8 +161,10 @@ export interface IPopoverProps {
      * A callback function that is called when the popover needs to be closed.
      */
     onClose?: () => void;
-
-    isOpen?: boolean;
+    /**
+     * Use `open` prop to control open state. By default, open is controls by component.
+     */
+    open?: boolean;
 }
 
 /**
@@ -176,18 +178,18 @@ const Popover: FC<IPopoverProps> = ({
     size = "medium",
     position = "bottom-center",
     padding = 10,
-    initialState = false,
+    defaultOpen = false,
     setProps,
     title,
     withArrow = true,
     children,
     disableReposition = false,
     onClose,
-    isOpen
+    open
 }) => {
     const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useScrollLock(document.body);
 
-    const [popoverOpened, setPopoverOpened] = useState(initialState);
+    const [popoverOpened, setPopoverOpened] = useState(defaultOpen);
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const [currentPosition, setCurrentPosition] = useState(correctPosition[position]);
 
@@ -244,13 +246,13 @@ const Popover: FC<IPopoverProps> = ({
     const { getReferenceProps, getFloatingProps } = useInteractions([click, role]);
 
     useEffect(() => {
-        const internalControl = isOpen === undefined ? getReferenceProps() : {};
+        const internalControl = open === undefined ? getReferenceProps() : {};
 
         setProps({
             ref: refs.setReference,
             ...internalControl
         });
-    }, [setProps, getReferenceProps, isOpen, refs.setReference]);
+    }, [setProps, getReferenceProps, open, refs.setReference]);
 
     const [currentDirection] = placement.split("-") as [StaticSides];
 
@@ -274,7 +276,7 @@ const Popover: FC<IPopoverProps> = ({
               }
             : floatingStyles;
 
-    const isShowPopover = isOpen || popoverOpened;
+    const isShowPopover = open || popoverOpened;
 
     useEffect(() => {
         if (size === "mobile" && isShowPopover) {
