@@ -47,6 +47,7 @@ const MenuItem: FC<IMenuItemProps> = ({
 }) => {
     const [propsForPopover, setPropsForPopover] = useState({});
     const { onChangeHandler, swappable } = useContext(MenuContext);
+    const [innerActiveState, setInnerActiveState] = useState(false);
 
     const customElement = isValidElementType(ComponentRender) && (
         <div className="menu__item_custom">
@@ -54,6 +55,18 @@ const MenuItem: FC<IMenuItemProps> = ({
         </div>
     );
 
+    const parentButtonClickHandler = () => {
+        if (onChangeHandler) {
+            // console.log("parentButtonClickHandler", index);
+            setInnerActiveState((prev) => !prev);
+            onChangeHandler({ index, id, isBack: innerActiveState, routeAction: true });
+        }
+    };
+
+    const popoverCloseHandler = () => {
+        // console.log(innerActiveState, activeElement, index, "popoverCloseHandler");
+    };
+    // console.log(activeElement, "activeElement");
     return swappable ? (
         <>
             {/* {typeof children !== "string" ? ( */}
@@ -159,11 +172,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                         })}
                         {...(disabled ? { tabIndex: -1 } : {})}
                         {...propsForPopover}
-                        onClick={() => {
-                            if (onChangeHandler) {
-                                onChangeHandler({ index, id, isBack: activeElement, routeAction: true });
-                            }
-                        }}
+                        onClick={parentButtonClickHandler}
                     >
                         <span className="menu__cell">
                             {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />}
@@ -181,6 +190,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                         position="right-top"
                         withArrow={false}
                         padding={5}
+                        onClose={popoverCloseHandler}
                         open={activeElement}
                     >
                         <PopoverBody withPadding={false}>

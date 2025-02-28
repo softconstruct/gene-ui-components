@@ -70,21 +70,8 @@ interface IMenuProps {
     swappable?: boolean;
     defaultOpen?: boolean;
     setPropsForPopover: Dispatch<SetStateAction<Record<string, unknown>>>;
+    isMenuOpen: boolean;
 }
-
-// interface IMenuData {
-//     title: string;
-//     selected?: boolean;
-//     id: number | string;
-//     value: string;
-//     IconBefore: FC<IconProps>;
-//     IconAfter: FC<IconProps>;
-//     danger?: boolean;
-//     defaultOpened?: never;
-//     isLoading?: boolean;
-//     disabled?: boolean;
-//     children: ReactNode | IMenuData[];
-// }
 
 const cloneChildrenRecursive = (
     children: JSX.Element | JSX.Element[],
@@ -101,18 +88,8 @@ const cloneChildrenRecursive = (
             </div>
         );
     }
-    // console.log(emptyText, 22222);
-    // if (Array.isArray(children) && !children.length) {
-    //     return (
-    //         <div className="menu__empty">
-    //             <h1>{emptyText}</h1>
-    //         </div>
-    //     );
-    // }
-
     return Children.map(children, (child, i) => {
         const isActive = paths?.length && i === paths[0];
-
         const childProps =
             isActive && child.props?.children
                 ? {
@@ -153,9 +130,15 @@ const Menu: FC<IMenuProps> = ({
     loadingText,
     swappable,
     setPropsForPopover,
-    defaultOpen = false
+    defaultOpen = false,
+    isMenuOpen
 }) => {
     const [path, setPath] = useState<number[]>([]);
+    const [isMenuOpenState, setIsMenuOpenState] = useState(false);
+    useEffect(() => {
+        setIsMenuOpenState(isMenuOpen);
+        if (!isMenuOpenState) setPath([]);
+    }, [isMenuOpen]);
 
     useEffect(() => {
         const defaultPath = findPathOfDefaultOpened(children);
@@ -166,16 +149,21 @@ const Menu: FC<IMenuProps> = ({
 
     const onChangeHandler = ({ index, id, isBack, routeAction }: OnchangeHandlerType) => {
         onChange(path, id);
+
         if (routeAction) {
             if (isBack) {
                 const newSteps = path.slice(0, -1);
                 onChange(newSteps, id);
                 setPath(newSteps);
+            } else if (!isBack && path.length && index !== path.at(-1)) {
+                const newSteps = path.slice(0, -1);
+                onChange([...newSteps, index], id);
+                setPath([...newSteps, index]);
             } else {
                 setPath((prev) => [...prev, index]);
             }
         }
-        if (!isBack) {
+        if (!isBack && !routeAction) {
             onChange([...path, index], id);
         }
     };
@@ -204,6 +192,8 @@ const Menu: FC<IMenuProps> = ({
                 onClose={popoverCloseHandler}
                 defaultOpen={defaultOpen}
                 withArrow={false}
+                // open={isMenuOpenState}
+                open
             >
                 <PopoverBody withPadding={false}>
                     <div className={classNames("menu menu_isSwappable", { menu_swappable: swappable }, className)}>

@@ -96,14 +96,15 @@ export const Swappable: Story = {
 
 const SimpleComponent: FC = (prop) => {
     const [propsForPopover, setPropsForPopover] = useState({});
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     return (
         <>
-            <Button onClick={() => {}} {...propsForPopover}>
+            <Button onClick={() => setIsMenuOpen((prev) => !prev)} {...propsForPopover}>
                 test
             </Button>
-            <Menu {...prop} setPropsForPopover={setPropsForPopover} onChange={() => {}}>
+            <Menu {...prop} setPropsForPopover={setPropsForPopover} onChange={() => {}} isMenuOpen={isMenuOpen}>
                 <MenuItem index={0} id={12} title="test">
-                    <MenuItem index={2} id={128}>
+                    <MenuItem index={2} id={128} selected>
                         test
                     </MenuItem>
                 </MenuItem>
@@ -112,6 +113,6 @@ const SimpleComponent: FC = (prop) => {
     );
 };
 
-export const Simple: Story = {
+export const SimpleWithOpenControl: Story = {
     render: (props) => <SimpleComponent {...props} />
 };
