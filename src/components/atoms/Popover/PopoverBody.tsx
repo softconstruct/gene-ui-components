@@ -11,7 +11,10 @@ interface IPopoverBodyProps extends PropsWithChildren {
 
 const PopoverBody: FC<IPopoverBodyProps> = ({ children, withPadding = true }) => {
     return (
-        <div className={classNames("popover__body", { popover__body_withPadding: withPadding })}>
+        <div
+            className={classNames("popover__body", { popover__body_withPadding: withPadding })}
+            style={{ height: 300 }}
+        >
             <div className="popover__content">{children} </div>
         </div>
     );

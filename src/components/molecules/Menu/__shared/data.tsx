@@ -8,7 +8,7 @@ export const data = [
     { title: "item 1", selected: false, id: "1233", value: "name1", IconBefore: Globe, danger: true, divider: true },
     { title: "item 2", selected: false, id: "123fd343", value: "name3", IconAfter: LightBulb, danger: true },
     {
-        title: "item 2",
+        title: "item 2ii",
         selected: false,
         id: "123dsfd343",
         value: "name3",

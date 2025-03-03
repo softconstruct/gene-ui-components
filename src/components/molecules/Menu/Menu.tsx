@@ -1,3 +1,4 @@
+/* eslint-disable default-param-last */
 import React, {
     Children,
     cloneElement,
@@ -7,7 +8,6 @@ import React, {
     FunctionComponentElement,
     JSX,
     ReactElement,
-    ReactNode,
     SetStateAction,
     useEffect,
     useMemo,
@@ -25,28 +25,28 @@ import "./Menu.scss";
 import Loader from "../../atoms/Loader";
 import { IMenuItemProps } from "./MenuItem";
 
-const findPathOfDefaultOpened = (menu: ReactNode | ReactElement[], path: number[] = []): number[] | null => {
-    if (!Array.isArray(menu)) return null;
-    for (let i = 0; i < menu?.length; i++) {
-        const item = menu[i];
+// const findPathOfDefaultOpened = (menu: ReactNode | ReactElement[], path: number[] = []): number[] | null => {
+//     if (!Array.isArray(menu)) return null;
+//     for (let i = 0; i < menu?.length; i++) {
+//         const item = menu[i];
 
-        if (item.props?.defaultOpened) {
-            return [...path, i];
-        }
+//         if (item.props?.defaultOpened) {
+//             return [...path, i];
+//         }
 
-        if (item.props.children && Array.isArray(item.props.children)) {
-            const childPath = findPathOfDefaultOpened(item.props.children, [...path, i]);
-            if (childPath) {
-                return childPath;
-            }
-        }
-    }
+//         if (item.props.children && Array.isArray(item.props.children)) {
+//             const childPath = findPathOfDefaultOpened(item.props.children, [...path, i]);
+//             if (childPath) {
+//                 return childPath;
+//             }
+//         }
+//     }
 
-    return null;
-};
+//     return null;
+// };
 
 export interface OnchangeHandlerType {
-    index: number;
+    index: string;
     id: number | string;
     isBack?: boolean;
     routeAction?: boolean;
@@ -75,11 +75,13 @@ interface IMenuProps {
 
 const cloneChildrenRecursive = (
     children: JSX.Element | JSX.Element[],
-    paths: number[],
+    paths: string[],
+
     props = {},
     regardingPaths: number[] = [],
     isLoading = false,
-    loadingText = ""
+    loadingText = "",
+    pathID = ""
 ): FunctionComponentElement<IMenuItemProps>[] | FunctionComponentElement<HTMLElement> => {
     if (isLoading) {
         return (
@@ -89,30 +91,28 @@ const cloneChildrenRecursive = (
         );
     }
     return Children.map(children, (child, i) => {
-        const isActive = paths?.length && i === paths[0];
-        const childProps =
-            isActive && child.props?.children
-                ? {
-                      ...props,
-                      activeElement: paths.length === 1,
-                      children: cloneChildrenRecursive(
-                          child.props?.children,
-                          paths.slice(1),
-                          props,
-                          [...regardingPaths, i],
-                          child.props.isLoading,
-                          child.props.loadingText,
-                          child.props.emptyText
-                      )
-                  }
-                : props;
+        const generateId = pathID ? `${pathID}_${i}` : `${i}`;
 
-        // Return the cloned element with new props
-        return cloneElement(child, {
-            ...child.props,
-            ...childProps,
-            regardingPaths
-        });
+        return cloneElement(
+            child,
+            {
+                ...props,
+                regardingPaths,
+                generateId,
+                paths
+            },
+            Array.isArray(child.props?.children)
+                ? cloneChildrenRecursive(
+                      child.props?.children,
+                      paths,
+                      props,
+                      [...regardingPaths, i],
+                      child.props.isLoading,
+                      child.props.loadingText,
+                      generateId
+                  )
+                : child.props?.children
+        );
     });
 };
 
@@ -133,39 +133,41 @@ const Menu: FC<IMenuProps> = ({
     defaultOpen = false,
     isMenuOpen
 }) => {
-    const [path, setPath] = useState<number[]>([]);
-    const [isMenuOpenState, setIsMenuOpenState] = useState(false);
+    // const [isMenuOpenState, setIsMenuOpenState] = useState(false);
+    const [paths, setPaths] = useState<string[]>([]);
     useEffect(() => {
-        setIsMenuOpenState(isMenuOpen);
-        if (!isMenuOpenState) setPath([]);
+        // setIsMenuOpenState(isMenuOpen);
+        // if (!isMenuOpenState) setPath([]);
     }, [isMenuOpen]);
 
     useEffect(() => {
-        const defaultPath = findPathOfDefaultOpened(children);
-        if (defaultPath) {
-            setPath(defaultPath);
-        }
+        // const defaultPath = findPathOfDefaultOpened(children);
+        // if (defaultPath) {
+        //     setPath(defaultPath);
+        // }
     }, []);
 
-    const onChangeHandler = ({ index, id, isBack, routeAction }: OnchangeHandlerType) => {
-        onChange(path, id);
+    const onChangeHandler = ({ index, id, isBack }: OnchangeHandlerType) => {
+        onChange([5, 2], id);
 
-        if (routeAction) {
-            if (isBack) {
-                const newSteps = path.slice(0, -1);
-                onChange(newSteps, id);
-                setPath(newSteps);
-            } else if (!isBack && path.length && index !== path.at(-1)) {
-                const newSteps = path.slice(0, -1);
-                onChange([...newSteps, index], id);
-                setPath([...newSteps, index]);
-            } else {
-                setPath((prev) => [...prev, index]);
-            }
-        }
-        if (!isBack && !routeAction) {
-            onChange([...path, index], id);
-        }
+        const toArray = index.split("_");
+
+        setPaths(isBack ? toArray.slice(0, -1) : toArray);
+
+        // if (routeAction) {
+        //     if (isBack) {
+        //         onChange(index.split("_"), id);
+        //         setPath(index.split("_"));
+        //     } else if (!isBack && path.length && index !== path.at(-1)) {
+        //         onChange(index.split("_"), id);
+        //         setPath(index.split("_"));
+        //     } else {
+        //         setPath(index.split("_"));
+        //     }
+        // }
+        // if (!isBack && !routeAction) {
+        //     onChange(index.split("_"), id);
+        // }
     };
 
     const memoizedMenuContextValue: IMenuContextProps = useMemo(
@@ -176,7 +178,7 @@ const Menu: FC<IMenuProps> = ({
         [onChangeHandler, swappable]
     );
 
-    const clonedChildren = cloneChildrenRecursive(children, path);
+    const clonedChildren = cloneChildrenRecursive(children, paths);
 
     const popoverCloseHandler = () => {
         // console.log("close");
