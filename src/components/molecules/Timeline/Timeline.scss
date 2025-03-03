@@ -58,7 +58,7 @@
             }
 
             #{ $this }__content {
-                padding-inline-end: var(--guit-ref-spacing-xsmall);
+                padding-inline-end: var(--guit-ref-spacing-large);
             }
         }
 
@@ -132,7 +132,7 @@
             }
 
             #{ $this }__content {
-                padding-bottom: var(--guit-ref-spacing-xsmall);
+                padding-bottom: var(--guit-ref-spacing-large);
             }
         }
     }
