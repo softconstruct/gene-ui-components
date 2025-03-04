@@ -12,11 +12,7 @@ const meta: Meta<IScrollbarProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         children: args({ control: "false", ...propCategory.content }),
-        autoScrollTopTo: args({ control: "number", ...propCategory.functionality }),
-        autoScrollLeftTo: args({ control: "number", ...propCategory.functionality }),
-        onScroll: args({ control: "false", ...propCategory.action }),
-        customHeight: args({ control: "text", ...propCategory.appearance }),
-        customWidth: args({ control: "text", ...propCategory.appearance })
+        onScroll: args({ control: "false", ...propCategory.action })
     },
     args: {
         onScroll: undefined
