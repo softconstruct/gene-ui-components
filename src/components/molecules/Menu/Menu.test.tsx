@@ -11,7 +11,7 @@ describe("Menu ", () => {
     beforeEach(() => {
         setup = mount(
             <Menu onChange={() => {}} setPropsForPopover={() => {}}>
-                <MenuItem selected={false} index={0} danger={false} disabled={false} id="testId">
+                <MenuItem selected={false} danger={false} disabled={false} id="testId">
                     test
                 </MenuItem>
             </Menu>,

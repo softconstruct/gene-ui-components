@@ -13,12 +13,9 @@ import { MenuContext } from "./Menu";
 
 interface IMenuItemProps {
     selected?: boolean;
-    preventIndex: string;
-    children: ReactNode;
+    children?: ReactNode;
     title?: string;
     activeElement?: boolean;
-    index: number;
-    defaultOpened?: never;
     isLoading?: never;
     IconBefore?: FC<IconProps>;
     IconAfter?: FC<IconProps>;
@@ -29,15 +26,15 @@ interface IMenuItemProps {
     loadingText?: string;
     emptyText?: string;
     ComponentRender?: FC;
-    generateId: string;
-    paths: string[];
+    generateId?: string;
+    paths?: string[];
+    pathID?: string;
 }
 
 const MenuItem: FC<IMenuItemProps> = ({
     children,
     title,
     activeElement,
-
     selected,
     IconBefore,
     IconAfter,
@@ -52,19 +49,21 @@ const MenuItem: FC<IMenuItemProps> = ({
 }) => {
     const [propsForPopover, setPropsForPopover] = useState({});
     const { onChangeHandler, swappable } = useContext(MenuContext);
+    const isOpen = !!generateId?.length && (paths?.join("_").startsWith(generateId) || paths?.join("_") === generateId);
 
-    const customElement = isValidElementType(ComponentRender) && (
-        <div className="menu__item_custom">
-            <ComponentRender />
-        </div>
-    );
-    const isOpen = paths.join("_").includes(generateId);
-
-    const parentButtonClickHandler = () => {
-        if (onChangeHandler) {
-            onChangeHandler({ index: generateId, id, isBack: isOpen, routeAction: true });
+    const onItemClickHandler = (isBack: boolean) => {
+        if (onChangeHandler && generateId) {
+            onChangeHandler({ generateId, id, isBack });
         }
     };
+
+    const CustomElement = isValidElementType(ComponentRender) && (
+        <button type="button" className="menu__item_custom " onClick={() => onItemClickHandler(isOpen)}>
+            <ComponentRender />
+        </button>
+    );
+
+    // const isOpen = paths?.join("_").includes(generateId);
 
     const popoverCloseHandler = () => {
         // console.log(innerActiveState, activeElement, index, "popoverCloseHandler");
@@ -84,11 +83,11 @@ const MenuItem: FC<IMenuItemProps> = ({
                         className={classNames("menu__item", {
                             menu__item_danger: danger,
                             menu__item_disabled: disabled,
-                            menu__item_active: activeElement
+                            menu__item_active: isOpen
                         })}
                         {...(disabled ? { tabIndex: -1 } : {})}
                         {...propsForPopover}
-                        onClick={parentButtonClickHandler}
+                        onClick={() => onItemClickHandler(isOpen)}
                     >
                         <span className="menu__cell">
                             {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />}
@@ -121,16 +120,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                                     <button
                                         type="button"
                                         className="menu__header"
-                                        onClick={() => {
-                                            if (onChangeHandler) {
-                                                onChangeHandler({
-                                                    index: generateId,
-                                                    id,
-                                                    isBack: isOpen,
-                                                    routeAction: true
-                                                });
-                                            }
-                                        }}
+                                        onClick={() => onItemClickHandler(isOpen)}
                                     >
                                         <ChevronLeft className="menu__icon menu__icon_before" size={20} />
                                         <p className="menu__headerTitle">{title}</p>
@@ -153,7 +143,7 @@ const MenuItem: FC<IMenuItemProps> = ({
             ) : (
                 // Simple menu item
                 <>
-                    {customElement || (
+                    {CustomElement || (
                         <button
                             type="button"
                             className={classNames("menu__item", {
@@ -161,11 +151,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                                 menu__item_selected: selected,
                                 menu__item_disabled: disabled
                             })}
-                            onClick={() => {
-                                if (onChangeHandler) {
-                                    onChangeHandler({ index: generateId, id, isBack: false, routeAction: false });
-                                }
-                            }}
+                            onClick={() => onItemClickHandler(false)}
                             {...(disabled ? { tabIndex: -1 } : {})}
                         >
                             <span className="menu__cell">

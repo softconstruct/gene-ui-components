@@ -21,7 +21,6 @@ import Scrollbar from "@components/atoms/Scrollbar";
 // Styles
 import "./Menu.scss";
 
-// import { IconProps } from "@geneui/icons";
 import Loader from "../../atoms/Loader";
 import { IMenuItemProps } from "./MenuItem";
 
@@ -46,10 +45,9 @@ import { IMenuItemProps } from "./MenuItem";
 // };
 
 export interface OnchangeHandlerType {
-    index: string;
+    generateId: string;
     id: number | string;
-    isBack?: boolean;
-    routeAction?: boolean;
+    isBack: boolean;
 }
 
 interface IMenuContextProps {
@@ -65,24 +63,22 @@ interface IMenuProps {
     className?: string;
     children: ReactElement | ReactElement[];
     isLoading?: boolean;
-    onChange: (paths: number[], id: string | number) => void;
+    onChange: (paths: string[], id: string | number) => void;
     loadingText?: string;
     swappable?: boolean;
     defaultOpen?: boolean;
     setPropsForPopover: Dispatch<SetStateAction<Record<string, unknown>>>;
-    isMenuOpen: boolean;
+    isMenuOpen?: boolean;
 }
 
 const cloneChildrenRecursive = (
     children: JSX.Element | JSX.Element[],
     paths: string[],
-
     props = {},
-    regardingPaths: number[] = [],
     isLoading = false,
     loadingText = "",
     pathID = ""
-): FunctionComponentElement<IMenuItemProps>[] | FunctionComponentElement<HTMLElement> => {
+): FunctionComponentElement<IMenuItemProps>[] | ReactElement => {
     if (isLoading) {
         return (
             <div className="menu__loader">
@@ -97,7 +93,6 @@ const cloneChildrenRecursive = (
             child,
             {
                 ...props,
-                regardingPaths,
                 generateId,
                 paths
             },
@@ -106,14 +101,13 @@ const cloneChildrenRecursive = (
                       child.props?.children,
                       paths,
                       props,
-                      [...regardingPaths, i],
                       child.props.isLoading,
                       child.props.loadingText,
                       generateId
                   )
                 : child.props?.children
         );
-    });
+    }) as FunctionComponentElement<IMenuItemProps>[];
 };
 
 /**
@@ -135,39 +129,25 @@ const Menu: FC<IMenuProps> = ({
 }) => {
     // const [isMenuOpenState, setIsMenuOpenState] = useState(false);
     const [paths, setPaths] = useState<string[]>([]);
+
     useEffect(() => {
-        // setIsMenuOpenState(isMenuOpen);
-        // if (!isMenuOpenState) setPath([]);
+        // setIsMenuOpenState(!!isMenuOpen);
     }, [isMenuOpen]);
 
     useEffect(() => {
         // const defaultPath = findPathOfDefaultOpened(children);
         // if (defaultPath) {
-        //     setPath(defaultPath);
+        // setPaths(["4", "4"]);
         // }
+        // console.log(isMenuOpenState);
     }, []);
 
-    const onChangeHandler = ({ index, id, isBack }: OnchangeHandlerType) => {
-        onChange([5, 2], id);
+    const onChangeHandler = ({ generateId, id, isBack }: OnchangeHandlerType) => {
+        const idToArray = generateId.split("_");
+        const currentPath = isBack ? idToArray.slice(0, -1) : idToArray;
 
-        const toArray = index.split("_");
-
-        setPaths(isBack ? toArray.slice(0, -1) : toArray);
-
-        // if (routeAction) {
-        //     if (isBack) {
-        //         onChange(index.split("_"), id);
-        //         setPath(index.split("_"));
-        //     } else if (!isBack && path.length && index !== path.at(-1)) {
-        //         onChange(index.split("_"), id);
-        //         setPath(index.split("_"));
-        //     } else {
-        //         setPath(index.split("_"));
-        //     }
-        // }
-        // if (!isBack && !routeAction) {
-        //     onChange(index.split("_"), id);
-        // }
+        setPaths(currentPath);
+        onChange(currentPath, id);
     };
 
     const memoizedMenuContextValue: IMenuContextProps = useMemo(

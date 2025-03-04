@@ -103,8 +103,8 @@ const SimpleComponent: FC = (prop) => {
                 test
             </Button>
             <Menu {...prop} setPropsForPopover={setPropsForPopover} onChange={() => {}} isMenuOpen={isMenuOpen}>
-                <MenuItem index={0} id={12} title="test">
-                    <MenuItem index={2} id={128} selected>
+                <MenuItem id={12} title="test">
+                    <MenuItem id={128} selected>
                         test
                     </MenuItem>
                 </MenuItem>
