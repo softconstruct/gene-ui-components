@@ -22,8 +22,8 @@ import useWindowSize from "@hooks/useWindowSize";
 // Styles
 import "./Tabs.scss";
 
-import { Scrollbar } from "../../../index";
 // Components
+import { Scrollbar } from "../../../index";
 import Button from "../../atoms/Button";
 import { ITabProps } from ".";
 
@@ -48,7 +48,6 @@ interface ITabsProps {
      * Possible values: `line | contained`
      */
     type?: "line" | "contained";
-
     /**
      * The prop responsible for showing the loading skeleton if passed true. The default value is false
      * boolean
@@ -216,19 +215,14 @@ const Tabs: FC<ITabsProps> = ({
         if (swipedElements.current <= 0) {
             disableButton(leftButtonRef, true);
             setShowLeftShadows(false);
-
             swipedElements.current = 0;
         } else {
             disableButton(leftButtonRef, false);
-
             setShowLeftShadows(true);
         }
-
         if (swipedElements.current + parentRef.current.offsetWidth >= parentRef.current.scrollWidth) {
             disableButton(rightButtonRef, true);
-
             swipedElements.current = parentRef.current.scrollWidth - parentRef.current.offsetWidth;
-
             setShowRightShadows(false);
         } else {
             disableButton(rightButtonRef, false);
@@ -267,17 +261,16 @@ const Tabs: FC<ITabsProps> = ({
                             />
                         </div>
                     )}
-                    <Scrollbar>
-                        <div className="tabs__wrapper">
-                            <div className="tabs__list" ref={parentRef} onScroll={scrollEvent}>
-                                {Children.map(AllChildren, (child, index) =>
-                                    cloneElement(child as JSX.Element, {
-                                        closable,
-                                        ...(child as JSX.Element).props,
-                                        index
-                                    })
-                                )}
-                            </div>
+
+                    <Scrollbar className="tabs__wrapper">
+                        <div className="tabs__list" ref={parentRef} onScroll={scrollEvent}>
+                            {Children.map(AllChildren, (child, index) =>
+                                cloneElement(child as JSX.Element, {
+                                    closable,
+                                    ...(child as JSX.Element).props,
+                                    index
+                                })
+                            )}
                         </div>
                     </Scrollbar>
 
