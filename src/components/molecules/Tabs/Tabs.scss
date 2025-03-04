@@ -174,12 +174,8 @@
         background-color: var(--guit-sem-color-background-neutral-1);
         max-width: 100%;
 
-        // position: relative;
-
         &_button {
             flex: 0 0 auto;
-
-            // box-shadow: 0 -0.1rem 0 0 var(--guit-sem-color-border-neutral-2) inset;
 
             [dir="rtl"] & {
                 rotate: 180deg;
@@ -295,7 +291,6 @@
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
         }
 
-        // state: rest
         &:not(&#{ $that }_selected):not(&#{ $that }_disabled) {
             cursor: pointer;
             #{ $that }_icon {
@@ -309,22 +304,18 @@
             }
         }
 
-        // state: hover
         &:hover:not(&#{ $that }_selected):not(&#{ $that }_disabled) {
             background-color: var(--guit-sem-color-background-neutral-1-hover);
         }
 
-        // state: pressed
         &:active {
             background-color: var(--guit-sem-color-background-neutral-1-pressed);
         }
 
-        // state: focused
         &:focus-visible {
             z-index: 2;
         }
 
-        // state: selected
         &_selected {
             cursor: default;
 
@@ -334,7 +325,6 @@
             }
         }
 
-        // state: error
         &_error {
             #{ $that }_iconError,
             #{ $that }_text {
@@ -342,7 +332,6 @@
             }
         }
 
-        // state: disabled
         &_disabled {
             pointer-events: none;
 
@@ -352,7 +341,6 @@
             }
         }
 
-        // slot styles
         &_slot {
             width: 2.4rem;
             height: 2.4rem;
