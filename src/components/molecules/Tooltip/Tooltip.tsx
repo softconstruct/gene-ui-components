@@ -1,35 +1,36 @@
 import React, {
-    useState,
-    useContext,
-    JSX,
-    FC,
-    cloneElement,
     Children,
+    cloneElement,
+    FC,
     Fragment,
-    useEffect,
+    JSX,
     RefObject,
-    useRef
+    useContext,
+    useEffect,
+    useRef,
+    useState
 } from "react";
-import { shift, flip, offset } from "@floating-ui/core";
+import { flip, offset, shift } from "@floating-ui/core";
 import {
-    FloatingPortal,
-    autoUpdate,
-    useFloating,
     arrow,
+    autoUpdate,
+    FloatingPortal,
+    platform,
+    useFloating,
     useHover,
-    useInteractions,
-    platform
+    useInteractions
 } from "@floating-ui/react";
-import { Placement } from "@floating-ui/utils";
 import { ReferenceType } from "@floating-ui/react-dom";
+import { Placement } from "@floating-ui/utils";
 import { isForwardRef } from "react-is";
 
 // Components
 import { IconProps } from "@geneui/icons";
-import { GeneUIDesignSystemContext } from "../../providers/GeneUIProvider";
 
 // Styles
 import "./Tooltip.scss";
+
+import { GeneUIDesignSystemContext } from "../../providers/GeneUIProvider";
 
 const positions: Placement[] = [
     "top",
@@ -255,6 +256,16 @@ const Tooltip: FC<ITooltipProps> = ({
         ? { [arrowPosition]: offsetFromEdge }
         : { insetInlineStart: middlewareArrowData?.x };
 
+    let arrowRegardingPosition = 0;
+    if (arrowRef.current?.offsetWidth) {
+        if (staticSide.match("top")) {
+            arrowRegardingPosition = -arrowRef.current.offsetHeight;
+        } else if (staticSide === "bottom") {
+            arrowRegardingPosition = -arrowRef.current.offsetWidth + 8;
+        } else {
+            arrowRegardingPosition = -arrowRef.current.offsetWidth + 4;
+        }
+    }
     return (
         <>
             {component}
@@ -272,7 +283,7 @@ const Tooltip: FC<ITooltipProps> = ({
                             style={{
                                 ...getCorrectPosition,
                                 top: middlewareArrowData?.y,
-                                [staticSide!]: arrowRef.current ? `${-arrowRef.current.offsetWidth + 6}px` : 0
+                                [staticSide!]: arrowRef.current ? `${arrowRegardingPosition}px` : 0
                             }}
                         >
                             <svg
@@ -290,11 +301,7 @@ const Tooltip: FC<ITooltipProps> = ({
                             <p className="tooltip__text">{text}</p>
                         </div>
 
-                        {Icon && (
-                            <div className="tooltip__icon">
-                                <Icon size={16} />
-                            </div>
-                        )}
+                        {Icon && <Icon size={16} className="tooltip__icon" />}
                     </div>
                 </FloatingPortal>
             )}

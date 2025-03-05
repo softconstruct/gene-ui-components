@@ -1,4 +1,5 @@
-import { useEffect, useState, RefObject } from "react";
+import { RefObject, useEffect, useState } from "react";
+
 import useDebouncedCallback from "../useDebounceCallback";
 
 const EQUAL_HEIGHT_DIFF = 3;
@@ -18,12 +19,12 @@ const useEllipsisDetection: IUseEllipsisDetection = (ref, externalDependencies =
 
     useEffect(() => handleResize(), [...externalDependencies]);
 
-    const debounce = useDebouncedCallback(handleResize, 100);
+    const { debouncedCallback } = useDebouncedCallback(handleResize, 100);
 
     useEffect(() => {
-        window.addEventListener("resize", debounce);
+        window.addEventListener("resize", debouncedCallback);
 
-        return () => window.removeEventListener("resize", debounce);
+        return () => window.removeEventListener("resize", debouncedCallback);
     }, [ref?.current?.scrollWidth, ref?.current?.clientWidth, ref?.current?.scrollHeight, ref?.current?.clientHeight]);
 
     return isTruncated;

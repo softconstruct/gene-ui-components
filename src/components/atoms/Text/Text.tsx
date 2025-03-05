@@ -1,0 +1,133 @@
+import React, { FC, useRef } from "react";
+import classNames from "classnames";
+
+import Tooltip from "@components/molecules/Tooltip";
+
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
+
+// Styles
+import "./Text.scss";
+
+interface ITextProps {
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
+    /**
+     * The HTML tag with which text will be rendered.<br/>
+     * Possible values: `h1 | h2 | h3 | h4 | h5 | h6 | p | span`
+     */
+    as: "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "p" | "span";
+    /**
+     * Style variants.<br>
+     * Will affect on `font-family` ,`font-size` ,`font-weight` and `line-height`.<br/>
+     * Possible values: `headingXLargeSemibold |`
+        <br/> `headingLargeSemibold |`
+        <br/> `headingMediumSemibold |`
+        <br/> `headingSmallSemibold |`
+        <br/> `headingXSmallSemibold |`
+        <br/> `subheadingLargeSemibold |`
+        <br/> `subheadingMediumSemibold |`
+        <br/> `labelLargeSemibold |`
+        <br/> `labelLargeMedium |`
+        <br/> `labelMediumSemibold |`
+        <br/> `labelMediumMedium |`
+        <br/> `labelSmallSemibold |`
+        <br/> `labelSmallMedium |`
+        <br/> `bodyLargeSemibold |`
+        <br/> `bodyLargeMedium |`
+        <br/> `bodyLargeRegular |`
+        <br/> `bodyMediumSemibold |`
+        <br/> `bodyMediumMedium |`
+        <br/> `bodyMediumRegular |`
+        <br/> `captionLargeSemibold |`
+        <br/> `captionLargeMedium |`
+        <br/> `captionLargeRegular |`
+        <br/> `captionMediumMedium |`
+        <br/> `captionMediumRegular`
+     */
+    variant?:
+        | "headingXLargeSemibold"
+        | "headingLargeSemibold"
+        | "headingMediumSemibold"
+        | "headingSmallSemibold"
+        | "headingXSmallSemibold"
+        | "subheadingLargeSemibold"
+        | "subheadingMediumSemibold"
+        | "labelLargeSemibold"
+        | "labelLargeMedium"
+        | "labelMediumSemibold"
+        | "labelMediumMedium"
+        | "labelSmallSemibold"
+        | "labelSmallMedium"
+        | "bodyLargeSemibold"
+        | "bodyLargeMedium"
+        | "bodyLargeRegular"
+        | "bodyMediumSemibold"
+        | "bodyMediumMedium"
+        | "bodyMediumRegular"
+        | "captionLargeSemibold"
+        | "captionLargeMedium"
+        | "captionLargeRegular"
+        | "captionMediumSemibold"
+        | "captionMediumMedium"
+        | "captionMediumRegular";
+    /**
+     * Text alignment<br>
+     * Possible values: `left | center | right`
+     */
+    alignment?: "start" | "center" | "end";
+    /**
+     * Text content
+     */
+    children: string;
+    /**
+     * If true, the text will be truncated with ellipsis when it overflows.
+     * This is typically used to limit text to a single line or prevent overflow.
+     */
+    truncate?: boolean;
+    /**
+     * If true, a tooltip will be displayed when the text is truncated and hovered.
+     * The tooltip will show the full text content when it's truncated.
+     */
+    withTooltip?: boolean;
+}
+
+/**
+ * Text component which has predefined tokens
+ */
+const Text: FC<ITextProps> = ({
+    className,
+    variant = "bodyMediumMedium",
+    children,
+    as,
+    alignment = "start",
+    truncate = false,
+    withTooltip = true
+}) => {
+    const textRef = useRef(null);
+
+    const isTruncated = useEllipsisDetection(textRef);
+    const Component = as;
+
+    const computedClassNames = classNames(
+        "text",
+        {
+            [`text_variant_${variant}`]: variant,
+            [`text_alignment_${alignment}`]: alignment,
+            "ellipsis-text": truncate
+        },
+        className
+    );
+
+    return (
+        <Tooltip text={children} isVisible={isTruncated && withTooltip}>
+            <Component ref={textRef} className={computedClassNames}>
+                {children}
+            </Component>
+        </Tooltip>
+    );
+};
+
+export { ITextProps, Text as default };
