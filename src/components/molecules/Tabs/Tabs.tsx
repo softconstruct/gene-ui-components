@@ -242,8 +242,8 @@ const Tabs: FC<ITabsProps> = ({
             <div className={classNames(`tabs tabs_${direction} tabs_${type} tabs_${size}`, className, direction, type)}>
                 <div
                     className={classNames("tabs__nav", {
-                        tabs__shadow_before: isMobile && showLeftShadows,
-                        tabs__shadow_after: isMobile && showRightShadows
+                        tabs__shadow_before: isMobile && showLeftShadows && isHorizontal,
+                        tabs__shadow_after: isMobile && showRightShadows && isHorizontal
                     })}
                     role="tablist"
                     aria-label="Sample Tabs"
