@@ -173,13 +173,10 @@
         flex: 0 0 auto;
         background-color: var(--guit-sem-color-background-neutral-1);
         max-width: 100%;
-
-        // position: relative;
+        position: relative;
 
         &_button {
             flex: 0 0 auto;
-
-            // box-shadow: 0 -0.1rem 0 0 var(--guit-sem-color-border-neutral-2) inset;
 
             [dir="rtl"] & {
                 rotate: 180deg;
@@ -202,22 +199,43 @@
         }
 
         &_before::before {
-            background: linear-gradient(
-                90deg,
-                var(--guit-sem-color-background-neutral-1) 0%,
-                var(--guit-sem-color-background-transparent-inverse-1) 100%
-            );
             inset-inline-start: 0;
+
+            [dir="ltr"] & {
+                background: linear-gradient(
+                    90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
+
+            [dir="rtl"] & {
+                background: linear-gradient(
+                    -90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
         }
 
         &_after::after {
-            content: "";
-            background: linear-gradient(
-                -90deg,
-                var(--guit-sem-color-background-neutral-1) 0%,
-                var(--guit-sem-color-background-transparent-inverse-1) 100%
-            );
             inset-inline-end: 0;
+
+            [dir="ltr"] & {
+                background: linear-gradient(
+                    -90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
+
+            [dir="rtl"] & {
+                background: linear-gradient(
+                    90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
         }
     }
 
