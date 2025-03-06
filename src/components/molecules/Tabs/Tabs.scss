@@ -238,7 +238,6 @@
 
         display: flex;
         align-items: center;
-        justify-content: flex-end;
         column-gap: var(--guit-ref-spacing-xsmall);
         background-color: var(--guit-sem-color-background-neutral-1);
 
@@ -315,7 +314,7 @@
         }
 
         // state: pressed
-        &:active {
+        &:active:not(&#{ $that }_selected):not(&#{ $that }_disabled) {
             background-color: var(--guit-sem-color-background-neutral-1-pressed);
         }
 
@@ -357,7 +356,7 @@
             width: 2.4rem;
             height: 2.4rem;
 
-            // todo: remove this styles after implementation
+            // todo: remove this styles after 'slot' component implementation
             background-color: #f4e1ec;
             border: 0.1rem solid #a60063;
         }
@@ -366,7 +365,7 @@
     &__stage {
         flex: 1;
 
-        // todo: remove this styles after stage component implementation
+        // todo: remove this styles after 'stage' component implementation
         padding: var(--guit-ref-spacing-xlarge);
         background-color: var(--guit-sem-color-background-neutral-3);
     }
