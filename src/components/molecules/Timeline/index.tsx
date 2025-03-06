@@ -1,2 +1,2 @@
-export { ITimelinesProps, default as Timelines } from "./Timelines";
-export { ITimelineProps, default as TimelinePoint } from "./TimelinePoint";
+export { ITimelinesProps, default as Timelines } from "./Timeline";
+export { ITimelinePointProps, default as TimelinePoint } from "./TimelinePoint";

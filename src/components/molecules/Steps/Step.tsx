@@ -6,7 +6,8 @@ import { Error, SuccessFill, UnavailableOutline } from "@geneui/icons";
 // Components
 import Divider from "@components/atoms/Divider";
 import Loader from "@components/atoms/Loader";
-import { StepsContext } from "@components/molecules/Steps/Steps";
+
+import { StepsContext } from "./Steps";
 
 interface IPointTypesProps {
     /**
@@ -50,6 +51,7 @@ interface IStepProps extends IPointTypesProps {
 
 const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, isLoading, state }) => {
     const { type } = useContext(StepsContext);
+
     const stepCount = (num: number) => {
         if (!num || num <= 0) return 1;
         if (num > 9) return 9;

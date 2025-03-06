@@ -9,7 +9,7 @@
             flex-direction: row;
 
             &#{ $this }_position {
-                &_top {
+                &_before {
                     #{ $this }__element {
                         grid-template-rows: 1fr auto;
                         #{ $this }__status {
@@ -18,7 +18,7 @@
                     }
                 }
 
-                &_bottom {
+                &_after {
                     #{ $this }__element {
                         grid-template-rows: auto 1fr;
                     }

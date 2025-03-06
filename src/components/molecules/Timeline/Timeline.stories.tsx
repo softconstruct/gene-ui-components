@@ -3,20 +3,17 @@ import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
-
 // Components
-import TimelinesComponent, { ITimelinesProps } from "./Timelines";
-import TimelinePoint, { ITimelineProps } from "./TimelinePoint";
+import Timeline, { ITimelinesProps } from "./Timeline";
+import TimelinePoint, { ITimelinePointProps } from "./TimelinePoint";
 
 const meta: Meta = {
-    title: "Molecules/Timelines",
-    component: TimelinesComponent,
+    title: "Molecules/Timeline",
+    component: Timeline,
     subcomponents: {
-        Timeline: TimelinePoint
+        "Timeline Point": TimelinePoint
     }
 };
-
-export default meta;
 
 const inlineData = [
     { title: "Task A", description: "Description A", status: "active" },
@@ -26,10 +23,7 @@ const inlineData = [
     { title: "Task E", description: "Description E", status: "success" }
 ] as const;
 
-type Story = StoryObj<ITimelinesProps>;
-type StoryTimeline = StoryObj<ITimelineProps>;
-
-export const Timelines: Story = {
+const TimelineStory: StoryObj<ITimelinesProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
@@ -41,18 +35,17 @@ export const Timelines: Story = {
     },
     render: (props) => {
         return (
-            <TimelinesComponent {...props}>
+            <Timeline {...props}>
                 {inlineData.map((timeline) => {
                     return <TimelinePoint {...timeline} />;
                 })}
-            </TimelinesComponent>
+            </Timeline>
         );
     }
 };
 
-export const Timeline: StoryTimeline = storyObjBuilder({
+const TimelinePointStory: StoryObj<ITimelinePointProps> = storyObjBuilder({
     argTypes: {
-        direction: args({ control: "select", ...propCategory.appearance }),
         title: args({ control: "text", ...propCategory.content }),
         status: args({
             control: "select",
@@ -64,16 +57,16 @@ export const Timeline: StoryTimeline = storyObjBuilder({
     args: {
         title: "Task A",
         description: "Description A",
-        status: "success",
-        direction: "vertical"
+        status: "success"
     },
     render: (props) => {
-        const { direction } = props;
         return (
-            <TimelinesComponent direction={direction}>
+            <Timeline>
                 <TimelinePoint {...props} />
-                <TimelinePoint {...props} />
-            </TimelinesComponent>
+            </Timeline>
         );
     }
 });
+
+export default meta;
+export { TimelineStory as Timeline, TimelinePointStory as TimelinePoint };

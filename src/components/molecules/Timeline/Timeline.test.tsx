@@ -1,9 +1,9 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
+import Timelines, { ITimelinesProps } from "./Timeline";
 // Components
-import Timelines, { ITimelinesProps } from "./Timelines";
-import TimelinePoint, { ITimelineProps } from "./TimelinePoint";
+import TimelinePoint, { ITimelinePointProps } from "./TimelinePoint";
 
 describe("Timeline ", () => {
     let setup: ReactWrapper<ITimelinesProps>;
@@ -45,7 +45,7 @@ describe("Timeline ", () => {
         }
     );
 
-    it.each<ITimelinesProps["position"]>(["top", "bottom", "alternate"])(
+    it.each<ITimelinesProps["position"]>(["after", "before", "alternate"])(
         'should have "%s" direction for horizontal direction ',
         (position) => {
             const wrapper = setup.setProps({ position, direction: "horizontal" });
@@ -54,7 +54,7 @@ describe("Timeline ", () => {
         }
     );
 
-    it.each<ITimelineProps["status"]>(["default", "active", "success", "error", "pending"])(
+    it.each<ITimelinePointProps["status"]>(["default", "active", "success", "error", "pending"])(
         'should have "%s" direction',
         (status) => {
             const wrapper = mount(<TimelinePoint status={status} title="Test1" description="Description 1" />);

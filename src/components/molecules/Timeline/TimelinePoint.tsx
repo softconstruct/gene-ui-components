@@ -1,16 +1,16 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import classNames from "classnames";
+
+import { CircleFilled, Clock } from "@geneui/icons";
+
+import Divider from "@components/atoms/Divider";
+
 // Styles
 import "./Timeline.scss";
-import { CircleFilled, Clock } from "@geneui/icons";
-import Divider from "../../atoms/Divider";
 
-interface ITimelineProps {
-    /**
-     * Timeline direction <br/>
-     * Possible values: `vertical | horizontal`
-     */
-    direction?: "vertical" | "horizontal";
+import { TimelineContext } from "./Timeline";
+
+interface ITimelinePointProps {
     /**
      * The title of the timeline item.
      */
@@ -34,8 +34,9 @@ interface ITimelineProps {
 /**
  * Timeline component is used to display a sequence of events in chronological order. It provides a clear visual representation of a series of activities, milestones, or steps, helping users understand the progression and flow of events over time.
  */
+const TimelinePoint: FC<ITimelinePointProps> = ({ title, status, description }) => {
+    const { direction } = useContext(TimelineContext);
 
-const TimelinePoint: FC<ITimelineProps> = ({ direction = "vertical", title, status, description }) => {
     return (
         <div className="timeline__element">
             <div className={classNames(`timeline__status timeline__status_${status}`)}>
@@ -54,4 +55,4 @@ const TimelinePoint: FC<ITimelineProps> = ({ direction = "vertical", title, stat
     );
 };
 
-export { ITimelineProps, TimelinePoint as default };
+export { ITimelinePointProps, TimelinePoint as default };
