@@ -12,6 +12,7 @@ const meta: Meta<ITextLinkProps> = {
     component: TextLink,
     argTypes: {
         appearance: args({ control: "select", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         href: args({ control: "text", ...propCategory.content }),
         underline: args({ control: "boolean", ...propCategory.appearance }),
@@ -26,6 +27,7 @@ const meta: Meta<ITextLinkProps> = {
     },
     args: {
         appearance: "primary",
+        size: "medium",
         text: "LinkText",
         href: "#",
         disabled: false,

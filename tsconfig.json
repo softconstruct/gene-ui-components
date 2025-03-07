@@ -5,8 +5,7 @@
             "@components/*": ["src/components/*"],
             "@hooks/*": ["src/hooks/*"],
             "@assets/*": ["src/assets/*"],
-            "@types": ["src/types/index.ts"],
-            "stories": ["stories/*"]
+            "@types": ["src/types/index.ts"]
         },
         "target": "es6",
         "module": "esnext",
