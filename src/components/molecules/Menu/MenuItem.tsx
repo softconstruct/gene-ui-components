@@ -58,8 +58,10 @@ const MenuItem: FC<IMenuItemProps> = ({
     };
 
     const CustomElement = isValidElementType(ComponentRender) && (
-        <button type="button" className="menu__item_custom " onClick={() => onItemClickHandler(isOpen)}>
-            <ComponentRender />
+        <button type="button" className="menu__item" onClick={() => onItemClickHandler(isOpen)}>
+            <span className="menu__cell">
+                <ComponentRender />
+            </span>
         </button>
     );
 
@@ -93,7 +95,6 @@ const MenuItem: FC<IMenuItemProps> = ({
                             {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />}
                             <span className="menu__itemTitle">{title}</span>
                         </span>
-
                         <ChevronRight className="menu__icon menu__icon_after" size={20} />
                     </button>
                     {divider && <Divider />}
@@ -123,7 +124,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                                         onClick={() => onItemClickHandler(isOpen)}
                                     >
                                         <ChevronLeft className="menu__icon menu__icon_before" size={20} />
-                                        <p className="menu__headerTitle">{title}</p>
+                                        <span className="menu__headerTitle">{title}</span>
                                     </button>
                                 )}
 
