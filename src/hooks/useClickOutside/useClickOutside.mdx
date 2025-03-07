@@ -1,51 +1,59 @@
 import { Meta } from '@storybook/blocks';
+import useClickOutside from './useClickOutside';
 
 <Meta title="Hooks/useClickOutside" />
 
 <div style={{ paddingInlineStart: '20px' }}>
 
-    ## useClickOutside
+## useClickOutside
 
-    Custom hook that detects clicks outside a specified element and triggers a callback function. This is useful for handling dropdowns, modals, or tooltips that should close when clicking outside of them.
+This hook detects clicks outside a specified element and triggers a callback function when such an event occurs.  
+It is particularly useful for implementing behaviors such as closing dropdowns, modals, and popovers when the user clicks outside of them.
 
-    ### Parameters
+### **Returns**
+A function that takes a single parameter:
 
-    - **`callback`** : A function that gets triggered when a click is detected outside the target element.
-    - **`relativeElements`** (optional): An array of `RefObject<HTMLElement>`, which are elements that should not trigger the callback when clicked.
+- **`node: HTMLElement | null`** – The element to track for outside clicks.
 
-    ### Returns
+### **Parameters**
+- **`callback`**: A function `(e: MouseEvent) => void` that executes when an outside click is detected.
+- **`relativeElements`** _(optional)_: An array of `RefObject<HTMLElement>` elements that are considered "inside" and should not trigger the callback when clicked.
 
-    - A ref callback function that should be assigned to the element whose outside clicks you want to detect.
+### **Usage**
 
-    ### Usage
+```tsx
+import React, { useRef, useState } from 'react';
+import useClickOutside from '@geneui/components';
 
-    ```tsx
-    import React, { useRef, useState } from 'react';
-    import { useClickOutside } from '@geneui/components';
+const ExampleComponent = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const relativeRef = useRef(null);
+    const buttonRef = useRef(null);
 
-    const MyComponent = () => {
-        const [isOpen, setIsOpen] = useState(false);
-        const relativeRef = useRef(null);
+    const handleClickOutside = () => {
+        setIsOpen(false);
+    };
 
-        const handleClickOutside = () => {
-            setIsOpen(false);
-        };
+    const ref = useClickOutside(handleClickOutside, [buttonRef, relativeRef]);
 
-        const ref = useClickOutside(handleClickOutside, [relativeRef]);
+    return (
+        <div>
+            <button ref={buttonRef} type="button" onClick={() => setIsOpen(!isOpen)}>
+                Toggle Menu
+            </button>
 
-        return (
-                <div>
-                    <button onClick={() => setIsOpen(!isOpen)}>Toggle Menu</button>
-                    {isOpen && (
-                        <div ref={ref} style={{ border: '1px solid black', padding: '10px' }}>
-                            This is a dropdown
-                        </div>
-                    )}
-                    <span ref={relativeRef}>Relative Element</span>
+            {isOpen && (
+                <div ref={ref} style={{ border: "1px solid black", padding: "10px" }}>
+                    This is a dropdown
                 </div>
-                )};
+            )}
 
-    export default MyComponent;
-    ```
+            <span ref={relativeRef}>Relative Element</span>
+        </div>
+    );
+};
+
+export default ExampleComponent;
+```
 
 </div>
