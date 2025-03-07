@@ -1,16 +1,12 @@
-import React, { cloneElement, FC, JSX, useEffect, useRef, useState } from "react";
+import React, { cloneElement, FC, JSX, useContext, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 // components
 import { QRCodeSVG } from "qrcode.react";
 
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
+
 // Styles
 import "./QRCode.scss";
-
-const QRForeground = {
-    magenta: "var(--guit-sem-color-foreground-accent-magenta)",
-    secondary: "var(--guit-sem-color-foreground-neutral-2)",
-    inverse: "var(--guit-sem-color-foreground-inverse-notheme)"
-};
 
 interface IQRCodeProps {
     /**
@@ -25,7 +21,7 @@ interface IQRCodeProps {
      */
     level?: "L" | "M" | "Q" | "H";
     /**
-     * The foreground color used to render the QR Code.
+     * The foreground color used to render the QR Code.<br>
      * Possible values: `magenta | secondary | inverse`;
      * Default value is `magenta`
      */
@@ -51,6 +47,16 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "L", appearance = "magenta", 
     const qrCodeRef = useRef<HTMLDivElement | null>(null);
     const [qrLogoSize, setQrLogoSize] = useState<number>(0);
 
+    const { tokens } = useContext(GeneUIDesignSystemContext);
+
+    const QRForeground = useMemo(() => {
+        return {
+            magenta: tokens?.GuitSemColorForegroundAccentMagenta,
+            secondary: tokens?.GuitSemColorForegroundNeutral2,
+            inverse: tokens?.GuitSemColorForegroundInverseNotheme
+        };
+    }, []);
+
     useEffect(() => {
         if (!EmbeddedIcon || !qrCodeRef.current) return;
 
@@ -65,7 +71,7 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "L", appearance = "magenta", 
                 <QRCodeSVG
                     value={value}
                     bgColor="transparent"
-                    fgColor={QRForeground[appearance]}
+                    fgColor={`${QRForeground[appearance]}`}
                     level={level}
                     className={classNames(`qRCode__svg`)}
                     {...(EmbeddedIcon
