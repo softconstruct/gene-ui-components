@@ -35,3 +35,4 @@ export { default as useDebounce } from "./hooks/useDebounceCallback";
 export { default as useEllipsisDetection } from "./hooks/useEllipsisDetection";
 export { default as useScrollLock } from "./hooks/useScrollLock";
 export { default as useWindowSize } from "./hooks/useWindowSize";
+export { default as useDeviceInfo } from "./hooks/useDeviceInfo";
