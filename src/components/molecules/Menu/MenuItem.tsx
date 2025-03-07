@@ -2,13 +2,13 @@ import React, { Children, FC, ReactNode, useContext, useState } from "react";
 import classNames from "classnames";
 import { isValidElementType } from "react-is";
 
-import { CheckMark, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
+import { IconProps } from "@geneui/icons";
 
 import { Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+import MenuItemButton from "@components/molecules/Menu/MenuItemButton";
 
 // components
-import Divider from "../../atoms/Divider";
 import { MenuContext } from "./Menu";
 
 interface IMenuItemProps {
@@ -23,12 +23,11 @@ interface IMenuItemProps {
     disabled?: boolean;
     id: number | string;
     divider?: boolean;
-    loadingText?: string;
+    loadingText?: never;
     emptyText?: string;
     ComponentRender?: FC;
     generateId?: string;
     paths?: string[];
-    pathID?: string;
 }
 
 const MenuItem: FC<IMenuItemProps> = ({
@@ -58,14 +57,17 @@ const MenuItem: FC<IMenuItemProps> = ({
     };
 
     const CustomElement = isValidElementType(ComponentRender) && (
-        <button type="button" className="menu__item" onClick={() => onItemClickHandler(isOpen)}>
-            <span className="menu__cell">
-                <ComponentRender />
-            </span>
-        </button>
+        <MenuItemButton
+            type="custom"
+            onItemClickHandler={onItemClickHandler}
+            selected={selected}
+            danger={danger}
+            disabled={disabled}
+            divider={divider}
+        >
+            <ComponentRender />
+        </MenuItemButton>
     );
-
-    // const isOpen = paths?.join("_").includes(generateId);
 
     const popoverCloseHandler = () => {
         // console.log(innerActiveState, activeElement, index, "popoverCloseHandler");
@@ -80,24 +82,18 @@ const MenuItem: FC<IMenuItemProps> = ({
             {typeof children !== "string" ? (
                 <>
                     {/* Parent menu item */}
-                    <button
-                        type="button"
-                        className={classNames("menu__item", {
-                            menu__item_danger: danger,
-                            menu__item_disabled: disabled,
-                            menu__item_active: isOpen
-                        })}
-                        {...(disabled ? { tabIndex: -1 } : {})}
-                        {...propsForPopover}
-                        onClick={() => onItemClickHandler(isOpen)}
-                    >
-                        <span className="menu__cell">
-                            {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />}
-                            <span className="menu__itemTitle">{title}</span>
-                        </span>
-                        <ChevronRight className="menu__icon menu__icon_after" size={20} />
-                    </button>
-                    {divider && <Divider />}
+                    <MenuItemButton
+                        type="parent"
+                        onItemClickHandler={onItemClickHandler}
+                        title={title}
+                        IconBefore={IconBefore}
+                        IconAfter={IconAfter}
+                        disabled={disabled}
+                        danger={danger}
+                        propsForPopover={propsForPopover}
+                        isOpen={isOpen}
+                        divider={divider}
+                    />
                     {/* menu list wrapper */}
                     <Popover
                         setProps={setPropsForPopover}
@@ -118,14 +114,11 @@ const MenuItem: FC<IMenuItemProps> = ({
                             >
                                 {/* header */}
                                 {swappable && (
-                                    <button
-                                        type="button"
-                                        className="menu__header"
-                                        onClick={() => onItemClickHandler(isOpen)}
-                                    >
-                                        <ChevronLeft className="menu__icon menu__icon_before" size={20} />
-                                        <span className="menu__headerTitle">{title}</span>
-                                    </button>
+                                    <MenuItemButton
+                                        type="header"
+                                        onItemClickHandler={onItemClickHandler}
+                                        title={title}
+                                    />
                                 )}
 
                                 <Scrollbar className="menu__content">
@@ -143,28 +136,20 @@ const MenuItem: FC<IMenuItemProps> = ({
                 </>
             ) : (
                 // Simple menu item
-                <>
-                    {CustomElement || (
-                        <button
-                            type="button"
-                            className={classNames("menu__item", {
-                                menu__item_danger: danger,
-                                menu__item_selected: selected,
-                                menu__item_disabled: disabled
-                            })}
-                            onClick={() => onItemClickHandler(false)}
-                            {...(disabled ? { tabIndex: -1 } : {})}
-                        >
-                            <span className="menu__cell">
-                                {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />}
-                                <span className="menu__itemTitle">{children}</span>
-                            </span>
-                            {(selected && <CheckMark className="menu__icon menu__icon_after" size={20} />) ||
-                                (IconAfter && <IconAfter className="menu__icon menu__icon_after" size={20} />)}
-                        </button>
-                    )}
-                    {divider && <Divider />}
-                </>
+                CustomElement || (
+                    <MenuItemButton
+                        type="simple"
+                        onItemClickHandler={onItemClickHandler}
+                        danger={danger}
+                        selected={selected}
+                        disabled={disabled}
+                        IconBefore={IconBefore}
+                        IconAfter={IconAfter}
+                        divider={divider}
+                    >
+                        {children}
+                    </MenuItemButton>
+                )
             )}
         </>
     );

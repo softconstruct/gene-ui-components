@@ -9,9 +9,9 @@ export const data = [
     { title: "item 2", selected: false, id: "123fd343", value: "name3", IconAfter: LightBulb, danger: true },
     {
         title: "item 2ii",
-        selected: false,
         id: "123dsfd343",
         value: "name3",
+        danger: true,
         ComponentRender: () => {
             return (
                 <span>
