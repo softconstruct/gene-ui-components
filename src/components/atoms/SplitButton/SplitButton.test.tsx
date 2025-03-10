@@ -7,7 +7,7 @@ import SplitButton, { ISplitButtonProps } from "./index";
 describe("SplitButton ", () => {
     let setup: ReactWrapper<ISplitButtonProps>;
     beforeEach(() => {
-        setup = mount(<SplitButton />);
+        setup = mount(<SplitButton appearance="outline" type="primary" onClick={() => {}} />);
     });
 
     it("renders without crashing", () => {
