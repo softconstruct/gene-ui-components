@@ -110,6 +110,7 @@
         #{ $this }__list {
             padding-top: var(--guit-ref-spacing-4xsmall);
             padding-inline-start: var(--guit-ref-spacing-4xsmall);
+            padding-inline-end: var(--guit-ref-spacing-4xsmall);
             padding-bottom: var(--guit-ref-spacing-4xsmall);
         }
 
@@ -310,6 +311,7 @@
             font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            text-align: start;
         }
 
         // state: rest

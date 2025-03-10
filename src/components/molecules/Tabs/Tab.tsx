@@ -79,7 +79,7 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, clos
             onClick={provideChildren}
         >
             {!isError && Icon && <Icon className="tabs__button_icon" size={24} />}
-            {title && <span className="tabs__button_text"> {title}</span>}
+            {title && <span className="tabs__button_text">{title}</span>}
             {closable && (
                 <Button
                     displayType="text"
