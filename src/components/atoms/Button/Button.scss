@@ -320,7 +320,7 @@
 
                     &:disabled {
                         border-color: var(--guit-sem-color-border-inverse-disabled);
-                        color: var(--guit-sem-color-foreground-disabled);
+                        color: var(--guit-sem-color-foreground-inverse-disabled);
                     }
                 }
 
@@ -337,7 +337,7 @@
                     }
 
                     &:disabled {
-                        color: var(--guit-sem-color-foreground-disabled);
+                        color: var(--guit-sem-color-foreground-inverse-disabled);
                     }
                 }
             }
@@ -468,6 +468,7 @@
     }
 
     &_loading {
+        pointer-events: none;
         #{ $this }__loader {
             visibility: visible;
         }
@@ -478,8 +479,7 @@
         }
     }
 
-    &:disabled,
-    &.disabled {
+    &:disabled {
         pointer-events: none;
         color: var(--guit-sem-color-foreground-disabled);
     }

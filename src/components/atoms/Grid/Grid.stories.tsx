@@ -3,9 +3,8 @@ import { Meta } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
-import { Grid, Row, Col } from "./index";
+import { Col, Grid, Row } from "./index";
 
 const meta: Meta = {
     title: "Atoms/Grid",
@@ -72,9 +71,10 @@ const Template = () => {
     );
 };
 
-export const StandardGridLayout = Template.bind({});
-
-StandardGridLayout.args = {};
+export const StandardGridLayout = {
+    render: Template,
+    args: {}
+};
 
 export const ColumnsWithOffset = () => {
     return (

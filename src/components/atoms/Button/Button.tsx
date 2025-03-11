@@ -47,7 +47,7 @@ interface IButtonProps {
     /**
      * The text will shown as content of the `button`.
      */
-    text?: string;
+    children?: string;
     /**
      * The `Icon` prop accepts a React Functional Component that will be displayed alongside the button text.
      */
@@ -99,7 +99,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             name,
             size = "medium",
             displayType = "fill",
-            text,
+            children,
             Icon,
             onClick,
             className,
@@ -119,7 +119,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 name={name}
                 type="button"
                 onClick={onClick}
-                disabled={disabled}
+                disabled={disabled && !isLoading}
+                {...(isLoading ? { tabIndex: -1 } : {})}
                 className={classNames(
                     `button button_size_${size} 
                     button_color_${appearance} 
@@ -127,9 +128,9 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                     className,
                     {
                         button_fullWidth: fullWidth,
-                        button_icon_before: !iconAfter && Icon && text,
-                        button_icon_after: iconAfter && Icon && text,
-                        button_icon_only: (!text || isSizeXS) && Icon,
+                        button_icon_before: !iconAfter && Icon && children,
+                        button_icon_after: iconAfter && Icon && children,
+                        button_icon_only: (!children || isSizeXS) && Icon,
                         button_loading: isLoading
                     }
                 )}
@@ -145,7 +146,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
 
                 {Icon && <Icon size={iconSizes[size]} className="button__icon" />}
 
-                {text && !isSizeXS && <span className="button__text">{text}</span>}
+                {children && !isSizeXS && <span className="button__text">{children}</span>}
             </button>
         );
     }

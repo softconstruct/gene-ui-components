@@ -12,7 +12,7 @@ import { Meta } from '@storybook/blocks';
 
     - **`func`**: The callback function you want to debounce. It will only be executed after the debounce period.
 
-    - **`wait`** (optional): The delay time in milliseconds before the callback function is invoked. If not provided, the default is typically a short delay, but you can set it as per your needs.
+    - **`wait`** _(optional)_: The delay time in milliseconds before the callback function is invoked. If not provided, the default is typically a short delay, but you can set it as per your needs.
 
     #### Returns
 
@@ -24,26 +24,23 @@ import { Meta } from '@storybook/blocks';
 
     #### Usage
 
-    ```js
+    ```jsx
     import React, { useCallback } from 'react';
-    import useDebouncedCallback from './useDebouncedCallback';
+    import { useDebouncedCallback } from '@geneui/components';
 
     const MyComponent = () => {
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.log('Button clicked', event);
-};
+        const handleClick = (event) => {
+            console.log('Button clicked', event);
+        };
 
-    const {debouncedCallback: debouncedHandleClick, clearDebounce} = useDebouncedCallback(handleClick, 300); // Debounce with a 300ms delay.
+        const debouncedHandleClick = useDebouncedCallback(handleClick, 300); // Debounce with a 300ms delay.
 
-    return (
-    <div>
-    <button onClick={debouncedHandleClick}>Click Me</button>
-<button onClick={clearDebounce}>Clear Debounce</button>
-</div>
-)
-};
+        return (
+            <button onClick={debouncedHandleClick}>Click Me</button>
+        )
+    };
 
-export default MyComponent;
+    export default MyComponent;
 ```
 #### Notes
 

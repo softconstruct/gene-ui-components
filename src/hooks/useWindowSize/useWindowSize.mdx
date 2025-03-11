@@ -1,0 +1,43 @@
+import { Meta } from '@storybook/blocks';
+import useWindowSize from './useWindowSize';
+
+<Meta title="Hooks/useWindowSize" />
+
+<div style={{paddingInlineStart:'20px'}}>
+
+## useWindowSize
+
+This hook provides the current width and height of the window and updates dynamically when the window resizes.
+
+#### Returns
+
+An object containing:
+-   **`width`**: The current width of the window in pixels.
+-   **`height`**: The current height of the window in pixels.
+
+#### Usage
+
+```js
+import React, { FC } from 'react';
+import { useWindowSize } from '@geneui/components';
+
+const ExampleComponent: FC = () => {
+    const { width, height } = useWindowSize();
+
+    return (
+        <div>
+            <p>Window Width: {width}px</p>
+            <p>Window Height: {height}px</p>
+        </div>
+    );
+};
+
+export default ExampleComponent;
+```
+
+#### Notes
+
+- This hook listens for the resize event on the window and updates the width and height accordingly.
+- It initializes with the current window dimensions when the component mounts.
+- The event listener is removed when the component unmounts to prevent memory leaks.
+</div> 
