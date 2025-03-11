@@ -74,7 +74,7 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "L", appearance = "magenta", 
                     fgColor={`${QRForeground[appearance]}`}
                     level={level}
                     className={classNames(`qRCode__svg`)}
-                    {...(EmbeddedIcon
+                    {...(EmbeddedIcon && level !== "L"
                         ? {
                               imageSettings: {
                                   src: "",
@@ -86,9 +86,9 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "L", appearance = "magenta", 
                           }
                         : {})}
                 />
-                {!!EmbeddedIcon && (
+                {!!EmbeddedIcon && level !== "L" && (
                     <div className="qRCode__logo" style={{ "--qr-code-logo-width": `${qrLogoSize * 0.2}px` }}>
-                        {cloneElement(EmbeddedIcon, { className: "qRCode__logoSvg" })}
+                        {cloneElement(EmbeddedIcon, { className: "qRCode__logoSvg", fill: QRForeground[appearance] })}
                     </div>
                 )}
             </>
