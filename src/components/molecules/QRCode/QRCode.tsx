@@ -36,6 +36,7 @@ interface IQRCodeProps {
      * The JSX element to embed in the center of the QR Code.
      * This can be used for branding, such as a logo or an icon.
      * The size of this element will be calculated relative to the parent element.
+     *  When `level` is `L`, the logo will be hidden regardless of this prop.
      */
     EmbeddedIcon?: JSX.Element;
 }
