@@ -1,4 +1,4 @@
-import React, { cloneElement, FC, JSX, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, { cloneElement, FC, JSX, useContext, useMemo, useRef } from "react";
 import classNames from "classnames";
 // components
 import { QRCodeSVG } from "qrcode.react";
@@ -17,9 +17,9 @@ interface IQRCodeProps {
     /**
      * The Error Correction Level to use.
      * @see https://www.qrcode.com/en/about/error_correction.html
-     * Default value is `L`
+     * Default value is `M`
      */
-    level?: "L" | "M" | "Q" | "H";
+    level?: "M" | "Q" | "H";
     /**
      * The foreground color used to render the QR Code.<br>
      * Possible values: `magenta | secondary | inverse`;
@@ -36,7 +36,6 @@ interface IQRCodeProps {
      * The JSX element to embed in the center of the QR Code.
      * This can be used for branding, such as a logo or an icon.
      * The size of this element will be calculated relative to the parent element.
-     *  When `level` is `L`, the logo will be hidden regardless of this prop.
      */
     EmbeddedIcon?: JSX.Element;
 }
@@ -44,9 +43,8 @@ interface IQRCodeProps {
 /**
  * A QR code component generates and displays a Quick Response (QR) code, a two-dimensional barcode that can be scanned by mobile devices to quickly access information, websites, or applications
  */
-const QRCode: FC<IQRCodeProps> = ({ value, level = "L", appearance = "magenta", EmbeddedIcon, className }) => {
+const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "magenta", EmbeddedIcon, className }) => {
     const qrCodeRef = useRef<HTMLDivElement | null>(null);
-    const [qrLogoSize, setQrLogoSize] = useState<number>(0);
 
     const { tokens } = useContext(GeneUIDesignSystemContext);
 
@@ -58,14 +56,6 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "L", appearance = "magenta", 
         };
     }, []);
 
-    useEffect(() => {
-        if (!EmbeddedIcon || !qrCodeRef.current) return;
-
-        const { width } = qrCodeRef.current.getBoundingClientRect();
-
-        setQrLogoSize(width);
-    }, [EmbeddedIcon, qrCodeRef.current]);
-
     return (
         <div ref={qrCodeRef} className={classNames("qRCode", className)}>
             <>
@@ -75,20 +65,20 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "L", appearance = "magenta", 
                     fgColor={`${QRForeground[appearance]}`}
                     level={level}
                     className={classNames(`qRCode__svg`)}
-                    {...(EmbeddedIcon && level !== "L"
+                    {...(EmbeddedIcon
                         ? {
                               imageSettings: {
                                   src: "",
-                                  width: qrLogoSize * 0.2,
-                                  height: qrLogoSize * 0.2,
+                                  width: 24,
+                                  height: 24,
                                   opacity: 0,
                                   excavate: true
                               }
                           }
                         : {})}
                 />
-                {!!EmbeddedIcon && level !== "L" && (
-                    <div className="qRCode__logo" style={{ "--qr-code-logo-width": `${qrLogoSize * 0.2}px` }}>
+                {!!EmbeddedIcon && (
+                    <div className="qRCode__logo">
                         {cloneElement(EmbeddedIcon, { className: "qRCode__logoSvg", fill: QRForeground[appearance] })}
                     </div>
                 )}

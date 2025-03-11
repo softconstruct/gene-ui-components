@@ -1,5 +1,3 @@
-// @TODO rewrite stories via new approach see the steps component story file
-
 import React, { FC } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
@@ -20,7 +18,7 @@ const meta: Meta<typeof QRCode> = {
     },
     args: {
         appearance: "magenta",
-        level: "L",
+        level: "M",
         value: "https://geneui-storybook.softconstruct.com/"
     } as IQRCodeProps
 };
@@ -30,7 +28,7 @@ export default meta;
 type Story = StoryObj<IQRCodeProps>;
 
 const StoryComponent: FC<IQRCodeProps> = (props) => (
-    <div style={{ maxWidth: "200px", width: "100%", height: "100%", maxHeight: "200px" }}>
+    <div style={{ maxWidth: "160px", width: "100%", height: "100%", maxHeight: "160px" }}>
         <QRCode {...props} />
     </div>
 );
@@ -42,7 +40,6 @@ export const Default: Story = {
 export const WithLogo: Story = {
     render: (props) => <StoryComponent {...props} />,
     args: {
-        level: "M",
         EmbeddedIcon: (
             <svg width="24" height="24" viewBox="0 0 24 24" fill="#A60063" xmlns="http://www.w3.org/2000/svg">
                 <path d="M21.9687 7.62106C21.8921 7.38978 21.7032 7.22364 21.4719 7.20084L19.3301 6.99073L20.6217 5.11439C20.765 4.90428 20.7438 4.59645 20.5663 4.41891C20.4669 4.31956 20.335 4.25278 20.2014 4.25278C20.0679 4.25278 19.9474 4.30816 19.848 4.39611L16.5253 7.52008C16.3494 7.68621 16.294 7.9403 16.3592 8.17158C16.4357 8.40287 16.6247 8.569 16.856 8.59181L18.9978 8.81332L17.7062 10.6897C17.5628 10.9112 17.584 11.2076 17.7616 11.3851C17.8609 11.4845 17.9928 11.5399 18.1264 11.5399C18.2583 11.5399 18.3805 11.4845 18.4798 11.3965L21.8025 8.27257C21.9784 8.10643 22.0452 7.85235 21.9687 7.62106Z" />

@@ -13,7 +13,8 @@
     }
 
     &__logo {
-        width: var(--qr-code-logo-width);
+        width: var(--guit-sem-dimension-width-small);
+        height: var(--guit-sem-dimension-height-small);
         aspect-ratio: 1 / 1;
         position: absolute;
         top: 50%;
