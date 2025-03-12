@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 
-import { OS } from "@types";
+import { OSTypes } from "@types";
 
 interface IDeviceInfo {
     isMobile: boolean;
     isDesktop: boolean;
-    os: OS;
+    isTouch: boolean;
+    os: OSTypes;
     isWindows: boolean;
     isMacOS: boolean;
     isLinux: boolean;
@@ -14,7 +15,7 @@ interface IDeviceInfo {
 }
 
 // Map of OS detection patterns
-const osPatterns: [OS, RegExp][] = [
+const osPatterns: [OSTypes, RegExp][] = [
     ["Windows", /\b(windows nt|win)\b/i],
     ["iOS", /\b(iPhone|iPad|iPod).*?OS \d+/i],
     ["Android", /\bandroid\b/i],
@@ -28,6 +29,7 @@ const useDeviceInfo = (): IDeviceInfo => {
             return {
                 isMobile: false,
                 isDesktop: false,
+                isTouch: false,
                 os: "Unknown",
                 isWindows: false,
                 isMacOS: false,
@@ -51,9 +53,17 @@ const useDeviceInfo = (): IDeviceInfo => {
         const isMobile = isAndroid || isIOS;
         const isDesktop = isWindows || isMacOS || isLinux;
 
+        // Detect touch device
+        const isTouch =
+            "ontouchstart" in window ||
+            navigator.maxTouchPoints > 0 ||
+            (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ||
+            false;
+
         return {
             isMobile,
             isDesktop,
+            isTouch,
             os: detectedOS,
             isWindows,
             isMacOS,
