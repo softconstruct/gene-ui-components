@@ -1,0 +1,62 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Hooks/useBreakpoint" />
+
+<div style={{ paddingInlineStart: '20px' }}>
+
+## useBreakpoint
+
+Custom hook that determines the current device breakpoint dynamically based on the provided breakpoint values.<br/>
+This hook is integrated with `GeneUIProvider`, allowing applications to use predefined breakpoints from `@geneui/tokens` while also supporting custom overrides.
+
+#### Parameters
+
+- **`breakpoints`** _(required)_:  
+An object containing the breakpoint values for different device types (`mobile`, `tablet`, `desktop`).<br/>
+These values define the width thresholds for each device category and can either come from `@geneui/tokens` or be redefined as needed.
+
+#### Returns
+
+- **`breakpoint`**  
+A string representing the current device type (`"mobile"`, `"tablet"`, or `"desktop"`) based on the window width.
+
+#### Usage
+
+```tsx
+import React from "react";
+import useBreakpoint from "@hooks/useBreakpoint";
+
+import { bootstrap } from "@geneui/tokens"; // GeneUI predefined tokens
+
+const defaultTokens = bootstrap();
+
+
+const MyComponent = () => {
+    const currentBreakpoint = useBreakpoint({
+        mobile: defaultTokens.GuitRefBreakpointMobile,
+        tablet: defaultTokens.GuitRefBreakpointTablet,
+        desktop: defaultTokens.GuitRefBreakpointDesktop
+    });
+    
+
+    return (
+        <div>
+            {currentBreakpoint === "mobile" && <p>Mobile Layout</p>}
+            {currentBreakpoint === "tablet" && <p>Tablet Layout</p>}
+            {currentBreakpoint === "desktop" && <p>Desktop Layout</p>}
+        </div>
+    );
+};
+
+export default MyComponent;
+```
+#### Notes
+
+- The breakpoints are predefined in the `@geneui/tokens` package, making them configurable at the design system level.
+- Applications can override the breakpoints if needed by providing custom values.
+- The `useBreakpoint` is used in `GeneUIProvider`, making the current breakpoint available globally via context.
+- Any component inside the `GeneUIProvider` can access the current breakpoint value dynamically.
+- Uses `useWindowSize` to track width changes efficiently.
+- Updates only when the window size crosses a breakpoint threshold.
+
+</div>
