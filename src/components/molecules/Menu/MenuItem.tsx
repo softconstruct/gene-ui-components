@@ -1,4 +1,4 @@
-import React, { Children, FC, ReactNode, useContext, useState } from "react";
+import React, { Children, FC, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import { isValidElementType } from "react-is";
 
@@ -47,14 +47,19 @@ const MenuItem: FC<IMenuItemProps> = ({
     generateId
 }) => {
     const [propsForPopover, setPropsForPopover] = useState({});
-    const { onChangeHandler, swappable } = useContext(MenuContext);
+    const { onChangeHandler, swappable, relativeRefsSetter } = useContext(MenuContext);
     const isOpen = !!generateId?.length && (paths?.join("_").startsWith(generateId) || paths?.join("_") === generateId);
+    const popoverBodyRef = useRef(null);
 
     const onItemClickHandler = (isBack: boolean) => {
         if (onChangeHandler && generateId) {
             onChangeHandler({ generateId, id, isBack });
         }
     };
+
+    useEffect(() => {
+        relativeRefsSetter({ generateId, popoverBodyRef });
+    }, [popoverBodyRef.current, propsForPopover]);
 
     const CustomElement = isValidElementType(ComponentRender) && (
         <MenuItemButton
@@ -105,7 +110,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                         onClose={popoverCloseHandler}
                         open={isOpen}
                     >
-                        <PopoverBody withPadding={false}>
+                        <PopoverBody withPadding={false} ref={popoverBodyRef}>
                             <div
                                 className={classNames("menu__list  ", {
                                     menu__list_current: activeElement,

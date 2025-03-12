@@ -29,7 +29,6 @@ const MenuItemRecursion = (menuData) => {
                 selected={el.selected}
                 index={i}
                 title={el.children ? el.title : ""}
-                defaultOpened={el?.defaultOpened}
                 IconBefore={el.IconBefore}
                 IconAfter={el.IconAfter}
                 danger={el.danger}
@@ -86,23 +85,33 @@ const StoryComponent: FC = (props) => {
 };
 
 export const Default: Story = {
-    render: (prop) => <StoryComponent {...prop} />
+    render: (props) => <StoryComponent {...props} />
 };
 
 export const Swappable: Story = {
-    render: (prop) => <StoryComponent {...prop} />,
+    render: (props) => <StoryComponent {...props} />,
     args: { swappable: true }
 };
 
-const SimpleComponent: FC = (prop) => {
-    const [propsForPopover, setPropsForPopover] = useState({});
+const SimpleComponent: FC = (props) => {
+    const [propsForPopover, setPropsForPopover] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+
     return (
         <>
             <Button onClick={() => setIsMenuOpen((prev) => !prev)} {...propsForPopover}>
                 test
             </Button>
-            <Menu {...prop} setPropsForPopover={setPropsForPopover} onChange={() => {}} isMenuOpen={isMenuOpen}>
+            <Menu
+                {...props}
+                setPropsForPopover={setPropsForPopover}
+                onChange={() => {}}
+                isMenuOpen={isMenuOpen}
+                clickOutside={() => {
+                    setIsMenuOpen(false);
+                }}
+                propsForPopover={propsForPopover}
+            >
                 <MenuItem id={12} title="test">
                     <MenuItem id={128} selected>
                         test

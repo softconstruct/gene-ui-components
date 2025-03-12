@@ -7,6 +7,7 @@ import React, {
     FC,
     FunctionComponentElement,
     JSX,
+    MutableRefObject,
     ReactElement,
     SetStateAction,
     useEffect,
@@ -17,6 +18,8 @@ import classNames from "classnames";
 
 import { Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+
+import { useClickOutside } from "@hooks/index";
 
 // Styles
 import "./Menu.scss";
@@ -53,6 +56,7 @@ export interface OnchangeHandlerType {
 interface IMenuContextProps {
     onChangeHandler: (props: OnchangeHandlerType) => void;
     swappable?: boolean;
+    relativeRefsSetter: (params: { generateId: string; ref: MutableRefObject<HTMLElement> }) => void;
 }
 
 interface IMenuProps {
@@ -61,14 +65,41 @@ interface IMenuProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * The child elements of the menu. These should be <MenuItem/> components.
+     */
     children: ReactElement | ReactElement[];
+    /**
+     *  Indicates whether the menu is in a loading state. If true, a loading indicator is displayed instead of the menu items.
+     */
     isLoading?: boolean;
+    /**
+     * Callback function triggered when a menu item is selected or navigated.
+     *
+     * paths: An array of strings representing the hierarchical path of the selected item.
+     * id: The unique identifier of the selected menu item.
+     */
     onChange: (paths: string[], id: string | number) => void;
+    /**
+     * The text to display alongside the loader when isLoading is true.
+     */
     loadingText?: string;
+    /**
+     *  If true, enables swapping behavior, modifying the appearance or behavior of the menu.
+     */
     swappable?: boolean;
-    defaultOpen?: boolean;
+    /**
+     * A function for setting additional props for the Popover component that wraps the menu.
+     */
     setPropsForPopover: Dispatch<SetStateAction<Record<string, unknown>>>;
+    /**
+     * Controls the open state of the menu. By default, the Menu controls automatically.
+     */
     isMenuOpen?: boolean;
+    /**
+     * A callback function that gets triggered when a click occurs outside of the menu, typically used for closing the menu.
+     */
+    clickOutside?: () => void;
 }
 
 const cloneChildrenRecursive = (
@@ -124,45 +155,48 @@ const Menu: FC<IMenuProps> = ({
     loadingText,
     swappable,
     setPropsForPopover,
-    defaultOpen = false,
-    isMenuOpen
+    isMenuOpen,
+    clickOutside
 }) => {
     // const [isMenuOpenState, setIsMenuOpenState] = useState(false);
     const [paths, setPaths] = useState<string[]>([]);
+    const [relativeRefs, setRelativeRefs] = useState({});
+
+    const mainPopoverBodyRef = useClickOutside(() => {
+        setPaths([]);
+        clickOutside?.();
+    }, [...Object.values(relativeRefs)]);
 
     useEffect(() => {
-        // setIsMenuOpenState(!!isMenuOpen);
+        // if (isMenuOpen !== "undefined") setIsMenuOpenState(!!isMenuOpen);
     }, [isMenuOpen]);
-
-    useEffect(() => {
-        // const defaultPath = findPathOfDefaultOpened(children);
-        // if (defaultPath) {
-        // setPaths(["4", "4"]);
-        // }
-        // console.log(isMenuOpenState);
-    }, []);
 
     const onChangeHandler = ({ generateId, id, isBack }: OnchangeHandlerType) => {
         const idToArray = generateId.split("_");
         const currentPath = isBack ? idToArray.slice(0, -1) : idToArray;
-
         setPaths(currentPath);
         onChange(currentPath, id);
+    };
+
+    const relativeRefsSetter = ({ generateId, popoverBodyRef }) => {
+        if (popoverBodyRef.current) {
+            setRelativeRefs((prev) => ({
+                ...prev,
+                [generateId]: popoverBodyRef
+            }));
+        }
     };
 
     const memoizedMenuContextValue: IMenuContextProps = useMemo(
         () => ({
             onChangeHandler,
-            swappable
+            swappable,
+            relativeRefsSetter
         }),
         [onChangeHandler, swappable]
     );
 
     const clonedChildren = cloneChildrenRecursive(children, paths);
-
-    const popoverCloseHandler = () => {
-        // console.log("close");
-    };
 
     return (
         <MenuContext.Provider value={memoizedMenuContextValue}>
@@ -171,14 +205,12 @@ const Menu: FC<IMenuProps> = ({
                 size={swappable ? "mobile" : "small"}
                 disableReposition
                 position="bottom-left"
-                onClose={popoverCloseHandler}
-                defaultOpen={defaultOpen}
                 withArrow={false}
                 // open={isMenuOpenState}
                 open
             >
-                <PopoverBody withPadding={false}>
-                    <div className={classNames("menu menu_isSwappable", { menu_swappable: swappable }, className)}>
+                <PopoverBody withPadding={false} ref={mainPopoverBodyRef}>
+                    <div className={classNames("menu ", { menu_swappable: swappable }, className)}>
                         <div className="menu__list menu__list_current">
                             <Scrollbar className="menu__content">
                                 {isLoading ? (
