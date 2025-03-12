@@ -1,6 +1,6 @@
 .badge {
     position: relative;
-    width: fit-content;
+    display: inline-flex;
 
     &__content {
         $this: &;

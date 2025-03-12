@@ -1,0 +1,73 @@
+import { Meta } from '@storybook/blocks';
+import useDeviceInfo from './useDeviceInfo';
+
+<Meta title="Hooks/useDeviceInfo" />
+
+<div style={{ paddingInlineStart: '20px' }}>
+
+## useDeviceInfo
+
+This hook is responsible for detecting the client device's operating system and type (mobile or desktop) by analyzing the browser's user agent string.<br />
+It returns a structured API that includes boolean flags for specific OS and for device types, making it easy to adapt your UI to the client environment.
+
+#### Returns
+
+An object with the following properties:
+
+- **`os`**: A string representing the detected operating system. The value is one of: `"Windows" | "macOS" | "Linux" | "Android" | "iOS" | "Unknown"`
+  
+- **`isMobile`**: A boolean indicating whether the device is a mobile device. It returns `true` for Android and iOS devices.
+
+- **`isDesktop`**: A boolean indicating whether the device is a desktop device. It returns `true` for Windows, macOS, and Linux systems.
+
+- **`isWindows`**: A boolean flag that is `true` when the OS is detected as Windows.
+
+- **`isMacOS`**: A boolean flag that is `true` when the OS is detected as macOS.
+
+- **`isLinux`**: A boolean flag that is `true` when the OS is detected as Linux.
+
+- **`isAndroid`**: A boolean flag that is `true` when the OS is detected as Android.
+
+- **`isIOS`**: A boolean flag that is `true` when the OS is detected as iOS.
+
+#### Usage
+
+```jsx
+import React from 'react';
+import { useDeviceInfo } from '@geneui/components';
+
+const ExampleComponent = () => {
+    const {
+        os,
+        isMobile,
+        isDesktop,
+        isWindows,
+        isMacOS,
+        isLinux,
+        isAndroid,
+        isIOS,
+    } = useDeviceInfo();
+
+    return (
+        <div>
+            <p>Detected Operating System: <strong>{os}</strong></p>
+            {isMobile && <p>You are using a mobile device.</p>}
+            {isDesktop && <p>You are using a desktop device.</p>}
+            {isWindows && <p>Your OS is Windows.</p>}
+            {isMacOS && <p>Your OS is macOS.</p>}
+            {isLinux && <p>Your OS is Linux.</p>}
+            {isAndroid && <p>Your OS is Android.</p>}
+            {isIOS && <p>Your OS is iOS.</p>}
+        </div>
+    );
+};
+
+export default ExampleComponent;
+```
+
+#### Notes
+
+-   <b>Detection Basis:</b> The hook uses the browser's `navigator.userAgent` to determine the operating system. This method is simple and efficient, though it depends on the reliability of the user agent string.
+-   <b>SSR Safety:</b> The hook is designed to be safe for server-side rendering (SSR). It checks for the existence of navigator before attempting detection, ensuring no runtime errors occur when rendered on the server.
+
+</div>
