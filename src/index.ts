@@ -18,6 +18,7 @@ export { default as Tooltip } from "./components/molecules/Tooltip";
 export { default as ProgressBar } from "./components/molecules/ProgressBar";
 export { Steps, Step, IStepProps, IStepsProps } from "./components/molecules/Steps";
 export { default as Tag, ITagProps } from "./components/molecules/Tag";
+export { default as QRCode } from "./components/molecules/QRCode";
 export { KeyValue, Key, Value, IKeyValueProps, IKeyProps, IValueProps } from "./components/molecules/KeyValue";
 
 // Organisms
