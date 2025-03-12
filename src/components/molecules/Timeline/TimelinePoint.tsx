@@ -48,7 +48,7 @@ const TimelinePoint: FC<ITimelinePointProps> = ({ title, status, description }) 
                 <Divider className="timeline__status_divider" vertical={direction === "vertical"} />
             </div>
             <div className="timeline__content">
-                <p className="timeline__title">{title}</p>
+                <p className="timeline__title ellipsis-text">{title}</p>
                 <p className="timeline__description">{description}</p>
             </div>
         </div>

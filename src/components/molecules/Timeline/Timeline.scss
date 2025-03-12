@@ -87,6 +87,10 @@
                     #{ $this }__content {
                         text-align: end;
                     }
+                    #{ $this }__description {
+                        padding-inline-end: 1em;
+                        margin-inline-end: -1em;
+                    }
                 }
 
                 &_alternate {
@@ -113,6 +117,10 @@
                             }
                             #{ $this }__content {
                                 text-align: end;
+                            }
+                            #{ $this }__description {
+                                padding-inline-end: 1em;
+                                margin-inline-end: -1em;
                             }
                         }
                     }
@@ -187,11 +195,7 @@
         display: flex;
         flex-direction: column;
         gap: var(--guit-ref-spacing-3xsmall);
-    }
-
-    &__title,
-    &__description {
-        word-break: break-word;
+        min-width: 0;
     }
 
     &__title {
@@ -208,5 +212,11 @@
         font-weight: var(--guit-sem-font-body-medium-default-regular-font-weight);
         font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
         line-height: var(--guit-sem-font-body-medium-default-regular-line-height);
+
+        // maximum 3 rows of text with ellipsis
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 }
