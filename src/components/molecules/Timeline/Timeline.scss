@@ -52,8 +52,8 @@
             #{ $this }__status {
                 flex-direction: row;
 
-                &_loading {
-                    padding-inline-start: var(--guit-ref-spacing-4xsmall);
+                &_icon_pending {
+                    padding-inline: var(--guit-ref-spacing-4xsmall);
                 }
             }
 
@@ -134,8 +134,8 @@
             #{ $this }__status {
                 flex-direction: column;
 
-                &_loading {
-                    padding-top: var(--guit-ref-spacing-4xsmall);
+                &_icon_pending {
+                    padding-block: var(--guit-ref-spacing-4xsmall);
                 }
             }
 
