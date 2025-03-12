@@ -37,13 +37,13 @@ interface IQRCodeProps {
      * This can be used for branding, such as a logo or an icon.
      * The size of this element will be calculated relative to the parent element.
      */
-    EmbeddedIcon?: JSX.Element;
+    Logo?: JSX.Element;
 }
 
 /**
  * A QR code component generates and displays a Quick Response (QR) code, a two-dimensional barcode that can be scanned by mobile devices to quickly access information, websites, or applications
  */
-const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "magenta", EmbeddedIcon, className }) => {
+const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "magenta", Logo, className }) => {
     const qrCodeRef = useRef<HTMLDivElement | null>(null);
 
     const { tokens } = useContext(GeneUIDesignSystemContext);
@@ -65,7 +65,7 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "magenta", 
                     fgColor={`${QRForeground[appearance]}`}
                     level={level}
                     className={classNames(`qRCode__svg`)}
-                    {...(EmbeddedIcon
+                    {...(Logo
                         ? {
                               imageSettings: {
                                   src: "",
@@ -77,9 +77,9 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "magenta", 
                           }
                         : {})}
                 />
-                {!!EmbeddedIcon && (
+                {!!Logo && (
                     <div className="qRCode__logo">
-                        {cloneElement(EmbeddedIcon, { className: "qRCode__logoSvg", fill: QRForeground[appearance] })}
+                        {cloneElement(Logo, { className: "qRCode__logoSvg", fill: QRForeground[appearance] })}
                     </div>
                 )}
             </>
