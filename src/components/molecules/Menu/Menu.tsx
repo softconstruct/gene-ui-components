@@ -13,6 +13,7 @@ import React, {
     SetStateAction,
     useEffect,
     useMemo,
+    useRef,
     useState
 } from "react";
 import classNames from "classnames";
@@ -165,8 +166,11 @@ const Menu: FC<IMenuProps> = ({
     const [paths, setPaths] = useState<string[]>([]);
     const [relativeRefs, setRelativeRefs] = useState<Record<string, RefObject<HTMLElement>>>({});
     const isMobile = true;
+    const popoverRef = useRef(null);
 
-    const mainPopoverBodyRef = useClickOutside(() => {
+    console.log("🚀 ~ popoverBodyRef:", popoverRef);
+
+    useClickOutside(() => {
         setPaths([]);
         clickOutside?.();
     }, [...Object.values(relativeRefs)]);
@@ -212,8 +216,9 @@ const Menu: FC<IMenuProps> = ({
                 withArrow={false}
                 // open={isMenuOpenState}
                 open
+                ref={popoverRef}
             >
-                <PopoverBody withPadding={false} ref={mainPopoverBodyRef}>
+                <PopoverBody withPadding={false}>
                     <div className={classNames("menu ", { menu_swappable: swappable }, className)}>
                         <div className="menu__list menu__list_current">
                             <Scrollbar className="menu__content">

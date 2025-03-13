@@ -165,7 +165,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                         onClose={popoverCloseHandler}
                         open={isOpen}
                     >
-                        <PopoverBody withPadding={false} ref={popoverBodyRef}>
+                        <PopoverBody withPadding={false}>
                             <div
                                 className={classNames("menu__list  ", {
                                     menu__list_current: activeElement,

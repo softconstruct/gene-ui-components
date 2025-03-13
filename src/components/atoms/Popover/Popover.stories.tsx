@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useRef, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -10,7 +10,7 @@ import { IPopoverProps, Popover, PopoverBody, PopoverFooter, PopoverFooterAction
 const meta: Meta<IPopoverProps> = {
     title: "Atoms/Popover",
     component: Popover,
-    subcomponents: { PopoverBody, PopoverFooter },
+    subcomponents: { PopoverBody, PopoverFooter, PopoverFooterActions },
     argTypes: {
         position: args({ control: "select", ...propCategory.appearance }),
         padding: args({ control: "number", ...propCategory.appearance }),
@@ -39,11 +39,14 @@ export default meta;
 type Story = StoryObj<IPopoverProps>;
 
 const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
+    const popRef = useRef(null);
     const [propsForContent, setPropsForContent] = useState({});
+
+    console.log("🚀 ~ popRef:", popRef.current);
 
     return (
         <div style={{ margin: "500px 500px", height: 7000 }}>
-            <Popover {...props} setProps={setPropsForContent}>
+            <Popover {...props} setProps={setPropsForContent} ref={popRef}>
                 <PopoverBody>
                     <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
                 </PopoverBody>
