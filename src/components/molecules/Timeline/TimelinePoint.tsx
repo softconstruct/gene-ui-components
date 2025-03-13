@@ -50,12 +50,10 @@ const TimelinePoint: FC<ITimelinePointProps> = ({ title, status, description }) 
             </div>
             <div className="timeline__content">
                 <Tooltip text={title}>
-                    <p className="timeline__title ellipsis-text">{title} Lorem ipsum dolor sit amet, consectetur.</p>
+                    <p className="timeline__title ellipsis-text">{title}</p>
                 </Tooltip>
                 <Tooltip text={description}>
-                    <p className="timeline__description">
-                        {description} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Culpa, ipsum?
-                    </p>
+                    <p className="timeline__description">{description}</p>
                 </Tooltip>
             </div>
         </div>
