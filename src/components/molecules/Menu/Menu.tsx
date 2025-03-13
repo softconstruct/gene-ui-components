@@ -9,6 +9,7 @@ import React, {
     JSX,
     MutableRefObject,
     ReactElement,
+    RefObject,
     SetStateAction,
     useEffect,
     useMemo,
@@ -53,10 +54,12 @@ export interface OnchangeHandlerType {
     isBack: boolean;
 }
 
+type RelativeRefsSetter = (props: { generateId: string; popoverBodyRef: MutableRefObject<HTMLElement | null> }) => void;
+
 interface IMenuContextProps {
     onChangeHandler: (props: OnchangeHandlerType) => void;
     swappable?: boolean;
-    relativeRefsSetter: (params: { generateId: string; ref: MutableRefObject<HTMLElement> }) => void;
+    relativeRefsSetter: RelativeRefsSetter;
 }
 
 interface IMenuProps {
@@ -160,7 +163,8 @@ const Menu: FC<IMenuProps> = ({
 }) => {
     // const [isMenuOpenState, setIsMenuOpenState] = useState(false);
     const [paths, setPaths] = useState<string[]>([]);
-    const [relativeRefs, setRelativeRefs] = useState({});
+    const [relativeRefs, setRelativeRefs] = useState<Record<string, RefObject<HTMLElement>>>({});
+    const isMobile = true;
 
     const mainPopoverBodyRef = useClickOutside(() => {
         setPaths([]);
@@ -178,7 +182,7 @@ const Menu: FC<IMenuProps> = ({
         onChange(currentPath, id);
     };
 
-    const relativeRefsSetter = ({ generateId, popoverBodyRef }) => {
+    const relativeRefsSetter: RelativeRefsSetter = ({ generateId, popoverBodyRef }) => {
         if (popoverBodyRef.current) {
             setRelativeRefs((prev) => ({
                 ...prev,
@@ -202,7 +206,7 @@ const Menu: FC<IMenuProps> = ({
         <MenuContext.Provider value={memoizedMenuContextValue}>
             <Popover
                 setProps={setPropsForPopover}
-                size={swappable ? "mobile" : "small"}
+                size={isMobile ? "mobile" : "small"}
                 disableReposition
                 position="bottom-left"
                 withArrow={false}

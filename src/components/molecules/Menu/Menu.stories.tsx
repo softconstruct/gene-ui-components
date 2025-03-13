@@ -110,7 +110,6 @@ const SimpleComponent: FC = (props) => {
                 clickOutside={() => {
                     setIsMenuOpen(false);
                 }}
-                propsForPopover={propsForPopover}
             >
                 <MenuItem id={12} title="test">
                     <MenuItem id={128} selected>

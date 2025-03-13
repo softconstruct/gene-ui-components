@@ -7,7 +7,7 @@ import Divider from "@components/atoms/Divider";
 
 interface IMenuItemButtonProps {
     type: "header" | "parent" | "simple" | "custom";
-    onItemClickHandler: (boolean) => void;
+    onItemClickHandler: (isOpen: boolean) => void;
     disabled?: boolean;
     danger?: boolean;
     isOpen?: boolean;
@@ -15,7 +15,7 @@ interface IMenuItemButtonProps {
     isActive?: boolean;
     selected?: boolean;
     divider?: boolean;
-    propsForPopover?: never;
+    propsForPopover?: Record<string, HTMLButtonElement>;
     IconBefore?: FC<IconProps>;
     IconAfter?: FC<IconProps>;
     title?: string;
@@ -28,7 +28,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
     children,
     danger,
     isActive,
-    propsForPopover,
+    propsForPopover = {},
     IconBefore,
     IconAfter,
     selected,
@@ -39,7 +39,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
     const onItemClick = () => {
         switch (type) {
             case "parent":
-                return onItemClickHandler(isOpen);
+                return onItemClickHandler(!!isOpen);
             case "header":
                 return onItemClickHandler(true);
             default:
@@ -75,7 +75,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                 })}
                 onClick={onItemClick}
                 {...(disabled ? { tabIndex: -1 } : {})}
-                {...(propsForPopover ? { ...propsForPopover } : {})}
+                {...propsForPopover}
             >
                 <span className="menu__cell">
                     {type === "header" && <ChevronLeft className="menu__icon menu__icon_before" size={20} />}
