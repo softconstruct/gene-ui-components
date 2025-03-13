@@ -212,6 +212,7 @@
         font-weight: var(--guit-sem-font-body-medium-default-regular-font-weight);
         font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
         line-height: var(--guit-sem-font-body-medium-default-regular-line-height);
+        word-break: break-word;
 
         // maximum 3 rows of text with ellipsis
         display: -webkit-box;

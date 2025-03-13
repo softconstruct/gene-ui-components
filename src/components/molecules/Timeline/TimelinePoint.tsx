@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { CircleFilled, Clock } from "@geneui/icons";
 
 import Divider from "@components/atoms/Divider";
+import Tooltip from "@components/molecules/Tooltip";
 
 // Styles
 import "./Timeline.scss";
@@ -48,8 +49,14 @@ const TimelinePoint: FC<ITimelinePointProps> = ({ title, status, description }) 
                 <Divider className="timeline__status_divider" vertical={direction === "vertical"} />
             </div>
             <div className="timeline__content">
-                <p className="timeline__title ellipsis-text">{title}</p>
-                <p className="timeline__description">{description}</p>
+                <Tooltip text={title}>
+                    <p className="timeline__title ellipsis-text">{title} Lorem ipsum dolor sit amet, consectetur.</p>
+                </Tooltip>
+                <Tooltip text={description}>
+                    <p className="timeline__description">
+                        {description} Lorem ipsum dolor sit amet, consectetur adipisicing elit. Culpa, ipsum?
+                    </p>
+                </Tooltip>
             </div>
         </div>
     );
