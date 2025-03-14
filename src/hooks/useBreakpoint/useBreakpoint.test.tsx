@@ -22,7 +22,7 @@ describe("useBreakpoint", () => {
         (useWindowSize as jest.Mock).mockReturnValue({ width: 500 });
 
         function Component() {
-            const currentBreakpoint = useBreakpoint(breakpoints);
+            const { currentBreakpoint } = useBreakpoint(breakpoints);
             return <div>{currentBreakpoint}</div>;
         }
 
@@ -35,7 +35,7 @@ describe("useBreakpoint", () => {
         (useWindowSize as jest.Mock).mockReturnValue({ width: 800 });
 
         function Component() {
-            const currentBreakpoint = useBreakpoint(breakpoints);
+            const { currentBreakpoint } = useBreakpoint(breakpoints);
             return <div>{currentBreakpoint}</div>;
         }
 
@@ -48,7 +48,7 @@ describe("useBreakpoint", () => {
         (useWindowSize as jest.Mock).mockReturnValue({ width: 1300 });
 
         function Component() {
-            const currentBreakpoint = useBreakpoint(breakpoints);
+            const { currentBreakpoint } = useBreakpoint(breakpoints);
             return <div>{currentBreakpoint}</div>;
         }
 
@@ -63,7 +63,7 @@ describe("useBreakpoint", () => {
         mockUseWindowSize.mockReturnValue({ width: 500 });
 
         function Component() {
-            const currentBreakpoint = useBreakpoint(breakpoints);
+            const { currentBreakpoint } = useBreakpoint(breakpoints);
             return <div>{currentBreakpoint}</div>;
         }
 
@@ -81,5 +81,42 @@ describe("useBreakpoint", () => {
         wrapper.setProps({}); // Force re-render
 
         expect(wrapper.text()).toBe("desktop");
+    });
+
+    it("should return correct boolean values for breakpoints", () => {
+        (useWindowSize as jest.Mock).mockReturnValue({ width: 500 });
+
+        function Component() {
+            const { isMobileBreakpoint, isTabletBreakpoint, isDesktopBreakpoint } = useBreakpoint(breakpoints);
+            return (
+                <div>
+                    <span data-testid="isMobile">{isMobileBreakpoint ? "true" : "false"}</span>
+                    <span data-testid="isTablet">{isTabletBreakpoint ? "true" : "false"}</span>
+                    <span data-testid="isDesktop">{isDesktopBreakpoint ? "true" : "false"}</span>
+                </div>
+            );
+        }
+
+        const wrapper = mount(<Component />);
+
+        expect(wrapper.find('[data-testid="isMobile"]').text()).toBe("true");
+        expect(wrapper.find('[data-testid="isTablet"]').text()).toBe("false");
+        expect(wrapper.find('[data-testid="isDesktop"]').text()).toBe("false");
+
+        // Simulate window resize to tablet
+        (useWindowSize as jest.Mock).mockReturnValue({ width: 900 });
+        wrapper.setProps({}); // Force re-render
+
+        expect(wrapper.find('[data-testid="isMobile"]').text()).toBe("false");
+        expect(wrapper.find('[data-testid="isTablet"]').text()).toBe("true");
+        expect(wrapper.find('[data-testid="isDesktop"]').text()).toBe("false");
+
+        // Simulate window resize to desktop
+        (useWindowSize as jest.Mock).mockReturnValue({ width: 1300 });
+        wrapper.setProps({}); // Force re-render
+
+        expect(wrapper.find('[data-testid="isMobile"]').text()).toBe("false");
+        expect(wrapper.find('[data-testid="isTablet"]').text()).toBe("false");
+        expect(wrapper.find('[data-testid="isDesktop"]').text()).toBe("true");
     });
 });

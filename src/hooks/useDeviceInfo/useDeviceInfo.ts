@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import { OSTypes } from "@types";
 
 interface IDeviceInfo {
-    isMobile: boolean;
-    isDesktop: boolean;
+    isMobileDevice: boolean;
+    isDesktopDevice: boolean;
     isTouch: boolean;
     os: OSTypes;
     isWindows: boolean;
@@ -27,8 +27,8 @@ const useDeviceInfo = (): IDeviceInfo => {
     return useMemo<IDeviceInfo>(() => {
         if (typeof navigator === "undefined") {
             return {
-                isMobile: false,
-                isDesktop: false,
+                isMobileDevice: false,
+                isDesktopDevice: false,
                 isTouch: false,
                 os: "Unknown",
                 isWindows: false,
@@ -50,8 +50,8 @@ const useDeviceInfo = (): IDeviceInfo => {
         const isAndroid = detectedOS === "Android";
         const isIOS = detectedOS === "iOS";
 
-        const isMobile = isAndroid || isIOS;
-        const isDesktop = isWindows || isMacOS || isLinux;
+        const isMobileDevice = isAndroid || isIOS;
+        const isDesktopDevice = isWindows || isMacOS || isLinux;
 
         // Detect touch device
         const isTouch =
@@ -61,8 +61,8 @@ const useDeviceInfo = (): IDeviceInfo => {
             false;
 
         return {
-            isMobile,
-            isDesktop,
+            isMobileDevice,
+            isDesktopDevice,
             isTouch,
             os: detectedOS,
             isWindows,

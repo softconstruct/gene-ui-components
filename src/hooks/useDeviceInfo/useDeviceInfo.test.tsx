@@ -67,8 +67,8 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: false,
+            isMobileDevice: false,
+            isDesktopDevice: false,
             isTouch: false,
             os: "Unknown",
             isWindows: false,
@@ -85,8 +85,8 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: true,
+            isMobileDevice: false,
+            isDesktopDevice: true,
             isTouch: false,
             os: "Windows",
             isWindows: true,
@@ -103,8 +103,8 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: true,
+            isMobileDevice: false,
+            isDesktopDevice: true,
             isTouch: false,
             os: "macOS",
             isWindows: false,
@@ -121,8 +121,8 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: true,
+            isMobileDevice: false,
+            isDesktopDevice: true,
             isTouch: false,
             os: "Linux",
             isWindows: false,
@@ -141,8 +141,8 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: true,
-            isDesktop: false,
+            isMobileDevice: true,
+            isDesktopDevice: false,
             isTouch: true, // Should be true
             os: "Android",
             isWindows: false,
@@ -161,8 +161,8 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: true,
-            isDesktop: false,
+            isMobileDevice: true,
+            isDesktopDevice: false,
             isTouch: true, // Should be true
             os: "iOS",
             isWindows: false,
