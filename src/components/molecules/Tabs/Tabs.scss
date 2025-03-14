@@ -10,12 +10,25 @@
         #{ $this }__wrapper {
             overflow: hidden;
             white-space: nowrap;
-            margin: calc(-1 * var(--guit-ref-spacing-4xsmall));
+            margin-inline: -0.2rem;
+        }
+
+        #{ $this }__nav {
+            &_button {
+                box-shadow: 0 -0.1rem 0 0 var(--guit-sem-color-border-neutral-2) inset;
+                margin-bottom: var(--guit-ref-spacing-4xsmall);
+            }
         }
 
         #{ $this }__list {
+            padding: 0.2rem;
             overflow-x: auto;
             overflow-y: hidden;
+
+            &::-webkit-scrollbar {
+                width: 0;
+                height: 0;
+            }
         }
 
         &#{ $this }_line {
@@ -96,6 +109,10 @@
             flex-direction: column;
         }
 
+        #{ $this }__list {
+            padding: 0.2rem;
+        }
+
         #{ $this }__button {
             [dir="ltr"] & {
                 &_large {
@@ -152,17 +169,72 @@
 
     &__nav {
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         flex: 0 0 auto;
         background-color: var(--guit-sem-color-background-neutral-1);
         max-width: 100%;
+        position: relative;
 
         &_button {
             flex: 0 0 auto;
-            box-shadow: 0 calc(-1 * var(--guit-ref-border-width-thin)) 0 0 var(--guit-sem-color-border-neutral-2) inset;
 
             [dir="rtl"] & {
                 rotate: 180deg;
+            }
+        }
+    }
+
+    &__shadow {
+        position: relative;
+
+        &_before::before,
+        &_after::after {
+            content: "";
+            width: 8.5rem;
+            height: 100%;
+            inset-block: 0;
+            pointer-events: none;
+            position: absolute;
+            z-index: 1;
+        }
+
+        &_before::before {
+            inset-inline-start: 0;
+
+            [dir="ltr"] & {
+                background: linear-gradient(
+                    90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
+
+            [dir="rtl"] & {
+                background: linear-gradient(
+                    -90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
+        }
+
+        &_after::after {
+            inset-inline-end: 0;
+
+            [dir="ltr"] & {
+                background: linear-gradient(
+                    -90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
+
+            [dir="rtl"] & {
+                background: linear-gradient(
+                    90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
             }
         }
     }
@@ -176,16 +248,7 @@
         display: flex;
         flex: 1;
         box-sizing: border-box;
-        padding: var(--guit-ref-spacing-4xsmall);
         scroll-behavior: smooth;
-
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        &::-webkit-scrollbar {
-            display: none;
-        }
-
-        -ms-overflow-style: none; /* IE and Edge */
-        scrollbar-width: none; /* Firefox */
     }
 
     &__button {
@@ -193,7 +256,6 @@
 
         display: flex;
         align-items: center;
-        justify-content: flex-end;
         column-gap: var(--guit-ref-spacing-xsmall);
         background-color: var(--guit-sem-color-background-neutral-1);
 
@@ -248,6 +310,7 @@
             font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            text-align: start;
         }
 
         // state: rest
@@ -270,7 +333,7 @@
         }
 
         // state: pressed
-        &:active {
+        &:active:not(&#{ $that }_selected):not(&#{ $that }_disabled) {
             background-color: var(--guit-sem-color-background-neutral-1-pressed);
         }
 
@@ -312,7 +375,7 @@
             width: 2.4rem;
             height: 2.4rem;
 
-            // todo: remove this styles after implementation
+            // todo: remove this styles after 'slot' component implementation
             background-color: #f4e1ec;
             border: 0.1rem solid #a60063;
         }
@@ -321,7 +384,7 @@
     &__stage {
         flex: 1;
 
-        // todo: remove this styles after stage component implementation
+        // todo: remove this styles after 'stage' component implementation
         padding: var(--guit-ref-spacing-xlarge);
         background-color: var(--guit-sem-color-background-neutral-3);
     }

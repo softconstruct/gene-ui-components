@@ -5,6 +5,7 @@ import React, {
     FC,
     FunctionComponentElement,
     JSX,
+    MutableRefObject,
     useEffect,
     useMemo,
     useRef,
@@ -22,6 +23,7 @@ import useWindowSize from "@hooks/useWindowSize";
 import "./Tabs.scss";
 
 // Components
+import { Scrollbar } from "../../../index";
 import Button from "../../atoms/Button";
 import { ITabProps } from ".";
 
@@ -46,7 +48,6 @@ interface ITabsProps {
      * Possible values: `line | contained`
      */
     type?: "line" | "contained";
-
     /**
      * The prop responsible for showing the loading skeleton if passed true. The default value is false
      * boolean
@@ -95,6 +96,10 @@ const Tabs: FC<ITabsProps> = ({
     const [selectedTabIndex, setSelectedTabIndex] = useState(0);
     const [showArrows, setShowArrows] = useState(true);
 
+    const [showLeftShadows, setShowLeftShadows] = useState(false);
+
+    const [showRightShadows, setShowRightShadows] = useState(true);
+
     const [AllChildren, setAllChildren] = useState<ITabProps["children"][]>(Children.toArray(children));
 
     const { width } = useWindowSize();
@@ -108,25 +113,32 @@ const Tabs: FC<ITabsProps> = ({
         });
     };
 
+    const disableButton = (ref: MutableRefObject<HTMLButtonElement | null>, isDisabled: boolean) => {
+        if (ref.current) {
+            // eslint-disable-next-line no-param-reassign
+            ref.current.disabled = isDisabled;
+        }
+    };
+
     useEffect(() => {
         if (leftButtonRef.current) {
-            leftButtonRef.current.disabled = true;
+            disableButton(leftButtonRef, true);
         }
     }, []);
 
     /* eslint consistent-return: off */
     useEffect(() => {
-        if (!parentRef.current) return;
-
         const animationFrame = requestAnimationFrame(() => {
-            if (!parentRef.current) return;
-            setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
+            return requestAnimationFrame(() => {
+                if (!parentRef.current) return;
+                setShowArrows(parentRef.current.scrollWidth > width);
+            });
         });
 
         return () => {
             cancelAnimationFrame(animationFrame);
         };
-    }, [parentRef.current, closable, width]);
+    }, [closable]);
 
     const slideShift = (isLeft?: boolean) => {
         if (!parentRef.current || !leftButtonRef.current || !rightButtonRef.current) return;
@@ -137,6 +149,7 @@ const Tabs: FC<ITabsProps> = ({
             }
             if (swipedElements.current + parentRef.current.offsetWidth >= parentRef.current.scrollWidth) {
                 rightButtonRef.current.disabled = true;
+                setShowRightShadows(true);
                 swipedElements.current = parentRef.current.scrollWidth - parentRef.current.offsetWidth;
             }
             leftButtonRef.current!.disabled = false;
@@ -150,6 +163,7 @@ const Tabs: FC<ITabsProps> = ({
 
         if (swipedElements.current <= 0) {
             leftButtonRef.current.disabled = true;
+
             swipedElements.current = 0;
         }
 
@@ -162,6 +176,11 @@ const Tabs: FC<ITabsProps> = ({
         const removedChildFromData = [...AllChildren];
         removedChildFromData.splice(index, 1);
         setAllChildren(removedChildFromData);
+
+        if (index < selectedTabIndex) {
+            setSelectedTabIndex((prev) => prev - 1);
+        }
+
         if (!parentRef.current) return;
         setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
     };
@@ -169,7 +188,7 @@ const Tabs: FC<ITabsProps> = ({
     const getIndex = (index: number) => {
         setSelectedTabIndex(index);
 
-        if (onChange && index) {
+        if (onChange && index !== undefined) {
             onChange(index);
         }
     };
@@ -191,22 +210,28 @@ const Tabs: FC<ITabsProps> = ({
 
         swipedElements.current = e.currentTarget.scrollLeft;
 
-        if (!rightButtonRef.current || !leftButtonRef.current || !parentRef.current) return;
+        if (!parentRef.current) return;
 
         if (swipedElements.current <= 0) {
-            leftButtonRef.current.disabled = true;
+            disableButton(leftButtonRef, true);
+            setShowLeftShadows(false);
             swipedElements.current = 0;
         } else {
-            leftButtonRef.current.disabled = false;
+            disableButton(leftButtonRef, false);
+            setShowLeftShadows(true);
         }
-
         if (swipedElements.current + parentRef.current.offsetWidth >= parentRef.current.scrollWidth) {
-            rightButtonRef.current.disabled = true;
+            disableButton(rightButtonRef, true);
             swipedElements.current = parentRef.current.scrollWidth - parentRef.current.offsetWidth;
+            setShowRightShadows(false);
         } else {
-            rightButtonRef.current.disabled = false;
+            disableButton(rightButtonRef, false);
+
+            setShowRightShadows(true);
         }
     };
+
+    const isMobile = width <= 767;
 
     if (isLoading) {
         return <div>Skeleton </div>;
@@ -215,8 +240,15 @@ const Tabs: FC<ITabsProps> = ({
     return (
         <TabsContext.Provider value={memoizedContextValues}>
             <div className={classNames(`tabs tabs_${direction} tabs_${type} tabs_${size}`, className, direction, type)}>
-                <div className="tabs__nav" role="tablist" aria-label="Sample Tabs">
-                    {isHorizontal && showArrows && (
+                <div
+                    className={classNames("tabs__nav", {
+                        tabs__shadow_before: isMobile && showLeftShadows && isHorizontal,
+                        tabs__shadow_after: isMobile && showRightShadows && isHorizontal
+                    })}
+                    role="tablist"
+                    aria-label="Sample Tabs"
+                >
+                    {isHorizontal && showArrows && !isMobile && (
                         <div className="tabs__nav_button">
                             <Button
                                 ref={leftButtonRef}
@@ -229,7 +261,8 @@ const Tabs: FC<ITabsProps> = ({
                             />
                         </div>
                     )}
-                    <div className="tabs__wrapper">
+
+                    <Scrollbar className="tabs__wrapper">
                         <div className="tabs__list" ref={parentRef} onScroll={scrollEvent}>
                             {Children.map(AllChildren, (child, index) =>
                                 cloneElement(child as JSX.Element, {
@@ -239,9 +272,9 @@ const Tabs: FC<ITabsProps> = ({
                                 })
                             )}
                         </div>
-                    </div>
+                    </Scrollbar>
 
-                    {isHorizontal && showArrows && (
+                    {isHorizontal && showArrows && !isMobile && (
                         <div className="tabs__nav_button">
                             <Button
                                 ref={rightButtonRef}

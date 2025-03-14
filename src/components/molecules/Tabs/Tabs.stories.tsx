@@ -1,5 +1,5 @@
-import React, { FC, FunctionComponent } from "react";
-import { Meta } from "@storybook/react";
+import React, { FunctionComponent } from "react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import { TagOutline } from "@geneui/icons";
 
@@ -10,15 +10,20 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 // Components
 import Tabs, { ITabsProps, Tab } from ".";
 
-const meta: Meta<typeof Tabs> = {
+const meta: Meta<ITabsProps> = {
     title: "Molecules/Tabs",
     component: Tabs,
     argTypes: {
         isLoading: args({ control: "boolean", ...propCategory.states }),
-        className: args({ control: "false", ...propCategory.appearance }),
+        closable: args({ control: "boolean", ...propCategory.states }),
+
         size: args({ control: "select", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
-        type: args({ control: "select", ...propCategory.appearance })
+        type: args({ control: "select", ...propCategory.appearance }),
+        className: args({ control: "false", ...propCategory.appearance }),
+
+        onChange: args({ control: "false", ...propCategory.action }),
+        children: args({ control: "false", ...propCategory.content })
     },
     args: {
         direction: "horizontal",
@@ -29,49 +34,70 @@ const meta: Meta<typeof Tabs> = {
 };
 
 export default meta;
+type Story = StoryObj<ITabsProps>;
 
-const Template: FC<ITabsProps> = (props) => {
-    return (
-        <Tabs {...props}>
-            {new Array(25).fill(null).map((_, i) => (
-                <Tab title={`TAB ${i + 1}`}>tab {i + 1}</Tab>
-            ))}
-        </Tabs>
-    );
+export const Default: Story = {
+    render: (props) => (
+        <div style={{ height: 550 }}>
+            <Tabs {...props}>
+                {new Array(25).fill(null).map((_, i) => (
+                    <Tab title={`TAB ${i + 1}`}>tab {i + 1}</Tab>
+                ))}
+            </Tabs>
+        </div>
+    )
 };
 
-export const Default = Template.bind({});
-
-export const IconOnly: FC<ITabsProps> = (props) => {
-    return (
-        <Tabs {...props}>
-            {new Array(25).fill(null).map((_, i) => (
-                <Tab Icon={TagOutline}>tab {i + 1} </Tab>
-            ))}
-        </Tabs>
-    );
+export const IconOnly: Story = {
+    render: (props) => (
+        <div style={{ height: 550 }}>
+            <Tabs {...props}>
+                {new Array(25).fill(null).map((_, i) => (
+                    <Tab Icon={TagOutline}>tab {i + 1} </Tab>
+                ))}
+            </Tabs>
+        </div>
+    )
 };
 
-export const TextOnly: FC<ITabsProps> = (props) => {
-    return (
-        <Tabs {...props}>
-            {new Array(25).fill(null).map((_, i) => (
-                <Tab title={`tab${i + 1}`} Icon={null}>
-                    tab {i + 1}
-                </Tab>
-            ))}
-        </Tabs>
-    );
+export const TextOnly: Story = {
+    render: (props) => (
+        <div style={{ height: 550 }}>
+            <Tabs {...props}>
+                {new Array(25).fill(null).map((_, i) => (
+                    <Tab title={`tab${i + 1}`} Icon={null}>
+                        tab {i + 1}
+                    </Tab>
+                ))}
+            </Tabs>
+        </div>
+    )
 };
 
-export const TemplateWithSwap: FC<ITabsProps> = (props) => {
-    return (
-        <Tabs {...props}>
-            {new Array(25).fill(null).map((_, i) => (
-                <Tab title={`TAB ${i + 1}`} content={<Pill size="medium" text={`${i}`} />}>
-                    tab {i + 1}
-                </Tab>
-            ))}
-        </Tabs>
-    );
+export const TemplateWithSwap: Story = {
+    render: (props) => (
+        <div style={{ height: 550 }}>
+            <Tabs {...props}>
+                {new Array(25).fill(null).map((_, i) => (
+                    <Tab title={`TAB ${i + 1}`} content={<Pill size="medium" text={`${i}`} />}>
+                        tab {i + 1}
+                    </Tab>
+                ))}
+            </Tabs>
+        </div>
+    )
+};
+
+export const Vertical: Story = {
+    render: (props) => (
+        <div style={{ height: 550 }}>
+            <Tabs {...props} direction="vertical">
+                {new Array(25).fill(null).map((_, i) => (
+                    <Tab title={`TAB ${i + 1}`} content={<Pill size="medium" text={`${i}`} />}>
+                        tab {i + 1}
+                    </Tab>
+                ))}
+            </Tabs>
+        </div>
+    )
 };
