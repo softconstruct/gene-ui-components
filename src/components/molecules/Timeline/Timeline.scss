@@ -7,6 +7,9 @@
         // horizontal direction styles
         &_horizontal {
             flex-direction: row;
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
 
             &#{ $this }_position {
                 &_before {
@@ -47,6 +50,9 @@
 
             #{ $this }__element {
                 min-height: var(--guit-sem-dimension-height-xlarge);
+                min-width: var(--guit-sem-dimension-height-7xlarge);
+                max-width: 64rem;
+                flex: 1;
             }
 
             #{ $this }__status {
@@ -128,7 +134,9 @@
             }
 
             #{ $this }__element {
-                min-height: var(--guit-sem-dimension-height-3xlarge);
+                min-height: var(--guit-ref-sizing-4xlarge);
+                min-width: var(--guit-sem-dimension-width-3xlarge);
+                max-width: 24rem;
             }
 
             #{ $this }__status {
@@ -149,8 +157,6 @@
     &__element {
         display: inline-grid;
         grid-gap: var(--guit-ref-spacing-xsmall);
-        min-width: var(--guit-sem-dimension-width-3xlarge);
-        max-width: 24rem;
 
         &:last-child {
             #{ $this }__status_divider {
