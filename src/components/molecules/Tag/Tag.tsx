@@ -46,7 +46,7 @@ interface ITagProps {
     /**
      * Callback function that calls when close button is pressed
      */
-    onClose: () => void;
+    onClose?: () => void;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -71,6 +71,12 @@ const Tag: FC<ITagProps> = ({
 
     const Icon = icons[type];
 
+    const handleButtonClick = () => {
+        if (onClose) {
+            onClose();
+        }
+    };
+
     return (
         <div
             className={classNames("tag", `tag_size_${size}`, className, {
@@ -91,7 +97,7 @@ const Tag: FC<ITagProps> = ({
                 displayType="text"
                 Icon={Close}
                 size={size}
-                onClick={onClose}
+                onClick={handleButtonClick}
                 disabled={disabled}
             />
         </div>

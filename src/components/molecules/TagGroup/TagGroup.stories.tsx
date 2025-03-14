@@ -6,6 +6,7 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 
 // Components
 import TagGroup, { ITagGroupProps } from "./index";
+import Tag from "../Tag/Tag";
 
 const meta: Meta<typeof TagGroup> = {
     title: "Molecules/TagGroup",
@@ -21,7 +22,44 @@ const meta: Meta<typeof TagGroup> = {
 
 export default meta;
 
-const Template: FC<ITagGroupProps> = (props) => <TagGroup {...props} />;
+const Template: FC<ITagGroupProps> = (props) => {
+    return (
+        <TagGroup {...props}>
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+            <Tag text="Tag" />
+        </TagGroup>
+    );
+};
 
 export const Default = Template.bind({});
 
