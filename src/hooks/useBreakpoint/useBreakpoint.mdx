@@ -17,8 +17,13 @@ These values define the width thresholds for each device category and can either
 
 #### Returns
 
-- **`breakpoint`**  
-A string representing the current device type (`"mobile"`, `"tablet"`, or `"desktop"`) based on the window width.
+- **`currentBreakpoint`**: A string representing the current device type (`"mobile"`, `"tablet"`, or `"desktop"`) based on the window width.
+
+- **`isMobileBreakpoint`**: A boolean indicating whether the breakpoint is a less or equal then mobile screen width.
+
+- **`isTabletBreakpoint`**: A boolean indicating whether the breakpoint is a less or equal then tablet screen width.
+
+- **`isDesktopBreakpoint`**: A boolean indicating whether the breakpoint is a greater then desktop min screen width.
 
 #### Usage
 
@@ -32,7 +37,12 @@ const defaultTokens = bootstrap();
 
 
 const MyComponent = () => {
-    const currentBreakpoint = useBreakpoint({
+    const {
+        currentBreakpoint, 
+        isMobileBreakpoint, 
+        isTabletBreakpoint, 
+        isDesktopBreakpoint
+    } = useBreakpoint({
         mobile: defaultTokens.GuitRefBreakpointMobile,
         tablet: defaultTokens.GuitRefBreakpointTablet,
         desktop: defaultTokens.GuitRefBreakpointDesktop
@@ -41,9 +51,10 @@ const MyComponent = () => {
 
     return (
         <div>
-            {currentBreakpoint === "mobile" && <p>Mobile Layout</p>}
-            {currentBreakpoint === "tablet" && <p>Tablet Layout</p>}
-            {currentBreakpoint === "desktop" && <p>Desktop Layout</p>}
+            <p>Current Breakpoint {currentBreakpoint}</p>
+            {isMobileBreakpoint && <p>Mobile Layout</p>}
+            {isTabletBreakpoint && <p>Tablet Layout</p>}
+            {isDesktopBreakpoint && <p>Desktop Layout</p>}
         </div>
     );
 };

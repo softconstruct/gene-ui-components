@@ -2,9 +2,9 @@ import React, { createContext, JSX, useEffect, useMemo, useRef, useState } from 
 
 import { bootstrap } from "@geneui/tokens";
 
-import useBreakpoint from "@hooks/useBreakpoint";
+import useBreakpoint, { IBreakpoint } from "@hooks/useBreakpoint";
 
-import { DeviceTypes, ThemesTypes } from "@types";
+import { ThemesTypes } from "@types";
 
 // Styles
 import "../../../assets/styles/reset.scss";
@@ -20,7 +20,7 @@ interface IGeneUIDesignSystemContext {
     theme: ThemesTypes;
     tokens: TokensType;
     geneUIProviderRef: React.MutableRefObject<null>;
-    breakpoint: DeviceTypes | null;
+    breakpoint: IBreakpoint | null;
 }
 
 const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
