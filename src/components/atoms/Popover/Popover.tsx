@@ -105,7 +105,7 @@ export const staticSides: Record<string, StaticSides> = {
     left: "right"
 } as const;
 
-interface IPopoverRef {
+export interface IPopoverRef {
     referenceElement: React.MutableRefObject<ReferenceType | null>;
     floatingElement: React.MutableRefObject<ReferenceType | null>;
 }
@@ -238,7 +238,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             whileElementsMounted: autoUpdate
         });
 
-        useImperativeHandle(popoverRef, () => {
+        useImperativeHandle(popoverRef, (): IPopoverRef => {
             return {
                 referenceElement: refs.reference,
                 floatingElement: refs.floating

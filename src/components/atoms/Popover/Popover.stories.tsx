@@ -42,8 +42,6 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
     const popRef = useRef(null);
     const [propsForContent, setPropsForContent] = useState({});
 
-    console.log("🚀 ~ popRef:", popRef.current);
-
     return (
         <div style={{ margin: "500px 500px", height: 7000 }}>
             <Popover {...props} setProps={setPropsForContent} ref={popRef}>
