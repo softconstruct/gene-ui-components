@@ -4,7 +4,7 @@ import { isValidElementType } from "react-is";
 
 import { IconProps } from "@geneui/icons";
 
-import { Popover, PopoverBody } from "@components/atoms/Popover";
+import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import MenuItemButton from "@components/molecules/Menu/MenuItemButton";
 
@@ -49,7 +49,10 @@ const MenuItem: FC<IMenuItemProps> = ({
     const [propsForPopover, setPropsForPopover] = useState({});
     const { onChangeHandler, swappable, relativeRefsSetter } = useContext(MenuContext);
     const isOpen = !!generateId?.length && (paths?.join("_").startsWith(generateId) || paths?.join("_") === generateId);
-    const popoverBodyRef = useRef<HTMLDivElement | null>(null);
+    const popoverFloatingRef = useRef<IPopoverRef>({
+        floatingElement: { current: null },
+        referenceElement: { current: null }
+    });
 
     const onItemClickHandler = (isBack: boolean) => {
         if (onChangeHandler && generateId) {
@@ -58,8 +61,14 @@ const MenuItem: FC<IMenuItemProps> = ({
     };
 
     useEffect(() => {
-        relativeRefsSetter({ generateId: generateId || "", popoverBodyRef });
-    }, [popoverBodyRef.current, propsForPopover]);
+        const floatingElement = popoverFloatingRef?.current?.floatingElement;
+        if (floatingElement) {
+            relativeRefsSetter({
+                generateId: generateId || "",
+                popoverFloatingRef: floatingElement
+            });
+        }
+    }, [popoverFloatingRef, propsForPopover]);
 
     const CustomElement = isValidElementType(ComponentRender) && (
         <MenuItemButton
@@ -73,10 +82,6 @@ const MenuItem: FC<IMenuItemProps> = ({
             <ComponentRender />
         </MenuItemButton>
     );
-
-    const popoverCloseHandler = () => {
-        // console.log(innerActiveState, activeElement, index, "popoverCloseHandler");
-    };
 
     return swappable ? (
         <>
@@ -162,8 +167,8 @@ const MenuItem: FC<IMenuItemProps> = ({
                         position="right-top"
                         withArrow={false}
                         padding={5}
-                        onClose={popoverCloseHandler}
                         open={isOpen}
+                        ref={popoverFloatingRef}
                     >
                         <PopoverBody withPadding={false}>
                             <div

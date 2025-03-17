@@ -1,4 +1,3 @@
-/* eslint-disable default-param-last */
 import React, {
     Children,
     cloneElement,
@@ -9,17 +8,19 @@ import React, {
     JSX,
     MutableRefObject,
     ReactElement,
-    RefObject,
     SetStateAction,
+    useContext,
     useEffect,
     useMemo,
     useRef,
     useState
 } from "react";
+import { ReferenceType } from "@floating-ui/react";
 import classNames from "classnames";
 
-import { Popover, PopoverBody } from "@components/atoms/Popover";
+import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 import { useClickOutside } from "@hooks/index";
 
@@ -29,33 +30,16 @@ import "./Menu.scss";
 import Loader from "../../atoms/Loader";
 import { IMenuItemProps } from "./MenuItem";
 
-// const findPathOfDefaultOpened = (menu: ReactNode | ReactElement[], path: number[] = []): number[] | null => {
-//     if (!Array.isArray(menu)) return null;
-//     for (let i = 0; i < menu?.length; i++) {
-//         const item = menu[i];
-
-//         if (item.props?.defaultOpened) {
-//             return [...path, i];
-//         }
-
-//         if (item.props.children && Array.isArray(item.props.children)) {
-//             const childPath = findPathOfDefaultOpened(item.props.children, [...path, i]);
-//             if (childPath) {
-//                 return childPath;
-//             }
-//         }
-//     }
-
-//     return null;
-// };
-
 export interface OnchangeHandlerType {
     generateId: string;
     id: number | string;
     isBack: boolean;
 }
 
-type RelativeRefsSetter = (props: { generateId: string; popoverBodyRef: MutableRefObject<HTMLElement | null> }) => void;
+type RelativeRefsSetter = (props: {
+    generateId: string;
+    popoverFloatingRef: MutableRefObject<ReferenceType | null> | undefined;
+}) => void;
 
 interface IMenuContextProps {
     onChangeHandler: (props: OnchangeHandlerType) => void;
@@ -162,21 +146,27 @@ const Menu: FC<IMenuProps> = ({
     isMenuOpen,
     clickOutside
 }) => {
-    // const [isMenuOpenState, setIsMenuOpenState] = useState(false);
+    const [isMenuOpenState, setIsMenuOpenState] = useState(false);
     const [paths, setPaths] = useState<string[]>([]);
-    const [relativeRefs, setRelativeRefs] = useState<Record<string, RefObject<HTMLElement>>>({});
-    const isMobile = true;
-    const popoverRef = useRef(null);
+    const [relativeRefs, setRelativeRefs] = useState<Record<string, MutableRefObject<ReferenceType | null>>>({});
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
-    console.log("🚀 ~ popoverBodyRef:", popoverRef);
+    const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
+    const popoverRef = useRef<IPopoverRef>({
+        floatingElement: { current: null },
+        referenceElement: { current: null }
+    });
 
     useClickOutside(() => {
         setPaths([]);
         clickOutside?.();
-    }, [...Object.values(relativeRefs)]);
+    }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement, ...Object.values(relativeRefs)]);
 
     useEffect(() => {
-        // if (isMenuOpen !== "undefined") setIsMenuOpenState(!!isMenuOpen);
+        setIsMenuOpenState(!!isMenuOpen);
+        if (isMenuOpen === false) {
+            setPaths([]);
+        }
     }, [isMenuOpen]);
 
     const onChangeHandler = ({ generateId, id, isBack }: OnchangeHandlerType) => {
@@ -186,11 +176,11 @@ const Menu: FC<IMenuProps> = ({
         onChange(currentPath, id);
     };
 
-    const relativeRefsSetter: RelativeRefsSetter = ({ generateId, popoverBodyRef }) => {
-        if (popoverBodyRef.current) {
+    const relativeRefsSetter: RelativeRefsSetter = ({ generateId, popoverFloatingRef }) => {
+        if (popoverFloatingRef?.current) {
             setRelativeRefs((prev) => ({
                 ...prev,
-                [generateId]: popoverBodyRef
+                [generateId]: popoverFloatingRef
             }));
         }
     };
@@ -198,7 +188,7 @@ const Menu: FC<IMenuProps> = ({
     const memoizedMenuContextValue: IMenuContextProps = useMemo(
         () => ({
             onChangeHandler,
-            swappable,
+            swappable: isMobileBreakpoint || swappable,
             relativeRefsSetter
         }),
         [onChangeHandler, swappable]
@@ -210,16 +200,18 @@ const Menu: FC<IMenuProps> = ({
         <MenuContext.Provider value={memoizedMenuContextValue}>
             <Popover
                 setProps={setPropsForPopover}
-                size={isMobile ? "mobile" : "small"}
+                size={isMobileBreakpoint ? "mobile" : "small"}
                 disableReposition
                 position="bottom-left"
                 withArrow={false}
-                // open={isMenuOpenState}
-                open
+                open={isMenuOpenState}
+                // open
                 ref={popoverRef}
             >
                 <PopoverBody withPadding={false}>
-                    <div className={classNames("menu ", { menu_swappable: swappable }, className)}>
+                    <div
+                        className={classNames("menu ", { menu_swappable: isMobileBreakpoint || swappable }, className)}
+                    >
                         <div className="menu__list menu__list_current">
                             <Scrollbar className="menu__content">
                                 {isLoading ? (
