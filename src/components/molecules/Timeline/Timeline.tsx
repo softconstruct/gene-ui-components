@@ -1,7 +1,7 @@
-import React, { createContext, FC, ReactNode, useMemo } from "react";
+import React, { createContext, FC, ReactNode, useContext, useMemo } from "react";
 import classNames from "classnames";
 
-import useDeviceInfo from "@hooks/useDeviceInfo";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Styles
 import "./Timeline.scss";
@@ -37,7 +37,9 @@ export const TimelineContext = createContext<ITimelineContextProps>({} as ITimel
  * Timeline component is used to display a sequence of events in chronological order. It provides a clear visual representation of a series of activities, milestones, or steps, helping users understand the progression and flow of events over time.
  */
 const Timelines: FC<ITimelinesProps> = ({ direction = "vertical", position = "after", className, children }) => {
-    const { isMobile } = useDeviceInfo();
+    const {
+        breakpoint: { isMobileBreakpoint }
+    } = useContext(GeneUIDesignSystemContext);
 
     const memoizedTimelineContextValue = useMemo(
         () => ({
@@ -50,7 +52,7 @@ const Timelines: FC<ITimelinesProps> = ({ direction = "vertical", position = "af
         <TimelineContext.Provider value={memoizedTimelineContextValue as ITimelineContextProps}>
             <div
                 className={classNames(
-                    `timeline timeline_direction_${isMobile ? "vertical" : direction} timeline_position_${position}`,
+                    `timeline timeline_direction_${isMobileBreakpoint ? "vertical" : direction} timeline_position_${position}`,
                     className
                 )}
             >

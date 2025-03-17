@@ -5,6 +5,7 @@ import { CircleFilled, Clock } from "@geneui/icons";
 
 import Divider from "@components/atoms/Divider";
 import Tooltip from "@components/molecules/Tooltip";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Styles
 import "./Timeline.scss";
@@ -37,6 +38,9 @@ interface ITimelinePointProps {
  */
 const TimelinePoint: FC<ITimelinePointProps> = ({ title, status, description }) => {
     const { direction } = useContext(TimelineContext);
+    const {
+        breakpoint: { isMobileBreakpoint }
+    } = useContext(GeneUIDesignSystemContext);
 
     return (
         <div className="timeline__element">
@@ -46,7 +50,10 @@ const TimelinePoint: FC<ITimelinePointProps> = ({ title, status, description }) 
                 ) : (
                     <CircleFilled size={20} className="timeline__status_icon" />
                 )}
-                <Divider className="timeline__status_divider" vertical={direction === "vertical"} />
+                <Divider
+                    className="timeline__status_divider"
+                    vertical={direction === "vertical" || isMobileBreakpoint}
+                />
             </div>
             <div className="timeline__content">
                 <Tooltip text={title}>
