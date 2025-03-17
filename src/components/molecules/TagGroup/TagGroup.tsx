@@ -22,6 +22,7 @@ interface ITagGroupProps {
  * Tag Group displays a list of selected options, offering a clear and organized way to present chosen items.
  */
 export const TagGroupContext = createContext<ITagGroupProps>;
+
 const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
     // todo: refactor functional part if needed
     const [isExpanded, setIsExpanded] = useState(false);
@@ -29,15 +30,11 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
     const toggleText = () => setIsExpanded((prev) => !prev);
 
     const [tags, setTags] = useState(React.Children.toArray(children));
-
-    // const divRef = useRef<HTMLDivElement | null>(null);
     const [needTruncate, setNeedTruncate] = useState(false);
 
     const [tagHeight, setTagHeight] = useState(0);
-    // const tagSpacing = 8;
-    // const [hasOverflow, setHasOverflow] = useState(false);
 
-    const parentRef = useRef(null);
+    const parentRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         if (parentRef.current && tags.length > 0) {
@@ -76,18 +73,16 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
     console.log("needTruncate::: ", needTruncate);
 
     return (
-        <div className={classNames(`tagGroup ${isExpanded ? "tagGroup_extended" : ""}`, className)}>
-            <div className="tagGroup__container">
-                <div
-                    className={classNames("tagGroup__tags", { tagGroup__tags_full: isExpanded })}
-                    ref={parentRef}
-                    // style={{ height: !isExpanded ? `${tagHeight}px` : '100%' }}
-                >
+        <div className={classNames("tagGroup", className)}>
+            <div className={classNames("tagGroup__container", { tagGroup__container_expanded: isExpanded })}>
+                <div className={classNames("tagGroup__tags", { tagGroup__tags_expanded: isExpanded })} ref={parentRef}>
                     {clonedChildren}
-                    {/* <Tag text="Tag" onClose={removeTag} /> */}
                 </div>
             </div>
-            {needTruncate && (
+
+            {/* todo: the "needTruncate" check doesn't work correctly, fix functional part */}
+            {/* {needTruncate && ( */}
+            {true && (
                 <Button
                     className="tagGroup__showButton"
                     appearance="secondary"
