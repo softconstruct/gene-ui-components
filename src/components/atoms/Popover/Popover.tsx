@@ -69,7 +69,7 @@ type Positions =
     | "top-end"
     | "auto";
 
-export const correctPosition = {
+export const correctPosition: Record<string, Positions> = {
     "bottom-center": "bottom",
     "bottom-left": "bottom-start",
     "bottom-right": "bottom-end",
@@ -342,7 +342,7 @@ const Popover: FC<IPopoverProps> = ({
         };
     }, [popoverOpened, refs.floating.current, placement, alwaysShow, position, currentPosition]);
 
-    const arrowOffsetFromEdge = staticSide === "left" || staticSide === "right" ? 7 : 11;
+    const arrowOffsetFromEdge = 5;
 
     return (
         <>
