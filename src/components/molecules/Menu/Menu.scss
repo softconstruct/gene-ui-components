@@ -157,9 +157,9 @@
         left: 0;
         width: 100%;
 
-        &:not(&_current) {
-            // visibility: hidden;
-        }
+        // &:not(&_current) {
+        // visibility: hidden;
+        // }
 
         &_current {
             z-index: 1;

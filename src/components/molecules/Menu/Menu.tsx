@@ -83,7 +83,7 @@ interface IMenuProps {
     /**
      * Controls the open state of the menu. By default, the Menu controls automatically.
      */
-    isMenuOpen?: boolean;
+    open?: boolean;
     /**
      * A callback function that gets triggered when a click occurs outside of the menu, typically used for closing the menu.
      */
@@ -135,21 +135,14 @@ const cloneChildrenRecursive = (
 
 export const MenuContext = createContext<IMenuContextProps>({} as IMenuContextProps);
 
-const Menu: FC<IMenuProps> = ({
-    className,
-    onChange,
-    children,
-    isLoading,
-    loadingText,
-    swappable,
-    setPropsForPopover,
-    isMenuOpen,
-    clickOutside
-}) => {
-    const [isMenuOpenState, setIsMenuOpenState] = useState(false);
+const Menu: FC<IMenuProps> = (props) => {
+    const { className, onChange, children, isLoading, loadingText, swappable, setPropsForPopover, open, clickOutside } =
+        props;
+    const [isOpenState, setIsOpenState] = useState<boolean | undefined>(undefined);
     const [paths, setPaths] = useState<string[]>([]);
     const [relativeRefs, setRelativeRefs] = useState<Record<string, MutableRefObject<ReferenceType | null>>>({});
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
+    const isControlled = "open" in props;
 
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
     const popoverRef = useRef<IPopoverRef>({
@@ -158,16 +151,28 @@ const Menu: FC<IMenuProps> = ({
     });
 
     useClickOutside(() => {
+        if (!isControlled) {
+            setIsOpenState(false);
+        }
         setPaths([]);
         clickOutside?.();
     }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement, ...Object.values(relativeRefs)]);
 
     useEffect(() => {
-        setIsMenuOpenState(!!isMenuOpen);
-        if (isMenuOpen === false) {
+        if (!isOpenState && !!paths.length) {
             setPaths([]);
         }
-    }, [isMenuOpen]);
+    }, [isOpenState]);
+
+    useEffect(() => {
+        if (!isControlled && !paths.length) {
+            setIsOpenState(undefined);
+        } else if (paths.length) {
+            setIsOpenState(true);
+        } else if (isControlled) {
+            setIsOpenState(open);
+        }
+    }, [isControlled, open, paths]);
 
     const onChangeHandler = ({ generateId, id, isBack }: OnchangeHandlerType) => {
         const idToArray = generateId.split("_");
@@ -204,8 +209,7 @@ const Menu: FC<IMenuProps> = ({
                 disableReposition
                 position="bottom-left"
                 withArrow={false}
-                open={isMenuOpenState}
-                // open
+                open={isOpenState}
                 ref={popoverRef}
             >
                 <PopoverBody withPadding={false}>
