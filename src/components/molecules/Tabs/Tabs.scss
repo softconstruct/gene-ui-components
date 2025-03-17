@@ -199,7 +199,7 @@
         }
 
         &_before::before {
-            inset-inline-start: 0;
+            inset-inline-start: -0.2rem;
 
             [dir="ltr"] & {
                 background: linear-gradient(
@@ -219,7 +219,7 @@
         }
 
         &_after::after {
-            inset-inline-end: 0;
+            inset-inline-end: -0.2rem;
 
             [dir="ltr"] & {
                 background: linear-gradient(
