@@ -14,6 +14,34 @@ describe("useDeviceInfo Hook", () => {
         });
     };
 
+    const mockTouchSupport = (isTouch: boolean = false) => {
+        Object.defineProperty(window, "ontouchstart", {
+            value: isTouch ? jest.fn() : undefined,
+            configurable: true
+        });
+
+        Object.defineProperty(navigator, "maxTouchPoints", {
+            value: isTouch ? 5 : 0,
+            configurable: true
+        });
+
+        if (typeof window.matchMedia !== "function") {
+            Object.defineProperty(window, "matchMedia", {
+                value: jest.fn().mockImplementation((query) => ({
+                    matches: isTouch && query === "(pointer: coarse)",
+                    media: query,
+                    onchange: null,
+                    addListener: jest.fn(),
+                    removeListener: jest.fn(),
+                    addEventListener: jest.fn(),
+                    removeEventListener: jest.fn(),
+                    dispatchEvent: jest.fn()
+                })),
+                configurable: true
+            });
+        }
+    };
+
     interface TestComponentProps {
         callback: (deviceInfo: DeviceInfo) => void;
     }
@@ -39,8 +67,9 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: false,
+            isMobileDevice: false,
+            isDesktopDevice: false,
+            isTouch: false,
             os: "Unknown",
             isWindows: false,
             isMacOS: false,
@@ -56,8 +85,9 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: true,
+            isMobileDevice: false,
+            isDesktopDevice: true,
+            isTouch: false,
             os: "Windows",
             isWindows: true,
             isMacOS: false,
@@ -73,8 +103,9 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: true,
+            isMobileDevice: false,
+            isDesktopDevice: true,
+            isTouch: false,
             os: "macOS",
             isWindows: false,
             isMacOS: true,
@@ -90,8 +121,9 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: true,
+            isMobileDevice: false,
+            isDesktopDevice: true,
+            isTouch: false,
             os: "Linux",
             isWindows: false,
             isMacOS: false,
@@ -103,12 +135,15 @@ describe("useDeviceInfo Hook", () => {
 
     it("should detect Android OS", () => {
         mockNavigator("Mozilla/5.0 (Linux; Android 10; SM-G975F)");
+        mockTouchSupport(true); // Android is usually a touch device
+
         const callback = jest.fn();
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: true,
-            isDesktop: false,
+            isMobileDevice: true,
+            isDesktopDevice: false,
+            isTouch: true, // Should be true
             os: "Android",
             isWindows: false,
             isMacOS: false,
@@ -120,12 +155,15 @@ describe("useDeviceInfo Hook", () => {
 
     it("should detect iOS", () => {
         mockNavigator("Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)");
+        mockTouchSupport(true); // iOS is a touch device
+
         const callback = jest.fn();
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: true,
-            isDesktop: false,
+            isMobileDevice: true,
+            isDesktopDevice: false,
+            isTouch: true, // Should be true
             os: "iOS",
             isWindows: false,
             isMacOS: false,
