@@ -38,9 +38,7 @@ interface ITimelinePointProps {
  */
 const TimelinePoint: FC<ITimelinePointProps> = ({ title, status, description }) => {
     const { direction } = useContext(TimelineContext);
-    const {
-        breakpoint: { isMobileBreakpoint }
-    } = useContext(GeneUIDesignSystemContext);
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
     return (
         <div className="timeline__element">
@@ -52,7 +50,7 @@ const TimelinePoint: FC<ITimelinePointProps> = ({ title, status, description }) 
                 )}
                 <Divider
                     className="timeline__status_divider"
-                    vertical={direction === "vertical" || isMobileBreakpoint}
+                    vertical={direction === "vertical" || breakpoint?.isMobileBreakpoint}
                 />
             </div>
             <div className="timeline__content">
