@@ -1,0 +1,23 @@
+{
+    "plugins": [
+        "@babel/plugin-proposal-export-default-from",
+        "@babel/plugin-proposal-optional-chaining",
+        "@babel/plugin-proposal-class-properties",
+        "@babel/plugin-transform-react-jsx",
+        "@babel/plugin-syntax-jsx",
+        "@babel/plugin-proposal-nullish-coalescing-operator",
+        [
+            "module-resolver",
+            {
+                "root": ["./src"],
+                "alias": {
+                    "@components": "./src/components",
+                    "@hooks": "./src/hooks",
+                    "@assets": "./src/assets",
+                    "@types": "./src/types"
+                }
+            }
+        ]
+    ],
+    "presets": ["@babel/preset-env", "@babel/preset-react"]
+}

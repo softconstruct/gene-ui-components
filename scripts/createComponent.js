@@ -39,8 +39,9 @@ const generateCmpTemplate = ({ name, description, props, isWithForwardRef }) => 
     return `
         import React${isWithForwardRef ? ", { forwardRef }" : ", { FC }"} from 'react';
         import classNames from 'classnames';
+        
         // Styles
-        import './${name}.scss';
+        import "./${name}.scss";
         
         interface ${InterfaceName} {
                 /**
@@ -79,25 +80,24 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
     const InterfaceName = `I${name}Props`;
 
     return `
-        import React, { FC } from 'react';
-        import { Meta } from '@storybook/react';
+        import React from "react";
+        import { Meta, StoryObj } from "@storybook/react";
         
         // Helpers
-        import { args, propCategory } from '../../../../stories/assets/storybook.globals';
-        
+        import { args, propCategory } from "../../../../stories/assets/storybook.globals";
         // Components
-        import ${name}, { ${InterfaceName} } from './index';
+        import ${name}, { ${InterfaceName} } from "./index";
         
-        const meta: Meta<typeof ${name}> = {
-            title: '${firstLetterCase(level)}/${name}',
+        const meta: Meta<${InterfaceName}> = {
+            title: "${firstLetterCase(level)}/${name}",
             component: ${name},
             argTypes: {
-                className: args({ control: 'false', ...propCategory.appearance }),
+                className: args({ control: "false", ...propCategory.appearance }),
                  ${
                      props.length
                          ? `${props.map(
                                (prop) => `
-                         ${prop}: args({ control: false, ...propCategory.others })`
+                         ${prop}: args({ control: "false", ...propCategory.others })`
                            )}`
                          : `// fill ${name} component argTypes`
                  }
@@ -112,33 +112,35 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
                           )}`
                         : `// fill ${name} component args`
                 }
-            } as ${InterfaceName}
+            }
         };
         
         export default meta;
         
-        const Template: FC<${InterfaceName}> = (props) => <${name} {...props} />;
+        type Story = StoryObj<${InterfaceName}>;
         
-        export const Default = Template.bind({});
-        
-        Default.args = {} as ${InterfaceName};
+        export const Default: Story = {};
         `;
 };
 
 const generateCmpTestTemplate = ({ name, portal }) => {
     const beforeEach = portal
-        ? `beforeEach(() => (setup = mount(<${name} />, { wrappingComponent: GeneUIProvider })));`
-        : `beforeEach(() => (setup = mount(<${name} />)));`;
+        ? `beforeEach(() => {
+                setup = mount(<${name} />, { wrappingComponent: GeneUIProvider })
+            });`
+        : `beforeEach(() => {
+                setup = mount(<${name} />)
+            });`;
 
     const InterfaceName = `I${name}Props`;
 
     return `
             import React from 'react';
-            import { ReactWrapper, mount } from 'enzyme';
+            import { mount, ReactWrapper } from "enzyme";
 
             // Components
-            import ${name}, { ${InterfaceName} } from './index';
-            ${portal ? `import GeneUIProvider from '../../providers/GeneUIProvider';` : ""}
+            import ${name}, { ${InterfaceName} } from "./index";
+            ${portal ? `import GeneUIProvider from "../../providers/GeneUIProvider";` : ""}
             
             describe('${name} ', () => {
                 let setup: ReactWrapper<${InterfaceName}>;
@@ -336,7 +338,7 @@ const createComponentFiles = async ({ level, name, files, ...restData }) => {
 const addExports = async ({ level, name }) => {
     try {
         const cmpDir = path.join(__dirname, ...pathToComponents, `${level}`, `${name}`);
-        const indexContent = `export { I${name}Props, default } from './${name}';`;
+        const indexContent = `export { I${name}Props, default } from "./${name}";`;
 
         await fs.writeFile(`${cmpDir}/index.tsx`, indexContent, { flag: "a+" });
     } catch (error) {

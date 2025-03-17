@@ -1,10 +1,11 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
+import { InfoOutline } from "@geneui/icons";
 
 // Components
-import { InfoOutline } from "@geneui/icons";
-import Label, { ILabelProps } from "./index";
 import GeneUIProvider from "../../providers/GeneUIProvider";
+import Label, { ILabelProps } from "./index";
 
 describe("Label ", () => {
     let setup: ReactWrapper<ILabelProps>;
@@ -43,6 +44,11 @@ describe("Label ", () => {
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({ disabled: true });
         expect(wrapper.find(".label__text").hasClass("label__text_disabled")).toBeTruthy();
+    });
+
+    it("renders readOnly prop correctly", () => {
+        const wrapper = setup.setProps({ readOnly: true });
+        expect(wrapper.find(".label__container").hasClass("label__container_readOnly")).toBeTruthy();
     });
 
     it("renders isLoading prop correctly", () => {

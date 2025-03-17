@@ -6,6 +6,7 @@
         "node": true,
         "jest": true
     },
+    "root": true,
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": 12,
@@ -30,9 +31,40 @@
         "react-hooks", // React hooks plugin
         "@typescript-eslint", // TypeScript plugin
         "jsx-a11y", // Accessibility plugin
-        "prettier" // Prettier plugin
+        "prettier", // Prettier plugin
+        "simple-import-sort",
+        "enforce-children"
     ],
     "rules": {
+        // Gene UI components children rules
+        "enforce-children/enforce-children": [
+            "error",
+            {
+                "rules": {
+                    "Grid": ["Row"],
+                    "Row": ["Col"],
+                    "Steps": ["Step"],
+                    "Popover": ["PopoverBody", "PopoverFooter"],
+                    "PopoverFooterActions": ["Button"]
+                }
+            }
+        ],
+        // Import orders definition
+        "simple-import-sort/imports": [
+            "error",
+            {
+                "groups": [
+                    ["^react$", "^react-dom$", "^(?!@components|@hooks|@types|@assets|@geneui)@?\\w"],
+                    ["^@geneui"],
+                    ["^@components"],
+                    ["^@hooks"],
+                    ["^@types"],
+                    ["^@assets"],
+                    ["\\.scss$"],
+                    ["\\.svg$", "\\.(png|jpe?g|gif)$"]
+                ]
+            }
+        ],
         // Prettier
         "prettier/prettier": [
             "error",
@@ -46,14 +78,25 @@
         // React
         "react/react-in-jsx-scope": "off", // Not needed for React 17+
         "react/prop-types": "off", // Disable prop-types (handled by TypeScript)
-        "react/jsx-filename-extension": [1, { "extensions": [".jsx", ".tsx"] }], // Allow JSX in TSX files
+        "react/jsx-filename-extension": [
+            1,
+            {
+                "extensions": [".jsx", ".tsx"]
+            }
+        ], // Allow JSX in TSX files
         "react/jsx-props-no-spreading": "off",
         "react-hooks/exhaustive-deps": "off", // Allow prop spreading (optional)
         "react/require-default-props": "off",
         "react/function-component-definition": "off",
+        "react/jsx-no-useless-fragment": "off",
         // TypeScript
         "@typescript-eslint/explicit-function-return-type": "off", // Optional return types
-        "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }], // Allow unused vars with underscore prefix
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+                "argsIgnorePattern": "^_"
+            }
+        ], // Allow unused vars with underscore prefix
         "@typescript-eslint/no-explicit-any": "warn", // Warn on `any` type usage
         "@typescript-eslint/explicit-module-boundary-types": "off", // Optional boundary types
         // Accessibility

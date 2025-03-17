@@ -31,22 +31,30 @@ interface ILoaderProps {
      *  Possible values: `below | after`
      */
     textPosition?: "below" | "after";
+    /**
+     * Additional className
+     */
+    className?: string;
 }
 
 /**
  *Loading spinner is a visual indicator that informs users an operation is in progress. Typically displayed as a rotating icon or circular animation, it signals that the system is working on a task, such as loading data or processing a request, and that the user should wait until the process is complete.
  */
+
 const Loader: FC<ILoaderProps> = ({
     isLoading = true,
     text,
     textPosition = "after",
     size = "medium",
     appearance = "brand",
-    children = null
+    children,
+    className = ""
 }) => {
     if (isLoading) {
         return (
-            <span className={`loader loader_direction_${textPosition} loader_size_${size} loader_color_${appearance}`}>
+            <span
+                className={`loader loader_direction_${textPosition} loader_size_${size} loader_color_${appearance} ${className}`}
+            >
                 <span className="loader__spinnerWrapper">
                     <svg className="loader__spinner" viewBox="0 0 50 50">
                         <circle className="loader__spinnerPath" cx="25" cy="25" r="22" fill="none" strokeWidth="5" />
@@ -56,8 +64,7 @@ const Loader: FC<ILoaderProps> = ({
             </span>
         );
     }
-
-    return children;
+    return <>{children}</>;
 };
 
 export { ILoaderProps, Loader as default };
