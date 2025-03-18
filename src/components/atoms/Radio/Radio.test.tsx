@@ -7,7 +7,7 @@ import Radio, { IRadioProps } from "./index";
 describe("Radio ", () => {
     let setup: ReactWrapper<IRadioProps>;
     beforeEach(() => {
-        setup = mount(<Radio />);
+        setup = mount(<Radio name="test" value="test" />);
     });
 
     it("renders without crashing", () => {

@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import React from "react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -7,7 +7,7 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 // Components
 import Radio, { IRadioProps } from "./index";
 
-const meta: Meta<typeof Radio> = {
+const meta: Meta<IRadioProps> = {
     title: "Atoms/Radio",
     component: Radio,
     argTypes: {
@@ -16,7 +16,6 @@ const meta: Meta<typeof Radio> = {
         disabled: args({ control: "boolean", ...propCategory.states }),
         checked: args({ control: "boolean", ...propCategory.states }),
         defaultChecked: args({ control: "boolean", ...propCategory.states }),
-        indeterminate: args({ control: "boolean", ...propCategory.states }),
         required: args({ control: "boolean", ...propCategory.content }),
         helperText: args({ control: "text", ...propCategory.content }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
@@ -33,11 +32,15 @@ const meta: Meta<typeof Radio> = {
         label: "Label",
         infoText: "info text",
         helperText: "helper text"
-    } as IRadioProps
+    }
 };
 
 export default meta;
 
-const Template: FC<IRadioProps> = (props) => <Radio {...props} />;
+type Story = StoryObj<IRadioProps>;
 
-export const Default = Template.bind({});
+export const Template: Story = {
+    render: (props) => {
+        return <Radio {...props} />;
+    }
+};

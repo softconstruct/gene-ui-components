@@ -31,10 +31,6 @@ interface IRadioProps {
      */
     readOnly?: boolean;
     /**
-     *  Activates a visual state indicating partial selection within a radio group.
-     */
-    indeterminate?: boolean;
-    /**
      *  Manages the checked state of the radio in a controlled way.
      */
     checked?: boolean;
@@ -63,7 +59,7 @@ interface IRadioProps {
      *  HTML name attribute for the input element.<br>
      *  A unique identifier for the radio within a form.
      */
-    name?: string;
+    name: string;
     /**
      *  Fires when the user changes the radio state. Provides the change event as a callback's argument.
      */
@@ -81,6 +77,10 @@ interface IRadioProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * The value that returns in the onChange event
+     * */
+    value: string;
 }
 
 /**
@@ -102,7 +102,8 @@ const Radio: FC<IRadioProps> = ({
     name,
     checked,
     defaultChecked,
-    className
+    className,
+    value
 }) => {
     const interRef = useRef<HTMLInputElement>(null);
     const isControlled = checked !== undefined;
@@ -158,7 +159,8 @@ const Radio: FC<IRadioProps> = ({
                             onBlur={onBlurHandler}
                             checked={checkedState}
                             ref={interRef}
-                            {...(name && { name })}
+                            value={value}
+                            name={name}
                             {...(autoFocus && { autoFocus })}
                             {...((disabled || readOnly) && { tabIndex: -1 })}
                         />
