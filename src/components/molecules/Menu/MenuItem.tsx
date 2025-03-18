@@ -56,7 +56,7 @@ const MenuItem: FC<IMenuItemProps> = ({
 
     const onItemClickHandler = (isBack: boolean) => {
         if (onChangeHandler && generateId) {
-            onChangeHandler({ generateId, id, isBack });
+            onChangeHandler({ generateId, id, isBack, closeMenu: typeof children === "string" });
         }
     };
 

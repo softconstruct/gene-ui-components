@@ -34,6 +34,7 @@ export interface OnchangeHandlerType {
     generateId: string;
     id: number | string;
     isBack: boolean;
+    closeMenu: boolean;
 }
 
 type RelativeRefsSetter = (props: {
@@ -80,14 +81,6 @@ interface IMenuProps {
      * A function for setting additional props for the Popover component that wraps the menu.
      */
     setPropsForPopover: Dispatch<SetStateAction<Record<string, unknown>>>;
-    /**
-     * Controls the open state of the menu. By default, the Menu controls automatically.
-     */
-    open?: boolean;
-    /**
-     * A callback function that gets triggered when a click occurs outside of the menu, typically used for closing the menu.
-     */
-    clickOutside?: () => void;
 }
 
 const cloneChildrenRecursive = (
@@ -135,14 +128,19 @@ const cloneChildrenRecursive = (
 
 export const MenuContext = createContext<IMenuContextProps>({} as IMenuContextProps);
 
-const Menu: FC<IMenuProps> = (props) => {
-    const { className, onChange, children, isLoading, loadingText, swappable, setPropsForPopover, open, clickOutside } =
-        props;
-    const [isOpenState, setIsOpenState] = useState<boolean | undefined>(undefined);
+const Menu: FC<IMenuProps> = ({
+    className,
+    onChange,
+    children,
+    isLoading,
+    loadingText,
+    swappable,
+    setPropsForPopover
+}) => {
+    const [isOpenState, setIsOpenState] = useState<boolean>(false);
     const [paths, setPaths] = useState<string[]>([]);
     const [relativeRefs, setRelativeRefs] = useState<Record<string, MutableRefObject<ReferenceType | null>>>({});
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
-    const isControlled = "open" in props;
 
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
     const popoverRef = useRef<IPopoverRef>({
@@ -150,34 +148,47 @@ const Menu: FC<IMenuProps> = (props) => {
         referenceElement: { current: null }
     });
 
-    useClickOutside(() => {
-        if (!isControlled) {
-            setIsOpenState(false);
-        }
-        setPaths([]);
-        clickOutside?.();
-    }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement, ...Object.values(relativeRefs)]);
+    useClickOutside(
+        (e) => {
+            if (
+                e.target instanceof Node &&
+                popoverRef.current.referenceElement?.current instanceof Node &&
+                popoverRef.current.referenceElement.current.contains(e.target)
+            ) {
+                setIsOpenState((open) => !open);
+                if (isOpenState) {
+                    setPaths([]);
+                }
+            } else {
+                setIsOpenState(false);
+                setPaths([]);
+            }
+        },
+        [popoverRef.current.floatingElement, ...Object.values(relativeRefs)]
+    );
+
+    // useEffect(() => {
+    //     if (!isOpenState && !!paths.length) {
+    //         setPaths([]);
+    //     }
+    // }, [isOpenState]);
 
     useEffect(() => {
-        if (!isOpenState && !!paths.length) {
-            setPaths([]);
-        }
-    }, [isOpenState]);
-
-    useEffect(() => {
-        if (!isControlled && !paths.length) {
-            setIsOpenState(undefined);
-        } else if (paths.length) {
+        if (paths.length) {
             setIsOpenState(true);
-        } else if (isControlled) {
-            setIsOpenState(open);
         }
-    }, [isControlled, open, paths]);
+    }, [paths]);
 
-    const onChangeHandler = ({ generateId, id, isBack }: OnchangeHandlerType) => {
+    const onChangeHandler = ({ generateId, id, isBack, closeMenu }: OnchangeHandlerType) => {
         const idToArray = generateId.split("_");
         const currentPath = isBack ? idToArray.slice(0, -1) : idToArray;
-        setPaths(currentPath);
+        if (closeMenu) {
+            setIsOpenState(false);
+            setPaths([]);
+        } else {
+            setPaths(currentPath);
+        }
+
         onChange(currentPath, id);
     };
 
