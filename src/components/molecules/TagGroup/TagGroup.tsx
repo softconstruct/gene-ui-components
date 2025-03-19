@@ -24,7 +24,6 @@ interface ITagGroupProps {
 export const TagGroupContext = createContext<ITagGroupProps>;
 
 const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
-    // todo: refactor functional part if needed
     const [isExpanded, setIsExpanded] = useState(false);
     const moreTagsQuantity = 12;
     const toggleText = () => setIsExpanded((prev) => !prev);
@@ -56,7 +55,8 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
     const clonedChildren = tags.map((child, index) => {
         if (React.isValidElement<ITagProps>(child)) {
             return cloneElement(child, {
-                onClose: () => removeTag(index) // Pass removeTag to Tag
+                ...child.props,
+                onClose: () => removeTag(index)
             });
         }
         return child;
@@ -64,13 +64,10 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
 
     useEffect(() => {
         if (!parentRef.current) return;
-        const { clientHeight } = parentRef.current;
-        console.log("aaa:::", clientHeight, tagHeight);
+        const { scrollHeight } = parentRef.current;
 
-        setNeedTruncate(clientHeight > tagHeight);
-    }, [parentRef.current, parentRef]);
-
-    console.log("needTruncate::: ", needTruncate);
+        setNeedTruncate(scrollHeight > tagHeight);
+    }, [parentRef.current, tagHeight, tags]);
 
     return (
         <div className={classNames("tagGroup", className)}>
@@ -79,10 +76,7 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
                     {clonedChildren}
                 </div>
             </div>
-
-            {/* todo: the "needTruncate" check doesn't work correctly, fix functional part */}
-            {/* {needTruncate && ( */}
-            {true && (
+            {needTruncate && (
                 <Button
                     className="tagGroup__showButton"
                     appearance="secondary"
