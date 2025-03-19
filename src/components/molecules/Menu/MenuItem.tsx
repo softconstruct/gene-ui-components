@@ -6,6 +6,7 @@ import { IconProps } from "@geneui/icons";
 
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+import { isActiveElementInside } from "@components/molecules/Menu/helper";
 import MenuItemButton from "@components/molecules/Menu/MenuItemButton";
 
 // components
@@ -47,8 +48,15 @@ const MenuItem: FC<IMenuItemProps> = ({
     generateId
 }) => {
     const [propsForPopover, setPropsForPopover] = useState({});
+    const parentRef = useRef<HTMLDivElement | null>(null);
     const { onChangeHandler, swappable, relativeRefsSetter } = useContext(MenuContext);
-    const isOpen = !!generateId?.length && (paths?.join("_").startsWith(generateId) || paths?.join("_") === generateId);
+    const [popoverOpenState, setPopoverOpenState] = useState(false);
+    useEffect(() => {
+        setPopoverOpenState(
+            !!generateId?.length && (paths?.join("_").startsWith(generateId) || paths?.join("_") === generateId)
+        );
+    }, [generateId, paths]);
+
     const popoverFloatingRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
@@ -69,6 +77,12 @@ const MenuItem: FC<IMenuItemProps> = ({
             });
         }
     }, [popoverFloatingRef, propsForPopover]);
+    const onScrollHandler = () => {
+        if (swappable) return;
+        if (popoverOpenState) {
+            if (!isActiveElementInside(parentRef, ".menu__item_active")) onItemClickHandler(false);
+        }
+    };
 
     const CustomElement = isValidElementType(ComponentRender) && (
         <MenuItemButton
@@ -97,21 +111,18 @@ const MenuItem: FC<IMenuItemProps> = ({
                         disabled={disabled}
                         danger={danger}
                         propsForPopover={propsForPopover}
-                        isOpen={isOpen}
+                        isOpen={popoverOpenState}
                         divider={divider}
                     />
                     {/* menu list wrapper */}
                     <div
-                        style={{ display: isOpen ? "block" : "none" }}
+                        style={{ display: popoverOpenState ? "block" : "none" }}
                         className={classNames("menu__list  ", {
-                            menu__list_current: isOpen,
+                            menu__list_current: popoverOpenState,
                             menu__item_disabled: disabled
                         })}
                     >
-                        {/* header */}
-                        {swappable && (
-                            <MenuItemButton type="header" onItemClickHandler={onItemClickHandler} title={title} />
-                        )}
+                        <MenuItemButton type="header" onItemClickHandler={onItemClickHandler} title={title} />
 
                         <Scrollbar className="menu__content">
                             {Children.count(children) > 0 ? (
@@ -156,7 +167,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                         disabled={disabled}
                         danger={danger}
                         propsForPopover={propsForPopover}
-                        isOpen={isOpen}
+                        isOpen={popoverOpenState}
                         divider={divider}
                     />
                     {/* menu list wrapper */}
@@ -167,26 +178,18 @@ const MenuItem: FC<IMenuItemProps> = ({
                         position="right-top"
                         withArrow={false}
                         padding={5}
-                        open={isOpen}
+                        open={popoverOpenState}
                         ref={popoverFloatingRef}
                     >
                         <PopoverBody withPadding={false}>
                             <div
-                                className={classNames("menu__list  ", {
+                                ref={parentRef}
+                                className={classNames("menu__list", {
                                     menu__list_current: activeElement,
                                     menu__item_disabled: disabled
                                 })}
                             >
-                                {/* header */}
-                                {swappable && (
-                                    <MenuItemButton
-                                        type="header"
-                                        onItemClickHandler={onItemClickHandler}
-                                        title={title}
-                                    />
-                                )}
-
-                                <Scrollbar className="menu__content">
+                                <Scrollbar className="menu__content" onScroll={onScrollHandler}>
                                     {Children.count(children) > 0 ? (
                                         <span className="menu__itemTitle">{children}</span>
                                     ) : (

@@ -12,7 +12,6 @@ interface IMenuItemButtonProps {
     danger?: boolean;
     isOpen?: boolean;
     children?: ReactNode;
-    isActive?: boolean;
     selected?: boolean;
     divider?: boolean;
     propsForPopover?: Record<string, HTMLButtonElement>;
@@ -27,7 +26,6 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
     disabled,
     children,
     danger,
-    isActive,
     propsForPopover = {},
     IconBefore,
     IconAfter,
@@ -70,7 +68,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                 className={classNames("menu__item", {
                     menu__item_danger: danger,
                     menu__item_disabled: disabled,
-                    menu__item_active: isActive,
+                    menu__item_active: isOpen,
                     menu__header: type === "header"
                 })}
                 onClick={onItemClick}

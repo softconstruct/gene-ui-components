@@ -20,6 +20,7 @@ import classNames from "classnames";
 
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+import { isActiveElementInside } from "@components/molecules/Menu/helper";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 import { useClickOutside } from "@hooks/index";
@@ -140,6 +141,7 @@ const Menu: FC<IMenuProps> = ({
     const [isOpenState, setIsOpenState] = useState<boolean>(false);
     const [paths, setPaths] = useState<string[]>([]);
     const [relativeRefs, setRelativeRefs] = useState<Record<string, MutableRefObject<ReferenceType | null>>>({});
+    const parentRef = useRef(null);
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
@@ -166,12 +168,6 @@ const Menu: FC<IMenuProps> = ({
         },
         [popoverRef.current.floatingElement, ...Object.values(relativeRefs)]
     );
-
-    // useEffect(() => {
-    //     if (!isOpenState && !!paths.length) {
-    //         setPaths([]);
-    //     }
-    // }, [isOpenState]);
 
     useEffect(() => {
         if (paths.length) {
@@ -212,6 +208,12 @@ const Menu: FC<IMenuProps> = ({
 
     const clonedChildren = cloneChildrenRecursive(children, paths);
 
+    const onScrollHandler = () => {
+        if (isOpenState && !swappable) {
+            if (!isActiveElementInside(parentRef, ".menu__item_active")) setPaths([]);
+        }
+    };
+
     return (
         <MenuContext.Provider value={memoizedMenuContextValue}>
             <Popover
@@ -225,10 +227,11 @@ const Menu: FC<IMenuProps> = ({
             >
                 <PopoverBody withPadding={false}>
                     <div
+                        ref={parentRef}
                         className={classNames("menu ", { menu_swappable: isMobileBreakpoint || swappable }, className)}
                     >
                         <div className="menu__list menu__list_current">
-                            <Scrollbar className="menu__content">
+                            <Scrollbar className="menu__content" onScroll={onScrollHandler}>
                                 {isLoading ? (
                                     <div className="menu__loader">
                                         <Loader text={loadingText} textPosition="below" />
