@@ -1,20 +1,17 @@
-import React, { FC, forwardRef } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
+import { args, propCategory } from "stories/assets/storybook.globals";
 
-// Helpers
 import { Search } from "@geneui/icons";
-import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 
-// Components
 import Button, { IButtonProps } from "./index";
 
-const meta: Meta<typeof forwardRef<HTMLButtonElement, IButtonProps>> = {
+const meta: Meta<IButtonProps> = {
     title: "Atoms/Button",
     component: Button,
     argTypes: {
         size: args({ control: "select", ...propCategory.appearance }),
         appearance: args({ control: "select", ...propCategory.appearance }),
-        text: args({ control: "text", ...propCategory.content }),
+        children: args({ control: "text", ...propCategory.content }),
         displayType: args({ control: "select", ...propCategory.appearance }),
         fullWidth: args({ control: "boolean", ...propCategory.appearance }),
         iconAfter: args({ control: "boolean", ...propCategory.appearance }),
@@ -26,7 +23,7 @@ const meta: Meta<typeof forwardRef<HTMLButtonElement, IButtonProps>> = {
         onClick: args({ control: "false", ...propCategory.action })
     },
     args: {
-        text: "Button",
+        children: "Button",
         appearance: "primary",
         size: "large",
         displayType: "fill",
@@ -36,10 +33,12 @@ const meta: Meta<typeof forwardRef<HTMLButtonElement, IButtonProps>> = {
 
 export default meta;
 
-const Template: FC<IButtonProps> = (props) => <Button {...props} />;
+type Story = StoryObj<IButtonProps>;
 
-export const Default = Template.bind({});
+export const Default: Story = {};
 
-export const WithIcon = Template.bind({});
-
-WithIcon.args = { Icon: Search } as IButtonProps;
+export const WithIcon: Story = {
+    args: {
+        Icon: Search
+    }
+};

@@ -1,27 +1,46 @@
-import React, { createContext, useEffect, useRef, useState, JSX, useMemo } from "react";
+import React, { createContext, JSX, useEffect, useMemo, useRef, useState } from "react";
+
 import { bootstrap } from "@geneui/tokens";
 
-// Statics
-import pgk from "../../../../package.json";
+import LogoMarkSVG from "@components/atoms/Logo/LogoMarkSVG";
+import LogoTypeSVG from "@components/atoms/Logo/LogoTypeSVG";
+
+import useBreakpoint, { IBreakpoint } from "@hooks/useBreakpoint";
+
+import { ThemesTypes } from "@types";
 
 // Styles
 import "../../../assets/styles/reset.scss";
 import "../../../assets/styles/utils.scss";
+import "./GeneUIProvider.scss";
 
-type ThemesTypes = "light" | "dark";
+// Statics
+import pgk from "../../../../package.json";
 
 type TokensType = { [key: string]: string | number } | null;
+
+const defaultLogo = {
+    svg: LogoTypeSVG,
+    logomark: LogoMarkSVG
+};
 
 interface IGeneUIDesignSystemContext {
     theme: ThemesTypes;
     tokens: TokensType;
     geneUIProviderRef: React.MutableRefObject<null>;
+    breakpoint: IBreakpoint | null;
+    logo: {
+        svg: React.ReactElement;
+        logomark?: React.ReactElement;
+    };
 }
 
 const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
     theme: "light",
     tokens: {},
-    geneUIProviderRef: { current: null }
+    geneUIProviderRef: { current: null },
+    breakpoint: null,
+    logo: defaultLogo
 });
 
 interface IGeneUIProviderProps {
@@ -38,19 +57,36 @@ interface IGeneUIProviderProps {
      * Theme which will follow all nested GeneUI components
      */
     theme?: ThemesTypes;
+    /**
+     * Custom logo to override the default GeneUI logo.
+     */
+    logo?: {
+        svg: React.ReactElement;
+        logomark?: React.ReactElement;
+    };
 }
 
-function GeneUIProvider({ children, tokens = null, theme = "light" }: IGeneUIProviderProps): JSX.Element {
+const defaultTokens = bootstrap();
+
+function GeneUIProvider({ children, tokens = null, theme = "light", logo }: IGeneUIProviderProps): JSX.Element {
     const geneUIProviderRef = useRef(null);
     const [isRefExist, setIsRefExist] = useState(false);
+
+    const currentBreakpoint = useBreakpoint({
+        mobile: defaultTokens.GuitRefBreakpointMobile,
+        tablet: defaultTokens.GuitRefBreakpointTablet,
+        desktop: defaultTokens.GuitRefBreakpointDesktop
+    });
 
     const contextValue = useMemo(
         () => ({
             theme,
-            tokens: tokens || bootstrap(),
-            geneUIProviderRef
+            tokens: tokens || defaultTokens,
+            geneUIProviderRef,
+            breakpoint: currentBreakpoint,
+            logo: logo || defaultLogo
         }),
-        [theme, tokens, geneUIProviderRef]
+        [theme, tokens, geneUIProviderRef, currentBreakpoint]
     );
 
     useEffect(() => {
@@ -61,7 +97,12 @@ function GeneUIProvider({ children, tokens = null, theme = "light" }: IGeneUIPro
 
     return (
         <GeneUIDesignSystemContext.Provider value={contextValue}>
-            <div data-gene-ui-version={pgk.version} ref={geneUIProviderRef} style={{ height: "100%" }}>
+            <div
+                className="gene-ui-provider"
+                data-gene-ui-version={pgk.version}
+                ref={geneUIProviderRef}
+                style={{ height: "100%" }}
+            >
                 {isRefExist && children}
             </div>
         </GeneUIDesignSystemContext.Provider>
