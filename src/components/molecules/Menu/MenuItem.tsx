@@ -1,4 +1,4 @@
-import React, { Children, FC, ReactNode, useContext, useEffect, useRef, useState } from "react";
+import React, { Children, FC, ReactNode, UIEvent, useContext, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import { isValidElementType } from "react-is";
 
@@ -77,7 +77,7 @@ const MenuItem: FC<IMenuItemProps> = ({
             });
         }
     }, [popoverFloatingRef, propsForPopover]);
-    const onScrollHandler = (e) => {
+    const onScrollHandler = (e: UIEvent<HTMLDivElement>) => {
         e.stopPropagation();
         if (swappable) return;
         if (popoverOpenState) {

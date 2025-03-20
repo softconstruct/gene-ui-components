@@ -16,18 +16,22 @@ const meta: Meta<typeof Menu> = {
     subcomponents: { MenuItem },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        isLoading: args({ control: "boolean", ...propCategory.state })
+        swappable: args({ control: "boolean", ...propCategory.appearance }),
+        onChange: args({ control: "false", ...propCategory.appearance }),
+        children: args({ control: "false", ...propCategory.content }),
+        setPropsForPopover: args({ control: "false", ...propCategory.functionality }),
+        loadingText: args({ control: "text", ...propCategory.content }),
+        isLoading: args({ control: "boolean", ...propCategory.states })
     },
     args: {} as IMenuProps
 };
 
 const MenuItemRecursion = (menuData) => {
-    return menuData.map((el, i) => {
+    return menuData.map((el) => {
         return (
             <MenuItem
                 key={el.id}
                 selected={el.selected}
-                index={i}
                 title={el.children ? el.title : ""}
                 IconBefore={el.IconBefore}
                 IconAfter={el.IconAfter}
