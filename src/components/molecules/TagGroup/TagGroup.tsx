@@ -1,10 +1,15 @@
-import React, { createContext, FC, ReactNode, useState, cloneElement, useRef, useEffect } from "react";
+import React, { cloneElement, createContext, FC, ReactNode, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
+
+import { ChevronDown, ChevronUp } from "@geneui/icons";
+
+import useWindowSize from "@hooks/useWindowSize";
+
 // Styles
 import "./TagGroup.scss";
-import { ChevronDown, ChevronUp } from "@geneui/icons";
-import { ITagProps } from "../Tag";
+
 import { Button } from "../../../index";
+import { ITagProps } from "../Tag";
 
 interface ITagGroupProps {
     /**
@@ -25,7 +30,6 @@ export const TagGroupContext = createContext<ITagGroupProps>;
 
 const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const moreTagsQuantity = 12;
     const toggleText = () => setIsExpanded((prev) => !prev);
 
     const [tags, setTags] = useState(React.Children.toArray(children));
@@ -34,6 +38,7 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
     const [tagHeight, setTagHeight] = useState(0);
 
     const parentRef = useRef<HTMLDivElement | null>(null);
+    const { width } = useWindowSize();
 
     useEffect(() => {
         if (parentRef.current && tags.length > 0) {
@@ -42,7 +47,7 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
                 setTagHeight(firstTag.getBoundingClientRect().height);
             }
         }
-    }, [tags]);
+    }, [tags, parentRef.current]);
 
     const removeTag = (index: number) => {
         setTags((prevTags) => {
@@ -67,7 +72,7 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
         const { scrollHeight } = parentRef.current;
 
         setNeedTruncate(scrollHeight > tagHeight);
-    }, [parentRef.current, tagHeight, tags]);
+    }, [parentRef.current, tagHeight, tags, width]);
 
     return (
         <div className={classNames("tagGroup", className)}>
@@ -84,9 +89,10 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children }) => {
                     displayType="text"
                     iconAfter
                     Icon={isExpanded ? ChevronUp : ChevronDown}
-                    text={isExpanded ? "Show less" : `Show ${moreTagsQuantity} more`}
                     onClick={toggleText}
-                />
+                >
+                    {isExpanded ? "Show less" : "Show more"}
+                </Button>
             )}
         </div>
     );

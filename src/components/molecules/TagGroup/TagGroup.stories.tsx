@@ -1,66 +1,37 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import React from "react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
+import Tag from "../Tag/Tag";
 // Components
 import TagGroup, { ITagGroupProps } from "./index";
-import Tag from "../Tag/Tag";
 
-const meta: Meta<typeof TagGroup> = {
+const meta: Meta<ITagGroupProps> = {
     title: "Molecules/TagGroup",
     component: TagGroup,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance })
-        // fill TagGroup component argTypes
     },
-    args: {
-        // fill TagGroup component args
-    } as ITagGroupProps
+    args: {}
 };
 
 export default meta;
 
-const Template: FC<ITagGroupProps> = (props) => {
-    return (
-        <TagGroup {...props}>
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-            <Tag text="Tag" />
-        </TagGroup>
-    );
+const TagGroupStory: StoryObj<ITagGroupProps> = {
+    argTypes: {
+        className: args({ control: "false", ...propCategory.appearance })
+    },
+    args: {},
+    render: (props) => {
+        return (
+            <TagGroup {...props}>
+                {Array.from({ length: 32 }).map(() => (
+                    <Tag text="Tag" />
+                ))}
+            </TagGroup>
+        );
+    }
 };
 
-export const Default = Template.bind({});
-
-Default.args = {} as ITagGroupProps;
+export { TagGroupStory as TagGroup };

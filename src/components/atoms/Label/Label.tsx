@@ -2,13 +2,14 @@ import React, { FC, JSX, useRef } from "react";
 import classnames from "classnames";
 
 // Components
-import Tooltip from "../../molecules/Tooltip";
+import Tooltip from "@components/molecules/Tooltip";
 
 // Hooks
-import { useEllipsisDetection } from "../../../hooks";
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./Label.scss";
+
 import Info from "../Info";
 
 interface ILabelProps {
