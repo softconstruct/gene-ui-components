@@ -7,10 +7,10 @@ import Divider from "@components/atoms/Divider";
 
 interface IMenuItemButtonProps {
     type: "header" | "parent" | "simple" | "custom";
-    onItemClickHandler: (isOpen: boolean) => void;
+    onItemClickHandler: (isBack: boolean) => void;
     disabled?: boolean;
     danger?: boolean;
-    isOpen?: boolean;
+    active?: boolean;
     children?: ReactNode;
     selected?: boolean;
     divider?: boolean;
@@ -31,13 +31,13 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
     IconAfter,
     selected,
     title,
-    isOpen,
+    active,
     divider
 }) => {
     const onItemClick = () => {
         switch (type) {
             case "parent":
-                return onItemClickHandler(!!isOpen);
+                return onItemClickHandler(!!active);
             case "header":
                 return onItemClickHandler(true);
             default:
@@ -68,7 +68,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                 className={classNames("menu__item", {
                     menu__item_danger: danger,
                     menu__item_disabled: disabled,
-                    menu__item_active: isOpen,
+                    menu__item_active: active,
                     menu__header: type === "header"
                 })}
                 onClick={onItemClick}

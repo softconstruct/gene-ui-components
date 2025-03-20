@@ -77,7 +77,8 @@ const MenuItem: FC<IMenuItemProps> = ({
             });
         }
     }, [popoverFloatingRef, propsForPopover]);
-    const onScrollHandler = () => {
+    const onScrollHandler = (e) => {
+        e.stopPropagation();
         if (swappable) return;
         if (popoverOpenState) {
             if (!isActiveElementInside(parentRef, ".menu__item_active")) onItemClickHandler(false);
@@ -111,7 +112,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                         disabled={disabled}
                         danger={danger}
                         propsForPopover={propsForPopover}
-                        isOpen={popoverOpenState}
+                        active={popoverOpenState}
                         divider={divider}
                     />
                     {/* menu list wrapper */}
@@ -167,7 +168,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                         disabled={disabled}
                         danger={danger}
                         propsForPopover={propsForPopover}
-                        isOpen={popoverOpenState}
+                        active={popoverOpenState}
                         divider={divider}
                     />
                     {/* menu list wrapper */}
