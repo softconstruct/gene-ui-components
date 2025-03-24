@@ -1,4 +1,4 @@
-import React, { cloneElement, FC, JSX, useContext, useMemo, useRef } from "react";
+import React, { FC, JSX, useContext, useMemo, useRef } from "react";
 import classNames from "classnames";
 // components
 import { QRCodeSVG } from "qrcode.react";
@@ -7,6 +7,8 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 
 // Styles
 import "./QRCode.scss";
+
+import LogoComponent from "../../atoms/Logo";
 
 interface IQRCodeProps {
     /**
@@ -25,7 +27,7 @@ interface IQRCodeProps {
      * Possible values: `magenta | secondary | inverse`;
      * Default value is `magenta`
      */
-    appearance?: "magenta" | "secondary" | "inverse";
+    appearance?: "brand" | "secondary" | "inverse";
     /**
      * The value to encode into the QR Code.
      * An array of strings can be passed in to represent multiple segments,
@@ -43,14 +45,14 @@ interface IQRCodeProps {
 /**
  * A QR code component generates and displays a Quick Response (QR) code, a two-dimensional barcode that can be scanned by mobile devices to quickly access information, websites, or applications
  */
-const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "magenta", Logo, className }) => {
+const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "brand", Logo, className }) => {
     const qrCodeRef = useRef<HTMLDivElement | null>(null);
 
     const { tokens } = useContext(GeneUIDesignSystemContext);
 
     const QRForeground = useMemo(() => {
         return {
-            magenta: tokens?.GuitSemColorForegroundAccentMagenta,
+            brand: tokens?.GuitSemColorForegroundAccentMagenta,
             secondary: tokens?.GuitSemColorForegroundNeutral2,
             inverse: tokens?.GuitSemColorForegroundInverseNotheme
         };
@@ -79,7 +81,13 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "magenta", 
                 />
                 {!!Logo && (
                     <div className="qRCode__logo">
-                        {cloneElement(Logo, { className: "qRCode__logoSvg", fill: QRForeground[appearance] })}
+                        <LogoComponent
+                            svg={Logo}
+                            appearance={appearance}
+                            type="logomark"
+                            size="small"
+                            className="qRCode__logoSvg"
+                        />
                     </div>
                 )}
             </>

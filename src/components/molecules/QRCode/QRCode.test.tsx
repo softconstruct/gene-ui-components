@@ -54,7 +54,7 @@ describe("QRCode ", () => {
         const wrapper = setup.setProps({ appearance });
         const providerContext = contextMock;
         const QRForeground = {
-            magenta: providerContext.tokens?.GuitSemColorForegroundAccentMagenta,
+            brand: providerContext.tokens?.GuitSemColorForegroundAccentMagenta,
             secondary: providerContext.tokens?.GuitSemColorForegroundNeutral2,
             inverse: providerContext.tokens?.GuitSemColorForegroundInverseNotheme
         };
