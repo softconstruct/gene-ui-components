@@ -8,27 +8,13 @@ import TagGroup, { ITagGroupProps } from "./index";
 describe("TagGroup ", () => {
     let setup: ReactWrapper<ITagGroupProps>;
 
-    const initialTags = (count: number) =>
-        Array.from({ length: count }, (_, i) => <Tag key={i} text={`Tag ${i + 1}`} onClose={() => {}} />);
-
     beforeEach(() => {
-        Object.defineProperty(HTMLElement.prototype, "getBoundingClientRect", {
-            value: jest.fn(() => ({ height: 20, width: 100 }))
-        });
-
-        // Mock useWindowSize
-        jest.mock("@hooks/useWindowSize", () => () => ({ width: 800, height: 600 }));
-
         setup = mount(
             <TagGroup>
-                <Tag text="Default Tag" />
+                <Tag text="Tab" />
+                <Tag text="Tab" />
             </TagGroup>
         );
-    });
-
-    afterEach(() => {
-        // Restore mocks
-        jest.restoreAllMocks();
     });
 
     it("renders without crashing", () => {
@@ -38,12 +24,21 @@ describe("TagGroup ", () => {
     it("renders className prop correctly", () => {
         const className = "test-class";
         const wrapper = setup.setProps({ className });
+
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    it("renders initial children (Tags)", () => {
-        const children = initialTags(3);
-        const wrapper = mount(<TagGroup>{children}</TagGroup>);
-        expect(wrapper.find(Tag)).toHaveLength(3);
+    it("renders multiple tags correctly", () => {
+        expect(setup.find(Tag)).toHaveLength(2);
+    });
+
+    it("removes a tag when close button is clicked", () => {
+        expect(setup.find(Tag)).toHaveLength(2);
+
+        // Simulate closing the first tag
+        setup.find(Tag).first().props().onClose?.();
+        setup.mount();
+
+        expect(setup.find(Tag)).toHaveLength(1);
     });
 });

@@ -11,9 +11,12 @@ const meta: Meta<ITagGroupProps> = {
     title: "Molecules/TagGroup",
     component: TagGroup,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance })
+        className: args({ control: "false", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance })
     },
-    args: {}
+    args: {
+        size: "medium"
+    }
 };
 
 export default meta;
@@ -26,7 +29,7 @@ const TagGroupStory: StoryObj<ITagGroupProps> = {
     render: (props) => {
         return (
             <TagGroup {...props}>
-                {Array.from({ length: 32 }).map(() => (
+                {Array.from({ length: 18 }).map(() => (
                     <Tag text="Tag" />
                 ))}
             </TagGroup>
