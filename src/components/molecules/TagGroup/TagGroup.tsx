@@ -58,7 +58,7 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium" }) 
         if (parentRef.current && tags.length > 0) {
             const firstTag = parentRef.current?.firstChild as HTMLElement;
             if (firstTag && typeof firstTag.getBoundingClientRect === "function") {
-                setTagHeight(firstTag.getBoundingClientRect().height);
+                setTagHeight(firstTag.getBoundingClientRect().height + 4);
             }
         }
     }, [tags, parentRef.current]);
@@ -96,6 +96,7 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium" }) 
                     <div
                         className={classNames("tagGroup__tags", { tagGroup__tags_expanded: isExpanded })}
                         ref={parentRef}
+                        style={{ height: !isExpanded ? `${tagHeight}px` : "auto" }}
                     >
                         {clonedChildren}
                     </div>

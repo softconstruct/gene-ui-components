@@ -28,7 +28,6 @@
         display: flex;
         flex-wrap: wrap;
         gap: var(--guit-ref-spacing-xsmall);
-        padding: 0.2rem;
 
         &_expanded {
             height: 100%;
@@ -36,11 +35,11 @@
 
         &:not(#{ $that }_expanded) {
             &:has(.tag_size_medium) {
-                height: calc(var(--guit-sem-dimension-height-medium) + 0.4rem);
+                height: var(--guit-sem-dimension-height-medium);
             }
 
             &:has(.tag_size_small) {
-                height: calc(var(--guit-sem-dimension-height-small) + 0.4rem);
+                height: var(--guit-sem-dimension-height-small);
             }
         }
     }
