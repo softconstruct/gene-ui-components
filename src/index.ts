@@ -19,7 +19,7 @@ export { default as ProgressBar } from "./components/molecules/ProgressBar";
 export { Steps, Step, IStepProps, IStepsProps } from "./components/molecules/Steps";
 export { default as Tag, ITagProps } from "./components/molecules/Tag";
 export { Timelines, TimelinePoint, ITimelinesProps, ITimelinePointProps } from "./components/molecules/Timeline";
-export { default as QRCode } from "./components/molecules/QRCode";
+export { default as QRCode, IQRCodeProps } from "./components/molecules/QRCode";
 export { KeyValue, Key, Value, IKeyValueProps, IKeyProps, IValueProps } from "./components/molecules/KeyValue";
 
 // Organisms
@@ -37,4 +37,6 @@ export { default as useDebounce } from "./hooks/useDebounceCallback";
 export { default as useEllipsisDetection } from "./hooks/useEllipsisDetection";
 export { default as useScrollLock } from "./hooks/useScrollLock";
 export { default as useWindowSize } from "./hooks/useWindowSize";
+export { default as useClickOutside } from "./hooks/useClickOutside";
 export { default as useDeviceInfo } from "./hooks/useDeviceInfo";
+export { default as useBreakpoint } from "./hooks/useBreakpoint";

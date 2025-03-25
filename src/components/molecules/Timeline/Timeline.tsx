@@ -41,16 +41,16 @@ const Timelines: FC<ITimelinesProps> = ({ direction = "vertical", position = "af
 
     const memoizedTimelineContextValue = useMemo(
         () => ({
-            direction
+            direction: breakpoint?.isMobileBreakpoint ? "vertical" : direction
         }),
-        [direction]
+        [direction, breakpoint]
     );
 
     return (
         <TimelineContext.Provider value={memoizedTimelineContextValue as ITimelineContextProps}>
             <div
                 className={classNames(
-                    `timeline timeline_direction_${breakpoint?.isMobileBreakpoint ? "vertical" : direction} timeline_position_${position}`,
+                    `timeline timeline_direction_${memoizedTimelineContextValue.direction} timeline_position_${position}`,
                     className
                 )}
             >
