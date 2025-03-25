@@ -1,13 +1,14 @@
-import React, { ChangeEvent, FC, useEffect, useRef, FocusEvent, useState } from "react";
-import { Dot } from "@geneui/icons";
+import React, { ChangeEvent, FC, FocusEvent, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
-// Components
-import Label from "../../atoms/Label";
-import HelperText from "../../atoms/HelperText";
+import { CircleFilled } from "@geneui/icons";
 
 // Styles
 import "./Radio.scss";
+
+import HelperText from "../../atoms/HelperText";
+// Components
+import Label from "../../atoms/Label";
 
 interface IRadioProps {
     /**
@@ -105,7 +106,7 @@ const Radio: FC<IRadioProps> = ({
     className,
     value
 }) => {
-    const interRef = useRef<HTMLInputElement>(null);
+    const interRef = useRef<HTMLInputElement | null>(null);
     const isControlled = checked !== undefined;
 
     const [checkedState, setCheckedState] = useState(defaultChecked || false);
@@ -165,7 +166,7 @@ const Radio: FC<IRadioProps> = ({
                             {...((disabled || readOnly) && { tabIndex: -1 })}
                         />
                         <span className="radio__imitation">
-                            <Dot className="radio__icon" size={16} />
+                            <CircleFilled className="radio__icon" />
                         </span>
                     </span>
                 </span>

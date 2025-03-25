@@ -1,11 +1,12 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import { Dot } from "@geneui/icons";
-import Radio, { IRadioProps } from "./index";
+import { CircleFilled } from "@geneui/icons";
+
 import HelperText from "../HelperText";
 import Label from "../Label";
+import Radio, { IRadioProps } from "./index";
 
 describe("Radio ", () => {
     let setup: ReactWrapper<IRadioProps>;
@@ -71,7 +72,7 @@ describe("Radio ", () => {
     it("renders defaultChecked prop correctly", () => {
         const wrapper = setup.setProps({ defaultChecked: true });
 
-        expect(wrapper.find(Dot)).toBeTruthy();
+        expect(wrapper.find(CircleFilled)).toBeTruthy();
     });
 
     it("renders infoText prop correctly", () => {
@@ -82,7 +83,7 @@ describe("Radio ", () => {
 
     it("renders checked prop correctly", () => {
         const wrapper = setup.setProps({ checked: true });
-        expect(wrapper.find(Dot)).toBeTruthy();
+        expect(wrapper.find(CircleFilled)).toBeTruthy();
     });
 
     it("calls onChange when the radio state changes", () => {
