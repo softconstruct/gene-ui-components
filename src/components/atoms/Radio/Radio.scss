@@ -82,16 +82,18 @@
     }
 
     &__imitation {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 100%;
         height: 100%;
         border: var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-neutral-3);
         border-radius: inherit;
+        overflow: hidden;
     }
 
     &__icon {
         flex: 0 0 auto;
-        width: 100%;
-        height: 100%;
         color: var(--guit-sem-color-foreground-inverse);
         opacity: 0;
     }
