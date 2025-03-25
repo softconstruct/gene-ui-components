@@ -1,14 +1,18 @@
-import React, { createContext, useEffect, useRef, useState, JSX, useMemo } from "react";
+import React, { createContext, JSX, useEffect, useMemo, useRef, useState } from "react";
+
 import { bootstrap } from "@geneui/tokens";
 
-// Statics
-import pgk from "../../../../package.json";
+import useBreakpoint, { IBreakpoint } from "@hooks/useBreakpoint";
+
+import { ThemesTypes } from "@types";
 
 // Styles
 import "../../../assets/styles/reset.scss";
 import "../../../assets/styles/utils.scss";
+import "./GeneUIProvider.scss";
 
-type ThemesTypes = "light" | "dark";
+// Statics
+import pgk from "../../../../package.json";
 
 type TokensType = { [key: string]: string | number } | null;
 
@@ -16,12 +20,14 @@ interface IGeneUIDesignSystemContext {
     theme: ThemesTypes;
     tokens: TokensType;
     geneUIProviderRef: React.MutableRefObject<null>;
+    breakpoint: IBreakpoint | null;
 }
 
 const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
     theme: "light",
     tokens: {},
-    geneUIProviderRef: { current: null }
+    geneUIProviderRef: { current: null },
+    breakpoint: null
 });
 
 interface IGeneUIProviderProps {
@@ -40,17 +46,26 @@ interface IGeneUIProviderProps {
     theme?: ThemesTypes;
 }
 
+const defaultTokens = bootstrap();
+
 function GeneUIProvider({ children, tokens = null, theme = "light" }: IGeneUIProviderProps): JSX.Element {
     const geneUIProviderRef = useRef(null);
     const [isRefExist, setIsRefExist] = useState(false);
 
+    const currentBreakpoint = useBreakpoint({
+        mobile: defaultTokens.GuitRefBreakpointMobile,
+        tablet: defaultTokens.GuitRefBreakpointTablet,
+        desktop: defaultTokens.GuitRefBreakpointDesktop
+    });
+
     const contextValue = useMemo(
         () => ({
             theme,
-            tokens: tokens || bootstrap(),
-            geneUIProviderRef
+            tokens: tokens || defaultTokens,
+            geneUIProviderRef,
+            breakpoint: currentBreakpoint
         }),
-        [theme, tokens, geneUIProviderRef]
+        [theme, tokens, geneUIProviderRef, currentBreakpoint]
     );
 
     useEffect(() => {
@@ -61,7 +76,12 @@ function GeneUIProvider({ children, tokens = null, theme = "light" }: IGeneUIPro
 
     return (
         <GeneUIDesignSystemContext.Provider value={contextValue}>
-            <div data-gene-ui-version={pgk.version} ref={geneUIProviderRef} style={{ height: "100%" }}>
+            <div
+                className="gene-ui-provider"
+                data-gene-ui-version={pgk.version}
+                ref={geneUIProviderRef}
+                style={{ height: "100%" }}
+            >
                 {isRefExist && children}
             </div>
         </GeneUIDesignSystemContext.Provider>

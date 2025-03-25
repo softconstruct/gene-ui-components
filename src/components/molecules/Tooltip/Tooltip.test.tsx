@@ -3,9 +3,10 @@ import { mount, ReactWrapper } from "enzyme";
 import * as TestsUtils from "react-dom/test-utils";
 
 // Components
-import { InfoOutline } from "@geneui/icons";
-import Tooltip, { ITooltipProps } from "./index";
+import { InfoOutlined } from "@geneui/icons";
+
 import GeneUIProvider from "../../providers/GeneUIProvider";
+import Tooltip, { ITooltipProps } from "./index";
 
 describe("Tooltip", () => {
     let setup: ReactWrapper<ITooltipProps>;
@@ -43,7 +44,7 @@ describe("Tooltip", () => {
     });
 
     it("renders Icon prop correct inside the portal", () => {
-        setup.setProps({ alwaysShow: true, Icon: InfoOutline });
+        setup.setProps({ alwaysShow: true, Icon: InfoOutlined });
         expect(provider().find(".tooltip__icon").exists()).toBeTruthy();
     });
 

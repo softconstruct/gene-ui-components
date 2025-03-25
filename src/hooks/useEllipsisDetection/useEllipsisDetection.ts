@@ -1,5 +1,6 @@
-import { useEffect, useState, RefObject } from "react";
-import useDebouncedCallback from "../useDebounceCallback";
+import { RefObject, useEffect, useState } from "react";
+
+import useWindowSize from "@hooks/useWindowSize";
 
 const EQUAL_HEIGHT_DIFF = 3;
 
@@ -9,6 +10,7 @@ interface IUseEllipsisDetection {
 
 const useEllipsisDetection: IUseEllipsisDetection = (ref, externalDependencies = []) => {
     const [isTruncated, setIsTruncated] = useState(false);
+    const { width } = useWindowSize();
 
     const handleResize = () => {
         if (!ref.current) return;
@@ -16,15 +18,16 @@ const useEllipsisDetection: IUseEllipsisDetection = (ref, externalDependencies =
         setIsTruncated(scrollWidth > clientWidth || scrollHeight > clientHeight + EQUAL_HEIGHT_DIFF);
     };
 
-    useEffect(() => handleResize(), [...externalDependencies]);
-
-    const debounce = useDebouncedCallback(handleResize, 100);
-
     useEffect(() => {
-        window.addEventListener("resize", debounce);
-
-        return () => window.removeEventListener("resize", debounce);
-    }, [ref?.current?.scrollWidth, ref?.current?.clientWidth, ref?.current?.scrollHeight, ref?.current?.clientHeight]);
+        handleResize();
+    }, [
+        width,
+        ...externalDependencies,
+        ref?.current?.scrollWidth,
+        ref?.current?.clientWidth,
+        ref?.current?.scrollHeight,
+        ref?.current?.clientHeight
+    ]);
 
     return isTruncated;
 };

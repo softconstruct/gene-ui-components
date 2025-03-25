@@ -1,6 +1,7 @@
 import React, { FC } from "react";
-import { ErrorAlertFill, IconProps, WarningFill } from "@geneui/icons";
 import classnames from "classnames";
+
+import { Error, IconProps, TriangleAlert } from "@geneui/icons";
 
 // Styles
 import "./HelperText.scss";
@@ -24,7 +25,7 @@ interface IHelperTextProps {
     text: string;
     /**
      * Optional. Icon to be displayed alongside the helper text.
-     * If the `type` prop is set to `error` or `warning`, a default icon will be used (ErrorAlertFill for `error` and WarningFill for `warning`) unless an `Icon` is explicitly provided.
+     * If the `type` prop is set to `error` or `warning`, a default icon will be used (Error for `error` and TriangleAlert for `warning`) unless an `Icon` is explicitly provided.
      * If `type` is `rest`, the provided `Icon` will be used (if supplied), otherwise no icon will be displayed.
      * The size of the icon will automatically adjust based on the `size` prop (`small` or `medium`).
      */
@@ -34,11 +35,6 @@ interface IHelperTextProps {
      * If `true`, the helper text will appear dimmed and non-interactive.
      */
     isDisabled?: boolean;
-    /**
-     * Indicates whether the component is in a loading state.
-     * When `true`, a loading skeleton is displayed instead of the actual helper text.
-     */
-    isLoading?: boolean;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -54,18 +50,10 @@ const iconSize = {
 /**
  * The Helper Text provides users with additional information or guidance related to a specific input field in a form. This text helps users understand the expected format, requirements, or purpose of the input, thereby improving form completion accuracy and user confidence.
  */
-const HelperText: FC<IHelperTextProps> = ({
-    size = "medium",
-    type = "rest",
-    text,
-    Icon,
-    isDisabled,
-    isLoading,
-    className
-}) => {
+const HelperText: FC<IHelperTextProps> = ({ size = "medium", type = "rest", text, Icon, isDisabled, className }) => {
     const iconMap = {
-        error: <ErrorAlertFill size={iconSize[size]} />,
-        warning: <WarningFill size={iconSize[size]} />,
+        error: <Error size={iconSize[size]} />,
+        warning: <TriangleAlert size={iconSize[size]} />,
         rest: Icon && <Icon size={iconSize[size]} />
     };
 
@@ -75,14 +63,8 @@ const HelperText: FC<IHelperTextProps> = ({
                 helperText_disabled: isDisabled
             })}
         >
-            {isLoading ? (
-                "skeleton"
-            ) : (
-                <>
-                    {iconMap[type] && <div className="helperText__icon">{iconMap[type]}</div>}
-                    <p className="helperText__text">{text}</p>
-                </>
-            )}
+            {iconMap[type] && <div className="helperText__icon">{iconMap[type]}</div>}
+            <p className="helperText__text">{text}</p>
         </div>
     );
 };
