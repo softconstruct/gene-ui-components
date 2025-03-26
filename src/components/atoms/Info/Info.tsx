@@ -1,9 +1,10 @@
-import React, { FC, useState, useMemo, KeyboardEvent } from "react";
+import React, { FC, KeyboardEvent, useMemo, useState } from "react";
 import classnames from "classnames";
-import { InfoOutlined, IconProps } from "@geneui/icons";
+
+import { IconProps, InfoOutlined } from "@geneui/icons";
 
 // Components
-import Tooltip from "../../molecules/Tooltip";
+import Tooltip from "@components/molecules/Tooltip";
 
 // Styles
 import "./Info.scss";

@@ -1,10 +1,12 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import { CheckMark, MinusOutline } from "@geneui/icons";
-import Checkbox, { ICheckboxProps } from "./index";
+import { CheckMark, Minus } from "@geneui/icons";
+
+// Components
 import { HelperText, Label } from "../../../index";
+import Checkbox, { ICheckboxProps } from "./index";
 
 describe("Checkbox ", () => {
     let setup: ReactWrapper<ICheckboxProps>;
@@ -74,7 +76,7 @@ describe("Checkbox ", () => {
 
     it("renders indeterminate prop correctly", () => {
         const wrapper = setup.setProps({ indeterminate: true });
-        expect(wrapper.find(MinusOutline)).toBeTruthy();
+        expect(wrapper.find(Minus)).toBeTruthy();
     });
 
     it("renders checked prop correctly", () => {
