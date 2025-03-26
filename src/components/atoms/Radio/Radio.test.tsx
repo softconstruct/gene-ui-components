@@ -47,7 +47,7 @@ describe("Radio ", () => {
     });
 
     it("renders vertical prop correctly", () => {
-        const wrapper = setup.setProps({ vertical: true });
+        const wrapper = setup.setProps({ direction: "vertical" });
         expect(wrapper.find(".radio").hasClass(`radio_labelTop`)).toBeTruthy();
     });
 
