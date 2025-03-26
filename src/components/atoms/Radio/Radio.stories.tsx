@@ -3,7 +3,6 @@ import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import Radio, { IRadioProps } from "./index";
 
@@ -20,7 +19,7 @@ const meta: Meta<IRadioProps> = {
         helperText: args({ control: "text", ...propCategory.content }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
         type: args({ control: "select", ...propCategory.appearance }),
-        vertical: args({ control: "boolean", ...propCategory.appearance }),
+        direction: args({ control: "select", ...propCategory.appearance }),
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         name: args({ control: "text", ...propCategory.others }),
         onChange: args({ control: "false", ...propCategory.action }),

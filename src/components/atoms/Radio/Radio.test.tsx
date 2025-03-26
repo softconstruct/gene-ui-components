@@ -1,11 +1,12 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
 import { CircleFilled } from "@geneui/icons";
-import Radio, { IRadioProps } from "./index";
+
 import HelperText from "../HelperText";
 import Label from "../Label";
+import Radio, { IRadioProps } from "./index";
 
 describe("Radio ", () => {
     let setup: ReactWrapper<IRadioProps>;
@@ -46,7 +47,7 @@ describe("Radio ", () => {
     });
 
     it("renders vertical prop correctly", () => {
-        const wrapper = setup.setProps({ vertical: true });
+        const wrapper = setup.setProps({ direction: "vertical" });
         expect(wrapper.find(".radio").hasClass(`radio_labelTop`)).toBeTruthy();
     });
 

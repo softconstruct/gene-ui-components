@@ -1,13 +1,14 @@
-import React, { ChangeEvent, FC, useEffect, useRef, FocusEvent, useState } from "react";
-import { CircleFilled } from "@geneui/icons";
+import React, { ChangeEvent, FC, FocusEvent, useEffect, useState } from "react";
 import classNames from "classnames";
 
-// Components
-import Label from "../../atoms/Label";
-import HelperText from "../../atoms/HelperText";
+import { CircleFilled } from "@geneui/icons";
 
 // Styles
 import "./Radio.scss";
+
+import HelperText from "../HelperText";
+// Components
+import Label from "../Label";
 
 interface IRadioProps {
     /**
@@ -16,8 +17,9 @@ interface IRadioProps {
     label?: string;
     /**
      *  Toggles the label's and HelperText position between above or beside the radio.
+     *   Possible values: `horizontal | vertical`
      */
-    vertical?: boolean;
+    direction?: "horizontal " | "vertical";
     /**
      *  Specifies whether the radio is mandatory for completing a form.
      */
@@ -39,7 +41,7 @@ interface IRadioProps {
      */
     autoFocus?: boolean;
     /**
-     *  Extra information displayed with the label for clarity or guidance.
+     *  Extra information displayed with the tooltip for clarity or guidance.
      */
     infoText?: string;
     /**
@@ -78,35 +80,35 @@ interface IRadioProps {
      */
     className?: string;
     /**
-     * The value that returns in the onChange event
+     * The value of the component that will be returned in the onChange event.
      * */
     value: string;
 }
 
-/**
- * radio component allows users to select one or more options from a set of choices. Each radio can be either checked or unchecked, indicating a binary state. radioes are commonly used in forms, settings, and lists where multiple selections are needed.
- */
-const Radio: FC<IRadioProps> = ({
-    label,
-    required,
-    infoText,
-    disabled,
-    helperText,
-    readOnly,
-    type = "rest" as const,
-    vertical,
-    autoFocus,
-    onChange,
-    onFocus,
-    onBlur,
-    name,
-    checked,
-    defaultChecked,
-    className,
-    value
-}) => {
-    const interRef = useRef<HTMLInputElement | null>(null);
-    const isControlled = checked !== undefined;
+/*
+ The radio component allows users to select one or more options from a set of choices. Each radio can be either checked or unchecked, indicating a binary state. Radios are commonly used in forms, settings, and lists where a user needs to select a single option from multiple options.
+*/
+const Radio: FC<IRadioProps> = (props) => {
+    const {
+        label,
+        required,
+        infoText,
+        disabled,
+        helperText,
+        readOnly,
+        type = "rest",
+        direction = "horizontal ",
+        autoFocus,
+        onChange,
+        onFocus,
+        onBlur,
+        name,
+        checked,
+        defaultChecked,
+        className,
+        value
+    } = props;
+    const isControlled = "checked" in props;
 
     const [checkedState, setCheckedState] = useState(defaultChecked || false);
 
@@ -135,7 +137,7 @@ const Radio: FC<IRadioProps> = ({
                 {
                     radio_disabled: disabled,
                     radio_readOnly: readOnly,
-                    radio_labelTop: vertical
+                    radio_labelTop: direction === "vertical"
                 },
                 className
             )}
@@ -158,7 +160,6 @@ const Radio: FC<IRadioProps> = ({
                             onFocus={onFocusHandler}
                             onBlur={onBlurHandler}
                             checked={checkedState}
-                            ref={interRef}
                             value={value}
                             name={name}
                             {...(autoFocus && { autoFocus })}
