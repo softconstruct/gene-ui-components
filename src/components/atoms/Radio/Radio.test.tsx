@@ -2,20 +2,27 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import { CheckMark, Minus } from "@geneui/icons";
+import { CircleFilled } from "@geneui/icons";
 
-// Components
-import { HelperText, Label } from "../../../index";
-import Checkbox, { ICheckboxProps } from "./index";
+import HelperText from "../HelperText";
+import Label from "../Label";
+import Radio, { IRadioProps } from "./index";
 
-describe("Checkbox ", () => {
-    let setup: ReactWrapper<ICheckboxProps>;
+describe("Radio ", () => {
+    let setup: ReactWrapper<IRadioProps>;
     beforeEach(() => {
-        setup = mount(<Checkbox />);
+        setup = mount(<Radio name="test" value="test" />);
     });
 
     it("renders without crashing", () => {
         expect(setup.exists()).toBeTruthy();
+    });
+
+    it("renders className prop correctly", () => {
+        const className = "test-class";
+        const wrapper = setup.setProps({ className });
+
+        expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
     it("renders label prop correctly", () => {
@@ -31,28 +38,28 @@ describe("Checkbox ", () => {
 
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({ disabled: true });
-        expect(wrapper.find(".checkbox").hasClass(`checkbox_disabled`)).toBeTruthy();
+        expect(wrapper.find(".radio").hasClass(`radio_disabled`)).toBeTruthy();
     });
 
     it("renders readOnly prop correctly", () => {
         const wrapper = setup.setProps({ readOnly: true });
-        expect(wrapper.find(".checkbox").hasClass(`checkbox_readOnly`)).toBeTruthy();
+        expect(wrapper.find(".radio").hasClass(`radio_readOnly`)).toBeTruthy();
     });
 
     it("renders vertical prop correctly", () => {
-        const wrapper = setup.setProps({ vertical: true });
-        expect(wrapper.find(".checkbox").hasClass(`checkbox_labelTop`)).toBeTruthy();
+        const wrapper = setup.setProps({ direction: "vertical" });
+        expect(wrapper.find(".radio").hasClass(`radio_labelTop`)).toBeTruthy();
     });
 
     it("renders autoFocus prop correctly", () => {
         const wrapper = setup.setProps({ autoFocus: true });
-        expect(wrapper.find(".checkbox__input").props().autoFocus).toBeTruthy();
+        expect(wrapper.find(".radio__input").props().autoFocus).toBeTruthy();
     });
 
     it("renders name prop correctly", () => {
         const name = "name";
         const wrapper = setup.setProps({ name });
-        expect(wrapper.find(".checkbox__input").name()).toBeTruthy();
+        expect(wrapper.find(".radio__input").name()).toBeTruthy();
     });
 
     it("renders helperText prop correctly", () => {
@@ -65,7 +72,7 @@ describe("Checkbox ", () => {
     it("renders defaultChecked prop correctly", () => {
         const wrapper = setup.setProps({ defaultChecked: true });
 
-        expect(wrapper.find(CheckMark)).toBeTruthy();
+        expect(wrapper.find(CircleFilled)).toBeTruthy();
     });
 
     it("renders infoText prop correctly", () => {
@@ -74,17 +81,12 @@ describe("Checkbox ", () => {
         expect(wrapper.find(Label).props().infoText).toBe(infoText);
     });
 
-    it("renders indeterminate prop correctly", () => {
-        const wrapper = setup.setProps({ indeterminate: true });
-        expect(wrapper.find(Minus)).toBeTruthy();
-    });
-
     it("renders checked prop correctly", () => {
         const wrapper = setup.setProps({ checked: true });
-        expect(wrapper.find(CheckMark)).toBeTruthy();
+        expect(wrapper.find(CircleFilled)).toBeTruthy();
     });
 
-    it("calls onChange when the checkbox state changes", () => {
+    it("calls onChange when the radio state changes", () => {
         const onChangeMock = jest.fn();
         const wrapper = setup.setProps({ onChange: onChangeMock });
 
@@ -93,7 +95,7 @@ describe("Checkbox ", () => {
         expect(wrapper.find("input").props().checked).toBeTruthy();
     });
 
-    it("calls onFocus when the checkbox state changes", () => {
+    it("calls onFocus when the radio state changes", () => {
         const onFocusMock = jest.fn();
         const wrapper = setup.setProps({ onFocus: onFocusMock });
 
@@ -102,7 +104,7 @@ describe("Checkbox ", () => {
         expect(onFocusMock).toHaveBeenCalled();
     });
 
-    it("calls onBlur when the checkbox state changes", () => {
+    it("calls onBlur when the radio state changes", () => {
         const onBlurMock = jest.fn();
         const wrapper = setup.setProps({ onBlur: onBlurMock });
 
@@ -111,10 +113,10 @@ describe("Checkbox ", () => {
         expect(onBlurMock).toHaveBeenCalled();
     });
 
-    it.each<ICheckboxProps["type"]>(["rest", "warning", "error"])('should have "%s" type', (type) => {
+    it.each<IRadioProps["type"]>(["rest", "warning", "error"])('should have "%s" type', (type) => {
         const wrapper = setup.setProps({ type });
 
-        expect(wrapper.find(".checkbox").hasClass(`checkbox_${type}`)).toBeTruthy();
+        expect(wrapper.find(".radio").hasClass(`radio_${type}`)).toBeTruthy();
     });
 
     it("renders className prop correctly", () => {
@@ -122,5 +124,12 @@ describe("Checkbox ", () => {
         const wrapper = setup.setProps({ className });
 
         expect(wrapper.hasClass(className)).toBeTruthy();
+    });
+
+    it("renders value prop correctly", () => {
+        const value = "test-value";
+        const wrapper = setup.setProps({ value });
+
+        expect(wrapper.find("input").props().value).toBe(value);
     });
 });

@@ -1,4 +1,4 @@
-.checkbox {
+.radio {
     $this: &;
 
     display: inline-flex;
@@ -16,26 +16,25 @@
         left: 0;
         top: 0;
         z-index: -1;
-        border-radius: var(--guit-ref-radius-4xsmall);
+        border-radius: inherit;
 
-        &:checked,
-        &:indeterminate {
+        &:checked {
             & + #{ $this }__imitation {
-                background-color: var(--guit-sem-color-background-selected-2);
                 border-color: var(--guit-sem-color-background-selected-2);
+                color: var(--guit-sem-color-background-selected-2);
 
                 &:hover {
-                    background-color: var(--guit-sem-color-background-selected-2-hover);
                     border-color: var(--guit-sem-color-background-selected-2-hover);
+                    color: var(--guit-sem-color-background-selected-2-hover);
                 }
 
                 &:active {
-                    background-color: var(--guit-sem-color-background-selected-2-pressed);
                     border-color: var(--guit-sem-color-background-selected-2-pressed);
+                    color: var(--guit-sem-color-background-selected-2-pressed);
                 }
-
                 #{ $this }__icon {
                     opacity: 1;
+                    color: inherit;
                 }
             }
         }
@@ -43,7 +42,6 @@
 
     &__label {
         display: flex;
-        max-width: fit-content;
     }
 
     &__imitationHolder {
@@ -51,14 +49,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        border-radius: 50%;
 
         &:only-child {
             width: var(--guit-sem-dimension-width-small);
             height: var(--guit-sem-dimension-height-small);
         }
-
         #{ $this }__input {
-            &:not(:checked, :indeterminate) {
+            &:not(:checked) {
                 & + #{ $this }__imitation {
                     &:hover {
                         background-color: var(--guit-sem-color-background-transparent-1-hover);
@@ -80,19 +78,22 @@
         width: var(--guit-sem-dimension-width-xsmall);
         height: var(--guit-sem-dimension-height-xsmall);
         position: relative;
+        border-radius: inherit;
     }
 
     &__imitation {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 100%;
         height: 100%;
-        border-radius: var(--guit-ref-radius-4xsmall);
         border: var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-neutral-3);
+        border-radius: inherit;
+        overflow: hidden;
     }
 
     &__icon {
-        position: absolute;
-        top: 0;
-        left: 0;
+        flex: 0 0 auto;
         color: var(--guit-sem-color-foreground-inverse);
         opacity: 0;
     }
@@ -102,6 +103,7 @@
     }
     &:not(#{ $this }_labelTop) {
         gap: var(--guit-ref-spacing-3xsmall);
+
         #{ $this }__infoContainer {
             padding-inline-start: var(--guit-ref-spacing-3xlarge);
         }
@@ -137,19 +139,17 @@
             #{ $this }__imitationHolderInner {
                 #{ $this }__imitation {
                     border-color: var(--guit-sem-color-border-disabled-1);
-                    background-color: var(--guit-sem-color-background-disabled);
-
                     #{ $this }__icon {
-                        color: var(--guit-sem-color-foreground-disabled);
+                        color: var(--guit-sem-color-background-disabled);
                     }
                 }
             }
         }
 
         #{ $this }__input {
-            &:not(:checked, :indeterminate) {
+            &:not(:checked) {
                 & + #{ $this }__imitation {
-                    background-color: var(--guit-sem-color-background-transparent-1);
+                    border-color: var(--guit-sem-color-border-disabled-1);
                 }
             }
         }
@@ -170,7 +170,7 @@
         }
 
         #{ $this }__input {
-            &:not(:checked, :indeterminate) {
+            &:not(:checked) {
                 & + #{ $this }__imitation {
                     border-color: var(--guit-sem-color-border-neutral-2);
                 }

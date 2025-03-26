@@ -28,7 +28,7 @@ import {
 } from "@floating-ui/react";
 import { Placement } from "@floating-ui/utils";
 
-import { Close, InfoOutline } from "@geneui/icons";
+import { InfoOutlined, X } from "@geneui/icons";
 
 // Styles
 import "./Popover.scss";
@@ -417,11 +417,11 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                 {title && (
                                     <div className="popover__header">
                                         <p className="popover__title">
-                                            <InfoOutline className="popover__title_icon" size={20} />
+                                            <InfoOutlined className="popover__title_icon" size={20} />
                                             <span className="popover__title_text ellipsis-text">{title}</span>
                                         </p>
                                         <Button
-                                            Icon={Close}
+                                            Icon={X}
                                             size="small"
                                             appearance="secondary"
                                             displayType="text"
