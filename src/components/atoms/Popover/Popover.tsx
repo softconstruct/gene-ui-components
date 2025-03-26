@@ -134,9 +134,9 @@ export interface IPopoverProps {
     position?: keyof typeof correctPosition;
 
     /**
-     * Padding between the popover and its target element.
+     * Margin between the popover and its target element.
      */
-    padding?: number;
+    margin?: number;
 
     /**
      * Function to update popover props dynamically.
@@ -186,7 +186,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         {
             size = "medium",
             position = "bottom-center",
-            padding = 10,
+            margin = 10,
             defaultOpen = false,
             setProps,
             title,
@@ -216,7 +216,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                 isRTL: () => false
             },
             middleware: [
-                offset(padding),
+                offset(margin),
                 flip({
                     mainAxis: position !== "auto" && !disableReposition,
                     fallbackAxisSideDirection: "none",
