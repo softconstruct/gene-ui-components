@@ -118,9 +118,9 @@ export interface IPopoverProps {
     defaultOpen?: boolean;
     /**
      * Define width and height of the popover.<br>
-     * Possible values: <code> xLarge | large | medium | small | mobile </code>
+     * Possible values: <code> xLarge | large | medium | small | mobile | fitContent | reference </code>
      */
-    size?: "xLarge" | "large" | "medium" | "small" | "mobile";
+    size?: "xLarge" | "large" | "medium" | "small" | "mobile" | "fitContent" | "reference";
 
     /**
      * Title displayed in the popover header.
@@ -203,6 +203,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         const [popoverOpened, setPopoverOpened] = useState(defaultOpen);
         const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
         const [currentPosition, setCurrentPosition] = useState(correctPosition[position]);
+        const [parentWidth, setParentWidth] = useState(0);
 
         const arrowRef = useRef<HTMLDivElement | null>(null);
 
@@ -374,12 +375,21 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
 
         const arrowOffsetFromEdge = 5;
 
+        const parentElement = refs.reference.current as HTMLElement | null;
+        useEffect(() => {
+            if (size !== "reference") return;
+
+            const parentElementWidth = parentElement?.offsetWidth;
+
+            if (parentElementWidth) setParentWidth(parentElementWidth);
+        }, [parentElement?.offsetWidth, size]);
+
         return (
             <>
                 {isShowPopover && (
                     <FloatingPortal root={geneUIProviderRef.current}>
                         <div
-                            style={styles}
+                            style={size === "reference" ? { ...styles, "--parent-width": `${parentWidth}px` } : styles}
                             className={`popover  popover_size_${size} popover_position_${currentDirection}`}
                             ref={refs.setFloating}
                             {...getFloatingProps()}
