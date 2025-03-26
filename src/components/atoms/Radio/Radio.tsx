@@ -49,11 +49,11 @@ interface IRadioProps {
      */
     helperText?: string;
     /**
-     *  The initial checked state of the radio before user interaction.
+     *  The initial state of the radio was checked before user interaction. This prop does not make the component controlled.
      */
     defaultChecked?: boolean;
     /**
-     *  Determines the radioes appearance based on its status.<br>
+     *  Determines the radios appearance based on its status.<br>
      *  Possible values: `rest | warning | error`
      */
     type?: "rest" | "warning" | "error";
