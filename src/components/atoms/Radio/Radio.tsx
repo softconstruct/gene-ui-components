@@ -67,11 +67,11 @@ interface IRadioProps {
      */
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     /**
-     *  Event handler for when the radio input element loses focus. Provides the focus event as a callback's argument.
+     *  This event is triggered when user loses focus from the component, clicks another space in screen or using a keyboard navigation change the current focused element
      */
     onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
     /**
-     *  Event handler for when the radio input element receives focus. Provides the focus event as a callback's argument.
+     *  This event is triggered when the user focuses on this component, clicks the radio button, or makes a currently focused element using keyboard navigation.
      */
     onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
     /**
@@ -86,7 +86,7 @@ interface IRadioProps {
 }
 
 /*
- The radio component allows users to select one or more options from a set of choices. Each radio can be either checked or unchecked, indicating a binary state. Radios are commonly used in forms, settings, and lists where a user needs to select a single option from multiple options.
+ The radio component allows users to select one option from a set of choices. Each radio can be either checked or unchecked, indicating a binary state. Radios are commonly used in forms, settings, and lists where a user needs to select a single option from multiple options.
 */
 const Radio: FC<IRadioProps> = (props) => {
     const {
