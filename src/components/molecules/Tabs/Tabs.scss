@@ -10,16 +10,18 @@
         #{ $this }__wrapper {
             overflow: hidden;
             white-space: nowrap;
+            margin-inline: -0.2rem;
         }
 
         #{ $this }__nav {
-            box-shadow: 0 -0.1rem 0 0 var(--guit-sem-color-border-neutral-2) inset;
+            &_button {
+                box-shadow: 0 -0.1rem 0 0 var(--guit-sem-color-border-neutral-2) inset;
+                margin-bottom: var(--guit-ref-spacing-4xsmall);
+            }
         }
 
         #{ $this }__list {
-            padding-top: var(--guit-ref-spacing-4xsmall);
-            padding-inline-start: var(--guit-ref-spacing-4xsmall);
-            padding-inline-end: var(--guit-ref-spacing-4xsmall);
+            padding: 0.2rem;
             overflow-x: auto;
             overflow-y: hidden;
 
@@ -108,9 +110,7 @@
         }
 
         #{ $this }__list {
-            padding-top: var(--guit-ref-spacing-4xsmall);
-            padding-inline-start: var(--guit-ref-spacing-4xsmall);
-            padding-bottom: var(--guit-ref-spacing-4xsmall);
+            padding: 0.2rem;
         }
 
         #{ $this }__button {
@@ -173,6 +173,7 @@
         flex: 0 0 auto;
         background-color: var(--guit-sem-color-background-neutral-1);
         max-width: 100%;
+        position: relative;
 
         &_button {
             flex: 0 0 auto;
@@ -198,22 +199,43 @@
         }
 
         &_before::before {
-            background: linear-gradient(
-                90deg,
-                var(--guit-sem-color-background-neutral-1) 0%,
-                var(--guit-sem-color-background-transparent-inverse-1) 100%
-            );
-            inset-inline-start: 0;
+            inset-inline-start: -0.2rem;
+
+            [dir="ltr"] & {
+                background: linear-gradient(
+                    90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
+
+            [dir="rtl"] & {
+                background: linear-gradient(
+                    -90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
         }
 
         &_after::after {
-            content: "";
-            background: linear-gradient(
-                -90deg,
-                var(--guit-sem-color-background-neutral-1) 0%,
-                var(--guit-sem-color-background-transparent-inverse-1) 100%
-            );
-            inset-inline-end: 0;
+            inset-inline-end: -0.2rem;
+
+            [dir="ltr"] & {
+                background: linear-gradient(
+                    -90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
+
+            [dir="rtl"] & {
+                background: linear-gradient(
+                    90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
         }
     }
 
@@ -234,7 +256,6 @@
 
         display: flex;
         align-items: center;
-        justify-content: flex-end;
         column-gap: var(--guit-ref-spacing-xsmall);
         background-color: var(--guit-sem-color-background-neutral-1);
 
@@ -289,6 +310,7 @@
             font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            text-align: start;
         }
 
         &:not(&#{ $that }_selected):not(&#{ $that }_disabled) {
@@ -308,7 +330,8 @@
             background-color: var(--guit-sem-color-background-neutral-1-hover);
         }
 
-        &:active {
+        // state: pressed
+        &:active:not(&#{ $that }_selected):not(&#{ $that }_disabled) {
             background-color: var(--guit-sem-color-background-neutral-1-pressed);
         }
 
@@ -345,7 +368,7 @@
             width: 2.4rem;
             height: 2.4rem;
 
-            // todo: remove this styles after implementation
+            // todo: remove this styles after 'slot' component implementation
             background-color: #f4e1ec;
             border: 0.1rem solid #a60063;
         }
@@ -354,7 +377,7 @@
     &__stage {
         flex: 1;
 
-        // todo: remove this styles after stage component implementation
+        // todo: remove this styles after 'stage' component implementation
         padding: var(--guit-ref-spacing-xlarge);
         background-color: var(--guit-sem-color-background-neutral-3);
     }
