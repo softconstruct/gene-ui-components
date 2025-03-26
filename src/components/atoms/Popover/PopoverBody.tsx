@@ -4,7 +4,6 @@ import classNames from "classnames";
 interface IPopoverBodyProps extends PropsWithChildren {
     /**
      * By default the PopoverBody has <code>--guit-ref-spacing-large</code> padding.
-     *
      */
     withPadding?: boolean;
 }
