@@ -12,7 +12,7 @@ describe("Popover", () => {
     let setup: ReactWrapper<IPopoverProps>;
 
     const Component = (
-        <Popover size="small" padding={0} setProps={() => {}}>
+        <Popover size="small" margin={0} setProps={() => {}}>
             <PopoverBody>
                 <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
             </PopoverBody>

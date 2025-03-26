@@ -13,7 +13,7 @@ const meta: Meta<IPopoverProps> = {
     subcomponents: { PopoverBody, PopoverFooter, PopoverFooterActions },
     argTypes: {
         position: args({ control: "select", ...propCategory.appearance }),
-        padding: args({ control: "number", ...propCategory.appearance }),
+        margin: args({ control: "number", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states, defaultValue: undefined }),
         withArrow: args({ control: "boolean", ...propCategory.states }),
@@ -26,7 +26,7 @@ const meta: Meta<IPopoverProps> = {
         defaultOpen: args({ control: "boolean", ...propCategory.states })
     },
     args: {
-        padding: 15,
+        margin: 15,
         position: "bottom-left",
         size: "medium",
         title: "Popover",
