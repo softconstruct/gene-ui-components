@@ -12,7 +12,7 @@ describe("Popover", () => {
     let setup: ReactWrapper<IPopoverProps>;
 
     const Component = (
-        <Popover size="small" padding={0} setProps={() => {}}>
+        <Popover size="small" margin={0} setProps={() => {}}>
             <PopoverBody>
                 <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
             </PopoverBody>
@@ -40,25 +40,25 @@ describe("Popover", () => {
     });
 
     it("renders children prop correct", () => {
-        setup.setProps({ alwaysShow: true });
+        setup.setProps({ open: true });
         expect(provider().find(".swapComponent").exists()).toBeTruthy();
     });
 
     it("renders title prop correct", () => {
         const title = "test";
-        setup.setProps({ alwaysShow: true, title });
+        setup.setProps({ open: true, title });
         expect(provider().find(".popover__header").text()).toBe(title);
     });
 
     it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "mobile"])("should have %p size", (size) => {
-        setup.setProps({ alwaysShow: true, size });
+        setup.setProps({ open: true, size });
         expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
     });
 
     it("renders PopoverFooterActions child correct", () => {
         const child = "test";
         setup.setProps({
-            alwaysShow: true,
+            open: true,
             children: (
                 <PopoverFooter>
                     <PopoverFooterActions>
@@ -73,7 +73,7 @@ describe("Popover", () => {
     it("renders withArrow prop correct", () => {
         setup.setProps({
             withArrow: true,
-            alwaysShow: true
+            open: true
         });
         expect(provider().find(".popover__arrowPath").exists()).toBeTruthy();
     });
