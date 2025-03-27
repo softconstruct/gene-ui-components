@@ -30,14 +30,16 @@ import { Placement } from "@floating-ui/utils";
 
 import { InfoOutlined, X } from "@geneui/icons";
 
+// Components
+import Button from "@components/atoms/Button";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
+
+// Hooks
+import useScrollLock from "@hooks/useScrollLock";
+
 // Styles
 import "./Popover.scss";
 
-// Hooks
-import { useScrollLock } from "../../../hooks";
-// Components
-import { GeneUIDesignSystemContext } from "../../providers/GeneUIProvider";
-import Button from "../Button";
 // Helper
 import { calculateOverlap, getPositionRect } from "./Helper";
 
