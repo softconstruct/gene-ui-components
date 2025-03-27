@@ -22,7 +22,6 @@ interface IScrollbarProps {
      * Callback function triggered during scroll events. Receives the scroll event as an argument.
      */
     onScroll?: (e: UIEvent<HTMLDivElement>) => void;
-
     /**
      * 	Control width for the scrollbar.<br>
      * 	Possible values: `full | auto`

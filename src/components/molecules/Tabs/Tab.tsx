@@ -1,7 +1,7 @@
 import React, { FC, JSX, PropsWithChildren, useContext, useEffect } from "react";
 import classNames from "classnames";
 
-import { Close, IconProps, InfoFill } from "@geneui/icons";
+import { CircleInfo, IconProps, X } from "@geneui/icons";
 
 // Components
 import Button from "../../atoms/Button";
@@ -90,10 +90,10 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, clos
                         if (index === undefined) return;
                         removeTabHandler(index);
                     }}
-                    Icon={Close}
+                    Icon={X}
                 />
             )}
-            {isError && <InfoFill className="tabs__button_iconError" size={24} />}
+            {isError && <CircleInfo className="tabs__button_iconError" size={24} />}
             {!closable && content}
         </button>
     );
