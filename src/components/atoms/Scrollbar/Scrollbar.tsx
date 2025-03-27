@@ -1,8 +1,8 @@
-import React, { FC, ReactNode, UIEvent, useEffect, useRef, useState } from "react";
+import React, { FC, ReactNode, UIEvent, useRef, useState } from "react";
 import classNames from "classnames";
-// Components
-import Scrollbars, { Scrollbar as ScrollBarTypes } from "react-scrollbars-custom";
+import Scrollbars from "react-scrollbars-custom";
 
+// Components";
 // Hooks
 import useDebouncedCallback from "@hooks/useDebounceCallback";
 
@@ -19,47 +19,33 @@ interface IScrollbarProps {
      *The content to be rendered inside the scrollable area.
      */
     children: ReactNode;
-    /**
-     * Automatically scrolls the container to a specific vertical position (in pixels).
-     */
-    autoScrollTopTo?: number;
-    /**
-     * Automatically scrolls the container to a specific horizontal position (in pixels).
-     */
-    autoScrollLeftTo?: number;
+
     /**
      * Callback function triggered during scroll events. Receives the scroll event as an argument.
      */
     onScroll?: (e: UIEvent<HTMLDivElement>) => void;
+
     /**
-     * 	Custom height for the scrollable container.<br>
-     * 	Default is 100%.<br>
-     * 	Possible values: `any valid css value`
+     * 	Control height for the scrollbar.<br>
+     *  Default is `full` <br>
+     * 	Possible values: `full | auto`
      */
-    customHeight?: string;
+    width?: "full" | "auto";
     /**
-     * 	Custom width for the scrollable container.<br>
-     * 	Default is 100%.<br>
-     * 	Possible values: `any valid css value`
+     * 	Control width for the scrollbar.<br>
+     * 	Default is `full` <br>
+     * 	Possible values: `full | auto`
      */
-    customWidth?: string;
+    height?: "full" | "auto";
 }
 
 /**
  * Scrollbar is a UI element that allows users to navigate through content that extends beyond the visible area of a container or window. It typically appears along the right side or bottom of the viewport, providing a draggable handle and directional arrows for vertical or horizontal scrolling, enabling users to access all available content.
  */
-const Scrollbar: FC<IScrollbarProps> = ({
-    className,
-    children,
-    autoScrollTopTo,
-    autoScrollLeftTo,
-    onScroll,
-    customHeight,
-    customWidth
-}) => {
+const Scrollbar: FC<IScrollbarProps> = ({ className, children, onScroll, width = "full", height = "full" }) => {
     const [scrollDirection, setScrollDirection] = useState<"x" | "y" | null>(null);
     const previousScrollPosition = useRef({ scrollTop: 0, scrollLeft: 0 });
-    const scrollbarsRef = useRef<(ScrollBarTypes & HTMLDivElement) | null>(null);
+    const scrollbarsRef = useRef(null);
 
     const scrollStateResetHandler = () => {
         setScrollDirection(null);
@@ -100,21 +86,6 @@ const Scrollbar: FC<IScrollbarProps> = ({
         debouncedCallback();
     };
 
-    // autoScrollTo Top and Left
-    useEffect(() => {
-        const hasAutoScrollTopTo = typeof autoScrollTopTo === "number";
-        const hasAutoScrollLeftTo = typeof autoScrollTopTo === "number";
-
-        const scrollRefCurrent = scrollbarsRef.current;
-        if (scrollRefCurrent?.scrollerElement && (hasAutoScrollTopTo || hasAutoScrollLeftTo)) {
-            scrollRefCurrent.scrollerElement?.scrollTo({
-                ...(hasAutoScrollTopTo ? { top: autoScrollTopTo } : {}),
-                ...(hasAutoScrollLeftTo ? { left: autoScrollLeftTo } : {}),
-                behavior: "smooth"
-            });
-        }
-    }, [autoScrollTopTo, autoScrollLeftTo]);
-
     const trackProps = (direction: "x" | "y" | null) => {
         return {
             onMouseEnter: () => showScrollbarHandler(direction),
@@ -137,7 +108,7 @@ const Scrollbar: FC<IScrollbarProps> = ({
 
     return (
         <Scrollbars
-            className={classNames("scrollbar", className)}
+            className={classNames(`scrollbar scrollbar_width_${width} scrollbar_height_${height}`, className)}
             noDefaultStyles
             scrollerProps={{
                 className: "scrollbar__scroller"
@@ -148,7 +119,6 @@ const Scrollbar: FC<IScrollbarProps> = ({
                 tabIndex: 0,
                 className: "scrollbar__content"
             }}
-            style={{ height: customHeight, width: customWidth }}
             minimalThumbSize={30}
             ref={scrollbarsRef}
             wrapperProps={{

@@ -313,7 +313,6 @@
             text-align: start;
         }
 
-        // state: rest
         &:not(&#{ $that }_selected):not(&#{ $that }_disabled) {
             cursor: pointer;
             #{ $that }_icon {
@@ -327,7 +326,6 @@
             }
         }
 
-        // state: hover
         &:hover:not(&#{ $that }_selected):not(&#{ $that }_disabled) {
             background-color: var(--guit-sem-color-background-neutral-1-hover);
         }
@@ -337,12 +335,10 @@
             background-color: var(--guit-sem-color-background-neutral-1-pressed);
         }
 
-        // state: focused
         &:focus-visible {
             z-index: 2;
         }
 
-        // state: selected
         &_selected {
             cursor: default;
 
@@ -352,7 +348,6 @@
             }
         }
 
-        // state: error
         &_error {
             #{ $that }_iconError,
             #{ $that }_text {
@@ -360,7 +355,6 @@
             }
         }
 
-        // state: disabled
         &_disabled {
             pointer-events: none;
 
@@ -370,7 +364,6 @@
             }
         }
 
-        // slot styles
         &_slot {
             width: 2.4rem;
             height: 2.4rem;
