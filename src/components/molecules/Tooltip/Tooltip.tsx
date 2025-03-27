@@ -256,6 +256,16 @@ const Tooltip: FC<ITooltipProps> = ({
         ? { [arrowPosition]: offsetFromEdge }
         : { insetInlineStart: middlewareArrowData?.x };
 
+    let arrowRegardingPosition = 0;
+    if (arrowRef.current?.offsetWidth) {
+        if (staticSide.match("top")) {
+            arrowRegardingPosition = -arrowRef.current.offsetHeight;
+        } else if (staticSide === "bottom") {
+            arrowRegardingPosition = -arrowRef.current.offsetWidth + 8;
+        } else {
+            arrowRegardingPosition = -arrowRef.current.offsetWidth + 4;
+        }
+    }
     return (
         <>
             {component}
@@ -273,7 +283,7 @@ const Tooltip: FC<ITooltipProps> = ({
                             style={{
                                 ...getCorrectPosition,
                                 top: middlewareArrowData?.y,
-                                [staticSide!]: arrowRef.current ? `${-arrowRef.current.offsetWidth + 6}px` : 0
+                                [staticSide!]: arrowRef.current ? `${arrowRegardingPosition}px` : 0
                             }}
                         >
                             <svg
@@ -291,11 +301,7 @@ const Tooltip: FC<ITooltipProps> = ({
                             <p className="tooltip__text">{text}</p>
                         </div>
 
-                        {Icon && (
-                            <div className="tooltip__icon">
-                                <Icon size={16} />
-                            </div>
-                        )}
+                        {Icon && <Icon size={16} className="tooltip__icon" />}
                     </div>
                 </FloatingPortal>
             )}
