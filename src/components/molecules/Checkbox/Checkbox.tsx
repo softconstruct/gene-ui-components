@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FC, FocusEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
-import { CheckMark, MinusOutline } from "@geneui/icons";
+import { CheckMark, Minus } from "@geneui/icons";
 
 // Components
 import HelperText from "@components/atoms/HelperText";
@@ -65,7 +65,11 @@ interface ICheckboxProps {
      *  HTML name attribute for the input element.<br>
      *  A unique identifier for the checkbox within a form.
      */
-    name?: string;
+    name: string;
+    /**
+     * The value of the component that will be returned in the onChange event.
+     */
+    value: string;
     /**
      *  Fires when the user changes the checkbox state. Provides the change event as a callback's argument.
      */
@@ -83,10 +87,6 @@ interface ICheckboxProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    /**
-     * The value of the component that will be returned in the onChange event.
-     */
-    value: string;
 }
 
 /**
@@ -188,7 +188,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                         />
                         <span className="checkbox__imitation">
                             {indeterminate && !checked ? (
-                                <MinusOutline className="checkbox__icon" size={16} />
+                                <Minus className="checkbox__icon" size={16} />
                             ) : (
                                 <CheckMark className="checkbox__icon" size={16} />
                             )}
