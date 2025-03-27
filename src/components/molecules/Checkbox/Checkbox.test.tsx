@@ -1,17 +1,18 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-// Components
 import { CheckMark, Minus } from "@geneui/icons";
 
 // Components
-import { HelperText, Label } from "../../../index";
+import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
+
 import Checkbox, { ICheckboxProps } from "./index";
 
 describe("Checkbox ", () => {
     let setup: ReactWrapper<ICheckboxProps>;
     beforeEach(() => {
-        setup = mount(<Checkbox />);
+        setup = mount(<Checkbox name="test" value="test" />);
     });
 
     it("renders without crashing", () => {
@@ -40,7 +41,7 @@ describe("Checkbox ", () => {
     });
 
     it("renders vertical prop correctly", () => {
-        const wrapper = setup.setProps({ vertical: true });
+        const wrapper = setup.setProps({ direction: "vertical" });
         expect(wrapper.find(".checkbox").hasClass(`checkbox_labelTop`)).toBeTruthy();
     });
 
@@ -122,5 +123,11 @@ describe("Checkbox ", () => {
         const wrapper = setup.setProps({ className });
 
         expect(wrapper.hasClass(className)).toBeTruthy();
+    });
+    it("renders value prop correctly", () => {
+        const value = "test-value";
+        const wrapper = setup.setProps({ value });
+
+        expect(wrapper.find("input").props().value).toBe(value);
     });
 });
