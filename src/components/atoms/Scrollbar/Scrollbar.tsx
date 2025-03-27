@@ -1,8 +1,7 @@
-import React, { FC, ReactNode, UIEvent, useRef, useState } from "react";
+import React, { FC, ReactNode, UIEvent, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import Scrollbars from "react-scrollbars-custom";
 
-// Components";
 // Hooks
 import useDebouncedCallback from "@hooks/useDebounceCallback";
 
@@ -16,36 +15,42 @@ interface IScrollbarProps {
      */
     className?: string;
     /**
-     *The content to be rendered inside the scrollable area.
+     * The content to be rendered inside the scrollable area.
      */
     children: ReactNode;
-
     /**
      * Callback function triggered during scroll events. Receives the scroll event as an argument.
      */
     onScroll?: (e: UIEvent<HTMLDivElement>) => void;
-
     /**
-     * 	Control height for the scrollbar.<br>
-     *  Default is `full` <br>
+     * 	Control width for the scrollbar.<br>
      * 	Possible values: `full | auto`
      */
     width?: "full" | "auto";
     /**
-     * 	Control width for the scrollbar.<br>
-     * 	Default is `full` <br>
+     * 	Control height for the scrollbar.<br>
      * 	Possible values: `full | auto`
      */
     height?: "full" | "auto";
+    /**
+     * Automatically scrolls the container to a specific vertical position (in pixels).
+     */
+    scrollToTop?: number;
+    /**
+     * Automatically scrolls the container to a specific horizontal position (in pixels).
+     */
+    scrollToLeft?: number;
 }
 
 /**
  * Scrollbar is a UI element that allows users to navigate through content that extends beyond the visible area of a container or window. It typically appears along the right side or bottom of the viewport, providing a draggable handle and directional arrows for vertical or horizontal scrolling, enabling users to access all available content.
  */
-const Scrollbar: FC<IScrollbarProps> = ({ className, children, onScroll, width = "full", height = "full" }) => {
+const Scrollbar: FC<IScrollbarProps> = (props) => {
+    const { className, children, onScroll, width = "full", height = "full", scrollToTop, scrollToLeft } = props;
+
     const [scrollDirection, setScrollDirection] = useState<"x" | "y" | null>(null);
     const previousScrollPosition = useRef({ scrollTop: 0, scrollLeft: 0 });
-    const scrollbarsRef = useRef(null);
+    const scrollbarRef = useRef<Scrollbars | null>(null);
 
     const scrollStateResetHandler = () => {
         setScrollDirection(null);
@@ -86,6 +91,20 @@ const Scrollbar: FC<IScrollbarProps> = ({ className, children, onScroll, width =
         debouncedCallback();
     };
 
+    useEffect(() => {
+        const scrollRefCurrent = scrollbarRef.current;
+        const hasScrollToTop = "scrollToTop" in props;
+        const hasScrollToLeft = "scrollToLeft" in props;
+
+        if (scrollRefCurrent && (hasScrollToTop || hasScrollToLeft)) {
+            scrollRefCurrent?.scrollerElement?.scrollTo({
+                ...(hasScrollToTop ? { top: scrollToTop } : {}),
+                ...(hasScrollToLeft ? { left: scrollToLeft } : {}),
+                behavior: "smooth"
+            });
+        }
+    }, [scrollToTop, scrollToLeft]);
+
     const trackProps = (direction: "x" | "y" | null) => {
         return {
             onMouseEnter: () => showScrollbarHandler(direction),
@@ -120,7 +139,9 @@ const Scrollbar: FC<IScrollbarProps> = ({ className, children, onScroll, width =
                 className: "scrollbar__content"
             }}
             minimalThumbSize={30}
-            ref={scrollbarsRef}
+            ref={(instance: unknown) => {
+                scrollbarRef.current = instance as Scrollbars | null;
+            }}
             wrapperProps={{
                 className: "scrollbar__wrapper",
                 onScroll: scrollHandler
