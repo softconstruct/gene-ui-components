@@ -4,13 +4,15 @@ import { mount, ReactWrapper } from "enzyme";
 import { CheckMark, Minus } from "@geneui/icons";
 
 // Components
-import { HelperText, Label } from "../../../index";
+import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
+
 import Checkbox, { ICheckboxProps } from "./index";
 
 describe("Checkbox ", () => {
     let setup: ReactWrapper<ICheckboxProps>;
     beforeEach(() => {
-        setup = mount(<Checkbox value="test" />);
+        setup = mount(<Checkbox name="test" value="test" />);
     });
 
     it("renders without crashing", () => {
