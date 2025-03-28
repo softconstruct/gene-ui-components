@@ -120,9 +120,9 @@ export interface IPopoverProps {
     defaultOpen?: boolean;
     /**
      * Define width and height of the popover.<br>
-     * Possible values: <code> xLarge | large | medium | small | mobile | fitContent | reference </code>
+     * Possible values: <code> xLarge | large | medium | small  | fitContent | reference </code>
      */
-    size?: "xLarge" | "large" | "medium" | "small" | "mobile" | "fitContent" | "reference";
+    size?: "xLarge" | "large" | "medium" | "small" | "fitContent" | "reference";
 
     /**
      * Title displayed in the popover header.
@@ -203,11 +203,12 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useScrollLock(document.body);
 
         const [popoverOpened, setPopoverOpened] = useState(defaultOpen);
-        const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
+        const { geneUIProviderRef, breakpoint } = useContext(GeneUIDesignSystemContext);
         const [currentPosition, setCurrentPosition] = useState(correctPosition[position]);
         const [parentWidth, setParentWidth] = useState(0);
-
         const arrowRef = useRef<HTMLDivElement | null>(null);
+
+        const isMobile = breakpoint?.isMobileBreakpoint;
 
         const wosPosed = useRef(new Map());
         const { refs, floatingStyles, context, middlewareData, placement } = useFloating({
@@ -289,23 +290,22 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             ? { [arrowPosition]: offsetFromEdge }
             : { insetInlineStart: middlewareArrowData?.x };
 
-        const styles: CSSProperties =
-            size === "mobile"
-                ? {
-                      position: "fixed",
-                      bottom: "0"
-                  }
-                : floatingStyles;
+        const styles: CSSProperties = isMobile
+            ? {
+                  position: "fixed",
+                  bottom: "0"
+              }
+            : floatingStyles;
 
         const isShowPopover = open || popoverOpened;
 
         useEffect(() => {
-            if (size === "mobile" && isShowPopover) {
+            if (isMobile && isShowPopover) {
                 lockBodyScroll();
             } else {
                 unlockBodyScroll();
             }
-        }, [size, isShowPopover]);
+        }, [isMobile, isShowPopover]);
 
         useEffect(() => {
             return () => {
@@ -392,11 +392,11 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                     <FloatingPortal root={geneUIProviderRef.current}>
                         <div
                             style={size === "reference" ? { ...styles, "--parent-width": `${parentWidth}px` } : styles}
-                            className={`popover  popover_size_${size} popover_position_${currentDirection}`}
+                            className={`popover  popover_size_${isMobile ? "mobile" : size} popover_position_${currentDirection}`}
                             ref={refs.setFloating}
                             {...getFloatingProps()}
                         >
-                            {size !== "mobile" && (
+                            {!isMobile && (
                                 <div
                                     ref={arrowRef}
                                     className="popover__arrow"

@@ -50,7 +50,7 @@ describe("Popover", () => {
         expect(provider().find(".popover__header").text()).toBe(title);
     });
 
-    it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "mobile", "fitContent", "reference"])(
+    it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "fitContent", "reference"])(
         "should have %p size",
         (size) => {
             setup.setProps({ open: true, size });
