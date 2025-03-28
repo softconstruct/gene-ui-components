@@ -2,6 +2,10 @@ import React, { createContext, JSX, useEffect, useMemo, useRef, useState } from 
 
 import { bootstrap } from "@geneui/tokens";
 
+import useBreakpoint, { IBreakpoint } from "@hooks/useBreakpoint";
+
+import { ThemesTypes } from "@types";
+
 // Styles
 import "../../../assets/styles/reset.scss";
 import "../../../assets/styles/utils.scss";
@@ -10,20 +14,20 @@ import "./GeneUIProvider.scss";
 // Statics
 import pgk from "../../../../package.json";
 
-type ThemesTypes = "light" | "dark";
-
 type TokensType = { [key: string]: string | number } | null;
 
 interface IGeneUIDesignSystemContext {
     theme: ThemesTypes;
     tokens: TokensType;
     geneUIProviderRef: React.MutableRefObject<null>;
+    breakpoint: IBreakpoint | null;
 }
 
 const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
     theme: "light",
     tokens: {},
-    geneUIProviderRef: { current: null }
+    geneUIProviderRef: { current: null },
+    breakpoint: null
 });
 
 interface IGeneUIProviderProps {
@@ -42,17 +46,26 @@ interface IGeneUIProviderProps {
     theme?: ThemesTypes;
 }
 
+const defaultTokens = bootstrap();
+
 function GeneUIProvider({ children, tokens = null, theme = "light" }: IGeneUIProviderProps): JSX.Element {
     const geneUIProviderRef = useRef(null);
     const [isRefExist, setIsRefExist] = useState(false);
 
+    const currentBreakpoint = useBreakpoint({
+        mobile: defaultTokens.GuitRefBreakpointMobile,
+        tablet: defaultTokens.GuitRefBreakpointTablet,
+        desktop: defaultTokens.GuitRefBreakpointDesktop
+    });
+
     const contextValue = useMemo(
         () => ({
             theme,
-            tokens: tokens || bootstrap(),
-            geneUIProviderRef
+            tokens: tokens || defaultTokens,
+            geneUIProviderRef,
+            breakpoint: currentBreakpoint
         }),
-        [theme, tokens, geneUIProviderRef]
+        [theme, tokens, geneUIProviderRef, currentBreakpoint]
     );
 
     useEffect(() => {

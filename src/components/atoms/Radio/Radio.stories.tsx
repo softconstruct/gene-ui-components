@@ -4,25 +4,25 @@ import { Meta, StoryObj } from "@storybook/react";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import Checkbox, { ICheckboxProps } from "./index";
+import Radio, { IRadioProps } from "./index";
 
-const meta: Meta<ICheckboxProps> = {
-    title: "Molecules/Checkbox",
-    component: Checkbox,
+const meta: Meta<IRadioProps> = {
+    title: "Atoms/Radio",
+    component: Radio,
     argTypes: {
+        name: args({ control: "text", ...propCategory.others }),
+        value: args({ control: "text", ...propCategory.others }),
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         checked: args({ control: "boolean", ...propCategory.states }),
         defaultChecked: args({ control: "boolean", ...propCategory.states }),
-        indeterminate: args({ control: "boolean", ...propCategory.states }),
         required: args({ control: "boolean", ...propCategory.content }),
         helperText: args({ control: "text", ...propCategory.content }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
         type: args({ control: "select", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
-        name: args({ control: "text", ...propCategory.others }),
         onChange: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
@@ -37,10 +37,10 @@ const meta: Meta<ICheckboxProps> = {
 
 export default meta;
 
-type Story = StoryObj<ICheckboxProps>;
+type Story = StoryObj<IRadioProps>;
 
 export const Default: Story = {
     render: (props) => {
-        return <Checkbox {...props} />;
+        return <Radio {...props} />;
     }
 };
