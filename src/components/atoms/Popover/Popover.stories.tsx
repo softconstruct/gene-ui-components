@@ -43,7 +43,7 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
 
     return (
-        <div style={{ margin: "500px 500px", height: 7000 }}>
+        <div style={{ margin: "500px 500px", height: 1000 }}>
             <Popover {...props} setProps={setPropsForContent} ref={popRef}>
                 <PopoverBody>
                     <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
@@ -79,7 +79,7 @@ export const popoverStory: Story = {
 const WithoutFooterComponent: FC<IPopoverProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
     return (
-        <div style={{ margin: "500px 500px", height: 7000 }}>
+        <div style={{ margin: "500px 500px", height: 1000 }}>
             <Popover {...props} setProps={setPropsForContent}>
                 <PopoverBody>
                     <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
@@ -98,7 +98,7 @@ export const WithoutFooter: Story = {
 const WithoutHeaderComponent: FC<IPopoverProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
     return (
-        <div style={{ margin: "500px 500px", height: 7000 }}>
+        <div style={{ margin: "500px 500px", height: 1000 }}>
             <Popover {...props} setProps={setPropsForContent} title="">
                 <PopoverBody>
                     <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
@@ -133,7 +133,7 @@ export const WithoutHeader: Story = {
 const WithoutHeaderAndFooterComponent: FC<IPopoverProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
     return (
-        <div style={{ margin: "500px 500px", height: 7000 }}>
+        <div style={{ margin: "500px 500px", height: 1000 }}>
             <Popover {...props} setProps={setPropsForContent} title="">
                 <PopoverBody>
                     <span>
