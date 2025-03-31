@@ -1,0 +1,53 @@
+.grid {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    row-gap: var(--guit-ref-spacing-2xl);
+    width: 100%;
+}
+
+.row {
+    width: 100%;
+    padding-left: var(--guit-ref-spacing-2xl);
+    padding-right: var(--guit-ref-spacing-2xl);
+
+    @for $i from 1 through 12 {
+        &:has([class^="col-"]:nth-child(1):nth-last-child(#{$i})) {
+            --column-count: #{$i};
+        }
+    }
+
+    &:not(.flexible) {
+        display: grid;
+        grid-column-gap: var(--guit-ref-spacing-2xl);
+        grid-template-columns: repeat(12, 1fr);
+
+        @for $i from 1 through 12 {
+            .col-#{$i} {
+                grid-column: span #{$i};
+
+                @for $j from 1 through 12 - $i {
+                    &.col-offset-#{$j} {
+                        grid-column: #{$j + 1} / #{$i + 1 + $j};
+                    }
+                }
+            }
+        }
+    }
+
+    &.flexible {
+        display: flex;
+        column-gap: var(--guit-ref-spacing-2xl);
+
+        @for $i from 1 through 12 {
+            .col-#{$i} {
+                flex: #{$i};
+            }
+        }
+
+        .col-fixed {
+            flex: 0 0 auto;
+        }
+    }
+}

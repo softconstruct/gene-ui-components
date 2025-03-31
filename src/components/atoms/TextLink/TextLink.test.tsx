@@ -1,5 +1,6 @@
 import React, { MouseEvent } from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
 import { Globe } from "@geneui/icons";
 
 // Components
@@ -79,6 +80,11 @@ describe("TextLink", () => {
             expect(wrapper.find(`textLink_color_${appearance}`)).toBeTruthy();
         }
     );
+
+    it.each<ITextLinkProps["size"]>(["large", "medium"])('should have "%s" appearance', (size) => {
+        const wrapper = setup.setProps({ size });
+        expect(wrapper.find(`textLink_size_${size}`)).toBeTruthy();
+    });
 
     it.each<ITextLinkProps["target"]>(["blank", "self"])('should have "%s" target', (target) => {
         const wrapper = setup.setProps({ target });

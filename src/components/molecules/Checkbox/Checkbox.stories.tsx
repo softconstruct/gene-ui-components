@@ -1,13 +1,12 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import React from "react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import Checkbox, { ICheckboxProps } from "./index";
 
-const meta: Meta<typeof Checkbox> = {
+const meta: Meta<ICheckboxProps> = {
     title: "Molecules/Checkbox",
     component: Checkbox,
     argTypes: {
@@ -21,7 +20,7 @@ const meta: Meta<typeof Checkbox> = {
         helperText: args({ control: "text", ...propCategory.content }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
         type: args({ control: "select", ...propCategory.appearance }),
-        vertical: args({ control: "boolean", ...propCategory.appearance }),
+        direction: args({ control: "select", ...propCategory.appearance }),
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         name: args({ control: "text", ...propCategory.others }),
         onChange: args({ control: "false", ...propCategory.action }),
@@ -33,13 +32,15 @@ const meta: Meta<typeof Checkbox> = {
         label: "Label",
         infoText: "info text",
         helperText: "helper text"
-    } as ICheckboxProps
+    }
 };
 
 export default meta;
 
-const Template: FC<ICheckboxProps> = (props) => <Checkbox {...props} />;
+type Story = StoryObj<ICheckboxProps>;
 
-export const Default = Template.bind({});
-
-Default.args = {} as ICheckboxProps;
+export const Default: Story = {
+    render: (props) => {
+        return <Checkbox {...props} />;
+    }
+};

@@ -1,0 +1,103 @@
+.scrollbar {
+    min-width: 0;
+    min-height: 0;
+
+    &_width {
+        &_full {
+            width: 100%;
+        }
+
+        &_auto {
+            width: auto;
+        }
+    }
+
+    &_height {
+        &_full {
+            height: 100%;
+        }
+
+        &_auto {
+            height: auto;
+        }
+    }
+
+    &__wrapper {
+        height: 100%;
+        width: 100%;
+        position: relative !important;
+    }
+
+    &__scroller {
+        height: 100%;
+        position: relative !important;
+        inset: initial !important;
+        margin: 0 !important;
+
+        &::-webkit-scrollbar-thumb,
+        &::-webkit-scrollbar-track,
+        &::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+    }
+
+    &__content {
+        padding: 0 !important;
+
+        &:focus-visible {
+            outline: none;
+        }
+    }
+
+    &__track {
+        position: absolute;
+        z-index: 100;
+        overflow: hidden;
+        border-radius: var(--guit-ref-radius-3xsmall);
+        inset-inline-end: var(--guit-ref-spacing-4xsmall);
+        bottom: var(--guit-ref-spacing-3xsmall) !important;
+
+        &_direction {
+            &_y {
+                height: 100%;
+                top: 0;
+                width: 0.6rem;
+            }
+
+            &_x {
+                width: 100%;
+                bottom: 0;
+                height: 0.6rem;
+            }
+        }
+    }
+
+    &__thumb {
+        position: absolute;
+        overflow: hidden;
+        background: var(--guit-sem-color-background-transparent-2);
+        border-radius: var(--guit-ref-radius-3xsmall);
+
+        &_direction {
+            &_y {
+                height: 100%;
+                top: 0;
+                width: 0.6rem;
+                inset-inline-end: 0;
+            }
+
+            &_x {
+                width: 100%;
+                bottom: 0;
+                inset-inline-start: 0;
+                height: 0.6rem;
+            }
+
+            &_hide {
+                height: 0;
+                width: 0;
+            }
+        }
+    }
+}

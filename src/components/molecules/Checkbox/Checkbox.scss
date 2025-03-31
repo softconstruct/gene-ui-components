@@ -43,6 +43,7 @@
 
     &__label {
         display: flex;
+        max-width: fit-content;
     }
 
     &__imitationHolder {
@@ -50,8 +51,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: var(--guit-sem-dimension-width-small);
-        height: var(--guit-sem-dimension-height-small);
+
+        &:only-child {
+            width: var(--guit-sem-dimension-width-small);
+            height: var(--guit-sem-dimension-height-small);
+        }
 
         #{ $this }__input {
             &:not(:checked, :indeterminate) {
@@ -86,9 +90,9 @@
     }
 
     &__icon {
-        flex: 0 0 auto;
-        width: 100%;
-        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
         color: var(--guit-sem-color-foreground-inverse);
         opacity: 0;
     }
@@ -97,12 +101,12 @@
         display: flex;
     }
     &:not(#{ $this }_labelTop) {
-        gap: var(--guit-ref-spacing-4xsmall);
+        gap: var(--guit-ref-spacing-3xsmall);
         #{ $this }__infoContainer {
-            padding-inline-start: var(--guit-ref-spacing-4xlarge);
+            padding-inline-start: var(--guit-ref-spacing-3xlarge);
         }
         #{ $this }__label {
-            gap: var(--guit-ref-spacing-xsmall);
+            gap: var(--guit-ref-spacing-medium);
         }
     }
 
@@ -110,7 +114,7 @@
         gap: var(--guit-ref-spacing-3xsmall);
         #{ $this }__label {
             flex-direction: column-reverse;
-            align-items: initial;
+            align-items: flex-start;
             gap: var(--guit-ref-spacing-3xsmall);
         }
     }
