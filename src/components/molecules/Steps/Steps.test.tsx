@@ -4,8 +4,7 @@ import { mount, ReactWrapper } from "enzyme";
 import { SuccessFill, UnavailableOutline } from "@geneui/icons";
 
 // Components
-import Step, { IStepProps } from "./Step";
-import Steps, { IStepsProps } from "./Steps";
+import { IStepProps, IStepsProps, Step, Steps } from "@components/molecules/Steps";
 
 describe("Steps ", () => {
     let setup: ReactWrapper<IStepsProps>;

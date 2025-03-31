@@ -138,14 +138,18 @@
     }
 
     &__body {
-        padding-block: var(--guit-ref-spacing-large);
-        padding-inline: var(--guit-ref-spacing-large);
+        &_withPadding {
+            padding-block: var(--guit-ref-spacing-large);
+            padding-inline: var(--guit-ref-spacing-large);
+        }
     }
 
     &__content {
         width: 100%;
         height: 100%;
-        overflow-y: auto;
+
+        // todo need to investigate why we need overflow auto
+        // overflow-y: auto;
     }
 
     &__footer {
