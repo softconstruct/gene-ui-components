@@ -1,4 +1,4 @@
-import React, { FC, JSX, PropsWithChildren, useContext, useEffect } from "react";
+import React, { FC, JSX, KeyboardEvent, MouseEvent, PropsWithChildren, useContext, useEffect } from "react";
 import classNames from "classnames";
 
 import { CircleInfo, IconProps, X } from "@geneui/icons";
@@ -54,7 +54,14 @@ export interface ITabProps extends PropsWithChildren {
 const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, closable = false, content }) => {
     const { getIndex, size, selectedTabIndex, removeTabHandler } = useContext(TabsContext);
 
-    const provideChildren = () => {
+    const provideChildren = (e: MouseEvent<HTMLDivElement> & KeyboardEvent<HTMLDivElement>) => {
+        if (e?.key) {
+            if (e.key === "Enter") {
+                getIndex(index!);
+            }
+            return;
+        }
+
         getIndex(index!);
     };
 
@@ -65,10 +72,9 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, clos
     }, []);
 
     return (
-        <button
-            type="button"
+        <div
             role="tab"
-            tabIndex={0}
+            tabIndex={selectedTabIndex === index ? -1 : 0}
             className={classNames(`tabs__button  tabs__button_${size}`, {
                 tabs__button_selected: selectedTabIndex === index,
                 tabs__button_error: isError,
@@ -77,6 +83,7 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, clos
                 tabs__button_iconOnly: !title
             })}
             onClick={provideChildren}
+            onKeyDown={provideChildren}
         >
             {!isError && Icon && <Icon className="tabs__button_icon" size={24} />}
             {title && <span className="tabs__button_text">{title}</span>}
@@ -95,7 +102,7 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, clos
             )}
             {isError && <CircleInfo className="tabs__button_iconError" size={24} />}
             {!closable && content}
-        </button>
+        </div>
     );
 };
 export default Tab;
