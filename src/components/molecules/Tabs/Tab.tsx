@@ -75,6 +75,7 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, clos
         <div
             role="tab"
             tabIndex={selectedTabIndex === index ? -1 : 0}
+            aria-selected={selectedTabIndex === index ? "true" : "false"}
             className={classNames(`tabs__button  tabs__button_${size}`, {
                 tabs__button_selected: selectedTabIndex === index,
                 tabs__button_error: isError,

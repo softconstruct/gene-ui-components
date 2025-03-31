@@ -245,7 +245,6 @@ const Tabs: FC<ITabsProps> = ({
                         tabs__shadow_before: isMobile && showLeftShadows && isHorizontal,
                         tabs__shadow_after: isMobile && showRightShadows && isHorizontal
                     })}
-                    role="tablist"
                     aria-label="Sample Tabs"
                 >
                     {isHorizontal && showArrows && !isMobile && (
@@ -263,7 +262,7 @@ const Tabs: FC<ITabsProps> = ({
                     )}
 
                     <Scrollbar className="tabs__wrapper">
-                        <div className="tabs__list" ref={parentRef} onScroll={scrollEvent}>
+                        <div className="tabs__list" role="tablist" ref={parentRef} onScroll={scrollEvent}>
                             {Children.map(AllChildren, (child, index) =>
                                 cloneElement(child as JSX.Element, {
                                     closable,
