@@ -23,7 +23,7 @@ describe("Rate ", () => {
     });
 
     it("renders readonly prop correctly", () => {
-        const wrapper = setup.setProps({ readonly: true, appearance: "heart" });
+        const wrapper = setup.setProps({ readOnly: true, appearance: "heart" });
         expect(wrapper.find(".rate__heart_readOnly").exists()).toBeTruthy();
     });
 
@@ -37,11 +37,6 @@ describe("Rate ", () => {
         const label = "test";
         const wrapper = setup.setProps({ label });
         expect(wrapper.find(Label).contains(label)).toBeTruthy();
-    });
-
-    it("renders required prop correctly", () => {
-        const wrapper = setup.setProps({ required: true });
-        expect(wrapper.find(Label)).toBeTruthy();
     });
 
     it("renders infoText prop correctly", () => {

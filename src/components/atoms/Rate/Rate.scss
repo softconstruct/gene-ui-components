@@ -38,11 +38,6 @@
                 width: var(--guit-sem-dimension-width-medium);
                 height: var(--guit-sem-dimension-height-medium);
 
-                #{ $this }__svg {
-                    width: var(--guit-sem-dimension-width-small);
-                    height: var(--guit-sem-dimension-height-small);
-                }
-
                 #{ $this }__number {
                     width: var(--guit-sem-dimension-width-small);
                     height: var(--guit-sem-dimension-height-small);
@@ -56,11 +51,6 @@
             &_small {
                 width: var(--guit-sem-dimension-width-small);
                 height: var(--guit-sem-dimension-height-small);
-
-                #{ $this }__svg {
-                    width: var(--guit-sem-dimension-width-small-nudge);
-                    height: var(--guit-sem-dimension-height-small-nudge);
-                }
 
                 #{ $this }__number {
                     width: var(--guit-sem-dimension-width-small-nudge);

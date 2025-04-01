@@ -207,7 +207,9 @@ const Rate: FC<IRateProps> = (props) => {
     const calculateFillPercentage = (e: MouseEvent<HTMLElement>) => {
         const { left, width } = e.currentTarget.getBoundingClientRect();
         const clientPosition = e.clientX - (isRTLMode ? left + width : left);
+
         const relativeWidth = Math.abs((clientPosition / width) * 100);
+
         return halfAllow && halfAllowAccess[appearance] && relativeWidth <= 50 ? 50 : 100;
     };
 
@@ -264,6 +266,8 @@ const Rate: FC<IRateProps> = (props) => {
 
     useEffect(() => {
         if (isControlled || isDefaultValueExist) {
+            console.log("ddd");
+
             setRating(currentValue);
             setTemporaryRating(currentValue);
         }
@@ -293,6 +297,8 @@ const Rate: FC<IRateProps> = (props) => {
         "--rate-wrapper-width": `${contentWidth}px`
     };
 
+    const iconSize = size === "medium" ? 28 : 20;
+
     return (
         <div
             className="rate"
@@ -301,7 +307,7 @@ const Rate: FC<IRateProps> = (props) => {
             onBlur={() => setDisableMouseMove(false)}
             style={cssWitVariable}
         >
-            <Label labelText={label} size={size} infoText={infoText} />
+            <Label labelText={label} size={size} infoText={infoText} disabled={disabled} />
             <div className="rate__content">
                 <>
                     {elements.map((_, i) => {
@@ -354,10 +360,10 @@ const Rate: FC<IRateProps> = (props) => {
                                         [`rate__${appearance}_color_default`]: (hoveredValue || rating) <= i
                                     })}
                                 >
-                                    <Default className="rate__svg" style={hoverStyle}>
+                                    <Default className="rate__svg" style={hoverStyle} size={iconSize}>
                                         {i + 1}
                                     </Default>
-                                    <Filled style={{ clipPath }} className={`rate__svg `}>
+                                    <Filled size={iconSize} style={{ clipPath }} className={`rate__svg `}>
                                         {i + 1}
                                     </Filled>
                                 </span>
@@ -366,7 +372,7 @@ const Rate: FC<IRateProps> = (props) => {
                     })}
                 </>
             </div>
-            <HelperText text={helperText} size={size} />
+            <HelperText text={helperText} isDisabled={disabled} size={size} />
         </div>
     );
 };
