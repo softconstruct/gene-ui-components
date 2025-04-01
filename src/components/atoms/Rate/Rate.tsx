@@ -1,32 +1,113 @@
-import React, { CSSProperties, FC, MouseEvent, ReactNode, useLayoutEffect, useMemo, useState } from "react";
+import React, { CSSProperties, FC, MouseEvent, ReactNode, useEffect, useMemo, useState } from "react";
+import classNames from "classnames";
+
 import {
-    Heart,
-    HeartFilled,
-    Star,
-    StarFilled,
-    EmojiAngryFilled,
     EmojiAngry,
+    EmojiAngryFilled,
     EmojiHappy,
     EmojiHappyFilled,
     EmojiLaugh,
     EmojiLaughFilled,
-    EmojiMehFilled,
     EmojiMeh,
+    EmojiMehFilled,
     EmojiSad,
-    EmojiSadFilled
+    EmojiSadFilled,
+    Heart,
+    HeartFilled,
+    Star,
+    StarFilled
 } from "@geneui/icons";
+
+// Components
+import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
+
 // Styles
 import "./Rate.scss";
-import classNames from "classnames";
-import { HelperText, Label } from "../../../index";
 
-type Enumerate<N extends number, Acc extends number[] = []> = Acc["length"] extends N
-    ? Acc[number]
-    : Enumerate<N, [...Acc, Acc["length"]]>;
+type IconTypes = "star" | "heart" | "emoji" | "number";
 
-export type IntRange<F extends number, T extends number> = Exclude<Enumerate<T>, Enumerate<F>>;
+type IntRange = 5 | 6 | 7 | 8 | 9 | 10;
 
-export const Icons = {
+interface IRateProps {
+    /**
+     * The initial rating value that is selected when the component first mounts.
+     * If a user interacts with the component and no `value` prop is provided (uncontrolled usage),
+     * this `defaultValue` will be used for the initial rating.
+     */
+    defaultValue?: number;
+    /**
+     * Determines the visual style of the rating elements.<br>
+     * Possible values: `star | heart | emoji | number`
+     */
+    appearance?: IconTypes;
+    /**
+     * The current rating value. If this prop is provided, the Rate component
+     * operates in a controlled manner, and any changes to the rating must be
+     * handled externally via the `onChange` prop.
+     *
+     * When `value` is used, the internal state related to rating management is bypassed,
+     * and the component simply reflects the prop value.
+     */
+    value?: number;
+    /**
+     * The total number of rating items to display. For instance, if `count` is 5,
+     * the user can choose a rating from 1 to 5 (or half steps, if `halfAllow` is enabled).
+     *
+     * This value must be in the range of 5 to 10 for standard icons, but defaults to 5 when using emojis.
+     */
+    count?: IntRange;
+    /**
+     * Determines if half-step ratings are allowed (e.g., 1.5, 2.5, etc.).
+     * This option is only applied if the chosen `appearance` supports partial fills
+     * (currently supported by "star" and "heart").
+     */
+    halfAllow?: boolean;
+    /**
+     * Makes the rating component read-only. Users can see the rating but cannot change it.
+     * Typically used for display purposes or in contexts where user interaction is not permitted.
+     */
+    readOnly?: boolean;
+    /**
+     * Specifies the overall size of each rating element.<br>
+     * Possible values: `small | medium | big`
+     */
+    size?: "small" | "medium";
+    /**
+     * Callback function that is called when the rating value changes.<br>
+     * Receives the new rating value as an argument.
+     */
+    onChange?: (rating: number) => void;
+    /**
+     * The text to be displayed as a label for the rating component.
+     * Useful for forms or scenarios where a descriptive label is needed.
+     */
+    label?: string;
+    /**
+     * Additional descriptive text that appears alongside the `label`,
+     * typically displayed as a tooltip triggered by an info icon.
+     * Helps provide extra context or guidance to the user.
+     */
+    infoText?: string;
+    /**
+     * Text displayed below the rating component, commonly used for error messages,
+     * hints, or validation feedback. This can guide users on how or why to use the rating field.
+     */
+    helperText?: string;
+    /**
+     * Disables the rating interaction and applies a visual style to reflect that it is not editable.
+     * Unlike `readOnly`, which simply prevents interaction, `disabled` typically indicates
+     * that the component is inactive due to form-level or application-level conditions.
+     */
+    disabled?: boolean;
+}
+
+interface CSSVariableType extends CSSProperties {
+    "--rate-wrapper-width": string;
+}
+
+/** Mapping of icons used by the Rate component. */
+const Icons: Record<IconTypes, object> = {
     star: {
         Filled: StarFilled,
         Default: Star
@@ -59,13 +140,13 @@ export const Icons = {
             Default: EmojiLaugh
         }
     ],
-    num: {
+    number: {
         Default: ({ children, className }: { className: string; children: ReactNode }) => {
-            return <span className={`${className} rate__numPath`}> {children}</span>;
+            return <span className={`${className} rate__numberPath`}> {children}</span>;
         },
         Filled: ({ children, className, style }: { className: string; children: ReactNode; style: CSSProperties }) => {
             return (
-                <span className={`${className} rate__num_filled rate__numPath`} style={style}>
+                <span className={`${className} rate__number_filled rate__numberPath`} style={style}>
                     {children}
                 </span>
             );
@@ -73,106 +154,49 @@ export const Icons = {
     }
 };
 
-interface IRateProps {
-    /*
-     * The default rating value is selected when the component is first rendered.
-     */
-    defaultValue?: number;
-    /**
-     * Icon types.<br>
-     * Possible values: `star | heart | emoji`
-     */
-    iconType: "star" | "heart" | "emoji" | "num";
-    /**
-     * The currently selected rating value. Use this to control the component from the outside.<br>
-     * If this prop is used the component will lose default behavior related to rating state.
-     */
-    value?: number;
-    /**
-     * The number of rating elements to render.
-     * Start from 5 to 10.
-     */
-    count?: IntRange<5, 11>;
-    /**
-     * Allows users to select half values in the rating component, enabling finer granularity.<br>
-     * For example, if `count` is 5, users can select 1, 1.5, 2, 2.5, and so on up to 5.
-     */
-    halfAllow?: boolean;
-    /**
-     * When set to `true`, the rating component becomes read-only, preventing any interaction.
-     */
-    readonly?: boolean;
-    /**
-     * The size of the rating elements.<br>
-     * Possible values: `small | medium | big`
-     */
-    size?: "small" | "medium";
-    /**
-     * Callback function that is called when the rating value changes.<br>
-     * Receives the new rating value as an argument.
-     */
-    onChange?: (rating: number) => void;
-    /**
-     * Indicates whether the label represents a required field.
-     * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
-     */
-    required?: boolean;
-    /**
-     * The text content of the `label`.
-     * This is the main text displayed within the `label`.
-     */
-    label?: string;
-    /**
-     * Additional descriptive text shown with info icon and tooltip alongside of the label component.
-     */
-    infoText?: string /**
-     * The actual text content to be displayed as helper text.
-     */;
-    helperText?: string;
-    /**
-     * Indicates whether the `label` should be displayed as `disabled`.
-     * When set to `true`, the `label` will be styled to appear `disabled`, which can indicate that the associated input field is not editable.
-     */
-    disable?: boolean;
-}
-
-const calculatePosition = (position: number) => (position - Math.floor(position)) * 100;
-
-const halfAllowAccess = {
+/** Determines if half-rating selection is supported for each appearance type. */
+const halfAllowAccess: Record<IconTypes, boolean> = {
     star: true,
     heart: true,
     emoji: false,
-    num: false
+    number: false
 };
 
-const iconsWidth = {
+/** Icon width presets. */
+const ICON_SIZES = {
     small: 24,
     medium: 32
 };
-interface CSSVariableType extends CSSProperties {
-    "--rate-wrapper-width": string;
-}
 
+/** Helper to calculate the percentage component of a decimal rating (e.g., 3.5 => 50%). */
+const calculatePosition = (position: number) => (position - Math.floor(position)) * 100;
+
+/*
+ * Rate allows users to provide feedback by assigning a rating, typically expressed through a series of icons such as stars or numbers.
+ */
 const Rate: FC<IRateProps> = (props) => {
     const {
-        readonly,
-        halfAllow = true,
+        readOnly,
+        halfAllow = false,
         defaultValue,
         value,
         onChange,
         size = "small",
         count = 5,
-        iconType = "heart",
+        appearance = "star",
         label = "",
-        required,
         helperText = "",
         infoText,
-        disable
+        disabled
     } = props;
+
     const isControlled = "value" in props;
     const isDefaultValueExist = "defaultValue" in props;
+
     const isRTLMode = document.dir === "rtl";
+
     const currentValue = value || defaultValue || 0;
+
     const [rating, setRating] = useState(currentValue);
     const [hoveredValue, setHoveredValue] = useState(0);
     const [regardingPosition, setRegardingPosition] = useState(0);
@@ -180,12 +204,13 @@ const Rate: FC<IRateProps> = (props) => {
     const [temporaryRating, setTemporaryRating] = useState(0);
     const [disableMouseMove, setDisableMouseMove] = useState(false);
 
-    const calculateRegardingPosition = (e: MouseEvent<HTMLElement>) => {
+    const calculateFillPercentage = (e: MouseEvent<HTMLElement>) => {
         const { left, width } = e.currentTarget.getBoundingClientRect();
-        const getClientPosition = e.clientX - (isRTLMode ? left + width : left);
-        const getRelativeWidth = Math.abs((getClientPosition / width) * 100);
-        return halfAllow && halfAllowAccess[iconType] && getRelativeWidth <= 50 ? 50 : 100;
+        const clientPosition = e.clientX - (isRTLMode ? left + width : left);
+        const relativeWidth = Math.abs((clientPosition / width) * 100);
+        return halfAllow && halfAllowAccess[appearance] && relativeWidth <= 50 ? 50 : 100;
     };
+
     const mouseEnterHandler = () => {
         if (!rating) return;
         setTemporaryRating(rating);
@@ -206,8 +231,8 @@ const Rate: FC<IRateProps> = (props) => {
     };
 
     const handleMouseMoveForElement = (e: MouseEvent<HTMLButtonElement>, currentRating: number) => {
-        if (readonly || disable) return;
-        const regradingPosition = calculateRegardingPosition(e);
+        if (readOnly || disabled) return;
+        const regradingPosition = calculateFillPercentage(e);
         setRegardingPosition(regradingPosition);
         if (disableMouseMove) return;
         setHoveredValue(currentRating);
@@ -221,22 +246,23 @@ const Rate: FC<IRateProps> = (props) => {
     };
 
     const getRating = (e: MouseEvent<HTMLButtonElement>, currentRating: number) => {
-        if (readonly || disable) return;
-        setRegardingPosition(calculateRegardingPosition(e));
+        if (readOnly || disabled) return;
+        setRegardingPosition(calculateFillPercentage(e));
         const selected = regardingPosition === 50 ? +`${currentRating - 1}.${regardingPosition}` : currentRating;
+
+        onChange?.(selected);
 
         if (isControlled) {
             setDisableMouseMove(true);
             setHoveredValue(0);
             setRating(selected);
-            onChange?.(selected);
             return;
         }
 
         ratingController(currentRating, selected);
     };
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (isControlled || isDefaultValueExist) {
             setRating(currentValue);
             setTemporaryRating(currentValue);
@@ -252,26 +278,21 @@ const Rate: FC<IRateProps> = (props) => {
         }
     }, [defaultValue, isDefaultValueExist, value, isControlled, currentValue]);
 
-    let elementsCount = 0;
-    if (count > 10) {
-        elementsCount = 10;
-    } else if (count < 5) {
-        elementsCount = 5;
-    } else if (iconType === "emoji") {
-        elementsCount = 5;
-    } else {
-        elementsCount = count;
+    let elementsCount = 5;
+    if (appearance !== "emoji") {
+        if (count && count > 10) elementsCount = 10;
+        else if (count && count < 5) elementsCount = 5;
+        else if (count) elementsCount = count;
     }
 
-    const elements = useMemo(() => new Array(elementsCount).fill(null), [count, elementsCount]);
+    const elements = useMemo(() => new Array(elementsCount).fill(null), [elementsCount]);
 
     const gapBetweenElements = 4;
-
-    const contentWidth = count * (iconsWidth[size] + gapBetweenElements);
+    const contentWidth = elementsCount * (ICON_SIZES[size] + gapBetweenElements);
     const cssWitVariable: CSSVariableType = {
         "--rate-wrapper-width": `${contentWidth}px`
     };
-    /* eslint-disable react/no-array-index-key */
+
     return (
         <div
             className="rate"
@@ -280,7 +301,7 @@ const Rate: FC<IRateProps> = (props) => {
             onBlur={() => setDisableMouseMove(false)}
             style={cssWitVariable}
         >
-            <Label labelText={label} size={size} required={required} infoText={infoText} />
+            <Label labelText={label} size={size} infoText={infoText} />
             <div className="rate__content">
                 <>
                     {elements.map((_, i) => {
@@ -304,12 +325,12 @@ const Rate: FC<IRateProps> = (props) => {
                             ? `polygon(${100 - calculatedWidthFor}% 0, 100% 0, 100% 100%, ${100 - calculatedWidthFor}% 100%)`
                             : `polygon( 0  0, ${calculatedWidthFor}% 0,  ${calculatedWidthFor}% 100%,0  100%)`;
 
-                        const { Default, Filled } = Array.isArray(Icons[iconType])
-                            ? Icons[iconType][i]
-                            : Icons[iconType];
+                        const { Default, Filled } = Array.isArray(Icons[appearance])
+                            ? Icons[appearance][i]
+                            : Icons[appearance];
 
                         const hoverStyle =
-                            iconType === "emoji" && (hoveredValue || rating) > i ? { color: "transparent" } : {};
+                            appearance === "emoji" && (hoveredValue || rating) > i ? { color: "transparent" } : {};
 
                         return (
                             <button
@@ -319,17 +340,18 @@ const Rate: FC<IRateProps> = (props) => {
                                 onMouseMove={(e) => handleMouseMoveForElement(e, currentRating)}
                                 onBlur={() => setDisableMouseMove(false)}
                                 onClick={(e) => getRating(e, currentRating)}
+                                // eslint-disable-next-line react/no-array-index-key
                                 key={i}
                                 type="button"
-                                disabled={disable || readonly}
+                                disabled={disabled || readOnly}
                             >
                                 <span
                                     aria-label="rate"
-                                    className={classNames(`rate__${iconType} rate__${iconType} `, {
-                                        [`rate__${iconType}_disabled`]: disable,
-                                        [`rate__${iconType}_readOnly`]: readonly,
-                                        [`rate__${iconType}_color_orange`]: (hoveredValue || rating) > i,
-                                        [`rate__${iconType}_color_default`]: (hoveredValue || rating) <= i
+                                    className={classNames(`rate__${appearance} rate__${appearance} `, {
+                                        [`rate__${appearance}_disabled`]: disabled,
+                                        [`rate__${appearance}_readOnly`]: readOnly,
+                                        [`rate__${appearance}_color_orange`]: (hoveredValue || rating) > i,
+                                        [`rate__${appearance}_color_default`]: (hoveredValue || rating) <= i
                                     })}
                                 >
                                     <Default className="rate__svg" style={hoverStyle}>

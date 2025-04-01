@@ -1,18 +1,15 @@
-import React, { FC } from "react";
-import { ReactWrapper, mount } from "enzyme";
+import React from "react";
+import { mount, ReactWrapper } from "enzyme";
 
-// Components
-import { IconProps } from "@geneui/icons";
-import Rate, { IRateProps } from "./index";
-import { Icons } from "./Rate";
 import HelperText from "../HelperText";
 import Label from "../Label";
+import Rate, { IRateProps } from "./index";
 
 describe("Rate ", () => {
     let setup: ReactWrapper<IRateProps>;
     const jestFn = jest.fn();
     beforeEach(() => {
-        setup = mount(<Rate iconType="star" />);
+        setup = mount(<Rate appearance="star" />);
     });
 
     it("renders without crashing", () => {
@@ -26,7 +23,7 @@ describe("Rate ", () => {
     });
 
     it("renders readonly prop correctly", () => {
-        const wrapper = setup.setProps({ readonly: true, iconType: "heart" });
+        const wrapper = setup.setProps({ readonly: true, appearance: "heart" });
         expect(wrapper.find(".rate__heart_readOnly").exists()).toBeTruthy();
     });
 
@@ -59,22 +56,9 @@ describe("Rate ", () => {
         expect(wrapper.find(".rate__item").length).toBe(count);
     });
 
-    it("renders disable prop correctly", () => {
-        const wrapper = setup.setProps({ disable: true, iconType: "heart" });
+    it("renders disabled prop correctly", () => {
+        const wrapper = setup.setProps({ disabled: true, appearance: "heart" });
         expect(wrapper.find(".rate__heart_disabled").exists()).toBeTruthy();
-    });
-
-    it.each(Object.keys(Icons))("renders Icon prop %p correctly", (keys) => {
-        const key = keys as keyof typeof Icons;
-        type keyType = (typeof Icons)[typeof key];
-        const wrapper = setup.setProps({ iconType: key });
-        const { Default, Filled } = (Array.isArray(Icons[key]) ? (Icons[key] as keyType[])[0] : Icons[key]) as {
-            Filled: FC<IconProps>;
-            Default: FC<IconProps>;
-        };
-
-        expect(wrapper.find(Filled).exists()).toBeTruthy();
-        expect(wrapper.find(Default).exists()).toBeTruthy();
     });
 
     it.each<"medium" | "small">(["medium", "small"])("renders size prop correctly", (size) => {

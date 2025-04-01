@@ -43,7 +43,7 @@
                     height: var(--guit-sem-dimension-height-small);
                 }
 
-                #{ $this }__num {
+                #{ $this }__number {
                     width: var(--guit-sem-dimension-width-small);
                     height: var(--guit-sem-dimension-height-small);
                     font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
@@ -62,7 +62,7 @@
                     height: var(--guit-sem-dimension-height-small-nudge);
                 }
 
-                #{ $this }__num {
+                #{ $this }__number {
                     width: var(--guit-sem-dimension-width-small-nudge);
                     height: var(--guit-sem-dimension-height-small-nudge);
                     font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
@@ -86,7 +86,7 @@
 
     &__star,
     &__heart,
-    &__num,
+    &__number,
     &__emoji {
         display: flex;
         align-items: center;
@@ -157,7 +157,7 @@
         }
     }
 
-    &__num {
+    &__number {
         $the: &;
 
         border-radius: 50%;
@@ -202,7 +202,7 @@
         }
     }
 
-    &__numPath {
+    &__numberPath {
         flex: 0 0 auto;
         border-radius: inherit;
     }
