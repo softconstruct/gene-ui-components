@@ -3,8 +3,9 @@ import { mount, ReactWrapper } from "enzyme";
 
 import { bootstrap } from "@geneui/tokens";
 
-import { GeneUIProvider } from "../../../index";
 // Components
+import GeneUIProvider from "@components/providers/GeneUIProvider";
+
 import QRCode, { IQRCodeProps } from "./index";
 
 const contextMock = {
@@ -70,7 +71,7 @@ describe("QRCode ", () => {
     });
 
     it("renders Logo prop correctly", () => {
-        const wrapper = setup.setProps({ Logo: <Logo /> });
+        const wrapper = setup.setProps({ Logo: <Logo />, withLogo: true });
 
         expect(wrapper.find(".qRCode__logo").exists()).toBeTruthy();
     });
