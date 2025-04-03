@@ -1,0 +1,118 @@
+import { Meta, Source } from '@storybook/blocks';
+
+<Meta title="Provider" />
+
+<div style={{ paddingInlineStart:'20px' }}>
+    # GeneUIProvider
+    The provider serves as the core context provider for the GeneUI design system. It wraps your application and supplies: 
+    
+    - **Theme**: Allows you to specify a theme (e.g., light, dark, or system).
+    - **Tokens**: A set of design tokens (colors, spacing, typography) to ensure consistent styling. [@geneui/tokens](https://www.npmjs.com/package/@geneui/tokens)
+    - **Breakpoint**: Handles mobile, tablet, and desktop breakpoints for responsive styling.
+    - **Logo**: Optionally override the default GeneUI logotype and logomark.
+
+    This provider must wrap your root application (or at least the parts needing GeneUI design tokens and theme support).<br />
+    Use this component at the highest level possible (e.g., App.tsx) to ensure child components receive the necessary context.
+    
+    <br />
+    ---
+    ### Standard usage of the `GeneUIProvider` component
+    In this scenario, the `GeneUIProvider` automatically applies the default design tokens and the light theme.
+
+    <div style={{ width: '70%' }}>
+        <Source
+            code={`
+import React from 'react';
+import GeneUIProvider from '@geneui/components/GeneUIProvider';
+
+function App() {
+    return (
+        <GeneUIProvider>
+            {/* Your application components go here */}
+            <MyComponent />
+        </GeneUIProvider>
+    );
+}
+
+export default App;
+            `}
+            language="jsx"
+        />
+    </div>
+    
+    ---
+
+    ### Usage of the `GeneUIProvider` component with re-branded tokens and logo
+    In this scenario, the `GeneUIProvider` receive the customized tokens package and logo, applies them to override the default design tokens and logo.<br/>
+    *To create custom tokens package please follow the [@geneui/tokens repository README.md](https://github.com/softconstruct/gene-ui-tokens/blob/main/README.md) instructions.*
+    
+    <div style={{ width: '70%' }}>
+        <Source
+            code={`
+import React from 'react';
+import GeneUIProvider from '@geneui/components/GeneUIProvider';
+import { bootstrap } from '@pascal/tokens';
+
+// Your own brand logomark and logotype SVG components
+import LogoMarkSVG from "assets/LogoMarkSVG";
+import LogoTypeSVG from "assets/LogoTypeSVG";
+
+function App() {
+    return (
+        <GeneUIProvider tokens={bootstrap()} logo={ logotype: LogoTypeSVG, logomark: LogoMarkSVG} >
+            <App />
+        </GeneUIProvider>;
+    );
+}
+
+export default App;
+            `}
+            language="jsx"
+        />
+    </div>
+
+    ---
+    <br/>
+    
+    ### Props
+
+    Below is a description of the props exposed by **GeneUIProvider**:
+
+    - **children**  
+    *Type:* `React.ReactElement`  
+    A valid React component or element. This is the content that will be wrapped by **GeneUIProvider**.
+
+    - **tokens**  <br/>
+    *Type:* `{ [key: string]: string | number }` (optional)<br/> 
+    *Default:* GeneUI `tokens` package. [@geneui/tokens](https://www.npmjs.com/package/@geneui/tokens)<br/>
+    An object following the [style-dictionary](https://amzn.github.io/style-dictionary/) format, mapping token keys to their values.<br/>
+    The package should have `bootstrap()` function to execute tokens from the package.
+
+    - **theme**<br/>
+    *Type:* `"light" | "dark" | "system"` (optional)<br/>
+    *Default:* `"system"`, will try to detect the user's system preference.<br/>
+    The global theme of the design system. It also can be controlled manually by using this prop.
+
+    - **logo**  <br/>
+    *Type:* `{ logotype: React.ReactElement; logomark: React.ReactElement }` (optional)<br />
+    *Default:* SoftConstruct's logotype and logomark as the Gene UI design system made by SoftConstruct company.<br />
+    You can also easily customize the logo elements to replace the default GeneUI logomark and logotype with your own brand logo.
+
+    <br />
+    ### Best Practices
+
+    - **Wrap at Root**  
+    Place the `GeneUIProvider` at the highest level (e.g., your `App.tsx`) to ensure all nested components can access the tokens and theme.
+    
+    - **Responsive Breakpoints**  
+    The built-in responsive hook (`useBreakpoint`) uses the breakpoint values from `tokens`. <br/>
+    Ensure your tokens have valid numerical values for mobile, tablet, and desktop breakpoints in case of you have provided re-branded `tokens`.
+    
+    - **Custom Logos**  
+    If you have brand-specific logo assets, pass them through the `logo` prop to keep your brand identity consistent throughout your application.
+
+    <br />
+    ### Versioning
+
+    **Package Version**: Refer to `package.json` or the `data-gene-ui-version` attribute in the DOM to see the exact GeneUI library version.
+</div>
