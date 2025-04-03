@@ -40,7 +40,7 @@ interface IGeneUIDesignSystemContext {
 }
 
 const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
-    theme: "light",
+    theme: "system",
     tokens: {},
     geneUIProviderRef: { current: null },
     breakpoint: null,
@@ -67,10 +67,11 @@ interface IGeneUIProviderProps {
     logo?: LogoType;
 }
 
+// TODO: implement theme detection in the `useDeviceInfo` hook, and insert all device info data into context
 function GeneUIProvider({
     children,
     tokens = defaultTokens,
-    theme = "light",
+    theme = "system",
     logo
 }: IGeneUIProviderProps): JSX.Element {
     const geneUIProviderRef = useRef(null);
