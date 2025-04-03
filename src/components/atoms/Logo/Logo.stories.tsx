@@ -15,9 +15,7 @@ const meta: Meta<ILogoProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.states }),
-        appearance: args({ control: "select", ...propCategory.appearance }),
-        svg: args({ control: "false", ...propCategory.content }),
-        markSvg: args({ control: "false", ...propCategory.content })
+        appearance: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         type: "logotype",

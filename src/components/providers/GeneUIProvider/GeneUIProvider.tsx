@@ -17,22 +17,26 @@ import "./GeneUIProvider.scss";
 // Statics
 import pgk from "../../../../package.json";
 
-type TokensType = { [key: string]: string | number } | null;
+type TokensType = { [key: string]: string | number };
 
-const defaultLogo = {
-    svg: LogoTypeSVG,
+type LogoType = {
+    logotype: React.ReactElement;
+    logomark: React.ReactElement;
+};
+
+const defaultLogo: LogoType = {
+    logotype: LogoTypeSVG,
     logomark: LogoMarkSVG
 };
+
+const defaultTokens: TokensType = bootstrap();
 
 interface IGeneUIDesignSystemContext {
     theme: ThemesTypes;
     tokens: TokensType;
     geneUIProviderRef: React.MutableRefObject<null>;
     breakpoint: IBreakpoint | null;
-    logo: {
-        svg: React.ReactElement;
-        logomark?: React.ReactElement;
-    };
+    logo: LogoType;
 }
 
 const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
@@ -60,28 +64,28 @@ interface IGeneUIProviderProps {
     /**
      * Custom logo to override the default GeneUI logo.
      */
-    logo?: {
-        svg: React.ReactElement;
-        logomark?: React.ReactElement;
-    };
+    logo?: LogoType;
 }
 
-const defaultTokens = bootstrap();
-
-function GeneUIProvider({ children, tokens = null, theme = "light", logo }: IGeneUIProviderProps): JSX.Element {
+function GeneUIProvider({
+    children,
+    tokens = defaultTokens,
+    theme = "light",
+    logo
+}: IGeneUIProviderProps): JSX.Element {
     const geneUIProviderRef = useRef(null);
     const [isRefExist, setIsRefExist] = useState(false);
 
     const currentBreakpoint = useBreakpoint({
-        mobile: defaultTokens.GuitRefBreakpointMobile,
-        tablet: defaultTokens.GuitRefBreakpointTablet,
-        desktop: defaultTokens.GuitRefBreakpointDesktop
+        mobile: +tokens.GuitRefBreakpointMobile,
+        tablet: +tokens.GuitRefBreakpointTablet,
+        desktop: +tokens.GuitRefBreakpointDesktop
     });
 
     const contextValue = useMemo(
         () => ({
             theme,
-            tokens: tokens || defaultTokens,
+            tokens,
             geneUIProviderRef,
             breakpoint: currentBreakpoint,
             logo: logo || defaultLogo

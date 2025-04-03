@@ -1,20 +1,12 @@
-import React, { FC, ReactElement, SVGProps } from "react";
+import React, { FC, useContext } from "react";
 import classNames from "classnames";
+
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Styles
 import "./Logo.scss";
 
 interface ILogoProps {
-    /**
-     * Specifies the SVG icon to render.<br/>
-     * Accepts a valid SVG element or its name as a string.
-     */
-    svg: ReactElement<SVGProps<SVGSVGElement>>;
-    /**
-     * Specifies the SVG icon to render when the `type` is set to `'logomark'`. <br/>
-     * This prop is optional and can accept either a valid SVG element or its name as a string.
-     */
-    markSvg?: ReactElement<SVGProps<SVGSVGElement>>;
     /**
      * Defines the size of the Logo.<br/>
      * Possible values: `large | medium | small`
@@ -38,20 +30,17 @@ interface ILogoProps {
 }
 
 /**
- * A logo component displays a Gene UI’s emblem or trademark, serving as a visual representation. It reinforces brand identity and recognition, typically placed in prominent locations such as the header, footer, or login page of an application or website.
+ * A logo component displays a SoftConstruct's emblem or trademark by default, as the GeneUI design system made by the SoftConstruct, serving as a visual representation. It reinforces brand identity and recognition, typically placed in prominent locations such as the header, footer, or login page of an application or website. The src of the logo is the Provider component and you can simply pass your own brand logotype and logomark see the `GeneUIProvider` component documentation for details
  */
-const Logo: FC<ILogoProps> = ({
-    svg,
-    size = "medium",
-    type = "logotype",
-    appearance = "brand",
-    className,
-    markSvg
-}) => {
+const Logo: FC<ILogoProps> = ({ size = "medium", type = "logotype", appearance = "brand", className }) => {
+    const {
+        logo: { logomark, logotype }
+    } = useContext(GeneUIDesignSystemContext);
+
     return (
         <div className={classNames("logo", className)}>
             <div className={`logo__${type} logo__${type}_size_${size} logo__${type}_color_${appearance}`}>
-                {type === "logomark" ? markSvg || svg : svg}
+                {type === "logomark" ? logomark : logotype}
             </div>
         </div>
     );

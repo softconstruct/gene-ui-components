@@ -1,27 +1,32 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
 import Logo, { ILogoProps } from "./index";
-import LogoTypeSVG from "./LogoTypeSVG";
 import LogoMarkSVG from "./LogoMarkSVG";
+import LogoTypeSVG from "./LogoTypeSVG";
 
 describe("Logo ", () => {
     let setup: ReactWrapper<ILogoProps>;
 
     beforeEach(() => {
-        setup = mount(<Logo svg={LogoTypeSVG} />);
+        setup = mount(<Logo />);
     });
 
     it("renders without crashing", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it("renders with marksvg prop", () => {
+    it("renders with logomark", () => {
         const type = "logomark";
-        const markSvg = LogoMarkSVG;
-        setup.setProps({ type, markSvg });
-        expect(setup.props().markSvg).toBe(markSvg);
+        setup.setProps({ type });
+        expect(setup.find(LogoMarkSVG)).toBeTruthy();
+    });
+
+    it("renders with logotype", () => {
+        const type = "logotype";
+        setup.setProps({ type });
+        expect(setup.find(LogoTypeSVG)).toBeTruthy();
     });
 
     it.each<ILogoProps["type"]>(["logomark", "logotype"])("should have '%s' type", (type) => {
