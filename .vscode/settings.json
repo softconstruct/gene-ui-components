@@ -9,6 +9,6 @@
     "eslint.workingDirectories": ["./"],
     "eslint.nodePath": "./node_modules/eslint",
 
-    "cSpell.words": ["geneui", "guit"],
+    "cSpell.words": ["geneui", "guit", "logomark"],
     "explorer.compactFolders": false
 }
