@@ -7,6 +7,7 @@ export { default as Pill, IPillProps } from "./components/atoms/Pill";
 export { default as Divider, IDividerProps } from "./components/atoms/Divider";
 export { default as Info, IInfoProps } from "./components/atoms/Info";
 export { default as Button, IButtonProps } from "./components/atoms/Button";
+export { default as Logo, ILogoProps } from "./components/atoms/Logo";
 export { default as Rate, IRateProps } from "./components/atoms/Rate";
 export { default as Radio, IRadioProps } from "./components/atoms/Radio";
 export { default as Text, ITextProps } from "./components/atoms/Text";

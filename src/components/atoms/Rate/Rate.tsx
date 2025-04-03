@@ -266,8 +266,6 @@ const Rate: FC<IRateProps> = (props) => {
 
     useEffect(() => {
         if (isControlled || isDefaultValueExist) {
-            console.log("ddd");
-
             setRating(currentValue);
             setTemporaryRating(currentValue);
         }
