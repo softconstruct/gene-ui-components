@@ -120,9 +120,9 @@ export interface IPopoverProps {
     defaultOpen?: boolean;
     /**
      * Define width and height of the popover.<br>
-     * Possible values: <code> xLarge | large | medium | small  | fitContent | reference </code>
+     * Possible values: <code> xxLarge | xLarge | large | medium | small | xSmall | fitContent | reference </code>
      */
-    size?: "xLarge" | "large" | "medium" | "small" | "fitContent" | "reference";
+    size?: "xSmall" | "small" | "medium" | "large" | "xLarge" | "xxLarge" | "fitContent" | "reference";
 
     /**
      * Title displayed in the popover header.

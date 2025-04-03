@@ -52,10 +52,21 @@
     }
 
     &_size {
+        &_xxLarge {
+            min-width: 82rem;
+            max-width: 100rem;
+        }
+
         &_xLarge {
-            width: 72rem;
+            min-width: 64rem;
+            max-width: 82rem;
+        }
+
+        &_xxLarge,
+        &_xLarge {
             #{ $this }__body {
-                height: 15.4rem;
+                min-height: 56rem;
+                max-height: 62rem;
             }
             #{ $this }__footer {
                 height: 6.4rem;
@@ -63,17 +74,20 @@
         }
 
         &_large {
-            width: 48rem;
+            min-width: 52rem;
+            max-width: 64rem;
         }
 
         &_medium {
-            width: 36rem;
+            min-width: 40rem;
+            max-width: 52rem;
         }
 
         &_large,
         &_medium {
             #{ $this }__body {
-                height: 17.2rem;
+                min-height: 40rem;
+                max-height: 56rem;
             }
             #{ $this }__footer {
                 height: 5.6rem;
@@ -81,23 +95,26 @@
         }
 
         &_small {
-            width: 24rem;
+            min-width: 28rem;
+            max-width: 40rem;
             #{ $this }__body {
-                height: 8.8rem;
+                min-height: 24rem;
+                max-height: 40rem;
             }
             #{ $this }__footer {
                 height: 5.6rem;
             }
         }
 
-        &_mobile {
-            min-width: 32rem;
-            width: 100%;
+        &_xSmall {
+            min-width: 16rem;
+            max-width: 28rem;
             #{ $this }__body {
-                height: 17.2rem;
+                min-height: 4rem;
+                max-height: 24rem;
             }
             #{ $this }__footer {
-                height: 6.4rem;
+                height: 5.6rem;
             }
         }
 
@@ -108,6 +125,11 @@
         &_reference {
             width: var(--parent-width);
         }
+    }
+
+    &__container {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
     }
 
     &__header {
@@ -134,7 +156,7 @@
         }
 
         &_text {
-            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
             font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
@@ -146,6 +168,8 @@
     }
 
     &__body {
+        min-width: 0;
+
         &_withPadding {
             padding-block: var(--guit-ref-spacing-large);
             padding-inline: var(--guit-ref-spacing-large);
@@ -169,6 +193,7 @@
             var(--guit-sem-color-border-neutral-2);
         padding-block: var(--guit-ref-spacing-large);
         padding-inline: var(--guit-ref-spacing-large);
+        overflow: hidden;
 
         &_buttons {
             display: flex;

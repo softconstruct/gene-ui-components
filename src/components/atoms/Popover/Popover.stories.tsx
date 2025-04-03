@@ -41,6 +41,7 @@ type Story = StoryObj<IPopoverProps>;
 const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
     const popRef = useRef(null);
     const [propsForContent, setPropsForContent] = useState({});
+    const { size } = props;
 
     return (
         <div style={{ margin: "500px 500px", height: 1000 }}>
@@ -49,21 +50,23 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
                     <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
                 </PopoverBody>
 
-                <PopoverFooter>
-                    <div
-                        className="swapComponent"
-                        style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
-                    />
+                {size !== "reference" && size !== "xSmall" && (
+                    <PopoverFooter>
+                        <div
+                            className="swapComponent"
+                            style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
+                        />
 
-                    <PopoverFooterActions>
-                        <Button onClick={() => {}} size="medium" appearance="inverse">
-                            Primary
-                        </Button>
-                        <Button onClick={() => {}} size="medium" appearance="primary">
-                            Secondary
-                        </Button>
-                    </PopoverFooterActions>
-                </PopoverFooter>
+                        <PopoverFooterActions>
+                            <Button onClick={() => {}} size="medium" appearance="inverse">
+                                Primary
+                            </Button>
+                            <Button onClick={() => {}} size="medium" appearance="primary">
+                                Secondary
+                            </Button>
+                        </PopoverFooterActions>
+                    </PopoverFooter>
+                )}
             </Popover>
             <Button onClick={() => {}} {...propsForContent}>
                 Click for open
