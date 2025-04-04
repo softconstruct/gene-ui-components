@@ -29,8 +29,8 @@ const TagGroupStory: StoryObj<ITagGroupProps> = {
     render: (props) => {
         return (
             <TagGroup {...props}>
-                {Array.from({ length: 18 }).map(() => (
-                    <Tag text="Tag" />
+                {Array.from({ length: 10 }).map((_, index) => (
+                    <Tag text={`Tag ${index}`} />
                 ))}
             </TagGroup>
         );

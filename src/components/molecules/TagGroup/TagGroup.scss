@@ -1,21 +1,17 @@
 .tagGroup {
     $this: &;
 
-    display: grid;
-    grid-template-rows: 1fr auto;
-    grid-gap: var(--guit-ref-spacing-xsmall);
-    min-height: 0;
-    max-height: 100%;
+    height: 100%;
 
     &__container {
         $that: &;
 
+        display: grid;
+        grid-template-rows: 1fr auto;
+        grid-gap: var(--guit-ref-spacing-xsmall);
         min-height: 0;
-
-        &_expanded {
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
+        max-height: 100%;
+        padding: 0.2rem;
 
         &:not(#{ $that }_expanded) {
             overflow: hidden;
@@ -25,23 +21,12 @@
     &__tags {
         $that: &;
 
+        overflow-x: hidden;
+        overflow-y: auto;
         display: flex;
         flex-wrap: wrap;
         gap: var(--guit-ref-spacing-xsmall);
-
-        &_expanded {
-            height: 100%;
-        }
-
-        &:not(#{ $that }_expanded) {
-            &:has(.tag_size_medium) {
-                height: var(--guit-sem-dimension-height-medium);
-            }
-
-            &:has(.tag_size_small) {
-                height: var(--guit-sem-dimension-height-small);
-            }
-        }
+        padding: 0.2rem;
     }
 
     &__showButton {

@@ -1,4 +1,4 @@
-import React, { cloneElement, createContext, FC, ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import React, { cloneElement, createContext, FC, JSX, ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
 import { ChevronDown, ChevronUp } from "@geneui/icons";
@@ -9,7 +9,6 @@ import useWindowSize from "@hooks/useWindowSize";
 import "./TagGroup.scss";
 
 import { Button } from "../../../index";
-import { ITagProps } from "../Tag";
 
 interface ITagGroupContextProps {
     /**
@@ -35,17 +34,23 @@ interface ITagGroupProps extends ITagGroupContextProps {
  */
 export const TagGroupContext = createContext<ITagGroupContextProps>({});
 
+const everyPixel = 7.18;
+const smallButtonSize = 24;
+const mediumButtonSize = 32;
+const elementPadding = 8;
+const iconSize = 20;
+const elementGap = 8;
+const preParentPadding = 4;
+const innerGap = 16;
+
 const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium" }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const toggleText = () => setIsExpanded((prev) => !prev);
-
-    const [tags, setTags] = useState(React.Children.toArray(children));
-    const [needTruncate, setNeedTruncate] = useState(false);
-
-    const [tagHeight, setTagHeight] = useState(0);
-
     const parentRef = useRef<HTMLDivElement | null>(null);
     const { width } = useWindowSize();
+
+    const [firstGroup, setFirstGroup] = useState<JSX.Element[]>([]);
+    const [secondGroup, setSecondGroup] = useState<JSX.Element[]>([]);
 
     const memoizedTagGroupContextValue = useMemo(
         () => ({
@@ -54,66 +59,131 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium" }) 
         [size]
     );
 
-    useEffect(() => {
-        if (parentRef.current && tags.length > 0) {
-            const firstTag = parentRef.current?.firstChild as HTMLElement;
-            if (firstTag && typeof firstTag.getBoundingClientRect === "function") {
-                setTagHeight(firstTag.getBoundingClientRect().height + 4);
-            }
-        }
-    }, [tags, parentRef.current]);
+    const buttonSize = size === "medium" ? mediumButtonSize : smallButtonSize;
 
-    const removeTag = (index: number) => {
-        setTags((prevTags) => {
-            const newTags = [...prevTags];
-            newTags.splice(index, 1);
-            return newTags;
-        });
-    };
+    const removeTag = (index: number, elementCalculatedWith: number, isFirstGroup: boolean) => {
+        if (isFirstGroup) {
+            setFirstGroup((prevTags) => {
+                if (!prevTags[index]) return prevTags;
 
-    const clonedChildren = tags.map((child, index) => {
-        if (React.isValidElement<ITagProps>(child)) {
-            return cloneElement(child, {
-                ...child.props,
-                size,
-                onClose: () => removeTag(index)
+                const newTags = prevTags
+                    .filter((_, i) => i !== index)
+                    .map((tag, i) =>
+                        React.cloneElement(tag, { onClose: () => removeTag(i, elementCalculatedWith, true) })
+                    );
+
+                setSecondGroup((prevSecondGroup) => {
+                    if (prevSecondGroup.length === 0) return prevSecondGroup;
+
+                    const firstItemFromSecondGroup = prevSecondGroup[0];
+                    const newSecondGroup = prevSecondGroup.slice(1);
+
+                    const reIndexedSecondGroup = newSecondGroup.map((child, i) => {
+                        return React.cloneElement(child, {
+                            onClose: () => removeTag(i, elementCalculatedWith, false)
+                        });
+                    }); // bad idea for reindexing
+
+                    const newElementWidth = firstItemFromSecondGroup.props.text.length * everyPixel;
+                    const newElementCalculatedWidth =
+                        newElementWidth + buttonSize + iconSize + elementPadding + innerGap;
+
+                    if (elementCalculatedWith >= newElementCalculatedWidth) {
+                        const clonedElement = React.cloneElement(firstItemFromSecondGroup, {
+                            onClose: () => removeTag(newTags.length, elementCalculatedWith, true)
+                        });
+
+                        setFirstGroup([...newTags, clonedElement]);
+                        return reIndexedSecondGroup;
+                    }
+
+                    return prevSecondGroup;
+                });
+
+                return newTags;
+            });
+        } else {
+            setSecondGroup((prevTags) => {
+                const newTags = prevTags
+                    .filter((_, i) => i !== index)
+                    .map((tag, i) =>
+                        React.cloneElement(tag, { onClose: () => removeTag(i, elementCalculatedWith, false) })
+                    ); // bad idea for reindexing
+
+                return newTags;
             });
         }
-        return child;
-    });
+    };
 
     useEffect(() => {
-        if (!parentRef.current) return;
-        const { scrollHeight } = parentRef.current;
+        const parentWidth = parentRef.current?.offsetWidth;
+        let calculatedWidth = 0;
+        let secondGroupIndex = 0;
 
-        setNeedTruncate(scrollHeight > tagHeight);
-    }, [parentRef.current, tagHeight, tags, width]);
+        const newFirstGroup: JSX.Element[] = [];
+        const newSecondGroup: JSX.Element[] = [];
+
+        React.Children.map(children, (child, index) => {
+            const typedChild = child as JSX.Element;
+            const textWidthOfElement = typedChild.props.text.length * everyPixel;
+
+            const elementCalculatedWith =
+                textWidthOfElement + buttonSize + iconSize + elementPadding + innerGap + elementGap;
+            calculatedWidth += elementCalculatedWith;
+
+            if (parentWidth) {
+                if (calculatedWidth < parentWidth - preParentPadding) {
+                    if (!newFirstGroup.includes(typedChild)) {
+                        const clonedElement = cloneElement(typedChild, {
+                            size,
+                            onClose: () => removeTag(index, elementCalculatedWith, true)
+                        });
+
+                        newFirstGroup.push(clonedElement);
+                    }
+                } else if (!newSecondGroup.includes(typedChild) && !newFirstGroup.includes(typedChild)) {
+                    const localIndex = secondGroupIndex;
+
+                    const clonedElement = cloneElement(typedChild, {
+                        size,
+                        onClose: () => removeTag(localIndex, elementCalculatedWith, false)
+                    });
+
+                    newSecondGroup.push(clonedElement);
+                    secondGroupIndex++;
+                }
+            }
+        });
+
+        setFirstGroup(newFirstGroup);
+        setSecondGroup(newSecondGroup);
+    }, [children, width, parentRef.current]);
 
     return (
         <TagGroupContext.Provider value={memoizedTagGroupContextValue}>
             <div className={classNames("tagGroup", className)}>
-                <div className={classNames("tagGroup__container", { tagGroup__container_expanded: isExpanded })}>
-                    <div
-                        className={classNames("tagGroup__tags", { tagGroup__tags_expanded: isExpanded })}
-                        ref={parentRef}
-                        style={{ height: !isExpanded ? `${tagHeight}px` : "auto" }}
-                    >
-                        {clonedChildren}
+                <div
+                    className={classNames("tagGroup__container", { tagGroup__container_expanded: isExpanded })}
+                    ref={parentRef}
+                >
+                    <div className={classNames("tagGroup__tags", { tagGroup__tags_expanded: isExpanded })}>
+                        {firstGroup}
+                        {isExpanded && secondGroup}
                     </div>
+                    {!!secondGroup?.length && (
+                        <Button
+                            className="tagGroup__showButton"
+                            appearance="secondary"
+                            size={size}
+                            displayType="text"
+                            iconAfter
+                            Icon={isExpanded ? ChevronUp : ChevronDown}
+                            onClick={toggleText}
+                        >
+                            {isExpanded ? "Show less" : "Show more"}
+                        </Button>
+                    )}
                 </div>
-                {needTruncate && (
-                    <Button
-                        className="tagGroup__showButton"
-                        appearance="secondary"
-                        size={size}
-                        displayType="text"
-                        iconAfter
-                        Icon={isExpanded ? ChevronUp : ChevronDown}
-                        onClick={toggleText}
-                    >
-                        {isExpanded ? "Show less" : "Show more"}
-                    </Button>
-                )}
             </div>
         </TagGroupContext.Provider>
     );
