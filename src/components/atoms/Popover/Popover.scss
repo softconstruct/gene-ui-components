@@ -52,69 +52,38 @@
     }
 
     &_size {
-        &_xxLarge {
-            min-width: 82rem;
-            max-width: 100rem;
-        }
-
         &_xLarge {
-            min-width: 64rem;
-            max-width: 82rem;
-        }
+            width: 64rem;
 
-        &_xxLarge,
-        &_xLarge {
             #{ $this }__body {
-                min-height: 56rem;
-                max-height: 62rem;
-            }
-            #{ $this }__footer {
-                height: 6.4rem;
+                height: 32rem;
             }
         }
 
         &_large {
-            min-width: 52rem;
-            max-width: 64rem;
-        }
+            width: 52rem;
 
-        &_medium {
-            min-width: 40rem;
-            max-width: 52rem;
-        }
-
-        &_large,
-        &_medium {
             #{ $this }__body {
-                min-height: 40rem;
-                max-height: 56rem;
+                height: 26rem;
             }
-            #{ $this }__footer {
-                height: 5.6rem;
+        }
+
+        &_medium {
+            width: 28rem;
+
+            #{ $this }__body {
+                height: 28rem;
             }
         }
 
         &_small {
-            min-width: 28rem;
-            max-width: 40rem;
-            #{ $this }__body {
-                min-height: 24rem;
-                max-height: 40rem;
-            }
-            #{ $this }__footer {
-                height: 5.6rem;
-            }
+            width: 16rem;
         }
 
-        &_xSmall {
-            min-width: 16rem;
-            max-width: 28rem;
-            #{ $this }__body {
-                min-height: 4rem;
-                max-height: 24rem;
-            }
+        &_large,
+        &_xLarge {
             #{ $this }__footer {
-                height: 5.6rem;
+                height: 6.4rem;
             }
         }
 
@@ -141,6 +110,7 @@
             var(--guit-sem-color-border-neutral-2);
         padding-inline: var(--guit-ref-spacing-large);
         height: 4.8rem;
+        overflow: hidden;
     }
 
     &__title {

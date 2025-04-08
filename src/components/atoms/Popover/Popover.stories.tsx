@@ -41,8 +41,8 @@ type Story = StoryObj<IPopoverProps>;
 const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
     const popRef = useRef(null);
     const [propsForContent, setPropsForContent] = useState({});
-    const { size } = props;
-    const title = size !== "reference" && size !== "xSmall" ? "Popover" : "";
+    const { size, title: titleProp } = props;
+    const title = size !== "reference" && size !== "small" ? titleProp : "";
 
     return (
         <div style={{ margin: "500px 500px", height: 1000 }}>
@@ -61,7 +61,7 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
                     </span>
                 </PopoverBody>
 
-                {size !== "reference" && size !== "xSmall" && (
+                {size !== "reference" && size !== "small" && (
                     <PopoverFooter>
                         <div
                             className="swapComponent"
