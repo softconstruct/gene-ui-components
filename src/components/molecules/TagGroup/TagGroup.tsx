@@ -189,4 +189,4 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium" }) 
     );
 };
 
-export { ITagGroupProps, TagGroup as default };
+export { ITagGroupProps, ITagGroupContextProps, TagGroup as default };
