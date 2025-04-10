@@ -178,7 +178,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                         disableReposition
                         position="right-top"
                         withArrow={false}
-                        padding={5}
+                        margin={5}
                         open={popoverOpenState}
                         ref={popoverFloatingRef}
                     >

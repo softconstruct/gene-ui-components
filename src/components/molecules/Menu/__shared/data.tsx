@@ -15,7 +15,7 @@ export const data = [
         ComponentRender: () => {
             return (
                 <span>
-                    <Checkbox label="test" />
+                    <Checkbox label="test" name="test" value="test" />
                 </span>
             );
         }
