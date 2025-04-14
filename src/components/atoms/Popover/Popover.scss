@@ -53,31 +53,43 @@
 
     &_size {
         &_xLarge {
-            width: 64rem;
+            min-width: 64rem;
+            max-width: 82rem;
 
             #{ $this }__body {
-                height: 32rem;
+                min-height: 32rem;
+                max-height: 82rem;
             }
         }
 
         &_large {
-            width: 52rem;
+            min-width: 52rem;
+            max-width: 64rem;
 
             #{ $this }__body {
-                height: 26rem;
+                min-height: 26rem;
+                max-height: 64rem;
             }
         }
 
         &_medium {
-            width: 28rem;
+            min-width: 28rem;
+            max-width: 52rem;
 
             #{ $this }__body {
-                height: 28rem;
+                min-height: 14rem;
+                max-height: 52rem;
             }
         }
 
         &_small {
-            width: 16rem;
+            min-width: 16rem;
+            max-width: 28rem;
+
+            #{ $this }__body {
+                min-height: 4rem;
+                max-height: 52rem;
+            }
         }
 
         &_large,
@@ -93,6 +105,7 @@
 
         &_reference {
             width: var(--parent-width);
+            min-width: auto;
         }
     }
 

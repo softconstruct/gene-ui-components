@@ -120,9 +120,15 @@ export interface IPopoverProps {
     defaultOpen?: boolean;
     /**
      * Define width and height of the popover.<br>
-     * Possible values: <code> xLarge | large | small | fitContent | reference </code>
+     * Possible values: <code> xLarge | large | small | fitContent </code>
      */
-    size?: "small" | "medium" | "large" | "xLarge" | "fitContent" | "reference";
+    size?: "small" | "medium" | "large" | "xLarge" | "fitContent";
+
+    /**
+     * When set to true, the `width` of the `popover` will match the `width` of the reference (trigger) element.
+     * The `height` of the popover will still be determined by the `size` prop.
+     */
+    withReference?: boolean;
 
     /**
      * Title displayed in the popover header.
@@ -187,6 +193,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
     (
         {
             size = "medium",
+            withReference,
             position = "bottom-center",
             margin = 10,
             defaultOpen = false,
@@ -379,7 +386,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
 
         const parentElement = refs.reference.current as HTMLElement | null;
         useEffect(() => {
-            if (size !== "reference") return;
+            if (!withReference) return;
 
             const parentElementWidth = parentElement?.offsetWidth;
 
@@ -391,8 +398,8 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                 {isShowPopover && (
                     <FloatingPortal root={geneUIProviderRef.current}>
                         <div
-                            style={size === "reference" ? { ...styles, "--parent-width": `${parentWidth}px` } : styles}
-                            className={`popover  popover_size_${isMobile ? "mobile" : size} popover_position_${currentDirection}`}
+                            style={withReference ? { ...styles, "--parent-width": `${parentWidth}px` } : styles}
+                            className={`popover ${withReference && "popover_size_reference"} popover_size_${isMobile ? "mobile" : size} popover_position_${currentDirection}`}
                             ref={refs.setFloating}
                             {...getFloatingProps()}
                         >

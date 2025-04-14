@@ -15,6 +15,7 @@ const meta: Meta<IPopoverProps> = {
         position: args({ control: "select", ...propCategory.appearance }),
         margin: args({ control: "number", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
+        withReference: args({ control: "boolean", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states, defaultValue: undefined }),
         withArrow: args({ control: "boolean", ...propCategory.states }),
         disableReposition: args({ control: "boolean", ...propCategory.states }),
@@ -41,8 +42,8 @@ type Story = StoryObj<IPopoverProps>;
 const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
     const popRef = useRef(null);
     const [propsForContent, setPropsForContent] = useState({});
-    const { size, title: titleProp } = props;
-    const title = size !== "reference" && size !== "small" ? titleProp : "";
+    const { size, withReference, title: titleProp } = props;
+    const title = !withReference && size !== "small" ? titleProp : "";
 
     return (
         <div style={{ margin: "500px 500px", height: 1000 }}>
@@ -61,7 +62,7 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
                     </span>
                 </PopoverBody>
 
-                {size !== "reference" && size !== "small" && (
+                {!withReference && size !== "small" && (
                     <PopoverFooter>
                         <div
                             className="swapComponent"
