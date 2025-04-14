@@ -1,8 +1,9 @@
-import React, { cloneElement, FC, JSX, useContext, useMemo, useRef } from "react";
+import React, { FC, JSX, useContext, useMemo, useRef } from "react";
 import classNames from "classnames";
-// components
 import { QRCodeSVG } from "qrcode.react";
 
+// Components
+import LogoComponent from "@components/atoms/Logo";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Styles
@@ -25,13 +26,17 @@ interface IQRCodeProps {
      * Possible values: `magenta | secondary | inverse`;
      * Default value is `magenta`
      */
-    appearance?: "magenta" | "secondary" | "inverse";
+    appearance?: "brand" | "secondary" | "inverse";
     /**
      * The value to encode into the QR Code.
      * An array of strings can be passed in to represent multiple segments,
      * allowing for optimization of the QR Code structure.
      */
     value: string;
+    /**
+     * Will show the logomark in the center of the `QRCode` component.
+     */
+    withLogo?: boolean;
     /**
      * The JSX element to embed in the center of the QR Code.
      * This can be used for branding, such as a logo or an icon.
@@ -43,16 +48,16 @@ interface IQRCodeProps {
 /**
  * A QR code component generates and displays a Quick Response (QR) code, a two-dimensional barcode that can be scanned by mobile devices to quickly access information, websites, or applications
  */
-const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "magenta", Logo, className }) => {
+const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "brand", withLogo = false, Logo, className }) => {
     const qrCodeRef = useRef<HTMLDivElement | null>(null);
 
     const { tokens } = useContext(GeneUIDesignSystemContext);
 
     const QRForeground = useMemo(() => {
         return {
-            magenta: tokens?.GuitSemColorForegroundAccentMagenta,
-            secondary: tokens?.GuitSemColorForegroundNeutral2,
-            inverse: tokens?.GuitSemColorForegroundInverseNotheme
+            brand: tokens.GuitSemColorForegroundAccentMagenta,
+            secondary: tokens.GuitSemColorForegroundNeutral2,
+            inverse: tokens.GuitSemColorForegroundInverseNotheme
         };
     }, []);
 
@@ -65,7 +70,7 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "magenta", 
                     fgColor={`${QRForeground[appearance]}`}
                     level={level}
                     className={classNames(`qRCode__svg`)}
-                    {...(Logo
+                    {...(withLogo
                         ? {
                               imageSettings: {
                                   src: "",
@@ -77,9 +82,16 @@ const QRCode: FC<IQRCodeProps> = ({ value, level = "M", appearance = "magenta", 
                           }
                         : {})}
                 />
-                {!!Logo && (
+                {withLogo && (
                     <div className="qRCode__logo">
-                        {cloneElement(Logo, { className: "qRCode__logoSvg", fill: QRForeground[appearance] })}
+                        {Logo || (
+                            <LogoComponent
+                                appearance={appearance}
+                                type="logomark"
+                                size="small"
+                                className="qRCode__logoSvg"
+                            />
+                        )}
                     </div>
                 )}
             </>

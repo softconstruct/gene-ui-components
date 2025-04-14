@@ -5,6 +5,7 @@ module.exports = {
         "./../stories/introduction.mdx",
         "./../stories/changelog.mdx",
         "./../stories/gettingStarted.mdx",
+        "./../stories/provider.mdx",
         "./../src/components/**/**/*.stories.tsx",
         "./../src/hooks/**/*.mdx"
     ],
