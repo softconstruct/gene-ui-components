@@ -138,7 +138,7 @@ const Tabs: FC<ITabsProps> = ({
         return () => {
             cancelAnimationFrame(animationFrame);
         };
-    }, [closable]);
+    }, [closable, width]);
 
     const slideShift = (isLeft?: boolean) => {
         if (!parentRef.current || !leftButtonRef.current || !rightButtonRef.current) return;
