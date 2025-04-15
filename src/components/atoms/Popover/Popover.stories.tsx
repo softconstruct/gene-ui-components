@@ -15,13 +15,12 @@ const meta: Meta<IPopoverProps> = {
         position: args({ control: "select", ...propCategory.appearance }),
         margin: args({ control: "number", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
-        withReference: args({ control: "boolean", ...propCategory.appearance }),
+        fitReference: args({ control: "boolean", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states, defaultValue: undefined }),
         withArrow: args({ control: "boolean", ...propCategory.states }),
         disableReposition: args({ control: "boolean", ...propCategory.states }),
         children: args({ control: "false", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),
-        footerContent: args({ control: "false", ...propCategory.content }),
         setProps: args({ control: "false", ...propCategory.functionality }),
         onClose: args({ control: "false", ...propCategory.action }),
         defaultOpen: args({ control: "boolean", ...propCategory.states })
@@ -42,8 +41,8 @@ type Story = StoryObj<IPopoverProps>;
 const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
     const popRef = useRef(null);
     const [propsForContent, setPropsForContent] = useState({});
-    const { size, withReference, title: titleProp } = props;
-    const title = !withReference && size !== "small" ? titleProp : "";
+    const { size, fitReference, title: titleProp } = props;
+    const title = !fitReference && size !== "small" ? titleProp : "";
 
     return (
         <div style={{ margin: "500px 500px", height: 1000 }}>
@@ -62,7 +61,7 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
                     </span>
                 </PopoverBody>
 
-                {!withReference && size !== "small" && (
+                {!fitReference && size !== "small" && (
                     <PopoverFooter>
                         <div
                             className="swapComponent"
@@ -87,7 +86,7 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
     );
 };
 
-export const popoverStory: Story = {
+export const Default: Story = {
     render: (props: IPopoverProps) => <PopoverStoryComponent {...props} />
 };
 
@@ -106,6 +105,7 @@ const WithoutFooterComponent: FC<IPopoverProps> = (props) => {
         </div>
     );
 };
+
 export const WithoutFooter: Story = {
     render: (props: IPopoverProps) => <WithoutFooterComponent {...props} />
 };

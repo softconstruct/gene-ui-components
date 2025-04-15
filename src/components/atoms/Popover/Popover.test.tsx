@@ -58,9 +58,9 @@ describe("Popover", () => {
         }
     );
 
-    it("renders withReference prop correct", () => {
-        const withReference = true;
-        setup.setProps({ open: true, withReference });
+    it("renders fitReference prop correct", () => {
+        const fitReference = true;
+        setup.setProps({ open: true, fitReference });
         expect(provider().find(`.popover_size_reference`).exists()).toBeTruthy();
     });
 
