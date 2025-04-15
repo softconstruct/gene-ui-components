@@ -33,9 +33,6 @@ import { InfoOutlined, X } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
-// Hooks
-import useScrollLock from "@hooks/useScrollLock";
-
 // Styles
 import "./Popover.scss";
 
@@ -206,8 +203,6 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         },
         popoverRef
     ) => {
-        const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useScrollLock(document.body);
-
         const [popoverOpened, setPopoverOpened] = useState(defaultOpen);
         const { geneUIProviderRef, breakpoint } = useContext(GeneUIDesignSystemContext);
         const [currentPosition, setCurrentPosition] = useState(correctPosition[position]);
@@ -295,21 +290,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             ? { [arrowPosition]: offsetFromEdge }
             : { insetInlineStart: middlewareArrowData?.x };
 
-        const isShowPopover = open || popoverOpened;
-
-        useEffect(() => {
-            if (isMobile && isShowPopover) {
-                lockBodyScroll();
-            } else {
-                unlockBodyScroll();
-            }
-        }, [isMobile, isShowPopover]);
-
-        useEffect(() => {
-            return () => {
-                unlockBodyScroll();
-            };
-        }, []);
+        const isPopoverOpened = open || popoverOpened;
 
         useLayoutEffect(() => {
             if (position === "auto") {
@@ -379,7 +360,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
 
         return (
             <>
-                {isShowPopover &&
+                {isPopoverOpened &&
                     (isMobile ? (
                         <span>Spreadsheet component</span>
                     ) : (
