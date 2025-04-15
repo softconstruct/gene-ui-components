@@ -1,5 +1,34 @@
 .spreadsheet {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100%;
+    background-color: var(--guit-sem-color-background-transparent-overlay-notheme-1);
+
+    &__body {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 80vh;
+
+        &_inset {
+            padding-inline: var(--guit-ref-spacing-large);
+            padding-top: var(--guit-ref-spacing-large);
+            background-color: var(--guit-sem-color-background-neutral-1-nudge);
+            border-top-left-radius: var(--guit-ref-radius-2xsmall);
+            border-top-right-radius: var(--guit-ref-radius-2xsmall);
+        }
+    }
+}
+
+@supports (height: 100lvh) {
+    .spreadsheet {
+        height: 100lvh;
+    }
 }

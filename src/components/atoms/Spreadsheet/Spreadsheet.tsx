@@ -1,6 +1,8 @@
 import React, { FC } from "react";
 import classNames from "classnames";
 
+import Scrollbar from "@components/atoms/Scrollbar";
+
 // Styles
 import "./Spreadsheet.scss";
 
@@ -13,11 +15,11 @@ interface ISpreadsheetProps {
     /**
      * inset description
      */
-    inset?: unknown;
+    inset?: boolean;
     /**
      * children description
      */
-    children?: unknown;
+    children?: React.ReactElement;
 }
 
 /**
@@ -29,7 +31,13 @@ const Spreadsheet: FC<ISpreadsheetProps> = ({ inset, children, className }) => {
     // eslint-disable-next-line no-console
     console.log("🚀 ~ inset:", inset);
 
-    return <div className={classNames("spreadsheet", className)}>Spreadsheet</div>;
+    return (
+        <div className={classNames("spreadsheet", className)}>
+            <div className={`spreadsheet__body ${inset ? `spreadsheet__body_inset` : ""}`}>
+                <Scrollbar>{children}</Scrollbar>
+            </div>
+        </div>
+    );
 };
 
 export { ISpreadsheetProps, Spreadsheet as default };
