@@ -21,7 +21,8 @@ const meta: Meta<typeof Menu> = {
         children: args({ control: "false", ...propCategory.content }),
         setPropsForPopover: args({ control: "false", ...propCategory.functionality }),
         loadingText: args({ control: "text", ...propCategory.content }),
-        isLoading: args({ control: "boolean", ...propCategory.states })
+        isLoading: args({ control: "boolean", ...propCategory.states }),
+        size: args({ control: "select", ...propCategory.appearance })
     },
     args: {} as IMenuProps
 };

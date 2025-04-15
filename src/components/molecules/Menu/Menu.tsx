@@ -43,10 +43,13 @@ type RelativeRefsSetter = (props: {
     popoverFloatingRef: MutableRefObject<ReferenceType | null> | undefined;
 }) => void;
 
+type SizeType = "large" | "medium" | "small";
+
 interface IMenuContextProps {
     onChangeHandler: (props: OnchangeHandlerType) => void;
     swappable?: boolean;
     relativeRefsSetter: RelativeRefsSetter;
+    size: SizeType;
 }
 
 interface IMenuProps {
@@ -82,6 +85,7 @@ interface IMenuProps {
      * A function for setting additional props for the Popover component that wraps the menu.
      */
     setPropsForPopover: Dispatch<SetStateAction<Record<string, unknown>>>;
+    size?: SizeType;
 }
 
 const cloneChildrenRecursive = (
@@ -136,7 +140,8 @@ const Menu: FC<IMenuProps> = ({
     isLoading,
     loadingText,
     swappable,
-    setPropsForPopover
+    setPropsForPopover,
+    size = "medium"
 }) => {
     const [isOpenState, setIsOpenState] = useState<boolean>(false);
     const [paths, setPaths] = useState<string[]>([]);
@@ -201,9 +206,10 @@ const Menu: FC<IMenuProps> = ({
         () => ({
             onChangeHandler,
             swappable: isMobileBreakpoint || swappable,
-            relativeRefsSetter
+            relativeRefsSetter,
+            size
         }),
-        [onChangeHandler, swappable]
+        [onChangeHandler, swappable, size]
     );
 
     const clonedChildren = cloneChildrenRecursive(children, paths);
@@ -218,14 +224,14 @@ const Menu: FC<IMenuProps> = ({
         <MenuContext.Provider value={memoizedMenuContextValue}>
             <Popover
                 setProps={setPropsForPopover}
-                size={isMobileBreakpoint ? "mobile" : "small"}
+                size="fitContent"
                 disableReposition
                 position="bottom-left"
                 withArrow={false}
                 open={isOpenState}
                 ref={popoverRef}
             >
-                <PopoverBody withPadding={false}>
+                <PopoverBody withPadding={false} className={`menu__body menu__body_size_${size}`} withScrollbar={false}>
                     <div
                         ref={parentRef}
                         className={classNames("menu ", { menu_swappable: isMobileBreakpoint || swappable }, className)}

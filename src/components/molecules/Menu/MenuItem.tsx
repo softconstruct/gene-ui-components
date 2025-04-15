@@ -49,7 +49,7 @@ const MenuItem: FC<IMenuItemProps> = ({
 }) => {
     const [propsForPopover, setPropsForPopover] = useState({});
     const parentRef = useRef<HTMLDivElement | null>(null);
-    const { onChangeHandler, swappable, relativeRefsSetter } = useContext(MenuContext);
+    const { onChangeHandler, swappable, relativeRefsSetter, size } = useContext(MenuContext);
     const [popoverOpenState, setPopoverOpenState] = useState(false);
     useEffect(() => {
         setPopoverOpenState(
@@ -174,7 +174,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                     {/* menu list wrapper */}
                     <Popover
                         setProps={setPropsForPopover}
-                        size={swappable ? "mobile" : "small"}
+                        size="fitContent"
                         disableReposition
                         position="right-top"
                         withArrow={false}
@@ -182,7 +182,11 @@ const MenuItem: FC<IMenuItemProps> = ({
                         open={popoverOpenState}
                         ref={popoverFloatingRef}
                     >
-                        <PopoverBody withPadding={false}>
+                        <PopoverBody
+                            withPadding={false}
+                            className={`menu__body menu__body_size_${size}`}
+                            withScrollbar={false}
+                        >
                             <div
                                 ref={parentRef}
                                 className={classNames("menu__list", {
