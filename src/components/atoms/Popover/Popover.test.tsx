@@ -50,9 +50,18 @@ describe("Popover", () => {
         expect(provider().find(".popover__header").text()).toBe(title);
     });
 
-    it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "mobile"])("should have %p size", (size) => {
-        setup.setProps({ open: true, size });
-        expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
+    it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "fitContent"])(
+        "should have %p size",
+        (size) => {
+            setup.setProps({ open: true, size });
+            expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
+        }
+    );
+
+    it("renders fitReference prop correct", () => {
+        const fitReference = true;
+        setup.setProps({ open: true, fitReference });
+        expect(provider().find(`.popover_size_reference`).exists()).toBeTruthy();
     });
 
     it("renders PopoverFooterActions child correct", () => {
