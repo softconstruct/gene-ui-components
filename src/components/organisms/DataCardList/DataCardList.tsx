@@ -16,25 +16,26 @@ const DIMENSIONS = { height: 400, width: 280 };
 
 interface IDataCardListProps {
     /**
-     * The data used to draw the list of DataCard components
+     * The data used to render the list of DataCard components.
      */
     data: Data;
     /**
-     * Function to load the next page of data
+     * Function to load the next page of data when the user scrolls near the end of the list.
      */
     loadNextPage?: (params: IndexRange) => Promise<any>;
     /**
-     * Indicating if there is a next page to load. If the value is true the loadNextPage function will be called <br/>
-     * when user scrolls and riches to the end of list
+     * Indicates whether more data is available to load.
+     * If `true`, the `loadNextPage` function will be triggered when the user reaches the end of the list.
      */
     hasNextPage?: boolean;
     /**
-     * Shows loading indicator at the end of list. This props should be used to show loading when next page request is processing
+     * Shows a loading indicator at the bottom of the list.
+     * Should be `true` while the next page of data is being loaded.
      */
     isNextPageLoading?: boolean;
     /**
-     * DataCard size
-     * Possible values: `medium | large`;
+     * Defines the size of each DataCard.
+     * Possible values: `'medium'` | `'large'`.
      */
     size?: IDataCardProps["size"];
     /**

@@ -1,30 +1,17 @@
 import React, { Dispatch, FC, SetStateAction, useMemo, useState } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
-import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
 // Components
 import DataCardList, { IDataCardListProps } from "./index";
 
 const totalCount = 100;
 
-const meta: Meta<typeof DataCardList> = {
+const meta: Meta = {
     title: "Organisms/DataCardList",
-    component: DataCardList,
-    argTypes: {
-        className: args({ control: "false", ...propCategory.appearance }),
-        size: args({ control: "select", ...propCategory.appearance, options: ["medium", "large"] }),
-        data: args({ control: "false", ...propCategory.content }),
-        hasNextPage: args({ control: "false", ...propCategory.others }),
-        isNextPageLoading: args({ control: "false", ...propCategory.others }),
-        loadNextPage: args({ control: "false", ...propCategory.action })
-    },
-    args: {
-        size: "medium"
-    } as IDataCardListProps
+    component: DataCardList
 };
-
-export default meta;
 
 const TemplateHOC: FC<IDataCardListProps & { dataCount: number; setDataCount: Dispatch<SetStateAction<number>> }> = ({
     data,
@@ -56,7 +43,18 @@ const TemplateHOC: FC<IDataCardListProps & { dataCount: number; setDataCount: Di
     );
 };
 
-export const Default: FC<IDataCardListProps> = (props) => {
+type Story = StoryObj<IDataCardListProps>;
+
+const argTypes = {
+    className: args({ control: "false", ...propCategory.appearance }),
+    size: args({ control: "select", ...propCategory.appearance, options: ["medium", "large"] }),
+    data: args({ control: "false", ...propCategory.content }),
+    hasNextPage: args({ control: "false", ...propCategory.others }),
+    isNextPageLoading: args({ control: "false", ...propCategory.others }),
+    loadNextPage: args({ control: "false", ...propCategory.action })
+};
+
+const DefaultDataCardListComponent: FC = (props) => {
     const [dataCount, setDataCount] = useState(10);
 
     const data: IDataCardListProps["data"] = useMemo(
@@ -72,7 +70,15 @@ export const Default: FC<IDataCardListProps> = (props) => {
     return <TemplateHOC {...props} data={data} dataCount={dataCount} setDataCount={setDataCount} />;
 };
 
-export const WithPillValue: FC<IDataCardListProps> = (props) => {
+const DefaultDataCardListStory: Story = storyObjBuilder({
+    argTypes: { ...argTypes },
+    args: {
+        size: "medium"
+    },
+    render: (props) => <DefaultDataCardListComponent {...props} />
+});
+
+const DataCardListWithPillValueComponent: FC = (props) => {
     const [dataCount, setDataCount] = useState(10);
 
     const data: IDataCardListProps["data"] = useMemo(
@@ -89,7 +95,15 @@ export const WithPillValue: FC<IDataCardListProps> = (props) => {
     return <TemplateHOC {...props} data={data} dataCount={dataCount} setDataCount={setDataCount} />;
 };
 
-export const WithTextLink: FC<IDataCardListProps> = (props) => {
+const DataCardListWithPillValueStory: Story = storyObjBuilder({
+    argTypes: { ...argTypes },
+    args: {
+        size: "medium"
+    },
+    render: (props) => <DataCardListWithPillValueComponent {...props} />
+});
+
+const DataCardListWithTextLinkComponent: FC = (props) => {
     const [dataCount, setDataCount] = useState(10);
 
     const data: IDataCardListProps["data"] = useMemo(
@@ -103,4 +117,19 @@ export const WithTextLink: FC<IDataCardListProps> = (props) => {
         [dataCount]
     );
     return <TemplateHOC {...props} data={data} dataCount={dataCount} setDataCount={setDataCount} />;
+};
+
+const DataCardListWithTextLinkStory: Story = storyObjBuilder({
+    argTypes: { ...argTypes },
+    args: {
+        size: "medium"
+    },
+    render: (props) => <DataCardListWithTextLinkComponent {...props} />
+});
+
+export default meta;
+export {
+    DefaultDataCardListStory as Default,
+    DataCardListWithPillValueStory as WithPillValue,
+    DataCardListWithTextLinkStory as WithTextLink
 };
