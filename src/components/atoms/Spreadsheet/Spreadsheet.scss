@@ -16,13 +16,13 @@
         right: 0;
         width: 100%;
         height: 80vh;
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+        border-top-left-radius: var(--guit-ref-radius-2xsmall);
+        border-top-right-radius: var(--guit-ref-radius-2xsmall);
 
         &_inset {
             padding-inline: var(--guit-ref-spacing-large);
             padding-top: var(--guit-ref-spacing-large);
-            background-color: var(--guit-sem-color-background-neutral-1-nudge);
-            border-top-left-radius: var(--guit-ref-radius-2xsmall);
-            border-top-right-radius: var(--guit-ref-radius-2xsmall);
         }
     }
 }
