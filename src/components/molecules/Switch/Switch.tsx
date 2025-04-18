@@ -113,6 +113,7 @@ const Switch: FC<ISwitchProps> = (props) => {
                     onKeyDown={onKeyDownHandler}
                     disabled={disabled}
                     {...(name && { name })}
+                    {...((disabled || readOnly) && { tabIndex: -1 })}
                     checked={isControlled ? checked : internalState}
                     readOnly={!disabled && readOnly}
                     value={value}
