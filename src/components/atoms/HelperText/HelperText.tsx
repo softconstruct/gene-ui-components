@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import classnames from "classnames";
 
-import { ErrorAlertFill, IconProps, WarningFill } from "@geneui/icons";
+import { Error, IconProps, TriangleAlert } from "@geneui/icons";
 
 // Styles
 import "./HelperText.scss";
@@ -25,7 +25,7 @@ interface IHelperTextProps {
     text: string;
     /**
      * Optional. Icon to be displayed alongside the helper text.
-     * If the `type` prop is set to `error` or `warning`, a default icon will be used (ErrorAlertFill for `error` and WarningFill for `warning`) unless an `Icon` is explicitly provided.
+     * If the `type` prop is set to `error` or `warning`, a default icon will be used (Error for `error` and TriangleAlert for `warning`) unless an `Icon` is explicitly provided.
      * If `type` is `rest`, the provided `Icon` will be used (if supplied), otherwise no icon will be displayed.
      * The size of the icon will automatically adjust based on the `size` prop (`small` or `medium`).
      */
@@ -52,8 +52,8 @@ const iconSize = {
  */
 const HelperText: FC<IHelperTextProps> = ({ size = "medium", type = "rest", text, Icon, isDisabled, className }) => {
     const iconMap = {
-        error: <ErrorAlertFill size={iconSize[size]} />,
-        warning: <WarningFill size={iconSize[size]} />,
+        error: <Error size={iconSize[size]} />,
+        warning: <TriangleAlert size={iconSize[size]} />,
         rest: Icon && <Icon size={iconSize[size]} />
     };
 

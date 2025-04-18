@@ -1,15 +1,49 @@
 .scrollbar {
-    height: 100%;
-    width: 100%;
+    $this: &;
+
     min-width: 0;
     min-height: 0;
+
+    &_width {
+        &_full {
+            width: 100%;
+
+            #{ $this }__content {
+                width: 100%;
+            }
+        }
+
+        &_auto {
+            width: auto;
+        }
+    }
+
+    &_height {
+        &_full {
+            height: 100%;
+
+            #{ $this }__content {
+                height: 100%;
+            }
+        }
+
+        &_auto {
+            height: auto;
+        }
+    }
 
     &__wrapper {
         height: 100%;
         width: 100%;
+        position: relative !important;
     }
 
     &__scroller {
+        height: 100%;
+        position: relative !important;
+        inset: initial !important;
+        margin: 0 !important;
+
         &::-webkit-scrollbar-thumb,
         &::-webkit-scrollbar-track,
         &::-webkit-scrollbar {
@@ -19,6 +53,8 @@
     }
 
     &__content {
+        padding: 0 !important;
+
         &:focus-visible {
             outline: none;
         }
@@ -26,21 +62,23 @@
 
     &__track {
         position: absolute;
+        z-index: 100;
         overflow: hidden;
         border-radius: var(--guit-ref-radius-3xsmall);
-        inset-inline-end: 0;
+        inset-inline-end: var(--guit-ref-spacing-4xsmall);
+        bottom: var(--guit-ref-spacing-3xsmall) !important;
 
         &_direction {
             &_y {
                 height: 100%;
                 top: 0;
-                width: 6px;
+                width: 0.6rem;
             }
 
             &_x {
                 width: 100%;
                 bottom: 0;
-                height: 6px;
+                height: 0.6rem;
             }
         }
     }
@@ -55,7 +93,7 @@
             &_y {
                 height: 100%;
                 top: 0;
-                width: 6px;
+                width: 0.6rem;
                 inset-inline-end: 0;
             }
 
@@ -63,7 +101,12 @@
                 width: 100%;
                 bottom: 0;
                 inset-inline-start: 0;
-                height: 6px;
+                height: 0.6rem;
+            }
+
+            &_hide {
+                height: 0;
+                width: 0;
             }
         }
     }

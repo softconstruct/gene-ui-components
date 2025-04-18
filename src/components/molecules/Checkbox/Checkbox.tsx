@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FC, FocusEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
-import { CheckMark, MinusOutline } from "@geneui/icons";
+import { CheckMark, Minus } from "@geneui/icons";
 
 // Components
 import HelperText from "@components/atoms/HelperText";
@@ -17,8 +17,9 @@ interface ICheckboxProps {
     label?: string;
     /**
      *  Toggles the label's and HelperText position between above or beside the checkbox.
+     *   Possible values: `horizontal | vertical`
      */
-    vertical?: boolean;
+    direction?: "horizontal" | "vertical";
     /**
      *  Specifies whether the checkbox is mandatory for completing a form.
      */
@@ -44,7 +45,7 @@ interface ICheckboxProps {
      */
     autoFocus?: boolean;
     /**
-     *  Extra information displayed with the label for clarity or guidance.
+     *  Extra information displayed with the tooltip for clarity or guidance.
      */
     infoText?: string;
     /**
@@ -52,7 +53,7 @@ interface ICheckboxProps {
      */
     helperText?: string;
     /**
-     *  The initial checked state of the checkbox before user interaction.
+     *  The initial state of the checkbox was checked before user interaction. This prop does not make the component controlled.
      */
     defaultChecked?: boolean;
     /**
@@ -64,7 +65,11 @@ interface ICheckboxProps {
      *  HTML name attribute for the input element.<br>
      *  A unique identifier for the checkbox within a form.
      */
-    name?: string;
+    name: string;
+    /**
+     * The value of the component that will be returned in the onChange event.
+     */
+    value: string;
     /**
      *  Fires when the user changes the checkbox state. Provides the change event as a callback's argument.
      */
@@ -87,27 +92,30 @@ interface ICheckboxProps {
 /**
  * Checkbox component allows users to select one or more options from a set of choices. Each checkbox can be either checked or unchecked, indicating a binary state. Checkboxes are commonly used in forms, settings, and lists where multiple selections are needed.
  */
-const Checkbox: FC<ICheckboxProps> = ({
-    label,
-    required,
-    infoText,
-    disabled,
-    helperText,
-    readOnly,
-    type = "rest" as const,
-    vertical,
-    autoFocus,
-    onChange,
-    onFocus,
-    onBlur,
-    name,
-    indeterminate,
-    checked,
-    defaultChecked,
-    className
-}) => {
+const Checkbox: FC<ICheckboxProps> = (props) => {
+    const {
+        label,
+        required,
+        infoText,
+        disabled,
+        helperText,
+        readOnly,
+        type = "rest",
+        direction = "horizontal",
+        autoFocus,
+        onChange,
+        onFocus,
+        onBlur,
+        name,
+        indeterminate,
+        checked,
+        defaultChecked,
+        className,
+        value
+    } = props;
+
     const interRef = useRef<HTMLInputElement>(null);
-    const isControlled = checked !== undefined;
+    const isControlled = "checked" in props;
 
     const [checkedState, setCheckedState] = useState(defaultChecked || false);
 
@@ -149,7 +157,7 @@ const Checkbox: FC<ICheckboxProps> = ({
                 {
                     checkbox_disabled: disabled,
                     checkbox_readOnly: readOnly,
-                    checkbox_labelTop: vertical
+                    checkbox_labelTop: direction === "vertical"
                 },
                 className
             )}
@@ -176,10 +184,11 @@ const Checkbox: FC<ICheckboxProps> = ({
                             {...(name && { name })}
                             {...(autoFocus && { autoFocus })}
                             {...((disabled || readOnly) && { tabIndex: -1 })}
+                            value={value}
                         />
                         <span className="checkbox__imitation">
                             {indeterminate && !checked ? (
-                                <MinusOutline className="checkbox__icon" size={16} />
+                                <Minus className="checkbox__icon" size={16} />
                             ) : (
                                 <CheckMark className="checkbox__icon" size={16} />
                             )}

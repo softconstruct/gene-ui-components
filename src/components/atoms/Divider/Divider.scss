@@ -2,7 +2,6 @@
     $this: &;
 
     display: inline-flex;
-    gap: var(--guit-ref-spacing-xsmall);
     overflow: hidden;
 
     &::before {
@@ -13,6 +12,7 @@
     }
 
     &_horizontal {
+        gap: var(--guit-ref-spacing-xsmall);
         align-items: center;
         width: 100%;
 

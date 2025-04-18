@@ -1,12 +1,13 @@
 import React, { FC, useContext } from "react";
 import classNames from "classnames";
 
-import { ErrorAlertFill, SuccessFill, UnavailableOutline } from "@geneui/icons";
+import { Error, SuccessFill, UnavailableOutline } from "@geneui/icons";
 
 // Components
 import Divider from "@components/atoms/Divider";
 import Loader from "@components/atoms/Loader";
-import { StepsContext } from "@components/molecules/Steps/Steps";
+
+import { StepsContext } from "./Steps";
 
 interface IPointTypesProps {
     /**
@@ -50,6 +51,7 @@ interface IStepProps extends IPointTypesProps {
 
 const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, isLoading, state }) => {
     const { type } = useContext(StepsContext);
+
     const stepCount = (num: number) => {
         if (!num || num <= 0) return 1;
         if (num > 9) return 9;
@@ -61,7 +63,7 @@ const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, isLoading, st
     }
 
     if (error) {
-        return <ErrorAlertFill size={24} className="steps__status_icon" />;
+        return <Error size={24} className="steps__status_icon" />;
     }
 
     if (type === "dot") {
