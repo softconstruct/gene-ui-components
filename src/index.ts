@@ -16,6 +16,7 @@ export { default as Badge, IBadgeProps } from "./components/atoms/Badge";
 export { default as Scrollbar, IScrollbarProps } from "./components/atoms/Scrollbar";
 export { Grid, Col, Row, IColProps, IRowProps } from "./components/atoms/Grid";
 export { default as Spreadsheet, ISpreadsheetProps } from "./components/atoms/Spreadsheet";
+export { default as Copy, ICopyProps } from "./components/atoms/Copy";
 
 // Molecules
 export { default as Tooltip, ITooltipProps } from "./components/molecules/Tooltip";
