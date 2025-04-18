@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { ChangeEvent, FC, KeyboardEvent, useState } from "react";
 import classNames from "classnames";
 
 // Components
@@ -34,12 +34,65 @@ interface ISwitchProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     *  Fires when the user changes the switch state. Provides the change event as a callback's argument.
+     */
+    onChange: (state: ChangeEvent<HTMLInputElement>) => void;
+    /**
+     *  The initial state of the switch was checked before user interaction. This prop does not make the component controlled.
+     */
+    defaultChecked?: boolean;
+    /**
+     *  Manages the checked state of the switch in a controlled way.
+     */
+    checked?: boolean;
+
+    /**
+     *  HTML name attribute for the input element.<br>
+     *  A unique identifier for the switch within a form.
+     */
+    name?: string;
+    /**
+     * The value of the component that will be returned in the onChange event.
+     */
+    value?: string;
 }
 
 /**
  * A switch component allows users to toggle between two states, typically "on" and "off". It is commonly used in settings and preferences to enable or disable features or functionalities.
  */
-const Switch: FC<ISwitchProps> = ({ className, label, helperText, disabled, readOnly, labelAlignment = "after" }) => {
+const Switch: FC<ISwitchProps> = (props) => {
+    const {
+        className,
+        label,
+        helperText,
+        disabled,
+        readOnly,
+        labelAlignment = "after",
+        onChange,
+        defaultChecked = false,
+        checked,
+        value = "",
+        name
+    } = props;
+
+    const isControlled = "checked" in props;
+
+    const [internalState, setInternalState] = useState(defaultChecked);
+
+    const onChangeHandler = (e: ChangeEvent<HTMLInputElement> | KeyboardEvent<HTMLInputElement>) => {
+        if (!isControlled) {
+            setInternalState((prev) => !prev);
+        }
+        onChange?.(e as ChangeEvent<HTMLInputElement>);
+    };
+
+    const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            onChangeHandler(e);
+        }
+    };
+
     return (
         <div
             className={classNames(
@@ -53,7 +106,17 @@ const Switch: FC<ISwitchProps> = ({ className, label, helperText, disabled, read
             )}
         >
             <label className="switch__label">
-                <input type="checkbox" className="switch__input" disabled={disabled} readOnly={!disabled && readOnly} />
+                <input
+                    type="checkbox"
+                    className="switch__input"
+                    onChange={onChangeHandler}
+                    onKeyDown={onKeyDownHandler}
+                    disabled={disabled}
+                    {...(name && { name })}
+                    checked={isControlled ? checked : internalState}
+                    readOnly={!disabled && readOnly}
+                    value={value}
+                />
                 <span className="switch__slider" />
                 {label && <span className="switch__labelText">{label}</span>}
             </label>

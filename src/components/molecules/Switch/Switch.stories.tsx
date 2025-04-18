@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import React from "react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Components
 import Switch, { ISwitchProps } from "@components/molecules/Switch";
@@ -16,7 +16,8 @@ const meta: Meta<typeof Switch> = {
         helperText: args({ control: "text", ...propCategory.content }),
         labelAlignment: args({ control: "select", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
-        readOnly: args({ control: "boolean", ...propCategory.states })
+        readOnly: args({ control: "boolean", ...propCategory.states }),
+        onChange: args({ control: "false", ...propCategory.states })
     },
     args: {
         label: "Label",
@@ -28,9 +29,9 @@ const meta: Meta<typeof Switch> = {
 };
 
 export default meta;
-
-const Template: FC<ISwitchProps> = (props) => <Switch {...props} />;
-
-export const Default = Template.bind({});
-
-Default.args = {} as ISwitchProps;
+type Story = StoryObj<ISwitchProps>;
+export const Default: Story = {
+    render: (props) => {
+        return <Switch {...props} />;
+    }
+};
