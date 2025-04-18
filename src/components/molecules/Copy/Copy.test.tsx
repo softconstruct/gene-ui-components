@@ -20,6 +20,7 @@ describe("Copy Component", () => {
     };
 
     const wrapper = setup();
+
     it("renders without crashing", () => {
         expect(wrapper.exists()).toBeTruthy();
     });

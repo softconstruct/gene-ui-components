@@ -13,20 +13,17 @@ const meta: Meta<ICopyProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         appearance: args({ control: "select", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
-
         copiedTooltipText: args({ control: "text", ...propCategory.content }),
         copyTooltipText: args({ control: "text", ...propCategory.content }),
-        value: args({ control: "false", ...propCategory.content }),
-
-        contentRef: args({ control: "false", ...propCategory.content }),
-
+        value: args({ control: "false", ...propCategory.functionality }),
+        contentRef: args({ control: "false", ...propCategory.functionality }),
         disabled: args({ control: "boolean", ...propCategory.states })
     },
     args: {
-        appearance: "brand",
+        appearance: "primary",
         size: "large",
         copiedTooltipText: "Successfully copied!",
-        copyTooltipText: "copy"
+        copyTooltipText: "Copy"
     }
 };
 
@@ -38,6 +35,7 @@ export const Default: Story = {
     render: (props) => {
         // eslint-disable-next-line react-hooks/rules-of-hooks
         const ref = useRef<HTMLDivElement>(null);
+
         return (
             <>
                 <div ref={ref}>

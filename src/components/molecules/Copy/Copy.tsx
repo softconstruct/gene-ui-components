@@ -8,11 +8,12 @@ import Tooltip from "../../molecules/Tooltip";
 
 interface ICopyProps {
     /**
-     * Size of the icon:  `small" | "medium" | "large" | "XSmall`,
+     * Size of the copy and copied icons:  `small | medium | large | XSmall`,
      */
     size?: "small" | "medium" | "large" | "XSmall";
     /**
-     * Additional CSS class name(s) to apply to the icon for styling
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
     /**
@@ -33,24 +34,24 @@ interface ICopyProps {
     value?: string;
     /**
      * Indicates the action meaning. <br>
-     * Possible values: `secondary" | "brand" | "inverse`
+     * Possible values: `secondary | primary | inverse`
      */
-    appearance?: "secondary" | "brand" | "inverse";
+    appearance?: "secondary" | "primary" | "inverse";
     /**
-     * Indicates whether the `button` is `disabled`, preventing user interaction, focus, click etc...
+     *  Disables the copy, preventing it from being interacted with.
      */
     disabled?: boolean;
 }
-// Copy component used to copy content to the clipboard, providing visual feedback upon success.
 
+// Copy component used to copy content to the clipboard, providing visual feedback upon success.
 const CopyComponent: FC<ICopyProps> = ({
     size = "medium",
     value,
     className,
     contentRef,
-    copyTooltipText,
-    copiedTooltipText,
-    appearance,
+    copyTooltipText = "Copy",
+    copiedTooltipText = "Copied",
+    appearance = "primary",
     disabled
 }) => {
     const [isCopied, setIsCopied] = useState(false);
@@ -60,7 +61,7 @@ const CopyComponent: FC<ICopyProps> = ({
 
         if (isCopied) return;
 
-        const content = contentRef?.current?.innerText || value;
+        const content = value || contentRef?.current?.innerText;
 
         if (!content) return;
 
@@ -76,6 +77,7 @@ const CopyComponent: FC<ICopyProps> = ({
             })
             .catch((error) => console.error("Failed to copy:", error));
     };
+
     return (
         <Tooltip text={isCopied ? copiedTooltipText : copyTooltipText} isVisible>
             <Button
@@ -84,7 +86,7 @@ const CopyComponent: FC<ICopyProps> = ({
                 onClick={copyContent}
                 size={size}
                 disabled={disabled}
-                appearance={appearance === "brand" ? "primary" : appearance}
+                appearance={appearance}
                 displayType="text"
             />
         </Tooltip>
