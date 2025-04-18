@@ -124,7 +124,7 @@ const Tabs: FC<ITabsProps> = ({
         if (leftButtonRef.current) {
             disableButton(leftButtonRef, true);
         }
-    }, []);
+    }, [parentRef.current]);
 
     /* eslint consistent-return: off */
     useEffect(() => {
