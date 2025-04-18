@@ -1,4 +1,4 @@
-import React, { Children, FC, ReactNode, UIEvent, useContext, useEffect, useRef, useState } from "react";
+import React, { Children, FC, ReactNode, UIEvent, useContext, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { isValidElementType } from "react-is";
 
@@ -98,47 +98,74 @@ const MenuItem: FC<IMenuItemProps> = ({
         </MenuItemButton>
     );
 
+    const [isActiveSwappableContent, setIsActiveSwappableContent] = useState(false);
+
+    useEffect(() => {
+        if (!swappable) return;
+        const pathId = paths?.join("_");
+        if (generateId) {
+            setIsActiveSwappableContent(!paths?.length || (!!pathId && !!generateId?.startsWith(pathId)));
+        }
+    }, [paths, swappable, popoverOpenState, generateId]);
+
+    const renderedSwappableContent = useMemo(() => {
+        if (Children.count(children) === 0) {
+            return (
+                <div className="menu__empty">
+                    <h1>{emptyText || "No data to show"}</h1>
+                </div>
+            );
+        }
+
+        if (isActiveSwappableContent) {
+            return (
+                <Scrollbar className="menu__content">
+                    <span className="menu__itemTitle">{children}</span>
+                </Scrollbar>
+            );
+        }
+
+        return <span className="menu__itemTitle">{children}</span>;
+    }, [children, emptyText, isActiveSwappableContent]);
+
     return swappable ? (
         <>
             {typeof children !== "string" ? (
                 <>
                     {/* Parent menu item */}
-                    <MenuItemButton
-                        type="parent"
-                        onItemClickHandler={onItemClickHandler}
-                        title={title}
-                        IconBefore={IconBefore}
-                        IconAfter={IconAfter}
-                        disabled={disabled}
-                        danger={danger}
-                        propsForPopover={propsForPopover}
-                        active={popoverOpenState}
-                        divider={divider}
-                    />
+                    {isActiveSwappableContent && !popoverOpenState && (
+                        <MenuItemButton
+                            type="parent"
+                            onItemClickHandler={onItemClickHandler}
+                            title={title}
+                            IconBefore={IconBefore}
+                            IconAfter={IconAfter}
+                            disabled={disabled}
+                            danger={danger}
+                            propsForPopover={propsForPopover}
+                            active={popoverOpenState}
+                            divider={divider}
+                        />
+                    )}
                     {/* menu list wrapper */}
                     <div
                         style={{ display: popoverOpenState ? "block" : "none" }}
-                        className={classNames("menu__list  ", {
+                        className={classNames("menu__list", {
                             menu__list_current: popoverOpenState,
                             menu__item_disabled: disabled
                         })}
                     >
-                        <MenuItemButton type="header" onItemClickHandler={onItemClickHandler} title={title} />
+                        {isActiveSwappableContent && (
+                            <MenuItemButton type="header" onItemClickHandler={onItemClickHandler} title={title} />
+                        )}
 
-                        <Scrollbar className="menu__content">
-                            {Children.count(children) > 0 ? (
-                                <span className="menu__itemTitle">{children}</span>
-                            ) : (
-                                <div className="menu__empty">
-                                    <h1>{emptyText || "No data to show"} e</h1>
-                                </div>
-                            )}
-                        </Scrollbar>
+                        {renderedSwappableContent}
                     </div>
                 </>
             ) : (
                 // Simple menu item
-                CustomElement || (
+                isActiveSwappableContent &&
+                (CustomElement || (
                     <MenuItemButton
                         type="simple"
                         onItemClickHandler={onItemClickHandler}
@@ -151,7 +178,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                     >
                         {children}
                     </MenuItemButton>
-                )
+                ))
             )}
         </>
     ) : (

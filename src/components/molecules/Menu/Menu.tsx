@@ -220,6 +220,28 @@ const Menu: FC<IMenuProps> = ({
         }
     };
 
+    const hasSwappablePaths = !!swappable && !!paths.length;
+
+    const content = useMemo(() => {
+        if (isLoading) {
+            return (
+                <div className="menu__loader">
+                    <Loader text={loadingText} textPosition="below" />
+                </div>
+            );
+        }
+
+        if (hasSwappablePaths) {
+            return clonedChildren;
+        }
+
+        return (
+            <Scrollbar className="menu__content" onScroll={onScrollHandler}>
+                {clonedChildren}
+            </Scrollbar>
+        );
+    }, [isLoading, loadingText, hasSwappablePaths, clonedChildren, onScrollHandler]);
+
     return (
         <MenuContext.Provider value={memoizedMenuContextValue}>
             <Popover
@@ -236,17 +258,7 @@ const Menu: FC<IMenuProps> = ({
                         ref={parentRef}
                         className={classNames("menu ", { menu_swappable: isMobileBreakpoint || swappable }, className)}
                     >
-                        <div className="menu__list menu__list_current">
-                            <Scrollbar className="menu__content" onScroll={onScrollHandler}>
-                                {isLoading ? (
-                                    <div className="menu__loader">
-                                        <Loader text={loadingText} textPosition="below" />
-                                    </div>
-                                ) : (
-                                    clonedChildren
-                                )}
-                            </Scrollbar>
-                        </div>
+                        <div className={classNames("menu__list", { menu__list_current: !swappable })}>{content}</div>
                     </div>
                 </PopoverBody>
             </Popover>

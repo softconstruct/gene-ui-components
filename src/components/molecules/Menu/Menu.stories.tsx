@@ -17,7 +17,7 @@ const meta: Meta<typeof Menu> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         swappable: args({ control: "boolean", ...propCategory.appearance }),
-        onChange: args({ control: "false", ...propCategory.appearance }),
+        onChange: args({ control: "false", ...propCategory.action }),
         children: args({ control: "false", ...propCategory.content }),
         setPropsForPopover: args({ control: "false", ...propCategory.functionality }),
         loadingText: args({ control: "text", ...propCategory.content }),
