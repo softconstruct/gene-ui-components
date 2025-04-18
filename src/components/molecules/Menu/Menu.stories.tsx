@@ -1,14 +1,14 @@
 import React, { FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+// Components
 import Button from "@components/atoms/Button";
+import Menu, { IMenuProps } from "@components/molecules/Menu/index";
+import MenuItem from "@components/molecules/Menu/MenuItem";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import { data } from "./__shared/data";
-// Components
-import Menu, { IMenuProps } from "./index";
-import MenuItem from "./MenuItem";
 
 const meta: Meta<typeof Menu> = {
     title: "Molecules/Menu",

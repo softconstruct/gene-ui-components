@@ -191,6 +191,10 @@
             // visibility: visible;
         }
 
+        &_hidden {
+            display: none;
+        }
+
         /*
      &_swipeLeft {
       animation: swipe-left var(--guit-ref-motion-duration-slow) var(--guit-ref-motion-easing-standard) forwards;

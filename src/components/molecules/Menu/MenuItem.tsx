@@ -4,12 +4,13 @@ import { isValidElementType } from "react-is";
 
 import { IconProps } from "@geneui/icons";
 
+// Components
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
-import { isActiveElementInside } from "@components/molecules/Menu/helper";
 import MenuItemButton from "@components/molecules/Menu/MenuItemButton";
 
-// components
+// Helpers
+import { isActiveElementInside } from "./helper";
 import { MenuContext } from "./Menu";
 
 interface IMenuItemProps {
@@ -17,18 +18,19 @@ interface IMenuItemProps {
     children?: ReactNode;
     title?: string;
     activeElement?: boolean;
-    isLoading?: never;
     IconBefore?: FC<IconProps>;
     IconAfter?: FC<IconProps>;
     danger?: boolean;
     disabled?: boolean;
     id: number | string;
     divider?: boolean;
-    loadingText?: never;
     emptyText?: string;
     ComponentRender?: FC;
     generateId?: string;
     paths?: string[];
+    // todo remove loadingText and isLoading
+    loadingText?: never;
+    isLoading?: never;
 }
 
 const MenuItem: FC<IMenuItemProps> = ({
@@ -43,7 +45,7 @@ const MenuItem: FC<IMenuItemProps> = ({
     id,
     divider,
     ComponentRender,
-    emptyText,
+    emptyText = "No data to show",
     paths,
     generateId
 }) => {
@@ -51,10 +53,12 @@ const MenuItem: FC<IMenuItemProps> = ({
     const parentRef = useRef<HTMLDivElement | null>(null);
     const { onChangeHandler, swappable, relativeRefsSetter, size } = useContext(MenuContext);
     const [popoverOpenState, setPopoverOpenState] = useState(false);
+    const [isActiveSwappableContent, setIsActiveSwappableContent] = useState(false);
+
     useEffect(() => {
-        setPopoverOpenState(
-            !!generateId?.length && (paths?.join("_").startsWith(generateId) || paths?.join("_") === generateId)
-        );
+        const shouldOpenPopover =
+            !!generateId?.length && (paths?.join("_").startsWith(generateId) || paths?.join("_") === generateId);
+        setPopoverOpenState(shouldOpenPopover);
     }, [generateId, paths]);
 
     const popoverFloatingRef = useRef<IPopoverRef>({
@@ -98,21 +102,18 @@ const MenuItem: FC<IMenuItemProps> = ({
         </MenuItemButton>
     );
 
-    const [isActiveSwappableContent, setIsActiveSwappableContent] = useState(false);
-
     useEffect(() => {
         if (!swappable) return;
         const pathId = paths?.join("_");
-        if (generateId) {
-            setIsActiveSwappableContent(!paths?.length || (!!pathId && !!generateId?.startsWith(pathId)));
-        }
-    }, [paths, swappable, popoverOpenState, generateId]);
+        const isMatch = generateId?.startsWith(pathId || "");
+        setIsActiveSwappableContent(!paths?.length || !!isMatch);
+    }, [paths, swappable, generateId]);
 
     const renderedSwappableContent = useMemo(() => {
         if (Children.count(children) === 0) {
             return (
                 <div className="menu__empty">
-                    <h1>{emptyText || "No data to show"}</h1>
+                    <h1>{emptyText}</h1>
                 </div>
             );
         }
@@ -149,10 +150,9 @@ const MenuItem: FC<IMenuItemProps> = ({
                     )}
                     {/* menu list wrapper */}
                     <div
-                        style={{ display: popoverOpenState ? "block" : "none" }}
                         className={classNames("menu__list", {
                             menu__list_current: popoverOpenState,
-                            menu__item_disabled: disabled
+                            menu__list_hidden: !popoverOpenState
                         })}
                     >
                         {isActiveSwappableContent && (
@@ -226,7 +226,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                                         <span className="menu__itemTitle">{children}</span>
                                     ) : (
                                         <div className="menu__empty">
-                                            <h1>{emptyText || "No data to show"} e</h1>
+                                            <h1>{emptyText}</h1>
                                         </div>
                                     )}
                                 </Scrollbar>

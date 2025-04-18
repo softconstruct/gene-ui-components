@@ -65,6 +65,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
         <>
             <button
                 type="button"
+                role="menuitem"
                 className={classNames("menu__item", {
                     menu__item_danger: danger,
                     menu__item_disabled: disabled,

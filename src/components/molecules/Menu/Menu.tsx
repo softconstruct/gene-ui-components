@@ -18,17 +18,21 @@ import React, {
 import { ReferenceType } from "@floating-ui/react";
 import classNames from "classnames";
 
+// Components
+import Loader from "@components/atoms/Loader";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
-import { isActiveElementInside } from "@components/molecules/Menu/helper";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
+// Hooks
 import { useClickOutside } from "@hooks/index";
 
 // Styles
 import "./Menu.scss";
 
-import Loader from "../../atoms/Loader";
+// Helpers
+import { isActiveElementInside } from "./helper";
+// Types
 import { IMenuItemProps } from "./MenuItem";
 
 export interface OnchangeHandlerType {
@@ -255,6 +259,7 @@ const Menu: FC<IMenuProps> = ({
             >
                 <PopoverBody withPadding={false} className={`menu__body menu__body_size_${size}`} withScrollbar={false}>
                     <div
+                        role="menu"
                         ref={parentRef}
                         className={classNames("menu ", { menu_swappable: isMobileBreakpoint || swappable }, className)}
                     >
