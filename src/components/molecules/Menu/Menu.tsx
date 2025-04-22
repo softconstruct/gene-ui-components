@@ -20,7 +20,7 @@ import classNames from "classnames";
 
 // Components
 import Loader from "@components/atoms/Loader";
-import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
+import { IPopoverProps, IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
@@ -89,7 +89,18 @@ interface IMenuProps {
      * A function for setting additional props for the Popover component that wraps the menu.
      */
     setPropsForPopover: Dispatch<SetStateAction<Record<string, unknown>>>;
+    /**
+     * Menu size.<br/>
+     * Default value is `small`.<br/>
+     * Possible values: `large | medium | small`
+     */
     size?: SizeType;
+    /**
+     *
+     * Position of the Menu first popover, relative to the reference (trigger, anchor) element.<br>
+     * Possible values: `bottom-center | bottom-left | bottom-right | left-bottom | left-center` <br> `left-top | right-bottom | right-center | right-top | top-center | top-left | top-right | auto`
+     */
+    position?: IPopoverProps["position"];
 }
 
 const cloneChildrenRecursive = (
@@ -151,7 +162,8 @@ const Menu: FC<IMenuProps> = ({
     loadingText,
     swappable,
     setPropsForPopover,
-    size = "small"
+    size = "small",
+    position = "bottom-left"
 }) => {
     const [isOpenState, setIsOpenState] = useState<boolean>(false);
     const [paths, setPaths] = useState<string[]>([]);
@@ -270,8 +282,7 @@ const Menu: FC<IMenuProps> = ({
             <Popover
                 setProps={setPropsForPopover}
                 size={popoverSizeMapping[size]}
-                disableReposition
-                position="bottom-left"
+                position={position}
                 withArrow={false}
                 open={isOpenState}
                 ref={popoverRef}
@@ -288,7 +299,7 @@ const Menu: FC<IMenuProps> = ({
                     <div
                         role="menu"
                         ref={parentRef}
-                        className={classNames("menu ", { menu_swappable: isMobileBreakpoint || swappable }, className)}
+                        className={classNames("menu", { menu_swappable: isMobileBreakpoint || swappable }, className)}
                     >
                         <div className={classNames("menu__list", { menu__list_current: !swappable })}>{content}</div>
                     </div>

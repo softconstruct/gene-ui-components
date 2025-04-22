@@ -34,6 +34,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
     active,
     divider
 }) => {
+    const isRTLMode = document.dir === "rtl";
     const onItemClick = () => {
         switch (type) {
             case "parent":
@@ -47,7 +48,11 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
 
     const MemoizedIconAfter = useMemo(() => {
         if (type === "parent") {
-            return <ChevronRight className="menu__icon menu__icon_after" size={20} />;
+            return isRTLMode ? (
+                <ChevronLeft className="menu__icon menu__icon_after" size={20} />
+            ) : (
+                <ChevronRight className="menu__icon menu__icon_after" size={20} />
+            );
         }
         if (type !== "header") {
             if (selected) {
@@ -77,7 +82,12 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                 {...propsForPopover}
             >
                 <span className="menu__cell">
-                    {type === "header" && <ChevronLeft className="menu__icon menu__icon_before" size={20} />}
+                    {type === "header" &&
+                        (isRTLMode ? (
+                            <ChevronRight className="menu__icon menu__icon_before" size={20} />
+                        ) : (
+                            <ChevronLeft className="menu__icon menu__icon_before" size={20} />
+                        ))}
                     {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />}
                     {title ? (
                         <span className={type === "header" ? "menu__headerTitle" : "menu__itemTitle"}>{title}</span>

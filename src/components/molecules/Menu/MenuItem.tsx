@@ -55,6 +55,8 @@ const MenuItem: FC<IMenuItemProps> = ({
     const [popoverOpenState, setPopoverOpenState] = useState(false);
     const [isActiveSwappableContent, setIsActiveSwappableContent] = useState(false);
 
+    const isRTLMode = document.dir === "rtl";
+
     useEffect(() => {
         const shouldOpenPopover =
             !!generateId?.length && (paths?.join("_").startsWith(generateId) || paths?.join("_") === generateId);
@@ -202,8 +204,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                     <Popover
                         setProps={setPropsForPopover}
                         size={popoverSizeMapping[size]}
-                        disableReposition
-                        position="right-top"
+                        position={isRTLMode ? "left-top" : "right-top"}
                         withArrow={false}
                         margin={5}
                         open={popoverOpenState}

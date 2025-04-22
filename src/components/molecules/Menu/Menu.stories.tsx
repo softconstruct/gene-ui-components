@@ -22,7 +22,26 @@ const meta: Meta<typeof Menu> = {
         setPropsForPopover: args({ control: "false", ...propCategory.functionality }),
         loadingText: args({ control: "text", ...propCategory.content }),
         isLoading: args({ control: "boolean", ...propCategory.states }),
-        size: args({ control: "select", ...propCategory.appearance })
+        size: args({ control: "select", ...propCategory.appearance }),
+        position: args({
+            control: "select",
+            ...propCategory.appearance,
+            options: [
+                "bottom-center",
+                "bottom-left",
+                "bottom-right",
+                "left-bottom",
+                "left-center",
+                "left-top",
+                "right-bottom",
+                "right-center",
+                "right-top",
+                "top-center",
+                "top-left",
+                "top-right",
+                "auto"
+            ]
+        })
     },
     args: {} as IMenuProps
 };
