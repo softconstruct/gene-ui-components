@@ -161,16 +161,21 @@ const Menu: FC<IMenuProps> = ({
 
     useClickOutside(
         (e) => {
-            if (
+            const onMenuTargetClick =
                 e.target instanceof Node &&
                 popoverRef.current.referenceElement?.current instanceof Node &&
-                popoverRef.current.referenceElement.current.contains(e.target)
-            ) {
-                setIsOpenState((open) => !open);
-                if (isOpenState) {
-                    setPaths([]);
+                popoverRef.current.referenceElement.current.contains(e.target);
+
+            if (onMenuTargetClick) {
+                if (isMobileBreakpoint) {
+                    setIsOpenState(true);
+                } else {
+                    setIsOpenState((open) => !open);
+                    if (isOpenState) {
+                        setPaths([]);
+                    }
                 }
-            } else {
+            } else if (!isMobileBreakpoint) {
                 setIsOpenState(false);
                 setPaths([]);
             }
@@ -219,8 +224,16 @@ const Menu: FC<IMenuProps> = ({
     const clonedChildren = cloneChildrenRecursive(children, paths);
 
     const onScrollHandler = () => {
+        if (isMobileBreakpoint) return;
         if (isOpenState && !swappable) {
             if (!isActiveElementInside(parentRef, ".menu__item_active")) setPaths([]);
+        }
+    };
+
+    const onCloseHandler = () => {
+        if (isMobileBreakpoint) {
+            setIsOpenState(false);
+            setPaths([]);
         }
     };
 
@@ -256,6 +269,7 @@ const Menu: FC<IMenuProps> = ({
                 withArrow={false}
                 open={isOpenState}
                 ref={popoverRef}
+                onClose={onCloseHandler}
             >
                 <PopoverBody withPadding={false} className={`menu__body menu__body_size_${size}`} withScrollbar={false}>
                     <div
