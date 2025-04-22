@@ -19,6 +19,7 @@ describe("Skeleton ", () => {
         const wrapper = setup.setProps({ className });
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
+
     it("renders width prop correctly", () => {
         const width = 120;
         const wrapper = setup.setProps({ width });
@@ -31,9 +32,9 @@ describe("Skeleton ", () => {
         expect(wrapper.find(".skeleton").props().style?.height).toBe(height);
     });
 
-    it("renders flexible prop correctly", () => {
-        const wrapper = setup.setProps({ flexible: true });
-        expect(wrapper.find(".skeleton_flexible").exists()).toBeTruthy();
+    it("renders flex prop correctly", () => {
+        const wrapper = setup.setProps({ flex: true });
+        expect(wrapper.find(".skeleton_flex").exists()).toBeTruthy();
     });
 
     it("renders inverse prop correctly", () => {

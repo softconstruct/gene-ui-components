@@ -23,14 +23,14 @@ interface ISkeletonProps {
      */
     height?: number;
     /**
-     * This prop defines the rounded for the component <br/>
-     * possible values rounded4X | rounded3X | rounded2X | circle
+     * This prop defines the border radius for the component <br/>
+     * Possible values: `rounded4X | rounded3X | rounded2X | circle`
      */
     rounded?: "rounded4X" | "rounded3X" | "rounded2X" | "circle";
     /**
-     * Defines whether the row should be flexible or not <br/>
+     * Apply flex display type for the component <br/>
      */
-    flexible?: boolean;
+    flex?: boolean;
 }
 
 const Skeleton: FC<ISkeletonProps> = ({
@@ -38,7 +38,7 @@ const Skeleton: FC<ISkeletonProps> = ({
     width = "100%",
     inverse,
     rounded = "rounded2X",
-    flexible,
+    flex,
     className
 }) => {
     return (
@@ -46,7 +46,7 @@ const Skeleton: FC<ISkeletonProps> = ({
             className={classNames("skeleton", className, {
                 skeleton_backInverse: inverse,
                 [`skeleton_${rounded}`]: rounded,
-                skeleton_flexible: flexible
+                skeleton_flex: flex
             })}
             style={{ width, height }}
         />

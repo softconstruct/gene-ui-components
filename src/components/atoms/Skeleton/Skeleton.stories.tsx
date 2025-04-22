@@ -3,8 +3,8 @@ import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import { Col, Grid, Row } from "../Grid";
 // Components
+import { Col, Grid, Row } from "../Grid";
 import Skeleton, { ISkeletonProps } from "./index";
 
 const meta: Meta<typeof Skeleton> = {
@@ -15,9 +15,8 @@ const meta: Meta<typeof Skeleton> = {
         width: args({ control: "number", ...propCategory.appearance }),
         height: args({ control: "number", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
-
-        flexible: args({ control: "boolean", ...propCategory.states }),
-        inverse: args({ control: "boolean", ...propCategory.states })
+        inverse: args({ control: "boolean", ...propCategory.appearance }),
+        flex: args({ control: "boolean", ...propCategory.functionality })
     },
     args: {
         rounded: "rounded2X",
@@ -43,7 +42,7 @@ export const Default: Story = {
 export const template: Story = {
     render: (props) => {
         return (
-            <div style={{ width: "100%" }}>
+            <div>
                 <Grid>
                     <Row>
                         <Col size={2}>
@@ -59,16 +58,16 @@ export const template: Story = {
                                     height: "100%"
                                 }}
                             >
-                                <div style={{ width: "100%" }}>
+                                <div>
                                     <Skeleton height={20} />
                                 </div>
-                                <div style={{ width: "100%" }}>
+                                <div>
                                     <Skeleton height={20} />
                                 </div>
-                                <div style={{ width: "100%" }}>
+                                <div>
                                     <Skeleton height={20} />
                                 </div>
-                                <div style={{ width: "100%" }}>
+                                <div>
                                     <Skeleton height={20} />
                                 </div>
                             </div>
