@@ -11,7 +11,7 @@ import MenuItemButton from "@components/molecules/Menu/MenuItemButton";
 
 // Helpers
 import { isActiveElementInside } from "./helper";
-import { MenuContext } from "./Menu";
+import { MenuContext, popoverSizeMapping } from "./Menu";
 
 interface IMenuItemProps {
     selected?: boolean;
@@ -201,7 +201,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                     {/* menu list wrapper */}
                     <Popover
                         setProps={setPropsForPopover}
-                        size="fitContent"
+                        size={popoverSizeMapping[size]}
                         disableReposition
                         position="right-top"
                         withArrow={false}

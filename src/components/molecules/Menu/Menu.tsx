@@ -137,6 +137,12 @@ const cloneChildrenRecursive = (
 
 export const MenuContext = createContext<IMenuContextProps>({} as IMenuContextProps);
 
+export const popoverSizeMapping = {
+    large: "medium",
+    medium: "small",
+    small: "small"
+} as const;
+
 const Menu: FC<IMenuProps> = ({
     className,
     onChange,
@@ -263,7 +269,7 @@ const Menu: FC<IMenuProps> = ({
         <MenuContext.Provider value={memoizedMenuContextValue}>
             <Popover
                 setProps={setPropsForPopover}
-                size="fitContent"
+                size={popoverSizeMapping[size]}
                 disableReposition
                 position="bottom-left"
                 withArrow={false}
@@ -271,7 +277,14 @@ const Menu: FC<IMenuProps> = ({
                 ref={popoverRef}
                 onClose={onCloseHandler}
             >
-                <PopoverBody withPadding={false} className={`menu__body menu__body_size_${size}`} withScrollbar={false}>
+                <PopoverBody
+                    withPadding={false}
+                    className={classNames("menu__body", {
+                        [`menu__body_size_${size}`]: !isMobileBreakpoint,
+                        menu__body_mobile: isMobileBreakpoint
+                    })}
+                    withScrollbar={false}
+                >
                     <div
                         role="menu"
                         ref={parentRef}
