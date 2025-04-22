@@ -1,0 +1,59 @@
+import { Meta } from '@storybook/blocks';
+import useClickOutside from './useClickOutside';
+
+<Meta title="Hooks/useClickOutside" />
+
+<div style={{ paddingInlineStart: '20px' }}>
+
+## useClickOutside
+
+This hook detects clicks outside a specified element and triggers a callback function when such an event occurs.  
+It is particularly useful for implementing behaviors such as closing dropdowns, modals, and popovers when the user clicks outside of them.
+
+### **Returns**
+A function that takes a single parameter:
+
+- **`node: HTMLElement | null`** – The element to track for outside clicks.
+
+### **Parameters**
+- **`callback`**: A function `(e: MouseEvent) => void` that executes when an outside click is detected.
+- **`relativeElements`** _(optional)_: An array of `RefObject<HTMLElement>` elements that are considered "inside" and should not trigger the callback when clicked.
+
+### **Usage**
+
+```tsx
+import React, { useRef, useState } from 'react';
+import useClickOutside from '@geneui/components';
+
+const ExampleComponent = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const relativeRef = useRef(null);
+    const buttonRef = useRef(null);
+
+    const handleClickOutside = () => {
+        setIsOpen(false);
+    };
+
+    const ref = useClickOutside(handleClickOutside, [buttonRef, relativeRef]);
+
+    return (
+        <div>
+            <button ref={buttonRef} type="button" onClick={() => setIsOpen(!isOpen)}>
+                Toggle Menu
+            </button>
+
+            {isOpen && (
+                <div ref={ref} style={{ border: "1px solid black", padding: "10px" }}>
+                    This is a dropdown
+                </div>
+            )}
+
+            <span ref={relativeRef}>Relative Element</span>
+        </div>
+    );
+};
+
+export default ExampleComponent;
+```
+
+</div>

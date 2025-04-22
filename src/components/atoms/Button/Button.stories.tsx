@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 import { args, propCategory } from "stories/assets/storybook.globals";
 
-import { Search } from "@geneui/icons";
+import { Magnifier } from "@geneui/icons";
 
 import Button, { IButtonProps } from "./index";
 
@@ -39,6 +39,6 @@ export const Default: Story = {};
 
 export const WithIcon: Story = {
     args: {
-        Icon: Search
+        Icon: Magnifier
     }
 };

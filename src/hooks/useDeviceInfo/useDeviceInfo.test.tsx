@@ -1,9 +1,20 @@
 import React, { FC, useEffect } from "react";
 import { mount } from "enzyme";
 
-import useDeviceInfo from "../useDeviceInfo";
+import useDeviceInfo, { IDeviceInfo } from "../useDeviceInfo";
 
-type DeviceInfo = ReturnType<typeof useDeviceInfo>;
+const defaultDeviceInfo: IDeviceInfo = {
+    isMobileDevice: false,
+    isDesktopDevice: false,
+    isTouch: false,
+    os: "Unknown",
+    isWindows: false,
+    isMacOS: false,
+    isLinux: false,
+    isAndroid: false,
+    isIOS: false,
+    theme: "light"
+};
 
 describe("useDeviceInfo Hook", () => {
     const mockNavigator = (userAgent: string): void => {
@@ -14,8 +25,36 @@ describe("useDeviceInfo Hook", () => {
         });
     };
 
+    const mockTouchSupport = (isTouch: boolean = false) => {
+        Object.defineProperty(window, "ontouchstart", {
+            value: isTouch ? jest.fn() : undefined,
+            configurable: true
+        });
+
+        Object.defineProperty(navigator, "maxTouchPoints", {
+            value: isTouch ? 5 : 0,
+            configurable: true
+        });
+
+        if (typeof window.matchMedia !== "function") {
+            Object.defineProperty(window, "matchMedia", {
+                value: jest.fn().mockImplementation((query) => ({
+                    matches: isTouch && query === "(pointer: coarse)",
+                    media: query,
+                    onchange: null,
+                    addListener: jest.fn(),
+                    removeListener: jest.fn(),
+                    addEventListener: jest.fn(),
+                    removeEventListener: jest.fn(),
+                    dispatchEvent: jest.fn()
+                })),
+                configurable: true
+            });
+        }
+    };
+
     interface TestComponentProps {
-        callback: (deviceInfo: DeviceInfo) => void;
+        callback: (deviceInfo: IDeviceInfo) => void;
     }
 
     const TestComponent: FC<TestComponentProps> = ({ callback }) => {
@@ -39,14 +78,7 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: false,
-            os: "Unknown",
-            isWindows: false,
-            isMacOS: false,
-            isLinux: false,
-            isAndroid: false,
-            isIOS: false
+            ...defaultDeviceInfo
         });
     });
 
@@ -56,14 +88,10 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: true,
+            ...defaultDeviceInfo,
+            isDesktopDevice: true,
             os: "Windows",
-            isWindows: true,
-            isMacOS: false,
-            isLinux: false,
-            isAndroid: false,
-            isIOS: false
+            isWindows: true
         });
     });
 
@@ -73,14 +101,10 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: true,
+            ...defaultDeviceInfo,
+            isDesktopDevice: true,
             os: "macOS",
-            isWindows: false,
-            isMacOS: true,
-            isLinux: false,
-            isAndroid: false,
-            isIOS: false
+            isMacOS: true
         });
     });
 
@@ -90,47 +114,41 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: false,
-            isDesktop: true,
+            ...defaultDeviceInfo,
+            isDesktopDevice: true,
             os: "Linux",
-            isWindows: false,
-            isMacOS: false,
-            isLinux: true,
-            isAndroid: false,
-            isIOS: false
+            isLinux: true
         });
     });
 
     it("should detect Android OS", () => {
         mockNavigator("Mozilla/5.0 (Linux; Android 10; SM-G975F)");
+        mockTouchSupport(true); // Android is usually a touch device
+
         const callback = jest.fn();
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: true,
-            isDesktop: false,
+            ...defaultDeviceInfo,
+            isMobileDevice: true,
+            isTouch: true, // Should be true
             os: "Android",
-            isWindows: false,
-            isMacOS: false,
-            isLinux: false,
-            isAndroid: true,
-            isIOS: false
+            isAndroid: true
         });
     });
 
     it("should detect iOS", () => {
         mockNavigator("Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)");
+        mockTouchSupport(true); // iOS is a touch device
+
         const callback = jest.fn();
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobile: true,
-            isDesktop: false,
+            ...defaultDeviceInfo,
+            isMobileDevice: true,
+            isTouch: true, // Should be true
             os: "iOS",
-            isWindows: false,
-            isMacOS: false,
-            isLinux: false,
-            isAndroid: false,
             isIOS: true
         });
     });
