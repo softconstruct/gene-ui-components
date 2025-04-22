@@ -151,7 +151,7 @@ const Menu: FC<IMenuProps> = ({
     loadingText,
     swappable,
     setPropsForPopover,
-    size = "medium"
+    size = "small"
 }) => {
     const [isOpenState, setIsOpenState] = useState<boolean>(false);
     const [paths, setPaths] = useState<string[]>([]);
