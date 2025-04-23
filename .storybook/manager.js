@@ -1,5 +1,5 @@
 import React from "react";
-import { addons } from "@storybook/preview-api";
+import { addons } from "@storybook/manager-api";
 import { themes } from "@storybook/theming";
 import SidebarLabelWrapper from "./components/SidebarLabelWrapper/SidebarLabelWrapper";
 
