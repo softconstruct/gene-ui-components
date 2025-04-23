@@ -9,11 +9,11 @@ import Loader from "@components/atoms/Loader";
 // Styles
 import "./Button.scss";
 
-const iconSizes: Record<"large" | "medium" | "small" | "XSmall", IconProps["size"]> = {
+const iconSizes: Record<"large" | "medium" | "small" | "smallNudge", IconProps["size"]> = {
     large: 20,
     medium: 20,
     small: 20,
-    XSmall: 16
+    smallNudge: 16
 } as const;
 
 interface IButtonProps {
@@ -25,7 +25,7 @@ interface IButtonProps {
      * Size <br>
      * Possible values: `large | medium | small`
      */
-    size?: "large" | "medium" | "small" | "XSmall";
+    size?: "large" | "medium" | "small" | "smallNudge";
     /**
      * If `true`, the `button` will stretch to occupy the full width of its container.
      */
@@ -103,7 +103,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
         }: IButtonProps,
         ref
     ) => {
-        const isSizeXS = size === "XSmall";
+        const isSizeXS = size === "smallNudge";
         const isTextDisplayForXS =
             (appearance === "primary" || appearance === "danger" || appearance === "success") && isSizeXS;
 

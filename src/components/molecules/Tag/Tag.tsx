@@ -90,7 +90,7 @@ const Tag: FC<ITagProps> = ({
             <Button
                 className="tag__button"
                 appearance="secondary"
-                displayType="text"
+                layout="text"
                 Icon={X}
                 size={size}
                 onClick={onClose}

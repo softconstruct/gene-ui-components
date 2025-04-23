@@ -413,7 +413,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                                 Icon={X}
                                                 size="small"
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 className="popover__close"
                                                 onClick={() => setPopoverOpened(false)}
                                             />

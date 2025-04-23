@@ -56,7 +56,7 @@ describe("Button ", () => {
         expect(mockFn).toHaveBeenCalledWith(event);
     });
 
-    it.each<IButtonProps["size"]>(["large", "medium", "small", "XSmall"])("should have %s size", (size) => {
+    it.each<IButtonProps["size"]>(["large", "medium", "small", "smallNudge"])("should have %s size", (size) => {
         const wrapper = setup.setProps({ size });
         expect(wrapper.find(".button").hasClass(`button_size_${size}`)).toBeTruthy();
     });
@@ -69,9 +69,9 @@ describe("Button ", () => {
         }
     );
 
-    it.each<IButtonProps["displayType"]>(["fill", "outline", "text"])("should have %s displayType", (displayType) => {
-        const wrapper = setup.setProps({ displayType });
-        expect(wrapper.find(".button").hasClass(`button_type_${displayType}`)).toBeTruthy();
+    it.each<IButtonProps["layout"]>(["fill", "outline", "text"])("should have %s layout", (layout) => {
+        const wrapper = setup.setProps({ layout });
+        expect(wrapper.find(".button").hasClass(`button_type_${layout}`)).toBeTruthy();
     });
 
     it("renders className prop correctly", () => {
