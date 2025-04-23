@@ -1,6 +1,6 @@
 .spreadsheet {
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: 0;
     z-index: 1;
     width: 100%;
@@ -27,11 +27,5 @@
 
     &__container {
         height: 100%;
-    }
-}
-
-@supports (height: 100lvh) {
-    .spreadsheet {
-        height: 100lvh;
     }
 }
