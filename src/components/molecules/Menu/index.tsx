@@ -1,1 +1,2 @@
-export { IMenuProps, default } from "./Menu";
+export { IMenuProps, default as Menu } from "./Menu";
+export { default as MenuItem } from "./MenuItem";

@@ -28,7 +28,6 @@ interface IMenuItemProps {
     ComponentRender?: FC;
     generateId?: string;
     paths?: string[];
-    // todo remove loadingText and isLoading
     loadingText?: never;
     isLoading?: never;
 }

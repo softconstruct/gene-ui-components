@@ -58,11 +58,6 @@ interface IMenuContextProps {
 
 interface IMenuProps {
     /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
-     */
-    className?: string;
-    /**
      * The child elements of the menu. These should be <MenuItem/> components.
      */
     children: ReactElement | ReactElement[];
@@ -101,6 +96,10 @@ interface IMenuProps {
      * Possible values: `bottom-center | bottom-left | bottom-right | left-bottom | left-center` <br> `left-top | right-bottom | right-center | right-top | top-center | top-left | top-right | auto`
      */
     position?: IPopoverProps["position"];
+    /**
+     * Controls the open state for menu.
+     */
+    open?: boolean;
 }
 
 const cloneChildrenRecursive = (
@@ -155,7 +154,6 @@ export const popoverSizeMapping = {
 } as const;
 
 const Menu: FC<IMenuProps> = ({
-    className,
     onChange,
     children,
     isLoading,
@@ -163,9 +161,10 @@ const Menu: FC<IMenuProps> = ({
     swappable,
     setPropsForPopover,
     size = "small",
-    position = "bottom-left"
+    position = "bottom-left",
+    open
 }) => {
-    const [isOpenState, setIsOpenState] = useState<boolean>(false);
+    const [isOpenState, setIsOpenState] = useState<boolean>(true);
     const [paths, setPaths] = useState<string[]>([]);
     const [relativeRefs, setRelativeRefs] = useState<Record<string, MutableRefObject<ReferenceType | null>>>({});
     const parentRef = useRef(null);
@@ -188,7 +187,7 @@ const Menu: FC<IMenuProps> = ({
                 if (isMobileBreakpoint) {
                     setIsOpenState(true);
                 } else {
-                    setIsOpenState((open) => !open);
+                    setIsOpenState((prev) => !prev);
                     if (isOpenState) {
                         setPaths([]);
                     }
@@ -206,6 +205,10 @@ const Menu: FC<IMenuProps> = ({
             setIsOpenState(true);
         }
     }, [paths]);
+
+    useEffect(() => {
+        if (open !== undefined) setIsOpenState(open);
+    }, [open]);
 
     const onChangeHandler = ({ generateId, id, isBack, closeMenu }: OnchangeHandlerType) => {
         const idToArray = generateId.split("_");
@@ -234,9 +237,9 @@ const Menu: FC<IMenuProps> = ({
             onChangeHandler,
             swappable: isMobileBreakpoint || swappable,
             relativeRefsSetter,
-            size
+            size: size as SizeType
         }),
-        [onChangeHandler, swappable, size]
+        [onChangeHandler, swappable, size, isMobileBreakpoint, relativeRefsSetter]
     );
 
     const clonedChildren = cloneChildrenRecursive(children, paths);
@@ -299,7 +302,7 @@ const Menu: FC<IMenuProps> = ({
                     <div
                         role="menu"
                         ref={parentRef}
-                        className={classNames("menu", { menu_swappable: isMobileBreakpoint || swappable }, className)}
+                        className={classNames("menu", { menu_swappable: isMobileBreakpoint || swappable })}
                     >
                         <div className={classNames("menu__list", { menu__list_current: !swappable })}>{content}</div>
                     </div>

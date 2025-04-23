@@ -3,8 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 // Components
 import Button from "@components/atoms/Button";
-import Menu, { IMenuProps } from "@components/molecules/Menu/index";
-import MenuItem from "@components/molecules/Menu/MenuItem";
+import { IMenuProps, Menu, MenuItem } from "@components/molecules/Menu/index";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -22,6 +21,7 @@ const meta: Meta<typeof Menu> = {
         setPropsForPopover: args({ control: "false", ...propCategory.functionality }),
         loadingText: args({ control: "text", ...propCategory.content }),
         isLoading: args({ control: "boolean", ...propCategory.states }),
+        open: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         position: args({
             control: "select",
