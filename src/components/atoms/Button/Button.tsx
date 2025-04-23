@@ -38,7 +38,7 @@ interface IButtonProps {
      * Affect form styling point of view. <br>
      * Possible values: `fill | outline | text`
      */
-    displayType?: "fill" | "outline" | "text";
+    layout?: "fill" | "outline" | "text";
     /**
      * Indicates the action meaning. <br>
      * Possible values: `primary | secondary | danger | success | inverse | transparent`
@@ -59,13 +59,13 @@ interface IButtonProps {
     onClick: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Icon position <br>
-     * If the prop is `true` the `Icon` will be shown after the `text` otherwise before the `text`.
+     * Possible values: `before | after`
      */
-    iconAfter?: boolean;
+    iconPosition?: "before" | "after";
     /**
      * The prop responsible for showing the loading spinner if passed `true`. The default value is `false`
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
      * Additional class for the parent element.<br>
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -93,13 +93,13 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             fullWidth,
             name,
             size = "medium",
-            displayType = "fill",
+            layout = "fill",
             children,
             Icon,
             onClick,
             className,
-            iconAfter,
-            isLoading
+            iconPosition,
+            loading
         }: IButtonProps,
         ref
     ) => {
@@ -113,27 +113,27 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 name={name}
                 type="button"
                 onClick={onClick}
-                disabled={disabled && !isLoading}
-                {...(isLoading ? { tabIndex: -1 } : {})}
+                disabled={disabled && !loading}
+                {...(loading ? { tabIndex: -1 } : {})}
                 className={classNames(
                     `button button_size_${size} 
                     button_color_${appearance} 
-                    button_type_${isTextDisplayForXS ? "text" : displayType}`,
+                    button_type_${isTextDisplayForXS ? "text" : layout}`,
                     className,
                     {
                         button_fullWidth: fullWidth,
-                        button_icon_before: !iconAfter && Icon && children,
-                        button_icon_after: iconAfter && Icon && children,
+                        button_icon_before: iconPosition === "before" && Icon && children,
+                        button_icon_after: iconPosition === "after" && Icon && children,
                         button_icon_only: (!children || isSizeXS) && Icon,
-                        button_loading: isLoading
+                        button_loading: loading
                     }
                 )}
             >
-                {isLoading && (
+                {loading && (
                     <Loader
                         size="smallNudge"
                         className="button__loader"
-                        appearance={loadingTypes[appearance][displayType]}
+                        appearance={loadingTypes[appearance][layout]}
                     />
                 )}
 
