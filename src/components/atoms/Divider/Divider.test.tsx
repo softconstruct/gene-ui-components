@@ -17,8 +17,8 @@ describe("Divider ", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it("renders vertical prop correctly", () => {
-        const wrapper = setup.setProps({ vertical: true });
+    it("renders direction prop correctly", () => {
+        const wrapper = setup.setProps({ direction: "vertical" });
         expect(wrapper.find(".divider").hasClass("divider_vertical")).toBeTruthy();
     });
 
@@ -27,10 +27,10 @@ describe("Divider ", () => {
         expect(wrapper.find(CheckMark).exists()).toBeTruthy();
     });
 
-    it("renders label prop correctly", () => {
-        const label = "test";
-        const wrapper = setup.setProps({ label });
-        expect(wrapper.find(".divider").text()).toBe(label);
+    it("renders text prop correctly", () => {
+        const TestText = "test";
+        const wrapper = setup.setProps({ text: TestText });
+        expect(wrapper.find(".divider").text()).toBe(TestText);
     });
 
     it("renders content prop correctly", () => {
@@ -52,11 +52,11 @@ describe("Divider ", () => {
         }
     );
 
-    it.each<IDividerProps["labelPosition"]>(["center", "after", "before"])(
-        "should have %s labelPosition",
-        (labelPosition) => {
-            const wrapper = setup.setProps({ labelPosition, label: "test" });
-            expect(wrapper.find(".divider").hasClass(`divider_withLabel_${labelPosition}`)).toBeTruthy();
+    it.each<IDividerProps["contentPosition"]>(["center", "after", "before"])(
+        "should have %s contentPosition",
+        (contentPosition) => {
+            const wrapper = setup.setProps({ contentPosition, text: "test" });
+            expect(wrapper.find(".divider").hasClass(`divider_withLabel_${contentPosition}`)).toBeTruthy();
         }
     );
 
