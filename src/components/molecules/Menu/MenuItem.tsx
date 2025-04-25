@@ -14,19 +14,61 @@ import { isActiveElementInside } from "./helper";
 import { MenuContext, popoverSizeMapping } from "./Menu";
 
 interface IMenuItemProps {
+    /**
+     * Highlights the menu item as selected.
+     */
     selected?: boolean;
+    /**
+     * Content displayed inside the menu item. Can be nested items or a string label.
+     */
     children?: ReactNode;
+    /**
+     * Title shown for the menu item, when it acts as a parent for nested items.
+     */
     title?: string;
+    /**
+     * Used to apply an active style when rendering popover content.
+     */
     activeElement?: boolean;
+    /**
+     * Optional icon shown before the title/content.
+     */
     IconBefore?: FC<IconProps>;
+    /**
+     * Optional icon shown after the title/content.
+     */
     IconAfter?: FC<IconProps>;
+    /**
+     * Applies a "danger" style to the item (e.g., red text for destructive actions).
+     */
     danger?: boolean;
+    /**
+     * Disables the menu item, preventing interaction.
+     */
     disabled?: boolean;
+    /**
+     * Unique identifier for the item, used in selection and navigation logic.
+     */
     id: number | string;
+    /**
+     * If true, adds a visual divider after the item.
+     */
     divider?: boolean;
+    /**
+     * Fallback text shown when the item has no children.
+     */
     emptyText?: string;
+    /**
+     * Custom component rendered inside the item (for more flexible layouts).
+     */
     ComponentRender?: FC;
+    /**
+     * Controls the open state for menu.
+     */
     generateId?: string;
+    /**
+     * Controls the open state for menu.
+     */
     paths?: string[];
     loadingText?: never;
     isLoading?: never;
