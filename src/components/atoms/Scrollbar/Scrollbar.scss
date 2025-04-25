@@ -1,10 +1,16 @@
 .scrollbar {
+    $this: &;
+
     min-width: 0;
     min-height: 0;
 
     &_width {
         &_full {
             width: 100%;
+
+            #{ $this }__content {
+                width: 100%;
+            }
         }
 
         &_auto {
@@ -15,6 +21,10 @@
     &_height {
         &_full {
             height: 100%;
+
+            #{ $this }__content {
+                height: 100%;
+            }
         }
 
         &_auto {

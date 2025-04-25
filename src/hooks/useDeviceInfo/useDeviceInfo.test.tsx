@@ -1,9 +1,20 @@
 import React, { FC, useEffect } from "react";
 import { mount } from "enzyme";
 
-import useDeviceInfo from "../useDeviceInfo";
+import useDeviceInfo, { IDeviceInfo } from "../useDeviceInfo";
 
-type DeviceInfo = ReturnType<typeof useDeviceInfo>;
+const defaultDeviceInfo: IDeviceInfo = {
+    isMobileDevice: false,
+    isDesktopDevice: false,
+    isTouch: false,
+    os: "Unknown",
+    isWindows: false,
+    isMacOS: false,
+    isLinux: false,
+    isAndroid: false,
+    isIOS: false,
+    theme: "light"
+};
 
 describe("useDeviceInfo Hook", () => {
     const mockNavigator = (userAgent: string): void => {
@@ -43,7 +54,7 @@ describe("useDeviceInfo Hook", () => {
     };
 
     interface TestComponentProps {
-        callback: (deviceInfo: DeviceInfo) => void;
+        callback: (deviceInfo: IDeviceInfo) => void;
     }
 
     const TestComponent: FC<TestComponentProps> = ({ callback }) => {
@@ -67,15 +78,7 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobileDevice: false,
-            isDesktopDevice: false,
-            isTouch: false,
-            os: "Unknown",
-            isWindows: false,
-            isMacOS: false,
-            isLinux: false,
-            isAndroid: false,
-            isIOS: false
+            ...defaultDeviceInfo
         });
     });
 
@@ -85,15 +88,10 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobileDevice: false,
+            ...defaultDeviceInfo,
             isDesktopDevice: true,
-            isTouch: false,
             os: "Windows",
-            isWindows: true,
-            isMacOS: false,
-            isLinux: false,
-            isAndroid: false,
-            isIOS: false
+            isWindows: true
         });
     });
 
@@ -103,15 +101,10 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobileDevice: false,
+            ...defaultDeviceInfo,
             isDesktopDevice: true,
-            isTouch: false,
             os: "macOS",
-            isWindows: false,
-            isMacOS: true,
-            isLinux: false,
-            isAndroid: false,
-            isIOS: false
+            isMacOS: true
         });
     });
 
@@ -121,15 +114,10 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
-            isMobileDevice: false,
+            ...defaultDeviceInfo,
             isDesktopDevice: true,
-            isTouch: false,
             os: "Linux",
-            isWindows: false,
-            isMacOS: false,
-            isLinux: true,
-            isAndroid: false,
-            isIOS: false
+            isLinux: true
         });
     });
 
@@ -141,15 +129,11 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
+            ...defaultDeviceInfo,
             isMobileDevice: true,
-            isDesktopDevice: false,
             isTouch: true, // Should be true
             os: "Android",
-            isWindows: false,
-            isMacOS: false,
-            isLinux: false,
-            isAndroid: true,
-            isIOS: false
+            isAndroid: true
         });
     });
 
@@ -161,14 +145,10 @@ describe("useDeviceInfo Hook", () => {
         mount(<TestComponent callback={callback} />);
 
         expect(callback).toHaveBeenCalledWith({
+            ...defaultDeviceInfo,
             isMobileDevice: true,
-            isDesktopDevice: false,
             isTouch: true, // Should be true
             os: "iOS",
-            isWindows: false,
-            isMacOS: false,
-            isLinux: false,
-            isAndroid: false,
             isIOS: true
         });
     });
