@@ -23,7 +23,7 @@ interface IButtonProps {
     name?: string;
     /**
      * Size <br>
-     * Possible values: `large | medium | small`
+     * Possible values: `large | medium | small | "smallNudge"`
      */
     size?: "large" | "medium" | "small" | "smallNudge";
     /**
