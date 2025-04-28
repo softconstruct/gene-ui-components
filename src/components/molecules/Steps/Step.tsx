@@ -106,7 +106,7 @@ const Step: FC<IStepProps> = ({
 
                 <Divider
                     className="steps__status_divider"
-                    vertical={direction === "vertical"}
+                    direction={direction}
                     appearance={state === "complete" && !disabled ? "brand" : "default"}
                 />
             </div>

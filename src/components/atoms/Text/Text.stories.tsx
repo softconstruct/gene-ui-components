@@ -43,7 +43,7 @@ export const Variants: Meta = {
     render: () => {
         return (
             <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                <Divider label="Heading" labelPosition="center" />
+                <Divider text="Heading" contentPosition="center" />
                 <Text as="p" variant="headingXLargeSemibold">
                     Text with headingXLargeSemibold variant
                 </Text>
@@ -59,14 +59,14 @@ export const Variants: Meta = {
                 <Text as="p" variant="headingXSmallSemibold">
                     Text with headingXSmallSemibold variant
                 </Text>
-                <Divider label="Subheading" labelPosition="center" />
+                <Divider text="Subheading" contentPosition="center" />
                 <Text as="p" variant="subheadingLargeSemibold">
                     Text with subheadingLargeSemibold variant
                 </Text>
                 <Text as="p" variant="subheadingMediumSemibold">
                     Text with subheadingMediumSemibold variant
                 </Text>
-                <Divider label="Label" labelPosition="center" />
+                <Divider text="Label" contentPosition="center" />
                 <Text as="p" variant="labelLargeSemibold">
                     Text with labelLargeSemibold variant
                 </Text>
@@ -85,7 +85,7 @@ export const Variants: Meta = {
                 <Text as="p" variant="labelSmallMedium">
                     Text with labelSmallMedium variant
                 </Text>
-                <Divider label="Body" labelPosition="center" />
+                <Divider text="Body" contentPosition="center" />
                 <Text as="p" variant="bodyLargeSemibold">
                     Text with bodyLargeSemibold variant
                 </Text>
@@ -104,7 +104,7 @@ export const Variants: Meta = {
                 <Text as="p" variant="bodyMediumRegular">
                     Text with bodyMediumRegular variant
                 </Text>
-                <Divider label="Caption" labelPosition="center" />
+                <Divider text="Caption" contentPosition="center" />
                 <Text as="p" variant="captionLargeSemibold">
                     Text with captionLargeSemibold variant
                 </Text>

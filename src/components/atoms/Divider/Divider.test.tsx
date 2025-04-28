@@ -23,13 +23,13 @@ describe("Divider ", () => {
     });
 
     it("renders Icon prop correctly", () => {
-        const wrapper = setup.setProps({ Icon: CheckMark });
+        const wrapper = setup.setProps({ Icon: CheckMark, direction: "horizontal" });
         expect(wrapper.find(CheckMark).exists()).toBeTruthy();
     });
 
     it("renders text prop correctly", () => {
         const TestText = "test";
-        const wrapper = setup.setProps({ text: TestText });
+        const wrapper = setup.setProps({ text: TestText, direction: "horizontal" });
         expect(wrapper.find(".divider").text()).toBe(TestText);
     });
 
@@ -55,7 +55,7 @@ describe("Divider ", () => {
     it.each<IDividerProps["contentPosition"]>(["center", "after", "before"])(
         "should have %s contentPosition",
         (contentPosition) => {
-            const wrapper = setup.setProps({ contentPosition, text: "test" });
+            const wrapper = setup.setProps({ contentPosition, text: "test", direction: "horizontal" });
             expect(wrapper.find(".divider").hasClass(`divider_withLabel_${contentPosition}`)).toBeTruthy();
         }
     );
