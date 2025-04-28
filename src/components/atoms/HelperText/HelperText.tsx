@@ -34,7 +34,7 @@ interface IHelperTextProps {
      * Determines whether the helper text is disabled.
      * If `true`, the helper text will appear dimmed and non-interactive.
      */
-    isDisabled?: boolean;
+    disabled?: boolean;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -50,7 +50,7 @@ const iconSize = {
 /**
  * The Helper Text provides users with additional information or guidance related to a specific input field in a form. This text helps users understand the expected format, requirements, or purpose of the input, thereby improving form completion accuracy and user confidence.
  */
-const HelperText: FC<IHelperTextProps> = ({ size = "medium", type = "rest", text, Icon, isDisabled, className }) => {
+const HelperText: FC<IHelperTextProps> = ({ size = "medium", type = "rest", text, Icon, disabled, className }) => {
     const iconMap = {
         error: <Error size={iconSize[size]} />,
         warning: <TriangleAlert size={iconSize[size]} />,
@@ -60,7 +60,7 @@ const HelperText: FC<IHelperTextProps> = ({ size = "medium", type = "rest", text
     return (
         <div
             className={classnames(`helperText helperText_type_${type} helperText_size_${size}`, className, {
-                helperText_disabled: isDisabled
+                helperText_disabled: disabled
             })}
         >
             {iconMap[type] && <div className="helperText__icon">{iconMap[type]}</div>}
