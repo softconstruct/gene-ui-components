@@ -370,7 +370,7 @@ const Rate: FC<IRateProps> = (props) => {
                     })}
                 </>
             </div>
-            <HelperText text={helperText} isDisabled={disabled} size={size} />
+            <HelperText text={helperText} disabled={disabled} size={size} />
         </div>
     );
 };
