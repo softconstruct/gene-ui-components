@@ -164,7 +164,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
             {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             <Label
-                labelText={label}
+                text={label}
                 className="checkbox__label"
                 required={required}
                 infoText={infoText}

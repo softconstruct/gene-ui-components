@@ -305,7 +305,7 @@ const Rate: FC<IRateProps> = (props) => {
             onBlur={() => setDisableMouseMove(false)}
             style={cssWitVariable}
         >
-            <Label labelText={label} size={size} infoText={infoText} disabled={disabled} />
+            <Label text={label} size={size} infoText={infoText} disabled={disabled} />
             <div className="rate__content">
                 <>
                     {elements.map((_, i) => {
