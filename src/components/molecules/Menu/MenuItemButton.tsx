@@ -75,7 +75,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                     menu__item_danger: danger,
                     menu__item_disabled: disabled,
                     menu__item_active: active,
-                    menu__header: type === "header"
+                    menu__item_header: type === "header"
                 })}
                 onClick={onItemClick}
                 {...(disabled ? { tabIndex: -1 } : {})}
@@ -89,15 +89,15 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                             <ChevronLeft className="menu__icon menu__icon_before" size={20} />
                         ))}
                     {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />}
-                    {title ? (
-                        <span className={type === "header" ? "menu__headerTitle" : "menu__itemTitle"}>{title}</span>
-                    ) : (
-                        children
-                    )}
+                    {title ? <span className={type === "header" ? "menu__headerTitle" : ""}>{title}</span> : children}
                 </span>
                 {MemoizedIconAfter}
             </button>
-            {divider && <Divider />}
+            {divider && (
+                <div className="menu__divider">
+                    <Divider />
+                </div>
+            )}
         </>
     );
 };

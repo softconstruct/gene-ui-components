@@ -258,7 +258,7 @@ const Menu: FC<IMenuProps> = ({
         }
     };
 
-    const hasSwappablePaths = !!swappable && !!paths.length;
+    const hasSwappablePaths = (!!swappable || isMobileBreakpoint) && !!paths.length;
 
     const content = useMemo(() => {
         if (isLoading) {
@@ -274,8 +274,8 @@ const Menu: FC<IMenuProps> = ({
         }
 
         return (
-            <Scrollbar className="menu__content" onScroll={onScrollHandler}>
-                {clonedChildren}
+            <Scrollbar className="menu__scrollbar" onScroll={onScrollHandler}>
+                <div className="menu__content">{clonedChildren}</div>
             </Scrollbar>
         );
     }, [isLoading, loadingText, hasSwappablePaths, clonedChildren, onScrollHandler]);

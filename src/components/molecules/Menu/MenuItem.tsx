@@ -163,13 +163,13 @@ const MenuItem: FC<IMenuItemProps> = ({
 
         if (isActiveSwappableContent) {
             return (
-                <Scrollbar className="menu__content">
-                    <span className="menu__itemTitle">{children}</span>
+                <Scrollbar className="menu__scrollbar">
+                    <div className="menu__content">{children}</div>
                 </Scrollbar>
             );
         }
 
-        return <span className="menu__itemTitle">{children}</span>;
+        return <div className="menu__content">{children}</div>;
     }, [children, emptyText, isActiveSwappableContent]);
 
     return swappable ? (
@@ -199,7 +199,9 @@ const MenuItem: FC<IMenuItemProps> = ({
                         })}
                     >
                         {isActiveSwappableContent && (
-                            <MenuItemButton type="header" onItemClickHandler={onItemClickHandler} title={title} />
+                            <div className="menu__header">
+                                <MenuItemButton type="header" onItemClickHandler={onItemClickHandler} title={title} />
+                            </div>
                         )}
 
                         {renderedSwappableContent}
@@ -247,13 +249,13 @@ const MenuItem: FC<IMenuItemProps> = ({
                         size={popoverSizeMapping[size]}
                         position={isRTLMode ? "left-top" : "right-top"}
                         withArrow={false}
-                        margin={5}
+                        margin={10}
                         open={popoverOpenState}
                         ref={popoverFloatingRef}
                     >
                         <PopoverBody
                             withPadding={false}
-                            className={`menu__body menu__body_size_${size}`}
+                            className={`menu__body menu__body_size menu__body_size_${size}`}
                             withScrollbar={false}
                         >
                             <div
@@ -263,9 +265,9 @@ const MenuItem: FC<IMenuItemProps> = ({
                                     menu__item_disabled: disabled
                                 })}
                             >
-                                <Scrollbar className="menu__content" onScroll={onScrollHandler}>
+                                <Scrollbar className="menu__scrollbar" onScroll={onScrollHandler}>
                                     {Children.count(children) > 0 ? (
-                                        <span className="menu__itemTitle">{children}</span>
+                                        <div className="menu__content">{children}</div>
                                     ) : (
                                         <div className="menu__empty">
                                             <h1>{emptyText}</h1>
