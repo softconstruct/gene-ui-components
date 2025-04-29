@@ -5,13 +5,13 @@ import "./Loader.scss";
 
 interface ILoaderProps {
     /**
-     * Any valid React node. Renders when "isLoading" is set to false
+     * Any valid React node. Renders when "loading" is set to false
      */
     children?: ReactNode;
     /**
      * Indicates if spinner should be visible.
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
      * Text to provide more context for Loader.
      */
@@ -42,7 +42,7 @@ interface ILoaderProps {
  */
 
 const Loader: FC<ILoaderProps> = ({
-    isLoading = true,
+    loading = true,
     text,
     textPosition = "after",
     size = "medium",
@@ -50,7 +50,7 @@ const Loader: FC<ILoaderProps> = ({
     children,
     className = ""
 }) => {
-    if (isLoading) {
+    if (loading) {
         return (
             <span
                 className={`loader loader_direction_${textPosition} loader_size_${size} loader_color_${appearance} ${className}`}
