@@ -18,7 +18,7 @@ const meta: Meta<ITextProps> = {
         as: args({ control: "select", ...propCategory.appearance }),
         alignment: args({ control: "select", ...propCategory.appearance }),
         truncate: args({ control: "boolean", ...propCategory.appearance }),
-        withTooltip: args({ control: "boolean", ...propCategory.functionality })
+        withTooltip: args({ control: "boolean", ...propCategory.appearance })
     },
     args: {
         variant: "headingLargeSemibold"
