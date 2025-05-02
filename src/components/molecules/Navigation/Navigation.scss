@@ -1,13 +1,16 @@
 .navigation {
     height: 100%;
-    width: 40px;
+    display: flex;
 
     &__col {
         height: 100%;
         display: flex;
 
         &_wrapper {
+            display: flex;
+            flex-direction: column;
             padding: var(--guit-ref-spacing-xsmall);
+            gap: var(--guit-ref-spacing-xsmall);
         }
     }
 
@@ -22,7 +25,7 @@
         border-radius: var(--guit-ref-radius-3xsmall);
         background-color: var(--guit-sem-color-background-neutral-1);
 
-        &_selected {
+        &_active {
             background-color: var(--guit-sem-color-background-selected-2);
             color: var(--guit-sem-color-foreground-inverse);
         }
@@ -31,6 +34,12 @@
             pointer-events: none;
             color: var(--guit-sem-color-foreground-disabled);
             background-color: var(--guit-sem-color-background-neutral-1);
+        }
+
+        &_opened {
+            pointer-events: none;
+            background-color: var(--guit-sem-color-background-neutral-1-hover);
+            color: var(--guit-sem-color-foreground-neutral-2);
         }
 
         &:hover {
@@ -43,7 +52,89 @@
         }
     }
 
+    &__addButton {
+        margin-top: auto;
+    }
+
     &__divider {
         flex: 0 0 auto;
+    }
+
+    &__menu {
+        display: flex;
+        width: 20rem;
+
+        &_wrapper {
+            width: 100%;
+            padding: 0 var(--guit-ref-spacing-xsmall);
+            display: flex;
+            flex-direction: column;
+            gap: var(--guit-ref-spacing-xsmall);
+        }
+    }
+}
+
+.navigationItem {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-xsmall);
+
+    &__button {
+        width: 100%;
+        display: flex;
+        padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-xsmall)
+            var(--guit-ref-spacing-medium);
+        border-radius: var(--guit-ref-radius-3xsmall);
+        background: var(--guit-sem-color-border-neutral-1);
+        gap: var(--guit-ref-spacing-xsmall);
+
+        &:hover {
+            background: var(--guit-sem-color-background-neutral-1-hover);
+        }
+
+        &:active {
+            background: var(--guit-sem-color-background-neutral-1-pressed);
+        }
+
+        &_selected {
+            color: var(--guit-sem-color-foreground-selected);
+
+            &_noChildren {
+                color: var(--guit-sem-color-foreground-accent-blue);
+                background: var(--guit-sem-color-background-neutral-3);
+            }
+        }
+
+        &_disabled {
+            // pointer-events: none;
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+
+        &_shift {
+            &_1 {
+                padding-inline-start: var(--guit-ref-spacing-5xlarge);
+            }
+
+            &_2 {
+                padding-inline-start: var(--guit-ref-spacing-8xlarge);
+            }
+
+            &_3 {
+                padding-inline-start: var(--guit-ref-spacing-9xlarge);
+            }
+
+            &_4 {
+                padding-inline-start: var(--guit-ref-spacing-10xlarge);
+            }
+        }
+    }
+
+    &__chevron {
+        margin-left: auto;
+
+        &_open {
+            transform: rotate(90deg);
+        }
     }
 }
