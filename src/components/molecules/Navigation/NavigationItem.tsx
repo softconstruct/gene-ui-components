@@ -8,19 +8,28 @@ import Text from "@components/atoms/Text";
 interface INavigationItemProps {
     title: string;
     children?: React.ReactNode;
-    onClick?: () => void;
+    onClick?: (path?: string) => void;
     disabled?: boolean;
     selected?: boolean;
     depth: number;
     Icon?: FC<IconProps>;
+    path?: string;
 }
 
-const NavigationItem: FC<INavigationItemProps> = ({ title, children, onClick, disabled, selected, depth, Icon }) => {
+const NavigationItem: FC<INavigationItemProps> = ({
+    title,
+    children,
+    onClick,
+    disabled,
+    selected,
+    depth,
+    Icon,
+    path
+}) => {
     const [isNavItemOpen, setIsNavItemOpen] = React.useState(false);
-
-    const onclickHandler = () => {
+    const onClickHandler = () => {
         if (onClick) {
-            onClick();
+            onClick(path);
         }
         setIsNavItemOpen((prev) => !prev);
     };
@@ -37,7 +46,7 @@ const NavigationItem: FC<INavigationItemProps> = ({ title, children, onClick, di
                     navigationItem__button_selected: selected,
                     navigationItem__button_selected_noChildren: !children && selected
                 })}
-                onClick={onclickHandler}
+                onClick={onClickHandler}
             >
                 {Icon && (
                     <span className="navigationItem__icon">

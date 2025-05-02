@@ -128,5 +128,10 @@ export const navigationData = [
             { title: "FAQ", path: "/faq" },
             { title: "Contact Support", path: "/contactSupport" }
         ]
+    },
+    {
+        title: "Help Center",
+        Icon: Globe,
+        path: "/helpCenter"
     }
 ];

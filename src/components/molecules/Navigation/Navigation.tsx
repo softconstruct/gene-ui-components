@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
-import { IconProps, Magnifier, ThreeDotsHorizontal } from "@geneui/icons";
+import { Magnifier, ThreeDotsHorizontal } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Popover, { IPopoverRef } from "@components/atoms/Popover/Popover";
@@ -20,6 +20,7 @@ import { Divider } from "../../../index";
 interface INavigationChildrenProps {
     title: string;
     Icon?: FC;
+    path?: string;
     children?: INavigationChildrenProps[];
 }
 
@@ -30,18 +31,58 @@ interface INavigationProps {
      */
     className?: string;
     open?: boolean;
-    navigationData?: {
-        title: string;
-        Icon: FC<IconProps>;
-        children?: INavigationChildrenProps[];
-    }[];
+    navigationData?: INavigationChildrenProps[];
+    activePath?: string | null;
+    onClick?: (path: string) => void;
 }
 
-const NavMenuContent: FC<{ data: INavigationChildrenProps; depth?: number }> = ({ data, depth = 0 }) => {
-    return data.children?.map((item) => {
+export const findPath = (
+    navigationData: INavigationChildrenProps[],
+    targetPath: string,
+    currentPath: number[] = []
+): number[] | null => {
+    for (let i = 0; i < navigationData.length; i++) {
+        const item = navigationData[i];
+
+        if (item.path === targetPath) {
+            return [...currentPath, i];
+        }
+
+        if (item.children) {
+            const result = findPath(item.children, targetPath, [...currentPath, i]);
+            if (result) {
+                return result;
+            }
+        }
+    }
+
+    return null;
+};
+
+const NavMenuContent: FC<{
+    data: INavigationChildrenProps;
+    depth?: number;
+    onClick: (path: string) => void;
+    activePathIndex?: number[] | null;
+}> = ({ data, depth = 0, onClick, activePathIndex }) => {
+    return data.children?.map((item, index) => {
         return (
-            <NavigationItem title={item.title} depth={depth} Icon={item.Icon}>
-                {item.children && <NavMenuContent data={item} depth={depth + 1} />}
+            <NavigationItem
+                title={item.title}
+                path={item.path}
+                depth={depth}
+                Icon={item.Icon}
+                onClick={onClick}
+                selected={index === activePathIndex?.[0]}
+            >
+                {item.children && (
+                    <NavMenuContent
+                        data={item}
+                        depth={depth + 1}
+                        onClick={onClick}
+                        activePathIndex={activePathIndex?.slice(1)}
+                    />
+                )}
             </NavigationItem>
         );
     });
@@ -50,26 +91,45 @@ const NavMenuContent: FC<{ data: INavigationChildrenProps; depth?: number }> = (
 /**
  * Navigation is a vertical component that appears on the left side of a user interface. It provides users with quick access to key features.
  */
-const Navigation: FC<INavigationProps> = ({ className, open, navigationData }) => {
+const Navigation: FC<INavigationProps> = ({ className, open, navigationData, activePath, onClick }) => {
     const [currentDataIndex, setCurrentDataIndex] = useState<number | null>(null);
     const [hoverDataIndex, setHoverDataIndex] = useState<number | null>(null);
     const [isNavigationOpen, setIsNavigationOpen] = useState<boolean | null>(null);
-    // const [mouseOver, setMouseOver] = useState(false);
+    const [activePathIndex, setActivePathIndex] = useState<number[] | null>(null);
     const [propsForPopover, setPropsForPopover] = useState({});
-    const popoverRef = useRef<IPopoverRef>({
-        floatingElement: { current: null },
-        referenceElement: { current: null }
+    const popoverRef = useRef<{ current: IPopoverRef }>({
+        current: {
+            floatingElement: { current: null },
+            referenceElement: { current: null }
+        }
     });
 
     useEffect(() => {
         setIsNavigationOpen((prev) => {
-            if ((open && prev) || (prev && !open) || prev) {
+            // if ((open && prev) || (prev && !open) || prev) {
+            //     return false;
+            // }
+            // if (open) {
+            //     return true;
+            // }
+            // return open || prev !== null;
+
+            if (open && prev) {
                 return false;
             }
             if (open) {
                 return true;
             }
-            return open || prev !== null;
+
+            if (prev && !open) {
+                return false;
+            }
+
+            if (prev) {
+                return false;
+            }
+
+            return prev !== null;
         });
     }, [open]);
 
@@ -84,25 +144,39 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData }) =
         [popoverRef?.current?.floatingElement, popoverRef?.current?.referenceElement]
     );
 
-    const onNavigationColItemClick = (index: number) => {
+    const onNavigationColItemClick = (index: number, path?: string) => {
         setCurrentDataIndex(index);
-        setIsNavigationOpen(true);
+        if (navigationData && navigationData[index]?.children?.length > 0) {
+            setIsNavigationOpen(true);
+        }
         setHoverDataIndex(null);
+        if (path && onClick) {
+            onClick(path);
+        }
     };
+
+    useEffect(() => {
+        setActivePathIndex(findPath(navigationData || [], activePath || ""));
+    }, [activePath]);
 
     const onMouseEnterHandler = (index: number) => {
         if (isNavigationOpen) return;
         setHoverDataIndex(index);
     };
-    const onMouseLeaveHandler = () => {
-        // setHoverDataIndex(null);
+    const onItemClickHandler = (path?: string) => {
+        if (path && onClick) {
+            onClick(path);
+            if (hoverDataIndex !== null) {
+                setHoverDataIndex(null);
+            }
+        }
     };
 
     return (
         <div className={classNames("navigation", className)} role="navigation">
             <div className="navigation__col">
                 <div className="navigation__col_wrapper">
-                    {navigationData?.map(({ Icon, title }, index) => {
+                    {navigationData?.map(({ Icon, title, path }, index) => {
                         return (
                             <>
                                 <NavigationColItem
@@ -110,31 +184,40 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData }) =
                                     title={title}
                                     onClick={onNavigationColItemClick}
                                     index={index}
+                                    path={path}
                                     opened={currentDataIndex === index}
-                                    active={index === 4}
+                                    active={index === activePathIndex?.[0]}
                                     onMouseEnter={onMouseEnterHandler}
-                                    onMouseLeave={onMouseLeaveHandler}
                                     {...(hoverDataIndex === index ? { propsForPopover } : {})}
                                 />
-                                <Popover
-                                    setProps={setPropsForPopover}
-                                    size="small"
-                                    position="right-top"
-                                    withArrow
-                                    margin={20}
-                                    disableReposition
-                                    ref={popoverRef}
-                                    // defaultOpen={index === hoverDataIndex}
-                                    open={hoverDataIndex === index && !isNavigationOpen}
-                                >
-                                    <PopoverBody withPadding={false}>
-                                        <div className="navigation__menu_wrapper">
-                                            {navigationData && hoverDataIndex !== null && (
-                                                <NavMenuContent data={navigationData[hoverDataIndex]} />
-                                            )}
-                                        </div>
-                                    </PopoverBody>
-                                </Popover>
+                                {navigationData &&
+                                    hoverDataIndex !== null &&
+                                    navigationData[hoverDataIndex].children?.length > 0 && (
+                                        <Popover
+                                            setProps={setPropsForPopover}
+                                            size="small"
+                                            position="right-top"
+                                            withArrow
+                                            margin={20}
+                                            disableReposition
+                                            ref={popoverRef}
+                                            open={hoverDataIndex === index && !isNavigationOpen}
+                                        >
+                                            <PopoverBody withPadding={false}>
+                                                <div className="navigation__menu_wrapper">
+                                                    <NavMenuContent
+                                                        data={navigationData[hoverDataIndex]}
+                                                        onClick={onItemClickHandler}
+                                                        activePathIndex={
+                                                            activePathIndex && hoverDataIndex === activePathIndex[0]
+                                                                ? activePathIndex.slice(1)
+                                                                : null
+                                                        }
+                                                    />
+                                                </div>
+                                            </PopoverBody>
+                                        </Popover>
+                                    )}
                             </>
                         );
                     })}
@@ -149,18 +232,27 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData }) =
                 </div>
                 <Divider className="navigation__divider" vertical />
             </div>
-            {isNavigationOpen && (
-                <div className="navigation__menu">
-                    <Scrollbar>
-                        <div className="navigation__menu_wrapper">
-                            {navigationData && currentDataIndex !== null && (
-                                <NavMenuContent data={navigationData[currentDataIndex]} />
-                            )}
-                        </div>
-                    </Scrollbar>
-                    <Divider className="navigation__divider" vertical />
-                </div>
-            )}
+            {isNavigationOpen &&
+                navigationData &&
+                currentDataIndex !== null &&
+                navigationData[currentDataIndex].children?.length > 0 && (
+                    <div className="navigation__menu">
+                        <Scrollbar>
+                            <div className="navigation__menu_wrapper">
+                                <NavMenuContent
+                                    data={navigationData[currentDataIndex]}
+                                    onClick={onItemClickHandler}
+                                    activePathIndex={
+                                        activePathIndex && currentDataIndex === activePathIndex[0]
+                                            ? activePathIndex.slice(1)
+                                            : null
+                                    }
+                                />
+                            </div>
+                        </Scrollbar>
+                        <Divider className="navigation__divider" vertical />
+                    </div>
+                )}
         </div>
     );
 };

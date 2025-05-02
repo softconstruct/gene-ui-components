@@ -12,9 +12,9 @@ interface INavigationColItemProps {
     title?: string;
     index?: number;
     opened?: boolean;
-    onClick?: (index: number) => void;
+    onClick?: (index: number, path?: string) => void;
     onMouseEnter?: (index: number) => void;
-    onMouseLeave?: () => void;
+    path?: string;
     propsForPopover?: Record<string, HTMLButtonElement>;
 }
 
@@ -26,13 +26,13 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
     onClick,
     index,
     onMouseEnter,
-    onMouseLeave,
     propsForPopover = {},
-    opened
+    opened,
+    path
 }) => {
     const onClickHandler = (activeIndex?: number) => {
         if (onClick) {
-            onClick(activeIndex || 0);
+            onClick(activeIndex || 0, path);
         }
     };
 
@@ -45,7 +45,7 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
     };
 
     return (
-        <div className="navigation__colItem" onMouseLeave={onMouseLeave}>
+        <div className="navigation__colItem">
             <button
                 type="button"
                 disabled={disabled}

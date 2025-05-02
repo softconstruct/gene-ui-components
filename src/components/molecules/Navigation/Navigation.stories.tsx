@@ -27,13 +27,25 @@ export default meta;
 
 const NavigationStoryComponent = (props: INavigationProps) => {
     const [isNavigationOpen, setIsNavigationOpen] = useState(false);
+    const [activePath, setActivePath] = useState<string | null>("/dashboard");
+
+    const onClickHandler = (path: string) => {
+        setActivePath(path);
+        setIsNavigationOpen(false);
+    };
 
     return (
         <div style={{ height: "90vh" }}>
             <div style={{ position: "fixed", top: 8, right: 8 }}>
                 <Button onClick={() => setIsNavigationOpen((prev) => !prev)} Icon={HamburgerMenu} />
             </div>
-            <Navigation open={isNavigationOpen} navigationData={navigationData} {...props} />
+            <Navigation
+                open={isNavigationOpen}
+                navigationData={navigationData}
+                {...props}
+                activePath={activePath}
+                onClick={onClickHandler}
+            />
         </div>
     );
 };
