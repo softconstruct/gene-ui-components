@@ -59,7 +59,7 @@ interface ITextLinkProps {
      * Indicates whether the component is in a loading state.
      * When set to `true` a skeleton indicator will be shown instead of the component.
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
      * An optional icon to display alongside the link text.
      */
@@ -90,11 +90,11 @@ const TextLink: FC<ITextLinkProps> = ({
     size = "medium",
     disabled,
     onClick,
-    isLoading,
+    loading,
     Icon,
     className
 }) =>
-    isLoading ? (
+    loading ? (
         <span>skeleton</span>
     ) : (
         <a
