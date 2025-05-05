@@ -32,7 +32,7 @@ interface IKeyValueProps extends IKeyValueContextProps {
      */
     spaceBetween?: boolean;
     /**
-     * Children - value direction <br/>
+     * Defines the children for the component.<br/>
      * Possible values: `Key | Value`
      */
     children: [ReactElement<IKeyProps>, ReactElement<IValueProps>];
