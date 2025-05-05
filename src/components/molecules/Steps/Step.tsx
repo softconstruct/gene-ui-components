@@ -32,7 +32,7 @@ interface IPointTypesProps {
 interface IStepProps extends IPointTypesProps {
     /**
      * The text displayed as the label for the Step, describing its purpose.<br>
-     * The Label can be clickable on not. For more information see the isLinear prop.
+     * The Label can be clickable on not. For more information see the linear prop.
      */
     label?: string;
     /**

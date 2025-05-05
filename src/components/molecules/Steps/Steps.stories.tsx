@@ -30,13 +30,13 @@ const StepsStory: Story = {
         className: args({ control: "false", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance }),
-        isLinear: args({ control: "boolean", ...propCategory.functionality }),
+        linear: args({ control: "boolean", ...propCategory.functionality }),
         onChange: args({ control: "false", ...propCategory.action }),
         children: args({ control: "false", ...propCategory.content })
     },
     args: {
         direction: "vertical",
-        isLinear: false,
+        linear: false,
         type: "dot"
     },
     render: (props) => {
@@ -56,7 +56,7 @@ const StepStory: StoryStep = storyObjBuilder({
         error: args({ control: "boolean", ...propCategory.states }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         label: args({ control: "text", ...propCategory.content }),
-        stepNumber: args({ control: "number", ...propCategory.content }),
+        stepNumber: args({ control: "false", ...propCategory.content }),
         id: args({ control: "false", ...propCategory.others }),
         description: args({ control: "text", ...propCategory.content }),
         state: args({ control: "select", ...propCategory.appearance, options: ["incomplete", "current", "complete"] })
