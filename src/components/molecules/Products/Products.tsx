@@ -1,10 +1,23 @@
-import React, { FC } from "react";
+import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from "react";
 import classNames from "classnames";
+
+import { AppGrid } from "@geneui/icons";
+
+// Components
+import Button from "@components/atoms/Button";
+import { Popover, PopoverBody } from "@components/atoms/Popover";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
+
 // Styles
 import "./Products.scss";
-import { Globe } from "@geneui/icons";
-import Badge from "../../atoms/Badge";
-import Divider from "../../atoms/Divider";
+
+import { IProductProps } from "./index";
+
+interface IProductsContext {
+    onClick: (event: IProductProps) => void;
+}
+
+export const ProductsContext = createContext<IProductsContext>({} as IProductsContext);
 
 interface IProductsProps {
     /**
@@ -12,107 +25,55 @@ interface IProductsProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    // fill Products component props interface
+    /**
+     * Provide `<ProductsMainSection/>` or `<ProductsSecondarySection/> components to be rendered in the `<Products/>`
+     */
+    children: ReactNode;
+    /**
+     * Fires when the user interact with `Product`. Provides the `Product` `id` as a callback's argument.
+     */
+    onClick?: (event: IProductProps) => void;
 }
 
 /**
  * Products component is a menu-based UI element that allows users to switch between different products or services within an ecosystem.
  */
-const Products: FC<IProductsProps> = ({ className }) => {
+const Products: FC<IProductsProps> = ({ onClick, className, children }) => {
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
+    const [propsForContent, setPropsForContent] = useState({});
+
+    const isRTL = document.dir === "rtl";
+
+    const memoizedProductsContextValue = useMemo(
+        () => ({
+            onClick
+        }),
+        []
+    );
+
     return (
-        <div className={classNames("products", className)}>
-            <div className="products__list">
-                {/* For products__item add tabindex */}
-                <Badge size="small" value={999}>
-                    <div className="products__item">
-                        <span className="products__item-logo">
-                            <Globe size="48" />
-                        </span>
-                        <span className="products__item-title">Backoffice</span>
-                    </div>
-                </Badge>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">BME</span>
-                </div>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">CMS</span>
-                </div>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">Affiliate</span>
-                </div>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">Umbrella</span>
-                </div>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">Agent</span>
-                </div>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">CRM</span>
-                </div>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">Poker</span>
-                </div>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">Spring</span>
-                </div>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">Product</span>
-                </div>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">Friendship</span>
-                </div>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">Translation Tool</span>
-                </div>
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">Data Spot</span>
-                </div>
-            </div>
-            <Divider />
-            <div className="products__list">
-                <div className="products__item">
-                    <span className="products__item-logo">
-                        <Globe size="48" />
-                    </span>
-                    <span className="products__item-title">Data Spot</span>
-                </div>
-            </div>
+        <div>
+            <ProductsContext.Provider value={memoizedProductsContextValue as IProductsContext}>
+                <Popover
+                    disableReposition={false}
+                    position={`${isRTL ? "bottom-left" : "bottom-right"}`}
+                    size="medium"
+                    setProps={setPropsForContent}
+                    withArrow={false}
+                    margin={4}
+                >
+                    <PopoverBody
+                        className={classNames("products", className, {
+                            products__mobile: breakpoint?.isMobileBreakpoint
+                        })}
+                        withScrollbar
+                        withPadding={false}
+                    >
+                        {children}
+                    </PopoverBody>
+                </Popover>
+                <Button Icon={AppGrid} onClick={() => {}} {...propsForContent} />
+            </ProductsContext.Provider>
         </div>
     );
 };
