@@ -69,7 +69,7 @@ const Products: FC<IProductsProps> = ({ onClick, className, children }) => {
                         withScrollbar
                         withPadding={false}
                     >
-                        {children}
+                        <div className="products__container">{children}</div>
                     </PopoverBody>
                 </Popover>
                 <Button Icon={AppGrid} onClick={() => {}} {...propsForContent} />
