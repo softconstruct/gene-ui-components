@@ -11,9 +11,9 @@ const meta: Meta<ITagProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance }),
-        disabled: args({ control: "boolean", ...propCategory.appearance }),
+        disabled: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
-        withIcon: args({ control: "boolean", ...propCategory.appearance }),
+        withIcon: args({ control: "boolean", ...propCategory.content }),
         text: args({ control: "text", ...propCategory.content }),
         onClose: args({ control: "false", ...propCategory.action })
     },
