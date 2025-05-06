@@ -5,133 +5,186 @@ import { Globe, LightBulb } from "@geneui/icons";
 import Checkbox from "../../Checkbox";
 
 export const data = [
-    { title: "item 1", selected: false, id: "1233", value: "name1", IconBefore: Globe, danger: true, divider: true },
-    { title: "item 2", selected: false, id: "123fd343", value: "name3", IconAfter: LightBulb, danger: true },
     {
-        title: "item 2ii",
-        id: "123dsfd343",
-        value: "name3",
+        title: "Users",
+        selected: false,
+        id: "users",
+        value: "users",
+        IconBefore: Globe,
         danger: true,
-        ComponentRender: () => {
-            return (
-                <span>
-                    <Checkbox label="test" name="test" value="test" />
-                </span>
-            );
-        }
+        divider: true
     },
     {
-        title: "EMPTY",
+        title: "Admins",
         selected: false,
-        id: "qwwqwe",
-        value: "namesd3",
+        id: "admins",
+        value: "admins",
+        IconAfter: LightBulb,
+        danger: true
+    },
+    {
+        title: "Options",
+        id: "options",
+        value: "options",
+        danger: true,
+        ComponentRender: () => (
+            <span>
+                <Checkbox label="Enable logs" name="logs" value="logs" />
+            </span>
+        )
+    },
+    {
+        title: "Projects",
+        selected: false,
+        id: "projects",
+        value: "projects",
         IconAfter: LightBulb,
         divider: true,
         children: [],
-        emptyText: "empty text"
+        emptyText: "No projects available"
     },
     {
-        title: "item 3",
+        title: "Teams",
         selected: false,
-        id: "1236343",
-        value: "name4",
+        id: "teams",
+        value: "teams",
         IconBefore: Globe,
         children: [
-            { title: "item 44sghdf", selected: false, id: "1d23s3", value: "namye55", disabled: true },
-            { title: "item 44aghsf", selected: false, id: "dfds", value: "namey55" },
-            { title: "item 44aghsf", selected: false, id: "ddfgf", value: "natme55" },
-            { title: "item 4fv4eraf", selected: false, id: "wef", value: "namree55" },
-            { title: "item 4fr4sdf", selected: false, id: "1d2sdd3s3", value: "sdf", disabled: true },
-            { title: "item ggf44rasf", selected: false, id: "dfffds", value: "sdf" },
-            { title: "item 4vb4asf", selected: false, id: "ddggddfgf", value: "namsdfe55" },
-            { title: "item 44tytyaf", selected: false, id: "wsdasdef", value: "sdsdf" },
             {
-                title: "item 555111",
+                title: "Alpha",
                 selected: false,
-                id: "12as3343",
-                value: "name355",
-                // defaultOpened: true,
-                isLoading: true,
-                loadingText: "loading text",
+                id: "team-alpha",
+                value: "alpha",
                 children: [
-                    { title: "item 44", selected: false, id: "1s23s3", value: "name55" },
-                    { title: "item 5553333", selected: false, id: "12as33f43", value: "name355" },
+                    { title: "UI", selected: false, id: "alpha-ui", value: "ui" },
+                    { title: "UX", selected: false, id: "alpha-ux", value: "ux" },
                     {
-                        title: "item 35555",
+                        title: "Dev",
                         selected: false,
-                        id: "sddsdfgdfgsdrgsg",
-                        value: "name4ff",
-                        children: [
-                            { title: "item 44", selected: false, id: "123s3", value: "name55" },
-                            { title: "item 555888", selected: true, id: "1d2as3343", value: "name355" }
-                        ]
+                        id: "alpha-dev",
+                        value: "dev",
+                        children: Array.from({ length: 10 }, (_, i) => ({
+                            title: `Module ${i + 1}`,
+                            selected: false,
+                            id: `alpha-mod-${i + 1}`,
+                            value: `mod${i + 1}`
+                        }))
                     }
                 ]
             },
             {
-                title: "item 35555",
+                title: "Delta",
                 selected: false,
-                id: "123sdshjkklld6343",
-                value: "name4ff",
+                id: "team-delta",
+                value: "delta"
+            },
+            {
+                title: "Epsilon",
+                selected: false,
+                id: "team-epsilon",
+                value: "epsilon"
+            },
+            {
+                title: "Beta",
+                selected: false,
+                id: "team-beta",
+                value: "beta",
                 children: [
-                    { title: "item 44sghdsdff", selected: false, id: "1d2xcv3s3", value: "ff", disabled: true },
-                    { title: "item 44aghdfgsf", selected: false, id: "dfdegrds", value: "namefvy55" },
-                    { title: "item 44agfhghsf", selected: false, id: "ddhhytfgf", value: "ffg" },
-                    { title: "item 4fv4efghraf", selected: false, id: "wehhf", value: "fgfdg" },
-                    { title: "item 4fr4fghsdf", selected: false, id: "1d2tsdd3s3", value: "ffg", disabled: true },
-                    { title: "item ggf4tr4rasf", selected: false, id: "dfffsdcds", value: "fgfdg" },
-                    { title: "item 4vbrt4asf", selected: false, id: "ddggdsdcdfgf", value: "ffdf" },
-                    { title: "item 44ttytyaf", selected: false, id: "wsdcsdef", value: "erer" },
                     {
-                        title: "item ewerwed",
+                        title: "Design",
                         selected: false,
-                        id: "wedewwe",
-                        value: "wedwed",
-                        isLoading: true,
-                        loadingText: "loading text",
+                        id: "beta-design",
+                        value: "design"
+                    },
+                    {
+                        title: "Dev",
+                        selected: false,
+                        id: "beta-dev",
+                        value: "dev",
                         children: [
-                            { title: "item wedwd", selected: false, id: "gth", value: "tyhrth" },
-                            { title: "item scassa", selected: false, id: "yhrtg", value: "ergewrg" },
+                            { title: "Node", selected: false, id: "beta-node", value: "node" },
                             {
-                                title: "item rtgrgr",
+                                title: "Infra",
                                 selected: false,
-                                id: "rtgrwes",
-                                value: "sdferf",
-                                children: [
-                                    { title: "item ergrgg", selected: false, id: "rrrth", value: "ergerg" },
-                                    { title: "item reg4e44", selected: true, id: "regergsd", value: "ergerg" }
-                                ]
+                                id: "beta-infra",
+                                value: "infra",
+                                children: Array.from({ length: 6 }, (_, i) => ({
+                                    title: `Region ${i + 1}`,
+                                    selected: false,
+                                    id: `infra-region-${i + 1}`,
+                                    value: `region${i + 1}`
+                                }))
                             }
                         ]
-                    },
-                    {
-                        title: "erferf",
-                        selected: false,
-                        id: "erferf",
-                        value: "efef",
-                        children: [
-                            { title: "erferg", selected: false, id: "erfergerg45", value: "45t4g" },
-                            { title: "456455645", selected: true, id: "456455f4f", value: "45g4g" }
-                        ]
-                    },
-                    { title: "erfr ewf", selected: false, id: "werfec", value: "ewrtwe", disabled: true },
-                    { title: "erfergerg werf", selected: false, id: "ecerc", value: "ewrtewrt" },
-                    { title: "erfef deccdecd", selected: false, id: "ercferc", value: "ergerg" },
-                    { title: "erferf sdc", selected: false, id: "ecece", value: "erfgert" },
-                    { title: "ergrtt sx", selected: false, id: "ecec", value: "ertret", disabled: true },
-                    { title: "ergerg asd", selected: false, id: "ececr", value: "wergrth" },
-                    { title: "rgeg dsc", selected: false, id: "ecerfre", value: "ergretg" },
-                    { title: "ergeerr efc", selected: false, id: "ecec", value: "erferf" }
+                    }
                 ]
             },
-            { title: "item 345", selected: false, id: "1d2345s3", value: "namree55", disabled: true },
-            { title: "item 543", selected: false, id: "df55ds", value: "nareme55" },
-            { title: "item 456", selected: false, id: "ddf555gf", value: "nreame55" },
-            { title: "item 45646", selected: false, id: "w34ref", value: "namere55" },
-            { title: "item 35556667655", selected: false, id: "435", value: "sdrtef", disabled: true },
-            { title: "item 5464565", selected: false, id: "dff3ffds", value: "sderf" },
-            { title: "item 36344434", selected: false, id: "ddrefggddfgf", value: "namsdfe55" },
-            { title: "item 34545354", selected: false, id: "w4545sdasdef", value: "sdsdf" }
+            ...Array.from({ length: 10 }, (_, i) => ({
+                title: `Team ${i + 1}`,
+                selected: false,
+                id: `team-${i + 1}`,
+                value: `team${i + 1}`
+            })),
+            {
+                title: "Gamma",
+                selected: false,
+                id: "team-gamma",
+                value: "gamma",
+                children: [
+                    {
+                        title: "QA",
+                        selected: false,
+                        id: "gamma-qa",
+                        value: "qa",
+                        children: Array.from({ length: 8 }, (_, i) => ({
+                            title: `Test ${i + 1}`,
+                            selected: false,
+                            id: `qa-test-${i + 1}`,
+                            value: `test${i + 1}`
+                        }))
+                    },
+                    {
+                        title: "Docs",
+                        selected: false,
+                        id: "gamma-docs",
+                        value: "docs"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        title: "Settings",
+        selected: false,
+        id: "settings",
+        value: "settings",
+        children: [
+            {
+                title: "General",
+                selected: false,
+                id: "settings-general",
+                value: "general"
+            },
+            {
+                title: "Security",
+                selected: false,
+                id: "settings-security",
+                value: "security",
+                children: [
+                    {
+                        title: "2FA",
+                        selected: false,
+                        id: "security-2fa",
+                        value: "2fa"
+                    },
+                    {
+                        title: "Sessions",
+                        selected: false,
+                        id: "security-sessions",
+                        value: "sessions"
+                    }
+                ]
+            }
         ]
     }
 ];
