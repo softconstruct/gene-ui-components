@@ -47,22 +47,22 @@
             color: var(--guit-sem-color-foreground-disabled);
             pointer-events: none;
         }
-    }
 
-    &__item-logo {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: var(--guit-sem-dimension-width-xlarge);
-        height: var(--guit-sem-dimension-height-xlarge);
-    }
+        &_logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--guit-sem-dimension-width-xlarge);
+            height: var(--guit-sem-dimension-height-xlarge);
+        }
 
-    &__item-title {
-        font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
-        font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
-        font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
-        line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
-        overflow-wrap: anywhere;
+        &_title {
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+            font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
+            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            overflow-wrap: anywhere;
+        }
     }
 
     &__badge {
