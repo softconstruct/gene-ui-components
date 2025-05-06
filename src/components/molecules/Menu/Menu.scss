@@ -90,7 +90,7 @@
 
     &__headerTitle {
         flex: 1;
-        font-family: var(--guit-sem-font-body-medium-default-semibold-font-family), sans-serif;
+        font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
         font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
         font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
         line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
@@ -110,7 +110,7 @@
         padding-inline-start: var(--guit-ref-spacing-4xsmall);
 
         #{ $this }__content {
-            font-family: var(--guit-sem-font-body-medium-default-medium-font-family), sans-serif;
+            font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
             font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
             font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
             line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
@@ -129,7 +129,6 @@
         width: 100%;
         color: var(--guit-sem-color-foreground-neutral-2);
         user-select: none;
-        background-color: #ef9caa;
 
         &:not(&#{ $this }__item_header) {
             height: 3.2rem;
