@@ -119,27 +119,61 @@ const Pagination: FC<IPaginationProps> = ({
         onPageChange?.(+e.currentTarget.innerText);
     };
 
-    const changeWithArrow = (isDoubleArrow?: boolean, isForward?: boolean) => {
-        if (isDoubleArrow && isForward) {
-            setCurrentPage((prev) => prev + 3);
-            onPageChange?.(currentPage + 3);
-            return;
+    const changeWithArrow = (
+        isDoubleArrow?: boolean,
+        isForward?: boolean,
+        isFirstStep?: boolean,
+        isLastStep?: boolean
+    ) => {
+        if (isFirstStep) {
+            if (currentPage === 1) {
+                setCurrentPage((prev) => prev + 6);
+                onPageChange?.(currentPage + 6);
+                return;
+            }
+            if (currentPage === 2) {
+                setCurrentPage((prev) => prev + 5);
+                onPageChange?.(currentPage + 5);
+                return;
+            }
         }
-        if (!isDoubleArrow && isForward) {
-            onPageChange?.(currentPage + 1);
-            setCurrentPage((prev) => prev + 1);
-            return;
+        if (isLastStep) {
+            if (currentPage === totalPages) {
+                setCurrentPage((prev) => prev - 6);
+                onPageChange?.(currentPage - 6);
+                return;
+            }
+            if (currentPage === totalPages - 1) {
+                setCurrentPage((prev) => prev - 5);
+                onPageChange?.(currentPage - 5);
+                return;
+            }
+        }
+        if (isDoubleArrow) {
+            if (isForward) {
+                setCurrentPage((prev) => prev + 3);
+                onPageChange?.(currentPage + 3);
+                return;
+            }
+
+            if (!isForward) {
+                setCurrentPage((prev) => prev - 3);
+                onPageChange?.(currentPage - 3);
+                return;
+            }
         }
 
-        if (isDoubleArrow && !isForward) {
-            setCurrentPage((prev) => prev - 3);
-            onPageChange?.(currentPage - 3);
-            return;
-        }
+        if (!isDoubleArrow) {
+            if (isForward) {
+                onPageChange?.(currentPage + 1);
+                setCurrentPage((prev) => prev + 1);
+                return;
+            }
 
-        if (!isDoubleArrow && !isForward) {
-            onPageChange?.(currentPage - 1);
-            setCurrentPage((prev) => prev - 1);
+            if (!isForward) {
+                onPageChange?.(currentPage - 1);
+                setCurrentPage((prev) => prev - 1);
+            }
         }
     };
 
@@ -189,7 +223,14 @@ const Pagination: FC<IPaginationProps> = ({
                     {!isLessOrEqualFive && (
                         <PaginationButton
                             disabled={currentPage - 3 <= 1}
-                            onClick={() => changeWithArrow(true)}
+                            onClick={() =>
+                                changeWithArrow(
+                                    true,
+                                    false,
+                                    false,
+                                    currentPage === totalPages || currentPage === totalPages - 1
+                                )
+                            }
                             Icon={isRTLMode ? ChevronDoubleRight : ChevronDoubleLeft}
                         />
                     )}
@@ -215,7 +256,7 @@ const Pagination: FC<IPaginationProps> = ({
                         <>
                             <PaginationButton
                                 disabled={currentPage + 3 >= totalPages}
-                                onClick={() => changeWithArrow(true, true)}
+                                onClick={() => changeWithArrow(true, true, currentPage === 1 || currentPage === 2)}
                                 Icon={isRTLMode ? ChevronDoubleLeft : ChevronDoubleRight}
                             />
 
