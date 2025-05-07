@@ -199,7 +199,7 @@ const Pagination: FC<IPaginationProps> = ({
                                 key={el}
                                 className={classNames("pagination__nav_item", {
                                     pagination__nav_item_selected:
-                                        currentPage + 3 >= totalPages || currentPage - 3 <= 0
+                                        currentPage + 2 >= totalPages || currentPage - 3 <= 0
                                             ? currentPage === el
                                             : Math.round(calculatedData.length / 2) - 1 === i
                                 })}
