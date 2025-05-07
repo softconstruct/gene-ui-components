@@ -13,11 +13,10 @@ const meta: Meta<IPaginationProps> = {
         current: args({ control: "text", ...propCategory.content }),
         pageSizes: args({ control: "false", ...propCategory.content }),
         totalPages: args({ control: "text", ...propCategory.content }),
-
+        className: args({ control: "false", ...propCategory.appearance }),
         onPageChange: args({ control: "false", ...propCategory.action }),
         onPageSizeChange: args({ control: "false", ...propCategory.action }),
-
-        showInputPageField: args({ control: "boolean", ...propCategory.state })
+        showInputPageField: args({ control: "boolean", ...propCategory.states })
     },
 
     args: {
@@ -52,5 +51,8 @@ export const WithoutPageInputField: Story = {
 export const WithoutPageSizeAndPageInputField: Story = {
     render: (props) => {
         return <Pagination {...props} showInputPageField={undefined} pageSizes={undefined} />;
+    },
+    argTypes: {
+        showInputPageField: args({ control: "false", ...propCategory.state })
     }
 };
