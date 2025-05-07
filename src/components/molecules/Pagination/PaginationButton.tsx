@@ -14,12 +14,10 @@ const PaginationButton: FC<Props> = ({ onClick, Icon, disabled }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
     return (
         <div
-            onMouseEnter={() => {
-                setIsHovered(true);
-            }}
-            onMouseLeave={() => {
-                setIsHovered(false);
-            }}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onFocus={() => setIsHovered(true)}
+            onBlur={() => setIsHovered(false)}
         >
             <Button
                 disabled={disabled}

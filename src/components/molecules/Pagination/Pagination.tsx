@@ -193,12 +193,15 @@ const Pagination: FC<IPaginationProps> = ({
                             Icon={isRTLMode ? ChevronDoubleRight : ChevronDoubleLeft}
                         />
                     )}
-                    {calculatedData.map((el) => {
+                    {calculatedData.map((el, i) => {
                         return (
                             <button
                                 key={el}
                                 className={classNames("pagination__nav_item", {
-                                    pagination__nav_item_selected: el === currentPage
+                                    pagination__nav_item_selected:
+                                        currentPage + 3 >= totalPages || currentPage - 3 <= 0
+                                            ? currentPage === el
+                                            : Math.round(calculatedData.length / 2) - 1 === i
                                 })}
                                 type="button"
                                 onClick={pageChange}
