@@ -11,7 +11,7 @@ const meta: Meta<ILabelProps> = {
     argTypes: {
         size: args({ control: "select", ...propCategory.appearance }),
         text: args({ control: "text", ...propCategory.content }),
-        required: args({ control: "boolean", ...propCategory.content }),
+        required: args({ control: "boolean", ...propCategory.states }),
         infoText: args({ control: "text", ...propCategory.content }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         loading: args({ control: "boolean", ...propCategory.states }),
