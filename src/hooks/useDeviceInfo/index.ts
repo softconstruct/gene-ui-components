@@ -1,1 +1,1 @@
-export { default } from "./useDeviceInfo";
+export { default, IDeviceInfo } from "./useDeviceInfo";
