@@ -50,6 +50,7 @@ interface IPaginationProps {
  Pagination divides content into multiple pages, allowing users to navigate through large datasets or long lists of items in a more manageable and digestible way.
 */
 
+const MAXIMUM_SIZE_IN_VIEW_PORT = 5;
 const Pagination: FC<IPaginationProps> = ({
     className,
     current = 1,
@@ -61,9 +62,9 @@ const Pagination: FC<IPaginationProps> = ({
 }) => {
     const isRTLMode = document.dir === "rtl";
 
-    const isLessOrEqualFive = totalPages <= 5;
+    const isLessOrEqualFive = totalPages <= MAXIMUM_SIZE_IN_VIEW_PORT;
 
-    const [currentPage, setCurrentPage] = useState<number>(current);
+    const [currentPage, setCurrentPage] = useState<number>(+current);
     const [currentPageSize, setCurrentPageSize] = useState<number>(pageSizes?.[0] || 0);
     const [calculatedData, setCalculatedData] = useState<number[]>([]);
 
@@ -79,19 +80,30 @@ const Pagination: FC<IPaginationProps> = ({
                 createData = [currentPage - 1, currentPage, currentPage + 1, currentPage + 2, currentPage + 3];
             } else if (currentPage - 2 === 0) {
                 createData = [currentPage, currentPage + 1, currentPage + 2, currentPage + 3, currentPage + 4];
-            } else if (totalPages > 5 && currentPage > 2 && currentPage - 2 !== 0 && currentPage + 2 !== totalPages) {
+            } else if (
+                totalPages > MAXIMUM_SIZE_IN_VIEW_PORT &&
+                currentPage > 2 &&
+                currentPage - 2 !== 0 &&
+                currentPage + 2 !== totalPages
+            ) {
                 createData = [currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
             } else if (currentPage + 2 === totalPages && currentPage > 3) {
                 createData = [currentPage - 3, currentPage - 2, currentPage - 1, currentPage, currentPage + 1];
             } else if (currentPage === 1) {
-                createData = [currentPage + 1, currentPage + 2, currentPage + 3, currentPage + 4, currentPage + 5];
+                createData = [
+                    currentPage + 1,
+                    currentPage + 2,
+                    currentPage + 3,
+                    currentPage + 4,
+                    currentPage + MAXIMUM_SIZE_IN_VIEW_PORT
+                ];
             }
         } else {
             createData = [currentPage - 4, currentPage - 3, currentPage - 2, currentPage - 1];
             if (currentPage !== totalPages) {
                 createData.push(currentPage);
             } else {
-                createData.unshift(currentPage - 5);
+                createData.unshift(currentPage - MAXIMUM_SIZE_IN_VIEW_PORT);
             }
         }
         setCalculatedData(createData);
@@ -132,8 +144,8 @@ const Pagination: FC<IPaginationProps> = ({
                 return;
             }
             if (currentPage === 2) {
-                setCurrentPage((prev) => prev + 5);
-                onPageChange?.(currentPage + 5);
+                setCurrentPage((prev) => prev + MAXIMUM_SIZE_IN_VIEW_PORT);
+                onPageChange?.(currentPage + MAXIMUM_SIZE_IN_VIEW_PORT);
                 return;
             }
         }
@@ -144,8 +156,8 @@ const Pagination: FC<IPaginationProps> = ({
                 return;
             }
             if (currentPage === totalPages - 1) {
-                setCurrentPage((prev) => prev - 5);
-                onPageChange?.(currentPage - 5);
+                setCurrentPage((prev) => prev - MAXIMUM_SIZE_IN_VIEW_PORT);
+                onPageChange?.(currentPage - MAXIMUM_SIZE_IN_VIEW_PORT);
                 return;
             }
         }
@@ -220,9 +232,8 @@ const Pagination: FC<IPaginationProps> = ({
                         </button>
                     )}
 
-                    {!isLessOrEqualFive && (
+                    {!isLessOrEqualFive && currentPage >= MAXIMUM_SIZE_IN_VIEW_PORT && (
                         <PaginationButton
-                            disabled={currentPage - 3 <= 1}
                             onClick={() =>
                                 changeWithArrow(
                                     true,
@@ -254,11 +265,12 @@ const Pagination: FC<IPaginationProps> = ({
 
                     {!isLessOrEqualFive && (
                         <>
-                            <PaginationButton
-                                disabled={currentPage + 3 >= totalPages}
-                                onClick={() => changeWithArrow(true, true, currentPage === 1 || currentPage === 2)}
-                                Icon={isRTLMode ? ChevronDoubleLeft : ChevronDoubleRight}
-                            />
+                            {totalPages - MAXIMUM_SIZE_IN_VIEW_PORT >= currentPage && (
+                                <PaginationButton
+                                    onClick={() => changeWithArrow(true, true, currentPage === 1 || currentPage === 2)}
+                                    Icon={isRTLMode ? ChevronDoubleLeft : ChevronDoubleRight}
+                                />
+                            )}
 
                             <button
                                 className={classNames("pagination__nav_item", {

@@ -49,9 +49,14 @@ export const WithoutPageInputField: Story = {
 };
 
 export const WithoutPageSizeAndPageInputField: Story = {
+    args: {
+        current: 25
+    },
+
     render: (props) => {
         return <Pagination {...props} showInputPageField={undefined} pageSizes={undefined} />;
     },
+
     argTypes: {
         showInputPageField: args({ control: "false", ...propCategory.state })
     }
