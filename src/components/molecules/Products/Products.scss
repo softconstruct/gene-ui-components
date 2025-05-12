@@ -1,7 +1,4 @@
 .products {
-    display: inline-flex;
-    flex-direction: column;
-    gap: var(--guit-ref-spacing-large);
     width: 36rem;
 
     &__mobile {
@@ -9,12 +6,18 @@
         height: 100%;
     }
 
+    &__container {
+        display: inline-flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-large);
+        padding-block: var(--guit-ref-spacing-large);
+        padding-inline: var(--guit-ref-spacing-large);
+    }
+
     &__list {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-gap: var(--guit-ref-spacing-xsmall);
-        padding-block: var(--guit-ref-spacing-large);
-        padding-inline: var(--guit-ref-spacing-large);
     }
 
     &__item {
@@ -40,33 +43,26 @@
             background-color: var(--guit-sem-color-background-neutral-1-pressed);
         }
 
-        /* &:focus-visible {
-            outline-offset: var(--guit-ref-border-width-thin);
-            outline: red solid 1px;
-        } */
-
         &_disabled {
-            pointer-events: none;
-
-            /* user-select: none; */
             color: var(--guit-sem-color-foreground-disabled);
+            pointer-events: none;
         }
-    }
 
-    &__item-logo {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: var(--guit-sem-dimension-width-xlarge);
-        height: var(--guit-sem-dimension-height-xlarge);
-    }
+        &_logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--guit-sem-dimension-width-xlarge);
+            height: var(--guit-sem-dimension-height-xlarge);
+        }
 
-    &__item-title {
-        font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
-        font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
-        font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
-        line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
-        overflow-wrap: anywhere;
+        &_title {
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+            font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
+            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            overflow-wrap: anywhere;
+        }
     }
 
     &__badge {

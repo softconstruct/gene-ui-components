@@ -44,10 +44,10 @@ const ProductButton: FC<Omit<IProductProps, "withBadge">> = (props) => {
             className={classNames("products__item", { products__item_disabled: disabled })}
             onClick={() => onClick(props)}
         >
-            <span className="products__item-logo">
+            <span className="products__item_logo">
                 <Icon size={48} />
             </span>
-            <Text as="span" className="products__item-title" alignment="center">
+            <Text as="span" className="products__item_title" alignment="center">
                 {title}
             </Text>
         </button>
