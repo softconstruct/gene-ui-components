@@ -21,7 +21,7 @@ type StoryProduct = StoryObj<IProductProps>;
 const testMainProducts: IProductProps[] = [
     {
         id: 1,
-        title: "Backoffxsdgsdgsdgice",
+        title: "Backoffice",
         withBadge: true,
         Icon: Globe,
         disabled: false
@@ -139,8 +139,7 @@ const ProductStory: StoryProduct = storyObjBuilder({
     argTypes: {
         title: args({ control: "text", ...propCategory.content }),
         Icon: args({ control: "false", ...propCategory.content }),
-        withBadge: args({ control: "boolean", ...propCategory.content }),
-        className: args({ control: "false", ...propCategory.appearance })
+        withBadge: args({ control: "boolean", ...propCategory.content })
     },
     args: {
         title: "BackOffice",

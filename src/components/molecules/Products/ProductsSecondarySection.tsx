@@ -5,11 +5,11 @@ import Divider from "@components/atoms/Divider";
 
 import { IProductsMainSectionProps, ProductsMainSection } from "./index";
 
-const ProductsSecondarySection: FC<IProductsMainSectionProps> = ({ className, children }) => {
+const ProductsSecondarySection: FC<IProductsMainSectionProps> = ({ children }) => {
     return (
         <>
             <Divider />
-            <ProductsMainSection className={className}>{children}</ProductsMainSection>
+            <ProductsMainSection>{children}</ProductsMainSection>
         </>
     );
 };

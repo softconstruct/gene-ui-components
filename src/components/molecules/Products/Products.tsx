@@ -52,29 +52,27 @@ const Products: FC<IProductsProps> = ({ onClick, className, children }) => {
     );
 
     return (
-        <div>
-            <ProductsContext.Provider value={memoizedProductsContextValue as IProductsContext}>
-                <Popover
-                    disableReposition={false}
-                    position={`${isRTL ? "bottom-left" : "bottom-right"}`}
-                    size="medium"
-                    setProps={setPropsForContent}
-                    withArrow={false}
-                    margin={4}
+        <ProductsContext.Provider value={memoizedProductsContextValue as IProductsContext}>
+            <Popover
+                disableReposition={false}
+                position={`${isRTL ? "bottom-left" : "bottom-right"}`}
+                size="medium"
+                setProps={setPropsForContent}
+                withArrow={false}
+                margin={4}
+            >
+                <PopoverBody
+                    className={classNames("products", className, {
+                        products__mobile: breakpoint?.isMobileBreakpoint
+                    })}
+                    withScrollbar
+                    withPadding={false}
                 >
-                    <PopoverBody
-                        className={classNames("products", className, {
-                            products__mobile: breakpoint?.isMobileBreakpoint
-                        })}
-                        withScrollbar
-                        withPadding={false}
-                    >
-                        {children}
-                    </PopoverBody>
-                </Popover>
-                <Button Icon={AppGrid} onClick={() => {}} {...propsForContent} />
-            </ProductsContext.Provider>
-        </div>
+                    {children}
+                </PopoverBody>
+            </Popover>
+            <Button Icon={AppGrid} onClick={() => {}} {...propsForContent} />
+        </ProductsContext.Provider>
     );
 };
 

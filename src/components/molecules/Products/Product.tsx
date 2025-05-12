@@ -31,22 +31,17 @@ interface IProductProps {
      * Indicates whether the `Product` is `disabled`, preventing user interaction, focus, click etc...
      */
     disabled?: boolean;
-    /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
-     */
-    className?: string;
 }
 
 const ProductButton: FC<Omit<IProductProps, "withBadge">> = (props) => {
-    const { title, Icon, disabled, className } = props;
+    const { title, Icon, disabled } = props;
     const { onClick } = useContext(ProductsContext);
 
     return (
         <button
             type="button"
             disabled={disabled}
-            className={classNames("products__item", className, { products__item_disabled: disabled })}
+            className={classNames("products__item", { products__item_disabled: disabled })}
             onClick={() => onClick(props)}
         >
             <span className="products__item-logo">

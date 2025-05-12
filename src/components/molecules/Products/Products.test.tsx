@@ -104,32 +104,6 @@ describe("Products ", () => {
         component.unmount();
     });
 
-    it("renders with prop className for component Product", () => {
-        const className = "test__class";
-        const component = setup({
-            children: <Product id={0} title="Backoffice" className={className} Icon={Globe} />
-        });
-        component.find(Button).simulate("click");
-        component.update();
-        expect(component.find(".products__item").hasClass(className)).toBeTruthy();
-        component.unmount();
-    });
-
-    it("renders with prop className for component ProductsMainSection", () => {
-        const className = "test__class";
-        const component = setup({
-            children: (
-                <ProductsMainSection className={className}>
-                    <Product id={0} title="Backoffice" Icon={Globe} />
-                </ProductsMainSection>
-            )
-        });
-        component.find(Button).simulate("click");
-        component.update();
-        expect(component.find(".products__list").hasClass(className)).toBeTruthy();
-        component.unmount();
-    });
-
     it("renders with prop children for component ProductsMainSection", () => {
         const component = setup({
             children: (
@@ -141,21 +115,6 @@ describe("Products ", () => {
         component.find(Button).simulate("click");
         component.update();
         expect(component.find(Product).exists()).toBeTruthy();
-        component.unmount();
-    });
-
-    it("renders with prop className for component ProductsSecondarySection", () => {
-        const className = "test__class";
-        const component = setup({
-            children: (
-                <ProductsSecondarySection className={className}>
-                    <Product id={0} title="Backoffice" Icon={Globe} />
-                </ProductsSecondarySection>
-            )
-        });
-        component.find(Button).simulate("click");
-        component.update();
-        expect(component.find(".products__list").hasClass(className)).toBeTruthy();
         component.unmount();
     });
 
