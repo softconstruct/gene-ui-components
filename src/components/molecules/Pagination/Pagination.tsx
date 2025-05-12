@@ -64,7 +64,7 @@ const Pagination: FC<IPaginationProps> = ({
 
     const isLessOrEqualFive = totalPages <= MAXIMUM_SIZE_IN_VIEW_PORT;
 
-    const [currentPage, setCurrentPage] = useState<number>(+current);
+    const [currentPage, setCurrentPage] = useState<number>(+current > totalPages ? 1 : +current);
     const [currentPageSize, setCurrentPageSize] = useState<number>(pageSizes?.[0] || 0);
     const [calculatedData, setCalculatedData] = useState<number[]>([]);
 
