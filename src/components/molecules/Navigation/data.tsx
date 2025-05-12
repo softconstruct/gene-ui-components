@@ -133,5 +133,40 @@ export const navigationData = [
         title: "Help Center",
         Icon: Globe,
         path: "/helpCenter"
+    },
+    {
+        title: "Help Center 1",
+        Icon: Globe,
+        path: "/helpCenter1"
+    },
+    {
+        title: "Help Center 2",
+        Icon: Globe,
+        path: "/helpCenter2"
+    },
+    {
+        title: "Help Center 3",
+        Icon: Globe,
+        path: "/helpCenter3"
+    },
+    {
+        title: "Help Center 4",
+        Icon: Globe,
+        path: "/helpCenter4"
+    },
+    {
+        title: "Help Center 5",
+        Icon: Globe,
+        path: "/helpCenter5"
+    },
+    {
+        title: "Help Center 6",
+        Icon: Globe,
+        path: "/helpCenter6"
+    },
+    {
+        title: "Help Center 7",
+        Icon: Globe,
+        path: "/helpCenter7"
     }
 ];

@@ -8,7 +8,7 @@ import Text from "@components/atoms/Text";
 interface INavigationItemProps {
     title: string;
     children?: React.ReactNode;
-    onClick?: (path?: string) => void;
+    onClick?: (path: string) => void;
     disabled?: boolean;
     selected?: boolean;
     depth: number;
@@ -28,13 +28,13 @@ const NavigationItem: FC<INavigationItemProps> = ({
 }) => {
     const [isNavItemOpen, setIsNavItemOpen] = React.useState(false);
     const onClickHandler = () => {
-        if (onClick) {
+        if (onClick && path) {
             onClick(path);
         }
         setIsNavItemOpen((prev) => !prev);
     };
     useEffect(() => {
-        setIsNavItemOpen(false);
+        setIsNavItemOpen(selected || false);
     }, [title]);
     return (
         <div className="navigationItem">
@@ -65,7 +65,7 @@ const NavigationItem: FC<INavigationItemProps> = ({
                     />
                 )}
             </button>
-            {isNavItemOpen && children && children}
+            {isNavItemOpen && children}
         </div>
     );
 };

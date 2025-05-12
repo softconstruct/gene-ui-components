@@ -7,7 +7,7 @@ import Text from "@components/atoms/Text";
 
 interface INavigationColItemProps {
     Icon?: FC<IconProps>;
-    active?: boolean;
+    selected?: boolean;
     disabled?: boolean;
     title?: string;
     index?: number;
@@ -16,11 +16,12 @@ interface INavigationColItemProps {
     onMouseEnter?: (index: number) => void;
     path?: string;
     propsForPopover?: Record<string, HTMLButtonElement>;
+    isVisible?: boolean;
 }
 
 const NavigationColItem: FC<INavigationColItemProps> = ({
     Icon,
-    active,
+    selected,
     disabled,
     title,
     onClick,
@@ -28,7 +29,8 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
     onMouseEnter,
     propsForPopover = {},
     opened,
-    path
+    path,
+    isVisible
 }) => {
     const onClickHandler = (activeIndex?: number) => {
         if (onClick) {
@@ -37,8 +39,6 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
     };
 
     const onMouseEnterHandler = (activeIndex: number | undefined) => {
-        // const hasIndex = typeof activeIndex === "number";
-
         if (onMouseEnter && activeIndex !== undefined && activeIndex >= 0) {
             onMouseEnter(activeIndex);
         }
@@ -48,10 +48,10 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
         <div className="navigation__colItem">
             <button
                 type="button"
-                disabled={disabled}
+                disabled={disabled || !isVisible}
                 className={classNames("navigation__iconButton", {
-                    navigation__iconButton_active: active,
-                    navigation__iconButton_opened: opened && !active,
+                    navigation__iconButton_selected: selected,
+                    navigation__iconButton_opened: opened && !selected,
                     navigation__iconButton_disabled: disabled
                 })}
                 onClick={() => onClickHandler(index)}
@@ -61,7 +61,7 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
                 {Icon && <Icon />}
             </button>
             {title && (
-                <Text as="p" className="navigation__colItem_text" truncate>
+                <Text as="p" className="navigation__colItemText" truncate>
                     {title}
                 </Text>
             )}

@@ -14,9 +14,26 @@
         }
     }
 
-    &__colItem {
+    &__colItemsWrapper {
+        display: flex;
+        flex-flow: column wrap;
+        gap: var(--guit-ref-spacing-xsmall);
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    &__colItem,
+    &__addButton {
         width: var(--guit-sem-dimension-width-xlarge);
         max-width: var(--guit-sem-dimension-width-xlarge);
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    &__colItemText {
+        max-width: 100%;
     }
 
     &__iconButton {
@@ -25,7 +42,7 @@
         border-radius: var(--guit-ref-radius-3xsmall);
         background-color: var(--guit-sem-color-background-neutral-1);
 
-        &_active {
+        &_selected {
             background-color: var(--guit-sem-color-background-selected-2);
             color: var(--guit-sem-color-foreground-inverse);
         }
