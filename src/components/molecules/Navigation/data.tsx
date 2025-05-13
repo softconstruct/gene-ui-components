@@ -100,8 +100,8 @@ export const navigationData = [
             {
                 title: "Profile Settings",
                 children: [
-                    { title: "Privacy", path: "/privacy" },
-                    { title: "Notifications", path: "notifications" }
+                    { title: "Private", path: "/private" },
+                    { title: "Notification", path: "/notification" }
                 ]
             },
             { title: "Security", path: "/security" } // No children

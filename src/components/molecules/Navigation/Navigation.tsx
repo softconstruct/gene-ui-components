@@ -102,12 +102,27 @@ const NavMenuContent: FC<{
 const Navigation: FC<INavigationProps> = ({ className, open, navigationData = [], activePath, onClick }) => {
     const [currentDataIndex, setCurrentDataIndex] = useState<number | null>(null);
     const [hoverDataIndex, setHoverDataIndex] = useState<number | null>(null);
-    const [isNavigationOpen, setIsNavigationOpen] = useState<boolean | null>(null);
+    const [forceOpen, setForceOpen] = useState<boolean>(false);
+    const [dataIsReordered, setDataIsReordered] = useState<boolean>(false);
     const [maxVisibleItems, setMaxVisibleItems] = useState<number>(0);
     const [activePathIndex, setActivePathIndex] = useState<number[] | null>(null);
-    // const [clonedNavigationData, setClonedNavigationData] = useState<INavigationData[] | null>(
-    //     navigationData ? [...navigationData] : null
-    // );
+    const [clonedNavigationData, setClonedNavigationData] = useState<INavigationData[]>([]);
+
+    const openFromInside = () => {
+        setForceOpen(true);
+    };
+
+    useEffect(() => {
+        setForceOpen(!forceOpen);
+    }, [open]);
+
+    useEffect(() => {
+        setForceOpen(!!open);
+    }, []);
+
+    useEffect(() => {
+        setClonedNavigationData(navigationData);
+    }, [navigationData]);
 
     const navColRef = useRef<HTMLDivElement | null>(null);
     const [propsForPopover, setPropsForPopover] = useState({});
@@ -118,26 +133,17 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
 
     const { height } = useWindowSize();
 
-    useEffect(() => {
-        setIsNavigationOpen((prev) => {
-            if (open && prev) {
-                return false;
-            }
-            if (open) {
-                return true;
-            }
-
-            if (prev && !open) {
-                return false;
-            }
-
-            if (prev) {
-                return false;
-            }
-
-            return prev !== null;
-        });
-    }, [open]);
+    const setDefaultNavData = () => {
+        if (
+            maxVisibleItems - 1 < clonedNavigationData.length &&
+            currentDataIndex !== null &&
+            currentDataIndex < maxVisibleItems - 1 &&
+            dataIsReordered
+        ) {
+            setClonedNavigationData(navigationData);
+            setDataIsReordered(false);
+        }
+    };
 
     useEffect(() => {
         if (navColRef.current) {
@@ -147,19 +153,43 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
                 const ELEMENT_HEIGHT = 68;
                 const maxVisibleItemsWithGap = Math.floor(containerHeight / ELEMENT_HEIGHT);
                 setMaxVisibleItems(maxVisibleItemsWithGap);
-                // console.log(maxVisibleItems, navigationData?.length, 1111);
-                // console.log(currentDataIndex);
+            } else {
+                setMaxVisibleItems(clonedNavigationData.length);
             }
         }
-    }, [navColRef.current, navigationData, height]);
+    }, [navColRef.current, clonedNavigationData, height]);
 
     useEffect(() => {
-        setActivePathIndex(findPath(navigationData || [], activePath || ""));
-    }, [activePath, navigationData]);
+        const lastVisibleItemIndex = maxVisibleItems - 1;
+        if (lastVisibleItemIndex === -1) return;
+        if (currentDataIndex !== null && currentDataIndex > lastVisibleItemIndex) {
+            const newData = [...navigationData];
+            const [activeItem] = newData.splice(currentDataIndex, 1);
+            newData.splice(lastVisibleItemIndex, 0, activeItem);
+            setCurrentDataIndex(lastVisibleItemIndex);
+            setClonedNavigationData(newData);
+            setDataIsReordered(true);
+        } else if (
+            activePathIndex &&
+            activePathIndex[0] > lastVisibleItemIndex &&
+            (currentDataIndex === null || currentDataIndex !== lastVisibleItemIndex)
+        ) {
+            const newData = [...navigationData];
+            const [activeItem] = newData.splice(activePathIndex[0], 1);
+
+            newData.splice(lastVisibleItemIndex, 0, activeItem);
+            setClonedNavigationData(newData);
+            setDataIsReordered(true);
+        }
+    }, [maxVisibleItems, currentDataIndex, activePathIndex, height, navigationData]);
+
+    useEffect(() => {
+        setActivePathIndex(findPath(clonedNavigationData || [], activePath || ""));
+    }, [activePath, clonedNavigationData]);
 
     const onMouseEnterHandler = (index: number) => {
-        if (isNavigationOpen) return;
-        if (hasDataAndChildren(navigationData, index)) {
+        if (forceOpen) return;
+        if (hasDataAndChildren(clonedNavigationData, index)) {
             setHoverDataIndex(index);
         } else {
             setHoverDataIndex(null);
@@ -167,23 +197,28 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
     };
     const onNavigationColItemClick = (index: number, path?: string) => {
         setCurrentDataIndex(index);
-        if (hasDataAndChildren(navigationData, index)) {
-            setIsNavigationOpen(true);
+        if (hasDataAndChildren(clonedNavigationData, index)) {
+            openFromInside();
         }
         setHoverDataIndex(null);
         if (path && onClick) {
             onClick(path);
         }
+
+        setDefaultNavData();
     };
+
     const onItemClickHandler = (path?: string) => {
         if (path && onClick) {
             onClick(path);
             if (hoverDataIndex !== null) {
                 setHoverDataIndex(null);
                 setCurrentDataIndex(hoverDataIndex);
-                setIsNavigationOpen(true);
+                openFromInside();
             }
+            setDefaultNavData();
         }
+        // setActivePathIndex(findPath(clonedNavigationData || [], activePath || ""));
     };
 
     return (
@@ -191,7 +226,7 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
             <div className="navigation__col">
                 <div className="navigation__col_wrapper">
                     <div className="navigation__colItemsWrapper" ref={navColRef}>
-                        {navigationData?.map(({ Icon, title, path }, index) => {
+                        {clonedNavigationData?.map(({ Icon, title, path }, index) => {
                             return (
                                 <span key={`${title}-${path}`}>
                                     <NavigationColItem
@@ -206,37 +241,40 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
                                         onMouseEnter={onMouseEnterHandler}
                                         propsForPopover={hoverDataIndex === index ? propsForPopover : {}}
                                     />
-                                    {hoverDataIndex !== null && hasDataAndChildren(navigationData, hoverDataIndex) && (
-                                        <Popover
-                                            setProps={setPropsForPopover}
-                                            size="small"
-                                            position="right-top"
-                                            withArrow
-                                            trigger="hover"
-                                            margin={20}
-                                            disableReposition={false}
-                                            ref={popoverRef}
-                                        >
-                                            <PopoverBody withPadding={false}>
-                                                <div className="navigation__menu_wrapper">
-                                                    <NavMenuContent
-                                                        data={navigationData[hoverDataIndex]}
-                                                        onClick={onItemClickHandler}
-                                                        activePathIndex={
-                                                            activePathIndex && hoverDataIndex === activePathIndex[0]
-                                                                ? activePathIndex.slice(1)
-                                                                : null
-                                                        }
-                                                    />
-                                                </div>
-                                            </PopoverBody>
-                                        </Popover>
-                                    )}
+                                    {hoverDataIndex !== null &&
+                                        hasDataAndChildren(clonedNavigationData, hoverDataIndex) && (
+                                            <Popover
+                                                setProps={setPropsForPopover}
+                                                size="small"
+                                                position="right-top"
+                                                withArrow
+                                                trigger="hover"
+                                                margin={20}
+                                                disableReposition={false}
+                                                ref={popoverRef}
+                                            >
+                                                <PopoverBody withPadding={false}>
+                                                    <div className="navigation__menu_wrapper">
+                                                        <NavMenuContent
+                                                            data={clonedNavigationData[hoverDataIndex]}
+                                                            onClick={onItemClickHandler}
+                                                            activePathIndex={
+                                                                activePathIndex && hoverDataIndex === activePathIndex[0]
+                                                                    ? activePathIndex.slice(1)
+                                                                    : null
+                                                            }
+                                                        />
+                                                    </div>
+                                                </PopoverBody>
+                                            </Popover>
+                                        )}
                                 </span>
                             );
                         })}
                     </div>
-                    <NavigationColItem Icon={ThreeDotsHorizontal} title="more" isVisible />
+                    {clonedNavigationData.length > maxVisibleItems && (
+                        <NavigationColItem Icon={ThreeDotsHorizontal} title="more" isVisible />
+                    )}
                     <Button
                         onClick={() => {}}
                         Icon={Magnifier}
@@ -247,12 +285,12 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
                 </div>
                 <Divider className="navigation__divider" vertical />
             </div>
-            {isNavigationOpen && currentDataIndex !== null && hasDataAndChildren(navigationData, currentDataIndex) && (
+            {forceOpen && currentDataIndex !== null && hasDataAndChildren(clonedNavigationData, currentDataIndex) && (
                 <div className="navigation__menu">
                     <Scrollbar>
                         <div className="navigation__menu_wrapper">
                             <NavMenuContent
-                                data={navigationData[currentDataIndex]}
+                                data={clonedNavigationData[currentDataIndex]}
                                 onClick={onItemClickHandler}
                                 activePathIndex={
                                     activePathIndex && currentDataIndex === activePathIndex[0]

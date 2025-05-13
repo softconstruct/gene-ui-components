@@ -33,9 +33,11 @@ const NavigationItem: FC<INavigationItemProps> = ({
         }
         setIsNavItemOpen((prev) => !prev);
     };
+
     useEffect(() => {
-        setIsNavItemOpen(selected || false);
-    }, [title]);
+        if (!selected) return;
+        setIsNavItemOpen(selected);
+    }, [title, selected]);
     return (
         <div className="navigationItem">
             <button

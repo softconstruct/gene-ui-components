@@ -27,11 +27,10 @@ export default meta;
 
 const NavigationStoryComponent = (props: INavigationProps) => {
     const [isNavigationOpen, setIsNavigationOpen] = useState(false);
-    const [activePath, setActivePath] = useState<string | null>("/dashboard");
+    const [activePath, setActivePath] = useState<string | null>("/helpCenter6");
 
     const onClickHandler = (path: string) => {
         setActivePath(path);
-        setIsNavigationOpen(false);
     };
 
     return (
