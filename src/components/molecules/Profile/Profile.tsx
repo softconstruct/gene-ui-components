@@ -1,7 +1,9 @@
-import React, { FC, MouseEvent, useState } from "react";
+import React, { FC, MouseEvent, useContext, useState } from "react";
 import classNames from "classnames";
 
 import { CaretDown } from "@geneui/icons";
+
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Styles
 import "./Profile.scss";
@@ -35,6 +37,9 @@ interface IProfileProps {
  */
 const Profile: FC<IProfileProps> = ({ className, onToggle, avatarProps, name }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
+
+    const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
 
     const onProfileClickHandler = (e: MouseEvent<HTMLButtonElement>) => {
         if (onToggle) {
@@ -47,10 +52,12 @@ const Profile: FC<IProfileProps> = ({ className, onToggle, avatarProps, name }) 
     return (
         <button type="button" className={classNames("profile", className)} onClick={onProfileClickHandler}>
             <Avatar {...avatarProps} className="profile__avatar" />
-            <div className="profile__content">
-                <span className="profile__text">{name}</span>
-                <CaretDown className="profile__icon" size={20} />
-            </div>
+            {!isMobileBreakpoint && (
+                <div className="profile__content">
+                    <span className="profile__text">{name}</span>
+                    <CaretDown className="profile__icon" size={20} />
+                </div>
+            )}
         </button>
     );
 };
