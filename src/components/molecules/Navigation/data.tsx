@@ -12,7 +12,7 @@ export const navigationData = [
                         title: "Summary",
                         Icon: Globe,
                         children: [
-                            { title: "Dashboard", path: "/dashboard" },
+                            { title: "Dashboard sadg sdrg drg werg werg ", path: "/dashboard" },
                             { title: "Reports", path: "/reports" },
                             { title: "User Management", path: "/users" },
                             { title: "Settings", path: "/settings" },

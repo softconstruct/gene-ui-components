@@ -218,7 +218,6 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
             }
             setDefaultNavData();
         }
-        // setActivePathIndex(findPath(clonedNavigationData || [], activePath || ""));
     };
 
     return (

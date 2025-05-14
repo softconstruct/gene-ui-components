@@ -83,6 +83,7 @@
 
         &_wrapper {
             width: 100%;
+            max-width: 20rem;
             padding: 0 var(--guit-ref-spacing-xsmall);
             display: flex;
             flex-direction: column;
