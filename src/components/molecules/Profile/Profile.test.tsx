@@ -46,6 +46,6 @@ describe("Profile ", () => {
         stepLabel.simulate("click");
 
         expect(onToggleMock).toHaveBeenCalledTimes(1);
-        expect(onToggleMock).toHaveBeenCalledWith(expect.any(Object), false);
+        expect(onToggleMock).toHaveBeenCalledWith(expect.any(Object), true);
     });
 });
