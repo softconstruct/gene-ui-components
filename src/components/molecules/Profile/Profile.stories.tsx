@@ -34,7 +34,14 @@ export const Default: Story = {
     render: (props) => {
         return (
             <div
-                style={{ width: "100%", background: "var(--guit-sem-color-background-neutral-5)", padding: "5px 10px" }}
+                style={{
+                    width: "100%",
+                    background: "var(--guit-sem-color-background-neutral-5)",
+                    padding: "5px 10px",
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    alignItems: "center"
+                }}
             >
                 <Profile {...props} />
             </div>
