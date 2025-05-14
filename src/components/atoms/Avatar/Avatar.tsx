@@ -1,7 +1,7 @@
 import React, { FC, JSX, PointerEvent, useEffect, useState } from "react";
 import classNames from "classnames";
 
-import { IconProps, Square } from "@geneui/icons"; // TODO: replace with the person icon
+import { IconProps, PersonFilled } from "@geneui/icons";
 
 // Styles
 import "./Avatar.scss";
@@ -26,7 +26,7 @@ interface IAvatarProps {
      * Avatar icon <br/>
      * The `Icon` prop accepts a JSX element that will be displayed as an avatar.
      */
-    Icon?: React.FC<IconProps>;
+    Icon?: FC<IconProps>;
     /**
      * This prop defines the width and height for the component <br/>
      * Possible values: `6Xlarge | large | medium | small`
@@ -85,7 +85,7 @@ const Avatar: FC<IAvatarProps> = ({
     onClick,
     isDisabled,
     isLoading,
-    Icon = Square, // todo need to change to User icon after releasing new icons
+    Icon = PersonFilled, // todo need to change to User icon after releasing new icons
     className
 }) => {
     const [proceedFullName, setProceedFullName] = useState(fullName);
