@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React, { ComponentType, CSSProperties } from "react";
 import { Meta } from "@storybook/react";
 
 // Helpers
@@ -10,8 +10,8 @@ const meta: Meta = {
     title: "Atoms/Grid",
     component: Grid,
     subcomponents: {
-        Row,
-        Col
+        Row: Row as ComponentType<unknown>,
+        Col: Col as ComponentType<unknown>
     },
     argTypes: {
         size: args({ control: "false", ...propCategory.content }),
@@ -71,9 +71,10 @@ const Template = () => {
     );
 };
 
-export const StandardGridLayout = Template.bind({});
-
-StandardGridLayout.args = {};
+export const StandardGridLayout = {
+    render: Template,
+    args: {}
+};
 
 export const ColumnsWithOffset = () => {
     return (

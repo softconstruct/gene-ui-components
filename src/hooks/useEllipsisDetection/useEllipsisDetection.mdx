@@ -14,7 +14,7 @@ overflowing content.
 
 -   **`ref`**: A React RefObject referencing the element whose text truncation status needs to be detected.
 
--   **`externalDependencies`** (optional): An array of dependencies to watch for changes that might affect the ellipsis
+-   **`externalDependencies`** _(optional)_: An array of dependencies to watch for changes that might affect the ellipsis
     detection. This allows for re-evaluation of the truncation state if any of these dependencies change.
 
 #### Returns
@@ -24,7 +24,7 @@ overflowing content.
 
 #### Usage
 
-```js
+```jsx
 import React, { useRef, FC } from 'react';
 import { useEllipsisDetection } from '@geneui/components';
 
