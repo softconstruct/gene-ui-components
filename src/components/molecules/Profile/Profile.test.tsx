@@ -1,10 +1,9 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-import { Globe } from "@geneui/icons";
-
 // Components
-import Profile, { IProfileProps } from "./index";
+import Avatar from "@components/atoms/Avatar";
+import Profile, { IProfileProps } from "@components/molecules/Profile";
 
 describe("Profile ", () => {
     let setup: ReactWrapper<IProfileProps>;
@@ -23,17 +22,18 @@ describe("Profile ", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    it("renders name prop correctly", () => {
-        const name = "testName";
-        const wrapper = setup.setProps({ name });
+    it("renders fullName prop correctly", () => {
+        const fullName = "testName";
+        const wrapper = setup.setProps({ fullName });
 
-        expect(wrapper.find(".profile").text()).toStrictEqual(name);
+        expect(wrapper.find(".profile__text").text()).toStrictEqual(fullName);
     });
 
-    it("renders avatarProps prop correctly", () => {
-        const wrapper = setup.setProps({ avatarProps: { Icon: Globe } });
+    it("renders src prop correctly", () => {
+        const src = "https://picsum.photos/id/64/200/300";
+        const wrapper = setup.setProps({ src });
 
-        expect(wrapper.find(Globe)).toBeTruthy();
+        expect(wrapper.find(Avatar).props().src).toStrictEqual(src);
     });
 
     it("renders onToggle prop correctly", () => {

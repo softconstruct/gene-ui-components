@@ -1,8 +1,6 @@
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import Avatar from "@components/atoms/Avatar";
-
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
@@ -11,18 +9,15 @@ import Profile, { IProfileProps } from "./index";
 const meta: Meta<typeof Profile> = {
     title: "Molecules/Profile",
     component: Profile,
-    subcomponents: {
-        Avatar
-    },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         onToggle: args({ control: "false", ...propCategory.action }),
-        avatarProps: args({ control: "false", ...propCategory.appearance }),
-        name: args({ control: "text", ...propCategory.content })
+        fullName: args({ control: "text", ...propCategory.content }),
+        src: args({ control: "text", ...propCategory.content })
     },
     args: {
-        name: "User Name",
-        avatarProps: { src: "https://picsum.photos/id/64/200/300", color: "slate" }
+        fullName: "User Name",
+        src: "https://picsum.photos/id/64/200/300"
     }
 };
 

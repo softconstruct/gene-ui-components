@@ -1,14 +1,14 @@
 import React, { FC, MouseEvent, useContext, useState } from "react";
 import classNames from "classnames";
 
-import { CaretDown } from "@geneui/icons";
+import { CaretDown, PersonFilled } from "@geneui/icons";
 
+// Components
+import Avatar from "@components/atoms/Avatar";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Styles
 import "./Profile.scss";
-
-import Avatar, { IAvatarProps } from "../../atoms/Avatar";
 
 interface IProfileProps {
     /**
@@ -22,20 +22,19 @@ interface IProfileProps {
      */
     onToggle?: (e: MouseEvent<HTMLButtonElement>, isOpen: boolean) => void;
     /**
-     * Props to customize the Avatar component, such as image source, size, etc.<br>
-     * See Avatar component documentation.
+     * The display fullName shown next to the avatar.
      */
-    avatarProps?: IAvatarProps;
+    fullName?: string;
     /**
-     * The display name shown next to the avatar.
+     * Avatar background image source.
      */
-    name?: string;
+    src?: string;
 }
 
 /**
  * Profile component provides users with access to quick actions, including links to settings, personal preferences, and other utility functions such.
  */
-const Profile: FC<IProfileProps> = ({ className, onToggle, avatarProps, name }) => {
+const Profile: FC<IProfileProps> = ({ className, onToggle, fullName, src }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
@@ -51,10 +50,10 @@ const Profile: FC<IProfileProps> = ({ className, onToggle, avatarProps, name }) 
 
     return (
         <button type="button" className={classNames("profile", className)} onClick={onProfileClickHandler}>
-            <Avatar {...avatarProps} className="profile__avatar" />
+            <Avatar className="profile__avatar" fullName={fullName} Icon={PersonFilled} src={src} />
             {!isMobileBreakpoint && (
                 <div className="profile__content">
-                    <span className="profile__text">{name}</span>
+                    <span className="profile__text">{fullName}</span>
                     <CaretDown className="profile__icon" size={20} />
                 </div>
             )}
