@@ -21,7 +21,7 @@ interface ITableProps {
     // fill Table component props interface
 }
 
-const Table: FC<ITableProps> = ({ className }) => {
+const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
     return (
         <div className={classNames("dataTable", className)}>
             <div className={classNames("dataTable__toolbar toolbar", className)}>
@@ -128,4 +128,4 @@ const Table: FC<ITableProps> = ({ className }) => {
     );
 };
 
-export { ITableProps, Table as default };
+export { ITableProps, TableLayoutTmp as default };
