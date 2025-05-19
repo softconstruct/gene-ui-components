@@ -1,0 +1,22 @@
+.partners {
+    &__scrollbar {
+        height: 200px;
+        max-height: 100%;
+    }
+
+    &__item {
+        display: flex;
+        gap: var(--guit-ref-spacing-xsmall);
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-small);
+        border-radius: var(--guit-ref-radius-4xsmall);
+        background-color: var(--guit-sem-color-background-neutral-1);
+        color: var(--guit-sem-color-foreground-neutral-1);
+
+        &_selected {
+            color: #0074d9;
+        }
+    }
+}

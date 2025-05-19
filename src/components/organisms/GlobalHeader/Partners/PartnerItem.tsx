@@ -1,0 +1,35 @@
+import React, { forwardRef } from "react";
+import classNames from "classnames";
+
+import Text from "@components/atoms/Text";
+
+export interface IPartnerItemProps {
+    name: string;
+    id: string | number;
+    onChange: (id: string | number) => void;
+    selected: boolean;
+}
+
+const PartnerItem = forwardRef<HTMLButtonElement, IPartnerItemProps>(({ name, onChange, id, selected }, ref) => {
+    const handleClick = () => {
+        onChange(id);
+    };
+    return (
+        <button
+            type="button"
+            className={classNames("partners__item", { partners__item_selected: selected })}
+            onClick={handleClick}
+            ref={ref}
+        >
+            <span className="partners__nameWrapper">
+                <Text as="span" truncate>
+                    {name}
+                </Text>
+            </span>
+
+            <span>{id}</span>
+        </button>
+    );
+});
+
+export { PartnerItem as default };

@@ -1,5 +1,36 @@
 .globalHeader {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    background-color: var(--guit-sem-color-background-neutral-5);
+    display: flex;
+    padding: var(--guit-ref-spacing-medium) var(--guit-ref-spacing-large);
+    justify-content: space-between;
+    color-scheme: light;
+
+    &_side {
+        &_left {
+            display: flex;
+            gap: var(--guit-ref-spacing-large);
+            align-items: center;
+        }
+
+        &_right {
+            display: flex;
+            gap: var(--guit-ref-spacing-large);
+            align-items: center;
+        }
+    }
+
+    &__logo {
+        &_link {
+            border-radius: 0.4rem;
+            text-decoration: none;
+        }
+    }
+
+    &__text {
+        color: var(--guit-sem-color-foreground-inverse);
+    }
+
+    &__divider {
+        height: var(--guit-sem-dimension-height-small-nudge);
+    }
 }
