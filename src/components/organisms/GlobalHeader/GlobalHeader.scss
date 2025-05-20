@@ -14,8 +14,8 @@
 
         &_right {
             display: flex;
-            gap: var(--guit-ref-spacing-large);
             align-items: center;
+            gap: var(--guit-ref-spacing-xsmall);
         }
     }
 
@@ -32,5 +32,28 @@
 
     &__divider {
         height: var(--guit-sem-dimension-height-small-nudge);
+    }
+
+    &__partners,
+    &__time,
+    &__limit {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__timeWrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    &__limitWrapper {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-2xsmall);
+    }
+
+    &__timeDigits {
+        width: 5.8rem;
     }
 }

@@ -8,7 +8,9 @@ import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import Logo from "@components/atoms/Logo";
 import Text from "@components/atoms/Text";
+import Limit from "@components/organisms/GlobalHeader/Limit/Limit";
 import Partners, { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
+import Time from "@components/organisms/GlobalHeader/Time/Time";
 
 // Styles
 import "./GlobalHeader.scss";
@@ -32,7 +34,8 @@ interface IGlobalHeaderProps {
     partnersSearchPlaceholder?: string;
     partnersName?: string;
     partnersIdName?: string;
-    // limit?: string; // todo
+    limitLabel?: string;
+    limitUnit?: string;
     // actionList?: any[]; // todo button group
 }
 
@@ -50,7 +53,9 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     partnersSearchPlaceholder,
     partnersDisabled,
     partnersName,
-    partnersIdName
+    partnersIdName,
+    limitLabel,
+    limitUnit
 }) => {
     const onNavigationButtonClickHandler = (e: MouseEvent<HTMLButtonElement>) => {
         if (onNavigationButtonClick) {
@@ -81,17 +86,29 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                 )}
             </div>
             <div className="globalHeader_side_right">
-                <Partners
-                    onPartnerSelect={onPartnerSelect}
-                    partners={partners}
-                    loading={partnersLoading}
-                    loadingText={partnersLoadingText}
-                    searchPlaceholder={partnersSearchPlaceholder}
-                    disabled={partnersDisabled}
-                    name={partnersName}
-                    idName={partnersIdName}
-                />
-                <Divider vertical className="globalHeader__divider" />
+                <div className="globalHeader__limit">
+                    <Limit limit={limitUnit} label={limitLabel} />
+                    <Divider vertical className="globalHeader__divider" />
+                </div>
+                <div className="globalHeader__time">
+                    <Time />
+                    <Divider vertical className="globalHeader__divider" />
+                </div>
+                {partners && (
+                    <div className="globalHeader__partners">
+                        <Partners
+                            onPartnerSelect={onPartnerSelect}
+                            partners={partners}
+                            loading={partnersLoading}
+                            loadingText={partnersLoadingText}
+                            searchPlaceholder={partnersSearchPlaceholder}
+                            disabled={partnersDisabled}
+                            name={partnersName}
+                            idName={partnersIdName}
+                        />
+                        <Divider vertical className="globalHeader__divider" />
+                    </div>
+                )}
                 <Text as="p" className="globalHeader__text">
                     TEST
                 </Text>

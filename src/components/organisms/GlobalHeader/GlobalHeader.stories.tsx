@@ -24,10 +24,13 @@ const meta: Meta<IGlobalHeaderProps> = {
         partnersSearchPlaceholder: args({ control: "text", ...propCategory.content }),
         partnersName: args({ control: "text", ...propCategory.content }),
         partnersIdName: args({ control: "text", ...propCategory.content }),
+        limitUnit: args({ control: "text", ...propCategory.content }),
+        limitLabel: args({ control: "text", ...propCategory.content }),
         logoAs: args({ control: "false", ...propCategory.content })
     },
     args: {
-        logoAs: <a href="/" aria-label="logo" />
+        logoAs: <a href="/" aria-label="logo" />,
+        limitUnit: "1234523"
     }
 };
 
