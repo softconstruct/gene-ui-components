@@ -16,11 +16,15 @@ const meta: Meta<IGlobalHeaderProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         onNavigationButtonClick: args({ control: "false", ...propCategory.action }),
+        onPartnerSelect: args({ control: "false", ...propCategory.action }),
         partnersLoading: args({ control: "boolean", ...propCategory.states }),
         partnersDisabled: args({ control: "boolean", ...propCategory.states }),
+        partners: args({ control: "false", ...propCategory.content }),
         partnersLoadingText: args({ control: "text", ...propCategory.content }),
+        partnersSearchPlaceholder: args({ control: "text", ...propCategory.content }),
         partnersName: args({ control: "text", ...propCategory.content }),
-        partnersIdName: args({ control: "text", ...propCategory.content })
+        partnersIdName: args({ control: "text", ...propCategory.content }),
+        logoAs: args({ control: "false", ...propCategory.content })
     },
     args: {
         logoAs: <a href="/" aria-label="logo" />
