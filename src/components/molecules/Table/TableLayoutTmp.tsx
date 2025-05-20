@@ -33,7 +33,7 @@ interface ITableProps {
     // fill Table component props interface
 }
 
-const Table: FC<ITableProps> = ({ className }) => {
+const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
     // todo: remove mock data after implementation
     const columnsLength = 18;
     const rowsLength = 18;
@@ -547,4 +547,4 @@ const Table: FC<ITableProps> = ({ className }) => {
     );
 };
 
-export { ITableProps, Table as default };
+export { ITableProps, TableLayoutTmp as default };

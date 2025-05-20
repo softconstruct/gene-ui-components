@@ -2,7 +2,7 @@ import { useMemo } from "react";
 
 import { OSTypes } from "@types";
 
-interface IDeviceInfo {
+export interface IDeviceInfo {
     isMobileDevice: boolean;
     isDesktopDevice: boolean;
     isTouch: boolean;
@@ -12,6 +12,7 @@ interface IDeviceInfo {
     isLinux: boolean;
     isAndroid: boolean;
     isIOS: boolean;
+    theme: "light" | "dark";
 }
 
 // Map of OS detection patterns
@@ -35,7 +36,8 @@ const useDeviceInfo = (): IDeviceInfo => {
                 isMacOS: false,
                 isLinux: false,
                 isAndroid: false,
-                isIOS: false
+                isIOS: false,
+                theme: "light"
             }; // Safe for SSR
         }
 
@@ -60,6 +62,8 @@ const useDeviceInfo = (): IDeviceInfo => {
             (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ||
             false;
 
+        const theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+
         return {
             isMobileDevice,
             isDesktopDevice,
@@ -69,7 +73,8 @@ const useDeviceInfo = (): IDeviceInfo => {
             isMacOS,
             isLinux,
             isAndroid,
-            isIOS
+            isIOS,
+            theme
         };
     }, []);
 };

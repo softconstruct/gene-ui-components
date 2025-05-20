@@ -6,6 +6,7 @@ import LogoMarkSVG from "@components/atoms/Logo/LogoMarkSVG";
 import LogoTypeSVG from "@components/atoms/Logo/LogoTypeSVG";
 
 import useBreakpoint, { IBreakpoint } from "@hooks/useBreakpoint";
+import useDeviceInfo, { IDeviceInfo } from "@hooks/useDeviceInfo";
 
 import { ThemesTypes } from "@types";
 
@@ -36,6 +37,7 @@ interface IGeneUIDesignSystemContext {
     tokens: TokensType;
     geneUIProviderRef: React.MutableRefObject<null>;
     breakpoint: IBreakpoint | null;
+    deviceInfo: IDeviceInfo | null;
     logo: LogoType;
 }
 
@@ -44,6 +46,7 @@ const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
     tokens: {},
     geneUIProviderRef: { current: null },
     breakpoint: null,
+    deviceInfo: null,
     logo: defaultLogo
 });
 
@@ -83,12 +86,15 @@ function GeneUIProvider({
         desktop: +tokens.GuitRefBreakpointDesktop
     });
 
+    const deviceInfo = useDeviceInfo();
+
     const contextValue = useMemo(
         () => ({
-            theme,
+            theme: theme === "system" ? deviceInfo.theme : theme,
             tokens,
             geneUIProviderRef,
             breakpoint: currentBreakpoint,
+            deviceInfo,
             logo: logo || defaultLogo
         }),
         [theme, tokens, geneUIProviderRef, currentBreakpoint]

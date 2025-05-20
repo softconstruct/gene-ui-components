@@ -1,5 +1,4 @@
 import React, {
-    CSSProperties,
     Dispatch,
     forwardRef,
     ReactNode,
@@ -30,14 +29,13 @@ import { Placement } from "@floating-ui/utils";
 
 import { InfoOutlined, X } from "@geneui/icons";
 
+// Components
+import Button from "@components/atoms/Button";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
+
 // Styles
 import "./Popover.scss";
 
-// Hooks
-import { useScrollLock } from "../../../hooks";
-// Components
-import { GeneUIDesignSystemContext } from "../../providers/GeneUIProvider";
-import Button from "../Button";
 // Helper
 import { calculateOverlap, getPositionRect } from "./Helper";
 
@@ -114,77 +112,84 @@ export interface IPopoverProps {
     /**
      * Whether the popover is open initially. Defaults value is `false`.
      */
-
     defaultOpen?: boolean;
     /**
      * Define width and height of the popover.<br>
-     * Possible values: <code> xLarge | large | medium | small | mobile </code>
+     * Possible values: `xLarge | large | medium | small | fitContent`
      */
-    size?: "xLarge" | "large" | "medium" | "small" | "mobile";
-
+    size?: "small" | "medium" | "large" | "xLarge" | "fitContent";
+    /**
+     * When set to true, the `width` of the `popover` will match the `width` of the reference (trigger, anchor) element.
+     * The `height` of the popover will still be determined by the `size` prop.
+     */
+    fitReference?: boolean;
     /**
      * Title displayed in the popover header.
      */
     title?: string;
-
     /**
-     * Position of the popover, relative to the target.<br><br>
-     * Possible values: <code> bottom-center | bottom-left | bottom-right | left-bottom | left-center | left-top | <br><br> right-bottom | right-center | right-top | top-center | top-left | top-right | auto </code>
+     * Position of the popover, relative to the reference (trigger, anchor) element.<br><br>
+     * Possible values: `bottom-center | bottom-left | bottom-right | left-bottom | left-center` <br> `left-top | right-bottom | right-center | right-top | top-center | top-left | top-right | auto`
      */
     position?: keyof typeof correctPosition;
-
     /**
-     * Margin between the popover and its target element.
+     * Margin between the popover and its reference (trigger, anchor) element.
      */
     margin?: number;
-
     /**
      * Function to update popover props dynamically.
      */
     setProps: Dispatch<SetStateAction<Record<string, unknown>>>;
-
-    /**
-     * Additional content displayed in the popover footer.
-     */
-    footerContent?: ReactNode;
-
     /**
      * The content displayed inside the popover.
      */
     children: ReactNode;
-
     /**
      * Show or hide arrows
      */
     withArrow?: boolean;
-
     /**
-     * If this property is enabled, rather than the popover content repositioning on a boundary collision,
-     * the popover content container will move beyond the window's bounds.
-     * You are, however, supplied with nudgedLeft and nudgedTop values, so you may choose to handle content overflow as you wish.
+     * If `true`, disables automatic repositioning of the popover when it would otherwise
+     * overflow or collide with a window boundary. By default, the popover will attempt
+     * to reposition itself (e.g., flip to another side) to remain visible.
+     *
+     * When `disableReposition` is enabled, the popover will instead remain in its
+     * original placement, even if that causes it to overflow the viewport.
+     * This can be useful when you want to handle overflow behavior manually or
+     * maintain consistent placement.
+     *
+     * Note: Even with repositioning disabled, the component still provides
+     * `nudgedLeft` and `nudgedTop` values, which can be used to handle content overflow.
      */
     disableReposition?: boolean;
     /**
-     * A callback function that is called when the popover needs to be closed.
+     * A callback function that is called when the popover is closed.
      */
     onClose?: () => void;
     /**
-     * Use `open` prop to control open state. By default, open is controls by component.
+     * Controls the open state of the popover externally.
+     *
+     * If `open` is provided, the component becomes a controlled component,
+     * and its visibility will be dictated by the parent.
+     * If `open` is not provided, the component manages its own open/close
+     * state internally via user interaction (e.g., clicks).
+     *
+     * This allows the component to be used both in controlled and uncontrolled modes.
      */
     open?: boolean;
 }
 
 /**
- Popover displays additional content or information in an overlay box.
+ Popover displays additional content or information in an overlay floating box.
  It appears on top of the main content when triggered by a user action,
  such as a click or hover. Unlike tooltips, popovers can contain more
  complex and interactive content, including text, images, and form elements.
 */
-
 const Popover = forwardRef<IPopoverRef, IPopoverProps>(
     (
         {
             size = "medium",
+            fitReference,
             position = "bottom-center",
             margin = 10,
             defaultOpen = false,
@@ -198,13 +203,12 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         },
         popoverRef
     ) => {
-        const { lock: lockBodyScroll, unlock: unlockBodyScroll } = useScrollLock(document.body);
-
         const [popoverOpened, setPopoverOpened] = useState(defaultOpen);
-        const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
+        const { geneUIProviderRef, breakpoint } = useContext(GeneUIDesignSystemContext);
         const [currentPosition, setCurrentPosition] = useState(correctPosition[position]);
-
         const arrowRef = useRef<HTMLDivElement | null>(null);
+
+        const isMobile = breakpoint?.isMobileBreakpoint;
 
         const wosPosed = useRef(new Map());
         const { refs, floatingStyles, context, middlewareData, placement } = useFloating({
@@ -286,29 +290,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             ? { [arrowPosition]: offsetFromEdge }
             : { insetInlineStart: middlewareArrowData?.x };
 
-        const styles: CSSProperties =
-            size === "mobile"
-                ? {
-                      position: "fixed",
-                      bottom: "0"
-                  }
-                : floatingStyles;
-
-        const isShowPopover = open || popoverOpened;
-
-        useEffect(() => {
-            if (size === "mobile" && isShowPopover) {
-                lockBodyScroll();
-            } else {
-                unlockBodyScroll();
-            }
-        }, [size, isShowPopover]);
-
-        useEffect(() => {
-            return () => {
-                unlockBodyScroll();
-            };
-        }, []);
+        const isPopoverOpened = open || popoverOpened;
 
         useLayoutEffect(() => {
             if (position === "auto") {
@@ -374,17 +356,25 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
 
         const arrowOffsetFromEdge = 5;
 
+        const parentElement = refs.reference.current as HTMLElement | null;
+
         return (
             <>
-                {isShowPopover && (
-                    <FloatingPortal root={geneUIProviderRef.current}>
-                        <div
-                            style={styles}
-                            className={`popover  popover_size_${size} popover_position_${currentDirection}`}
-                            ref={refs.setFloating}
-                            {...getFloatingProps()}
-                        >
-                            {size !== "mobile" && (
+                {isPopoverOpened &&
+                    (isMobile ? (
+                        <span>Spreadsheet component</span>
+                    ) : (
+                        <FloatingPortal root={geneUIProviderRef.current}>
+                            <div
+                                style={
+                                    fitReference && parentElement
+                                        ? { ...floatingStyles, "--parent-width": `${parentElement?.offsetWidth}px` }
+                                        : floatingStyles
+                                }
+                                className={`popover ${fitReference && "popover_size_reference"} popover_size_${size} popover_position_${currentDirection}`}
+                                ref={refs.setFloating}
+                                {...getFloatingProps()}
+                            >
                                 <div
                                     ref={arrowRef}
                                     className="popover__arrow"
@@ -411,30 +401,29 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                         )}
                                     </svg>
                                 </div>
-                            )}
 
-                            <div className="popover__container">
-                                {title && (
-                                    <div className="popover__header">
-                                        <p className="popover__title">
-                                            <InfoOutlined className="popover__title_icon" size={20} />
-                                            <span className="popover__title_text ellipsis-text">{title}</span>
-                                        </p>
-                                        <Button
-                                            Icon={X}
-                                            size="small"
-                                            appearance="secondary"
-                                            displayType="text"
-                                            className="popover__close"
-                                            onClick={() => setPopoverOpened(false)}
-                                        />
-                                    </div>
-                                )}
-                                {children}
+                                <div className="popover__container">
+                                    {title && (
+                                        <div className="popover__header">
+                                            <p className="popover__title">
+                                                <InfoOutlined className="popover__title_icon" size={20} />
+                                                <span className="popover__title_text ellipsis-text">{title}</span>
+                                            </p>
+                                            <Button
+                                                Icon={X}
+                                                size="small"
+                                                appearance="secondary"
+                                                displayType="text"
+                                                className="popover__close"
+                                                onClick={() => setPopoverOpened(false)}
+                                            />
+                                        </div>
+                                    )}
+                                    {children}
+                                </div>
                             </div>
-                        </div>
-                    </FloatingPortal>
-                )}
+                        </FloatingPortal>
+                    ))}
             </>
         );
     }

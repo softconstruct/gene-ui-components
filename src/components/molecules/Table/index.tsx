@@ -1,1 +1,1 @@
-export { ITableProps, default } from "./TableLayoutTmp";
+export { default, ITableProps } from "./Table";
