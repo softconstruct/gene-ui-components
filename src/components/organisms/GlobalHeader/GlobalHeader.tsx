@@ -26,6 +26,12 @@ interface IGlobalHeaderProps {
     logoAs?: ReactElement;
     partners?: IPartnerItemData[];
     onPartnerSelect?: (partner: IPartnerItemData) => void;
+    partnersLoading?: boolean;
+    partnersDisabled?: boolean;
+    partnersLoadingText?: string;
+    partnersSearchPlaceholder?: string;
+    partnersName?: string;
+    partnersIdName?: string;
     // limit?: string; // todo
     // actionList?: any[]; // todo button group
 }
@@ -38,7 +44,13 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     onNavigationButtonClick,
     logoAs,
     partners,
-    onPartnerSelect
+    onPartnerSelect,
+    partnersLoading,
+    partnersLoadingText,
+    partnersSearchPlaceholder,
+    partnersDisabled,
+    partnersName,
+    partnersIdName
 }) => {
     const onNavigationButtonClickHandler = (e: MouseEvent<HTMLButtonElement>) => {
         if (onNavigationButtonClick) {
@@ -69,7 +81,16 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                 )}
             </div>
             <div className="globalHeader_side_right">
-                <Partners onPartnerSelect={onPartnerSelect} partners={partners} />
+                <Partners
+                    onPartnerSelect={onPartnerSelect}
+                    partners={partners}
+                    loading={partnersLoading}
+                    loadingText={partnersLoadingText}
+                    searchPlaceholder={partnersSearchPlaceholder}
+                    disabled={partnersDisabled}
+                    name={partnersName}
+                    idName={partnersIdName}
+                />
                 <Divider vertical className="globalHeader__divider" />
                 <Text as="p" className="globalHeader__text">
                     TEST

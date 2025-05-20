@@ -3,6 +3,7 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import { CaretDownFilled } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
+import Loader from "@components/atoms/Loader";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import PartnerItem, { IPartnerItemProps } from "@components/organisms/GlobalHeader/Partners/PartnerItem";
@@ -16,12 +17,28 @@ export type IPartnerItemData = Omit<IPartnerItemProps, "onChange">;
 interface IPartnersProps {
     onPartnerSelect?: (partner: IPartnerItemData) => void;
     partners?: IPartnerItemData[];
+    loading?: boolean;
+    loadingText?: string;
+    searchPlaceholder?: string;
+    disabled?: boolean;
+    name?: string;
+    idName?: string;
 }
 
-const Partners: FC<IPartnersProps> = ({ onPartnerSelect, partners }) => {
+const Partners: FC<IPartnersProps> = ({
+    onPartnerSelect,
+    partners,
+    loading,
+    searchPlaceholder,
+    loadingText = "Loading",
+    disabled = false,
+    name = "partner",
+    idName = "Id"
+}) => {
     const [propsForProductsPopover, setPropsForProductsPopover] = useState<Record<string, unknown>>({});
     const [mappedPartners, setMappedPartners] = useState<IPartnerItemData[]>([]);
     const [selectedPartner, setSelectedPartner] = useState<IPartnerItemData | null>(null);
+    const [hasScrolled, setHasScrolled] = useState(false);
     const selectedPartnerRef = useRef<HTMLButtonElement | null>(null);
     const [isProductsOpen, setIsProductsOpen] = useState(false);
     const popoverRef = useRef<IPopoverRef>({
@@ -47,7 +64,7 @@ const Partners: FC<IPartnersProps> = ({ onPartnerSelect, partners }) => {
 
     useEffect(() => {
         const currentRef = selectedPartnerRef.current;
-        if (isProductsOpen && currentRef) {
+        if (isProductsOpen && currentRef && !hasScrolled) {
             currentRef.scrollIntoView({ behavior: "smooth" });
         }
     }, [selectedPartner, isProductsOpen, selectedPartnerRef.current, assignSelectedRef]);
@@ -57,6 +74,7 @@ const Partners: FC<IPartnersProps> = ({ onPartnerSelect, partners }) => {
     }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement]);
 
     const onProductsToggle = () => {
+        setHasScrolled(false);
         setIsProductsOpen((prevState) => !prevState);
     };
 
@@ -68,6 +86,7 @@ const Partners: FC<IPartnersProps> = ({ onPartnerSelect, partners }) => {
     const searchHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.toLowerCase();
         const partnersSnapshot = partners?.length ? partners : [];
+        setHasScrolled(true);
         setMappedPartners(() => {
             return partnersSnapshot.filter(
                 (partner) => partner.name.toLowerCase().includes(value) || partner.id.toString().includes(value)
@@ -78,6 +97,7 @@ const Partners: FC<IPartnersProps> = ({ onPartnerSelect, partners }) => {
     return (
         <div className="partners">
             <Button
+                disabled={disabled}
                 onClick={onProductsToggle}
                 appearance="inverse"
                 displayType="text"
@@ -97,23 +117,35 @@ const Partners: FC<IPartnersProps> = ({ onPartnerSelect, partners }) => {
                 ref={popoverRef}
             >
                 <PopoverBody withPadding={false} className="partners__popoverBody">
-                    <input type="search" onChange={searchHandler} />
-                    <Scrollbar className="partners__scrollbar">
-                        {mappedPartners?.map((partner) => {
-                            return (
-                                <PartnerItem
-                                    key={partner.id}
-                                    {...partner}
-                                    onChange={() => {
-                                        onPartnerItemSelect(partner);
-                                    }}
-                                    ref={(el) => {
-                                        return assignSelectedRef(el, partner.id);
-                                    }}
-                                />
-                            );
-                        })}
-                    </Scrollbar>
+                    {loading ? (
+                        <Loader className="partners__loader" text={loadingText} textPosition="below" />
+                    ) : (
+                        <>
+                            <div className="partners__header">
+                                <input type="search" onChange={searchHandler} placeholder={searchPlaceholder} />
+                                <div className="partners__title">
+                                    <span>{name}</span>
+                                    <span>{idName}</span>
+                                </div>
+                            </div>
+                            <Scrollbar className="partners__scrollbar">
+                                {mappedPartners?.map((partner) => {
+                                    return (
+                                        <PartnerItem
+                                            key={partner.id}
+                                            {...partner}
+                                            onChange={() => {
+                                                onPartnerItemSelect(partner);
+                                            }}
+                                            ref={(el) => {
+                                                return assignSelectedRef(el, partner.id);
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </Scrollbar>
+                        </>
+                    )}
                 </PopoverBody>
             </Popover>
         </div>

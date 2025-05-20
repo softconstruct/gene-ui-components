@@ -15,7 +15,12 @@ const meta: Meta<IGlobalHeaderProps> = {
 
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        onNavigationButtonClick: args({ control: "false", ...propCategory.action })
+        onNavigationButtonClick: args({ control: "false", ...propCategory.action }),
+        partnersLoading: args({ control: "boolean", ...propCategory.states }),
+        partnersDisabled: args({ control: "boolean", ...propCategory.states }),
+        partnersLoadingText: args({ control: "text", ...propCategory.content }),
+        partnersName: args({ control: "text", ...propCategory.content }),
+        partnersIdName: args({ control: "text", ...propCategory.content })
     },
     args: {
         logoAs: <a href="/" aria-label="logo" />
@@ -46,5 +51,5 @@ export default meta;
 type Story = StoryObj<IGlobalHeaderProps>;
 
 export const Default: Story = {
-    render: () => <Template />
+    render: (props) => <Template {...props} />
 };
