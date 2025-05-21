@@ -1,6 +1,7 @@
 import React, { forwardRef } from "react";
 import classNames from "classnames";
 
+// Components
 import Text from "@components/atoms/Text";
 
 export interface IPartnerItemProps {

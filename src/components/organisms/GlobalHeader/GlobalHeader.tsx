@@ -21,21 +21,68 @@ interface IGlobalHeaderProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Triggered when the navigation button (hamburger menu) is clicked.
+     */
     onNavigationButtonClick?: (e: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Optional logo link. You can pass a React Router Link, Next.js Link, or just an <a>.
+     * Example: <Link to="/"> or <a href="/">.
      */
     logoAs?: ReactElement;
+    /**
+     * An array of partner items to display in the partners dropdown.
+     */
     partners?: IPartnerItemData[];
+    /**
+     * Callback function when a partner is selected from the list.
+     */
     onPartnerSelect?: (partner: IPartnerItemData) => void;
-    partnersLoading?: boolean;
+    /**
+     * Whether the partners dropdown should be disabled.
+     */
     partnersDisabled?: boolean;
+    /**
+     * Whether the partners list is currently loading.
+     * Displays a loading indicator.
+     */
+    partnersLoading?: boolean;
+    /**
+     * Text to display when the partners list is loading.
+     */
     partnersLoadingText?: string;
+    /**
+     * Placeholder text for the partners search input.
+     */
     partnersSearchPlaceholder?: string;
+    /**
+     * The property name use as the label for partner name in the dropdown.
+     */
     partnersName?: string;
+    /**
+     * The property id use as the label for partner id in the dropdown.
+     */
     partnersIdName?: string;
+    /**
+     * Label for the limit section (e.g. "Limit").
+     */
     limitLabel?: string;
+    /**
+     * Unit or amount to show next to the limit label (e.g. "100").
+     */
     limitUnit?: string;
+    /**
+     * The time zone to display the time in.
+     * If not provided, it will use the local time zone of the user's device.
+     * example: "America/New_York", "Europe/London"
+     */
+    timeZone?: string;
+    /**
+     * The format of the time to display.
+     * Possible values: "24h" or "12h"
+     * Default is "24h"
+     */
+    timeFormat?: "24h" | "12h";
     // actionList?: any[]; // todo button group
 }
 
@@ -55,7 +102,9 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     partnersName,
     partnersIdName,
     limitLabel,
-    limitUnit
+    limitUnit,
+    timeZone,
+    timeFormat
 }) => {
     const onNavigationButtonClickHandler = (e: MouseEvent<HTMLButtonElement>) => {
         if (onNavigationButtonClick) {
@@ -86,14 +135,6 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                 )}
             </div>
             <div className="globalHeader_side_right">
-                <div className="globalHeader__limit">
-                    <Limit limit={limitUnit} label={limitLabel} />
-                    <Divider vertical className="globalHeader__divider" />
-                </div>
-                <div className="globalHeader__time">
-                    <Time />
-                    <Divider vertical className="globalHeader__divider" />
-                </div>
                 {partners && (
                     <div className="globalHeader__partners">
                         <Partners
@@ -109,8 +150,18 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                         <Divider vertical className="globalHeader__divider" />
                     </div>
                 )}
+                {(limitLabel || limitUnit) && (
+                    <div className="globalHeader__limit">
+                        <Limit limit={limitUnit} label={limitLabel} />
+                        <Divider vertical className="globalHeader__divider" />
+                    </div>
+                )}
+                <div className="globalHeader__time">
+                    <Time timeZone={timeZone} format={timeFormat} />
+                    <Divider vertical className="globalHeader__divider" />
+                </div>
                 <Text as="p" className="globalHeader__text">
-                    TEST
+                    Profile
                 </Text>
             </div>
         </div>

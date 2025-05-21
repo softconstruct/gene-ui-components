@@ -26,6 +26,8 @@ const meta: Meta<IGlobalHeaderProps> = {
         partnersIdName: args({ control: "text", ...propCategory.content }),
         limitUnit: args({ control: "text", ...propCategory.content }),
         limitLabel: args({ control: "text", ...propCategory.content }),
+        timeZone: args({ control: "text", ...propCategory.content }),
+        timeFormat: args({ control: "select", ...propCategory.content }),
         logoAs: args({ control: "false", ...propCategory.content })
     },
     args: {

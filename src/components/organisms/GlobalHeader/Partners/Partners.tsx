@@ -2,12 +2,14 @@ import React, { FC, useEffect, useRef, useState } from "react";
 
 import { CaretDownFilled } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import PartnerItem, { IPartnerItemProps } from "@components/organisms/GlobalHeader/Partners/PartnerItem";
 
+// Hooks
 import useClickOutside from "@hooks/useClickOutside";
 
 import "./Partners.scss";
@@ -112,7 +114,7 @@ const Partners: FC<IPartnersProps> = ({
                 setProps={setPropsForProductsPopover}
                 position="bottom-right"
                 size="medium"
-                withArrow
+                withArrow={false}
                 open={isProductsOpen}
                 ref={popoverRef}
             >
