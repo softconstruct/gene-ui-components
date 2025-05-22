@@ -61,7 +61,7 @@ export const data = [
                         selected: false,
                         id: "alpha-ui",
                         value: "ui",
-                        isLoading: true,
+                        loading: true,
                         loadingText: "Loading...",
                         children: []
                     },

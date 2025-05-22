@@ -4,8 +4,8 @@ import { isValidElementType } from "react-is";
 
 import { IconProps } from "@geneui/icons";
 
-import Loader from "@components/atoms/Loader";
 // Components
+import Loader from "@components/atoms/Loader";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import MenuItemButton from "@components/molecules/Menu/MenuItemButton";
@@ -74,9 +74,9 @@ interface IMenuItemProps {
     /**
      *  Indicates whether the menu is in a loading state. If true, a loading indicator is displayed instead of the menu items.
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
-     * The text to display alongside the loader when isLoading is true.
+     * The text to display alongside the loader when loading is true.
      */
     loadingText?: string;
 }
@@ -96,7 +96,7 @@ const MenuItem: FC<IMenuItemProps> = ({
     emptyText = "No data to show",
     paths,
     generateId,
-    isLoading,
+    loading,
     loadingText
 }) => {
     const [propsForPopover, setPropsForPopover] = useState({});
@@ -162,7 +162,7 @@ const MenuItem: FC<IMenuItemProps> = ({
     }, [paths, swappable, generateId]);
 
     const menuContent = useMemo(() => {
-        if (isLoading) {
+        if (loading) {
             return (
                 <div className="menu__loader">
                     <Loader text={loadingText} textPosition="below" />
@@ -185,7 +185,7 @@ const MenuItem: FC<IMenuItemProps> = ({
             );
         }
         return <div className="menu__content">{children}</div>;
-    }, [children, emptyText, isLoading, loadingText, swappable, isActiveSwappableContent]);
+    }, [children, emptyText, loading, loadingText, swappable, isActiveSwappableContent]);
 
     return swappable ? (
         <>

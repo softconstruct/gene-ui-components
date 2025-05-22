@@ -64,9 +64,9 @@ interface IMenuProps {
     /**
      *  Indicates whether the menu is in a loading state. If true, a loading indicator is displayed instead of the menu items.
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
-     * The text to display alongside the loader when isLoading is true.
+     * The text to display alongside the loader when loading is true.
      */
     loadingText?: string;
     /**
@@ -140,7 +140,7 @@ export const popoverSizeMapping = {
 const Menu: FC<IMenuProps> = ({
     onChange,
     children,
-    isLoading,
+    loading,
     loadingText,
     swappable,
     setPropsForPopover,
@@ -245,7 +245,7 @@ const Menu: FC<IMenuProps> = ({
     const hasSwappablePaths = (!!swappable || isMobileBreakpoint) && !!paths.length;
 
     const content = useMemo(() => {
-        if (isLoading) {
+        if (loading) {
             return (
                 <div className="menu__loader">
                     <Loader text={loadingText} textPosition="below" />
@@ -262,7 +262,7 @@ const Menu: FC<IMenuProps> = ({
                 <div className="menu__content">{clonedChildren}</div>
             </Scrollbar>
         );
-    }, [isLoading, loadingText, hasSwappablePaths, clonedChildren, onScrollHandler]);
+    }, [loading, loadingText, hasSwappablePaths, clonedChildren, onScrollHandler]);
 
     return (
         <MenuContext.Provider value={memoizedMenuContextValue}>

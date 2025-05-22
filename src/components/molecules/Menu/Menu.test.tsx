@@ -37,14 +37,14 @@ describe("Menu ", () => {
         expect(setup.find(MenuItem)).toBeTruthy();
     });
 
-    it("renders isLoading prop correctly", () => {
-        const wrapper = setup.setProps({ isLoading: true });
+    it("renders loading prop correctly", () => {
+        const wrapper = setup.setProps({ loading: true });
 
         expect(wrapper.find(Loader)).toBeTruthy();
     });
 
     it("renders loadingText prop correctly", () => {
-        const wrapper = setup.setProps({ isLoading: true, loadingText: "Loading" });
+        const wrapper = setup.setProps({ loading: true, loadingText: "Loading" });
 
         expect(wrapper.find(Loader).contains("Loading")).toBeTruthy();
     });
