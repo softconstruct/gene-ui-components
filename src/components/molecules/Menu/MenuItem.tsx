@@ -4,6 +4,7 @@ import { isValidElementType } from "react-is";
 
 import { IconProps } from "@geneui/icons";
 
+import Loader from "@components/atoms/Loader";
 // Components
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
@@ -70,8 +71,14 @@ interface IMenuItemProps {
      * Controls the open state for menu.
      */
     paths?: string[];
-    loadingText?: never;
-    isLoading?: never;
+    /**
+     *  Indicates whether the menu is in a loading state. If true, a loading indicator is displayed instead of the menu items.
+     */
+    isLoading?: boolean;
+    /**
+     * The text to display alongside the loader when isLoading is true.
+     */
+    loadingText?: string;
 }
 
 const MenuItem: FC<IMenuItemProps> = ({
@@ -88,7 +95,9 @@ const MenuItem: FC<IMenuItemProps> = ({
     ComponentRender,
     emptyText = "No data to show",
     paths,
-    generateId
+    generateId,
+    isLoading,
+    loadingText
 }) => {
     const [propsForPopover, setPropsForPopover] = useState({});
     const parentRef = useRef<HTMLDivElement | null>(null);
@@ -152,7 +161,15 @@ const MenuItem: FC<IMenuItemProps> = ({
         setIsActiveSwappableContent(!paths?.length || !!isMatch);
     }, [paths, swappable, generateId]);
 
-    const renderedSwappableContent = useMemo(() => {
+    const menuContent = useMemo(() => {
+        if (isLoading) {
+            return (
+                <div className="menu__loader">
+                    <Loader text={loadingText} textPosition="below" />
+                </div>
+            );
+        }
+
         if (Children.count(children) === 0) {
             return (
                 <div className="menu__empty">
@@ -160,17 +177,15 @@ const MenuItem: FC<IMenuItemProps> = ({
                 </div>
             );
         }
-
-        if (isActiveSwappableContent) {
+        if (swappable && isActiveSwappableContent) {
             return (
                 <Scrollbar className="menu__scrollbar">
                     <div className="menu__content">{children}</div>
                 </Scrollbar>
             );
         }
-
         return <div className="menu__content">{children}</div>;
-    }, [children, emptyText, isActiveSwappableContent]);
+    }, [children, emptyText, isLoading, loadingText, swappable, isActiveSwappableContent]);
 
     return swappable ? (
         <>
@@ -203,8 +218,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                                 <MenuItemButton type="header" onItemClickHandler={onItemClickHandler} title={title} />
                             </div>
                         )}
-
-                        {renderedSwappableContent}
+                        {menuContent}
                     </div>
                 </>
             ) : (
@@ -266,13 +280,7 @@ const MenuItem: FC<IMenuItemProps> = ({
                                 })}
                             >
                                 <Scrollbar className="menu__scrollbar" onScroll={onScrollHandler}>
-                                    {Children.count(children) > 0 ? (
-                                        <div className="menu__content">{children}</div>
-                                    ) : (
-                                        <div className="menu__empty">
-                                            <h1>{emptyText}</h1>
-                                        </div>
-                                    )}
+                                    {menuContent}
                                 </Scrollbar>
                             </div>
                         </PopoverBody>

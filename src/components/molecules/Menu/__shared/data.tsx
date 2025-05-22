@@ -56,7 +56,15 @@ export const data = [
                 id: "team-alpha",
                 value: "alpha",
                 children: [
-                    { title: "UI", selected: false, id: "alpha-ui", value: "ui" },
+                    {
+                        title: "UI",
+                        selected: false,
+                        id: "alpha-ui",
+                        value: "ui",
+                        isLoading: true,
+                        loadingText: "Loading...",
+                        children: []
+                    },
                     { title: "UX", selected: false, id: "alpha-ux", value: "ux" },
                     {
                         title: "Dev",
