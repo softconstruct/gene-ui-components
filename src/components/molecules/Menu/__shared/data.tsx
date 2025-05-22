@@ -2,7 +2,7 @@ import React from "react";
 
 import { Globe, LightBulb } from "@geneui/icons";
 
-import Checkbox from "../../Checkbox";
+import Pill from "@components/atoms/Pill";
 
 export const data = [
     {
@@ -26,11 +26,11 @@ export const data = [
         title: "Options",
         id: "options",
         value: "options",
-        danger: true,
         ComponentRender: () => (
-            <span>
-                <Checkbox label="Enable logs" name="logs" value="logs" />
-            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Pill color="informative" isFill size="small" withDot />
+                <span>custom</span>
+            </div>
         )
     },
     {
