@@ -58,14 +58,13 @@ export const data = [
                 children: [
                     {
                         title: "UI",
-                        selected: false,
                         id: "alpha-ui",
                         value: "ui",
                         loading: true,
                         loadingText: "Loading...",
                         children: []
                     },
-                    { title: "UX", selected: false, id: "alpha-ux", value: "ux" },
+                    { title: "UX", id: "alpha-ux", value: "ux", selected: true },
                     {
                         title: "Dev",
                         selected: false,

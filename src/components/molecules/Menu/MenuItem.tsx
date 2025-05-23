@@ -101,7 +101,7 @@ const MenuItem: FC<IMenuItemProps> = ({
 }) => {
     const [propsForPopover, setPropsForPopover] = useState({});
     const parentRef = useRef<HTMLDivElement | null>(null);
-    const { onChangeHandler, swappable, relativeRefsSetter, size } = useContext(MenuContext);
+    const { onChangeHandler, swappable, relativeRefsSetter, size, openSelectedPath } = useContext(MenuContext);
     const [popoverOpenState, setPopoverOpenState] = useState(false);
     const [isActiveSwappableContent, setIsActiveSwappableContent] = useState(false);
 
@@ -156,10 +156,12 @@ const MenuItem: FC<IMenuItemProps> = ({
 
     useEffect(() => {
         if (!swappable) return;
-        const pathId = paths?.join("_");
+        const pathsForOpenSelectedPath = paths && Array.isArray(paths) ? [...paths.slice(0, -1)] : [];
+        const pathId = openSelectedPath ? pathsForOpenSelectedPath.join("_") : paths?.join("_");
         const isMatch = generateId?.startsWith(pathId || "");
+
         setIsActiveSwappableContent(!paths?.length || !!isMatch);
-    }, [paths, swappable, generateId]);
+    }, [paths, swappable, generateId, children, openSelectedPath]);
 
     const menuContent = useMemo(() => {
         if (loading) {

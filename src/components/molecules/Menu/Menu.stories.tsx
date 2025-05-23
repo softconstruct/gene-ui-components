@@ -23,6 +23,7 @@ const meta: Meta<typeof Menu> = {
         loading: args({ control: "boolean", ...propCategory.states }),
         open: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
+        openSelectedPath: args({ control: "boolean", ...propCategory.appearance }),
         position: args({
             control: "select",
             ...propCategory.appearance,
@@ -78,22 +79,21 @@ const StoryComponent: FC = (props) => {
     const [menuData, setMenuData] = useState(data);
     const [propsForPopover, setPropsForPopover] = useState({});
 
-    const updateSelection = (menu, id) => {
-        return menu.map((item) => {
-            const isSelected = item.id === id;
-            const updatedItem = { ...item, selected: isSelected };
+    const handleMenuChange = (id) => {
+        const updateSelected = (items, targetId) => {
+            return items.map((item) => {
+                const isSelected = item.id === id;
+                const updatedItem = { ...item, selected: isSelected };
 
-            if (item.children) {
-                updatedItem.children = updateSelection(item.children, id);
-            }
+                if (item.children) {
+                    updatedItem.children = updateSelected(item.children, targetId);
+                }
 
-            return updatedItem;
-        });
-    };
+                return updatedItem;
+            });
+        };
 
-    const onChange = (paths, id) => {
-        const updatedMenuData = updateSelection(menuData, id);
-        setMenuData(updatedMenuData);
+        setMenuData(updateSelected(menuData, id));
     };
 
     const Elements = MenuItemRecursion(menuData);
@@ -101,7 +101,7 @@ const StoryComponent: FC = (props) => {
     return (
         <div style={{ height: "98vh" }}>
             <Button {...propsForPopover}>test</Button>
-            <Menu {...props} onChange={onChange} setPropsForPopover={setPropsForPopover}>
+            <Menu {...props} onChange={handleMenuChange} setPropsForPopover={setPropsForPopover}>
                 {Elements}
             </Menu>
         </div>

@@ -31,7 +31,7 @@ import { useClickOutside } from "@hooks/index";
 import "./Menu.scss";
 
 // Helpers
-import { isActiveElementInside } from "./helper";
+import { findPathOfSelected, isActiveElementInside } from "./helper";
 // Types
 import { IMenuItemProps } from "./MenuItem";
 
@@ -51,6 +51,7 @@ type SizeType = "large" | "medium" | "small";
 
 interface IMenuContextProps {
     onChangeHandler: (props: OnchangeHandlerType) => void;
+    openSelectedPath?: boolean;
     swappable?: boolean;
     relativeRefsSetter: RelativeRefsSetter;
     size: SizeType;
@@ -75,7 +76,7 @@ interface IMenuProps {
      * paths: An array of strings representing the hierarchical path of the selected item.
      * id: The unique identifier of the selected menu item.
      */
-    onChange: (paths: string[], id: string | number) => void;
+    onChange: (id: string | number) => void;
     /**
      *  If true, enables swapping behavior, modifying the appearance or behavior of the menu.
      */
@@ -100,6 +101,10 @@ interface IMenuProps {
      * Controls the open state for menu.
      */
     open?: boolean;
+    /**
+     * When a path is selected and this prop is true, the menu will open the corresponding page automatically.
+     */
+    openSelectedPath?: boolean;
 }
 
 const cloneChildrenRecursive = (
@@ -146,10 +151,12 @@ const Menu: FC<IMenuProps> = ({
     setPropsForPopover,
     size = "small",
     position = "bottom-left",
-    open
+    open,
+    openSelectedPath = false
 }) => {
     const [isOpenState, setIsOpenState] = useState<boolean>(true);
     const [paths, setPaths] = useState<string[]>([]);
+    const [openSelectedPathState, setOpenSelectedPathState] = useState<boolean>(openSelectedPath);
     const [relativeRefs, setRelativeRefs] = useState<Record<string, MutableRefObject<ReferenceType | null>>>({});
     const parentRef = useRef(null);
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
@@ -185,26 +192,30 @@ const Menu: FC<IMenuProps> = ({
     );
 
     useEffect(() => {
-        if (paths.length) {
-            setIsOpenState(true);
+        const defaultPath = findPathOfSelected(children);
+        if (defaultPath && isOpenState && openSelectedPath && !paths.length) {
+            setPaths(defaultPath);
         }
-    }, [paths]);
+    }, [isOpenState, children, openSelectedPath, paths]);
 
     useEffect(() => {
         if (open !== undefined) setIsOpenState(open);
     }, [open]);
 
     const onChangeHandler = ({ generateId, id, isBack, closeMenu }: OnchangeHandlerType) => {
+        setOpenSelectedPathState(false);
         const idToArray = generateId.split("_");
         const currentPath = isBack ? idToArray.slice(0, -1) : idToArray;
         if (closeMenu) {
+            if (openSelectedPath) setOpenSelectedPathState(true);
             setIsOpenState(false);
             setPaths([]);
         } else {
             setPaths(currentPath);
         }
-
-        onChange(currentPath, id);
+        if (closeMenu) {
+            onChange(id);
+        }
     };
 
     const relativeRefsSetter: RelativeRefsSetter = ({ generateId, popoverFloatingRef }) => {
@@ -221,9 +232,10 @@ const Menu: FC<IMenuProps> = ({
             onChangeHandler,
             swappable: isMobileBreakpoint || swappable,
             relativeRefsSetter,
+            openSelectedPath: openSelectedPathState,
             size: size as SizeType
         }),
-        [onChangeHandler, swappable, size, isMobileBreakpoint, relativeRefsSetter]
+        [onChangeHandler, swappable, size, isMobileBreakpoint, relativeRefsSetter, openSelectedPath]
     );
 
     const clonedChildren = cloneChildrenRecursive(children, paths);
