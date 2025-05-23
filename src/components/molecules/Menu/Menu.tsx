@@ -36,14 +36,14 @@ import { findPathOfSelected, isActiveElementInside } from "./helper";
 import { IMenuItemProps } from "./MenuItem";
 
 export interface OnchangeHandlerType {
-    generateId: string;
+    generatedId: string;
     id: number | string;
     isBack: boolean;
     closeMenu: boolean;
 }
 
 type RelativeRefsSetter = (props: {
-    generateId: string;
+    generatedId: string;
     popoverFloatingRef: MutableRefObject<ReferenceType | null> | undefined;
 }) => void;
 
@@ -114,17 +114,17 @@ const cloneChildrenRecursive = (
     pathID = ""
 ): FunctionComponentElement<IMenuItemProps>[] | ReactElement => {
     return Children.map(children, (child, i) => {
-        const generateId = pathID ? `${pathID}_${i}` : `${i}`;
+        const generatedId = pathID ? `${pathID}_${i}` : `${i}`;
 
         return cloneElement(
             child,
             {
                 ...props,
-                generateId,
+                generatedId,
                 paths
             },
             Array.isArray(child.props?.children)
-                ? cloneChildrenRecursive(child.props?.children, paths, props, generateId)
+                ? cloneChildrenRecursive(child.props?.children, paths, props, generatedId)
                 : child.props?.children
         );
     }) as FunctionComponentElement<IMenuItemProps>[];
@@ -202,9 +202,9 @@ const Menu: FC<IMenuProps> = ({
         if (open !== undefined) setIsOpenState(open);
     }, [open]);
 
-    const onChangeHandler = ({ generateId, id, isBack, closeMenu }: OnchangeHandlerType) => {
+    const onChangeHandler = ({ generatedId, id, isBack, closeMenu }: OnchangeHandlerType) => {
         setOpenSelectedPathState(false);
-        const idToArray = generateId.split("_");
+        const idToArray = generatedId.split("_");
         const currentPath = isBack ? idToArray.slice(0, -1) : idToArray;
         if (closeMenu) {
             setOpenSelectedPathState(true);
@@ -218,11 +218,11 @@ const Menu: FC<IMenuProps> = ({
         }
     };
 
-    const relativeRefsSetter: RelativeRefsSetter = ({ generateId, popoverFloatingRef }) => {
+    const relativeRefsSetter: RelativeRefsSetter = ({ generatedId, popoverFloatingRef }) => {
         if (popoverFloatingRef?.current) {
             setRelativeRefs((prev) => ({
                 ...prev,
-                [generateId]: popoverFloatingRef
+                [generatedId]: popoverFloatingRef
             }));
         }
     };

@@ -66,7 +66,7 @@ interface IMenuItemProps {
     /**
      * Controls the open state for menu.
      */
-    generateId?: string;
+    generatedId?: string;
     /**
      * Controls the open state for menu.
      */
@@ -95,7 +95,7 @@ const MenuItem: FC<IMenuItemProps> = ({
     ComponentRender,
     emptyText = "No data to show",
     paths,
-    generateId,
+    generatedId,
     loading,
     loadingText
 }) => {
@@ -109,9 +109,9 @@ const MenuItem: FC<IMenuItemProps> = ({
 
     useEffect(() => {
         const shouldOpenPopover =
-            !!generateId?.length && (paths?.join("_").startsWith(generateId) || paths?.join("_") === generateId);
+            !!generatedId?.length && (paths?.join("_").startsWith(generatedId) || paths?.join("_") === generatedId);
         setPopoverOpenState(shouldOpenPopover);
-    }, [generateId, paths]);
+    }, [generatedId, paths]);
 
     const popoverFloatingRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
@@ -119,8 +119,8 @@ const MenuItem: FC<IMenuItemProps> = ({
     });
 
     const onItemClickHandler = (isBack: boolean) => {
-        if (onChangeHandler && generateId) {
-            onChangeHandler({ generateId, id, isBack, closeMenu: typeof children === "string" });
+        if (onChangeHandler && generatedId) {
+            onChangeHandler({ generatedId, id, isBack, closeMenu: typeof children === "string" });
         }
     };
 
@@ -128,7 +128,7 @@ const MenuItem: FC<IMenuItemProps> = ({
         const floatingElement = popoverFloatingRef?.current?.floatingElement;
         if (floatingElement) {
             relativeRefsSetter({
-                generateId: generateId || "",
+                generatedId: generatedId || "",
                 popoverFloatingRef: floatingElement
             });
         }
@@ -158,10 +158,10 @@ const MenuItem: FC<IMenuItemProps> = ({
         if (!swappable) return;
         const pathsForOpenSelectedPath = paths && Array.isArray(paths) ? [...paths.slice(0, -1)] : [];
         const pathId = openSelectedPath ? pathsForOpenSelectedPath.join("_") : paths?.join("_");
-        const isMatch = generateId?.startsWith(pathId || "");
+        const isMatch = generatedId?.startsWith(pathId || "");
 
         setIsActiveSwappableContent(!paths?.length || !!isMatch);
-    }, [paths, swappable, generateId, children, openSelectedPath]);
+    }, [paths, swappable, generatedId, children, openSelectedPath]);
 
     const menuContent = useMemo(() => {
         if (loading) {
