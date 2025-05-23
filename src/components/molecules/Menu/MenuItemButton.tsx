@@ -75,6 +75,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                     menu__item_danger: danger,
                     menu__item_disabled: disabled,
                     menu__item_active: active,
+                    menu__item_selected: selected,
                     menu__item_header: type === "header"
                 })}
                 onClick={onItemClick}
