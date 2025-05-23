@@ -54,8 +54,8 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                 <ChevronRight className="menu__icon menu__icon_after" size={20} />
             );
         }
-        if (type !== "header") {
-            if (selected) {
+        if (type !== "header" && type !== "custom") {
+            if (selected && !IconAfter && !danger) {
                 return <CheckMark className="menu__icon menu__icon_after" size={20} />;
             }
             if (IconAfter) {
@@ -64,7 +64,7 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
         }
 
         return <></>;
-    }, [type, selected, IconAfter, onItemClick]);
+    }, [type, selected, IconAfter, onItemClick, danger]);
 
     return (
         <>
