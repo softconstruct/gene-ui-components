@@ -193,10 +193,10 @@ const Menu: FC<IMenuProps> = ({
 
     useEffect(() => {
         const defaultPath = findPathOfSelected(children);
-        if (defaultPath && isOpenState && openSelectedPath && !paths.length) {
+        if (defaultPath && isOpenState && openSelectedPathState && !paths.length) {
             setPaths(defaultPath);
         }
-    }, [isOpenState, children, openSelectedPath, paths]);
+    }, [isOpenState, children, openSelectedPathState, paths]);
 
     useEffect(() => {
         if (open !== undefined) setIsOpenState(open);
@@ -207,7 +207,7 @@ const Menu: FC<IMenuProps> = ({
         const idToArray = generateId.split("_");
         const currentPath = isBack ? idToArray.slice(0, -1) : idToArray;
         if (closeMenu) {
-            if (openSelectedPath) setOpenSelectedPathState(true);
+            setOpenSelectedPathState(true);
             setIsOpenState(false);
             setPaths([]);
         } else {
