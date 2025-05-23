@@ -32,9 +32,13 @@
         &:not(&#{ $that }_mobile) {
             border-radius: var(--guit-ref-radius-2xsmall);
 
-            #{ $this }__scrollbar {
+            #{ $this }__list {
                 min-height: 3.2rem;
                 max-height: 35.2rem;
+            }
+            #{ $this }__loader,
+            #{ $this }__empty {
+                aspect-ratio: 1;
             }
         }
 
@@ -74,6 +78,7 @@
         height: 100%;
         width: 100%;
         display: flex;
+        flex-wrap: wrap;
         place-content: center;
     }
 
