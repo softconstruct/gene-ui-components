@@ -64,7 +64,11 @@ interface IMenuProps {
     /**
      *  Indicates whether the menu is in a loading state. If true, a loading indicator is displayed instead of the menu items.
      */
-    isLoading?: boolean;
+    loading?: boolean;
+    /**
+     * The text to display alongside the loader when loading is true.
+     */
+    loadingText?: string;
     /**
      * Callback function triggered when a menu item is selected or navigated.
      *
@@ -72,10 +76,6 @@ interface IMenuProps {
      * id: The unique identifier of the selected menu item.
      */
     onChange: (paths: string[], id: string | number) => void;
-    /**
-     * The text to display alongside the loader when isLoading is true.
-     */
-    loadingText?: string;
     /**
      *  If true, enables swapping behavior, modifying the appearance or behavior of the menu.
      */
@@ -106,17 +106,8 @@ const cloneChildrenRecursive = (
     children: JSX.Element | JSX.Element[],
     paths: string[],
     props = {},
-    isLoading = false,
-    loadingText = "",
     pathID = ""
 ): FunctionComponentElement<IMenuItemProps>[] | ReactElement => {
-    if (isLoading) {
-        return (
-            <div className="menu__loader">
-                <Loader text={loadingText} textPosition="below" />
-            </div>
-        );
-    }
     return Children.map(children, (child, i) => {
         const generateId = pathID ? `${pathID}_${i}` : `${i}`;
 
@@ -128,14 +119,7 @@ const cloneChildrenRecursive = (
                 paths
             },
             Array.isArray(child.props?.children)
-                ? cloneChildrenRecursive(
-                      child.props?.children,
-                      paths,
-                      props,
-                      child.props.isLoading,
-                      child.props.loadingText,
-                      generateId
-                  )
+                ? cloneChildrenRecursive(child.props?.children, paths, props, generateId)
                 : child.props?.children
         );
     }) as FunctionComponentElement<IMenuItemProps>[];
@@ -156,7 +140,7 @@ export const popoverSizeMapping = {
 const Menu: FC<IMenuProps> = ({
     onChange,
     children,
-    isLoading,
+    loading,
     loadingText,
     swappable,
     setPropsForPopover,
@@ -261,7 +245,7 @@ const Menu: FC<IMenuProps> = ({
     const hasSwappablePaths = (!!swappable || isMobileBreakpoint) && !!paths.length;
 
     const content = useMemo(() => {
-        if (isLoading) {
+        if (loading) {
             return (
                 <div className="menu__loader">
                     <Loader text={loadingText} textPosition="below" />
@@ -278,7 +262,7 @@ const Menu: FC<IMenuProps> = ({
                 <div className="menu__content">{clonedChildren}</div>
             </Scrollbar>
         );
-    }, [isLoading, loadingText, hasSwappablePaths, clonedChildren, onScrollHandler]);
+    }, [loading, loadingText, hasSwappablePaths, clonedChildren, onScrollHandler]);
 
     return (
         <MenuContext.Provider value={memoizedMenuContextValue}>

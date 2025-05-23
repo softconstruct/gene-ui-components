@@ -20,7 +20,7 @@ const meta: Meta<typeof Menu> = {
         children: args({ control: "false", ...propCategory.content }),
         setPropsForPopover: args({ control: "false", ...propCategory.functionality }),
         loadingText: args({ control: "text", ...propCategory.content }),
-        isLoading: args({ control: "boolean", ...propCategory.states }),
+        loading: args({ control: "boolean", ...propCategory.states }),
         open: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         position: args({
@@ -57,7 +57,7 @@ const MenuItemRecursion = (menuData) => {
                 IconAfter={el.IconAfter}
                 danger={el.danger}
                 disabled={el.disabled}
-                isLoading={el.isLoading}
+                loading={el.loading}
                 id={el.id}
                 divider={el.divider}
                 loadingText={el.loadingText}
