@@ -55,7 +55,7 @@ interface ITabsProps {
      * The prop responsible for showing the loading skeleton if passed true. The default value is false
      * boolean
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
      * Tab component. Renders inside the component
      */
@@ -88,7 +88,7 @@ const Tabs: FC<ITabsProps> = ({
     size = "large",
     type = "line",
     children,
-    isLoading,
+    loading,
     className,
     onChange,
     closable
@@ -236,7 +236,7 @@ const Tabs: FC<ITabsProps> = ({
 
     const isMobile = width <= 767;
 
-    if (isLoading) {
+    if (loading) {
         return <div>Skeleton </div>;
     }
 

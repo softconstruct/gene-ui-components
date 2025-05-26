@@ -61,8 +61,8 @@ describe("Tabs", () => {
         expect(wrapper.find(Tab).length).toBe(initialTabCount - 1);
     });
 
-    it("shows loading skeleton when isLoading is true", () => {
-        setup.setProps({ isLoading: true });
+    it("shows loading skeleton when loading is true", () => {
+        setup.setProps({ loading: true });
         expect(setup.text()).toContain("Skeleton");
     });
 });

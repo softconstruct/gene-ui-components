@@ -14,16 +14,13 @@ const meta: Meta<ITabsProps> = {
     title: "Molecules/Tabs",
     component: Tabs,
     argTypes: {
-        isLoading: args({ control: "boolean", ...propCategory.states }),
+        loading: args({ control: "boolean", ...propCategory.states }),
         closable: args({ control: "boolean", ...propCategory.states }),
-
         size: args({ control: "select", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
-
         onChange: args({ control: "false", ...propCategory.action }),
-
         children: args({ control: "false", ...propCategory.content })
     },
     args: {
