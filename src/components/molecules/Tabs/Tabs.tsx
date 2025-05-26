@@ -6,6 +6,7 @@ import React, {
     FunctionComponentElement,
     JSX,
     MutableRefObject,
+    useContext,
     useEffect,
     useMemo,
     useRef,
@@ -18,6 +19,8 @@ import { ChevronLeft, ChevronRight } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
+import Scrollbar from "@components/atoms/Scrollbar";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Hooks
 import useWindowSize from "@hooks/useWindowSize";
@@ -25,8 +28,6 @@ import useWindowSize from "@hooks/useWindowSize";
 // Styles
 import "./Tabs.scss";
 
-// Components
-import { Scrollbar } from "../../../index";
 import { ITabProps } from ".";
 
 interface ITabsProps {
@@ -109,6 +110,10 @@ const Tabs: FC<ITabsProps> = ({
 
     const leftButtonRef = useRef<HTMLButtonElement | null>(null);
     const rightButtonRef = useRef<HTMLButtonElement | null>(null);
+
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
+
+    const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
 
     const updateTransform = (offset: number) => {
         parentRef.current?.scrollTo({
@@ -234,8 +239,6 @@ const Tabs: FC<ITabsProps> = ({
         }
     };
 
-    const isMobile = width <= 767;
-
     if (loading) {
         return <div>Skeleton </div>;
     }
@@ -245,12 +248,12 @@ const Tabs: FC<ITabsProps> = ({
             <div className={classNames(`tabs tabs_${direction} tabs_${type} tabs_${size}`, className, direction, type)}>
                 <div
                     className={classNames("tabs__nav", {
-                        tabs__shadow_before: isMobile && showLeftShadows && isHorizontal,
-                        tabs__shadow_after: isMobile && showRightShadows && isHorizontal
+                        tabs__shadow_before: isMobileBreakpoint && showLeftShadows && isHorizontal,
+                        tabs__shadow_after: isMobileBreakpoint && showRightShadows && isHorizontal
                     })}
                     aria-label="Sample Tabs"
                 >
-                    {isHorizontal && showArrows && !isMobile && (
+                    {isHorizontal && showArrows && !isMobileBreakpoint && (
                         <div className="tabs__nav_button">
                             <Button
                                 ref={leftButtonRef}
@@ -276,7 +279,7 @@ const Tabs: FC<ITabsProps> = ({
                         </div>
                     </Scrollbar>
 
-                    {isHorizontal && showArrows && !isMobile && (
+                    {isHorizontal && showArrows && !isMobileBreakpoint && (
                         <div className="tabs__nav_button">
                             <Button
                                 ref={rightButtonRef}
