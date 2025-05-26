@@ -49,17 +49,17 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
     const MemoizedIconAfter = useMemo(() => {
         if (type === "parent") {
             return isRTLMode ? (
-                <ChevronLeft className="menu__icon menu__icon_after" size={20} />
+                <ChevronLeft className="menu__icon" size={20} />
             ) : (
-                <ChevronRight className="menu__icon menu__icon_after" size={20} />
+                <ChevronRight className="menu__icon" size={20} />
             );
         }
         if (type !== "header" && type !== "custom") {
             if (selected && !IconAfter && !danger) {
-                return <CheckMark className="menu__icon menu__icon_after" size={20} />;
+                return <CheckMark className="menu__icon" size={20} />;
             }
             if (IconAfter) {
-                return <IconAfter className="menu__icon menu__icon_after" size={20} />;
+                return <IconAfter className="menu__icon" size={20} />;
             }
         }
 
@@ -76,7 +76,9 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                     menu__item_disabled: disabled,
                     menu__item_active: active,
                     menu__item_selected: selected,
-                    menu__item_header: type === "header"
+                    menu__item_header: type === "header",
+                    menu__item_icon_after: !!IconAfter || type === "parent",
+                    menu__item_icon_before: !!IconBefore || type === "header"
                 })}
                 onClick={onItemClick}
                 {...(disabled ? { tabIndex: -1 } : {})}
@@ -85,11 +87,11 @@ const MenuItemButton: FC<IMenuItemButtonProps> = ({
                 <span className="menu__cell">
                     {type === "header" &&
                         (isRTLMode ? (
-                            <ChevronRight className="menu__icon menu__icon_before" size={20} />
+                            <ChevronRight className="menu__icon" size={20} />
                         ) : (
-                            <ChevronLeft className="menu__icon menu__icon_before" size={20} />
+                            <ChevronLeft className="menu__icon" size={20} />
                         ))}
-                    {IconBefore && <IconBefore className="menu__icon menu__icon_before" size={20} />}
+                    {IconBefore && <IconBefore className="menu__icon" size={20} />}
                     {title ? <span className={type === "header" ? "menu__headerTitle" : ""}>{title}</span> : children}
                 </span>
                 {MemoizedIconAfter}
