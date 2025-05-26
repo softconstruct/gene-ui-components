@@ -50,7 +50,7 @@ export const Default: Story = {
 };
 
 export const IconOnly: Story = {
-    render: (props) => (
+    render: (props: ITabsProps) => (
         <div style={{ height: 550 }}>
             <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => (
@@ -62,7 +62,7 @@ export const IconOnly: Story = {
 };
 
 export const TextOnly: Story = {
-    render: (props) => (
+    render: (props: ITabsProps) => (
         <div style={{ height: 550 }}>
             <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => (
@@ -76,7 +76,7 @@ export const TextOnly: Story = {
 };
 
 export const TemplateWithSwap: Story = {
-    render: (props) => (
+    render: (props: ITabsProps) => (
         <div style={{ height: 550 }}>
             <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => (
@@ -90,7 +90,7 @@ export const TemplateWithSwap: Story = {
 };
 
 export const Vertical: Story = {
-    render: (props) => (
+    render: (props: ITabsProps) => (
         <div style={{ height: 550 }}>
             <Tabs {...props} direction="vertical">
                 {new Array(25).fill(null).map((_, i) => (
