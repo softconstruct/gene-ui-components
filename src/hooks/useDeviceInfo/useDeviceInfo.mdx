@@ -1,0 +1,83 @@
+import { Meta } from '@storybook/blocks';
+import useDeviceInfo from './useDeviceInfo';
+
+<Meta title="Hooks/useDeviceInfo" />
+
+<div style={{ paddingInlineStart: '20px' }}>
+
+## useDeviceInfo
+
+This hook detects the client device's **operating system, device type (mobile or desktop), and touch capability** by analyzing the browser's user agent string and other available properties.<br />
+It provides a structured API with boolean flags for specific OS detection, device classification, and whether the device supports touch interactions.
+
+#### Returns
+
+An object with the following properties:
+
+- **`os`**: A string representing the detected operating system. The value is one of: `"Windows" | "macOS" | "Linux" | "Android" | "iOS" | "Unknown"`
+  
+- **`isMobileDevice`**: A boolean indicating whether the device is a mobile device. It returns `true` for Android and iOS devices.
+
+- **`isDesktopDevice`**: A boolean indicating whether the device is a desktop device. It returns `true` for Windows, macOS, and Linux systems.
+
+- **`isTouch`**: A boolean indicating whether the device supports touch interactions. It returns `true` if the device has touch capabilities.
+
+- **`isWindows`**: A boolean flag that is `true` when the OS is detected as Windows.
+
+- **`isMacOS`**: A boolean flag that is `true` when the OS is detected as macOS.
+
+- **`isLinux`**: A boolean flag that is `true` when the OS is detected as Linux.
+
+- **`isAndroid`**: A boolean flag that is `true` when the OS is detected as Android.
+
+- **`isIOS`**: A boolean flag that is `true` when the OS is detected as iOS.
+
+- **`theme`**: A union value detected from device `light` or `dark`
+
+#### Usage
+
+```jsx
+import React from 'react';
+import { useDeviceInfo } from '@geneui/components';
+
+const ExampleComponent = () => {
+    const {
+        os,
+        isMobileDevice,
+        isDesktopDevice,
+        isTouch,
+        isWindows,
+        isMacOS,
+        isLinux,
+        isAndroid,
+        isIOS,
+        theme
+    } = useDeviceInfo();
+
+    return (
+        <div>
+            <p>Detected Operating System: <strong>{os}</strong></p>
+            {isMobileDevice && <p>You are using a mobile device.</p>}
+            {isDesktopDevice && <p>You are using a desktop device.</p>}
+            {isTouch && <p>Your device supports touch interactions.</p>}
+            {isWindows && <p>Your OS is Windows.</p>}
+            {isMacOS && <p>Your OS is macOS.</p>}
+            {isLinux && <p>Your OS is Linux.</p>}
+            {isAndroid && <p>Your OS is Android.</p>}
+            {isIOS && <p>Your OS is iOS.</p>}
+            <p>Detected theme of the device: <strong>{theme}</strong></p>
+        </div>
+    );
+};
+
+export default ExampleComponent;
+```
+
+#### Notes
+
+-   <b>Detection Basis:</b> The hook uses the browser's `navigator.userAgent` to determine the operating system. This method is simple and efficient, though it depends on the reliability of the user agent string.
+-   <b>SSR Safety:</b> The hook is designed to be safe for server-side rendering (SSR). It checks for the existence of navigator before attempting detection, ensuring no runtime errors occur when rendered on the server.
+-   <b>Touch Device Detection:</b> It also detects touch devices using `"ontouchstart" in window`, `navigator.maxTouchPoints`, `window.matchMedia("(pointer: coarse)").matches`.
+-   <b>Theme Detection</b> It using `window.matchMedia("(prefers-color-scheme: dark)").matches`.
+
+</div>
