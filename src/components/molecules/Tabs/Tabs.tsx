@@ -16,14 +16,15 @@ import classNames from "classnames";
 
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
 
+// Components
+import Button from "@components/atoms/Button";
+
 // Hooks
 import useWindowSize from "@hooks/useWindowSize";
 
 // Styles
 import "./Tabs.scss";
 
-// Components
-import Button from "../../atoms/Button";
 import { ITabProps } from ".";
 
 interface ITabsProps {

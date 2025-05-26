@@ -20,7 +20,7 @@ export { default as Spreadsheet, ISpreadsheetProps } from "./components/atoms/Sp
 export { default as Copy, ICopyProps } from "./components/atoms/Copy";
 
 // Molecules
-export { default as Tabs } from "./components/molecules/Tabs";
+export { Tabs, Tab, ITabsProps, ITabProps } from "./components/molecules/Tabs";
 export { default as Tooltip, ITooltipProps } from "./components/molecules/Tooltip";
 export { default as ProgressBar, IProgressBarProps } from "./components/molecules/ProgressBar";
 export { Steps, Step, IStepProps, IStepsProps } from "./components/molecules/Steps";

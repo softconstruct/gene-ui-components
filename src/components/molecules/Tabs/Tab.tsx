@@ -7,7 +7,7 @@ import { Close, IconProps, InfoFill } from "@geneui/icons";
 import Button from "../../atoms/Button";
 import { TabsContext } from "./Tabs";
 
-export interface ITabProps extends PropsWithChildren {
+interface ITabProps extends PropsWithChildren {
     /**
      * The title of the tab, displayed as the tab label.
      * Accepts a string or a number.
@@ -98,4 +98,4 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, isError, index, clos
         </button>
     );
 };
-export default Tab;
+export { ITabProps, Tab as default };

@@ -3,12 +3,12 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { TagOutline } from "@geneui/icons";
 
+// Components
 import Pill from "@components/atoms/Pill";
+import { ITabsProps, Tab, Tabs } from "@components/molecules/Tabs";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-// Components
-import Tabs, { ITabsProps, Tab } from ".";
 
 const meta: Meta<ITabsProps> = {
     title: "Molecules/Tabs",
@@ -37,7 +37,7 @@ const meta: Meta<ITabsProps> = {
 export default meta;
 type Story = StoryObj<ITabsProps>;
 
-export const popoverStory: Story = {
+export const Default: Story = {
     render: (props) => (
         <div style={{ height: 550 }}>
             <Tabs {...props}>

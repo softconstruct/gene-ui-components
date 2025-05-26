@@ -1,3 +1,2 @@
-export { ITabsProps, default } from "./Tabs";
-
-export { default as Tab, ITabProps } from "./Tab";
+export { ITabsProps, default as Tabs } from "./Tabs";
+export { ITabProps, default as Tab } from "./Tab";
