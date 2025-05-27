@@ -61,6 +61,11 @@ describe("Button ", () => {
         expect(wrapper.find(".button").hasClass(`button_size_${size}`)).toBeTruthy();
     });
 
+    it.each<IButtonProps["iconPosition"]>(["before", "after"])("should have %s position", (iconPosition) => {
+        const wrapper = setup.setProps({ iconPosition, Icon: Globe, children: "Search" });
+        expect(wrapper.find(".button").hasClass(`button_icon_${iconPosition}`)).toBeTruthy();
+    });
+
     it.each<IButtonProps["appearance"]>(["primary", "secondary", "danger", "success", "inverse", "transparent"])(
         "should have %s appearance",
         (appearance) => {

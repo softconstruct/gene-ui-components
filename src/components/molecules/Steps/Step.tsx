@@ -22,7 +22,7 @@ interface IPointTypesProps {
     /**
      * Loading state for Step.
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
      * Change the icon for step to mention the Step state.
      */
@@ -49,7 +49,7 @@ interface IStepProps extends IPointTypesProps {
     disabled?: boolean;
 }
 
-const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, isLoading, state }) => {
+const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, state }) => {
     const { type } = useContext(StepsContext);
 
     const stepCount = (num: number) => {
@@ -58,7 +58,7 @@ const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, isLoading, st
         return num;
     };
 
-    if (isLoading) {
+    if (loading) {
         return <Loader size="small" />;
     }
 
@@ -83,7 +83,7 @@ const Step: FC<IStepProps> = ({
     description,
     label,
     id,
-    isLoading,
+    loading,
     stepNumber,
     disabled,
     error,
@@ -95,14 +95,14 @@ const Step: FC<IStepProps> = ({
     return (
         <div
             className={classNames("steps__step", {
-                steps__step_disabled: disabled && !error && !isLoading,
+                steps__step_disabled: disabled && !error && !loading,
                 steps__step_error: error,
                 steps__step_success: state === "complete",
                 steps__step_current: state === "current"
             })}
         >
             <div className="steps__status">
-                <PointTypes stepNumber={stepNumber ?? 1} error={error} isLoading={isLoading} state={state} />
+                <PointTypes stepNumber={stepNumber ?? 1} error={error} loading={loading} state={state} />
 
                 <Divider
                     className="steps__status_divider"
@@ -116,7 +116,7 @@ const Step: FC<IStepProps> = ({
                         type="button"
                         className="steps__label"
                         onClick={changeHandler}
-                        disabled={disabled || isLoading}
+                        disabled={disabled || loading}
                     >
                         {label}
                     </button>
