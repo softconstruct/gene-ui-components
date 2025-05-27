@@ -177,10 +177,6 @@
 
         &_button {
             flex: 0 0 auto;
-
-            [dir="rtl"] & {
-                rotate: 180deg;
-            }
         }
     }
 

@@ -115,6 +115,8 @@ const Tabs: FC<ITabsProps> = ({
 
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
 
+    const isRTLMode = document.dir === "rtl";
+
     const updateTransform = (offset: number) => {
         parentRef.current?.scrollTo({
             left: offset
@@ -261,7 +263,7 @@ const Tabs: FC<ITabsProps> = ({
                                 appearance="secondary"
                                 displayType="text"
                                 fullWidth
-                                Icon={ChevronLeft}
+                                Icon={isRTLMode ? ChevronRight : ChevronLeft}
                                 onClick={() => slideShift()}
                             />
                         </div>
@@ -287,7 +289,7 @@ const Tabs: FC<ITabsProps> = ({
                                 appearance="secondary"
                                 displayType="text"
                                 fullWidth
-                                Icon={ChevronRight}
+                                Icon={isRTLMode ? ChevronLeft : ChevronRight}
                                 onClick={() => slideShift(true)}
                             />
                         </div>
