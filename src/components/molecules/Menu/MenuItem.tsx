@@ -66,10 +66,6 @@ interface IMenuItemProps {
     /**
      * Controls the open state for menu.
      */
-    generatedId?: string;
-    /**
-     * Controls the open state for menu.
-     */
     paths?: string[];
     /**
      *  Indicates whether the menu is in a loading state. If true, a loading indicator is displayed instead of the menu items.
@@ -79,6 +75,7 @@ interface IMenuItemProps {
      * The text to display alongside the loader when loading is true.
      */
     loadingText?: string;
+    generatedId?: string;
 }
 
 const MenuItem: FC<IMenuItemProps> = ({

@@ -167,6 +167,10 @@ const Menu: FC<IMenuProps> = ({
         referenceElement: { current: null }
     });
 
+    useEffect(() => {
+        setOpenSelectedPathState(openSelectedPath);
+    }, [openSelectedPath]);
+
     useClickOutside(
         (e) => {
             const onMenuTargetClick =
@@ -203,11 +207,11 @@ const Menu: FC<IMenuProps> = ({
     }, [open]);
 
     const onChangeHandler = ({ generatedId, id, isBack, closeMenu }: OnchangeHandlerType) => {
-        setOpenSelectedPathState(false);
+        if (swappable) setOpenSelectedPathState(false);
         const idToArray = generatedId.split("_");
         const currentPath = isBack ? idToArray.slice(0, -1) : idToArray;
         if (closeMenu) {
-            setOpenSelectedPathState(true);
+            if (swappable) setOpenSelectedPathState(openSelectedPath);
             setIsOpenState(false);
             setPaths([]);
         } else {
