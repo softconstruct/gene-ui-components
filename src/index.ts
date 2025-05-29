@@ -27,6 +27,7 @@ export { default as Tag, ITagProps } from "./components/molecules/Tag";
 export { Timelines, TimelinePoint, ITimelinesProps, ITimelinePointProps } from "./components/molecules/Timeline";
 export { default as QRCode, IQRCodeProps } from "./components/molecules/QRCode";
 export { KeyValue, Key, Value, IKeyValueProps, IKeyProps, IValueProps } from "./components/molecules/KeyValue";
+export { default as TextField } from "./components/molecules/TextField";
 
 // Organisms
 
