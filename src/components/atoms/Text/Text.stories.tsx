@@ -16,9 +16,7 @@ const meta: Meta<ITextProps> = {
         children: args({ control: "text", ...propCategory.content }),
         variant: args({ control: "select", ...propCategory.appearance }),
         as: args({ control: "select", ...propCategory.appearance }),
-        alignment: args({ control: "select", ...propCategory.appearance }),
-        truncate: args({ control: "boolean", ...propCategory.appearance }),
-        withTooltip: args({ control: "boolean", ...propCategory.appearance })
+        alignment: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         variant: "headingLargeSemibold"
@@ -151,21 +149,6 @@ export const Alignment: Meta = {
                     Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a
                     galley of type and scrambled it to make a type specimen book. It has survived not only five
                     centuries, but also the leap into electronic typesetting, remaining essentially unch
-                </Text>
-            </div>
-        );
-    },
-    parameters: {
-        controls: { disable: true }
-    }
-};
-
-export const TruncationWithTooltip: Meta = {
-    render: () => {
-        return (
-            <div style={{ width: "200px" }}>
-                <Text as="p" variant="bodyMediumRegular" alignment="start" truncate>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                 </Text>
             </div>
         );
