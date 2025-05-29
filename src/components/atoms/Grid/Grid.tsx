@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, ReactNode } from "react";
 
 // Styles
 import "./Grid.scss";
@@ -18,7 +18,7 @@ export interface IColProps {
      * Content placed inside the `Col` component.<br/>
      * Accepts any valid HTML tag or custom React component.
      */
-    children?: React.ReactNode;
+    children?: ReactNode;
 }
 
 const Col: FC<IColProps> = ({ children, size, offset }) => {
@@ -34,7 +34,7 @@ export interface IRowProps {
      * Defines the columns within the `Row` component.<br/>
      * Accepts `Col` components used to structure the layout.
      */
-    children?: React.ReactNode;
+    children?: ReactNode;
 }
 
 interface IGridProps {
@@ -42,7 +42,7 @@ interface IGridProps {
      * The content to be rendered inside the `Grid` component.<br/>
      * Possible values: `Col` | `Row`.
      */
-    children?: React.ReactNode;
+    children?: ReactNode;
 }
 
 /**  The 12-column grid system is a flexible and robust layout

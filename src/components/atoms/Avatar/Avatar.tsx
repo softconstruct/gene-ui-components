@@ -26,7 +26,7 @@ interface IAvatarProps {
      * Avatar icon <br/>
      * The `Icon` prop accepts a JSX element that will be displayed as an avatar.
      */
-    Icon?: React.FC<IconProps>;
+    Icon?: FC<IconProps>;
     /**
      * This prop defines the width and height for the component <br/>
      * Possible values: `6Xlarge | large | medium | small`

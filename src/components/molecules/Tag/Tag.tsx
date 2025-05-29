@@ -16,7 +16,7 @@ import Tooltip from "../Tooltip";
 
 type TagTypes = "rest" | "error" | "warning";
 
-const icons: Record<TagTypes, React.FC<IconProps>> = {
+const icons: Record<TagTypes, FC<IconProps>> = {
     rest: TagOutline,
     warning: CircleAlert,
     error: TriangleAlert

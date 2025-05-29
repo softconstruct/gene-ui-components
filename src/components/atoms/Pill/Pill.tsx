@@ -43,7 +43,7 @@ interface IPillProps {
      * Pill icon <br/>
      * The `Icon` prop accepts a JSX element that will be displayed alongside the `text`
      */
-    Icon?: React.FC<IconProps>;
+    Icon?: FC<IconProps>;
     /**
      * Displays a dot `Icon` when no custom `Icon` is provided. <br/>
      * If `true`, a dot icon will be shown unless a custom `Icon` is specified. <br/>

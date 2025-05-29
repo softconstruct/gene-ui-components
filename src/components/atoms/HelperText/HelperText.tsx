@@ -29,7 +29,7 @@ interface IHelperTextProps {
      * If `type` is `rest`, the provided `Icon` will be used (if supplied), otherwise no icon will be displayed.
      * The size of the icon will automatically adjust based on the `size` prop (`small` or `medium`).
      */
-    Icon?: React.FC<IconProps>;
+    Icon?: FC<IconProps>;
     /**
      * Determines whether the helper text is disabled.
      * If `true`, the helper text will appear dimmed and non-interactive.
