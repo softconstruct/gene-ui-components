@@ -37,7 +37,7 @@ interface IStepsProps extends IStepsContextProps {
     /**
      * This prop for label click ability. If true the labels are interactive else informative.
      */
-    isLinear?: boolean;
+    linear?: boolean;
 }
 
 export const StepsContext = createContext<IStepsContextProps>({} as IStepsContextProps);
@@ -45,14 +45,7 @@ export const StepsContext = createContext<IStepsContextProps>({} as IStepsContex
 /**
  * Step component is used to guide users through a sequential process by breaking it down into distinct steps. It is commonly employed in multi-step forms, checkout processes, or workflows that require users to complete tasks in a specific order.
  */
-const Steps: FC<IStepsProps> = ({
-    direction = "horizontal",
-    type = "dot",
-    isLinear,
-    className,
-    children,
-    onChange
-}) => {
+const Steps: FC<IStepsProps> = ({ direction = "horizontal", type = "dot", linear, className, children, onChange }) => {
     const memoizedStepsContextValue = useMemo(
         () => ({
             direction,
@@ -64,7 +57,7 @@ const Steps: FC<IStepsProps> = ({
 
     return (
         <StepsContext.Provider value={memoizedStepsContextValue as IStepsContextProps}>
-            <div className={classNames(`steps steps_direction_${direction}`, { steps_linear: isLinear }, className)}>
+            <div className={classNames(`steps steps_direction_${direction}`, { steps_linear: linear }, className)}>
                 {Children.toArray(children).map((child, i) => {
                     if (!isValidElement<IStepProps>(child)) return child;
 

@@ -34,7 +34,7 @@ describe("ProgressBar ", () => {
     it("renders label prop correctly", () => {
         const label = "test label";
         const wrapper = setup.setProps({ label });
-        expect(wrapper.find(Label).props().labelText).toBe(label);
+        expect(wrapper.find(Label).props().text).toBe(label);
     });
 
     it("renders infoText prop correctly", () => {

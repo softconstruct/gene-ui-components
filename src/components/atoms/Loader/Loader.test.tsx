@@ -14,8 +14,8 @@ describe("Loader", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it("renders isLoading prop correctly", () => {
-        const wrapper = setup.setProps({ isLoading: true });
+    it("renders loading prop correctly", () => {
+        const wrapper = setup.setProps({ loading: true });
         expect(wrapper.find(".loader").exists()).toBeTruthy();
     });
 
@@ -26,7 +26,7 @@ describe("Loader", () => {
     });
 
     it("renders hide loader", () => {
-        const wrapper = setup.setProps({ isLoading: false });
+        const wrapper = setup.setProps({ loading: false });
         expect(wrapper.find(".loader").exists()).toBeFalsy();
     });
 
@@ -50,7 +50,7 @@ describe("Loader", () => {
 
     it("renders children and isBusy prop correctly", () => {
         const children = <span>test</span>;
-        const wrapper = setup.setProps({ children, isLoading: false });
+        const wrapper = setup.setProps({ children, loading: false });
 
         expect(wrapper.contains("test")).toBeTruthy();
     });

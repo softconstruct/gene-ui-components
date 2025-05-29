@@ -28,7 +28,7 @@ describe("Radio ", () => {
     it("renders label prop correctly", () => {
         const label = "test label";
         const wrapper = setup.setProps({ label });
-        expect(wrapper.find(Label).props().labelText).toBe(label);
+        expect(wrapper.find(Label).props().text).toBe(label);
     });
 
     it("renders required prop correctly", () => {

@@ -1,4 +1,4 @@
-import React, { createContext, JSX, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, JSX, MutableRefObject, ReactElement, useEffect, useMemo, useRef, useState } from "react";
 
 import { bootstrap } from "@geneui/tokens";
 
@@ -21,8 +21,8 @@ import pgk from "../../../../package.json";
 type TokensType = { [key: string]: string | number };
 
 type LogoType = {
-    logotype: React.ReactElement;
-    logomark: React.ReactElement;
+    logotype: ReactElement;
+    logomark: ReactElement;
 };
 
 const defaultLogo: LogoType = {
@@ -35,7 +35,7 @@ const defaultTokens: TokensType = bootstrap();
 interface IGeneUIDesignSystemContext {
     theme: ThemesTypes;
     tokens: TokensType;
-    geneUIProviderRef: React.MutableRefObject<null>;
+    geneUIProviderRef: MutableRefObject<null>;
     breakpoint: IBreakpoint | null;
     deviceInfo: IDeviceInfo | null;
     logo: LogoType;
@@ -54,7 +54,7 @@ interface IGeneUIProviderProps {
     /**
      * Any valid React node
      */
-    children: React.ReactElement;
+    children: ReactElement;
     /**
      * Tokens library object defined by style-dictionary standard,
      * and GeneUI tokens package rules

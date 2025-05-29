@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect } from "react";
+import React, { FC, ReactElement, useContext, useEffect } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 
@@ -38,7 +38,7 @@ interface ISpreadsheetProps {
      * The content to render inside the Spreadsheet.
      * Typically includes form elements, info panels, or custom UI blocks.
      */
-    children?: React.ReactElement;
+    children?: ReactElement;
 }
 
 /**
