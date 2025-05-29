@@ -28,7 +28,7 @@ export const data = [
         value: "options",
         ComponentRender: () => (
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Pill color="informative" isFill size="small" withDot />
+                <Pill appearance="informative" filled size="small" withDot />
                 <span>custom</span>
             </div>
         )
