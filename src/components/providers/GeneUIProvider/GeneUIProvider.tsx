@@ -112,7 +112,7 @@ function GeneUIProvider({
                 className="gene-ui-provider"
                 data-gene-ui-version={pgk.version}
                 ref={geneUIProviderRef}
-                style={{ height: "100%" }}
+                style={{ colorScheme: theme, height: "100%" }}
             >
                 {isRefExist && children}
             </div>
