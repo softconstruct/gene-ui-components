@@ -11,7 +11,7 @@ const meta: Meta<IProgressBarProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
-        type: args({ control: "select", ...propCategory.functionality }),
+        type: args({ control: "select", ...propCategory.appearance }),
         helperText: args({ control: "text", ...propCategory.content }),
         uploadingText: args({ control: "text", ...propCategory.content }),
         percent: args({ control: "number", ...propCategory.content }),

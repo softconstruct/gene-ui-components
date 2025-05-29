@@ -1,6 +1,7 @@
 import React, {
     Dispatch,
     forwardRef,
+    MutableRefObject,
     ReactNode,
     SetStateAction,
     useContext,
@@ -104,8 +105,8 @@ export const staticSides: Record<string, StaticSides> = {
 } as const;
 
 export interface IPopoverRef {
-    referenceElement: React.MutableRefObject<ReferenceType | null>;
-    floatingElement: React.MutableRefObject<ReferenceType | null>;
+    referenceElement: MutableRefObject<ReferenceType | null>;
+    floatingElement: MutableRefObject<ReferenceType | null>;
 }
 
 export interface IPopoverProps {
@@ -413,7 +414,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                                 Icon={X}
                                                 size="small"
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 className="popover__close"
                                                 onClick={() => setPopoverOpened(false)}
                                             />

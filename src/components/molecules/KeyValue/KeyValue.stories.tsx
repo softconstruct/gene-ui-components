@@ -79,7 +79,7 @@ const WithPillValue: Story = storyObjBuilder({
             <KeyValue {...props}>
                 <Key>Title</Key>
                 <Value>
-                    <Pill text="Pill" isFill />
+                    <Pill text="Pill" filled />
                 </Value>
             </KeyValue>
         );

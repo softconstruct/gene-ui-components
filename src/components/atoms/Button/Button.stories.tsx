@@ -12,22 +12,23 @@ const meta: Meta<IButtonProps> = {
         size: args({ control: "select", ...propCategory.appearance }),
         appearance: args({ control: "select", ...propCategory.appearance }),
         children: args({ control: "text", ...propCategory.content }),
-        displayType: args({ control: "select", ...propCategory.appearance }),
+        layout: args({ control: "select", ...propCategory.appearance }),
         fullWidth: args({ control: "boolean", ...propCategory.appearance }),
-        iconAfter: args({ control: "boolean", ...propCategory.appearance }),
+        iconPosition: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
-        isLoading: args({ control: "boolean", ...propCategory.states }),
+        loading: args({ control: "boolean", ...propCategory.states }),
         Icon: args({ control: "false", ...propCategory.content }),
-        name: args({ control: "false", ...propCategory.functionality }),
+        name: args({ control: "false", ...propCategory.others }),
         onClick: args({ control: "false", ...propCategory.action })
     },
     args: {
         children: "Button",
         appearance: "primary",
         size: "large",
-        displayType: "fill",
-        isLoading: false
+        layout: "fill",
+        iconPosition: "before",
+        loading: false
     }
 };
 
