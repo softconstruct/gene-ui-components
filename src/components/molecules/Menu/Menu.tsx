@@ -207,11 +207,11 @@ const Menu: FC<IMenuProps> = ({
     }, [open]);
 
     const onChangeHandler = ({ generatedId, id, isBack, closeMenu }: OnchangeHandlerType) => {
-        if (swappable) setOpenSelectedPathState(false);
+        if (swappable || isMobileBreakpoint) setOpenSelectedPathState(false);
         const idToArray = generatedId.split("_");
         const currentPath = isBack ? idToArray.slice(0, -1) : idToArray;
         if (closeMenu) {
-            if (swappable) setOpenSelectedPathState(openSelectedPath);
+            if (swappable || isMobileBreakpoint) setOpenSelectedPathState(openSelectedPath);
             setIsOpenState(false);
             setPaths([]);
         } else {
