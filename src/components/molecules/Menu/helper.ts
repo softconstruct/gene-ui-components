@@ -13,17 +13,26 @@ export const isActiveElementInside = (parentRef: RefObject<HTMLDivElement>, sele
 };
 
 export const findPathOfSelected = (menu: ReactNode | ReactElement[], path: string[] = []): string[] | null => {
-    if (!Array.isArray(menu)) return null;
-    for (let i = 0; i < menu?.length; i++) {
-        const item = menu[i];
-        if (item.props?.selected) {
-            return [...path, i.toString()];
-        }
+    if (!Array.isArray(menu) || menu.length === 0) return null;
 
-        if (item.props.children && Array.isArray(item.props.children)) {
-            const childPath = findPathOfSelected(item.props.children, [...path, i.toString()]);
-            if (childPath) {
-                return childPath;
+    for (let i = 0, len = menu.length; i < len; i++) {
+        const item = menu[i];
+        const props = item?.props;
+
+        if (props) {
+            if (props.selected) {
+                path.push(i.toString());
+                return path.slice();
+            }
+
+            const { children } = props;
+            if (children && Array.isArray(children) && children.length > 0) {
+                path.push(i.toString());
+                const result = findPathOfSelected(children, path);
+
+                if (result) return result;
+
+                path.pop();
             }
         }
     }
