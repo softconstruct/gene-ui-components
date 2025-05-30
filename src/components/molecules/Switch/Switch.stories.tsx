@@ -24,7 +24,8 @@ const meta: Meta<typeof Switch> = {
         value: args({ control: "false", ...propCategory.others }),
         onBlur: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
-        autoFocus: args({ control: "boolean", ...propCategory.states })
+        autoFocus: args({ control: "boolean", ...propCategory.states }),
+        type: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         label: "Label",

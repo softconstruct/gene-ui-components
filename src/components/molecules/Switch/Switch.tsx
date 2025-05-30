@@ -67,14 +67,15 @@ interface ISwitchProps {
      *  Automatically focuses the switch when the component mounts.
      */
     autoFocus?: boolean;
+    /**
+     *  Determines the switch appearance based on its status.<br>
+     *  Possible values: `rest | warning | error`
+     */
+    type?: "rest" | "warning" | "error";
 }
 
 // TODO
-// autoFocus ✅
-// onBlur ✅
-// onFocus ✅
-// infoText
-// labelAlignment should be changed to direction (values = horizontal | vertical) ✅
+// add Label component
 
 /**
  * A switch component allows users to toggle between two states, typically "on" and "off". It is commonly used in settings and preferences to enable or disable features or functionalities.
@@ -94,7 +95,8 @@ const Switch: FC<ISwitchProps> = (props) => {
         name,
         onFocus,
         onBlur,
-        autoFocus
+        autoFocus,
+        type = "rest"
     } = props;
 
     const isControlled = "checked" in props;
@@ -113,7 +115,7 @@ const Switch: FC<ISwitchProps> = (props) => {
     const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => onBlur?.(e);
 
     return (
-        <div className={classNames("switch", `switch_direction_${direction}`, className)}>
+        <div className={classNames("switch", `switch_direction_${direction}`, `switch_type_${type}`, className)}>
             <label className="switch__label">
                 <input
                     type="checkbox"
@@ -132,7 +134,9 @@ const Switch: FC<ISwitchProps> = (props) => {
                 {label && <span className="switch__labelText">{label}</span>}
                 {/** TODO need to be replaced by Label component and support infoText props */}
             </label>
-            {helperText && <HelperText text={helperText} className="switch__helperText" disabled={disabled} />}
+            {helperText && (
+                <HelperText text={helperText} className="switch__helperText" disabled={disabled} type={type} />
+            )}
         </div>
     );
 };
