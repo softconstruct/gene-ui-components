@@ -48,7 +48,8 @@
                     "PopoverFooterActions": ["Button"],
                     "KeyValue": ["Key", "Value"],
                     "Value": ["Pill", "TextLink", "Text"],
-                    "Timeline": ["TimelinePoint"]
+                    "Timeline": ["TimelinePoint"],
+                    "Menu": ["MenuItem"]
                 }
             }
         ],

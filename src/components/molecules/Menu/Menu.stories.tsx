@@ -7,7 +7,7 @@ import { IMenuProps, Menu, MenuItem } from "@components/molecules/Menu/index";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import { data } from "./__shared/data";
+import { data } from "../../../../stories/data/__menu";
 
 const meta: Meta<typeof Menu> = {
     title: "Molecules/Menu",

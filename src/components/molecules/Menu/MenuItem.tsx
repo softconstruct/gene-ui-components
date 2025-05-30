@@ -130,6 +130,7 @@ const MenuItem: FC<IMenuItemProps> = ({
             });
         }
     }, [popoverFloatingRef, propsForPopover]);
+
     const onScrollHandler = (e: UIEvent<HTMLDivElement>) => {
         e.stopPropagation();
         if (swappable) return;

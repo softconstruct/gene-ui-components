@@ -78,7 +78,7 @@ interface IMenuProps {
      */
     onChange: (id: string | number) => void;
     /**
-     *  If true, enables swapping behavior, modifying the appearance or behavior of the menu.
+     *  If true, enables swapping behavior, modifying the appearance and behavior of the menu.
      */
     swappable?: boolean;
     /**
@@ -92,17 +92,16 @@ interface IMenuProps {
      */
     size?: SizeType;
     /**
-     *
      * Position of the Menu first popover, relative to the reference (trigger, anchor) element.<br>
      * Possible values: `bottom-center | bottom-left | bottom-right | left-bottom | left-center` <br> `left-top | right-bottom | right-center | right-top | top-center | top-left | top-right | auto`
      */
     position?: IPopoverProps["position"];
     /**
-     * Controls the open state for menu.
+     * Controls the open state for menu, for more info see the Popover component open state.
      */
     open?: boolean;
     /**
-     * When a path is selected and this prop is true, the menu will open the corresponding page automatically.
+     * When a path is selected and this prop is true, the menu will open the corresponding page automatically via highlighting selection route.
      */
     openSelectedPath?: boolean;
 }
@@ -130,10 +129,6 @@ const cloneChildrenRecursive = (
     }) as FunctionComponentElement<IMenuItemProps>[];
 };
 
-/**
- * Menu component provides a list of options or actions available to the user within a specific context. Menus are used to offer additional functionality without cluttering the interface, allowing users to access commands, navigate to different sections, or modify settings quickly and efficiently.
- */
-
 export const MenuContext = createContext<IMenuContextProps>({} as IMenuContextProps);
 
 export const popoverSizeMapping = {
@@ -142,6 +137,9 @@ export const popoverSizeMapping = {
     small: "small"
 } as const;
 
+/**
+ * Menu component provides a list of options or actions available to the user within a specific context. Menus are used to offer additional functionality without cluttering the interface, allowing users to access commands, navigate to different sections, or modify settings quickly and efficiently.
+ */
 const Menu: FC<IMenuProps> = ({
     onChange,
     children,
@@ -162,6 +160,7 @@ const Menu: FC<IMenuProps> = ({
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
+
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
