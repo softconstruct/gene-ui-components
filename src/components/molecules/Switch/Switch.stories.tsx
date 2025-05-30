@@ -14,7 +14,7 @@ const meta: Meta<typeof Switch> = {
         className: args({ control: "false", ...propCategory.appearance }),
         label: args({ control: "text", ...propCategory.content }),
         helperText: args({ control: "text", ...propCategory.content }),
-        labelAlignment: args({ control: "select", ...propCategory.appearance }),
+        direction: args({ control: "select", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
         onChange: args({ control: "false", ...propCategory.states }),
@@ -27,8 +27,7 @@ const meta: Meta<typeof Switch> = {
         label: "Label",
         helperText: "Helper Text",
         disabled: false,
-        readOnly: false,
-        labelAlignment: "after"
+        readOnly: false
     } as ISwitchProps
 };
 

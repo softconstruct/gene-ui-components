@@ -25,10 +25,10 @@ interface ISwitchProps {
      */
     readOnly?: boolean;
     /**
-     * The alignment of the label relative to the switch </br>
-     * Possible values: `after | before | top`
+     * The direction of the label relative to the switch </br>
+     * Possible values: `horizontal | vertical`
      */
-    labelAlignment?: "after" | "before" | "top";
+    direction?: "horizontal" | "vertical";
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -74,7 +74,7 @@ const Switch: FC<ISwitchProps> = (props) => {
         helperText,
         disabled,
         readOnly,
-        labelAlignment = "after",
+        direction = "horizontal",
         onChange,
         defaultChecked = false,
         checked,
@@ -100,17 +100,7 @@ const Switch: FC<ISwitchProps> = (props) => {
     };
 
     return (
-        <div
-            className={classNames(
-                "switch",
-                {
-                    switch_labelAfter: labelAlignment === "after",
-                    switch_labelBefore: labelAlignment === "before",
-                    switch_labelTop: labelAlignment === "top"
-                },
-                className
-            )}
-        >
+        <div className={classNames("switch", `switch_direction_${direction}`, className)}>
             <label className="switch__label">
                 <input
                     type="checkbox"

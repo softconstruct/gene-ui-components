@@ -142,31 +142,26 @@
     }
 
     // labelText alignment
-    &_labelAfter {
-        #{ $this }__labelText {
-            margin-inline-start: var(--guit-ref-spacing-xsmall);
-        }
-        #{ $this }__helperText {
-            margin-inline-start: calc(var(--guit-sem-dimension-width-large) + var(--guit-ref-spacing-xsmall));
-        }
-    }
+    &_direction {
+        &_horizontal {
+            #{ $this }__labelText {
+                margin-inline-start: var(--guit-ref-spacing-xsmall);
+            }
 
-    &_labelBefore {
-        #{ $this }__label {
-            flex-direction: row-reverse;
+            #{ $this }__helperText {
+                margin-inline-start: calc(var(--guit-sem-dimension-width-large) + var(--guit-ref-spacing-xsmall));
+            }
         }
-        #{ $this }__labelText {
-            margin-inline-end: var(--guit-ref-spacing-xsmall);
-        }
-    }
 
-    &_labelTop {
-        #{ $this }__label {
-            align-items: flex-start;
-            flex-direction: column-reverse;
-        }
-        #{ $this }__labelText {
-            margin-bottom: var(--guit-ref-spacing-3xsmall);
+        &_vertical {
+            #{ $this }__label {
+                align-items: flex-start;
+                flex-direction: column-reverse;
+            }
+
+            #{ $this }__labelText {
+                margin-bottom: var(--guit-ref-spacing-3xsmall);
+            }
         }
     }
 }

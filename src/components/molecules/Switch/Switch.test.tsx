@@ -47,18 +47,14 @@ describe("Switch", () => {
         expect(wrapper.find(".switch__input").props().readOnly).toBeTruthy();
     });
 
-    it.each<ISwitchProps["labelAlignment"]>(["before", "after", "top"])(
-        'should have "%s" labelAlignment',
-        (labelAlignment) => {
-            const className = {
-                before: "switch_labelBefore",
-                after: "switch_labelAfter",
-                top: "switch_labelTop"
-            } as const;
-            const wrapper = setup.setProps({ labelAlignment });
-            expect(wrapper.find(".switch").hasClass(className[labelAlignment as keyof typeof className])).toBeTruthy();
-        }
-    );
+    it.each<ISwitchProps["labelAlignment"]>(["after", "top"])('should have "%s" labelAlignment', (labelAlignment) => {
+        const className = {
+            after: "switch_labelAfter",
+            top: "switch_labelTop"
+        } as const;
+        const wrapper = setup.setProps({ labelAlignment });
+        expect(wrapper.find(".switch").hasClass(className[labelAlignment as keyof typeof className])).toBeTruthy();
+    });
 
     it("renders name prop correctly", () => {
         const name = "switch-name";
