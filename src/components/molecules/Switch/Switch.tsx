@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, KeyboardEvent, useState } from "react";
+import React, { ChangeEvent, FC, FocusEvent, KeyboardEvent, useState } from "react";
 import classNames from "classnames";
 
 // Components
@@ -55,14 +55,22 @@ interface ISwitchProps {
      * The value of the component that will be returned in the onChange event.
      */
     value?: string;
+    /**
+     *  Event handler for when the Switch loses focus. Provides the focus event as a callback's argument.
+     */
+    onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
+    /**
+     *  Event handler for when the Switch receives focus. Provides the focus event as a callback's argument.
+     */
+    onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
 }
 
 // TODO
 // autoFocus
-// onBlur
-// onFocus
+// onBlur ✅
+// onFocus ✅
 // infoText
-// labelAlignment should be changed to direction (values = horizontal | vertical)
+// labelAlignment should be changed to direction (values = horizontal | vertical) ✅
 
 /**
  * A switch component allows users to toggle between two states, typically "on" and "off". It is commonly used in settings and preferences to enable or disable features or functionalities.
@@ -79,7 +87,9 @@ const Switch: FC<ISwitchProps> = (props) => {
         defaultChecked = false,
         checked,
         value = "",
-        name
+        name,
+        onFocus,
+        onBlur
     } = props;
 
     const isControlled = "checked" in props;
@@ -93,11 +103,9 @@ const Switch: FC<ISwitchProps> = (props) => {
         onChange?.(e as ChangeEvent<HTMLInputElement>);
     };
 
-    const onKeyDownHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            onChangeHandler(e);
-        }
-    };
+    const onFocusHandler = (e: FocusEvent<HTMLInputElement>) => onFocus?.(e);
+
+    const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => onBlur?.(e);
 
     return (
         <div className={classNames("switch", `switch_direction_${direction}`, className)}>
@@ -106,7 +114,8 @@ const Switch: FC<ISwitchProps> = (props) => {
                     type="checkbox"
                     className="switch__input"
                     onChange={onChangeHandler}
-                    onKeyDown={onKeyDownHandler}
+                    onFocus={onFocusHandler}
+                    onBlur={onBlurHandler}
                     disabled={disabled}
                     {...(name && { name })}
                     {...((disabled || readOnly) && { tabIndex: -1 })}

@@ -47,13 +47,13 @@ describe("Switch", () => {
         expect(wrapper.find(".switch__input").props().readOnly).toBeTruthy();
     });
 
-    it.each<ISwitchProps["labelAlignment"]>(["after", "top"])('should have "%s" labelAlignment', (labelAlignment) => {
+    it.each<ISwitchProps["direction"]>(["horizontal", "vertical"])('should have "%s" direction', (direction) => {
         const className = {
-            after: "switch_labelAfter",
-            top: "switch_labelTop"
+            horizontal: "switch_direction_horizontal",
+            vertical: "switch_direction_vertical"
         } as const;
-        const wrapper = setup.setProps({ labelAlignment });
-        expect(wrapper.find(".switch").hasClass(className[labelAlignment as keyof typeof className])).toBeTruthy();
+        const wrapper = setup.setProps({ direction });
+        expect(wrapper.find(".switch").hasClass(className[direction as keyof typeof className])).toBeTruthy();
     });
 
     it("renders name prop correctly", () => {
@@ -88,5 +88,23 @@ describe("Switch", () => {
         const wrapper = setup.setProps({ onChange });
         wrapper.find("input").simulate("keyDown", { key: "Enter", target: { checked: true } });
         expect(onChange).toHaveBeenCalled();
+    });
+
+    it("calls onFocus when the checkbox state changes", () => {
+        const onFocusMock = jest.fn();
+        const wrapper = setup.setProps({ onFocus: onFocusMock });
+
+        wrapper.find("input").simulate("focus");
+
+        expect(onFocusMock).toHaveBeenCalled();
+    });
+
+    it("calls onBlur when the checkbox state changes", () => {
+        const onBlurMock = jest.fn();
+        const wrapper = setup.setProps({ onBlur: onBlurMock });
+
+        wrapper.find("input").simulate("blur");
+
+        expect(onBlurMock).toHaveBeenCalled();
     });
 });
