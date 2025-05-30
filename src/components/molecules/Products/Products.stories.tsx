@@ -117,7 +117,7 @@ const ProductsStory: Story = {
     },
     render: (props) => {
         return (
-            <div style={{ position: "fixed", insetInlineEnd: 30, top: 30 }}>
+            <div style={{ justifyContent: "end", display: "flex", backgroundColor: "#262627" }}>
                 <Products {...props}>
                     <ProductsMainSection>
                         {testMainProducts.map((product) => (

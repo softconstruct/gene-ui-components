@@ -1,17 +1,21 @@
-import React, { FC } from "react";
+import React, { FC, ReactNode } from "react";
 
-// Components
 import Divider from "@components/atoms/Divider";
 
-import { IProductsMainSectionProps, ProductsMainSection } from "./index";
+interface IProductsSecondarySectionProps {
+    /**
+     * Provided `<Product/>` components will be rendered in the second section of the popover body
+     */
+    children: ReactNode;
+}
 
-const ProductsSecondarySection: FC<IProductsMainSectionProps> = ({ children }) => {
+const ProductsSecondarySection: FC<IProductsSecondarySectionProps> = ({ children }) => {
     return (
         <>
             <Divider />
-            <ProductsMainSection>{children}</ProductsMainSection>
+            <div className="products__list">{children}</div>
         </>
     );
 };
 
-export { ProductsSecondarySection as default };
+export { IProductsSecondarySectionProps, ProductsSecondarySection as default };

@@ -14,7 +14,7 @@ import "./Products.scss";
 import { IProductProps } from "./index";
 
 interface IProductsContext {
-    onClick: (event: IProductProps) => void;
+    onChange: (product: IProductProps) => void;
 }
 
 export const ProductsContext = createContext<IProductsContext>({} as IProductsContext);
@@ -32,13 +32,13 @@ interface IProductsProps {
     /**
      * Fires when the user interact with `Product`. Provides the `Product` `id` as a callback's argument.
      */
-    onClick?: (event: IProductProps) => void;
+    onChange?: (event: IProductProps) => void;
 }
 
 /**
  * Products component is a menu-based UI element that allows users to switch between different products or services within an ecosystem.
  */
-const Products: FC<IProductsProps> = ({ onClick, className, children }) => {
+const Products: FC<IProductsProps> = ({ onChange, children }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const [propsForContent, setPropsForContent] = useState({});
 
@@ -46,7 +46,7 @@ const Products: FC<IProductsProps> = ({ onClick, className, children }) => {
 
     const memoizedProductsContextValue = useMemo(
         () => ({
-            onClick
+            onChange
         }),
         []
     );
@@ -62,16 +62,16 @@ const Products: FC<IProductsProps> = ({ onClick, className, children }) => {
                 margin={4}
             >
                 <PopoverBody
-                    className={classNames("products", className, {
+                    className={classNames("products", {
                         products__mobile: breakpoint?.isMobileBreakpoint
                     })}
-                    withScrollbar
                     withPadding={false}
                 >
                     <div className="products__container">{children}</div>
                 </PopoverBody>
             </Popover>
-            <Button Icon={AppGrid} onClick={() => {}} {...propsForContent} />
+
+            <Button Icon={AppGrid} appearance="inverse" layout="text" {...propsForContent} />
         </ProductsContext.Provider>
     );
 };

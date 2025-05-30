@@ -1,29 +1,14 @@
-import React, { Children, cloneElement, FC, ReactNode } from "react";
-
-// Components
-import { IProductProps } from "./index";
+import React, { FC, ReactNode } from "react";
 
 interface IProductsMainSectionProps {
     /**
-     * Provide `<Product/>` components to be rendered in the `<ProductsMainSection/>`
+     * Provided `<Product/>` components will be rendered in the first section of the popover body
      */
     children: ReactNode;
 }
 
 const ProductsMainSection: FC<IProductsMainSectionProps> = ({ children }) => {
-    return (
-        <div className="products__list">
-            {Children.map(children, (product, i) => {
-                if (!React.isValidElement<IProductProps>(product)) return product;
-
-                return cloneElement(product, {
-                    id: product.props.id || i + 1,
-                    title: product.props.title,
-                    Icon: product.props.Icon
-                });
-            })}
-        </div>
-    );
+    return <div className="products__list">{children}</div>;
 };
 
 export { IProductsMainSectionProps, ProductsMainSection as default };

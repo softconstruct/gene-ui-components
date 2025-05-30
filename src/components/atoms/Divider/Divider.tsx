@@ -53,7 +53,7 @@ interface IDividerProps {
 const Divider: FC<IDividerProps> = ({
     appearance = "default",
     Icon,
-    direction,
+    direction = "horizontal",
     text,
     contentPosition = "before",
     content,

@@ -35,14 +35,14 @@ interface IProductProps {
 
 const ProductButton: FC<Omit<IProductProps, "withBadge">> = (props) => {
     const { title, Icon, disabled } = props;
-    const { onClick } = useContext(ProductsContext);
+    const { onChange } = useContext(ProductsContext);
 
     return (
         <button
             type="button"
             disabled={disabled}
             className={classNames("products__item", { products__item_disabled: disabled })}
-            onClick={() => onClick(props)}
+            onClick={() => onChange(props)}
         >
             <span className="products__item_logo">
                 <Icon size={48} />
