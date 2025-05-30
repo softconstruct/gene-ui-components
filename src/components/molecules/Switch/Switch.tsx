@@ -9,19 +9,19 @@ import "./Switch.scss";
 
 interface ISwitchProps {
     /**
-     * Label for the switch
+     * The text displayed as the label for the switch, describing its purpose or function.
      */
     label?: string;
     /**
-     * Additional helper text displayed below the switch
+     * Helper text to provide context or explain any errors, warnings related to the switch.
      */
     helperText?: string;
     /**
-     * If true, the switch will be disabled
+     * Disables the switch, preventing it from being interacted with.
      */
     disabled?: boolean;
     /**
-     * If true, the switch will be read-only
+     * Displays the switch as read-only, where users cannot modify its value.
      */
     readOnly?: boolean;
     /**
@@ -46,7 +46,6 @@ interface ISwitchProps {
      *  Manages the checked state of the switch in a controlled way.
      */
     checked?: boolean;
-
     /**
      *  HTML name attribute for the input element.<br>
      *  A unique identifier for the switch within a form.
@@ -57,6 +56,13 @@ interface ISwitchProps {
      */
     value?: string;
 }
+
+// TODO
+// autoFocus
+// onBlur
+// onFocus
+// infoText
+// labelAlignment should be changed to direction (values = horizontal | vertical)
 
 /**
  * A switch component allows users to toggle between two states, typically "on" and "off". It is commonly used in settings and preferences to enable or disable features or functionalities.
@@ -120,8 +126,9 @@ const Switch: FC<ISwitchProps> = (props) => {
                 />
                 <span className="switch__slider" />
                 {label && <span className="switch__labelText">{label}</span>}
+                {/** TODO need to be replaced by Label component and support infoText props */}
             </label>
-            {helperText && <HelperText text={helperText} className="switch__helperText" isDisabled={disabled} />}
+            {helperText && <HelperText text={helperText} className="switch__helperText" disabled={disabled} />}
         </div>
     );
 };

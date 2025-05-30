@@ -29,7 +29,9 @@ const meta: Meta<typeof Switch> = {
 };
 
 export default meta;
+
 type Story = StoryObj<ISwitchProps>;
+
 export const Default: Story = {
     render: (props) => {
         return <Switch {...props} />;

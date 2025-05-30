@@ -39,7 +39,7 @@ describe("Switch", () => {
         const helperText = "Helper text";
         const wrapper = setup.setProps({ disabled: true, helperText });
         expect(wrapper.find(".switch__input").props().disabled).toBeTruthy();
-        expect(wrapper.find(HelperText).props().isDisabled).toBeTruthy();
+        expect(wrapper.find(HelperText).props().disabled).toBeTruthy();
     });
 
     it("renders readOnly prop correctly", () => {
