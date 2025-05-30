@@ -1,4 +1,4 @@
-import React from "react";
+import React, { act } from "react";
 import { mount, ReactWrapper } from "enzyme";
 import * as TestsUtils from "react-dom/test-utils";
 
@@ -15,7 +15,7 @@ describe("Tooltip", () => {
             <div className="test">Test</div>
         </Tooltip>
     );
-    const act = typeof React.act === "function" ? React.act : TestsUtils.act;
+    const action = typeof act === "function" ? act : TestsUtils.act;
 
     const provider = () =>
         setup.getWrappingComponent().setProps({
@@ -63,7 +63,7 @@ describe("Tooltip", () => {
         const position = "top-center";
 
         setup.setProps({ alwaysShow: true, position, text: "test" });
-        await act(async () => {
+        await action(async () => {
             await new Promise((resolve) => {
                 setTimeout(resolve);
             });

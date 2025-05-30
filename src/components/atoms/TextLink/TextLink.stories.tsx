@@ -21,11 +21,12 @@ const meta: Meta<ITextLinkProps> = {
         rel: args({ control: "select", ...propCategory.others }),
         target: args({ control: "select", ...propCategory.functionality }),
         text: args({ control: "text", ...propCategory.content }),
-        isLoading: args({ control: "boolean", ...propCategory.states }),
+        loading: args({ control: "boolean", ...propCategory.states }),
         iconBefore: args({ control: "boolean", ...propCategory.appearance }),
-        className: args({ control: "boolean", ...propCategory.appearance })
+        className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
+        loading: false,
         appearance: "primary",
         size: "medium",
         text: "LinkText",
