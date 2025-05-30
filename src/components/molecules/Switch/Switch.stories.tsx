@@ -17,7 +17,11 @@ const meta: Meta<typeof Switch> = {
         labelAlignment: args({ control: "select", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
-        onChange: args({ control: "false", ...propCategory.states })
+        onChange: args({ control: "false", ...propCategory.states }),
+        defaultChecked: args({ control: "boolean", ...propCategory.states }),
+        checked: args({ control: "boolean", ...propCategory.states }),
+        name: args({ control: "false", ...propCategory.others }),
+        value: args({ control: "false", ...propCategory.others })
     },
     args: {
         label: "Label",
