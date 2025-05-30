@@ -107,4 +107,9 @@ describe("Switch", () => {
 
         expect(onBlurMock).toHaveBeenCalled();
     });
+
+    it("renders autoFocus prop correctly", () => {
+        const wrapper = setup.setProps({ autoFocus: true });
+        expect(wrapper.find(".switch__input").props().autoFocus).toBeTruthy();
+    });
 });

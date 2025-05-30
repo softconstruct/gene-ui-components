@@ -63,10 +63,14 @@ interface ISwitchProps {
      *  Event handler for when the Switch receives focus. Provides the focus event as a callback's argument.
      */
     onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+    /**
+     *  Automatically focuses the switch when the component mounts.
+     */
+    autoFocus?: boolean;
 }
 
 // TODO
-// autoFocus
+// autoFocus ✅
 // onBlur ✅
 // onFocus ✅
 // infoText
@@ -89,7 +93,8 @@ const Switch: FC<ISwitchProps> = (props) => {
         value = "",
         name,
         onFocus,
-        onBlur
+        onBlur,
+        autoFocus
     } = props;
 
     const isControlled = "checked" in props;
@@ -116,9 +121,9 @@ const Switch: FC<ISwitchProps> = (props) => {
                     onChange={onChangeHandler}
                     onFocus={onFocusHandler}
                     onBlur={onBlurHandler}
-                    disabled={disabled}
+                    disabled={disabled || readOnly}
                     {...(name && { name })}
-                    {...((disabled || readOnly) && { tabIndex: -1 })}
+                    {...(autoFocus && { autoFocus })}
                     checked={isControlled ? checked : internalState}
                     readOnly={!disabled && readOnly}
                     value={value}

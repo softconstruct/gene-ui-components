@@ -23,7 +23,8 @@ const meta: Meta<typeof Switch> = {
         name: args({ control: "false", ...propCategory.others }),
         value: args({ control: "false", ...propCategory.others }),
         onBlur: args({ control: "false", ...propCategory.action }),
-        onFocus: args({ control: "false", ...propCategory.action })
+        onFocus: args({ control: "false", ...propCategory.action }),
+        autoFocus: args({ control: "boolean", ...propCategory.states })
     },
     args: {
         label: "Label",
