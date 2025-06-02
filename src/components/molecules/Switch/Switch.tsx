@@ -3,6 +3,7 @@ import classNames from "classnames";
 
 // Components
 import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
 
 // Styles
 import "./Switch.scss";
@@ -13,9 +14,17 @@ interface ISwitchProps {
      */
     label?: string;
     /**
+     * Extra information displayed with the tooltip for clarity or guidance.
+     */
+    infoText?: string;
+    /**
      * Helper text to provide context or explain any errors, warnings related to the switch.
      */
     helperText?: string;
+    /**
+     * Specifies whether the switch is mandatory for completing a form.
+     */
+    required?: boolean;
     /**
      * Disables the switch, preventing it from being interacted with.
      */
@@ -82,21 +91,23 @@ interface ISwitchProps {
  */
 const Switch: FC<ISwitchProps> = (props) => {
     const {
-        className,
         label,
-        helperText,
+        required,
+        infoText,
         disabled,
+        helperText,
         readOnly,
+        type = "rest",
         direction = "horizontal",
+        autoFocus,
         onChange,
-        defaultChecked = false,
-        checked,
-        value = "",
-        name,
         onFocus,
         onBlur,
-        autoFocus,
-        type = "rest"
+        name,
+        checked,
+        defaultChecked = false,
+        className,
+        value = ""
     } = props;
 
     const isControlled = "checked" in props;
@@ -115,27 +126,40 @@ const Switch: FC<ISwitchProps> = (props) => {
     const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => onBlur?.(e);
 
     return (
-        <div className={classNames("switch", `switch_direction_${direction}`, `switch_type_${type}`, className)}>
-            <label className="switch__label">
-                <input
-                    type="checkbox"
-                    className="switch__input"
-                    onChange={onChangeHandler}
-                    onFocus={onFocusHandler}
-                    onBlur={onBlurHandler}
-                    disabled={disabled || readOnly}
-                    {...(name && { name })}
-                    {...(autoFocus && { autoFocus })}
-                    checked={isControlled ? checked : internalState}
-                    readOnly={!disabled && readOnly}
-                    value={value}
-                />
-                <span className="switch__slider" />
-                {label && <span className="switch__labelText">{label}</span>}
-                {/** TODO need to be replaced by Label component and support infoText props */}
-            </label>
+        <div
+            className={classNames("switch", `switch_direction_${direction}`, `switch_type_${type}`, className)}
+            {...((disabled || readOnly) && { tabIndex: -1 })}
+        >
+            <Label
+                text={label}
+                className="switch__label"
+                required={required}
+                infoText={infoText}
+                disabled={disabled}
+                readOnly={readOnly}
+            >
+                <span className="switch__sliderHolder">
+                    <input
+                        type="checkbox"
+                        className="switch__input"
+                        onChange={onChangeHandler}
+                        onFocus={onFocusHandler}
+                        onBlur={onBlurHandler}
+                        checked={isControlled ? checked : internalState}
+                        disabled={disabled || readOnly}
+                        readOnly={!disabled && readOnly}
+                        {...(name && { name })}
+                        {...(autoFocus && { autoFocus })}
+                        {...((disabled || readOnly) && { tabIndex: -1 })}
+                        value={value}
+                    />
+                    <span className="switch__slider" />
+                </span>
+            </Label>
             {helperText && (
-                <HelperText text={helperText} className="switch__helperText" disabled={disabled} type={type} />
+                <div className="switch__infoContainer">
+                    <HelperText text={helperText} disabled={disabled} type={type} />
+                </div>
             )}
         </div>
     );

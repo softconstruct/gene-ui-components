@@ -1,14 +1,26 @@
+@use "../../../assets/styles/mixins";
+
 .switch {
     $this: &;
 
     display: inline-flex;
+    max-width: 100%;
     flex-direction: column;
+    min-width: 0;
     row-gap: var(--guit-ref-spacing-3xsmall);
 
     &__label {
-        display: inline-flex;
+        display: flex;
         align-items: center;
+        max-width: fit-content;
         user-select: none;
+    }
+
+    &__sliderHolder {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     &__input {
@@ -24,12 +36,13 @@
         }
 
         &:not(:disabled) {
-            & ~ #{ $this }__labelText,
             & + #{ $this }__slider {
                 cursor: pointer;
             }
-            &:hover + #{ $this }__slider {
-                background-color: var(--guit-sem-color-background-transparent-1-hover);
+            @include mixins.media-hover {
+                &:hover + #{ $this }__slider {
+                    background-color: var(--guit-sem-color-background-transparent-1-hover);
+                }
             }
             &:active + #{ $this }__slider {
                 background-color: var(--guit-sem-color-background-transparent-1-pressed);
@@ -44,7 +57,6 @@
             }
         }
 
-        // checked
         &:checked {
             & + #{ $this }__slider {
                 background-color: var(--guit-sem-color-background-brand-2);
@@ -61,8 +73,10 @@
                         background-color: var(--guit-sem-color-foreground-inverse);
                     }
                 }
-                &:hover + #{ $this }__slider {
-                    background-color: var(--guit-sem-color-background-brand-2-hover);
+                @include mixins.media-hover {
+                    &:hover + #{ $this }__slider {
+                        background-color: var(--guit-sem-color-background-brand-2-hover);
+                    }
                 }
                 &:active + #{ $this }__slider {
                     background-color: var(--guit-sem-color-background-brand-2-pressed);
@@ -86,10 +100,6 @@
         border-style: var(--guit-ref-border-style-solid);
         border-width: var(--guit-ref-border-width-thin);
         border-radius: var(--guit-ref-radius-small);
-        transition:
-            background-color var(--guit-ref-motion-duration-moderate-macro),
-            border-color var(--guit-ref-motion-duration-moderate-macro),
-            box-shadow var(--guit-ref-motion-duration-moderate-macro);
 
         &::before {
             content: "";
@@ -100,26 +110,17 @@
             height: var(--guit-sem-dimension-height-xsmall);
             background-color: var(--guit-sem-color-foreground-neutral-1);
             border-radius: var(--guit-ref-radius-full);
-            transition:
-                background-color var(--guit-ref-motion-duration-moderate-macro),
-                inset-inline-start var(--guit-ref-motion-duration-moderate-macro);
         }
     }
 
-    &__labelText {
-        font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
-        font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
-        font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
-        line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+    &__infoContainer {
+        display: flex;
     }
 
     &:has(#{ $this }__input[readonly]) {
         pointer-events: none;
 
         #{ $this }__input {
-            & + #{ $this }__slider {
-                background-color: var(--guit-sem-color-background-neutral-4);
-            }
             &:not(:checked) + #{ $this }__slider {
                 border-color: var(--guit-sem-color-border-neutral-2);
             }
@@ -127,29 +128,23 @@
                 background-color: var(--guit-sem-color-foreground-neutral-1);
             }
         }
-    }
 
-    &:not(:has(#{ $this }__input[disabled])) {
-        #{ $this }__labelText {
-            color: var(--guit-sem-color-foreground-neutral-2);
+        #{ $this }__slider {
+            background-color: var(--guit-sem-color-background-neutral-4);
+
+            &::before {
+                background-color: var(--guit-sem-color-foreground-neutral-1);
+            }
         }
     }
 
-    &:has(#{ $this }__input[disabled]) {
-        #{ $this }__labelText {
-            color: var(--guit-sem-color-foreground-disabled);
-        }
-    }
-
-    // labelText alignment
     &_direction {
         &_horizontal {
-            #{ $this }__labelText {
-                margin-inline-start: var(--guit-ref-spacing-xsmall);
+            #{ $this }__infoContainer {
+                padding-inline-start: var(--guit-ref-spacing-8xlarge);
             }
-
-            #{ $this }__helperText {
-                margin-inline-start: calc(var(--guit-sem-dimension-width-large) + var(--guit-ref-spacing-xsmall));
+            #{ $this }__label {
+                column-gap: var(--guit-ref-spacing-xsmall);
             }
         }
 
@@ -157,10 +152,15 @@
             #{ $this }__label {
                 align-items: flex-start;
                 flex-direction: column-reverse;
+                row-gap: var(--guit-ref-spacing-3xsmall);
             }
+        }
+    }
 
-            #{ $this }__labelText {
-                margin-bottom: var(--guit-ref-spacing-3xsmall);
+    &_type {
+        &_error {
+            #{ $this }__sliderHolder #{ $this }__slider {
+                border-color: var(--guit-sem-color-border-error);
             }
         }
     }
