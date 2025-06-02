@@ -49,6 +49,9 @@
                     "KeyValue": ["Key", "Value"],
                     "Value": ["Pill", "TextLink", "Text"],
                     "Timeline": ["TimelinePoint"],
+                    "Products": ["ProductsMainSection", "ProductsSecondarySection"],
+                    "ProductsMainSection": ["Product"],
+                    "ProductsSecondarySection": ["Product"],
                     "Menu": ["MenuItem"]
                 }
             }

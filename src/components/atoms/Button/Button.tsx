@@ -56,7 +56,7 @@ interface IButtonProps {
      * A callback function that is called when the `button` is clicked or entered. <br>
      * It receives an argument containing the event object, which can be a mouse or keyboard event.
      */
-    onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Icon position <br>
      * Possible values: `before | after`
