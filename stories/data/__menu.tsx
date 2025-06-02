@@ -20,7 +20,8 @@ export const data = [
         id: "admins",
         value: "admins",
         IconAfter: LightBulb,
-        danger: true
+        danger: true,
+        divider: true
     },
     {
         title: "Options",
