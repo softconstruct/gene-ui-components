@@ -51,7 +51,8 @@
                     "Timeline": ["TimelinePoint"],
                     "Products": ["ProductsMainSection", "ProductsSecondarySection"],
                     "ProductsMainSection": ["Product"],
-                    "ProductsSecondarySection": ["Product"]
+                    "ProductsSecondarySection": ["Product"],
+                    "Menu": ["MenuItem"]
                 }
             }
         ],
