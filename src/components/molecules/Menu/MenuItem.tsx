@@ -101,6 +101,14 @@ const MenuItem: FC<IMenuItemProps> = ({
     const { onChangeHandler, swappable, relativeRefsSetter, size, openSelectedPath } = useContext(MenuContext);
     const [popoverOpenState, setPopoverOpenState] = useState(false);
     const [isActiveSwappableContent, setIsActiveSwappableContent] = useState(false);
+    const [activeElementPosition, setActiveElementPosition] = useState(0);
+
+    useEffect(() => {
+        if (parentRef.current) {
+            const activeEl = parentRef.current?.querySelector(".menu__item_selected");
+            setActiveElementPosition(activeEl?.offsetTop || 0);
+        }
+    }, [popoverOpenState, parentRef.current]);
 
     const isRTLMode = document.dir === "rtl";
 
@@ -279,7 +287,12 @@ const MenuItem: FC<IMenuItemProps> = ({
                                     menu__item_disabled: disabled
                                 })}
                             >
-                                <Scrollbar className="menu__scrollbar" onScroll={onScrollHandler}>
+                                <Scrollbar
+                                    className="menu__scrollbar"
+                                    onScroll={onScrollHandler}
+                                    scrollToTop={activeElementPosition}
+                                    scrollBehaviorSmooth={false}
+                                >
                                     {menuContent}
                                 </Scrollbar>
                             </div>

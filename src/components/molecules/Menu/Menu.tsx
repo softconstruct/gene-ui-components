@@ -267,11 +267,9 @@ const Menu: FC<IMenuProps> = ({
                 </div>
             );
         }
-
         if (hasSwappablePaths) {
             return clonedChildren;
         }
-
         return (
             <Scrollbar className="menu__scrollbar" onScroll={onScrollHandler}>
                 <div className="menu__content">{clonedChildren}</div>
