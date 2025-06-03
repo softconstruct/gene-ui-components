@@ -3,6 +3,7 @@ import { mount, ReactWrapper } from "enzyme";
 
 // Components
 import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
 import Switch, { ISwitchProps } from "@components/molecules/Switch";
 
 describe("Switch", () => {
@@ -26,7 +27,7 @@ describe("Switch", () => {
     it("renders label prop correctly", () => {
         const label = "Label";
         const wrapper = setup.setProps({ label });
-        expect(wrapper.find(".switch__labelText").contains(label)).toBeTruthy();
+        expect(wrapper.find(Label).contains(label)).toBeTruthy();
     });
 
     it("renders helperText prop correctly", () => {

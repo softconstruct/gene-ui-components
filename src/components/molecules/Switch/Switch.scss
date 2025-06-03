@@ -159,7 +159,7 @@
 
     &_type {
         &_error {
-            #{ $this }__sliderHolder #{ $this }__slider {
+            #{ $this }__input:not(:disabled) + #{ $this }__slider {
                 border-color: var(--guit-sem-color-border-error);
             }
         }
