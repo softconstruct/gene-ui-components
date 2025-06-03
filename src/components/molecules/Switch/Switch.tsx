@@ -83,9 +83,6 @@ interface ISwitchProps {
     type?: "rest" | "warning" | "error";
 }
 
-// TODO
-// add Label component
-
 /**
  * A switch component allows users to toggle between two states, typically "on" and "off". It is commonly used in settings and preferences to enable or disable features or functionalities.
  */
