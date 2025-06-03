@@ -10,10 +10,10 @@ import Label, { ILabelProps } from "./index";
 
 describe("Label ", () => {
     let setup: ReactWrapper<ILabelProps>;
-    const labelText = "label";
+    const text = "label";
 
     beforeEach(() => {
-        setup = mount(<Label labelText={labelText} />, {
+        setup = mount(<Label text={text} />, {
             wrappingComponent: GeneUIProvider
         });
     });
@@ -28,8 +28,8 @@ describe("Label ", () => {
         expect(wrapper.find(".label__text").hasClass(`label__text_size_${size}`)).toBeTruthy();
     });
 
-    it("renders labelText prop correctly", () => {
-        expect(setup.find("label").text()).toStrictEqual(labelText);
+    it("renders text prop correctly", () => {
+        expect(setup.find("label").text()).toStrictEqual(text);
     });
 
     it("renders required prop correctly", () => {
@@ -52,8 +52,8 @@ describe("Label ", () => {
         expect(wrapper.find(".label__container").hasClass("label__container_readOnly")).toBeTruthy();
     });
 
-    it("renders isLoading prop correctly", () => {
-        const wrapper = setup.setProps({ isLoading: true });
+    it("renders loading prop correctly", () => {
+        const wrapper = setup.setProps({ loading: true });
         expect(wrapper.find(".label").hasClass("label__text")).toBeFalsy();
     });
 

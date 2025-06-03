@@ -43,8 +43,8 @@ describe("Steps ", () => {
         expect(wrapper.find(`steps__status_${type}`)).toBeTruthy();
     });
 
-    it("renders isLinear prop correctly", () => {
-        const wrapper = setup.setProps({ isLinear: true });
+    it("renders linear prop correctly", () => {
+        const wrapper = setup.setProps({ linear: true });
         expect(wrapper.find(".steps").hasClass("steps_linear")).toBeTruthy();
     });
 

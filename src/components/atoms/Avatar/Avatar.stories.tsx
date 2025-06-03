@@ -16,8 +16,8 @@ const meta: Meta<IAvatarProps> = {
         src: args({ control: "text", ...propCategory.content }),
         fullName: args({ control: "text", ...propCategory.content }),
         onClick: args({ control: "false", ...propCategory.action }),
-        isDisabled: args({ control: "boolean", ...propCategory.states }),
-        isLoading: args({ control: "boolean", ...propCategory.states }),
+        disabled: args({ control: "boolean", ...propCategory.states }),
+        loading: args({ control: "boolean", ...propCategory.states }),
         Icon: args({ control: "false", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance })
     },
@@ -25,7 +25,7 @@ const meta: Meta<IAvatarProps> = {
         size: "6Xlarge",
         color: "lagoon",
         fullName: "name lastName",
-        isDisabled: false
+        disabled: false
     }
 };
 

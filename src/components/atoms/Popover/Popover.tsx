@@ -1,6 +1,7 @@
 import React, {
     Dispatch,
     forwardRef,
+    MutableRefObject,
     ReactNode,
     SetStateAction,
     useContext,
@@ -26,11 +27,13 @@ import {
     useRole
 } from "@floating-ui/react";
 import { Placement } from "@floating-ui/utils";
+import classNames from "classnames";
 
 import { InfoOutlined, X } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
+import Spreadsheet from "@components/atoms/Spreadsheet";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Styles
@@ -104,8 +107,8 @@ export const staticSides: Record<string, StaticSides> = {
 } as const;
 
 export interface IPopoverRef {
-    referenceElement: React.MutableRefObject<ReferenceType | null>;
-    floatingElement: React.MutableRefObject<ReferenceType | null>;
+    referenceElement: MutableRefObject<ReferenceType | null>;
+    floatingElement: MutableRefObject<ReferenceType | null>;
 }
 
 export interface IPopoverProps {
@@ -362,7 +365,33 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             <>
                 {isPopoverOpened &&
                     (isMobile ? (
-                        <span>Spreadsheet component</span>
+                        <Spreadsheet
+                            inset={false}
+                            open={isPopoverOpened}
+                            onClose={() => {
+                                onClose?.();
+                            }}
+                        >
+                            <div className={classNames("popover__container", "popover__container_height_full")}>
+                                {title && (
+                                    <div className="popover__header">
+                                        <p className="popover__title">
+                                            <InfoOutlined className="popover__title_icon" size={20} />
+                                            <span className="popover__title_text ellipsis-text">{title}</span>
+                                        </p>
+                                        <Button
+                                            Icon={X}
+                                            size="small"
+                                            appearance="secondary"
+                                            layout="text"
+                                            className="popover__close"
+                                            onClick={() => setPopoverOpened(false)}
+                                        />
+                                    </div>
+                                )}
+                                {children}
+                            </div>
+                        </Spreadsheet>
                     ) : (
                         <FloatingPortal root={geneUIProviderRef.current}>
                             <div
@@ -413,7 +442,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                                 Icon={X}
                                                 size="small"
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 className="popover__close"
                                                 onClick={() => setPopoverOpened(false)}
                                             />

@@ -40,7 +40,7 @@ describe("KeyValue ", () => {
             <KeyValue>
                 <Key>{title}</Key>
                 <Value>
-                    <Pill text="Pill" isFill />
+                    <Pill text="Pill" filled />
                 </Value>
             </KeyValue>
         );

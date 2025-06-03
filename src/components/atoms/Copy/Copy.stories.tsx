@@ -15,7 +15,7 @@ const meta: Meta<ICopyProps> = {
         size: args({ control: "select", ...propCategory.appearance }),
         copiedTooltipText: args({ control: "text", ...propCategory.content }),
         copyTooltipText: args({ control: "text", ...propCategory.content }),
-        value: args({ control: "false", ...propCategory.functionality }),
+        value: args({ control: "false", ...propCategory.content }),
         contentRef: args({ control: "false", ...propCategory.functionality }),
         disabled: args({ control: "boolean", ...propCategory.states })
     },

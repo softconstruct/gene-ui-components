@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { mount } from "enzyme";
 
 import useScrollLock from "./useScrollLock";
@@ -43,7 +43,7 @@ describe("useScrollLock", () => {
         // In this test component, we lock the body immediately upon mount
         function LockOnMount() {
             const { lock } = useScrollLock(document.body);
-            React.useEffect(() => {
+            useEffect(() => {
                 lock();
             }, [lock]);
             return <div>Locking body on mount...</div>;

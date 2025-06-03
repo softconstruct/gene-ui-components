@@ -24,9 +24,11 @@ export { default as Tooltip, ITooltipProps } from "./components/molecules/Toolti
 export { default as ProgressBar, IProgressBarProps } from "./components/molecules/ProgressBar";
 export { Steps, Step, IStepProps, IStepsProps } from "./components/molecules/Steps";
 export { default as Tag, ITagProps } from "./components/molecules/Tag";
+export { default as Switch } from "./components/molecules/Switch";
 export { Timelines, TimelinePoint, ITimelinesProps, ITimelinePointProps } from "./components/molecules/Timeline";
 export { default as QRCode, IQRCodeProps } from "./components/molecules/QRCode";
 export { KeyValue, Key, Value, IKeyValueProps, IKeyProps, IValueProps } from "./components/molecules/KeyValue";
+export { Menu, MenuItem, IMenuProps, IMenuItemProps } from "./components/molecules/Menu";
 export { default as Navigation } from "./components/molecules/Navigation";
 
 // Organisms

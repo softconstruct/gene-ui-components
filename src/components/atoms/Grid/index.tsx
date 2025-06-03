@@ -1,1 +1,1 @@
-export { Grid, Col, Row, IColProps, IRowProps } from "./Grid";
+export { Grid, Col, Row, IColProps, IRowProps, IGridProps } from "./Grid";
