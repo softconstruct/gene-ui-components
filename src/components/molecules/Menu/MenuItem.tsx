@@ -105,7 +105,7 @@ const MenuItem: FC<IMenuItemProps> = ({
 
     useEffect(() => {
         if (parentRef.current) {
-            const activeEl = parentRef.current?.querySelector(".menu__item_selected");
+            const activeEl = parentRef.current?.querySelector(".menu__item_selected") as HTMLElement | null;
             setActiveElementPosition(activeEl?.offsetTop || 0);
         }
     }, [popoverOpenState, parentRef.current]);
