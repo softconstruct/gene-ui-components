@@ -61,7 +61,7 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
                 {Icon && <Icon />}
             </button>
             {title && (
-                <Text as="p" className="navigation__colItemText" truncate>
+                <Text as="p" className="navigation__colItemText">
                     {title}
                 </Text>
             )}

@@ -282,7 +282,7 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
                         className="navigation__addButton"
                     />
                 </div>
-                <Divider className="navigation__divider" vertical />
+                <Divider className="navigation__divider" direction="vertical" />
             </div>
             {forceOpen && currentDataIndex !== null && hasDataAndChildren(clonedNavigationData, currentDataIndex) && (
                 <div className="navigation__menu">
@@ -299,7 +299,7 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
                             />
                         </div>
                     </Scrollbar>
-                    <Divider className="navigation__divider" vertical />
+                    <Divider className="navigation__divider" direction="vertical" />
                 </div>
             )}
         </div>

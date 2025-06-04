@@ -55,7 +55,7 @@ const NavigationItem: FC<INavigationItemProps> = ({
                         <Icon size={20} />
                     </span>
                 )}
-                <Text as="p" className="menu__title" truncate>
+                <Text as="p" className="menu__title">
                     {title}
                 </Text>
                 {children && (
