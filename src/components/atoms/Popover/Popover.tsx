@@ -23,6 +23,7 @@ import {
     useClick,
     useDismiss,
     useFloating,
+    useHover,
     useInteractions,
     useRole
 } from "@floating-ui/react";
@@ -180,6 +181,11 @@ export interface IPopoverProps {
      * This allows the component to be used both in controlled and uncontrolled modes.
      */
     open?: boolean;
+    /**
+     * Determines how the popover is triggered.
+     * Can be either "click" or "hover".
+     */
+    trigger?: "click" | "hover";
 }
 
 /**
@@ -202,7 +208,8 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             children,
             disableReposition = false,
             onClose,
-            open
+            open,
+            trigger = "click"
         },
         popoverRef
     ) => {
@@ -250,7 +257,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                 referenceElement: refs.reference,
                 floatingElement: refs.floating
             };
-        }, []);
+        }, [popoverRef, refs.reference.current, refs.floating.current, open]);
 
         useEffect(() => {
             if (!popoverOpened && onClose) {
@@ -262,13 +269,19 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             outsidePressEvent: "click"
         });
 
-        const click = useClick(context, {
-            event: "click"
-        });
-
         const role = useRole(context);
 
-        const { getReferenceProps, getFloatingProps } = useInteractions([click, role]);
+        const click = useClick(context, {
+            event: "click",
+            enabled: trigger === "click"
+        });
+        const hover = useHover(context, {
+            enabled: trigger === "hover",
+            delay: { close: 3000 }
+        });
+
+        const interactions = trigger === "hover" ? [hover, role] : [click, role];
+        const { getReferenceProps, getFloatingProps } = useInteractions(interactions);
 
         useEffect(() => {
             const internalControl = open === undefined ? getReferenceProps() : {};
