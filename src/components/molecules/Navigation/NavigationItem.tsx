@@ -1,9 +1,14 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import classNames from "classnames";
 
 import { ChevronRight, IconProps } from "@geneui/icons";
 
+// Components
 import Text from "@components/atoms/Text";
+import Tooltip from "@components/molecules/Tooltip";
+
+// Hooks
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 interface INavigationItemProps {
     title: string;
@@ -27,6 +32,8 @@ const NavigationItem: FC<INavigationItemProps> = ({
     path
 }) => {
     const [isNavItemOpen, setIsNavItemOpen] = React.useState(false);
+    const textRef = useRef<HTMLHeadingElement | null>(null);
+    const isTruncated: boolean = useEllipsisDetection(textRef, [title]);
     const onClickHandler = () => {
         if (onClick && path) {
             onClick(path);
@@ -55,9 +62,11 @@ const NavigationItem: FC<INavigationItemProps> = ({
                         <Icon size={20} />
                     </span>
                 )}
-                <Text as="p" className="menu__title">
-                    {title}
-                </Text>
+                <Tooltip text={title} isVisible={isTruncated}>
+                    <Text as="p" className="menu__title ellipsis-text" ref={textRef}>
+                        {title}
+                    </Text>
+                </Tooltip>
                 {children && (
                     <ChevronRight
                         className={classNames("navigationItem__chevron", {

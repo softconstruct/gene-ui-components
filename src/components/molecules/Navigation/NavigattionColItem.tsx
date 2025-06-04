@@ -1,9 +1,14 @@
-import React, { FC } from "react";
+import React, { FC, useRef } from "react";
 import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
 
+// Components
 import Text from "@components/atoms/Text";
+import Tooltip from "@components/molecules/Tooltip";
+
+// Hooks
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 interface INavigationColItemProps {
     Icon?: FC<IconProps>;
@@ -32,6 +37,8 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
     path,
     isVisible
 }) => {
+    const textRef = useRef<HTMLHeadingElement | null>(null);
+    const isTruncated: boolean = useEllipsisDetection(textRef, [title]);
     const onClickHandler = (activeIndex?: number) => {
         if (onClick) {
             onClick(activeIndex || 0, path);
@@ -61,9 +68,11 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
                 {Icon && <Icon />}
             </button>
             {title && (
-                <Text as="p" className="navigation__colItemText">
-                    {title}
-                </Text>
+                <Tooltip text={title} isVisible={isTruncated}>
+                    <Text as="p" className="navigation__colItemText ellipsis-text" ref={textRef}>
+                        {title}
+                    </Text>
+                </Tooltip>
             )}
         </div>
     );
