@@ -107,6 +107,12 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
     const [maxVisibleItems, setMaxVisibleItems] = useState<number>(0);
     const [activePathIndex, setActivePathIndex] = useState<number[] | null>(null);
     const [clonedNavigationData, setClonedNavigationData] = useState<INavigationData[]>([]);
+    const navColRef = useRef<HTMLDivElement | null>(null);
+    const [propsForPopover, setPropsForPopover] = useState({});
+    const popoverRef = useRef<IPopoverRef>({
+        floatingElement: { current: null },
+        referenceElement: { current: null }
+    });
 
     const openFromInside = () => {
         setForceOpen(true);
@@ -124,27 +130,15 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
         setClonedNavigationData(navigationData);
     }, [navigationData]);
 
-    const navColRef = useRef<HTMLDivElement | null>(null);
-    const [propsForPopover, setPropsForPopover] = useState({});
-    const popoverRef = useRef<IPopoverRef>({
-        floatingElement: { current: null },
-        referenceElement: { current: null }
-    });
-
     const { height } = useWindowSize();
-
     const setDefaultNavData = () => {
-        if (
-            maxVisibleItems - 1 < clonedNavigationData.length &&
-            currentDataIndex !== null &&
-            currentDataIndex < maxVisibleItems - 1 &&
-            dataIsReordered
-        ) {
+        if (dataIsReordered) {
             setClonedNavigationData(navigationData);
             setDataIsReordered(false);
         }
     };
 
+    // maxVisibleItems calculation
     useEffect(() => {
         if (navColRef.current) {
             const { scrollWidth, offsetWidth } = navColRef.current;
