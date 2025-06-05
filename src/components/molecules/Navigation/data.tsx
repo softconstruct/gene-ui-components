@@ -1,4 +1,16 @@
-import { Globe } from "@geneui/icons";
+import {
+    EmojiHappy,
+    GiftBoxFilled,
+    Globe,
+    Heart,
+    Joystick,
+    Layers,
+    LightBulb,
+    LockFilled,
+    Molecule,
+    QRCode,
+    StarFilled
+} from "@geneui/icons";
 
 export const navigationData = [
     {
@@ -58,7 +70,7 @@ export const navigationData = [
     },
     {
         title: "Reports",
-        Icon: Globe,
+        Icon: EmojiHappy,
         children: [
             {
                 title: "Annual Report",
@@ -75,7 +87,7 @@ export const navigationData = [
     },
     {
         title: "Users",
-        Icon: Globe,
+        Icon: Joystick,
         children: [
             {
                 title: "User List",
@@ -95,7 +107,7 @@ export const navigationData = [
     },
     {
         title: "Settings",
-        Icon: Globe,
+        Icon: StarFilled,
         children: [
             {
                 title: "Profile Settings",
@@ -109,7 +121,7 @@ export const navigationData = [
     },
     {
         title: "Billing",
-        Icon: Globe,
+        Icon: QRCode,
         children: [
             {
                 title: "Invoices",
@@ -123,7 +135,7 @@ export const navigationData = [
     },
     {
         title: "Help Center",
-        Icon: Globe,
+        Icon: Layers,
         children: [
             { title: "FAQ", path: "/faq" },
             { title: "Contact Support", path: "/contactSupport" }
@@ -131,22 +143,22 @@ export const navigationData = [
     },
     {
         title: "Help Center",
-        Icon: Globe,
+        Icon: LockFilled,
         path: "/helpCenter"
     },
     {
         title: "Help Center 1",
-        Icon: Globe,
+        Icon: LightBulb,
         path: "/helpCenter1"
     },
     {
         title: "Help Center 2",
-        Icon: Globe,
+        Icon: Heart,
         path: "/helpCenter2"
     },
     {
         title: "Help Center 3",
-        Icon: Globe,
+        Icon: Molecule,
         path: "/helpCenter3"
     },
     {
@@ -161,7 +173,7 @@ export const navigationData = [
     },
     {
         title: "Help Center 6",
-        Icon: Globe,
+        Icon: GiftBoxFilled,
         path: "/helpCenter6"
     },
     {
