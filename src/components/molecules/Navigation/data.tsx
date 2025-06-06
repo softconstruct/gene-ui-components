@@ -179,6 +179,15 @@ export const navigationData = [
     {
         title: "Help Center 7",
         Icon: Globe,
-        path: "/helpCenter7"
+        children: [
+            {
+                title: "Invoicddes",
+                children: [
+                    { title: "20ss24", path: "/202df4ddd" },
+                    { title: "20sf23", path: "/202ff3wdcwdc" }
+                ]
+            },
+            { title: "Payment Methods", path: "/paymentMethodssdcfwe" }
+        ]
     }
 ];

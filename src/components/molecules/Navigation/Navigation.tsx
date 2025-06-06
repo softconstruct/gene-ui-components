@@ -7,6 +7,7 @@ import Button from "@components/atoms/Button";
 import Popover, { IPopoverRef } from "@components/atoms/Popover/Popover";
 import PopoverBody from "@components/atoms/Popover/PopoverBody";
 import Scrollbar from "@components/atoms/Scrollbar";
+import { IMenuItemProps, Menu, MenuItem } from "@components/molecules/Menu";
 import NavigationItem from "@components/molecules/Navigation/NavigationItem";
 import NavigationColItem from "@components/molecules/Navigation/NavigattionColItem";
 
@@ -103,12 +104,14 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
     const [currentDataIndex, setCurrentDataIndex] = useState<number | null>(null);
     const [hoverDataIndex, setHoverDataIndex] = useState<number | null>(null);
     const [forceOpen, setForceOpen] = useState<boolean>(false);
-    const [dataIsReordered, setDataIsReordered] = useState<boolean>(false);
+    // const [dataIsReordered, setDataIsReordered] = useState<boolean>(false);
     const [maxVisibleItems, setMaxVisibleItems] = useState<number>(0);
     const [activePathIndex, setActivePathIndex] = useState<number[] | null>(null);
     const [clonedNavigationData, setClonedNavigationData] = useState<INavigationData[]>([]);
     const navColRef = useRef<HTMLDivElement | null>(null);
     const [propsForPopover, setPropsForPopover] = useState({});
+    const [menuData, setMenuData] = useState<INavigationData[]>([]);
+    const [menuPropsForPopover, setMenuPropsForPopover] = useState({});
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
@@ -130,13 +133,18 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
         setClonedNavigationData(navigationData);
     }, [navigationData]);
 
+    useEffect(() => {
+        const menuSliceData = clonedNavigationData.slice(maxVisibleItems);
+        setMenuData(menuSliceData);
+    }, [maxVisibleItems, clonedNavigationData]);
+
     const { height } = useWindowSize();
-    const setDefaultNavData = () => {
-        if (dataIsReordered) {
-            setClonedNavigationData(navigationData);
-            setDataIsReordered(false);
-        }
-    };
+    // const setDefaultNavData = () => {
+    //     if (dataIsReordered) {
+    //         setClonedNavigationData(navigationData);
+    //         setDataIsReordered(false);
+    //     }
+    // };
 
     // maxVisibleItems calculation
     useEffect(() => {
@@ -157,12 +165,12 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
         const lastVisibleItemIndex = maxVisibleItems - 1;
         if (lastVisibleItemIndex === -1) return;
         if (currentDataIndex !== null && currentDataIndex > lastVisibleItemIndex) {
-            const newData = [...navigationData];
+            const newData = [...clonedNavigationData];
             const [activeItem] = newData.splice(currentDataIndex, 1);
             newData.splice(lastVisibleItemIndex, 0, activeItem);
             setCurrentDataIndex(lastVisibleItemIndex);
             setClonedNavigationData(newData);
-            setDataIsReordered(true);
+            // setDataIsReordered(true);
         } else if (
             activePathIndex &&
             activePathIndex[0] > lastVisibleItemIndex &&
@@ -173,7 +181,7 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
 
             newData.splice(lastVisibleItemIndex, 0, activeItem);
             setClonedNavigationData(newData);
-            setDataIsReordered(true);
+            // setDataIsReordered(true);
         }
     }, [maxVisibleItems, currentDataIndex, activePathIndex, height, navigationData]);
 
@@ -198,8 +206,6 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
         if (path && onClick) {
             onClick(path);
         }
-
-        setDefaultNavData();
     };
 
     const onItemClickHandler = (path?: string) => {
@@ -210,8 +216,23 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
                 setCurrentDataIndex(hoverDataIndex);
                 openFromInside();
             }
-            setDefaultNavData();
         }
+    };
+
+    const onMoreMenuItemsClickHandler = (item: IMenuItemProps) => {
+        const foundedItem = navigationData.find((data) => {
+            return !Array.isArray(item.children) && item.children === data.title;
+        });
+        const index = maxVisibleItems + item.id;
+        setCurrentDataIndex(index);
+        if (hasDataAndChildren(clonedNavigationData, index)) {
+            openFromInside();
+        }
+        setHoverDataIndex(null);
+        if (foundedItem.path && onClick) {
+            onClick(foundedItem.path);
+        }
+        setActivePathIndex([maxVisibleItems - 1]);
     };
 
     return (
@@ -266,7 +287,23 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
                         })}
                     </div>
                     {clonedNavigationData.length > maxVisibleItems && (
-                        <NavigationColItem Icon={ThreeDotsHorizontal} title="more" isVisible />
+                        <>
+                            <NavigationColItem
+                                Icon={ThreeDotsHorizontal}
+                                title="more"
+                                isVisible
+                                propsForPopover={menuPropsForPopover}
+                            />
+                            <Menu onChange={onMoreMenuItemsClickHandler} setPropsForPopover={setMenuPropsForPopover}>
+                                {menuData.map(({ Icon, title }, index) => {
+                                    return (
+                                        <MenuItem id={index} IconBefore={Icon}>
+                                            {title}
+                                        </MenuItem>
+                                    );
+                                })}
+                            </Menu>
+                        </>
                     )}
                     <Button
                         onClick={() => {}}
