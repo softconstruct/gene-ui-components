@@ -79,10 +79,10 @@ const StoryComponent: FC = (props) => {
     const [menuData, setMenuData] = useState(data);
     const [propsForPopover, setPropsForPopover] = useState({});
 
-    const handleMenuChange = (id) => {
+    const handleMenuChange = (menuItemData) => {
         const updateSelected = (items, targetId) => {
             return items.map((item) => {
-                const isSelected = item.id === id;
+                const isSelected = item.id === menuItemData.id;
                 const updatedItem = { ...item, selected: isSelected };
 
                 if (item.children) {
@@ -93,7 +93,7 @@ const StoryComponent: FC = (props) => {
             });
         };
 
-        setMenuData(updateSelected(menuData, id));
+        setMenuData(updateSelected(menuData, menuItemData.id));
     };
 
     const Elements = MenuItemRecursion(menuData);

@@ -7,12 +7,19 @@ import Pill from "@components/atoms/Pill";
 export const data = [
     {
         title: "Users",
-        selected: false,
+        selected: true,
         id: "users",
         value: "users",
         IconBefore: Globe,
         danger: true,
         divider: true
+    },
+    {
+        title: "profile",
+        selected: true,
+        id: "profile",
+        value: "profile",
+        IconBefore: Globe
     },
     {
         title: "Admins",
