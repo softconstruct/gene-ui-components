@@ -119,6 +119,7 @@ const Navigation: FC<INavigationProps> = ({
     // const [dataIsReordered, setDataIsReordered] = useState<boolean>(false);
     const [maxVisibleItems, setMaxVisibleItems] = useState<number>(0);
     const [activePathIndex, setActivePathIndex] = useState<number[] | null>(null);
+    const [moreMenuDataActiveIndex, setMoreMenuDataActiveIndex] = useState<number>(-1);
     const [clonedNavigationData, setClonedNavigationData] = useState<INavigationData[]>([]);
     const navColRef = useRef<HTMLDivElement | null>(null);
     const [propsForPopover, setPropsForPopover] = useState({});
@@ -250,6 +251,16 @@ const Navigation: FC<INavigationProps> = ({
 
     const onNavigationCreateDataClickHandler = (item: INavigationCreateData) => onNavigationCreateDataClick?.(item);
 
+    useEffect(() => {
+        if (!(clonedNavigationData.length > maxVisibleItems)) return;
+        const index = activePathIndex?.[0];
+        if (typeof index === "number" && index >= maxVisibleItems) {
+            setMoreMenuDataActiveIndex(maxVisibleItems - index);
+        } else {
+            setMoreMenuDataActiveIndex(-1);
+        }
+    }, [maxVisibleItems, activePathIndex]);
+
     return (
         <div className={classNames("navigation", className)} role="navigation">
             <div className="navigation__col">
@@ -312,7 +323,11 @@ const Navigation: FC<INavigationProps> = ({
                             <Menu onChange={onMoreMenuItemsClickHandler} setPropsForPopover={setMenuPropsForPopover}>
                                 {menuData.map(({ Icon, title }, index) => {
                                     return (
-                                        <MenuItem id={index} IconBefore={Icon}>
+                                        <MenuItem
+                                            id={index}
+                                            IconBefore={Icon}
+                                            selected={index === moreMenuDataActiveIndex}
+                                        >
                                             {title}
                                         </MenuItem>
                                     );
