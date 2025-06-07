@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
 import { PersonPlus, ThreeDotsHorizontal } from "@geneui/icons";
@@ -16,7 +16,7 @@ import { useWindowSize } from "@hooks/index";
 // Styles
 import "./Navigation.scss";
 
-import { Divider } from "../../../index";
+import { Divider, GeneUIDesignSystemContext } from "../../../index";
 
 interface INavigationData {
     title: string;
@@ -152,6 +152,8 @@ const Navigation: FC<INavigationProps> = ({
         floatingElement: { current: null },
         referenceElement: { current: null }
     });
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
+    const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
     const { height } = useWindowSize();
 
     const openFromInside = () => {
@@ -275,119 +277,132 @@ const Navigation: FC<INavigationProps> = ({
 
     return (
         <div className={classNames("navigation", className)} role="navigation">
-            <div className="navigation__col">
-                <div className="navigation__col_wrapper">
-                    <div className="navigation__colItemsWrapper" ref={navColRef}>
-                        {clonedNavigationData?.map(({ Icon, title, path }, index) => {
-                            return (
-                                <span key={`${title}-${path}`}>
-                                    <NavigationColItem
-                                        isVisible={index < maxVisibleItems}
-                                        Icon={Icon}
-                                        title={title}
-                                        onClick={onNavigationColItemClick}
-                                        index={index}
-                                        path={path}
-                                        opened={currentDataIndex === index}
-                                        selected={index === activePathIndex?.[0]}
-                                        onMouseEnter={onMouseEnterHandler}
-                                        propsForPopover={hoverDataIndex === index ? propsForPopover : {}}
-                                    />
-                                    {hoverDataIndex !== null &&
-                                        hasDataAndChildren(clonedNavigationData, hoverDataIndex) && (
-                                            <Popover
-                                                setProps={setPropsForPopover}
-                                                size="small"
-                                                position="right-top"
-                                                withArrow
-                                                trigger="hover"
-                                                margin={20}
-                                                disableReposition={false}
-                                                ref={popoverRef}
-                                            >
-                                                <PopoverBody withPadding={false}>
-                                                    <div className="navigation__menu_wrapper">
-                                                        <NavMenuContent
-                                                            data={clonedNavigationData[hoverDataIndex]}
-                                                            onClick={onItemClickHandler}
-                                                            activePathIndex={
-                                                                activePathIndex && hoverDataIndex === activePathIndex[0]
-                                                                    ? activePathIndex.slice(1)
-                                                                    : null
-                                                            }
-                                                        />
-                                                    </div>
-                                                </PopoverBody>
-                                            </Popover>
-                                        )}
-                                </span>
-                            );
-                        })}
-                    </div>
-                    {clonedNavigationData.length > maxVisibleItems && (
-                        <>
-                            <NavigationColItem
-                                Icon={ThreeDotsHorizontal}
-                                title={moreMenuTitle}
-                                isVisible
-                                propsForPopover={menuPropsForPopover}
-                            />
-                            <Menu onChange={onMoreMenuItemsClickHandler} setPropsForPopover={setMenuPropsForPopover}>
-                                {menuData.map(({ Icon, title }, index) => {
+            {isMobileBreakpoint ? (
+                // todo create navigation mobile
+                <div>Mobile Navigation</div>
+            ) : (
+                <>
+                    <div className="navigation__col">
+                        <div className="navigation__col_wrapper">
+                            <div className="navigation__colItemsWrapper" ref={navColRef}>
+                                {clonedNavigationData?.map(({ Icon, title, path }, index) => {
                                     return (
-                                        <MenuItem
-                                            id={index}
-                                            IconBefore={Icon}
-                                            selected={index === moreMenuDataActiveIndex}
-                                        >
-                                            {title}
-                                        </MenuItem>
+                                        <span key={`${title}-${path}`}>
+                                            <NavigationColItem
+                                                isVisible={index < maxVisibleItems}
+                                                Icon={Icon}
+                                                title={title}
+                                                onClick={onNavigationColItemClick}
+                                                index={index}
+                                                path={path}
+                                                opened={currentDataIndex === index}
+                                                selected={index === activePathIndex?.[0]}
+                                                onMouseEnter={onMouseEnterHandler}
+                                                propsForPopover={hoverDataIndex === index ? propsForPopover : {}}
+                                            />
+                                            {hoverDataIndex !== null &&
+                                                hasDataAndChildren(clonedNavigationData, hoverDataIndex) && (
+                                                    <Popover
+                                                        setProps={setPropsForPopover}
+                                                        size="small"
+                                                        position="right-top"
+                                                        withArrow
+                                                        trigger="hover"
+                                                        margin={20}
+                                                        disableReposition={false}
+                                                        ref={popoverRef}
+                                                    >
+                                                        <PopoverBody withPadding={false}>
+                                                            <div className="navigation__menu_wrapper">
+                                                                <NavMenuContent
+                                                                    data={clonedNavigationData[hoverDataIndex]}
+                                                                    onClick={onItemClickHandler}
+                                                                    activePathIndex={
+                                                                        activePathIndex &&
+                                                                        hoverDataIndex === activePathIndex[0]
+                                                                            ? activePathIndex.slice(1)
+                                                                            : null
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        </PopoverBody>
+                                                    </Popover>
+                                                )}
+                                        </span>
                                     );
                                 })}
-                            </Menu>
-                        </>
-                    )}
-                    {navigationCreateData && (
-                        <>
-                            <Button
-                                onClick={() => {}}
-                                Icon={PersonPlus}
-                                size="large"
-                                appearance="secondary"
-                                className="navigation__addButton"
-                                {...propsForCreatePopover}
-                            />
-                            <Menu
-                                onChange={onNavigationCreateDataClickHandler}
-                                setPropsForPopover={setPropsForCreatePopover}
-                            >
-                                {navigationCreateData.map((props: IMenuItemProps) => {
-                                    const { title, ...rest } = props;
-                                    return <MenuItem {...rest}>{title}</MenuItem>;
-                                })}
-                            </Menu>
-                        </>
-                    )}
-                </div>
-                <Divider className="navigation__divider" direction="vertical" />
-            </div>
-            {forceOpen && currentDataIndex !== null && hasDataAndChildren(clonedNavigationData, currentDataIndex) && (
-                <div className="navigation__menu">
-                    <Scrollbar>
-                        <div className="navigation__menu_wrapper">
-                            <NavMenuContent
-                                data={clonedNavigationData[currentDataIndex]}
-                                onClick={onItemClickHandler}
-                                activePathIndex={
-                                    activePathIndex && currentDataIndex === activePathIndex[0]
-                                        ? activePathIndex.slice(1)
-                                        : null
-                                }
-                            />
+                            </div>
+                            {clonedNavigationData.length > maxVisibleItems && (
+                                <>
+                                    <NavigationColItem
+                                        Icon={ThreeDotsHorizontal}
+                                        title={moreMenuTitle}
+                                        isVisible
+                                        propsForPopover={menuPropsForPopover}
+                                    />
+                                    <Menu
+                                        onChange={onMoreMenuItemsClickHandler}
+                                        setPropsForPopover={setMenuPropsForPopover}
+                                    >
+                                        {menuData.map(({ Icon, title }, index) => {
+                                            return (
+                                                <MenuItem
+                                                    id={index}
+                                                    IconBefore={Icon}
+                                                    selected={index === moreMenuDataActiveIndex}
+                                                >
+                                                    {title}
+                                                </MenuItem>
+                                            );
+                                        })}
+                                    </Menu>
+                                </>
+                            )}
+                            {navigationCreateData && (
+                                <>
+                                    <Button
+                                        onClick={() => {}}
+                                        Icon={PersonPlus}
+                                        size="large"
+                                        appearance="secondary"
+                                        className="navigation__addButton"
+                                        {...propsForCreatePopover}
+                                    />
+                                    <Menu
+                                        onChange={onNavigationCreateDataClickHandler}
+                                        setPropsForPopover={setPropsForCreatePopover}
+                                    >
+                                        {navigationCreateData.map((props: IMenuItemProps) => {
+                                            const { title, ...rest } = props;
+                                            return <MenuItem {...rest}>{title}</MenuItem>;
+                                        })}
+                                    </Menu>
+                                </>
+                            )}
                         </div>
-                    </Scrollbar>
-                    <Divider className="navigation__divider" direction="vertical" />
-                </div>
+                        <Divider className="navigation__divider" direction="vertical" />
+                    </div>
+                    {forceOpen &&
+                        currentDataIndex !== null &&
+                        hasDataAndChildren(clonedNavigationData, currentDataIndex) && (
+                            <div className="navigation__menu">
+                                <Scrollbar>
+                                    <div className="navigation__menu_wrapper">
+                                        <NavMenuContent
+                                            data={clonedNavigationData[currentDataIndex]}
+                                            onClick={onItemClickHandler}
+                                            activePathIndex={
+                                                activePathIndex && currentDataIndex === activePathIndex[0]
+                                                    ? activePathIndex.slice(1)
+                                                    : null
+                                            }
+                                        />
+                                    </div>
+                                </Scrollbar>
+                                <Divider className="navigation__divider" direction="vertical" />
+                            </div>
+                        )}
+                </>
             )}
         </div>
     );
