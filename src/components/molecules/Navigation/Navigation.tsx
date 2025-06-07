@@ -236,13 +236,13 @@ const Navigation: FC<INavigationProps> = ({
         const foundedItem = navigationData.find((data) => {
             return !Array.isArray(item.children) && item.children === data.title;
         });
-        const index = maxVisibleItems + item.id;
+        const index = maxVisibleItems + +item.id;
         setCurrentDataIndex(index);
         if (hasDataAndChildren(clonedNavigationData, index)) {
             openFromInside();
         }
         setHoverDataIndex(null);
-        if (foundedItem.path && onClick) {
+        if (foundedItem?.path && onClick) {
             onClick(foundedItem.path);
         }
         setActivePathIndex([maxVisibleItems - 1]);

@@ -4,10 +4,10 @@ import { Meta, StoryObj } from "@storybook/react";
 import { HamburgerMenu } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
-import { navigationCreateData, navigationData } from "@components/molecules/Navigation/data";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import { navigationCreateData, navigationData } from "../../../../stories/data/__navigation";
 // Components
 import Navigation, { INavigationProps } from "./index";
 

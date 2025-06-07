@@ -198,19 +198,16 @@ export const navigationCreateData: INavigationCreateData[] = [
     {
         title: "Template",
         id: "createTemplate",
-        value: "users",
         IconBefore: Globe
     },
     {
         title: "Add User",
         id: "addUser",
-        value: "profile",
         IconBefore: Globe
     },
     {
         title: "Block ",
         id: "admins",
-        value: "admins",
         IconAfter: LightBulb,
         danger: true
     }

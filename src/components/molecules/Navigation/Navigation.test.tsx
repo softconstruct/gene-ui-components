@@ -1,8 +1,7 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-import { navigationData } from "@components/molecules/Navigation/data";
-
+import { navigationData } from "../../../../stories/data/__navigation";
 // Components
 import Navigation, { INavigationProps } from "./index";
 
