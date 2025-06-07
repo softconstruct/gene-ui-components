@@ -12,6 +12,8 @@ import {
     StarFilled
 } from "@geneui/icons";
 
+import { INavigationCreateData } from "@components/molecules/Navigation/Navigation";
+
 export const navigationData = [
     {
         title: "Dashboard",
@@ -162,22 +164,22 @@ export const navigationData = [
         path: "/helpCenter3"
     },
     {
-        title: "Help Center 4",
+        title: "Center 1",
         Icon: Globe,
         path: "/helpCenter4"
     },
     {
-        title: "Help Center 5",
+        title: "A Blog",
         Icon: Globe,
         path: "/helpCenter5"
     },
     {
-        title: "Help Center 6",
+        title: "Back",
         Icon: GiftBoxFilled,
         path: "/helpCenter6"
     },
     {
-        title: "Help Center 7",
+        title: "Nested",
         Icon: Globe,
         children: [
             {
@@ -189,5 +191,27 @@ export const navigationData = [
             },
             { title: "Payment Methods", path: "/paymentMethodssdcfwe" }
         ]
+    }
+];
+
+export const navigationCreateData: INavigationCreateData[] = [
+    {
+        title: "Template",
+        id: "createTemplate",
+        value: "users",
+        IconBefore: Globe
+    },
+    {
+        title: "Add User",
+        id: "addUser",
+        value: "profile",
+        IconBefore: Globe
+    },
+    {
+        title: "Block ",
+        id: "admins",
+        value: "admins",
+        IconAfter: LightBulb,
+        danger: true
     }
 ];

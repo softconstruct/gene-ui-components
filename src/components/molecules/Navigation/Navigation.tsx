@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
-import { Magnifier, ThreeDotsHorizontal } from "@geneui/icons";
+import { PersonPlus, ThreeDotsHorizontal } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Popover, { IPopoverRef } from "@components/atoms/Popover/Popover";
@@ -25,6 +25,8 @@ interface INavigationData {
     children?: INavigationData[];
 }
 
+export type INavigationCreateData = Omit<IMenuItemProps, "children">;
+
 interface INavigationProps {
     /**
      * Additional class for the parent element.
@@ -33,8 +35,10 @@ interface INavigationProps {
     className?: string;
     open?: boolean;
     navigationData?: INavigationData[];
+    navigationCreateData?: INavigationCreateData[];
     activePath?: string | null;
     onClick?: (path: string) => void;
+    onNavigationCreateDataClick?: (item: INavigationCreateData) => void;
 }
 
 export const findPath = (
@@ -100,7 +104,15 @@ const NavMenuContent: FC<{
 /**
  * Navigation is a vertical component that appears on the left side of a user interface. It provides users with quick access to key features.
  */
-const Navigation: FC<INavigationProps> = ({ className, open, navigationData = [], activePath, onClick }) => {
+const Navigation: FC<INavigationProps> = ({
+    className,
+    open,
+    navigationData = [],
+    activePath,
+    onClick,
+    navigationCreateData,
+    onNavigationCreateDataClick
+}) => {
     const [currentDataIndex, setCurrentDataIndex] = useState<number | null>(null);
     const [hoverDataIndex, setHoverDataIndex] = useState<number | null>(null);
     const [forceOpen, setForceOpen] = useState<boolean>(false);
@@ -110,6 +122,7 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
     const [clonedNavigationData, setClonedNavigationData] = useState<INavigationData[]>([]);
     const navColRef = useRef<HTMLDivElement | null>(null);
     const [propsForPopover, setPropsForPopover] = useState({});
+    const [propsForCreatePopover, setPropsForCreatePopover] = useState({});
     const [menuData, setMenuData] = useState<INavigationData[]>([]);
     const [menuPropsForPopover, setMenuPropsForPopover] = useState({});
     const popoverRef = useRef<IPopoverRef>({
@@ -152,7 +165,7 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
             const { scrollWidth, offsetWidth } = navColRef.current;
             if (scrollWidth > offsetWidth) {
                 const containerHeight = navColRef.current.offsetHeight;
-                const ELEMENT_HEIGHT = 68;
+                const ELEMENT_HEIGHT = 66;
                 const maxVisibleItemsWithGap = Math.floor(containerHeight / ELEMENT_HEIGHT);
                 setMaxVisibleItems(maxVisibleItemsWithGap);
             } else {
@@ -235,6 +248,8 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
         setActivePathIndex([maxVisibleItems - 1]);
     };
 
+    const onNavigationCreateDataClickHandler = (item: INavigationCreateData) => onNavigationCreateDataClick?.(item);
+
     return (
         <div className={classNames("navigation", className)} role="navigation">
             <div className="navigation__col">
@@ -305,13 +320,27 @@ const Navigation: FC<INavigationProps> = ({ className, open, navigationData = []
                             </Menu>
                         </>
                     )}
-                    <Button
-                        onClick={() => {}}
-                        Icon={Magnifier}
-                        size="large"
-                        appearance="secondary"
-                        className="navigation__addButton"
-                    />
+                    {navigationCreateData && (
+                        <>
+                            <Button
+                                onClick={() => {}}
+                                Icon={PersonPlus}
+                                size="large"
+                                appearance="secondary"
+                                className="navigation__addButton"
+                                {...propsForCreatePopover}
+                            />
+                            <Menu
+                                onChange={onNavigationCreateDataClickHandler}
+                                setPropsForPopover={setPropsForCreatePopover}
+                            >
+                                {navigationCreateData.map((props: IMenuItemProps) => {
+                                    const { title, ...rest } = props;
+                                    return <MenuItem {...rest}>{title}</MenuItem>;
+                                })}
+                            </Menu>
+                        </>
+                    )}
                 </div>
                 <Divider className="navigation__divider" direction="vertical" />
             </div>
