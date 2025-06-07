@@ -15,11 +15,14 @@ const meta: Meta<INavigationProps> = {
     title: "Molecules/Navigation",
     component: Navigation,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance })
-        // fill Navigation component argTypes
-    },
-    args: {
-        // fill Navigation component args
+        className: args({ control: "false", ...propCategory.appearance }),
+        open: args({ control: "boolean", ...propCategory.states }),
+        navigationData: args({ control: "false", ...propCategory.content }),
+        navigationCreateData: args({ control: "false", ...propCategory.content }),
+        activePath: args({ control: "false", ...propCategory.states }),
+        onClick: args({ control: "false", ...propCategory.action }),
+        onNavigationCreateDataClick: args({ control: "false", ...propCategory.action }),
+        moreMenuTitle: args({ control: "false", ...propCategory.content })
     }
 };
 

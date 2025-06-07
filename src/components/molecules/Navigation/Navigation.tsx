@@ -33,12 +33,34 @@ interface INavigationProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Controls whether the navigation is forced open.
+     */
     open?: boolean;
+    /**
+     * Array of navigation items data.
+     */
     navigationData?: INavigationData[];
+    /**
+     * Data for items shown in the create/add menu.
+     */
     navigationCreateData?: INavigationCreateData[];
+    /**
+     * Currently active navigation path.
+     */
     activePath?: string | null;
+    /**
+     * Called when a navigation item is clicked.
+     */
     onClick?: (path: string) => void;
+    /**
+     * Called when a create menu item is clicked.
+     */
     onNavigationCreateDataClick?: (item: INavigationCreateData) => void;
+    /**
+     * Optional custom title for the "More" menu.
+     */
+    moreMenuTitle?: string;
 }
 
 export const findPath = (
@@ -111,12 +133,12 @@ const Navigation: FC<INavigationProps> = ({
     activePath,
     onClick,
     navigationCreateData,
-    onNavigationCreateDataClick
+    onNavigationCreateDataClick,
+    moreMenuTitle = "More"
 }) => {
     const [currentDataIndex, setCurrentDataIndex] = useState<number | null>(null);
     const [hoverDataIndex, setHoverDataIndex] = useState<number | null>(null);
     const [forceOpen, setForceOpen] = useState<boolean>(false);
-    // const [dataIsReordered, setDataIsReordered] = useState<boolean>(false);
     const [maxVisibleItems, setMaxVisibleItems] = useState<number>(0);
     const [activePathIndex, setActivePathIndex] = useState<number[] | null>(null);
     const [moreMenuDataActiveIndex, setMoreMenuDataActiveIndex] = useState<number>(-1);
@@ -130,6 +152,7 @@ const Navigation: FC<INavigationProps> = ({
         floatingElement: { current: null },
         referenceElement: { current: null }
     });
+    const { height } = useWindowSize();
 
     const openFromInside = () => {
         setForceOpen(true);
@@ -152,15 +175,6 @@ const Navigation: FC<INavigationProps> = ({
         setMenuData(menuSliceData);
     }, [maxVisibleItems, clonedNavigationData]);
 
-    const { height } = useWindowSize();
-    // const setDefaultNavData = () => {
-    //     if (dataIsReordered) {
-    //         setClonedNavigationData(navigationData);
-    //         setDataIsReordered(false);
-    //     }
-    // };
-
-    // maxVisibleItems calculation
     useEffect(() => {
         if (navColRef.current) {
             const { scrollWidth, offsetWidth } = navColRef.current;
@@ -184,7 +198,6 @@ const Navigation: FC<INavigationProps> = ({
             newData.splice(lastVisibleItemIndex, 0, activeItem);
             setCurrentDataIndex(lastVisibleItemIndex);
             setClonedNavigationData(newData);
-            // setDataIsReordered(true);
         } else if (
             activePathIndex &&
             activePathIndex[0] > lastVisibleItemIndex &&
@@ -195,7 +208,6 @@ const Navigation: FC<INavigationProps> = ({
 
             newData.splice(lastVisibleItemIndex, 0, activeItem);
             setClonedNavigationData(newData);
-            // setDataIsReordered(true);
         }
     }, [maxVisibleItems, currentDataIndex, activePathIndex, height, navigationData]);
 
@@ -316,7 +328,7 @@ const Navigation: FC<INavigationProps> = ({
                         <>
                             <NavigationColItem
                                 Icon={ThreeDotsHorizontal}
-                                title="more"
+                                title={moreMenuTitle}
                                 isVisible
                                 propsForPopover={menuPropsForPopover}
                             />
