@@ -58,6 +58,7 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
                 disabled={disabled || !isVisible}
                 className={classNames("navigation__iconButton", {
                     navigation__iconButton_selected: selected,
+                    navigation__iconButton_pointer_none: selected && opened,
                     navigation__iconButton_opened: opened && !selected,
                     navigation__iconButton_disabled: disabled
                 })}

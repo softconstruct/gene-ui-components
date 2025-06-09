@@ -53,6 +53,7 @@ const NavigationItem: FC<INavigationItemProps> = ({
                 className={classNames("navigationItem__button", `navigationItem__button_shift_${depth}`, {
                     navigationItem__button_disabled: disabled,
                     navigationItem__button_selected: selected,
+                    navigationItem__button_pointer_none: selected && !children,
                     navigationItem__button_selected_noChildren: !children && selected
                 })}
                 onClick={onClickHandler}
