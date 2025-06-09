@@ -169,6 +169,13 @@ const Navigation: FC<INavigationProps> = ({
     }, []);
 
     useEffect(() => {
+        // set null if navigation opened
+        if (forceOpen && currentDataIndex !== null) {
+            setHoverDataIndex(null);
+        }
+    }, [forceOpen, hoverDataIndex, currentDataIndex]);
+
+    useEffect(() => {
         setClonedNavigationData(navigationData);
     }, [navigationData]);
 
