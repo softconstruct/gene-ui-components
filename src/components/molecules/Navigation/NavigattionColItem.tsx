@@ -70,7 +70,12 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
             </button>
             {title && (
                 <Tooltip text={title} isVisible={isTruncated}>
-                    <Text as="p" className="navigation__colItemText ellipsis-text" ref={textRef}>
+                    <Text
+                        as="p"
+                        variant="captionMediumMedium"
+                        className="navigation__colItemText ellipsis-text"
+                        ref={textRef}
+                    >
                         {title}
                     </Text>
                 </Tooltip>

@@ -108,6 +108,7 @@ const NavMenuContent: FC<{
                     depth={depth}
                     Icon={item.Icon}
                     onClick={onClick}
+                    disabled={item.disabled}
                     selected={index === activePathIndex?.[0]}
                 >
                     {item.children && (
@@ -296,8 +297,9 @@ const Navigation: FC<INavigationProps> = ({
                             <div className="navigation__colItemsWrapper" ref={navColRef}>
                                 {clonedNavigationData?.map(({ Icon, title, path, disabled }, index) => {
                                     return (
-                                        <span key={`${title}-${path}`}>
+                                        <>
                                             <NavigationColItem
+                                                key={`${title}-${path}`}
                                                 isVisible={index < maxVisibleItems}
                                                 Icon={Icon}
                                                 title={title}
@@ -338,7 +340,7 @@ const Navigation: FC<INavigationProps> = ({
                                                         </PopoverBody>
                                                     </Popover>
                                                 )}
-                                        </span>
+                                        </>
                                     );
                                 })}
                             </div>
