@@ -169,9 +169,10 @@ const Navigation: FC<INavigationProps> = ({
     }, []);
 
     useEffect(() => {
-        // set null if navigation opened
         if (forceOpen && currentDataIndex !== null) {
             setHoverDataIndex(null);
+        } else {
+            setCurrentDataIndex(null);
         }
     }, [forceOpen, hoverDataIndex, currentDataIndex]);
 
@@ -189,7 +190,7 @@ const Navigation: FC<INavigationProps> = ({
             const { scrollWidth, offsetWidth } = navColRef.current;
             if (scrollWidth > offsetWidth) {
                 const containerHeight = navColRef.current.offsetHeight;
-                const ELEMENT_HEIGHT = 66;
+                const ELEMENT_HEIGHT = 67;
                 const maxVisibleItemsWithGap = Math.floor(containerHeight / ELEMENT_HEIGHT);
                 setMaxVisibleItems(maxVisibleItemsWithGap);
             } else {
