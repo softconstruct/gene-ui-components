@@ -8,6 +8,8 @@
         gap: var(--guit-ref-spacing-2xlarge);
         padding: var(--guit-ref-spacing-large);
         background-color: var(--guit-sem-color-background-neutral-1);
+        position: relative;
+        z-index: 2;
 
         &_search {
             flex: 1;
@@ -523,7 +525,6 @@
         position: relative;
         z-index: 1;
 
-        &::before,
         &::after {
             content: "";
             pointer-events: none;
@@ -563,7 +564,7 @@
             border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
                 var(--guit-sem-color-border-neutral-3);
 
-            &::before {
+            &::after {
                 inset-inline: 0;
                 height: 0.4rem;
                 top: 100%;

@@ -1,7 +1,5 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { ChangeEvent, FC, ReactNode, useState } from "react";
+import React, { ChangeEvent, FC, useState } from "react";
 import {
-    Column,
     ColumnSort,
     ExpandedState,
     flexRender,
@@ -13,60 +11,116 @@ import {
     RowPinningState,
     useReactTable
 } from "@tanstack/react-table";
+import classNames from "classnames";
+
+import {
+    CaretDownFilled,
+    ChevronDown,
+    ChevronRight,
+    Clock,
+    Copy,
+    Download,
+    Globe,
+    Pin,
+    RecycleBin,
+    TagOutline,
+    ThreeDotsVertical
+} from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
-import CopyComponent from "@components/atoms/Copy";
+import Divider from "@components/atoms/Divider";
+import Scrollbar from "@components/atoms/Scrollbar";
+import Checkbox from "@components/molecules/Checkbox";
+import Cell from "@components/molecules/Table/Cell";
+import { CellClassNames, deepCloneWithFunctions } from "@components/molecules/Table/helpers";
+import { Row } from "@components/molecules/Table/makeData";
+import PinnedRow from "@components/molecules/Table/PinnedRow";
+import { RowActions, TableCol } from "@components/molecules/Table/type";
 
-import Filter from "./Filter";
-import PinnedRow from "./PinnedRow";
-import { TableCol } from "./type";
+// Styles
+import "./Table.scss";
 
-export interface ITableProps {
+interface ITableProps {
     columns: TableCol<any>[];
-    externalData: Record<string, string | ReactNode | Record<string, string>>[];
+    externalData: Row[];
+    expandable?: boolean;
+    withCheckbox?: boolean;
     onSortChange?: (sortedData: ColumnSort[]) => void;
-    pageSizes?: number[];
+    // pageSizes?: number[];
+    onSave: (data: Row[]) => void;
+    rowActions: Partial<RowActions>;
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
+    // fill Table component props interface
 }
 
-const TableComponent: FC<ITableProps> = ({ columns, externalData, onSortChange, pageSizes }) => {
+const TableLayoutTmp: FC<ITableProps> = ({
+    columns,
+    externalData,
+    onSortChange,
+    withCheckbox,
+    expandable,
+    onSave,
+    rowActions,
+    className
+}) => {
     const [rowPinning, setRowPinning] = useState<RowPinningState>({
         top: [],
         bottom: []
     });
     const [expanded, setExpanded] = useState<ExpandedState>({});
-    const [currentCol, setCurrentCol] = useState<Column<Record<string, ReactNode | Record<string, string>>, unknown>>(
-        {}
-    );
+    // const [currentCol, setCurrentCol] = useState<Column<Record<string, ReactNode | Record<string, string>>, unknown>>(
+    //     {}
+    // );
     const [sorting, setSorting] = useState<ColumnSort[]>([]);
     const [editableMode, setEditableMode] = useState(false);
 
     const [editedValue, setEditableValue] = useState<Record<string, Record<string, string>>>({});
-    const [data, setData] = useState(externalData);
+    const [data, setData] = useState(deepCloneWithFunctions(externalData));
 
-    const [columnPinning, setColumnPinning] = useState({});
+    const [columnPinning, setColumnPinning] = useState({
+        left: ["expand", "rowCheckbox"],
+        right: []
+    });
+    const [columnVisibility, setColumnVisibility] = useState({});
 
     const accessEditableMode: Record<string, boolean> = {};
     const accessCopyable: Record<string, boolean> = {};
 
-    const changeData = (e: ChangeEvent<HTMLInputElement>, index: number, id: string) => {
+    const [menuOpened, setMenuOpened] = useState(false);
+
+    const onCellEdit = (
+        e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+        index: number,
+        type: string
+    ) => {
         e.persist();
         const current = e.currentTarget?.value;
-        const createData = { ...editedValue, [id]: { ...editedValue[id], [index]: e.currentTarget?.value } };
+        const createData = { ...editedValue, [type]: { ...editedValue[type], [index]: e.currentTarget?.value } };
         setEditableValue(createData);
         const newData = [...data];
-        newData[index][id] = current;
+        newData[index][type].data = current;
         setData(newData);
     };
 
     const table = useReactTable({
         data,
         columns,
-        initialState: { pagination: { pageSize: 20, pageIndex: 0 } },
+        initialState: {
+            pagination: { pageSize: 20, pageIndex: 0 },
+            columnPinning: {
+                left: ["expand", "rowCheckbox"]
+            }
+        },
         state: {
             expanded,
             rowPinning,
             sorting,
-            columnPinning
+            columnPinning,
+            columnVisibility
         },
 
         getCoreRowModel: getCoreRowModel(),
@@ -74,83 +128,213 @@ const TableComponent: FC<ITableProps> = ({ columns, externalData, onSortChange, 
         getExpandedRowModel: getExpandedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
-        getRowCanExpand: (row) => !!row.original.subRows,
+        getRowCanExpand: (row) => !!row.original.expandedData,
 
         onSortingChange: (e) => {
             onSortChange?.(sorting);
             setSorting(e);
         },
+        onColumnVisibilityChange: setColumnVisibility,
         onColumnPinningChange: setColumnPinning,
         onExpandedChange: setExpanded,
         onRowPinningChange: setRowPinning
     });
-    const tableHeader = table.getHeaderGroups()[0].headers;
-    const changeFilterKey = (e: ChangeEvent<HTMLSelectElement>) => {
-        const currentFilter = +e.currentTarget.value;
-        if (tableHeader[currentFilter].column) {
-            setCurrentCol(tableHeader[currentFilter].column);
-        }
-    };
+    // const tableHeader = table.getHeaderGroups()[0].headers;
+    // const changeFilterKey = (e: ChangeEvent<HTMLSelectElement>) => {
+    //     const currentFilter = +e.currentTarget.value;
+    //     if (tableHeader[currentFilter].column) {
+    //         setCurrentCol(tableHeader[currentFilter].column);
+    //     }
+    // };
+    // const changeFilterData = (e: ChangeEvent<HTMLInputElement>) => {
+    //     currentCol?.setFilterValue(e.currentTarget.value);
+    // };
 
-    const changeFilterData = (e: ChangeEvent<HTMLInputElement>) => {
-        currentCol?.setFilterValue(e.currentTarget.value);
-    };
-
-    const createEditableCol = () => {
-        setEditableMode((prev) => !prev);
+    const tableEditAction = (type: "cancel" | "edit" | "save") => {
+        if (type === "save") onSave(data);
+        if (type === "cancel") setData(deepCloneWithFunctions(externalData));
+        setEditableMode(!editableMode);
     };
 
     return (
-        <>
-            <div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <div>
-                        <input onChange={changeFilterData} />
-                        <select onChange={changeFilterKey}>
-                            {tableHeader.map(({ id }, i) => {
-                                return (
-                                    <option key={id} value={i}>
-                                        {id}
-                                    </option>
-                                );
-                            })}
-                        </select>
-                    </div>
-                    <div>
-                        <div style={{ display: "flex", flexDirection: "column" }}>
-                            <label>
-                                <input
-                                    {...{
-                                        type: "checkbox",
-                                        checked: table.getIsAllColumnsVisible(),
-                                        onChange: table.getToggleAllColumnsVisibilityHandler()
-                                    }}
-                                />{" "}
-                                Toggle All
-                            </label>
-                            {table.getAllLeafColumns().map((column) => {
-                                return (
-                                    <label>
-                                        <input
-                                            type="checkbox"
-                                            checked={column.getIsVisible()}
-                                            onChange={(e) => {
-                                                column.getToggleVisibilityHandler()(e);
-                                            }}
-                                        />
-                                        {column.id}
-                                    </label>
-                                );
-                            })}{" "}
-                        </div>
+        <div className={classNames("dataTable", className)}>
+            <div className={classNames("dataTable__toolbar toolbar", className)}>
+                <div className="dataTable__toolbar_search">
+                    <input type="text" placeholder="Search" style={{ width: "100%" }} />
+                    <div className="dataTable__bulkActions">
+                        <div className="dataTable__bulkActions_selected">2 selected</div>
+                        <Divider vertical />
+                        <Button appearance="primary" displayType="text" size="medium" onClick={() => {}}>
+                            Deselect
+                        </Button>
+                        <Button
+                            appearance="primary"
+                            displayType="text"
+                            size="medium"
+                            Icon={CaretDownFilled}
+                            iconAfter
+                            onClick={() => {}}
+                        >
+                            Bulk Actions
+                        </Button>
                     </div>
                 </div>
+                <div className="dataTable__toolbar_actions">
+                    {editableMode ? (
+                        <>
+                            <div className="dropdownMenu__footer_buutonGroup">
+                                <Button
+                                    appearance="secondary"
+                                    displayType="fill"
+                                    size="medium"
+                                    onClick={() => tableEditAction("cancel")}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    appearance="primary"
+                                    displayType="fill"
+                                    size="medium"
+                                    onClick={() => tableEditAction("save")}
+                                >
+                                    Save
+                                </Button>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <Button
+                                appearance="secondary"
+                                displayType="outline"
+                                size="medium"
+                                Icon={Globe}
+                                onClick={() => tableEditAction("edit")}
+                            >
+                                Edit
+                            </Button>
+                            <div className="dataTable__toolbar_dropdownMenu">
+                                <Button
+                                    appearance="secondary"
+                                    displayType="outline"
+                                    size="medium"
+                                    Icon={Globe}
+                                    onClick={() => setMenuOpened(!menuOpened)}
+                                >
+                                    Manage Columns
+                                </Button>
 
-                <Button onClick={createEditableCol}>Edit</Button>
-                <table style={{ width: "100%", height: "100%" }}>
+                                {menuOpened && (
+                                    <div className="dropdownMenu">
+                                        <div className="dropdownMenu__header">
+                                            <input type="text" placeholder="Search" style={{ width: "100%" }} />
+                                        </div>
+
+                                        <Scrollbar>
+                                            <div className="dropdownMenu__main">
+                                                <div className="dropdownMenu__columns">
+                                                    <div className="dropdownMenu__columns_header">
+                                                        <p className="dropdownMenu__columns_title ellipsis-text">
+                                                            Active Columns
+                                                        </p>
+                                                    </div>
+                                                    {table.getAllColumns().map((headerGroup) => {
+                                                        return headerGroup.columns.map((column) => {
+                                                            if (
+                                                                column.columnDef.type === "expand" ||
+                                                                column.columnDef.type === "rowCheckbox"
+                                                            ) {
+                                                                return null;
+                                                            }
+                                                            return (
+                                                                <div
+                                                                    className="dropdownMenu__columns_item dropdownMenu__columns_item_drag"
+                                                                    role="tab"
+                                                                    tabIndex={0}
+                                                                >
+                                                                    <div className="dropdownMenu__columns_placeholder">
+                                                                        <Checkbox
+                                                                            name="item"
+                                                                            value="item"
+                                                                            checked={column.getIsVisible()}
+                                                                            onChange={() => column.toggleVisibility()}
+                                                                        />
+                                                                        <p className="dropdownMenu__columns_text ellipsis-text">
+                                                                            {column.columnDef.header()}
+                                                                        </p>
+                                                                    </div>
+
+                                                                    <div className="dropdownMenu__columns_actions">
+                                                                        <Button
+                                                                            appearance="secondary"
+                                                                            displayType="text"
+                                                                            size="small"
+                                                                            Icon={Pin}
+                                                                            onClick={() =>
+                                                                                !column.getIsPinned()
+                                                                                    ? column.pin("left")
+                                                                                    : column.pin(false)
+                                                                            }
+                                                                            className="dropdownMenu__columns_icon"
+                                                                        />
+                                                                        <Button
+                                                                            appearance="secondary"
+                                                                            displayType="text"
+                                                                            size="small"
+                                                                            Icon={ThreeDotsVertical}
+                                                                            onClick={() => column.pin("left")}
+                                                                            className="dropdownMenu__columns_icon"
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            );
+                                                        });
+                                                    })}
+                                                </div>
+                                                <Divider />
+                                            </div>
+                                        </Scrollbar>
+
+                                        <div className="dropdownMenu__footer">
+                                            <Button
+                                                appearance="secondary"
+                                                displayType="text"
+                                                size="medium"
+                                                onClick={() => {}}
+                                            >
+                                                Restore Defaults
+                                            </Button>
+                                            <div className="dropdownMenu__footer_buutonGroup">
+                                                <Button
+                                                    appearance="secondary"
+                                                    displayType="fill"
+                                                    size="medium"
+                                                    onClick={() => {}}
+                                                >
+                                                    Cancel
+                                                </Button>
+                                                <Button
+                                                    appearance="primary"
+                                                    displayType="fill"
+                                                    size="medium"
+                                                    onClick={() => {}}
+                                                >
+                                                    Save
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
+
+            <Scrollbar>
+                <table className={classNames("table", className)}>
                     <thead>
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <tr key={headerGroup.id}>
+                            <tr key={`${headerGroup.id}_header`} className="table__row table__row_thead">
                                 {headerGroup.headers.map((header) => {
                                     const col = header.column.columnDef as TableCol<unknown>;
 
@@ -161,55 +345,32 @@ const TableComponent: FC<ITableProps> = ({ columns, externalData, onSortChange, 
                                     if (col.copyable) {
                                         accessCopyable[header.id] = true;
                                     }
-
                                     return (
                                         <th
-                                            key={header.id}
-                                            style={{
-                                                cursor: "pointer"
-                                            }}
+                                            key={`${header.id}_header`}
                                             colSpan={header.colSpan}
+                                            className={classNames("table__th", {
+                                                table__th_group: header.subHeaders.length
+                                            })}
                                         >
-                                            {header.column.getIsPinned() !== "left" ? (
-                                                <Button
-                                                    className="border rounded px-2"
-                                                    onClick={() => {
-                                                        header.column.pin("left");
-                                                    }}
-                                                >
-                                                    {"<="}
-                                                </Button>
-                                            ) : null}
-                                            {header.column.getIsPinned() ? (
-                                                <Button
-                                                    className="border rounded px-2"
-                                                    onClick={() => {
-                                                        header.column.pin(false);
-                                                    }}
-                                                >
-                                                    X
-                                                </Button>
-                                            ) : null}
                                             {header.isPlaceholder ? null : (
                                                 <>
-                                                    <div
+                                                    <button
+                                                        type="button"
                                                         onClick={(e) =>
                                                             (header.column.columnDef as TableCol<unknown>).sortable &&
                                                             header?.column?.getToggleSortingHandler?.()?.(e)
                                                         }
-                                                        role="button"
                                                         tabIndex={0}
+                                                        className="table__content"
                                                     >
-                                                        {flexRender(
-                                                            header.column.columnDef.header,
-                                                            header.getContext()
-                                                        )}
-                                                    </div>
-                                                    {header.column.getCanFilter() ? (
-                                                        <div>
-                                                            <Filter column={header.column} />
-                                                        </div>
-                                                    ) : null}
+                                                        <span className="table__th_text ellipsis-text">
+                                                            {flexRender(
+                                                                header.column.columnDef.header,
+                                                                header.getContext()
+                                                            )}
+                                                        </span>
+                                                    </button>
                                                 </>
                                             )}
                                         </th>
@@ -218,114 +379,212 @@ const TableComponent: FC<ITableProps> = ({ columns, externalData, onSortChange, 
                             </tr>
                         ))}
                     </thead>
-                    <tbody style={{ textAlign: "center", overflowY: "scroll" }}>
-                        {table.getTopRows().map((row) => (
-                            <PinnedRow key={row.id} row={row} table={table} />
+
+                    <tbody>
+                        {table.getTopRows().map((row, index) => (
+                            <PinnedRow
+                                key={row.id}
+                                rowIndex={index}
+                                row={row}
+                                table={table}
+                                rowActions={rowActions}
+                                expandable={expandable}
+                                editableMode={editableMode}
+                                onCellEdit={onCellEdit}
+                            />
                         ))}
-                        {table.getCenterRows().map((row) => {
+
+                        {table.getCenterRows().map((row, rowIndex) => {
                             return (
                                 <>
-                                    <tr key={row.id} style={{ marginLeft: 200 }}>
-                                        {row.getVisibleCells().map((cell) => {
-                                            const isEditable = accessEditableMode[cell.column.id];
-                                            const isCopyable = accessCopyable[cell.column.id];
+                                    <tr
+                                        key={row.id}
+                                        className={classNames(
+                                            `table__row table__row_tbody table__row_${row.original.rowStatus}`
+                                        )}
+                                    >
+                                        {!!expandable && (
+                                            <td key={`${row.id}-0`} className="table__td">
+                                                <div className="table__content table__content_expand">
+                                                    {!!row.original.expandedData && (
+                                                        <Button
+                                                            appearance="secondary"
+                                                            displayType="text"
+                                                            size="small"
+                                                            Icon={!row.getIsExpanded() ? ChevronRight : ChevronDown}
+                                                            onClick={() => row.toggleExpanded()}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </td>
+                                        )}
 
+                                        {withCheckbox && (
+                                            <td key={`${row.id}-1`} className="table__td">
+                                                <div className="table__content table__content_checkbox">
+                                                    <Checkbox name="item" value="item" />
+                                                </div>
+                                            </td>
+                                        )}
+                                        {row.getVisibleCells().map((cell) => {
+                                            const { type } = cell.column.columnDef as TableCol<unknown>;
+                                            if (type === "expand" || type === "rowCheckbox") {
+                                                return null;
+                                            }
                                             return (
-                                                <td key={cell.id} style={{ height: "100%" }}>
-                                                    {editableMode && isEditable ? (
-                                                        <input
-                                                            value={editedValue[cell.column.id]?.[row.index]}
-                                                            defaultValue={cell.row.original[cell.column.id] as string}
-                                                            onChange={(e) => changeData(e, row.index, cell.column.id)}
-                                                        />
-                                                    ) : (
-                                                        <>{flexRender(cell.column.columnDef.cell, cell.getContext())}</>
-                                                    )}
-                                                    {isCopyable && (
-                                                        <CopyComponent
-                                                            value={(cell.row.original[cell.column.id] as string) || ""}
-                                                        />
-                                                    )}
+                                                <td key={cell.id} className="table__td">
+                                                    <>
+                                                        <div
+                                                            className={classNames(
+                                                                `table__content ${CellClassNames[type]}`
+                                                            )}
+                                                        >
+                                                            <Cell
+                                                                type={type}
+                                                                data={row.original[cell.column.columnDef.type]?.data}
+                                                                // colData={cell.column.columnDef as TableCol<any>}
+                                                                withEditMode={editableMode}
+                                                                rowCellRenderer={
+                                                                    row.original[cell.column.columnDef.type]
+                                                                        ?.rowCellRenderer
+                                                                }
+                                                                onChange={(e) => onCellEdit(e, rowIndex, type)}
+                                                            />
+                                                        </div>
+                                                    </>
                                                 </td>
                                             );
                                         })}
+                                        {!editableMode &&
+                                            rowActions &&
+                                            Object.values(rowActions).every((action) => !!action) && (
+                                                <td className="table__td table__actionsWrapper">
+                                                    <div className="table__actions">
+                                                        {rowActions && rowActions.pin && (
+                                                            <Button
+                                                                appearance="secondary"
+                                                                displayType="text"
+                                                                size="small"
+                                                                Icon={Pin}
+                                                                onClick={() => {
+                                                                    row.pin("top");
+                                                                    rowActions.pin?.(row.id);
+                                                                }}
+                                                                className=""
+                                                            />
+                                                        )}
+                                                        {rowActions?.tag && (
+                                                            <Button
+                                                                appearance="secondary"
+                                                                displayType="text"
+                                                                size="small"
+                                                                Icon={TagOutline}
+                                                                onClick={() => rowActions.tag?.(row.id)}
+                                                                className=""
+                                                            />
+                                                        )}
+                                                        {rowActions?.clock && (
+                                                            <Button
+                                                                appearance="secondary"
+                                                                displayType="text"
+                                                                size="small"
+                                                                Icon={Clock}
+                                                                onClick={() => rowActions.clock?.(row.id)}
+                                                                className=""
+                                                            />
+                                                        )}
+                                                        {rowActions?.copy && (
+                                                            <Button
+                                                                appearance="secondary"
+                                                                displayType="text"
+                                                                size="small"
+                                                                Icon={Copy}
+                                                                onClick={() => rowActions.copy?.(row.id)}
+                                                                className=""
+                                                            />
+                                                        )}
+                                                        {rowActions?.download && (
+                                                            <Button
+                                                                appearance="secondary"
+                                                                displayType="text"
+                                                                size="small"
+                                                                Icon={Download}
+                                                                onClick={() => rowActions.download?.(row.id)}
+                                                                className=""
+                                                            />
+                                                        )}
+                                                        {rowActions?.delete && (
+                                                            <Button
+                                                                appearance="secondary"
+                                                                displayType="text"
+                                                                size="small"
+                                                                Icon={RecycleBin}
+                                                                onClick={() => rowActions.delete?.(row.id)}
+                                                                className=""
+                                                            />
+                                                        )}
+                                                    </div>
+                                                </td>
+                                            )}
                                     </tr>
                                     {row.getIsExpanded() && (
-                                        <tr>
-                                            <td colSpan={row.getVisibleCells().length}>
-                                                {row.original.subRows as string}
+                                        <tr key={`${row.id}_expanded`} className="table__row table__row_tbody">
+                                            <td
+                                                className="table__td table__td_expanded"
+                                                colSpan={row.getVisibleCells().length}
+                                            >
+                                                <div
+                                                    className="swapComponent"
+                                                    style={{
+                                                        height: "20rem",
+                                                        backgroundColor: "#F4E1EC",
+                                                        padding: "1.6rem",
+                                                        color: "#A60063"
+                                                    }}
+                                                >
+                                                    {row.original.expandedData()}
+                                                </div>
                                             </td>
                                         </tr>
                                     )}
                                 </>
                             );
                         })}
-                        {table.getBottomRows().map((row) => (
-                            <PinnedRow key={row.id} row={row} table={table} />
-                        ))}
                     </tbody>
-                </table>
-            </div>
 
-            <div />
-            <div>
-                <Button onClick={() => table.setPageIndex(0)} disabled={!table.getCanPreviousPage()}>
-                    {"<<"}
-                </Button>
-                <Button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-                    {"<"}
-                </Button>
-                {new Array(table.getPageCount()).fill(undefined).map((_, i) => {
-                    return (
-                        // eslint-disable-next-line react/no-array-index-key
-                        <Button onClick={() => table.setPageIndex(i)} key={i}>
-                            {(i + 1).toString()}
-                        </Button>
-                    );
-                })}
-                <Button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-                    {">"}
-                </Button>
-                <Button onClick={() => table.setPageIndex(table.getPageCount() - 1)} disabled={!table.getCanNextPage()}>
-                    {">>"}
-                </Button>
-                <span>
-                    <div>Page</div>
-                    <strong>
-                        {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                    </strong>
-                </span>
-                <span>
-                    | fast page change:
-                    <input
-                        type="number"
-                        min="1"
-                        max={table.getPageCount()}
-                        defaultValue={table.getState().pagination.pageIndex + 1}
-                        onChange={(e) => {
-                            const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                            table.setPageIndex(page);
-                        }}
-                    />
-                </span>
-                {pageSizes && (
-                    <select
-                        value={table.getState().pagination.pageSize}
-                        onChange={(e) => {
-                            table.setPageSize(Number(e.target.value));
-                        }}
-                    >
-                        {pageSizes.map((pageSize) => (
-                            <option key={pageSize} value={pageSize}>
-                                {pageSize}/page
-                            </option>
-                        ))}
-                    </select>
-                )}
-            </div>
-            <div />
-        </>
+                    <tfoot>
+                        {table.getFooterGroups().map((footerGroups) => {
+                            return (
+                                <tr key={`${footerGroups.id}_footer`} className="table__row table__row_tfoot">
+                                    {footerGroups.headers.map((footer) => {
+                                        return (
+                                            <td
+                                                key={`${footer.id}_footer`}
+                                                className="table__td"
+                                                colSpan={footer.colSpan}
+                                            >
+                                                <div className="table__content table__content_empty table__content_text_numeric">
+                                                    <span className="ellipsis-text table__td_text">
+                                                        {footer?.column?.columnDef?.footer
+                                                            ? flexRender(
+                                                                  footer.column.columnDef.footer,
+                                                                  footer.getContext()
+                                                              )
+                                                            : null}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                            );
+                        })}
+                    </tfoot>
+                </table>
+            </Scrollbar>
+            <Divider />
+        </div>
     );
 };
 
-export default TableComponent;
+export { ITableProps, TableLayoutTmp as default };
