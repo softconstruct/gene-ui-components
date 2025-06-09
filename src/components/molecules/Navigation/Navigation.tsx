@@ -23,6 +23,7 @@ interface INavigationData {
     Icon?: FC;
     path?: string;
     children?: INavigationData[];
+    disabled?: boolean;
 }
 
 export type INavigationCreateData = Omit<IMenuItemProps, "children">;
@@ -293,7 +294,7 @@ const Navigation: FC<INavigationProps> = ({
                     <div className="navigation__col">
                         <div className="navigation__col_wrapper">
                             <div className="navigation__colItemsWrapper" ref={navColRef}>
-                                {clonedNavigationData?.map(({ Icon, title, path }, index) => {
+                                {clonedNavigationData?.map(({ Icon, title, path, disabled }, index) => {
                                     return (
                                         <span key={`${title}-${path}`}>
                                             <NavigationColItem
@@ -306,6 +307,7 @@ const Navigation: FC<INavigationProps> = ({
                                                 opened={currentDataIndex === index}
                                                 selected={index === activePathIndex?.[0]}
                                                 onMouseEnter={onMouseEnterHandler}
+                                                disabled={disabled}
                                                 propsForPopover={hoverDataIndex === index ? propsForPopover : {}}
                                             />
                                             {hoverDataIndex !== null &&
@@ -352,12 +354,13 @@ const Navigation: FC<INavigationProps> = ({
                                         onChange={onMoreMenuItemsClickHandler}
                                         setPropsForPopover={setMenuPropsForPopover}
                                     >
-                                        {menuData.map(({ Icon, title }, index) => {
+                                        {menuData.map(({ Icon, title, disabled }, index) => {
                                             return (
                                                 <MenuItem
                                                     id={index}
                                                     IconBefore={Icon}
                                                     selected={index === moreMenuDataActiveIndex}
+                                                    disabled={disabled}
                                                 >
                                                     {title}
                                                 </MenuItem>
