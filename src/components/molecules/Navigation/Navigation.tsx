@@ -16,7 +16,7 @@ import { useWindowSize } from "@hooks/index";
 // Styles
 import "./Navigation.scss";
 
-import { Divider, GeneUIDesignSystemContext } from "../../../index";
+import { GeneUIDesignSystemContext } from "../../../index";
 
 interface INavigationData {
     title: string;
@@ -391,7 +391,6 @@ const Navigation: FC<INavigationProps> = ({
                                 </>
                             )}
                         </div>
-                        <Divider className="navigation__divider" direction="vertical" />
                     </nav>
                     {forceOpen &&
                         currentDataIndex !== null &&
@@ -410,7 +409,6 @@ const Navigation: FC<INavigationProps> = ({
                                         />
                                     </div>
                                 </Scrollbar>
-                                <Divider className="navigation__divider" direction="vertical" />
                             </div>
                         )}
                 </>
