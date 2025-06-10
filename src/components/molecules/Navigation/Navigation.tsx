@@ -191,7 +191,7 @@ const Navigation: FC<INavigationProps> = ({
             const { scrollWidth, offsetWidth } = navColRef.current;
             if (scrollWidth > offsetWidth) {
                 const containerHeight = navColRef.current.offsetHeight;
-                const ELEMENT_HEIGHT = 67;
+                const ELEMENT_HEIGHT = 65;
                 const maxVisibleItemsWithGap = Math.floor(containerHeight / ELEMENT_HEIGHT);
                 setMaxVisibleItems(maxVisibleItemsWithGap);
             } else {
