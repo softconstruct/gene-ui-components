@@ -52,7 +52,7 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
     };
 
     return (
-        <div className="navigation__colItem">
+        <div className="navigation__listItem">
             <button
                 type="button"
                 disabled={disabled || !isVisible}
@@ -73,7 +73,7 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
                     <Text
                         as="p"
                         variant="captionMediumMedium"
-                        className="navigation__colItemText ellipsis-text"
+                        className="navigation__listItemText ellipsis-text"
                         ref={textRef}
                     >
                         {title}

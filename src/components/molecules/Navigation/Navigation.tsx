@@ -101,26 +101,25 @@ const NavMenuContent: FC<{
     return data.children?.map((item, index) => {
         const itemKey = `${item.title}-${item.path}`;
         return (
-            <span key={itemKey}>
-                <NavigationItem
-                    title={item.title}
-                    path={item.path}
-                    depth={depth}
-                    Icon={item.Icon}
-                    onClick={onClick}
-                    disabled={item.disabled}
-                    selected={index === activePathIndex?.[0]}
-                >
-                    {item.children && (
-                        <NavMenuContent
-                            data={item}
-                            depth={depth + 1}
-                            onClick={onClick}
-                            activePathIndex={activePathIndex?.slice(1)}
-                        />
-                    )}
-                </NavigationItem>
-            </span>
+            <NavigationItem
+                key={itemKey}
+                title={item.title}
+                path={item.path}
+                depth={depth}
+                Icon={item.Icon}
+                onClick={onClick}
+                disabled={item.disabled}
+                selected={index === activePathIndex?.[0]}
+            >
+                {item.children && (
+                    <NavMenuContent
+                        data={item}
+                        depth={depth + 1}
+                        onClick={onClick}
+                        activePathIndex={activePathIndex?.slice(1)}
+                    />
+                )}
+            </NavigationItem>
         );
     });
 };
@@ -292,9 +291,9 @@ const Navigation: FC<INavigationProps> = ({
                 <div>Mobile Navigation</div>
             ) : (
                 <>
-                    <div className="navigation__col">
-                        <div className="navigation__col_wrapper">
-                            <div className="navigation__colItemsWrapper" ref={navColRef}>
+                    <nav className="navigation__list">
+                        <div className="navigation__listWrapper">
+                            <div className="navigation__listItems" ref={navColRef}>
                                 {clonedNavigationData?.map(({ Icon, title, path, disabled }, index) => {
                                     return (
                                         <>
@@ -394,7 +393,7 @@ const Navigation: FC<INavigationProps> = ({
                             )}
                         </div>
                         <Divider className="navigation__divider" direction="vertical" />
-                    </div>
+                    </nav>
                     {forceOpen &&
                         currentDataIndex !== null &&
                         hasDataAndChildren(clonedNavigationData, currentDataIndex) && (
