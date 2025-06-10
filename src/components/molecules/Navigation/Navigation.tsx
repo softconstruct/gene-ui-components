@@ -351,6 +351,7 @@ const Navigation: FC<INavigationProps> = ({
                                         propsForPopover={menuPropsForPopover}
                                     />
                                     <Menu
+                                        position="right-bottom"
                                         onChange={onMoreMenuItemsClickHandler}
                                         setPropsForPopover={setMenuPropsForPopover}
                                     >
@@ -380,6 +381,7 @@ const Navigation: FC<INavigationProps> = ({
                                         {...propsForCreatePopover}
                                     />
                                     <Menu
+                                        position="right-bottom"
                                         onChange={onNavigationCreateDataClickHandler}
                                         setPropsForPopover={setPropsForCreatePopover}
                                     >
