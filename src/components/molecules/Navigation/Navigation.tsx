@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useRef, useState } from "react";
+import React, { FC, Fragment, useContext, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
 import { PersonPlus, ThreeDotsHorizontal } from "@geneui/icons";
@@ -296,9 +296,8 @@ const Navigation: FC<INavigationProps> = ({
                             <div className="navigation__listItems" ref={navColRef}>
                                 {clonedNavigationData?.map(({ Icon, title, path, disabled }, index) => {
                                     return (
-                                        <>
+                                        <Fragment key={`${title}-${path}`}>
                                             <NavigationColItem
-                                                key={`${title}-${path}`}
                                                 isVisible={index < maxVisibleItems}
                                                 Icon={Icon}
                                                 title={title}
@@ -339,7 +338,7 @@ const Navigation: FC<INavigationProps> = ({
                                                         </PopoverBody>
                                                     </Popover>
                                                 )}
-                                        </>
+                                        </Fragment>
                                     );
                                 })}
                             </div>
