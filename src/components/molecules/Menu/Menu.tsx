@@ -102,6 +102,10 @@ interface IMenuProps {
      * When a path is selected and this prop is true, the menu will open the corresponding page automatically via highlighting selection route.
      */
     openSelectedPath?: boolean;
+    /**
+     * Called when the open state is changed.
+     */
+    onOpenChange?: (isOpen: boolean) => void;
 }
 
 const cloneChildrenRecursive = (
@@ -148,7 +152,8 @@ const Menu: FC<IMenuProps> = ({
     size = "small",
     position = "bottom-left",
     open = false,
-    openSelectedPath = false
+    openSelectedPath = false,
+    onOpenChange
 }) => {
     const [isOpenState, setIsOpenState] = useState<boolean>(true);
     const [paths, setPaths] = useState<string[]>([]);
@@ -202,6 +207,12 @@ const Menu: FC<IMenuProps> = ({
     useEffect(() => {
         if (open !== undefined) setIsOpenState(open);
     }, [open]);
+
+    useEffect(() => {
+        if (onOpenChange) {
+            onOpenChange(isOpenState);
+        }
+    }, [isOpenState]);
 
     const onChangeHandler = ({ generatedId, isBack, closeMenu, item }: OnchangeHandlerType) => {
         if (swappable || isMobileBreakpoint) setOpenSelectedPathState(false);
