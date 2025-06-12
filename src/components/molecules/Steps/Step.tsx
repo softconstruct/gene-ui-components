@@ -1,7 +1,7 @@
 import React, { FC, useContext } from "react";
 import classNames from "classnames";
 
-import { Error, SuccessFill, UnavailableOutline } from "@geneui/icons";
+import { Error, SuccessFilled, Unavailable } from "@geneui/icons";
 
 // Components
 import Divider from "@components/atoms/Divider";
@@ -68,12 +68,12 @@ const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, stat
 
     if (type === "dot") {
         if (state === "current") {
-            return <UnavailableOutline size={24} className="step_type steps__status_icon steps__status_dot" />;
+            return <Unavailable size={24} className="step_type steps__status_icon steps__status_dot" />;
         }
         if (state === "complete") {
-            return <SuccessFill size={24} className="step_type steps__status_icon steps__status_dot" />;
+            return <SuccessFilled size={24} className="step_type steps__status_icon steps__status_dot" />;
         }
-        return <UnavailableOutline size={24} className="step_type steps__status_icon" />;
+        return <Unavailable size={24} className="step_type steps__status_icon" />;
     }
 
     return <span className="step_type steps__status_icon steps__status_numeric">{stepCount(stepNumber)}</span>;
