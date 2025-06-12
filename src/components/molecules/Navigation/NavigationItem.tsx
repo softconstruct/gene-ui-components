@@ -60,7 +60,7 @@ const NavigationItem: FC<INavigationItemProps> = ({
             >
                 {Icon && <Icon className="navigationItem__icon" size={20} />}
                 <Tooltip text={title} isVisible={isTruncated}>
-                    <Text as="p" className="menu__title ellipsis-text" ref={textRef}>
+                    <Text as="p" variant="labelMediumMedium" className="menu__title ellipsis-text" ref={textRef}>
                         {title}
                     </Text>
                 </Tooltip>
