@@ -30,7 +30,7 @@ import {
 import { Placement } from "@floating-ui/utils";
 import classNames from "classnames";
 
-import { InfoOutlined, X } from "@geneui/icons";
+import { Info, X } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -389,7 +389,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                 {title && (
                                     <div className="popover__header">
                                         <p className="popover__title">
-                                            <InfoOutlined className="popover__title_icon" size={20} />
+                                            <Info className="popover__title_icon" size={20} />
                                             <span className="popover__title_text ellipsis-text">{title}</span>
                                         </p>
                                         <Button
@@ -448,7 +448,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                     {title && (
                                         <div className="popover__header">
                                             <p className="popover__title">
-                                                <InfoOutlined className="popover__title_icon" size={20} />
+                                                <Info className="popover__title_icon" size={20} />
                                                 <span className="popover__title_text ellipsis-text">{title}</span>
                                             </p>
                                             <Button
