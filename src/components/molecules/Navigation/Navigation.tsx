@@ -1,7 +1,7 @@
 import React, { FC, Fragment, useContext, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
-import { PersonPlus, ThreeDotsHorizontal } from "@geneui/icons";
+import { Plus, ThreeDotsHorizontal, X } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Popover, { IPopoverRef } from "@components/atoms/Popover/Popover";
@@ -149,6 +149,7 @@ const Navigation: FC<INavigationProps> = ({
     const [propsForCreatePopover, setPropsForCreatePopover] = useState({});
     const [menuData, setMenuData] = useState<INavigationData[]>([]);
     const [menuPropsForPopover, setMenuPropsForPopover] = useState({});
+    const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
@@ -284,6 +285,10 @@ const Navigation: FC<INavigationProps> = ({
         }
     }, [maxVisibleItems, activePathIndex]);
 
+    const onCreateMenuClickHandler = (isOpen) => {
+        setIsCreateMenuOpen(isOpen);
+    };
+
     return (
         <div className={classNames("navigation", className)} role="navigation">
             {isMobileBreakpoint ? (
@@ -374,7 +379,7 @@ const Navigation: FC<INavigationProps> = ({
                                 <>
                                     <Button
                                         onClick={() => {}}
-                                        Icon={PersonPlus}
+                                        Icon={isCreateMenuOpen ? X : Plus}
                                         size="large"
                                         appearance="secondary"
                                         className="navigation__addButton"
@@ -384,6 +389,7 @@ const Navigation: FC<INavigationProps> = ({
                                         position="right-bottom"
                                         onChange={onNavigationCreateDataClickHandler}
                                         setPropsForPopover={setPropsForCreatePopover}
+                                        onOpenChange={onCreateMenuClickHandler}
                                     >
                                         {navigationCreateData.map((props: IMenuItemProps) => {
                                             const { title, ...rest } = props;
