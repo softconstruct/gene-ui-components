@@ -285,7 +285,7 @@ const Navigation: FC<INavigationProps> = ({
         }
     }, [maxVisibleItems, activePathIndex]);
 
-    const onCreateMenuClickHandler = (isOpen) => {
+    const onCreateMenuClickHandler = (isOpen: boolean) => {
         setIsCreateMenuOpen(isOpen);
     };
 
