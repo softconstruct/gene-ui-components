@@ -29,6 +29,7 @@ export { Timelines, TimelinePoint, ITimelinesProps, ITimelinePointProps } from "
 export { default as QRCode, IQRCodeProps } from "./components/molecules/QRCode";
 export { KeyValue, Key, Value, IKeyValueProps, IKeyProps, IValueProps } from "./components/molecules/KeyValue";
 export { Menu, MenuItem, IMenuProps, IMenuItemProps } from "./components/molecules/Menu";
+export { default as Navigation } from "./components/molecules/Navigation";
 
 // Organisms
 

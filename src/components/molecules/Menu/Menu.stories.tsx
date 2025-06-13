@@ -17,6 +17,7 @@ const meta: Meta<typeof Menu> = {
         className: args({ control: "false", ...propCategory.appearance }),
         swappable: args({ control: "boolean", ...propCategory.appearance }),
         onChange: args({ control: "false", ...propCategory.action }),
+        onOpenChange: args({ control: "false", ...propCategory.action }),
         children: args({ control: "false", ...propCategory.content }),
         setPropsForPopover: args({ control: "false", ...propCategory.functionality }),
         loadingText: args({ control: "text", ...propCategory.content }),
@@ -44,7 +45,9 @@ const meta: Meta<typeof Menu> = {
             ]
         })
     },
-    args: {} as IMenuProps
+    args: {
+        onOpenChange: () => {}
+    } as IMenuProps
 };
 
 const MenuItemRecursion = (menuData) => {
@@ -79,10 +82,10 @@ const StoryComponent: FC = (props) => {
     const [menuData, setMenuData] = useState(data);
     const [propsForPopover, setPropsForPopover] = useState({});
 
-    const handleMenuChange = (id) => {
+    const handleMenuChange = (menuItemData) => {
         const updateSelected = (items, targetId) => {
             return items.map((item) => {
-                const isSelected = item.id === id;
+                const isSelected = item.id === menuItemData.id;
                 const updatedItem = { ...item, selected: isSelected };
 
                 if (item.children) {
@@ -93,7 +96,7 @@ const StoryComponent: FC = (props) => {
             });
         };
 
-        setMenuData(updateSelected(menuData, id));
+        setMenuData(updateSelected(menuData, menuItemData.id));
     };
 
     const Elements = MenuItemRecursion(menuData);

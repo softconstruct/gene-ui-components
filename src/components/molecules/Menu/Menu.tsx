@@ -40,6 +40,7 @@ export interface OnchangeHandlerType {
     id: number | string;
     isBack: boolean;
     closeMenu: boolean;
+    item?: IMenuItemProps;
 }
 
 type RelativeRefsSetter = (props: {
@@ -71,12 +72,9 @@ interface IMenuProps {
      */
     loadingText?: string;
     /**
-     * Callback function triggered when a menu item is selected or navigated.
-     *
-     * paths: An array of strings representing the hierarchical path of the selected item.
-     * id: The unique identifier of the selected menu item.
+     * Callback function hat returns all provided menu item props when a menu item is selected.
      */
-    onChange: (id: string | number) => void;
+    onChange: (item: IMenuItemProps) => void;
     /**
      *  If true, enables swapping behavior, modifying the appearance and behavior of the menu.
      */
@@ -104,6 +102,10 @@ interface IMenuProps {
      * When a path is selected and this prop is true, the menu will open the corresponding page automatically via highlighting selection route.
      */
     openSelectedPath?: boolean;
+    /**
+     * Called when the open state is changed.
+     */
+    onOpenChange?: (isOpen: boolean) => void;
 }
 
 const cloneChildrenRecursive = (
@@ -149,8 +151,9 @@ const Menu: FC<IMenuProps> = ({
     setPropsForPopover,
     size = "small",
     position = "bottom-left",
-    open,
-    openSelectedPath = false
+    open = false,
+    openSelectedPath = false,
+    onOpenChange
 }) => {
     const [isOpenState, setIsOpenState] = useState<boolean>(true);
     const [paths, setPaths] = useState<string[]>([]);
@@ -205,7 +208,13 @@ const Menu: FC<IMenuProps> = ({
         if (open !== undefined) setIsOpenState(open);
     }, [open]);
 
-    const onChangeHandler = ({ generatedId, id, isBack, closeMenu }: OnchangeHandlerType) => {
+    useEffect(() => {
+        if (onOpenChange) {
+            onOpenChange(isOpenState);
+        }
+    }, [isOpenState]);
+
+    const onChangeHandler = ({ generatedId, isBack, closeMenu, item }: OnchangeHandlerType) => {
         if (swappable || isMobileBreakpoint) setOpenSelectedPathState(false);
         const idToArray = generatedId.split("_");
         const currentPath = isBack ? idToArray.slice(0, -1) : idToArray;
@@ -217,7 +226,7 @@ const Menu: FC<IMenuProps> = ({
             setPaths(currentPath);
         }
         if (closeMenu) {
-            onChange(id);
+            onChange(item as IMenuItemProps);
         }
     };
 

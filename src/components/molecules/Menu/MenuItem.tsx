@@ -78,24 +78,26 @@ interface IMenuItemProps {
     generatedId?: string;
 }
 
-const MenuItem: FC<IMenuItemProps> = ({
-    children,
-    title,
-    activeElement,
-    selected,
-    IconBefore,
-    IconAfter,
-    danger,
-    disabled,
-    id,
-    divider,
-    ComponentRender,
-    emptyText = "No data to show",
-    paths,
-    generatedId,
-    loading,
-    loadingText
-}) => {
+const MenuItem: FC<IMenuItemProps> = (props) => {
+    const {
+        children,
+        title,
+        activeElement,
+        selected,
+        IconBefore,
+        IconAfter,
+        danger,
+        disabled,
+        id,
+        divider,
+        ComponentRender,
+        emptyText = "No data to show",
+        paths,
+        generatedId,
+        loading,
+        loadingText
+    } = props;
+
     const [propsForPopover, setPropsForPopover] = useState({});
     const parentRef = useRef<HTMLDivElement | null>(null);
     const { onChangeHandler, swappable, relativeRefsSetter, size, openSelectedPath } = useContext(MenuContext);
@@ -125,7 +127,7 @@ const MenuItem: FC<IMenuItemProps> = ({
 
     const onItemClickHandler = (isBack: boolean) => {
         if (onChangeHandler && generatedId) {
-            onChangeHandler({ generatedId, id, isBack, closeMenu: typeof children === "string" });
+            onChangeHandler({ generatedId, id, isBack, closeMenu: typeof children === "string", item: props });
         }
     };
 
