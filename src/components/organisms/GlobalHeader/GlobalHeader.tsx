@@ -1,7 +1,7 @@
-import React, { cloneElement, FC, MouseEvent, ReactElement } from "react";
+import React, { cloneElement, FC, MouseEvent, ReactElement, useContext } from "react";
 import classNames from "classnames";
 
-import { HamburgerMenu } from "@geneui/icons";
+import { Globe, HamburgerMenu } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -11,6 +11,7 @@ import Text from "@components/atoms/Text";
 import Limit from "@components/organisms/GlobalHeader/Limit/Limit";
 import Partners, { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
 import Time from "@components/organisms/GlobalHeader/Time/Time";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Styles
 import "./GlobalHeader.scss";
@@ -106,6 +107,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     timeZone,
     timeFormat
 }) => {
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
+
     const onNavigationButtonClickHandler = (e: MouseEvent<HTMLButtonElement>) => {
         if (onNavigationButtonClick) {
             onNavigationButtonClick(e);
@@ -113,7 +116,11 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     };
 
     return (
-        <div className={classNames("globalHeader", className)}>
+        <div
+            className={classNames("globalHeader", className, {
+                globalHeader_mobile: breakpoint?.isMobileBreakpoint
+            })}
+        >
             <div className="globalHeader_side_left">
                 <Button
                     onClick={onNavigationButtonClickHandler}
@@ -133,10 +140,32 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                 ) : (
                     <Logo className="globalHeader__logo" type="logomark" appearance="inverse" size="small" />
                 )}
+
+                <div className="globalHeader__ftn">
+                    <div className="globalHeader__amount">
+                        <Text as="span" variant="captionLargeMedium">
+                            1FTN
+                        </Text>
+                        <Text as="span" variant="captionLargeMedium">
+                            =
+                        </Text>
+                        <Text as="span" variant="captionLargeMedium">
+                            2.3698
+                        </Text>
+                        <Text as="span" variant="captionLargeMedium">
+                            USDT
+                        </Text>
+                    </div>
+                    <div className="globalHeader__domain">
+                        <Text as="span" variant="captionLargeMedium">
+                            exchange.fastex.com
+                        </Text>
+                    </div>
+                </div>
             </div>
             <div className="globalHeader_side_right">
                 {partners && (
-                    <div className="globalHeader__partners">
+                    <div className="globalHeader__item">
                         <Partners
                             onPartnerSelect={onPartnerSelect}
                             partners={partners}
@@ -151,15 +180,35 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                     </div>
                 )}
                 {(limitLabel || limitUnit) && (
-                    <div className="globalHeader__limit">
+                    <div className="globalHeader__item">
                         <Limit limit={limitUnit} label={limitLabel} />
                         <Divider vertical className="globalHeader__divider" />
                     </div>
                 )}
-                <div className="globalHeader__time">
+                <div className="globalHeader__item">
                     <Time timeZone={timeZone} format={timeFormat} />
                     <Divider vertical className="globalHeader__divider" />
                 </div>
+
+                <div className="globalHeader__item">
+                    <div className="globalHeader__actions">
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
+                    </div>
+                    <Divider vertical className="globalHeader__divider" />
+                </div>
+
+                <div className="globalHeader__item">
+                    <div className="globalHeader__actions">
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
+                    </div>
+                    <Divider vertical className="globalHeader__divider" />
+                </div>
+
+                {/* todo: remove after "Profile" component implementation */}
                 <Text as="p" className="globalHeader__text">
                     Profile
                 </Text>

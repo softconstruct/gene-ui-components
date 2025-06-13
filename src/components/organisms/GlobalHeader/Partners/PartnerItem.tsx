@@ -18,17 +18,16 @@ const PartnerItem = forwardRef<HTMLButtonElement, IPartnerItemProps>(({ name, on
     return (
         <button
             type="button"
-            className={classNames("partners__item", { partners__item_selected: selected })}
+            className={classNames("partners__partner", { partners__partner_selected: selected })}
             onClick={handleClick}
             ref={ref}
         >
-            <span className="partners__nameWrapper">
-                <Text as="span" truncate>
-                    {name}
-                </Text>
-            </span>
-
-            <span>{id}</span>
+            <Text as="span" className="partners__partnerName" truncate>
+                {name}
+            </Text>
+            <Text as="span" className="partners__partnerID">
+                {id}
+            </Text>
         </button>
     );
 });

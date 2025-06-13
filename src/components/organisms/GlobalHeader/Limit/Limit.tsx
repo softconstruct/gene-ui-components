@@ -10,14 +10,11 @@ interface ILimitProps {
 
 const Limit: FC<ILimitProps> = ({ label = "Limit", limit = "0" }) => {
     return (
-        <div className="globalHeader__limitWrapper">
-            <Text as="span" className="globalHeader__limitLabel">
-                {label}
+        <div className="globalHeader__limit">
+            <Text as="span" variant="labelMediumSemibold" truncate>
+                {`${label} -`}
             </Text>
-            <Text as="span" className="globalHeader__separator">
-                -
-            </Text>
-            <Text as="span" className="globalHeader__limitAmount">
+            <Text as="span" variant="labelMediumSemibold">
                 {limit}
             </Text>
         </div>

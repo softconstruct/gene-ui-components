@@ -7,6 +7,7 @@ import Button from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+import Text from "@components/atoms/Text";
 import PartnerItem, { IPartnerItemProps } from "@components/organisms/GlobalHeader/Partners/PartnerItem";
 
 // Hooks
@@ -34,8 +35,8 @@ const Partners: FC<IPartnersProps> = ({
     searchPlaceholder,
     loadingText = "Loading",
     disabled = false,
-    name = "partner",
-    idName = "Id"
+    name = "Partner",
+    idName = "ID"
 }) => {
     const [propsForProductsPopover, setPropsForProductsPopover] = useState<Record<string, unknown>>({});
     const [mappedPartners, setMappedPartners] = useState<IPartnerItemData[]>([]);
@@ -118,35 +119,46 @@ const Partners: FC<IPartnersProps> = ({
                 open={isProductsOpen}
                 ref={popoverRef}
             >
-                <PopoverBody withPadding={false} className="partners__popoverBody">
+                <PopoverBody
+                    withScrollbar={false}
+                    withPadding={false}
+                    className="partners__popoverBody popover_size_small"
+                >
                     {loading ? (
                         <Loader className="partners__loader" text={loadingText} textPosition="below" />
                     ) : (
-                        <>
+                        <div className="partners__popoverContent">
                             <div className="partners__header">
+                                {/* todo: implement "Search Field" component */}
                                 <input type="search" onChange={searchHandler} placeholder={searchPlaceholder} />
                                 <div className="partners__title">
-                                    <span>{name}</span>
-                                    <span>{idName}</span>
+                                    <Text as="span" className="partners__titleName" truncate>
+                                        {name}
+                                    </Text>
+                                    <Text as="span" className="partners__titleID">
+                                        {idName}
+                                    </Text>
                                 </div>
                             </div>
                             <Scrollbar className="partners__scrollbar">
-                                {mappedPartners?.map((partner) => {
-                                    return (
-                                        <PartnerItem
-                                            key={partner.id}
-                                            {...partner}
-                                            onChange={() => {
-                                                onPartnerItemSelect(partner);
-                                            }}
-                                            ref={(el) => {
-                                                return assignSelectedRef(el, partner.id);
-                                            }}
-                                        />
-                                    );
-                                })}
+                                <div className="partners__content">
+                                    {mappedPartners?.map((partner) => {
+                                        return (
+                                            <PartnerItem
+                                                key={partner.id}
+                                                {...partner}
+                                                onChange={() => {
+                                                    onPartnerItemSelect(partner);
+                                                }}
+                                                ref={(el) => {
+                                                    return assignSelectedRef(el, partner.id);
+                                                }}
+                                            />
+                                        );
+                                    })}
+                                </div>
                             </Scrollbar>
-                        </>
+                        </div>
                     )}
                 </PopoverBody>
             </Popover>

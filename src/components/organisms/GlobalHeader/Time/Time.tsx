@@ -1,5 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 
+import Text from "@components/atoms/Text";
+
 export interface ITimeProps {
     /**
      * The time zone to display the time in.
@@ -40,9 +42,15 @@ const Time: FC<ITimeProps> = ({ timeZone, format = "24 h" }) => {
     }, [timeZone, format]);
 
     return (
-        <div className="globalHeader__timeWrapper">
-            <span className="globalHeader__timeDigits">{format === "12h" ? time.slice(0, -2) : time}</span>
-            {format === "12h" && <span className="globalHeader__time">&nbsp;{time.slice(-2)}</span>}
+        <div className="globalHeader__time">
+            <Text as="span" variant="labelMediumSemibold">
+                {format === "12h" ? time.slice(0, -2) : time}
+            </Text>
+            {format === "12h" && (
+                <Text as="span" variant="labelMediumSemibold">
+                    {time.slice(-2)}
+                </Text>
+            )}
         </div>
     );
 };
