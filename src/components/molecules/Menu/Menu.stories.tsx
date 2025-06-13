@@ -17,6 +17,7 @@ const meta: Meta<typeof Menu> = {
         className: args({ control: "false", ...propCategory.appearance }),
         swappable: args({ control: "boolean", ...propCategory.appearance }),
         onChange: args({ control: "false", ...propCategory.action }),
+        onOpenChange: args({ control: "false", ...propCategory.action }),
         children: args({ control: "false", ...propCategory.content }),
         setPropsForPopover: args({ control: "false", ...propCategory.functionality }),
         loadingText: args({ control: "text", ...propCategory.content }),
@@ -24,7 +25,6 @@ const meta: Meta<typeof Menu> = {
         open: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         openSelectedPath: args({ control: "boolean", ...propCategory.appearance }),
-        onOpenChange: args({ control: "false", ...propCategory.action }),
         position: args({
             control: "select",
             ...propCategory.appearance,
@@ -45,7 +45,9 @@ const meta: Meta<typeof Menu> = {
             ]
         })
     },
-    args: {} as IMenuProps
+    args: {
+        onOpenChange: () => {}
+    } as IMenuProps
 };
 
 const MenuItemRecursion = (menuData) => {
