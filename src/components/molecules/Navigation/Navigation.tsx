@@ -240,10 +240,9 @@ const Navigation: FC<INavigationProps> = ({
     };
     const onNavigationColItemClick = (index: number, path?: string) => {
         setCurrentDataIndex(index);
-        if (hasDataAndChildren(clonedNavigationData, index)) {
-            openFromInside();
-        }
+        setForceOpen(hasDataAndChildren(clonedNavigationData, index));
         setHoverDataIndex(null);
+
         if (path && onClick) {
             onClick(path);
         }
@@ -266,9 +265,7 @@ const Navigation: FC<INavigationProps> = ({
         });
         const index = maxVisibleItems + +item.id;
         setCurrentDataIndex(index);
-        if (hasDataAndChildren(clonedNavigationData, index)) {
-            openFromInside();
-        }
+        setForceOpen(hasDataAndChildren(clonedNavigationData, index));
         setHoverDataIndex(null);
         if (foundedItem?.path && onClick) {
             onClick(foundedItem.path);
