@@ -87,17 +87,17 @@
         &_secondary {
             &#{ $this }_type {
                 &_fill {
-                    background-color: var(--guit-sem-color-background-neutral-2);
+                    background-color: var(--guit-sem-color-background-neutral-3);
                     color: var(--guit-sem-color-foreground-neutral-2);
 
                     @include mixins.media-hover {
                         &:hover {
-                            background-color: var(--guit-sem-color-background-neutral-2-hover);
+                            background-color: var(--guit-sem-color-background-neutral-3-hover);
                         }
                     }
 
                     &:active {
-                        background-color: var(--guit-sem-color-background-neutral-2-pressed);
+                        background-color: var(--guit-sem-color-background-neutral-3-pressed);
                     }
 
                     &:disabled {
