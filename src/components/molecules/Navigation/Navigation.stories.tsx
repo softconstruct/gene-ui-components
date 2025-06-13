@@ -30,7 +30,7 @@ export default meta;
 
 const NavigationStoryComponent = (props: INavigationProps) => {
     const [isNavigationOpen, setIsNavigationOpen] = useState(false);
-    const [activePath, setActivePath] = useState<string | null>("");
+    const [activePath, setActivePath] = useState<string | null>("/performance");
 
     const onClickHandler = (path: string) => {
         setActivePath(path);

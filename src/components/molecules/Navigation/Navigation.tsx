@@ -3,6 +3,7 @@ import classNames from "classnames";
 
 import { Plus, ThreeDotsHorizontal, X } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
 import Popover, { IPopoverRef } from "@components/atoms/Popover/Popover";
 import PopoverBody from "@components/atoms/Popover/PopoverBody";
@@ -10,13 +11,13 @@ import Scrollbar from "@components/atoms/Scrollbar";
 import { IMenuItemProps, Menu, MenuItem } from "@components/molecules/Menu";
 import NavigationItem from "@components/molecules/Navigation/NavigationItem";
 import NavigationColItem from "@components/molecules/Navigation/NavigattionColItem";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
+// Hooks
 import { useWindowSize } from "@hooks/index";
 
 // Styles
 import "./Navigation.scss";
-
-import { GeneUIDesignSystemContext } from "../../../index";
 
 interface INavigationData {
     title: string;
@@ -101,25 +102,26 @@ const NavMenuContent: FC<{
     return data.children?.map((item, index) => {
         const itemKey = `${item.title}-${item.path}`;
         return (
-            <NavigationItem
-                key={itemKey}
-                title={item.title}
-                path={item.path}
-                depth={depth}
-                Icon={item.Icon}
-                onClick={onClick}
-                disabled={item.disabled}
-                selected={index === activePathIndex?.[0]}
-            >
-                {item.children && (
-                    <NavMenuContent
-                        data={item}
-                        depth={depth + 1}
-                        onClick={onClick}
-                        activePathIndex={activePathIndex?.slice(1)}
-                    />
-                )}
-            </NavigationItem>
+            <Fragment key={itemKey}>
+                <NavigationItem
+                    title={item.title}
+                    path={item.path}
+                    depth={depth}
+                    Icon={item.Icon}
+                    onClick={onClick}
+                    disabled={item.disabled}
+                    selected={index === activePathIndex?.[0]}
+                >
+                    {item.children && (
+                        <NavMenuContent
+                            data={item}
+                            depth={depth + 1}
+                            onClick={onClick}
+                            activePathIndex={activePathIndex?.slice(1)}
+                        />
+                    )}
+                </NavigationItem>
+            </Fragment>
         );
     });
 };
@@ -173,10 +175,11 @@ const Navigation: FC<INavigationProps> = ({
     useEffect(() => {
         if (forceOpen && currentDataIndex !== null) {
             setHoverDataIndex(null);
-        } else {
-            setCurrentDataIndex(null);
         }
-    }, [forceOpen, hoverDataIndex, currentDataIndex]);
+        if (activePathIndex && currentDataIndex === null) {
+            setCurrentDataIndex(activePathIndex[0]);
+        }
+    }, [forceOpen, hoverDataIndex, currentDataIndex, activePathIndex]);
 
     useEffect(() => {
         setClonedNavigationData(navigationData);
