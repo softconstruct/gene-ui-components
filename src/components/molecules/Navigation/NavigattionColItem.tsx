@@ -22,6 +22,8 @@ interface INavigationColItemProps {
     path?: string;
     propsForPopover?: Record<string, HTMLButtonElement>;
     isVisible?: boolean;
+    hasChildren?: boolean;
+    currentSelected?: boolean;
 }
 
 const NavigationColItem: FC<INavigationColItemProps> = ({
@@ -35,7 +37,9 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
     propsForPopover = {},
     opened,
     path,
-    isVisible
+    isVisible,
+    hasChildren,
+    currentSelected
 }) => {
     const textRef = useRef<HTMLHeadingElement | null>(null);
     const isTruncated: boolean = useEllipsisDetection(textRef, [title]);
@@ -58,8 +62,8 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
                 disabled={disabled || !isVisible}
                 className={classNames("navigation__iconButton", {
                     navigation__iconButton_selected: selected,
-                    navigation__iconButton_pointer_none: selected && opened,
-                    navigation__iconButton_opened: opened && !selected,
+                    navigation__iconButton_currentSelected: currentSelected && !selected && opened,
+                    navigation__iconButton_pointer_none: selected && !hasChildren,
                     navigation__iconButton_disabled: disabled
                 })}
                 onClick={() => onClickHandler(index)}
