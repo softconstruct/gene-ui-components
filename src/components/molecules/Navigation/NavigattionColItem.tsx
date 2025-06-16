@@ -22,8 +22,8 @@ interface INavigationColItemProps {
     path?: string;
     propsForPopover?: Record<string, HTMLButtonElement>;
     isVisible?: boolean;
-    hasChildren: boolean;
-    currentSelected: boolean;
+    hasChildren?: boolean;
+    currentSelected?: boolean;
 }
 
 const NavigationColItem: FC<INavigationColItemProps> = ({
