@@ -63,7 +63,7 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
                 className={classNames("navigation__iconButton", {
                     navigation__iconButton_selected: selected,
                     navigation__iconButton_currentSelected: currentSelected && !selected && opened,
-                    navigation__iconButton_pointer_none: (selected && !hasChildren) || (selected && opened),
+                    navigation__iconButton_pointer_none: selected && !hasChildren,
                     navigation__iconButton_disabled: disabled
                 })}
                 onClick={() => onClickHandler(index)}
