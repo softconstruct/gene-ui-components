@@ -62,11 +62,14 @@
         height: var(--guit-sem-dimension-height-large);
         padding: var(--guit-ref-spacing-xsmall);
         border-radius: var(--guit-ref-radius-3xsmall);
-        background-color: var(--guit-sem-color-background-neutral-2);
 
         &_selected {
             background-color: var(--guit-sem-color-background-selected-2);
             color: var(--guit-sem-color-foreground-inverse);
+        }
+
+        &_currentSelected {
+            background-color: var(--guit-sem-color-background-neutral-1-pressed);
         }
 
         &_disabled {
@@ -81,12 +84,6 @@
 
         &_pointer_none {
             pointer-events: none;
-        }
-
-        &_opened {
-            pointer-events: none;
-            background-color: var(--guit-sem-color-background-neutral-1-hover);
-            color: var(--guit-sem-color-foreground-neutral-2);
         }
 
         &:not(#{ $this }__iconButton_selected, #{ $this }__iconButton_disabled) {

@@ -309,41 +309,41 @@ const Navigation: FC<INavigationProps> = ({
                                                 onClick={onNavigationColItemClick}
                                                 index={index}
                                                 path={item.path}
-                                                opened={currentDataIndex === index}
+                                                opened={forceOpen}
+                                                currentSelected={currentDataIndex === index}
                                                 selected={index === activePathIndex?.[0]}
                                                 onMouseEnter={onMouseEnterHandler}
                                                 disabled={item.disabled}
                                                 propsForPopover={hoverDataIndex === index ? propsForPopover : {}}
                                                 hasChildren={item.children && item.children.length > 0}
                                             />
-                                            {hoverDataIndex !== null &&
-                                                hasDataAndChildren(clonedNavigationData, hoverDataIndex) && (
-                                                    <Popover
-                                                        setProps={setPropsForPopover}
-                                                        size="small"
-                                                        position="right-top"
-                                                        withArrow
-                                                        trigger="hover"
-                                                        margin={20}
-                                                        disableReposition={false}
-                                                        ref={popoverRef}
-                                                    >
-                                                        <PopoverBody withPadding={false}>
-                                                            <div className="navigation__menu_wrapper">
-                                                                <NavMenuContent
-                                                                    data={clonedNavigationData[hoverDataIndex]}
-                                                                    onClick={onItemClickHandler}
-                                                                    activePathIndex={
-                                                                        activePathIndex &&
-                                                                        hoverDataIndex === activePathIndex[0]
-                                                                            ? activePathIndex.slice(1)
-                                                                            : null
-                                                                    }
-                                                                />
-                                                            </div>
-                                                        </PopoverBody>
-                                                    </Popover>
-                                                )}
+                                            {hoverDataIndex !== null && item.children && item.children.length > 0 && (
+                                                <Popover
+                                                    setProps={setPropsForPopover}
+                                                    size="small"
+                                                    position="right-top"
+                                                    withArrow
+                                                    trigger="hover"
+                                                    margin={20}
+                                                    disableReposition={false}
+                                                    ref={popoverRef}
+                                                >
+                                                    <PopoverBody withPadding={false}>
+                                                        <div className="navigation__menu_wrapper">
+                                                            <NavMenuContent
+                                                                data={clonedNavigationData[hoverDataIndex]}
+                                                                onClick={onItemClickHandler}
+                                                                activePathIndex={
+                                                                    activePathIndex &&
+                                                                    hoverDataIndex === activePathIndex[0]
+                                                                        ? activePathIndex.slice(1)
+                                                                        : null
+                                                                }
+                                                            />
+                                                        </div>
+                                                    </PopoverBody>
+                                                </Popover>
+                                            )}
                                         </Fragment>
                                     );
                                 })}
