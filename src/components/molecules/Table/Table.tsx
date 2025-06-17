@@ -354,7 +354,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                             })}
                                         >
                                             {header.isPlaceholder ? null : (
-                                                <>
+                                                <div className="table__content table__content_empty">
                                                     <button
                                                         type="button"
                                                         onClick={(e) =>
@@ -371,7 +371,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                             )}
                                                         </span>
                                                     </button>
-                                                </>
+                                                </div>
                                             )}
                                         </th>
                                     );
