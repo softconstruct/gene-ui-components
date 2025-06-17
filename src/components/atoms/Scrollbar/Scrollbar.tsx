@@ -40,13 +40,26 @@ interface IScrollbarProps {
      * Automatically scrolls the container to a specific horizontal position (in pixels).
      */
     scrollToLeft?: number;
+    /**
+     * scrollBehaviorSmooth by default is true, set to false if needed instant scroll.
+     */
+    scrollBehaviorSmooth?: boolean;
 }
 
 /**
  * Scrollbar is a UI element that allows users to navigate through content that extends beyond the visible area of a container or window. It typically appears along the right side or bottom of the viewport, providing a draggable handle and directional arrows for vertical or horizontal scrolling, enabling users to access all available content.
  */
 const Scrollbar: FC<IScrollbarProps> = (props) => {
-    const { className, children, onScroll, width = "full", height = "full", scrollToTop, scrollToLeft } = props;
+    const {
+        className,
+        children,
+        onScroll,
+        width = "full",
+        height = "full",
+        scrollToTop,
+        scrollToLeft,
+        scrollBehaviorSmooth = true
+    } = props;
 
     const [scrollDirection, setScrollDirection] = useState<"x" | "y" | null>(null);
     const previousScrollPosition = useRef({ scrollTop: 0, scrollLeft: 0 });
@@ -100,10 +113,13 @@ const Scrollbar: FC<IScrollbarProps> = (props) => {
             scrollRefCurrent?.scrollerElement?.scrollTo({
                 ...(hasScrollToTop ? { top: scrollToTop } : {}),
                 ...(hasScrollToLeft ? { left: scrollToLeft } : {}),
-                behavior: "smooth"
+                ...(scrollBehaviorSmooth ? { behavior: "smooth" } : {})
             });
         }
-    }, [scrollToTop, scrollToLeft]);
+        return () => {
+            clearDebounce();
+        };
+    }, [scrollToTop, scrollToLeft, scrollbarRef.current?.scrollerElement?.clientHeight]);
 
     const trackProps = (direction: "x" | "y" | null) => {
         return {

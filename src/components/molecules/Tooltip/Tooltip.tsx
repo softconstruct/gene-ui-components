@@ -3,6 +3,7 @@ import React, {
     cloneElement,
     FC,
     Fragment,
+    isValidElement,
     JSX,
     RefObject,
     useContext,
@@ -136,7 +137,7 @@ const FindAndSetRef = <T extends object>(
         let newProps = {
             ...childProps
         };
-        if (!React.isValidElement(el)) return null;
+        if (!isValidElement(el)) return null;
 
         if (el.type === Tooltip) {
             return null;

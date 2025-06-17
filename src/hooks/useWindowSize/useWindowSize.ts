@@ -17,12 +17,15 @@ const useWindowSize = (): IWindowSize => {
         });
     };
 
-    const { debouncedCallback } = useDebounceCallback(handleSize, 100);
+    const { debouncedCallback, clearDebounce } = useDebounceCallback(handleSize, 100);
 
     useEffect(() => {
         handleSize();
         window.addEventListener("resize", debouncedCallback);
-        return () => window.removeEventListener("resize", debouncedCallback);
+        return () => {
+            window.removeEventListener("resize", debouncedCallback);
+            clearDebounce();
+        };
     }, []);
 
     return windowSize;

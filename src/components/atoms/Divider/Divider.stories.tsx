@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Globe, Search } from "@geneui/icons";
+import { Globe, Magnifier } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -14,21 +14,21 @@ const meta: Meta<IDividerProps> = {
     component: Divider,
     argTypes: {
         appearance: args({ control: "select", ...propCategory.appearance }),
-        vertical: args({ control: "boolean", ...propCategory.appearance }),
+        direction: args({ control: "select", ...propCategory.appearance }),
         Icon: args({ control: "false", ...propCategory.content }),
-        label: args({ control: "text", ...propCategory.content }),
-        labelPosition: args({ control: "select", ...propCategory.appearance }),
+        text: args({ control: "text", ...propCategory.content }),
+        contentPosition: args({ control: "select", ...propCategory.appearance }),
         content: args({ control: "false", ...propCategory.content }),
         inset: args({ control: "boolean", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
         appearance: "brand",
-        vertical: false,
-        label: "test",
-        labelPosition: "before",
+        direction: "horizontal",
+        text: "test",
+        contentPosition: "before",
         Icon: Globe,
-        content: <Avatar Icon={Search} color="slate" />
+        content: <Avatar Icon={Magnifier} color="slate" />
     }
 };
 
@@ -53,6 +53,6 @@ export const Solid: Story = {
     args: {
         Icon: null,
         content: undefined,
-        labelPosition: "after"
+        contentPosition: "after"
     }
 };

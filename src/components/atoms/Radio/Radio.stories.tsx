@@ -17,7 +17,7 @@ const meta: Meta<IRadioProps> = {
         disabled: args({ control: "boolean", ...propCategory.states }),
         checked: args({ control: "boolean", ...propCategory.states }),
         defaultChecked: args({ control: "boolean", ...propCategory.states }),
-        required: args({ control: "boolean", ...propCategory.content }),
+        required: args({ control: "boolean", ...propCategory.states }),
         helperText: args({ control: "text", ...propCategory.content }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
         type: args({ control: "select", ...propCategory.appearance }),

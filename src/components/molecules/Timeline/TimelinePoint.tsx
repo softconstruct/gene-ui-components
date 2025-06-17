@@ -53,7 +53,7 @@ const TimelinePoint: FC<ITimelinePointProps> = ({ title, status, description }) 
                 ) : (
                     <CircleFilled size={20} className="timeline__status_icon" />
                 )}
-                <Divider className="timeline__status_divider" vertical={direction === "vertical"} />
+                <Divider className="timeline__status_divider" direction={direction} />
             </div>
             <div className="timeline__content">
                 <Tooltip text={title} isVisible={isTitleTruncated}>
