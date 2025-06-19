@@ -19,7 +19,7 @@ import { useWindowSize } from "@hooks/index";
 // Styles
 import "./Navigation.scss";
 
-interface INavigationData {
+export interface INavigationData {
     title: string;
     Icon?: FC;
     path?: string;

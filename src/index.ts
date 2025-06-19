@@ -15,7 +15,7 @@ export { default as TextLink, ITextLinkProps } from "./components/atoms/TextLink
 export { Popover, PopoverBody, PopoverFooter, PopoverFooterActions, IPopoverProps } from "./components/atoms/Popover";
 export { default as Badge, IBadgeProps } from "./components/atoms/Badge";
 export { default as Scrollbar, IScrollbarProps } from "./components/atoms/Scrollbar";
-export { Grid, Col, Row, IColProps, IRowProps } from "./components/atoms/Grid";
+export { Grid, Col, Row, IColProps, IRowProps, IGridProps } from "./components/atoms/Grid";
 export { default as Skeleton, ISkeletonProps } from "./components/atoms/Skeleton";
 export { default as Spreadsheet, ISpreadsheetProps } from "./components/atoms/Spreadsheet";
 export { default as Copy, ICopyProps } from "./components/atoms/Copy";
@@ -30,9 +30,9 @@ export { Timelines, TimelinePoint, ITimelinesProps, ITimelinePointProps } from "
 export { default as QRCode, IQRCodeProps } from "./components/molecules/QRCode";
 export { KeyValue, Key, Value, IKeyValueProps, IKeyProps, IValueProps } from "./components/molecules/KeyValue";
 export { Menu, MenuItem, IMenuProps, IMenuItemProps } from "./components/molecules/Menu";
-export { default as Navigation, INavigationProps } from "./components/molecules/Navigation";
+export { default as Navigation, INavigationProps, INavigationData } from "./components/molecules/Navigation";
 export { default as Checkbox, ICheckboxProps } from "./components/molecules/Checkbox";
-export { default as Profile } from "./components/molecules/Profile";
+export { default as Profile, IProfileProps, IProfileData } from "./components/molecules/Profile";
 
 // Organisms
 
