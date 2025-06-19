@@ -164,7 +164,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
             {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             <Label
-                labelText={label}
+                text={label}
                 className="checkbox__label"
                 required={required}
                 infoText={infoText}
@@ -198,7 +198,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
             </Label>
             {helperText && (
                 <div className="checkbox__infoContainer">
-                    <HelperText text={helperText} isDisabled={disabled} type={type} />
+                    <HelperText text={helperText} disabled={disabled} type={type} />
                 </div>
             )}
         </div>

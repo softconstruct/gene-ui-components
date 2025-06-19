@@ -11,7 +11,8 @@ const pillSize: { [key: string]: IPillProps["size"] } = {
 
 interface IValueProps {
     /**
-     * Possible values: `Pill | TextLink | Text` components or `string`
+     * The content displayed by the `Value` component.<br/>
+     * Accepts a `string` or a React element such as `Pill`, `TextLink`, or `Text` components.
      */
     children: ReactElement | string;
 }

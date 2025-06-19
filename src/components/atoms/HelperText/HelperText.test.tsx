@@ -40,8 +40,8 @@ describe("HelperText ", () => {
         expect(wrapper.find(Globe)).toBeTruthy();
     });
 
-    it("renders isDisabled prop correctly", () => {
-        const wrapper = setup.setProps({ isDisabled: true });
+    it("renders disabled prop correctly", () => {
+        const wrapper = setup.setProps({ disabled: true });
         expect(wrapper.find(".helperText_disabled").exists()).toBeTruthy();
     });
 

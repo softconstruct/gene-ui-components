@@ -23,7 +23,8 @@ const meta: Meta<IPopoverProps> = {
         title: args({ control: "text", ...propCategory.content }),
         setProps: args({ control: "false", ...propCategory.functionality }),
         onClose: args({ control: "false", ...propCategory.action }),
-        defaultOpen: args({ control: "boolean", ...propCategory.states })
+        defaultOpen: args({ control: "boolean", ...propCategory.states }),
+        trigger: args({ control: "boolean", ...propCategory.functionality })
     },
     args: {
         margin: 15,

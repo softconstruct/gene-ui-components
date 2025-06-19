@@ -97,4 +97,49 @@ describe("useClickOutside", () => {
 
         expect(mockCallback).toHaveBeenCalledTimes(1);
     });
+
+    it("should call the callback when clicking outside the component with only relative ref", () => {
+        const mockCallback = jest.fn();
+
+        function Component() {
+            const ref = useRef(null);
+            useClickOutside(mockCallback, [ref]);
+            return (
+                <div>
+                    <div data-testid="dropdown" ref={ref}>
+                        Dropdown
+                    </div>
+                </div>
+            );
+        }
+
+        mount(<Component />);
+
+        document.body.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+
+        expect(mockCallback).toHaveBeenCalledTimes(1);
+    });
+
+    it("should not call the callback when clicking a relative element with only relative element", () => {
+        const mockCallback = jest.fn();
+
+        function Component() {
+            const relativeRef = useRef(null);
+            useClickOutside(mockCallback, [relativeRef]);
+
+            return (
+                <div>
+                    <span data-testid="relative" ref={relativeRef}>
+                        Relative
+                    </span>
+                </div>
+            );
+        }
+
+        const wrapper = mount(<Component />);
+
+        wrapper.find('[data-testid="relative"]').simulate("mousedown");
+
+        expect(mockCallback).not.toHaveBeenCalled();
+    });
 });
