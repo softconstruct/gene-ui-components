@@ -1,1 +1,1 @@
-export { INavigationProps, default } from "./Navigation";
+export { INavigationProps, INavigationData, default } from "./Navigation";

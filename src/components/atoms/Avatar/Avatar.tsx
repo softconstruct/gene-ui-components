@@ -1,7 +1,7 @@
 import React, { FC, JSX, PointerEvent, useEffect, useState } from "react";
 import classNames from "classnames";
 
-import { IconProps, Square } from "@geneui/icons"; // TODO: replace with the person icon
+import { IconProps, PersonFilled } from "@geneui/icons";
 
 // Styles
 import "./Avatar.scss";
@@ -85,7 +85,7 @@ const Avatar: FC<IAvatarProps> = ({
     onClick,
     disabled,
     loading,
-    Icon = Square, // todo need to change to User icon after releasing new icons
+    Icon = PersonFilled,
     className
 }) => {
     const [proceedFullName, setProceedFullName] = useState(fullName);

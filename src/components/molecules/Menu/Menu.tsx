@@ -35,6 +35,8 @@ import { findPathOfSelected, isActiveElementInside } from "./helper";
 // Types
 import { IMenuItemProps } from "./MenuItem";
 
+const MENU_GAP_FROM_TARGET = 4;
+
 export interface OnchangeHandlerType {
     generatedId: string;
     id: number | string;
@@ -296,6 +298,7 @@ const Menu: FC<IMenuProps> = ({
                 open={isOpenState}
                 ref={popoverRef}
                 onClose={onCloseHandler}
+                margin={MENU_GAP_FROM_TARGET}
             >
                 <PopoverBody
                     withPadding={false}
