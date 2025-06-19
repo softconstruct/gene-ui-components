@@ -1,1 +1,1 @@
-export { IProfileProps, default } from "./Profile";
+export { IProfileProps, IProfileData, default } from "./Profile";

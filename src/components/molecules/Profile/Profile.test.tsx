@@ -5,10 +5,12 @@ import { mount, ReactWrapper } from "enzyme";
 import Avatar from "@components/atoms/Avatar";
 import Profile, { IProfileProps } from "@components/molecules/Profile";
 
+import { profileData } from "../../../../stories/data/__profile";
+
 describe("Profile ", () => {
     let setup: ReactWrapper<IProfileProps>;
     beforeEach(() => {
-        setup = mount(<Profile />);
+        setup = mount(<Profile profileData={profileData} />);
     });
 
     it("renders without crashing", () => {
@@ -41,7 +43,7 @@ describe("Profile ", () => {
 
         const wrapper = setup.setProps({ onToggle: onToggleMock });
 
-        const stepLabel = wrapper.find(".profile");
+        const stepLabel = wrapper.find(".profile__button");
 
         stepLabel.simulate("click");
 
