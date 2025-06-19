@@ -1,7 +1,7 @@
 import React, { FC, MouseEvent, useContext, useState } from "react";
 import classNames from "classnames";
 
-import { CaretDown, IconProps, PersonFilled } from "@geneui/icons";
+import { CaretDownFilled, IconProps, PersonFilled } from "@geneui/icons";
 
 // Components
 import Avatar from "@components/atoms/Avatar";
@@ -122,7 +122,7 @@ const Profile: FC<IProfileProps> = ({ className, onToggle, fullName, src, onProf
                 {!isMobileBreakpoint && (
                     <div className="profile__content">
                         <span className="profile__text">{fullName}</span>
-                        <CaretDown className="profile__icon" size={20} />
+                        <CaretDownFilled className="profile__icon" size={20} />
                     </div>
                 )}
             </button>

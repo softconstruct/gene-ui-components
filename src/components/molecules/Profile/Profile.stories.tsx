@@ -56,7 +56,7 @@ const ProfileComponentStory = (props: IProfileProps) => {
             style={{
                 width: "100%",
                 background: "var(--guit-sem-color-background-neutral-5)",
-                padding: "5px 10px",
+                padding: "12px 10px",
                 display: "flex",
                 justifyContent: "flex-end",
                 alignItems: "center"
