@@ -126,7 +126,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                     onClick={onNavigationButtonClickHandler}
                     Icon={HamburgerMenu}
                     appearance="inverse"
-                    displayType="text"
+                    layout="text"
                     size="medium"
                 />
                 {logoAs ? (
@@ -176,36 +176,36 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                             name={partnersName}
                             idName={partnersIdName}
                         />
-                        <Divider vertical className="globalHeader__divider" />
+                        <Divider direction="vertical" className="globalHeader__divider" />
                     </div>
                 )}
                 {(limitLabel || limitUnit) && (
                     <div className="globalHeader__item">
                         <Limit limit={limitUnit} label={limitLabel} />
-                        <Divider vertical className="globalHeader__divider" />
+                        <Divider direction="vertical" className="globalHeader__divider" />
                     </div>
                 )}
                 <div className="globalHeader__item">
                     <Time timeZone={timeZone} format={timeFormat} />
-                    <Divider vertical className="globalHeader__divider" />
+                    <Divider direction="vertical" className="globalHeader__divider" />
                 </div>
 
                 <div className="globalHeader__item">
                     <div className="globalHeader__actions">
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
                     </div>
-                    <Divider vertical className="globalHeader__divider" />
+                    <Divider direction="vertical" className="globalHeader__divider" />
                 </div>
 
                 <div className="globalHeader__item">
                     <div className="globalHeader__actions">
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" displayType="text" size="medium" />
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
+                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
                     </div>
-                    <Divider vertical className="globalHeader__divider" />
+                    <Divider direction="vertical" className="globalHeader__divider" />
                 </div>
 
                 {/* todo: remove after "Profile" component implementation */}

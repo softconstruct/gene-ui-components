@@ -11,7 +11,7 @@ interface ILimitProps {
 const Limit: FC<ILimitProps> = ({ label = "Limit", limit = "0" }) => {
     return (
         <div className="globalHeader__limit">
-            <Text as="span" variant="labelMediumSemibold" truncate>
+            <Text as="span" variant="labelMediumSemibold">
                 {`${label} -`}
             </Text>
             <Text as="span" variant="labelMediumSemibold">

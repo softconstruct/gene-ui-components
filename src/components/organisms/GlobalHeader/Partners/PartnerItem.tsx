@@ -22,11 +22,11 @@ const PartnerItem = forwardRef<HTMLButtonElement, IPartnerItemProps>(({ name, on
             onClick={handleClick}
             ref={ref}
         >
-            <Text as="span" className="partners__partnerName" truncate>
+            <Text as="span" className="partners__partnerName">
                 {name}
             </Text>
             <Text as="span" className="partners__partnerID">
-                {id}
+                {id.toString()}
             </Text>
         </button>
     );

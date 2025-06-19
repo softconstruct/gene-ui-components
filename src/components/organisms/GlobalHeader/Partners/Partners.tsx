@@ -103,10 +103,10 @@ const Partners: FC<IPartnersProps> = ({
                 disabled={disabled}
                 onClick={onProductsToggle}
                 appearance="inverse"
-                displayType="text"
+                layout="text"
                 size="medium"
                 Icon={CaretDownFilled}
-                iconAfter
+                iconPosition="after"
                 {...propsForProductsPopover}
             >
                 {selectedPartner?.name || "Partner"}
@@ -132,7 +132,7 @@ const Partners: FC<IPartnersProps> = ({
                                 {/* todo: implement "Search Field" component */}
                                 <input type="search" onChange={searchHandler} placeholder={searchPlaceholder} />
                                 <div className="partners__title">
-                                    <Text as="span" className="partners__titleName" truncate>
+                                    <Text as="span" className="partners__titleName">
                                         {name}
                                     </Text>
                                     <Text as="span" className="partners__titleID">

@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 
 import Text from "@components/atoms/Text";
 
-export interface ITimeProps {
+interface ITimeProps {
     /**
      * The time zone to display the time in.
      * If not provided, it will use the local time zone of the user's device.
