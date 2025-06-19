@@ -94,6 +94,7 @@ const Profile: FC<IProfileProps> = ({ className, onToggle, fullName, src, onProf
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
+    const isRTLMode = document.dir === "rtl";
 
     const onProfileClickHandler = (e: MouseEvent<HTMLButtonElement>) => {
         if (onToggle) {
@@ -128,7 +129,7 @@ const Profile: FC<IProfileProps> = ({ className, onToggle, fullName, src, onProf
             <Menu
                 onChange={onProfileItemSelectHandler}
                 setPropsForPopover={setPropsForPopover}
-                position="bottom-right"
+                position={isRTLMode ? "bottom-left" : "bottom-right"}
                 swappable
                 size="large"
             >
