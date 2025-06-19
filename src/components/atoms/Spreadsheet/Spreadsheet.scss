@@ -1,11 +1,10 @@
 .spreadsheet {
     position: fixed;
-    top: 0;
+    bottom: 0;
     left: 0;
     z-index: 1;
     width: 100%;
     height: 100vh;
-    height: 100dvh;
     max-height: 100%;
     background-color: var(--guit-sem-color-background-transparent-overlay-notheme-1);
 
@@ -25,10 +24,8 @@
             padding-top: var(--guit-ref-spacing-large);
         }
     }
-}
 
-@supports (height: 100lvh) {
-    .spreadsheet {
-        height: 100lvh;
+    &__container {
+        height: 100%;
     }
 }
