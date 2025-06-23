@@ -13,10 +13,10 @@ const meta: Meta<ISpreadsheetProps> = {
     component: Spreadsheet,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        open: args({ control: "boolean", ...propCategory.functionality }),
+        open: args({ control: "boolean", ...propCategory.states }),
         inset: args({ control: "boolean", ...propCategory.appearance }),
         children: args({ control: "false", ...propCategory.content }),
-        onClose: args({ control: "false", ...propCategory.content })
+        onClose: args({ control: "false", ...propCategory.functionality })
     },
     args: {
         open: false,
