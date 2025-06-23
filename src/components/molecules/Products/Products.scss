@@ -44,6 +44,12 @@
             background-color: var(--guit-sem-color-background-neutral-1-pressed);
         }
 
+        &_selected {
+            background-color: var(--guit-sem-color-background-selected-2);
+            color: var(--guit-sem-color-foreground-inverse);
+            pointer-events: none;
+        }
+
         &_disabled {
             color: var(--guit-sem-color-foreground-disabled);
             pointer-events: none;

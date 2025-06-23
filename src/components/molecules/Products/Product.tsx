@@ -31,17 +31,25 @@ interface IProductProps {
      * Indicates whether the `Product` is `disabled`, preventing user interaction, focus, click etc...
      */
     disabled?: boolean;
+    /**
+     * Indicates whether the `Product` is currently selected.
+     * When `true`, the product will display with a selected visual style.
+     */
+    selected?: boolean;
 }
 
 const ProductButton: FC<Omit<IProductProps, "withBadge">> = (props) => {
-    const { title, Icon, disabled } = props;
+    const { title, Icon, disabled, selected } = props;
     const { onChange } = useContext(ProductsContext);
 
     return (
         <button
             type="button"
             disabled={disabled}
-            className={classNames("products__item", { products__item_disabled: disabled })}
+            className={classNames("products__item", {
+                products__item_disabled: disabled,
+                products__item_selected: selected
+            })}
             onClick={() => onChange(props)}
         >
             <span className="products__item_logo">
@@ -58,7 +66,7 @@ const Product: FC<IProductProps> = (props) => {
     const { withBadge } = props;
 
     return withBadge ? (
-        <Badge className="products__badge">
+        <Badge className="products__badge" withBorder>
             <ProductButton {...props} />
         </Badge>
     ) : (

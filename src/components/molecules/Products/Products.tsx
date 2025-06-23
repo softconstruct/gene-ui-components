@@ -32,7 +32,7 @@ interface IProductsProps {
      */
     children: ReactNode;
     /**
-     * Fires when the user interact with `Product`. Provides the `Product` `id` as a callback's argument.
+     * Fires when the user interact with `Product`. Provides the `Product` as a callback's argument.
      */
     onChange?: (event: IProductProps) => void;
 }
