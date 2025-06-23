@@ -385,7 +385,11 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                 onClose?.();
                             }}
                         >
-                            <div className={classNames("popover__container", "popover__container_height_full")}>
+                            <div
+                                className={classNames("popover__container", "popover__container_height_full")}
+                                ref={refs.setFloating}
+                                {...getFloatingProps()}
+                            >
                                 {title && (
                                     <div className="popover__header">
                                         <p className="popover__title">
