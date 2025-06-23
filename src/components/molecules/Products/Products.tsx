@@ -1,12 +1,15 @@
-import React, { createContext, FC, ReactNode, useContext, useMemo, useState } from "react";
+import React, { createContext, FC, ReactNode, useContext, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
 import { AppGrid } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
-import { Popover, PopoverBody } from "@components/atoms/Popover";
+import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
+
+// Hooks
+import useClickOutside from "@hooks/useClickOutside";
 
 // Styles
 import "./Products.scss";
@@ -43,12 +46,30 @@ interface IProductsProps {
 const Products: FC<IProductsProps> = ({ onChange, children }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const [propsForContent, setPropsForContent] = useState({});
+    const [popoverOpen, setPopoverOpen] = useState(false);
+    const popoverRef = useRef<IPopoverRef>({
+        floatingElement: { current: null },
+        referenceElement: { current: null }
+    });
+
+    useClickOutside(() => {
+        setPopoverOpen(false);
+    }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement]);
 
     const isRTL = document.dir === "rtl";
 
+    const onProductsChange = (product: IProductProps) => {
+        onChange?.(product);
+        setPopoverOpen(false);
+    };
+
+    const toggleButtonHandler = () => {
+        setPopoverOpen((prev) => !prev);
+    };
+
     const memoizedProductsContextValue = useMemo(
         () => ({
-            onChange
+            onChange: onProductsChange
         }),
         []
     );
@@ -62,6 +83,8 @@ const Products: FC<IProductsProps> = ({ onChange, children }) => {
                 setProps={setPropsForContent}
                 withArrow={false}
                 margin={PRODUCT_GAP_FROM_TARGET}
+                open={popoverOpen}
+                ref={popoverRef}
             >
                 <PopoverBody
                     className={classNames("products", {
@@ -73,7 +96,13 @@ const Products: FC<IProductsProps> = ({ onChange, children }) => {
                 </PopoverBody>
             </Popover>
 
-            <Button Icon={AppGrid} appearance="inverse" layout="text" {...propsForContent} />
+            <Button
+                Icon={AppGrid}
+                appearance="inverse"
+                layout="text"
+                onClick={toggleButtonHandler}
+                {...propsForContent}
+            />
         </ProductsContext.Provider>
     );
 };
