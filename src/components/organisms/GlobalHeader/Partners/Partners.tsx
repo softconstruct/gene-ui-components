@@ -68,7 +68,7 @@ const Partners: FC<IPartnersProps> = ({
     useEffect(() => {
         const currentRef = selectedPartnerRef.current;
         if (isProductsOpen && currentRef && !hasScrolled) {
-            currentRef.scrollIntoView({ behavior: "smooth" });
+            currentRef.scrollIntoView();
         }
     }, [selectedPartner, isProductsOpen, selectedPartnerRef.current, assignSelectedRef]);
 
