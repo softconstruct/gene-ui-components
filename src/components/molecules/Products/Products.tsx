@@ -13,6 +13,8 @@ import "./Products.scss";
 
 import { IProductProps } from "./index";
 
+const PRODUCT_GAP_FROM_TARGET = 4;
+
 interface IProductsContext {
     onChange: (product: IProductProps) => void;
 }
@@ -59,7 +61,7 @@ const Products: FC<IProductsProps> = ({ onChange, children }) => {
                 size="medium"
                 setProps={setPropsForContent}
                 withArrow={false}
-                margin={4}
+                margin={PRODUCT_GAP_FROM_TARGET}
             >
                 <PopoverBody
                     className={classNames("products", {
