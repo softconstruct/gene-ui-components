@@ -253,15 +253,15 @@
                     background-color: var(--guit-sem-color-background-neutral-3-pressed);
                 }
             }
-            &#{ $that }_red:not(:active) {
+            &#{ $that }_red:not(:active):not(:hover) {
                 background-color: var(--guit-sem-color-background-error-1);
             }
 
-            &#{ $that }_green:not(:active) {
+            &#{ $that }_green:not(:active):not(:hover) {
                 background-color: var(--guit-sem-color-background-success-1);
             }
 
-            &#{ $that }_highlighted:not(:active) {
+            &#{ $that }_highlighted:not(:active):not(:hover) {
                 background-color: var(--guit-sem-color-background-brand-1);
             }
         }
@@ -412,6 +412,7 @@
         }
 
         &_checkbox {
+            justify-content: center;
             padding-block: var(--guit-ref-spacing-xsmall);
             padding-inline: var(--guit-ref-spacing-small);
         }
@@ -497,12 +498,14 @@
 
         &_pill,
         &_icon {
+            justify-content: center;
             padding-block: var(--guit-ref-spacing-small);
             padding-inline: var(--guit-ref-spacing-large);
         }
 
         &_check {
             &_checkbox {
+                justify-content: center;
                 padding-block: var(--guit-ref-spacing-small);
                 padding-inline: var(--guit-ref-spacing-large);
             }
@@ -514,6 +517,7 @@
         }
 
         &_switch {
+            justify-content: center;
             padding-block: var(--guit-ref-spacing-medium);
             padding-inline: var(--guit-ref-spacing-large);
         }
