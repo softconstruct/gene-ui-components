@@ -204,4 +204,12 @@
         gap: var(--guit-ref-spacing-3xsmall);
         flex: 0 0 auto;
     }
+
+    &__info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 28rem;
+    }
 }

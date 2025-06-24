@@ -29,6 +29,7 @@ export { default as Switch, ISwitchProps } from "./components/molecules/Switch";
 export { Timelines, TimelinePoint, ITimelinesProps, ITimelinePointProps } from "./components/molecules/Timeline";
 export { default as QRCode, IQRCodeProps } from "./components/molecules/QRCode";
 export { KeyValue, Key, Value, IKeyValueProps, IKeyProps, IValueProps } from "./components/molecules/KeyValue";
+export { default as TextField } from "./components/molecules/TextField";
 export { Menu, MenuItem, IMenuProps, IMenuItemProps } from "./components/molecules/Menu";
 export { default as Navigation, INavigationProps } from "./components/molecules/Navigation";
 export { default as Checkbox, ICheckboxProps } from "./components/molecules/Checkbox";
