@@ -136,6 +136,10 @@ interface IGlobalHeaderProps {
      */
     timeLabel?: string;
     products?: IProducts;
+    /**
+     * Callback function when a product is selected from the list.
+     */
+    onProductSelect?: (product: IProductProps) => void;
 
     // actionList?: any[]; // todo button group
 }
@@ -160,6 +164,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     timeZone,
     timeFormat,
     products,
+    onProductSelect,
     timeLabel = "Time"
 }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
@@ -271,7 +276,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                         {/* <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" /> */}
                         {/* <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" /> */}
                         {products && (
-                            <Products>
+                            <Products onChange={onProductSelect}>
                                 {products.mainSectionData && products.mainSectionData.length > 0 && (
                                     <ProductsMainSection>
                                         {products.mainSectionData?.map((product) => (

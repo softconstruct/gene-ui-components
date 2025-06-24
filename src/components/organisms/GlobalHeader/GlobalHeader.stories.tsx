@@ -4,6 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { Copy, CurrencyGlobal, Globe, HamburgerMenu } from "@geneui/icons";
 
 import { partners } from "@components/organisms/GlobalHeader/__shared/data";
+import { IProducts } from "@components/organisms/GlobalHeader/GlobalHeader";
 import { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
 
 // Helpers
@@ -11,14 +12,15 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 // Components
 import GlobalHeader, { IGlobalHeaderProps } from "./index";
 
-const products = {
+const products: IProducts = {
     mainSectionData: [
         {
             id: 1,
             title: "StarBase",
             withBadge: true,
             Icon: Globe,
-            disabled: false
+            disabled: false,
+            selected: true
         },
         {
             id: 2,
@@ -84,9 +86,11 @@ const meta: Meta<IGlobalHeaderProps> = {
 
 const Template = (props) => {
     const [partnerData, setPartnerData] = useState<IPartnerItemData[]>(partners);
+    const [productsData, setProductsData] = useState<IProducts>(products);
 
     useEffect(() => {
         setPartnerData(partners);
+        setProductsData(products);
     }, []);
 
     const onPartnerSelect = (partner: IPartnerItemData) => {
@@ -99,9 +103,30 @@ const Template = (props) => {
             });
         });
     };
+
+    const onProductSelect = (product) => {
+        setProductsData((prev) => {
+            return {
+                mainSectionData: prev.mainSectionData?.map((item) => ({
+                    ...item,
+                    selected: item.id === product.id
+                })),
+                secondarySectionData: prev.secondarySectionData?.map((item) => ({
+                    ...item,
+                    selected: item.id === product.id
+                }))
+            };
+        });
+    };
     return (
         <div style={{ width: "100%", height: "100%" }}>
-            <GlobalHeader {...props} onPartnerSelect={onPartnerSelect} partners={partnerData} products={products} />
+            <GlobalHeader
+                {...props}
+                onPartnerSelect={onPartnerSelect}
+                onProductSelect={onProductSelect}
+                partners={partnerData}
+                products={productsData}
+            />
         </div>
     );
 };
