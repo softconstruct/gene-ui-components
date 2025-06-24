@@ -46,7 +46,11 @@ type Story = StoryObj<ITextFieldProps>;
 const StoryComponentWithRef: FC<ITextFieldProps> = (props) => {
     const inputRef = useRef<ITextFieldRef | null>(null);
 
-    return <TextField {...props} ref={inputRef} />;
+    return (
+        <div style={{ width: 300 }}>
+            <TextField {...props} ref={inputRef} />
+        </div>
+    );
 };
 
 export const Default: Story = {

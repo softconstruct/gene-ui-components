@@ -199,18 +199,17 @@ const TextField = forwardRef<ITextFieldRef | undefined, ITextFieldProps>(
 
         return (
             <div className={classNames("textField", className)}>
-                <Label
-                    {...label}
-                    className={classNames(
-                        `textField__wrapper textField__wrapper textField__wrapper_size_${size} textField__wrapper_withIcons`,
-                        {
-                            textField__wrapper_readOnly: readOnly,
-                            textField__wrapper_disabled: disabled,
-                            textField__wrapper_error: validationStatus?.type === "error" || limitErrorMessage
-                        }
-                    )}
-                >
-                    <div>
+                <Label {...label} className="textField__label">
+                    <div
+                        className={classNames(
+                            `textField__wrapper textField__wrapper textField__wrapper_size_${size} textField__wrapper_withIcons`,
+                            {
+                                textField__wrapper_readOnly: readOnly,
+                                textField__wrapper_disabled: disabled,
+                                textField__wrapper_error: validationStatus?.type === "error" || limitErrorMessage
+                            }
+                        )}
+                    >
                         {Icon && (
                             <span className="textField__icon">
                                 <Icon size={size === "small" ? 20 : 24} />
@@ -260,7 +259,12 @@ const TextField = forwardRef<ITextFieldRef | undefined, ITextFieldProps>(
                                 type={limitErrorMessage ? "error" : validationStatus?.type}
                             />
                         )}
-                        {characterLimit && <Text as="span">{`${inputValue.length} / ${characterLimit.length}`}</Text>}
+                        {characterLimit && (
+                            <Text
+                                as="span"
+                                className="textField__info_text"
+                            >{`${inputValue.length} / ${characterLimit.length}`}</Text>
+                        )}
                     </div>
                 )}
             </div>

@@ -5,13 +5,18 @@
     flex-direction: column;
     gap: var(--guit-ref-spacing-3xsmall);
 
+    &__label {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
+
     &__wrapper {
         $this: &;
 
         display: flex;
         align-items: center;
         width: 100%;
-        max-width: 28rem;
         border-width: var(--guit-ref-border-width-thin);
         border-style: var(--guit-ref-border-style-solid);
 
@@ -210,6 +215,9 @@
         align-items: center;
         justify-content: space-between;
         width: 100%;
-        max-width: 28rem;
+
+        &_text {
+            margin-inline-start: auto;
+        }
     }
 }
