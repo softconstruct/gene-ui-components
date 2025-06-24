@@ -78,7 +78,16 @@
     &__time {
         display: flex;
         align-items: center;
+        gap: 0.4rem;
         color: var(--guit-sem-color-foreground-inverse-notheme);
+
+        &_mobile {
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
+
+        &_text {
+            color: var(--guit-sem-color-foreground-neutral-1);
+        }
     }
 
     &__limit {
@@ -86,5 +95,13 @@
         align-items: center;
         gap: var(--guit-ref-spacing-2xsmall);
         color: var(--guit-sem-color-foreground-inverse-notheme);
+
+        &_label {
+            color: var(--guit-sem-color-foreground-neutral-1);
+        }
+
+        &_limit {
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
     }
 }

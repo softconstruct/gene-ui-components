@@ -1,4 +1,4 @@
-import React, { cloneElement, FC, MouseEvent, ReactElement, useContext } from "react";
+import React, { cloneElement, FC, MouseEvent, ReactElement, useContext, useMemo } from "react";
 import classNames from "classnames";
 
 import { Globe, HamburgerMenu } from "@geneui/icons";
@@ -8,6 +8,13 @@ import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import Logo from "@components/atoms/Logo";
 import Text from "@components/atoms/Text";
+import {
+    IProductProps,
+    Product,
+    Products,
+    ProductsMainSection,
+    ProductsSecondarySection
+} from "@components/molecules/Products";
 import Limit from "@components/organisms/GlobalHeader/Limit/Limit";
 import Partners, { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
 import Time from "@components/organisms/GlobalHeader/Time/Time";
@@ -15,6 +22,46 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 
 // Styles
 import "./GlobalHeader.scss";
+
+import { IProfileData, Profile } from "../../../index";
+
+const mobileData = (
+    isMobileBreakpoint: boolean,
+    timeLabel: string,
+    limitLabel: string,
+    limitUnit?: string
+): IProfileData[] => {
+    return isMobileBreakpoint
+        ? [
+              {
+                  title: "time",
+                  id: "time",
+                  disabled: true,
+                  ComponentRender: () => (
+                      <span className="globalHeader__time">
+                          <span className="globalHeader__time_text">{timeLabel}</span>
+                          <Time className="globalHeader__time_mobile" />
+                      </span>
+                  )
+              },
+              {
+                  title: "limit",
+                  id: "limit",
+                  disabled: true,
+                  ComponentRender: () => (
+                      <span className="globalHeader__limit">
+                          <Limit limit={limitUnit} label={limitLabel} isMobile={isMobileBreakpoint} />
+                      </span>
+                  )
+              }
+          ]
+        : [];
+};
+
+export interface IProducts {
+    mainSectionData?: IProductProps[];
+    secondarySectionData?: IProductProps[];
+}
 
 interface IGlobalHeaderProps {
     /**
@@ -84,6 +131,12 @@ interface IGlobalHeaderProps {
      * Default is "24h"
      */
     timeFormat?: "24h" | "12h";
+    /**
+     * Label for the time section, in mobile Breakpoint default is "Time"
+     */
+    timeLabel?: string;
+    products?: IProducts;
+
     // actionList?: any[]; // todo button group
 }
 
@@ -102,12 +155,16 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     partnersDisabled,
     partnersName,
     partnersIdName,
-    limitLabel,
+    limitLabel = "Limit",
     limitUnit,
     timeZone,
-    timeFormat
+    timeFormat,
+    products,
+    timeLabel = "Time"
 }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
+
+    const { isMobileBreakpoint = false, isDesktopBreakpoint = false } = breakpoint || {};
 
     const onNavigationButtonClickHandler = (e: MouseEvent<HTMLButtonElement>) => {
         if (onNavigationButtonClick) {
@@ -115,10 +172,16 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         }
     };
 
+    const profileData = useMemo(() => {
+        const timeAndLimitForMobile = mobileData(isMobileBreakpoint, timeLabel, limitLabel, limitUnit);
+
+        return [...timeAndLimitForMobile];
+    }, [isMobileBreakpoint, timeLabel, limitLabel, limitUnit]);
+
     return (
         <div
             className={classNames("globalHeader", className, {
-                globalHeader_mobile: breakpoint?.isMobileBreakpoint
+                globalHeader_mobile: isMobileBreakpoint
             })}
         >
             <div className="globalHeader_side_left">
@@ -141,30 +204,32 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                     <Logo className="globalHeader__logo" type="logomark" appearance="inverse" size="small" />
                 )}
 
-                <div className="globalHeader__ftn">
-                    <div className="globalHeader__amount">
-                        <Text as="span" variant="captionLargeMedium">
-                            1FTN
-                        </Text>
-                        <Text as="span" variant="captionLargeMedium">
-                            =
-                        </Text>
-                        <Text as="span" variant="captionLargeMedium">
-                            2.3698
-                        </Text>
-                        <Text as="span" variant="captionLargeMedium">
-                            USDT
-                        </Text>
+                {isDesktopBreakpoint && (
+                    <div className="globalHeader__ftn">
+                        <div className="globalHeader__amount">
+                            <Text as="span" variant="captionLargeMedium">
+                                1FTN
+                            </Text>
+                            <Text as="span" variant="captionLargeMedium">
+                                =
+                            </Text>
+                            <Text as="span" variant="captionLargeMedium">
+                                2.3698
+                            </Text>
+                            <Text as="span" variant="captionLargeMedium">
+                                USDT
+                            </Text>
+                        </div>
+                        <div className="globalHeader__domain">
+                            <Text as="span" variant="captionLargeMedium">
+                                exchange.fastex.com
+                            </Text>
+                        </div>
                     </div>
-                    <div className="globalHeader__domain">
-                        <Text as="span" variant="captionLargeMedium">
-                            exchange.fastex.com
-                        </Text>
-                    </div>
-                </div>
+                )}
             </div>
             <div className="globalHeader_side_right">
-                {partners && (
+                {partners && !isMobileBreakpoint && (
                     <div className="globalHeader__item">
                         <Partners
                             onPartnerSelect={onPartnerSelect}
@@ -179,16 +244,18 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                         <Divider direction="vertical" className="globalHeader__divider" />
                     </div>
                 )}
-                {(limitLabel || limitUnit) && (
+                {(limitLabel || limitUnit) && !isMobileBreakpoint && (
                     <div className="globalHeader__item">
                         <Limit limit={limitUnit} label={limitLabel} />
                         <Divider direction="vertical" className="globalHeader__divider" />
                     </div>
                 )}
-                <div className="globalHeader__item">
-                    <Time timeZone={timeZone} format={timeFormat} />
-                    <Divider direction="vertical" className="globalHeader__divider" />
-                </div>
+                {!isMobileBreakpoint && (
+                    <div className="globalHeader__item">
+                        <Time timeZone={timeZone} format={timeFormat} />
+                        <Divider direction="vertical" className="globalHeader__divider" />
+                    </div>
+                )}
 
                 <div className="globalHeader__item">
                     <div className="globalHeader__actions">
@@ -201,17 +268,31 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
 
                 <div className="globalHeader__item">
                     <div className="globalHeader__actions">
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
+                        {/* <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" /> */}
+                        {/* <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" /> */}
+                        {products && (
+                            <Products>
+                                {products.mainSectionData && products.mainSectionData.length > 0 && (
+                                    <ProductsMainSection>
+                                        {products.mainSectionData?.map((product) => (
+                                            <Product key={product.id} {...product} />
+                                        ))}
+                                    </ProductsMainSection>
+                                )}
+                                {products.secondarySectionData && products.secondarySectionData?.length > 0 && (
+                                    <ProductsSecondarySection>
+                                        {products.secondarySectionData?.map((product) => (
+                                            <Product key={product.id} {...product} />
+                                        ))}
+                                    </ProductsSecondarySection>
+                                )}
+                            </Products>
+                        )}
                     </div>
                     <Divider direction="vertical" className="globalHeader__divider" />
                 </div>
 
-                {/* todo: remove after "Profile" component implementation */}
-                <Text as="p" className="globalHeader__text">
-                    Profile
-                </Text>
+                <Profile profileData={profileData} className="globalHeader__profile" fullName="Full Name" />
             </div>
         </div>
     );

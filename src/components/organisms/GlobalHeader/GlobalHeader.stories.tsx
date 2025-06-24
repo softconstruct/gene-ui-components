@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import { Copy, CurrencyGlobal, Globe, HamburgerMenu } from "@geneui/icons";
+
 import { partners } from "@components/organisms/GlobalHeader/__shared/data";
 import { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
 
@@ -8,6 +10,50 @@ import { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Pa
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
 import GlobalHeader, { IGlobalHeaderProps } from "./index";
+
+const products = {
+    mainSectionData: [
+        {
+            id: 1,
+            title: "StarBase",
+            withBadge: true,
+            Icon: Globe,
+            disabled: false
+        },
+        {
+            id: 2,
+            title: "Pixel Bank",
+            withBadge: true,
+            Icon: CurrencyGlobal,
+            disabled: false
+        },
+        {
+            id: 3,
+            title: "Sky Link",
+            Icon: Copy,
+            disabled: false
+        },
+        {
+            id: 4,
+            title: "Polyglot Hub",
+            Icon: HamburgerMenu,
+            disabled: true
+        }
+    ],
+    secondarySectionData: [
+        {
+            id: 5,
+            title: "Content Forge",
+            Icon: Globe
+        },
+        {
+            id: 6,
+            title: "Cloud Haven",
+            withBadge: true,
+            Icon: CurrencyGlobal
+        }
+    ]
+};
 
 const meta: Meta<IGlobalHeaderProps> = {
     title: "Organisms/GlobalHeader",
@@ -53,7 +99,11 @@ const Template = (props) => {
             });
         });
     };
-    return <GlobalHeader {...props} onPartnerSelect={onPartnerSelect} partners={partnerData} />;
+    return (
+        <div style={{ width: "100%", height: "100%" }}>
+            <GlobalHeader {...props} onPartnerSelect={onPartnerSelect} partners={partnerData} products={products} />
+        </div>
+    );
 };
 export default meta;
 
