@@ -1,8 +1,14 @@
 import React, { FC, useEffect, useState } from "react";
+import classNames from "classnames";
 
 import Text from "@components/atoms/Text";
 
 interface ITimeProps {
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
     /**
      * The time zone to display the time in.
      * If not provided, it will use the local time zone of the user's device.
@@ -17,7 +23,7 @@ interface ITimeProps {
     format?: "24h" | "12h";
 }
 
-const Time: FC<ITimeProps> = ({ timeZone, format = "24 h" }) => {
+const Time: FC<ITimeProps> = ({ timeZone, format = "24 h", className }) => {
     const [time, setTime] = useState<string>("");
 
     useEffect(() => {
@@ -42,7 +48,7 @@ const Time: FC<ITimeProps> = ({ timeZone, format = "24 h" }) => {
     }, [timeZone, format]);
 
     return (
-        <div className="globalHeader__time">
+        <div className={classNames("globalHeader__time", className)}>
             <Text as="span" variant="labelMediumSemibold">
                 {format === "12h" ? time.slice(0, -2) : time}
             </Text>
