@@ -37,7 +37,7 @@ type CellRenderer = {
 };
 
 export const cellRenderer: CellRenderer = {
-    empty: () => <div className="table__content table__content_empty" />,
+    empty: ({ rowCellRenderer }) => rowCellRenderer(<div className="table__content table__content_empty" />),
     graph: ({ rowCellRenderer, data }) => {
         return rowCellRenderer(<img src={data} alt="" />);
     },
@@ -48,7 +48,7 @@ export const cellRenderer: CellRenderer = {
                     <span className="table__td_text ellipsis-text">{data}</span>
                     <Button
                         appearance="secondary"
-                        displayType="text"
+                        layout="text"
                         size="small"
                         Icon={Copy}
                         onClick={() => {}}
@@ -72,7 +72,7 @@ export const cellRenderer: CellRenderer = {
                     <span className="table__td_text">{data}</span>
                     <Button
                         appearance="secondary"
-                        displayType="text"
+                        layout="text"
                         size="small"
                         Icon={Copy}
                         onClick={() => {}}
@@ -96,7 +96,7 @@ export const cellRenderer: CellRenderer = {
                     <span className="table__td_text ellipsis-text">{data}</span>
                     <Button
                         appearance="secondary"
-                        displayType="text"
+                        layout="text"
                         size="small"
                         Icon={Copy}
                         onClick={() => {}}
@@ -123,11 +123,17 @@ export const cellRenderer: CellRenderer = {
     status: ({ rowCellRenderer, data }) => {
         /* todo: change "Pill" components "color" as a status to next values: "informative", "neutral", "error", "success", "warning" */
 
-        return rowCellRenderer(<Pill text={data.text} color={data.color} />);
+        return rowCellRenderer(<Pill text={data.text} appearance={data.color} />);
     },
     pill: ({ rowCellRenderer, data }) => {
         return rowCellRenderer(
-            <Pill text={data.text} isFill={data.isFill} color={data.color} size={data.size} withDot={data.withDot} />
+            <Pill
+                text={data.text}
+                filled={data.isFill}
+                appearance={data.color}
+                size={data.size}
+                withDot={data.withDot}
+            />
         );
     },
     icon: ({ rowCellRenderer, data: icon }) => {
@@ -161,7 +167,9 @@ export const cellRenderer: CellRenderer = {
 const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, onChange }) => {
     const cellTypeWithNumber = type === "number" ? "text" : type;
     const CellItem = cellRenderer[cellTypeWithNumber];
-    return CellItem({ rowCellRenderer, withEditMode, data, inputType: type === "number" ? type : "text", onChange });
+    return (
+        <>{CellItem({ rowCellRenderer, withEditMode, data, inputType: type === "number" ? type : "text", onChange })}</>
+    );
 };
 
 export { ICellProps, Cell as default };

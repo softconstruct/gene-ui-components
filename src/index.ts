@@ -23,7 +23,6 @@ export { default as Copy, ICopyProps } from "./components/atoms/Copy";
 // Molecules
 export { default as Tooltip, ITooltipProps } from "./components/molecules/Tooltip";
 export { default as ProgressBar, IProgressBarProps } from "./components/molecules/ProgressBar";
-export { default as Tabs } from "./components/molecules/Tabs";
 export { Steps, Step, IStepProps, IStepsProps } from "./components/molecules/Steps";
 export { default as Tag, ITagProps } from "./components/molecules/Tag";
 export { default as Switch, ISwitchProps } from "./components/molecules/Switch";

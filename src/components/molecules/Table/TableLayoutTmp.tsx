@@ -62,12 +62,12 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                     <div className="dataTable__bulkActions">
                         <div className="dataTable__bulkActions_selected">2 selected</div>
                         <Divider vertical />
-                        <Button appearance="primary" displayType="text" size="medium" onClick={() => {}}>
+                        <Button appearance="primary" layout="text" size="medium" onClick={() => {}}>
                             Deselect
                         </Button>
                         <Button
                             appearance="primary"
-                            displayType="text"
+                            layout="text"
                             size="medium"
                             Icon={CaretDownFilled}
                             iconAfter
@@ -80,17 +80,11 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                 </div>
                 <div className="dataTable__toolbar_actions">
                     {/* todo: import "Swap" component here if needed */}
-                    <Button appearance="secondary" displayType="outline" size="medium" Icon={Globe} onClick={() => {}}>
+                    <Button appearance="secondary" layout="outline" size="medium" Icon={Globe} onClick={() => {}}>
                         Edit
                     </Button>
                     <div className="dataTable__toolbar_dropdownMenu">
-                        <Button
-                            appearance="secondary"
-                            displayType="outline"
-                            size="medium"
-                            Icon={Globe}
-                            onClick={() => {}}
-                        >
+                        <Button appearance="secondary" layout="outline" size="medium" Icon={Globe} onClick={() => {}}>
                             Manage Columns
                         </Button>
 
@@ -137,16 +131,16 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                             </Scrollbar>
 
                             <div className="dropdownMenu__footer">
-                                <Button appearance="secondary" displayType="text" size="medium" onClick={() => {}}>
+                                <Button appearance="secondary" layout="text" size="medium" onClick={() => {}}>
                                     Restore Defaults
                                 </Button>
 
                                 {/* todo: import "Button Group" component instead of next element */}
                                 <div className="dropdownMenu__footer_buutonGroup">
-                                    <Button appearance="secondary" displayType="fill" size="medium" onClick={() => {}}>
+                                    <Button appearance="secondary" layout="fill" size="medium" onClick={() => {}}>
                                         Cancel
                                     </Button>
-                                    <Button appearance="primary" displayType="fill" size="medium" onClick={() => {}}>
+                                    <Button appearance="primary" layout="fill" size="medium" onClick={() => {}}>
                                         Save
                                     </Button>
                                 </div>
@@ -196,7 +190,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                     <div className="table__th_actions">
                                         <Button
                                             appearance="secondary"
-                                            displayType="text"
+                                            layout="text"
                                             size="small"
                                             Icon={ArrowUpDown}
                                             // Icon={ArrowUp}
@@ -208,7 +202,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         {/* todo: change icon from "Globe" to some "Filter" icon, when it will implemented */}
                                         <Button
                                             appearance="secondary"
-                                            displayType="text"
+                                            layout="text"
                                             size="small"
                                             Icon={Globe}
                                             onClick={() => {}}
@@ -218,7 +212,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         {/* todo: change icon from "Globe" to some "Search" icon, when it will implemented */}
                                         <Button
                                             appearance="secondary"
-                                            displayType="text"
+                                            layout="text"
                                             size="small"
                                             Icon={Globe}
                                             onClick={() => {}}
@@ -255,7 +249,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         <div className="table__content table__content_expand">
                                             <Button
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 size="small"
                                                 Icon={ChevronRight}
                                                 // Icon={ChevronDown}
@@ -294,7 +288,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                             <span className="table__td_text ellipsis-text">Row Text</span>
                                             <Button
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 size="small"
                                                 Icon={Copy}
                                                 onClick={() => {}}
@@ -313,7 +307,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                             <span className="table__td_text ellipsis-text">123456789</span>
                                             <Button
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 size="small"
                                                 Icon={Copy}
                                                 onClick={() => {}}
@@ -356,14 +350,20 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
 
                                     <td key={`${id}-8`} className="table__td">
                                         <div className="table__content table__content_status">
-                                            {/* todo: change "Pill" components "color" as a status to next values: "informative", "neutral", "error", "success", "warning" */}
-                                            <Pill text="Status" color="informative" />
+                                            {/* todo: change "Pill" components "appearance" as a status to next values: "informative", "neutral", "error", "success", "warning" */}
+                                            <Pill text="Status" appearance="informative" />
                                         </div>
                                     </td>
 
                                     <td key={`${id}-9`} className="table__td">
                                         <div className="table__content table__content_pill">
-                                            <Pill text="Pill" isFill color="informative" size="small" withDot={false} />
+                                            <Pill
+                                                text="Pill"
+                                                filled
+                                                appearance="informative"
+                                                size="small"
+                                                withDot={false}
+                                            />
                                         </div>
                                     </td>
 
@@ -419,7 +419,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         <div className="table__actions">
                                             <Button
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 size="small"
                                                 Icon={Pin}
                                                 onClick={() => {}}
@@ -427,7 +427,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                             />
                                             <Button
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 size="small"
                                                 Icon={TagOutline}
                                                 onClick={() => {}}
@@ -435,7 +435,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                             />
                                             <Button
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 size="small"
                                                 Icon={Clock}
                                                 onClick={() => {}}
@@ -443,7 +443,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                             />
                                             <Button
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 size="small"
                                                 Icon={Copy}
                                                 onClick={() => {}}
@@ -451,7 +451,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                             />
                                             <Button
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 size="small"
                                                 Icon={Download}
                                                 onClick={() => {}}
@@ -459,7 +459,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                             />
                                             <Button
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 size="small"
                                                 Icon={RecycleBin}
                                                 onClick={() => {}}
@@ -476,9 +476,9 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                                 className="swapComponent"
                                                 style={{
                                                     height: "20rem",
-                                                    backgroundColor: "#F4E1EC",
+                                                    backgroundappearance: "#F4E1EC",
                                                     padding: "1.6rem",
-                                                    color: "#A60063"
+                                                    appearance: "#A60063"
                                                 }}
                                             >
                                                 Swap
@@ -498,7 +498,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                     <div className="table__content table__content_expand">
                                         <Button
                                             appearance="secondary"
-                                            displayType="text"
+                                            layout="text"
                                             size="small"
                                             Icon={ChevronRight}
                                             // Icon={ChevronDown}

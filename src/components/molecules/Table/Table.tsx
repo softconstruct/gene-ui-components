@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FC, useState } from "react";
 import {
+    ColumnPinningState,
     ColumnSort,
     ExpandedState,
     flexRender,
@@ -23,7 +24,7 @@ import {
     Globe,
     Pin,
     RecycleBin,
-    TagOutline,
+    Tag,
     ThreeDotsVertical
 } from "@geneui/icons";
 
@@ -31,7 +32,7 @@ import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Checkbox from "@components/molecules/Checkbox";
-import Cell from "@components/molecules/Table/Cell";
+import Cell, { ICellProps } from "@components/molecules/Table/Cell";
 import { CellClassNames, deepCloneWithFunctions } from "@components/molecules/Table/helpers";
 import { Row } from "@components/molecules/Table/makeData";
 import PinnedRow from "@components/molecules/Table/PinnedRow";
@@ -57,7 +58,7 @@ interface ITableProps {
     // fill Table component props interface
 }
 
-const TableLayoutTmp: FC<ITableProps> = ({
+const Table: FC<ITableProps> = ({
     columns,
     externalData,
     onSortChange,
@@ -81,9 +82,8 @@ const TableLayoutTmp: FC<ITableProps> = ({
     const [editedValue, setEditableValue] = useState<Record<string, Record<string, string>>>({});
     const [data, setData] = useState(deepCloneWithFunctions(externalData));
 
-    const [columnPinning, setColumnPinning] = useState({
-        left: ["expand", "rowCheckbox"],
-        right: []
+    const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
+        left: ["expand", "rowCheckbox"]
     });
     const [columnVisibility, setColumnVisibility] = useState({});
 
@@ -163,16 +163,16 @@ const TableLayoutTmp: FC<ITableProps> = ({
                     <input type="text" placeholder="Search" style={{ width: "100%" }} />
                     <div className="dataTable__bulkActions">
                         <div className="dataTable__bulkActions_selected">2 selected</div>
-                        <Divider vertical />
-                        <Button appearance="primary" displayType="text" size="medium" onClick={() => {}}>
+                        <Divider direction="vertical" />
+                        <Button appearance="primary" layout="text" size="medium" onClick={() => {}}>
                             Deselect
                         </Button>
                         <Button
                             appearance="primary"
-                            displayType="text"
+                            layout="text"
                             size="medium"
                             Icon={CaretDownFilled}
-                            iconAfter
+                            iconPosition="after"
                             onClick={() => {}}
                         >
                             Bulk Actions
@@ -185,7 +185,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                             <div className="dropdownMenu__footer_buutonGroup">
                                 <Button
                                     appearance="secondary"
-                                    displayType="fill"
+                                    layout="fill"
                                     size="medium"
                                     onClick={() => tableEditAction("cancel")}
                                 >
@@ -193,7 +193,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                 </Button>
                                 <Button
                                     appearance="primary"
-                                    displayType="fill"
+                                    layout="fill"
                                     size="medium"
                                     onClick={() => tableEditAction("save")}
                                 >
@@ -205,7 +205,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                         <>
                             <Button
                                 appearance="secondary"
-                                displayType="outline"
+                                layout="outline"
                                 size="medium"
                                 Icon={Globe}
                                 onClick={() => tableEditAction("edit")}
@@ -215,7 +215,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                             <div className="dataTable__toolbar_dropdownMenu">
                                 <Button
                                     appearance="secondary"
-                                    displayType="outline"
+                                    layout="outline"
                                     size="medium"
                                     Icon={Globe}
                                     onClick={() => setMenuOpened(!menuOpened)}
@@ -240,8 +240,10 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                     {table.getAllColumns().map((headerGroup) => {
                                                         return headerGroup.columns.map((column) => {
                                                             if (
-                                                                column.columnDef.type === "expand" ||
-                                                                column.columnDef.type === "rowCheckbox"
+                                                                (column.columnDef as TableCol<unknown>).type ===
+                                                                    "expand" ||
+                                                                (column.columnDef as TableCol<unknown>).type ===
+                                                                    "rowCheckbox"
                                                             ) {
                                                                 return null;
                                                             }
@@ -259,14 +261,16 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                                             onChange={() => column.toggleVisibility()}
                                                                         />
                                                                         <p className="dropdownMenu__columns_text ellipsis-text">
-                                                                            {column.columnDef.header()}
+                                                                            {(
+                                                                                column.columnDef as TableCol<unknown>
+                                                                            ).header()}
                                                                         </p>
                                                                     </div>
 
                                                                     <div className="dropdownMenu__columns_actions">
                                                                         <Button
                                                                             appearance="secondary"
-                                                                            displayType="text"
+                                                                            layout="text"
                                                                             size="small"
                                                                             Icon={Pin}
                                                                             onClick={() =>
@@ -278,7 +282,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                                         />
                                                                         <Button
                                                                             appearance="secondary"
-                                                                            displayType="text"
+                                                                            layout="text"
                                                                             size="small"
                                                                             Icon={ThreeDotsVertical}
                                                                             onClick={() => column.pin("left")}
@@ -297,7 +301,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                         <div className="dropdownMenu__footer">
                                             <Button
                                                 appearance="secondary"
-                                                displayType="text"
+                                                layout="text"
                                                 size="medium"
                                                 onClick={() => {}}
                                             >
@@ -306,7 +310,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                             <div className="dropdownMenu__footer_buutonGroup">
                                                 <Button
                                                     appearance="secondary"
-                                                    displayType="fill"
+                                                    layout="fill"
                                                     size="medium"
                                                     onClick={() => {}}
                                                 >
@@ -314,7 +318,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                 </Button>
                                                 <Button
                                                     appearance="primary"
-                                                    displayType="fill"
+                                                    layout="fill"
                                                     size="medium"
                                                     onClick={() => {}}
                                                 >
@@ -386,7 +390,6 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                 key={row.id}
                                 rowIndex={index}
                                 row={row}
-                                table={table}
                                 rowActions={rowActions}
                                 expandable={expandable}
                                 editableMode={editableMode}
@@ -409,7 +412,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                     {!!row.original.expandedData && (
                                                         <Button
                                                             appearance="secondary"
-                                                            displayType="text"
+                                                            layout="text"
                                                             size="small"
                                                             Icon={!row.getIsExpanded() ? ChevronRight : ChevronDown}
                                                             onClick={() => row.toggleExpanded()}
@@ -427,7 +430,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                             </td>
                                         )}
                                         {row.getVisibleCells().map((cell) => {
-                                            const { type } = cell.column.columnDef as TableCol<unknown>;
+                                            const { type } = cell.column.columnDef as TableCol<ICellProps>;
                                             if (type === "expand" || type === "rowCheckbox") {
                                                 return null;
                                             }
@@ -440,13 +443,20 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                             )}
                                                         >
                                                             <Cell
-                                                                type={type}
-                                                                data={row.original[cell.column.columnDef.type]?.data}
+                                                                type={type as ICellProps["type"]}
+                                                                data={
+                                                                    row.original[
+                                                                        (cell.column.columnDef as TableCol<unknown>)
+                                                                            .type
+                                                                    ]?.data
+                                                                }
                                                                 // colData={cell.column.columnDef as TableCol<any>}
                                                                 withEditMode={editableMode}
                                                                 rowCellRenderer={
-                                                                    row.original[cell.column.columnDef.type]
-                                                                        ?.rowCellRenderer
+                                                                    row.original[
+                                                                        (cell.column.columnDef as TableCol<unknown>)
+                                                                            .type
+                                                                    ]?.rowCellRenderer
                                                                 }
                                                                 onChange={(e) => onCellEdit(e, rowIndex, type)}
                                                             />
@@ -463,7 +473,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                         {rowActions && rowActions.pin && (
                                                             <Button
                                                                 appearance="secondary"
-                                                                displayType="text"
+                                                                layout="text"
                                                                 size="small"
                                                                 Icon={Pin}
                                                                 onClick={() => {
@@ -476,9 +486,9 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                         {rowActions?.tag && (
                                                             <Button
                                                                 appearance="secondary"
-                                                                displayType="text"
+                                                                layout="text"
                                                                 size="small"
-                                                                Icon={TagOutline}
+                                                                Icon={Tag}
                                                                 onClick={() => rowActions.tag?.(row.id)}
                                                                 className=""
                                                             />
@@ -486,7 +496,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                         {rowActions?.clock && (
                                                             <Button
                                                                 appearance="secondary"
-                                                                displayType="text"
+                                                                layout="text"
                                                                 size="small"
                                                                 Icon={Clock}
                                                                 onClick={() => rowActions.clock?.(row.id)}
@@ -496,7 +506,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                         {rowActions?.copy && (
                                                             <Button
                                                                 appearance="secondary"
-                                                                displayType="text"
+                                                                layout="text"
                                                                 size="small"
                                                                 Icon={Copy}
                                                                 onClick={() => rowActions.copy?.(row.id)}
@@ -506,7 +516,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                         {rowActions?.download && (
                                                             <Button
                                                                 appearance="secondary"
-                                                                displayType="text"
+                                                                layout="text"
                                                                 size="small"
                                                                 Icon={Download}
                                                                 onClick={() => rowActions.download?.(row.id)}
@@ -516,7 +526,7 @@ const TableLayoutTmp: FC<ITableProps> = ({
                                                         {rowActions?.delete && (
                                                             <Button
                                                                 appearance="secondary"
-                                                                displayType="text"
+                                                                layout="text"
                                                                 size="small"
                                                                 Icon={RecycleBin}
                                                                 onClick={() => rowActions.delete?.(row.id)}
@@ -587,4 +597,4 @@ const TableLayoutTmp: FC<ITableProps> = ({
     );
 };
 
-export { ITableProps, TableLayoutTmp as default };
+export { ITableProps, Table as default };

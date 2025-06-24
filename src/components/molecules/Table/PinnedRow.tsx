@@ -2,11 +2,11 @@ import React, { ChangeEvent } from "react";
 import { Row } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import { ChevronDown, ChevronRight, Clock, Copy, Download, Pin, RecycleBin, TagOutline } from "@geneui/icons";
+import { ChevronDown, ChevronRight, Clock, Copy, Download, Pin, RecycleBin, Tag } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Checkbox from "@components/molecules/Checkbox";
-import Cell from "@components/molecules/Table/Cell";
+import Cell, { ICellProps } from "@components/molecules/Table/Cell";
 import { CellClassNames } from "@components/molecules/Table/helpers";
 
 import { RowActions, TableCol } from "./type";
@@ -47,7 +47,7 @@ const PinnedRow = ({
                             {!!row.original.expandedData && (
                                 <Button
                                     appearance="secondary"
-                                    displayType="text"
+                                    layout="text"
                                     size="small"
                                     Icon={!row.getIsExpanded() ? ChevronRight : ChevronDown}
                                     // Icon={ChevronDown}
@@ -78,7 +78,7 @@ const PinnedRow = ({
                             <>
                                 <div className={classNames(`table__content ${CellClassNames[type]}`)}>
                                     <Cell
-                                        type={type}
+                                        type={type as ICellProps["type"]}
                                         data={row.original[type].data}
                                         withEditMode={editableMode}
                                         rowCellRenderer={row.original[type].rowCellRenderer}
@@ -96,7 +96,7 @@ const PinnedRow = ({
                             {rowActions && rowActions.pin && (
                                 <Button
                                     appearance="secondary"
-                                    displayType="text"
+                                    layout="text"
                                     size="small"
                                     Icon={Pin}
                                     onClick={() => {
@@ -109,9 +109,9 @@ const PinnedRow = ({
                             {rowActions?.tag && (
                                 <Button
                                     appearance="secondary"
-                                    displayType="text"
+                                    layout="text"
                                     size="small"
-                                    Icon={TagOutline}
+                                    Icon={Tag}
                                     onClick={() => rowActions.tag?.(row.id)}
                                     className=""
                                 />
@@ -119,7 +119,7 @@ const PinnedRow = ({
                             {rowActions?.clock && (
                                 <Button
                                     appearance="secondary"
-                                    displayType="text"
+                                    layout="text"
                                     size="small"
                                     Icon={Clock}
                                     onClick={() => rowActions.clock?.(row.id)}
@@ -129,7 +129,7 @@ const PinnedRow = ({
                             {rowActions?.copy && (
                                 <Button
                                     appearance="secondary"
-                                    displayType="text"
+                                    layout="text"
                                     size="small"
                                     Icon={Copy}
                                     onClick={() => rowActions.copy?.(row.id)}
@@ -139,7 +139,7 @@ const PinnedRow = ({
                             {rowActions?.download && (
                                 <Button
                                     appearance="secondary"
-                                    displayType="text"
+                                    layout="text"
                                     size="small"
                                     Icon={Download}
                                     onClick={() => rowActions.download?.(row.id)}
@@ -149,7 +149,7 @@ const PinnedRow = ({
                             {rowActions?.delete && (
                                 <Button
                                     appearance="secondary"
-                                    displayType="text"
+                                    layout="text"
                                     size="small"
                                     Icon={RecycleBin}
                                     onClick={() => rowActions.delete?.(row.id)}

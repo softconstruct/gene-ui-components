@@ -3,13 +3,14 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import { TableCol } from "@components/molecules/Table/type";
 
-const columnHelper = createColumnHelper<TableCol<any>>();
+const columnHelper = createColumnHelper<TableCol<unknown>>();
 
 // Make some columns!
 export const defaultColumns = [
     // Grouping Column
     columnHelper.group({
         header: "Group Name",
+        sortingFn: "alphanumeric",
         type: "text",
         footer: (props) => props.column.id,
         columns: [
@@ -38,6 +39,7 @@ export const defaultColumns = [
                 id: "title",
                 type: "text",
                 sortable: true,
+                sortingFn: "alphanumeric",
                 editable: true,
                 copyable: true,
                 cell: (info) => info.getValue(),
@@ -49,6 +51,7 @@ export const defaultColumns = [
                 id: "number",
                 type: "number",
                 sortable: true,
+                sortingFn: "alphanumeric",
                 editable: true,
                 copyable: true,
                 cell: (info) => info.getValue(),
@@ -60,6 +63,7 @@ export const defaultColumns = [
                 id: "description",
                 type: "longText",
                 sortable: true,
+                sortingFn: "alphanumeric",
                 editable: true,
                 copyable: true,
                 cell: (info) => info.getValue(),
@@ -71,6 +75,7 @@ export const defaultColumns = [
                 id: "dropdown",
                 type: "dropdown",
                 sortable: true,
+                sortingFn: "alphanumeric",
                 editable: true,
                 copyable: true,
                 cell: (info) => info.getValue(),
@@ -83,6 +88,7 @@ export const defaultColumns = [
                 type: "status",
                 sortable: true,
                 editable: false,
+                sortingFn: "alphanumeric",
                 copyable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Status</span>,
@@ -93,6 +99,7 @@ export const defaultColumns = [
                 id: "pill",
                 type: "pill",
                 sortable: true,
+                sortingFn: "alphanumeric",
                 editable: false,
                 copyable: false,
                 cell: (info) => info.getValue(),
@@ -104,6 +111,7 @@ export const defaultColumns = [
                 id: "icon",
                 type: "icon",
                 sortable: true,
+                sortingFn: "alphanumeric",
                 editable: false,
                 copyable: false,
                 cell: (info) => info.getValue(),
@@ -116,6 +124,7 @@ export const defaultColumns = [
                 type: "flag",
                 sortable: true,
                 editable: false,
+                sortingFn: "alphanumeric",
                 copyable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Flag</span>,
@@ -127,6 +136,7 @@ export const defaultColumns = [
                 type: "checkbox",
                 sortable: true,
                 editable: true,
+                sortingFn: "alphanumeric",
                 copyable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Checkbox</span>,
@@ -136,6 +146,7 @@ export const defaultColumns = [
             columnHelper.accessor((row) => row.lastName, {
                 id: "switch",
                 type: "switch",
+                sortingFn: "alphanumeric",
                 sortable: true,
                 editable: true,
                 copyable: false,
