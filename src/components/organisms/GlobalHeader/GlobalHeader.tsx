@@ -23,7 +23,7 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 // Styles
 import "./GlobalHeader.scss";
 
-import { IProfileData, Profile } from "../../../index";
+import { IMenuItemProps, IProfileData, Profile } from "../../../index";
 
 const mobileData = (
     isMobileBreakpoint: boolean,
@@ -140,6 +140,12 @@ interface IGlobalHeaderProps {
      * Callback function when a product is selected from the list.
      */
     onProductSelect?: (product: IProductProps) => void;
+    /**
+     * Callback triggered when a profile menu item is selected.
+     * Receives the selected menu item as an argument.
+     */
+    onProfileItemSelect?: (item: IMenuItemProps) => void;
+    logOutText?: string;
 
     // actionList?: any[]; // todo button group
 }
@@ -165,7 +171,9 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     timeFormat,
     products,
     onProductSelect,
-    timeLabel = "Time"
+    timeLabel = "Time",
+    logOutText,
+    onProfileItemSelect
 }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
@@ -179,8 +187,13 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
 
     const profileData = useMemo(() => {
         const timeAndLimitForMobile = mobileData(isMobileBreakpoint, timeLabel, limitLabel, limitUnit);
+        const logOut = {
+            title: logOutText || "Log out",
+            id: "logOut",
+            danger: true
+        };
 
-        return [...timeAndLimitForMobile];
+        return [...timeAndLimitForMobile, logOut];
     }, [isMobileBreakpoint, timeLabel, limitLabel, limitUnit]);
 
     return (
@@ -297,7 +310,12 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                     <Divider direction="vertical" className="globalHeader__divider" />
                 </div>
 
-                <Profile profileData={profileData} className="globalHeader__profile" fullName="Full Name" />
+                <Profile
+                    profileData={profileData}
+                    className="globalHeader__profile"
+                    fullName="Full Name"
+                    onProfileItemSelect={onProfileItemSelect}
+                />
             </div>
         </div>
     );
