@@ -80,7 +80,7 @@ const Table: FC<ITableProps> = ({
     const [editableMode, setEditableMode] = useState(false);
 
     const [editedValue, setEditableValue] = useState<Record<string, Record<string, string>>>({});
-    const [data, setData] = useState(deepCloneWithFunctions(externalData));
+    const [data, setData] = useState<Row[]>(deepCloneWithFunctions(externalData));
 
     const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
         left: ["expand", "rowCheckbox"]
@@ -110,6 +110,7 @@ const Table: FC<ITableProps> = ({
         data,
         columns,
         initialState: {
+            sorting,
             pagination: { pageSize: 20, pageIndex: 0 },
             columnPinning: {
                 left: ["expand", "rowCheckbox"]
@@ -131,8 +132,8 @@ const Table: FC<ITableProps> = ({
         getRowCanExpand: (row) => !!row.original.expandedData,
 
         onSortingChange: (e) => {
-            onSortChange?.(sorting);
             setSorting(e);
+            onSortChange?.(sorting);
         },
         onColumnVisibilityChange: setColumnVisibility,
         onColumnPinningChange: setColumnPinning,
@@ -149,7 +150,7 @@ const Table: FC<ITableProps> = ({
     // const changeFilterData = (e: ChangeEvent<HTMLInputElement>) => {
     //     currentCol?.setFilterValue(e.currentTarget.value);
     // };
-
+    console.log({ table });
     const tableEditAction = (type: "cancel" | "edit" | "save") => {
         if (type === "save") onSave(data);
         if (type === "cancel") setData(deepCloneWithFunctions(externalData));
@@ -361,10 +362,13 @@ const Table: FC<ITableProps> = ({
                                                 <div className="table__content table__content_empty">
                                                     <button
                                                         type="button"
-                                                        onClick={(e) =>
-                                                            (header.column.columnDef as TableCol<unknown>).sortable &&
-                                                            header?.column?.getToggleSortingHandler?.()?.(e)
-                                                        }
+                                                        onClick={(e) => {
+                                                            return (
+                                                                (header.column.columnDef as TableCol<unknown>)
+                                                                    .enableSorting &&
+                                                                header?.column?.getToggleSortingHandler?.()?.(e)
+                                                            );
+                                                        }}
                                                         tabIndex={0}
                                                         className="table__content"
                                                     >
@@ -398,6 +402,7 @@ const Table: FC<ITableProps> = ({
                         ))}
 
                         {table.getCenterRows().map((row, rowIndex) => {
+                            console.log(row.original.text);
                             return (
                                 <>
                                     <tr

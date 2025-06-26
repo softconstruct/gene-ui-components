@@ -1,159 +1,143 @@
 import React from "react";
-import { createColumnHelper } from "@tanstack/react-table";
 
-import { TableCol } from "@components/molecules/Table/type";
-
-const columnHelper = createColumnHelper<TableCol<unknown>>();
-
-// Make some columns!
 export const defaultColumns = [
-    // Grouping Column
-    columnHelper.group({
+    {
         header: "Group Name",
-        sortingFn: "alphanumeric",
         type: "text",
         footer: (props) => props.column.id,
         columns: [
-            columnHelper.group({
+            {
                 id: "expand",
-                type: "expand"
-            }),
-            // Display Column
-            columnHelper.group({
+                type: "expand",
+                accessorKey: "expand"
+            },
+            {
                 id: "rowCheckbox",
-                type: "rowCheckbox"
-            }),
-            // Accessor Column
-            columnHelper.accessor("graph", {
+                type: "rowCheckbox",
+                accessorKey: "rowCheckbox"
+            },
+            {
                 id: "graph",
                 type: "graph",
-                sortable: true,
+                accessorKey: "graph",
                 editable: false,
                 copyable: false,
                 header: () => <div>Graph</div>,
                 cell: (info) => info.getValue(),
                 footer: (props) => props.column.id
-            }),
-            // Accessor Column
-            columnHelper.accessor("title", {
+            },
+            {
                 id: "title",
                 type: "text",
-                sortable: true,
-                sortingFn: "alphanumeric",
+                accessorKey: "text",
+                enableSorting: true,
+                sortingFn: (rowA, rowB, columnId) => {
+                    const a: string = rowA.getValue(columnId)?.data ?? "";
+                    const b: string = rowB.getValue(columnId)?.data ?? "";
+                    return a.localeCompare(b);
+                },
                 editable: true,
                 copyable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Title</span>,
                 footer: (props) => props.column.id
-            }),
-            // Accessor Column
-            columnHelper.accessor((row) => row.lastName, {
+            },
+            {
                 id: "number",
                 type: "number",
-                sortable: true,
-                sortingFn: "alphanumeric",
+                accessorKey: "number",
+                enableSorting: true,
+                sortingFn: (rowA, rowB, columnId) => {
+                    const a: number = rowA.getValue(columnId)?.data ?? "";
+                    const b: number = rowB.getValue(columnId)?.data ?? "";
+                    return a - b;
+                },
                 editable: true,
                 copyable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Number</span>,
                 footer: (props) => props.column.id
-            }),
-            // Accessor Column
-            columnHelper.accessor((row) => row.lastName, {
+            },
+            {
                 id: "description",
                 type: "longText",
-                sortable: true,
-                sortingFn: "alphanumeric",
+                accessorKey: "longText",
                 editable: true,
                 copyable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Description</span>,
                 footer: (props) => props.column.id
-            }),
-            // Accessor Column
-            columnHelper.accessor((row) => row.lastName, {
+            },
+            {
                 id: "dropdown",
                 type: "dropdown",
-                sortable: true,
-                sortingFn: "alphanumeric",
+                accessorKey: "dropdown",
                 editable: true,
                 copyable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Dropdown</span>,
                 footer: (props) => props.column.id
-            }),
-            // Accessor Column
-            columnHelper.accessor((row) => row.lastName, {
+            },
+            {
                 id: "status",
                 type: "status",
-                sortable: true,
-                editable: false,
-                sortingFn: "alphanumeric",
+                accessorKey: "status",
+                enableSorting: true,
                 copyable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Status</span>,
                 footer: (props) => props.column.id
-            }),
-            // Accessor Column
-            columnHelper.accessor((row) => row.lastName, {
+            },
+            {
                 id: "pill",
                 type: "pill",
-                sortable: true,
-                sortingFn: "alphanumeric",
+                accessorKey: "pill",
                 editable: false,
                 copyable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Pill</span>,
                 footer: (props) => props.column.id
-            }),
-            // Accessor Column
-            columnHelper.accessor((row) => row.lastName, {
+            },
+            {
                 id: "icon",
                 type: "icon",
-                sortable: true,
-                sortingFn: "alphanumeric",
+                accessorKey: "icon",
                 editable: false,
                 copyable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Icon</span>,
                 footer: (props) => props.column.id
-            }),
-            // Accessor Column
-            columnHelper.accessor((row) => row.lastName, {
+            },
+            {
                 id: "flag",
                 type: "flag",
-                sortable: true,
+                accessorKey: "flag",
                 editable: false,
-                sortingFn: "alphanumeric",
                 copyable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Flag</span>,
                 footer: (props) => props.column.id
-            }),
-            // Accessor Column
-            columnHelper.accessor((row) => row.lastName, {
+            },
+            {
                 id: "checkbox",
                 type: "checkbox",
-                sortable: true,
+                accessorKey: "checkbox",
                 editable: true,
-                sortingFn: "alphanumeric",
                 copyable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Checkbox</span>,
                 footer: (props) => props.column.id
-            }),
-            // Accessor Column
-            columnHelper.accessor((row) => row.lastName, {
+            },
+            {
                 id: "switch",
                 type: "switch",
-                sortingFn: "alphanumeric",
-                sortable: true,
+                accessorKey: "switch",
                 editable: true,
                 copyable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Switch</span>,
                 footer: (props) => props.column.id
-            })
+            }
         ]
-    })
+    }
 ];
