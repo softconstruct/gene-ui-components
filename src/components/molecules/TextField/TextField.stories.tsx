@@ -1,4 +1,4 @@
-import React, { FC, useRef } from "react";
+import React, { FC, useRef, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Info } from "@geneui/icons";
@@ -18,6 +18,7 @@ const meta: Meta<ITextFieldProps> = {
         size: args({ control: "select", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
+        required: args({ control: "boolean", ...propCategory.states }),
         clearable: args({ control: "boolean", ...propCategory.states }),
         type: args({ control: "select", ...propCategory.appearance }),
         validationStatus: args({ control: "object", ...propCategory.appearance }),
@@ -45,10 +46,12 @@ type Story = StoryObj<ITextFieldProps>;
 
 const StoryComponentWithRef: FC<ITextFieldProps> = (props) => {
     const inputRef = useRef<ITextFieldRef | null>(null);
+    const { value: defaultValue } = props;
+    const [value, setValue] = useState(defaultValue || "");
 
     return (
         <div style={{ width: 300 }}>
-            <TextField {...props} ref={inputRef} />
+            <TextField {...props} value={value} onChange={(e) => setValue(e.target.value)} ref={inputRef} />
         </div>
     );
 };

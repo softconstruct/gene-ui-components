@@ -41,6 +41,11 @@ interface ITextFieldProps {
      */
     disabled?: boolean;
     /**
+     * Marks the `TextField` as a required field. This will apply the `required` attribute
+     * to the underlying `<input>` element and can be used for native form validation.
+     */
+    required?: boolean;
+    /**
      * The type of `TextField`.
      * - `text`: Standard text `input`
      * - `password`: Password `input` (with optional visibility toggle)
@@ -115,13 +120,13 @@ interface ITextFieldProps {
 
 export interface ITextFieldRef {
     focus: () => void;
-    getValue: () => HTMLInputElement | null;
+    getInputRef: () => HTMLInputElement | null;
 }
 
 /**
  * Text field is an input element in a user interface where users can enter and edit text. Text fields are commonly used in forms for collecting user data such as names, email addresses, and messages.
  */
-const TextField = forwardRef<ITextFieldRef | undefined, ITextFieldProps>(
+const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
     (
         {
             inputId,
@@ -136,6 +141,7 @@ const TextField = forwardRef<ITextFieldRef | undefined, ITextFieldProps>(
             onBlur,
             readOnly,
             disabled,
+            required,
             label,
             validationStatus,
             clearable,
@@ -176,7 +182,7 @@ const TextField = forwardRef<ITextFieldRef | undefined, ITextFieldProps>(
             focus: () => {
                 inputRef.current?.focus();
             },
-            getValue: () => inputRef.current
+            getInputRef: () => inputRef.current
         }));
 
         useEffect(() => {
@@ -195,11 +201,11 @@ const TextField = forwardRef<ITextFieldRef | undefined, ITextFieldProps>(
             }
 
             if (limitErrorMessage) setLimitErrorMessage(undefined);
-        }, [inputValue, limitErrorMessage]);
+        }, [inputValue, characterLimit]);
 
         return (
             <div className={classNames("textField", className)}>
-                <Label {...label} className="textField__label">
+                <Label {...label} required={required || label?.required} className="textField__label">
                     <div
                         className={classNames(
                             `textField__wrapper textField__wrapper textField__wrapper_size_${size} textField__wrapper_withIcons`,
@@ -221,6 +227,7 @@ const TextField = forwardRef<ITextFieldRef | undefined, ITextFieldProps>(
                             ref={inputRef}
                             className="textField__input"
                             type={shouldShowPassword ? "text" : type}
+                            required={required}
                             placeholder={placeholder}
                             value={inputValue}
                             onChange={handleChange}

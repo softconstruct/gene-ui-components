@@ -91,6 +91,16 @@ describe("TextField ", () => {
         expect(wrapper.find(".textField__wrapper").hasClass("textField__wrapper_disabled")).toBeTruthy();
     });
 
+    it("renders required prop correctly", () => {
+        const required = true;
+        const label = {
+            text: "Label"
+        };
+        const wrapper = setup.setProps({ required, label });
+
+        expect(wrapper.find(".label__asterisk").exists()).toBeTruthy();
+    });
+
     it("renders label prop correctly", () => {
         const label = {
             text: "Label"
