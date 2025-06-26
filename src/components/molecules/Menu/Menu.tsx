@@ -118,7 +118,7 @@ const cloneChildrenRecursive = (
 ): FunctionComponentElement<IMenuItemProps>[] | ReactElement => {
     return Children.map(children, (child, i) => {
         const generatedId = pathID ? `${pathID}_${i}` : `${i}`;
-
+        if (child?.key === null) return null;
         return cloneElement(
             child,
             {
