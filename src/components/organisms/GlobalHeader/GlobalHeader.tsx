@@ -105,6 +105,7 @@ interface IGlobalHeaderProps {
     partnersSearchPlaceholder?: string;
     /**
      * The property name use as the label for partner name in the dropdown.
+     * The default value is "Partner". This prop is used for internationalization.
      */
     partnersName?: string;
     /**
@@ -163,7 +164,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     partnersLoadingText,
     partnersSearchPlaceholder,
     partnersDisabled,
-    partnersName,
+    partnersName = "Partner",
     partnersIdName,
     limitLabel = "Limit",
     limitUnit,
@@ -185,6 +186,13 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         }
     };
 
+    const onProfileItemSelectHandler = (item) => {
+        if (isMobileBreakpoint && partners && partners.length > 0) {
+            onPartnerSelect?.(item);
+        }
+        onProfileItemSelect?.(item);
+    };
+
     const profileData = useMemo(() => {
         const timeAndLimitForMobile = mobileData(isMobileBreakpoint, timeLabel, limitLabel, limitUnit);
         const logOut = {
@@ -193,8 +201,20 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
             danger: true
         };
 
-        return [...timeAndLimitForMobile, logOut];
-    }, [isMobileBreakpoint, timeLabel, limitLabel, limitUnit]);
+        const partnersData =
+            isMobileBreakpoint && partners && partners.length > 0
+                ? {
+                      title: partnersName || "Partner",
+                      id: "teams",
+                      value: "teams",
+                      children: partners
+                  }
+                : {};
+
+        console.log({ isMobileBreakpoint, partners, ll: partners?.length });
+
+        return [partnersData as IProfileData, {}, ...timeAndLimitForMobile, logOut];
+    }, [isMobileBreakpoint, timeLabel, limitLabel, limitUnit, partners, partnersName, logOutText]);
 
     return (
         <div
@@ -256,7 +276,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                             loadingText={partnersLoadingText}
                             searchPlaceholder={partnersSearchPlaceholder}
                             disabled={partnersDisabled}
-                            name={partnersName}
+                            title={partnersName}
                             idName={partnersIdName}
                         />
                         <Divider direction="vertical" className="globalHeader__divider" />
@@ -309,12 +329,11 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                     </div>
                     <Divider direction="vertical" className="globalHeader__divider" />
                 </div>
-
                 <Profile
                     profileData={profileData}
                     className="globalHeader__profile"
                     fullName="Full Name"
-                    onProfileItemSelect={onProfileItemSelect}
+                    onProfileItemSelect={onProfileItemSelectHandler}
                 />
             </div>
         </div>

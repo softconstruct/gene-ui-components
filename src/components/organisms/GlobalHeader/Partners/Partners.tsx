@@ -24,7 +24,7 @@ interface IPartnersProps {
     loadingText?: string;
     searchPlaceholder?: string;
     disabled?: boolean;
-    name?: string;
+    title?: string;
     idName?: string;
 }
 
@@ -35,7 +35,7 @@ const Partners: FC<IPartnersProps> = ({
     searchPlaceholder,
     loadingText = "Loading",
     disabled = false,
-    name = "Partner",
+    title = "Partner",
     idName = "ID"
 }) => {
     const [propsForProductsPopover, setPropsForProductsPopover] = useState<Record<string, unknown>>({});
@@ -92,7 +92,7 @@ const Partners: FC<IPartnersProps> = ({
         setHasScrolled(true);
         setMappedPartners(() => {
             return partnersSnapshot.filter(
-                (partner) => partner.name.toLowerCase().includes(value) || partner.id.toString().includes(value)
+                (partner) => partner.title.toLowerCase().includes(value) || partner.id.toString().includes(value)
             );
         });
     };
@@ -109,7 +109,7 @@ const Partners: FC<IPartnersProps> = ({
                 iconPosition="after"
                 {...propsForProductsPopover}
             >
-                {selectedPartner?.name || "Partner"}
+                {selectedPartner?.title || "Partner"}
             </Button>
             <Popover
                 setProps={setPropsForProductsPopover}
@@ -133,7 +133,7 @@ const Partners: FC<IPartnersProps> = ({
                                 <input type="search" onChange={searchHandler} placeholder={searchPlaceholder} />
                                 <div className="partners__title">
                                     <Text as="span" className="partners__titleName">
-                                        {name}
+                                        {title}
                                     </Text>
                                     <Text as="span" className="partners__titleID">
                                         {idName}

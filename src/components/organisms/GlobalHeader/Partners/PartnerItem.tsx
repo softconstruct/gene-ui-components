@@ -5,13 +5,13 @@ import classNames from "classnames";
 import Text from "@components/atoms/Text";
 
 export interface IPartnerItemProps {
-    name: string;
+    title: string;
     id: string | number;
     onChange: (id: string | number) => void;
     selected: boolean;
 }
 
-const PartnerItem = forwardRef<HTMLButtonElement, IPartnerItemProps>(({ name, onChange, id, selected }, ref) => {
+const PartnerItem = forwardRef<HTMLButtonElement, IPartnerItemProps>(({ title, onChange, id, selected }, ref) => {
     const handleClick = () => {
         onChange(id);
     };
@@ -23,7 +23,7 @@ const PartnerItem = forwardRef<HTMLButtonElement, IPartnerItemProps>(({ name, on
             ref={ref}
         >
             <Text as="span" className="partners__partnerName">
-                {name}
+                {title}
             </Text>
             <Text as="span" className="partners__partnerID">
                 {id.toString()}
