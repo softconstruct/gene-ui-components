@@ -51,6 +51,10 @@
             width: 0;
             height: 0;
         }
+
+        @-moz-document url-prefix("") {
+            scrollbar-width: none;
+        }
     }
 
     &__content {
