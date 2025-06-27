@@ -23,7 +23,7 @@ interface ITimeProps {
     format?: "24h" | "12h";
 }
 
-const Time: FC<ITimeProps> = ({ timeZone, format = "24 h", className }) => {
+const Time: FC<ITimeProps> = ({ timeZone, format = "24h", className }) => {
     const [time, setTime] = useState<string>("");
 
     useEffect(() => {

@@ -51,7 +51,7 @@ const Partners: FC<IPartnersProps> = ({
 
     useEffect(() => {
         setMappedPartners(partners || []);
-    }, [isProductsOpen]);
+    }, [partners]);
 
     useEffect(() => {
         if (!partners || partners.length === 0) return;
@@ -130,7 +130,13 @@ const Partners: FC<IPartnersProps> = ({
                         <div className="partners__popoverContent">
                             <div className="partners__header">
                                 {/* todo: implement "Search Field" component */}
-                                <input type="search" onChange={searchHandler} placeholder={searchPlaceholder} />
+                                <input
+                                    type="search"
+                                    onChange={searchHandler}
+                                    placeholder={searchPlaceholder}
+                                    aria-label="Search partners"
+                                    role="searchbox"
+                                />
                                 <div className="partners__title">
                                     <Text as="span" className="partners__titleName">
                                         {title}

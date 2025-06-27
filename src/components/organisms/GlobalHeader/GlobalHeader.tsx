@@ -85,7 +85,7 @@ interface IGlobalHeaderProps {
     /**
      * Callback function when a partner is selected from the list.
      */
-    onPartnerSelect?: (partner: IPartnerItemData) => void;
+    onPartnerSelect?: (partner: IPartnerItemData | IMenuItemProps) => void;
     /**
      * Whether the partners dropdown should be disabled.
      */
@@ -186,7 +186,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         }
     };
 
-    const onProfileItemSelectHandler = (item) => {
+    const onProfileItemSelectHandler = (item: IMenuItemProps) => {
         if (isMobileBreakpoint && partners && partners.length > 0) {
             onPartnerSelect?.(item);
         }
@@ -211,9 +211,9 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                   }
                 : {};
 
-        console.log({ isMobileBreakpoint, partners, ll: partners?.length });
-
-        return [partnersData as IProfileData, {}, ...timeAndLimitForMobile, logOut];
+        return [partnersData, ...timeAndLimitForMobile, logOut].filter(
+            (item) => item && typeof item === "object" && "id" in item
+        ) as IProfileData[];
     }, [isMobileBreakpoint, timeLabel, limitLabel, limitUnit, partners, partnersName, logOutText]);
 
     return (
