@@ -205,7 +205,12 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
         return (
             <div className={classNames("textField", className)}>
-                <Label {...label} required={required || label?.required} className="textField__label">
+                <Label
+                    {...label}
+                    required={required || label?.required}
+                    className="textField__label"
+                    disabled={disabled}
+                >
                     <div
                         className={classNames(
                             `textField__wrapper textField__wrapper textField__wrapper_size_${size} textField__wrapper_withIcons`,
@@ -228,6 +233,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             className="textField__input"
                             type={shouldShowPassword ? "text" : type}
                             required={required}
+                            disabled={disabled}
+                            readOnly={readOnly}
                             placeholder={placeholder}
                             value={inputValue}
                             onChange={handleChange}
@@ -235,7 +242,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             onFocus={onInputFocus}
                         />
                         <span className="textField__actions">
-                            {clearable && inputValue.length > 0 && (
+                            {clearable && inputValue.length > 0 && !disabled && !readOnly && (
                                 <Button
                                     Icon={X}
                                     appearance="secondary"
@@ -264,12 +271,15 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             <HelperText
                                 text={limitErrorMessage || validationStatus?.text || ""}
                                 type={limitErrorMessage ? "error" : validationStatus?.type}
+                                disabled={disabled}
                             />
                         )}
-                        {characterLimit && (
+                        {characterLimit?.length && (
                             <Text
                                 as="span"
-                                className="textField__info_text"
+                                className={classNames(`textField__info_text`, {
+                                    textField__info_text_disabled: disabled
+                                })}
                             >{`${inputValue.length} / ${characterLimit.length}`}</Text>
                         )}
                     </div>
