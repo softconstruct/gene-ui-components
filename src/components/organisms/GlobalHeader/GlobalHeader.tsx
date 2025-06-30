@@ -1,4 +1,4 @@
-import React, { cloneElement, FC, MouseEvent, ReactElement, useContext, useMemo } from "react";
+import React, { cloneElement, FC, MouseEvent, ReactElement, useContext, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 
 import { Globe, HamburgerMenu } from "@geneui/icons";
@@ -48,6 +48,7 @@ const mobileData = (
                   title: "limit",
                   id: "limit",
                   disabled: true,
+                  divider: true,
                   ComponentRender: () => (
                       <span className="globalHeader__limit">
                           <Limit limit={limitUnit} label={limitLabel} isMobile={isMobileBreakpoint} />
@@ -146,7 +147,12 @@ interface IGlobalHeaderProps {
      * Receives the selected menu item as an argument.
      */
     onProfileItemSelect?: (item: IMenuItemProps) => void;
+    onLanguageSelect?: (item: IMenuItemProps) => void;
+    languages?: IProfileData[];
     logOutText?: string;
+    myAccountText?: string;
+    settingsText?: string;
+    languageText?: string;
 
     // actionList?: any[]; // todo button group
 }
@@ -174,8 +180,24 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     onProductSelect,
     timeLabel = "Time",
     logOutText,
-    onProfileItemSelect
+    onProfileItemSelect,
+    myAccountText,
+    settingsText,
+    languageText,
+    languages = [],
+    onLanguageSelect
 }) => {
+    const [languagesData, setLanguagesData] = useState<IProfileData[]>(languages);
+    const [partnersData, setPartnersData] = useState<IProfileData[]>([]);
+
+    useEffect(() => {
+        setLanguagesData(languages.map((lang) => ({ ...lang, id: `languages_${lang.id}` })));
+    }, [languages]);
+
+    useEffect(() => {
+        setPartnersData(partners?.map((partner) => ({ ...partner, id: `partners_${partner.id}` })) || []);
+    }, [partners]);
+
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
     const { isMobileBreakpoint = false, isDesktopBreakpoint = false } = breakpoint || {};
@@ -187,34 +209,73 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     };
 
     const onProfileItemSelectHandler = (item: IMenuItemProps) => {
-        if (isMobileBreakpoint && partners && partners.length > 0) {
-            onPartnerSelect?.(item);
+        if (isMobileBreakpoint && item.id.toString().startsWith("partners")) {
+            onPartnerSelect?.({ ...item, id: item.id.toString().replace("partners_", "") });
         }
-        onProfileItemSelect?.(item);
+        if (item.id.toString().startsWith("languages")) {
+            onLanguageSelect?.({ ...item, id: item.id.toString().replace("languages_", "") });
+        } else {
+            onProfileItemSelect?.(item);
+        }
     };
 
     const profileData = useMemo(() => {
         const timeAndLimitForMobile = mobileData(isMobileBreakpoint, timeLabel, limitLabel, limitUnit);
+        const languageTitle = (langText: string): string => {
+            const selectedLanguage = languagesData.find((lang) => lang.selected);
+            return `${langText}: ${selectedLanguage ? selectedLanguage.title : "Select Language"}`;
+        };
+
+        const constantData: IProfileData[] = [
+            {
+                title: myAccountText || "My Account",
+                id: "myAccount",
+                IconAfter: Globe
+            },
+            {
+                title: settingsText || "Settings",
+                id: "settings"
+            },
+            {
+                title: languageTitle(languageText || "Language"),
+                id: "language",
+                divider: true,
+                children: languagesData
+            }
+        ];
         const logOut = {
             title: logOutText || "Log out",
             id: "logOut",
             danger: true
         };
 
-        const partnersData =
+        const partnersDataForProfile =
             isMobileBreakpoint && partners && partners.length > 0
                 ? {
                       title: partnersName || "Partner",
                       id: "teams",
                       value: "teams",
-                      children: partners
+                      children: partnersData
                   }
                 : {};
 
-        return [partnersData, ...timeAndLimitForMobile, logOut].filter(
+        return [partnersDataForProfile, ...timeAndLimitForMobile, ...constantData, logOut].filter(
             (item) => item && typeof item === "object" && "id" in item
         ) as IProfileData[];
-    }, [isMobileBreakpoint, timeLabel, limitLabel, limitUnit, partners, partnersName, logOutText]);
+    }, [
+        isMobileBreakpoint,
+        timeLabel,
+        limitLabel,
+        limitUnit,
+        partners,
+        partnersName,
+        logOutText,
+        myAccountText,
+        settingsText,
+        languageText,
+        languagesData,
+        partnersData
+    ]);
 
     return (
         <div

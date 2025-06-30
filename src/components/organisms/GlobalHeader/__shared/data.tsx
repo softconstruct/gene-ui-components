@@ -1,3 +1,8 @@
+import { Copy, CurrencyGlobal, Globe, HamburgerMenu } from "@geneui/icons";
+
+import { IProfileData } from "@components/molecules/Profile";
+import { IProducts } from "@components/organisms/GlobalHeader/GlobalHeader";
+
 export const partners = [
     { title: "Partner One", id: 1, selected: false },
     { title: "Partner Two", id: 2, selected: false },
@@ -29,4 +34,62 @@ export const partners = [
     { title: "Partner Twenty-Eight", id: 28, selected: false },
     { title: "Partner Twenty-Nine", id: 29, selected: false },
     { title: "Partner Thirty", id: 30, selected: false }
+];
+
+export const products: IProducts = {
+    mainSectionData: [
+        {
+            id: 1,
+            title: "StarBase",
+            withBadge: true,
+            Icon: Globe,
+            disabled: false,
+            selected: true
+        },
+        {
+            id: 2,
+            title: "Pixel Bank",
+            withBadge: true,
+            Icon: CurrencyGlobal,
+            disabled: false
+        },
+        {
+            id: 3,
+            title: "Sky Link",
+            Icon: Copy,
+            disabled: false
+        },
+        {
+            id: 4,
+            title: "Polyglot Hub",
+            Icon: HamburgerMenu,
+            disabled: true
+        }
+    ],
+    secondarySectionData: [
+        {
+            id: 5,
+            title: "Content Forge",
+            Icon: Globe
+        },
+        {
+            id: 6,
+            title: "Cloud Haven",
+            withBadge: true,
+            Icon: CurrencyGlobal
+        }
+    ]
+};
+
+export const languages: IProfileData[] = [
+    { title: "English", id: "en", selected: false },
+    { title: "Español", id: "es", selected: true },
+    { title: "Français", id: "fr", selected: false },
+    { title: "Deutsch", id: "de", selected: false },
+    { title: "Русский", id: "ru", selected: false },
+    { title: "中文", id: "zh", selected: false },
+    { title: "العربية", id: "ar", selected: false },
+    { title: "Português", id: "pt", selected: false },
+    { title: "हिन्दी", id: "hi", selected: false },
+    { title: "Հայերեն", id: "hy", selected: false }
 ];

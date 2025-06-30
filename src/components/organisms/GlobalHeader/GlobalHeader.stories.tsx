@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Copy, CurrencyGlobal, Globe, HamburgerMenu } from "@geneui/icons";
-
-import { partners } from "@components/organisms/GlobalHeader/__shared/data";
+import { IMenuItemProps } from "@components/molecules/Menu";
+import { IProfileData } from "@components/molecules/Profile";
+import { languages, partners, products } from "@components/organisms/GlobalHeader/__shared/data";
 import { IProducts } from "@components/organisms/GlobalHeader/GlobalHeader";
 import { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
 
@@ -11,51 +11,6 @@ import { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Pa
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
 import GlobalHeader, { IGlobalHeaderProps } from "./index";
-
-const products: IProducts = {
-    mainSectionData: [
-        {
-            id: 1,
-            title: "StarBase",
-            withBadge: true,
-            Icon: Globe,
-            disabled: false,
-            selected: true
-        },
-        {
-            id: 2,
-            title: "Pixel Bank",
-            withBadge: true,
-            Icon: CurrencyGlobal,
-            disabled: false
-        },
-        {
-            id: 3,
-            title: "Sky Link",
-            Icon: Copy,
-            disabled: false
-        },
-        {
-            id: 4,
-            title: "Polyglot Hub",
-            Icon: HamburgerMenu,
-            disabled: true
-        }
-    ],
-    secondarySectionData: [
-        {
-            id: 5,
-            title: "Content Forge",
-            Icon: Globe
-        },
-        {
-            id: 6,
-            title: "Cloud Haven",
-            withBadge: true,
-            Icon: CurrencyGlobal
-        }
-    ]
-};
 
 const meta: Meta<IGlobalHeaderProps> = {
     title: "Organisms/GlobalHeader",
@@ -87,10 +42,12 @@ const meta: Meta<IGlobalHeaderProps> = {
 const Template = (props) => {
     const [partnerData, setPartnerData] = useState<IPartnerItemData[]>(partners);
     const [productsData, setProductsData] = useState<IProducts>(products);
+    const [languagesData, setLanguagesData] = useState<IProfileData[]>(languages);
 
     useEffect(() => {
         setPartnerData(partners);
         setProductsData(products);
+        setLanguagesData(languages);
     }, []);
 
     const onPartnerSelect = (partner: IPartnerItemData) => {
@@ -119,14 +76,27 @@ const Template = (props) => {
         });
     };
 
+    const onLanguageSelect = (language: IMenuItemProps) => {
+        setLanguagesData((prev) => {
+            return prev.map((prevLanguage) => {
+                return {
+                    ...prevLanguage,
+                    selected: prevLanguage.id === language.id
+                };
+            });
+        });
+    };
+
     return (
         <div style={{ width: "100%", height: "100%" }}>
             <GlobalHeader
                 {...props}
                 onPartnerSelect={onPartnerSelect}
                 onProductSelect={onProductSelect}
+                onLanguageSelect={onLanguageSelect}
                 partners={partnerData}
                 products={productsData}
+                languages={languagesData}
             />
         </div>
     );
