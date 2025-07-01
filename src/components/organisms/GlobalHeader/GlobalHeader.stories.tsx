@@ -55,7 +55,7 @@ const Template = (props) => {
             return prev.map((prevPartner) => {
                 return {
                     ...prevPartner,
-                    selected: prevPartner.id === partner.id
+                    selected: prevPartner.id.toString() === partner.id.toString()
                 };
             });
         });

@@ -1,4 +1,4 @@
-import React, { cloneElement, FC, MouseEvent, ReactElement, useContext, useEffect, useMemo, useState } from "react";
+import React, { cloneElement, FC, MouseEvent, ReactElement, useContext, useMemo } from "react";
 import classNames from "classnames";
 
 import { Globe, HamburgerMenu } from "@geneui/icons";
@@ -187,15 +187,12 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     languages = [],
     onLanguageSelect
 }) => {
-    const [languagesData, setLanguagesData] = useState<IProfileData[]>(languages);
-    const [partnersData, setPartnersData] = useState<IProfileData[]>([]);
-
-    useEffect(() => {
-        setLanguagesData(languages.map((lang) => ({ ...lang, id: `languages_${lang.id}` })));
+    const languagesData = useMemo(() => {
+        return languages?.map((lang) => ({ ...lang, id: `languages_${lang.id}` })) || [];
     }, [languages]);
 
-    useEffect(() => {
-        setPartnersData(partners?.map((partner) => ({ ...partner, id: `partners_${partner.id}` })) || []);
+    const partnersData = useMemo(() => {
+        return partners?.map((partner) => ({ ...partner, id: `partners_${partner.id}` })) || [];
     }, [partners]);
 
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
@@ -229,8 +226,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         const constantData: IProfileData[] = [
             {
                 title: myAccountText || "My Account",
-                id: "myAccount",
-                IconAfter: Globe
+                id: "myAccount"
             },
             {
                 title: settingsText || "Settings",
