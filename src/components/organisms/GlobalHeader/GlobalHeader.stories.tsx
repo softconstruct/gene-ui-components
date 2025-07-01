@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { IProfileData } from "@components/molecules/Profile";
-import { languages, partners, products } from "@components/organisms/GlobalHeader/__shared/data";
+import { languages, partners, products, webWallets } from "@components/organisms/GlobalHeader/__shared/data";
 import { IProducts } from "@components/organisms/GlobalHeader/GlobalHeader";
 import { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
 
@@ -43,11 +43,13 @@ const Template = (props) => {
     const [partnerData, setPartnerData] = useState<IPartnerItemData[]>(partners);
     const [productsData, setProductsData] = useState<IProducts>(products);
     const [languagesData, setLanguagesData] = useState<IProfileData[]>(languages);
+    const [walletData, setWalletData] = useState<IProfileData[]>(webWallets);
 
     useEffect(() => {
         setPartnerData(partners);
         setProductsData(products);
         setLanguagesData(languages);
+        setWalletData(webWallets);
     }, []);
 
     const onPartnerSelect = (partner: IPartnerItemData) => {
@@ -87,6 +89,17 @@ const Template = (props) => {
         });
     };
 
+    const onWalletSelect = (wallet: IMenuItemProps) => {
+        setWalletData((prev) => {
+            return prev.map((prevWallet) => {
+                return {
+                    ...prevWallet,
+                    selected: prevWallet.id === wallet.id
+                };
+            });
+        });
+    };
+
     return (
         <div style={{ width: "100%", height: "100%" }}>
             <GlobalHeader
@@ -94,9 +107,11 @@ const Template = (props) => {
                 onPartnerSelect={onPartnerSelect}
                 onProductSelect={onProductSelect}
                 onLanguageSelect={onLanguageSelect}
+                onWalletSelect={onWalletSelect}
                 partners={partnerData}
                 products={productsData}
                 languages={languagesData}
+                wallet={walletData}
             />
         </div>
     );

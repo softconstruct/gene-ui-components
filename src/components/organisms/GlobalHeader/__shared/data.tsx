@@ -43,27 +43,23 @@ export const products: IProducts = {
             title: "StarBase",
             withBadge: true,
             Icon: Globe,
-            disabled: false,
-            selected: true
+            disabled: false
         },
         {
             id: 2,
             title: "Pixel Bank",
             withBadge: true,
-            Icon: CurrencyGlobal,
-            disabled: false
+            Icon: CurrencyGlobal
         },
         {
             id: 3,
             title: "Sky Link",
-            Icon: Copy,
-            disabled: false
+            Icon: Copy
         },
         {
             id: 4,
             title: "Polyglot Hub",
-            Icon: HamburgerMenu,
-            disabled: true
+            Icon: HamburgerMenu
         }
     ],
     secondarySectionData: [
@@ -92,4 +88,12 @@ export const languages: IProfileData[] = [
     { title: "Português", id: "pt", selected: false },
     { title: "हिन्दी", id: "hi", selected: false },
     { title: "Հայերեն", id: "hy", selected: false }
+];
+
+export const webWallets: IProfileData[] = [
+    { title: "MetaMask", id: "metamask", selected: true },
+    { title: "Coinbase Wallet", id: "coinbase", selected: false },
+    { title: "Trust Wallet", id: "trust", selected: false },
+    { title: "Rainbow Wallet", id: "rainbow", selected: false },
+    { title: "Binance Web Wallet", id: "binance", selected: false }
 ];

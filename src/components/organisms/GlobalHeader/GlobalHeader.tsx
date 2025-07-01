@@ -149,10 +149,16 @@ interface IGlobalHeaderProps {
     onProfileItemSelect?: (item: IMenuItemProps) => void;
     onLanguageSelect?: (item: IMenuItemProps) => void;
     languages?: IProfileData[];
+    languageText?: string;
     logOutText?: string;
     myAccountText?: string;
     settingsText?: string;
-    languageText?: string;
+    /**
+     * --------------.
+     */
+    wallet?: IProfileData[];
+    walletText?: string;
+    onWalletSelect?: (item: IMenuItemProps) => void;
 
     // actionList?: any[]; // todo button group
 }
@@ -181,11 +187,14 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     timeLabel = "Time",
     logOutText,
     onProfileItemSelect,
-    myAccountText,
-    settingsText,
-    languageText,
+    myAccountText = "My Account",
+    settingsText = "Settings",
+    languageText = "Language",
     languages = [],
-    onLanguageSelect
+    onLanguageSelect,
+    wallet,
+    walletText = "Wallet",
+    onWalletSelect
 }) => {
     const languagesData = useMemo(() => {
         return languages?.map((lang) => ({ ...lang, id: `languages_${lang.id}` })) || [];
@@ -194,6 +203,10 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     const partnersData = useMemo(() => {
         return partners?.map((partner) => ({ ...partner, id: `partners_${partner.id}` })) || [];
     }, [partners]);
+
+    const walletData = useMemo(() => {
+        return wallet?.map((walletItem) => ({ ...walletItem, id: `wallet_${walletItem.id}` })) || [];
+    }, [wallet]);
 
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
@@ -208,9 +221,10 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     const onProfileItemSelectHandler = (item: IMenuItemProps) => {
         if (isMobileBreakpoint && item.id.toString().startsWith("partners")) {
             onPartnerSelect?.({ ...item, id: item.id.toString().replace("partners_", "") });
-        }
-        if (item.id.toString().startsWith("languages")) {
+        } else if (item.id.toString().startsWith("languages")) {
             onLanguageSelect?.({ ...item, id: item.id.toString().replace("languages_", "") });
+        } else if (item.id.toString().startsWith("wallet")) {
+            onWalletSelect?.({ ...item, id: item.id.toString().replace("wallet_", "") });
         } else {
             onProfileItemSelect?.(item);
         }
@@ -223,21 +237,35 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
             return `${langText}: ${selectedLanguage ? selectedLanguage.title : "Select Language"}`;
         };
 
+        const languagesDataCheck: IProfileData | null =
+            languagesData.length > 0
+                ? {
+                      title: languageTitle(languageText),
+                      id: "language",
+                      divider: true,
+                      children: languagesData
+                  }
+                : null;
+        const walletDataCheck: IProfileData | null =
+            walletData.length > 0
+                ? {
+                      title: walletText,
+                      id: "wallet",
+                      children: walletData
+                  }
+                : null;
+
         const constantData: IProfileData[] = [
             {
-                title: myAccountText || "My Account",
+                title: myAccountText,
                 id: "myAccount"
             },
             {
-                title: settingsText || "Settings",
+                title: settingsText,
                 id: "settings"
             },
-            {
-                title: languageTitle(languageText || "Language"),
-                id: "language",
-                divider: true,
-                children: languagesData
-            }
+            ...(languagesDataCheck ? [languagesDataCheck] : []),
+            ...(walletDataCheck ? [walletDataCheck] : [])
         ];
         const logOut = {
             title: logOutText || "Log out",
@@ -270,7 +298,9 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         settingsText,
         languageText,
         languagesData,
-        partnersData
+        partnersData,
+        walletData,
+        walletText
     ]);
 
     return (
