@@ -165,6 +165,11 @@ interface IGlobalHeaderProps {
     currency?: IProfileData[];
     currencyText?: string;
     onCurrencySelect?: (item: IMenuItemProps) => void;
+    /**
+     * --------------.
+     */
+    currencyConvertorText?: string;
+    onCurrencyConvertorSelect?: (item: IMenuItemProps) => void;
 
     // actionList?: any[]; // todo button group
 }
@@ -203,7 +208,9 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     onWalletSelect,
     currency,
     currencyText = "Reporting Currency",
-    onCurrencySelect
+    onCurrencySelect,
+    currencyConvertorText,
+    onCurrencyConvertorSelect
 }) => {
     const languagesData = useMemo(() => {
         return languages?.map((lang) => ({ ...lang, id: `languages_${lang.id}` })) || [];
@@ -232,24 +239,30 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     };
 
     const onProfileItemSelectHandler = (item: IMenuItemProps) => {
+        let changedItem = { ...item };
         if (isMobileBreakpoint && item.id.toString().startsWith("partners_")) {
-            onPartnerSelect?.({ ...item, id: item.id.toString().replace("partners_", "") });
+            changedItem = { ...item, id: item.id.toString().replace("partners_", "") };
+            onPartnerSelect?.(changedItem);
         } else if (item.id.toString().startsWith("languages_")) {
-            onLanguageSelect?.({ ...item, id: item.id.toString().replace("languages_", "") });
+            changedItem = { ...item, id: item.id.toString().replace("languages_", "") };
+            onLanguageSelect?.(changedItem);
         } else if (item.id.toString().startsWith("wallet_")) {
-            onWalletSelect?.({ ...item, id: item.id.toString().replace("wallet_", "") });
+            changedItem = { ...item, id: item.id.toString().replace("wallet_", "") };
+            onWalletSelect?.(changedItem);
         } else if (item.id.toString().startsWith("currency_")) {
-            onCurrencySelect?.({ ...item, id: item.id.toString().replace("currency_", "") });
-        } else {
-            onProfileItemSelect?.(item);
+            changedItem = { ...item, id: item.id.toString().replace("currency_", "") };
+            onCurrencySelect?.(changedItem);
+        } else if (item.id.toString().includes("currencyConvertor")) {
+            onCurrencyConvertorSelect?.(changedItem);
         }
+        onProfileItemSelect?.(changedItem);
     };
 
     const profileData = useMemo(() => {
         const timeAndLimitForMobile = mobileData(isMobileBreakpoint, timeLabel, limitLabel, limitUnit);
-        const dynamicTitleCreator = (title: string, data): string => {
+        const dynamicTitleCreator = (title: string, data: IProfileData[]): string => {
             const selectedItem = data.find((item) => item.selected);
-            return `${title}${selectedItem ? `: ${selectedItem.title.split(" ").at(-1).replace(")", "").replace("(", "")}` : ""}`;
+            return `${title}${selectedItem && selectedItem.title ? `: ${selectedItem.title.replace(")", "").replace("(", "").split(" ")["-1"]}` : ""}`;
         };
 
         const languagesDataCheck: IProfileData | null =
@@ -279,6 +292,13 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                   }
                 : null;
 
+        const currencyConvertorCheck: IProfileData | null = currencyConvertorText
+            ? {
+                  title: currencyConvertorText,
+                  id: "currencyConvertor"
+              }
+            : null;
+
         const constantData: IProfileData[] = [
             {
                 title: myAccountText,
@@ -290,7 +310,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
             },
             ...(languagesDataCheck ? [languagesDataCheck] : []),
             ...(walletDataCheck ? [walletDataCheck] : []),
-            ...(currencyCheck ? [currencyCheck] : [])
+            ...(currencyCheck ? [currencyCheck] : []),
+            ...(currencyConvertorCheck ? [currencyConvertorCheck] : [])
         ];
         const logOut = {
             title: logOutText || "Log out",

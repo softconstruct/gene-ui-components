@@ -133,6 +133,7 @@ const Template = (props) => {
                 wallet={walletData}
                 currency={currencyData}
                 onCurrencySelect={onCurrencySelect}
+                currencyConvertorText="Currency Convertor"
             />
         </div>
     );
