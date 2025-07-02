@@ -159,6 +159,12 @@ interface IGlobalHeaderProps {
     wallet?: IProfileData[];
     walletText?: string;
     onWalletSelect?: (item: IMenuItemProps) => void;
+    /**
+     * --------------.
+     */
+    currency?: IProfileData[];
+    currencyText?: string;
+    onCurrencySelect?: (item: IMenuItemProps) => void;
 
     // actionList?: any[]; // todo button group
 }
@@ -194,7 +200,10 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     onLanguageSelect,
     wallet,
     walletText = "Wallet",
-    onWalletSelect
+    onWalletSelect,
+    currency,
+    currencyText = "Reporting Currency",
+    onCurrencySelect
 }) => {
     const languagesData = useMemo(() => {
         return languages?.map((lang) => ({ ...lang, id: `languages_${lang.id}` })) || [];
@@ -208,6 +217,10 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         return wallet?.map((walletItem) => ({ ...walletItem, id: `wallet_${walletItem.id}` })) || [];
     }, [wallet]);
 
+    const currencyData = useMemo(() => {
+        return currency?.map((currencyItem) => ({ ...currencyItem, id: `currency_${currencyItem.id}` })) || [];
+    }, [currency]);
+
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
     const { isMobileBreakpoint = false, isDesktopBreakpoint = false } = breakpoint || {};
@@ -219,12 +232,14 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     };
 
     const onProfileItemSelectHandler = (item: IMenuItemProps) => {
-        if (isMobileBreakpoint && item.id.toString().startsWith("partners")) {
+        if (isMobileBreakpoint && item.id.toString().startsWith("partners_")) {
             onPartnerSelect?.({ ...item, id: item.id.toString().replace("partners_", "") });
-        } else if (item.id.toString().startsWith("languages")) {
+        } else if (item.id.toString().startsWith("languages_")) {
             onLanguageSelect?.({ ...item, id: item.id.toString().replace("languages_", "") });
-        } else if (item.id.toString().startsWith("wallet")) {
+        } else if (item.id.toString().startsWith("wallet_")) {
             onWalletSelect?.({ ...item, id: item.id.toString().replace("wallet_", "") });
+        } else if (item.id.toString().startsWith("currency_")) {
+            onCurrencySelect?.({ ...item, id: item.id.toString().replace("currency_", "") });
         } else {
             onProfileItemSelect?.(item);
         }
@@ -232,15 +247,15 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
 
     const profileData = useMemo(() => {
         const timeAndLimitForMobile = mobileData(isMobileBreakpoint, timeLabel, limitLabel, limitUnit);
-        const languageTitle = (langText: string): string => {
-            const selectedLanguage = languagesData.find((lang) => lang.selected);
-            return `${langText}: ${selectedLanguage ? selectedLanguage.title : "Select Language"}`;
+        const dynamicTitleCreator = (title: string, data): string => {
+            const selectedItem = data.find((item) => item.selected);
+            return `${title}${selectedItem ? `: ${selectedItem.title.split(" ").at(-1).replace(")", "").replace("(", "")}` : ""}`;
         };
 
         const languagesDataCheck: IProfileData | null =
             languagesData.length > 0
                 ? {
-                      title: languageTitle(languageText),
+                      title: dynamicTitleCreator(languageText, languagesData),
                       id: "language",
                       divider: true,
                       children: languagesData
@@ -255,6 +270,15 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                   }
                 : null;
 
+        const currencyCheck: IProfileData | null =
+            currencyData.length > 0
+                ? {
+                      title: dynamicTitleCreator(currencyText, currencyData),
+                      id: "currency",
+                      children: currencyData
+                  }
+                : null;
+
         const constantData: IProfileData[] = [
             {
                 title: myAccountText,
@@ -265,7 +289,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                 id: "settings"
             },
             ...(languagesDataCheck ? [languagesDataCheck] : []),
-            ...(walletDataCheck ? [walletDataCheck] : [])
+            ...(walletDataCheck ? [walletDataCheck] : []),
+            ...(currencyCheck ? [currencyCheck] : [])
         ];
         const logOut = {
             title: logOutText || "Log out",
@@ -300,7 +325,9 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         languagesData,
         partnersData,
         walletData,
-        walletText
+        walletText,
+        currencyData,
+        currencyText
     ]);
 
     return (

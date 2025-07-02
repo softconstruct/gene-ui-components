@@ -97,3 +97,14 @@ export const webWallets: IProfileData[] = [
     { title: "Rainbow Wallet", id: "rainbow", selected: false },
     { title: "Binance Web Wallet", id: "binance", selected: false }
 ];
+
+export const currencies: IProfileData[] = [
+    { title: "US Dollar (USD)", id: "usd", selected: false },
+    { title: "Euro (EUR)", id: "eur", selected: false },
+    { title: "British Pound (GBP)", id: "gbp", selected: false },
+    { title: "Japanese Yen (JPY)", id: "jpy", selected: false },
+    { title: "Armenian Dram (AMD)", id: "amd", selected: false },
+    { title: "Chinese Yuan (CNY)", id: "cny", selected: false },
+    { title: "Russian Ruble (RUB)", id: "rub", selected: false },
+    { title: "Indian Rupee (INR)", id: "inr", selected: false }
+];

@@ -3,7 +3,13 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { IProfileData } from "@components/molecules/Profile";
-import { languages, partners, products, webWallets } from "@components/organisms/GlobalHeader/__shared/data";
+import {
+    currencies,
+    languages,
+    partners,
+    products,
+    webWallets
+} from "@components/organisms/GlobalHeader/__shared/data";
 import { IProducts } from "@components/organisms/GlobalHeader/GlobalHeader";
 import { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
 
@@ -44,12 +50,14 @@ const Template = (props) => {
     const [productsData, setProductsData] = useState<IProducts>(products);
     const [languagesData, setLanguagesData] = useState<IProfileData[]>(languages);
     const [walletData, setWalletData] = useState<IProfileData[]>(webWallets);
+    const [currencyData, setCurrencyData] = useState<IProfileData[]>(currencies);
 
     useEffect(() => {
         setPartnerData(partners);
         setProductsData(products);
         setLanguagesData(languages);
         setWalletData(webWallets);
+        setCurrencyData(currencies);
     }, []);
 
     const onPartnerSelect = (partner: IPartnerItemData) => {
@@ -100,6 +108,17 @@ const Template = (props) => {
         });
     };
 
+    const onCurrencySelect = (currency: IMenuItemProps) => {
+        setCurrencyData((prev) => {
+            return prev.map((prevCurrency) => {
+                return {
+                    ...prevCurrency,
+                    selected: prevCurrency.id === currency.id
+                };
+            });
+        });
+    };
+
     return (
         <div style={{ width: "100%", height: "100%" }}>
             <GlobalHeader
@@ -112,6 +131,8 @@ const Template = (props) => {
                 products={productsData}
                 languages={languagesData}
                 wallet={walletData}
+                currency={currencyData}
+                onCurrencySelect={onCurrencySelect}
             />
         </div>
     );
