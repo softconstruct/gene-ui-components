@@ -305,7 +305,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                 ? {
                       title: walletText,
                       id: "wallet",
-                      children: walletData
+                      children: walletData,
+                      divider: activityData.length === 0 && !currencyConvertorText && currencyData.length === 0
                   }
                 : null;
 
@@ -314,9 +315,19 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                 ? {
                       title: dynamicTitleCreator(currencyText, currencyData, true),
                       id: "currency",
-                      children: currencyData
+                      children: currencyData,
+                      divider: activityData.length === 0 && !currencyConvertorText
                   }
                 : null;
+
+        const currencyConvertorCheck: IProfileData | null = currencyConvertorText
+            ? {
+                  title: currencyConvertorText,
+                  id: "currencyConvertor",
+                  divider: activityData.length === 0
+              }
+            : null;
+
         const activityCheck: IProfileData | null =
             activityData.length > 0
                 ? {
@@ -326,13 +337,6 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                       divider: true
                   }
                 : null;
-
-        const currencyConvertorCheck: IProfileData | null = currencyConvertorText
-            ? {
-                  title: currencyConvertorText,
-                  id: "currencyConvertor"
-              }
-            : null;
 
         const constantData: IProfileData[] = [
             {
