@@ -168,6 +168,12 @@ interface IGlobalHeaderProps {
     /**
      * --------------.
      */
+    activity?: IProfileData[];
+    activityText?: string;
+    onActivitySelect?: (item: IMenuItemProps) => void;
+    /**
+     * --------------.
+     */
     currencyConvertorText?: string;
     onCurrencyConvertorSelect?: (item: IMenuItemProps) => void;
 
@@ -208,6 +214,9 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     onWalletSelect,
     currency,
     currencyText = "Reporting Currency",
+    activity,
+    activityText = "Activity",
+    onActivitySelect,
     onCurrencySelect,
     currencyConvertorText,
     onCurrencyConvertorSelect
@@ -227,6 +236,10 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     const currencyData = useMemo(() => {
         return currency?.map((currencyItem) => ({ ...currencyItem, id: `currency_${currencyItem.id}` })) || [];
     }, [currency]);
+
+    const activityData = useMemo(() => {
+        return activity?.map((activityItem) => ({ ...activityItem, id: `activityItem_${activityItem.id}` })) || [];
+    }, [activity]);
 
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
@@ -254,15 +267,21 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
             onCurrencySelect?.(changedItem);
         } else if (item.id.toString().includes("currencyConvertor")) {
             onCurrencyConvertorSelect?.(changedItem);
+        } else if (item.id.toString().includes("activityItem_")) {
+            changedItem = { ...item, id: item.id.toString().replace("activityItem_", "") };
+            onActivitySelect?.(changedItem);
         }
         onProfileItemSelect?.(changedItem);
     };
 
     const profileData = useMemo(() => {
         const timeAndLimitForMobile = mobileData(isMobileBreakpoint, timeLabel, limitLabel, limitUnit);
-        const dynamicTitleCreator = (title: string, data: IProfileData[]): string => {
+        const dynamicTitleCreator = (title: string, data: IProfileData[], needLastElement = false): string => {
             const selectedItem = data.find((item) => item.selected);
-            return `${title}${selectedItem && selectedItem.title ? `: ${selectedItem.title.replace(")", "").replace("(", "").split(" ")["-1"]}` : ""}`;
+            if (needLastElement) {
+                return `${title}${selectedItem && selectedItem.title ? `: ${selectedItem.title.replace(")", "").replace("(", "").split(" ").at(-1)}` : ""}`;
+            }
+            return `${title}${selectedItem && selectedItem.title ? `: ${selectedItem.title}` : ""}`;
         };
 
         const languagesDataCheck: IProfileData | null =
@@ -286,9 +305,17 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         const currencyCheck: IProfileData | null =
             currencyData.length > 0
                 ? {
-                      title: dynamicTitleCreator(currencyText, currencyData),
+                      title: dynamicTitleCreator(currencyText, currencyData, true),
                       id: "currency",
                       children: currencyData
+                  }
+                : null;
+        const activityCheck: IProfileData | null =
+            activityData.length > 0
+                ? {
+                      title: dynamicTitleCreator(activityText, activityData),
+                      id: "activity",
+                      children: activityData
                   }
                 : null;
 
@@ -311,7 +338,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
             ...(languagesDataCheck ? [languagesDataCheck] : []),
             ...(walletDataCheck ? [walletDataCheck] : []),
             ...(currencyCheck ? [currencyCheck] : []),
-            ...(currencyConvertorCheck ? [currencyConvertorCheck] : [])
+            ...(currencyConvertorCheck ? [currencyConvertorCheck] : []),
+            ...(activityCheck ? [activityCheck] : [])
         ];
         const logOut = {
             title: logOutText || "Log out",
@@ -348,7 +376,9 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         walletData,
         walletText,
         currencyData,
-        currencyText
+        currencyText,
+        activityData,
+        activityText
     ]);
 
     return (

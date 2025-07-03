@@ -108,3 +108,9 @@ export const currencies: IProfileData[] = [
     { title: "Russian Ruble (RUB)", id: "rub", selected: false },
     { title: "Indian Rupee (INR)", id: "inr", selected: false }
 ];
+
+export const activities: IProfileData[] = [
+    { title: "Exclude CPA", id: "exclude_cpa", selected: false },
+    { title: "High Depositors", id: "include_depositors", selected: false },
+    { title: "Inactive Users", id: "target_inactive", selected: false }
+];

@@ -4,6 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { IProfileData } from "@components/molecules/Profile";
 import {
+    activities,
     currencies,
     languages,
     partners,
@@ -51,6 +52,7 @@ const Template = (props) => {
     const [languagesData, setLanguagesData] = useState<IProfileData[]>(languages);
     const [walletData, setWalletData] = useState<IProfileData[]>(webWallets);
     const [currencyData, setCurrencyData] = useState<IProfileData[]>(currencies);
+    const [activityData, setActivityData] = useState<IProfileData[]>(activities);
 
     useEffect(() => {
         setPartnerData(partners);
@@ -58,6 +60,7 @@ const Template = (props) => {
         setLanguagesData(languages);
         setWalletData(webWallets);
         setCurrencyData(currencies);
+        setActivityData(activities);
     }, []);
 
     const onPartnerSelect = (partner: IPartnerItemData) => {
@@ -119,6 +122,17 @@ const Template = (props) => {
         });
     };
 
+    const onActivitiesSelect = (currency: IMenuItemProps) => {
+        setActivityData((prev) => {
+            return prev.map((prevActivity) => {
+                return {
+                    ...prevActivity,
+                    selected: prevActivity.id === currency.id
+                };
+            });
+        });
+    };
+
     return (
         <div style={{ width: "100%", height: "100%" }}>
             <GlobalHeader
@@ -134,6 +148,8 @@ const Template = (props) => {
                 currency={currencyData}
                 onCurrencySelect={onCurrencySelect}
                 currencyConvertorText="Currency Convertor"
+                activity={activityData}
+                onActivitySelect={onActivitiesSelect}
             />
         </div>
     );
