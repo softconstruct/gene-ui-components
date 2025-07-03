@@ -1,4 +1,4 @@
-import React, { cloneElement, FC, MouseEvent, ReactElement, useContext, useMemo } from "react";
+import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode, useContext, useMemo } from "react";
 import classNames from "classnames";
 
 import { Globe, HamburgerMenu } from "@geneui/icons";
@@ -7,7 +7,6 @@ import { Globe, HamburgerMenu } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import Logo from "@components/atoms/Logo";
-import Text from "@components/atoms/Text";
 import {
     IProductProps,
     Product,
@@ -176,6 +175,12 @@ interface IGlobalHeaderProps {
      */
     currencyConvertorText?: string;
     onCurrencyConvertorSelect?: (item: IMenuItemProps) => void;
+    /**
+     * Optional React component or element to display dynamic content in the header's left section,
+     * positioned adjacent to the logo. Commonly used for real-time information such as exchange rates,
+     * system status, etc.
+     */
+    leftContent?: ReactNode;
 
     // actionList?: any[]; // todo button group
 }
@@ -219,7 +224,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     onActivitySelect,
     onCurrencySelect,
     currencyConvertorText,
-    onCurrencyConvertorSelect
+    onCurrencyConvertorSelect,
+    leftContent = null
 }) => {
     const languagesData = useMemo(() => {
         return languages?.map((lang) => ({ ...lang, id: `languages_${lang.id}` })) || [];
@@ -293,6 +299,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                       children: languagesData
                   }
                 : null;
+
         const walletDataCheck: IProfileData | null =
             walletData.length > 0
                 ? {
@@ -315,7 +322,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                 ? {
                       title: dynamicTitleCreator(activityText, activityData),
                       id: "activity",
-                      children: activityData
+                      children: activityData,
+                      divider: true
                   }
                 : null;
 
@@ -407,29 +415,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                     <Logo className="globalHeader__logo" type="logomark" appearance="inverse" size="small" />
                 )}
 
-                {isDesktopBreakpoint && (
-                    <div className="globalHeader__ftn">
-                        <div className="globalHeader__amount">
-                            <Text as="span" variant="captionLargeMedium">
-                                1FTN
-                            </Text>
-                            <Text as="span" variant="captionLargeMedium">
-                                =
-                            </Text>
-                            <Text as="span" variant="captionLargeMedium">
-                                2.3698
-                            </Text>
-                            <Text as="span" variant="captionLargeMedium">
-                                USDT
-                            </Text>
-                        </div>
-                        <div className="globalHeader__domain">
-                            <Text as="span" variant="captionLargeMedium">
-                                exchange.fastex.com
-                            </Text>
-                        </div>
-                    </div>
-                )}
+                {isDesktopBreakpoint && leftContent}
             </div>
             <div className="globalHeader_side_right">
                 {partners && !isMobileBreakpoint && (

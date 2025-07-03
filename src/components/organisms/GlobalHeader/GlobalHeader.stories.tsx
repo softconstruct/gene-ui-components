@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import Text from "@components/atoms/Text";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { IProfileData } from "@components/molecules/Profile";
 import {
@@ -18,6 +19,32 @@ import { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Pa
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
 import GlobalHeader, { IGlobalHeaderProps } from "./index";
+
+const LeftContent = () => {
+    return (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", alignItems: "center", columnGap: 10, color: "#fff" }}>
+                <Text as="span" variant="captionLargeMedium">
+                    1FTN
+                </Text>
+                <Text as="span" variant="captionLargeMedium">
+                    =
+                </Text>
+                <Text as="span" variant="captionLargeMedium">
+                    2.3698
+                </Text>
+                <Text as="span" variant="captionLargeMedium">
+                    USDT
+                </Text>
+            </div>
+            <div className="globalHeader__domain">
+                <Text as="span" variant="captionLargeMedium">
+                    exchange.fastex.com
+                </Text>
+            </div>
+        </div>
+    );
+};
 
 const meta: Meta<IGlobalHeaderProps> = {
     title: "Organisms/GlobalHeader",
@@ -150,6 +177,7 @@ const Template = (props) => {
                 currencyConvertorText="Currency Convertor"
                 activity={activityData}
                 onActivitySelect={onActivitiesSelect}
+                leftContent={<LeftContent />}
             />
         </div>
     );

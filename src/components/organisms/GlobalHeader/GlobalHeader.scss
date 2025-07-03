@@ -37,18 +37,6 @@
         }
     }
 
-    &__ftn {
-        display: flex;
-        flex-direction: column;
-    }
-
-    &__amount {
-        display: flex;
-        align-items: center;
-        column-gap: var(--guit-ref-spacing-small);
-        color: var(--guit-sem-color-foreground-inverse-notheme);
-    }
-
     &__domain {
         display: flex;
         align-items: center;
