@@ -1,9 +1,8 @@
 import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode, useContext, useMemo } from "react";
 import classNames from "classnames";
 
-import { Bell, Globe, HamburgerMenu, QuestionMark } from "@geneui/icons";
+import { HamburgerMenu, IconProps, QuestionMark } from "@geneui/icons";
 
-import Badge from "@components/atoms/Badge";
 // Components
 import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
@@ -62,6 +61,13 @@ const mobileData = (
 export interface IProducts {
     mainSectionData?: IProductProps[];
     secondarySectionData?: IProductProps[];
+}
+
+export interface IAction {
+    title: string;
+    Icon: FC<IconProps>;
+    id: string;
+    onActionSelect: (action: IAction) => void;
 }
 
 interface IGlobalHeaderProps {
@@ -187,6 +193,7 @@ interface IGlobalHeaderProps {
      * If not provided, the Help button will not be displayed in the header.
      */
     onHelpActionSelect?: () => void;
+    actions?: IAction[];
 
     // actionList?: any[]; // todo button group
 }
@@ -232,8 +239,13 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     currencyConvertorText,
     onCurrencyConvertorSelect,
     leftContent = null,
-    onHelpActionSelect
+    onHelpActionSelect,
+    actions
 }) => {
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
+
+    const { isMobileBreakpoint = false, isDesktopBreakpoint = false } = breakpoint || {};
+
     const languagesData = useMemo(() => {
         return languages?.map((lang) => ({ ...lang, id: `languages_${lang.id}` })) || [];
     }, [languages]);
@@ -253,10 +265,6 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     const activityData = useMemo(() => {
         return activity?.map((activityItem) => ({ ...activityItem, id: `activityItem_${activityItem.id}` })) || [];
     }, [activity]);
-
-    const { breakpoint } = useContext(GeneUIDesignSystemContext);
-
-    const { isMobileBreakpoint = false, isDesktopBreakpoint = false } = breakpoint || {};
 
     const onNavigationButtonClickHandler = (e: MouseEvent<HTMLButtonElement>) => {
         if (onNavigationButtonClick) {
@@ -283,6 +291,11 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         } else if (item.id.toString().includes("activityItem_")) {
             changedItem = { ...item, id: item.id.toString().replace("activityItem_", "") };
             onActivitySelect?.(changedItem);
+        } else if (actions && actions.some((action) => action.id === item.id)) {
+            const foundedAction = actions.find((action) => action.id === item.id);
+            if (foundedAction && foundedAction.onActionSelect) {
+                foundedAction.onActionSelect(foundedAction);
+            }
         }
         onProfileItemSelect?.(changedItem);
     };
@@ -345,6 +358,17 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                   }
                 : null;
 
+        const customActionsCheck: IProfileData[] | null =
+            actions && actions.length > 0 && !isDesktopBreakpoint
+                ? actions.map((action, index) => {
+                      return {
+                          title: action.title,
+                          id: action.id,
+                          divider: index === actions.length - 1
+                      };
+                  })
+                : null;
+
         const constantData: IProfileData[] = [
             {
                 title: myAccountText,
@@ -358,7 +382,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
             ...(walletDataCheck ? [walletDataCheck] : []),
             ...(currencyCheck ? [currencyCheck] : []),
             ...(currencyConvertorCheck ? [currencyConvertorCheck] : []),
-            ...(activityCheck ? [activityCheck] : [])
+            ...(activityCheck ? [activityCheck] : []),
+            ...(customActionsCheck || [])
         ];
         const logOut = {
             title: logOutText || "Log out",
@@ -456,21 +481,30 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                         <Divider direction="vertical" className="globalHeader__divider" />
                     </div>
                 )}
-
-                <div className="globalHeader__item">
-                    <div className="globalHeader__actions">
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
-                        <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" />
+                {actions && isDesktopBreakpoint && (
+                    <div className="globalHeader__item">
+                        <div className="globalHeader__actions">
+                            {actions.map((action) => {
+                                return (
+                                    <Button
+                                        onClick={() => action.onActionSelect(action)}
+                                        Icon={action.Icon}
+                                        appearance="inverse"
+                                        layout="text"
+                                        size="medium"
+                                    />
+                                );
+                            })}
+                        </div>
+                        <Divider direction="vertical" className="globalHeader__divider" />
                     </div>
-                    <Divider direction="vertical" className="globalHeader__divider" />
-                </div>
+                )}
                 <div className="globalHeader__item">
                     <div className="globalHeader__actions">
-                        {/* todo: add popover and notifications section */}
-                        <Badge appearance="brand" size="3xSmall">
-                            <Button onClick={() => {}} Icon={Bell} appearance="inverse" layout="text" size="medium" />
-                        </Badge>
+                        {/* todo: add popover and notifications section after design ready */}
+                        {/* <Badge appearance="brand" size="3xSmall"> */}
+                        {/*    <Button onClick={() => {}} Icon={Bell} appearance="inverse" layout="text" size="medium" /> */}
+                        {/* </Badge> */}
                         {onHelpActionSelect && (
                             <Button
                                 onClick={onHelpActionSelect}

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import { Box, Messages } from "@geneui/icons";
+
 import Text from "@components/atoms/Text";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { IProfileData } from "@components/molecules/Profile";
@@ -12,7 +14,7 @@ import {
     products,
     webWallets
 } from "@components/organisms/GlobalHeader/__shared/data";
-import { IProducts } from "@components/organisms/GlobalHeader/GlobalHeader";
+import { IAction, IProducts } from "@components/organisms/GlobalHeader/GlobalHeader";
 import { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
 
 // Helpers
@@ -80,6 +82,25 @@ const Template = (props) => {
     const [walletData, setWalletData] = useState<IProfileData[]>(webWallets);
     const [currencyData, setCurrencyData] = useState<IProfileData[]>(currencies);
     const [activityData, setActivityData] = useState<IProfileData[]>(activities);
+
+    const actions: IAction[] = [
+        {
+            title: "Test Action",
+            Icon: Messages,
+            onActionSelect: (e) => {
+                console.log("Test Action Selected", e);
+            },
+            id: "test-action"
+        },
+        {
+            title: "Test Action 2",
+            Icon: Box,
+            onActionSelect: (e) => {
+                console.log("Test Action 2 Selected", e);
+            },
+            id: "test-action2"
+        }
+    ];
 
     useEffect(() => {
         setPartnerData(partners);
@@ -178,6 +199,7 @@ const Template = (props) => {
                 activity={activityData}
                 onActivitySelect={onActivitiesSelect}
                 leftContent={<LeftContent />}
+                actions={actions}
             />
         </div>
     );
