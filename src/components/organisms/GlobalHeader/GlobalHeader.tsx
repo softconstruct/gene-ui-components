@@ -1,8 +1,9 @@
 import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode, useContext, useMemo } from "react";
 import classNames from "classnames";
 
-import { Globe, HamburgerMenu } from "@geneui/icons";
+import { Bell, Globe, HamburgerMenu, QuestionMark } from "@geneui/icons";
 
+import Badge from "@components/atoms/Badge";
 // Components
 import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
@@ -181,6 +182,11 @@ interface IGlobalHeaderProps {
      * system status, etc.
      */
     leftContent?: ReactNode;
+    /**
+     * Callback function triggered when the Help button (with the QuestionMark icon) is clicked.
+     * If not provided, the Help button will not be displayed in the header.
+     */
+    onHelpActionSelect?: () => void;
 
     // actionList?: any[]; // todo button group
 }
@@ -225,7 +231,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     onCurrencySelect,
     currencyConvertorText,
     onCurrencyConvertorSelect,
-    leftContent = null
+    leftContent = null,
+    onHelpActionSelect
 }) => {
     const languagesData = useMemo(() => {
         return languages?.map((lang) => ({ ...lang, id: `languages_${lang.id}` })) || [];
@@ -458,11 +465,21 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                     </div>
                     <Divider direction="vertical" className="globalHeader__divider" />
                 </div>
-
                 <div className="globalHeader__item">
                     <div className="globalHeader__actions">
-                        {/* <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" /> */}
-                        {/* <Button onClick={() => {}} Icon={Globe} appearance="inverse" layout="text" size="medium" /> */}
+                        {/* todo: add popover and notifications section */}
+                        <Badge appearance="brand" size="3xSmall">
+                            <Button onClick={() => {}} Icon={Bell} appearance="inverse" layout="text" size="medium" />
+                        </Badge>
+                        {onHelpActionSelect && (
+                            <Button
+                                onClick={onHelpActionSelect}
+                                Icon={QuestionMark}
+                                appearance="inverse"
+                                layout="text"
+                                size="medium"
+                            />
+                        )}
                         {products && (
                             <Products onChange={onProductSelect}>
                                 {products.mainSectionData && products.mainSectionData.length > 0 && (
