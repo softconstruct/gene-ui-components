@@ -118,7 +118,6 @@ const cloneChildrenRecursive = (
 ): FunctionComponentElement<IMenuItemProps>[] | ReactElement => {
     return Children.map(children, (child, i) => {
         const generatedId = pathID ? `${pathID}_${i}` : `${i}`;
-        if (child?.key === null) return null;
         return cloneElement(
             child,
             {
@@ -228,7 +227,10 @@ const Menu: FC<IMenuProps> = ({
             setPaths(currentPath);
         }
         if (closeMenu) {
-            onChange(item as IMenuItemProps);
+            onChange({
+                ...item,
+                title: typeof item?.children === "string" ? item?.children : item?.title
+            } as IMenuItemProps);
         }
     };
 
