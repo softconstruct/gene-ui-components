@@ -1,1 +1,1 @@
-export { IGlobalHeaderProps, default } from "./GlobalHeader";
+export { IGlobalHeaderProps, IAction, IProducts, default } from "./GlobalHeader";

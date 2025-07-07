@@ -590,18 +590,16 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                 {actions && isDesktopBreakpoint && (
                     <div className="globalHeader__item">
                         <div className="globalHeader__actions">
-                            {actions.map((action) => {
-                                return (
-                                    <Button
-                                        onClick={() => action.onActionSelect(action)}
-                                        Icon={action.Icon}
-                                        appearance="inverse"
-                                        layout="text"
-                                        size="medium"
-                                        key={action.id}
-                                    />
-                                );
-                            })}
+                            {actions.map((action) => (
+                                <Button
+                                    key={action.id}
+                                    onClick={() => action.onActionSelect(action)}
+                                    Icon={action.Icon}
+                                    appearance="inverse"
+                                    layout="text"
+                                    size="medium"
+                                />
+                            ))}
                         </div>
                         <Divider direction="vertical" className="globalHeader__divider" />
                     </div>

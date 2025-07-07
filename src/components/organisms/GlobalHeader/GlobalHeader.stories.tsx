@@ -68,12 +68,14 @@ const meta: Meta<IGlobalHeaderProps> = {
         timeZone: args({ control: "text", ...propCategory.content }),
         timeFormat: args({ control: "select", ...propCategory.content }),
         timeLabel: args({ control: "text", ...propCategory.content }),
+        currencyConvertorText: args({ control: "text", ...propCategory.content }),
         logoAs: args({ control: "false", ...propCategory.content })
     },
     args: {
         logoAs: <a href="/" aria-label="logo" />,
         limitUnit: "1234523",
-        timeLabel: "Time"
+        timeLabel: "Time",
+        currencyConvertorText: "Currency Convertor"
     }
 };
 
@@ -89,17 +91,13 @@ const Template = (props) => {
         {
             title: "Test Action",
             Icon: Messages,
-            onActionSelect: (e) => {
-                console.log("Test Action Selected", e);
-            },
+            onActionSelect: () => {},
             id: "test-action"
         },
         {
             title: "Test Action 2",
             Icon: Box,
-            onActionSelect: (e) => {
-                console.log("Test Action 2 Selected", e);
-            },
+            onActionSelect: () => {},
             id: "test-action2"
         }
     ];
@@ -197,7 +195,6 @@ const Template = (props) => {
                 wallet={walletData}
                 currency={currencyData}
                 onCurrencySelect={onCurrencySelect}
-                currencyConvertorText="Currency Convertor"
                 activity={activityData}
                 onActivitySelect={onActivitiesSelect}
                 leftContent={<LeftContent />}
