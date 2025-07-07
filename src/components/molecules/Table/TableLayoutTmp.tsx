@@ -11,7 +11,7 @@ import {
     Globe,
     Pin,
     RecycleBin,
-    TagOutline,
+    Tag,
     ThreeDotsVertical
 } from "@geneui/icons";
 
@@ -61,7 +61,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                     <input type="text" placeholder="Search" style={{ width: "100%" }} />
                     <div className="dataTable__bulkActions">
                         <div className="dataTable__bulkActions_selected">2 selected</div>
-                        <Divider vertical />
+                        <Divider direction="vertical" />
                         <Button appearance="primary" layout="text" size="medium" onClick={() => {}}>
                             Deselect
                         </Button>
@@ -70,7 +70,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                             layout="text"
                             size="medium"
                             Icon={CaretDownFilled}
-                            iconAfter
+                            iconPosition="after"
                             onClick={() => {}}
                         >
                             Bulk Actions
@@ -370,7 +370,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                     <td key={`${id}-10`} className="table__td">
                                         <div className="table__content table__content_icon">
                                             {/* todo: import icon as a component for "Icon" and "Flag" case */}
-                                            <TagOutline size={24} />
+                                            <Tag size={24} />
                                         </div>
                                     </td>
 
@@ -429,7 +429,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                                 appearance="secondary"
                                                 layout="text"
                                                 size="small"
-                                                Icon={TagOutline}
+                                                Icon={Tag}
                                                 onClick={() => {}}
                                                 className=""
                                             />
@@ -476,9 +476,9 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                                 className="swapComponent"
                                                 style={{
                                                     height: "20rem",
-                                                    backgroundappearance: "#F4E1EC",
-                                                    padding: "1.6rem",
-                                                    appearance: "#A60063"
+                                                    // backgroundappearance: "#F4E1EC",
+                                                    padding: "1.6rem"
+                                                    // appearance: "#A60063"
                                                 }}
                                             >
                                                 Swap

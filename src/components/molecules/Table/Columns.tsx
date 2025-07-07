@@ -1,23 +1,39 @@
 import React from "react";
 
-export const defaultColumns = [
+import { RowData, TableCol } from "@components/molecules/Table/type";
+
+export const defaultColumns: TableCol<RowData>[] = [
     {
-        header: "Group Name",
+        id: "groupName",
+        header: () => <div>Group Name</div>,
+        accessorKey: "groupName",
+        order: 0,
         type: "text",
         footer: (props) => props.column.id,
         columns: [
             {
                 id: "expand",
+                isVisible: true,
+                order: 0,
+                enableGlobalFilter: false,
                 type: "expand",
-                accessorKey: "expand"
+                accessorKey: "expand",
+                header: () => null
             },
             {
                 id: "rowCheckbox",
+                isVisible: true,
+                order: 0,
+                enableGlobalFilter: false,
                 type: "rowCheckbox",
-                accessorKey: "rowCheckbox"
+                accessorKey: "rowCheckbox",
+                header: () => null
             },
             {
                 id: "graph",
+                isVisible: true,
+                order: 2,
+                enableGlobalFilter: false,
                 type: "graph",
                 accessorKey: "graph",
                 editable: false,
@@ -28,14 +44,14 @@ export const defaultColumns = [
             },
             {
                 id: "title",
+                isVisible: true,
+                order: 2,
+                enableGlobalFilter: true,
                 type: "text",
-                accessorKey: "text",
+                accessorFn: (row) => row.text?.data,
                 enableSorting: true,
-                sortingFn: (rowA, rowB, columnId) => {
-                    const a: string = rowA.getValue(columnId)?.data ?? "";
-                    const b: string = rowB.getValue(columnId)?.data ?? "";
-                    return a.localeCompare(b);
-                },
+                searchable: true,
+                filterable: false,
                 editable: true,
                 copyable: true,
                 cell: (info) => info.getValue(),
@@ -44,100 +60,147 @@ export const defaultColumns = [
             },
             {
                 id: "number",
+                isVisible: true,
+                order: 1,
+                enableGlobalFilter: true,
                 type: "number",
-                accessorKey: "number",
+                accessorFn: (row) => row.number?.data,
                 enableSorting: true,
-                sortingFn: (rowA, rowB, columnId) => {
-                    const a: number = rowA.getValue(columnId)?.data ?? "";
-                    const b: number = rowB.getValue(columnId)?.data ?? "";
-                    return a - b;
-                },
                 editable: true,
                 copyable: true,
+                searchable: true,
+                filterable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Number</span>,
                 footer: (props) => props.column.id
             },
             {
                 id: "description",
+                isVisible: true,
+                order: 2,
+                enableGlobalFilter: false,
                 type: "longText",
                 accessorKey: "longText",
                 editable: true,
                 copyable: true,
+                enableSorting: true,
+                searchable: true,
+                filterable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Description</span>,
                 footer: (props) => props.column.id
             },
             {
                 id: "dropdown",
+                isVisible: true,
+                order: 2,
+                enableGlobalFilter: true,
                 type: "dropdown",
                 accessorKey: "dropdown",
                 editable: true,
                 copyable: true,
+                enableSorting: true,
+                searchable: false,
+                filterable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Dropdown</span>,
                 footer: (props) => props.column.id
             },
             {
                 id: "status",
+                isVisible: true,
+                order: 2,
+                enableGlobalFilter: true,
                 type: "status",
                 accessorKey: "status",
                 enableSorting: true,
                 copyable: false,
+                searchable: false,
+                filterable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Status</span>,
                 footer: (props) => props.column.id
             },
             {
                 id: "pill",
+                isVisible: true,
+                order: 2,
+                enableGlobalFilter: false,
                 type: "pill",
                 accessorKey: "pill",
                 editable: false,
                 copyable: false,
+                enableSorting: true,
+                searchable: false,
+                filterable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Pill</span>,
                 footer: (props) => props.column.id
             },
             {
                 id: "icon",
+                isVisible: true,
+                order: 2,
+                enableGlobalFilter: false,
                 type: "icon",
                 accessorKey: "icon",
                 editable: false,
                 copyable: false,
+                enableSorting: true,
+                searchable: false,
+                filterable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Icon</span>,
                 footer: (props) => props.column.id
             },
             {
                 id: "flag",
+                isVisible: true,
+                order: 2,
+                enableGlobalFilter: false,
                 type: "flag",
                 accessorKey: "flag",
                 editable: false,
                 copyable: false,
+                enableSorting: true,
+                searchable: false,
+                filterable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Flag</span>,
                 footer: (props) => props.column.id
             },
             {
                 id: "checkbox",
+                isVisible: true,
+                order: 2,
+                enableGlobalFilter: false,
                 type: "checkbox",
                 accessorKey: "checkbox",
                 editable: true,
                 copyable: false,
+                enableSorting: true,
+                searchable: false,
+                filterable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Checkbox</span>,
                 footer: (props) => props.column.id
             },
             {
                 id: "switch",
+                isVisible: true,
+                order: 2,
+                enableGlobalFilter: false,
                 type: "switch",
                 accessorKey: "switch",
                 editable: true,
                 copyable: false,
+                enableSorting: true,
+                searchable: false,
+                filterable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Switch</span>,
                 footer: (props) => props.column.id
             }
-        ]
+        ] as TableCol<RowData>[]
     }
 ];

@@ -1,4 +1,7 @@
+import { ArrowUp, ArrowUpDown } from "@geneui/icons";
+
 import { Row } from "@components/molecules/Table/makeData";
+import { RowData, TableCol } from "@components/molecules/Table/type";
 
 export const CellClassNames: { [key: string]: string } = {
     empty: "table__content_empty",
@@ -15,13 +18,19 @@ export const CellClassNames: { [key: string]: string } = {
     switch: "table__content_switch"
 };
 
-type Cloneable = Row | Row[] | { [key: string]: Cloneable } | Cloneable[] | null;
+export const SortingIcons = {
+    asc: ArrowUp,
+    desc: ArrowUp,
+    false: ArrowUpDown
+};
+
+type Cloneable = Row | Row[] | TableCol<RowData>[] | { [key: string]: Cloneable } | Cloneable[] | null;
 
 export function deepCloneWithFunctions<T extends Cloneable>(obj: T): T {
     if (obj === null || typeof obj !== "object") return obj;
 
     if (Array.isArray(obj)) {
-        return obj.map((item) => deepCloneWithFunctions(item)) as T;
+        return obj.map((item) => deepCloneWithFunctions(item as Cloneable)) as T;
     }
 
     if (typeof obj === "function") {

@@ -88,6 +88,7 @@
         "@types/enzyme": "^3.10.18",
         "@types/enzyme-adapter-react-16": "^1.0.9",
         "@types/jest": "^29.5.11",
+        "@types/react-beautiful-dnd": "^13.1.8",
         "@types/react-dom": "^18.3.1",
         "@types/react-is": "^18.3.0",
         "@typescript-eslint/eslint-plugin": "^8.11.0",
@@ -175,8 +176,10 @@
         "@geneui/icons": "^1.4.1",
         "@geneui/tokens": "^1.0.2",
         "@tanstack/react-table": "^8.21.3",
+        "@tanstack/table-core": "^8.21.3",
         "classnames": "^2.3.2",
         "qrcode.react": "^4.2.0",
+        "react-beautiful-dnd": "^13.1.1",
         "react-is": "^17.0.2",
         "react-scrollbars-custom": "^4.1.1"
     },

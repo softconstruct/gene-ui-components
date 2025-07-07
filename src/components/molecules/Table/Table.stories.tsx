@@ -7,7 +7,7 @@ import { defaultColumns } from "@components/molecules/Table/Columns";
 import { storyObjBuilder } from "../../../../stories/assets/storybook.globals";
 // Components
 import Table, { ITableProps } from "./index";
-import { makeData } from "./makeData";
+import { makeData, Row } from "./makeData";
 import TableLayoutTmp from "./TableLayoutTmp";
 
 const meta: Meta<ITableProps> = {
@@ -26,34 +26,29 @@ const meta: Meta<ITableProps> = {
 
 type Story = StoryObj<ITableProps>;
 
-const data = makeData(41);
+const data = makeData(3);
 export const TableStory: Story = storyObjBuilder({
     argTypes: {},
     args: {},
     render: () => {
-        const onSave = () => {};
+        const onSave = (savedData: Row[]) => {
+            return savedData;
+        };
         return (
             <Table
-                expandable
-                withCheckbox
                 columns={defaultColumns}
                 externalData={data}
+                withPagination
+                showPagination
+                pageSizes={[10, 25, 50, 100]}
+                initialPageSize={25}
+                initialPageIndex={0}
+                withCheckbox
+                expandable
                 rowActions={{
-                    pin: (e) => {
-                        console.log(e);
-                    },
-                    copy: (e) => {
-                        console.log(e);
-                    },
-                    tag: (e) => {
-                        console.log(e);
-                    },
-                    delete: (e) => {
-                        console.log(e);
-                    }
+                    delete: (id) => console.log(id)
                 }}
-                onSave={onSave}
-                pageSizes={[10, 20, 30, 42]}
+                onSave={(savedData) => onSave(savedData)}
             />
         );
     }

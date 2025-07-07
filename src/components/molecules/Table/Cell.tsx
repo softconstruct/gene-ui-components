@@ -6,26 +6,18 @@ import Button from "@components/atoms/Button";
 import Pill from "@components/atoms/Pill";
 import Checkbox from "@components/molecules/Checkbox";
 
+import { CellType } from "./type";
+
 interface ICellProps {
-    type:
-        | "empty"
-        | "expand"
-        | "rowCheckbox"
-        | "graph"
-        | "text"
-        | "number"
-        | "longText"
-        | "dropdown"
-        | "status"
-        | "pill"
-        | "icon"
-        | "flag"
-        | "checkbox"
-        | "switch";
+    type: CellType;
     withEditMode: boolean;
     data: any;
     onChange?: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
     rowCellRenderer: (rowCellRenderer: ReactNode) => Element;
+    // disabled?: boolean;
+    // placeholder?: string;
+    // options?: Array<{ value: string; label: string }>;
+    onCopy?: (value: string | number) => void;
 }
 
 type CellRenderer = {
@@ -41,7 +33,7 @@ export const cellRenderer: CellRenderer = {
     graph: ({ rowCellRenderer, data }) => {
         return rowCellRenderer(<img src={data} alt="" />);
     },
-    text: ({ rowCellRenderer, data, withEditMode, inputType = "text", onChange }) =>
+    text: ({ rowCellRenderer, data, withEditMode, inputType = "text", onCopy, onChange }) =>
         rowCellRenderer(
             !withEditMode ? (
                 <>
@@ -51,7 +43,7 @@ export const cellRenderer: CellRenderer = {
                         layout="text"
                         size="small"
                         Icon={Copy}
-                        onClick={() => {}}
+                        onClick={() => onCopy?.(data)}
                         className="table__content_copy"
                     />
                 </>
@@ -65,7 +57,7 @@ export const cellRenderer: CellRenderer = {
                 />
             )
         ),
-    longText: ({ rowCellRenderer, data, withEditMode, onChange }) => {
+    longText: ({ rowCellRenderer, data, withEditMode, onCopy, onChange }) => {
         return rowCellRenderer(
             !withEditMode ? (
                 <>
@@ -75,7 +67,7 @@ export const cellRenderer: CellRenderer = {
                         layout="text"
                         size="small"
                         Icon={Copy}
-                        onClick={() => {}}
+                        onClick={() => onCopy?.(data)}
                         className="table__content_copy"
                     />
                 </>
@@ -89,7 +81,7 @@ export const cellRenderer: CellRenderer = {
             )
         );
     },
-    dropdown: ({ rowCellRenderer, data, withEditMode, onChange }) => {
+    dropdown: ({ rowCellRenderer, data, withEditMode, onCopy, onChange }) => {
         return rowCellRenderer(
             !withEditMode ? (
                 <>
@@ -99,7 +91,7 @@ export const cellRenderer: CellRenderer = {
                         layout="text"
                         size="small"
                         Icon={Copy}
-                        onClick={() => {}}
+                        onClick={() => onCopy?.(data)}
                         className="table__content_copy"
                     />
                 </>
@@ -164,11 +156,20 @@ export const cellRenderer: CellRenderer = {
         )
 };
 
-const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, onChange }) => {
+const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, onCopy, onChange }) => {
     const cellTypeWithNumber = type === "number" ? "text" : type;
     const CellItem = cellRenderer[cellTypeWithNumber];
     return (
-        <>{CellItem({ rowCellRenderer, withEditMode, data, inputType: type === "number" ? type : "text", onChange })}</>
+        <>
+            {CellItem({
+                rowCellRenderer,
+                withEditMode,
+                data,
+                inputType: type === "number" ? type : "text",
+                onCopy,
+                onChange
+            })}
+        </>
     );
 };
 

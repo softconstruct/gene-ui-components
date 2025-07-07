@@ -5,6 +5,7 @@ import { faker } from "@faker-js/faker";
 import { Globe, IconProps } from "@geneui/icons";
 
 import { IPillProps } from "@components/atoms/Pill";
+import { CellType } from "@components/molecules/Table/type";
 
 type Cell = {
     type:
@@ -24,8 +25,11 @@ type Cell = {
     rowCellRenderer: (Element: ReactNode) => ReactNode;
 };
 
-export type Row = {
-    [key: string]: Cell;
+type TableRowCells = {
+    [K in CellType]?: Cell;
+};
+
+export type Row = TableRowCells & {
     rowStatus: "default" | "zebra" | "red" | "green" | "highlighted";
     expandedData: () => ReactNode | null;
 };
