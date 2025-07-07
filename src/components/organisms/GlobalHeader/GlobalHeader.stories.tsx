@@ -67,11 +67,13 @@ const meta: Meta<IGlobalHeaderProps> = {
         limitLabel: args({ control: "text", ...propCategory.content }),
         timeZone: args({ control: "text", ...propCategory.content }),
         timeFormat: args({ control: "select", ...propCategory.content }),
+        timeLabel: args({ control: "text", ...propCategory.content }),
         logoAs: args({ control: "false", ...propCategory.content })
     },
     args: {
         logoAs: <a href="/" aria-label="logo" />,
-        limitUnit: "1234523"
+        limitUnit: "1234523",
+        timeLabel: "Time"
     }
 };
 

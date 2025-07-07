@@ -26,24 +26,15 @@ import { IMenuItemProps, IProfileData, Profile } from "../../../index";
 
 const mobileData = (
     isMobileBreakpoint: boolean,
-    timeLabel: string,
-    limitLabel: string,
-    limitUnit?: string
+    timeLabel?: string,
+    limitLabel?: string,
+    limitUnit?: string,
+    timeZone?: string,
+    timeFormat?: "24h" | "12h"
 ): IProfileData[] => {
-    return isMobileBreakpoint
-        ? [
-              {
-                  title: "time",
-                  id: "time",
-                  disabled: true,
-                  ComponentRender: () => (
-                      <span className="globalHeader__time">
-                          <span className="globalHeader__time_text">{timeLabel}</span>
-                          <Time className="globalHeader__time_mobile" />
-                      </span>
-                  )
-              },
-              {
+    const limitCheck: IProfileData | null =
+        limitLabel && limitUnit
+            ? {
                   title: "limit",
                   id: "limit",
                   disabled: true,
@@ -54,8 +45,25 @@ const mobileData = (
                       </span>
                   )
               }
-          ]
-        : [];
+            : null;
+
+    const timeCheck: IProfileData | null =
+        timeZone || timeFormat || timeLabel
+            ? {
+                  title: "time",
+                  id: "time",
+                  disabled: true,
+                  divider: !limitCheck,
+                  ComponentRender: () => (
+                      <span className="globalHeader__time">
+                          <span className="globalHeader__time_text">{timeLabel}</span>
+                          <Time className="globalHeader__time_mobile" timeZone={timeZone} format={timeFormat} />
+                      </span>
+                  )
+              }
+            : null;
+
+    return isMobileBreakpoint ? [...(timeCheck ? [timeCheck] : []), ...(limitCheck ? [limitCheck] : [])] : [];
 };
 
 export interface IProducts {
@@ -219,7 +227,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     timeFormat,
     products,
     onProductSelect,
-    timeLabel = "Time",
+    timeLabel,
     logOutText,
     onProfileItemSelect,
     myAccountText = "My Account",
@@ -301,7 +309,14 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     };
 
     const profileData = useMemo(() => {
-        const timeAndLimitForMobile = mobileData(isMobileBreakpoint, timeLabel, limitLabel, limitUnit);
+        const timeAndLimitForMobile = mobileData(
+            isMobileBreakpoint,
+            timeLabel,
+            limitLabel,
+            limitUnit,
+            timeZone,
+            timeFormat
+        );
         const dynamicTitleCreator = (title: string, data: IProfileData[], needLastElement = false): string => {
             const selectedItem = data.find((item) => item.selected);
             if (needLastElement) {
@@ -477,7 +492,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                         <Divider direction="vertical" className="globalHeader__divider" />
                     </div>
                 )}
-                {!isMobileBreakpoint && (
+                {!isMobileBreakpoint && (timeZone || timeFormat || timeLabel) && (
                     <div className="globalHeader__item">
                         <Time timeZone={timeZone} format={timeFormat} />
                         <Divider direction="vertical" className="globalHeader__divider" />
