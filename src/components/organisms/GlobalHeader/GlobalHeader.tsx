@@ -24,6 +24,28 @@ import "./GlobalHeader.scss";
 
 import { IMenuItemProps, IProfileData, Profile } from "../../../index";
 
+// Utilities
+const idPrefixCreator = (data?: IProfileData[], prefix?: string) => {
+    return data?.map((item) => ({ ...item, id: `${prefix}_${item.id}` })) || [];
+};
+
+const idPrefixRemover = (item: IMenuItemProps, prefix: string) => {
+    if (typeof item.id === "string") {
+        return { ...item, id: item.id.replace(`${prefix}_`, "") };
+    }
+    return { ...item, id: item.id.toString().replace(`${prefix}_`, "") };
+};
+
+const getItemTypeFromId = (id: string): string | null => {
+    if (id.startsWith("partners_")) return "partners";
+    if (id.startsWith("languages_")) return "languages";
+    if (id.startsWith("wallet_")) return "wallet";
+    if (id.startsWith("currency_")) return "currency";
+    if (id.includes("currencyConvertor")) return "currencyConvertor";
+    if (id.includes("activityItem_")) return "activityItem";
+    return null;
+};
+
 const mobileData = (
     isMobileBreakpoint: boolean,
     timeLabel?: string,
@@ -254,25 +276,11 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
 
     const { isMobileBreakpoint = false, isDesktopBreakpoint = false } = breakpoint || {};
 
-    const languagesData = useMemo(() => {
-        return languages?.map((lang) => ({ ...lang, id: `languages_${lang.id}` })) || [];
-    }, [languages]);
-
-    const partnersData = useMemo(() => {
-        return partners?.map((partner) => ({ ...partner, id: `partners_${partner.id}` })) || [];
-    }, [partners]);
-
-    const walletData = useMemo(() => {
-        return wallet?.map((walletItem) => ({ ...walletItem, id: `wallet_${walletItem.id}` })) || [];
-    }, [wallet]);
-
-    const currencyData = useMemo(() => {
-        return currency?.map((currencyItem) => ({ ...currencyItem, id: `currency_${currencyItem.id}` })) || [];
-    }, [currency]);
-
-    const activityData = useMemo(() => {
-        return activity?.map((activityItem) => ({ ...activityItem, id: `activityItem_${activityItem.id}` })) || [];
-    }, [activity]);
+    const languagesData = idPrefixCreator(languages, "languages");
+    const partnersData = idPrefixCreator(partners, "partners");
+    const walletData = idPrefixCreator(wallet, "wallet");
+    const currencyData = idPrefixCreator(currency, "currency");
+    const activityData = idPrefixCreator(activity, "activityItem");
 
     const onNavigationButtonClickHandler = (e: MouseEvent<HTMLButtonElement>) => {
         if (onNavigationButtonClick) {
@@ -281,30 +289,45 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     };
 
     const onProfileItemSelectHandler = (item: IMenuItemProps) => {
+        const type = getItemTypeFromId(item.id.toString());
         let changedItem = { ...item };
-        if (isMobileBreakpoint && item.id.toString().startsWith("partners_")) {
-            changedItem = { ...item, id: item.id.toString().replace("partners_", "") };
-            onPartnerSelect?.(changedItem);
-        } else if (item.id.toString().startsWith("languages_")) {
-            changedItem = { ...item, id: item.id.toString().replace("languages_", "") };
-            onLanguageSelect?.(changedItem);
-        } else if (item.id.toString().startsWith("wallet_")) {
-            changedItem = { ...item, id: item.id.toString().replace("wallet_", "") };
-            onWalletSelect?.(changedItem);
-        } else if (item.id.toString().startsWith("currency_")) {
-            changedItem = { ...item, id: item.id.toString().replace("currency_", "") };
-            onCurrencySelect?.(changedItem);
-        } else if (item.id.toString().includes("currencyConvertor")) {
-            onCurrencyConvertorSelect?.(changedItem);
-        } else if (item.id.toString().includes("activityItem_")) {
-            changedItem = { ...item, id: item.id.toString().replace("activityItem_", "") };
-            onActivitySelect?.(changedItem);
-        } else if (actions && actions.some((action) => action.id === item.id)) {
-            const foundedAction = actions.find((action) => action.id === item.id);
-            if (foundedAction && foundedAction.onActionSelect) {
-                foundedAction.onActionSelect(foundedAction);
-            }
+
+        switch (type) {
+            case "partners":
+                if (isMobileBreakpoint) {
+                    changedItem = idPrefixRemover(item, "partners");
+                    onPartnerSelect?.(changedItem);
+                }
+                break;
+            case "languages":
+                changedItem = idPrefixRemover(item, "languages");
+                onLanguageSelect?.(changedItem);
+                break;
+            case "wallet":
+                changedItem = idPrefixRemover(item, "wallet");
+                onWalletSelect?.(changedItem);
+                break;
+            case "currency":
+                changedItem = idPrefixRemover(item, "currency");
+                onCurrencySelect?.(changedItem);
+                break;
+            case "currencyConvertor":
+                onCurrencyConvertorSelect?.(changedItem);
+                break;
+            case "activityItem":
+                changedItem = idPrefixRemover(item, "activityItem");
+                onActivitySelect?.(changedItem);
+                break;
+            default:
+                if (actions && actions.some((action) => action.id === item.id)) {
+                    const foundedAction = actions.find((action) => action.id === item.id);
+                    if (foundedAction && foundedAction.onActionSelect) {
+                        foundedAction.onActionSelect(foundedAction);
+                    }
+                }
+                break;
         }
+
         onProfileItemSelect?.(changedItem);
     };
 
@@ -425,6 +448,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         timeLabel,
         limitLabel,
         limitUnit,
+        timeZone,
+        timeFormat,
         partners,
         partnersName,
         logOutText,
@@ -439,7 +464,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         currencyText,
         activityData,
         activityText,
-        customElements
+        currencyConvertorText,
+        actions
     ]);
 
     return (
@@ -509,6 +535,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                                         appearance="inverse"
                                         layout="text"
                                         size="medium"
+                                        key={action.id}
                                     />
                                 );
                             })}
