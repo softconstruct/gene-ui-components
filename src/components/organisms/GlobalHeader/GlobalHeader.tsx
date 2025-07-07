@@ -406,6 +406,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         ) as IProfileData[];
     }, [
         isMobileBreakpoint,
+        isDesktopBreakpoint,
         timeLabel,
         limitLabel,
         limitUnit,
@@ -422,7 +423,8 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         currencyData,
         currencyText,
         activityData,
-        activityText
+        activityText,
+        customElements
     ]);
 
     return (
