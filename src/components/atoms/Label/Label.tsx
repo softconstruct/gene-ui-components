@@ -2,13 +2,14 @@ import React, { FC, JSX, useRef } from "react";
 import classnames from "classnames";
 
 // Components
-import Tooltip from "../../molecules/Tooltip";
+import Tooltip from "@components/molecules/Tooltip";
 
 // Hooks
-import { useEllipsisDetection } from "../../../hooks";
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./Label.scss";
+
 import Info from "../Info";
 
 interface ILabelProps {
@@ -21,7 +22,7 @@ interface ILabelProps {
      * The text content of the `label`.
      * This is the main text displayed within the `label`.
      */
-    labelText?: string;
+    text?: string;
     /**
      * Indicates whether the label represents a required field.
      * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
@@ -42,7 +43,7 @@ interface ILabelProps {
      * Indicates whether the `label` is in a loading state.
      * When set to `true` a `skeleton` indicator will be shown instead of the `label` text.
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
      * Indicates whether the `label` should be read-only.
      * This prop will not make visual changes but sets `pointer-events: auto` to prevent triggering label click events.
@@ -71,11 +72,11 @@ const iconSizes = {
 
 const Label: FC<ILabelProps> = ({
     size = "medium",
-    labelText,
+    text,
     disabled,
     required,
     infoText,
-    isLoading,
+    loading,
     className,
     children,
     readOnly
@@ -87,23 +88,23 @@ const Label: FC<ILabelProps> = ({
     return (
         <label className={classnames(`label`, className)}>
             {children}
-            {isLoading ? (
+            {loading ? (
                 <span>skeleton</span>
             ) : (
-                labelText && (
+                text && (
                     <span
                         className={classnames("label__container", { label__container_readOnly: readOnly && !disabled })}
                     >
                         <div className="label__container-inner">
-                            {labelText && (
-                                <Tooltip text={labelText} isVisible={isTruncated}>
+                            {text && (
+                                <Tooltip text={text} isVisible={isTruncated}>
                                     <span
                                         ref={labelRef}
                                         className={classnames(`ellipsis-text label__text label__text_size_${size}`, {
                                             label__text_disabled: disabled
                                         })}
                                     >
-                                        {labelText}
+                                        {text}
                                     </span>
                                 </Tooltip>
                             )}

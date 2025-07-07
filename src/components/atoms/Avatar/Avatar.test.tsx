@@ -1,5 +1,6 @@
 import React, { MouseEvent } from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
 import { Square } from "@geneui/icons"; // TODO: replace with the person icon
 
 // Components
@@ -41,14 +42,14 @@ describe("Avatar ", () => {
         expect(wrapper.find("img").props().src).toBe(src);
     });
 
-    it("renders isDisabled prop correctly", () => {
-        const wrapper = setup.setProps({ isDisabled: true });
+    it("renders disabled prop correctly", () => {
+        const wrapper = setup.setProps({ disabled: true });
 
         expect(wrapper.find(".avatar").hasClass("avatar_disabled")).toBeTruthy();
     });
 
-    it("renders isLoading prop correctly", () => {
-        const wrapper = setup.setProps({ isLoading: true });
+    it("renders loading prop correctly", () => {
+        const wrapper = setup.setProps({ loading: true });
 
         expect(wrapper.find("skeleton")).toBeTruthy();
     });

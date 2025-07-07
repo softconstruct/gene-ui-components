@@ -1,10 +1,12 @@
 import React, { FC } from "react";
 import classNames from "classnames";
+
 // Styles
 import "./CheckboxGroup.scss";
-import Checkbox from "../Checkbox";
-import Label from "../../atoms/Label";
+
 import HelperText from "../../atoms/HelperText";
+import Label from "../../atoms/Label";
+import Checkbox from "../Checkbox";
 
 interface ICheckboxGroupProps {
     /**
@@ -54,16 +56,16 @@ const CheckboxGroup: FC<ICheckboxGroupProps> = ({
 }) => {
     return (
         <div className={classNames("checkboxGroup", className)}>
-            <Label labelText={label} required={required} disabled={disabled} readOnly={readOnly} />
+            <Label text={label} required={required} disabled={disabled} readOnly={readOnly} />
 
-            <Checkbox label="Label" type={type} disabled={disabled} readOnly={readOnly} />
-            <Checkbox label="Label" type={type} disabled={disabled} readOnly={readOnly} />
-            <Checkbox label="Label" type={type} disabled={disabled} readOnly={readOnly} />
-            <Checkbox label="Label" type={type} disabled={disabled} readOnly={readOnly} />
+            <Checkbox label="Label" type={type} value="" name="" disabled={disabled} readOnly={readOnly} />
+            <Checkbox label="Label" type={type} value="" name="" disabled={disabled} readOnly={readOnly} />
+            <Checkbox label="Label" type={type} value="" name="" disabled={disabled} readOnly={readOnly} />
+            <Checkbox label="Label" type={type} value="" name="" disabled={disabled} readOnly={readOnly} />
 
             {helperText && (
                 <div className="checkbox__infoContainer">
-                    <HelperText text={helperText} isDisabled={disabled} type={type} />
+                    <HelperText text={helperText} disabled={disabled} type={type} />
                 </div>
             )}
         </div>

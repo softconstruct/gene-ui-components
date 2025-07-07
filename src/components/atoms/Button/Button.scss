@@ -1,3 +1,5 @@
+@use "../../../assets/styles/mixins";
+
 .button {
     $this: &;
 
@@ -32,8 +34,10 @@
                     background-color: var(--guit-sem-color-background-brand-2);
                     color: var(--guit-sem-color-foreground-inverse);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-brand-2-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-brand-2-hover);
+                        }
                     }
 
                     &:active {
@@ -49,8 +53,10 @@
                     border-color: var(--guit-sem-color-border-brand);
                     color: var(--guit-sem-color-foreground-brand);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-brand-1-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-brand-1-hover);
+                        }
                     }
 
                     &:active {
@@ -65,8 +71,10 @@
                 &_text {
                     color: var(--guit-sem-color-foreground-brand);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-brand-1-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-brand-1-hover);
+                        }
                     }
 
                     &:active {
@@ -79,15 +87,17 @@
         &_secondary {
             &#{ $this }_type {
                 &_fill {
-                    background-color: var(--guit-sem-color-background-neutral-2);
+                    background-color: var(--guit-sem-color-background-neutral-3);
                     color: var(--guit-sem-color-foreground-neutral-2);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-neutral-2-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-neutral-3-hover);
+                        }
                     }
 
                     &:active {
-                        background-color: var(--guit-sem-color-background-neutral-2-pressed);
+                        background-color: var(--guit-sem-color-background-neutral-3-pressed);
                     }
 
                     &:disabled {
@@ -100,8 +110,10 @@
                     border-color: var(--guit-sem-color-border-neutral-2);
                     color: var(--guit-sem-color-foreground-neutral-2);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-transparent-1-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-transparent-1-hover);
+                        }
                     }
 
                     &:active {
@@ -117,8 +129,10 @@
                     background-color: var(--guit-sem-color-background-transparent-1);
                     color: var(--guit-sem-color-foreground-neutral-2);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-transparent-1-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-transparent-1-hover);
+                        }
                     }
 
                     &:active {
@@ -134,8 +148,10 @@
                     background-color: var(--guit-sem-color-background-error-2);
                     color: var(--guit-sem-color-foreground-inverse);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-error-2-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-error-2-hover);
+                        }
                     }
 
                     &:active {
@@ -151,8 +167,10 @@
                     border-color: var(--guit-sem-color-border-error);
                     color: var(--guit-sem-color-foreground-error);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-error-1-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-error-1-hover);
+                        }
                     }
 
                     &:active {
@@ -168,8 +186,10 @@
                     background-color: var(--guit-sem-color-background-transparent-1);
                     color: var(--guit-sem-color-foreground-error);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-error-1-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-error-1-hover);
+                        }
                     }
 
                     &:active {
@@ -185,8 +205,10 @@
                     background-color: var(--guit-sem-color-background-success-2);
                     color: var(--guit-sem-color-foreground-neutral-2-notheme);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-success-2-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-success-2-hover);
+                        }
                     }
 
                     &:active {
@@ -202,8 +224,10 @@
                     border-color: var(--guit-sem-color-border-success);
                     color: var(--guit-sem-color-foreground-success);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-success-1-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-success-1-hover);
+                        }
                     }
 
                     &:active {
@@ -219,8 +243,10 @@
                     background-color: var(--guit-sem-color-background-transparent-1);
                     color: var(--guit-sem-color-foreground-success);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-success-1-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-success-1-hover);
+                        }
                     }
 
                     &:active {
@@ -236,8 +262,10 @@
                     background-color: var(--guit-sem-color-background-inverse);
                     color: var(--guit-sem-color-foreground-neutral-2);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-inverse-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-inverse-hover);
+                        }
                     }
 
                     &:active {
@@ -254,8 +282,10 @@
                     border-color: var(--guit-sem-color-border-inverse);
                     color: var(--guit-sem-color-foreground-inverse);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-transparent-1-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-transparent-1-hover);
+                        }
                     }
 
                     &:active {
@@ -272,8 +302,10 @@
                     background-color: var(--guit-sem-color-background-transparent-1);
                     color: var(--guit-sem-color-foreground-inverse);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-transparent-1-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-transparent-1-hover);
+                        }
                     }
 
                     &:active {
@@ -293,8 +325,10 @@
                     background-color: var(--guit-sem-color-background-transparent-inverse-2);
                     color: var(--guit-sem-color-foreground-inverse);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-transparent-inverse-2-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-transparent-inverse-2-hover);
+                        }
                     }
 
                     &:active {
@@ -310,8 +344,10 @@
                     border-color: var(--guit-sem-color-border-inverse);
                     color: var(--guit-sem-color-foreground-inverse);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-transparent-inverse-2-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-transparent-inverse-2-hover);
+                        }
                     }
 
                     &:active {
@@ -320,7 +356,7 @@
 
                     &:disabled {
                         border-color: var(--guit-sem-color-border-inverse-disabled);
-                        color: var(--guit-sem-color-foreground-disabled);
+                        color: var(--guit-sem-color-foreground-inverse-disabled);
                     }
                 }
 
@@ -328,8 +364,10 @@
                     background-color: var(--guit-sem-color-background-transparent-inverse-1);
                     color: var(--guit-sem-color-foreground-inverse);
 
-                    &:hover {
-                        background-color: var(--guit-sem-color-background-transparent-inverse-2-hover);
+                    @include mixins.media-hover {
+                        &:hover {
+                            background-color: var(--guit-sem-color-background-transparent-inverse-2-hover);
+                        }
                     }
 
                     &:active {
@@ -337,7 +375,7 @@
                     }
 
                     &:disabled {
-                        color: var(--guit-sem-color-foreground-disabled);
+                        color: var(--guit-sem-color-foreground-inverse-disabled);
                     }
                 }
             }
@@ -378,7 +416,6 @@
 
             &#{ $this }_icon_only {
                 min-width: var(--guit-sem-dimension-width-large);
-                padding: var(--guit-ref-spacing-small);
             }
         }
 
@@ -415,7 +452,6 @@
 
             &#{ $this }_icon_only {
                 min-width: var(--guit-sem-dimension-width-medium);
-                padding: var(--guit-ref-spacing-2xsmall);
             }
         }
 
@@ -452,17 +488,15 @@
 
             &#{ $this }_icon_only {
                 min-width: var(--guit-sem-dimension-width-small);
-                padding: var(--guit-ref-spacing-4xsmall);
             }
         }
 
-        &_XSmall {
+        &_smallNudge {
             height: var(--guit-sem-dimension-height-small-nudge);
             border-radius: var(--guit-ref-radius-4xsmall);
 
             &#{ $this }_icon_only {
                 min-width: var(--guit-sem-dimension-width-small-nudge);
-                padding: var(--guit-ref-spacing-4xsmall);
             }
         }
     }
@@ -472,6 +506,7 @@
     }
 
     &_loading {
+        pointer-events: none;
         #{ $this }__loader {
             visibility: visible;
         }
@@ -482,14 +517,13 @@
         }
     }
 
-    &:disabled,
-    &.disabled {
+    &:disabled {
         pointer-events: none;
         color: var(--guit-sem-color-foreground-disabled);
     }
 
     &__text {
-        font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+        font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
         font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
         font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
         line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);

@@ -1,18 +1,19 @@
 import React, { FC, forwardRef, MouseEvent } from "react";
 import classNames from "classnames";
+
 import { IconProps } from "@geneui/icons";
+
+// Components
+import Loader from "@components/atoms/Loader";
 
 // Styles
 import "./Button.scss";
 
-// Components
-import Loader from "../Loader";
-
-const iconSizes: Record<"large" | "medium" | "small" | "XSmall", IconProps["size"]> = {
+const iconSizes: Record<"large" | "medium" | "small" | "smallNudge", IconProps["size"]> = {
     large: 20,
     medium: 20,
     small: 20,
-    XSmall: 16
+    smallNudge: 16
 } as const;
 
 interface IButtonProps {
@@ -22,9 +23,9 @@ interface IButtonProps {
     name?: string;
     /**
      * Size <br>
-     * Possible values: `large | medium | small`
+     * Possible values: `large | medium | small | "smallNudge"`
      */
-    size?: "large" | "medium" | "small" | "XSmall";
+    size?: "large" | "medium" | "small" | "smallNudge";
     /**
      * If `true`, the `button` will stretch to occupy the full width of its container.
      */
@@ -37,7 +38,7 @@ interface IButtonProps {
      * Affect form styling point of view. <br>
      * Possible values: `fill | outline | text`
      */
-    displayType?: "fill" | "outline" | "text";
+    layout?: "fill" | "outline" | "text";
     /**
      * Indicates the action meaning. <br>
      * Possible values: `primary | secondary | danger | success | inverse | transparent`
@@ -46,7 +47,7 @@ interface IButtonProps {
     /**
      * The text will shown as content of the `button`.
      */
-    text?: string;
+    children?: string;
     /**
      * The `Icon` prop accepts a React Functional Component that will be displayed alongside the button text.
      */
@@ -55,16 +56,16 @@ interface IButtonProps {
      * A callback function that is called when the `button` is clicked or entered. <br>
      * It receives an argument containing the event object, which can be a mouse or keyboard event.
      */
-    onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Icon position <br>
-     * If the prop is `true` the `Icon` will be shown after the `text` otherwise before the `text`.
+     * Possible values: `before | after`
      */
-    iconAfter?: boolean;
+    iconPosition?: "before" | "after";
     /**
      * The prop responsible for showing the loading spinner if passed `true`. The default value is `false`
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
      * Additional class for the parent element.<br>
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -92,17 +93,17 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             fullWidth,
             name,
             size = "medium",
-            displayType = "fill",
-            text,
+            layout = "fill",
+            children,
             Icon,
             onClick,
             className,
-            iconAfter,
-            isLoading
+            iconPosition,
+            loading
         }: IButtonProps,
         ref
     ) => {
-        const isSizeXS = size === "XSmall";
+        const isSizeXS = size === "smallNudge";
         const isTextDisplayForXS =
             (appearance === "primary" || appearance === "danger" || appearance === "success") && isSizeXS;
 
@@ -112,32 +113,33 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 name={name}
                 type="button"
                 onClick={onClick}
-                disabled={disabled}
+                disabled={disabled && !loading}
+                {...(loading ? { tabIndex: -1 } : {})}
                 className={classNames(
                     `button button_size_${size} 
                     button_color_${appearance} 
-                    button_type_${isTextDisplayForXS ? "text" : displayType}`,
+                    button_type_${isTextDisplayForXS ? "text" : layout}`,
                     className,
                     {
                         button_fullWidth: fullWidth,
-                        button_icon_before: !iconAfter && Icon && text,
-                        button_icon_after: iconAfter && Icon && text,
-                        button_icon_only: (!text || isSizeXS) && Icon,
-                        button_loading: isLoading
+                        button_icon_before: iconPosition === "before" && Icon && children,
+                        button_icon_after: iconPosition === "after" && Icon && children,
+                        button_icon_only: (!children || isSizeXS) && Icon,
+                        button_loading: loading
                     }
                 )}
             >
-                {isLoading && (
+                {loading && (
                     <Loader
                         size="smallNudge"
                         className="button__loader"
-                        appearance={loadingTypes[appearance][displayType]}
+                        appearance={loadingTypes[appearance][layout]}
                     />
                 )}
 
                 {Icon && <Icon size={iconSizes[size]} className="button__icon" />}
 
-                {text && !isSizeXS && <span className="button__text">{text}</span>}
+                {children && !isSizeXS && <span className="button__text">{children}</span>}
             </button>
         );
     }

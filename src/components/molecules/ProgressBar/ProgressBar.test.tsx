@@ -1,10 +1,11 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
+import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
+
 import ProgressBar, { IProgressBarProps } from "./index";
-import HelperText from "../../atoms/HelperText";
-import Label from "../../atoms/Label";
 
 describe("ProgressBar ", () => {
     let setup: ReactWrapper<IProgressBarProps>;
@@ -33,7 +34,7 @@ describe("ProgressBar ", () => {
     it("renders label prop correctly", () => {
         const label = "test label";
         const wrapper = setup.setProps({ label });
-        expect(wrapper.find(Label).props().labelText).toBe(label);
+        expect(wrapper.find(Label).props().text).toBe(label);
     });
 
     it("renders infoText prop correctly", () => {

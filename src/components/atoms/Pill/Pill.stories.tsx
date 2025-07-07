@@ -1,30 +1,29 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
+
 import { Globe } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import Pill, { IPillProps } from "./index";
 
-const meta: Meta<typeof Pill> = {
+const meta: Meta<IPillProps> = {
     title: "Atoms/Pill",
     component: Pill,
     argTypes: {
         size: args({ control: "select", ...propCategory.appearance }),
-        color: args({ control: "select", ...propCategory.appearance }),
-        Icon: args({ control: false, ...propCategory.content }),
+        appearance: args({ control: "select", ...propCategory.appearance }),
+        Icon: args({ control: "false", ...propCategory.content }),
         text: args({ control: "text", ...propCategory.content }),
-        isFill: args({ control: "boolean", ...propCategory.appearance }),
+        filled: args({ control: "boolean", ...propCategory.appearance }),
         iconAlignment: args({ control: "select", ...propCategory.appearance }),
         withDot: args({ control: "boolean", ...propCategory.content }),
-        className: args({ control: false, ...propCategory.appearance })
+        className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
         size: "medium",
-        color: "informative",
-        isFill: true,
+        appearance: "informative",
+        filled: true,
         text: "Pill",
         withDot: true
     }
@@ -32,12 +31,12 @@ const meta: Meta<typeof Pill> = {
 
 export default meta;
 
-const Template: FC<IPillProps> = (props) => <Pill {...props} />;
+type Story = StoryObj<IPillProps>;
 
-export const Default = Template.bind({});
+export const Default: Story = {};
 
-export const WithCustomIcon = Template.bind({});
-
-WithCustomIcon.args = {
-    Icon: Globe
+export const WithCustomIcon: Story = {
+    args: {
+        Icon: Globe
+    }
 };

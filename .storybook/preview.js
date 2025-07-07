@@ -5,7 +5,7 @@ import { DocsContainer } from "./components/DocContainer";
 import { themes } from "@storybook/theming";
 import { softConstructThem } from "./softConstructThem";
 
-import { Title, Subtitle, Description, ArgsTable, Stories, PRIMARY_STORY } from "@storybook/blocks";
+import { Title, Subtitle, Description, Controls, Stories } from "@storybook/blocks";
 import { withTests } from "@storybook/addon-jest";
 import results from "../coverage/.jest-test-results.json";
 
@@ -51,8 +51,8 @@ export const parameters = {
                 <Title />
                 <Subtitle />
                 <Description />
-                <ArgsTable story={PRIMARY_STORY} />
-                <Stories includePrimary />
+                <Controls />
+                <Stories />
             </>
         )
     },
@@ -95,6 +95,7 @@ export const parameters = {
                 "Introduction",
                 "Changelog",
                 "Getting started",
+                "Provider",
                 "Atoms",
                 "Molecules",
                 "Organisms",
@@ -137,3 +138,5 @@ export const argTypes = {
         }
     }
 };
+
+export const tags = ["autodocs"];

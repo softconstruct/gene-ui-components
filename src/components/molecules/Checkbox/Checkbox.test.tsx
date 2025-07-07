@@ -1,15 +1,18 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
+import { CheckMark, Minus } from "@geneui/icons";
 
 // Components
-import { CheckMark, MinusOutline } from "@geneui/icons";
+import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
+
 import Checkbox, { ICheckboxProps } from "./index";
-import { HelperText, Label } from "../../../index";
 
 describe("Checkbox ", () => {
     let setup: ReactWrapper<ICheckboxProps>;
     beforeEach(() => {
-        setup = mount(<Checkbox />);
+        setup = mount(<Checkbox name="test" value="test" />);
     });
 
     it("renders without crashing", () => {
@@ -19,7 +22,7 @@ describe("Checkbox ", () => {
     it("renders label prop correctly", () => {
         const label = "test label";
         const wrapper = setup.setProps({ label });
-        expect(wrapper.find(Label).props().labelText).toBe(label);
+        expect(wrapper.find(Label).props().text).toBe(label);
     });
 
     it("renders required prop correctly", () => {
@@ -38,7 +41,7 @@ describe("Checkbox ", () => {
     });
 
     it("renders vertical prop correctly", () => {
-        const wrapper = setup.setProps({ vertical: true });
+        const wrapper = setup.setProps({ direction: "vertical" });
         expect(wrapper.find(".checkbox").hasClass(`checkbox_labelTop`)).toBeTruthy();
     });
 
@@ -74,7 +77,7 @@ describe("Checkbox ", () => {
 
     it("renders indeterminate prop correctly", () => {
         const wrapper = setup.setProps({ indeterminate: true });
-        expect(wrapper.find(MinusOutline)).toBeTruthy();
+        expect(wrapper.find(Minus)).toBeTruthy();
     });
 
     it("renders checked prop correctly", () => {
@@ -120,5 +123,11 @@ describe("Checkbox ", () => {
         const wrapper = setup.setProps({ className });
 
         expect(wrapper.hasClass(className)).toBeTruthy();
+    });
+    it("renders value prop correctly", () => {
+        const value = "test-value";
+        const wrapper = setup.setProps({ value });
+
+        expect(wrapper.find("input").props().value).toBe(value);
     });
 });

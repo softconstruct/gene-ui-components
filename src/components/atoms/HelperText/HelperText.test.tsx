@@ -1,10 +1,11 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
 import { Globe } from "@geneui/icons";
 
+import GeneUIProvider from "../../providers/GeneUIProvider";
 // Components
 import HelperText, { IHelperTextProps } from "./index";
-import GeneUIProvider from "../../providers/GeneUIProvider";
 
 describe("HelperText ", () => {
     let setup: ReactWrapper<IHelperTextProps>;
@@ -39,8 +40,8 @@ describe("HelperText ", () => {
         expect(wrapper.find(Globe)).toBeTruthy();
     });
 
-    it("renders isDisabled prop correctly", () => {
-        const wrapper = setup.setProps({ isDisabled: true });
+    it("renders disabled prop correctly", () => {
+        const wrapper = setup.setProps({ disabled: true });
         expect(wrapper.find(".helperText_disabled").exists()).toBeTruthy();
     });
 

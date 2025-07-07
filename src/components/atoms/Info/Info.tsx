@@ -1,9 +1,10 @@
-import React, { FC, useState, useMemo, KeyboardEvent } from "react";
+import React, { FC, KeyboardEvent, useMemo, useState } from "react";
 import classnames from "classnames";
-import { InfoOutline, IconProps } from "@geneui/icons";
+
+import { IconProps, Info as InfoIcon } from "@geneui/icons";
 
 // Components
-import Tooltip from "../../molecules/Tooltip";
+import Tooltip from "@components/molecules/Tooltip";
 
 // Styles
 import "./Info.scss";
@@ -75,7 +76,7 @@ const Info: FC<IInfoProps> = ({ infoText, disabled, size = "smallNudge", appeara
                 onKeyDown={keyDownHandler}
                 onBlur={handleBlur}
             >
-                <InfoOutline className="info__icon" size={iconSizes[size]} />
+                <InfoIcon className="info__icon" size={iconSizes[size]} />
             </button>
         </Tooltip>
     );

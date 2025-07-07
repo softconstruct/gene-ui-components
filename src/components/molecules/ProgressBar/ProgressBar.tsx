@@ -2,8 +2,8 @@ import React, { FC, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 
 // Components
-import HelperText from "../../atoms/HelperText";
-import Label from "../../atoms/Label";
+import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
 
 // Styles
 import "./ProgressBar.scss";
@@ -114,7 +114,7 @@ const ProgressBar: FC<IProgressBarProps> = ({
                 className
             )}
         >
-            <Label labelText={label} size={helperTextAndLabelSizeMap[size]} infoText={infoText} />
+            <Label text={label} size={helperTextAndLabelSizeMap[size]} infoText={infoText} />
             <div className="progressBar__track">
                 {(isDeterminate || error) && <div className="progressBar__fill" style={{ width: processedPercent }} />}
                 <div className="progressBar__loadingBar" />

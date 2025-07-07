@@ -3,12 +3,17 @@
 
 html {
     font-size: 10px;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .ellipsis-text {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.scroll-lock {
+    overflow: hidden;
 }
 
 *:focus-visible {
