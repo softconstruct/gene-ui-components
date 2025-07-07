@@ -33,6 +33,7 @@ export { Menu, MenuItem, IMenuProps, IMenuItemProps } from "./components/molecul
 export { default as Navigation, INavigationProps, INavigationData } from "./components/molecules/Navigation";
 export { default as Checkbox, ICheckboxProps } from "./components/molecules/Checkbox";
 export { default as Profile, IProfileProps, IProfileData } from "./components/molecules/Profile";
+export { default as RadioGroup } from "./components/molecules/RadioGroup";
 
 // Organisms
 
