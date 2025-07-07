@@ -173,6 +173,10 @@ interface IGlobalHeaderProps {
      * Label for the time section, in mobile Breakpoint default is "Time"
      */
     timeLabel?: string;
+    /**
+     * Configuration object containing product data for main and secondary sections.
+     * Used to render the products dropdown in the global header.
+     */
     products?: IProducts;
     /**
      * Callback function when a product is selected from the list.
@@ -183,34 +187,90 @@ interface IGlobalHeaderProps {
      * Receives the selected menu item as an argument.
      */
     onProfileItemSelect?: (item: IMenuItemProps) => void;
+    /**
+     * Callback function triggered when a language is selected from the language dropdown.
+     * Receives the selected language item as an argument.
+     */
     onLanguageSelect?: (item: IMenuItemProps) => void;
+    /**
+     * Array of language options to display in the profile dropdown.
+     * Each item should have a title, id, and selected state.
+     */
     languages?: IProfileData[];
+    /**
+     * Label text for the language section in the profile dropdown.
+     * Default value is "Language". Used for internationalization.
+     */
     languageText?: string;
+    /**
+     * Text to display for the log out menu item.
+     * Default value is "Log out". Used for internationalization.
+     */
     logOutText?: string;
+    /**
+     * Text to display for the my account menu item.
+     * Default value is "My Account". Used for internationalization.
+     */
     myAccountText?: string;
+    /**
+     * Text to display for the settings menu item.
+     * Default value is "Settings". Used for internationalization.
+     */
     settingsText?: string;
     /**
-     * --------------.
+     * Array of wallet options to display in the profile dropdown.
+     * Each item should have a title, id, and selected state.
      */
     wallet?: IProfileData[];
+    /**
+     * Label text for the wallet section in the profile dropdown.
+     * Default value is "Wallet". Used for internationalization.
+     */
     walletText?: string;
+    /**
+     * Callback function triggered when a wallet option is selected.
+     * Receives the selected wallet item as an argument.
+     */
     onWalletSelect?: (item: IMenuItemProps) => void;
     /**
-     * --------------.
+     * Array of currency options to display in the profile dropdown.
+     * Each item should have a title, id, and selected state.
      */
     currency?: IProfileData[];
+    /**
+     * Label text for the currency section in the profile dropdown.
+     * Default value is "Reporting Currency". Used for internationalization.
+     */
     currencyText?: string;
+    /**
+     * Callback function triggered when a currency option is selected.
+     * Receives the selected currency item as an argument.
+     */
     onCurrencySelect?: (item: IMenuItemProps) => void;
     /**
-     * --------------.
+     * Array of activity filter options to display in the profile dropdown.
+     * Each item should have a title, id, and selected state.
      */
     activity?: IProfileData[];
+    /**
+     * Label text for the activity section in the profile dropdown.
+     * Default value is "Activity". Used for internationalization.
+     */
     activityText?: string;
+    /**
+     * Callback function triggered when an activity filter is selected.
+     * Receives the selected activity item as an argument.
+     */
     onActivitySelect?: (item: IMenuItemProps) => void;
     /**
-     * --------------.
+     * Text to display for the currency converter menu item.
+     * If provided, adds a currency converter option to the profile dropdown.
      */
     currencyConvertorText?: string;
+    /**
+     * Callback function triggered when the currency converter option is selected.
+     * Receives the menu item as an argument.
+     */
     onCurrencyConvertorSelect?: (item: IMenuItemProps) => void;
     /**
      * Optional React component or element to display dynamic content in the header's left section,
@@ -223,9 +283,12 @@ interface IGlobalHeaderProps {
      * If not provided, the Help button will not be displayed in the header.
      */
     onHelpActionSelect?: () => void;
+    /**
+     * Array of custom action buttons to display in the header.
+     * Each action includes a title, icon, id, and callback function.
+     * Actions are shown on desktop and moved to profile dropdown on mobile.
+     */
     actions?: IAction[];
-
-    // actionList?: any[]; // todo button group
 }
 
 /**
