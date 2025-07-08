@@ -7,6 +7,7 @@ import { HamburgerMenu, IconProps, QuestionMark } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import Logo from "@components/atoms/Logo";
+import { IMenuItemProps } from "@components/molecules/Menu";
 import {
     IProductProps,
     Product,
@@ -14,6 +15,7 @@ import {
     ProductsMainSection,
     ProductsSecondarySection
 } from "@components/molecules/Products";
+import Profile, { IProfileData } from "@components/molecules/Profile";
 import Limit from "@components/organisms/GlobalHeader/Limit/Limit";
 import Partners, { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
 import Time from "@components/organisms/GlobalHeader/Time/Time";
@@ -21,8 +23,6 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 
 // Styles
 import "./GlobalHeader.scss";
-
-import { IMenuItemProps, IProfileData, Profile } from "../../../index";
 
 // Utilities
 const idPrefixCreator = (data?: IProfileData[], prefix?: string) => {

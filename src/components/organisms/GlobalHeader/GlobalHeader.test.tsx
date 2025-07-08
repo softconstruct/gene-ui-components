@@ -10,6 +10,11 @@ import Logo from "@components/atoms/Logo";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { Products } from "@components/molecules/Products";
 import Profile, { IProfileData } from "@components/molecules/Profile";
+import GlobalHeader, { IAction, IGlobalHeaderProps } from "@components/organisms/GlobalHeader";
+import Partners from "@components/organisms/GlobalHeader/Partners/Partners";
+import GeneUIProvider from "@components/providers/GeneUIProvider";
+
+// Data
 import {
     activities,
     currencies,
@@ -17,11 +22,7 @@ import {
     partners,
     products,
     webWallets
-} from "@components/organisms/GlobalHeader/__shared/data";
-import Partners from "@components/organisms/GlobalHeader/Partners/Partners";
-import GeneUIProvider from "@components/providers/GeneUIProvider";
-
-import GlobalHeader, { IAction, IGlobalHeaderProps } from "./index";
+} from "../../../../stories/data/__globalHeader";
 
 describe("GlobalHeader ", () => {
     let setup: ReactWrapper<IGlobalHeaderProps>;

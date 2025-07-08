@@ -6,6 +6,11 @@ import { Box, Messages } from "@geneui/icons";
 import Text from "@components/atoms/Text";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { IProfileData } from "@components/molecules/Profile";
+import { IAction, IProducts } from "@components/organisms/GlobalHeader/GlobalHeader";
+import { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
+
+// Helpers
+import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import {
     activities,
     currencies,
@@ -13,12 +18,7 @@ import {
     partners,
     products,
     webWallets
-} from "@components/organisms/GlobalHeader/__shared/data";
-import { IAction, IProducts } from "@components/organisms/GlobalHeader/GlobalHeader";
-import { IPartnerItemData } from "@components/organisms/GlobalHeader/Partners/Partners";
-
-// Helpers
-import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+} from "../../../../stories/data/__globalHeader";
 // Components
 import GlobalHeader, { IGlobalHeaderProps } from "./index";
 

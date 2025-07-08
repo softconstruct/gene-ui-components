@@ -13,6 +13,7 @@ import PartnerItem, { IPartnerItemProps } from "@components/organisms/GlobalHead
 // Hooks
 import useClickOutside from "@hooks/useClickOutside";
 
+// Styles
 import "./Partners.scss";
 
 export type IPartnerItemData = Omit<IPartnerItemProps, "onChange">;
