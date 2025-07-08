@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import {
     Column,
+    ColumnFiltersState,
     flexRender,
     getCoreRowModel,
     getExpandedRowModel,
@@ -22,6 +23,7 @@ import {
     Copy,
     Download,
     Globe,
+    Magnifier,
     Pin,
     RecycleBin,
     Tag,
@@ -34,6 +36,7 @@ import Label from "@components/atoms/Label";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Checkbox from "@components/molecules/Checkbox";
 import Cell, { ICellProps } from "@components/molecules/Table/Cell";
+import Filter from "@components/molecules/Table/Filter";
 import { CellClassNames, deepCloneWithFunctions, SortingIcons } from "@components/molecules/Table/helpers";
 import { Row } from "@components/molecules/Table/makeData";
 import PinnedRow from "@components/molecules/Table/PinnedRow";
@@ -249,6 +252,8 @@ const Table: FC<ITableProps> = ({
     const [orderedColumns, setOrderedColumns] = useState<IOrderedColumns[]>([]);
 
     const [columnOrder, setColumnOrder] = useState<string[]>([]);
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [currentSearchInput, setCurrentSearchInput] = useState<string | null>(null);
 
     useEffect(() => {
         const columnIds: string[] = [];
@@ -284,7 +289,8 @@ const Table: FC<ITableProps> = ({
             sorting,
             columnPinning,
             columnVisibility,
-            globalFilter
+            globalFilter,
+            columnFilters
         },
         onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
@@ -294,6 +300,7 @@ const Table: FC<ITableProps> = ({
         getSortedRowModel: getSortedRowModel(),
         getRowCanExpand: (row) => !!row.original.expandedData,
         enableGlobalFilter: true,
+        onColumnFiltersChange: setColumnFilters,
         onSortingChange: (e) => {
             setSorting(e);
             onSortChange?.(sorting);
@@ -700,7 +707,7 @@ const Table: FC<ITableProps> = ({
                                                                 )}
                                                             </span>
                                                             <div className="table__th_actions">
-                                                                {header.column.columnDef.enableSorting && (
+                                                                {header.column.getCanSort() && (
                                                                     <Button
                                                                         appearance="secondary"
                                                                         layout="text"
@@ -726,7 +733,7 @@ const Table: FC<ITableProps> = ({
 
                                                                 {/* todo: change icon from "Globe" to some "Filter" icon, when it will implemented */}
                                                                 {(header.column.columnDef as TableCol<RowData>)
-                                                                    .filterable && (
+                                                                    .enablePopoverFilter && (
                                                                     <Button
                                                                         appearance="secondary"
                                                                         layout="text"
@@ -738,15 +745,26 @@ const Table: FC<ITableProps> = ({
                                                                 {/* todo: import "Dropdown-Menu" component upon click on "Filter" button */}
 
                                                                 {/* todo: change icon from "Globe" to some "Search" icon, when it will implemented */}
-                                                                {(header.column.columnDef as TableCol<RowData>)
-                                                                    .searchable && (
-                                                                    <Button
-                                                                        appearance="secondary"
-                                                                        layout="text"
-                                                                        size="small"
-                                                                        Icon={Globe}
-                                                                        onClick={() => {}}
-                                                                    />
+                                                                {header.column.getCanFilter() && (
+                                                                    <>
+                                                                        <Button
+                                                                            appearance="secondary"
+                                                                            layout="text"
+                                                                            size="small"
+                                                                            Icon={Magnifier}
+                                                                            onClick={() =>
+                                                                                setCurrentSearchInput(header.column.id)
+                                                                            }
+                                                                        />
+                                                                        {currentSearchInput === header.column.id && (
+                                                                            <Filter
+                                                                                column={header.column}
+                                                                                onBlur={() =>
+                                                                                    setCurrentSearchInput(null)
+                                                                                }
+                                                                            />
+                                                                        )}
+                                                                    </>
                                                                 )}
                                                                 {/* todo: import "Search Field" component instead of "Search" button upon click on it */}
                                                                 {/* <input type="text" placeholder="Search" style={{ width: "100%" }} /> */}

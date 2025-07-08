@@ -50,8 +50,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 type: "text",
                 accessorFn: (row) => row.text?.data,
                 enableSorting: true,
-                searchable: true,
-                filterable: false,
                 editable: true,
                 copyable: true,
                 cell: (info) => info.getValue(),
@@ -68,8 +66,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 enableSorting: true,
                 editable: true,
                 copyable: true,
-                searchable: true,
-                filterable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Number</span>,
                 footer: (props) => props.column.id
@@ -84,8 +80,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: true,
                 copyable: true,
                 enableSorting: true,
-                searchable: true,
-                filterable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Description</span>,
                 footer: (props) => props.column.id
@@ -100,8 +94,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: true,
                 copyable: true,
                 enableSorting: true,
-                searchable: false,
-                filterable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Dropdown</span>,
                 footer: (props) => props.column.id
@@ -115,8 +107,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 accessorKey: "status",
                 enableSorting: true,
                 copyable: false,
-                searchable: false,
-                filterable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Status</span>,
                 footer: (props) => props.column.id
@@ -131,8 +121,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: false,
                 copyable: false,
                 enableSorting: true,
-                searchable: false,
-                filterable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Pill</span>,
                 footer: (props) => props.column.id
@@ -147,8 +135,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: false,
                 copyable: false,
                 enableSorting: true,
-                searchable: false,
-                filterable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Icon</span>,
                 footer: (props) => props.column.id
@@ -163,8 +149,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: false,
                 copyable: false,
                 enableSorting: true,
-                searchable: false,
-                filterable: false,
                 cell: (info) => info.getValue(),
                 header: () => <span>Flag</span>,
                 footer: (props) => props.column.id
@@ -179,8 +163,8 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: true,
                 copyable: false,
                 enableSorting: true,
-                searchable: false,
-                filterable: true,
+                enablePopoverFilter: true,
+                filterOptions: ["On", "Off"],
                 cell: (info) => info.getValue(),
                 header: () => <span>Checkbox</span>,
                 footer: (props) => props.column.id
@@ -195,8 +179,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: true,
                 copyable: false,
                 enableSorting: true,
-                searchable: false,
-                filterable: true,
                 cell: (info) => info.getValue(),
                 header: () => <span>Switch</span>,
                 footer: (props) => props.column.id

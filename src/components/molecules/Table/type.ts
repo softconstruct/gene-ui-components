@@ -28,11 +28,12 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     order: number;
     isVisible?: boolean;
     withCheckbox?: boolean;
-    sortable?: boolean;
+    enableSorting?: boolean;
     editable?: boolean;
     copyable?: boolean;
-    filterable?: boolean;
-    searchable?: boolean;
+    enableColumnFilter?: boolean;
+    enablePopoverFilter?: true;
+    filterOptions?: string[];
     resizable?: boolean;
     columns?: TableCol<RowData>[];
     width?: number | string;

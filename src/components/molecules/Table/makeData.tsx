@@ -59,7 +59,7 @@ const newRow = (): Row => {
         number: {
             withCheckbox: true,
             type: "number",
-            data: faker.datatype.number({ min: 1000 }),
+            data: `${faker.datatype.number({ min: 1000 })}`,
             rowCellRenderer: (element) => element
         },
         longText: {

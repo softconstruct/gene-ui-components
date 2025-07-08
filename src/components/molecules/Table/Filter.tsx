@@ -2,10 +2,12 @@ import React, { ReactNode } from "react";
 import { Column } from "@tanstack/react-table";
 
 const Filter = ({
-    column
+    column,
+    onBlur
     // table
 }: {
     column: Column<Record<string, string | ReactNode | Record<string, string>>, unknown>;
+    onBlur: () => void;
     // table: Table<Record<string, string | Record<string, string>>>;
 }) => {
     // const firstValue = table.getPreFilteredRowModel().flatRows[0]?.getValue(column.id);
@@ -38,6 +40,7 @@ const Filter = ({
             type="text"
             value={(column.getFilterValue() ?? "") as string}
             onChange={(e) => column.setFilterValue(e.target.value)}
+            onBlur={onBlur}
             placeholder="Search..."
         />
     );
