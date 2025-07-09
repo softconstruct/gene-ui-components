@@ -95,7 +95,10 @@ const CustomDecorator = ({ children }) => {
     const paddingForWrapper = paddingBlacklist[children._owner?.pendingProps?.componentId]
         ? {}
         : { padding: "8px 16px" };
-
+    console.log(paddingBlacklist, "paddingBlacklist");
+    console.log(children._owner, "children._owner");
+    console.log(children._owner?.pendingProps, "children._owner?.pendingProps");
+    console.log(children._owner?.pendingProps?.componentId, "children._owner?.pendingProps?.componentId");
     return (
         <GeneUIProvider theme={isDark ? "dark" : "light"}>
             {componentStageProp && (
