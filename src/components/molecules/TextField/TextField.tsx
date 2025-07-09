@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import classNames from "classnames";
 
-import { Globe, IconProps, X } from "@geneui/icons";
+import { Eye, EyeOff, IconProps, X } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -150,10 +150,10 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         },
         ref
     ) => {
-        const inputRef = useRef<HTMLInputElement>(null);
+        const inputRef = useRef<HTMLInputElement | null>(null);
         const [inputValue, setInputValue] = useState("");
-        const [shouldShowPassword, setShouldShowPassword] = useState(false);
         const [limitErrorMessage, setLimitErrorMessage] = useState<string | undefined>();
+        const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
         const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
             const { value: currentValue } = event.target;
@@ -203,6 +203,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             if (limitErrorMessage) setLimitErrorMessage(undefined);
         }, [inputValue, characterLimit]);
 
+        const showPasswordToggle = () => setIsPasswordVisible((prev) => !prev);
+
         return (
             <div className={classNames("textField", className)}>
                 <Label
@@ -231,7 +233,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             {...(inputName && { name: inputName })}
                             ref={inputRef}
                             className="textField__input"
-                            type={shouldShowPassword ? "text" : type}
+                            type={isPasswordVisible ? "text" : type}
                             required={required}
                             disabled={disabled}
                             readOnly={readOnly}
@@ -254,12 +256,12 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             )}
                             {type === "password" && inputValue.length > 0 && (
                                 <Button
-                                    Icon={Globe}
+                                    Icon={isPasswordVisible ? Eye : EyeOff}
                                     appearance="secondary"
                                     size={size === "small" ? "smallNudge" : size}
                                     layout="text"
                                     disabled={disabled}
-                                    onClick={() => setShouldShowPassword(!shouldShowPassword)}
+                                    onClick={showPasswordToggle}
                                 />
                             )}
                         </span>
