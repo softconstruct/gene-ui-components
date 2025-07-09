@@ -96,6 +96,7 @@ const CustomDecorator = ({ children }) => {
         ? {}
         : { padding: "8px 16px" };
     console.log(paddingBlacklist, "paddingBlacklist");
+    console.log(children, "children");
     console.log(children._owner, "children._owner");
     console.log(children._owner?.pendingProps, "children._owner?.pendingProps");
     console.log(children._owner?.pendingProps?.componentId, "children._owner?.pendingProps?.componentId");
