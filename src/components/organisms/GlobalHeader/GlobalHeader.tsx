@@ -1,4 +1,4 @@
-import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode, useContext, useMemo } from "react";
+import React, { cloneElement, FC, MouseEvent, ReactElement, ReactNode, useContext } from "react";
 import classNames from "classnames";
 
 import { HamburgerMenu, IconProps, QuestionMark } from "@geneui/icons";
@@ -394,7 +394,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
         onProfileItemSelect?.(changedItem);
     };
 
-    const profileData = useMemo(() => {
+    const profileData = () => {
         const timeAndLimitForMobile = mobileData(
             isMobileBreakpoint,
             timeLabel,
@@ -502,34 +502,12 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                   }
                 : {};
 
-        return [partnersDataForProfile, ...timeAndLimitForMobile, ...constantData, logOut].filter(
-            (item) => item && typeof item === "object" && "id" in item
-        ) as IProfileData[];
-    }, [
-        isMobileBreakpoint,
-        isDesktopBreakpoint,
-        timeLabel,
-        limitLabel,
-        limitUnit,
-        timeZone,
-        timeFormat,
-        partners,
-        partnersName,
-        logOutText,
-        myAccountText,
-        settingsText,
-        languageText,
-        languagesData,
-        partnersData,
-        walletData,
-        walletText,
-        currencyData,
-        currencyText,
-        activityData,
-        activityText,
-        currencyConvertorText,
-        actions
-    ]);
+        return (
+            ([partnersDataForProfile, ...timeAndLimitForMobile, ...constantData, logOut].filter(
+                (item) => item && typeof item === "object" && "id" in item
+            ) as IProfileData[]) || []
+        );
+    };
 
     return (
         <div
@@ -641,7 +619,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                     <Divider direction="vertical" className="globalHeader__divider" />
                 </div>
                 <Profile
-                    profileData={profileData}
+                    profileData={profileData()}
                     className="globalHeader__profile"
                     fullName="Full Name"
                     onProfileItemSelect={onProfileItemSelectHandler}
