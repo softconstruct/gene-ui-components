@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Globe, Search } from "@geneui/icons";
+import { Globe, Magnifier } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -28,7 +28,7 @@ const meta: Meta<IDividerProps> = {
         text: "test",
         contentPosition: "before",
         Icon: Globe,
-        content: <Avatar Icon={Search} color="slate" />
+        content: <Avatar Icon={Magnifier} color="slate" />
     }
 };
 

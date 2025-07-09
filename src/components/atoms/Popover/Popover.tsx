@@ -23,15 +23,18 @@ import {
     useClick,
     useDismiss,
     useFloating,
+    useHover,
     useInteractions,
     useRole
 } from "@floating-ui/react";
 import { Placement } from "@floating-ui/utils";
+import classNames from "classnames";
 
-import { InfoOutlined, X } from "@geneui/icons";
+import { Info, X } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
+import Spreadsheet from "@components/atoms/Spreadsheet";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Styles
@@ -178,6 +181,11 @@ export interface IPopoverProps {
      * This allows the component to be used both in controlled and uncontrolled modes.
      */
     open?: boolean;
+    /**
+     * Determines how the popover is triggered.
+     * Can be either "click" or "hover".
+     */
+    trigger?: "click" | "hover";
 }
 
 /**
@@ -200,7 +208,8 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             children,
             disableReposition = false,
             onClose,
-            open
+            open,
+            trigger = "click"
         },
         popoverRef
     ) => {
@@ -248,7 +257,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                 referenceElement: refs.reference,
                 floatingElement: refs.floating
             };
-        }, []);
+        }, [popoverRef, refs.reference.current, refs.floating.current, open]);
 
         useEffect(() => {
             if (!popoverOpened && onClose) {
@@ -260,13 +269,19 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             outsidePressEvent: "click"
         });
 
-        const click = useClick(context, {
-            event: "click"
-        });
-
         const role = useRole(context);
 
-        const { getReferenceProps, getFloatingProps } = useInteractions([click, role]);
+        const click = useClick(context, {
+            event: "click",
+            enabled: trigger === "click"
+        });
+        const hover = useHover(context, {
+            enabled: trigger === "hover",
+            delay: { close: 3000 }
+        });
+
+        const interactions = trigger === "hover" ? [hover, role] : [click, role];
+        const { getReferenceProps, getFloatingProps } = useInteractions(interactions);
 
         useEffect(() => {
             const internalControl = open === undefined ? getReferenceProps() : {};
@@ -363,7 +378,37 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             <>
                 {isPopoverOpened &&
                     (isMobile ? (
-                        <span>Spreadsheet component</span>
+                        <Spreadsheet
+                            inset={false}
+                            open={isPopoverOpened}
+                            onClose={() => {
+                                onClose?.();
+                            }}
+                        >
+                            <div
+                                className={classNames("popover__container", "popover__container_height_full")}
+                                ref={refs.setFloating}
+                                {...getFloatingProps()}
+                            >
+                                {title && (
+                                    <div className="popover__header">
+                                        <p className="popover__title">
+                                            <Info className="popover__title_icon" size={20} />
+                                            <span className="popover__title_text ellipsis-text">{title}</span>
+                                        </p>
+                                        <Button
+                                            Icon={X}
+                                            size="small"
+                                            appearance="secondary"
+                                            layout="text"
+                                            className="popover__close"
+                                            onClick={() => setPopoverOpened(false)}
+                                        />
+                                    </div>
+                                )}
+                                {children}
+                            </div>
+                        </Spreadsheet>
                     ) : (
                         <FloatingPortal root={geneUIProviderRef.current}>
                             <div
@@ -407,7 +452,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                     {title && (
                                         <div className="popover__header">
                                             <p className="popover__title">
-                                                <InfoOutlined className="popover__title_icon" size={20} />
+                                                <Info className="popover__title_icon" size={20} />
                                                 <span className="popover__title_text ellipsis-text">{title}</span>
                                             </p>
                                             <Button

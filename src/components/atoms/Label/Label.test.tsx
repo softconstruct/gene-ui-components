@@ -2,7 +2,7 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import { InfoOutlined } from "@geneui/icons";
+import { Info } from "@geneui/icons";
 
 // Components
 import GeneUIProvider from "../../providers/GeneUIProvider";
@@ -39,7 +39,7 @@ describe("Label ", () => {
 
     it("renders infoText prop correctly", () => {
         const wrapper = setup.setProps({ infoText: "text" });
-        expect(wrapper.find(InfoOutlined)).toBeTruthy();
+        expect(wrapper.find(Info)).toBeTruthy();
     });
 
     it("renders disabled prop correctly", () => {
