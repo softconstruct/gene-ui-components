@@ -111,7 +111,13 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                             <div className="dropdownMenu__columns_placeholder">
                                                 {/* todo: add 'disabled' attr. for similar state */}
                                                 {/* todo: add 'readOnly checked' attr-s. for 'readOnly state */}
-                                                <Checkbox name="item" value="item" readOnly checked />
+                                                <Checkbox
+                                                    className="dropdownMenu__columns_checkbox"
+                                                    name="item"
+                                                    value="item"
+                                                    readOnly
+                                                    checked
+                                                />
                                                 <p className="dropdownMenu__columns_text ellipsis-text">
                                                     Active Column Title
                                                 </p>
@@ -199,15 +205,139 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                             onClick={() => {}}
                                         />
 
-                                        {/* todo: change icon from "Globe" to some "Filter" icon, when it will implemented */}
-                                        <Button
-                                            appearance="secondary"
-                                            layout="text"
-                                            size="small"
-                                            Icon={Globe}
-                                            onClick={() => {}}
-                                        />
-                                        {/* todo: import "Dropdown-Menu" component upon click on "Filter" button */}
+                                        {/* todo: conditionally show manageColumns dropdown menu */}
+                                        <div className="dataTable__filterDropdownMenu" style={{ display: "none" }}>
+                                            {/* todo: change icon from "Globe" to some "Filter" icon, when it will implemented */}
+                                            <Button
+                                                appearance="secondary"
+                                                layout="text"
+                                                size="small"
+                                                Icon={Globe}
+                                                onClick={() => {}}
+                                            />
+                                            {/* todo: import "Dropdown-Menu" component upon click on "Filter" button */}
+                                            <div className="filterDropdownMenu">
+                                                <div className="filterDropdownMenu__header">
+                                                    {/* todo: import "Search Field" component instead of next input element */}
+                                                    <input type="text" placeholder="Search" style={{ width: "100%" }} />
+
+                                                    <div className="filterDropdownMenu__headerSelect">
+                                                        <div
+                                                            className="filterDropdownMenu__headerSelect_item"
+                                                            role="tab"
+                                                            tabIndex={0}
+                                                        >
+                                                            <div className="filterDropdownMenu__headerSelect_placeholder">
+                                                                {/* todo: add 'disabled' attr. for similar state */}
+                                                                {/* todo: add 'readOnly checked' attr-s. for 'readOnly state */}
+                                                                <Checkbox
+                                                                    className="filterDropdownMenu__headerSelect_checkbox"
+                                                                    name="item"
+                                                                    value="item"
+                                                                />
+                                                                <p className="filterDropdownMenu__headerSelect_text ellipsis-text">
+                                                                    Select All
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                        <Button
+                                                            appearance="secondary"
+                                                            layout="text"
+                                                            size="small"
+                                                            disabled
+                                                            onClick={() => {}}
+                                                        >
+                                                            Clear
+                                                        </Button>
+                                                    </div>
+                                                </div>
+
+                                                <Scrollbar>
+                                                    <div className="filterDropdownMenu__main">
+                                                        <div className="filterDropdownMenu__columns">
+                                                            {/* todo: add next classNames for similar states - "filterDropdownMenu__columns_item_drag", "filterDropdownMenu__columns_item_disabled" */}
+                                                            <div
+                                                                className="filterDropdownMenu__columns_item"
+                                                                role="tab"
+                                                                tabIndex={0}
+                                                            >
+                                                                <div className="filterDropdownMenu__columns_placeholder">
+                                                                    {/* todo: add 'disabled' attr. for similar state */}
+                                                                    {/* todo: add 'readOnly checked' attr-s. for 'readOnly state */}
+                                                                    <Checkbox
+                                                                        className="filterDropdownMenu__columns_checkbox"
+                                                                        name="item"
+                                                                        value="item"
+                                                                        checked
+                                                                    />
+                                                                    <p className="filterDropdownMenu__columns_text ellipsis-text">
+                                                                        Active Column Title
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div
+                                                                className="filterDropdownMenu__columns_item"
+                                                                role="tab"
+                                                                tabIndex={0}
+                                                            >
+                                                                <div className="filterDropdownMenu__columns_placeholder">
+                                                                    {/* todo: add 'disabled' attr. for similar state */}
+                                                                    {/* todo: add 'readOnly checked' attr-s. for 'readOnly state */}
+                                                                    <Checkbox
+                                                                        className="filterDropdownMenu__columns_checkbox"
+                                                                        name="item"
+                                                                        value="item"
+                                                                    />
+                                                                    <p className="filterDropdownMenu__columns_text ellipsis-text">
+                                                                        Active Column Title
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div
+                                                                className="filterDropdownMenu__columns_item"
+                                                                role="tab"
+                                                                tabIndex={0}
+                                                            >
+                                                                <div className="filterDropdownMenu__columns_placeholder">
+                                                                    {/* todo: add 'disabled' attr. for similar state */}
+                                                                    {/* todo: add 'readOnly checked' attr-s. for 'readOnly state */}
+                                                                    <Checkbox
+                                                                        className="filterDropdownMenu__columns_checkbox"
+                                                                        name="item"
+                                                                        value="item"
+                                                                    />
+                                                                    <p className="filterDropdownMenu__columns_text ellipsis-text">
+                                                                        Active Column Title
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </Scrollbar>
+
+                                                <div className="filterDropdownMenu__footer">
+                                                    {/* todo: import "Button Group" component instead of next element */}
+                                                    <div className="filterDropdownMenu__footer_buutonGroup">
+                                                        <Button
+                                                            appearance="secondary"
+                                                            layout="fill"
+                                                            size="medium"
+                                                            onClick={() => {}}
+                                                        >
+                                                            Cancel
+                                                        </Button>
+                                                        <Button
+                                                            appearance="primary"
+                                                            layout="fill"
+                                                            size="medium"
+                                                            onClick={() => {}}
+                                                        >
+                                                            Save
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         {/* todo: change icon from "Globe" to some "Search" icon, when it will implemented */}
                                         <Button
