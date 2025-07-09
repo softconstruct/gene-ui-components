@@ -6,7 +6,7 @@ import Text from "@components/atoms/Text";
 
 interface ILimitProps {
     label?: string;
-    limit?: string;
+    limit?: string | number;
     isMobile?: boolean;
 }
 

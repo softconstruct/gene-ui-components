@@ -50,7 +50,7 @@ const mobileData = (
     isMobileBreakpoint: boolean,
     timeLabel?: string,
     limitLabel?: string,
-    limitUnit?: string,
+    limitUnit?: string | number,
     timeZone?: string,
     timeFormat?: "24h" | "12h"
 ): IProfileData[] => {
@@ -156,7 +156,7 @@ interface IGlobalHeaderProps {
     /**
      * Unit or amount to show next to the limit label (e.g. "100").
      */
-    limitUnit?: string;
+    limitUnit?: string | number;
     /**
      * The time zone to display the time in.
      * If not provided, it will use the local time zone of the user's device.
