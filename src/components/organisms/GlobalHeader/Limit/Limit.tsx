@@ -25,7 +25,7 @@ const Limit: FC<ILimitProps> = ({ label = "Limit", limit = "0", isMobile }) => {
                 variant="labelMediumSemibold"
                 className={classNames({ globalHeader__limit_limit: isMobile })}
             >
-                {limit}
+                {limit.toString()}
             </Text>
         </div>
     );
