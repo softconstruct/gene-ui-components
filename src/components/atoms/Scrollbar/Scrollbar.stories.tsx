@@ -16,7 +16,8 @@ const meta: Meta<IScrollbarProps> = {
         width: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
         children: args({ control: "false", ...propCategory.content }),
-        onScroll: args({ control: "false", ...propCategory.action })
+        onScroll: args({ control: "false", ...propCategory.action }),
+        scrollBehaviorSmooth: args({ control: "false", ...propCategory.appearance })
     },
     args: {
         onScroll: undefined

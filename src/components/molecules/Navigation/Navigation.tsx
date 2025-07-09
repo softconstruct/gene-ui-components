@@ -364,6 +364,7 @@ const Navigation: FC<INavigationProps> = ({
                                         {menuData.map(({ Icon, title, disabled }, index) => {
                                             return (
                                                 <MenuItem
+                                                    key={`menuitem-${title}-${Icon?.displayName || Icon?.name || index}`}
                                                     id={index}
                                                     IconBefore={Icon}
                                                     selected={index === moreMenuDataActiveIndex}
@@ -392,9 +393,13 @@ const Navigation: FC<INavigationProps> = ({
                                         setPropsForPopover={setPropsForCreatePopover}
                                         onOpenChange={onCreateMenuClickHandler}
                                     >
-                                        {navigationCreateData.map((props: IMenuItemProps) => {
+                                        {navigationCreateData.map((props: IMenuItemProps, index) => {
                                             const { title, ...rest } = props;
-                                            return <MenuItem {...rest}>{title}</MenuItem>;
+                                            return (
+                                                <MenuItem {...rest} key={`create-${title}-${props.id || index}`}>
+                                                    {title}
+                                                </MenuItem>
+                                            );
                                         })}
                                     </Menu>
                                 </>

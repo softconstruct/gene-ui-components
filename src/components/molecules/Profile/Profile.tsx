@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent, useContext, useState } from "react";
+import React, { FC, JSX, MouseEvent, useContext, useState } from "react";
 import classNames from "classnames";
 
 import { CaretDownFilled, IconProps, PersonFilled } from "@geneui/icons";
@@ -61,28 +61,26 @@ interface IProfileProps {
     onProfileItemSelect?: (item: IMenuItemProps) => void;
 }
 
-const ProfileDataRecursion = (menuData: IProfileData[]) => {
-    return menuData.map((el: IProfileData) => {
-        return (
-            <MenuItem
-                key={el.id}
-                selected={el.selected}
-                title={el.children ? el.title : ""}
-                IconBefore={el.IconBefore}
-                IconAfter={el.IconAfter}
-                danger={el.danger}
-                disabled={el.disabled}
-                loading={el.loading}
-                id={el.id}
-                divider={el.divider}
-                loadingText={el.loadingText}
-                emptyText={el.emptyText}
-                ComponentRender={el.ComponentRender}
-            >
-                {el.children ? ProfileDataRecursion(el.children) : el.title}
-            </MenuItem>
-        );
-    });
+const ProfileDataRecursion = (menuData: IProfileData[]): JSX.Element[] => {
+    return menuData.map((el: IProfileData) => (
+        <MenuItem
+            key={el.id}
+            selected={el.selected}
+            title={el.children ? el.title : ""}
+            IconBefore={el.IconBefore}
+            IconAfter={el.IconAfter}
+            danger={el.danger}
+            disabled={el.disabled}
+            loading={el.loading}
+            id={el.id}
+            divider={el.divider}
+            loadingText={el.loadingText}
+            emptyText={el.emptyText}
+            ComponentRender={el.ComponentRender}
+        >
+            {el.children ? ProfileDataRecursion(el.children) : el.title}
+        </MenuItem>
+    ));
 };
 
 /**
@@ -108,8 +106,6 @@ const Profile: FC<IProfileProps> = ({ className, onToggle, fullName, src, onProf
         onProfileItemSelect?.(item);
     };
 
-    const Elements = ProfileDataRecursion(profileData);
-
     return (
         <div className="profile">
             <button
@@ -133,7 +129,7 @@ const Profile: FC<IProfileProps> = ({ className, onToggle, fullName, src, onProf
                 swappable
                 size="large"
             >
-                {Elements}
+                {ProfileDataRecursion(profileData)}
             </Menu>
         </div>
     );
