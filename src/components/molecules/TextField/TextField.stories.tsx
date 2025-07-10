@@ -31,7 +31,7 @@ const meta: Meta<ITextFieldProps> = {
         placeholder: args({ control: "text", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content }),
         inputId: args({ control: "text", ...propCategory.others }),
-        inputName: args({ control: "text", ...propCategory.others })
+        name: args({ control: "text", ...propCategory.others })
     },
     args: {
         size: "large",

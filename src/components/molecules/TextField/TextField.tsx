@@ -48,7 +48,7 @@ interface ITextFieldProps {
     /**
      * The type of `TextField`.
      * - `text`: Standard text `input`
-     * - `password`: Password `input` (with optional visibility toggle)
+     * - `password`: Password `input` with visibility toggle.
      * - default `value` is `text`
      */
     type?: "text" | "password";
@@ -71,7 +71,7 @@ interface ITextFieldProps {
     /**
      * `HTML` `name` attribute for the `input` element
      */
-    inputName?: string;
+    name?: string;
     /**
      * `validationStatus` object for validation feedback.
      * - `type`: Visual state ("warning" | "error")
@@ -80,7 +80,7 @@ interface ITextFieldProps {
     validationStatus?: {
         type: "warning" | "error";
         text: string;
-    };
+    }; // todo: need investigation
     /**
      * Callback triggered when `input` value changes.
      * event - React change event with input details
@@ -130,11 +130,11 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
     (
         {
             inputId,
-            inputName,
+            name,
             type = "text",
             size = "large",
             value = "",
-            placeholder = "",
+            placeholder,
             IconBefore,
             onChange,
             onFocus,
@@ -230,14 +230,14 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                         )}
                         <input
                             {...(inputId && { id: inputId })}
-                            {...(inputName && { name: inputName })}
+                            {...(placeholder && { placeholder })}
+                            name={name || type}
                             ref={inputRef}
                             className="textField__input"
                             type={isPasswordVisible ? "text" : type}
                             required={required}
                             disabled={disabled}
                             readOnly={readOnly}
-                            placeholder={placeholder}
                             value={inputValue}
                             onChange={handleChange}
                             onBlur={onInputBlur}

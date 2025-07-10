@@ -200,7 +200,7 @@
         outline: none;
 
         &::placeholder {
-            color: inherit;
+            color: var(--guit-sem-color-foreground-neutral-1);
         }
     }
 

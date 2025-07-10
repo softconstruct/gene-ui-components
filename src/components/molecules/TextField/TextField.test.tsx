@@ -35,11 +35,11 @@ describe("TextField ", () => {
         expect(wrapper.find("input").prop("id")).toEqual(inputId);
     });
 
-    it("renders inputName prop correctly", () => {
-        const inputName = "test-name";
-        const wrapper = setup.setProps({ inputName });
+    it("renders name prop correctly", () => {
+        const name = "test-name";
+        const wrapper = setup.setProps({ name });
 
-        expect(wrapper.find("input").prop("name")).toEqual(inputName);
+        expect(wrapper.find("input").prop("name")).toEqual(name);
     });
 
     it.each<ITextFieldProps["size"]>(["large", "medium", "small"])("should have %s size", (size) => {
@@ -65,8 +65,8 @@ describe("TextField ", () => {
         expect(wrapper.find("input").prop("placeholder")).toEqual(placeholder);
     });
 
-    it("renders Icon prop correctly", () => {
-        const wrapper = setup.setProps({ Icon: Info });
+    it("renders IconBefore prop correctly", () => {
+        const wrapper = setup.setProps({ IconBefore: Info });
         expect(wrapper.find(Info).exists()).toBeTruthy();
     });
 
