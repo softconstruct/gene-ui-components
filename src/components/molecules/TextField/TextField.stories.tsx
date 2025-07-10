@@ -26,7 +26,7 @@ const meta: Meta<ITextFieldProps> = {
         onChange: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
-        label: args({ control: "object", ...propCategory.content }),
+        label: args({ control: "text", ...propCategory.content }),
         characterLimit: args({ control: "object", ...propCategory.content }),
         placeholder: args({ control: "text", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content }),
@@ -37,9 +37,7 @@ const meta: Meta<ITextFieldProps> = {
         size: "large",
         type: "text",
         placeholder: "placeholder",
-        label: {
-            text: "Label"
-        }
+        label: "Label"
     }
 };
 
@@ -109,7 +107,7 @@ export const WithCharacterLimit: Story = {
 
 export const WithoutLabel: Story = {
     args: {
-        label: undefined
+        label: ""
     },
     render: (props) => <StoryComponentWithRef {...props} />
 };

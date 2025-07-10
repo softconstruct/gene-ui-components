@@ -15,7 +15,7 @@ import { Eye, EyeOff, IconProps, X } from "@geneui/icons";
 // Components
 import Button from "@components/atoms/Button";
 import HelperText from "@components/atoms/HelperText";
-import Label, { ILabelProps } from "@components/atoms/Label";
+import Label from "@components/atoms/Label";
 import Text from "@components/atoms/Text";
 
 // Styles
@@ -55,7 +55,7 @@ interface ITextFieldProps {
     /**
      * `Label` text displayed above the `input` field.
      */
-    label?: ILabelProps;
+    label?: string;
     /**
      * Controlled `input` value
      */
@@ -207,12 +207,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
         return (
             <div className={classNames("textField", className)}>
-                <Label
-                    {...label}
-                    required={required || label?.required}
-                    className="textField__label"
-                    disabled={disabled}
-                >
+                <Label text={label} required={required} className="textField__label" disabled={disabled}>
                     <div
                         className={classNames(
                             `textField__wrapper textField__wrapper_size_${size} textField__wrapper_withIcons`,

@@ -92,20 +92,13 @@ describe("TextField ", () => {
     });
 
     it("renders required prop correctly", () => {
-        const required = true;
-        const label = {
-            text: "Label"
-        };
-        const wrapper = setup.setProps({ required, label });
+        const wrapper = setup.setProps({ required: true, label: "Label" });
 
         expect(wrapper.find(".label__asterisk").exists()).toBeTruthy();
     });
 
     it("renders label prop correctly", () => {
-        const label = {
-            text: "Label"
-        };
-        const wrapper = setup.setProps({ label });
+        const wrapper = setup.setProps({ label: "Label" });
 
         expect(wrapper.find(Label).exists()).toBeTruthy();
     });
