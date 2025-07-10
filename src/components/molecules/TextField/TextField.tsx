@@ -97,9 +97,9 @@ interface ITextFieldProps {
      */
     onBlur?: (event: FocusEvent<HTMLInputElement, Element>) => void;
     /**
-     * The `Icon` prop accepts a React Functional Component that will be displayed alongside the `TextField`.
+     * The `IconBefore` prop accepts a React Functional Component that will be displayed alongside the `TextField`.
      */
-    Icon?: FC<IconProps>;
+    IconBefore?: FC<IconProps>; // startIcon
     /**
      * When `true`, shows a `clear button` to reset the `input` value.
      * default value is `false`
@@ -135,7 +135,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             size = "large",
             value = "",
             placeholder = "",
-            Icon,
+            IconBefore,
             onChange,
             onFocus,
             onBlur,
@@ -223,9 +223,9 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             }
                         )}
                     >
-                        {Icon && (
+                        {IconBefore && (
                             <span className="textField__icon">
-                                <Icon size={size === "small" ? 20 : 24} />
+                                <IconBefore size={size === "small" ? 20 : 24} />
                             </span>
                         )}
                         <input

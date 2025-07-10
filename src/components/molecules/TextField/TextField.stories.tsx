@@ -22,7 +22,7 @@ const meta: Meta<ITextFieldProps> = {
         clearable: args({ control: "boolean", ...propCategory.states }),
         type: args({ control: "select", ...propCategory.appearance }),
         validationStatus: args({ control: "object", ...propCategory.appearance }),
-        Icon: args({ control: "false", ...propCategory.appearance }),
+        IconBefore: args({ control: "false", ...propCategory.appearance }),
         onChange: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
@@ -85,7 +85,7 @@ export const Error: Story = {
 
 export const WithIcon: Story = {
     args: {
-        Icon: Info
+        IconBefore: Info
     },
     render: (props) => <StoryComponentWithRef {...props} />
 };
