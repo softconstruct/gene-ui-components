@@ -215,7 +215,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                 >
                     <div
                         className={classNames(
-                            `textField__wrapper textField__wrapper textField__wrapper_size_${size} textField__wrapper_withIcons`,
+                            `textField__wrapper textField__wrapper_size_${size} textField__wrapper_withIcons`,
                             {
                                 textField__wrapper_readOnly: readOnly,
                                 textField__wrapper_disabled: disabled,
@@ -248,7 +248,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                                 <Button
                                     Icon={X}
                                     appearance="secondary"
-                                    size={size === "small" ? "smallNudge" : size}
+                                    size={size === "small" ? "smallNudge" : "small"}
                                     layout="text"
                                     disabled={disabled}
                                     onClick={handleClear}
@@ -258,7 +258,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                                 <Button
                                     Icon={isPasswordVisible ? Eye : EyeOff}
                                     appearance="secondary"
-                                    size={size === "small" ? "smallNudge" : size}
+                                    size={size === "small" ? "smallNudge" : "small"}
                                     layout="text"
                                     disabled={disabled}
                                     onClick={showPasswordToggle}
