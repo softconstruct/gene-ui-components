@@ -182,10 +182,11 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         };
 
         const handleClear = () => {
-            if (!inputRef.current) return;
+            const refSnapshot = inputRef.current;
+            if (!refSnapshot) return;
 
             setInputValue("");
-            inputRef.current.focus();
+            refSnapshot.focus();
             onClear?.();
         };
 
