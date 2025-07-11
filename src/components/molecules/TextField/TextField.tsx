@@ -107,12 +107,12 @@ interface ITextFieldProps {
      * Callback triggered when input receives focus.
      * event - React focus event
      */
-    onFocus?: (event: FocusEvent<HTMLInputElement, Element>) => void;
+    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
      * Callback triggered when input loses focus.
      * event - React blur event
      */
-    onBlur?: (event: FocusEvent<HTMLInputElement, Element>) => void;
+    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
      * The `IconBefore` prop accepts a React Functional Component that will be displayed alongside the `TextField`.
      */
@@ -187,14 +187,14 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             }
 
             setInputValue("");
-            inputRef.current.focus();
+            inputRef.current?.focus();
         };
 
-        const onInputBlur = (event: FocusEvent<HTMLInputElement, Element>) => {
+        const onInputBlur = (event: FocusEvent<HTMLInputElement>) => {
             onBlur?.(event);
         };
 
-        const onInputFocus = (event: FocusEvent<HTMLInputElement, Element>) => {
+        const onInputFocus = (event: FocusEvent<HTMLInputElement>) => {
             onFocus?.(event);
         };
 
