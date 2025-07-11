@@ -1,9 +1,7 @@
-import React, { FC, useRef, useState } from "react";
+import React, { FC } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Info } from "@geneui/icons";
-
-import { ITextFieldRef } from "@components/molecules/TextField/TextField";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -46,20 +44,16 @@ export default meta;
 
 type Story = StoryObj<ITextFieldProps>;
 
-const StoryComponentWithRef: FC<ITextFieldProps> = (props) => {
-    const inputRef = useRef<ITextFieldRef | null>(null);
-    const { value: defaultValue } = props;
-    const [value, setValue] = useState(defaultValue || "");
-
+const StoryTamplate: FC<ITextFieldProps> = (props) => {
     return (
         <div style={{ width: 300 }}>
-            <TextField {...props} value={value} onChange={(e) => setValue(e.target.value)} ref={inputRef} />
+            <TextField {...props} />
         </div>
     );
 };
 
 export const Default: Story = {
-    render: (props) => <StoryComponentWithRef {...props} />
+    render: (props) => <StoryTamplate {...props} />
 };
 
 export const Warning: Story = {
@@ -69,7 +63,7 @@ export const Warning: Story = {
             text: "Some warning text"
         }
     },
-    render: (props) => <StoryComponentWithRef {...props} />
+    render: (props) => <StoryTamplate {...props} />
 };
 
 export const Error: Story = {
@@ -79,21 +73,21 @@ export const Error: Story = {
             text: "Some error text"
         }
     },
-    render: (props) => <StoryComponentWithRef {...props} />
+    render: (props) => <StoryTamplate {...props} />
 };
 
 export const WithIcon: Story = {
     args: {
         IconBefore: Info
     },
-    render: (props) => <StoryComponentWithRef {...props} />
+    render: (props) => <StoryTamplate {...props} />
 };
 
 export const WithPassword: Story = {
     args: {
         type: "password"
     },
-    render: (props) => <StoryComponentWithRef {...props} />
+    render: (props) => <StoryTamplate {...props} />
 };
 
 export const WithCharacterLimit: Story = {
@@ -103,12 +97,12 @@ export const WithCharacterLimit: Story = {
             text: "Some validation text"
         }
     },
-    render: (props) => <StoryComponentWithRef {...props} />
+    render: (props) => <StoryTamplate {...props} />
 };
 
 export const WithoutLabel: Story = {
     args: {
         label: ""
     },
-    render: (props) => <StoryComponentWithRef {...props} />
+    render: (props) => <StoryTamplate {...props} />
 };

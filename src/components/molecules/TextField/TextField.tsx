@@ -137,7 +137,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             name,
             type = "text",
             size = "large",
-            value = "",
+            value,
             placeholder,
             IconBefore,
             onChange,
@@ -191,7 +191,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         }));
 
         useEffect(() => {
-            setInputValue(value);
+            setInputValue(value || "");
         }, [value]);
 
         useEffect(() => {
