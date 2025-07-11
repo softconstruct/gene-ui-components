@@ -42,6 +42,12 @@ describe("TextField ", () => {
         expect(wrapper.find("input").prop("name")).toEqual(name);
     });
 
+    it("renders autocomplete prop correctly", () => {
+        const wrapper = setup.setProps({ autocomplete: "off" });
+
+        expect(wrapper.find("input").prop("autoComplete")).toEqual("off");
+    });
+
     it.each<ITextFieldProps["size"]>(["large", "medium", "small"])("should have %s size", (size) => {
         const wrapper = setup.setProps({ size });
         expect(wrapper.find(".textField__wrapper").hasClass(`textField__wrapper_size_${size}`)).toBeTruthy();

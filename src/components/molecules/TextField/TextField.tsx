@@ -77,6 +77,14 @@ interface ITextFieldProps {
      */
     name?: string;
     /**
+     * `Controls the HTML autocomplete attribute for the input field. This helps browsers offer autofill suggestions based on user data and context.
+     *  Use HTML default values like "on" or "off", "email", "username", etc.
+     *  Default is "on".
+     *  Always match name and autocomplete attributes for best browser support.
+     *  Possible values: "on" | "off" | string
+     */
+    autocomplete?: "on" | "off" | string;
+    /**
      * `validationStatus` object for validation feedback.
      * - `type`: Visual state ("warning" | "error")
      * - `text`: Message to display
@@ -151,7 +159,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             validationStatus,
             clearable,
             characterLimit,
-            className
+            className,
+            autocomplete = "on"
         },
         ref
     ) => {
@@ -238,6 +247,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             {...(id && { id })}
                             {...(placeholder && { placeholder })}
                             name={name || type}
+                            autoComplete={autocomplete}
                             ref={inputRef}
                             className="textField__input"
                             type={isPasswordVisible ? "text" : type}

@@ -30,7 +30,8 @@ const meta: Meta<ITextFieldProps> = {
         placeholder: args({ control: "text", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content }),
         id: args({ control: "text", ...propCategory.others }),
-        name: args({ control: "text", ...propCategory.others })
+        name: args({ control: "text", ...propCategory.others }),
+        autocomplete: args({ control: "text", ...propCategory.others })
     },
     args: {
         size: "large",
@@ -44,7 +45,7 @@ export default meta;
 
 type Story = StoryObj<ITextFieldProps>;
 
-const StoryTamplate: FC<ITextFieldProps> = (props) => {
+const StoryTemplate: FC<ITextFieldProps> = (props) => {
     return (
         <div style={{ width: 300 }}>
             <TextField {...props} />
@@ -53,7 +54,7 @@ const StoryTamplate: FC<ITextFieldProps> = (props) => {
 };
 
 export const Default: Story = {
-    render: (props) => <StoryTamplate {...props} />
+    render: (props) => <StoryTemplate {...props} />
 };
 
 export const Warning: Story = {
@@ -63,7 +64,7 @@ export const Warning: Story = {
             text: "Some warning text"
         }
     },
-    render: (props) => <StoryTamplate {...props} />
+    render: (props) => <StoryTemplate {...props} />
 };
 
 export const Error: Story = {
@@ -73,21 +74,21 @@ export const Error: Story = {
             text: "Some error text"
         }
     },
-    render: (props) => <StoryTamplate {...props} />
+    render: (props) => <StoryTemplate {...props} />
 };
 
 export const WithIcon: Story = {
     args: {
         IconBefore: Info
     },
-    render: (props) => <StoryTamplate {...props} />
+    render: (props) => <StoryTemplate {...props} />
 };
 
 export const WithPassword: Story = {
     args: {
         type: "password"
     },
-    render: (props) => <StoryTamplate {...props} />
+    render: (props) => <StoryTemplate {...props} />
 };
 
 export const WithCharacterLimit: Story = {
@@ -97,12 +98,12 @@ export const WithCharacterLimit: Story = {
             text: "Some validation text"
         }
     },
-    render: (props) => <StoryTamplate {...props} />
+    render: (props) => <StoryTemplate {...props} />
 };
 
 export const WithoutLabel: Story = {
     args: {
         label: ""
     },
-    render: (props) => <StoryTamplate {...props} />
+    render: (props) => <StoryTemplate {...props} />
 };
