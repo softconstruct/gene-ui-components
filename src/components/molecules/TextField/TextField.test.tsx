@@ -151,4 +151,15 @@ describe("TextField ", () => {
 
         expect(wrapper.find(HelperText).props().type).toEqual(status);
     });
+
+    it("fires onClear when the clear button is clicked", () => {
+        const onClear = jest.fn();
+        const onChange = jest.fn();
+
+        const wrapper = mount(<TextField value="text" onClear={onClear} onChange={onChange} clearable />);
+
+        wrapper.find("button").simulate("click");
+
+        expect(onClear).toHaveBeenCalledTimes(1);
+    });
 });

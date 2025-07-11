@@ -126,6 +126,12 @@ interface ITextFieldProps {
      *  Possible values: `rest | warning | error`
      */
     status?: "rest" | "warning" | "error";
+    /**
+     *  Callback fired after the Clear (“×”) button is pressed.
+     *  Use it when the parent component needs to react to a manual reset.
+     *
+     */
+    onClear?: () => void;
 }
 
 export interface ITextFieldRef {
@@ -160,7 +166,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             autoComplete = "on",
             autoFocus = false,
             helperText,
-            status = "rest"
+            status = "rest",
+            onClear
         },
         ref
     ) => {
@@ -181,6 +188,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
             setInputValue("");
             inputRef.current?.focus();
+            onClear?.();
         };
 
         const onInputBlur = (event: FocusEvent<HTMLInputElement>) => {
@@ -199,7 +207,9 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         }));
 
         useEffect(() => {
-            setInputValue(value || "");
+            if (typeof value === "string") {
+                setInputValue(value);
+            }
         }, [value]);
 
         const showPasswordToggle = () => setIsPasswordVisible((prev) => !prev);

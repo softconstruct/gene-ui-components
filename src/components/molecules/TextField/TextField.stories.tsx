@@ -24,6 +24,7 @@ const meta: Meta<ITextFieldProps> = {
         onChange: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
+        onClear: args({ control: "false", ...propCategory.action }),
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
         characterLimit: args({ control: "number", ...propCategory.content }),
@@ -62,20 +63,16 @@ export const Default: Story = {
 
 export const Warning: Story = {
     args: {
-        validationStatus: {
-            type: "warning",
-            text: "Some warning text"
-        }
+        status: "warning",
+        helperText: "warning text"
     },
     render: (props) => <StoryTemplate {...props} />
 };
 
 export const Error: Story = {
     args: {
-        validationStatus: {
-            type: "error",
-            text: "Some error text"
-        }
+        status: "error",
+        helperText: "error text"
     },
     render: (props) => <StoryTemplate {...props} />
 };
