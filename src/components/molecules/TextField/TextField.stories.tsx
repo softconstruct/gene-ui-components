@@ -26,13 +26,15 @@ const meta: Meta<ITextFieldProps> = {
         onBlur: args({ control: "false", ...propCategory.action }),
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
-        characterLimit: args({ control: "object", ...propCategory.content }),
+        characterLimit: args({ control: "number", ...propCategory.content }),
         placeholder: args({ control: "text", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content }),
         id: args({ control: "text", ...propCategory.others }),
         name: args({ control: "text", ...propCategory.others }),
         autoComplete: args({ control: "text", ...propCategory.functionality }),
-        autoFocus: args({ control: "boolean", ...propCategory.functionality })
+        autoFocus: args({ control: "boolean", ...propCategory.functionality }),
+        helperText: args({ control: "text", ...propCategory.content }),
+        status: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         size: "large",
@@ -94,10 +96,7 @@ export const WithPassword: Story = {
 
 export const WithCharacterLimit: Story = {
     args: {
-        characterLimit: {
-            length: 100,
-            text: "Some validation text"
-        }
+        characterLimit: 111
     },
     render: (props) => <StoryTemplate {...props} />
 };

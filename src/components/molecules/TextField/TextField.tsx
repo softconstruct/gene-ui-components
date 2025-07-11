@@ -90,14 +90,9 @@ interface ITextFieldProps {
      */
     autoFocus?: boolean;
     /**
-     * `validationStatus` object for validation feedback.
-     * - `type`: Visual state ("warning" | "error")
-     * - `text`: Message to display
+     * Helper text to provide context or explain any errors, warnings related to the input.
      */
-    validationStatus?: {
-        type: "warning" | "error";
-        text: string;
-    }; // todo: need investigation
+    helperText?: string;
     /**
      * Callback triggered when `input` value changes.
      * event - React change event with input details
@@ -123,16 +118,14 @@ interface ITextFieldProps {
      */
     clearable?: boolean;
     /**
-     * Configuration for maximum character limit:
-     * - `length`: Maximum allowed characters
-     * - `text`: Custom error message when limit is exceeded
-     *            (default: "Exceeds max length {length}")
-     * - The max length validation message takes priority over the standard status error message when both are present.
+     * - `length`: Maximum allowed characters counter.
      */
-    characterLimit?: {
-        length: number;
-        text?: string;
-    };
+    characterLimit?: number;
+    /**
+     *  Determines the input appearance based on its status.<br>
+     *  Possible values: `rest | warning | error`
+     */
+    status?: "rest" | "warning" | "error";
 }
 
 export interface ITextFieldRef {
@@ -161,18 +154,18 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             required,
             label,
             infoText,
-            validationStatus,
             clearable,
             characterLimit,
             className,
             autoComplete = "on",
-            autoFocus = false
+            autoFocus = false,
+            helperText,
+            status = "rest"
         },
         ref
     ) => {
         const inputRef = useRef<HTMLInputElement | null>(null);
         const [inputValue, setInputValue] = useState("");
-        const [limitErrorMessage, setLimitErrorMessage] = useState<string | undefined>();
         const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
         const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -209,20 +202,6 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             setInputValue(value || "");
         }, [value]);
 
-        useEffect(() => {
-            if (!inputValue.length) {
-                if (limitErrorMessage) setLimitErrorMessage(undefined);
-                return;
-            }
-
-            if (characterLimit && inputValue.length > characterLimit?.length) {
-                setLimitErrorMessage(characterLimit?.text || `Exceeds max length ${characterLimit?.length}`);
-                return;
-            }
-
-            if (limitErrorMessage) setLimitErrorMessage(undefined);
-        }, [inputValue, characterLimit]);
-
         const showPasswordToggle = () => setIsPasswordVisible((prev) => !prev);
 
         return (
@@ -240,7 +219,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             {
                                 textField__wrapper_readOnly: readOnly,
                                 textField__wrapper_disabled: disabled,
-                                textField__wrapper_error: validationStatus?.type === "error" || limitErrorMessage
+                                textField__wrapper_error: status === "error"
                             }
                         )}
                     >
@@ -290,25 +269,17 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                         </span>
                     </div>
                 </Label>
-                {(validationStatus || limitErrorMessage || characterLimit) && (
-                    <div className="textField__info">
-                        {(validationStatus || limitErrorMessage) && (
-                            <HelperText
-                                text={limitErrorMessage || validationStatus?.text || ""}
-                                type={limitErrorMessage ? "error" : validationStatus?.type}
-                                disabled={disabled}
-                            />
-                        )}
-                        {characterLimit?.length && (
-                            <Text
-                                as="span"
-                                className={classNames(`textField__info_text`, {
-                                    textField__info_text_disabled: disabled
-                                })}
-                            >{`${inputValue.length} / ${characterLimit.length}`}</Text>
-                        )}
-                    </div>
-                )}
+                <div className="textField__info">
+                    {helperText && <HelperText text={helperText} disabled={disabled} type={status || "rest"} />}
+                    {characterLimit && (
+                        <Text
+                            as="span"
+                            className={classNames(`textField__characterLimit`, {
+                                textField__characterLimit_disabled: disabled
+                            })}
+                        >{`${inputValue.length} / ${characterLimit}`}</Text>
+                    )}
+                </div>
             </div>
         );
     }

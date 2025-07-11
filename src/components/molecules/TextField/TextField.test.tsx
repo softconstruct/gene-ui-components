@@ -5,7 +5,6 @@ import { Info, X } from "@geneui/icons";
 
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
-import Text from "@components/atoms/Text";
 
 // Components
 import TextField, { ITextFieldProps } from "./index";
@@ -122,22 +121,14 @@ describe("TextField ", () => {
     });
 
     it("renders characterLimit prop correctly", () => {
-        const characterLimit = {
-            length: 100
-        };
-        const wrapper = setup.setProps({ characterLimit });
+        const characterLimit = 100;
+        const value = "1";
 
-        expect(wrapper.find(Text).exists()).toBeTruthy();
-    });
+        const wrapper = setup.setProps({ characterLimit, value });
+        wrapper.update();
 
-    it("renders validationStatus prop correctly", () => {
-        const validationStatus: ITextFieldProps["validationStatus"] = {
-            type: "error",
-            text: "some error text"
-        };
-        const wrapper = setup.setProps({ validationStatus });
-
-        expect(wrapper.find(HelperText).exists()).toBeTruthy();
+        const characterCounter = wrapper.find(".textField__characterLimit").filter("span");
+        expect(characterCounter.text()).toEqual(`${value.length} / ${characterLimit}`);
     });
 
     it("renders clearable prop correctly", () => {
@@ -146,5 +137,18 @@ describe("TextField ", () => {
         const wrapper = setup.setProps({ clearable, value });
         wrapper.update();
         expect(wrapper.find(X).exists()).toBeTruthy();
+    });
+
+    it("renders helperText prop correctly", () => {
+        const helperText = "test";
+        const wrapper = setup.setProps({ helperText });
+
+        expect(wrapper.find(HelperText).text()).toStrictEqual(helperText);
+    });
+
+    it.each<ITextFieldProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
+        const wrapper = setup.setProps({ status, helperText: "test helper text" });
+
+        expect(wrapper.find(HelperText).props().type).toEqual(status);
     });
 });
