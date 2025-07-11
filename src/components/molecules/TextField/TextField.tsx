@@ -118,7 +118,7 @@ interface ITextFieldProps {
      */
     clearable?: boolean;
     /**
-     * - `length`: Maximum allowed characters counter.
+     * - Maximum allowed characters counter.
      */
     characterLimit?: number;
     /**
@@ -182,17 +182,11 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         };
 
         const handleClear = () => {
-            if (!inputRef?.current) {
-                return;
-            }
+            if (!inputRef.current) return;
 
             setInputValue("");
-            inputRef.current?.focus();
+            inputRef.current.focus();
             onClear?.();
-        };
-
-        const onInputBlur = (event: FocusEvent<HTMLInputElement>) => {
-            onBlur?.(event);
         };
 
         const onInputFocus = (event: FocusEvent<HTMLInputElement>) => {
@@ -242,7 +236,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             {...(id && { id })}
                             {...(placeholder && { placeholder })}
                             {...(autoFocus && { autoFocus })}
-                            {...(autoComplete !== "off" && { autoComplete })}
+                            autoComplete={autoComplete}
                             name={name || type}
                             ref={inputRef}
                             className="textField__input"
@@ -252,8 +246,10 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             readOnly={readOnly}
                             value={inputValue}
                             onChange={handleChange}
-                            onBlur={onInputBlur}
+                            onBlur={onBlur}
                             onFocus={onInputFocus}
+                            aria-invalid={status === "error"}
+                            aria-required={required}
                         />
                         <span className="textField__actions">
                             {clearable && inputValue.length > 0 && !disabled && !readOnly && (
@@ -266,7 +262,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                                     onClick={handleClear}
                                 />
                             )}
-                            {type === "password" && inputValue.length > 0 && (
+                            {type === "password" && inputValue.length > 0 && !readOnly && !disabled && (
                                 <Button
                                     Icon={isPasswordVisible ? Eye : EyeOff}
                                     appearance="secondary"
