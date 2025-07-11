@@ -42,10 +42,16 @@ describe("TextField ", () => {
         expect(wrapper.find("input").prop("name")).toEqual(name);
     });
 
-    it("renders autocomplete prop correctly", () => {
-        const wrapper = setup.setProps({ autocomplete: "off" });
+    it("renders autoComplete prop correctly", () => {
+        const wrapper = setup.setProps({ autoComplete: "email" });
 
-        expect(wrapper.find("input").prop("autoComplete")).toEqual("off");
+        expect(wrapper.find("input").prop("autoComplete")).toEqual("email");
+    });
+
+    it("renders autoFocus prop correctly", () => {
+        const wrapper = setup.setProps({ autoFocus: true });
+
+        expect(wrapper.find("input").prop("autoFocus")).toEqual(true);
     });
 
     it.each<ITextFieldProps["size"]>(["large", "medium", "small"])("should have %s size", (size) => {

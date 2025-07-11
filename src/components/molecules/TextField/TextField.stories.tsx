@@ -31,7 +31,8 @@ const meta: Meta<ITextFieldProps> = {
         value: args({ control: "text", ...propCategory.content }),
         id: args({ control: "text", ...propCategory.others }),
         name: args({ control: "text", ...propCategory.others }),
-        autocomplete: args({ control: "text", ...propCategory.others })
+        autoComplete: args({ control: "text", ...propCategory.functionality }),
+        autoFocus: args({ control: "boolean", ...propCategory.functionality })
     },
     args: {
         size: "large",
