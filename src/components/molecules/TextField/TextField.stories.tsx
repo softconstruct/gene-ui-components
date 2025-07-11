@@ -29,7 +29,7 @@ const meta: Meta<ITextFieldProps> = {
         characterLimit: args({ control: "object", ...propCategory.content }),
         placeholder: args({ control: "text", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content }),
-        inputId: args({ control: "text", ...propCategory.others }),
+        id: args({ control: "text", ...propCategory.others }),
         name: args({ control: "text", ...propCategory.others })
     },
     args: {

@@ -71,7 +71,7 @@ interface ITextFieldProps {
     /**
      * `HTML` `id` attribute for the `input` element
      */
-    inputId?: string;
+    id?: string;
     /**
      * `HTML` `name` attribute for the `input` element
      */
@@ -133,7 +133,7 @@ export interface ITextFieldRef {
 const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
     (
         {
-            inputId,
+            id,
             name,
             type = "text",
             size = "large",
@@ -235,7 +235,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             </span>
                         )}
                         <input
-                            {...(inputId && { id: inputId })}
+                            {...(id && { id })}
                             {...(placeholder && { placeholder })}
                             name={name || type}
                             ref={inputRef}

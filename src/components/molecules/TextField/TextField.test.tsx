@@ -28,11 +28,11 @@ describe("TextField ", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    it("renders inputId prop correctly", () => {
-        const inputId = "test-id";
-        const wrapper = setup.setProps({ inputId });
+    it("renders id prop correctly", () => {
+        const id = "test-id";
+        const wrapper = setup.setProps({ id });
 
-        expect(wrapper.find("input").prop("id")).toEqual(inputId);
+        expect(wrapper.find("input").prop("id")).toEqual(id);
     });
 
     it("renders name prop correctly", () => {
