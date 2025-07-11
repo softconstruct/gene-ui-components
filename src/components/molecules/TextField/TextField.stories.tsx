@@ -27,6 +27,7 @@ const meta: Meta<ITextFieldProps> = {
         onFocus: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
         label: args({ control: "text", ...propCategory.content }),
+        infoText: args({ control: "text", ...propCategory.content }),
         characterLimit: args({ control: "object", ...propCategory.content }),
         placeholder: args({ control: "text", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content }),

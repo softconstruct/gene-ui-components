@@ -103,6 +103,12 @@ describe("TextField ", () => {
         expect(wrapper.find(Label).exists()).toBeTruthy();
     });
 
+    it("renders infoText prop correctly", () => {
+        const infoText = "infoText";
+        const wrapper = setup.setProps({ infoText });
+        expect(wrapper.find(Label).props().infoText).toBe(infoText);
+    });
+
     it("renders characterLimit prop correctly", () => {
         const characterLimit = {
             length: 100

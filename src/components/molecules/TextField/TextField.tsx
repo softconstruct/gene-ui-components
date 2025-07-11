@@ -57,6 +57,10 @@ interface ITextFieldProps {
      */
     label?: string;
     /**
+     *  Extra information displayed with the tooltip next to the label for clarity or guidance.
+     */
+    infoText?: string;
+    /**
      * Controlled `input` value
      */
     value?: string;
@@ -143,6 +147,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             disabled,
             required,
             label,
+            infoText,
             validationStatus,
             clearable,
             characterLimit,
@@ -207,7 +212,13 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
         return (
             <div className={classNames("textField", className)}>
-                <Label text={label} required={required} className="textField__label" disabled={disabled}>
+                <Label
+                    text={label}
+                    required={required}
+                    className="textField__label"
+                    disabled={disabled}
+                    infoText={infoText}
+                >
                     <div
                         className={classNames(
                             `textField__wrapper textField__wrapper_size_${size} textField__wrapper_withIcons`,
