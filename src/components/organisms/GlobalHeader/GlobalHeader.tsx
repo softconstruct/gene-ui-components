@@ -289,6 +289,22 @@ interface IGlobalHeaderProps {
      * Actions are shown on desktop and moved to profile dropdown on mobile.
      */
     actions?: IAction[];
+    /**
+     * The full name of the currently authenticated user.
+     * This name is displayed next to the user profile avatar in the global header.
+     * If not provided, only the profile avatar will be shown.
+     */
+    fullName?: string;
+    /**
+     *  The image URL for the user's profile avatar.
+     *  This image is displayed in the top-right section of the global header.
+     */
+    userImageSrc?: string;
+    /**
+     * Callback function triggered when the logOut option is selected.
+     * Receives the menu item as an argument.
+     */
+    onLogOutSelect?: (item: IMenuItemProps) => void;
 }
 
 /**
@@ -306,7 +322,7 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     partnersDisabled,
     partnersName = "Partner",
     partnersIdName,
-    limitLabel = "Limit",
+    limitLabel,
     limitUnit,
     timeZone,
     timeFormat,
@@ -333,7 +349,10 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
     onCurrencyConvertorSelect,
     leftContent = null,
     onHelpActionSelect,
-    actions
+    actions,
+    fullName,
+    userImageSrc,
+    onLogOutSelect
 }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
@@ -380,6 +399,9 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
             case "activityItem":
                 changedItem = idPrefixRemover(item, "activityItem");
                 onActivitySelect?.(changedItem);
+                break;
+            case "logOut":
+                onLogOutSelect?.(changedItem);
                 break;
             default:
                 if (actions && actions.some((action) => action.id === item.id)) {
@@ -598,30 +620,33 @@ const GlobalHeader: FC<IGlobalHeaderProps> = ({
                             />
                         )}
                         {products && (
-                            <Products onChange={onProductSelect}>
-                                {products.mainSectionData && products.mainSectionData.length > 0 && (
-                                    <ProductsMainSection>
-                                        {products.mainSectionData?.map((product) => (
-                                            <Product key={product.id} {...product} />
-                                        ))}
-                                    </ProductsMainSection>
-                                )}
-                                {products.secondarySectionData && products.secondarySectionData?.length > 0 && (
-                                    <ProductsSecondarySection>
-                                        {products.secondarySectionData?.map((product) => (
-                                            <Product key={product.id} {...product} />
-                                        ))}
-                                    </ProductsSecondarySection>
-                                )}
-                            </Products>
+                            <>
+                                <Products onChange={onProductSelect}>
+                                    {products.mainSectionData && products.mainSectionData.length > 0 && (
+                                        <ProductsMainSection>
+                                            {products.mainSectionData?.map((product) => (
+                                                <Product key={product.id} {...product} />
+                                            ))}
+                                        </ProductsMainSection>
+                                    )}
+                                    {products.secondarySectionData && products.secondarySectionData?.length > 0 && (
+                                        <ProductsSecondarySection>
+                                            {products.secondarySectionData?.map((product) => (
+                                                <Product key={product.id} {...product} />
+                                            ))}
+                                        </ProductsSecondarySection>
+                                    )}
+                                </Products>
+                                <Divider direction="vertical" className="globalHeader__divider" />
+                            </>
                         )}
                     </div>
-                    <Divider direction="vertical" className="globalHeader__divider" />
                 </div>
                 <Profile
                     profileData={profileData()}
                     className="globalHeader__profile"
-                    fullName="Full Name"
+                    fullName={fullName}
+                    src={userImageSrc}
                     onProfileItemSelect={onProfileItemSelectHandler}
                 />
             </div>

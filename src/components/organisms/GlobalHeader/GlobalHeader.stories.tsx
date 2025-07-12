@@ -62,6 +62,7 @@ const meta: Meta<IGlobalHeaderProps> = {
         onCurrencySelect: args({ control: "false", ...propCategory.action }),
         onActivitySelect: args({ control: "false", ...propCategory.action }),
         onCurrencyConvertorSelect: args({ control: "false", ...propCategory.action }),
+        onLogOutSelect: args({ control: "false", ...propCategory.action }),
         onHelpActionSelect: args({ control: "false", ...propCategory.action }),
         partnersLoading: args({ control: "boolean", ...propCategory.states }),
         partnersDisabled: args({ control: "boolean", ...propCategory.states }),
@@ -76,6 +77,7 @@ const meta: Meta<IGlobalHeaderProps> = {
         limitLabel: args({ control: "text", ...propCategory.content }),
         limitUnit: args({ control: "text", ...propCategory.content }),
         timeZone: args({ control: "text", ...propCategory.content }),
+        fullName: args({ control: "text", ...propCategory.content }),
         timeFormat: args({
             control: "select",
             options: ["24h", "12h"],
@@ -94,13 +96,15 @@ const meta: Meta<IGlobalHeaderProps> = {
         currencyConvertorText: args({ control: "text", ...propCategory.content }),
         activity: args({ control: "false", ...propCategory.content }),
         activityText: args({ control: "text", ...propCategory.content }),
+        userImageSrc: args({ control: "text", ...propCategory.content }),
         actions: args({ control: "false", ...propCategory.content })
     },
     args: {
         logoAs: <a href="/" aria-label="logo" />,
         limitUnit: "1234523",
         timeLabel: "Time",
-        currencyConvertorText: "Currency Convertor"
+        currencyConvertorText: "Currency Convertor",
+        fullName: "Full Name"
     }
 };
 
@@ -228,10 +232,22 @@ const Template = (props) => {
         </div>
     );
 };
+
 export default meta;
 
 type Story = StoryObj<IGlobalHeaderProps>;
 
 export const Default: Story = {
     render: (props) => <Template {...props} />
+};
+
+const EmptyTemplate = () => {
+    return (
+        <div style={{ width: "100%", height: "100%" }}>
+            <GlobalHeader fullName="Full Name" />
+        </div>
+    );
+};
+export const Empty: Story = {
+    render: () => <EmptyTemplate />
 };
