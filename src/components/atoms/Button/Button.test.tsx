@@ -85,4 +85,9 @@ describe("Button ", () => {
 
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
+
+    it.each<IButtonProps["type"]>(["button", "submit", "reset"])("should have %s type", (type) => {
+        const wrapper = setup.setProps({ type });
+        expect(wrapper.find("button").props().type).toBe(type);
+    });
 });
