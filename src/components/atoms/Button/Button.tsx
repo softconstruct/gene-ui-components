@@ -113,12 +113,13 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
         const isSizeXS = size === "smallNudge";
         const isTextDisplayForXS =
             (appearance === "primary" || appearance === "danger" || appearance === "success") && isSizeXS;
+
         return (
             <button
                 ref={ref}
                 name={name}
-                type="button"
-                {...(type ? { type } : {})}
+                // eslint-disable-next-line react/button-has-type
+                type={type || "button"}
                 onClick={onClick}
                 disabled={disabled && !loading}
                 {...(loading ? { tabIndex: -1 } : {})}
