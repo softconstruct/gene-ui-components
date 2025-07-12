@@ -71,6 +71,12 @@ interface IButtonProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * The button type attribute for HTML form behavior. <br>
+     * Possible values: `button | submit | reset` <br>
+     * Default: `button`
+     */
+    type?: "button" | "submit" | "reset";
 }
 
 const loadingTypes = {
@@ -99,19 +105,20 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             onClick,
             className,
             iconPosition,
-            loading
+            loading,
+            type = "button"
         }: IButtonProps,
         ref
     ) => {
         const isSizeXS = size === "smallNudge";
         const isTextDisplayForXS =
             (appearance === "primary" || appearance === "danger" || appearance === "success") && isSizeXS;
-
         return (
             <button
                 ref={ref}
                 name={name}
                 type="button"
+                {...(type ? { type } : {})}
                 onClick={onClick}
                 disabled={disabled && !loading}
                 {...(loading ? { tabIndex: -1 } : {})}
