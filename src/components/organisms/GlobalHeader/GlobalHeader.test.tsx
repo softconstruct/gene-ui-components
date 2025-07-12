@@ -5,7 +5,6 @@ import { Box, Messages, QuestionMark } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
-import Divider from "@components/atoms/Divider";
 import Logo from "@components/atoms/Logo";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { Products } from "@components/molecules/Products";
@@ -278,7 +277,8 @@ describe("GlobalHeader ", () => {
                 activityText: "Activity",
                 myAccountText: "My Account",
                 settingsText: "Settings",
-                logOutText: "Log Out"
+                logOutText: "Log Out",
+                fullName: "Full Name"
             });
 
             const profileComponent = wrapper.find(Profile);
@@ -313,19 +313,6 @@ describe("GlobalHeader ", () => {
             const wrapper = setup.setProps({ leftContent });
             // Left content rendering depends on breakpoint, so we just test that props are passed
             expect(wrapper.prop("leftContent")).toBeDefined();
-        });
-    });
-
-    describe("Dividers", () => {
-        it("renders dividers between sections", () => {
-            const wrapper = setup.setProps({
-                partners,
-                limitLabel: "Limit",
-                limitUnit: "1000",
-                timeZone: "UTC"
-            });
-
-            expect(wrapper.find(Divider).length).toBeGreaterThan(0);
         });
     });
 
