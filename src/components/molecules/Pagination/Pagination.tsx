@@ -4,11 +4,11 @@ import classNames from "classnames";
 import { ChevronDoubleLeft, ChevronDoubleRight, ChevronLeft, ChevronRight } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
+import PaginationButton from "@components/molecules/Pagination/PaginationButton";
+import TextField from "@components/molecules/TextField";
 
 // Styles
 import "./Pagination.scss";
-
-import PaginationButton from "./PaginationButton";
 
 interface IPaginationProps {
     /**
@@ -294,10 +294,12 @@ const Pagination: FC<IPaginationProps> = ({
                 {showInputPageField && (
                     <div className="pagination__nav_specific">
                         <span>Go to</span>
-                        {/* todo: import 'Text Field' component */}
-                        <div className="pagination__input">
-                            <input type="text" onChange={changeCurrenPage} />
-                        </div>
+                        <TextField
+                            numericOnly
+                            onChange={changeCurrenPage}
+                            autoComplete="off"
+                            className="pagination__input"
+                        />
                         <span>Page</span>
                     </div>
                 )}

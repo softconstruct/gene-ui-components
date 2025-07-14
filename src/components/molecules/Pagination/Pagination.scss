@@ -37,8 +37,9 @@
 
         display: flex;
         align-items: center;
-        justify-content: flex-end;
+        justify-content: space-between;
         gap: var(--guit-ref-spacing-2xlarge);
+        width: 100%;
 
         &_specific {
             display: flex;
@@ -152,5 +153,9 @@
         align-items: center;
         justify-content: flex-end;
         gap: var(--guit-ref-spacing-2xlarge);
+    }
+
+    &__input {
+        width: 6.4rem;
     }
 }
