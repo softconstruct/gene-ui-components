@@ -24,7 +24,8 @@ const testMainProducts: IProductProps[] = [
         title: "Backoffice",
         withBadge: true,
         Icon: Globe,
-        disabled: false
+        disabled: false,
+        selected: true
     },
     {
         id: 2,
@@ -112,7 +113,7 @@ const testSecondaryProducts: IProductProps[] = [
 const ProductsStory: Story = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        onClick: args({ control: "false", ...propCategory.action }),
+        onChange: args({ control: "false", ...propCategory.action }),
         children: args({ control: "false", ...propCategory.content })
     },
     render: (props) => {
@@ -139,7 +140,8 @@ const ProductStory: StoryProduct = storyObjBuilder({
     argTypes: {
         title: args({ control: "text", ...propCategory.content }),
         Icon: args({ control: "false", ...propCategory.content }),
-        withBadge: args({ control: "boolean", ...propCategory.content })
+        withBadge: args({ control: "boolean", ...propCategory.content }),
+        selected: args({ control: "boolean", ...propCategory.states })
     },
     args: {
         title: "BackOffice",
@@ -149,8 +151,8 @@ const ProductStory: StoryProduct = storyObjBuilder({
     render: (props) => {
         const onProductClick = () => {};
         return (
-            <div style={{ position: "fixed", insetInlineEnd: 30, top: 30 }}>
-                <Products onClick={onProductClick}>
+            <div style={{ position: "fixed", insetInlineEnd: 30, top: 30, backgroundColor: "#262627" }}>
+                <Products onChange={onProductClick}>
                     <ProductsMainSection>
                         <Product title="Backoffice" Icon={Globe} {...props} />
                     </ProductsMainSection>

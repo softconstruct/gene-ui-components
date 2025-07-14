@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import classnames from "classnames";
 
-import { Error, IconProps, TriangleAlert } from "@geneui/icons";
+import { ErrorFilled, IconProps, TriangleAlert } from "@geneui/icons";
 
 // Styles
 import "./HelperText.scss";
@@ -52,7 +52,7 @@ const iconSize = {
  */
 const HelperText: FC<IHelperTextProps> = ({ size = "medium", type = "rest", text, Icon, disabled, className }) => {
     const iconMap = {
-        error: <Error size={iconSize[size]} />,
+        error: <ErrorFilled size={iconSize[size]} />,
         warning: <TriangleAlert size={iconSize[size]} />,
         rest: Icon && <Icon size={iconSize[size]} />
     };
