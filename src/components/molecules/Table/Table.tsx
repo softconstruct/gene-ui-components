@@ -263,6 +263,7 @@ const Table: FC<ITableProps> = ({
                 }
                 columnIds.push(col.columnDef.id);
                 columnVisibilities[col.columnDef.id] = !!(col.columnDef as TableCol<RowData>).isVisible;
+                col.toggleVisibility(!!(col.columnDef as TableCol<RowData>).isVisible);
             })
         );
 
@@ -318,7 +319,7 @@ const Table: FC<ITableProps> = ({
                 if (header.getContext().column.columns.length && header.getContext().column.columnDef.header)
                     cols.push({
                         id: header.column.id,
-                        title: () => flexRender(header.column.columnDef.header, header.getContext()),
+                        title: (header.column.columnDef as TableCol<RowData>).header,
                         columns: header.column.columns.sort((a, b) => {
                             return (a.columnDef as TableCol<RowData>).order - (b.columnDef as TableCol<RowData>).order;
                         })
@@ -507,7 +508,7 @@ const Table: FC<ITableProps> = ({
                                                                                     snapshot.isDraggingOver
                                                                             })}
                                                                         >
-                                                                            <span key={item.id}>{item.title()}</span>
+                                                                            <span key={item.id}>{item.title}</span>
                                                                             {item.columns.map((column, index) => {
                                                                                 if (
                                                                                     (
@@ -547,9 +548,11 @@ const Table: FC<ITableProps> = ({
                                                                                             >
                                                                                                 <Label
                                                                                                     className="dropdownMenu__columns_placeholder"
-                                                                                                    text={`${(
-                                                                                                        column.columnDef as TableCol<RowData>
-                                                                                                    ).header()}`}
+                                                                                                    text={
+                                                                                                        (
+                                                                                                            column.columnDef as TableCol<RowData>
+                                                                                                        ).header
+                                                                                                    }
                                                                                                 >
                                                                                                     <Checkbox
                                                                                                         name="item"
@@ -567,10 +570,6 @@ const Table: FC<ITableProps> = ({
                                                                                                         }
                                                                                                     />
                                                                                                 </Label>
-                                                                                                {/* <p className="dropdownMenu__columns_text ellipsis-text"> */}
-                                                                                                {/*    {column.columnDef.header()} */}
-                                                                                                {/* </p> */}
-
                                                                                                 <div className="dropdownMenu__columns_actions">
                                                                                                     <Button
                                                                                                         appearance="secondary"
@@ -692,10 +691,7 @@ const Table: FC<ITableProps> = ({
                                                     ) : (
                                                         <button type="button" tabIndex={0} className="table__content">
                                                             <span className="table__th_text ellipsis-text">
-                                                                {flexRender(
-                                                                    header.column.columnDef.header,
-                                                                    header.getContext()
-                                                                )}
+                                                                {(header.column.columnDef as TableCol<RowData>).header}
                                                             </span>
                                                             <ColActions header={header} />
                                                         </button>

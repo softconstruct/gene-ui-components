@@ -1,11 +1,9 @@
-import React from "react";
-
 import { RowData, TableCol } from "@components/molecules/Table/type";
 
 export const defaultColumns: TableCol<RowData>[] = [
     {
         id: "groupName",
-        header: () => <div>Group Name</div>,
+        header: "Group Name",
         accessorKey: "groupName",
         order: 0,
         type: "text",
@@ -21,7 +19,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 enableGlobalFilter: false,
                 type: "expand",
                 accessorKey: "expand",
-                header: () => null
+                header: null
             },
             {
                 id: "rowCheckbox",
@@ -30,7 +28,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 enableGlobalFilter: false,
                 type: "rowCheckbox",
                 accessorKey: "rowCheckbox",
-                header: () => null
+                header: null
             },
             {
                 id: "graph",
@@ -41,22 +39,21 @@ export const defaultColumns: TableCol<RowData>[] = [
                 accessorKey: "graph",
                 editable: false,
                 copyable: false,
-                header: () => <div>Graph</div>,
+                header: "Graph",
                 cell: (info) => info.getValue(),
                 footer: (props) => props.column.id
             },
             {
                 id: "title",
-                isVisible: true,
                 order: 2,
-                enableGlobalFilter: true,
+                isVisible: false,
                 type: "text",
                 accessorFn: (row) => row.text?.data,
                 enableSorting: true,
                 editable: true,
                 copyable: true,
                 cell: (cell) => cell,
-                header: () => <span>Title</span>,
+                header: "Title",
                 footer: (props) => props.column.id
             },
             {
@@ -70,7 +67,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: true,
                 copyable: true,
                 cell: (info) => info,
-                header: () => <span>Number</span>,
+                header: "Number",
                 footer: (props) => props.column.id
             },
             {
@@ -84,7 +81,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 copyable: true,
                 enableSorting: true,
                 cell: (info) => info.getValue(),
-                header: () => <span>Description</span>,
+                header: "Description",
                 footer: (props) => props.column.id
             },
             {
@@ -99,7 +96,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 enableSorting: true,
                 enablePopoverFilter: true,
                 cell: (info) => info.getValue(),
-                header: () => <span>Dropdown</span>,
+                header: "Dropdown",
                 footer: (props) => props.column.id
             },
             {
@@ -113,7 +110,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 enableSorting: true,
                 copyable: false,
                 cell: (info) => info.getValue(),
-                header: () => <span>Status</span>,
+                header: "Status",
                 footer: (props) => props.column.id
             },
             {
@@ -127,7 +124,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 copyable: false,
                 enableSorting: true,
                 cell: (info) => info.getValue(),
-                header: () => <span>Pill</span>,
+                header: "Pill",
                 footer: (props) => props.column.id
             },
             {
@@ -141,7 +138,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 copyable: false,
                 enableSorting: true,
                 cell: (info) => info.getValue(),
-                header: () => <span>Icon</span>,
+                header: "Icon",
                 footer: (props) => props.column.id
             },
             {
@@ -155,7 +152,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 copyable: false,
                 enableSorting: true,
                 cell: (info) => info.getValue(),
-                header: () => <span>Flag</span>,
+                header: "Flag",
                 footer: (props) => props.column.id
             },
             {
@@ -170,7 +167,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 enableSorting: true,
                 enablePopoverFilter: true,
                 cell: (info) => info.getValue(),
-                header: () => <span>Checkbox</span>,
+                header: "Checkbox",
                 footer: (props) => props.column.id
             },
             {
@@ -186,7 +183,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 enablePopoverFilter: true,
                 filterOptions: ["On", "Off"],
                 cell: (info) => info.getValue(),
-                header: () => <span>Switch</span>,
+                header: "Switch",
                 footer: (props) => props.column.id
             }
         ] as TableCol<RowData>[]
