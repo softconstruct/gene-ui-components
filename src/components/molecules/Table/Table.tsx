@@ -23,7 +23,6 @@ import {
     Copy,
     Download,
     Globe,
-    Magnifier,
     Pin,
     RecycleBin,
     Tag,
@@ -35,12 +34,12 @@ import Divider from "@components/atoms/Divider";
 import Label from "@components/atoms/Label";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Checkbox from "@components/molecules/Checkbox";
+import BulkActions from "@components/molecules/Table/BulkActions";
 import Cell, { ICellProps } from "@components/molecules/Table/Cell";
-import Filter from "@components/molecules/Table/Filter";
-import { CellClassNames, deepCloneWithFunctions, SortingIcons } from "@components/molecules/Table/helpers";
-import { Row } from "@components/molecules/Table/makeData";
+import { ColActions } from "@components/molecules/Table/ColActions";
+import { CellClassNames, deepCloneWithFunctions } from "@components/molecules/Table/helpers";
 import PinnedRow from "@components/molecules/Table/PinnedRow";
-import { BulkAction, IOrderedColumns, RowActions, RowData, TableCol } from "@components/molecules/Table/type";
+import { BulkAction, IOrderedColumns, Row, RowActions, RowData, TableCol } from "@components/molecules/Table/type";
 
 // Styles
 import "./Table.scss";
@@ -119,7 +118,7 @@ interface ITableProps {
     /**
      * Optional bulk action buttons that appear when rows are selected.
      */
-    bulkActions?: BulkAction[];
+    bulkActions?: BulkAction;
 
     /**
      * Enables global search box (text input above the table).
@@ -253,7 +252,6 @@ const Table: FC<ITableProps> = ({
 
     const [columnOrder, setColumnOrder] = useState<string[]>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-    const [currentSearchInput, setCurrentSearchInput] = useState<string | null>(null);
 
     useEffect(() => {
         const columnIds: string[] = [];
@@ -399,14 +397,6 @@ const Table: FC<ITableProps> = ({
         onManageColumnRestore?.(manageColumnsData);
     };
 
-    const onCellCopy = async (value: string | number) => {
-        try {
-            await navigator.clipboard.writeText(`${value}`);
-        } catch (err) {
-            console.error("Failed to copy text:", err);
-        }
-    };
-
     return (
         <div className={classNames("dataTable", className)}>
             <div className={classNames("dataTable__toolbar toolbar", className)}>
@@ -443,6 +433,7 @@ const Table: FC<ITableProps> = ({
                         >
                             Bulk Actions
                         </Button>
+                        <BulkActions />
                     </div>
                 </div>
                 <div className="dataTable__toolbar_actions">
@@ -706,69 +697,7 @@ const Table: FC<ITableProps> = ({
                                                                     header.getContext()
                                                                 )}
                                                             </span>
-                                                            <div className="table__th_actions">
-                                                                {header.column.getCanSort() && (
-                                                                    <Button
-                                                                        appearance="secondary"
-                                                                        layout="text"
-                                                                        size="small"
-                                                                        Icon={
-                                                                            SortingIcons[
-                                                                                `${header.column.getIsSorted()}`
-                                                                            ]
-                                                                        }
-                                                                        onClick={(e) => {
-                                                                            return (
-                                                                                (
-                                                                                    header.column
-                                                                                        .columnDef as TableCol<unknown>
-                                                                                ).enableSorting &&
-                                                                                header?.column?.getToggleSortingHandler?.()?.(
-                                                                                    e
-                                                                                )
-                                                                            );
-                                                                        }}
-                                                                    />
-                                                                )}
-
-                                                                {/* todo: change icon from "Globe" to some "Filter" icon, when it will implemented */}
-                                                                {(header.column.columnDef as TableCol<RowData>)
-                                                                    .enablePopoverFilter && (
-                                                                    <Button
-                                                                        appearance="secondary"
-                                                                        layout="text"
-                                                                        size="small"
-                                                                        Icon={Globe}
-                                                                        onClick={() => {}}
-                                                                    />
-                                                                )}
-                                                                {/* todo: import "Dropdown-Menu" component upon click on "Filter" button */}
-
-                                                                {/* todo: change icon from "Globe" to some "Search" icon, when it will implemented */}
-                                                                {header.column.getCanFilter() && (
-                                                                    <>
-                                                                        <Button
-                                                                            appearance="secondary"
-                                                                            layout="text"
-                                                                            size="small"
-                                                                            Icon={Magnifier}
-                                                                            onClick={() =>
-                                                                                setCurrentSearchInput(header.column.id)
-                                                                            }
-                                                                        />
-                                                                        {currentSearchInput === header.column.id && (
-                                                                            <Filter
-                                                                                column={header.column}
-                                                                                onBlur={() =>
-                                                                                    setCurrentSearchInput(null)
-                                                                                }
-                                                                            />
-                                                                        )}
-                                                                    </>
-                                                                )}
-                                                                {/* todo: import "Search Field" component instead of "Search" button upon click on it */}
-                                                                {/* <input type="text" placeholder="Search" style={{ width: "100%" }} /> */}
-                                                            </div>
+                                                            <ColActions header={header} />
                                                         </button>
                                                     )}
                                                 </div>
@@ -849,6 +778,11 @@ const Table: FC<ITableProps> = ({
                                                                 `table__content ${CellClassNames[type]}`
                                                             )}
                                                         >
+                                                            {/* {cell.column.columnDef.cell && */}
+                                                            {/*    flexRender(cell.column.columnDef.cell, { */}
+                                                            {/*        ...cell.getContext(), */}
+                                                            {/*        editableMode */}
+                                                            {/*    })} */}
                                                             <Cell
                                                                 type={type as ICellProps["type"]}
                                                                 data={
@@ -864,8 +798,10 @@ const Table: FC<ITableProps> = ({
                                                                             .type
                                                                     ]?.rowCellRenderer
                                                                 }
-                                                                {...((cell.column.columnDef as TableCol<unknown>)
-                                                                    .copyable && { onCopy: onCellCopy })}
+                                                                withCopy={
+                                                                    (cell.column.columnDef as TableCol<unknown>)
+                                                                        .copyable
+                                                                }
                                                                 onChange={(e) => handleCellEdit(e, rowIndex, type)}
                                                             />
                                                         </div>

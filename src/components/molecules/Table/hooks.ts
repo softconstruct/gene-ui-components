@@ -9,10 +9,8 @@ import {
     VisibilityState
 } from "@tanstack/react-table";
 
-import { Row } from "@components/molecules/Table/makeData";
-
 import { deepCloneWithFunctions } from "./helpers";
-import { IOrderedColumns, LoadingState, SelectionMode, TableCallbacks } from "./type";
+import { IOrderedColumns, LoadingState, Row, SelectionMode, TableCallbacks } from "./type";
 
 export interface UseTableStateProps<T = any> {
     initialData: Row[];

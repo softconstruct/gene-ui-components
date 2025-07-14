@@ -6,9 +6,30 @@ import { defaultColumns } from "@components/molecules/Table/Columns";
 // Helpers
 import { storyObjBuilder } from "../../../../stories/assets/storybook.globals";
 // Components
-import Table, { ITableProps } from "./index";
-import { makeData, Row } from "./makeData";
+import Table, { BulkAction, ITableProps, Row } from "./index";
+import { makeData } from "./makeData";
 import TableLayoutTmp from "./TableLayoutTmp";
+
+const bulkActionsMock: BulkAction = {
+    label: "Bulk",
+    list: [
+        {
+            id: 1,
+            label: "item",
+            action: (event) => console.log(event)
+        },
+        {
+            id: 2,
+            label: "item",
+            action: (event) => console.log(event)
+        },
+        {
+            id: 3,
+            label: "item",
+            action: (event) => console.log(event)
+        }
+    ]
+};
 
 const meta: Meta<ITableProps> = {
     title: "Molecules/Table",
@@ -45,6 +66,7 @@ export const TableStory: Story = storyObjBuilder({
                 initialPageIndex={0}
                 withCheckbox
                 expandable
+                bulkActions={bulkActionsMock}
                 rowActions={{
                     delete: (id) => console.log(id)
                 }}

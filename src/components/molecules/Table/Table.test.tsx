@@ -2,10 +2,10 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
 import { defaultColumns } from "@components/molecules/Table/Columns";
-import { makeData, Row } from "@components/molecules/Table/makeData";
+import { makeData } from "@components/molecules/Table/makeData";
 
 // Components
-import Table, { ITableProps } from "./index";
+import Table, { ITableProps, Row } from "./index";
 
 const mockData: Row[] = makeData(1);
 

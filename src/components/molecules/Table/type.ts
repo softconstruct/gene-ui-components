@@ -1,6 +1,10 @@
-import { ReactNode } from "react";
+import { FC, ReactNode } from "react";
 import { Column, ColumnDef, PaginationState, SortingState } from "@tanstack/react-table";
 import { HeaderContext } from "@tanstack/table-core/build/lib/core/headers";
+
+import { IconProps } from "@geneui/icons";
+
+import { IPillProps } from "@components/atoms/Pill";
 
 export type CellType =
     | "empty"
@@ -76,12 +80,41 @@ export interface TableCallbacks<T = any> {
     onGlobalFilterChange?: (filter: string) => void;
 }
 
-export interface BulkAction {
-    id: string;
+export type Cell = {
+    type:
+        | "graph"
+        | "text"
+        | "number"
+        | "longText"
+        | "dropdown"
+        | "status"
+        | "pill"
+        | "icon"
+        | "flag"
+        | "checkbox"
+        | "switch";
+    data: string | number | boolean | IPillProps | FC<IconProps>;
+    rowCellRenderer: (Element: ReactNode) => ReactNode;
+};
+
+type TableRowCells = {
+    [K in CellType]?: Cell;
+};
+
+export type Row = TableRowCells & {
+    rowStatus: "default" | "zebra" | "red" | "green" | "highlighted";
+    expandedData: () => ReactNode | null;
+};
+
+export interface BulkActionList {
+    id?: string | number;
     label: string;
-    icon?: ReactNode;
-    action: (selectedRows: string[]) => void;
-    variant?: "default" | "danger" | "success";
+    action: (selectedRows: Row) => void;
+}
+
+export interface BulkAction {
+    label: string;
+    list: BulkActionList[];
 }
 
 export interface IOrderedColumns {

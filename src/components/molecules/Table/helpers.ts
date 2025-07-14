@@ -1,7 +1,6 @@
 import { ArrowUp, ArrowUpDown } from "@geneui/icons";
 
-import { Row } from "@components/molecules/Table/makeData";
-import { RowData, TableCol } from "@components/molecules/Table/type";
+import { Row, RowData, TableCol } from "@components/molecules/Table/type";
 
 export const CellClassNames: { [key: string]: string } = {
     empty: "table__content_empty",

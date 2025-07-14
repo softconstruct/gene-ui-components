@@ -1,8 +1,6 @@
 import React, { ChangeEvent, FC, ReactNode } from "react";
 
-import { Copy } from "@geneui/icons";
-
-import Button from "@components/atoms/Button";
+import Copy from "@components/atoms/Copy";
 import Pill from "@components/atoms/Pill";
 import Checkbox from "@components/molecules/Checkbox";
 
@@ -17,7 +15,7 @@ interface ICellProps {
     // disabled?: boolean;
     // placeholder?: string;
     // options?: Array<{ value: string; label: string }>;
-    onCopy?: (value: string | number) => void;
+    withCopy?: boolean;
 }
 
 type CellRenderer = {
@@ -33,19 +31,12 @@ export const cellRenderer: CellRenderer = {
     graph: ({ rowCellRenderer, data }) => {
         return rowCellRenderer(<img src={data} alt="" />);
     },
-    text: ({ rowCellRenderer, data, withEditMode, inputType = "text", onCopy, onChange }) =>
-        rowCellRenderer(
+    text: ({ rowCellRenderer, data, withEditMode, inputType = "text", withCopy, onChange }) => {
+        return rowCellRenderer(
             !withEditMode ? (
                 <>
                     <span className="table__td_text ellipsis-text">{data}</span>
-                    <Button
-                        appearance="secondary"
-                        layout="text"
-                        size="small"
-                        Icon={Copy}
-                        onClick={() => onCopy?.(data)}
-                        className="table__content_copy"
-                    />
+                    {withCopy && <Copy value={data} className="table__content_copy" />}
                 </>
             ) : (
                 <input
@@ -56,20 +47,14 @@ export const cellRenderer: CellRenderer = {
                     style={{ width: "160px" }}
                 />
             )
-        ),
-    longText: ({ rowCellRenderer, data, withEditMode, onCopy, onChange }) => {
+        );
+    },
+    longText: ({ rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
         return rowCellRenderer(
             !withEditMode ? (
                 <>
                     <span className="table__td_text">{data}</span>
-                    <Button
-                        appearance="secondary"
-                        layout="text"
-                        size="small"
-                        Icon={Copy}
-                        onClick={() => onCopy?.(data)}
-                        className="table__content_copy"
-                    />
+                    {withCopy && <Copy value={data} className="table__content_copy" />}
                 </>
             ) : (
                 <textarea
@@ -81,19 +66,12 @@ export const cellRenderer: CellRenderer = {
             )
         );
     },
-    dropdown: ({ rowCellRenderer, data, withEditMode, onCopy, onChange }) => {
+    dropdown: ({ rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
         return rowCellRenderer(
             !withEditMode ? (
                 <>
                     <span className="table__td_text ellipsis-text">{data}</span>
-                    <Button
-                        appearance="secondary"
-                        layout="text"
-                        size="small"
-                        Icon={Copy}
-                        onClick={() => onCopy?.(data)}
-                        className="table__content_copy"
-                    />
+                    {withCopy && <Copy value={data} className="table__content_copy" />}
                 </>
             ) : (
                 <select
@@ -156,7 +134,7 @@ export const cellRenderer: CellRenderer = {
         )
 };
 
-const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, onCopy, onChange }) => {
+const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
     const cellTypeWithNumber = type === "number" ? "text" : type;
     const CellItem = cellRenderer[cellTypeWithNumber];
     return (
@@ -166,7 +144,7 @@ const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, onCop
                 withEditMode,
                 data,
                 inputType: type === "number" ? type : "text",
-                onCopy,
+                withCopy,
                 onChange
             })}
         </>

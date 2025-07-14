@@ -1,38 +1,10 @@
-import React, { FC, ReactNode } from "react";
+import React from "react";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { faker } from "@faker-js/faker";
 
-import { Globe, IconProps } from "@geneui/icons";
+import { Globe } from "@geneui/icons";
 
-import { IPillProps } from "@components/atoms/Pill";
-import { CellType } from "@components/molecules/Table/type";
-
-type Cell = {
-    type:
-        | "graph"
-        | "text"
-        | "number"
-        | "longText"
-        | "dropdown"
-        | "status"
-        | "pill"
-        | "icon"
-        | "flag"
-        | "checkbox"
-        | "switch";
-    data: string | number | boolean | IPillProps | FC<IconProps>;
-    withCheckbox?: boolean;
-    rowCellRenderer: (Element: ReactNode) => ReactNode;
-};
-
-type TableRowCells = {
-    [K in CellType]?: Cell;
-};
-
-export type Row = TableRowCells & {
-    rowStatus: "default" | "zebra" | "red" | "green" | "highlighted";
-    expandedData: () => ReactNode | null;
-};
+import { Row } from "@components/molecules/Table/type";
 
 const range = (len: number) => {
     const arr: number[] = [];
@@ -45,54 +17,69 @@ const range = (len: number) => {
 const newRow = (): Row => {
     return {
         graph: {
-            withCheckbox: true,
+            // withCheckbox: true,
             type: "graph",
             data: faker.image.image(148, 28),
             rowCellRenderer: (element) => element
         },
         text: {
-            withCheckbox: true,
+            // withCheckbox: true,
             type: "text",
-            data: faker.word.adjective(),
+            data: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!,
             rowCellRenderer: (element) => element
         },
         number: {
-            withCheckbox: true,
+            // withCheckbox: true,
             type: "number",
             data: `${faker.datatype.number({ min: 1000 })}`,
             rowCellRenderer: (element) => element
         },
         longText: {
-            withCheckbox: true,
+            // withCheckbox: true,
             type: "longText",
             data: faker.lorem.text(),
             rowCellRenderer: (element) => element
         },
         dropdown: {
-            withCheckbox: true,
+            // withCheckbox: true,
             type: "dropdown",
             data: faker.word.adjective(),
             rowCellRenderer: (element) => element
         },
         status: {
-            withCheckbox: true,
+            // withCheckbox: true,
             type: "status",
             data: faker.word.adjective(),
             rowCellRenderer: (element) => element
         },
-        pill: { withCheckbox: true, type: "pill", data: {}, rowCellRenderer: (element) => element },
-        icon: { withCheckbox: true, type: "icon", data: Globe, rowCellRenderer: (element) => element },
-        flag: { withCheckbox: true, type: "flag", data: Globe, rowCellRenderer: (element) => element },
+        pill: {
+            // withCheckbox: true,
+            type: "pill",
+            data: {},
+            rowCellRenderer: (element) => element
+        },
+        icon: {
+            // withCheckbox: true,
+            type: "icon",
+            data: Globe,
+            rowCellRenderer: (element) => element
+        },
+        flag: {
+            // withCheckbox: true,
+            type: "flag",
+            data: Globe,
+            rowCellRenderer: (element) => element
+        },
         checkbox: {
-            withCheckbox: true,
+            // withCheckbox: true,
             type: "checkbox",
             data: "value",
             rowCellRenderer: (element) => element
         },
         switch: {
-            withCheckbox: true,
+            // withCheckbox: true,
             type: "switch",
-            data: true,
+            data: faker.helpers.shuffle<boolean>([true, false])[0]!,
             rowCellRenderer: (element) => element
         },
         rowStatus: faker.helpers.shuffle<Row["rowStatus"]>([
