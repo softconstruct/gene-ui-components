@@ -214,7 +214,7 @@ const Pagination: FC<IPaginationProps> = ({
                 <div className="pagination__nav_list">
                     <Button
                         appearance="secondary"
-                        displayType="text"
+                        layout="text"
                         disabled={currentPage === 1}
                         Icon={isRTLMode ? ChevronRight : ChevronLeft}
                         onClick={() => changeWithArrow(false, false)}
@@ -285,7 +285,7 @@ const Pagination: FC<IPaginationProps> = ({
                     )}
                     <Button
                         appearance="secondary"
-                        displayType="text"
+                        layout="text"
                         disabled={currentPage === totalPages}
                         Icon={isRTLMode ? ChevronLeft : ChevronRight}
                         onClick={() => changeWithArrow(false, true)}

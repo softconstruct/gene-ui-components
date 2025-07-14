@@ -24,7 +24,7 @@ const PaginationButton: FC<Props> = ({ onClick, Icon, disabled }) => {
                 onClick={onClick}
                 Icon={isHovered ? Icon : ThreeDotsHorizontal}
                 appearance="secondary"
-                displayType="text"
+                layout="text"
             />
         </div>
     );
