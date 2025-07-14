@@ -12,10 +12,6 @@ import Filter from "@components/molecules/Table/Filter";
 import { SortingIcons } from "@components/molecules/Table/helpers";
 import { RowData, TableCol } from "@components/molecules/Table/type";
 
-interface IFilteredValues {
-    [key: string]: string[];
-}
-
 interface IColActionsProps {
     header: Header<RowData, unknown>;
 }
@@ -34,28 +30,33 @@ const getFilterOption = (column: Column<RowData, unknown>): string[] => {
 export const ColActions: FC<IColActionsProps> = ({ header }) => {
     const [currentSearchInput, setCurrentSearchInput] = useState<string | null>(null);
     const [popoverPropsForContent, setPopoverPropsForContent] = useState({});
-    const [filteredValues, setFilteredValues] = useState<IFilteredValues>({});
+    const [filteredValues, setFilteredValues] = useState<string[]>([]);
 
     const handleFilterFromPopover = (column: Column<RowData, unknown>) => {
-        column.setFilterValue(filteredValues[column.id]);
+        column.setFilterValue(filteredValues);
     };
 
-    const handleFilteredValueChanges = (e: ChangeEvent<HTMLInputElement>, columnId: string) => {
+    const handleFilteredValueChanges = (e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
 
-        setFilteredValues((prev) => {
-            const currentColumn = prev[columnId];
-            if (currentColumn) {
-                return {
-                    [columnId]: prev[columnId].includes(value)
-                        ? prev[columnId].filter((v) => v !== value)
-                        : [...prev[columnId], value]
-                };
-            }
-            return {
-                [columnId]: [value]
-            };
-        });
+        setFilteredValues((prev) => (prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]));
+    };
+
+    const handleSelectAll = () => {
+        const { column } = header;
+        const { flatRows } = column.getFacetedRowModel();
+
+        if (flatRows.length === filteredValues.length) {
+            setFilteredValues([]);
+            return;
+        }
+
+        const values = flatRows.map((row) => row.getValue(column.id) as string).filter((item) => Boolean(item));
+        setFilteredValues(values);
+    };
+
+    const handleClearSelectedValues = () => {
+        setFilteredValues([]);
     };
 
     return (
@@ -97,22 +98,30 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                                             <div className="filterDropdownMenu__headerSelect_placeholder">
                                                 {/* todo: add 'disabled' attr. for similar state */}
                                                 {/* todo: add 'readOnly checked' attr-s. for 'readOnly state */}
-                                                <Checkbox
-                                                    className="filterDropdownMenu__headerSelect_checkbox"
-                                                    name="item"
-                                                    value="item"
-                                                />
-                                                <p className="filterDropdownMenu__headerSelect_text ellipsis-text">
-                                                    Select All
-                                                </p>
+                                                <Label
+                                                    text="Select All"
+                                                    className="filterDropdownMenu__headerSelect_text ellipsis-text"
+                                                >
+                                                    <Checkbox
+                                                        className="filterDropdownMenu__headerSelect_checkbox"
+                                                        name="item"
+                                                        value="item"
+                                                        checked={
+                                                            header.column.getFacetedRowModel().flatRows.length ===
+                                                            filteredValues.length
+                                                        }
+                                                        onChange={handleSelectAll}
+                                                    />
+                                                </Label>
+                                                <p className="filterDropdownMenu__headerSelect_text ellipsis-text" />
                                             </div>
                                         </div>
                                         <Button
                                             appearance="secondary"
                                             layout="text"
                                             size="small"
-                                            disabled
-                                            onClick={() => {}}
+                                            disabled={filteredValues.length === 0}
+                                            onClick={handleClearSelectedValues}
                                         >
                                             Clear
                                         </Button>
@@ -132,10 +141,8 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                                                             className="filterDropdownMenu__columns_checkbox"
                                                             name="item"
                                                             value={option}
-                                                            checked={filteredValues[header.column.id]?.includes(option)}
-                                                            onChange={(event) =>
-                                                                handleFilteredValueChanges(event, header.column.id)
-                                                            }
+                                                            checked={filteredValues.includes(option)}
+                                                            onChange={(event) => handleFilteredValueChanges(event)}
                                                         />
                                                     </Label>
                                                     {/* <Checkbox */}
