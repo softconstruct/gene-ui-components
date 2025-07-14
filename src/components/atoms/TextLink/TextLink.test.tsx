@@ -63,8 +63,8 @@ describe("TextLink", () => {
         expect(mockFn).toHaveBeenCalledWith(event);
     });
 
-    it("renders isLoading prop correctly", () => {
-        const wrapper = setup.setProps({ isLoading: true });
+    it("renders loading prop correctly", () => {
+        const wrapper = setup.setProps({ loading: true });
         expect(wrapper.text()).toStrictEqual("skeleton");
     });
 

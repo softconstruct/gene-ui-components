@@ -114,7 +114,7 @@ const ProgressBar: FC<IProgressBarProps> = ({
                 className
             )}
         >
-            <Label labelText={label} size={helperTextAndLabelSizeMap[size]} infoText={infoText} />
+            <Label text={label} size={helperTextAndLabelSizeMap[size]} infoText={infoText} />
             <div className="progressBar__track">
                 {(isDeterminate || error) && <div className="progressBar__fill" style={{ width: processedPercent }} />}
                 <div className="progressBar__loadingBar" />

@@ -16,12 +16,12 @@ const meta: Meta<IHelperTextProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         text: args({ control: "text", ...propCategory.content }),
         Icon: args({ control: "false", ...propCategory.content }),
-        isDisabled: args({ control: "boolean", ...propCategory.states })
+        disabled: args({ control: "boolean", ...propCategory.states })
     },
     args: {
         size: "medium",
         text: "Helper Text",
-        isDisabled: false,
+        disabled: false,
         type: "rest"
     }
 };

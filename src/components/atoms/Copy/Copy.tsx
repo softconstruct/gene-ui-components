@@ -8,9 +8,9 @@ import Tooltip from "../../molecules/Tooltip";
 
 interface ICopyProps {
     /**
-     * Size of the copy and copied icons:  `small | medium | large | XSmall`,
+     * Size of the copy and copied icons:  `small | medium | large | smallNudge`,
      */
-    size?: "small" | "medium" | "large" | "XSmall";
+    size?: "small" | "medium" | "large" | "smallNudge";
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -87,7 +87,7 @@ const CopyComponent: FC<ICopyProps> = ({
                 size={size}
                 disabled={disabled}
                 appearance={appearance}
-                displayType="text"
+                layout="text"
             />
         </Tooltip>
     );
