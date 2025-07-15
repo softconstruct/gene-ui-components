@@ -5,6 +5,7 @@ import { HeaderContext } from "@tanstack/table-core/build/lib/core/headers";
 import { IconProps } from "@geneui/icons";
 
 import { IPillProps } from "@components/atoms/Pill";
+import { IMenuItemProps } from "@components/molecules/Menu";
 
 export type CellType =
     | "empty"
@@ -114,7 +115,8 @@ export interface BulkActionList {
 
 export interface BulkAction {
     label: string;
-    list: BulkActionList[];
+    onChange: (item: IMenuItemProps) => void;
+    list: IMenuItemProps[];
 }
 
 export interface IOrderedColumns {

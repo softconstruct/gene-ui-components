@@ -1,6 +1,7 @@
 import React, { ComponentType } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import { IMenuItemProps } from "@components/molecules/Menu";
 import { defaultColumns } from "@components/molecules/Table/Columns";
 
 // Helpers
@@ -12,21 +13,19 @@ import TableLayoutTmp from "./TableLayoutTmp";
 
 const bulkActionsMock: BulkAction = {
     label: "Bulk",
+    onChange: (item: IMenuItemProps) => console.log(item),
     list: [
         {
             id: 1,
-            label: "item",
-            action: (event) => console.log(event)
+            title: "Item 1"
         },
         {
             id: 2,
-            label: "item",
-            action: (event) => console.log(event)
+            title: "Item 2"
         },
         {
             id: 3,
-            label: "item",
-            action: (event) => console.log(event)
+            title: "item 3"
         }
     ]
 };

@@ -16,7 +16,6 @@ import classNames from "classnames";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 
 import {
-    CaretDownFilled,
     ChevronDown,
     ChevronRight,
     Clock,
@@ -206,6 +205,7 @@ const Table: FC<ITableProps> = ({
     onSortChange,
     onGlobalFilterChange,
     onSave,
+    bulkActions,
     pageSizes = [10, 20, 50, 100],
     initialPageSize = 20,
     initialPageIndex = 0,
@@ -221,7 +221,6 @@ const Table: FC<ITableProps> = ({
         rowPinning,
         editableMode,
         menuOpened,
-        isBulkActionsOpen,
         setData,
         setSorting,
         setColumnVisibility,
@@ -230,7 +229,6 @@ const Table: FC<ITableProps> = ({
         setExpanded,
         setEditableMode,
         setMenuOpened,
-        setIsBulkActionsOpen,
         handleCellEdit,
         setGlobalFilter
     } = useTableState<Row>({
@@ -424,17 +422,7 @@ const Table: FC<ITableProps> = ({
                         >
                             Deselect
                         </Button>
-                        <Button
-                            appearance="primary"
-                            layout="text"
-                            size="medium"
-                            Icon={CaretDownFilled}
-                            iconPosition="after"
-                            onClick={() => setIsBulkActionsOpen(!isBulkActionsOpen)}
-                        >
-                            Bulk Actions
-                        </Button>
-                        <BulkActions />
+                        {!!bulkActions?.list.length && <BulkActions bulkActions={bulkActions} />}
                     </div>
                 </div>
                 <div className="dataTable__toolbar_actions">

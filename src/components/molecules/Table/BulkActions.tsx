@@ -1,33 +1,38 @@
 import React from "react";
 
+import { CaretDownFilled } from "@geneui/icons";
+
+import Button from "@components/atoms/Button";
+import { Menu, MenuItem } from "@components/molecules/Menu";
+import { BulkAction } from "@components/molecules/Table/type";
+
 interface BulkActionsProps {
-    selectedCount?: number;
+    bulkActions: BulkAction;
 }
 
-const BulkActions: React.FC<BulkActionsProps> = ({ selectedCount }) => {
-    if (selectedCount === 0) return null;
+const BulkActions: React.FC<BulkActionsProps> = ({ bulkActions }) => {
+    const [propsForPopover, setPropsForPopover] = React.useState({});
 
     return (
-        // isMenuOpen && (
-        <div className="dataTable__bulkActions_menu">
-            {/* {actions?.list.map((action) => ( */}
-            {/*    <Button */}
-            {/*        key={action.id} */}
-            {/*        appearance={action.variant === "danger" ? "danger" : "secondary"} */}
-            {/*        layout="text" */}
-            {/*        size="small" */}
-            {/*        Icon={action.icon as any} */}
-            {/*        onClick={() => { */}
-            {/*            action.action([]); */}
-            {/*            setIsMenuOpen(false); */}
-            {/*        }} */}
-            {/*        className="dataTable__bulkActions_menuItem" */}
-            {/*    > */}
-            {/*        {action.label} */}
-            {/*    </Button> */}
-            {/* ))} */}
-        </div>
-        // )
+        <>
+            <Button
+                appearance="primary"
+                layout="text"
+                size="medium"
+                Icon={CaretDownFilled}
+                iconPosition="after"
+                {...propsForPopover}
+            >
+                {bulkActions.label}
+            </Button>
+            <Menu setPropsForPopover={setPropsForPopover} onChange={bulkActions.onChange}>
+                {bulkActions.list.map((item) => (
+                    <MenuItem key={item.id} {...item}>
+                        {item.title}
+                    </MenuItem>
+                ))}
+            </Menu>
+        </>
     );
 };
 
