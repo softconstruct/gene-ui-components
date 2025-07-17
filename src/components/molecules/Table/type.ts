@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, JSX, ReactNode } from "react";
 import { Column, ColumnDef, PaginationState, SortingState } from "@tanstack/react-table";
 import { HeaderContext } from "@tanstack/table-core/build/lib/core/headers";
 
@@ -34,6 +34,7 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     isVisible?: boolean;
     withCheckbox?: boolean;
     enableSorting?: boolean;
+    rowCellRenderer?: (data?: any) => JSX.Element;
     editable?: boolean;
     copyable?: boolean;
     enableColumnFilter?: boolean;
@@ -95,7 +96,7 @@ export type Cell = {
         | "checkbox"
         | "switch";
     data: string | number | boolean | IPillProps | FC<IconProps>;
-    rowCellRenderer: (Element: ReactNode) => ReactNode;
+    // rowCellRenderer: (Element: ReactNode) => ReactNode;
 };
 
 type TableRowCells = {

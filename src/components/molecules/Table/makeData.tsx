@@ -17,70 +17,48 @@ const range = (len: number) => {
 const newRow = (): Row => {
     return {
         graph: {
-            // withCheckbox: true,
             type: "graph",
-            data: faker.image.image(148, 28),
-            rowCellRenderer: (element) => element
+            data: faker.image.image(148, 28)
         },
         text: {
-            // withCheckbox: true,
             type: "text",
-            data: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!,
-            rowCellRenderer: (element) => element
+            data: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!
         },
         number: {
-            // withCheckbox: true,
             type: "number",
-            data: `${faker.datatype.number({ min: 1000 })}`,
-            rowCellRenderer: (element) => element
+            data: `${faker.datatype.number({ min: 1000 })}`
         },
         longText: {
-            // withCheckbox: true,
             type: "longText",
-            data: faker.lorem.text(),
-            rowCellRenderer: (element) => element
+            data: faker.lorem.text()
         },
         dropdown: {
-            // withCheckbox: true,
             type: "dropdown",
-            data: faker.word.adjective(),
-            rowCellRenderer: (element) => element
+            data: faker.word.adjective()
         },
         status: {
-            // withCheckbox: true,
             type: "status",
-            data: faker.word.adjective(),
-            rowCellRenderer: (element) => element
+            data: faker.word.adjective()
         },
         pill: {
-            // withCheckbox: true,
             type: "pill",
-            data: {},
-            rowCellRenderer: (element) => element
+            data: {}
         },
         icon: {
-            // withCheckbox: true,
             type: "icon",
-            data: Globe,
-            rowCellRenderer: (element) => element
+            data: Globe
         },
         flag: {
-            // withCheckbox: true,
             type: "flag",
-            data: Globe,
-            rowCellRenderer: (element) => element
+            data: Globe
         },
         checkbox: {
-            // withCheckbox: true,
             type: "checkbox",
-            data: "value",
-            rowCellRenderer: (element) => element
+            data: "value"
         },
         switch: {
-            // withCheckbox: true,
             type: "switch",
-            data: faker.helpers.shuffle<boolean>([true, false])[0]!,
-            rowCellRenderer: (element) => element
+            data: faker.helpers.shuffle<boolean>([true, false])[0]!
         },
         rowStatus: faker.helpers.shuffle<Row["rowStatus"]>([
             "default",

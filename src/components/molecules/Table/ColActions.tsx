@@ -132,7 +132,12 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                                     <div className="filterDropdownMenu__columns">
                                         {/* todo: add next classNames for similar states - "filterDropdownMenu__columns_item_drag", "filterDropdownMenu__columns_item_disabled" */}
                                         {getFilterOption(header.column)?.map((option) => (
-                                            <div className="filterDropdownMenu__columns_item" role="tab" tabIndex={0}>
+                                            <div
+                                                key={header.column.id}
+                                                className="filterDropdownMenu__columns_item"
+                                                role="tab"
+                                                tabIndex={0}
+                                            >
                                                 <div className="filterDropdownMenu__columns_placeholder">
                                                     {/* todo: add 'disabled' attr. for similar state */}
                                                     {/* todo: add 'readOnly checked' attr-s. for 'readOnly state */}

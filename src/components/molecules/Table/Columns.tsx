@@ -1,3 +1,5 @@
+import React from "react";
+
 import { RowData, TableCol } from "@components/molecules/Table/type";
 
 export const defaultColumns: TableCol<RowData>[] = [
@@ -40,19 +42,19 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: false,
                 copyable: false,
                 header: "Graph",
-                cell: (info) => info.getValue(),
+                rowCellRenderer: () => <div>here will be Image</div>,
                 footer: (props) => props.column.id
             },
             {
                 id: "title",
                 order: 2,
-                isVisible: false,
+                isVisible: true,
                 type: "text",
                 accessorFn: (row) => row.text?.data,
                 enableSorting: true,
                 editable: true,
                 copyable: true,
-                cell: (cell) => cell,
+                rowCellRenderer: (data) => <h1>{data}</h1>,
                 header: "Title",
                 footer: (props) => props.column.id
             },
@@ -66,7 +68,7 @@ export const defaultColumns: TableCol<RowData>[] = [
                 enableSorting: true,
                 editable: true,
                 copyable: true,
-                cell: (info) => info,
+                rowCellRenderer: (data) => <>{data}</>,
                 header: "Number",
                 footer: (props) => props.column.id
             },
@@ -80,7 +82,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: true,
                 copyable: true,
                 enableSorting: true,
-                cell: (info) => info.getValue(),
                 header: "Description",
                 footer: (props) => props.column.id
             },
@@ -95,7 +96,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 copyable: true,
                 enableSorting: true,
                 enablePopoverFilter: true,
-                cell: (info) => info.getValue(),
                 header: "Dropdown",
                 footer: (props) => props.column.id
             },
@@ -109,7 +109,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 enablePopoverFilter: true,
                 enableSorting: true,
                 copyable: false,
-                cell: (info) => info.getValue(),
                 header: "Status",
                 footer: (props) => props.column.id
             },
@@ -123,7 +122,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: false,
                 copyable: false,
                 enableSorting: true,
-                cell: (info) => info.getValue(),
                 header: "Pill",
                 footer: (props) => props.column.id
             },
@@ -137,7 +135,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: false,
                 copyable: false,
                 enableSorting: true,
-                cell: (info) => info.getValue(),
                 header: "Icon",
                 footer: (props) => props.column.id
             },
@@ -151,7 +148,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 editable: false,
                 copyable: false,
                 enableSorting: true,
-                cell: (info) => info.getValue(),
                 header: "Flag",
                 footer: (props) => props.column.id
             },
@@ -166,7 +162,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 copyable: false,
                 enableSorting: true,
                 enablePopoverFilter: true,
-                cell: (info) => info.getValue(),
                 header: "Checkbox",
                 footer: (props) => props.column.id
             },
@@ -182,7 +177,6 @@ export const defaultColumns: TableCol<RowData>[] = [
                 enableSorting: true,
                 enablePopoverFilter: true,
                 filterOptions: ["On", "Off"],
-                cell: (info) => info.getValue(),
                 header: "Switch",
                 footer: (props) => props.column.id
             }

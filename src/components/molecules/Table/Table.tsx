@@ -762,11 +762,6 @@ const Table: FC<ITableProps> = ({
                                                                 `table__content ${CellClassNames[type]}`
                                                             )}
                                                         >
-                                                            {/* {cell.column.columnDef.cell && */}
-                                                            {/*    flexRender(cell.column.columnDef.cell, { */}
-                                                            {/*        ...cell.getContext(), */}
-                                                            {/*        editableMode */}
-                                                            {/*    })} */}
                                                             <Cell
                                                                 type={type as ICellProps["type"]}
                                                                 data={
@@ -777,10 +772,8 @@ const Table: FC<ITableProps> = ({
                                                                 }
                                                                 withEditMode={editableMode}
                                                                 rowCellRenderer={
-                                                                    row.original[
-                                                                        (cell.column.columnDef as TableCol<unknown>)
-                                                                            .type
-                                                                    ]?.rowCellRenderer
+                                                                    (cell.column.columnDef as TableCol<unknown>)
+                                                                        .rowCellRenderer
                                                                 }
                                                                 withCopy={
                                                                     (cell.column.columnDef as TableCol<unknown>)

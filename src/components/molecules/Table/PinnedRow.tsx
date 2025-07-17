@@ -79,9 +79,10 @@ const PinnedRow = ({
                                 <div className={classNames(`table__content ${CellClassNames[type]}`)}>
                                     <Cell
                                         type={type as ICellProps["type"]}
-                                        data={row.original[type].data}
+                                        data={row.original[(cell.column.columnDef as TableCol<unknown>).type]?.data}
                                         withEditMode={editableMode}
-                                        rowCellRenderer={row.original[type].rowCellRenderer}
+                                        rowCellRenderer={(cell.column.columnDef as TableCol<unknown>).rowCellRenderer}
+                                        withCopy={(cell.column.columnDef as TableCol<unknown>).copyable}
                                         onChange={(e) => onCellEdit(e, rowIndex, type)}
                                     />
                                 </div>
