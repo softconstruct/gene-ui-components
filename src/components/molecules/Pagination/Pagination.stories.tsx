@@ -11,12 +11,16 @@ const meta: Meta<IPaginationProps> = {
     component: Pagination,
     argTypes: {
         current: args({ control: "text", ...propCategory.content }),
-        rowsPerPageOptions: args({ control: "false", ...propCategory.content }),
+        rowsPerPageOptions: args({ control: "array", ...propCategory.content }),
         totalPages: args({ control: "text", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance }),
         onPageChange: args({ control: "false", ...propCategory.action }),
         onPageSizeChange: args({ control: "false", ...propCategory.action }),
-        showInputPageField: args({ control: "boolean", ...propCategory.states })
+        showInputPageField: args({ control: "boolean", ...propCategory.states }),
+        pageSizeSuffixLabel: args({ control: "text", ...propCategory.content }),
+        pageSizeOfLabel: args({ control: "text", ...propCategory.content }),
+        goToPageLabel: args({ control: "text", ...propCategory.content }),
+        goToPageSuffixLabel: args({ control: "text", ...propCategory.content })
     },
 
     args: {
@@ -32,7 +36,7 @@ type Story = StoryObj<IPaginationProps>;
 
 export const Default: Story = {
     render: (props) => {
-        return <Pagination {...props} />;
+        return <Pagination {...props} showInputPageField />;
     }
 };
 

@@ -45,6 +45,22 @@ interface IPaginationProps {
      * When `true`, displays an input field allowing the user to jump to a specific page by number.
      */
     showInputPageField?: boolean;
+    /**
+     * The text or suffix to display after each page size option in the dropdown (e.g., '/Page').
+     */
+    pageSizeSuffixLabel?: string;
+    /**
+     * The separator text displayed between the current page size and the total number of items (e.g., 'of').
+     */
+    pageSizeOfLabel?: string;
+    /**
+     * The label displayed before the input field for jumping to a specific page (e.g., 'Go to').
+     */
+    goToPageLabel?: string;
+    /**
+     * The label displayed after the input field for jumping to a specific page (e.g., 'Page').
+     */
+    goToPageSuffixLabel?: string;
 }
 /*
  Pagination divides content into multiple pages, allowing users to navigate through large datasets or long lists of items in a more manageable and digestible way.
@@ -58,7 +74,11 @@ const Pagination: FC<IPaginationProps> = ({
     rowsPerPageOptions,
     onPageChange,
     onPageSizeChange,
-    showInputPageField
+    showInputPageField,
+    pageSizeSuffixLabel = "Page",
+    pageSizeOfLabel = "of",
+    goToPageLabel = "Go to",
+    goToPageSuffixLabel = "Page"
 }) => {
     const isRTLMode = document.dir === "rtl";
 
@@ -199,14 +219,14 @@ const Pagination: FC<IPaginationProps> = ({
                         <select onChange={changePageSize}>
                             {rowsPerPageOptions.map((el) => (
                                 <option value={el} key={el}>
-                                    {el}/Page
+                                    {el}/{pageSizeSuffixLabel}
                                 </option>
                             ))}
                         </select>
                     </div>
 
                     <div className="pagination__perpage_values">
-                        <span>{currentPageSize}</span> of <span>{totalPages}</span>
+                        <span>{currentPageSize}</span> {pageSizeOfLabel} <span>{totalPages}</span>
                     </div>
                 </div>
             )}
@@ -293,14 +313,14 @@ const Pagination: FC<IPaginationProps> = ({
                 </div>
                 {showInputPageField && (
                     <div className="pagination__nav_specific">
-                        <span>Go to</span>
+                        <span>{goToPageLabel}</span>
                         <TextField
                             numericOnly
                             onChange={changeCurrenPage}
                             autoComplete="off"
                             className="pagination__input"
                         />
-                        <span>Page</span>
+                        <span>{goToPageSuffixLabel}</span>
                     </div>
                 )}
             </div>

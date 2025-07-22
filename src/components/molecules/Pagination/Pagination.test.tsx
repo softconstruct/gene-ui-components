@@ -2,18 +2,19 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
 import Button from "@components/atoms/Button";
+import GeneUIProvider from "@components/providers/GeneUIProvider";
 
 import Pagination, { IPaginationProps } from "./index";
 
 describe("Pagination", () => {
     let setup: ReactWrapper<IPaginationProps>;
-    const defaultProps: IPaginationProps = {
+    const baseProps: IPaginationProps = {
         totalPages: 10,
         current: 1
     };
 
     beforeEach(() => {
-        setup = mount(<Pagination {...defaultProps} />);
+        setup = mount(<Pagination {...baseProps} />);
     });
 
     it("renders without crashing", () => {
@@ -85,5 +86,52 @@ describe("Pagination", () => {
 
         wrapper.find(".pagination__nav_item").last().simulate("click");
         expect(wrapper.find(".pagination__nav_item_selected").text()).toBe("10");
+    });
+
+    it("renders pageSizeSuffixLabel prop correctly", () => {
+        const customLabel = "per page";
+        setup = mount(
+            <Pagination {...baseProps} rowsPerPageOptions={[10, 20, 30]} pageSizeSuffixLabel={customLabel} />,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        // Check if the first option in the dropdown has the correct custom label.
+        const firstOptionText = setup.find("option").first().text();
+        expect(firstOptionText).toBe(`10/${customLabel}`);
+    });
+
+    it("renders pageSizeOfLabel prop correctly", () => {
+        const customLabel = "of";
+        setup = mount(<Pagination {...baseProps} rowsPerPageOptions={[10, 20]} pageSizeOfLabel={customLabel} />, {
+            wrappingComponent: GeneUIProvider
+        });
+
+        // Check if the text indicating the page range contains the custom label.
+        const perPageValuesText = setup.find(".pagination__perpage_values").text();
+        expect(perPageValuesText).toContain(customLabel);
+        // Example assertion: "10 of 20"
+        expect(perPageValuesText).toBe(`10 ${customLabel} 10`);
+    });
+
+    it("renders goToPageLabel prop correctly", () => {
+        const customLabel = "Jump to";
+        setup = mount(<Pagination {...baseProps} showInputPageField goToPageLabel={customLabel} />, {
+            wrappingComponent: GeneUIProvider
+        });
+
+        // Check if the label before the input field matches the custom label.
+        const goToText = setup.find(".pagination__nav_specific span").first().text();
+        expect(goToText).toBe(customLabel);
+    });
+
+    it("renders goToPageSuffixLabel prop correctly", () => {
+        const customLabel = "page";
+        setup = mount(<Pagination {...baseProps} showInputPageField goToPageSuffixLabel={customLabel} />, {
+            wrappingComponent: GeneUIProvider
+        });
+
+        // Check if the label after the input field matches the custom label.
+        const pageText = setup.find(".pagination__nav_specific span").last().text();
+        expect(pageText).toBe(customLabel);
     });
 });
