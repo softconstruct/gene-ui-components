@@ -13,15 +13,12 @@ interface Props {
 const PaginationButton: FC<Props> = ({ onClick, Icon, disabled }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
     return (
-        <div
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onFocus={() => setIsHovered(true)}
-            onBlur={() => setIsHovered(false)}
-        >
+        <div onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
             <Button
                 disabled={disabled}
                 onClick={onClick}
+                onBlur={() => setIsHovered(false)}
+                onFocus={() => setIsHovered(true)}
                 Icon={isHovered ? Icon : ThreeDotsHorizontal}
                 appearance="secondary"
                 layout="text"
