@@ -30,7 +30,7 @@ interface IPaginationProps {
      * Optional array of available page sizes (e.g., [10, 25, 50]).
      * When provided, a dropdown is rendered to allow users to choose the number of items displayed per page.
      */
-    pageSizes?: number[];
+    rowsPerPageOptions?: number[];
     /**
      * Callback triggered when the user selects a new page size from the dropdown.
      * Receives the selected page size as a numeric argument.
@@ -55,7 +55,7 @@ const Pagination: FC<IPaginationProps> = ({
     className,
     current = 1,
     totalPages = 25,
-    pageSizes,
+    rowsPerPageOptions,
     onPageChange,
     onPageSizeChange,
     showInputPageField
@@ -65,7 +65,7 @@ const Pagination: FC<IPaginationProps> = ({
     const isLessOrEqualFive = totalPages <= MAXIMUM_SIZE_IN_VIEW_PORT;
 
     const [currentPage, setCurrentPage] = useState<number>(+current > totalPages ? 1 : +current);
-    const [currentPageSize, setCurrentPageSize] = useState<number>(pageSizes?.[0] || 0);
+    const [currentPageSize, setCurrentPageSize] = useState<number>(rowsPerPageOptions?.[0] || 0);
     const [calculatedData, setCalculatedData] = useState<number[]>([]);
 
     useEffect(() => {
@@ -191,13 +191,13 @@ const Pagination: FC<IPaginationProps> = ({
 
     return (
         <div className={classNames("pagination", className)}>
-            {pageSizes && (
+            {rowsPerPageOptions && (
                 <div className="pagination__perpage">
                     {/* todo: import 'Dropdown' component */}
 
                     <div className="pagination__select">
                         <select onChange={changePageSize}>
-                            {pageSizes.map((el) => (
+                            {rowsPerPageOptions.map((el) => (
                                 <option value={el} key={el}>
                                     {el}/Page
                                 </option>

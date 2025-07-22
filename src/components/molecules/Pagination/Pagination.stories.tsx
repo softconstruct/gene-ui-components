@@ -11,7 +11,7 @@ const meta: Meta<IPaginationProps> = {
     component: Pagination,
     argTypes: {
         current: args({ control: "text", ...propCategory.content }),
-        pageSizes: args({ control: "false", ...propCategory.content }),
+        rowsPerPageOptions: args({ control: "false", ...propCategory.content }),
         totalPages: args({ control: "text", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance }),
         onPageChange: args({ control: "false", ...propCategory.action }),
@@ -20,8 +20,8 @@ const meta: Meta<IPaginationProps> = {
     },
 
     args: {
-        current: 10,
-        pageSizes: [10, 20, 30],
+        current: 30,
+        rowsPerPageOptions: [10, 20, 30, 80],
         totalPages: 25
     }
 };
@@ -38,7 +38,7 @@ export const Default: Story = {
 
 export const WithoutPageSize: Story = {
     render: (props) => {
-        return <Pagination {...props} pageSizes={undefined} showInputPageField />;
+        return <Pagination {...props} rowsPerPageOptions={undefined} showInputPageField />;
     }
 };
 
@@ -54,7 +54,7 @@ export const WithoutPageSizeAndPageInputField: Story = {
     },
 
     render: (props) => {
-        return <Pagination {...props} showInputPageField={undefined} pageSizes={undefined} />;
+        return <Pagination {...props} showInputPageField={undefined} rowsPerPageOptions={undefined} />;
     },
 
     argTypes: {

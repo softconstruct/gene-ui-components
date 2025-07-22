@@ -36,15 +36,15 @@ describe("Pagination", () => {
         expect(wrapper.find(".pagination__nav_item").length).toBeGreaterThan(5);
     });
 
-    it("renders page size dropdown when pageSizes prop is provided", () => {
-        const wrapper = setup.setProps({ pageSizes: [10, 20, 30] });
+    it("renders page size dropdown when rowsPerPageOptions prop is provided", () => {
+        const wrapper = setup.setProps({ rowsPerPageOptions: [10, 20, 30] });
         expect(wrapper.find("select").exists()).toBeTruthy();
     });
 
     it("calls onPageSizeChange when page size is changed", () => {
         const onPageSizeChange = jest.fn();
         const wrapper = setup.setProps({
-            pageSizes: [10, 20],
+            rowsPerPageOptions: [10, 20],
             onPageSizeChange
         });
 
