@@ -21,6 +21,8 @@ const meta: Meta<IButtonProps> = {
         Icon: args({ control: "false", ...propCategory.content }),
         name: args({ control: "false", ...propCategory.others }),
         onClick: args({ control: "false", ...propCategory.action }),
+        onBlur: args({ control: "false", ...propCategory.action }),
+        onFocus: args({ control: "false", ...propCategory.action }),
         type: args({ control: "select", ...propCategory.functionality })
     },
     args: {
