@@ -102,6 +102,7 @@ const createPageNumbers = (currentPage: number, totalPages: number, pageLimit: n
 };
 
 const MAXIMUM_SIZE_IN_VIEW_PORT = 5;
+const DOUBLE_ARROW_PAGE_JUMP_COUNT = 3;
 const DEFAULT_PAGE_SIZE_SUFFIX = "Page";
 const DEFAULT_PAGE_SIZE_OF_LABEL = "of";
 const DEFAULT_GO_TO_PAGE_LABEL = "Go to";
@@ -170,7 +171,7 @@ const Pagination: FC<IPaginationProps> = ({
     };
 
     const handleArrowClick = (isDoubleArrow?: boolean, isForward?: boolean) => {
-        const jumpSize = isDoubleArrow ? MAXIMUM_SIZE_IN_VIEW_PORT : 1;
+        const jumpSize = isDoubleArrow ? DOUBLE_ARROW_PAGE_JUMP_COUNT : 1;
         const newPage = isForward ? Math.min(currentPage + jumpSize, totalPages) : Math.max(currentPage - jumpSize, 1);
         handlePageChange(newPage);
     };
