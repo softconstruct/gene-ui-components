@@ -63,8 +63,8 @@ describe("TextLink", () => {
         expect(mockFn).toHaveBeenCalledWith(event);
     });
 
-    it("renders isLoading prop correctly", () => {
-        const wrapper = setup.setProps({ isLoading: true });
+    it("renders loading prop correctly", () => {
+        const wrapper = setup.setProps({ loading: true });
         expect(wrapper.text()).toStrictEqual("skeleton");
     });
 
@@ -80,6 +80,11 @@ describe("TextLink", () => {
             expect(wrapper.find(`textLink_color_${appearance}`)).toBeTruthy();
         }
     );
+
+    it.each<ITextLinkProps["size"]>(["large", "medium"])('should have "%s" appearance', (size) => {
+        const wrapper = setup.setProps({ size });
+        expect(wrapper.find(`textLink_size_${size}`)).toBeTruthy();
+    });
 
     it.each<ITextLinkProps["target"]>(["blank", "self"])('should have "%s" target', (target) => {
         const wrapper = setup.setProps({ target });

@@ -1,12 +1,13 @@
 import React, { FC, useContext } from "react";
 import classNames from "classnames";
 
-import { ErrorAlertFill, SuccessFill, UnavailableOutline } from "@geneui/icons";
+import { Error, SuccessFilled, Unavailable } from "@geneui/icons";
 
 // Components
 import Divider from "@components/atoms/Divider";
 import Loader from "@components/atoms/Loader";
-import { StepsContext } from "@components/molecules/Steps/Steps";
+
+import { StepsContext } from "./Steps";
 
 interface IPointTypesProps {
     /**
@@ -21,7 +22,7 @@ interface IPointTypesProps {
     /**
      * Loading state for Step.
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
      * Change the icon for step to mention the Step state.
      */
@@ -31,7 +32,7 @@ interface IPointTypesProps {
 interface IStepProps extends IPointTypesProps {
     /**
      * The text displayed as the label for the Step, describing its purpose.<br>
-     * The Label can be clickable on not. For more information see the isLinear prop.
+     * The Label can be clickable on not. For more information see the linear prop.
      */
     label?: string;
     /**
@@ -48,30 +49,31 @@ interface IStepProps extends IPointTypesProps {
     disabled?: boolean;
 }
 
-const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, isLoading, state }) => {
+const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, state }) => {
     const { type } = useContext(StepsContext);
+
     const stepCount = (num: number) => {
         if (!num || num <= 0) return 1;
         if (num > 9) return 9;
         return num;
     };
 
-    if (isLoading) {
+    if (loading) {
         return <Loader size="small" />;
     }
 
     if (error) {
-        return <ErrorAlertFill size={24} className="steps__status_icon" />;
+        return <Error size={24} className="steps__status_icon" />;
     }
 
     if (type === "dot") {
         if (state === "current") {
-            return <UnavailableOutline size={24} className="step_type steps__status_icon steps__status_dot" />;
+            return <Unavailable size={24} className="step_type steps__status_icon steps__status_dot" />;
         }
         if (state === "complete") {
-            return <SuccessFill size={24} className="step_type steps__status_icon steps__status_dot" />;
+            return <SuccessFilled size={24} className="step_type steps__status_icon steps__status_dot" />;
         }
-        return <UnavailableOutline size={24} className="step_type steps__status_icon" />;
+        return <Unavailable size={24} className="step_type steps__status_icon" />;
     }
 
     return <span className="step_type steps__status_icon steps__status_numeric">{stepCount(stepNumber)}</span>;
@@ -81,7 +83,7 @@ const Step: FC<IStepProps> = ({
     description,
     label,
     id,
-    isLoading,
+    loading,
     stepNumber,
     disabled,
     error,
@@ -93,18 +95,18 @@ const Step: FC<IStepProps> = ({
     return (
         <div
             className={classNames("steps__step", {
-                steps__step_disabled: disabled && !error && !isLoading,
+                steps__step_disabled: disabled && !error && !loading,
                 steps__step_error: error,
                 steps__step_success: state === "complete",
                 steps__step_current: state === "current"
             })}
         >
             <div className="steps__status">
-                <PointTypes stepNumber={stepNumber ?? 1} error={error} isLoading={isLoading} state={state} />
+                <PointTypes stepNumber={stepNumber ?? 1} error={error} loading={loading} state={state} />
 
                 <Divider
                     className="steps__status_divider"
-                    vertical={direction === "vertical"}
+                    direction={direction}
                     appearance={state === "complete" && !disabled ? "brand" : "default"}
                 />
             </div>
@@ -114,7 +116,7 @@ const Step: FC<IStepProps> = ({
                         type="button"
                         className="steps__label"
                         onClick={changeHandler}
-                        disabled={disabled || isLoading}
+                        disabled={disabled || loading}
                     >
                         {label}
                     </button>

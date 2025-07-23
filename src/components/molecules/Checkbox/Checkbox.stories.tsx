@@ -1,3 +1,4 @@
+import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -10,16 +11,17 @@ const meta: Meta<ICheckboxProps> = {
     component: Checkbox,
     argTypes: {
         label: args({ control: "text", ...propCategory.content }),
+        value: args({ control: "false", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         checked: args({ control: "boolean", ...propCategory.states }),
         defaultChecked: args({ control: "boolean", ...propCategory.states }),
         indeterminate: args({ control: "boolean", ...propCategory.states }),
-        required: args({ control: "boolean", ...propCategory.content }),
+        required: args({ control: "boolean", ...propCategory.states }),
         helperText: args({ control: "text", ...propCategory.content }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
         type: args({ control: "select", ...propCategory.appearance }),
-        vertical: args({ control: "boolean", ...propCategory.appearance }),
+        direction: args({ control: "select", ...propCategory.appearance }),
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         name: args({ control: "text", ...propCategory.others }),
         onChange: args({ control: "false", ...propCategory.action }),
@@ -38,4 +40,8 @@ export default meta;
 
 type Story = StoryObj<ICheckboxProps>;
 
-export const Default: Story = {};
+export const Default: Story = {
+    render: (props) => {
+        return <Checkbox {...props} />;
+    }
+};

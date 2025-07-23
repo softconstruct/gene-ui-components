@@ -1,13 +1,10 @@
-import React, { FC } from "react";
+import React, { FC, MouseEvent } from "react";
 import classNames from "classnames";
+
+import { IconProps } from "@geneui/icons";
 
 // Styles
 import "./TextLink.scss";
-
-interface IconProps extends React.SVGProps<SVGSVGElement> {
-    size?: 16 | 20 | 24 | 28 | 32 | 48;
-    color?: string;
-}
 
 interface ITextLinkProps {
     /**
@@ -45,6 +42,11 @@ interface ITextLinkProps {
      */
     appearance?: "primary" | "secondary" | "inverse";
     /**
+     * Defines the size of the Text Link.<br>
+     * Possible values: `medium | large`
+     */
+    size?: "medium" | "large";
+    /**
      * When `true`, the link is disabled and not clickable.
      */
     disabled?: boolean;
@@ -52,22 +54,27 @@ interface ITextLinkProps {
      * Function that will called after user click or press enter button.
      * Receives the event as an argument.
      */
-    onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+    onClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
     /**
      * Indicates whether the component is in a loading state.
      * When set to `true` a skeleton indicator will be shown instead of the component.
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
      * An optional icon to display alongside the link text.
      */
-    Icon?: React.FC<IconProps>; // todo need to change to interface IconProps after Icon new version release
+    Icon?: FC<IconProps>; // todo need to change to interface IconProps after Icon new version release
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
 }
+
+const iconSize = {
+    medium: 20,
+    large: 24
+} as const;
 
 /**
  * A link is styled text that navigates users to another location, either within the current experience or to a different app or website.
@@ -80,19 +87,20 @@ const TextLink: FC<ITextLinkProps> = ({
     target = "self",
     underline,
     appearance = "primary",
+    size = "medium",
     disabled,
     onClick,
-    isLoading,
+    loading,
     Icon,
     className
 }) =>
-    isLoading ? (
+    loading ? (
         <span>skeleton</span>
     ) : (
         <a
             target={`_${target}`}
             rel={rel}
-            className={classNames(`textLink textLink_color_${appearance}`, className, {
+            className={classNames(`textLink textLink_size_${size} textLink_color_${appearance}`, className, {
                 textLink_underline: underline,
                 textLink_disabled: disabled
             })}
@@ -100,11 +108,9 @@ const TextLink: FC<ITextLinkProps> = ({
             onClick={onClick}
             {...(disabled && { tabIndex: -1 })}
         >
-            <span className="textLink__text">
-                {Icon && iconBefore && <Icon className="textLink__icon textLink__icon_before" size={20} />}
-                {text}
-                {Icon && !iconBefore && <Icon className="textLink__icon textLink__icon_after" size={20} />}
-            </span>
+            {Icon && iconBefore && <Icon className="textLink__icon textLink__icon_before" size={iconSize[size]} />}
+            <span className="textLink__text">{text}</span>
+            {Icon && !iconBefore && <Icon className="textLink__icon textLink__icon_after" size={iconSize[size]} />}
         </a>
     );
 

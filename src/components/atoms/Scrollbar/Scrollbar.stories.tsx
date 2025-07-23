@@ -10,13 +10,14 @@ const meta: Meta<IScrollbarProps> = {
     title: "Atoms/Scrollbar",
     component: Scrollbar,
     argTypes: {
+        scrollToTop: args({ control: "number", ...propCategory.functionality }),
+        scrollToLeft: args({ control: "number", ...propCategory.functionality }),
+        height: args({ control: "select", ...propCategory.appearance }),
+        width: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
         children: args({ control: "false", ...propCategory.content }),
-        autoScrollTopTo: args({ control: "number", ...propCategory.functionality }),
-        autoScrollLeftTo: args({ control: "number", ...propCategory.functionality }),
         onScroll: args({ control: "false", ...propCategory.action }),
-        customHeight: args({ control: "text", ...propCategory.appearance }),
-        customWidth: args({ control: "text", ...propCategory.appearance })
+        scrollBehaviorSmooth: args({ control: "false", ...propCategory.appearance })
     },
     args: {
         onScroll: undefined

@@ -1,0 +1,77 @@
+import React, { FC, useContext } from "react";
+import classNames from "classnames";
+
+import { IconProps } from "@geneui/icons";
+
+// Components
+import Badge from "@components/atoms/Badge";
+import Text from "@components/atoms/Text";
+
+import { ProductsContext } from "./Products";
+
+interface IProductProps {
+    /**
+     * Unique id for `Product`.
+     */
+    id?: string | number;
+    /**
+     * The text displayed as the `title` for the `Product`, describing its purpose.<br>
+     */
+    title: string;
+    /**
+     * Configuration settings for the `Badge` component displayed with the `Product`.
+     * If provided, the `product` will be wrapped inside a `Badge`.
+     */
+    withBadge?: boolean;
+    /**
+     * The `Icon` prop accepts a JSX element that will be rendered within the `Product`.
+     */
+    Icon: FC<IconProps>;
+    /**
+     * Indicates whether the `Product` is `disabled`, preventing user interaction, focus, click etc...
+     */
+    disabled?: boolean;
+    /**
+     * Indicates whether the `Product` is currently selected.
+     * When `true`, the product will display with a selected visual style.
+     */
+    selected?: boolean;
+}
+
+const ProductButton: FC<Omit<IProductProps, "withBadge">> = (props) => {
+    const { title, Icon, disabled, selected } = props;
+    const { onChange } = useContext(ProductsContext);
+
+    return (
+        <button
+            type="button"
+            disabled={disabled}
+            className={classNames("products__item", {
+                products__item_disabled: disabled,
+                products__item_selected: selected
+            })}
+            onClick={() => onChange(props)}
+        >
+            <span className="products__item_logo">
+                <Icon size={48} />
+            </span>
+            <Text as="span" className="products__item_title" alignment="center">
+                {title}
+            </Text>
+        </button>
+    );
+};
+
+const Product: FC<IProductProps> = (props) => {
+    const { withBadge } = props;
+
+    return withBadge ? (
+        <Badge className="products__badge" withBorder>
+            <ProductButton {...props} />
+        </Badge>
+    ) : (
+        <ProductButton {...props} />
+    );
+};
+
+export { IProductProps, Product as default };

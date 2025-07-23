@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import classnames from "classnames";
 
-import { ErrorAlertFill, IconProps, WarningFill } from "@geneui/icons";
+import { ErrorFilled, IconProps, TriangleAlert } from "@geneui/icons";
 
 // Styles
 import "./HelperText.scss";
@@ -25,16 +25,16 @@ interface IHelperTextProps {
     text: string;
     /**
      * Optional. Icon to be displayed alongside the helper text.
-     * If the `type` prop is set to `error` or `warning`, a default icon will be used (ErrorAlertFill for `error` and WarningFill for `warning`) unless an `Icon` is explicitly provided.
+     * If the `type` prop is set to `error` or `warning`, a default icon will be used (Error for `error` and TriangleAlert for `warning`) unless an `Icon` is explicitly provided.
      * If `type` is `rest`, the provided `Icon` will be used (if supplied), otherwise no icon will be displayed.
      * The size of the icon will automatically adjust based on the `size` prop (`small` or `medium`).
      */
-    Icon?: React.FC<IconProps>;
+    Icon?: FC<IconProps>;
     /**
      * Determines whether the helper text is disabled.
      * If `true`, the helper text will appear dimmed and non-interactive.
      */
-    isDisabled?: boolean;
+    disabled?: boolean;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -50,17 +50,17 @@ const iconSize = {
 /**
  * The Helper Text provides users with additional information or guidance related to a specific input field in a form. This text helps users understand the expected format, requirements, or purpose of the input, thereby improving form completion accuracy and user confidence.
  */
-const HelperText: FC<IHelperTextProps> = ({ size = "medium", type = "rest", text, Icon, isDisabled, className }) => {
+const HelperText: FC<IHelperTextProps> = ({ size = "medium", type = "rest", text, Icon, disabled, className }) => {
     const iconMap = {
-        error: <ErrorAlertFill size={iconSize[size]} />,
-        warning: <WarningFill size={iconSize[size]} />,
+        error: <ErrorFilled size={iconSize[size]} />,
+        warning: <TriangleAlert size={iconSize[size]} />,
         rest: Icon && <Icon size={iconSize[size]} />
     };
 
     return (
         <div
             className={classnames(`helperText helperText_type_${type} helperText_size_${size}`, className, {
-                helperText_disabled: isDisabled
+                helperText_disabled: disabled
             })}
         >
             {iconMap[type] && <div className="helperText__icon">{iconMap[type]}</div>}
