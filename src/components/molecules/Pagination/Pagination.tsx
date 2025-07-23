@@ -73,7 +73,6 @@ interface IPaginationProps {
  * @returns An array of page numbers to display.
  */
 const createPageNumbers = (currentPage: number, totalPages: number, pageLimit: number): number[] => {
-    // If the total number of pages is less than or equal to the limit, show all pages.
     if (+totalPages <= pageLimit) {
         return [...Array(totalPages).keys()].map((i) => i + 1);
     }
@@ -107,10 +106,6 @@ const DEFAULT_PAGE_SIZE_SUFFIX = "Page";
 const DEFAULT_PAGE_SIZE_OF_LABEL = "of";
 const DEFAULT_GO_TO_PAGE_LABEL = "Go to";
 const DEFAULT_GO_TO_PAGE_SUFFIX = "Page";
-
-/*
- Pagination divides content into multiple pages, allowing users to navigate through large datasets or long lists of items in a more manageable and digestible way.
-*/
 
 /*
  Pagination divides content into multiple pages, allowing users to navigate through large datasets or long lists of items in a more manageable and digestible way.
