@@ -31,7 +31,7 @@ const Template: FC<IButtonGroupProps> = (props) => {
             <Button onClick={() => {}} appearance="secondary">
                 secondary
             </Button>
-            <Button onClick={() => {}} appearance="secondary" displayType="outline">
+            <Button onClick={() => {}} appearance="secondary" layout="outline">
                 transparent
             </Button>
             <Button
@@ -39,7 +39,7 @@ const Template: FC<IButtonGroupProps> = (props) => {
                     console.log("1");
                 }}
                 appearance="secondary"
-                displayType="outline"
+                layout="outline"
             >
                 zzzzzz1
             </Button>
@@ -48,7 +48,7 @@ const Template: FC<IButtonGroupProps> = (props) => {
                     console.log("2");
                 }}
                 appearance="secondary"
-                displayType="outline"
+                layout="outline"
             >
                 zzzzzz2
             </Button>
@@ -57,7 +57,7 @@ const Template: FC<IButtonGroupProps> = (props) => {
                     console.log("3");
                 }}
                 appearance="secondary"
-                displayType="outline"
+                layout="outline"
             >
                 zzzzzz3
             </Button>
@@ -66,7 +66,7 @@ const Template: FC<IButtonGroupProps> = (props) => {
                     console.log("4");
                 }}
                 appearance="secondary"
-                displayType="outline"
+                layout="outline"
             >
                 zzzzzz4
             </Button>{" "}
@@ -75,7 +75,7 @@ const Template: FC<IButtonGroupProps> = (props) => {
                     console.log("4");
                 }}
                 appearance="secondary"
-                displayType="outline"
+                layout="outline"
             >
                 zzzzzz4
             </Button>{" "}
@@ -84,7 +84,7 @@ const Template: FC<IButtonGroupProps> = (props) => {
                     console.log("4");
                 }}
                 appearance="secondary"
-                displayType="outline"
+                layout="outline"
             >
                 zzzzzz4
             </Button>{" "}
@@ -93,7 +93,7 @@ const Template: FC<IButtonGroupProps> = (props) => {
                     console.log("4");
                 }}
                 appearance="secondary"
-                displayType="outline"
+                layout="outline"
             >
                 zzzzzz4
             </Button>

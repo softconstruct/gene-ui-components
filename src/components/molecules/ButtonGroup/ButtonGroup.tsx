@@ -1,7 +1,7 @@
 import React, { FC, ReactNode, useEffect, useState } from "react";
 import classNames from "classnames";
 
-import { HorizontalDots } from "@geneui/icons";
+import { ThreeDotsHorizontal } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import { Popover, PopoverBody } from "@components/atoms/Popover";
@@ -51,12 +51,12 @@ const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, direction }) 
                     <>
                         <Button
                             onClick={() => {}}
-                            Icon={HorizontalDots}
-                            displayType="text"
+                            Icon={ThreeDotsHorizontal}
+                            layout="text"
                             appearance="secondary"
                             {...propsForContent}
                         />
-                        <Popover setProps={setPropsForContent} title="" position="bottom-left" padding={5}>
+                        <Popover setProps={setPropsForContent} title="" position="bottom-left" margin={5}>
                             <PopoverBody>
                                 {otherChildProps.map((el) => (
                                     <Button {...el} />

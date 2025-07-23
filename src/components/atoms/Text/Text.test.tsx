@@ -26,11 +26,6 @@ describe("Text ", () => {
         expect(wrapper.find(as).exists()).toBeTruthy();
     });
 
-    it("renders truncate prop correctly", () => {
-        const wrapper = setup.setProps({ truncate: true });
-        expect(wrapper.find(".ellipsis-text").exists()).toBeTruthy();
-    });
-
     it.each<ITextProps["variant"]>([
         "headingXLargeSemibold",
         "headingLargeSemibold",

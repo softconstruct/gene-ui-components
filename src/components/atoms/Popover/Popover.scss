@@ -53,51 +53,72 @@
 
     &_size {
         &_xLarge {
-            width: 72rem;
+            min-width: 64rem;
+            max-width: 82rem;
+
             #{ $this }__body {
-                height: 15.4rem;
-            }
-            #{ $this }__footer {
-                height: 6.4rem;
+                min-height: 32rem;
+                max-height: 82rem;
             }
         }
 
         &_large {
-            width: 48rem;
-        }
+            min-width: 52rem;
+            max-width: 64rem;
 
-        &_medium {
-            width: 36rem;
-        }
-
-        &_large,
-        &_medium {
             #{ $this }__body {
-                height: 17.2rem;
+                min-height: 26rem;
+                max-height: 64rem;
             }
-            #{ $this }__footer {
-                height: 5.6rem;
+        }
+
+        &_medium {
+            min-width: 28rem;
+            max-width: 52rem;
+
+            #{ $this }__body {
+                min-height: 14rem;
+                max-height: 52rem;
             }
         }
 
         &_small {
-            width: 24rem;
+            min-width: 16rem;
+            max-width: 28rem;
+
             #{ $this }__body {
-                height: 8.8rem;
-            }
-            #{ $this }__footer {
-                height: 5.6rem;
+                min-height: 4rem;
+                max-height: 52rem;
             }
         }
 
-        &_mobile {
-            min-width: 32rem;
-            width: 100%;
-            #{ $this }__body {
-                height: 17.2rem;
-            }
+        &_large,
+        &_xLarge {
             #{ $this }__footer {
                 height: 6.4rem;
+            }
+        }
+
+        &_fitContent {
+            width: fit-content;
+        }
+
+        &_reference {
+            width: var(--parent-width);
+            min-width: auto;
+        }
+    }
+
+    &__container {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+
+        &_height {
+            &_full {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
             }
         }
     }
@@ -111,6 +132,7 @@
             var(--guit-sem-color-border-neutral-2);
         padding-inline: var(--guit-ref-spacing-large);
         height: 4.8rem;
+        overflow: hidden;
     }
 
     &__title {
@@ -126,7 +148,7 @@
         }
 
         &_text {
-            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
             font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
@@ -138,14 +160,20 @@
     }
 
     &__body {
-        padding-block: var(--guit-ref-spacing-large);
-        padding-inline: var(--guit-ref-spacing-large);
+        min-width: 0;
+
+        &_withPadding {
+            padding-block: var(--guit-ref-spacing-large);
+            padding-inline: var(--guit-ref-spacing-large);
+        }
     }
 
     &__content {
         width: 100%;
         height: 100%;
-        overflow-y: auto;
+
+        // todo need to investigate why we need overflow auto
+        // overflow-y: auto;
     }
 
     &__footer {
@@ -157,6 +185,7 @@
             var(--guit-sem-color-border-neutral-2);
         padding-block: var(--guit-ref-spacing-large);
         padding-inline: var(--guit-ref-spacing-large);
+        overflow: hidden;
 
         &_buttons {
             display: flex;

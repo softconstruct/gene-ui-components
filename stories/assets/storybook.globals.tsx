@@ -64,7 +64,9 @@ export const args = (obj: ArgOptions): ArgTypes => {
 };
 
 // Prop category mapping with explicit type.
-export const propCategory: Record<string, { category: string }> = {
+
+type Categories = "functionality" | "validation" | "appearance" | "content" | "action" | "states" | "others";
+export const propCategory: Record<Categories, { category: string }> = {
     functionality: { category: "Functionality" },
     validation: { category: "Validation" },
     appearance: { category: "Appearance" },
