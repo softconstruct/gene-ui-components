@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import {
     Column,
     ColumnFiltersState,
@@ -97,15 +97,6 @@ interface ITableProps {
      * Called when column visibility or order is updated from the "Manage Columns" menu.
      */
     onManageColumns?: (event: IOrderedColumns[]) => void;
-
-    /**
-     * Table size preset.
-     * - `small` - compact
-     * - `medium` - default
-     * - `large` - spacious
-     */
-    size?: "small" | "medium" | "large";
-
     /**
      * Table visual style variant.
      * - `default` - basic layout
@@ -122,22 +113,12 @@ interface ITableProps {
     /**
      * Enables global search box (text input above the table).
      */
-    withFilter?: boolean;
+    withGlobalFilter?: boolean;
 
     /**
      * Custom placeholder text for the global search input.
      */
-    searchPlaceholder?: string;
-
-    /**
-     * Custom message to show when no data is available.
-     */
-    emptyStateMessage?: string;
-
-    /**
-     * Custom error message to show when table fails to load or display.
-     */
-    errorMessage?: string;
+    globalFilterPlaceholder?: string;
 
     /**
      * Whether pagination controls should be shown.
@@ -150,19 +131,9 @@ interface ITableProps {
     stickyHeader?: boolean;
 
     /**
-     * Allows resizing of columns if supported.
-     */
-    resizableColumns?: boolean;
-
-    /**
      * Enables column sorting (if defined in columnDef).
      */
     sortableColumns?: boolean;
-
-    /**
-     * Enables per-column filtering (if implemented).
-     */
-    filterableColumns?: boolean;
 
     /**
      * Allowed values for page size dropdown.
@@ -203,6 +174,8 @@ const Table: FC<ITableProps> = ({
     onManageColumnRestore,
     className,
     onSortChange,
+    withGlobalFilter,
+    globalFilterPlaceholder,
     onGlobalFilterChange,
     onSave,
     bulkActions,
@@ -262,6 +235,7 @@ const Table: FC<ITableProps> = ({
                 columnIds.push(col.columnDef.id);
                 columnVisibilities[col.columnDef.id] = !!(col.columnDef as TableCol<RowData>).isVisible;
                 col.toggleVisibility(!!(col.columnDef as TableCol<RowData>).isVisible);
+                if ((col.columnDef as TableCol<RowData>).isPinned) col.pin("left");
             })
         );
 
@@ -314,14 +288,14 @@ const Table: FC<ITableProps> = ({
         const cols: IOrderedColumns[] = [];
         table.getHeaderGroups().forEach((headerGroup) => {
             headerGroup.headers.forEach((header) => {
-                if (header.getContext().column.columns.length && header.getContext().column.columnDef.header)
-                    cols.push({
-                        id: header.column.id,
-                        title: (header.column.columnDef as TableCol<RowData>).header,
-                        columns: header.column.columns.sort((a, b) => {
-                            return (a.columnDef as TableCol<RowData>).order - (b.columnDef as TableCol<RowData>).order;
-                        })
-                    });
+                // if (header.getContext().column.columns.length && header.getContext().column.columnDef.header)
+                cols.push({
+                    id: header.column.id,
+                    title: (header.column.columnDef as TableCol<RowData>).header,
+                    columns: header.column.columns.sort((a, b) => {
+                        return (a.columnDef as TableCol<RowData>).order - (b.columnDef as TableCol<RowData>).order;
+                    })
+                });
             });
         });
         setOrderedColumns(cols);
@@ -397,18 +371,21 @@ const Table: FC<ITableProps> = ({
     };
 
     return (
-        <div className={classNames("dataTable", className)}>
-            <div className={classNames("dataTable__toolbar toolbar", className)}>
+        <div className={classNames("dataTable")}>
+            <div className={classNames("dataTable__toolbar toolbar")}>
                 <div className="dataTable__toolbar_search">
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        value={globalFilter}
-                        onChange={(e) => {
-                            setGlobalFilter(e.target.value);
-                        }}
-                        style={{ width: "100%" }}
-                    />
+                    {withGlobalFilter && (
+                        <input
+                            className="dataTable__toolbar_searchInput"
+                            type="text"
+                            placeholder={globalFilterPlaceholder}
+                            value={globalFilter}
+                            onChange={(e) => {
+                                setGlobalFilter(e.target.value);
+                            }}
+                            style={{ width: "100%" }}
+                        />
+                    )}
                     <div className="dataTable__bulkActions">
                         <div className="dataTable__bulkActions_selected">
                             {table.getSelectedRowModel().rows.length} selected
@@ -460,6 +437,7 @@ const Table: FC<ITableProps> = ({
                             </Button>
                             <div className="dataTable__toolbar_dropdownMenu">
                                 <Button
+                                    className="dataTable__toolbar_dropdownMenu_manageColumns"
                                     appearance="secondary"
                                     layout="outline"
                                     size="medium"
@@ -624,6 +602,7 @@ const Table: FC<ITableProps> = ({
                                                     Cancel
                                                 </Button>
                                                 <Button
+                                                    className="dropdownMenu__footer_buttonGroup_save"
                                                     appearance="primary"
                                                     layout="fill"
                                                     size="medium"
@@ -677,12 +656,12 @@ const Table: FC<ITableProps> = ({
                                                             }}
                                                         />
                                                     ) : (
-                                                        <button type="button" tabIndex={0} className="table__content">
+                                                        <div className="table__content">
                                                             <span className="table__th_text ellipsis-text">
                                                                 {(header.column.columnDef as TableCol<RowData>).header}
                                                             </span>
-                                                            <ColActions header={header} />
-                                                        </button>
+                                                            {header.id !== "expand" && <ColActions header={header} />}
+                                                        </div>
                                                     )}
                                                 </div>
                                             )}
@@ -708,9 +687,8 @@ const Table: FC<ITableProps> = ({
 
                         {table.getCenterRows().map((row, rowIndex) => {
                             return (
-                                <>
+                                <Fragment key={row.id}>
                                     <tr
-                                        key={row.id}
                                         className={classNames(
                                             `table__row table__row_tbody table__row_${row.original.rowStatus}`,
                                             {
@@ -718,8 +696,8 @@ const Table: FC<ITableProps> = ({
                                             }
                                         )}
                                     >
-                                        {!!expandable && (
-                                            <td key={`${row.id}-0`} className="table__td">
+                                        {expandable && (
+                                            <td className="table__td">
                                                 <div className="table__content table__content_expand">
                                                     {row.getCanExpand() && (
                                                         <Button
@@ -735,7 +713,7 @@ const Table: FC<ITableProps> = ({
                                         )}
 
                                         {withCheckbox && (
-                                            <td key={`${row.id}-1`} className="table__td">
+                                            <td className="table__td">
                                                 <div className="table__content table__content_checkbox">
                                                     <Checkbox
                                                         name="item"
@@ -801,7 +779,6 @@ const Table: FC<ITableProps> = ({
                                                                     row.pin("top");
                                                                     rowActions.pin?.(row.id);
                                                                 }}
-                                                                className=""
                                                             />
                                                         )}
                                                         {rowActions?.tag && (
@@ -811,7 +788,6 @@ const Table: FC<ITableProps> = ({
                                                                 size="small"
                                                                 Icon={Tag}
                                                                 onClick={() => rowActions.tag?.(row.id)}
-                                                                className=""
                                                             />
                                                         )}
                                                         {rowActions?.clock && (
@@ -821,7 +797,6 @@ const Table: FC<ITableProps> = ({
                                                                 size="small"
                                                                 Icon={Clock}
                                                                 onClick={() => rowActions.clock?.(row.id)}
-                                                                className=""
                                                             />
                                                         )}
                                                         {rowActions?.copy && (
@@ -831,7 +806,6 @@ const Table: FC<ITableProps> = ({
                                                                 size="small"
                                                                 Icon={Copy}
                                                                 onClick={() => rowActions.copy?.(row.id)}
-                                                                className=""
                                                             />
                                                         )}
                                                         {rowActions?.download && (
@@ -841,7 +815,6 @@ const Table: FC<ITableProps> = ({
                                                                 size="small"
                                                                 Icon={Download}
                                                                 onClick={() => rowActions.download?.(row.id)}
-                                                                className=""
                                                             />
                                                         )}
                                                         {rowActions?.delete && (
@@ -851,7 +824,6 @@ const Table: FC<ITableProps> = ({
                                                                 size="small"
                                                                 Icon={RecycleBin}
                                                                 onClick={() => rowActions.delete?.(row.id)}
-                                                                className=""
                                                             />
                                                         )}
                                                     </div>
@@ -859,7 +831,7 @@ const Table: FC<ITableProps> = ({
                                             )}
                                     </tr>
                                     {row.getIsExpanded() && (
-                                        <tr key={`${row.id}_expanded`} className="table__row table__row_tbody">
+                                        <tr className="table__row table__row_tbody">
                                             <td
                                                 className="table__td table__td_expanded"
                                                 colSpan={row.getVisibleCells().length}
@@ -878,7 +850,7 @@ const Table: FC<ITableProps> = ({
                                             </td>
                                         </tr>
                                     )}
-                                </>
+                                </Fragment>
                             );
                         })}
                     </tbody>
@@ -916,15 +888,6 @@ const Table: FC<ITableProps> = ({
 
             {withPagination && (
                 <div className="dataTable__pagination">
-                    <div className="dataTable__pagination_info">
-                        Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{" "}
-                        {Math.min(
-                            (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-                            table.getFilteredRowModel().rows.length
-                        )}{" "}
-                        of {table.getFilteredRowModel().rows.length} entries
-                    </div>
-
                     <div className="dataTable__pagination_controls">
                         <select
                             value={table.getState().pagination.pageSize}

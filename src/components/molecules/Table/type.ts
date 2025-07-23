@@ -31,6 +31,7 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     footer?: (props: HeaderContext<RowData, unknown>) => ReactNode;
     type: CellType;
     order: number;
+    isPinned?: boolean;
     isVisible?: boolean;
     withCheckbox?: boolean;
     enableSorting?: boolean;
@@ -96,7 +97,6 @@ export type Cell = {
         | "checkbox"
         | "switch";
     data: string | number | boolean | IPillProps | FC<IconProps>;
-    // rowCellRenderer: (Element: ReactNode) => ReactNode;
 };
 
 type TableRowCells = {
@@ -124,6 +124,7 @@ export interface IOrderedColumns {
     id: string;
     title: string | null;
     isVisible?: boolean;
+    isPinned?: boolean;
     order?: number;
     columns: Column<RowData, unknown>[];
 }

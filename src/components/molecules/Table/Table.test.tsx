@@ -24,74 +24,75 @@ describe("Table ", () => {
     it("renders without crashing", () => {
         expect(setup.exists()).toBeTruthy();
     });
-    //
-    // it("renders with className prop", () => {
-    //     const className = "test-class";
-    //     setup.setProps({ className });
-    //     expect(setup.find(className).exists()).toBeTruthy();
-    // });
-    //
-    // it("renders with expandable rows prop", () => {
-    //     expect(setup.find(".table__content_expand").exists()).toBeTruthy();
-    // });
-    //
-    // it("renders with checkboxes props", () => {
-    //     expect(setup.find("input[type='checkbox']").exists()).toBeTruthy();
-    // });
-    //
-    // it("handles row checkbox click", () => {
-    //     const onRowClick = jest.fn();
-    //     setup.setProps({ onRowClick, withCheckbox: true });
-    //     setup.find("input[type='checkbox']").at(1).simulate("change");
-    //     expect(onRowClick).toHaveBeenCalled();
-    // });
-    //
-    // it("handles onManageColumns", () => {
-    //     const mockManage = jest.fn();
-    //     setup.setProps({ onManageColumns: mockManage });
-    //     setup
-    //         .find("button")
-    //         .filterWhere((b) => b.text().includes("Manage Columns"))
-    //         .simulate("click");
-    //     setup
-    //         .find("button")
-    //         .filterWhere((b) => b.text().includes("Save"))
-    //         .simulate("click");
-    //     expect(mockManage).toHaveBeenCalled();
-    // });
-    //
-    // it("renders with withFilter prop", () => {
-    //     setup.setProps({ withFilter: true });
-    //     expect(setup.find("input[type='text']").exists()).toBeTruthy();
-    // });
-    //
-    // it("renders with withFilter prop", () => {
-    //     setup.setProps({ searchPlaceholder: "Search here...", withFilter: true });
-    //     expect(setup.find("input[type='text']").prop("placeholder")).toBe("Search here...");
-    // });
-    //
-    // it("renders with emptyStateMessage prop", () => {
-    //     setup.setProps({ emptyStateMessage: "No records found", externalData: [] });
-    //     expect(setup.text()).toContain("No records found");
-    // });
-    //
-    // it("renders with errorMessage prop", () => {
-    //     setup.setProps({ errorMessage: "Something went wrong" });
-    //     expect(setup.text()).toContain("Something went wrong");
-    // });
-    //
-    // it("renders with withPagination prop", () => {
-    //     setup.setProps({ withPagination: true });
-    //     expect(setup.find(".dataTable__pagination").exists()).toBe(true);
-    // });
 
-    // it("renders size and variant classes", () => {
-    //     setup = mount(<Table {...defaultProps} size="small" variant="striped" />);
-    //     expect(setup.find(".dataTable").hasClass("dataTable--small")).toBe(false); // class logic not shown
-    // });
+    it("renders with className prop", () => {
+        const className = "test-class";
+        setup.setProps({ className });
+        expect(setup.hasClass(className)).toBeTruthy();
+    });
 
-    // it("renders bulk actions if provided", () => {
-    //     setup = mount(<Table {...defaultProps} bulkActions={[{ label: "Action", onClick: jest.fn() }]} />);
-    //     expect(setup.find(".dataTable__bulkActions").exists()).toBe(true);
+    it("renders with expandable rows prop", () => {
+        setup.setProps({ expandable: true });
+
+        expect(setup.find(".table__content_expand").exists()).toBeTruthy();
+    });
+
+    it("renders withCheckbox props", () => {
+        setup.setProps({ withCheckbox: true });
+        expect(setup.find(".table__content_checkbox").exists()).toBeTruthy();
+    });
+
+    it("handles row checkbox click", () => {
+        const onRowClick = jest.fn();
+        setup.setProps({ onRowClick, withCheckbox: true });
+        setup.find("input[type='checkbox']").at(1).simulate("change");
+        expect(onRowClick).toHaveBeenCalled();
+    });
+
+    it("handles onManageColumns", () => {
+        const mockManage = jest.fn();
+        setup.setProps({ onManageColumns: mockManage });
+        setup
+            .find("button")
+            .filterWhere((b) => b.hasClass("dataTable__toolbar_dropdownMenu_manageColumns"))
+            .simulate("click");
+        setup.update();
+        setup
+            .find("button")
+            .filterWhere((b) => b.hasClass("dropdownMenu__footer_buttonGroup_save"))
+            .simulate("click");
+        expect(mockManage).toHaveBeenCalled();
+    });
+
+    it("renders withGlobalFilter prop", () => {
+        setup.setProps({ withGlobalFilter: true });
+        expect(setup.find(".dataTable__toolbar_search").exists()).toBeTruthy();
+    });
+
+    it("renders withFilter prop", () => {
+        const placeholder = "Search here...";
+        setup.setProps({ globalFilterPlaceholder: placeholder, withGlobalFilter: true });
+        expect(setup.find(".dataTable__toolbar_searchInput").prop("placeholder")).toBe(placeholder);
+    });
+
+    it("renders withPagination prop", () => {
+        setup.setProps({ withPagination: true });
+        expect(setup.find(".dataTable__pagination").exists()).toBeTruthy();
+    });
+
+    // it("renders bulkActions prop", () => {
+    //     const bulkActions: BulkAction = {
+    //         label: "Bulk",
+    //         onChange: (item: IMenuItemProps) => {},
+    //         list: [
+    //             {
+    //                 id: 1,
+    //                 title: "Item 1"
+    //             }
+    //         ]
+    //     };
+    //     setup.setProps({ bulkActions });
+    //     console.log(setup.find(BulkActions).debug());
+    //     expect(setup.find(BulkActions).exists()).toBeTruthy();
     // });
 });
