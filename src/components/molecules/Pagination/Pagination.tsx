@@ -3,6 +3,7 @@ import classNames from "classnames";
 
 import { ChevronDoubleLeft, ChevronDoubleRight, ChevronLeft, ChevronRight } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
 import PaginationButton from "@components/molecules/Pagination/PaginationButton";
 import TextField from "@components/molecules/TextField";
@@ -62,11 +63,53 @@ interface IPaginationProps {
      */
     goToPageSuffixLabel?: string;
 }
+
+/**
+ * Helper function to generate the array of page numbers to be displayed.
+ * It ensures the current page is centered when possible and handles edge cases.
+ * @param currentPage - The current active page.
+ * @param totalPages - The total number of pages.
+ * @param pageLimit - The maximum number of page buttons to show.
+ * @returns An array of page numbers to display.
+ */
+const createPageNumbers = (currentPage: number, totalPages: number, pageLimit: number): number[] => {
+    // If the total number of pages is less than or equal to the limit, show all pages.
+    if (+totalPages <= pageLimit) {
+        return [...Array(totalPages).keys()].map((i) => i + 1);
+    }
+
+    const halfLimit = Math.floor(pageLimit / 2);
+    let startPage = currentPage - halfLimit;
+    let endPage = currentPage + halfLimit;
+
+    // Adjust for start edge case
+    if (startPage <= 0) {
+        startPage = 1;
+        endPage = pageLimit;
+    }
+
+    // Adjust for end edge case
+    if (endPage > totalPages) {
+        endPage = totalPages;
+        startPage = totalPages - pageLimit + 1;
+    }
+
+    const pages = [];
+    for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+    }
+    return pages;
+};
+
+const MAXIMUM_SIZE_IN_VIEW_PORT = 5;
+
 /*
  Pagination divides content into multiple pages, allowing users to navigate through large datasets or long lists of items in a more manageable and digestible way.
 */
 
-const MAXIMUM_SIZE_IN_VIEW_PORT = 5;
+/*
+ Pagination divides content into multiple pages, allowing users to navigate through large datasets or long lists of items in a more manageable and digestible way.
+ */
 const Pagination: FC<IPaginationProps> = ({
     className,
     current = 1,
@@ -82,131 +125,50 @@ const Pagination: FC<IPaginationProps> = ({
 }) => {
     const isRTLMode = document.dir === "rtl";
 
-    const isLessOrEqualFive = totalPages <= MAXIMUM_SIZE_IN_VIEW_PORT;
-
     const [currentPage, setCurrentPage] = useState<number>(+current > totalPages ? 1 : +current);
     const [currentPageSize, setCurrentPageSize] = useState<number>(rowsPerPageOptions?.[0] || 0);
-    const [calculatedData, setCalculatedData] = useState<number[]>([]);
 
+    // Generate the page numbers to display
+    const calculatedData = createPageNumbers(currentPage, +totalPages, MAXIMUM_SIZE_IN_VIEW_PORT);
+
+    // Effect to sync internal state with external prop changes
     useEffect(() => {
-        if (isLessOrEqualFive) {
-            setCalculatedData(new Array(totalPages).fill(undefined).map((_, i) => i + 1));
-            return;
+        const newCurrentPage = +current > totalPages ? 1 : +current;
+        setCurrentPage(newCurrentPage);
+    }, [current, totalPages]);
+
+    const handlePageChange = (newPage: number) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+            onPageChange?.(newPage);
         }
-        let createData: number[] = [];
-
-        if (totalPages - 1 > currentPage) {
-            if (currentPage - 3 === 0) {
-                createData = [currentPage - 1, currentPage, currentPage + 1, currentPage + 2, currentPage + 3];
-            } else if (currentPage - 2 === 0) {
-                createData = [currentPage, currentPage + 1, currentPage + 2, currentPage + 3, currentPage + 4];
-            } else if (
-                totalPages > MAXIMUM_SIZE_IN_VIEW_PORT &&
-                currentPage > 2 &&
-                currentPage - 2 !== 0 &&
-                currentPage + 2 !== totalPages
-            ) {
-                createData = [currentPage - 2, currentPage - 1, currentPage, currentPage + 1, currentPage + 2];
-            } else if (currentPage + 2 === totalPages && currentPage > 3) {
-                createData = [currentPage - 3, currentPage - 2, currentPage - 1, currentPage, currentPage + 1];
-            } else if (currentPage === 1) {
-                createData = [
-                    currentPage + 1,
-                    currentPage + 2,
-                    currentPage + 3,
-                    currentPage + 4,
-                    currentPage + MAXIMUM_SIZE_IN_VIEW_PORT
-                ];
-            }
-        } else {
-            createData = [currentPage - 4, currentPage - 3, currentPage - 2, currentPage - 1];
-            if (currentPage !== totalPages) {
-                createData.push(currentPage);
-            } else {
-                createData.unshift(currentPage - MAXIMUM_SIZE_IN_VIEW_PORT);
-            }
-        }
-        setCalculatedData(createData);
-    }, [currentPage]);
-
-    const changeCurrenPage = (e: ChangeEvent<HTMLInputElement>) => {
-        const value = +e.currentTarget.value;
-        if (Number.isNaN(value)) return;
-
-        if (value > totalPages || !value) return;
-
-        setCurrentPage(value);
-        onPageSizeChange?.(value);
     };
 
-    const changePageSize = (e: ChangeEvent<HTMLSelectElement>) => {
+    const handleGoToPage = (e: ChangeEvent<HTMLInputElement>) => {
+        const value = +e.currentTarget.value;
+        if (Number.isNaN(value) || value < 1) return;
+
+        if (value > totalPages) {
+            handlePageChange(totalPages);
+        } else {
+            handlePageChange(value);
+        }
+    };
+
+    const handlePageSizeChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const value = +e.currentTarget.value;
         setCurrentPageSize(value);
         onPageSizeChange?.(value);
     };
 
-    const pageChange = (e: PointerEvent<HTMLButtonElement>) => {
-        setCurrentPage(+e.currentTarget.innerText);
-
-        onPageChange?.(+e.currentTarget.innerText);
+    const handlePageButtonClick = (e: PointerEvent<HTMLButtonElement>) => {
+        handlePageChange(+e.currentTarget.innerText);
     };
 
-    const changeWithArrow = (
-        isDoubleArrow?: boolean,
-        isForward?: boolean,
-        isFirstStep?: boolean,
-        isLastStep?: boolean
-    ) => {
-        if (isFirstStep) {
-            if (currentPage === 1) {
-                setCurrentPage((prev) => prev + 6);
-                onPageChange?.(currentPage + 6);
-                return;
-            }
-            if (currentPage === 2) {
-                setCurrentPage((prev) => prev + MAXIMUM_SIZE_IN_VIEW_PORT);
-                onPageChange?.(currentPage + MAXIMUM_SIZE_IN_VIEW_PORT);
-                return;
-            }
-        }
-        if (isLastStep) {
-            if (currentPage === totalPages) {
-                setCurrentPage((prev) => prev - 6);
-                onPageChange?.(currentPage - 6);
-                return;
-            }
-            if (currentPage === totalPages - 1) {
-                setCurrentPage((prev) => prev - MAXIMUM_SIZE_IN_VIEW_PORT);
-                onPageChange?.(currentPage - MAXIMUM_SIZE_IN_VIEW_PORT);
-                return;
-            }
-        }
-        if (isDoubleArrow) {
-            if (isForward) {
-                setCurrentPage((prev) => prev + 3);
-                onPageChange?.(currentPage + 3);
-                return;
-            }
-
-            if (!isForward) {
-                setCurrentPage((prev) => prev - 3);
-                onPageChange?.(currentPage - 3);
-                return;
-            }
-        }
-
-        if (!isDoubleArrow) {
-            if (isForward) {
-                onPageChange?.(currentPage + 1);
-                setCurrentPage((prev) => prev + 1);
-                return;
-            }
-
-            if (!isForward) {
-                onPageChange?.(currentPage - 1);
-                setCurrentPage((prev) => prev - 1);
-            }
-        }
+    const handleArrowClick = (isDoubleArrow?: boolean, isForward?: boolean) => {
+        const jumpSize = isDoubleArrow ? MAXIMUM_SIZE_IN_VIEW_PORT : 1;
+        const newPage = isForward ? Math.min(currentPage + jumpSize, totalPages) : Math.max(currentPage - jumpSize, 1);
+        handlePageChange(newPage);
     };
 
     return (
@@ -214,9 +176,8 @@ const Pagination: FC<IPaginationProps> = ({
             {rowsPerPageOptions && (
                 <div className="pagination__perpage">
                     {/* todo: import 'Dropdown' component */}
-
                     <div className="pagination__select">
-                        <select onChange={changePageSize}>
+                        <select onChange={handlePageSizeChange}>
                             {rowsPerPageOptions.map((el) => (
                                 <option value={el} key={el}>
                                     {el}/{pageSizeSuffixLabel}
@@ -237,67 +198,44 @@ const Pagination: FC<IPaginationProps> = ({
                         layout="text"
                         disabled={currentPage === 1}
                         Icon={isRTLMode ? ChevronRight : ChevronLeft}
-                        onClick={() => changeWithArrow(false, false)}
+                        onClick={() => handleArrowClick(false, false)}
                     />
 
-                    {!isLessOrEqualFive && (
+                    {calculatedData[0] > 1 && (
+                        <>
+                            <button className="pagination__nav_item" type="button" onClick={() => handlePageChange(1)}>
+                                <span className="pagination__nav_value">1</span>
+                            </button>
+                            <PaginationButton
+                                onClick={() => handleArrowClick(true, false)}
+                                Icon={isRTLMode ? ChevronDoubleRight : ChevronDoubleLeft}
+                            />
+                        </>
+                    )}
+
+                    {calculatedData.map((el) => (
                         <button
+                            key={el}
                             className={classNames("pagination__nav_item", {
-                                pagination__nav_item_selected: currentPage === 1
+                                pagination__nav_item_selected: currentPage === el
                             })}
                             type="button"
-                            onClick={pageChange}
+                            onClick={handlePageButtonClick}
                         >
-                            <span className="pagination__nav_value">1</span>
+                            <span className="pagination__nav_value">{el}</span>
                         </button>
-                    )}
+                    ))}
 
-                    {!isLessOrEqualFive && currentPage >= MAXIMUM_SIZE_IN_VIEW_PORT && (
-                        <PaginationButton
-                            onClick={() =>
-                                changeWithArrow(
-                                    true,
-                                    false,
-                                    false,
-                                    currentPage === totalPages || currentPage === totalPages - 1
-                                )
-                            }
-                            Icon={isRTLMode ? ChevronDoubleRight : ChevronDoubleLeft}
-                        />
-                    )}
-                    {calculatedData.map((el, i) => {
-                        return (
-                            <button
-                                key={el}
-                                className={classNames("pagination__nav_item", {
-                                    pagination__nav_item_selected:
-                                        currentPage + 2 >= totalPages || currentPage - 3 <= 0
-                                            ? currentPage === el
-                                            : Math.round(calculatedData.length / 2) - 1 === i
-                                })}
-                                type="button"
-                                onClick={pageChange}
-                            >
-                                <span className="pagination__nav_value">{el}</span>
-                            </button>
-                        );
-                    })}
-
-                    {!isLessOrEqualFive && (
+                    {calculatedData[calculatedData.length - 1] < totalPages && (
                         <>
-                            {totalPages - MAXIMUM_SIZE_IN_VIEW_PORT >= currentPage && (
-                                <PaginationButton
-                                    onClick={() => changeWithArrow(true, true, currentPage === 1 || currentPage === 2)}
-                                    Icon={isRTLMode ? ChevronDoubleLeft : ChevronDoubleRight}
-                                />
-                            )}
-
+                            <PaginationButton
+                                onClick={() => handleArrowClick(true, true)}
+                                Icon={isRTLMode ? ChevronDoubleLeft : ChevronDoubleRight}
+                            />
                             <button
-                                className={classNames("pagination__nav_item", {
-                                    pagination__nav_item_selected: totalPages === currentPage
-                                })}
+                                className="pagination__nav_item"
                                 type="button"
-                                onClick={() => setCurrentPage(totalPages)}
+                                onClick={() => handlePageChange(totalPages)}
                             >
                                 <span className="pagination__nav_value">{totalPages}</span>
                             </button>
@@ -308,7 +246,7 @@ const Pagination: FC<IPaginationProps> = ({
                         layout="text"
                         disabled={currentPage === totalPages}
                         Icon={isRTLMode ? ChevronLeft : ChevronRight}
-                        onClick={() => changeWithArrow(false, true)}
+                        onClick={() => handleArrowClick(false, true)}
                     />
                 </div>
                 {showInputPageField && (
@@ -316,9 +254,10 @@ const Pagination: FC<IPaginationProps> = ({
                         <span>{goToPageLabel}</span>
                         <TextField
                             numericOnly
-                            onChange={changeCurrenPage}
+                            onChange={handleGoToPage}
                             autoComplete="off"
                             className="pagination__input"
+                            value={currentPage.toString()}
                         />
                         <span>{goToPageSuffixLabel}</span>
                     </div>

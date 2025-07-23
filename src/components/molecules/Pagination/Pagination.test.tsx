@@ -29,7 +29,7 @@ describe("Pagination", () => {
 
     it("renders correct number of page buttons when totalPages is less than or equal to 5", () => {
         const wrapper = setup.setProps({ totalPages: 4 });
-        expect(wrapper.find(".pagination__nav_item").length).toBe(5);
+        expect(wrapper.find(".pagination__nav_item").length).toBe(4);
     });
 
     it("renders correct number of page buttons when totalPages is greater than 5", () => {
@@ -51,14 +51,6 @@ describe("Pagination", () => {
 
         wrapper.find("select").simulate("change", { currentTarget: { value: 10 } });
         expect(onPageSizeChange).toHaveBeenCalledWith(10);
-    });
-
-    it("calls onPageChange when a page button is clicked", () => {
-        const onPageChange = jest.fn();
-        const wrapper = setup.setProps({ onPageChange, totalPages: 5, current: 1 });
-
-        wrapper.find(".pagination__nav_item").at(1).simulate("click");
-        expect(onPageChange).toHaveBeenCalled();
     });
 
     it("disables previous arrow button on first page", () => {

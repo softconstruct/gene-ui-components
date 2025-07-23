@@ -25,7 +25,7 @@ const meta: Meta<IPaginationProps> = {
 
     args: {
         current: 30,
-        rowsPerPageOptions: [10, 20, 30, 80],
+        rowsPerPageOptions: [10, 20, 30, 40],
         totalPages: 25
     }
 };
@@ -62,6 +62,6 @@ export const WithoutPageSizeAndPageInputField: Story = {
     },
 
     argTypes: {
-        showInputPageField: args({ control: "false", ...propCategory.state })
+        showInputPageField: args({ control: "false", ...propCategory.states })
     }
 };
