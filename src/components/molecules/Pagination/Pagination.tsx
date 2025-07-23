@@ -102,6 +102,10 @@ const createPageNumbers = (currentPage: number, totalPages: number, pageLimit: n
 };
 
 const MAXIMUM_SIZE_IN_VIEW_PORT = 5;
+const DEFAULT_PAGE_SIZE_SUFFIX = "Page";
+const DEFAULT_PAGE_SIZE_OF_LABEL = "of";
+const DEFAULT_GO_TO_PAGE_LABEL = "Go to";
+const DEFAULT_GO_TO_PAGE_SUFFIX = "Page";
 
 /*
  Pagination divides content into multiple pages, allowing users to navigate through large datasets or long lists of items in a more manageable and digestible way.
@@ -118,10 +122,10 @@ const Pagination: FC<IPaginationProps> = ({
     onPageChange,
     onPageSizeChange,
     showInputPageField,
-    pageSizeSuffixLabel = "Page",
-    pageSizeOfLabel = "of",
-    goToPageLabel = "Go to",
-    goToPageSuffixLabel = "Page"
+    pageSizeSuffixLabel = DEFAULT_PAGE_SIZE_SUFFIX,
+    pageSizeOfLabel = DEFAULT_PAGE_SIZE_OF_LABEL,
+    goToPageLabel = DEFAULT_GO_TO_PAGE_LABEL,
+    goToPageSuffixLabel = DEFAULT_GO_TO_PAGE_SUFFIX
 }) => {
     const isRTLMode = document.dir === "rtl";
 
@@ -253,6 +257,7 @@ const Pagination: FC<IPaginationProps> = ({
                     <div className="pagination__nav_specific">
                         <span>{goToPageLabel}</span>
                         <TextField
+                            size="medium"
                             numericOnly
                             onChange={handleGoToPage}
                             autoComplete="off"
