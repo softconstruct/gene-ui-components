@@ -306,17 +306,19 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                         </span>
                     </div>
                 </Label>
-                <div className="textField__info">
-                    {helperText && <HelperText text={helperText} disabled={disabled} type={status || "rest"} />}
-                    {characterLimit && (
-                        <Text
-                            as="span"
-                            className={classNames(`textField__characterLimit`, {
-                                textField__characterLimit_disabled: disabled
-                            })}
-                        >{`${inputValue.length} / ${characterLimit}`}</Text>
-                    )}
-                </div>
+                {(helperText || characterLimit) && (
+                    <div className="textField__info">
+                        {helperText && <HelperText text={helperText} disabled={disabled} type={status || "rest"} />}
+                        {characterLimit && (
+                            <Text
+                                as="span"
+                                className={classNames(`textField__characterLimit`, {
+                                    textField__characterLimit_disabled: disabled
+                                })}
+                            >{`${inputValue.length} / ${characterLimit}`}</Text>
+                        )}
+                    </div>
+                )}
             </div>
         );
     }
