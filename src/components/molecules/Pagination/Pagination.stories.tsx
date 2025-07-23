@@ -12,7 +12,7 @@ const meta: Meta<IPaginationProps> = {
     argTypes: {
         current: args({ control: "text", ...propCategory.content }),
         rowsPerPageOptions: args({ control: "array", ...propCategory.content }),
-        totalPages: args({ control: "text", ...propCategory.content }),
+        totalPages: args({ control: "number", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance }),
         onPageChange: args({ control: "false", ...propCategory.action }),
         onPageSizeChange: args({ control: "false", ...propCategory.action }),
