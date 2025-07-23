@@ -1,4 +1,4 @@
-import React, { FC, forwardRef, MouseEvent } from "react";
+import React, { FC, FocusEvent, forwardRef, MouseEvent } from "react";
 import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
@@ -77,6 +77,14 @@ interface IButtonProps {
      * Default: `button`
      */
     type?: "button" | "submit" | "reset";
+    /**
+     *  Event handler for when the button element loses focus. Provides the focus event as a callback's argument.
+     */
+    onBlur?: (e: FocusEvent<HTMLButtonElement>) => void;
+    /**
+     *  Event handler for when the button element receives focus. Provides the focus event as a callback's argument.
+     */
+    onFocus?: (e: FocusEvent<HTMLButtonElement>) => void;
 }
 
 const loadingTypes = {
@@ -106,7 +114,9 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             className,
             iconPosition,
             loading,
-            type = "button"
+            type = "button",
+            onBlur,
+            onFocus
         }: IButtonProps,
         ref
     ) => {
@@ -118,6 +128,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             <button
                 ref={ref}
                 name={name}
+                onFocus={onFocus}
+                onBlur={onBlur}
                 // eslint-disable-next-line react/button-has-type
                 type={type || "button"}
                 onClick={onClick}

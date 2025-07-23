@@ -132,6 +132,25 @@ interface ITextFieldProps {
      *
      */
     onClear?: () => void;
+    /**
+     * Hints the browser which type of virtual keyboard to display on mobile devices.
+     * For example, `numeric` shows a number pad, `email` shows the `@` symbol, etc.
+     *
+     * Default is `"text"`, but overridden to `"numeric"` when `numericOnly` is true.
+     *
+     * Possible values:
+     * `"numeric" | "decimal" | "tel" | "text" | "search" | "email" | "url"`
+     */
+    inputMode?: "numeric" | "decimal" | "tel" | "text" | "search" | "email" | "url";
+    /**
+     * If `true`, only numeric digits (`0–9`) will be allowed in the input.
+     * This does not allow negative numbers or decimal points.
+     * This applies live filtering on user input and disables all other characters.
+     * Also, automatically sets `inputMode="numeric"` to enable mobile number keyboard.
+     *
+     * Tip: For more complex cases like decimals or negative values, use `onChange` manually.
+     */
+    numericOnly?: boolean;
 }
 
 export interface ITextFieldRef {
@@ -167,7 +186,9 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             autoFocus = false,
             helperText,
             status = "rest",
-            onClear
+            onClear,
+            inputMode = "text",
+            numericOnly
         },
         ref
     ) => {
@@ -177,8 +198,16 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
         const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
             const { value: currentValue } = event.target;
-            setInputValue(currentValue);
-            onChange?.(event);
+            const filteredValue = numericOnly && type !== "password" ? currentValue.replace(/\D/g, "") : currentValue;
+            setInputValue(filteredValue);
+
+            onChange?.({
+                ...event,
+                target: {
+                    ...event.target,
+                    value: filteredValue
+                }
+            });
         };
 
         const handleClear = () => {
@@ -237,6 +266,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                             {...(id && { id })}
                             {...(placeholder && { placeholder })}
                             {...(autoFocus && { autoFocus })}
+                            {...(numericOnly ? { inputMode: "numeric" } : { inputMode })}
                             autoComplete={autoComplete}
                             name={name || type}
                             ref={inputRef}
@@ -276,17 +306,19 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                         </span>
                     </div>
                 </Label>
-                <div className="textField__info">
-                    {helperText && <HelperText text={helperText} disabled={disabled} type={status || "rest"} />}
-                    {characterLimit && (
-                        <Text
-                            as="span"
-                            className={classNames(`textField__characterLimit`, {
-                                textField__characterLimit_disabled: disabled
-                            })}
-                        >{`${inputValue.length} / ${characterLimit}`}</Text>
-                    )}
-                </div>
+                {(helperText || characterLimit) && (
+                    <div className="textField__info">
+                        {helperText && <HelperText text={helperText} disabled={disabled} type={status || "rest"} />}
+                        {characterLimit && (
+                            <Text
+                                as="span"
+                                className={classNames(`textField__characterLimit`, {
+                                    textField__characterLimit_disabled: disabled
+                                })}
+                            >{`${inputValue.length} / ${characterLimit}`}</Text>
+                        )}
+                    </div>
+                )}
             </div>
         );
     }
