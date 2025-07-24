@@ -1,26 +1,47 @@
 import React, { FC, PointerEvent, useState } from "react";
 
-import { CaretDown, IconProps } from "@geneui/icons";
+import { CaretDownFilled, IconProps } from "@geneui/icons";
+
+import Loader from "@components/atoms/Loader";
+import { Menu, MenuItem } from "@components/molecules/Menu";
 
 // Styles
 import "./SplitButton.scss";
 
-import { Popover } from "../Popover";
-
-// import { Icon } from "../../../index";
-
 interface ISplitButtonProps {
     /**
-     * size description
+     * Size <br>
+     * Possible values: `large | medium | small`
      */
     size?: "large" | "medium" | "small";
-
-    appearance?: "outline" | "fill" | "inverse";
-
-    type?: "primary" | "secondary";
+    /**
+     * Indicates whether the `button` is `disabled`, preventing user interaction, focus, click etc...
+     */
+    disabled?: boolean;
+    /**
+     * Type <br/>
+     * Possible values: `fill | outline`
+     */
+    type?: "fill" | "outline";
+    /**
+     * Indicates the action meaning. <br>
+     * Possible values: `primary | secondary | inverse`
+     */
+    appearance?: "primary" | "secondary" | "inverse";
+    /**
+     * The `Icon` prop accepts a React Functional Component that will be displayed alongside the button text.
+     */
     Icon?: FC<IconProps>;
-
+    /**
+     * A callback function that is called when the `button` is clicked or entered. <br>
+     * It receives an argument containing the event object, which can be a mouse or keyboard event.
+     */
     onClick: (e: PointerEvent<HTMLButtonElement>) => void;
+    /**
+     * Indicates whether the `SplitButton` is in a loading state.
+     * When set to `true` a `skeleton` indicator will be shown instead of the `Avatar`.
+     */
+    loading?: boolean;
 }
 
 /**
@@ -28,36 +49,59 @@ interface ISplitButtonProps {
  */
 const SplitButton: FC<ISplitButtonProps> = ({
     size = "large",
-    appearance = "fill",
-    type = "primary",
+    disabled = false,
+    type = "fill",
+    appearance = "primary",
+    Icon,
     onClick,
-    Icon
+    loading
 }) => {
     const [props, setProps] = useState({});
 
     return (
         <div className="splitButton">
-            <div className="splitButton__content">
+            {loading ? (
                 <button
                     type="button"
+                    disabled={disabled}
                     onClick={onClick}
-                    className={`splitButton__button splitButton__button_size_${size} splitButton__button_color_${type} splitButton__button_type_${appearance} splitButton__button_icon_before`}
+                    className={`splitButton__button splitButton__button_size_${size} splitButton__button_type_${type} splitButton__button_appearance_${appearance} splitButton__button_loading`}
                 >
-                    {Icon && <Icon size={20} className="button__icon" />}
-                    <span className="splitButton__text">Button</span>
+                    {/* todo: change appearance value from "inverse" to "brand" or "neutral", depending on SplitButton "type" and "appearance" */}
+                    <Loader size="small" appearance="inverse" />
                 </button>
+            ) : (
+                <>
+                    <button
+                        type="button"
+                        disabled={disabled}
+                        onClick={onClick}
+                        className={`splitButton__button splitButton__button_size_${size} splitButton__button_type_${type} splitButton__button_appearance_${appearance} ${Icon ? "splitButton__button_icon_before" : ""}`}
+                    >
+                        {Icon && <Icon size={20} className="button__icon" />}
+                        <span className="splitButton__text">Button</span>
+                    </button>
 
-                <button
-                    type="button"
-                    {...props}
-                    className={`splitButton__button splitButton__button_size_${size} splitButton__button_color_${type} splitButton__button_type_${appearance} splitButton__button_icon_only`}
-                >
-                    <CaretDown className="splitButton__icon" />
-                </button>
-                <Popover setProps={setProps} position="bottom-left">
-                    sqw
-                </Popover>
-            </div>
+                    <button
+                        type="button"
+                        {...props}
+                        disabled={disabled}
+                        className={`splitButton__button splitButton__button_size_${size} splitButton__button_type_${type} splitButton__button_appearance_${appearance} splitButton__button_icon_only`}
+                    >
+                        <CaretDownFilled className="splitButton__icon" />
+                    </button>
+                    <Menu
+                        onChange={() => {}}
+                        setPropsForPopover={setProps}
+                        swappable
+                        position="bottom-left"
+                        size="small"
+                    >
+                        <MenuItem id="0" title="Menu Item" />
+                        <MenuItem id="0" title="Menu Item" />
+                    </Menu>
+                </>
+            )}
         </div>
     );
 };
