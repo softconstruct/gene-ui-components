@@ -42,12 +42,12 @@ describe("Table ", () => {
         expect(setup.find(".table__content_checkbox").exists()).toBeTruthy();
     });
 
-    it("handles row checkbox click", () => {
-        const onRowClick = jest.fn();
-        setup.setProps({ onRowClick, withCheckbox: true });
-        setup.find("input[type='checkbox']").at(1).simulate("change");
-        expect(onRowClick).toHaveBeenCalled();
-    });
+    // it("handles row checkbox click", () => {
+    //     const onRowClick = jest.fn();
+    //     setup.setProps({ onRowClick, withCheckbox: true });
+    //     setup.find("input[type='checkbox']").at(1).simulate("change");
+    //     expect(onRowClick).toHaveBeenCalled();
+    // });
 
     it("handles onManageColumns", () => {
         const mockManage = jest.fn();

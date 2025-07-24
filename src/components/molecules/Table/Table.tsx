@@ -288,14 +288,32 @@ const Table: FC<ITableProps> = ({
         const cols: IOrderedColumns[] = [];
         table.getHeaderGroups().forEach((headerGroup) => {
             headerGroup.headers.forEach((header) => {
-                // if (header.getContext().column.columns.length && header.getContext().column.columnDef.header)
-                cols.push({
-                    id: header.column.id,
-                    title: (header.column.columnDef as TableCol<RowData>).header,
-                    columns: header.column.columns.sort((a, b) => {
-                        return (a.columnDef as TableCol<RowData>).order - (b.columnDef as TableCol<RowData>).order;
-                    })
-                });
+                if (header.getContext().column.columns.length && header.getContext().column.columnDef.header) {
+                    cols.push({
+                        id: header.column.id,
+                        title: (header.column.columnDef as TableCol<RowData>).header,
+                        columns: header.column.columns.sort((a, b) => {
+                            return (a.columnDef as TableCol<RowData>).order - (b.columnDef as TableCol<RowData>).order;
+                        })
+                    });
+                } else {
+                    if (headerGroup.depth > 0) return;
+
+                    if (!cols.length) {
+                        cols.push({
+                            id: headerGroup.id,
+                            title: null,
+                            columns: headerGroup.headers
+                                .map((item) => item.column)
+                                .sort((a, b) => {
+                                    return (
+                                        (a.columnDef as TableCol<RowData>).order -
+                                        (b.columnDef as TableCol<RowData>).order
+                                    );
+                                })
+                        });
+                    }
+                }
             });
         });
         setOrderedColumns(cols);
@@ -395,7 +413,7 @@ const Table: FC<ITableProps> = ({
                             appearance="primary"
                             layout="text"
                             size="medium"
-                            onClick={() => table.resetRowSelection()}
+                            onClick={() => table.getSelectedRowModel().rows.length && table.resetRowSelection()}
                         >
                             Deselect
                         </Button>
