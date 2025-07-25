@@ -1,105 +1,71 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import React from "react";
+import { Meta, StoryObj } from "@storybook/react";
 
+import { Globe } from "@geneui/icons";
+
+// Components
 import Button from "@components/atoms/Button";
+import ButtonGroup, { IButtonGroupProps } from "@components/molecules/ButtonGroup";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-// Components
-import ButtonGroup, { IButtonGroupProps } from "./index";
 
-const meta: Meta<typeof ButtonGroup> = {
+const meta: Meta<IButtonGroupProps> = {
     title: "Molecules/ButtonGroup",
     component: ButtonGroup,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance })
-        // fill ButtonGroup component argTypes
+        className: args({ control: "false", ...propCategory.appearance }),
+        children: args({ control: "array", ...propCategory.content }),
+        size: args({
+            control: "select",
+            options: ["small", "medium", "large", "smallNudge"],
+            ...propCategory.appearance
+        })
     },
-    args: {
-        // fill ButtonGroup component args
-    } as IButtonGroupProps
+    args: {}
 };
 
 export default meta;
 
-const Template: FC<IButtonGroupProps> = (props) => {
-    return (
+type Story = StoryObj<IButtonGroupProps>;
+
+export const Default: Story = {
+    render: (props) => (
         <ButtonGroup {...props}>
-            <Button onClick={() => {}} appearance="primary">
-                primary
+            <Button size="medium" appearance="primary" Icon={Globe} iconPosition="after">
+                Primary
             </Button>
-            <Button onClick={() => {}} appearance="secondary">
-                secondary
+            <Button size="medium" appearance="secondary">
+                Secondary
             </Button>
-            <Button onClick={() => {}} appearance="secondary" layout="outline">
-                transparent
+            <Button size="medium" appearance="danger">
+                Danger
             </Button>
-            <Button
-                onClick={() => {
-                    console.log("1");
-                }}
-                appearance="secondary"
-                layout="outline"
-            >
-                zzzzzz1
+            <Button size="medium" appearance="success" disabled>
+                Disabled
             </Button>
-            <Button
-                onClick={() => {
-                    console.log("2");
-                }}
-                appearance="secondary"
-                layout="outline"
-            >
-                zzzzzz2
+            <Button size="medium" appearance="danger" iconPosition="before">
+                Danger
             </Button>
-            <Button
-                onClick={() => {
-                    console.log("3");
-                }}
-                appearance="secondary"
-                layout="outline"
-            >
-                zzzzzz3
+            <Button size="medium" appearance="success">
+                Success
             </Button>
-            <Button
-                onClick={() => {
-                    console.log("4");
-                }}
-                appearance="secondary"
-                layout="outline"
-            >
-                zzzzzz4
-            </Button>{" "}
-            <Button
-                onClick={() => {
-                    console.log("4");
-                }}
-                appearance="secondary"
-                layout="outline"
-            >
-                zzzzzz4
-            </Button>{" "}
-            <Button
-                onClick={() => {
-                    console.log("4");
-                }}
-                appearance="secondary"
-                layout="outline"
-            >
-                zzzzzz4
-            </Button>{" "}
-            <Button
-                onClick={() => {
-                    console.log("4");
-                }}
-                appearance="secondary"
-                layout="outline"
-            >
-                zzzzzz4
+            <Button size="medium" Icon={Globe} iconPosition="before">
+                With icon
             </Button>
         </ButtonGroup>
-    );
+    )
 };
-export const Default = Template.bind({});
 
-Default.args = {} as IButtonGroupProps;
+export const NoSplit: Story = {
+    render: (props) => (
+        <ButtonGroup {...props}>
+            <Button size="medium" appearance="primary">
+                primary
+            </Button>
+            <Button size="medium" appearance="secondary">
+                secondary
+            </Button>
+        </ButtonGroup>
+    )
+};

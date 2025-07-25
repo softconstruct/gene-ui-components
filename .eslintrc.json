@@ -52,7 +52,8 @@
                     "Products": ["ProductsMainSection", "ProductsSecondarySection"],
                     "ProductsMainSection": ["Product"],
                     "ProductsSecondarySection": ["Product"],
-                    "Menu": ["MenuItem"]
+                    "Menu": ["MenuItem"],
+                    "ButtonGroup": ["Button"]
                 }
             }
         ],

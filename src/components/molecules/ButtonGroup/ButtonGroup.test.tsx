@@ -1,14 +1,23 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-import GeneUIProvider from "../../providers/GeneUIProvider";
+import { Button } from "../../../index";
 // Components
 import ButtonGroup, { IButtonGroupProps } from "./index";
 
 describe("ButtonGroup ", () => {
     let setup: ReactWrapper<IButtonGroupProps>;
     beforeEach(() => {
-        setup = mount(<ButtonGroup direction="vertical"> 312</ButtonGroup>, { wrappingComponent: GeneUIProvider });
+        setup = mount(
+            <ButtonGroup>
+                <Button size="medium" appearance="primary" onClick={() => console.log("Button 1 clicked")}>
+                    primary
+                </Button>
+                <Button size="medium" appearance="secondary" onClick={() => console.log("Button 1 clicked")}>
+                    secondary
+                </Button>
+            </ButtonGroup>
+        );
     });
 
     it("renders without crashing", () => {

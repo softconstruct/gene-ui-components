@@ -1,12 +1,4 @@
-.buttonGroup {
+.ButtonGroup {
     display: inline-flex;
     gap: var(--guit-ref-spacing-xsmall);
-
-    &_horizontal {
-        flex-direction: row;
-    }
-
-    &_vertical {
-        flex-direction: column;
-    }
 }

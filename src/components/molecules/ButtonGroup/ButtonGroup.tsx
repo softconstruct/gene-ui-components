@@ -1,10 +1,11 @@
-import React, { FC, ReactNode, useEffect, useState } from "react";
+import React, { Children, cloneElement, FC, isValidElement, JSX, ReactNode, useEffect, useState } from "react";
 import classNames from "classnames";
 
 import { ThreeDotsHorizontal } from "@geneui/icons";
 
-import Button from "@components/atoms/Button";
-import { Popover, PopoverBody } from "@components/atoms/Popover";
+// Components
+import Button, { IButtonProps } from "@components/atoms/Button";
+import { IMenuItemProps, Menu, MenuItem } from "@components/molecules/Menu";
 
 // Styles
 import "./ButtonGroup.scss";
@@ -15,58 +16,98 @@ interface IButtonGroupProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    // fill ButtonGroup component props interface
-
+    /**
+     * The content of the button group, expected to be a series of Button components.
+     */
     children: ReactNode;
-
-    direction: "horizontal" | "vertical";
+    /**
+     * The size of the buttons in the group. This will be applied to all buttons, including the dropdown trigger.
+     * The type is inherited from the Button component's props for consistency.
+     * Possible values: `large | medium | small | "smallNudge"`
+     */
+    size?: IButtonProps["size"];
 }
+
+const MAX_VISIBLE_BUTTONS = 3;
 
 /**
  * A button group clusters multiple buttons together. Use button groups in toolbars, forms, and modals, etc.
  */
-const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, direction }) => {
-    const [SplitChildren, setSplitChildren] = useState(children);
-    const [propsForContent, setPropsForContent] = useState({});
-    const [otherChildProps, setOtherChildProps] = useState<React.JSX.Element["props"][]>([]);
-    const isShowMenuButton = Array.isArray(children) && children.length > 3;
+const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "medium" }) => {
+    const [menuPropsForPopover, setMenuPropsForPopover] = useState({});
+    const [splitChildren, setSplitChildren] = useState(children);
+    const [menuData, setMenuData] = useState<IMenuItemProps[]>([]);
+    const [childArray, setChildArray] = useState<JSX.Element[]>([]);
 
     useEffect(() => {
-        if (isShowMenuButton && Array.isArray(SplitChildren)) {
-            const child = SplitChildren.slice(0, 3);
-            setSplitChildren(child);
+        if (!children) return;
+        const clonedChildren = Children.map(children, (el) => {
+            if (isValidElement(el)) {
+                return cloneElement(el, {
+                    ...el.props,
+                    size: size as IButtonProps["size"]
+                });
+            }
+            return el;
+        });
+        const childrenArray = Children.toArray(clonedChildren) as JSX.Element[];
+        setChildArray(childrenArray);
 
-            const otherChild = SplitChildren.slice(3, children.length) as React.JSX.Element[];
-            const childProps = otherChild.map((el) => el.props);
+        if (Array.isArray(clonedChildren) && clonedChildren?.length <= MAX_VISIBLE_BUTTONS) {
+            setSplitChildren(clonedChildren);
+        } else {
+            const visibleChildren = childrenArray.slice(0, MAX_VISIBLE_BUTTONS);
+            const hiddenChildren = childrenArray.slice(MAX_VISIBLE_BUTTONS);
 
-            setOtherChildProps(childProps);
+            setSplitChildren(visibleChildren);
+            setMenuData(
+                hiddenChildren.map((child, index) => ({
+                    id: String(index),
+                    title: child.props.children,
+                    IconBefore: child.props.Icon,
+                    danger: child.props.appearance === "danger",
+                    disabled: child.props.disabled
+                }))
+            );
         }
-    }, [isShowMenuButton]);
+    }, [children, size]);
+
+    const menuSelectHandler = (menuItem: IMenuItemProps) => {
+        const selectedChild = childArray[+menuItem.id + MAX_VISIBLE_BUTTONS];
+        if (selectedChild) {
+            selectedChild.props.onClick?.();
+        }
+    };
 
     return (
-        <>
-            <div className={classNames(`buttonGroup buttonGroup_${direction}`, className)}>
-                {SplitChildren}
-                {isShowMenuButton && (
-                    <>
-                        <Button
-                            onClick={() => {}}
-                            Icon={ThreeDotsHorizontal}
-                            layout="text"
-                            appearance="secondary"
-                            {...propsForContent}
-                        />
-                        <Popover setProps={setPropsForContent} title="" position="bottom-left" margin={5}>
-                            <PopoverBody>
-                                {otherChildProps.map((el) => (
-                                    <Button {...el} />
-                                ))}
-                            </PopoverBody>
-                        </Popover>
-                    </>
-                )}
-            </div>
-        </>
+        <div className={classNames("ButtonGroup", className)}>
+            {splitChildren}
+            {menuData.length > 0 && (
+                <>
+                    <Button
+                        Icon={ThreeDotsHorizontal}
+                        layout="text"
+                        appearance="secondary"
+                        size={size as IButtonProps["size"]}
+                        {...menuPropsForPopover}
+                    />
+                    <Menu onChange={menuSelectHandler} setPropsForPopover={setMenuPropsForPopover}>
+                        {menuData.map((item) => {
+                            return (
+                                <MenuItem
+                                    id={item.id}
+                                    IconBefore={item.IconBefore}
+                                    danger={item.danger}
+                                    disabled={item.disabled}
+                                >
+                                    {item.title}
+                                </MenuItem>
+                            );
+                        })}
+                    </Menu>
+                </>
+            )}
+        </div>
     );
 };
 
