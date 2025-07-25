@@ -20,7 +20,8 @@ const meta: Meta<IButtonProps> = {
         loading: args({ control: "boolean", ...propCategory.states }),
         Icon: args({ control: "false", ...propCategory.content }),
         name: args({ control: "false", ...propCategory.others }),
-        onClick: args({ control: "false", ...propCategory.action })
+        onClick: args({ control: "false", ...propCategory.action }),
+        type: args({ control: "select", ...propCategory.functionality })
     },
     args: {
         children: "Button",

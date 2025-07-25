@@ -33,9 +33,10 @@ export { Menu, MenuItem, IMenuProps, IMenuItemProps } from "./components/molecul
 export { default as Navigation, INavigationProps, INavigationData } from "./components/molecules/Navigation";
 export { default as Checkbox, ICheckboxProps } from "./components/molecules/Checkbox";
 export { default as Profile, IProfileProps, IProfileData } from "./components/molecules/Profile";
-export { default as Table } from "./components/molecules/Table";
+export { default as TextField } from "./components/molecules/TextField";
 
 // Organisms
+export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
 
 // Providers
 export {
