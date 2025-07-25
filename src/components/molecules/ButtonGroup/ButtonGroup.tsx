@@ -80,7 +80,7 @@ const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "mediu
     };
 
     return (
-        <div className={classNames("ButtonGroup", className)}>
+        <div className={classNames("buttonGroup", className)}>
             {splitChildren}
             {menuData.length > 0 && (
                 <>
