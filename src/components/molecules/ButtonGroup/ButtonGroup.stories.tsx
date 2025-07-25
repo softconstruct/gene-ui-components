@@ -1,7 +1,7 @@
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Globe } from "@geneui/icons";
+import { Globe, Heart, Letter, Magnifier, Note } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -35,10 +35,10 @@ export const Default: Story = {
             <Button size="medium" appearance="primary" Icon={Globe} iconPosition="after">
                 Primary
             </Button>
-            <Button size="medium" appearance="secondary">
+            <Button size="medium" appearance="secondary" Icon={Magnifier}>
                 Secondary
             </Button>
-            <Button size="medium" appearance="danger">
+            <Button size="medium" appearance="danger" Icon={Heart}>
                 Danger
             </Button>
             <Button size="medium" appearance="success" disabled>
@@ -60,10 +60,10 @@ export const Default: Story = {
 export const NoSplit: Story = {
     render: (props) => (
         <ButtonGroup {...props}>
-            <Button size="medium" appearance="primary">
+            <Button size="medium" appearance="primary" Icon={Letter}>
                 primary
             </Button>
-            <Button size="medium" appearance="secondary">
+            <Button size="medium" appearance="secondary" Icon={Note}>
                 secondary
             </Button>
         </ButtonGroup>
