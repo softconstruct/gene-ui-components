@@ -195,6 +195,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         const inputRef = useRef<HTMLInputElement | null>(null);
         const [inputValue, setInputValue] = useState("");
         const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+        const [paddingClassesForIcon, setPaddingClassesForIcon] = useState<string>("");
 
         const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
             const { value: currentValue } = event.target;
@@ -238,6 +239,17 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
         const showPasswordToggle = () => setIsPasswordVisible((prev) => !prev);
 
+        useEffect(() => {
+            const iconAfter = type === "password" || (clearable && inputValue.length > 0 && !disabled && !readOnly);
+            if (IconBefore && iconAfter) {
+                setPaddingClassesForIcon("textField__wrapper_withIcons");
+            } else if (IconBefore) {
+                setPaddingClassesForIcon("textField__wrapper_iconBefore");
+            } else if (iconAfter) {
+                setPaddingClassesForIcon("textField__wrapper_iconAfter");
+            }
+        }, [IconBefore, type, clearable, inputValue, disabled, readOnly]);
+
         return (
             <div className={classNames("textField", className)}>
                 <Label
@@ -249,7 +261,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                 >
                     <div
                         className={classNames(
-                            `textField__wrapper textField__wrapper_size_${size} textField__wrapper_withIcons`,
+                            `textField__wrapper textField__wrapper_size_${size}`,
+                            paddingClassesForIcon,
                             {
                                 textField__wrapper_readOnly: readOnly,
                                 textField__wrapper_disabled: disabled,

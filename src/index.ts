@@ -35,6 +35,7 @@ export { default as Checkbox, ICheckboxProps } from "./components/molecules/Chec
 export { default as Profile, IProfileProps, IProfileData } from "./components/molecules/Profile";
 export { default as Pagination } from "./components/molecules/Pagination";
 export { default as TextField } from "./components/molecules/TextField";
+export { default as ButtonGroup } from "./components/molecules/ButtonGroup";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
