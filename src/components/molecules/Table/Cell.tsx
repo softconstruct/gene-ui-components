@@ -47,7 +47,7 @@ export const cellRenderer: CellRenderer = {
         return (
             <>
                 <span className="table__td_text ellipsis-text">{data}</span>
-                {withCopy && <Copy value={data} className="table__content_copy" />}
+                {withCopy && <Copy value={data} size="small" appearance="secondary" className="table__content_copy" />}
             </>
         );
     },
@@ -68,7 +68,7 @@ export const cellRenderer: CellRenderer = {
         return (
             <>
                 <span className="table__td_text">{data}</span>
-                {withCopy && <Copy value={data} className="table__content_copy" />}
+                {withCopy && <Copy value={data} size="small" appearance="secondary" className="table__content_copy" />}
             </>
         );
     },
@@ -92,7 +92,7 @@ export const cellRenderer: CellRenderer = {
         return (
             <>
                 <span className="table__td_text ellipsis-text">{data}</span>
-                {withCopy && <Copy value={data} className="table__content_copy" />}
+                {withCopy && <Copy value={data} size="small" appearance="secondary" className="table__content_copy" />}
             </>
         );
     },

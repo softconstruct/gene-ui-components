@@ -674,7 +674,7 @@ const Table: FC<ITableProps> = ({
                                                             }}
                                                         />
                                                     ) : (
-                                                        <div className="table__content">
+                                                        <div className="table__content table__content_header">
                                                             <span className="table__th_text ellipsis-text">
                                                                 {(header.column.columnDef as TableCol<RowData>).header}
                                                             </span>
