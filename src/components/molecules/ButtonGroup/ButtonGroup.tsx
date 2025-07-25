@@ -95,6 +95,7 @@ const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "mediu
                         {menuData.map((item) => {
                             return (
                                 <MenuItem
+                                    key={item.id}
                                     id={item.id}
                                     IconBefore={item.IconBefore}
                                     danger={item.danger}
