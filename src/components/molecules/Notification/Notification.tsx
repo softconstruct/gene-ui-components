@@ -1,8 +1,10 @@
 import React, { FC } from "react";
 import classNames from "classnames";
+
+import { CircleInfo, X } from "@geneui/icons";
+
 // Styles
 import "./Notification.scss";
-import { Close, InfoFill } from "@geneui/icons";
 
 interface INotificationProps {
     /**
@@ -25,14 +27,14 @@ const Notification: FC<INotificationProps> = ({ className }) => {
         >
             <div className="notification__wrapper">
                 <div className="notification__content">
-                    <InfoFill className="notification__icon" />
+                    <CircleInfo className="notification__icon" />
                     <div className="notification__textGroup">
                         <p className="notification__title">Title</p>
                         <p className="notification__description">Description text goes here.</p>
                     </div>
                 </div>
                 <div className="notification__button">
-                    <Close size={16} />
+                    <X size={16} />
                 </div>
             </div>
             <div className="notification__actions">{/* Here should be buttons */}</div>
