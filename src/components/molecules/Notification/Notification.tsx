@@ -116,6 +116,8 @@ const Notification: FC<INotificationProps> = ({
 
     const notificationContent = (
         <div
+            role="alert"
+            aria-live="assertive"
             className={classNames(
                 `notification notification_variant_${variant} notification_status_${finalStatus}`,
                 className
