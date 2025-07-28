@@ -21,11 +21,7 @@ const meta: Meta<typeof Notification> = {
         onClose: args({ control: "false", ...propCategory.action }),
         onPrimaryActionClick: args({ control: "false", ...propCategory.action }),
         onSecondaryActionClick: args({ control: "false", ...propCategory.action }),
-        actionsButtonsSize: args({
-            control: "select",
-            options: ["small", "medium", "large", "smallNudge"],
-            ...propCategory.appearance
-        })
+        actionsButtonsSize: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         open: true,

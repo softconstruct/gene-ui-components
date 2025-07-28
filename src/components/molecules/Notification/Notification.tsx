@@ -115,7 +115,11 @@ const Notification: FC<INotificationProps> = ({
                 <div className="notification__content">
                     <CircleInfo className="notification__icon" />
                     <div className="notification__textGroup">
-                        {title && <p className="notification__title">{title}</p>}
+                        {title && (
+                            <Text as="h6" variant="labelMediumSemibold" className="notification__title">
+                                {title}
+                            </Text>
+                        )}
                         {description && (
                             <Text as="p" variant="bodyMediumMedium" className="notification__description">
                                 {description}
@@ -134,7 +138,12 @@ const Notification: FC<INotificationProps> = ({
             </div>
             <ButtonGroup className="notification__actions" size={actionsButtonsSize}>
                 {!!secondaryActionText && (
-                    <Button appearance="secondary" className="notification__button" onClick={onSecondaryActionClick}>
+                    <Button
+                        appearance="secondary"
+                        className="notification__button"
+                        onClick={onSecondaryActionClick}
+                        layout="text"
+                    >
                         {secondaryActionText}
                     </Button>
                 )}
