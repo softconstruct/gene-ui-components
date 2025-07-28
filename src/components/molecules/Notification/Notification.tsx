@@ -2,7 +2,7 @@ import React, { FC, useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 
-import { CircleInfo, X } from "@geneui/icons";
+import { CheckMark, CircleInfo, ErrorFilled, LightBulb, TriangleAlert, X } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -73,6 +73,14 @@ interface INotificationProps {
     onSecondaryActionClick?: () => void;
 }
 
+const STATUS_ICONS = {
+    informative: CircleInfo,
+    success: CheckMark, // todo Circle CheckMark after updating the pack
+    warning: TriangleAlert,
+    error: ErrorFilled,
+    insight: LightBulb
+};
+
 /**
  * Notification component encompasses various types of messages, including toast notifications and section messages, to provide feedback to users in a clear and structured manner. Notifications inform users about system events, updates, or the status of their actions, ensuring that important information is communicated effectively.
  */
@@ -104,6 +112,8 @@ const Notification: FC<INotificationProps> = ({
 
     const finalStatus = variant === "toast" && status === "insight" ? "informative" : status;
 
+    const IconComponent = STATUS_ICONS[finalStatus];
+
     const notificationContent = (
         <div
             className={classNames(
@@ -113,7 +123,7 @@ const Notification: FC<INotificationProps> = ({
         >
             <div className="notification__wrapper">
                 <div className="notification__content">
-                    <CircleInfo className="notification__icon" />
+                    <IconComponent className="notification__icon" />
                     <div className="notification__textGroup">
                         {title && (
                             <Text as="h6" variant="labelMediumSemibold" className="notification__title">
