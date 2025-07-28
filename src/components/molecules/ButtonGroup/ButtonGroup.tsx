@@ -79,6 +79,8 @@ const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "mediu
         }
     };
 
+    if (childArray.length === 0) return null;
+
     return (
         <div className={classNames("buttonGroup", className)}>
             {splitChildren}
