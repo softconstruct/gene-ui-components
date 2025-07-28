@@ -1,0 +1,78 @@
+.products {
+    width: 36rem;
+
+    &__mobile {
+        width: 100%;
+        height: 100%;
+    }
+
+    &__container {
+        width: 100%;
+        display: inline-flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-large);
+        padding-block: var(--guit-ref-spacing-large);
+        padding-inline: var(--guit-ref-spacing-large);
+    }
+
+    &__list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-3xsmall);
+        width: 100%;
+        min-width: 0;
+        padding: var(--guit-ref-spacing-xsmall);
+        border-radius: var(--guit-ref-radius-3xsmall);
+        color: var(--guit-sem-color-foreground-neutral-2);
+        cursor: pointer;
+        text-align: center;
+        user-select: none;
+
+        &:hover {
+            background-color: var(--guit-sem-color-background-neutral-1-nudge-hover);
+        }
+
+        &:active {
+            background-color: var(--guit-sem-color-background-neutral-1-pressed);
+        }
+
+        &_selected {
+            background-color: var(--guit-sem-color-background-selected-2);
+            color: var(--guit-sem-color-foreground-inverse);
+            pointer-events: none;
+        }
+
+        &_disabled {
+            color: var(--guit-sem-color-foreground-disabled);
+            pointer-events: none;
+        }
+
+        &_logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--guit-sem-dimension-width-xlarge);
+            height: var(--guit-sem-dimension-height-xlarge);
+        }
+
+        &_title {
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+            font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
+            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            overflow-wrap: anywhere;
+        }
+    }
+
+    &__badge {
+        min-width: 100%;
+    }
+}

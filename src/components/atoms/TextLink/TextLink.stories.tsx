@@ -1,18 +1,18 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
+
 import { Globe } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
 import TextLink, { ITextLinkProps } from "./index";
 
-const meta: Meta<typeof TextLink> = {
+const meta: Meta<ITextLinkProps> = {
     title: "Atoms/TextLink",
     component: TextLink,
     argTypes: {
         appearance: args({ control: "select", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         href: args({ control: "text", ...propCategory.content }),
         underline: args({ control: "boolean", ...propCategory.appearance }),
@@ -21,12 +21,14 @@ const meta: Meta<typeof TextLink> = {
         rel: args({ control: "select", ...propCategory.others }),
         target: args({ control: "select", ...propCategory.functionality }),
         text: args({ control: "text", ...propCategory.content }),
-        isLoading: args({ control: "boolean", ...propCategory.states }),
+        loading: args({ control: "boolean", ...propCategory.states }),
         iconBefore: args({ control: "boolean", ...propCategory.appearance }),
-        className: args({ control: "boolean", ...propCategory.appearance })
+        className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
+        loading: false,
         appearance: "primary",
+        size: "medium",
         text: "LinkText",
         href: "#",
         disabled: false,
@@ -34,13 +36,11 @@ const meta: Meta<typeof TextLink> = {
         iconBefore: false,
         Icon: Globe,
         onClick: (e) => e.preventDefault()
-    } as ITextLinkProps
+    }
 };
 
 export default meta;
 
-const Template: FC<ITextLinkProps> = (props) => <TextLink {...props} />;
+type Story = StoryObj<ITextLinkProps>;
 
-export const Default = Template.bind({});
-
-Default.args = {} as ITextLinkProps;
+export const Default: Story = {};

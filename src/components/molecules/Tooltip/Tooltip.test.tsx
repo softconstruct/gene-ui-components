@@ -1,11 +1,12 @@
-import React from "react";
+import React, { act } from "react";
 import { mount, ReactWrapper } from "enzyme";
 import * as TestsUtils from "react-dom/test-utils";
 
 // Components
-import { InfoOutline } from "@geneui/icons";
-import Tooltip, { ITooltipProps } from "./index";
+import { Info } from "@geneui/icons";
+
 import GeneUIProvider from "../../providers/GeneUIProvider";
+import Tooltip, { ITooltipProps } from "./index";
 
 describe("Tooltip", () => {
     let setup: ReactWrapper<ITooltipProps>;
@@ -14,7 +15,7 @@ describe("Tooltip", () => {
             <div className="test">Test</div>
         </Tooltip>
     );
-    const act = typeof React.act === "function" ? React.act : TestsUtils.act;
+    const action = typeof act === "function" ? act : TestsUtils.act;
 
     const provider = () =>
         setup.getWrappingComponent().setProps({
@@ -43,7 +44,7 @@ describe("Tooltip", () => {
     });
 
     it("renders Icon prop correct inside the portal", () => {
-        setup.setProps({ alwaysShow: true, Icon: InfoOutline });
+        setup.setProps({ alwaysShow: true, Icon: Info });
         expect(provider().find(".tooltip__icon").exists()).toBeTruthy();
     });
 
@@ -62,7 +63,7 @@ describe("Tooltip", () => {
         const position = "top-center";
 
         setup.setProps({ alwaysShow: true, position, text: "test" });
-        await act(async () => {
+        await action(async () => {
             await new Promise((resolve) => {
                 setTimeout(resolve);
             });

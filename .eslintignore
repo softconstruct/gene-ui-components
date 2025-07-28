@@ -1,0 +1,12 @@
+.git
+.github
+node_modules
+
+# Ignore artifacts:
+dist
+stats
+scripts
+
+coverage
+docs
+tests

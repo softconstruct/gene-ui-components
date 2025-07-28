@@ -1,8 +1,7 @@
 .divider {
     $this: &;
 
-    display: inline-flex;
-    gap: var(--guit-ref-spacing-xsmall);
+    align-items: center;
     overflow: hidden;
 
     &::before {
@@ -13,7 +12,8 @@
     }
 
     &_horizontal {
-        align-items: center;
+        display: flex;
+        gap: var(--guit-ref-spacing-xsmall);
         width: 100%;
 
         &#{ $this }:before,
@@ -34,8 +34,8 @@
     }
 
     &_vertical {
+        display: inline-flex;
         flex-direction: column;
-        align-items: center;
         height: 100%;
 
         &#{ $this }:before {

@@ -1,0 +1,62 @@
+.keyValue {
+    $this: &;
+
+    display: inline-flex;
+    max-width: 100%;
+
+    &_direction {
+        &_vertical {
+            flex-direction: column;
+        }
+
+        &_horizontal {
+            &#{ $this }_spaceBetween {
+                width: 100%;
+            }
+        }
+    }
+
+    &__content {
+        display: flex;
+        align-items: center;
+        color: var(--guit-sem-color-foreground-neutral-2);
+        flex: 1;
+    }
+
+    &__value {
+        color: var(--guit-sem-color-foreground-neutral-1);
+        word-break: break-word;
+    }
+
+    &_size {
+        &_large {
+            gap: var(--guit-ref-spacing-medium);
+
+            #{ $this }__content {
+                gap: var(--guit-ref-spacing-xsmall);
+            }
+            #{ $this }__title,
+            #{ $this }__value {
+                font-family: var(--guit-sem-font-label-large-default-medium-font-family), sans-serif;
+                font-weight: var(--guit-sem-font-label-large-default-medium-font-weight);
+                font-size: var(--guit-sem-font-label-large-default-semibold-font-size);
+                line-height: var(--guit-sem-font-label-large-default-semibold-line-height);
+            }
+        }
+
+        &_medium {
+            gap: var(--guit-ref-spacing-medium);
+
+            #{ $this }__content {
+                gap: var(--guit-ref-spacing-xsmall);
+            }
+            #{ $this }__title,
+            #{ $this }__value {
+                font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
+                font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+                font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+                line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            }
+        }
+    }
+}
