@@ -609,6 +609,10 @@
             padding-inline: var(--guit-ref-spacing-large);
         }
 
+        &_header {
+            column-gap: var(--guit-ref-spacing-xsmall);
+        }
+
         &_checkbox {
             justify-content: center;
             padding-block: var(--guit-ref-spacing-xsmall);
