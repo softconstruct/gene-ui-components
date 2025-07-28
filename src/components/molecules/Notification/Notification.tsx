@@ -2,7 +2,7 @@ import React, { FC, useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 
-import { CheckMark, CircleInfo, ErrorFilled, LightBulb, TriangleAlert, X } from "@geneui/icons";
+import { CheckMarkCircleFilled, CircleInfo, ErrorFilled, LightBulb, TriangleAlert, X } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -75,7 +75,7 @@ interface INotificationProps {
 
 const STATUS_ICONS = {
     informative: CircleInfo,
-    success: CheckMark, // todo Circle CheckMark after updating the pack
+    success: CheckMarkCircleFilled,
     warning: TriangleAlert,
     error: ErrorFilled,
     insight: LightBulb
