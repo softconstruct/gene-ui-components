@@ -30,6 +30,7 @@ const meta: Meta<typeof Notification> = {
     args: {
         open: true,
         title: 'Notification "Title"',
+        variant: "sectionMessage",
         description:
             'This is a "description" of the notification. asdf asdc asdc asdc asdc asdc asdc asdc asdc asdc adc sDC sdc sDC sdc sDC '
     } as INotificationProps
@@ -47,6 +48,8 @@ export const WithActions: Story = {
     render: (props) => <Notification {...props} />,
     args: {
         secondaryActionText: "Secondary",
-        primaryActionText: "Primary"
+        primaryActionText: "Primary",
+        variant: "toast",
+        status: "warning"
     }
 };

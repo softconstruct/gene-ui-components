@@ -19,16 +19,57 @@ interface INotificationProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Controls the visibility of the notification. Set to `true` to show and `false` to hide.
+     */
     open?: boolean;
+    /**
+     * Determines the rendering style of the notification.
+     * - `toast`: A floating, temporary notification that appears on top of other content (rendered via a portal).
+     * - `sectionMessage`: An inline notification that is part of the page's content flow.
+     */
     variant?: "toast" | "sectionMessage";
+    /**
+     * Defines the semantic meaning and visual style (color, icon) of the notification.
+     * Note: The `insight` status is a special case and should only be used with the `sectionMessage` variant.
+     */
     status?: "informative" | "success" | "warning" | "error" | "insight";
+    /**
+     * The main heading or title for the notification.
+     */
     title?: string;
+    /**
+     * The main body content or description of the notification.
+     */
     description?: string;
+    /**
+     * The size to be applied to the action buttons within the notification.
+     * Possible values: `large | medium | small | "smallNudge"`
+     */
     actionsButtonsSize?: IButtonProps["size"];
+    /**
+     * The text to display on the primary action button.
+     * **Note: The primary action button will not be rendered if this prop is not provided.**
+     */
     primaryActionText?: string;
+    /**
+     * The text to display on the secondary action button.
+     * **Note: The secondary action button will not be rendered if this prop is not provided.**
+     */
     secondaryActionText?: string;
+    /**
+     * Callback function triggered when the close (X) button is clicked.
+     */
     onClose?: () => void;
+    /**
+     * Callback function for the primary action button.
+     * This is only relevant if `primaryActionText` is also provided.
+     */
     onPrimaryActionClick?: () => void;
+    /**
+     * Callback function for the secondary action button.
+     * This is only relevant if `secondaryActionText` is also provided.
+     */
     onSecondaryActionClick?: () => void;
 }
 
