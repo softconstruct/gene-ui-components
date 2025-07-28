@@ -176,6 +176,7 @@
         "@geneui/icons": "^1.4.2",
         "@geneui/tokens": "^1.0.2",
         "@tanstack/react-table": "^8.21.3",
+        "@tanstack/react-virtual": "^3.13.12",
         "@tanstack/table-core": "^8.21.3",
         "classnames": "^2.3.2",
         "qrcode.react": "^4.2.0",

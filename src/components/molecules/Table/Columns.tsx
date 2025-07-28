@@ -4,6 +4,15 @@ import { RowData, TableCol } from "@components/molecules/Table/type";
 
 export const defaultColumns: TableCol<RowData>[] = [
     {
+        id: "rowCheckbox",
+        isVisible: true,
+        order: 0,
+        enableGlobalFilter: false,
+        type: "rowCheckbox",
+        accessorKey: "rowCheckbox",
+        header: null
+    },
+    {
         id: "graph",
         isVisible: true,
         order: 2,

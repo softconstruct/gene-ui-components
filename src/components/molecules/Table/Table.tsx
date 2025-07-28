@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
     Column,
     ColumnFiltersState,
@@ -15,18 +15,7 @@ import {
 import classNames from "classnames";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 
-import {
-    ChevronDown,
-    ChevronRight,
-    Clock,
-    Copy,
-    Download,
-    Globe,
-    Pin,
-    RecycleBin,
-    Tag,
-    ThreeDotsVertical
-} from "@geneui/icons";
+import { Globe, Pin, ThreeDotsVertical } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
@@ -34,15 +23,15 @@ import Label from "@components/atoms/Label";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Checkbox from "@components/molecules/Checkbox";
 import BulkActions from "@components/molecules/Table/BulkActions";
-import Cell, { ICellProps } from "@components/molecules/Table/Cell";
 import { ColActions } from "@components/molecules/Table/ColActions";
-import { CellClassNames, deepCloneWithFunctions } from "@components/molecules/Table/helpers";
+import { deepCloneWithFunctions } from "@components/molecules/Table/helpers";
 import PinnedRow from "@components/molecules/Table/PinnedRow";
+import TBody from "@components/molecules/Table/TBody";
 import { BulkAction, IOrderedColumns, Row, RowActions, RowData, TableCol } from "@components/molecules/Table/type";
+import VirtualScrollTBody from "@components/molecules/Table/VirtualScrollTBody";
 
 // Styles
 import "./Table.scss";
-import "./DragAndDrop.scss";
 
 // hooks
 import { useTableState } from "./hooks";
@@ -121,11 +110,6 @@ interface ITableProps {
     globalFilterPlaceholder?: string;
 
     /**
-     * Whether pagination controls should be shown.
-     */
-    showPagination?: boolean;
-
-    /**
      * Whether table header should remain fixed during scroll.
      */
     stickyHeader?: boolean;
@@ -154,11 +138,13 @@ interface ITableProps {
      * Enables pagination functionality.
      */
     withPagination?: boolean;
+    withVirtualScroll?: boolean;
     onManageColumnRestore?: (event: IOrderedColumns[]) => void;
     onSortChange?: (sorting: SortingState) => void;
     onPageChange?: (pagination: PaginationState) => void;
     onRowSelect?: (selectedRows: any[]) => void;
     onCellEdit?: (rowIndex: number, columnId: string, value: any) => void;
+    withStickyHeader?: boolean;
     onSave?: (data: Row[]) => void;
 }
 
@@ -182,7 +168,9 @@ const Table: FC<ITableProps> = ({
     pageSizes = [10, 20, 50, 100],
     initialPageSize = 20,
     initialPageIndex = 0,
-    withPagination = true
+    withPagination,
+    withVirtualScroll,
+    withStickyHeader
 }) => {
     const {
         data,
@@ -214,6 +202,7 @@ const Table: FC<ITableProps> = ({
         }
     });
 
+    const tableContainerRef = React.useRef<HTMLDivElement>(null);
     const accessEditableMode: Record<string, boolean> = {};
     const accessCopyable: Record<string, boolean> = {};
     const [tableColumns, setTableColumns] = useState<TableCol<RowData>[]>(deepCloneWithFunctions(columns));
@@ -248,10 +237,13 @@ const Table: FC<ITableProps> = ({
         columns,
         initialState: {
             sorting,
-            pagination: { pageSize: initialPageSize, pageIndex: initialPageIndex },
             columnPinning: {
                 left: ["expand", "rowCheckbox"]
-            }
+            },
+            ...(withPagination &&
+                !withVirtualScroll && {
+                    pagination: { pageSize: initialPageSize, pageIndex: initialPageIndex }
+                })
         },
         state: {
             columnOrder,
@@ -267,7 +259,10 @@ const Table: FC<ITableProps> = ({
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getExpandedRowModel: getExpandedRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        ...(withPagination &&
+            !withVirtualScroll && {
+                getPaginationRowModel: getPaginationRowModel()
+            }),
         getSortedRowModel: getSortedRowModel(),
         getRowCanExpand: (row) => !!row.original.expandedData,
         enableGlobalFilter: true,
@@ -318,6 +313,7 @@ const Table: FC<ITableProps> = ({
         });
         setOrderedColumns(cols);
     }, [tableColumns]);
+
     const handleDragEnd = (result: DropResult) => {
         if (!result.destination) {
             return;
@@ -637,10 +633,14 @@ const Table: FC<ITableProps> = ({
                     )}
                 </div>
             </div>
-
-            <Scrollbar>
+            <div ref={tableContainerRef} style={{ height: "500px", overflow: "auto" }}>
+                {/* <Scrollbar> */}
                 <table className={classNames("table", className)}>
-                    <thead>
+                    <thead
+                        className={classNames({
+                            table__header_sticky: withStickyHeader
+                        })}
+                    >
                         {table.getHeaderGroups().map((headerGroup) => (
                             <tr key={`${headerGroup.id}_header`} className="table__row table__row_thead">
                                 {headerGroup.headers.map((header) => {
@@ -702,175 +702,29 @@ const Table: FC<ITableProps> = ({
                                 onCellEdit={handleCellEdit}
                             />
                         ))}
-
-                        {table.getCenterRows().map((row, rowIndex) => {
-                            return (
-                                <Fragment key={row.id}>
-                                    <tr
-                                        className={classNames(
-                                            `table__row table__row_tbody table__row_${row.original.rowStatus}`,
-                                            {
-                                                table__row_selected: row.getIsSelected()
-                                            }
-                                        )}
-                                    >
-                                        {expandable && (
-                                            <td className="table__td">
-                                                <div className="table__content table__content_expand">
-                                                    {row.getCanExpand() && (
-                                                        <Button
-                                                            appearance="secondary"
-                                                            layout="text"
-                                                            size="small"
-                                                            Icon={!row.getIsExpanded() ? ChevronRight : ChevronDown}
-                                                            onClick={() => row.toggleExpanded()}
-                                                        />
-                                                    )}
-                                                </div>
-                                            </td>
-                                        )}
-
-                                        {withCheckbox && (
-                                            <td className="table__td">
-                                                <div className="table__content table__content_checkbox">
-                                                    <Checkbox
-                                                        name="item"
-                                                        value="item"
-                                                        checked={row.getIsSelected()}
-                                                        onChange={() => {
-                                                            row.toggleSelected();
-                                                            onRowClick?.(row.id);
-                                                        }}
-                                                    />
-                                                </div>
-                                            </td>
-                                        )}
-                                        {row.getVisibleCells().map((cell) => {
-                                            const { type } = cell.column.columnDef as TableCol<ICellProps>;
-                                            if (type === "expand" || type === "rowCheckbox") {
-                                                return null;
-                                            }
-                                            return (
-                                                <td key={cell.id} className="table__td">
-                                                    <>
-                                                        <div
-                                                            className={classNames(
-                                                                `table__content ${CellClassNames[type]}`
-                                                            )}
-                                                        >
-                                                            <Cell
-                                                                type={type as ICellProps["type"]}
-                                                                data={
-                                                                    row.original[
-                                                                        (cell.column.columnDef as TableCol<unknown>)
-                                                                            .type
-                                                                    ]?.data
-                                                                }
-                                                                withEditMode={editableMode}
-                                                                rowCellRenderer={
-                                                                    (cell.column.columnDef as TableCol<unknown>)
-                                                                        .rowCellRenderer
-                                                                }
-                                                                withCopy={
-                                                                    (cell.column.columnDef as TableCol<unknown>)
-                                                                        .copyable
-                                                                }
-                                                                onChange={(e) => handleCellEdit(e, rowIndex, type)}
-                                                            />
-                                                        </div>
-                                                    </>
-                                                </td>
-                                            );
-                                        })}
-                                        {!editableMode &&
-                                            rowActions &&
-                                            Object.values(rowActions).every((action) => !!action) && (
-                                                <td className="table__td table__actionsWrapper">
-                                                    <div className="table__actions">
-                                                        {rowActions && rowActions.pin && (
-                                                            <Button
-                                                                appearance="secondary"
-                                                                layout="text"
-                                                                size="small"
-                                                                Icon={Pin}
-                                                                onClick={() => {
-                                                                    row.pin("top");
-                                                                    rowActions.pin?.(row.id);
-                                                                }}
-                                                            />
-                                                        )}
-                                                        {rowActions?.tag && (
-                                                            <Button
-                                                                appearance="secondary"
-                                                                layout="text"
-                                                                size="small"
-                                                                Icon={Tag}
-                                                                onClick={() => rowActions.tag?.(row.id)}
-                                                            />
-                                                        )}
-                                                        {rowActions?.clock && (
-                                                            <Button
-                                                                appearance="secondary"
-                                                                layout="text"
-                                                                size="small"
-                                                                Icon={Clock}
-                                                                onClick={() => rowActions.clock?.(row.id)}
-                                                            />
-                                                        )}
-                                                        {rowActions?.copy && (
-                                                            <Button
-                                                                appearance="secondary"
-                                                                layout="text"
-                                                                size="small"
-                                                                Icon={Copy}
-                                                                onClick={() => rowActions.copy?.(row.id)}
-                                                            />
-                                                        )}
-                                                        {rowActions?.download && (
-                                                            <Button
-                                                                appearance="secondary"
-                                                                layout="text"
-                                                                size="small"
-                                                                Icon={Download}
-                                                                onClick={() => rowActions.download?.(row.id)}
-                                                            />
-                                                        )}
-                                                        {rowActions?.delete && (
-                                                            <Button
-                                                                appearance="secondary"
-                                                                layout="text"
-                                                                size="small"
-                                                                Icon={RecycleBin}
-                                                                onClick={() => rowActions.delete?.(row.id)}
-                                                            />
-                                                        )}
-                                                    </div>
-                                                </td>
-                                            )}
-                                    </tr>
-                                    {row.getIsExpanded() && (
-                                        <tr className="table__row table__row_tbody">
-                                            <td
-                                                className="table__td table__td_expanded"
-                                                colSpan={row.getVisibleCells().length}
-                                            >
-                                                <div
-                                                    className="swapComponent"
-                                                    style={{
-                                                        height: "20rem",
-                                                        backgroundColor: "#F4E1EC",
-                                                        padding: "1.6rem",
-                                                        color: "#A60063"
-                                                    }}
-                                                >
-                                                    {row.original.expandedData()}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    )}
-                                </Fragment>
-                            );
-                        })}
+                        {withVirtualScroll && tableContainerRef.current ? (
+                            <VirtualScrollTBody
+                                rows={table.getRowModel().rows}
+                                columnCount={table.getHeaderGroups().length || 1}
+                                tableContainerRef={tableContainerRef.current}
+                                onRowClick={onRowClick}
+                                rowActions={rowActions || {}}
+                                expandable={expandable}
+                                editableMode={editableMode}
+                                withCheckbox={withCheckbox}
+                                onCellEdit={handleCellEdit}
+                            />
+                        ) : (
+                            <TBody
+                                table={table}
+                                onRowClick={onRowClick}
+                                rowActions={rowActions || {}}
+                                expandable={expandable}
+                                editableMode={editableMode}
+                                withCheckbox={withCheckbox}
+                                onCellEdit={handleCellEdit}
+                            />
+                        )}
                     </tbody>
 
                     <tfoot>
@@ -902,7 +756,8 @@ const Table: FC<ITableProps> = ({
                         })}
                     </tfoot>
                 </table>
-            </Scrollbar>
+                {/* </Scrollbar> */}
+            </div>
 
             {withPagination && (
                 <div className="dataTable__pagination">

@@ -395,6 +395,12 @@
     width: 100%;
     border-collapse: separate;
 
+    &__header_sticky {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
     &__row {
         $that: &;
 

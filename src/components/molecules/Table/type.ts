@@ -59,9 +59,6 @@ export type RowActions = {
     delete?: (rowId: string) => void;
 };
 
-export type TableSize = "small" | "medium" | "large";
-export type TableVariant = "default" | "striped" | "bordered";
-
 export type LoadingState = "idle" | "loading" | "error" | "success";
 
 export type SelectionMode = "single" | "multiple" | "none";

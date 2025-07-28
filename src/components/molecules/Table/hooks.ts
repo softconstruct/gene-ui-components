@@ -112,32 +112,29 @@ export function useTableState<T = any>({
         [callbacks]
     );
 
-    const handleCellEdit = useCallback(
-        (
-            e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-            rowIndex: number,
-            columnId: string
-        ) => {
-            e.persist();
-            const { value } = e.currentTarget;
+    const handleCellEdit = (
+        e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+        rowIndex: number,
+        columnId: string
+    ) => {
+        e.persist();
+        const { value } = e.currentTarget;
 
-            // Update edited values tracking
-            setEditedValues((prev) => ({
-                ...prev,
-                [columnId]: { ...prev[columnId], [rowIndex]: value }
-            }));
+        // Update edited values tracking
+        setEditedValues((prev) => ({
+            ...prev,
+            [columnId]: { ...prev[columnId], [rowIndex]: value }
+        }));
 
-            // Update actual data
-            const newData = [...data];
-            if (newData[rowIndex] && typeof newData[rowIndex] === "object") {
-                (newData[rowIndex] as any)[columnId].data = value;
-            }
-            setData(newData);
+        // Update actual data
+        const newData = [...data];
+        if (newData[rowIndex] && typeof newData[rowIndex] === "object") {
+            (newData[rowIndex] as any)[columnId].data = value;
+        }
+        setData(newData);
 
-            callbacks?.onCellEdit?.(rowIndex, columnId, value);
-        },
-        [data, callbacks]
-    );
+        callbacks?.onCellEdit?.(rowIndex, columnId, value);
+    };
 
     const handleSave = useCallback(() => {
         callbacks?.onSave?.(data);

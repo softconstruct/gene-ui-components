@@ -46,7 +46,8 @@ const meta: Meta<ITableProps> = {
 
 type Story = StoryObj<ITableProps>;
 
-const data = makeData(3);
+const data = makeData(300);
+
 export const Default: Story = storyObjBuilder({
     argTypes: {},
     args: {},
@@ -58,11 +59,62 @@ export const Default: Story = storyObjBuilder({
             <Table
                 columns={defaultColumns}
                 externalData={data}
-                withPagination
-                showPagination
                 pageSizes={[10, 25, 50, 100]}
                 initialPageSize={25}
                 initialPageIndex={0}
+                withPagination
+                withGlobalFilter
+                withCheckbox
+                bulkActions={bulkActionsMock}
+                rowActions={{
+                    delete: (id) => console.log(id)
+                }}
+                onSave={(savedData) => onSave(savedData)}
+            />
+        );
+    }
+});
+
+export const WithStickyHeader: Story = storyObjBuilder({
+    argTypes: {},
+    args: {},
+    render: () => {
+        const onSave = (savedData: Row[]) => {
+            return savedData;
+        };
+        return (
+            <Table
+                columns={defaultColumns}
+                externalData={data}
+                pageSizes={[10, 25, 50, 100]}
+                initialPageSize={25}
+                initialPageIndex={0}
+                withPagination
+                withGlobalFilter
+                withCheckbox
+                withStickyHeader
+                bulkActions={bulkActionsMock}
+                rowActions={{
+                    delete: (id) => console.log(id)
+                }}
+                onSave={(savedData) => onSave(savedData)}
+            />
+        );
+    }
+});
+
+export const WithVirtualScroll: Story = storyObjBuilder({
+    argTypes: {},
+    args: {},
+    render: () => {
+        const onSave = (savedData: Row[]) => {
+            return savedData;
+        };
+        return (
+            <Table
+                columns={defaultColumns}
+                externalData={data}
+                withVirtualScroll
                 withGlobalFilter
                 bulkActions={bulkActionsMock}
                 rowActions={{
@@ -85,11 +137,10 @@ export const WithPinnedColumns: Story = storyObjBuilder({
             <Table
                 columns={withPinnedColumns}
                 externalData={data}
-                withPagination
-                showPagination
                 pageSizes={[10, 25, 50, 100]}
                 initialPageSize={25}
                 initialPageIndex={0}
+                withPagination
                 withGlobalFilter
                 bulkActions={bulkActionsMock}
                 rowActions={{
@@ -112,14 +163,41 @@ export const WithGroupedColumns: Story = storyObjBuilder({
             <Table
                 columns={withGroupedColumns}
                 externalData={data}
+                pageSizes={[10, 25, 50, 100]}
+                initialPageSize={25}
+                initialPageIndex={0}
+                withCheckbox
+                withGlobalFilter
                 withPagination
-                showPagination
+                withStickyHeader
+                bulkActions={bulkActionsMock}
+                rowActions={{
+                    delete: (id) => console.log(id)
+                }}
+                onSave={(savedData) => onSave(savedData)}
+            />
+        );
+    }
+});
+
+export const WithExpendRowsColumns: Story = storyObjBuilder({
+    argTypes: {},
+    args: {},
+    render: () => {
+        const onSave = (savedData: Row[]) => {
+            return savedData;
+        };
+        return (
+            <Table
+                columns={withGroupedColumns}
+                externalData={data}
                 pageSizes={[10, 25, 50, 100]}
                 initialPageSize={25}
                 initialPageIndex={0}
                 withCheckbox
                 withGlobalFilter
                 expandable
+                withPagination
                 bulkActions={bulkActionsMock}
                 rowActions={{
                     delete: (id) => console.log(id)
