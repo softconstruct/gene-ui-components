@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { CircleInfo, X } from "@geneui/icons";
 
 // Components
-import Button, { IButtonProps } from "@components/atoms/Button";
+import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
@@ -44,9 +44,9 @@ interface INotificationProps {
     description?: string;
     /**
      * The size to be applied to the action buttons within the notification.
-     * Possible values: `large | medium | small | "smallNudge"`
+     * Possible values: `large | medium | small `
      */
-    actionsButtonsSize?: IButtonProps["size"];
+    actionsButtonsSize?: "large" | "medium" | "small";
     /**
      * The text to display on the primary action button.
      * **Note: The primary action button will not be rendered if this prop is not provided.**
@@ -150,8 +150,10 @@ const Notification: FC<INotificationProps> = ({
     if (!show) return null;
 
     if (variant === "toast") {
-        if (geneUIProviderRef.current) {
-            return createPortal(notificationContent, geneUIProviderRef.current);
+        const providerCurrent = geneUIProviderRef.current;
+
+        if (providerCurrent) {
+            return createPortal(notificationContent, providerCurrent);
         }
         return null;
     }
