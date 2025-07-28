@@ -11,11 +11,11 @@
     border-inline-start: var(--guit-ref-border-width-thicker) var(--guit-ref-border-style-solid);
     overflow: hidden;
 
-    &_type {
+    &_variant {
         &_sectionMessage {
             min-width: 16rem;
 
-            &#{ $this }_state {
+            &#{ $this }_status {
                 &_informative {
                     background-color: var(--guit-sem-color-background-informative);
                 }
@@ -39,6 +39,9 @@
         }
 
         &_toast {
+            position: fixed;
+            right: 0;
+            top: 0;
             min-width: 24rem;
             max-width: 32rem;
             background-color: var(--guit-sem-color-background-neutral-1);
@@ -52,7 +55,7 @@
         }
     }
 
-    &_state {
+    &_status {
         &_informative {
             border-inline-start-color: var(--guit-sem-color-border-informative);
 
@@ -114,12 +117,6 @@
         height: var(--guit-sem-dimension-height-small-nudge);
     }
 
-    &__button {
-        width: var(--guit-sem-dimension-width-small-nudge);
-        height: var(--guit-sem-dimension-height-small-nudge);
-        color: var(--guit-sem-color-foreground-neutral-2);
-    }
-
     &__actions {
         display: flex;
         justify-content: flex-end;
@@ -150,10 +147,6 @@
     }
 
     &__description {
-        font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
-        font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
-        font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
-        line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
         color: var(--guit-sem-color-foreground-neutral-2);
     }
 }
