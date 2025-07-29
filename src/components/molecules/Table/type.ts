@@ -27,7 +27,7 @@ export type RowData = Record<string, any>;
 
 export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     id: string;
-    header: string | null;
+    header?: string | null;
     footer?: (props: HeaderContext<RowData, unknown>) => ReactNode;
     type: CellType;
     order: number;
@@ -119,7 +119,7 @@ export interface BulkAction {
 
 export interface IOrderedColumns {
     id: string;
-    title: string | null;
+    title?: string | null;
     isVisible?: boolean;
     isPinned?: boolean;
     order?: number;

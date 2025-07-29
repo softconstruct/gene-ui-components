@@ -40,7 +40,7 @@ interface ITableProps {
     /**
      * Column definitions for the table.
      */
-    columns: TableCol<any>[];
+    columns: TableCol<RowData>[];
 
     /**
      * Data to display in the table.
@@ -145,6 +145,10 @@ interface ITableProps {
     onRowSelect?: (selectedRows: any[]) => void;
     onCellEdit?: (rowIndex: number, columnId: string, value: any) => void;
     withStickyHeader?: boolean;
+    withDynamicFetch?: boolean;
+    hasNextPage?: boolean;
+    isFetchingNextPage?: boolean;
+    fetchNextPage?: () => void;
     onSave?: (data: Row[]) => void;
 }
 
@@ -170,7 +174,11 @@ const Table: FC<ITableProps> = ({
     initialPageIndex = 0,
     withPagination,
     withVirtualScroll,
-    withStickyHeader
+    withStickyHeader,
+    withDynamicFetch,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage
 }) => {
     const {
         data,
@@ -212,6 +220,10 @@ const Table: FC<ITableProps> = ({
 
     const [columnOrder, setColumnOrder] = useState<string[]>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+
+    useEffect(() => {
+        setData(externalData);
+    }, [externalData]);
 
     useEffect(() => {
         const columnIds: string[] = [];
@@ -286,7 +298,7 @@ const Table: FC<ITableProps> = ({
                 if (header.getContext().column.columns.length && header.getContext().column.columnDef.header) {
                     cols.push({
                         id: header.column.id,
-                        title: (header.column.columnDef as TableCol<RowData>).header,
+                        title: (header.column.columnDef as TableCol<RowData>).header || null,
                         columns: header.column.columns.sort((a, b) => {
                             return (a.columnDef as TableCol<RowData>).order - (b.columnDef as TableCol<RowData>).order;
                         })
@@ -362,7 +374,7 @@ const Table: FC<ITableProps> = ({
         });
     };
 
-    const onColumnPin = (column: any, groupIndex: number, columnIndex: number) => {
+    const onColumnPin = (column: Column<RowData, unknown>, groupIndex: number, columnIndex: number) => {
         const isPinned = column.getIsPinned();
         if (!isPinned) {
             column.pin("left");
@@ -713,6 +725,10 @@ const Table: FC<ITableProps> = ({
                                 editableMode={editableMode}
                                 withCheckbox={withCheckbox}
                                 onCellEdit={handleCellEdit}
+                                withDynamicFetch={withDynamicFetch}
+                                hasNextPage={hasNextPage}
+                                isFetchingNextPage={isFetchingNextPage}
+                                fetchNextPage={fetchNextPage}
                             />
                         ) : (
                             <TBody

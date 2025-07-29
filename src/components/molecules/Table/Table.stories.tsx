@@ -1,4 +1,4 @@
-import React, { ComponentType } from "react";
+import React, { ComponentType, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IMenuItemProps } from "@components/molecules/Menu";
@@ -103,27 +103,51 @@ export const WithStickyHeader: Story = storyObjBuilder({
     }
 });
 
+const TableWithVirtualScroll = () => {
+    const [tableData, setTableData] = useState(makeData(50));
+    const [hasNextPage, setHasNextPage] = useState(true);
+    const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
+
+    const fetchData = () => {
+        if (tableData.length > 300) setHasNextPage(false);
+        setIsFetchingNextPage(true);
+        setTimeout(() => {
+            console.log("log");
+            setTableData((prev) => {
+                const newData = makeData(50);
+                return [...prev, ...newData];
+            });
+            setIsFetchingNextPage(false);
+        }, 2000);
+    };
+
+    const onSave = (savedData: Row[]) => {
+        return savedData;
+    };
+    return (
+        <Table
+            columns={defaultColumns}
+            externalData={tableData}
+            withVirtualScroll
+            withGlobalFilter
+            withCheckbox
+            bulkActions={bulkActionsMock}
+            rowActions={{
+                delete: (id) => console.log(id)
+            }}
+            withDynamicFetch
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            fetchNextPage={fetchData}
+            onSave={(savedData) => onSave(savedData)}
+        />
+    );
+};
+
 export const WithVirtualScroll: Story = storyObjBuilder({
     argTypes: {},
     args: {},
-    render: () => {
-        const onSave = (savedData: Row[]) => {
-            return savedData;
-        };
-        return (
-            <Table
-                columns={defaultColumns}
-                externalData={data}
-                withVirtualScroll
-                withGlobalFilter
-                bulkActions={bulkActionsMock}
-                rowActions={{
-                    delete: (id) => console.log(id)
-                }}
-                onSave={(savedData) => onSave(savedData)}
-            />
-        );
-    }
+    render: () => <TableWithVirtualScroll />
 });
 
 export const WithPinnedColumns: Story = storyObjBuilder({

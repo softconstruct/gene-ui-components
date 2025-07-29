@@ -9,8 +9,7 @@ export const defaultColumns: TableCol<RowData>[] = [
         order: 0,
         enableGlobalFilter: false,
         type: "rowCheckbox",
-        accessorKey: "rowCheckbox",
-        header: null
+        accessorKey: "rowCheckbox"
     },
     {
         id: "graph",

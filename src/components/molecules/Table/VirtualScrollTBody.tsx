@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC } from "react";
+import React, { ChangeEvent, FC, useEffect } from "react";
 import { Row } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
@@ -13,6 +13,10 @@ interface IVirtualScrollTBody {
     expandable?: boolean;
     withCheckbox?: boolean;
     editableMode: boolean;
+    withDynamicFetch?: boolean;
+    hasNextPage?: boolean;
+    isFetchingNextPage?: boolean;
+    fetchNextPage?: () => void;
     rowActions: Partial<RowActions>;
     onRowClick?: (event: string) => void;
     onCellEdit: (
@@ -26,6 +30,10 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
     rows,
     columnCount,
     tableContainerRef,
+    withDynamicFetch,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
     expandable,
     withCheckbox,
     editableMode,
@@ -35,11 +43,20 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
 }) => {
     const rowVirtualizer = useVirtualizer({
         count: rows.length,
-        estimateSize: () => 70,
         getScrollElement: () => tableContainerRef,
-        overscan: 3
+        estimateSize: () => 34,
+        overscan: 20
     });
+
+    useEffect(() => {
+        if (!withDynamicFetch) return;
+        if ((rowVirtualizer.range?.endIndex ?? 0) >= rows.length - 10 && hasNextPage && !isFetchingNextPage) {
+            fetchNextPage?.();
+        }
+    }, [fetchNextPage, hasNextPage, isFetchingNextPage, rows.length]);
+
     const virtualItems = rowVirtualizer.getVirtualItems();
+
     return (
         <>
             {virtualItems.length > 0 && (
