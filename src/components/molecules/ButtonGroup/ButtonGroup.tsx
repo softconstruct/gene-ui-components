@@ -55,10 +55,10 @@ const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "mediu
 
         if (Array.isArray(clonedChildren) && clonedChildren?.length <= MAX_VISIBLE_BUTTONS) {
             setSplitChildren(clonedChildren);
+            setMenuData([]);
         } else {
             const visibleChildren = childrenArray.slice(0, MAX_VISIBLE_BUTTONS);
             const hiddenChildren = childrenArray.slice(MAX_VISIBLE_BUTTONS);
-
             setSplitChildren(visibleChildren);
             setMenuData(
                 hiddenChildren.map((child, index) => ({
@@ -78,6 +78,8 @@ const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "mediu
             selectedChild.props.onClick?.();
         }
     };
+
+    if (childArray.length === 0) return null;
 
     return (
         <div className={classNames("buttonGroup", className)}>
