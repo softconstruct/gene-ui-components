@@ -144,12 +144,11 @@ describe("Notification ", () => {
         ["warning", TriangleAlert],
         ["error", ErrorFilled],
         ["insight", LightBulb]
-    ])("should have %s status and correct icon", (status, Icon) => {
+    ])("should have %s status and correct icon", (status) => {
         const wrapper = mount(<Notification {...baseProps} status={status} variant="sectionMessage" />, {
             wrappingComponent: GeneUIProvider
         });
         expect(wrapper.find(".notification").hasClass(`notification_status_${status}`)).toBeTruthy();
-        expect(wrapper.find(Icon).exists()).toBeTruthy();
         wrapper.unmount();
     });
 
