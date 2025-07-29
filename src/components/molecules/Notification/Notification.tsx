@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useContext } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 
@@ -98,17 +98,7 @@ const Notification: FC<INotificationProps> = ({
     onSecondaryActionClick,
     actionsButtonsSize
 }) => {
-    const [show, setShow] = useState(false);
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
-
-    useEffect(() => {
-        setShow(!!open);
-    }, [open]);
-
-    const onCloseHandler = () => {
-        setShow(false);
-        onClose?.();
-    };
 
     const finalStatus = variant === "toast" && status === "insight" ? "informative" : status;
 
@@ -144,7 +134,7 @@ const Notification: FC<INotificationProps> = ({
                     layout="text"
                     size="small"
                     className="notification__button"
-                    onClick={onCloseHandler}
+                    onClick={onClose}
                     Icon={X}
                 />
             </div>
@@ -168,7 +158,7 @@ const Notification: FC<INotificationProps> = ({
         </div>
     );
 
-    if (!show) return null;
+    if (!open) return null;
 
     if (variant === "toast") {
         const providerCurrent = geneUIProviderRef.current;

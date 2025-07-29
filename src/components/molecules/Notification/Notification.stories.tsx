@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -36,12 +36,24 @@ export default meta;
 
 type Story = StoryObj<INotificationProps>;
 
+const NotificationStory = (props) => {
+    const [isOpen, setIsOpen] = useState(true);
+
+    useEffect(() => {
+        setIsOpen(!!props?.open);
+    }, [props?.open]);
+    const closeHandler = () => {
+        setIsOpen(false);
+    };
+    return <Notification {...props} open={isOpen} onClose={closeHandler} onSecondaryActionClick={closeHandler} />;
+};
+
 export const Default: Story = {
-    render: (props) => <Notification {...props} />
+    render: (props) => <NotificationStory {...props} />
 };
 
 export const WithActions: Story = {
-    render: (props) => <Notification {...props} />,
+    render: (props) => <NotificationStory {...props} />,
     args: {
         secondaryActionText: "Secondary",
         primaryActionText: "Primary",
