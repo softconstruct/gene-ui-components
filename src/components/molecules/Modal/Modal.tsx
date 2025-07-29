@@ -25,12 +25,12 @@ interface IModalProps {
  */
 const Modal: FC<IModalProps> = ({ className }) => {
     return (
-        <div className={classNames("modalWrapper modalWrapper_desktop", className)}>
-            {/* Add class modalWrapper_desktop // modalWrapper_mobile for .modalWrapper */}
+        <div className={classNames("modalWrapper modalWrapper_desktop modalWrapper_fullView", className)}>
+            {/* Add class modalWrapper_desktop Or modalWrapper_mobile for .modalWrapper */}
             {/* Add class modalWrapper_toTop for .modalWrapper */}
-            {/* Add class modal_fullView for .modal */}
+            {/* Add class modalWrapper_fullView for .modalWrapper */}
             {/* Add class modal_insetTrue for .modal */}
-            <div className="modal modal_insetTrue">
+            <div className="modal modalWrapper__modal modal_insetTrue">
                 <div className="modal__header">
                     <div className="modal__headerContent">
                         <Info className="modal_status_informative" size={20} />
