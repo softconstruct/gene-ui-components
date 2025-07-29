@@ -1,79 +1,38 @@
-.modalWrapper {
+.modal {
     $this: &;
 
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
     display: flex;
     justify-content: center;
     width: 100%;
-    height: 100%;
     background-color: var(--guit-sem-color-background-transparent-overlay-notheme-1);
     overflow: hidden;
 
-    &:not(#{ $this }_toTop, #{ $this }_fullView) {
+    &:not(#{ $this }_toTop, #{ $this }_viewFull) {
         align-items: center;
 
-        &#{ $this }_desktop {
+        &#{ $this }_viewDesktop {
             padding: var(--guit-ref-spacing-8xlarge);
         }
 
-        &#{ $this }_mobile {
+        &#{ $this }_viewMobile {
             padding: var(--guit-ref-spacing-large);
         }
 
-        #{ $this }__modal {
+        #{ $this }__wrapper {
             border-radius: var(--guit-ref-radius-2xsmall);
             border: 0.1rem solid var(--guit-sem-color-border-neutral-2);
         }
     }
 
-    &:not(#{ $this }_fullView) {
-        #{ $this }__modal {
+    &:not(#{ $this }_viewFull) {
+        #{ $this }__wrapper {
             max-height: 80rem;
         }
     }
-
-    &_toTop {
-        align-items: flex-start;
-
-        &#{ $this }_desktop {
-            padding: 0 var(--guit-ref-spacing-8xlarge) var(--guit-ref-spacing-8xlarge) var(--guit-ref-spacing-8xlarge);
-        }
-
-        &#{ $this }_mobile {
-            padding: 0 var(--guit-ref-spacing-large) var(--guit-ref-spacing-large) var(--guit-ref-spacing-large);
-        }
-
-        #{ $this }__modal {
-            border-end-start-radius: var(--guit-ref-radius-2xsmall);
-            border-end-end-radius: var(--guit-ref-radius-2xsmall);
-        }
-    }
-
-    &_fullView {
-        #{ $this }__modal {
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-    }
-}
-
-.modal {
-    $this: &;
-
-    display: grid;
-    grid-template-columns: 12fr;
-    grid-template-rows: auto 10fr auto;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    box-shadow:
-        var(--guit-sem-shadow-floating-3-position-x-1) var(--guit-sem-shadow-floating-3-position-y-1)
-            var(--guit-sem-shadow-floating-3-blur-1) var(--guit-sem-shadow-floating-3-spread-1)
-            var(--guit-sem-color-floating-3-rgba-1),
-        var(--guit-sem-shadow-floating-3-position-x-2) var(--guit-sem-shadow-floating-3-position-y-2)
-            var(--guit-sem-shadow-floating-3-position-y-1) var(--guit-sem-shadow-floating-3-spread-2)
-            var(--guit-sem-color-floating-3-rgba-2);
 
     &__header {
         display: flex;
@@ -137,10 +96,50 @@
         }
     }
 
-    &_insetTrue {
+    &_toTop {
+        align-items: flex-start;
+
+        &#{ $this }_viewDesktop {
+            padding: 0 var(--guit-ref-spacing-8xlarge) var(--guit-ref-spacing-8xlarge) var(--guit-ref-spacing-8xlarge);
+        }
+
+        &#{ $this }_viewMobile {
+            padding: 0 var(--guit-ref-spacing-large) var(--guit-ref-spacing-large) var(--guit-ref-spacing-large);
+        }
+
+        #{ $this }__wrapper {
+            border-top-width: 0;
+            border-end-start-radius: var(--guit-ref-radius-2xsmall);
+            border-end-end-radius: var(--guit-ref-radius-2xsmall);
+        }
+    }
+
+    &_viewFull {
+        height: 100%;
+    }
+
+    &_withPadding {
         #{ $this }__content {
             padding: var(--guit-ref-spacing-large);
         }
+    }
+
+    &__wrapper {
+        $this: &;
+
+        display: grid;
+        grid-template-columns: 12fr;
+        grid-template-rows: auto 10fr auto;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        box-shadow:
+            var(--guit-sem-shadow-floating-3-position-x-1) var(--guit-sem-shadow-floating-3-position-y-1)
+                var(--guit-sem-shadow-floating-3-blur-1) var(--guit-sem-shadow-floating-3-spread-1)
+                var(--guit-sem-color-floating-3-rgba-1),
+            var(--guit-sem-shadow-floating-3-position-x-2) var(--guit-sem-shadow-floating-3-position-y-2)
+                var(--guit-sem-shadow-floating-3-position-y-1) var(--guit-sem-shadow-floating-3-spread-2)
+                var(--guit-sem-color-floating-3-rgba-2);
     }
 
     &_status {

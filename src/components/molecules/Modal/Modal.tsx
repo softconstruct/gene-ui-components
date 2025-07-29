@@ -31,18 +31,18 @@ const Modal: FC<IModalProps> = ({ className, open }) => {
     const providerCurrent = geneUIProviderRef.current;
 
     const modalContent = (
-        <div className={classNames("modalWrapper modalWrapper_desktop", className)}>
-            {/* Add class modalWrapper_desktop Or modalWrapper_mobile for .modalWrapper */}
-            {/* Add class modalWrapper_toTop for .modalWrapper */}
-            {/* Add class modalWrapper_fullView for .modalWrapper */}
-            {/* Add class modal_insetTrue for .modal */}
-            <div className="modal modalWrapper__modal modal_insetTrue">
+        <div className={classNames("modal modal_viewDesktop", className)}>
+            {/* Add class modalWrapper_desktop Or modal_mobile for .modalWrapper */}
+            {/* Add class modalWrapper_toTop for .modal */}
+            {/* Add class modalWrapper_fullView for .modal */}
+            {/* Add class modal_insetTrue for .modal__wrapper */}
+            <div className="modal__wrapper modal_withPadding">
                 <div className="modal__header">
                     <div className="modal__headerContent">
                         <Info className="modal_status_informative" size={20} />
                         <ErrorFilled className="modal_status_error" size={20} />
                         <TriangleAlert className="modal_status_warning" size={20} />
-                        <Text variant="labelLargeSemibold" className="modal__title" as="p">
+                        <Text variant="labelLargeSemibold" className="modal__title" as="h3">
                             Modal Title
                         </Text>
                     </div>
