@@ -1,5 +1,147 @@
+.modalWrapper {
+    $this: &;
+
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    background-color: var(--guit-sem-color-background-transparent-overlay-notheme-1);
+
+    &:not(#{ $this }_toTop) {
+        align-items: center;
+
+        &#{ $this }_desktop {
+            padding: var(--guit-ref-spacing-8xlarge);
+        }
+
+        &#{ $this }_mobile {
+            padding: var(--guit-ref-spacing-large);
+        }
+    }
+
+    &_toTop {
+        align-items: flex-start;
+
+        &#{ $this }_desktop {
+            padding: 0 var(--guit-ref-spacing-8xlarge) var(--guit-ref-spacing-8xlarge) var(--guit-ref-spacing-8xlarge);
+        }
+
+        &#{ $this }_mobile {
+            padding: 0 var(--guit-ref-spacing-large) var(--guit-ref-spacing-large) var(--guit-ref-spacing-large);
+        }
+    }
+}
+
 .modal {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    display: grid;
+    grid-template-columns: 12fr;
+    grid-template-rows: auto 10fr auto;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--guit-ref-spacing-xsmall);
+        width: 100%;
+        height: var(--guit-sem-dimension-height-2xlarge);
+        padding: var(--guit-ref-spacing-large);
+        border-bottom: 0.1rem solid var(--guit-sem-color-border-neutral-2);
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    }
+
+    &__body {
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    }
+
+    &__content {
+        width: 100%;
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-medium);
+        width: 100%;
+        height: var(--guit-sem-dimension-height-2xlarge);
+        padding: var(--guit-ref-spacing-medium) var(--guit-ref-spacing-large);
+        border-top: 0.1rem solid var(--guit-sem-color-border-neutral-2);
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+
+        &:has(#{ $this }__buttonGroup:only-child) {
+            justify-content: flex-end;
+        }
+
+        &:not(:has(#{ $this }__buttonGroup:only-child)) {
+            justify-content: space-between;
+        }
+    }
+
+    &__headerContent {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__title {
+        text-transform: capitalize;
+        color: var(--guit-sem-color-foreground-neutral-2);
+    }
+
+    &__paragraph {
+        color: var(--guit-sem-color-foreground-neutral-2);
+
+        &:not(:last-of-type) {
+            margin-bottom: var(--guit-sem-font-body-large-default-medium-paragraph-spacing);
+        }
+    }
+
+    &:not(#{ $this }_fullView) {
+        max-height: 80rem;
+        border-radius: var(--guit-ref-radius-2xsmall);
+        border: 0.1rem solid var(--guit-sem-color-border-neutral-2);
+        box-shadow:
+            var(--guit-sem-shadow-floating-3-position-x-1) var(--guit-sem-shadow-floating-3-position-y-1)
+                var(--guit-sem-shadow-floating-3-blur-1) var(--guit-sem-shadow-floating-3-spread-1)
+                var(--guit-sem-color-floating-3-rgba-1),
+            var(--guit-sem-shadow-floating-3-position-x-2) var(--guit-sem-shadow-floating-3-position-y-2)
+                var(--guit-sem-shadow-floating-3-position-y-1) var(--guit-sem-shadow-floating-3-spread-2)
+                var(--guit-sem-color-floating-3-rgba-2);
+    }
+
+    &_fullView {
+        &#{ $this } {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+
+    &_insetTrue {
+        #{ $this }__content {
+            padding: var(--guit-ref-spacing-large);
+        }
+    }
+
+    &_status {
+        &_informative {
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
+
+        &_warning {
+            color: var(--guit-sem-color-foreground-warning);
+        }
+
+        &_error {
+            color: var(--guit-sem-color-foreground-error);
+        }
+    }
 }
