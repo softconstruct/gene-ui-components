@@ -1,4 +1,5 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
+import { createPortal } from "react-dom";
 import classNames from "classnames";
 
 import { ErrorFilled, Info, TriangleAlert, X } from "@geneui/icons";
@@ -7,6 +8,7 @@ import Button from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Styles
 import "./Modal.scss";
@@ -17,15 +19,19 @@ interface IModalProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    open?: boolean;
     // fill Modal component props interface
 }
 
 /**
  * Modal component displays content in a layer above the main application, effectively focusing the user's attention on a specific task or information. It is often used for actions that require user input, such as confirmation dialogs, forms, or important notifications.
  */
-const Modal: FC<IModalProps> = ({ className }) => {
-    return (
-        <div className={classNames("modalWrapper modalWrapper_desktop modalWrapper_fullView", className)}>
+const Modal: FC<IModalProps> = ({ className, open }) => {
+    const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
+    const providerCurrent = geneUIProviderRef.current;
+
+    const modalContent = (
+        <div className={classNames("modalWrapper modalWrapper_desktop", className)}>
             {/* Add class modalWrapper_desktop Or modalWrapper_mobile for .modalWrapper */}
             {/* Add class modalWrapper_toTop for .modalWrapper */}
             {/* Add class modalWrapper_fullView for .modalWrapper */}
@@ -64,6 +70,12 @@ const Modal: FC<IModalProps> = ({ className }) => {
             </div>
         </div>
     );
+    if (!open) return null;
+
+    if (providerCurrent) {
+        return createPortal(modalContent, providerCurrent);
+    }
+    return null;
 };
 
 export { IModalProps, Modal as default };

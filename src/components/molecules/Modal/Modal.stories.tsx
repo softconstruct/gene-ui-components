@@ -1,3 +1,4 @@
+import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -9,16 +10,25 @@ const meta: Meta<IModalProps> = {
     title: "Molecules/Modal",
     component: Modal,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance })
-        // fill Modal component argTypes
+        className: args({ control: "false", ...propCategory.appearance }),
+        open: args({ control: "boolean", ...propCategory.states })
     },
     args: {
-        // fill Modal component args
+        open: true
     }
 };
 
 export default meta;
 
 type Story = StoryObj<IModalProps>;
+const ModalStory = (props) => {
+    return (
+        <div style={{ height: "100vh" }}>
+            <Modal {...props}>This is a modal</Modal>
+        </div>
+    );
+};
 
-export const Default: Story = {};
+export const Default: Story = {
+    render: (props) => <ModalStory {...props} />
+};
