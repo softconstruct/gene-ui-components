@@ -190,7 +190,7 @@ const Pagination: FC<IPaginationProps> = ({
                 <div className="pagination__perpage">
                     {/* todo: import 'Dropdown' component */}
                     <div className="pagination__select">
-                        <select onChange={handlePageSizeChange} value={currentPageItemsLength}>
+                        <select onChange={handlePageSizeChange} defaultValue={currentPageSize}>
                             {rowsPerPageOptions.map((el) => (
                                 <option value={el} key={el}>
                                     {el}/{pageSizeSuffixLabel}
