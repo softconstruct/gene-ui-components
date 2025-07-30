@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import React, { FC, ReactNode, useContext, useEffect } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 
@@ -19,44 +19,131 @@ interface IModalProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Controls the visibility of the modal. Set to `true` to show and `false` to hide.
+     */
     open?: boolean;
-    // fill Modal component props interface
+    /**
+     * Determines whether the close (X) button is displayed in the modal's header.
+     * @default false
+     */
+    hasCloseButton?: boolean;
+    /**
+     * Callback function triggered when the modal is requested to be closed (e.g., via the close button, Escape key, or overlay click).
+     */
+    onClose?: () => void;
+    /**
+     * When `true`, allows the modal to be closed by pressing the Escape key.
+     * Calls `onClose`.
+     * @default false
+     */
+    shouldCloseOnEscapePress?: boolean;
+    /**
+     * When `true`, allows the modal to be closed by clicking on the semi-transparent background overlay.
+     * Calls `onClose`.
+     * @default false
+     */
+    shouldCloseOnOverlayClick?: boolean;
+    title?: string;
+    status?: "informative" | "warning" | "error";
+    children?: ReactNode;
 }
+
+const STATUS_ICONS = {
+    informative: Info,
+    warning: TriangleAlert,
+    error: ErrorFilled
+};
 
 /**
  * Modal component displays content in a layer above the main application, effectively focusing the user's attention on a specific task or information. It is often used for actions that require user input, such as confirmation dialogs, forms, or important notifications.
  */
-const Modal: FC<IModalProps> = ({ className, open }) => {
+const Modal: FC<IModalProps> = ({
+    className,
+    open,
+    title,
+    hasCloseButton,
+    shouldCloseOnEscapePress = false,
+    shouldCloseOnOverlayClick = false,
+    onClose,
+    status,
+    children
+}) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
 
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldCloseOnEscapePress && event.key === "Escape") {
+                onClose?.();
+            }
+        };
+
+        if (open) {
+            document.addEventListener("keydown", handleKeyDown);
+            document.body.style.overflow = "hidden";
+        }
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+            document.body.style.overflow = "unset";
+        };
+    }, [open, shouldCloseOnEscapePress, onClose]);
+
+    const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        if (shouldCloseOnOverlayClick && event.target === event.currentTarget) {
+            onClose?.();
+        }
+    };
+
+    const IconComponent = status ? STATUS_ICONS[status] : null;
+
     const modalContent = (
-        <div className={classNames("modal modal_viewDesktop", className)}>
+        <div
+            className={classNames("modal modal_viewDesktop modalWrapper_fullView", className)}
+            onClick={handleOverlayClick}
+            role="presentation"
+        >
             {/* Add class modalWrapper_desktop Or modal_mobile for .modalWrapper */}
             {/* Add class modalWrapper_toTop for .modal */}
             {/* Add class modalWrapper_fullView for .modal */}
             {/* Add class modal_insetTrue for .modal__wrapper */}
             <div className="modal__wrapper modal_withPadding">
-                <div className="modal__header">
-                    <div className="modal__headerContent">
-                        <Info className="modal_status_informative" size={20} />
-                        <ErrorFilled className="modal_status_error" size={20} />
-                        <TriangleAlert className="modal_status_warning" size={20} />
-                        <Text variant="labelLargeSemibold" className="modal__title" as="h3">
-                            Modal Title
-                        </Text>
+                {(hasCloseButton || title) && (
+                    <div className="modal__header">
+                        <div className="modal__headerContent">
+                            {title && (
+                                <>
+                                    {IconComponent && <IconComponent className={`modal_status_${status}`} size={20} />}
+
+                                    <Text variant="labelLargeSemibold" className="modal__title" as="h1">
+                                        {title}
+                                    </Text>
+                                </>
+                            )}
+                        </div>
+                        {hasCloseButton && (
+                            <Button
+                                size="small"
+                                Icon={X}
+                                type="button"
+                                layout="text"
+                                appearance="secondary"
+                                onClick={onClose}
+                            />
+                        )}
                     </div>
-                    <Button size="small" Icon={X} type="button" layout="text" appearance="secondary" />
-                </div>
+                )}
                 <div className="modal__body">
                     <Scrollbar>
                         <div className="modal__content">
-                            <Text variant="bodyLargeMedium" className="modal__paragraph" as="p">
-                                You are about to perform an action that will permanently alter your current settings.
-                                Once you proceed, these changes cannot be reversed, and the previous state will be lost.
-                                Please take a moment to carefully review your choices and ensure that you have saved any
-                                necessary information before continuing.
-                            </Text>
+                            {typeof children === "string" ? (
+                                <Text variant="bodyLargeMedium" className="modal__paragraph" as="p">
+                                    {children}
+                                </Text>
+                            ) : (
+                                children
+                            )}
                         </div>
                     </Scrollbar>
                 </div>
