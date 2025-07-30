@@ -23,6 +23,15 @@ interface IPaginationProps {
      */
     totalPages: number;
     /**
+     * Total number of data items available.
+     * This value determines the upper bound of pagination navigation.
+     */
+    totalItems?: number;
+    /**
+     * The number of items currently displayed on the active page.
+     */
+    currentPageItemsLength?: number;
+    /**
      * The current active page (1-indexed).
      * This value sets the starting point of the pagination and updates dynamically with user interaction.
      */
@@ -114,6 +123,8 @@ const Pagination: FC<IPaginationProps> = ({
     className,
     current = 1,
     totalPages = 25,
+    totalItems,
+    currentPageItemsLength,
     rowsPerPageOptions,
     onPageChange,
     onPageSizeChange,
@@ -126,9 +137,11 @@ const Pagination: FC<IPaginationProps> = ({
     const isRTLMode = document.dir === "rtl";
 
     const [currentPage, setCurrentPage] = useState<number>(+current > totalPages ? 1 : +current);
-    const [currentPageSize, setCurrentPageSize] = useState<number>(rowsPerPageOptions?.[0] || 0);
+    const [currentPageSize, setCurrentPageSize] = useState<number>(
+        currentPageItemsLength || rowsPerPageOptions?.[0] || 0
+    );
 
-    // Generate the page numbers to display
+    // Generate the page numbers to displays
     const calculatedData = createPageNumbers(currentPage, +totalPages, MAXIMUM_SIZE_IN_VIEW_PORT);
 
     // Effect to sync internal state with external prop changes
@@ -173,11 +186,11 @@ const Pagination: FC<IPaginationProps> = ({
 
     return (
         <div className={classNames("pagination", className)}>
-            {rowsPerPageOptions && (
+            {rowsPerPageOptions && totalItems && (
                 <div className="pagination__perpage">
                     {/* todo: import 'Dropdown' component */}
                     <div className="pagination__select">
-                        <select onChange={handlePageSizeChange}>
+                        <select onChange={handlePageSizeChange} value={currentPageItemsLength}>
                             {rowsPerPageOptions.map((el) => (
                                 <option value={el} key={el}>
                                     {el}/{pageSizeSuffixLabel}
@@ -187,7 +200,8 @@ const Pagination: FC<IPaginationProps> = ({
                     </div>
 
                     <div className="pagination__perpage_values">
-                        <span>{currentPageSize}</span> {pageSizeOfLabel} <span>{totalPages}</span>
+                        <span>{currentPageSize}</span> {pageSizeOfLabel}{" "}
+                        <span className="pagination__perpage_totalItems">{totalItems}</span>
                     </div>
                 </div>
             )}
