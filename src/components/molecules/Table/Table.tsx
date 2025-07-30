@@ -22,6 +22,7 @@ import Divider from "@components/atoms/Divider";
 import Label from "@components/atoms/Label";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Checkbox from "@components/molecules/Checkbox";
+import Pagination from "@components/molecules/Pagination";
 import BulkActions from "@components/molecules/Table/BulkActions";
 import { ColActions } from "@components/molecules/Table/ColActions";
 import { deepCloneWithFunctions } from "@components/molecules/Table/helpers";
@@ -170,7 +171,7 @@ const Table: FC<ITableProps> = ({
     onSave,
     bulkActions,
     pageSizes = [10, 20, 50, 100],
-    initialPageSize = 20,
+    initialPageSize = 10,
     initialPageIndex = 0,
     withPagination,
     withVirtualScroll,
@@ -778,65 +779,19 @@ const Table: FC<ITableProps> = ({
             {withPagination && (
                 <div className="dataTable__pagination">
                     <div className="dataTable__pagination_controls">
-                        <select
-                            value={table.getState().pagination.pageSize}
-                            onChange={(e) => table.setPageSize(Number(e.target.value))}
-                            className="dataTable__pagination_select"
-                        >
-                            {pageSizes.map((pageSize) => (
-                                <option key={pageSize} value={pageSize}>
-                                    Show {pageSize}
-                                </option>
-                            ))}
-                        </select>
-
-                        <div className="dataTable__pagination_buttons">
-                            <Button
-                                appearance="secondary"
-                                layout="outline"
-                                size="small"
-                                onClick={() => table.setPageIndex(0)}
-                                disabled={!table.getCanPreviousPage()}
-                            >
-                                First
-                            </Button>
-                            <Button
-                                appearance="secondary"
-                                layout="outline"
-                                size="small"
-                                onClick={() => table.previousPage()}
-                                disabled={!table.getCanPreviousPage()}
-                            >
-                                Previous
-                            </Button>
-
-                            <span className="dataTable__pagination_info">
-                                Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-                            </span>
-
-                            <Button
-                                appearance="secondary"
-                                layout="outline"
-                                size="small"
-                                onClick={() => table.nextPage()}
-                                disabled={!table.getCanNextPage()}
-                            >
-                                Next
-                            </Button>
-                            <Button
-                                appearance="secondary"
-                                layout="outline"
-                                size="small"
-                                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                                disabled={!table.getCanNextPage()}
-                            >
-                                Last
-                            </Button>
-                        </div>
+                        <Pagination
+                            current={initialPageIndex + 1}
+                            totalItems={data.length}
+                            currentPageItemsLength={initialPageSize}
+                            totalPages={table.getPageCount()}
+                            rowsPerPageOptions={pageSizes}
+                            onPageChange={(pageNumber) => table.setPageIndex(pageNumber)}
+                            onPageSizeChange={(size) => table.setPageSize(size)}
+                            showInputPageField
+                        />
                     </div>
                 </div>
             )}
-
             <Divider />
         </div>
     );

@@ -59,9 +59,6 @@ export const Default: Story = storyObjBuilder({
             <Table
                 columns={defaultColumns}
                 externalData={data}
-                pageSizes={[10, 25, 50, 100]}
-                initialPageSize={25}
-                initialPageIndex={0}
                 withPagination
                 withGlobalFilter
                 withCheckbox
