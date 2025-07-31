@@ -3,6 +3,7 @@ import React, { ChangeEvent, FC, JSX } from "react";
 import Copy from "@components/atoms/Copy";
 import Pill from "@components/atoms/Pill";
 import Checkbox from "@components/molecules/Checkbox";
+import TextField from "@components/molecules/TextField";
 
 import { CellType } from "./type";
 
@@ -32,12 +33,11 @@ export const cellRenderer: CellRenderer = {
     text: ({ rowCellRenderer, data, withEditMode, inputType = "text", withCopy, onChange }) => {
         if (withEditMode) {
             return (
-                <input
-                    type={inputType}
+                <TextField
+                    numericOnly={inputType === "number"}
                     placeholder="Row Text"
                     value={data}
                     {...(onChange && { onChange: (e) => onChange(e) })}
-                    style={{ width: "160px" }}
                 />
             );
         }
