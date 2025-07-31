@@ -46,7 +46,7 @@ const meta: Meta<ITableProps> = {
 
 type Story = StoryObj<ITableProps>;
 
-const data = makeData(300);
+const data = makeData(10);
 
 export const Default: Story = storyObjBuilder({
     argTypes: {},

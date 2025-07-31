@@ -5,7 +5,9 @@ import { HeaderContext } from "@tanstack/table-core/build/lib/core/headers";
 import { IconProps } from "@geneui/icons";
 
 import { IPillProps } from "@components/atoms/Pill";
+import { ICheckboxProps } from "@components/molecules/Checkbox";
 import { IMenuItemProps } from "@components/molecules/Menu";
+import { ISwitchProps } from "@components/molecules/Switch";
 
 export type CellType =
     | "empty"
@@ -39,7 +41,7 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     editable?: boolean;
     copyable?: boolean;
     enableColumnFilter?: boolean;
-    enablePopoverFilter?: true;
+    enablePopoverFilter?: boolean;
     filterOptions?: string[];
     resizable?: boolean;
     columns?: TableCol<RowData>[];
@@ -93,7 +95,7 @@ export type Cell = {
         | "flag"
         | "checkbox"
         | "switch";
-    data: string | number | boolean | IPillProps | FC<IconProps>;
+    data: string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
 };
 
 type TableRowCells = {

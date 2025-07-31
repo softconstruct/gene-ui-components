@@ -4,6 +4,8 @@ import { faker } from "@faker-js/faker";
 
 import { Globe } from "@geneui/icons";
 
+import { ICheckboxProps } from "@components/molecules/Checkbox";
+import { ISwitchProps } from "@components/molecules/Switch";
 import { Row } from "@components/molecules/Table/type";
 
 const range = (len: number) => {
@@ -34,7 +36,7 @@ const newRow = (): Row => {
         },
         dropdown: {
             type: "dropdown",
-            data: faker.word.adjective()
+            data: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!
         },
         status: {
             type: "status",
@@ -54,11 +56,17 @@ const newRow = (): Row => {
         },
         checkbox: {
             type: "checkbox",
-            data: "value"
+            data: {
+                value: faker.word.adjective(),
+                checked: faker.helpers.shuffle<boolean>([true, false])[0]!
+            } as ICheckboxProps
         },
         switch: {
             type: "switch",
-            data: faker.helpers.shuffle<boolean>([true, false])[0]!
+            data: {
+                value: faker.word.adjective(),
+                checked: faker.helpers.shuffle<boolean>([true, false])[0]!
+            } as ISwitchProps
         },
         rowStatus: faker.helpers.shuffle<Row["rowStatus"]>([
             "default",
