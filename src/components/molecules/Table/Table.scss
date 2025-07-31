@@ -648,7 +648,7 @@
             }
 
             &_numeric {
-                text-align: end;
+                justify-content: flex-end;
 
                 #{ $this }__td_text {
                     padding-inline-start: var(--guit-ref-sizing-medium-nudge);

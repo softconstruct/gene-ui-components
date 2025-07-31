@@ -20,6 +20,7 @@ import { Globe, Pin, ThreeDotsVertical } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import Label from "@components/atoms/Label";
+import Loader, { ILoaderProps } from "@components/atoms/Loader";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Checkbox from "@components/molecules/Checkbox";
 import Pagination from "@components/molecules/Pagination";
@@ -151,6 +152,9 @@ interface ITableProps {
     isFetchingNextPage?: boolean;
     fetchNextPage?: () => void;
     onSave?: (data: Row[]) => void;
+    loading?: boolean;
+    loaderSize?: ILoaderProps["size"];
+    loaderText?: string;
 }
 
 const Table: FC<ITableProps> = ({
@@ -179,7 +183,10 @@ const Table: FC<ITableProps> = ({
     withDynamicFetch,
     hasNextPage,
     isFetchingNextPage,
-    fetchNextPage
+    fetchNextPage,
+    loading,
+    loaderSize,
+    loaderText
 }) => {
     const {
         data,
@@ -395,6 +402,59 @@ const Table: FC<ITableProps> = ({
     const handleManageColumnsRestore = () => {
         setTableColumns(deepCloneWithFunctions(columns));
         onManageColumnRestore?.(manageColumnsData);
+    };
+
+    const renderTableBody = () => {
+        if (loading) {
+            return <Loader size={loaderSize} text={loaderText} />;
+        }
+
+        if (table.getRowModel().flatRows.length > 0) {
+            return (
+                <>
+                    {table.getTopRows().map((row, index) => (
+                        <PinnedRow
+                            key={row.id}
+                            rowIndex={index}
+                            row={row}
+                            rowActions={rowActions || {}}
+                            expandable={expandable}
+                            editableMode={editableMode}
+                            onCellEdit={handleCellEdit}
+                        />
+                    ))}
+                    {withVirtualScroll && tableContainerRef.current ? (
+                        <VirtualScrollTBody
+                            rows={table.getRowModel().rows}
+                            columnCount={table.getHeaderGroups().length || 1}
+                            tableContainerRef={tableContainerRef.current}
+                            onRowClick={onRowClick}
+                            rowActions={rowActions || {}}
+                            expandable={expandable}
+                            editableMode={editableMode}
+                            withCheckbox={withCheckbox}
+                            onCellEdit={handleCellEdit}
+                            withDynamicFetch={withDynamicFetch}
+                            hasNextPage={hasNextPage}
+                            isFetchingNextPage={isFetchingNextPage}
+                            fetchNextPage={fetchNextPage}
+                        />
+                    ) : (
+                        <TBody
+                            table={table}
+                            onRowClick={onRowClick}
+                            rowActions={rowActions || {}}
+                            expandable={expandable}
+                            editableMode={editableMode}
+                            withCheckbox={withCheckbox}
+                            onCellEdit={handleCellEdit}
+                        />
+                    )}
+                </>
+            );
+        }
+
+        return <h1>No data available</h1>;
     };
 
     return (
@@ -703,52 +763,7 @@ const Table: FC<ITableProps> = ({
                         ))}
                     </thead>
 
-                    <tbody>
-                        {table.getRowModel().flatRows.length > 0 ? (
-                            <>
-                                {table.getTopRows().map((row, index) => (
-                                    <PinnedRow
-                                        key={row.id}
-                                        rowIndex={index}
-                                        row={row}
-                                        rowActions={rowActions || {}}
-                                        expandable={expandable}
-                                        editableMode={editableMode}
-                                        onCellEdit={handleCellEdit}
-                                    />
-                                ))}
-                                {withVirtualScroll && tableContainerRef.current ? (
-                                    <VirtualScrollTBody
-                                        rows={table.getRowModel().rows}
-                                        columnCount={table.getHeaderGroups().length || 1}
-                                        tableContainerRef={tableContainerRef.current}
-                                        onRowClick={onRowClick}
-                                        rowActions={rowActions || {}}
-                                        expandable={expandable}
-                                        editableMode={editableMode}
-                                        withCheckbox={withCheckbox}
-                                        onCellEdit={handleCellEdit}
-                                        withDynamicFetch={withDynamicFetch}
-                                        hasNextPage={hasNextPage}
-                                        isFetchingNextPage={isFetchingNextPage}
-                                        fetchNextPage={fetchNextPage}
-                                    />
-                                ) : (
-                                    <TBody
-                                        table={table}
-                                        onRowClick={onRowClick}
-                                        rowActions={rowActions || {}}
-                                        expandable={expandable}
-                                        editableMode={editableMode}
-                                        withCheckbox={withCheckbox}
-                                        onCellEdit={handleCellEdit}
-                                    />
-                                )}
-                            </>
-                        ) : (
-                            <h1>No data available</h1>
-                        )}
-                    </tbody>
+                    <tbody>{renderTableBody()}</tbody>
                     {table.getRowModel().flatRows.length > 0 && (
                         <tfoot>
                             {table.getFooterGroups().map((footerGroups) => {
