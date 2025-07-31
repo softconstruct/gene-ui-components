@@ -704,79 +704,86 @@ const Table: FC<ITableProps> = ({
                     </thead>
 
                     <tbody>
-                        {table.getTopRows().map((row, index) => (
-                            <PinnedRow
-                                key={row.id}
-                                rowIndex={index}
-                                row={row}
-                                rowActions={rowActions || {}}
-                                expandable={expandable}
-                                editableMode={editableMode}
-                                onCellEdit={handleCellEdit}
-                            />
-                        ))}
-                        {withVirtualScroll && tableContainerRef.current ? (
-                            <VirtualScrollTBody
-                                rows={table.getRowModel().rows}
-                                columnCount={table.getHeaderGroups().length || 1}
-                                tableContainerRef={tableContainerRef.current}
-                                onRowClick={onRowClick}
-                                rowActions={rowActions || {}}
-                                expandable={expandable}
-                                editableMode={editableMode}
-                                withCheckbox={withCheckbox}
-                                onCellEdit={handleCellEdit}
-                                withDynamicFetch={withDynamicFetch}
-                                hasNextPage={hasNextPage}
-                                isFetchingNextPage={isFetchingNextPage}
-                                fetchNextPage={fetchNextPage}
-                            />
+                        {table.getRowModel().flatRows.length > 0 ? (
+                            <>
+                                {table.getTopRows().map((row, index) => (
+                                    <PinnedRow
+                                        key={row.id}
+                                        rowIndex={index}
+                                        row={row}
+                                        rowActions={rowActions || {}}
+                                        expandable={expandable}
+                                        editableMode={editableMode}
+                                        onCellEdit={handleCellEdit}
+                                    />
+                                ))}
+                                {withVirtualScroll && tableContainerRef.current ? (
+                                    <VirtualScrollTBody
+                                        rows={table.getRowModel().rows}
+                                        columnCount={table.getHeaderGroups().length || 1}
+                                        tableContainerRef={tableContainerRef.current}
+                                        onRowClick={onRowClick}
+                                        rowActions={rowActions || {}}
+                                        expandable={expandable}
+                                        editableMode={editableMode}
+                                        withCheckbox={withCheckbox}
+                                        onCellEdit={handleCellEdit}
+                                        withDynamicFetch={withDynamicFetch}
+                                        hasNextPage={hasNextPage}
+                                        isFetchingNextPage={isFetchingNextPage}
+                                        fetchNextPage={fetchNextPage}
+                                    />
+                                ) : (
+                                    <TBody
+                                        table={table}
+                                        onRowClick={onRowClick}
+                                        rowActions={rowActions || {}}
+                                        expandable={expandable}
+                                        editableMode={editableMode}
+                                        withCheckbox={withCheckbox}
+                                        onCellEdit={handleCellEdit}
+                                    />
+                                )}
+                            </>
                         ) : (
-                            <TBody
-                                table={table}
-                                onRowClick={onRowClick}
-                                rowActions={rowActions || {}}
-                                expandable={expandable}
-                                editableMode={editableMode}
-                                withCheckbox={withCheckbox}
-                                onCellEdit={handleCellEdit}
-                            />
+                            <h1>No data available</h1>
                         )}
                     </tbody>
-
-                    <tfoot>
-                        {table.getFooterGroups().map((footerGroups) => {
-                            return (
-                                <tr key={`${footerGroups.id}_footer`} className="table__row table__row_tfoot">
-                                    {footerGroups.headers.map((footer) => {
-                                        return (
-                                            <td
-                                                key={`${footer.id}_footer`}
-                                                className="table__td"
-                                                colSpan={footer.colSpan}
-                                            >
-                                                <div className="table__content table__content_empty table__content_text_numeric">
-                                                    <span className="ellipsis-text table__td_text">
-                                                        {footer?.column?.columnDef?.footer
-                                                            ? flexRender(
-                                                                  footer.column.columnDef.footer,
-                                                                  footer.getContext()
-                                                              )
-                                                            : null}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                        );
-                                    })}
-                                </tr>
-                            );
-                        })}
-                    </tfoot>
+                    {table.getRowModel().flatRows.length > 0 && (
+                        <tfoot>
+                            {table.getFooterGroups().map((footerGroups) => {
+                                return (
+                                    <tr key={`${footerGroups.id}_footer`} className="table__row table__row_tfoot">
+                                        {footerGroups.headers.map((footer) => {
+                                            return (
+                                                <td
+                                                    key={`${footer.id}_footer`}
+                                                    className="table__td"
+                                                    colSpan={footer.colSpan}
+                                                >
+                                                    <div className="table__content table__content_empty table__content_text_numeric">
+                                                        <span className="ellipsis-text table__td_text">
+                                                            {footer?.column?.columnDef?.footer
+                                                                ? flexRender(
+                                                                      footer.column.columnDef.footer,
+                                                                      footer.getContext()
+                                                                  )
+                                                                : null}
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                );
+                            })}
+                        </tfoot>
+                    )}
                 </table>
                 {/* </Scrollbar> */}
             </div>
 
-            {withPagination && (
+            {withPagination && table.getRowModel().flatRows.length > 0 && (
                 <div className="dataTable__pagination">
                     <div className="dataTable__pagination_controls">
                         <Pagination

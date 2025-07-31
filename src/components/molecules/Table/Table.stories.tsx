@@ -109,7 +109,6 @@ const TableWithVirtualScroll = () => {
         if (tableData.length > 300) setHasNextPage(false);
         setIsFetchingNextPage(true);
         setTimeout(() => {
-            console.log("log");
             setTableData((prev) => {
                 const newData = makeData(50);
                 return [...prev, ...newData];
@@ -224,6 +223,25 @@ export const WithExpendRowsColumns: Story = storyObjBuilder({
                     delete: (id) => console.log(id)
                 }}
                 onSave={(savedData) => onSave(savedData)}
+            />
+        );
+    }
+});
+
+export const WithOutData: Story = storyObjBuilder({
+    argTypes: {},
+    args: {},
+    render: () => {
+        return (
+            <Table
+                columns={withGroupedColumns}
+                externalData={[]}
+                pageSizes={[10, 25, 50, 100]}
+                initialPageSize={25}
+                initialPageIndex={0}
+                withCheckbox
+                withGlobalFilter
+                withPagination
             />
         );
     }
