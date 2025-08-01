@@ -100,14 +100,16 @@ const Modal: FC<IModalProps> = ({
 
     const modalContent = (
         <div
-            className={classNames("modal modal_viewDesktop modalWrapper_fullView", className)}
+            className={classNames("modal modal_view_mobile modal_size_mobile_xxLarge", className)}
             onClick={handleOverlayClick}
             role="presentation"
         >
-            {/* Add class modalWrapper_desktop Or modal_mobile for .modalWrapper */}
-            {/* Add class modalWrapper_toTop for .modal */}
-            {/* Add class modalWrapper_fullView for .modal */}
-            {/* Add class modal_insetTrue for .modal__wrapper */}
+            {/* modal_size_desktop_xxLarge */}
+            {/* modal_size_desktop_xLarge */}
+            {/* modal_size_desktop_large */}
+            {/* modal_size_desktop_small */}
+            {/* modal_size_mobile_xxLarge */}
+            {/* modal_size_mobile_small */}
             <div className="modal__wrapper modal_withPadding">
                 {(hasCloseButton || title) && (
                     <div className="modal__header">
