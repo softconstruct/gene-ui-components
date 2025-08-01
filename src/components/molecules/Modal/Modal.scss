@@ -30,8 +30,8 @@
     }
 
     &:not(#{ $this }_size_mobile_xxLarge) {
-        #{ $this }__wrapper {
-            max-height: 80rem;
+        #{ $this }__content {
+            max-height: 68.8rem;
         }
     }
 
@@ -177,6 +177,7 @@
         grid-template-columns: 12fr;
         grid-template-rows: auto 10fr auto;
         width: 100%;
+        max-height: 100%;
         overflow: hidden;
         box-shadow:
             var(--guit-sem-shadow-floating-3-position-x-1) var(--guit-sem-shadow-floating-3-position-y-1)

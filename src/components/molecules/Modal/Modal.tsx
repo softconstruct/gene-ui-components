@@ -100,7 +100,7 @@ const Modal: FC<IModalProps> = ({
 
     const modalContent = (
         <div
-            className={classNames("modal modal_view_mobile modal_size_mobile_xxLarge", className)}
+            className={classNames("modal modal_view_desktop modal_size_desktop_small", className)}
             onClick={handleOverlayClick}
             role="presentation"
         >
