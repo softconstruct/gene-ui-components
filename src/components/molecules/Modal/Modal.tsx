@@ -89,6 +89,11 @@ interface IModalProps {
      * ]}
      */
     actions?: IButtonProps[];
+    /**
+     * If `true`, disables scrolling on the `body` element when the modal is open.
+     * @default true
+     */
+    lockBodyScroll?: boolean;
 }
 
 const STATUS_ICONS = {
@@ -114,7 +119,8 @@ const Modal: FC<IModalProps> = ({
     withPadding = true,
     position = "center",
     footerContent,
-    actions
+    actions,
+    lockBodyScroll
 }) => {
     const { geneUIProviderRef, breakpoint } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
@@ -138,12 +144,16 @@ const Modal: FC<IModalProps> = ({
 
         if (open) {
             document.addEventListener("keydown", handleKeyDown);
-            document.body.style.overflow = "hidden";
+            if (lockBodyScroll) {
+                document.body.style.overflow = "hidden";
+            }
         }
 
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
-            document.body.style.overflow = "unset";
+            if (lockBodyScroll) {
+                document.body.style.overflow = "unset";
+            }
         };
     }, [open, shouldCloseOnEscapePress, onClose]);
 

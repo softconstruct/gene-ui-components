@@ -35,7 +35,8 @@ const meta: Meta<typeof Modal> = {
         children: args({ control: "text", ...propCategory.content }),
         footerContent: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.states }),
-        actions: args({ control: "false", ...propCategory.functionality })
+        actions: args({ control: "false", ...propCategory.functionality }),
+        lockBodyScroll: args({ control: "boolean", ...propCategory.functionality })
     },
     args: {
         open: true,
