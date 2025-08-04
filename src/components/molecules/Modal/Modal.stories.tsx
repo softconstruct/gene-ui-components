@@ -3,17 +3,17 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { Globe } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
+import Divider from "@components/atoms/Divider";
 import Pill from "@components/atoms/Pill";
+import Modal, { IModalProps } from "@components/molecules/Modal";
 import QRCode from "@components/molecules/QRCode";
 import Timeline from "@components/molecules/Timeline/Timeline";
+import TimelinePoint from "@components/molecules/Timeline/TimelinePoint";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import { Divider } from "../../../index";
-import TimelinePoint from "../Timeline/TimelinePoint";
-// Components
-import Modal, { IModalProps } from "./index";
 
 const meta: Meta<IModalProps> = {
     title: "Molecules/Modal",
@@ -38,6 +38,7 @@ const meta: Meta<IModalProps> = {
         secondaryActionText: args({ control: "text", ...propCategory.content }),
         onPrimaryActionClick: args({ control: "false", ...propCategory.action }),
         onSecondaryActionClick: args({ control: "false", ...propCategory.action }),
+        footerContent: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", options: ["informative", "warning", "error"], ...propCategory.states })
     },
     args: {

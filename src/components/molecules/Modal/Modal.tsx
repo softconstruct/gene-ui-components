@@ -175,7 +175,12 @@ const Modal: FC<IModalProps> = ({
             onClick={handleOverlayClick}
             role="presentation"
         >
-            <div className={classNames("modal__wrapper", { modal_withPadding: withPadding })}>
+            <div
+                className={classNames("modal__wrapper", { modal_withPadding: withPadding })}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={title ? "modal-title" : undefined}
+            >
                 {(hasCloseButton || title) && (
                     <div className="modal__header">
                         <div className="modal__headerContent">
@@ -183,7 +188,12 @@ const Modal: FC<IModalProps> = ({
                                 <>
                                     {IconComponent && <IconComponent className={`modal_status_${status}`} size={20} />}
 
-                                    <Text variant="labelLargeSemibold" className="modal__title" as="h1">
+                                    <Text
+                                        id="modal-title"
+                                        variant="labelLargeSemibold"
+                                        className="modal__title"
+                                        as="h1"
+                                    >
                                         {title}
                                     </Text>
                                 </>
@@ -216,7 +226,7 @@ const Modal: FC<IModalProps> = ({
                 </div>
                 {(primaryActionText || secondaryActionText || footerContent) && (
                     <div className="modal__footer">
-                        {footerContent}
+                        {footerContent && <div className="modal__footerContent">{footerContent}</div>}
                         <ButtonGroup className="modal__buttonGroup" size="medium">
                             {secondaryActionText && (
                                 <Button appearance="secondary" onClick={onSecondaryActionClick}>
