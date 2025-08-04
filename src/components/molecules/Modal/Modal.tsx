@@ -90,6 +90,10 @@ interface IModalProps {
      * Callback function executed when the secondary action button is clicked.
      */
     onSecondaryActionClick?: () => void;
+    /**
+     * Custom content or component to be displayed in the footer, typically to the left of the action buttons.
+     */
+    footerContent?: ReactNode;
 }
 
 const STATUS_ICONS = {
@@ -117,7 +121,8 @@ const Modal: FC<IModalProps> = ({
     primaryActionText,
     secondaryActionText,
     onPrimaryActionClick,
-    onSecondaryActionClick
+    onSecondaryActionClick,
+    footerContent
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
@@ -209,8 +214,9 @@ const Modal: FC<IModalProps> = ({
                         </div>
                     </Scrollbar>
                 </div>
-                {(primaryActionText || secondaryActionText) && (
+                {(primaryActionText || secondaryActionText || footerContent) && (
                     <div className="modal__footer">
+                        {footerContent}
                         <ButtonGroup className="modal__buttonGroup" size="medium">
                             {secondaryActionText && (
                                 <Button appearance="secondary" onClick={onSecondaryActionClick}>

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import { Globe } from "@geneui/icons";
+
 import Button from "@components/atoms/Button";
+import Pill from "@components/atoms/Pill";
 import QRCode from "@components/molecules/QRCode";
 import Timeline from "@components/molecules/Timeline/Timeline";
 
@@ -66,7 +69,13 @@ const ModalStory = (props) => {
     return (
         <div style={{ height: "100vh" }}>
             <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
-            <Modal {...props} onClose={closeHandler} open={isOpen}>
+            <Modal
+                onClose={closeHandler}
+                open={isOpen}
+                status="informative"
+                footerContent={<Pill appearance="success" text="Footer Content" Icon={Globe} filled />}
+                {...props}
+            >
                 {props?.children || null}
             </Modal>
         </div>
