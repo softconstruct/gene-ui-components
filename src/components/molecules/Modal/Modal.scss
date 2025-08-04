@@ -12,7 +12,7 @@
     background-color: var(--guit-sem-color-background-transparent-overlay-notheme-1);
     overflow: hidden;
 
-    &:not(#{ $this }_toTop) {
+    &:not(#{ $this }_position_top) {
         align-items: center;
 
         &#{ $this }_device_desktop {
@@ -153,21 +153,24 @@
         }
     }
 
-    &_toTop {
-        align-items: flex-start;
+    &_position {
+        &_top {
+            align-items: flex-start;
 
-        &#{ $this }_device_desktop {
-            padding: 0 var(--guit-ref-spacing-8xlarge) var(--guit-ref-spacing-8xlarge) var(--guit-ref-spacing-8xlarge);
-        }
+            &#{ $this }_device_desktop {
+                padding: 0 var(--guit-ref-spacing-8xlarge) var(--guit-ref-spacing-8xlarge)
+                    var(--guit-ref-spacing-8xlarge);
+            }
 
-        &#{ $this }_device_mobile {
-            padding: 0 var(--guit-ref-spacing-large) var(--guit-ref-spacing-large) var(--guit-ref-spacing-large);
-        }
+            &#{ $this }_device_mobile {
+                padding: 0 var(--guit-ref-spacing-large) var(--guit-ref-spacing-large) var(--guit-ref-spacing-large);
+            }
 
-        #{ $this }__wrapper {
-            border-top-width: 0;
-            border-end-start-radius: var(--guit-ref-radius-2xsmall);
-            border-end-end-radius: var(--guit-ref-radius-2xsmall);
+            #{ $this }__wrapper {
+                border-top-width: 0;
+                border-end-start-radius: var(--guit-ref-radius-2xsmall);
+                border-end-end-radius: var(--guit-ref-radius-2xsmall);
+            }
         }
     }
 

@@ -4,6 +4,7 @@ import classNames from "classnames";
 
 import { ErrorFilled, Info, TriangleAlert, X } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
@@ -44,9 +45,35 @@ interface IModalProps {
      * @default false
      */
     shouldCloseOnOverlayClick?: boolean;
+    /**
+     * The title text displayed in the modal's header.
+     */
     title?: string;
+    /**
+     * Adds a corresponding status icon next to the title.
+     */
     status?: "informative" | "warning" | "error";
+    /**
+     * The main content of the modal, displayed between the header and footer.
+     */
     children?: ReactNode;
+    /**
+     * Defines the width of the modal. The effective size adapts for mobile viewports:
+     * - 'large' and 'medium' sizes become 'small' on mobile.
+     * - 'xLarge' becomes 'xxLarge' on mobile.
+     * @default "medium"
+     */
+    size?: "xxLarge" | "xLarge" | "large" | "medium" | "small";
+    /**
+     * Toggles the padding around the modal's content area.
+     * @default true
+     */
+    withPadding: boolean;
+    /**
+     * Sets the vertical alignment of the modal in the viewport.
+     * @default "center"
+     */
+    position?: "top" | "center";
 }
 
 const STATUS_ICONS = {
@@ -67,10 +94,25 @@ const Modal: FC<IModalProps> = ({
     shouldCloseOnOverlayClick = false,
     onClose,
     status,
-    children
+    children,
+    size = "medium",
+    withPadding = true,
+    position = "center"
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
+
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
+
+    const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
+
+    const sizeMap = {
+        xxLarge: "xxLarge",
+        xLarge: isMobileBreakpoint ? "xxLarge" : "xLarge",
+        large: isMobileBreakpoint ? "small" : "large",
+        medium: isMobileBreakpoint ? "small" : "medium",
+        small: "small"
+    } as const;
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -100,19 +142,15 @@ const Modal: FC<IModalProps> = ({
 
     const modalContent = (
         <div
-            className={classNames("modal modal_device_desktop modal_size_small", className)}
+            className={classNames(
+                `modal modal_device_${isMobileBreakpoint ? "mobile" : "desktop"} modal_size_${sizeMap[size]} `,
+                `modal_position_${isMobileBreakpoint && (size === "xxLarge" || size === "xLarge") ? "center" : position}`,
+                className
+            )}
             onClick={handleOverlayClick}
             role="presentation"
         >
-            {/* for device DESKTOP */}
-            {/* modal_size_xxLarge */}
-            {/* modal_size_xLarge */}
-            {/* modal_size_large */}
-            {/* modal_size_small */}
-            {/* for device MOBILE */}
-            {/* modal_size_xxLarge */}
-            {/* modal_size_small */}
-            <div className="modal__wrapper modal_withPadding">
+            <div className={classNames("modal__wrapper", { modal_withPadding: withPadding })}>
                 {(hasCloseButton || title) && (
                     <div className="modal__header">
                         <div className="modal__headerContent">
