@@ -27,8 +27,7 @@ const meta: Meta<typeof Notification> = {
         open: true,
         title: 'Notification "Title"',
         variant: "sectionMessage",
-        description:
-            'This is a "description" of the notification. asdf asdc asdc asdc asdc asdc asdc asdc asdc asdc adc sDC sdc sDC sdc sDC '
+        description: 'This is a "description" of the notification. It can be a longer text to provide more context.'
     } as INotificationProps
 };
 
