@@ -34,10 +34,6 @@ const meta: Meta<IModalProps> = {
         title: args({ control: "text", ...propCategory.content }),
         position: args({ control: "select", options: ["top", "center"], ...propCategory.appearance }),
         children: args({ control: "text", ...propCategory.content }),
-        primaryActionText: args({ control: "text", ...propCategory.content }),
-        secondaryActionText: args({ control: "text", ...propCategory.content }),
-        onPrimaryActionClick: args({ control: "false", ...propCategory.action }),
-        onSecondaryActionClick: args({ control: "false", ...propCategory.action }),
         footerContent: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", options: ["informative", "warning", "error"], ...propCategory.states })
     },
@@ -59,26 +55,36 @@ const timelineData = [
 
 type Story = StoryObj<IModalProps>;
 const ModalStory = (props) => {
-    const [isOpen, setIsOpen] = useState(true);
+    const { open } = props;
+    const [isOpen, setIsOpen] = useState(!!open);
 
     useEffect(() => {
-        setIsOpen(!!props?.open);
-    }, [props?.open]);
-    const closeHandler = () => {
+        setIsOpen(open);
+    }, [open]);
+
+    const handleClose = () => {
         setIsOpen(false);
     };
+
     return (
         <div style={{ height: "100vh" }}>
             <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
             <Modal
-                onClose={closeHandler}
-                open={isOpen}
-                status="informative"
-                footerContent={<Pill appearance="success" text="Footer Content" Icon={Globe} filled />}
                 {...props}
-            >
-                {props?.children || null}
-            </Modal>
+                open={isOpen}
+                onClose={handleClose}
+                actions={[
+                    {
+                        children: "Secondary",
+                        appearance: "secondary",
+                        onClick: handleClose
+                    },
+                    {
+                        children: "Primary",
+                        appearance: "primary"
+                    }
+                ]}
+            />
         </div>
     );
 };
@@ -87,8 +93,7 @@ export const Default: Story = {
     render: (props) => <ModalStory {...props}>{props.children}</ModalStory>,
     args: {
         title: "Default Modal",
-        children: "This is the modal content.",
-        primaryActionText: "Primary Action"
+        children: "This is the modal content."
     }
 };
 
@@ -104,7 +109,12 @@ const ModalWithContent = (props) => {
     return (
         <div style={{ height: "100vh" }}>
             <Button onClick={() => setIsOpen(true)}>Open Modal</Button>
-            <Modal {...props} onClose={closeHandler} open={isOpen} onSecondaryActionClick={closeHandler}>
+            <Modal
+                {...props}
+                onClose={closeHandler}
+                open={isOpen}
+                footerContent={<Pill appearance="success" text="Footer Content" Icon={Globe} filled />}
+            >
                 <div
                     style={{
                         width: "100%",
@@ -141,8 +151,6 @@ const ModalWithContent = (props) => {
 export const withContent: Story = {
     render: (props) => <ModalWithContent {...props} />,
     args: {
-        title: "Modal with Content",
-        primaryActionText: "Primary Action",
-        secondaryActionText: "Secondary Action"
+        title: "Modal with Content"
     }
 };

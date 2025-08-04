@@ -5,7 +5,7 @@ import classNames from "classnames";
 import { ErrorFilled, Info, TriangleAlert, X } from "@geneui/icons";
 
 // Components
-import Button from "@components/atoms/Button";
+import Button, { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
@@ -75,25 +75,20 @@ interface IModalProps {
      */
     position?: "top" | "center";
     /**
-     * Text for the primary action button in the footer. If provided, the button is displayed.
-     */
-    primaryActionText?: string;
-    /**
-     * Text for the secondary action button in the footer. If provided, the button is displayed.
-     */
-    secondaryActionText?: string;
-    /**
-     * Callback function executed when the primary action button is clicked.
-     */
-    onPrimaryActionClick?: () => void;
-    /**
-     * Callback function executed when the secondary action button is clicked.
-     */
-    onSecondaryActionClick?: () => void;
-    /**
      * Custom content or component to be displayed in the footer, typically to the left of the action buttons.
      */
     footerContent?: ReactNode;
+    /**
+     * An array of action button objects to display in the modal's footer.
+     * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
+     * Each object conforms to the `IButtonProps` interface, allowing full customization of each button.
+     * @example
+     * actions={[
+     * { children: 'Cancel', appearance: 'secondary', onClick: handleCancel },
+     * { children: 'Submit', appearance: 'primary', onClick: handleSubmit }
+     * ]}
+     */
+    actions: IButtonProps[];
 }
 
 const STATUS_ICONS = {
@@ -118,11 +113,8 @@ const Modal: FC<IModalProps> = ({
     size = "medium",
     withPadding = true,
     position = "center",
-    primaryActionText,
-    secondaryActionText,
-    onPrimaryActionClick,
-    onSecondaryActionClick,
-    footerContent
+    footerContent,
+    actions
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
@@ -224,21 +216,21 @@ const Modal: FC<IModalProps> = ({
                         </div>
                     </Scrollbar>
                 </div>
-                {(primaryActionText || secondaryActionText || footerContent) && (
+                {(actions || footerContent) && (
                     <div className="modal__footer">
                         {footerContent && <div className="modal__footerContent">{footerContent}</div>}
-                        <ButtonGroup className="modal__buttonGroup" size="medium">
-                            {secondaryActionText && (
-                                <Button appearance="secondary" onClick={onSecondaryActionClick}>
-                                    {secondaryActionText}
-                                </Button>
-                            )}
-                            {primaryActionText && (
-                                <Button appearance="primary" onClick={onPrimaryActionClick}>
-                                    {primaryActionText}
-                                </Button>
-                            )}
-                        </ButtonGroup>
+                        {actions && actions.length > 0 && (
+                            <ButtonGroup className="modal__buttonGroup" size="medium">
+                                {actions.map((action: IButtonProps) => {
+                                    const { children: buttonChildren } = action;
+                                    return buttonChildren ? (
+                                        <Button key={buttonChildren} {...action}>
+                                            {buttonChildren}
+                                        </Button>
+                                    ) : null;
+                                })}
+                            </ButtonGroup>
+                        )}
                     </div>
                 )}
             </div>
