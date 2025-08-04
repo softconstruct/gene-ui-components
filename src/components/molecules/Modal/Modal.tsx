@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useContext, useEffect } from "react";
+import React, { FC, ReactNode, useContext, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 
@@ -9,7 +9,11 @@ import Button, { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
+import Tooltip from "@components/molecules/Tooltip";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
+
+// Hooks
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./Modal.scss";
@@ -124,8 +128,10 @@ const Modal: FC<IModalProps> = ({
 }) => {
     const { geneUIProviderRef, breakpoint } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
+    const titleRef = useRef<HTMLHeadingElement | null>(null);
 
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
+    const isTruncated: boolean = useEllipsisDetection(titleRef);
 
     const sizeMap = {
         xxLarge: "xxLarge",
@@ -187,15 +193,17 @@ const Modal: FC<IModalProps> = ({
                             {title && (
                                 <>
                                     {IconComponent && <IconComponent className={`modal_status_${status}`} size={20} />}
-
-                                    <Text
-                                        id="modal-title"
-                                        variant="labelLargeSemibold"
-                                        className="modal__title"
-                                        as="h1"
-                                    >
-                                        {title}
-                                    </Text>
+                                    <Tooltip text={title} isVisible={isTruncated}>
+                                        <Text
+                                            id="modal-title"
+                                            variant="labelLargeSemibold"
+                                            className="modal__title ellipsis-text"
+                                            as="h1"
+                                            ref={titleRef}
+                                        >
+                                            {title}
+                                        </Text>
+                                    </Tooltip>
                                 </>
                             )}
                         </div>
