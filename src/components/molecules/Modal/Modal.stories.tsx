@@ -7,7 +7,7 @@ import { Globe } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import Pill from "@components/atoms/Pill";
-import Modal, { IModalProps } from "@components/molecules/Modal";
+import Modal, { IModalProps } from "@components/molecules/Modal/Modal";
 import QRCode from "@components/molecules/QRCode";
 import Timeline from "@components/molecules/Timeline/Timeline";
 import TimelinePoint from "@components/molecules/Timeline/TimelinePoint";
@@ -15,14 +15,13 @@ import TimelinePoint from "@components/molecules/Timeline/TimelinePoint";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 
-const meta: Meta<IModalProps> = {
+const meta: Meta<typeof Modal> = {
     title: "Molecules/Modal",
     component: Modal,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({
             control: "select",
-            options: ["xxLarge", "xLarge", "large", "medium", "small"],
             ...propCategory.appearance
         }),
         open: args({ control: "boolean", ...propCategory.states }),
@@ -32,10 +31,11 @@ const meta: Meta<IModalProps> = {
         shouldCloseOnOverlayClick: args({ control: "boolean", ...propCategory.functionality }),
         shouldCloseOnEscapePress: args({ control: "boolean", ...propCategory.functionality }),
         title: args({ control: "text", ...propCategory.content }),
-        position: args({ control: "select", options: ["top", "center"], ...propCategory.appearance }),
+        position: args({ control: "select", ...propCategory.appearance }),
         children: args({ control: "text", ...propCategory.content }),
         footerContent: args({ control: "text", ...propCategory.content }),
-        status: args({ control: "select", options: ["informative", "warning", "error"], ...propCategory.states })
+        status: args({ control: "select", ...propCategory.states }),
+        actions: args({ control: "false", ...propCategory.functionality })
     },
     args: {
         open: true,
@@ -48,10 +48,7 @@ const meta: Meta<IModalProps> = {
 
 export default meta;
 
-const timelineData = [
-    { title: "Task A", description: "Description A", status: "active" },
-    { title: "Task B", description: "Description B", status: "error" }
-] as const;
+const timelineData = [{ title: "Task A", description: "Description A", status: "active" }] as const;
 
 type Story = StoryObj<IModalProps>;
 const ModalStory = (props) => {
@@ -90,7 +87,7 @@ const ModalStory = (props) => {
 };
 
 export const Default: Story = {
-    render: (props) => <ModalStory {...props}>{props.children}</ModalStory>,
+    render: (props) => <ModalStory {...props} />,
     args: {
         title: "Default Modal",
         children: "This is the modal content."

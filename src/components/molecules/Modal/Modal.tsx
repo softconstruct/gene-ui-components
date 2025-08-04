@@ -235,12 +235,8 @@ const Modal: FC<IModalProps> = ({
             </div>
         </div>
     );
-    if (!open) return null;
 
-    if (providerCurrent) {
-        return createPortal(modalContent, providerCurrent);
-    }
-    return null;
+    return <>{providerCurrent && open ? createPortal(modalContent, providerCurrent) : null}</>;
 };
 
 export { IModalProps, Modal as default };
