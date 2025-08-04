@@ -74,6 +74,22 @@ interface IModalProps {
      * @default "center"
      */
     position?: "top" | "center";
+    /**
+     * Text for the primary action button in the footer. If provided, the button is displayed.
+     */
+    primaryActionText?: string;
+    /**
+     * Text for the secondary action button in the footer. If provided, the button is displayed.
+     */
+    secondaryActionText?: string;
+    /**
+     * Callback function executed when the primary action button is clicked.
+     */
+    onPrimaryActionClick?: () => void;
+    /**
+     * Callback function executed when the secondary action button is clicked.
+     */
+    onSecondaryActionClick?: () => void;
 }
 
 const STATUS_ICONS = {
@@ -97,7 +113,11 @@ const Modal: FC<IModalProps> = ({
     children,
     size = "medium",
     withPadding = true,
-    position = "center"
+    position = "center",
+    primaryActionText,
+    secondaryActionText,
+    onPrimaryActionClick,
+    onSecondaryActionClick
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
@@ -189,13 +209,22 @@ const Modal: FC<IModalProps> = ({
                         </div>
                     </Scrollbar>
                 </div>
-                <div className="modal__footer">
-                    {/* Any component can be placed here */}
-                    <ButtonGroup className="modal__buttonGroup" size="medium">
-                        <Button appearance="secondary">Secondary</Button>
-                        <Button appearance="primary">Primary</Button>
-                    </ButtonGroup>
-                </div>
+                {(primaryActionText || secondaryActionText) && (
+                    <div className="modal__footer">
+                        <ButtonGroup className="modal__buttonGroup" size="medium">
+                            {secondaryActionText && (
+                                <Button appearance="secondary" onClick={onSecondaryActionClick}>
+                                    {secondaryActionText}
+                                </Button>
+                            )}
+                            {primaryActionText && (
+                                <Button appearance="primary" onClick={onPrimaryActionClick}>
+                                    {primaryActionText}
+                                </Button>
+                            )}
+                        </ButtonGroup>
+                    </div>
+                )}
             </div>
         </div>
     );
