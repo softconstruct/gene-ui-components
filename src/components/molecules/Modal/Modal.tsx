@@ -68,7 +68,7 @@ interface IModalProps {
      * Toggles the padding around the modal's content area.
      * @default true
      */
-    withPadding: boolean;
+    withPadding?: boolean;
     /**
      * Sets the vertical alignment of the modal in the viewport.
      * @default "center"
@@ -88,7 +88,7 @@ interface IModalProps {
      * { children: 'Submit', appearance: 'primary', onClick: handleSubmit }
      * ]}
      */
-    actions: IButtonProps[];
+    actions?: IButtonProps[];
 }
 
 const STATUS_ICONS = {
@@ -116,10 +116,8 @@ const Modal: FC<IModalProps> = ({
     footerContent,
     actions
 }) => {
-    const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
+    const { geneUIProviderRef, breakpoint } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
-
-    const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
 
@@ -223,8 +221,9 @@ const Modal: FC<IModalProps> = ({
                             <ButtonGroup className="modal__buttonGroup" size="medium">
                                 {actions.map((action: IButtonProps) => {
                                     const { children: buttonChildren } = action;
+                                    const key = `action-${buttonChildren}`;
                                     return buttonChildren ? (
-                                        <Button key={buttonChildren} {...action}>
+                                        <Button key={key} {...action}>
                                             {buttonChildren}
                                         </Button>
                                     ) : null;
