@@ -8,15 +8,18 @@ import useWindowSize from "@hooks/useWindowSize";
 // Styles
 import "./TagGroup.scss";
 
-import { Button } from "../../../index";
+import { Button, IButtonProps } from "../../../index";
+
+type ITagGroupSize = Extract<IButtonProps["size"], "medium" | "small">;
 
 interface ITagGroupContextProps {
     /**
      * Size
      * Possible values: `medium | small`;
      */
-    size?: "medium" | "small";
+    size?: ITagGroupSize;
 }
+
 interface ITagGroupProps extends ITagGroupContextProps {
     /**
      * Additional class for the parent element.
@@ -175,8 +178,8 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium" }) 
                             className="tagGroup__showButton"
                             appearance="secondary"
                             size={size}
-                            displayType="text"
-                            iconAfter
+                            layout="text"
+                            iconPosition="after"
                             Icon={isExpanded ? ChevronUp : ChevronDown}
                             onClick={toggleText}
                         >

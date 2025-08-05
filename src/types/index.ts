@@ -2,6 +2,6 @@ export type OSTypes = "iOS" | "Android" | "Windows" | "macOS" | "Linux" | "Unkno
 
 export type DeviceTypes = "mobile" | "tablet" | "desktop";
 
-export type ThemesTypes = "light" | "dark";
+export type ThemesTypes = "light" | "dark" | "system";
 
 export type BreakpointsTypes = Record<DeviceTypes, number>;

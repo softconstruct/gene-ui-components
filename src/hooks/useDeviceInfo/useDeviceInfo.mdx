@@ -32,6 +32,8 @@ An object with the following properties:
 
 - **`isIOS`**: A boolean flag that is `true` when the OS is detected as iOS.
 
+- **`theme`**: A union value detected from device `light` or `dark`
+
 #### Usage
 
 ```jsx
@@ -49,6 +51,7 @@ const ExampleComponent = () => {
         isLinux,
         isAndroid,
         isIOS,
+        theme
     } = useDeviceInfo();
 
     return (
@@ -62,6 +65,7 @@ const ExampleComponent = () => {
             {isLinux && <p>Your OS is Linux.</p>}
             {isAndroid && <p>Your OS is Android.</p>}
             {isIOS && <p>Your OS is iOS.</p>}
+            <p>Detected theme of the device: <strong>{theme}</strong></p>
         </div>
     );
 };
@@ -74,5 +78,6 @@ export default ExampleComponent;
 -   <b>Detection Basis:</b> The hook uses the browser's `navigator.userAgent` to determine the operating system. This method is simple and efficient, though it depends on the reliability of the user agent string.
 -   <b>SSR Safety:</b> The hook is designed to be safe for server-side rendering (SSR). It checks for the existence of navigator before attempting detection, ensuring no runtime errors occur when rendered on the server.
 -   <b>Touch Device Detection:</b> It also detects touch devices using `"ontouchstart" in window`, `navigator.maxTouchPoints`, `window.matchMedia("(pointer: coarse)").matches`.
+-   <b>Theme Detection</b> It using `window.matchMedia("(prefers-color-scheme: dark)").matches`.
 
 </div>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { InfoOutline } from "@geneui/icons";
+import { Info } from "@geneui/icons";
 
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import HelperText from "../../atoms/HelperText";
@@ -29,7 +29,7 @@ const meta: Meta<ITooltipProps> = {
         text: "Tooltip some text",
         appearance: "default",
         padding: 10,
-        Icon: InfoOutline
+        Icon: Info
     }
 };
 

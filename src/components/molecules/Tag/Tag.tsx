@@ -1,7 +1,7 @@
 import React, { FC, useRef } from "react";
 import classNames from "classnames";
 
-import { Close, ErrorAlertFill, IconProps, TagOutline, WarningFill } from "@geneui/icons";
+import { CircleAlert, IconProps, Tag as TagIcon, TriangleAlert, X } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -16,10 +16,10 @@ import Tooltip from "../Tooltip";
 
 type TagTypes = "rest" | "error" | "warning";
 
-const icons: Record<TagTypes, React.FC<IconProps>> = {
-    rest: TagOutline,
-    warning: WarningFill,
-    error: ErrorAlertFill
+const icons: Record<TagTypes, FC<IconProps>> = {
+    rest: TagIcon,
+    warning: CircleAlert,
+    error: TriangleAlert
 };
 
 interface ITagProps {
@@ -96,8 +96,8 @@ const Tag: FC<ITagProps> = ({
             <Button
                 className="tag__button"
                 appearance="secondary"
-                displayType="text"
-                Icon={Close}
+                layout="text"
+                Icon={X}
                 size={size}
                 onClick={handleButtonClick}
                 disabled={disabled}

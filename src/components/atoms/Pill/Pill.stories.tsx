@@ -12,18 +12,18 @@ const meta: Meta<IPillProps> = {
     component: Pill,
     argTypes: {
         size: args({ control: "select", ...propCategory.appearance }),
-        color: args({ control: "select", ...propCategory.appearance }),
+        appearance: args({ control: "select", ...propCategory.appearance }),
         Icon: args({ control: "false", ...propCategory.content }),
         text: args({ control: "text", ...propCategory.content }),
-        isFill: args({ control: "boolean", ...propCategory.appearance }),
+        filled: args({ control: "boolean", ...propCategory.appearance }),
         iconAlignment: args({ control: "select", ...propCategory.appearance }),
         withDot: args({ control: "boolean", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
         size: "medium",
-        color: "informative",
-        isFill: true,
+        appearance: "informative",
+        filled: true,
         text: "Pill",
         withDot: true
     }

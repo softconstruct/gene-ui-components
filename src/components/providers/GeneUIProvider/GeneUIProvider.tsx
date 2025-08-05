@@ -1,8 +1,12 @@
-import React, { createContext, JSX, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, JSX, MutableRefObject, ReactElement, useEffect, useMemo, useRef, useState } from "react";
 
 import { bootstrap } from "@geneui/tokens";
 
+import LogoMarkSVG from "@components/atoms/Logo/LogoMarkSVG";
+import LogoTypeSVG from "@components/atoms/Logo/LogoTypeSVG";
+
 import useBreakpoint, { IBreakpoint } from "@hooks/useBreakpoint";
+import useDeviceInfo, { IDeviceInfo } from "@hooks/useDeviceInfo";
 
 import { ThemesTypes } from "@types";
 
@@ -14,27 +18,43 @@ import "./GeneUIProvider.scss";
 // Statics
 import pgk from "../../../../package.json";
 
-type TokensType = { [key: string]: string | number } | null;
+type TokensType = { [key: string]: string | number };
+
+type LogoType = {
+    logotype: ReactElement;
+    logomark: ReactElement;
+};
+
+const defaultLogo: LogoType = {
+    logotype: LogoTypeSVG,
+    logomark: LogoMarkSVG
+};
+
+const defaultTokens: TokensType = bootstrap();
 
 interface IGeneUIDesignSystemContext {
     theme: ThemesTypes;
     tokens: TokensType;
-    geneUIProviderRef: React.MutableRefObject<null>;
+    geneUIProviderRef: MutableRefObject<null>;
     breakpoint: IBreakpoint | null;
+    deviceInfo: IDeviceInfo | null;
+    logo: LogoType;
 }
 
 const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
-    theme: "light",
+    theme: "system",
     tokens: {},
     geneUIProviderRef: { current: null },
-    breakpoint: null
+    breakpoint: null,
+    deviceInfo: null,
+    logo: defaultLogo
 });
 
 interface IGeneUIProviderProps {
     /**
      * Any valid React node
      */
-    children: React.ReactElement;
+    children: ReactElement;
     /**
      * Tokens library object defined by style-dictionary standard,
      * and GeneUI tokens package rules
@@ -44,26 +64,38 @@ interface IGeneUIProviderProps {
      * Theme which will follow all nested GeneUI components
      */
     theme?: ThemesTypes;
+    /**
+     * Custom logo to override the default GeneUI logo.
+     */
+    logo?: LogoType;
 }
 
-const defaultTokens = bootstrap();
-
-function GeneUIProvider({ children, tokens = null, theme = "light" }: IGeneUIProviderProps): JSX.Element {
+// TODO: implement theme detection in the `useDeviceInfo` hook, and insert all device info data into context
+function GeneUIProvider({
+    children,
+    tokens = defaultTokens,
+    theme = "system",
+    logo
+}: IGeneUIProviderProps): JSX.Element {
     const geneUIProviderRef = useRef(null);
     const [isRefExist, setIsRefExist] = useState(false);
 
     const currentBreakpoint = useBreakpoint({
-        mobile: defaultTokens.GuitRefBreakpointMobile,
-        tablet: defaultTokens.GuitRefBreakpointTablet,
-        desktop: defaultTokens.GuitRefBreakpointDesktop
+        mobile: +tokens.GuitRefBreakpointMobile,
+        tablet: +tokens.GuitRefBreakpointTablet,
+        desktop: +tokens.GuitRefBreakpointDesktop
     });
+
+    const deviceInfo = useDeviceInfo();
 
     const contextValue = useMemo(
         () => ({
-            theme,
-            tokens: tokens || defaultTokens,
+            theme: theme === "system" ? deviceInfo.theme : theme,
+            tokens,
             geneUIProviderRef,
-            breakpoint: currentBreakpoint
+            breakpoint: currentBreakpoint,
+            deviceInfo,
+            logo: logo || defaultLogo
         }),
         [theme, tokens, geneUIProviderRef, currentBreakpoint]
     );
@@ -80,7 +112,7 @@ function GeneUIProvider({ children, tokens = null, theme = "light" }: IGeneUIPro
                 className="gene-ui-provider"
                 data-gene-ui-version={pgk.version}
                 ref={geneUIProviderRef}
-                style={{ height: "100%" }}
+                style={{ colorScheme: theme, height: "100%" }}
             >
                 {isRefExist && children}
             </div>

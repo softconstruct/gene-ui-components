@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, MouseEvent } from "react";
 import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
@@ -54,16 +54,16 @@ interface ITextLinkProps {
      * Function that will called after user click or press enter button.
      * Receives the event as an argument.
      */
-    onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
+    onClick?: (e: MouseEvent<HTMLAnchorElement>) => void;
     /**
      * Indicates whether the component is in a loading state.
      * When set to `true` a skeleton indicator will be shown instead of the component.
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
      * An optional icon to display alongside the link text.
      */
-    Icon?: React.FC<IconProps>; // todo need to change to interface IconProps after Icon new version release
+    Icon?: FC<IconProps>; // todo need to change to interface IconProps after Icon new version release
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -90,11 +90,11 @@ const TextLink: FC<ITextLinkProps> = ({
     size = "medium",
     disabled,
     onClick,
-    isLoading,
+    loading,
     Icon,
     className
 }) =>
-    isLoading ? (
+    loading ? (
         <span>skeleton</span>
     ) : (
         <a

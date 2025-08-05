@@ -10,7 +10,15 @@ const infoSize: { [key: string]: IInfoProps["size"] } = {
 };
 
 interface IKeyProps {
+    /**
+     * Additional informational text displayed alongside the label.
+     * When provided, an info icon will be displayed next to the label,
+     * which can be hovered over to reveal the additional context or instructions via a tooltip.
+     */
     infoText?: string;
+    /**
+     * Defines the children for the component.
+     */
     children: string;
 }
 

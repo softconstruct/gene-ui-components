@@ -1,7 +1,7 @@
 import React, { FC, JSX, PointerEvent, useEffect, useState } from "react";
 import classNames from "classnames";
 
-import { IconProps, Square } from "@geneui/icons"; // TODO: replace with the person icon
+import { IconProps, PersonFilled } from "@geneui/icons";
 
 // Styles
 import "./Avatar.scss";
@@ -26,7 +26,7 @@ interface IAvatarProps {
      * Avatar icon <br/>
      * The `Icon` prop accepts a JSX element that will be displayed as an avatar.
      */
-    Icon?: React.FC<IconProps>;
+    Icon?: FC<IconProps>;
     /**
      * This prop defines the width and height for the component <br/>
      * Possible values: `6Xlarge | large | medium | small`
@@ -44,12 +44,12 @@ interface IAvatarProps {
     /**
      * Indicates whether the `avatar` is `disabled`, preventing user interaction. When `true`, the `avatar` appears dimmed and can not be clicked.
      */
-    isDisabled?: boolean;
+    disabled?: boolean;
     /**
      * Indicates whether the `Avatar` is in a loading state.
      * When set to `true` a `skeleton` indicator will be shown instead of the `Avatar`.
      */
-    isLoading?: boolean;
+    loading?: boolean;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -61,12 +61,12 @@ interface IAvatarWrapperProps {
     onClick?: (e: PointerEvent<HTMLButtonElement>) => void;
     children: JSX.Element;
     parentClass: string;
-    isDisabled: boolean | undefined;
+    disabled: boolean | undefined;
 }
 
-const AvatarWrapper: FC<IAvatarWrapperProps> = ({ onClick, children, parentClass, isDisabled }) => {
+const AvatarWrapper: FC<IAvatarWrapperProps> = ({ onClick, children, parentClass, disabled }) => {
     return onClick ? (
-        <button type="button" onClick={onClick} className={`${parentClass} avatar_button`} disabled={isDisabled}>
+        <button type="button" onClick={onClick} className={`${parentClass} avatar_button`} disabled={disabled}>
             {children}
         </button>
     ) : (
@@ -83,9 +83,9 @@ const Avatar: FC<IAvatarProps> = ({
     fullName = "",
     src,
     onClick,
-    isDisabled,
-    isLoading,
-    Icon = Square, // todo need to change to User icon after releasing new icons
+    disabled,
+    loading,
+    Icon = PersonFilled,
     className
 }) => {
     const [proceedFullName, setProceedFullName] = useState(fullName);
@@ -112,15 +112,15 @@ const Avatar: FC<IAvatarProps> = ({
         content = <span className="avatar__text">{proceedFullName}</span>;
     }
 
-    return isLoading ? (
+    return loading ? (
         <span>skeleton</span>
     ) : (
         <AvatarWrapper
             parentClass={classNames(`avatar avatar_size_${size} avatar_color_${color}`, className, {
-                avatar_disabled: isDisabled
+                avatar_disabled: disabled
             })}
             onClick={onClick}
-            isDisabled={isDisabled}
+            disabled={disabled}
         >
             {content}
         </AvatarWrapper>
