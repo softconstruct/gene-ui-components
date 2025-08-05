@@ -192,7 +192,9 @@ const Modal: FC<IModalProps> = ({
                         <div className="modal__headerContent">
                             {title && (
                                 <>
-                                    {IconComponent && <IconComponent className={`modal_status_${status}`} size={20} />}
+                                    {IconComponent && (
+                                        <IconComponent className={`modal_status_${status} modal__icon`} size={20} />
+                                    )}
                                     <Tooltip text={title} isVisible={isTruncated}>
                                         <Text
                                             id="modal-title"
