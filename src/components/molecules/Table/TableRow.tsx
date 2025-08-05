@@ -36,6 +36,10 @@ const TableRow: FC<ITableRow> = ({
     handleCellEdit,
     rowActions
 }) => {
+    const onRowDelete = () => {
+        rowActions.delete?.(row.id);
+    };
+
     return (
         <>
             <tr
@@ -96,10 +100,10 @@ const TableRow: FC<ITableRow> = ({
                         </td>
                     );
                 })}
-                {!editableMode && rowActions && Object.values(rowActions).every((action) => !!action) && (
+                {!editableMode && rowActions && Object.values(rowActions).every((action) => Boolean(action)) && (
                     <td className="table__td table__actionsWrapper">
                         <div className="table__actions">
-                            {rowActions && rowActions.pin && (
+                            {rowActions.pin && (
                                 <Button
                                     appearance="secondary"
                                     layout="text"
@@ -153,7 +157,7 @@ const TableRow: FC<ITableRow> = ({
                                     layout="text"
                                     size="small"
                                     Icon={RecycleBin}
-                                    onClick={() => rowActions.delete?.(row.id)}
+                                    onClick={onRowDelete}
                                 />
                             )}
                         </div>

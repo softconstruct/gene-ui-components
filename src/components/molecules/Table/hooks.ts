@@ -118,18 +118,24 @@ export function useTableState<T = any>({
         columnId: string
     ) => {
         e.persist();
-        const { value } = e.currentTarget;
+        const { value } = e.target;
 
-        // Update edited values tracking
         setEditedValues((prev) => ({
             ...prev,
             [columnId]: { ...prev[columnId], [rowIndex]: value }
         }));
 
-        // Update actual data
+        const updatedData =
+            columnId === "switch" || columnId === "checkbox"
+                ? {
+                      value,
+                      checked: !(data[rowIndex] as any)[columnId].data.checked
+                  }
+                : value;
+
         const newData = [...data];
         if (newData[rowIndex] && typeof newData[rowIndex] === "object") {
-            (newData[rowIndex] as any)[columnId].data = value;
+            (newData[rowIndex] as any)[columnId].data = updatedData;
         }
         setData(newData);
 

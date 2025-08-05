@@ -1,15 +1,14 @@
-import React, { ComponentType, useState } from "react";
+import React, { useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { defaultColumns, withGroupedColumns, withPinnedColumns } from "@components/molecules/Table/Columns";
 
 // Helpers
-import { storyObjBuilder } from "../../../../stories/assets/storybook.globals";
+import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
 // Components
 import Table, { BulkAction, ITableProps, Row } from "./index";
 import { makeData } from "./makeData";
-import TableLayoutTmp from "./TableLayoutTmp";
 
 const bulkActionsMock: BulkAction = {
     label: "Bulk",
@@ -30,47 +29,60 @@ const bulkActionsMock: BulkAction = {
     ]
 };
 
+const data = makeData(10);
+
 const meta: Meta<ITableProps> = {
     title: "Molecules/Table",
     component: Table,
     argTypes: {
-        // fill Table component argTypes
+        columns: args({ control: "false", ...propCategory.content }),
+        externalData: args({ control: "false", ...propCategory.content }),
+        expandable: args({ control: "boolean", ...propCategory.content }),
+        withCheckbox: args({ control: "boolean", ...propCategory.content }),
+        rowActions: args({ control: "false", ...propCategory.content }),
+        onRowClick: args({ control: "false", ...propCategory.action }),
+        onColumnCheck: args({ control: "false", ...propCategory.action }),
+        className: args({ control: "false", ...propCategory.appearance }),
+        onGlobalFilterChange: args({ control: "false", ...propCategory.action }),
+        onManageColumns: args({ control: "false", ...propCategory.action }),
+        bulkActions: args({ control: "false", ...propCategory.functionality }),
+        withGlobalFilter: args({ control: "boolean", ...propCategory.functionality }),
+        globalFilterPlaceholder: args({ control: "text", ...propCategory.content }),
+        withStickyHeader: args({ control: "boolean", ...propCategory.appearance }),
+        sortableColumns: args({ control: "boolean", ...propCategory.functionality }),
+        pageSizes: args({ control: "false", ...propCategory.functionality }),
+        initialPageSize: args({ control: "number", ...propCategory.content }),
+        initialPageIndex: args({ control: "number", ...propCategory.content }),
+        withPagination: args({ control: "boolean", ...propCategory.appearance }),
+        withVirtualScroll: args({ control: "boolean", ...propCategory.appearance }),
+        onManageColumnRestore: args({ control: "false", ...propCategory.action }),
+        onSortChange: args({ control: "false", ...propCategory.action }),
+        onPageChange: args({ control: "false", ...propCategory.action }),
+        onRowSelect: args({ control: "false", ...propCategory.action }),
+        onCellEdit: args({ control: "false", ...propCategory.action }),
+        withDynamicFetch: args({ control: "boolean", ...propCategory.functionality }),
+        hasNextPage: args({ control: "boolean", ...propCategory.content }),
+        isFetchingNextPage: args({ control: "boolean", ...propCategory.content }),
+        fetchNextPage: args({ control: "false", ...propCategory.action }),
+        onSave: args({ control: "false", ...propCategory.action }),
+        loading: args({ control: "boolean", ...propCategory.states }),
+        loaderSize: args({ control: "select", ...propCategory.appearance }),
+        loaderText: args({ control: "text", ...propCategory.appearance }),
+        isManageColumnsDisabled: args({ control: "boolean", ...propCategory.states }),
+        withManageColumns: args({ control: "boolean", ...propCategory.states }),
+        manageColumnsTitle: args({ control: "text", ...propCategory.content })
     },
     args: {
-        // fill Table component args
-    },
-    subcomponents: {
-        Layout: TableLayoutTmp as ComponentType<unknown>
+        columns: defaultColumns,
+        externalData: data
     }
 };
 
 type Story = StoryObj<ITableProps>;
 
-const data = makeData(10);
-
-export const Default: Story = storyObjBuilder({
-    argTypes: {},
-    args: {},
-    render: () => {
-        const onSave = (savedData: Row[]) => {
-            return savedData;
-        };
-        return (
-            <Table
-                columns={defaultColumns}
-                externalData={data}
-                withPagination
-                withGlobalFilter
-                withCheckbox
-                bulkActions={bulkActionsMock}
-                rowActions={{
-                    delete: (id) => console.log(id)
-                }}
-                onSave={(savedData) => onSave(savedData)}
-            />
-        );
-    }
-});
+export const Default: Story = {
+    render: (props) => <Table {...props} columns={defaultColumns} externalData={data} withManageColumns />
+};
 
 export const WithStickyHeader: Story = storyObjBuilder({
     argTypes: {},
@@ -187,6 +199,7 @@ export const WithGroupedColumns: Story = storyObjBuilder({
                 initialPageSize={25}
                 initialPageIndex={0}
                 withCheckbox
+                expandable
                 withGlobalFilter
                 withPagination
                 withStickyHeader
@@ -200,15 +213,16 @@ export const WithGroupedColumns: Story = storyObjBuilder({
     }
 });
 
-export const WithExpendRowsColumns: Story = storyObjBuilder({
+export const WithExpendRowsColumns: Story = {
     argTypes: {},
     args: {},
-    render: () => {
+    render: (props) => {
         const onSave = (savedData: Row[]) => {
             return savedData;
         };
         return (
             <Table
+                {...props}
                 columns={withGroupedColumns}
                 externalData={data}
                 pageSizes={[10, 25, 50, 100]}
@@ -226,7 +240,7 @@ export const WithExpendRowsColumns: Story = storyObjBuilder({
             />
         );
     }
-});
+};
 
 export const WithOutData: Story = storyObjBuilder({
     argTypes: {},

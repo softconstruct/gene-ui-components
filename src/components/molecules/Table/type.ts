@@ -33,15 +33,21 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     footer?: (props: HeaderContext<RowData, unknown>) => ReactNode;
     type: CellType;
     order: number;
+    disabled?: boolean;
     isPinned?: boolean;
     isVisible?: boolean;
-    withCheckbox?: boolean;
+    isCheckboxDisabled?: boolean;
     enableSorting?: boolean;
+    isSortingDisabled?: boolean;
     rowCellRenderer?: (data?: any) => JSX.Element;
     editable?: boolean;
+    isEditDisabled?: boolean;
     copyable?: boolean;
+    isCopyDisabled?: boolean;
     enableColumnFilter?: boolean;
+    isColumnFilterDisabled?: boolean;
     enablePopoverFilter?: boolean;
+    isPopoverFilterDisabled?: boolean;
     filterOptions?: string[];
     resizable?: boolean;
     columns?: TableCol<RowData>[];
@@ -116,6 +122,7 @@ export interface BulkActionList {
 export interface BulkAction {
     label: string;
     onChange: (item: IMenuItemProps) => void;
+    disabled?: boolean;
     list: IMenuItemProps[];
 }
 

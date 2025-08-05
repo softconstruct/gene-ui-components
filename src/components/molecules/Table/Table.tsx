@@ -8,6 +8,7 @@ import {
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
+    Header,
     PaginationState,
     SortingState,
     useReactTable
@@ -15,7 +16,7 @@ import {
 import classNames from "classnames";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 
-import { Globe, Pin, ThreeDotsVertical } from "@geneui/icons";
+import { Globe, Pin, PinFilled, ThreeDotsVertical } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
@@ -88,13 +89,6 @@ interface ITableProps {
      * Called when column visibility or order is updated from the "Manage Columns" menu.
      */
     onManageColumns?: (event: IOrderedColumns[]) => void;
-    /**
-     * Table visual style variant.
-     * - `default` - basic layout
-     * - `striped` - zebra rows
-     * - `bordered` - table borders
-     */
-    variant?: "default" | "striped" | "bordered";
 
     /**
      * Optional bulk action buttons that appear when rows are selected.
@@ -114,7 +108,7 @@ interface ITableProps {
     /**
      * Whether table header should remain fixed during scroll.
      */
-    stickyHeader?: boolean;
+    withStickyHeader?: boolean;
 
     /**
      * Enables column sorting (if defined in columnDef).
@@ -146,7 +140,6 @@ interface ITableProps {
     onPageChange?: (pagination: PaginationState) => void;
     onRowSelect?: (selectedRows: any[]) => void;
     onCellEdit?: (rowIndex: number, columnId: string, value: any) => void;
-    withStickyHeader?: boolean;
     withDynamicFetch?: boolean;
     hasNextPage?: boolean;
     isFetchingNextPage?: boolean;
@@ -155,6 +148,9 @@ interface ITableProps {
     loading?: boolean;
     loaderSize?: ILoaderProps["size"];
     loaderText?: string;
+    isManageColumnsDisabled?: boolean;
+    withManageColumns?: boolean;
+    manageColumnsTitle?: string;
 }
 
 const Table: FC<ITableProps> = ({
@@ -177,7 +173,7 @@ const Table: FC<ITableProps> = ({
     pageSizes = [10, 20, 50, 100],
     initialPageSize = 10,
     initialPageIndex = 0,
-    withPagination,
+    withPagination = true,
     withVirtualScroll,
     withStickyHeader,
     withDynamicFetch,
@@ -186,7 +182,10 @@ const Table: FC<ITableProps> = ({
     fetchNextPage,
     loading,
     loaderSize,
-    loaderText
+    loaderText,
+    withManageColumns,
+    isManageColumnsDisabled,
+    manageColumnsTitle = "Manage Columns"
 }) => {
     const {
         data,
@@ -199,6 +198,8 @@ const Table: FC<ITableProps> = ({
         editableMode,
         menuOpened,
         setData,
+        handleSave,
+        handleCancel,
         setSorting,
         setColumnVisibility,
         setColumnPinning,
@@ -285,7 +286,7 @@ const Table: FC<ITableProps> = ({
             }),
         getSortedRowModel: getSortedRowModel(),
         getRowCanExpand: (row) => !!row.original.expandedData,
-        enableGlobalFilter: true,
+        enableGlobalFilter: withGlobalFilter,
         onColumnFiltersChange: setColumnFilters,
         onSortingChange: (e) => {
             setSorting(e);
@@ -363,8 +364,8 @@ const Table: FC<ITableProps> = ({
     };
 
     const tableEditAction = (type: "cancel" | "edit" | "save") => {
-        if (type === "save") onSave?.(data);
-        if (type === "cancel") setData(deepCloneWithFunctions(externalData));
+        if (type === "save") handleSave();
+        if (type === "cancel") handleCancel();
         setEditableMode(!editableMode);
     };
 
@@ -402,6 +403,55 @@ const Table: FC<ITableProps> = ({
     const handleManageColumnsRestore = () => {
         setTableColumns(deepCloneWithFunctions(columns));
         onManageColumnRestore?.(manageColumnsData);
+    };
+
+    const renderTableHeaderCell = (header: Header<RowData, unknown>) => {
+        if (header.isPlaceholder) return null;
+
+        if (header.id === "rowCheckbox" && withCheckbox) {
+            return (
+                <th
+                    key={`${header.id}_header`}
+                    colSpan={header.colSpan}
+                    className={classNames("table__th", {
+                        table__th_group: header.subHeaders.length
+                    })}
+                >
+                    <div className="table__content table__content_empty">
+                        <Checkbox
+                            name="column"
+                            value="column"
+                            checked={table.getIsAllRowsSelected()}
+                            onChange={() => {
+                                table.toggleAllRowsSelected();
+                                onColumnCheck?.();
+                            }}
+                        />
+                    </div>
+                </th>
+            );
+        }
+
+        if (header.id === "rowCheckbox") return null;
+
+        return (
+            <th
+                key={`${header.id}_header`}
+                colSpan={header.colSpan}
+                className={classNames("table__th", {
+                    table__th_group: header.subHeaders.length
+                })}
+            >
+                <div className="table__content table__content_empty">
+                    <div className="table__content table__content_header">
+                        <span className="table__th_text ellipsis-text">
+                            {(header.column.columnDef as TableCol<RowData>).header}
+                        </span>
+                        {header.id !== "expand" && <ColActions header={header} />}
+                    </div>
+                </div>
+            </th>
+        );
     };
 
     const renderTableBody = () => {
@@ -457,6 +507,22 @@ const Table: FC<ITableProps> = ({
         return <h1>No data available</h1>;
     };
 
+    const renderTableFooterCell = (footer: Header<RowData, unknown>) => {
+        if (footer.id === "rowCheckbox" && !withCheckbox) return null;
+
+        return (
+            <td key={`${footer.id}_footer`} className="table__td" colSpan={footer.colSpan}>
+                <div className="table__content table__content_empty table__content_text_numeric">
+                    <span className="ellipsis-text table__td_text">
+                        {footer?.column?.columnDef?.footer
+                            ? flexRender(footer.column.columnDef.footer, footer.getContext())
+                            : null}
+                    </span>
+                </div>
+            </td>
+        );
+    };
+
     return (
         <div className={classNames("dataTable")}>
             <div className={classNames("dataTable__toolbar toolbar")}>
@@ -482,6 +548,7 @@ const Table: FC<ITableProps> = ({
                             appearance="primary"
                             layout="text"
                             size="medium"
+                            disabled={bulkActions?.disabled}
                             onClick={() => table.getSelectedRowModel().rows.length && table.resetRowSelection()}
                         >
                             Deselect
@@ -522,192 +589,203 @@ const Table: FC<ITableProps> = ({
                             >
                                 Edit
                             </Button>
-                            <div className="dataTable__toolbar_dropdownMenu">
-                                <Button
-                                    className="dataTable__toolbar_dropdownMenu_manageColumns"
-                                    appearance="secondary"
-                                    layout="outline"
-                                    size="medium"
-                                    Icon={Globe}
-                                    onClick={() => setMenuOpened(!menuOpened)}
-                                >
-                                    Manage Columns
-                                </Button>
+                            {withManageColumns && (
+                                <div className="dataTable__toolbar_dropdownMenu">
+                                    <Button
+                                        className="dataTable__toolbar_dropdownMenu_manageColumns"
+                                        appearance="secondary"
+                                        layout="outline"
+                                        size="medium"
+                                        disabled={isManageColumnsDisabled}
+                                        Icon={Globe}
+                                        onClick={() => setMenuOpened(!menuOpened)}
+                                    >
+                                        {manageColumnsTitle}
+                                    </Button>
 
-                                {menuOpened && (
-                                    <div className="dropdownMenu">
-                                        <div className="dropdownMenu__header">
-                                            <input type="text" placeholder="Search" style={{ width: "100%" }} />
-                                        </div>
+                                    {menuOpened && (
+                                        <div className="dropdownMenu">
+                                            <div className="dropdownMenu__header">
+                                                <input type="text" placeholder="Search" style={{ width: "100%" }} />
+                                            </div>
 
-                                        <Scrollbar>
-                                            <div className="dropdownMenu__main">
-                                                <div className="dropdownMenu__columns">
-                                                    <div className="dropdownMenu__columns_header">
-                                                        <p className="dropdownMenu__columns_title ellipsis-text">
-                                                            Active Columns
-                                                        </p>
-                                                    </div>
-                                                    <DragDropContext onDragEnd={handleDragEnd}>
-                                                        {orderedColumns.map((item, groupIndex) => {
-                                                            return (
-                                                                <Droppable droppableId={item.id} key={item.id}>
-                                                                    {(provided, snapshot) => (
-                                                                        <div
-                                                                            {...provided.droppableProps}
-                                                                            ref={provided.innerRef}
-                                                                            className={classNames("columns-list", {
-                                                                                "columns-list--dragging-over":
-                                                                                    snapshot.isDraggingOver
-                                                                            })}
-                                                                        >
-                                                                            <span key={item.id}>{item.title}</span>
-                                                                            {item.columns.map((column, index) => {
-                                                                                if (
-                                                                                    (
-                                                                                        column.columnDef as TableCol<RowData>
-                                                                                    ).type === "expand" ||
-                                                                                    (
-                                                                                        column.columnDef as TableCol<RowData>
-                                                                                    ).type === "rowCheckbox"
-                                                                                ) {
-                                                                                    return null;
-                                                                                }
+                                            <Scrollbar>
+                                                <div className="dropdownMenu__main">
+                                                    <div className="dropdownMenu__columns">
+                                                        <div className="dropdownMenu__columns_header">
+                                                            <p className="dropdownMenu__columns_title ellipsis-text">
+                                                                Active Columns
+                                                            </p>
+                                                        </div>
+                                                        <DragDropContext onDragEnd={handleDragEnd}>
+                                                            {orderedColumns.map((item, groupIndex) => {
+                                                                return (
+                                                                    <Droppable droppableId={item.id} key={item.id}>
+                                                                        {(provided, snapshot) => (
+                                                                            <div
+                                                                                {...provided.droppableProps}
+                                                                                ref={provided.innerRef}
+                                                                                className={classNames("columns-list", {
+                                                                                    "columns-list--dragging-over":
+                                                                                        snapshot.isDraggingOver
+                                                                                })}
+                                                                            >
+                                                                                <span key={item.id}>{item.title}</span>
+                                                                                {item.columns.map((column, index) => {
+                                                                                    if (
+                                                                                        (
+                                                                                            column.columnDef as TableCol<RowData>
+                                                                                        ).type === "expand" ||
+                                                                                        (
+                                                                                            column.columnDef as TableCol<RowData>
+                                                                                        ).type === "rowCheckbox"
+                                                                                    ) {
+                                                                                        return null;
+                                                                                    }
 
-                                                                                return (
-                                                                                    <Draggable
-                                                                                        key={column.id}
-                                                                                        draggableId={column.id}
-                                                                                        index={index}
-                                                                                    >
-                                                                                        {(
-                                                                                            draggableProvided,
-                                                                                            draggableSnapshot
-                                                                                        ) => (
-                                                                                            <div
-                                                                                                ref={
-                                                                                                    draggableProvided.innerRef
-                                                                                                }
-                                                                                                {...(draggableProvided.draggableProps as React.HTMLAttributes<HTMLDivElement>)}
-                                                                                                className={classNames(
-                                                                                                    "dropdownMenu__columns_item",
-                                                                                                    {
-                                                                                                        "dropdownMenu__columns_item--dragging":
-                                                                                                            draggableSnapshot.isDragging
+                                                                                    return (
+                                                                                        <Draggable
+                                                                                            key={column.id}
+                                                                                            draggableId={column.id}
+                                                                                            index={index}
+                                                                                        >
+                                                                                            {(
+                                                                                                draggableProvided,
+                                                                                                draggableSnapshot
+                                                                                            ) => (
+                                                                                                <div
+                                                                                                    ref={
+                                                                                                        draggableProvided.innerRef
                                                                                                     }
-                                                                                                )}
-                                                                                                role="tab"
-                                                                                                tabIndex={0}
-                                                                                            >
-                                                                                                <Label
-                                                                                                    className="dropdownMenu__columns_placeholder"
-                                                                                                    text={
-                                                                                                        (
-                                                                                                            column.columnDef as TableCol<RowData>
-                                                                                                        ).header
-                                                                                                    }
+                                                                                                    {...(draggableProvided.draggableProps as React.HTMLAttributes<HTMLDivElement>)}
+                                                                                                    className={classNames(
+                                                                                                        "dropdownMenu__columns_item",
+                                                                                                        {
+                                                                                                            "dropdownMenu__columns_item--dragging":
+                                                                                                                draggableSnapshot.isDragging,
+                                                                                                            "dropdownMenu__columns_item--disabled":
+                                                                                                                (
+                                                                                                                    column.columnDef as TableCol<unknown>
+                                                                                                                )
+                                                                                                                    .disabled
+                                                                                                        }
+                                                                                                    )}
+                                                                                                    role="tab"
+                                                                                                    tabIndex={0}
                                                                                                 >
-                                                                                                    <Checkbox
-                                                                                                        name="item"
-                                                                                                        value="item"
-                                                                                                        checked={
-                                                                                                            visibleColumns[
-                                                                                                                column
-                                                                                                                    .id
-                                                                                                            ]
+                                                                                                    <Label
+                                                                                                        className="dropdownMenu__columns_placeholder"
+                                                                                                        text={
+                                                                                                            (
+                                                                                                                column.columnDef as TableCol<RowData>
+                                                                                                            ).header
                                                                                                         }
-                                                                                                        onChange={() =>
-                                                                                                            handleColumnVisibility(
-                                                                                                                column
-                                                                                                            )
-                                                                                                        }
-                                                                                                    />
-                                                                                                </Label>
-                                                                                                <div className="dropdownMenu__columns_actions">
-                                                                                                    <Button
-                                                                                                        appearance="secondary"
-                                                                                                        layout="text"
-                                                                                                        size="small"
-                                                                                                        Icon={Pin}
-                                                                                                        onClick={() =>
-                                                                                                            onColumnPin(
-                                                                                                                column,
-                                                                                                                groupIndex,
-                                                                                                                index
-                                                                                                            )
-                                                                                                        }
-                                                                                                        className="dropdownMenu__columns_icon"
-                                                                                                    />
-                                                                                                    <div
-                                                                                                        {...draggableProvided.dragHandleProps}
                                                                                                     >
+                                                                                                        <Checkbox
+                                                                                                            name="item"
+                                                                                                            value="item"
+                                                                                                            checked={
+                                                                                                                visibleColumns[
+                                                                                                                    column
+                                                                                                                        .id
+                                                                                                                ]
+                                                                                                            }
+                                                                                                            onChange={() =>
+                                                                                                                handleColumnVisibility(
+                                                                                                                    column
+                                                                                                                )
+                                                                                                            }
+                                                                                                        />
+                                                                                                    </Label>
+                                                                                                    <div className="dropdownMenu__columns_actions">
                                                                                                         <Button
                                                                                                             appearance="secondary"
                                                                                                             layout="text"
                                                                                                             size="small"
                                                                                                             Icon={
-                                                                                                                ThreeDotsVertical
+                                                                                                                column.getIsPinned()
+                                                                                                                    ? PinFilled
+                                                                                                                    : Pin
                                                                                                             }
-                                                                                                            onClick={() => {}}
+                                                                                                            onClick={() =>
+                                                                                                                onColumnPin(
+                                                                                                                    column,
+                                                                                                                    groupIndex,
+                                                                                                                    index
+                                                                                                                )
+                                                                                                            }
                                                                                                             className="dropdownMenu__columns_icon"
                                                                                                         />
+                                                                                                        <div
+                                                                                                            {...draggableProvided.dragHandleProps}
+                                                                                                        >
+                                                                                                            <Button
+                                                                                                                appearance="secondary"
+                                                                                                                layout="text"
+                                                                                                                size="small"
+                                                                                                                Icon={
+                                                                                                                    ThreeDotsVertical
+                                                                                                                }
+                                                                                                                onClick={() => {}}
+                                                                                                                className="dropdownMenu__columns_icon"
+                                                                                                            />
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                        )}
-                                                                                    </Draggable>
-                                                                                );
-                                                                            })}
-                                                                            {provided.placeholder}
-                                                                        </div>
-                                                                    )}
-                                                                </Droppable>
-                                                            );
-                                                        })}
-                                                    </DragDropContext>
+                                                                                            )}
+                                                                                        </Draggable>
+                                                                                    );
+                                                                                })}
+                                                                                {provided.placeholder}
+                                                                            </div>
+                                                                        )}
+                                                                    </Droppable>
+                                                                );
+                                                            })}
+                                                        </DragDropContext>
+                                                    </div>
+                                                    <Divider />
                                                 </div>
-                                                <Divider />
-                                            </div>
-                                        </Scrollbar>
+                                            </Scrollbar>
 
-                                        <div className="dropdownMenu__footer">
-                                            <Button
-                                                appearance="secondary"
-                                                layout="text"
-                                                size="medium"
-                                                onClick={() => handleManageColumnsRestore()}
-                                            >
-                                                Restore Defaults
-                                            </Button>
-                                            <div className="dropdownMenu__footer_buutonGroup">
+                                            <div className="dropdownMenu__footer">
                                                 <Button
                                                     appearance="secondary"
-                                                    layout="fill"
+                                                    layout="text"
                                                     size="medium"
-                                                    onClick={() => setMenuOpened(false)}
+                                                    onClick={() => handleManageColumnsRestore()}
                                                 >
-                                                    Cancel
+                                                    Restore Defaults
                                                 </Button>
-                                                <Button
-                                                    className="dropdownMenu__footer_buttonGroup_save"
-                                                    appearance="primary"
-                                                    layout="fill"
-                                                    size="medium"
-                                                    onClick={handleManageColumns}
-                                                >
-                                                    Save
-                                                </Button>
+                                                <div className="dropdownMenu__footer_buutonGroup">
+                                                    <Button
+                                                        appearance="secondary"
+                                                        layout="fill"
+                                                        size="medium"
+                                                        onClick={() => setMenuOpened(false)}
+                                                    >
+                                                        Cancel
+                                                    </Button>
+                                                    <Button
+                                                        className="dropdownMenu__footer_buttonGroup_save"
+                                                        appearance="primary"
+                                                        layout="fill"
+                                                        size="medium"
+                                                        onClick={handleManageColumns}
+                                                    >
+                                                        Save
+                                                    </Button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-                            </div>
+                                    )}
+                                </div>
+                            )}
                         </>
                     )}
                 </div>
             </div>
             <div ref={tableContainerRef} style={{ height: "500px", overflow: "auto" }}>
-                {/* <Scrollbar> */}
                 <table className={classNames("table", className)}>
                     <thead
                         className={classNames({
@@ -726,38 +804,7 @@ const Table: FC<ITableProps> = ({
                                     if (col.copyable) {
                                         accessCopyable[header.id] = true;
                                     }
-                                    return (
-                                        <th
-                                            key={`${header.id}_header`}
-                                            colSpan={header.colSpan}
-                                            className={classNames("table__th", {
-                                                table__th_group: header.subHeaders.length
-                                            })}
-                                        >
-                                            {header.isPlaceholder ? null : (
-                                                <div className="table__content table__content_empty">
-                                                    {header.id === "rowCheckbox" ? (
-                                                        <Checkbox
-                                                            name="column"
-                                                            value="column"
-                                                            checked={table.getIsAllRowsSelected()}
-                                                            onChange={() => {
-                                                                table.toggleAllRowsSelected();
-                                                                onColumnCheck?.();
-                                                            }}
-                                                        />
-                                                    ) : (
-                                                        <div className="table__content table__content_header">
-                                                            <span className="table__th_text ellipsis-text">
-                                                                {(header.column.columnDef as TableCol<RowData>).header}
-                                                            </span>
-                                                            {header.id !== "expand" && <ColActions header={header} />}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </th>
-                                    );
+                                    return renderTableHeaderCell(header);
                                 })}
                             </tr>
                         ))}
@@ -770,24 +817,7 @@ const Table: FC<ITableProps> = ({
                                 return (
                                     <tr key={`${footerGroups.id}_footer`} className="table__row table__row_tfoot">
                                         {footerGroups.headers.map((footer) => {
-                                            return (
-                                                <td
-                                                    key={`${footer.id}_footer`}
-                                                    className="table__td"
-                                                    colSpan={footer.colSpan}
-                                                >
-                                                    <div className="table__content table__content_empty table__content_text_numeric">
-                                                        <span className="ellipsis-text table__td_text">
-                                                            {footer?.column?.columnDef?.footer
-                                                                ? flexRender(
-                                                                      footer.column.columnDef.footer,
-                                                                      footer.getContext()
-                                                                  )
-                                                                : null}
-                                                        </span>
-                                                    </div>
-                                                </td>
-                                            );
+                                            return renderTableFooterCell(footer);
                                         })}
                                     </tr>
                                 );
@@ -795,7 +825,6 @@ const Table: FC<ITableProps> = ({
                         </tfoot>
                     )}
                 </table>
-                {/* </Scrollbar> */}
             </div>
 
             {withPagination && table.getRowModel().flatRows.length > 0 && (

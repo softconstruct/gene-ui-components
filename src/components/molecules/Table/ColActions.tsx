@@ -31,9 +31,11 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
     const [currentSearchInput, setCurrentSearchInput] = useState<string | null>(null);
     const [popoverPropsForContent, setPopoverPropsForContent] = useState({});
     const [filteredValues, setFilteredValues] = useState<string[]>([]);
+    const [isFilterPopoverOpen, setIsFilterPopoverOpen] = useState<boolean>(false);
 
     const handleFilterFromPopover = (column: Column<RowData, unknown>) => {
         column.setFilterValue(filteredValues);
+        setIsFilterPopoverOpen(false);
     };
 
     const handleFilteredValueChanges = (e: ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +68,7 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                     appearance="secondary"
                     layout="text"
                     size="small"
+                    disabled={(header.column.columnDef as TableCol<unknown>)?.isSortingDisabled}
                     Icon={SortingIcons[`${header.column.getIsSorted()}`]}
                     onClick={(e) => {
                         return (
@@ -84,9 +87,11 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                         layout="text"
                         size="small"
                         Icon={Globe}
+                        disabled={(header.column.columnDef as TableCol<RowData>)?.isPopoverFilterDisabled}
                         {...popoverPropsForContent}
+                        onClick={() => setIsFilterPopoverOpen(true)}
                     />
-                    <Popover setProps={setPopoverPropsForContent}>
+                    <Popover setProps={setPopoverPropsForContent} open={isFilterPopoverOpen}>
                         <PopoverBody withPadding={false}>
                             <div className="filterDropdownMenu">
                                 <div className="filterDropdownMenu__header">
@@ -133,7 +138,7 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                                         {/* todo: add next classNames for similar states - "filterDropdownMenu__columns_item_drag", "filterDropdownMenu__columns_item_disabled" */}
                                         {getFilterOption(header.column)?.map((option) => (
                                             <div
-                                                key={header.column.id}
+                                                key={option}
                                                 className="filterDropdownMenu__columns_item"
                                                 role="tab"
                                                 tabIndex={0}
@@ -169,7 +174,12 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                         </PopoverBody>
                         <PopoverFooter>
                             <PopoverFooterActions>
-                                <Button appearance="secondary" layout="fill" size="medium">
+                                <Button
+                                    appearance="secondary"
+                                    layout="fill"
+                                    size="medium"
+                                    onClick={() => setIsFilterPopoverOpen(false)}
+                                >
                                     Cancel
                                 </Button>
                                 <Button
@@ -194,6 +204,7 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                         appearance="secondary"
                         layout="text"
                         size="small"
+                        disabled={(header.column.columnDef as TableCol<unknown>).isColumnFilterDisabled}
                         Icon={Magnifier}
                         onClick={() => setCurrentSearchInput(header.column.id)}
                     />

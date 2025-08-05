@@ -51,7 +51,7 @@ describe("Table ", () => {
 
     it("handles onManageColumns", () => {
         const mockManage = jest.fn();
-        setup.setProps({ onManageColumns: mockManage });
+        setup.setProps({ onManageColumns: mockManage, withManageColumns: true });
         setup
             .find("button")
             .filterWhere((b) => b.hasClass("dataTable__toolbar_dropdownMenu_manageColumns"))
