@@ -37,6 +37,7 @@ export { default as Pagination } from "./components/molecules/Pagination";
 export { default as TextField } from "./components/molecules/TextField";
 export { default as ButtonGroup } from "./components/molecules/ButtonGroup";
 export { default as Notification } from "./components/molecules/Notification";
+export { default as Modal } from "./components/molecules/Modal";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";

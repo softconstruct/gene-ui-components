@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -27,8 +27,7 @@ const meta: Meta<typeof Notification> = {
         open: true,
         title: 'Notification "Title"',
         variant: "sectionMessage",
-        description:
-            'This is a "description" of the notification. asdf asdc asdc asdc asdc asdc asdc asdc asdc asdc adc sDC sdc sDC sdc sDC '
+        description: 'This is a "description" of the notification. It can be a longer text to provide more context.'
     } as INotificationProps
 };
 
@@ -36,12 +35,24 @@ export default meta;
 
 type Story = StoryObj<INotificationProps>;
 
+const NotificationStory = (props) => {
+    const [isOpen, setIsOpen] = useState(true);
+
+    useEffect(() => {
+        setIsOpen(!!props?.open);
+    }, [props?.open]);
+    const closeHandler = () => {
+        setIsOpen(false);
+    };
+    return <Notification {...props} open={isOpen} onClose={closeHandler} onSecondaryActionClick={closeHandler} />;
+};
+
 export const Default: Story = {
-    render: (props) => <Notification {...props} />
+    render: (props) => <NotificationStory {...props} />
 };
 
 export const WithActions: Story = {
-    render: (props) => <Notification {...props} />,
+    render: (props) => <NotificationStory {...props} />,
     args: {
         secondaryActionText: "Secondary",
         primaryActionText: "Primary",
