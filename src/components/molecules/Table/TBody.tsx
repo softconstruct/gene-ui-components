@@ -12,6 +12,7 @@ interface ITableBody {
     editableMode: boolean;
     rowActions: Partial<RowActions>;
     onRowClick?: (event: string) => void;
+    onRowDelete?: (index: number) => void;
     onCellEdit: (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
         rowIndex: number,
@@ -26,7 +27,8 @@ const TBody: FC<ITableBody> = ({
     editableMode,
     rowActions,
     onRowClick,
-    onCellEdit
+    onCellEdit,
+    onRowDelete
 }) => {
     return table
         .getCenterRows()
@@ -41,6 +43,7 @@ const TBody: FC<ITableBody> = ({
                 rowActions={rowActions}
                 onRowClick={onRowClick}
                 handleCellEdit={onCellEdit}
+                onRowDelete={onRowDelete}
             />
         ));
 };

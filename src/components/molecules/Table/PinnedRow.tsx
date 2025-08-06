@@ -17,12 +17,14 @@ const PinnedRow = ({
     expandable,
     editableMode,
     onCellEdit,
-    rowActions
+    rowActions,
+    onRowDelete
 }: {
     row: Row<any>;
     rowIndex: number;
     expandable?: boolean;
     editableMode: boolean;
+    onRowDelete?: (index: number) => void;
     onCellEdit: (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
         index: number,
@@ -30,6 +32,11 @@ const PinnedRow = ({
     ) => void;
     rowActions: Partial<RowActions>;
 }) => {
+    const handleRowDelete = () => {
+        onRowDelete?.(rowIndex);
+        rowActions.delete?.(row.id);
+    };
+
     return (
         <>
             <tr
@@ -153,7 +160,7 @@ const PinnedRow = ({
                                     layout="text"
                                     size="small"
                                     Icon={RecycleBin}
-                                    onClick={() => rowActions.delete?.(row.id)}
+                                    onClick={handleRowDelete}
                                     className=""
                                 />
                             )}

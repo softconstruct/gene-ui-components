@@ -19,6 +19,7 @@ interface ITableRow {
     editableMode: boolean;
     rowActions: Partial<RowActions>;
     onRowClick?: (event: string) => void;
+    onRowDelete?: (index: number) => void;
     handleCellEdit: (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
         rowIndex: number,
@@ -34,9 +35,11 @@ const TableRow: FC<ITableRow> = ({
     editableMode,
     onRowClick,
     handleCellEdit,
-    rowActions
+    rowActions,
+    onRowDelete
 }) => {
-    const onRowDelete = () => {
+    const handleRowDelete = () => {
+        onRowDelete?.(rowIndex);
         rowActions.delete?.(row.id);
     };
 
@@ -157,7 +160,7 @@ const TableRow: FC<ITableRow> = ({
                                     layout="text"
                                     size="small"
                                     Icon={RecycleBin}
-                                    onClick={onRowDelete}
+                                    onClick={handleRowDelete}
                                 />
                             )}
                         </div>

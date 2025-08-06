@@ -4,6 +4,7 @@ import { faker } from "@faker-js/faker";
 
 import { Globe } from "@geneui/icons";
 
+import { IPillProps } from "@components/atoms/Pill";
 import { ICheckboxProps } from "@components/molecules/Checkbox";
 import { ISwitchProps } from "@components/molecules/Switch";
 import { Row } from "@components/molecules/Table/type";
@@ -40,7 +41,21 @@ const newRow = (): Row => {
         },
         status: {
             type: "status",
-            data: faker.word.adjective()
+            data: {
+                text: faker.word.adjective(),
+                appearance: faker.helpers.shuffle<IPillProps["appearance"]>([
+                    "warning",
+                    "error",
+                    "inverse",
+                    "informative",
+                    "neutral",
+                    "success",
+                    "purple",
+                    "lagoon",
+                    "magenta",
+                    "slate"
+                ])[0]
+            } as IPillProps
         },
         pill: {
             type: "pill",

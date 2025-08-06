@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, ReactNode, useEffect, useState } from "react";
 import {
     Column,
     ColumnFiltersState,
@@ -9,7 +9,6 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     Header,
-    PaginationState,
     SortingState,
     useReactTable
 } from "@tanstack/react-table";
@@ -137,7 +136,10 @@ interface ITableProps {
     withVirtualScroll?: boolean;
     onManageColumnRestore?: (event: IOrderedColumns[]) => void;
     onSortChange?: (sorting: SortingState) => void;
-    onPageChange?: (pagination: PaginationState) => void;
+    onPageChange?: (pageNumber: number) => void;
+    onPageSizeChange?: (size: number) => void;
+    showInputPageField?: boolean;
+    withManualPagination?: boolean;
     onRowSelect?: (selectedRows: any[]) => void;
     onCellEdit?: (rowIndex: number, columnId: string, value: any) => void;
     withDynamicFetch?: boolean;
@@ -151,6 +153,7 @@ interface ITableProps {
     isManageColumnsDisabled?: boolean;
     withManageColumns?: boolean;
     manageColumnsTitle?: string;
+    headerContent?: ReactNode;
 }
 
 const Table: FC<ITableProps> = ({
@@ -171,6 +174,10 @@ const Table: FC<ITableProps> = ({
     onSave,
     bulkActions,
     pageSizes = [10, 20, 50, 100],
+    onPageChange,
+    onPageSizeChange,
+    showInputPageField,
+    withManualPagination,
     initialPageSize = 10,
     initialPageIndex = 0,
     withPagination = true,
@@ -185,7 +192,8 @@ const Table: FC<ITableProps> = ({
     loaderText,
     withManageColumns,
     isManageColumnsDisabled,
-    manageColumnsTitle = "Manage Columns"
+    manageColumnsTitle = "Manage Columns",
+    headerContent
 }) => {
     const {
         data,
@@ -276,6 +284,7 @@ const Table: FC<ITableProps> = ({
             globalFilter,
             columnFilters
         },
+        ...(withManualPagination && { manualPagination: withManualPagination }),
         onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
@@ -298,7 +307,7 @@ const Table: FC<ITableProps> = ({
         onRowPinningChange: setRowPinning,
         onColumnOrderChange: setColumnOrder
     });
-
+    console.log(data);
     useEffect(() => {
         if (!table || !tableColumns.length) return;
         const cols: IOrderedColumns[] = [];
@@ -421,9 +430,10 @@ const Table: FC<ITableProps> = ({
                         <Checkbox
                             name="column"
                             value="column"
-                            checked={table.getIsAllRowsSelected()}
+                            checked={table.getIsAllPageRowsSelected()}
+                            indeterminate={table.getIsSomePageRowsSelected()}
                             onChange={() => {
-                                table.toggleAllRowsSelected();
+                                table.toggleAllPageRowsSelected();
                                 onColumnCheck?.();
                             }}
                         />
@@ -454,6 +464,10 @@ const Table: FC<ITableProps> = ({
         );
     };
 
+    const handleRowDelete = (rowIndex: number) => {
+        setData((prevData) => prevData.filter((row) => data.indexOf(row) !== rowIndex));
+    };
+
     const renderTableBody = () => {
         if (loading) {
             return <Loader size={loaderSize} text={loaderText} />;
@@ -471,6 +485,7 @@ const Table: FC<ITableProps> = ({
                             expandable={expandable}
                             editableMode={editableMode}
                             onCellEdit={handleCellEdit}
+                            {...(rowActions?.delete && { onRowDelete: handleRowDelete })}
                         />
                     ))}
                     {withVirtualScroll && tableContainerRef.current ? (
@@ -488,6 +503,7 @@ const Table: FC<ITableProps> = ({
                             hasNextPage={hasNextPage}
                             isFetchingNextPage={isFetchingNextPage}
                             fetchNextPage={fetchNextPage}
+                            {...(rowActions?.delete && { onRowDelete: handleRowDelete })}
                         />
                     ) : (
                         <TBody
@@ -498,6 +514,7 @@ const Table: FC<ITableProps> = ({
                             editableMode={editableMode}
                             withCheckbox={withCheckbox}
                             onCellEdit={handleCellEdit}
+                            {...(rowActions?.delete && { onRowDelete: handleRowDelete })}
                         />
                     )}
                 </>
@@ -521,6 +538,16 @@ const Table: FC<ITableProps> = ({
                 </div>
             </td>
         );
+    };
+
+    const handlePageChange = (pageNumber: number) => {
+        table.setPageIndex(pageNumber - 1);
+        onPageChange?.(pageNumber);
+    };
+
+    const handlePageSizeChange = (size: number) => {
+        table.setPageSize(size);
+        onPageSizeChange?.(size);
     };
 
     return (
@@ -557,6 +584,7 @@ const Table: FC<ITableProps> = ({
                     </div>
                 </div>
                 <div className="dataTable__toolbar_actions">
+                    {headerContent && <div className="dataTable__toolbar_content">{headerContent}</div>}
                     {editableMode ? (
                         <>
                             <div className="dropdownMenu__footer_buutonGroup">
@@ -836,9 +864,9 @@ const Table: FC<ITableProps> = ({
                             currentPageItemsLength={initialPageSize}
                             totalPages={table.getPageCount()}
                             rowsPerPageOptions={pageSizes}
-                            onPageChange={(pageNumber) => table.setPageIndex(pageNumber)}
-                            onPageSizeChange={(size) => table.setPageSize(size)}
-                            showInputPageField
+                            onPageChange={handlePageChange}
+                            onPageSizeChange={handlePageSizeChange}
+                            showInputPageField={showInputPageField}
                         />
                     </div>
                 </div>

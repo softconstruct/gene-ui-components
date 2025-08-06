@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { defaultColumns, withGroupedColumns, withPinnedColumns } from "@components/molecules/Table/Columns";
 
 // Helpers
-import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
+import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
 import Table, { BulkAction, ITableProps, Row } from "./index";
 import { makeData } from "./makeData";
@@ -70,7 +70,8 @@ const meta: Meta<ITableProps> = {
         loaderText: args({ control: "text", ...propCategory.appearance }),
         isManageColumnsDisabled: args({ control: "boolean", ...propCategory.states }),
         withManageColumns: args({ control: "boolean", ...propCategory.states }),
-        manageColumnsTitle: args({ control: "text", ...propCategory.content })
+        manageColumnsTitle: args({ control: "text", ...propCategory.content }),
+        headerContent: args({ control: "text", ...propCategory.content })
     },
     args: {
         columns: defaultColumns,
@@ -81,18 +82,29 @@ const meta: Meta<ITableProps> = {
 type Story = StoryObj<ITableProps>;
 
 export const Default: Story = {
-    render: (props) => <Table {...props} columns={defaultColumns} externalData={data} withManageColumns />
+    render: (props) => (
+        <Table
+            {...props}
+            columns={defaultColumns}
+            rowActions={{
+                delete: (id) => console.log(id)
+            }}
+            externalData={data}
+            withManageColumns
+        />
+    )
 };
 
-export const WithStickyHeader: Story = storyObjBuilder({
+export const WithStickyHeader: Story = {
     argTypes: {},
     args: {},
-    render: () => {
+    render: (props) => {
         const onSave = (savedData: Row[]) => {
             return savedData;
         };
         return (
             <Table
+                {...props}
                 columns={defaultColumns}
                 externalData={data}
                 pageSizes={[10, 25, 50, 100]}
@@ -110,9 +122,9 @@ export const WithStickyHeader: Story = storyObjBuilder({
             />
         );
     }
-});
+};
 
-const TableWithVirtualScroll = () => {
+const TableWithVirtualScroll: FC<ITableProps> = (props) => {
     const [tableData, setTableData] = useState(makeData(50));
     const [hasNextPage, setHasNextPage] = useState(true);
     const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
@@ -134,6 +146,7 @@ const TableWithVirtualScroll = () => {
     };
     return (
         <Table
+            {...props}
             columns={defaultColumns}
             externalData={tableData}
             withVirtualScroll
@@ -152,21 +165,22 @@ const TableWithVirtualScroll = () => {
     );
 };
 
-export const WithVirtualScroll: Story = storyObjBuilder({
+export const WithVirtualScroll: Story = {
     argTypes: {},
     args: {},
-    render: () => <TableWithVirtualScroll />
-});
+    render: (props) => <TableWithVirtualScroll {...props} />
+};
 
-export const WithPinnedColumns: Story = storyObjBuilder({
+export const WithPinnedColumns: Story = {
     argTypes: {},
     args: {},
-    render: () => {
+    render: (props) => {
         const onSave = (savedData: Row[]) => {
             return savedData;
         };
         return (
             <Table
+                {...props}
                 columns={withPinnedColumns}
                 externalData={data}
                 pageSizes={[10, 25, 50, 100]}
@@ -182,17 +196,18 @@ export const WithPinnedColumns: Story = storyObjBuilder({
             />
         );
     }
-});
+};
 
-export const WithGroupedColumns: Story = storyObjBuilder({
+export const WithGroupedColumns: Story = {
     argTypes: {},
     args: {},
-    render: () => {
+    render: (props) => {
         const onSave = (savedData: Row[]) => {
             return savedData;
         };
         return (
             <Table
+                {...props}
                 columns={withGroupedColumns}
                 externalData={data}
                 pageSizes={[10, 25, 50, 100]}
@@ -211,7 +226,7 @@ export const WithGroupedColumns: Story = storyObjBuilder({
             />
         );
     }
-});
+};
 
 export const WithExpendRowsColumns: Story = {
     argTypes: {},
@@ -242,12 +257,13 @@ export const WithExpendRowsColumns: Story = {
     }
 };
 
-export const WithOutData: Story = storyObjBuilder({
+export const WithOutData: Story = {
     argTypes: {},
     args: {},
-    render: () => {
+    render: (props) => {
         return (
             <Table
+                {...props}
                 columns={withGroupedColumns}
                 externalData={[]}
                 pageSizes={[10, 25, 50, 100]}
@@ -259,6 +275,6 @@ export const WithOutData: Story = storyObjBuilder({
             />
         );
     }
-});
+};
 
 export default meta;
