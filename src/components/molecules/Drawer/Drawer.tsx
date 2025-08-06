@@ -25,9 +25,7 @@ interface IDrawerProps {
  */
 const Drawer: FC<IDrawerProps> = ({ className }) => {
     return (
-        <div
-            className={classNames("drawer drawer_variant_portal drawer_flow_horizontal drawer_withPadding", className)}
-        >
+        <div className={classNames("drawer drawer_variant_portal drawer_flow_vertical drawer_withPadding", className)}>
             {/* drawer_flow_vertical // drawer_flow_horizontal */}
             <div className="drawer__wrapper drawer__wrapper_size_medium">
                 <div className="drawer__header">

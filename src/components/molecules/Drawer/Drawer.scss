@@ -96,15 +96,15 @@
             #{ $this }__wrapper {
                 &_size {
                     &_large {
-                        max-height: 56rem;
+                        max-height: 62.22%;
                     }
 
                     &_medium {
-                        max-height: 42rem;
+                        max-height: 46.67%;
                     }
 
                     &_small {
-                        max-height: 28rem;
+                        max-height: 31.11%;
                     }
                 }
             }
@@ -117,15 +117,15 @@
             #{ $this }__wrapper {
                 &_size {
                     &_large {
-                        max-width: 72rem;
+                        max-width: 50%;
                     }
 
                     &_medium {
-                        max-width: 48rem;
+                        max-width: 33.33%;
                     }
 
                     &_small {
-                        max-width: 36rem;
+                        max-width: 25%;
                     }
                 }
             }
