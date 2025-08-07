@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from "react";
+import React, { cloneElement, FC, isValidElement, ReactNode, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
 import { ChevronRight, IconProps } from "@geneui/icons";
@@ -10,15 +10,18 @@ import Tooltip from "@components/molecules/Tooltip";
 // Hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
+import { INavigationProps } from "../Navigation";
+
 interface INavigationItemProps {
     title: string;
-    children?: React.ReactNode;
+    children?: ReactNode;
     onClick?: (path: string) => void;
     disabled?: boolean;
     selected?: boolean;
     depth: number;
     Icon?: FC<IconProps>;
     path?: string;
+    render?: INavigationProps["render"];
 }
 
 const NavigationItem: FC<INavigationItemProps> = ({
@@ -29,9 +32,10 @@ const NavigationItem: FC<INavigationItemProps> = ({
     selected,
     depth,
     Icon,
-    path
+    path,
+    render
 }) => {
-    const [isNavItemOpen, setIsNavItemOpen] = React.useState(false);
+    const [isNavItemOpen, setIsNavItemOpen] = useState(false);
     const textRef = useRef<HTMLHeadingElement | null>(null);
     const isTruncated: boolean = useEllipsisDetection(textRef, [title]);
     const onClickHandler = () => {
@@ -45,34 +49,58 @@ const NavigationItem: FC<INavigationItemProps> = ({
         if (!selected) return;
         setIsNavItemOpen(selected);
     }, [title, selected]);
+
+    const itemContent = (
+        <>
+            {Icon && <Icon className="navigationItem__icon" size={20} />}
+            <Tooltip text={title} isVisible={isTruncated}>
+                <Text as="span" variant="labelMediumMedium" className="menu__title ellipsis-text" ref={textRef}>
+                    {title}
+                </Text>
+            </Tooltip>
+            {children && (
+                <ChevronRight
+                    className={classNames("navigationItem__chevron", {
+                        navigationItem__chevron_open: isNavItemOpen
+                    })}
+                    size={20}
+                />
+            )}
+        </>
+    );
+
+    const propsToApply = {
+        "aria-expanded": children ? isNavItemOpen : undefined,
+        disabled,
+        className: classNames("navigationItem__button", `navigationItem__button_shift_${depth}`, {
+            navigationItem__button_disabled: disabled,
+            navigationItem__button_selected: selected,
+            navigationItem__button_pointer_none: selected && !children,
+            navigationItem__button_selected_noChildren: !children && selected,
+            navigationItem__button_render: render && path
+        }),
+        onClick: onClickHandler
+    };
+
+    const linkData = { path, title, isActive: selected, hasChildren: !!children, isDisabled: disabled };
+
+    const interactiveElement = (() => {
+        if (render && path) {
+            const renderedElement = render(linkData);
+            if (isValidElement(renderedElement)) {
+                return cloneElement(renderedElement, { ...propsToApply }, itemContent);
+            }
+        }
+        return (
+            <button type="button" {...propsToApply}>
+                {itemContent}
+            </button>
+        );
+    })();
+
     return (
         <div className="navigationItem">
-            <button
-                disabled={disabled}
-                type="button"
-                className={classNames("navigationItem__button", `navigationItem__button_shift_${depth}`, {
-                    navigationItem__button_disabled: disabled,
-                    navigationItem__button_selected: selected,
-                    navigationItem__button_pointer_none: selected && !children,
-                    navigationItem__button_selected_noChildren: !children && selected
-                })}
-                onClick={onClickHandler}
-            >
-                {Icon && <Icon className="navigationItem__icon" size={20} />}
-                <Tooltip text={title} isVisible={isTruncated}>
-                    <Text as="span" variant="labelMediumMedium" className="menu__title ellipsis-text" ref={textRef}>
-                        {title}
-                    </Text>
-                </Tooltip>
-                {children && (
-                    <ChevronRight
-                        className={classNames("navigationItem__chevron", {
-                            navigationItem__chevron_open: isNavItemOpen
-                        })}
-                        size={20}
-                    />
-                )}
-            </button>
+            {interactiveElement}
             {isNavItemOpen && children}
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useContext, useEffect, useRef, useState } from "react";
+import React, { FC, Fragment, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
 import { Plus, ThreeDotsHorizontal, X } from "@geneui/icons";
@@ -19,6 +19,7 @@ import { useWindowSize } from "@hooks/index";
 // Styles
 import "./Navigation.scss";
 
+const ELEMENT_HEIGHT = 62;
 export interface INavigationData {
     title: string;
     Icon?: FC;
@@ -63,6 +64,17 @@ interface INavigationProps {
      * Optional custom title for the "More" menu.
      */
     moreMenuTitle?: string;
+    /**
+     * Custom render function for navigation links.
+     */
+    render?: (linkData: {
+        path?: string;
+        title?: string;
+        isActive?: boolean;
+        hasChildren?: boolean;
+        isDisabled?: boolean;
+        Icon?: FC;
+    }) => ReactNode;
 }
 
 export const findPath = (
@@ -97,7 +109,8 @@ const NavMenuContent: FC<{
     depth?: number;
     onClick: (path: string) => void;
     activePathIndex?: number[] | null;
-}> = ({ data, depth = 0, onClick, activePathIndex }) => {
+    render?: INavigationProps["render"];
+}> = ({ data, depth = 0, onClick, activePathIndex, render }) => {
     if (!data) return null;
     return data.children?.map((item, index) => {
         const itemKey = `${item.title}-${item.path}`;
@@ -111,6 +124,7 @@ const NavMenuContent: FC<{
                     onClick={onClick}
                     disabled={item.disabled}
                     selected={index === activePathIndex?.[0]}
+                    render={render}
                 >
                     {item.children && (
                         <NavMenuContent
@@ -118,6 +132,7 @@ const NavMenuContent: FC<{
                             depth={depth + 1}
                             onClick={onClick}
                             activePathIndex={activePathIndex?.slice(1)}
+                            render={render}
                         />
                     )}
                 </NavigationItem>
@@ -137,7 +152,8 @@ const Navigation: FC<INavigationProps> = ({
     onClick,
     navigationCreateData,
     onNavigationCreateDataClick,
-    moreMenuTitle = "More"
+    moreMenuTitle = "More",
+    render
 }) => {
     const [currentDataIndex, setCurrentDataIndex] = useState<number | null>(null);
     const [hoverDataIndex, setHoverDataIndex] = useState<number | null>(null);
@@ -191,11 +207,12 @@ const Navigation: FC<INavigationProps> = ({
     }, [maxVisibleItems, clonedNavigationData]);
 
     useEffect(() => {
-        if (navColRef.current) {
-            const { scrollWidth, offsetWidth } = navColRef.current;
+        const navColRefCurrent = navColRef.current;
+        if (navColRefCurrent) {
+            const { scrollWidth, offsetWidth } = navColRefCurrent;
             if (scrollWidth > offsetWidth) {
-                const containerHeight = navColRef.current.offsetHeight;
-                const ELEMENT_HEIGHT = 62;
+                const containerHeight = navColRefCurrent.offsetHeight;
+
                 const maxVisibleItemsWithGap = Math.floor(containerHeight / ELEMENT_HEIGHT);
                 setMaxVisibleItems(maxVisibleItemsWithGap);
             } else {
@@ -316,6 +333,7 @@ const Navigation: FC<INavigationProps> = ({
                                                 disabled={item.disabled}
                                                 propsForPopover={hoverDataIndex === index ? propsForPopover : {}}
                                                 hasChildren={item.children && item.children.length > 0}
+                                                render={render}
                                             />
                                             {hoverDataIndex !== null && item.children && item.children.length > 0 && (
                                                 <Popover
@@ -339,6 +357,7 @@ const Navigation: FC<INavigationProps> = ({
                                                                         ? activePathIndex.slice(1)
                                                                         : null
                                                                 }
+                                                                render={render}
                                                             />
                                                         </div>
                                                     </PopoverBody>
@@ -420,6 +439,7 @@ const Navigation: FC<INavigationProps> = ({
                                                     ? activePathIndex.slice(1)
                                                     : null
                                             }
+                                            render={render}
                                         />
                                     </div>
                                 </Scrollbar>
