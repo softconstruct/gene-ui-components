@@ -19,6 +19,7 @@ import { useWindowSize } from "@hooks/index";
 // Styles
 import "./Navigation.scss";
 
+const ELEMENT_HEIGHT = 62;
 export interface INavigationData {
     title: string;
     Icon?: FC;
@@ -28,17 +29,6 @@ export interface INavigationData {
 }
 
 export type INavigationCreateData = Omit<IMenuItemProps, "children">;
-
-// export interface IRenderLinkPropsToApply {
-//     className: string;
-//     onClick: (event?: MouseEvent) => void;
-//     onMouseEnter?: (event?: MouseEvent) => void;
-//     disabled?: boolean;
-//     "aria-label"?: string;
-//     "aria-expanded"?: boolean;
-//
-//     [key: string]: unknown;
-// }
 
 interface INavigationProps {
     /**
@@ -217,11 +207,12 @@ const Navigation: FC<INavigationProps> = ({
     }, [maxVisibleItems, clonedNavigationData]);
 
     useEffect(() => {
-        if (navColRef.current) {
-            const { scrollWidth, offsetWidth } = navColRef.current;
+        const navColRefCurrent = navColRef.current;
+        if (navColRefCurrent) {
+            const { scrollWidth, offsetWidth } = navColRefCurrent;
             if (scrollWidth > offsetWidth) {
-                const containerHeight = navColRef.current?.offsetHeight;
-                const ELEMENT_HEIGHT = 62;
+                const containerHeight = navColRefCurrent.offsetHeight;
+
                 const maxVisibleItemsWithGap = Math.floor(containerHeight / ELEMENT_HEIGHT);
                 setMaxVisibleItems(maxVisibleItemsWithGap);
             } else {

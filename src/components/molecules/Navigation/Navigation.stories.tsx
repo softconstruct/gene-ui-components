@@ -22,7 +22,7 @@ const meta: Meta<INavigationProps> = {
         activePath: args({ control: "false", ...propCategory.states }),
         onClick: args({ control: "false", ...propCategory.action }),
         onNavigationCreateDataClick: args({ control: "false", ...propCategory.action }),
-        moreMenuTitle: args({ control: "false", ...propCategory.content }),
+        moreMenuTitle: args({ control: "text", ...propCategory.content }),
         render: args({ control: "false", ...propCategory.content })
     }
 };
