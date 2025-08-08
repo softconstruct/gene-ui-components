@@ -481,7 +481,7 @@ export const withGroupedColumns: TableCol<RowData>[] = [
                 order: 2,
                 enableGlobalFilter: false,
                 type: "checkbox",
-                accessorFn: (row) => row.checkbox?.data.checked,
+                accessorFn: (row) => row.checkbox?.data.value,
                 editable: true,
                 copyable: false,
                 enableSorting: true,

@@ -72,7 +72,7 @@ const newRow = (): Row => {
         checkbox: {
             type: "checkbox",
             data: {
-                value: faker.word.adjective(),
+                value: faker.helpers.shuffle(["default", "zebra"])[0]!,
                 checked: faker.helpers.shuffle<boolean>([true, false])[0]!
             } as ICheckboxProps
         },
@@ -90,7 +90,7 @@ const newRow = (): Row => {
             "green",
             "highlighted"
         ])[0]! as Row["rowStatus"],
-        expandedData: () => <h1>{faker.lorem.text()}</h1>
+        expandedData: () => <h1>Swap data</h1>
     };
 };
 

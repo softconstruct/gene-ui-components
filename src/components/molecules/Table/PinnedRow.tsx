@@ -2,7 +2,7 @@ import React, { ChangeEvent } from "react";
 import { Row } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import { ChevronDown, ChevronRight, Clock, Copy, Download, Pin, RecycleBin, Tag } from "@geneui/icons";
+import { ChevronDown, ChevronRight, Clock, Copy, Download, PinFilled, RecycleBin, Tag } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Checkbox from "@components/molecules/Checkbox";
@@ -106,7 +106,7 @@ const PinnedRow = ({
                                     appearance="secondary"
                                     layout="text"
                                     size="small"
-                                    Icon={Pin}
+                                    Icon={PinFilled}
                                     onClick={() => {
                                         row.pin(false);
                                         rowActions.pin?.(row.id);

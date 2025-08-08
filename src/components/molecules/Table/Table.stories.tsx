@@ -249,6 +249,7 @@ export const WithExpendRowsColumns: Story = {
                 withPagination
                 bulkActions={bulkActionsMock}
                 rowActions={{
+                    pin: () => {},
                     delete: (id) => console.log(id)
                 }}
                 onSave={(savedData) => onSave(savedData)}

@@ -6,8 +6,9 @@ import { Globe, Magnifier } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Label from "@components/atoms/Label";
+import { IPillProps } from "@components/atoms/Pill";
 import { Popover, PopoverBody, PopoverFooter, PopoverFooterActions } from "@components/atoms/Popover";
-import Checkbox from "@components/molecules/Checkbox";
+import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
 import Filter from "@components/molecules/Table/Filter";
 import { SortingIcons } from "@components/molecules/Table/helpers";
 import { RowData, TableCol } from "@components/molecules/Table/type";
@@ -15,6 +16,19 @@ import { RowData, TableCol } from "@components/molecules/Table/type";
 interface IColActionsProps {
     header: Header<RowData, unknown>;
 }
+
+const getFilterOptionLabelByColumnId = (data: string | IPillProps | ICheckboxProps, colId: string) => {
+    switch (colId) {
+        case "status":
+        case "pill":
+            return (data as IPillProps).text;
+        case "checkbox":
+        case "switch":
+            return (data as ICheckboxProps).value;
+        default:
+            return data as string;
+    }
+};
 
 const getFilterOption = (column: Column<RowData, unknown>): string[] => {
     const colDef = column.columnDef as TableCol<RowData>;
@@ -24,7 +38,16 @@ const getFilterOption = (column: Column<RowData, unknown>): string[] => {
         return initialFilteredOptions;
     }
     const { flatRows } = column.getFacetedRowModel();
-    return [...new Set(flatRows.map((row) => row.getValue(column.id) as string).filter((item) => Boolean(item)))];
+    return [
+        ...new Set(
+            flatRows
+                .map((row) => {
+                    const cellData: string | IPillProps | ICheckboxProps = row.original[column.id].data;
+                    return getFilterOptionLabelByColumnId(cellData, column.id);
+                })
+                .filter((item) => item !== undefined)
+        )
+    ];
 };
 
 export const ColActions: FC<IColActionsProps> = ({ header }) => {
