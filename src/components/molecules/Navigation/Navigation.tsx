@@ -160,7 +160,6 @@ const Navigation: FC<INavigationProps> = ({
     const [forceOpen, setForceOpen] = useState<boolean>(false);
     const [maxVisibleItems, setMaxVisibleItems] = useState<number>(0);
     const [activePathIndex, setActivePathIndex] = useState<number[] | null>(null);
-    const [moreMenuDataActiveIndex, setMoreMenuDataActiveIndex] = useState<number>(-1);
     const [clonedNavigationData, setClonedNavigationData] = useState<INavigationData[]>([]);
     const navColRef = useRef<HTMLDivElement | null>(null);
     const [propsForPopover, setPropsForPopover] = useState({});
@@ -219,7 +218,7 @@ const Navigation: FC<INavigationProps> = ({
                 setMaxVisibleItems(clonedNavigationData.length);
             }
         }
-    }, [navColRef.current, clonedNavigationData, height]);
+    }, [navColRef, clonedNavigationData, height]);
 
     useEffect(() => {
         const lastVisibleItemIndex = maxVisibleItems - 1;
@@ -276,31 +275,23 @@ const Navigation: FC<INavigationProps> = ({
         }
     };
 
-    const onMoreMenuItemsClickHandler = (item: IMenuItemProps) => {
-        const foundedItem = navigationData.find((data) => {
-            return !Array.isArray(item.children) && item.children === data.title;
-        });
-        const index = maxVisibleItems + +item.id;
-        setCurrentDataIndex(index);
-        setForceOpen(hasDataAndChildren(clonedNavigationData, index));
+    const onMoreMenuItemsClickHandler = (menuItemProps: IMenuItemProps) => {
+        const indexInMenuData = Number(menuItemProps.id);
+        const originalIndex = maxVisibleItems + indexInMenuData;
+        const clickedItem = clonedNavigationData[originalIndex];
+
+        if (!clickedItem) return;
+
+        setCurrentDataIndex(originalIndex);
+        setForceOpen(hasDataAndChildren(clonedNavigationData, originalIndex));
         setHoverDataIndex(null);
-        if (foundedItem?.path && onClick) {
-            onClick(foundedItem.path);
+
+        if (clickedItem.path && onClick) {
+            onClick(clickedItem.path);
         }
-        setActivePathIndex([maxVisibleItems - 1]);
     };
 
     const onNavigationCreateDataClickHandler = (item: INavigationCreateData) => onNavigationCreateDataClick?.(item);
-
-    useEffect(() => {
-        if (!(clonedNavigationData.length > maxVisibleItems)) return;
-        const index = activePathIndex?.[0];
-        if (typeof index === "number" && index >= maxVisibleItems) {
-            setMoreMenuDataActiveIndex(maxVisibleItems - index);
-        } else {
-            setMoreMenuDataActiveIndex(-1);
-        }
-    }, [maxVisibleItems, activePathIndex]);
 
     const onCreateMenuClickHandler = (isOpen: boolean) => {
         setIsCreateMenuOpen(isOpen);
@@ -309,63 +300,59 @@ const Navigation: FC<INavigationProps> = ({
     return (
         <div className={classNames("navigation", className)} role="navigation">
             {isMobileBreakpoint ? (
-                // todo create navigation mobile
                 <div>Mobile Navigation</div>
             ) : (
                 <>
                     <nav className="navigation__list">
                         <div className="navigation__listWrapper">
                             <div className="navigation__listItems" ref={navColRef}>
-                                {clonedNavigationData?.map((item, index) => {
-                                    return (
-                                        <Fragment key={`${item.title}-${item.path}`}>
-                                            <NavigationColItem
-                                                isVisible={index < maxVisibleItems}
-                                                Icon={item.Icon}
-                                                title={item.title}
-                                                onClick={onNavigationColItemClick}
-                                                index={index}
-                                                path={item.path}
-                                                opened={forceOpen}
-                                                currentSelected={currentDataIndex === index}
-                                                selected={index === activePathIndex?.[0]}
-                                                onMouseEnter={onMouseEnterHandler}
-                                                disabled={item.disabled}
-                                                propsForPopover={hoverDataIndex === index ? propsForPopover : {}}
-                                                hasChildren={item.children && item.children.length > 0}
-                                                render={render}
-                                            />
-                                            {hoverDataIndex !== null && item.children && item.children.length > 0 && (
-                                                <Popover
-                                                    setProps={setPropsForPopover}
-                                                    size="small"
-                                                    position="right-top"
-                                                    withArrow
-                                                    trigger="hover"
-                                                    margin={20}
-                                                    disableReposition={false}
-                                                    ref={popoverRef}
-                                                >
-                                                    <PopoverBody withPadding={false}>
-                                                        <div className="navigation__menu_wrapper">
-                                                            <NavMenuContent
-                                                                data={clonedNavigationData[hoverDataIndex]}
-                                                                onClick={onItemClickHandler}
-                                                                activePathIndex={
-                                                                    activePathIndex &&
-                                                                    hoverDataIndex === activePathIndex[0]
-                                                                        ? activePathIndex.slice(1)
-                                                                        : null
-                                                                }
-                                                                render={render}
-                                                            />
-                                                        </div>
-                                                    </PopoverBody>
-                                                </Popover>
-                                            )}
-                                        </Fragment>
-                                    );
-                                })}
+                                {clonedNavigationData?.map((item, index) => (
+                                    <Fragment key={`${item.title}-${item.path}`}>
+                                        <NavigationColItem
+                                            isVisible={index < maxVisibleItems}
+                                            Icon={item.Icon}
+                                            title={item.title}
+                                            onClick={onNavigationColItemClick}
+                                            index={index}
+                                            path={item.path}
+                                            opened={forceOpen}
+                                            currentSelected={currentDataIndex === index}
+                                            selected={index === activePathIndex?.[0]}
+                                            onMouseEnter={onMouseEnterHandler}
+                                            disabled={item.disabled}
+                                            propsForPopover={hoverDataIndex === index ? propsForPopover : {}}
+                                            hasChildren={item.children && item.children.length > 0}
+                                            render={render}
+                                        />
+                                        {hoverDataIndex !== null && item.children && item.children.length > 0 && (
+                                            <Popover
+                                                setProps={setPropsForPopover}
+                                                size="small"
+                                                position="right-top"
+                                                withArrow
+                                                trigger="hover"
+                                                margin={20}
+                                                disableReposition={false}
+                                                ref={popoverRef}
+                                            >
+                                                <PopoverBody withPadding={false}>
+                                                    <div className="navigation__menu_wrapper">
+                                                        <NavMenuContent
+                                                            data={clonedNavigationData[hoverDataIndex]}
+                                                            onClick={onItemClickHandler}
+                                                            activePathIndex={
+                                                                activePathIndex && hoverDataIndex === activePathIndex[0]
+                                                                    ? activePathIndex.slice(1)
+                                                                    : null
+                                                            }
+                                                            render={render}
+                                                        />
+                                                    </div>
+                                                </PopoverBody>
+                                            </Popover>
+                                        )}
+                                    </Fragment>
+                                ))}
                             </div>
                             {clonedNavigationData.length > maxVisibleItems && (
                                 <>
@@ -380,16 +367,32 @@ const Navigation: FC<INavigationProps> = ({
                                         onChange={onMoreMenuItemsClickHandler}
                                         setPropsForPopover={setMenuPropsForPopover}
                                     >
-                                        {menuData.map(({ Icon, title, disabled }, index) => {
+                                        {menuData.map((item, index) => {
+                                            const isParentItem = !!item.children && item.children.length > 0;
+
+                                            const menuItemRender =
+                                                render && item.path && !isParentItem
+                                                    ? (menuLinkData: { id: string | number; title?: string }) =>
+                                                          render({
+                                                              path: item.path,
+                                                              title: menuLinkData.title,
+                                                              isActive: activePath === item.path,
+                                                              hasChildren: isParentItem,
+                                                              isDisabled: item.disabled,
+                                                              Icon: item.Icon
+                                                          })
+                                                    : undefined;
+
                                             return (
                                                 <MenuItem
-                                                    key={`menuitem-${title}-${Icon?.displayName || Icon?.name || index}`}
+                                                    key={`menuitem-${item.title}-${item.path || index}`}
                                                     id={index}
-                                                    IconBefore={Icon}
-                                                    selected={index === moreMenuDataActiveIndex}
-                                                    disabled={disabled}
+                                                    IconBefore={item.Icon}
+                                                    selected={activePath === item.path}
+                                                    disabled={item.disabled}
+                                                    render={menuItemRender}
                                                 >
-                                                    {title}
+                                                    {item.title}
                                                 </MenuItem>
                                             );
                                         })}
