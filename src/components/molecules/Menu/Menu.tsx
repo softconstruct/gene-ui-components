@@ -66,7 +66,7 @@ interface IMenuProps {
      */
     children: ReactElement | ReactElement[];
     /**
-     *  Indicates whether the menu is in a loading state. If true, a loading indicator is displayed instead of the menu items.
+     * Indicates whether the menu is in a loading state. If true, a loading indicator is displayed instead of the menu items.
      */
     loading?: boolean;
     /**
@@ -76,9 +76,9 @@ interface IMenuProps {
     /**
      * Callback function hat returns all provided menu item props when a menu item is selected.
      */
-    onChange: (item: IMenuItemProps) => void;
+    onChange?: (item: IMenuItemProps) => void;
     /**
-     *  If true, enables swapping behavior, modifying the appearance and behavior of the menu.
+     * If true, enables swapping behavior, modifying the appearance and behavior of the menu.
      */
     swappable?: boolean;
     /**
@@ -92,8 +92,8 @@ interface IMenuProps {
      */
     size?: SizeType;
     /**
-     * Position of the Menu first popover, relative to the reference (trigger, anchor) element.<br>
-     * Possible values: `bottom-center | bottom-left | bottom-right | left-bottom | left-center` <br> `left-top | right-bottom | right-center | right-top | top-center | top-left | top-right | auto`
+     * Position of the Menu first popover, relative to the reference (trigger, anchor) element.<br/>
+     * Possible values: `bottom-center | bottom-left | bottom-right | left-bottom | left-center` <br/> `left-top | right-bottom | right-center | right-top | top-center | top-left | top-right | auto`
      */
     position?: IPopoverProps["position"];
     /**
@@ -125,7 +125,7 @@ const cloneChildrenRecursive = (
                 generatedId,
                 paths
             },
-            Array.isArray(child.props?.children)
+            child.props.children && typeof child.props.children !== "string"
                 ? cloneChildrenRecursive(child.props?.children, paths, props, generatedId)
                 : child.props?.children
         );
@@ -213,7 +213,7 @@ const Menu: FC<IMenuProps> = ({
         if (onOpenChange) {
             onOpenChange(isOpenState);
         }
-    }, [isOpenState]);
+    }, [isOpenState, onOpenChange]);
 
     const onChangeHandler = ({ generatedId, isBack, closeMenu, item }: OnchangeHandlerType) => {
         if (swappable || isMobileBreakpoint) setOpenSelectedPathState(false);
@@ -226,7 +226,7 @@ const Menu: FC<IMenuProps> = ({
         } else {
             setPaths(currentPath);
         }
-        if (closeMenu) {
+        if (closeMenu && onChange) {
             onChange({
                 ...item,
                 title: typeof item?.children === "string" ? item?.children : item?.title
@@ -251,7 +251,7 @@ const Menu: FC<IMenuProps> = ({
             openSelectedPath: openSelectedPathState,
             size: size as SizeType
         }),
-        [onChangeHandler, swappable, size, isMobileBreakpoint, relativeRefsSetter, openSelectedPath]
+        [onChangeHandler, swappable, size, isMobileBreakpoint, relativeRefsSetter, openSelectedPathState]
     );
 
     const clonedChildren = cloneChildrenRecursive(children, paths);

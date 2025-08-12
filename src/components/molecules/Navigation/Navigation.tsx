@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useContext, useEffect, useRef, useState } from "react";
+import React, { FC, Fragment, ReactNode, useContext, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
 import { Plus, ThreeDotsHorizontal, X } from "@geneui/icons";
@@ -19,6 +19,7 @@ import { useWindowSize } from "@hooks/index";
 // Styles
 import "./Navigation.scss";
 
+const ELEMENT_HEIGHT = 62;
 export interface INavigationData {
     title: string;
     Icon?: FC;
@@ -63,6 +64,17 @@ interface INavigationProps {
      * Optional custom title for the "More" menu.
      */
     moreMenuTitle?: string;
+    /**
+     * Custom render function for navigation links.
+     */
+    render?: (linkData: {
+        path?: string;
+        title?: string;
+        isActive?: boolean;
+        hasChildren?: boolean;
+        isDisabled?: boolean;
+        Icon?: FC;
+    }) => ReactNode;
 }
 
 export const findPath = (
@@ -97,7 +109,8 @@ const NavMenuContent: FC<{
     depth?: number;
     onClick: (path: string) => void;
     activePathIndex?: number[] | null;
-}> = ({ data, depth = 0, onClick, activePathIndex }) => {
+    render?: INavigationProps["render"];
+}> = ({ data, depth = 0, onClick, activePathIndex, render }) => {
     if (!data) return null;
     return data.children?.map((item, index) => {
         const itemKey = `${item.title}-${item.path}`;
@@ -111,6 +124,7 @@ const NavMenuContent: FC<{
                     onClick={onClick}
                     disabled={item.disabled}
                     selected={index === activePathIndex?.[0]}
+                    render={render}
                 >
                     {item.children && (
                         <NavMenuContent
@@ -118,6 +132,7 @@ const NavMenuContent: FC<{
                             depth={depth + 1}
                             onClick={onClick}
                             activePathIndex={activePathIndex?.slice(1)}
+                            render={render}
                         />
                     )}
                 </NavigationItem>
@@ -137,14 +152,14 @@ const Navigation: FC<INavigationProps> = ({
     onClick,
     navigationCreateData,
     onNavigationCreateDataClick,
-    moreMenuTitle = "More"
+    moreMenuTitle = "More",
+    render
 }) => {
     const [currentDataIndex, setCurrentDataIndex] = useState<number | null>(null);
     const [hoverDataIndex, setHoverDataIndex] = useState<number | null>(null);
     const [forceOpen, setForceOpen] = useState<boolean>(false);
     const [maxVisibleItems, setMaxVisibleItems] = useState<number>(0);
     const [activePathIndex, setActivePathIndex] = useState<number[] | null>(null);
-    const [moreMenuDataActiveIndex, setMoreMenuDataActiveIndex] = useState<number>(-1);
     const [clonedNavigationData, setClonedNavigationData] = useState<INavigationData[]>([]);
     const navColRef = useRef<HTMLDivElement | null>(null);
     const [propsForPopover, setPropsForPopover] = useState({});
@@ -191,18 +206,19 @@ const Navigation: FC<INavigationProps> = ({
     }, [maxVisibleItems, clonedNavigationData]);
 
     useEffect(() => {
-        if (navColRef.current) {
-            const { scrollWidth, offsetWidth } = navColRef.current;
+        const navColRefCurrent = navColRef.current;
+        if (navColRefCurrent) {
+            const { scrollWidth, offsetWidth } = navColRefCurrent;
             if (scrollWidth > offsetWidth) {
-                const containerHeight = navColRef.current.offsetHeight;
-                const ELEMENT_HEIGHT = 62;
+                const containerHeight = navColRefCurrent.offsetHeight;
+
                 const maxVisibleItemsWithGap = Math.floor(containerHeight / ELEMENT_HEIGHT);
                 setMaxVisibleItems(maxVisibleItemsWithGap);
             } else {
                 setMaxVisibleItems(clonedNavigationData.length);
             }
         }
-    }, [navColRef.current, clonedNavigationData, height]);
+    }, [navColRef, clonedNavigationData, height]);
 
     useEffect(() => {
         const lastVisibleItemIndex = maxVisibleItems - 1;
@@ -259,31 +275,23 @@ const Navigation: FC<INavigationProps> = ({
         }
     };
 
-    const onMoreMenuItemsClickHandler = (item: IMenuItemProps) => {
-        const foundedItem = navigationData.find((data) => {
-            return !Array.isArray(item.children) && item.children === data.title;
-        });
-        const index = maxVisibleItems + +item.id;
-        setCurrentDataIndex(index);
-        setForceOpen(hasDataAndChildren(clonedNavigationData, index));
+    const onMoreMenuItemsClickHandler = (menuItemProps: IMenuItemProps) => {
+        const indexInMenuData = Number(menuItemProps.id);
+        const originalIndex = maxVisibleItems + indexInMenuData;
+        const clickedItem = clonedNavigationData[originalIndex];
+
+        if (!clickedItem) return;
+
+        setCurrentDataIndex(originalIndex);
+        setForceOpen(hasDataAndChildren(clonedNavigationData, originalIndex));
         setHoverDataIndex(null);
-        if (foundedItem?.path && onClick) {
-            onClick(foundedItem.path);
+
+        if (clickedItem.path && onClick) {
+            onClick(clickedItem.path);
         }
-        setActivePathIndex([maxVisibleItems - 1]);
     };
 
     const onNavigationCreateDataClickHandler = (item: INavigationCreateData) => onNavigationCreateDataClick?.(item);
-
-    useEffect(() => {
-        if (!(clonedNavigationData.length > maxVisibleItems)) return;
-        const index = activePathIndex?.[0];
-        if (typeof index === "number" && index >= maxVisibleItems) {
-            setMoreMenuDataActiveIndex(maxVisibleItems - index);
-        } else {
-            setMoreMenuDataActiveIndex(-1);
-        }
-    }, [maxVisibleItems, activePathIndex]);
 
     const onCreateMenuClickHandler = (isOpen: boolean) => {
         setIsCreateMenuOpen(isOpen);
@@ -292,61 +300,59 @@ const Navigation: FC<INavigationProps> = ({
     return (
         <div className={classNames("navigation", className)} role="navigation">
             {isMobileBreakpoint ? (
-                // todo create navigation mobile
                 <div>Mobile Navigation</div>
             ) : (
                 <>
                     <nav className="navigation__list">
                         <div className="navigation__listWrapper">
                             <div className="navigation__listItems" ref={navColRef}>
-                                {clonedNavigationData?.map((item, index) => {
-                                    return (
-                                        <Fragment key={`${item.title}-${item.path}`}>
-                                            <NavigationColItem
-                                                isVisible={index < maxVisibleItems}
-                                                Icon={item.Icon}
-                                                title={item.title}
-                                                onClick={onNavigationColItemClick}
-                                                index={index}
-                                                path={item.path}
-                                                opened={forceOpen}
-                                                currentSelected={currentDataIndex === index}
-                                                selected={index === activePathIndex?.[0]}
-                                                onMouseEnter={onMouseEnterHandler}
-                                                disabled={item.disabled}
-                                                propsForPopover={hoverDataIndex === index ? propsForPopover : {}}
-                                                hasChildren={item.children && item.children.length > 0}
-                                            />
-                                            {hoverDataIndex !== null && item.children && item.children.length > 0 && (
-                                                <Popover
-                                                    setProps={setPropsForPopover}
-                                                    size="small"
-                                                    position="right-top"
-                                                    withArrow
-                                                    trigger="hover"
-                                                    margin={20}
-                                                    disableReposition={false}
-                                                    ref={popoverRef}
-                                                >
-                                                    <PopoverBody withPadding={false}>
-                                                        <div className="navigation__menu_wrapper">
-                                                            <NavMenuContent
-                                                                data={clonedNavigationData[hoverDataIndex]}
-                                                                onClick={onItemClickHandler}
-                                                                activePathIndex={
-                                                                    activePathIndex &&
-                                                                    hoverDataIndex === activePathIndex[0]
-                                                                        ? activePathIndex.slice(1)
-                                                                        : null
-                                                                }
-                                                            />
-                                                        </div>
-                                                    </PopoverBody>
-                                                </Popover>
-                                            )}
-                                        </Fragment>
-                                    );
-                                })}
+                                {clonedNavigationData?.map((item, index) => (
+                                    <Fragment key={`${item.title}-${item.path}`}>
+                                        <NavigationColItem
+                                            isVisible={index < maxVisibleItems}
+                                            Icon={item.Icon}
+                                            title={item.title}
+                                            onClick={onNavigationColItemClick}
+                                            index={index}
+                                            path={item.path}
+                                            opened={forceOpen}
+                                            currentSelected={currentDataIndex === index}
+                                            selected={index === activePathIndex?.[0]}
+                                            onMouseEnter={onMouseEnterHandler}
+                                            disabled={item.disabled}
+                                            propsForPopover={hoverDataIndex === index ? propsForPopover : {}}
+                                            hasChildren={item.children && item.children.length > 0}
+                                            render={render}
+                                        />
+                                        {hoverDataIndex !== null && item.children && item.children.length > 0 && (
+                                            <Popover
+                                                setProps={setPropsForPopover}
+                                                size="small"
+                                                position="right-top"
+                                                withArrow
+                                                trigger="hover"
+                                                margin={20}
+                                                disableReposition={false}
+                                                ref={popoverRef}
+                                            >
+                                                <PopoverBody withPadding={false}>
+                                                    <div className="navigation__menu_wrapper">
+                                                        <NavMenuContent
+                                                            data={clonedNavigationData[hoverDataIndex]}
+                                                            onClick={onItemClickHandler}
+                                                            activePathIndex={
+                                                                activePathIndex && hoverDataIndex === activePathIndex[0]
+                                                                    ? activePathIndex.slice(1)
+                                                                    : null
+                                                            }
+                                                            render={render}
+                                                        />
+                                                    </div>
+                                                </PopoverBody>
+                                            </Popover>
+                                        )}
+                                    </Fragment>
+                                ))}
                             </div>
                             {clonedNavigationData.length > maxVisibleItems && (
                                 <>
@@ -361,16 +367,32 @@ const Navigation: FC<INavigationProps> = ({
                                         onChange={onMoreMenuItemsClickHandler}
                                         setPropsForPopover={setMenuPropsForPopover}
                                     >
-                                        {menuData.map(({ Icon, title, disabled }, index) => {
+                                        {menuData.map((item, index) => {
+                                            const isParentItem = !!item.children && item.children.length > 0;
+
+                                            const menuItemRender =
+                                                render && item.path && !isParentItem
+                                                    ? (menuLinkData: { id: string | number; title?: string }) =>
+                                                          render({
+                                                              path: item.path,
+                                                              title: menuLinkData.title,
+                                                              isActive: activePath === item.path,
+                                                              hasChildren: isParentItem,
+                                                              isDisabled: item.disabled,
+                                                              Icon: item.Icon
+                                                          })
+                                                    : undefined;
+
                                             return (
                                                 <MenuItem
-                                                    key={`menuitem-${title}-${Icon?.displayName || Icon?.name || index}`}
+                                                    key={`menuitem-${item.title}-${item.path || index}`}
                                                     id={index}
-                                                    IconBefore={Icon}
-                                                    selected={index === moreMenuDataActiveIndex}
-                                                    disabled={disabled}
+                                                    IconBefore={item.Icon}
+                                                    selected={activePath === item.path}
+                                                    disabled={item.disabled}
+                                                    render={menuItemRender}
                                                 >
-                                                    {title}
+                                                    {item.title}
                                                 </MenuItem>
                                             );
                                         })}
@@ -420,6 +442,7 @@ const Navigation: FC<INavigationProps> = ({
                                                     ? activePathIndex.slice(1)
                                                     : null
                                             }
+                                            render={render}
                                         />
                                     </div>
                                 </Scrollbar>

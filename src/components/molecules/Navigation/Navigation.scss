@@ -129,6 +129,10 @@
     gap: var(--guit-ref-spacing-3xsmall);
 
     &__button {
+        &_render {
+            color: inherit;
+        }
+
         display: flex;
         gap: var(--guit-ref-spacing-xsmall);
         width: 100%;
