@@ -44,7 +44,15 @@ const StoryComponent: FC<IProductsProps> = (props) => {
     };
 
     return (
-        <div style={{ justifyContent: "end", display: "flex", backgroundColor: "#262627", padding: "1rem" }}>
+        <div
+            style={{
+                justifyContent: "end",
+                display: "flex",
+                backgroundColor: "#262627",
+                padding: "1rem",
+                colorScheme: "light"
+            }}
+        >
             <Products {...props} onChange={handleProductChange}>
                 <ProductsMainSection>
                     {products.slice(0, 3).map((product) => (
@@ -73,7 +81,15 @@ const WithRenderStoryComponent: FC<IProductsProps> = (props) => {
     };
 
     return (
-        <div style={{ justifyContent: "end", display: "flex", backgroundColor: "#262627", padding: "1rem" }}>
+        <div
+            style={{
+                justifyContent: "end",
+                display: "flex",
+                backgroundColor: "#262627",
+                padding: "1rem",
+                colorScheme: "light"
+            }}
+        >
             <Products {...props} onChange={handleProductChange}>
                 <ProductsMainSection>
                     {testMainProducts.map((product) => (
