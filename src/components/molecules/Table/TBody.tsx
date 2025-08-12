@@ -12,7 +12,7 @@ interface ITableBody {
     editableMode: boolean;
     rowActions: Partial<RowActions>;
     onRowClick?: (event: string) => void;
-    onRowDelete?: (index: number) => void;
+    onRowDelete?: (rowId: string) => void;
     onCellEdit: (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
         rowIndex: number,

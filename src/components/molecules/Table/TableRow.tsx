@@ -19,7 +19,7 @@ interface ITableRow {
     editableMode: boolean;
     rowActions: Partial<RowActions>;
     onRowClick?: (event: string) => void;
-    onRowDelete?: (index: number) => void;
+    onRowDelete?: (rowId: string) => void;
     handleCellEdit: (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
         rowIndex: number,
@@ -39,7 +39,7 @@ const TableRow: FC<ITableRow> = ({
     onRowDelete
 }) => {
     const handleRowDelete = () => {
-        onRowDelete?.(rowIndex);
+        onRowDelete?.(row.id);
         rowActions.delete?.(row.id);
     };
 

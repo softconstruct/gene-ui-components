@@ -19,6 +19,7 @@ const range = (len: number) => {
 
 const newRow = (): Row => {
     return {
+        id: crypto.randomUUID(),
         graph: {
             type: "graph",
             data: faker.image.image(148, 28)

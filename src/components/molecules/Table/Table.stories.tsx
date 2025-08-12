@@ -87,7 +87,8 @@ export const Default: Story = {
             {...props}
             columns={defaultColumns}
             rowActions={{
-                delete: (id) => console.log(id)
+                delete: () => {},
+                pin: () => {}
             }}
             externalData={data}
             withManageColumns

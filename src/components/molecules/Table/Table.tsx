@@ -284,6 +284,7 @@ const Table: FC<ITableProps> = ({
             globalFilter,
             columnFilters
         },
+        getRowId: (row) => row.id,
         ...(withManualPagination && { manualPagination: withManualPagination }),
         onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
@@ -464,8 +465,14 @@ const Table: FC<ITableProps> = ({
         );
     };
 
-    const handleRowDelete = (rowIndex: number) => {
-        setData((prevData) => prevData.filter((row) => data.indexOf(row) !== rowIndex));
+    const handleRowDelete = (rowId: string) => {
+        setRowPinning((prev) => ({ ...prev, top: prev.top?.filter((row) => row !== rowId) }));
+
+        setData((prevData) =>
+            prevData.filter((row) => {
+                return row.id !== rowId;
+            })
+        );
     };
 
     const renderTableBody = () => {
@@ -476,12 +483,13 @@ const Table: FC<ITableProps> = ({
         if (table.getRowModel().flatRows.length > 0) {
             return (
                 <>
-                    {table.getTopRows().map((row, index) => (
+                    {table.getTopRows().map((row) => (
                         <PinnedRow
                             key={row.id}
-                            rowIndex={index}
+                            rowIndex={row.index}
                             row={row}
                             rowActions={rowActions || {}}
+                            withCheckbox={withCheckbox}
                             expandable={expandable}
                             editableMode={editableMode}
                             onCellEdit={handleCellEdit}

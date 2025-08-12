@@ -14,6 +14,7 @@ import { RowActions, TableCol } from "./type";
 const PinnedRow = ({
     row,
     rowIndex,
+    withCheckbox,
     expandable,
     editableMode,
     onCellEdit,
@@ -23,8 +24,9 @@ const PinnedRow = ({
     row: Row<any>;
     rowIndex: number;
     expandable?: boolean;
+    withCheckbox: boolean;
     editableMode: boolean;
-    onRowDelete?: (index: number) => void;
+    onRowDelete?: (rowId: string) => void;
     onCellEdit: (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
         index: number,
@@ -33,14 +35,13 @@ const PinnedRow = ({
     rowActions: Partial<RowActions>;
 }) => {
     const handleRowDelete = () => {
-        onRowDelete?.(rowIndex);
+        onRowDelete?.(row.id);
         rowActions.delete?.(row.id);
     };
 
     return (
         <>
             <tr
-                key={row.id}
                 className={classNames(
                     `table__row table__row_tbody table__row_${row.original.rowStatus} table__pinned table__pinned_horizontal`
                 )}
@@ -64,17 +65,13 @@ const PinnedRow = ({
                         </div>
                     </td>
                 )}
-
-                {/* todo: add next classNames next to "table__td" classname, for similar states - "table__pinned", "table__pinned_horizontal" */}
-                {/* {row.withCheckbox && ( */}
-                <td key={`${row.id}-1`} className="table__td">
-                    {/* todo: add next classNames for similar states - "table__content_empty", "table__content_expand", "table__content_checkbox" */}
-                    <div className="table__content table__content_checkbox">
-                        <Checkbox name="item" value="item" />
-                        {/* <Checkbox name="item" value="item" checked /> */}
-                    </div>
-                </td>
-                {/* )} */}
+                {withCheckbox && (
+                    <td className="table__td">
+                        <div className="table__content table__content_checkbox">
+                            <Checkbox name="item" value="item" />
+                        </div>
+                    </td>
+                )}
                 {row.getVisibleCells().map((cell) => {
                     const { type } = cell.column.columnDef as TableCol<unknown>;
                     if (type === "expand" || type === "rowCheckbox") {
@@ -169,9 +166,8 @@ const PinnedRow = ({
                 )}
             </tr>
             {row.getIsExpanded() && (
-                <tr key={`${row.id}_expanded`} className="table__row table__row_tbody">
+                <tr className="table__row table__row_tbody">
                     <td className="table__td table__td_expanded" colSpan={row.getVisibleCells().length}>
-                        {/* todo: replace this custom "swapComponent" with needed content after implementation */}
                         <div
                             className="swapComponent"
                             style={{

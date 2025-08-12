@@ -109,6 +109,7 @@ type TableRowCells = {
 };
 
 export type Row = TableRowCells & {
+    id: string;
     rowStatus: "default" | "zebra" | "red" | "green" | "highlighted";
     expandedData: () => ReactNode | null;
 };
