@@ -58,6 +58,11 @@
 
     &__title {
         color: var(--guit-sem-color-foreground-neutral-2);
+        min-width: 1rem;
+    }
+
+    &__closeButton {
+        margin-left: auto;
     }
 
     &_variant {
@@ -88,7 +93,7 @@
         }
     }
 
-    &_flow {
+    &_direction {
         &_vertical {
             flex-direction: column;
             justify-content: flex-end;

@@ -1,3 +1,4 @@
+import React, { FC } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -9,11 +10,18 @@ const meta: Meta<IDrawerProps> = {
     title: "Molecules/Drawer",
     component: Drawer,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance })
-        // fill Drawer component argTypes
+        className: args({ control: "false", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
+        direction: args({ control: "select", ...propCategory.appearance }),
+        withPadding: args({ control: "boolean", ...propCategory.appearance }),
+        title: args({ control: "text", ...propCategory.content }),
+        hasCloseButton: args({ control: "boolean", ...propCategory.functionality }),
+        open: args({ control: "boolean", ...propCategory.states })
     },
     args: {
-        // fill Drawer component args
+        withPadding: true,
+        title: "Drawer Title",
+        open: true
     }
 };
 
@@ -21,4 +29,10 @@ export default meta;
 
 type Story = StoryObj<IDrawerProps>;
 
-export const Default: Story = {};
+const DrawerTemplate: FC = (props) => {
+    return <Drawer {...props} />;
+};
+
+export const Default: Story = {
+    render: (props) => <DrawerTemplate {...props} />
+};
