@@ -92,11 +92,9 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
             }
         }
         return (
-            <Tooltip text={title} isVisible={compact}>
-                <button type="button" {...propsToApply}>
-                    {Icon && <Icon />}
-                </button>
-            </Tooltip>
+            <button type="button" {...propsToApply}>
+                {Icon && <Icon />}
+            </button>
         );
     })();
 
