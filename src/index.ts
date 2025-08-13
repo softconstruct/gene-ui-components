@@ -27,6 +27,16 @@ export { Steps, Step, IStepProps, IStepsProps } from "./components/molecules/Ste
 export { default as Tag, ITagProps } from "./components/molecules/Tag";
 export { default as Switch, ISwitchProps } from "./components/molecules/Switch";
 export { Timelines, TimelinePoint, ITimelinesProps, ITimelinePointProps } from "./components/molecules/Timeline";
+export {
+    Products,
+    Product,
+    IProductsProps,
+    IProductProps,
+    ProductsMainSection,
+    IProductsMainSectionProps,
+    ProductsSecondarySection,
+    IProductsSecondarySectionProps
+} from "./components/molecules/Products";
 export { default as QRCode, IQRCodeProps } from "./components/molecules/QRCode";
 export { KeyValue, Key, Value, IKeyValueProps, IKeyProps, IValueProps } from "./components/molecules/KeyValue";
 export { Menu, MenuItem, IMenuProps, IMenuItemProps } from "./components/molecules/Menu";

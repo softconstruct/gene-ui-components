@@ -20,6 +20,8 @@ import { useWindowSize } from "@hooks/index";
 import "./Navigation.scss";
 
 const ELEMENT_HEIGHT = 62;
+const ELEMENT_HEIGHT_COMPACT = 48;
+
 export interface INavigationData {
     title: string;
     Icon?: FC;
@@ -75,6 +77,10 @@ interface INavigationProps {
         isDisabled?: boolean;
         Icon?: FC;
     }) => ReactNode;
+    /**
+     * Hides item titles, showing only icons with tooltips for a compact layout.
+     */
+    compact?: boolean;
 }
 
 export const findPath = (
@@ -153,7 +159,8 @@ const Navigation: FC<INavigationProps> = ({
     navigationCreateData,
     onNavigationCreateDataClick,
     moreMenuTitle = "More",
-    render
+    render,
+    compact = false
 }) => {
     const [currentDataIndex, setCurrentDataIndex] = useState<number | null>(null);
     const [hoverDataIndex, setHoverDataIndex] = useState<number | null>(null);
@@ -197,7 +204,7 @@ const Navigation: FC<INavigationProps> = ({
     }, [forceOpen, hoverDataIndex, currentDataIndex, activePathIndex]);
 
     useEffect(() => {
-        setClonedNavigationData(navigationData);
+        setClonedNavigationData(Array.isArray(navigationData) ? navigationData : []);
     }, [navigationData]);
 
     useEffect(() => {
@@ -212,13 +219,15 @@ const Navigation: FC<INavigationProps> = ({
             if (scrollWidth > offsetWidth) {
                 const containerHeight = navColRefCurrent.offsetHeight;
 
-                const maxVisibleItemsWithGap = Math.floor(containerHeight / ELEMENT_HEIGHT);
+                const maxVisibleItemsWithGap = Math.floor(
+                    containerHeight / (compact ? ELEMENT_HEIGHT_COMPACT : ELEMENT_HEIGHT)
+                );
                 setMaxVisibleItems(maxVisibleItemsWithGap);
             } else {
                 setMaxVisibleItems(clonedNavigationData.length);
             }
         }
-    }, [navColRef, clonedNavigationData, height]);
+    }, [navColRef, clonedNavigationData, height, compact]);
 
     useEffect(() => {
         const lastVisibleItemIndex = maxVisibleItems - 1;
@@ -323,6 +332,7 @@ const Navigation: FC<INavigationProps> = ({
                                             propsForPopover={hoverDataIndex === index ? propsForPopover : {}}
                                             hasChildren={item.children && item.children.length > 0}
                                             render={render}
+                                            compact={compact}
                                         />
                                         {hoverDataIndex !== null && item.children && item.children.length > 0 && (
                                             <Popover

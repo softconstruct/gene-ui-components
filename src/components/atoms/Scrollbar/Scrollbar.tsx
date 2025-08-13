@@ -151,7 +151,6 @@ const Scrollbar: FC<IScrollbarProps> = (props) => {
             role="scrollbar"
             aria-valuenow={0}
             contentProps={{
-                tabIndex: 0,
                 className: "scrollbar__content"
             }}
             minimalThumbSize={30}
