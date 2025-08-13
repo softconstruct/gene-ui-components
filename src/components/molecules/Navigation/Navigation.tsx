@@ -204,7 +204,7 @@ const Navigation: FC<INavigationProps> = ({
     }, [forceOpen, hoverDataIndex, currentDataIndex, activePathIndex]);
 
     useEffect(() => {
-        setClonedNavigationData(navigationData);
+        setClonedNavigationData(Array.isArray(navigationData) ? navigationData : []);
     }, [navigationData]);
 
     useEffect(() => {
