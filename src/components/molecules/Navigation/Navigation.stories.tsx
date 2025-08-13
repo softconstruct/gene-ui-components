@@ -23,7 +23,8 @@ const meta: Meta<INavigationProps> = {
         onClick: args({ control: "false", ...propCategory.action }),
         onNavigationCreateDataClick: args({ control: "false", ...propCategory.action }),
         moreMenuTitle: args({ control: "text", ...propCategory.content }),
-        render: args({ control: "false", ...propCategory.content })
+        render: args({ control: "false", ...propCategory.content }),
+        compact: args({ control: "boolean", ...propCategory.appearance })
     }
 };
 

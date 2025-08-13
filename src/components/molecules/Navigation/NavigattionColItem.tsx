@@ -27,6 +27,7 @@ interface INavigationColItemProps {
     hasChildren?: boolean;
     currentSelected?: boolean;
     render?: INavigationProps["render"];
+    compact?: boolean;
 }
 
 const NavigationColItem: FC<INavigationColItemProps> = ({
@@ -43,7 +44,8 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
     isVisible,
     hasChildren,
     currentSelected,
-    render
+    render,
+    compact = false
 }) => {
     const textRef = useRef<HTMLHeadingElement | null>(null);
     const isTruncated: boolean = useEllipsisDetection(textRef, [title]);
@@ -90,16 +92,18 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
             }
         }
         return (
-            <button type="button" {...propsToApply}>
-                {Icon && <Icon />}
-            </button>
+            <Tooltip text={title} isVisible={compact}>
+                <button type="button" {...propsToApply}>
+                    {Icon && <Icon />}
+                </button>
+            </Tooltip>
         );
     })();
 
     return (
         <div className="navigation__listItem">
             {interactiveElement}
-            {title && (
+            {title && !compact && (
                 <Tooltip text={title} isVisible={isTruncated}>
                     <Text
                         as="p"
