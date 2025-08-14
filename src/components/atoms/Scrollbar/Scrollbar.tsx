@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, UIEvent, useEffect, useRef, useState } from "react";
+import React, { forwardRef, ReactNode, UIEvent, useEffect, useImperativeHandle, useRef, useState } from "react";
 import classNames from "classnames";
 import Scrollbars from "react-scrollbars-custom";
 
@@ -46,10 +46,17 @@ interface IScrollbarProps {
     scrollBehaviorSmooth?: boolean;
 }
 
+type ScrollbarRef = {
+    /**
+     * Reference to the instance of the Scrollbar component
+     */
+    scrollbarRef: Scrollbars | null;
+};
+
 /**
  * Scrollbar is a UI element that allows users to navigate through content that extends beyond the visible area of a container or window. It typically appears along the right side or bottom of the viewport, providing a draggable handle and directional arrows for vertical or horizontal scrolling, enabling users to access all available content.
  */
-const Scrollbar: FC<IScrollbarProps> = (props) => {
+const Scrollbar = forwardRef<ScrollbarRef, IScrollbarProps>((props, ref) => {
     const {
         className,
         children,
@@ -64,6 +71,10 @@ const Scrollbar: FC<IScrollbarProps> = (props) => {
     const [scrollDirection, setScrollDirection] = useState<"x" | "y" | null>(null);
     const previousScrollPosition = useRef({ scrollTop: 0, scrollLeft: 0 });
     const scrollbarRef = useRef<Scrollbars | null>(null);
+
+    useImperativeHandle(ref, () => ({
+        scrollbarRef: scrollbarRef.current
+    }));
 
     const scrollStateResetHandler = () => {
         setScrollDirection(null);
@@ -169,6 +180,6 @@ const Scrollbar: FC<IScrollbarProps> = (props) => {
             {children}
         </Scrollbars>
     );
-};
+});
 
-export { IScrollbarProps, Scrollbar as default };
+export { IScrollbarProps, ScrollbarRef, Scrollbar as default };
