@@ -19,7 +19,7 @@ const range = (len: number) => {
 
 const newRow = (): Row => {
     return {
-        id: crypto.randomUUID(),
+        id: faker.datatype.uuid(),
         graph: {
             type: "graph",
             data: faker.image.image(148, 28)
@@ -84,6 +84,7 @@ const newRow = (): Row => {
                 checked: faker.helpers.shuffle<boolean>([true, false])[0]!
             } as ISwitchProps
         },
+        isPinned: faker.helpers.shuffle<boolean>([false, true])[0]!,
         rowStatus: faker.helpers.shuffle<Row["rowStatus"]>([
             "default",
             "zebra",

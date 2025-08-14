@@ -39,8 +39,15 @@ const meta: Meta<ITableProps> = {
         externalData: args({ control: "false", ...propCategory.content }),
         expandable: args({ control: "boolean", ...propCategory.content }),
         withCheckbox: args({ control: "boolean", ...propCategory.content }),
-        rowActions: args({ control: "false", ...propCategory.content }),
         onRowClick: args({ control: "false", ...propCategory.action }),
+        onRowPin: args({ control: "false", ...propCategory.action }),
+        onRowTag: args({ control: "false", ...propCategory.action }),
+        onRowClock: args({ control: "false", ...propCategory.action }),
+        onRowReload: args({ control: "false", ...propCategory.action }),
+        onRowCopy: args({ control: "false", ...propCategory.action }),
+        onRowDownload: args({ control: "false", ...propCategory.action }),
+        onRowShow: args({ control: "false", ...propCategory.action }),
+        onRowDelete: args({ control: "false", ...propCategory.action }),
         onColumnCheck: args({ control: "false", ...propCategory.action }),
         className: args({ control: "false", ...propCategory.appearance }),
         onGlobalFilterChange: args({ control: "false", ...propCategory.action }),
@@ -75,25 +82,23 @@ const meta: Meta<ITableProps> = {
     },
     args: {
         columns: defaultColumns,
-        externalData: data
+        externalData: data,
+        onRowClick: undefined,
+        // onRowPin: undefined,
+        onRowTag: undefined,
+        onRowClock: undefined,
+        onRowReload: undefined,
+        onRowCopy: undefined,
+        onRowDownload: undefined,
+        onRowShow: undefined
+        // onRowDelete: undefined
     }
 };
 
 type Story = StoryObj<ITableProps>;
 
 export const Default: Story = {
-    render: (props) => (
-        <Table
-            {...props}
-            columns={defaultColumns}
-            rowActions={{
-                delete: () => {},
-                pin: () => {}
-            }}
-            externalData={data}
-            withManageColumns
-        />
-    )
+    render: (props) => <Table {...props} columns={defaultColumns} externalData={data} withManageColumns />
 };
 
 export const WithStickyHeader: Story = {
@@ -116,9 +121,6 @@ export const WithStickyHeader: Story = {
                 withCheckbox
                 withStickyHeader
                 bulkActions={bulkActionsMock}
-                rowActions={{
-                    delete: (id) => console.log(id)
-                }}
                 onSave={(savedData) => onSave(savedData)}
             />
         );
@@ -154,9 +156,6 @@ const TableWithVirtualScroll: FC<ITableProps> = (props) => {
             withGlobalFilter
             withCheckbox
             bulkActions={bulkActionsMock}
-            rowActions={{
-                delete: (id) => console.log(id)
-            }}
             withDynamicFetch
             hasNextPage={hasNextPage}
             isFetchingNextPage={isFetchingNextPage}
@@ -190,9 +189,6 @@ export const WithPinnedColumns: Story = {
                 withPagination
                 withGlobalFilter
                 bulkActions={bulkActionsMock}
-                rowActions={{
-                    delete: (id) => console.log(id)
-                }}
                 onSave={(savedData) => onSave(savedData)}
             />
         );
@@ -220,9 +216,6 @@ export const WithGroupedColumns: Story = {
                 withPagination
                 withStickyHeader
                 bulkActions={bulkActionsMock}
-                rowActions={{
-                    delete: (id) => console.log(id)
-                }}
                 onSave={(savedData) => onSave(savedData)}
             />
         );
@@ -249,10 +242,6 @@ export const WithExpendRowsColumns: Story = {
                 expandable
                 withPagination
                 bulkActions={bulkActionsMock}
-                rowActions={{
-                    pin: () => {},
-                    delete: (id) => console.log(id)
-                }}
                 onSave={(savedData) => onSave(savedData)}
             />
         );

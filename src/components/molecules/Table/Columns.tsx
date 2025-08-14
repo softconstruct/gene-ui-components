@@ -1,8 +1,10 @@
 import React from "react";
 
-import { RowData, TableCol } from "@components/molecules/Table/type";
+import { ICheckboxProps } from "@components/molecules/Checkbox";
+import { ISwitchProps } from "@components/molecules/Switch";
+import { Row, TableCol } from "@components/molecules/Table/type";
 
-export const defaultColumns: TableCol<RowData>[] = [
+export const defaultColumns: TableCol<Row>[] = [
     {
         id: "rowCheckbox",
         isVisible: true,
@@ -146,7 +148,7 @@ export const defaultColumns: TableCol<RowData>[] = [
         order: 2,
         enableGlobalFilter: false,
         type: "checkbox",
-        accessorFn: (row) => row.checkbox?.data.checked,
+        accessorFn: (row) => (row.switch?.data as ICheckboxProps).checked,
         enableColumnFilter: false,
         editable: true,
         copyable: false,
@@ -161,7 +163,7 @@ export const defaultColumns: TableCol<RowData>[] = [
         order: 2,
         enableGlobalFilter: false,
         type: "switch",
-        accessorFn: (row) => row.switch?.data.checked,
+        accessorFn: (row) => ((row.switch?.data as ISwitchProps).checked ? "On" : "Off"),
         enableColumnFilter: false,
         editable: true,
         copyable: false,
@@ -173,7 +175,7 @@ export const defaultColumns: TableCol<RowData>[] = [
     }
 ];
 
-export const withPinnedColumns: TableCol<RowData>[] = [
+export const withPinnedColumns: TableCol<Row>[] = [
     {
         id: "graph",
         isVisible: true,
@@ -300,7 +302,7 @@ export const withPinnedColumns: TableCol<RowData>[] = [
         order: 2,
         enableGlobalFilter: false,
         type: "checkbox",
-        accessorFn: (row) => row.checkbox?.data.checked,
+        accessorFn: (row) => (row.checkbox?.data as ICheckboxProps).value,
         editable: true,
         copyable: false,
         enableSorting: true,
@@ -314,7 +316,7 @@ export const withPinnedColumns: TableCol<RowData>[] = [
         order: 2,
         enableGlobalFilter: false,
         type: "switch",
-        accessorFn: (row) => (row.switch?.data.checked ? "On" : "Off"),
+        accessorFn: (row) => ((row.switch?.data as ISwitchProps).checked ? "On" : "Off"),
         editable: true,
         copyable: false,
         enableSorting: true,
@@ -325,7 +327,7 @@ export const withPinnedColumns: TableCol<RowData>[] = [
     }
 ];
 
-export const withGroupedColumns: TableCol<RowData>[] = [
+export const withGroupedColumns: TableCol<Row>[] = [
     {
         id: "groupName",
         header: "Group Name",
@@ -481,7 +483,7 @@ export const withGroupedColumns: TableCol<RowData>[] = [
                 order: 2,
                 enableGlobalFilter: false,
                 type: "checkbox",
-                accessorFn: (row) => row.checkbox?.data.value,
+                accessorFn: (row) => (row.checkbox?.data as ICheckboxProps).value,
                 editable: true,
                 copyable: false,
                 enableSorting: true,
@@ -495,7 +497,7 @@ export const withGroupedColumns: TableCol<RowData>[] = [
                 order: 2,
                 enableGlobalFilter: false,
                 type: "switch",
-                accessorFn: (row) => (row.switch?.data.checked ? "On" : "Off"),
+                accessorFn: (row) => ((row.switch?.data as ISwitchProps).checked ? "On" : "Off"),
                 editable: true,
                 copyable: false,
                 enableSorting: true,
@@ -504,6 +506,6 @@ export const withGroupedColumns: TableCol<RowData>[] = [
                 header: "Switch",
                 footer: (props) => props.column.id
             }
-        ] as TableCol<RowData>[]
+        ] as TableCol<Row>[]
     }
 ];

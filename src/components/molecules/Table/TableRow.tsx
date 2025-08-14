@@ -2,13 +2,13 @@ import React, { ChangeEvent, FC } from "react";
 import { Row } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import { ChevronDown, ChevronRight, Clock, Copy, Download, Pin, RecycleBin, Tag } from "@geneui/icons";
+import { ChevronDown, ChevronRight, Clock, Copy, Download, Pin, PinFilled, RecycleBin, Tag } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import { CellClassNames } from "@components/molecules/Table/helpers";
 
 import Checkbox from "../Checkbox";
-import { RowActions, RowData, TableCol } from ".";
+import { Row as RowData, TableCol } from ".";
 import Cell, { ICellProps } from "./Cell";
 
 interface ITableRow {
@@ -17,8 +17,14 @@ interface ITableRow {
     expandable?: boolean;
     withCheckbox?: boolean;
     editableMode: boolean;
-    rowActions: Partial<RowActions>;
     onRowClick?: (event: string) => void;
+    onRowPin?: (rowId: string) => void;
+    onRowTag?: (rowId: string) => void;
+    onRowClock?: (rowId: string) => void;
+    onRowReload?: (rowId: string) => void;
+    onRowCopy?: (rowId: string) => void;
+    onRowDownload?: (rowId: string) => void;
+    onRowShow?: (rowId: string) => void;
     onRowDelete?: (rowId: string) => void;
     handleCellEdit: (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
@@ -35,19 +41,26 @@ const TableRow: FC<ITableRow> = ({
     editableMode,
     onRowClick,
     handleCellEdit,
-    rowActions,
+    onRowPin,
+    onRowTag,
+    onRowClock,
+    onRowReload,
+    onRowCopy,
+    onRowDownload,
+    onRowShow,
     onRowDelete
 }) => {
     const handleRowDelete = () => {
         onRowDelete?.(row.id);
-        rowActions.delete?.(row.id);
     };
 
     return (
         <>
             <tr
                 className={classNames(`table__row table__row_tbody table__row_${row.original.rowStatus}`, {
-                    table__row_selected: row.getIsSelected()
+                    table__row_selected: row.getIsSelected(),
+                    table__pinned: row.getIsPinned(),
+                    table__pinned_horizontal: row.getIsPinned()
                 })}
             >
                 {expandable && (
@@ -103,69 +116,78 @@ const TableRow: FC<ITableRow> = ({
                         </td>
                     );
                 })}
-                {!editableMode && rowActions && Object.values(rowActions).every((action) => Boolean(action)) && (
-                    <td className="table__td table__actionsWrapper">
-                        <div className="table__actions">
-                            {rowActions.pin && (
-                                <Button
-                                    appearance="secondary"
-                                    layout="text"
-                                    size="small"
-                                    Icon={Pin}
-                                    onClick={() => {
-                                        row.pin("top");
-                                        rowActions.pin?.(row.id);
-                                    }}
-                                />
-                            )}
-                            {rowActions?.tag && (
-                                <Button
-                                    appearance="secondary"
-                                    layout="text"
-                                    size="small"
-                                    Icon={Tag}
-                                    onClick={() => rowActions.tag?.(row.id)}
-                                />
-                            )}
-                            {rowActions?.clock && (
-                                <Button
-                                    appearance="secondary"
-                                    layout="text"
-                                    size="small"
-                                    Icon={Clock}
-                                    onClick={() => rowActions.clock?.(row.id)}
-                                />
-                            )}
-                            {rowActions?.copy && (
-                                <Button
-                                    appearance="secondary"
-                                    layout="text"
-                                    size="small"
-                                    Icon={Copy}
-                                    onClick={() => rowActions.copy?.(row.id)}
-                                />
-                            )}
-                            {rowActions?.download && (
-                                <Button
-                                    appearance="secondary"
-                                    layout="text"
-                                    size="small"
-                                    Icon={Download}
-                                    onClick={() => rowActions.download?.(row.id)}
-                                />
-                            )}
-                            {rowActions?.delete && (
-                                <Button
-                                    appearance="secondary"
-                                    layout="text"
-                                    size="small"
-                                    Icon={RecycleBin}
-                                    onClick={handleRowDelete}
-                                />
-                            )}
-                        </div>
-                    </td>
-                )}
+                {!editableMode &&
+                    [
+                        onRowPin,
+                        onRowTag,
+                        onRowClock,
+                        onRowReload,
+                        onRowCopy,
+                        onRowDownload,
+                        onRowShow,
+                        onRowDelete
+                    ].some((action) => Boolean(action)) && (
+                        <td className="table__td table__actionsWrapper">
+                            <div className="table__actions">
+                                {onRowPin && (
+                                    <Button
+                                        appearance="secondary"
+                                        layout="text"
+                                        size="small"
+                                        Icon={row.getIsPinned() ? PinFilled : Pin}
+                                        onClick={() => {
+                                            onRowPin(row.id);
+                                        }}
+                                    />
+                                )}
+                                {onRowTag && (
+                                    <Button
+                                        appearance="secondary"
+                                        layout="text"
+                                        size="small"
+                                        Icon={Tag}
+                                        onClick={() => onRowTag(row.id)}
+                                    />
+                                )}
+                                {onRowClock && (
+                                    <Button
+                                        appearance="secondary"
+                                        layout="text"
+                                        size="small"
+                                        Icon={Clock}
+                                        onClick={() => onRowClock(row.id)}
+                                    />
+                                )}
+                                {onRowCopy && (
+                                    <Button
+                                        appearance="secondary"
+                                        layout="text"
+                                        size="small"
+                                        Icon={Copy}
+                                        onClick={() => onRowCopy(row.id)}
+                                    />
+                                )}
+                                {onRowDownload && (
+                                    <Button
+                                        appearance="secondary"
+                                        layout="text"
+                                        size="small"
+                                        Icon={Download}
+                                        onClick={() => onRowDownload(row.id)}
+                                    />
+                                )}
+                                {onRowDelete && (
+                                    <Button
+                                        appearance="secondary"
+                                        layout="text"
+                                        size="small"
+                                        Icon={RecycleBin}
+                                        onClick={handleRowDelete}
+                                    />
+                                )}
+                            </div>
+                        </td>
+                    )}
             </tr>
             {row.getIsExpanded() && (
                 <tr className="table__row table__row_tbody">

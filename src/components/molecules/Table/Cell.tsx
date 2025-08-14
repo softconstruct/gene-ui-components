@@ -13,7 +13,7 @@ import { CellType } from "./type";
 interface ICellProps {
     type: CellType;
     withEditMode: boolean;
-    data: string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
+    data?: string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
     onChange?: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
     rowCellRenderer?: (data?: any) => JSX.Element;
     withCopy?: boolean;
@@ -176,6 +176,8 @@ export const cellRenderer: CellRenderer = {
 };
 
 const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
+    if (!data) return null;
+
     const cellTypeWithNumber = type === "number" ? "text" : type;
     const CellItem = cellRenderer[cellTypeWithNumber];
     return (

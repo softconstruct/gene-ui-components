@@ -25,12 +25,26 @@ export type CellType =
     | "checkbox"
     | "switch";
 
-export type RowData = Record<string, any>;
+export type Cell = {
+    type: CellType;
+    data: string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
+};
+
+type TableRowCells = {
+    [K in CellType]?: Cell;
+};
+
+export type Row = TableRowCells & {
+    id: string;
+    isPinned: boolean;
+    rowStatus: "default" | "zebra" | "red" | "green" | "highlighted";
+    expandedData: () => ReactNode | null;
+};
 
 export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     id: string;
     header?: string | null;
-    footer?: (props: HeaderContext<RowData, unknown>) => ReactNode;
+    footer?: (props: HeaderContext<Row, unknown>) => ReactNode;
     type: CellType;
     order: number;
     disabled?: boolean;
@@ -50,21 +64,10 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     isPopoverFilterDisabled?: boolean;
     filterOptions?: string[];
     resizable?: boolean;
-    columns?: TableCol<RowData>[];
+    columns?: TableCol<Row>[];
     width?: number | string;
     minWidth?: number;
     maxWidth?: number;
-};
-
-export type RowActions = {
-    pin?: (rowId: string) => void;
-    tag?: (rowId: string) => void;
-    clock?: (rowId: string) => void;
-    reload?: (rowId: string) => void;
-    copy?: (rowId: string) => void;
-    download?: (rowId: string) => void;
-    show?: (rowId: string) => void;
-    delete?: (rowId: string) => void;
 };
 
 export type LoadingState = "idle" | "loading" | "error" | "success";
@@ -88,32 +91,6 @@ export interface TableCallbacks<T = any> {
     onGlobalFilterChange?: (filter: string) => void;
 }
 
-export type Cell = {
-    type:
-        | "graph"
-        | "text"
-        | "number"
-        | "longText"
-        | "dropdown"
-        | "status"
-        | "pill"
-        | "icon"
-        | "flag"
-        | "checkbox"
-        | "switch";
-    data: string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
-};
-
-type TableRowCells = {
-    [K in CellType]?: Cell;
-};
-
-export type Row = TableRowCells & {
-    id: string;
-    rowStatus: "default" | "zebra" | "red" | "green" | "highlighted";
-    expandedData: () => ReactNode | null;
-};
-
 export interface BulkActionList {
     id?: string | number;
     label: string;
@@ -133,5 +110,5 @@ export interface IOrderedColumns {
     isVisible?: boolean;
     isPinned?: boolean;
     order?: number;
-    columns: Column<RowData, unknown>[];
+    columns: Column<Row, unknown>[];
 }

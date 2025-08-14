@@ -11,13 +11,13 @@ import { Popover, PopoverBody, PopoverFooter, PopoverFooterActions } from "@comp
 import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
 import Filter from "@components/molecules/Table/Filter";
 import { SortingIcons } from "@components/molecules/Table/helpers";
-import { RowData, TableCol } from "@components/molecules/Table/type";
+import { Cell, CellType, Row, TableCol } from "@components/molecules/Table/type";
 
 interface IColActionsProps {
-    header: Header<RowData, unknown>;
+    header: Header<Row, unknown>;
 }
 
-const getFilterOptionLabelByColumnId = (data: string | IPillProps | ICheckboxProps, colId: string) => {
+const getFilterOptionLabelByColumnId = (data: Cell["data"] | undefined, colId: string) => {
     switch (colId) {
         case "status":
         case "pill":
@@ -30,10 +30,10 @@ const getFilterOptionLabelByColumnId = (data: string | IPillProps | ICheckboxPro
     }
 };
 
-const getFilterOption = (column: Column<RowData, unknown>): string[] => {
-    const colDef = column.columnDef as TableCol<RowData>;
+const getFilterOption = (column: Column<Row, unknown>): string[] => {
+    const colDef = column.columnDef as TableCol<Row>;
     colDef.filterFn = colDef.enablePopoverFilter ? "arrIncludesSome" : "auto";
-    const initialFilteredOptions = (column.columnDef as TableCol<RowData>).filterOptions;
+    const initialFilteredOptions = (column.columnDef as TableCol<Row>).filterOptions;
     if (initialFilteredOptions?.length) {
         return initialFilteredOptions;
     }
@@ -42,7 +42,7 @@ const getFilterOption = (column: Column<RowData, unknown>): string[] => {
         ...new Set(
             flatRows
                 .map((row) => {
-                    const cellData: string | IPillProps | ICheckboxProps = row.original[column.id].data;
+                    const cellData: Cell["data"] | undefined = row.original[column.id as CellType]?.data;
                     return getFilterOptionLabelByColumnId(cellData, column.id);
                 })
                 .filter((item) => item !== undefined)
@@ -56,7 +56,7 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
     const [filteredValues, setFilteredValues] = useState<string[]>([]);
     const [isFilterPopoverOpen, setIsFilterPopoverOpen] = useState<boolean>(false);
 
-    const handleFilterFromPopover = (column: Column<RowData, unknown>) => {
+    const handleFilterFromPopover = (column: Column<Row, unknown>) => {
         column.setFilterValue(filteredValues);
         setIsFilterPopoverOpen(false);
     };
@@ -103,14 +103,14 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
             )}
 
             {/* todo: change icon from "Globe" to some "Filter" icon, when it will implemented */}
-            {(header.column.columnDef as TableCol<RowData>).enablePopoverFilter && (
+            {(header.column.columnDef as TableCol<Row>).enablePopoverFilter && (
                 <>
                     <Button
                         appearance="secondary"
                         layout="text"
                         size="small"
                         Icon={Globe}
-                        disabled={(header.column.columnDef as TableCol<RowData>)?.isPopoverFilterDisabled}
+                        disabled={(header.column.columnDef as TableCol<Row>)?.isPopoverFilterDisabled}
                         {...popoverPropsForContent}
                         onClick={() => setIsFilterPopoverOpen(true)}
                     />

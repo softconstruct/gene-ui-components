@@ -4,10 +4,11 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 
 import TableRow from "@components/molecules/Table/TableRow";
 
-import { RowActions, RowData } from ".";
+import { Row as RowData } from ".";
 
 interface IVirtualScrollTBody {
-    rows: Row<RowData>[];
+    topRows: Row<RowData>[];
+    centerRows: Row<RowData>[];
     columnCount: number;
     tableContainerRef: HTMLDivElement;
     expandable?: boolean;
@@ -17,8 +18,15 @@ interface IVirtualScrollTBody {
     hasNextPage?: boolean;
     isFetchingNextPage?: boolean;
     fetchNextPage?: () => void;
-    rowActions: Partial<RowActions>;
     onRowClick?: (event: string) => void;
+    onRowPin?: (rowId: string) => void;
+    onRowTag?: (rowId: string) => void;
+    onRowClock?: (rowId: string) => void;
+    onRowReload?: (rowId: string) => void;
+    onRowCopy?: (rowId: string) => void;
+    onRowDownload?: (rowId: string) => void;
+    onRowShow?: (rowId: string) => void;
+    onRowDelete?: (rowId: string) => void;
     onCellEdit: (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
         rowIndex: number,
@@ -27,7 +35,8 @@ interface IVirtualScrollTBody {
 }
 
 const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
-    rows,
+    topRows,
+    centerRows,
     columnCount,
     tableContainerRef,
     withDynamicFetch,
@@ -37,12 +46,19 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
     expandable,
     withCheckbox,
     editableMode,
-    rowActions,
     onRowClick,
-    onCellEdit
+    onCellEdit,
+    onRowPin,
+    onRowTag,
+    onRowClock,
+    onRowReload,
+    onRowCopy,
+    onRowDownload,
+    onRowShow,
+    onRowDelete
 }) => {
     const rowVirtualizer = useVirtualizer({
-        count: rows.length,
+        count: centerRows.length,
         getScrollElement: () => tableContainerRef,
         estimateSize: () => 34,
         overscan: 20
@@ -50,10 +66,10 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
 
     useEffect(() => {
         if (!withDynamicFetch) return;
-        if ((rowVirtualizer.range?.endIndex ?? 0) >= rows.length - 10 && hasNextPage && !isFetchingNextPage) {
+        if ((rowVirtualizer.range?.endIndex ?? 0) >= centerRows.length - 10 && hasNextPage && !isFetchingNextPage) {
             fetchNextPage?.();
         }
-    }, [fetchNextPage, hasNextPage, isFetchingNextPage, rows.length]);
+    }, [fetchNextPage, hasNextPage, isFetchingNextPage, centerRows.length]);
 
     const virtualItems = rowVirtualizer.getVirtualItems();
 
@@ -64,8 +80,28 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                     <td colSpan={columnCount} aria-hidden="true" />
                 </tr>
             )}
+            {topRows.map((row) => (
+                <TableRow
+                    key={row.id}
+                    row={row}
+                    rowIndex={row.index}
+                    expandable={expandable}
+                    withCheckbox={withCheckbox}
+                    editableMode={editableMode}
+                    onRowClick={onRowClick}
+                    handleCellEdit={onCellEdit}
+                    {...(onRowDelete && { onRowDelete })}
+                    {...(onRowPin && { onRowPin })}
+                    {...(onRowTag && { onRowTag })}
+                    {...(onRowClock && { onRowClock })}
+                    {...(onRowReload && { onRowReload })}
+                    {...(onRowCopy && { onRowCopy })}
+                    {...(onRowDownload && { onRowDownload })}
+                    {...(onRowShow && { onRowShow })}
+                />
+            ))}
             {virtualItems.map((virtualRow) => {
-                const row = rows[virtualRow.index];
+                const row = centerRows[virtualRow.index];
                 return (
                     <TableRow
                         key={row.id}
@@ -74,9 +110,16 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                         expandable={expandable}
                         withCheckbox={withCheckbox}
                         editableMode={editableMode}
-                        rowActions={rowActions}
                         onRowClick={onRowClick}
                         handleCellEdit={onCellEdit}
+                        {...(onRowDelete && { onRowDelete })}
+                        {...(onRowPin && { onRowPin })}
+                        {...(onRowTag && { onRowTag })}
+                        {...(onRowClock && { onRowClock })}
+                        {...(onRowReload && { onRowReload })}
+                        {...(onRowCopy && { onRowCopy })}
+                        {...(onRowDownload && { onRowDownload })}
+                        {...(onRowShow && { onRowShow })}
                     />
                 );
             })}

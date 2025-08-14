@@ -15,8 +15,7 @@ describe("Table ", () => {
         const defaultProps: ITableProps = {
             columns: defaultColumns,
             externalData: mockData,
-            onSave: jest.fn(),
-            rowActions: {}
+            onSave: jest.fn()
         };
         setup = mount(<Table {...defaultProps} />);
     });

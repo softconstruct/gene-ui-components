@@ -1,13 +1,9 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { Column } from "@tanstack/react-table";
 
-const Filter = ({
-    column,
-    onBlur
-}: {
-    column: Column<Record<string, string | ReactNode | Record<string, string>>, unknown>;
-    onBlur: () => void;
-}) => {
+import { Row } from "@components/molecules/Table/type";
+
+const Filter = ({ column, onBlur }: { column: Column<Row, unknown>; onBlur: () => void }) => {
     return (
         <input
             type="text"

@@ -27,9 +27,8 @@ import Pagination from "@components/molecules/Pagination";
 import BulkActions from "@components/molecules/Table/BulkActions";
 import { ColActions } from "@components/molecules/Table/ColActions";
 import { deepCloneWithFunctions } from "@components/molecules/Table/helpers";
-import PinnedRow from "@components/molecules/Table/PinnedRow";
 import TBody from "@components/molecules/Table/TBody";
-import { BulkAction, IOrderedColumns, Row, RowActions, RowData, TableCol } from "@components/molecules/Table/type";
+import { BulkAction, IOrderedColumns, Row, TableCol } from "@components/molecules/Table/type";
 import VirtualScrollTBody from "@components/molecules/Table/VirtualScrollTBody";
 
 // Styles
@@ -40,17 +39,17 @@ import { useTableState } from "./hooks";
 
 interface ITableProps {
     /**
-     * Column definitions for the table.
+     * An array of column definitions that configure the table's structure, data accessors, and rendering.
      */
-    columns: TableCol<RowData>[];
+    columns: TableCol<Row>[];
 
     /**
-     * Data to display in the table.
+     * The array of data objects to be displayed in the table. Each object represents a single row.
      */
     externalData: Row[];
 
     /**
-     * Enables expandable rows.
+     * Enables expandable rows, allowing for additional content to be revealed below a row when clicked.
      */
     expandable?: boolean;
 
@@ -60,100 +59,219 @@ interface ITableProps {
     withCheckbox?: boolean;
 
     /**
-     * Object containing optional row action callbacks (pin, tag, delete, etc).
-     */
-    rowActions?: Partial<RowActions>;
-
-    /**
-     * Called when a row is clicked.
+     * A callback function that is triggered when a row is clicked. The ID of the clicked row is passed as an argument.
      */
     onRowClick?: (id: string) => void;
 
     /**
-     * Called when the main checkbox column is toggled.
+     * A callback function that is triggered when the main checkbox in the table header is toggled.
      */
     onColumnCheck?: () => void;
 
     /**
-     * Additional class name for styling the table container.
+     * An optional CSS class name to apply to the table container for custom styling.
      */
     className?: string;
 
     /**
-     * Called when the global filter (search input) value changes.
+     * A callback function that is triggered when the value of the global search input changes.
      */
     onGlobalFilterChange?: (filter: string) => void;
 
     /**
-     * Called when column visibility or order is updated from the "Manage Columns" menu.
+     * A callback function that is triggered when column visibility or order is updated via the "Manage Columns" menu.
      */
     onManageColumns?: (event: IOrderedColumns[]) => void;
 
     /**
-     * Optional bulk action buttons that appear when rows are selected.
+     * An object defining optional bulk actions that appear when one or more rows are selected.
      */
     bulkActions?: BulkAction;
 
     /**
-     * Enables global search box (text input above the table).
+     * Enables the global search box (text input) located above the table.
      */
     withGlobalFilter?: boolean;
 
     /**
-     * Custom placeholder text for the global search input.
+     * Custom placeholder text to be displayed in the global search input.
      */
     globalFilterPlaceholder?: string;
 
     /**
-     * Whether table header should remain fixed during scroll.
+     * A boolean that determines whether the table header should remain fixed at the top during vertical scrolling.
      */
     withStickyHeader?: boolean;
 
     /**
-     * Enables column sorting (if defined in columnDef).
+     * Enables sorting functionality for columns, provided the `columnDef` has `enableSorting` set to `true`.
      */
     sortableColumns?: boolean;
 
     /**
-     * Allowed values for page size dropdown.
+     * An array of numbers used to populate the page size dropdown, allowing users to change the number of rows displayed per page.
      */
     pageSizes?: number[];
 
     /**
-     * Default page size on initial render.
+     * Sets the default number of rows to display per page upon initial render. Defaults to `10`.
      */
     initialPageSize?: number;
 
     /**
-     * Default page index on initial render.
+     * Sets the default page index on initial render. Defaults to `0`.
      */
     initialPageIndex?: number;
 
     /**
-     * Enables pagination functionality.
+     * Enables pagination controls at the bottom of the table. Defaults to `true`.
      */
     withPagination?: boolean;
+
+    /**
+     * Enables virtualized scrolling for rendering a large number of rows, improving performance.
+     */
     withVirtualScroll?: boolean;
+
+    /**
+     * A callback function that is triggered when the column configuration is restored to its default settings from the "Manage Columns" menu.
+     */
     onManageColumnRestore?: (event: IOrderedColumns[]) => void;
+
+    /**
+     * A callback function that is triggered whenever the sorting state of the table changes.
+     */
     onSortChange?: (sorting: SortingState) => void;
+
+    /**
+     * A callback function that is triggered when the current page changes. The new page number is passed as an argument.
+     */
     onPageChange?: (pageNumber: number) => void;
+
+    /**
+     * A callback function that is triggered when the page size changes. The new page size is passed as an argument.
+     */
     onPageSizeChange?: (size: number) => void;
+
+    /**
+     * Displays an input field in the pagination control that allows users to manually enter a page number.
+     */
     showInputPageField?: boolean;
+
+    /**
+     * Enables manual pagination, where the component expects the consumer to handle pagination logic (e.g., fetching data for the current page).
+     */
     withManualPagination?: boolean;
+
+    /**
+     * A callback function that is triggered whenever the row selection changes. An array of the selected row data is passed as an argument.
+     */
     onRowSelect?: (selectedRows: any[]) => void;
+
+    /**
+     * A callback function that is triggered when a cell value is edited in editable mode.
+     */
     onCellEdit?: (rowIndex: number, columnId: string, value: any) => void;
+
+    /**
+     * Enables dynamic fetching of data for infinite scrolling or virtualized lists.
+     */
     withDynamicFetch?: boolean;
+
+    /**
+     * A boolean indicating if there is a next page of data to be fetched for dynamic loading.
+     */
     hasNextPage?: boolean;
+
+    /**
+     * A boolean indicating if the next page of data is currently being fetched.
+     */
     isFetchingNextPage?: boolean;
+
+    /**
+     * A function to be called to fetch the next page of data for dynamic loading.
+     */
     fetchNextPage?: () => void;
+
+    /**
+     * A callback function that is triggered when the "Save" button is clicked in editable mode. The updated data is passed as an argument.
+     */
     onSave?: (data: Row[]) => void;
+
+    /**
+     * A boolean that, when `true`, displays a loading indicator over the table.
+     */
     loading?: boolean;
+
+    /**
+     * The size of the loading indicator.
+     */
     loaderSize?: ILoaderProps["size"];
+
+    /**
+     * The text to be displayed alongside the loading indicator.
+     */
     loaderText?: string;
+
+    /**
+     * Disables the "Manage Columns" menu button.
+     */
     isManageColumnsDisabled?: boolean;
+
+    /**
+     * Enables the "Manage Columns" menu button and its functionality.
+     */
     withManageColumns?: boolean;
+
+    /**
+     * Custom title for the "Manage Columns" button.
+     */
     manageColumnsTitle?: string;
+
+    /**
+     * A React node to be rendered as additional content in the table's header toolbar.
+     */
     headerContent?: ReactNode;
+
+    /**
+     * A callback function that is triggered when a row is pinned. The ID of the pinned row is passed as an argument.
+     */
+    onRowPin?: (rowId: string) => void;
+
+    /**
+     * A callback function for the tag action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowTag?: (rowId: string) => void;
+
+    /**
+     * A callback function for the clock action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowClock?: (rowId: string) => void;
+
+    /**
+     * A callback function for the reload action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowReload?: (rowId: string) => void;
+
+    /**
+     * A callback function for the copy action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowCopy?: (rowId: string) => void;
+
+    /**
+     * A callback function for the download action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowDownload?: (rowId: string) => void;
+
+    /**
+     * A callback function for the show action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowShow?: (rowId: string) => void;
+
+    /**
+     * A callback function that is triggered when a row is deleted. The ID of the deleted row is passed as an argument.
+     */
+    onRowDelete?: (rowId: string) => void;
 }
 
 const Table: FC<ITableProps> = ({
@@ -161,7 +279,6 @@ const Table: FC<ITableProps> = ({
     externalData,
     withCheckbox,
     expandable,
-    rowActions,
     onRowClick,
     onColumnCheck,
     onManageColumns,
@@ -193,7 +310,15 @@ const Table: FC<ITableProps> = ({
     withManageColumns,
     isManageColumnsDisabled,
     manageColumnsTitle = "Manage Columns",
-    headerContent
+    headerContent,
+    onRowPin,
+    onRowTag,
+    onRowClock,
+    onRowReload,
+    onRowCopy,
+    onRowDownload,
+    onRowShow,
+    onRowDelete
 }) => {
     const {
         data,
@@ -230,7 +355,7 @@ const Table: FC<ITableProps> = ({
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
     const accessEditableMode: Record<string, boolean> = {};
     const accessCopyable: Record<string, boolean> = {};
-    const [tableColumns, setTableColumns] = useState<TableCol<RowData>[]>(deepCloneWithFunctions(columns));
+    const [tableColumns, setTableColumns] = useState<TableCol<Row>[]>(deepCloneWithFunctions(columns));
     const [visibleColumns, setVisibleColumns] = useState<{ [key: string]: boolean }>({});
     const [manageColumnsData, setManageColumnsData] = useState<IOrderedColumns[]>([]);
     const [orderedColumns, setOrderedColumns] = useState<IOrderedColumns[]>([]);
@@ -240,6 +365,7 @@ const Table: FC<ITableProps> = ({
 
     useEffect(() => {
         setData(externalData);
+        setRowPinning({ ...rowPinning, top: externalData.filter((item) => item.isPinned).map((item) => item.id) });
     }, [externalData]);
 
     useEffect(() => {
@@ -251,9 +377,9 @@ const Table: FC<ITableProps> = ({
                     return;
                 }
                 columnIds.push(col.columnDef.id);
-                columnVisibilities[col.columnDef.id] = !!(col.columnDef as TableCol<RowData>).isVisible;
-                col.toggleVisibility(!!(col.columnDef as TableCol<RowData>).isVisible);
-                if ((col.columnDef as TableCol<RowData>).isPinned) col.pin("left");
+                columnVisibilities[col.columnDef.id] = !!(col.columnDef as TableCol<Row>).isVisible;
+                col.toggleVisibility(!!(col.columnDef as TableCol<Row>).isVisible);
+                if ((col.columnDef as TableCol<Row>).isPinned) col.pin("left");
             })
         );
 
@@ -261,7 +387,7 @@ const Table: FC<ITableProps> = ({
         setVisibleColumns(columnVisibilities);
     }, [orderedColumns]);
 
-    const table = useReactTable<RowData>({
+    const table = useReactTable<Row>({
         data,
         columns,
         initialState: {
@@ -290,6 +416,7 @@ const Table: FC<ITableProps> = ({
         getCoreRowModel: getCoreRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         getExpandedRowModel: getExpandedRowModel(),
+        enableRowPinning: true,
         ...(withPagination &&
             !withVirtualScroll && {
                 getPaginationRowModel: getPaginationRowModel()
@@ -317,9 +444,9 @@ const Table: FC<ITableProps> = ({
                 if (header.getContext().column.columns.length && header.getContext().column.columnDef.header) {
                     cols.push({
                         id: header.column.id,
-                        title: (header.column.columnDef as TableCol<RowData>).header || null,
+                        title: (header.column.columnDef as TableCol<Row>).header || null,
                         columns: header.column.columns.sort((a, b) => {
-                            return (a.columnDef as TableCol<RowData>).order - (b.columnDef as TableCol<RowData>).order;
+                            return (a.columnDef as TableCol<Row>).order - (b.columnDef as TableCol<Row>).order;
                         })
                     });
                 } else {
@@ -332,10 +459,7 @@ const Table: FC<ITableProps> = ({
                             columns: headerGroup.headers
                                 .map((item) => item.column)
                                 .sort((a, b) => {
-                                    return (
-                                        (a.columnDef as TableCol<RowData>).order -
-                                        (b.columnDef as TableCol<RowData>).order
-                                    );
+                                    return (a.columnDef as TableCol<Row>).order - (b.columnDef as TableCol<Row>).order;
                                 })
                         });
                     }
@@ -386,14 +510,14 @@ const Table: FC<ITableProps> = ({
         if (manageColumnsData.length > 0) setOrderedColumns(manageColumnsData);
     };
 
-    const handleColumnVisibility = (column: Column<RowData, unknown>) => {
+    const handleColumnVisibility = (column: Column<Row, unknown>) => {
         setVisibleColumns({
             ...visibleColumns,
             [column.id]: !visibleColumns[column.id]
         });
     };
 
-    const onColumnPin = (column: Column<RowData, unknown>, groupIndex: number, columnIndex: number) => {
+    const onColumnPin = (column: Column<Row, unknown>, groupIndex: number, columnIndex: number) => {
         const isPinned = column.getIsPinned();
         if (!isPinned) {
             column.pin("left");
@@ -415,7 +539,7 @@ const Table: FC<ITableProps> = ({
         onManageColumnRestore?.(manageColumnsData);
     };
 
-    const renderTableHeaderCell = (header: Header<RowData, unknown>) => {
+    const renderTableHeaderCell = (header: Header<Row, unknown>) => {
         if (header.isPlaceholder) return null;
 
         if (header.id === "rowCheckbox" && withCheckbox) {
@@ -456,7 +580,7 @@ const Table: FC<ITableProps> = ({
                 <div className="table__content table__content_empty">
                     <div className="table__content table__content_header">
                         <span className="table__th_text ellipsis-text">
-                            {(header.column.columnDef as TableCol<RowData>).header}
+                            {(header.column.columnDef as TableCol<Row>).header}
                         </span>
                         {header.id !== "expand" && <ColActions header={header} />}
                     </div>
@@ -464,17 +588,6 @@ const Table: FC<ITableProps> = ({
             </th>
         );
     };
-
-    const handleRowDelete = (rowId: string) => {
-        setRowPinning((prev) => ({ ...prev, top: prev.top?.filter((row) => row !== rowId) }));
-
-        setData((prevData) =>
-            prevData.filter((row) => {
-                return row.id !== rowId;
-            })
-        );
-    };
-
     const renderTableBody = () => {
         if (loading) {
             return <Loader size={loaderSize} text={loaderText} />;
@@ -483,46 +596,48 @@ const Table: FC<ITableProps> = ({
         if (table.getRowModel().flatRows.length > 0) {
             return (
                 <>
-                    {table.getTopRows().map((row) => (
-                        <PinnedRow
-                            key={row.id}
-                            rowIndex={row.index}
-                            row={row}
-                            rowActions={rowActions || {}}
-                            withCheckbox={withCheckbox}
-                            expandable={expandable}
-                            editableMode={editableMode}
-                            onCellEdit={handleCellEdit}
-                            {...(rowActions?.delete && { onRowDelete: handleRowDelete })}
-                        />
-                    ))}
                     {withVirtualScroll && tableContainerRef.current ? (
-                        <VirtualScrollTBody
-                            rows={table.getRowModel().rows}
-                            columnCount={table.getHeaderGroups().length || 1}
-                            tableContainerRef={tableContainerRef.current}
-                            onRowClick={onRowClick}
-                            rowActions={rowActions || {}}
-                            expandable={expandable}
-                            editableMode={editableMode}
-                            withCheckbox={withCheckbox}
-                            onCellEdit={handleCellEdit}
-                            withDynamicFetch={withDynamicFetch}
-                            hasNextPage={hasNextPage}
-                            isFetchingNextPage={isFetchingNextPage}
-                            fetchNextPage={fetchNextPage}
-                            {...(rowActions?.delete && { onRowDelete: handleRowDelete })}
-                        />
+                        <>
+                            <VirtualScrollTBody
+                                topRows={table.getTopRows()}
+                                centerRows={table.getCenterRows()}
+                                columnCount={table.getHeaderGroups().length || 1}
+                                tableContainerRef={tableContainerRef.current}
+                                onRowClick={onRowClick}
+                                expandable={expandable}
+                                editableMode={editableMode}
+                                withCheckbox={withCheckbox}
+                                onCellEdit={handleCellEdit}
+                                withDynamicFetch={withDynamicFetch}
+                                hasNextPage={hasNextPage}
+                                isFetchingNextPage={isFetchingNextPage}
+                                fetchNextPage={fetchNextPage}
+                                {...(onRowDelete && { onRowDelete })}
+                                {...(onRowPin && { onRowPin })}
+                                {...(onRowTag && { onRowTag })}
+                                {...(onRowClock && { onRowClock })}
+                                {...(onRowReload && { onRowReload })}
+                                {...(onRowCopy && { onRowCopy })}
+                                {...(onRowDownload && { onRowDownload })}
+                                {...(onRowShow && { onRowShow })}
+                            />
+                        </>
                     ) : (
                         <TBody
                             table={table}
                             onRowClick={onRowClick}
-                            rowActions={rowActions || {}}
                             expandable={expandable}
                             editableMode={editableMode}
                             withCheckbox={withCheckbox}
                             onCellEdit={handleCellEdit}
-                            {...(rowActions?.delete && { onRowDelete: handleRowDelete })}
+                            {...(onRowDelete && { onRowDelete })}
+                            {...(onRowPin && { onRowPin })}
+                            {...(onRowTag && { onRowTag })}
+                            {...(onRowClock && { onRowClock })}
+                            {...(onRowReload && { onRowReload })}
+                            {...(onRowCopy && { onRowCopy })}
+                            {...(onRowDownload && { onRowDownload })}
+                            {...(onRowShow && { onRowShow })}
                         />
                     )}
                 </>
@@ -532,7 +647,7 @@ const Table: FC<ITableProps> = ({
         return <h1>No data available</h1>;
     };
 
-    const renderTableFooterCell = (footer: Header<RowData, unknown>) => {
+    const renderTableFooterCell = (footer: Header<Row, unknown>) => {
         if (footer.id === "rowCheckbox" && !withCheckbox) return null;
 
         return (
@@ -677,10 +792,10 @@ const Table: FC<ITableProps> = ({
                                                                                         (column, index) => {
                                                                                             if (
                                                                                                 (
-                                                                                                    column.columnDef as TableCol<RowData>
+                                                                                                    column.columnDef as TableCol<Row>
                                                                                                 ).type === "expand" ||
                                                                                                 (
-                                                                                                    column.columnDef as TableCol<RowData>
+                                                                                                    column.columnDef as TableCol<Row>
                                                                                                 ).type === "rowCheckbox"
                                                                                             ) {
                                                                                                 return null;
@@ -722,7 +837,7 @@ const Table: FC<ITableProps> = ({
                                                                                                                 className="dropdownMenu__columns_placeholder"
                                                                                                                 text={
                                                                                                                     (
-                                                                                                                        column.columnDef as TableCol<RowData>
+                                                                                                                        column.columnDef as TableCol<Row>
                                                                                                                     )
                                                                                                                         .header
                                                                                                                 }
