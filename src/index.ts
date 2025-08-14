@@ -14,7 +14,7 @@ export { default as Text, ITextProps } from "./components/atoms/Text";
 export { default as TextLink, ITextLinkProps } from "./components/atoms/TextLink";
 export { Popover, PopoverBody, PopoverFooter, PopoverFooterActions, IPopoverProps } from "./components/atoms/Popover";
 export { default as Badge, IBadgeProps } from "./components/atoms/Badge";
-export { default as Scrollbar, IScrollbarProps } from "./components/atoms/Scrollbar";
+export { default as Scrollbar, ScrollbarRefType, IScrollbarProps } from "./components/atoms/Scrollbar";
 export { Grid, Col, Row, IColProps, IRowProps, IGridProps } from "./components/atoms/Grid";
 export { default as Skeleton, ISkeletonProps } from "./components/atoms/Skeleton";
 export { default as Spreadsheet, ISpreadsheetProps } from "./components/atoms/Spreadsheet";

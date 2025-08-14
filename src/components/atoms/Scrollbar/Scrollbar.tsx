@@ -46,7 +46,7 @@ interface IScrollbarProps {
     scrollBehaviorSmooth?: boolean;
 }
 
-type ScrollbarRef = {
+type ScrollbarRefType = {
     /**
      * Reference to the instance of the Scrollbar component
      */
@@ -56,7 +56,7 @@ type ScrollbarRef = {
 /**
  * Scrollbar is a UI element that allows users to navigate through content that extends beyond the visible area of a container or window. It typically appears along the right side or bottom of the viewport, providing a draggable handle and directional arrows for vertical or horizontal scrolling, enabling users to access all available content.
  */
-const Scrollbar = forwardRef<ScrollbarRef, IScrollbarProps>((props, ref) => {
+const Scrollbar = forwardRef<ScrollbarRefType, IScrollbarProps>((props, ref) => {
     const {
         className,
         children,
@@ -182,4 +182,4 @@ const Scrollbar = forwardRef<ScrollbarRef, IScrollbarProps>((props, ref) => {
     );
 });
 
-export { IScrollbarProps, ScrollbarRef, Scrollbar as default };
+export { IScrollbarProps, ScrollbarRefType, Scrollbar as default };
