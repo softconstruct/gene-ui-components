@@ -1,10 +1,11 @@
-import React, { FC, useContext, useEffect, useRef } from "react";
+import React, { FC, ReactNode, useContext, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 
 import { X } from "@geneui/icons";
 
-import Button from "@components/atoms/Button";
+// Components
+import Button, { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
@@ -38,10 +39,22 @@ interface IDrawerProps {
      * Controls the visibility of the Drawer.
      */
     open?: boolean;
+    /**
+     * Defines the size of the Drawer, affecting its width or height depending on the position.
+     * @default "medium"
+     */
     size?: "small" | "medium" | "large";
+    /**
+     * Specifies the edge of the screen from which the Drawer will appear.
+     * 'start' corresponds to the left, 'end' to the right.
+     * @default "end"
+     */
     position?: "bottom " | "end" | "start";
     /**
-     * Callback function triggered when the Drawer is requested to be closed (e.g., via the close button, Escape key, or overlay click).
+     *
+     * Callback function triggered when the modal is requested to be closed (e.g., via the close button, Escape key, or overlay click).
+     * () => void
+     *
      */
     onClose?: () => void;
     /**
@@ -61,6 +74,31 @@ interface IDrawerProps {
      * @default false
      */
     lockBodyScroll?: boolean;
+    /**
+     * The main content of the Drawer, displayed between the header and footer.
+     * If provided as a string, it will be wrapped in a paragraph element.
+     * Else you can provide any content as children.
+     */
+    children?: React.ReactNode;
+    /**
+     * An array of action button objects to display in the drawer's footer.
+     * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
+     * Each object conforms to the `IButtonProps` interface, allowing full customization of each button.
+     * @example
+     * actions={[
+     * { children: 'Cancel', appearance: 'secondary', onClick: handleCancel },
+     * { children: 'Submit', appearance: 'primary', onClick: handleSubmit }
+     * ]}
+     */
+    actions?: IButtonProps[];
+    /**
+     * Custom content or component to be displayed in the footer, typically to the left of the action buttons.
+     */
+    footerContent?: ReactNode;
+    /**
+     * Custom content or component to be displayed in the header, typically to the left of the X button.
+     */
+    headerContent?: ReactNode;
 }
 
 /**
@@ -77,7 +115,11 @@ const Drawer: FC<IDrawerProps> = ({
     onClose,
     shouldCloseOnEscapePress = true,
     shouldCloseOnOverlayClick = true,
-    lockBodyScroll = false
+    lockBodyScroll = false,
+    children,
+    actions,
+    footerContent,
+    headerContent
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
@@ -124,9 +166,8 @@ const Drawer: FC<IDrawerProps> = ({
             onClick={handleOverlayClick}
             role="presentation"
         >
-            {/* drawer_flow_vertical // drawer_flow_horizontal */}
             <div className={`drawer__wrapper drawer__wrapper_size_${size}`}>
-                {(hasCloseButton || title) && (
+                {(hasCloseButton || title || headerContent) && (
                     <div className="drawer__header">
                         {title && (
                             <Tooltip text={title} isVisible={isTruncated}>
@@ -140,6 +181,7 @@ const Drawer: FC<IDrawerProps> = ({
                                 </Text>
                             </Tooltip>
                         )}
+                        {headerContent && <div className="drawer__headerContent">{headerContent}</div>}
                         {hasCloseButton && (
                             <Button
                                 size="medium"
@@ -155,19 +197,35 @@ const Drawer: FC<IDrawerProps> = ({
                 )}
                 <div className="drawer__body">
                     <Scrollbar>
-                        <div className="drawer__content">Content</div>
+                        <div className="drawer__content">
+                            {typeof children === "string" ? (
+                                <Text variant="bodyLargeMedium" className="drawer__paragraph" as="p">
+                                    {children}
+                                </Text>
+                            ) : (
+                                children
+                            )}
+                        </div>
                     </Scrollbar>
                 </div>
-                <div className="drawer__footer">
-                    <ButtonGroup className="drawer__buttonGroup" size="medium">
-                        <Button className="drawer__button" size="small" appearance="secondary">
-                            Secondary
-                        </Button>
-                        <Button className="drawer__button" size="small" appearance="primary">
-                            Primary
-                        </Button>
-                    </ButtonGroup>
-                </div>
+                {(actions || footerContent) && (
+                    <div className="drawer__footer">
+                        {footerContent && <div className="drawer__footerContent">{footerContent}</div>}
+                        {actions && actions.length > 0 && (
+                            <ButtonGroup className="drawer__buttonGroup" size="medium">
+                                {actions.map((action: IButtonProps) => {
+                                    const { children: buttonChildren } = action;
+                                    const key = `action-${buttonChildren}`;
+                                    return buttonChildren ? (
+                                        <Button key={key} {...action}>
+                                            {buttonChildren}
+                                        </Button>
+                                    ) : null;
+                                })}
+                            </ButtonGroup>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );

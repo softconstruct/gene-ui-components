@@ -43,7 +43,7 @@
     &__footer {
         display: flex;
         align-items: center;
-        gap: var(--guit-ref-spacing-medium);
+        gap: var(--guit-ref-spacing-medium); // todo why we need this gap
         flex: 0 0 auto;
         width: 100%;
         height: var(--guit-sem-dimension-height-3xlarge);
@@ -66,7 +66,7 @@
         min-width: 1rem;
     }
 
-    &__closeButton {
+    &__headerContent {
         margin-left: auto;
     }
 
