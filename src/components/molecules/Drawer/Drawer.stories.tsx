@@ -12,7 +12,7 @@ const meta: Meta<IDrawerProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
-        direction: args({ control: "select", ...propCategory.appearance }),
+        position: args({ control: "select", ...propCategory.appearance }),
         withPadding: args({ control: "boolean", ...propCategory.appearance }),
         title: args({ control: "text", ...propCategory.content }),
         hasCloseButton: args({ control: "boolean", ...propCategory.functionality }),

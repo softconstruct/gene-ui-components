@@ -39,7 +39,7 @@ interface IDrawerProps {
      */
     open?: boolean;
     size?: "small" | "medium" | "large";
-    direction?: "horizontal " | "vertical";
+    position?: "bottom " | "end" | "start";
 }
 
 /**
@@ -48,7 +48,7 @@ interface IDrawerProps {
 const Drawer: FC<IDrawerProps> = ({
     className,
     size = "medium",
-    direction = "horizontal",
+    position = "end",
     withPadding = true,
     title,
     hasCloseButton,
@@ -62,7 +62,7 @@ const Drawer: FC<IDrawerProps> = ({
     const drawerContent = (
         <div
             className={classNames(
-                `drawer drawer_variant_portal drawer_direction_${direction} `,
+                `drawer drawer_variant_portal drawer_position_${position} `,
                 {
                     drawer_withPadding: withPadding
                 },

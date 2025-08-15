@@ -93,8 +93,8 @@
         }
     }
 
-    &_direction {
-        &_vertical {
+    &_position {
+        &_bottom {
             flex-direction: column;
             justify-content: flex-end;
 
@@ -115,10 +115,8 @@
             }
         }
 
-        &_horizontal {
-            flex-direction: row;
-            justify-content: flex-end;
-
+        &_end,
+        &_start {
             #{ $this }__wrapper {
                 &_size {
                     &_large {
@@ -134,6 +132,14 @@
                     }
                 }
             }
+        }
+
+        &_end {
+            justify-content: flex-end;
+        }
+
+        &_start {
+            justify-content: flex-start;
         }
     }
 }
