@@ -1,4 +1,4 @@
-import React, { FC, useContext, useRef } from "react";
+import React, { FC, useContext, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 
@@ -40,6 +40,27 @@ interface IDrawerProps {
     open?: boolean;
     size?: "small" | "medium" | "large";
     position?: "bottom " | "end" | "start";
+    /**
+     * Callback function triggered when the Drawer is requested to be closed (e.g., via the close button, Escape key, or overlay click).
+     */
+    onClose?: () => void;
+    /**
+     * When `true`, allows the Drawer to be closed by pressing the Escape key.
+     * Calls `onClose`.
+     * @default true
+     */
+    shouldCloseOnEscapePress?: boolean;
+    /**
+     * When `true`, allows the Drawer to be closed by clicking on the semi-transparent background overlay.
+     * Calls `onClose`.
+     * @default true
+     */
+    shouldCloseOnOverlayClick?: boolean;
+    /**
+     * If `true`, disables scrolling on the `body` element when the modal is open.
+     * @default false
+     */
+    lockBodyScroll?: boolean;
 }
 
 /**
@@ -52,12 +73,44 @@ const Drawer: FC<IDrawerProps> = ({
     withPadding = true,
     title,
     hasCloseButton,
-    open
+    open,
+    onClose,
+    shouldCloseOnEscapePress = true,
+    shouldCloseOnOverlayClick = true,
+    lockBodyScroll = false
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
     const titleRef = useRef<HTMLHeadingElement | null>(null);
     const isTruncated: boolean = useEllipsisDetection(titleRef);
+
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (shouldCloseOnEscapePress && event.key === "Escape") {
+                onClose?.();
+            }
+        };
+
+        if (open) {
+            document.addEventListener("keydown", handleKeyDown);
+            if (lockBodyScroll) {
+                document.body.style.overflow = "hidden";
+            }
+        }
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+            if (lockBodyScroll) {
+                document.body.style.overflow = "unset";
+            }
+        };
+    }, [open, shouldCloseOnEscapePress, onClose]);
+
+    const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
+        if (shouldCloseOnOverlayClick && event.target === event.currentTarget) {
+            onClose?.();
+        }
+    };
 
     const drawerContent = (
         <div
@@ -68,6 +121,8 @@ const Drawer: FC<IDrawerProps> = ({
                 },
                 className
             )}
+            onClick={handleOverlayClick}
+            role="presentation"
         >
             {/* drawer_flow_vertical // drawer_flow_horizontal */}
             <div className={`drawer__wrapper drawer__wrapper_size_${size}`}>
@@ -93,6 +148,7 @@ const Drawer: FC<IDrawerProps> = ({
                                 layout="text"
                                 appearance="secondary"
                                 className="drawer__closeButton"
+                                onClick={onClose}
                             />
                         )}
                     </div>
