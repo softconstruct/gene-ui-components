@@ -40,13 +40,13 @@ interface IModalProps {
     /**
      * When `true`, allows the modal to be closed by pressing the Escape key.
      * Calls `onClose`.
-     * @default false
+     * @default true
      */
     shouldCloseOnEscapePress?: boolean;
     /**
      * When `true`, allows the modal to be closed by clicking on the semi-transparent background overlay.
      * Calls `onClose`.
-     * @default false
+     * @default true
      */
     shouldCloseOnOverlayClick?: boolean;
     /**
@@ -95,7 +95,7 @@ interface IModalProps {
     actions?: IButtonProps[];
     /**
      * If `true`, disables scrolling on the `body` element when the modal is open.
-     * @default true
+     * @default false
      */
     lockBodyScroll?: boolean;
 }
@@ -114,8 +114,8 @@ const Modal: FC<IModalProps> = ({
     open,
     title,
     hasCloseButton,
-    shouldCloseOnEscapePress = false,
-    shouldCloseOnOverlayClick = false,
+    shouldCloseOnEscapePress = true,
+    shouldCloseOnOverlayClick = true,
     onClose,
     status,
     children,
