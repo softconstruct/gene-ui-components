@@ -59,6 +59,8 @@ interface IModalProps {
     status?: "informative" | "warning" | "error";
     /**
      * The main content of the modal, displayed between the header and footer.
+     * If provided as a string, it will be wrapped in a paragraph element.
+     * Else you can provide any content as children.
      */
     children?: ReactNode;
     /**
