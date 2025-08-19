@@ -20,28 +20,28 @@ const range = (len: number) => {
 const newRow = (): Row => {
     return {
         id: faker.datatype.uuid(),
-        graph: {
-            type: "graph",
+        Graph: {
+            type: "Graph",
             data: faker.image.image(148, 28)
         },
-        text: {
-            type: "text",
+        Text: {
+            type: "Text",
             data: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!
         },
-        number: {
-            type: "number",
+        Number: {
+            type: "Number",
             data: `${faker.datatype.number({ min: 1000 })}`
         },
-        longText: {
-            type: "longText",
+        LongText: {
+            type: "LongText",
             data: faker.lorem.text()
         },
-        dropdown: {
-            type: "dropdown",
+        Dropdown: {
+            type: "Dropdown",
             data: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!
         },
-        status: {
-            type: "status",
+        Status: {
+            type: "Status",
             data: {
                 text: faker.word.adjective(),
                 appearance: faker.helpers.shuffle<IPillProps["appearance"]>([
@@ -58,27 +58,27 @@ const newRow = (): Row => {
                 ])[0]
             } as IPillProps
         },
-        pill: {
-            type: "pill",
+        Pill: {
+            type: "Pill",
             data: {}
         },
-        icon: {
-            type: "icon",
+        Icon: {
+            type: "Icon",
             data: Globe
         },
-        flag: {
-            type: "flag",
+        Flag: {
+            type: "Flag",
             data: Globe
         },
-        checkbox: {
-            type: "checkbox",
+        Checkbox: {
+            type: "Checkbox",
             data: {
-                value: faker.helpers.shuffle(["default", "zebra"])[0]!,
+                value: faker.word.adjective(),
                 checked: faker.helpers.shuffle<boolean>([true, false])[0]!
             } as ICheckboxProps
         },
-        switch: {
-            type: "switch",
+        Switch: {
+            type: "Switch",
             data: {
                 value: faker.word.adjective(),
                 checked: faker.helpers.shuffle<boolean>([true, false])[0]!

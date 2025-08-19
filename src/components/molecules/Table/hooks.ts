@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
     ColumnFiltersState,
     ColumnPinningState,
@@ -53,12 +53,8 @@ export function useTableState<T = any>({
 
     // UI states
     const [loadingState, setLoadingState] = useState<LoadingState>("idle");
-    const [editableMode, setEditableMode] = useState(false);
     const [menuOpened, setMenuOpened] = useState(false);
     const [isBulkActionsOpen, setIsBulkActionsOpen] = useState(false);
-
-    // Editable data tracking
-    const [editedValues, setEditedValues] = useState<Record<string, Record<string, string>>>({});
 
     // Computed values
     const selectedRows = useMemo(() => {
@@ -112,52 +108,6 @@ export function useTableState<T = any>({
         [callbacks]
     );
 
-    const handleCellEdit = (
-        e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-        rowIndex: number,
-        columnId: string
-    ) => {
-        e.persist();
-        const { value } = e.target;
-
-        setEditedValues((prev) => ({
-            ...prev,
-            [columnId]: { ...prev[columnId], [rowIndex]: value }
-        }));
-
-        const updatedData =
-            columnId === "switch" || columnId === "checkbox"
-                ? {
-                      value,
-                      checked: !(data[rowIndex] as any)[columnId].data.checked
-                  }
-                : value;
-
-        const newData = [...data];
-        if (newData[rowIndex] && typeof newData[rowIndex] === "object") {
-            (newData[rowIndex] as any)[columnId].data = updatedData;
-        }
-        setData(newData);
-
-        callbacks?.onCellEdit?.(rowIndex, columnId, value);
-    };
-
-    const handleSave = useCallback(() => {
-        callbacks?.onSave?.(data);
-        setEditableMode(false);
-        setEditedValues({});
-    }, [data, callbacks]);
-
-    const handleCancel = useCallback(() => {
-        setData(deepCloneWithFunctions(initialData) as T[]);
-        setEditableMode(false);
-        setEditedValues({});
-    }, [initialData]);
-
-    const handleEdit = useCallback(() => {
-        setEditableMode(true);
-    }, []);
-
     const clearSelection = useCallback(() => {
         setRowSelection({});
     }, []);
@@ -185,10 +135,8 @@ export function useTableState<T = any>({
         rowPinning,
         pagination,
         loadingState,
-        editableMode,
         menuOpened,
         isBulkActionsOpen,
-        editedValues,
         currentManageColumnsData,
         selectedRows,
         hasSelectedRows,
@@ -203,14 +151,9 @@ export function useTableState<T = any>({
         setRowPinning,
         setPagination: handlePaginationChange,
         setLoadingState,
-        setEditableMode,
         setMenuOpened,
         setIsBulkActionsOpen,
         setCurrentManageColumnsData,
-        handleCellEdit,
-        handleSave,
-        handleCancel,
-        handleEdit,
         clearSelection,
         selectAll
     };

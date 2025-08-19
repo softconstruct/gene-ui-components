@@ -2,12 +2,14 @@ import React, { FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IMenuItemProps } from "@components/molecules/Menu";
+import { ISwitchProps } from "@components/molecules/Switch";
 import { defaultColumns, withGroupedColumns, withPinnedColumns } from "@components/molecules/Table/Columns";
+// Components
+import { deepCloneWithFunctions } from "@components/molecules/Table/helpers";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-// Components
-import Table, { BulkAction, ITableProps, Row } from "./index";
+import Table, { BulkAction, ITableProps } from "./index";
 import { makeData } from "./makeData";
 
 const bulkActionsMock: BulkAction = {
@@ -29,7 +31,7 @@ const bulkActionsMock: BulkAction = {
     ]
 };
 
-const data = makeData(10);
+const externalData = makeData(10);
 
 const meta: Meta<ITableProps> = {
     title: "Molecules/Table",
@@ -67,8 +69,14 @@ const meta: Meta<ITableProps> = {
         onPageChange: args({ control: "false", ...propCategory.action }),
         onRowSelect: args({ control: "false", ...propCategory.action }),
         onCellEdit: args({ control: "false", ...propCategory.action }),
+        onEdit: args({ control: "false", ...propCategory.action }),
+        onCancel: args({ control: "false", ...propCategory.action }),
         withDynamicFetch: args({ control: "boolean", ...propCategory.functionality }),
+        editableMode: args({ control: "boolean", ...propCategory.functionality }),
+        onPageSizeChange: args({ control: "false", ...propCategory.functionality }),
+        withManualPagination: args({ control: "boolean", ...propCategory.functionality }),
         hasNextPage: args({ control: "boolean", ...propCategory.content }),
+        showInputPageField: args({ control: "boolean", ...propCategory.content }),
         isFetchingNextPage: args({ control: "boolean", ...propCategory.content }),
         fetchNextPage: args({ control: "false", ...propCategory.action }),
         onSave: args({ control: "false", ...propCategory.action }),
@@ -82,7 +90,7 @@ const meta: Meta<ITableProps> = {
     },
     args: {
         columns: defaultColumns,
-        externalData: data,
+        externalData,
         onRowClick: undefined,
         // onRowPin: undefined,
         onRowTag: undefined,
@@ -97,22 +105,73 @@ const meta: Meta<ITableProps> = {
 
 type Story = StoryObj<ITableProps>;
 
+const TableComponent: FC<ITableProps> = (props) => {
+    const { externalData: data } = props;
+    const [tableData, setTableData] = useState(data);
+    const [updatedTableData, setUpdatedTableData] = useState(deepCloneWithFunctions(data));
+    const [editableState, setEditableState] = useState(false);
+
+    const onCellEdit: ITableProps["onCellEdit"] = (rowIndex, columnType, value) => {
+        const updatedData =
+            columnType === "Switch" || columnType === "Checkbox"
+                ? {
+                      value,
+                      checked: !(tableData[rowIndex][columnType]?.data as ISwitchProps).checked
+                  }
+                : value;
+        const newData = [...tableData];
+        if (newData[rowIndex] && typeof newData[rowIndex] === "object") {
+            (newData[rowIndex] as any)[columnType].data = updatedData;
+        }
+
+        setUpdatedTableData(newData);
+    };
+
+    const onSave = () => {
+        setTableData(updatedTableData);
+        setEditableState(false);
+    };
+
+    const onEdit = () => {
+        setEditableState(true);
+    };
+
+    const onCancel = () => {
+        setEditableState(false);
+    };
+
+    return (
+        <Table
+            {...props}
+            columns={defaultColumns}
+            externalData={tableData}
+            withVirtualScroll
+            withGlobalFilter
+            withCheckbox
+            bulkActions={bulkActionsMock}
+            onCellEdit={onCellEdit}
+            withDynamicFetch
+            editableMode={editableState}
+            onEdit={onEdit}
+            onSave={onSave}
+            onCancel={onCancel}
+        />
+    );
+};
+
 export const Default: Story = {
-    render: (props) => <Table {...props} columns={defaultColumns} externalData={data} withManageColumns />
+    render: (props) => <TableComponent {...props} columns={defaultColumns} withManageColumns />
 };
 
 export const WithStickyHeader: Story = {
     argTypes: {},
     args: {},
     render: (props) => {
-        const onSave = (savedData: Row[]) => {
-            return savedData;
-        };
         return (
-            <Table
+            <TableComponent
                 {...props}
                 columns={defaultColumns}
-                externalData={data}
+                externalData={externalData}
                 pageSizes={[10, 25, 50, 100]}
                 initialPageSize={25}
                 initialPageIndex={0}
@@ -121,7 +180,6 @@ export const WithStickyHeader: Story = {
                 withCheckbox
                 withStickyHeader
                 bulkActions={bulkActionsMock}
-                onSave={(savedData) => onSave(savedData)}
             />
         );
     }
@@ -144,11 +202,8 @@ const TableWithVirtualScroll: FC<ITableProps> = (props) => {
         }, 2000);
     };
 
-    const onSave = (savedData: Row[]) => {
-        return savedData;
-    };
     return (
-        <Table
+        <TableComponent
             {...props}
             columns={defaultColumns}
             externalData={tableData}
@@ -160,7 +215,6 @@ const TableWithVirtualScroll: FC<ITableProps> = (props) => {
             hasNextPage={hasNextPage}
             isFetchingNextPage={isFetchingNextPage}
             fetchNextPage={fetchData}
-            onSave={(savedData) => onSave(savedData)}
         />
     );
 };
@@ -175,21 +229,16 @@ export const WithPinnedColumns: Story = {
     argTypes: {},
     args: {},
     render: (props) => {
-        const onSave = (savedData: Row[]) => {
-            return savedData;
-        };
         return (
-            <Table
+            <TableComponent
                 {...props}
                 columns={withPinnedColumns}
-                externalData={data}
                 pageSizes={[10, 25, 50, 100]}
                 initialPageSize={25}
                 initialPageIndex={0}
                 withPagination
                 withGlobalFilter
                 bulkActions={bulkActionsMock}
-                onSave={(savedData) => onSave(savedData)}
             />
         );
     }
@@ -199,14 +248,10 @@ export const WithGroupedColumns: Story = {
     argTypes: {},
     args: {},
     render: (props) => {
-        const onSave = (savedData: Row[]) => {
-            return savedData;
-        };
         return (
-            <Table
+            <TableComponent
                 {...props}
                 columns={withGroupedColumns}
-                externalData={data}
                 pageSizes={[10, 25, 50, 100]}
                 initialPageSize={25}
                 initialPageIndex={0}
@@ -216,7 +261,6 @@ export const WithGroupedColumns: Story = {
                 withPagination
                 withStickyHeader
                 bulkActions={bulkActionsMock}
-                onSave={(savedData) => onSave(savedData)}
             />
         );
     }
@@ -226,14 +270,10 @@ export const WithExpendRowsColumns: Story = {
     argTypes: {},
     args: {},
     render: (props) => {
-        const onSave = (savedData: Row[]) => {
-            return savedData;
-        };
         return (
-            <Table
+            <TableComponent
                 {...props}
                 columns={withGroupedColumns}
-                externalData={data}
                 pageSizes={[10, 25, 50, 100]}
                 initialPageSize={25}
                 initialPageIndex={0}
@@ -242,7 +282,6 @@ export const WithExpendRowsColumns: Story = {
                 expandable
                 withPagination
                 bulkActions={bulkActionsMock}
-                onSave={(savedData) => onSave(savedData)}
             />
         );
     }
@@ -253,7 +292,7 @@ export const WithOutData: Story = {
     args: {},
     render: (props) => {
         return (
-            <Table
+            <TableComponent
                 {...props}
                 columns={withGroupedColumns}
                 externalData={[]}

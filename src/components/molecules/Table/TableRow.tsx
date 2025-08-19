@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC } from "react";
+import React, { FC } from "react";
 import { Row } from "@tanstack/react-table";
 import classNames from "classnames";
 
@@ -26,11 +26,7 @@ interface ITableRow {
     onRowDownload?: (rowId: string) => void;
     onRowShow?: (rowId: string) => void;
     onRowDelete?: (rowId: string) => void;
-    handleCellEdit: (
-        e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-        rowIndex: number,
-        columnId: string
-    ) => void;
+    handleCellEdit?: (rowIndex: number, columnType: string, value: any) => void;
 }
 
 const TableRow: FC<ITableRow> = ({
@@ -96,7 +92,7 @@ const TableRow: FC<ITableRow> = ({
                 )}
                 {row.getVisibleCells().map((cell) => {
                     const { type } = cell.column.columnDef as TableCol<ICellProps>;
-                    if (type === "expand" || type === "rowCheckbox") {
+                    if (type === "Expand" || type === "RowCheckbox") {
                         return null;
                     }
                     return (
@@ -109,7 +105,9 @@ const TableRow: FC<ITableRow> = ({
                                         withEditMode={editableMode}
                                         rowCellRenderer={(cell.column.columnDef as TableCol<unknown>).rowCellRenderer}
                                         withCopy={(cell.column.columnDef as TableCol<unknown>).copyable}
-                                        onChange={(e) => handleCellEdit(e, rowIndex, type)}
+                                        {...(handleCellEdit && {
+                                            onChange: (e) => handleCellEdit(rowIndex, type, e.target.value)
+                                        })}
                                     />
                                 </div>
                             </>

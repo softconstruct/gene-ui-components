@@ -9,6 +9,7 @@ import Label from "@components/atoms/Label";
 import { IPillProps } from "@components/atoms/Pill";
 import { Popover, PopoverBody, PopoverFooter, PopoverFooterActions } from "@components/atoms/Popover";
 import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
+import { ICellProps } from "@components/molecules/Table/Cell";
 import Filter from "@components/molecules/Table/Filter";
 import { SortingIcons } from "@components/molecules/Table/helpers";
 import { Cell, CellType, Row, TableCol } from "@components/molecules/Table/type";
@@ -17,8 +18,8 @@ interface IColActionsProps {
     header: Header<Row, unknown>;
 }
 
-const getFilterOptionLabelByColumnId = (data: Cell["data"] | undefined, colId: string) => {
-    switch (colId) {
+const getFilterOptionLabelByColumnType = (data: Cell["data"] | undefined, type: string) => {
+    switch (type) {
         case "status":
         case "pill":
             return (data as IPillProps).text;
@@ -42,8 +43,12 @@ const getFilterOption = (column: Column<Row, unknown>): string[] => {
         ...new Set(
             flatRows
                 .map((row) => {
-                    const cellData: Cell["data"] | undefined = row.original[column.id as CellType]?.data;
-                    return getFilterOptionLabelByColumnId(cellData, column.id);
+                    const cellData: Cell["data"] | undefined =
+                        row.original[(column.columnDef as TableCol<ICellProps>).type as CellType]?.data;
+                    return getFilterOptionLabelByColumnType(
+                        cellData,
+                        (column.columnDef as TableCol<ICellProps>).type.toLowerCase()
+                    );
                 })
                 .filter((item) => item !== undefined)
         )
@@ -178,16 +183,6 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                                                             onChange={(event) => handleFilteredValueChanges(event)}
                                                         />
                                                     </Label>
-                                                    {/* <Checkbox */}
-                                                    {/*    className="filterDropdownMenu__columns_checkbox" */}
-                                                    {/*    name="item" */}
-                                                    {/*    value={ */}
-                                                    {/*        option */}
-                                                    {/*    } */}
-                                                    {/* /> */}
-                                                    {/* <p className="filterDropdownMenu__columns_text ellipsis-text"> */}
-                                                    {/*    {option} */}
-                                                    {/* </p> */}
                                                 </div>
                                             </div>
                                         ))}

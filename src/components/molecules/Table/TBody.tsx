@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC } from "react";
+import React, { FC } from "react";
 import { Table } from "@tanstack/react-table";
 
 import TableRow from "@components/molecules/Table/TableRow";
@@ -19,11 +19,7 @@ interface ITableBody {
     onRowDownload?: (rowId: string) => void;
     onRowShow?: (rowId: string) => void;
     onRowDelete?: (rowId: string) => void;
-    onCellEdit: (
-        e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-        rowIndex: number,
-        columnId: string
-    ) => void;
+    onCellEdit?: (rowIndex: number, columnType: string, value: any) => void;
 }
 
 const TBody: FC<ITableBody> = ({

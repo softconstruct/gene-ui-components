@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, JSX } from "react";
+import React, { ChangeEvent, FC, JSX, useState } from "react";
 
 import { IconProps } from "@geneui/icons";
 
@@ -22,171 +22,199 @@ interface ICellProps {
 type CellRenderer = {
     [key: string]: (
         props: Omit<ICellProps, "type"> & {
-            inputType?: "text" | "number";
+            inputType?: "Text" | "Number";
         }
     ) => JSX.Element;
 };
 
-export const cellRenderer: CellRenderer = {
-    empty: ({ rowCellRenderer }) =>
-        rowCellRenderer ? rowCellRenderer() : <div className="table__content table__content_empty" />,
-    graph: ({ rowCellRenderer, data }) => {
-        return rowCellRenderer ? rowCellRenderer(data) : <img src={data as string} alt="" />;
-    },
-    text: ({ rowCellRenderer, data, withEditMode, inputType = "text", withCopy, onChange }) => {
-        const value = data as string;
-        if (withEditMode) {
+export const cellRenderer: () => CellRenderer = () => {
+    return {
+        Empty: ({ rowCellRenderer }) =>
+            rowCellRenderer ? rowCellRenderer() : <div className="table__content table__content_empty" />,
+        Graph: ({ rowCellRenderer, data }) => {
+            return rowCellRenderer ? rowCellRenderer(data) : <img src={data as string} alt="" />;
+        },
+        Text: ({ rowCellRenderer, data, withEditMode, inputType = "text", withCopy, onChange }) => {
+            const value = data as string;
+
+            if (withEditMode) {
+                return (
+                    <TextField
+                        numericOnly={inputType === "number"}
+                        placeholder="Row Text"
+                        value={value}
+                        {...(onChange && { onChange: (e) => onChange(e) })}
+                    />
+                );
+            }
+
+            if (rowCellRenderer) return rowCellRenderer(data);
+
             return (
-                <TextField
-                    numericOnly={inputType === "number"}
-                    placeholder="Row Text"
-                    value={value}
-                    {...(onChange && { onChange: (e) => onChange(e) })}
+                <>
+                    <span className="table__td_text ellipsis-text">{value}</span>
+                    {withCopy && (
+                        <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />
+                    )}
+                </>
+            );
+        },
+        LongText: ({ rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
+            const [value, setValue] = useState<string>(data as string);
+
+            const handleChange = (e: ChangeEvent<HTMLTextAreaElement> | undefined) => {
+                if (!e) return;
+                setValue(e.target.value);
+                onChange?.(e);
+            };
+
+            if (withEditMode) {
+                return (
+                    <textarea
+                        placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vulputate felis eget nulla consequat, non fermentum velit gravida. Nulla facilisi. Aenean ac "
+                        value={value}
+                        style={{ width: "280px" }}
+                        {...(onChange && { onChange: handleChange })}
+                    />
+                );
+            }
+
+            if (rowCellRenderer) return rowCellRenderer(data);
+
+            return (
+                <>
+                    <span className="table__td_text">{value}</span>
+                    {withCopy && (
+                        <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />
+                    )}
+                </>
+            );
+        },
+        Dropdown: ({ rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
+            const value = data as string;
+            if (withEditMode) {
+                return (
+                    <select
+                        name="dropdown"
+                        id="dropdown"
+                        style={{ width: "160px" }}
+                        value={value}
+                        {...(onChange && { onChange: (e) => onChange(e) })}
+                    >
+                        <option value="Value">Value</option>
+                    </select>
+                );
+            }
+
+            if (rowCellRenderer) return rowCellRenderer(data);
+
+            return (
+                <>
+                    <span className="table__td_text ellipsis-text">{value}</span>
+                    {withCopy && (
+                        <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />
+                    )}
+                </>
+            );
+        },
+        Status: ({ rowCellRenderer, data }) => {
+            /* todo: change "Pill" components "color" as a status to next values: "informative", "neutral", "error", "success", "warning" */
+            const props = data as IPillProps;
+
+            return rowCellRenderer ? (
+                rowCellRenderer(data)
+            ) : (
+                <Pill {...props} text={props.text} appearance={props.appearance} />
+            );
+        },
+        Pill: ({ rowCellRenderer, data }) => {
+            const props = data as IPillProps;
+
+            return rowCellRenderer ? (
+                rowCellRenderer(data)
+            ) : (
+                <Pill
+                    text={props.text}
+                    filled={props.filled}
+                    appearance={props.appearance}
+                    size={props.size}
+                    withDot={props.withDot}
                 />
             );
+        },
+        Icon: ({ rowCellRenderer, data: icon }) => {
+            /* todo: import icon as a component for "Icon" and "Flag" case */
+            const Icon = icon as FC<IconProps>;
+            return rowCellRenderer ? rowCellRenderer(icon) : <Icon size={24} />;
+        },
+        Flag: ({ rowCellRenderer, data: icon }) => {
+            /* todo: import icon as a component for "Icon" and "Flag" case */
+            const Icon = icon as FC<IconProps>;
+            return rowCellRenderer ? rowCellRenderer(icon) : <Icon size={24} />;
+        },
+        Checkbox: ({ rowCellRenderer, data, withEditMode, onChange }) => {
+            const props = data as ICheckboxProps;
+            const [checked, setChecked] = useState<boolean>(!!props.checked);
+
+            const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+                setChecked((prev) => !prev);
+                onChange?.(e);
+            };
+
+            if (withEditMode)
+                return (
+                    <Checkbox
+                        {...props}
+                        value={props.value}
+                        checked={checked}
+                        {...(onChange && {
+                            onChange: handleChange
+                        })}
+                    />
+                );
+
+            if (rowCellRenderer) return rowCellRenderer(data);
+
+            return <Checkbox name="item" value={props.value} checked={checked} readOnly />;
+        },
+        Switch: ({ rowCellRenderer, data, withEditMode, onChange }) => {
+            const props = data as ISwitchProps;
+            const [checked, setChecked] = useState<boolean>(!!props.checked);
+
+            const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+                setChecked((prev) => !prev);
+                onChange?.(e);
+            };
+
+            if (withEditMode)
+                return (
+                    <Switch
+                        {...props}
+                        value={props.value}
+                        checked={checked}
+                        {...(onChange && { onChange: handleChange })}
+                    />
+                );
+
+            if (rowCellRenderer) return rowCellRenderer();
+
+            return <span className="table__td_text">{checked ? "on" : "off"}</span>;
         }
-
-        if (rowCellRenderer) return rowCellRenderer(data);
-
-        return (
-            <>
-                <span className="table__td_text ellipsis-text">{value}</span>
-                {withCopy && <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />}
-            </>
-        );
-    },
-    longText: ({ rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
-        const value = data as string;
-        if (withEditMode) {
-            return (
-                <textarea
-                    placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vulputate felis eget nulla consequat, non fermentum velit gravida. Nulla facilisi. Aenean ac "
-                    value={value}
-                    style={{ width: "280px" }}
-                    {...(onChange && { onChange: (e) => onChange(e) })}
-                />
-            );
-        }
-
-        if (rowCellRenderer) return rowCellRenderer(data);
-
-        return (
-            <>
-                <span className="table__td_text">{value}</span>
-                {withCopy && <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />}
-            </>
-        );
-    },
-    dropdown: ({ rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
-        const value = data as string;
-        if (withEditMode) {
-            return (
-                <select
-                    name="dropdown"
-                    id="dropdown"
-                    style={{ width: "160px" }}
-                    value={value}
-                    {...(onChange && { onChange: (e) => onChange(e) })}
-                >
-                    <option value="Value">Value</option>
-                </select>
-            );
-        }
-
-        if (rowCellRenderer) return rowCellRenderer(data);
-
-        return (
-            <>
-                <span className="table__td_text ellipsis-text">{value}</span>
-                {withCopy && <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />}
-            </>
-        );
-    },
-    status: ({ rowCellRenderer, data }) => {
-        /* todo: change "Pill" components "color" as a status to next values: "informative", "neutral", "error", "success", "warning" */
-        const props = data as IPillProps;
-
-        return rowCellRenderer ? (
-            rowCellRenderer(data)
-        ) : (
-            <Pill {...props} text={props.text} appearance={props.appearance} />
-        );
-    },
-    pill: ({ rowCellRenderer, data }) => {
-        const props = data as IPillProps;
-
-        return rowCellRenderer ? (
-            rowCellRenderer(data)
-        ) : (
-            <Pill
-                text={props.text}
-                filled={props.filled}
-                appearance={props.appearance}
-                size={props.size}
-                withDot={props.withDot}
-            />
-        );
-    },
-    icon: ({ rowCellRenderer, data: icon }) => {
-        /* todo: import icon as a component for "Icon" and "Flag" case */
-        const Icon = icon as FC<IconProps>;
-        return rowCellRenderer ? rowCellRenderer(icon) : <Icon size={24} />;
-    },
-    flag: ({ rowCellRenderer, data: icon }) => {
-        /* todo: import icon as a component for "Icon" and "Flag" case */
-        const Icon = icon as FC<IconProps>;
-        return rowCellRenderer ? rowCellRenderer(icon) : <Icon size={24} />;
-    },
-    checkbox: ({ rowCellRenderer, data, withEditMode, onChange }) => {
-        const props = data as ICheckboxProps;
-        if (withEditMode)
-            return (
-                <Checkbox
-                    {...props}
-                    value={props.value}
-                    checked={props.checked}
-                    {...(onChange && {
-                        onChange: (e) => {
-                            onChange(e);
-                        }
-                    })}
-                />
-            );
-
-        if (rowCellRenderer) return rowCellRenderer(data);
-
-        return <Checkbox name="item" value={props.value} checked={props.checked} readOnly />;
-    },
-    switch: ({ rowCellRenderer, data, withEditMode, onChange }) => {
-        const props = data as ISwitchProps;
-        if (withEditMode)
-            return (
-                <Switch
-                    {...props}
-                    value={props.value}
-                    checked={props.checked}
-                    {...(onChange && { onChange: (e) => onChange(e) })}
-                />
-            );
-
-        if (rowCellRenderer) return rowCellRenderer();
-
-        return <span className="table__td_text">{props.checked ? "on" : "off"}</span>;
-    }
+    };
 };
 
 const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
     if (!data) return null;
 
-    const cellTypeWithNumber = type === "number" ? "text" : type;
-    const CellItem = cellRenderer[cellTypeWithNumber];
+    const cellTypeWithNumber = type === "Number" ? "Text" : type;
+    const CellItem = cellRenderer()[cellTypeWithNumber];
     return (
         <>
             {CellItem({
                 rowCellRenderer,
                 withEditMode,
                 data,
-                inputType: type === "number" ? type : "text",
+                inputType: type === "Number" ? type : "Text",
                 withCopy,
                 onChange
             })}

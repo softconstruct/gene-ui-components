@@ -10,20 +10,20 @@ import { IMenuItemProps } from "@components/molecules/Menu";
 import { ISwitchProps } from "@components/molecules/Switch";
 
 export type CellType =
-    | "empty"
-    | "expand"
-    | "rowCheckbox"
-    | "graph"
-    | "text"
-    | "number"
-    | "longText"
-    | "dropdown"
-    | "status"
-    | "pill"
-    | "icon"
-    | "flag"
-    | "checkbox"
-    | "switch";
+    | "Empty"
+    | "Expand"
+    | "RowCheckbox"
+    | "Graph"
+    | "Text"
+    | "Number"
+    | "LongText"
+    | "Dropdown"
+    | "Status"
+    | "Pill"
+    | "Icon"
+    | "Flag"
+    | "Checkbox"
+    | "Switch";
 
 export type Cell = {
     type: CellType;
@@ -86,8 +86,8 @@ export interface TableCallbacks<T = any> {
     onPageChange?: (pagination: PaginationState) => void;
     onRowSelect?: (selectedRows: T[]) => void;
     onRowClick?: (row: T) => void;
-    onCellEdit?: (rowIndex: number, columnId: string, value: any) => void;
-    onSave?: (data: T[]) => void;
+    onCellEdit?: (rowIndex: number, columnType: string, value: any) => void;
+    onSave?: () => void;
     onGlobalFilterChange?: (filter: string) => void;
 }
 

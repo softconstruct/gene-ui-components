@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import { Row } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
@@ -27,11 +27,7 @@ interface IVirtualScrollTBody {
     onRowDownload?: (rowId: string) => void;
     onRowShow?: (rowId: string) => void;
     onRowDelete?: (rowId: string) => void;
-    onCellEdit: (
-        e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-        rowIndex: number,
-        columnId: string
-    ) => void;
+    onCellEdit?: (rowIndex: number, columnType: string, value: any) => void;
 }
 
 const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
@@ -89,7 +85,7 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                     withCheckbox={withCheckbox}
                     editableMode={editableMode}
                     onRowClick={onRowClick}
-                    handleCellEdit={onCellEdit}
+                    {...(onCellEdit && { handleCellEdit: onCellEdit })}
                     {...(onRowDelete && { onRowDelete })}
                     {...(onRowPin && { onRowPin })}
                     {...(onRowTag && { onRowTag })}
@@ -111,7 +107,7 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                         withCheckbox={withCheckbox}
                         editableMode={editableMode}
                         onRowClick={onRowClick}
-                        handleCellEdit={onCellEdit}
+                        {...(onCellEdit && { handleCellEdit: onCellEdit })}
                         {...(onRowDelete && { onRowDelete })}
                         {...(onRowPin && { onRowPin })}
                         {...(onRowTag && { onRowTag })}
