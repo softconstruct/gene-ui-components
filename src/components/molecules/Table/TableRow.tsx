@@ -18,7 +18,7 @@ interface ITableRow {
     withCheckbox?: boolean;
     editableMode: boolean;
     onRowClick?: (event: string) => void;
-    onRowPin?: (rowId: string) => void;
+    onRowPinToggle?: (rowId: string) => void;
     onRowTag?: (rowId: string) => void;
     onRowClock?: (rowId: string) => void;
     onRowReload?: (rowId: string) => void;
@@ -37,7 +37,7 @@ const TableRow: FC<ITableRow> = ({
     editableMode,
     onRowClick,
     handleCellEdit,
-    onRowPin,
+    onRowPinToggle,
     onRowTag,
     onRowClock,
     onRowReload,
@@ -116,7 +116,7 @@ const TableRow: FC<ITableRow> = ({
                 })}
                 {!editableMode &&
                     [
-                        onRowPin,
+                        onRowPinToggle,
                         onRowTag,
                         onRowClock,
                         onRowReload,
@@ -127,14 +127,14 @@ const TableRow: FC<ITableRow> = ({
                     ].some((action) => Boolean(action)) && (
                         <td className="table__td table__actionsWrapper">
                             <div className="table__actions">
-                                {onRowPin && (
+                                {onRowPinToggle && (
                                     <Button
                                         appearance="secondary"
                                         layout="text"
                                         size="small"
                                         Icon={row.getIsPinned() ? PinFilled : Pin}
                                         onClick={() => {
-                                            onRowPin(row.id);
+                                            onRowPinToggle(row.id);
                                         }}
                                     />
                                 )}

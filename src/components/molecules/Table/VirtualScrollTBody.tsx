@@ -19,7 +19,7 @@ interface IVirtualScrollTBody {
     isFetchingNextPage?: boolean;
     fetchNextPage?: () => void;
     onRowClick?: (event: string) => void;
-    onRowPin?: (rowId: string) => void;
+    onRowPinToggle?: (rowId: string) => void;
     onRowTag?: (rowId: string) => void;
     onRowClock?: (rowId: string) => void;
     onRowReload?: (rowId: string) => void;
@@ -44,7 +44,7 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
     editableMode,
     onRowClick,
     onCellEdit,
-    onRowPin,
+    onRowPinToggle,
     onRowTag,
     onRowClock,
     onRowReload,
@@ -87,7 +87,7 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                     onRowClick={onRowClick}
                     {...(onCellEdit && { handleCellEdit: onCellEdit })}
                     {...(onRowDelete && { onRowDelete })}
-                    {...(onRowPin && { onRowPin })}
+                    {...(onRowPinToggle && { onRowPinToggle })}
                     {...(onRowTag && { onRowTag })}
                     {...(onRowClock && { onRowClock })}
                     {...(onRowReload && { onRowReload })}
@@ -109,7 +109,7 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                         onRowClick={onRowClick}
                         {...(onCellEdit && { handleCellEdit: onCellEdit })}
                         {...(onRowDelete && { onRowDelete })}
-                        {...(onRowPin && { onRowPin })}
+                        {...(onRowPinToggle && { onRowPinToggle })}
                         {...(onRowTag && { onRowTag })}
                         {...(onRowClock && { onRowClock })}
                         {...(onRowReload && { onRowReload })}

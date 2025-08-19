@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
-    ColumnFiltersState,
     ColumnPinningState,
     ExpandedState,
     PaginationState,
@@ -10,27 +9,19 @@ import {
 } from "@tanstack/react-table";
 
 import { deepCloneWithFunctions } from "./helpers";
-import { IOrderedColumns, LoadingState, Row, SelectionMode, TableCallbacks } from "./type";
+import { Row, SelectionMode, TableCallbacks } from "./type";
 
 export interface UseTableStateProps<T = any> {
     initialData: Row[];
     initialPageSize?: number;
-    manageColumnsData?: IOrderedColumns[];
     selectionMode?: SelectionMode;
     callbacks?: TableCallbacks<T>;
 }
 
-export function useTableState<T = any>({
-    initialData,
-    manageColumnsData,
-    initialPageSize = 20,
-    callbacks
-}: UseTableStateProps<T>) {
+export function useTableState<T = any>({ initialData, initialPageSize = 20, callbacks }: UseTableStateProps<T>) {
     // Core table states
     const [data, setData] = useState<T[]>(deepCloneWithFunctions(initialData) as T[]);
-    const [currentManageColumnsData, setCurrentManageColumnsData] = useState<IOrderedColumns[] | undefined>();
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -51,10 +42,7 @@ export function useTableState<T = any>({
         pageSize: initialPageSize
     });
 
-    // UI states
-    const [loadingState, setLoadingState] = useState<LoadingState>("idle");
     const [menuOpened, setMenuOpened] = useState(false);
-    const [isBulkActionsOpen, setIsBulkActionsOpen] = useState(false);
 
     // Computed values
     const selectedRows = useMemo(() => {
@@ -62,11 +50,6 @@ export function useTableState<T = any>({
     }, [rowSelection]);
 
     const hasSelectedRows = selectedRows.length > 0;
-
-    useEffect(() => {
-        if (!manageColumnsData) return;
-        setCurrentManageColumnsData(manageColumnsData);
-    }, [manageColumnsData]);
 
     // Handlers
     const handleSortingChange = useCallback(
@@ -108,25 +91,9 @@ export function useTableState<T = any>({
         [callbacks]
     );
 
-    const clearSelection = useCallback(() => {
-        setRowSelection({});
-    }, []);
-
-    const selectAll = useCallback(() => {
-        const allRowSelection = data.reduce(
-            (acc, _, index) => {
-                acc[index] = true;
-                return acc;
-            },
-            {} as Record<string, boolean>
-        );
-        setRowSelection(allRowSelection);
-    }, [data]);
-
     return {
         data,
         sorting,
-        columnFilters,
         columnVisibility,
         rowSelection,
         expanded,
@@ -134,15 +101,11 @@ export function useTableState<T = any>({
         columnPinning,
         rowPinning,
         pagination,
-        loadingState,
         menuOpened,
-        isBulkActionsOpen,
-        currentManageColumnsData,
         selectedRows,
         hasSelectedRows,
         setData,
         setSorting: handleSortingChange,
-        setColumnFilters,
         setColumnVisibility,
         setRowSelection: handleRowSelectionChange,
         setExpanded,
@@ -150,11 +113,6 @@ export function useTableState<T = any>({
         setColumnPinning,
         setRowPinning,
         setPagination: handlePaginationChange,
-        setLoadingState,
-        setMenuOpened,
-        setIsBulkActionsOpen,
-        setCurrentManageColumnsData,
-        clearSelection,
-        selectAll
+        setMenuOpened
     };
 }

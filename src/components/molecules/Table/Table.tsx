@@ -236,7 +236,7 @@ interface ITableProps {
     /**
      * A callback function that is triggered when a row is pinned. The ID of the pinned row is passed as an argument.
      */
-    onRowPin?: (rowId: string) => void;
+    onRowPinToggle?: (rowId: string) => void;
 
     /**
      * A callback function for the tag action button on a row. The ID of the row is passed as an argument.
@@ -315,7 +315,7 @@ const Table: FC<ITableProps> = ({
     isManageColumnsDisabled,
     manageColumnsTitle = "Manage Columns",
     headerContent,
-    onRowPin,
+    onRowPinToggle,
     onRowTag,
     onRowClock,
     onRowReload,
@@ -631,7 +631,7 @@ const Table: FC<ITableProps> = ({
                                 fetchNextPage={fetchNextPage}
                                 {...(onCellEdit && { onCellEdit })}
                                 {...(onRowDelete && { onRowDelete })}
-                                {...(onRowPin && { onRowPin })}
+                                {...(onRowPinToggle && { onRowPinToggle })}
                                 {...(onRowTag && { onRowTag })}
                                 {...(onRowClock && { onRowClock })}
                                 {...(onRowReload && { onRowReload })}
@@ -649,7 +649,7 @@ const Table: FC<ITableProps> = ({
                             withCheckbox={withCheckbox}
                             {...(onCellEdit && { onCellEdit })}
                             {...(onRowDelete && { onRowDelete })}
-                            {...(onRowPin && { onRowPin })}
+                            {...(onRowPinToggle && { onRowPinToggle })}
                             {...(onRowTag && { onRowTag })}
                             {...(onRowClock && { onRowClock })}
                             {...(onRowReload && { onRowReload })}
@@ -706,19 +706,23 @@ const Table: FC<ITableProps> = ({
                         />
                     )}
                     <div className="dataTable__bulkActions">
-                        <div className="dataTable__bulkActions_selected">
-                            {table.getSelectedRowModel().rows.length} selected
-                        </div>
-                        <Divider direction="vertical" />
-                        <Button
-                            appearance="primary"
-                            layout="text"
-                            size="medium"
-                            disabled={bulkActions?.disabled}
-                            onClick={() => table.getSelectedRowModel().rows.length && table.resetRowSelection()}
-                        >
-                            Deselect
-                        </Button>
+                        {withCheckbox && (
+                            <>
+                                <div className="dataTable__bulkActions_selected">
+                                    {table.getSelectedRowModel().rows.length} selected
+                                </div>
+                                <Divider direction="vertical" />
+                                <Button
+                                    appearance="primary"
+                                    layout="text"
+                                    size="medium"
+                                    disabled={bulkActions?.disabled}
+                                    onClick={() => table.getSelectedRowModel().rows.length && table.resetRowSelection()}
+                                >
+                                    Deselect
+                                </Button>
+                            </>
+                        )}
                         {!!bulkActions?.list.length && <BulkActions bulkActions={bulkActions} />}
                     </div>
                 </div>

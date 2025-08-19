@@ -11,7 +11,7 @@ interface ITableBody {
     withCheckbox?: boolean;
     editableMode: boolean;
     onRowClick?: (event: string) => void;
-    onRowPin?: (rowId: string) => void;
+    onRowPinToggle?: (rowId: string) => void;
     onRowTag?: (rowId: string) => void;
     onRowClock?: (rowId: string) => void;
     onRowReload?: (rowId: string) => void;
@@ -29,7 +29,7 @@ const TBody: FC<ITableBody> = ({
     editableMode,
     onRowClick,
     onCellEdit,
-    onRowPin,
+    onRowPinToggle,
     onRowTag,
     onRowClock,
     onRowReload,
@@ -51,7 +51,7 @@ const TBody: FC<ITableBody> = ({
                     onRowClick={onRowClick}
                     handleCellEdit={onCellEdit}
                     {...(onRowDelete && { onRowDelete })}
-                    {...(onRowPin && { onRowPin })}
+                    {...(onRowPinToggle && { onRowPinToggle })}
                     {...(onRowTag && { onRowTag })}
                     {...(onRowClock && { onRowClock })}
                     {...(onRowReload && { onRowReload })}
@@ -72,7 +72,7 @@ const TBody: FC<ITableBody> = ({
                         onRowClick={onRowClick}
                         handleCellEdit={onCellEdit}
                         {...(onRowDelete && { onRowDelete })}
-                        {...(onRowPin && { onRowPin })}
+                        {...(onRowPinToggle && { onRowPinToggle })}
                         {...(onRowTag && { onRowTag })}
                         {...(onRowClock && { onRowClock })}
                         {...(onRowReload && { onRowReload })}

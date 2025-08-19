@@ -55,7 +55,7 @@ const meta: Meta<ITableProps> = {
         expandable: args({ control: "boolean", ...propCategory.content }),
         withCheckbox: args({ control: "boolean", ...propCategory.content }),
         onRowClick: args({ control: "false", ...propCategory.action }),
-        onRowPin: args({ control: "false", ...propCategory.action }),
+        onRowPinToggle: args({ control: "false", ...propCategory.action }),
         onRowTag: args({ control: "false", ...propCategory.action }),
         onRowClock: args({ control: "false", ...propCategory.action }),
         onRowReload: args({ control: "false", ...propCategory.action }),
@@ -154,6 +154,32 @@ const TableComponent: FC<ITableProps> = (props) => {
         setEditableState(false);
     };
 
+    const onRowPinToggle = (rowId: string) => {
+        setTableData((prevData) => {
+            const rowIndex = prevData.findIndex((row) => row.id === rowId);
+            if (rowIndex === -1) {
+                return prevData;
+            }
+
+            const updatedData = [...prevData];
+
+            updatedData[rowIndex] = {
+                ...updatedData[rowIndex],
+                isPinned: !updatedData[rowIndex].isPinned
+            };
+
+            return updatedData;
+        });
+    };
+
+    const onRowDelete = (rowId: string) => {
+        setTableData((prevData) =>
+            prevData.filter((row) => {
+                return row.id !== rowId;
+            })
+        );
+    };
+
     return (
         <Table
             {...props}
@@ -161,6 +187,8 @@ const TableComponent: FC<ITableProps> = (props) => {
             bulkActions={bulkActionsMock}
             onCellEdit={onCellEdit}
             editableMode={editableState}
+            onRowPinToggle={onRowPinToggle}
+            onRowDelete={onRowDelete}
             onEdit={onEdit}
             onSave={onSave}
             onCancel={onCancel}
