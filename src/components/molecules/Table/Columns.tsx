@@ -344,7 +344,7 @@ export const withGroupedColumns: TableCol<Row>[] = [
                 isVisible: true,
                 order: 0,
                 enableGlobalFilter: false,
-                type: "expand",
+                type: "Expand",
                 accessorKey: "expand",
                 header: null
             },
@@ -353,7 +353,7 @@ export const withGroupedColumns: TableCol<Row>[] = [
                 isVisible: true,
                 order: 0,
                 enableGlobalFilter: false,
-                type: "rowCheckbox",
+                type: "RowCheckbox",
                 accessorKey: "rowCheckbox",
                 header: null
             },

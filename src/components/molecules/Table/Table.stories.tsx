@@ -12,6 +12,19 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 import Table, { BulkAction, ITableProps } from "./index";
 import { makeData } from "./makeData";
 
+const HeaderContent = () => (
+    <div
+        className="swapComponent"
+        style={{
+            background: "#F4E1EC",
+            padding: ".6rem 1.2rem",
+            color: "#A60063"
+        }}
+    >
+        Swap
+    </div>
+);
+
 const bulkActionsMock: BulkAction = {
     label: "Bulk",
     onChange: (item: IMenuItemProps) => console.log(item),
@@ -75,6 +88,7 @@ const meta: Meta<ITableProps> = {
         editableMode: args({ control: "boolean", ...propCategory.functionality }),
         onPageSizeChange: args({ control: "false", ...propCategory.functionality }),
         withManualPagination: args({ control: "boolean", ...propCategory.functionality }),
+        keepPinnedRows: args({ control: "boolean", ...propCategory.functionality }),
         hasNextPage: args({ control: "boolean", ...propCategory.content }),
         showInputPageField: args({ control: "boolean", ...propCategory.content }),
         isFetchingNextPage: args({ control: "boolean", ...propCategory.content }),
@@ -86,20 +100,20 @@ const meta: Meta<ITableProps> = {
         isManageColumnsDisabled: args({ control: "boolean", ...propCategory.states }),
         withManageColumns: args({ control: "boolean", ...propCategory.states }),
         manageColumnsTitle: args({ control: "text", ...propCategory.content }),
-        headerContent: args({ control: "text", ...propCategory.content })
+        headerContent: args({ control: "false", ...propCategory.content })
     },
     args: {
         columns: defaultColumns,
         externalData,
         onRowClick: undefined,
-        // onRowPin: undefined,
         onRowTag: undefined,
         onRowClock: undefined,
         onRowReload: undefined,
         onRowCopy: undefined,
         onRowDownload: undefined,
-        onRowShow: undefined
-        // onRowDelete: undefined
+        onRowShow: undefined,
+        keepPinnedRows: false,
+        headerContent: <HeaderContent />
     }
 };
 
@@ -143,14 +157,9 @@ const TableComponent: FC<ITableProps> = (props) => {
     return (
         <Table
             {...props}
-            columns={defaultColumns}
             externalData={tableData}
-            withVirtualScroll
-            withGlobalFilter
-            withCheckbox
             bulkActions={bulkActionsMock}
             onCellEdit={onCellEdit}
-            withDynamicFetch
             editableMode={editableState}
             onEdit={onEdit}
             onSave={onSave}

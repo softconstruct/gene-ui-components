@@ -7,6 +7,7 @@ import Pill, { IPillProps } from "@components/atoms/Pill";
 import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
 import Switch, { ISwitchProps } from "@components/molecules/Switch";
 import TextField from "@components/molecules/TextField";
+import Tooltip from "@components/molecules/Tooltip";
 
 import { CellType } from "./type";
 
@@ -82,12 +83,14 @@ export const cellRenderer: () => CellRenderer = () => {
             if (rowCellRenderer) return rowCellRenderer(data);
 
             return (
-                <>
-                    <span className="table__td_text">{value}</span>
-                    {withCopy && (
-                        <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />
-                    )}
-                </>
+                <Tooltip>
+                    <>
+                        <span className="table__td_text">{value}</span>
+                        {withCopy && (
+                            <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />
+                        )}
+                    </>
+                </Tooltip>
             );
         },
         Dropdown: ({ rowCellRenderer, data, withEditMode, withCopy, onChange }) => {

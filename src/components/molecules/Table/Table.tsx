@@ -275,6 +275,7 @@ interface ITableProps {
     editableMode?: boolean;
     onEdit?: () => void;
     onCancel?: () => void;
+    keepPinnedRows?: boolean;
 }
 
 const Table: FC<ITableProps> = ({
@@ -325,7 +326,8 @@ const Table: FC<ITableProps> = ({
     onCellEdit,
     editableMode,
     onEdit,
-    onCancel
+    onCancel,
+    keepPinnedRows
 }) => {
     const {
         data,
@@ -415,6 +417,7 @@ const Table: FC<ITableProps> = ({
         ...(withManualPagination && { manualPagination: withManualPagination }),
         onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
+        keepPinnedRows,
         getFilteredRowModel: getFilteredRowModel(),
         getExpandedRowModel: getExpandedRowModel(),
         enableRowPinning: true,
@@ -543,7 +546,7 @@ const Table: FC<ITableProps> = ({
     const renderTableHeaderCell = (header: Header<Row, unknown>) => {
         if (header.isPlaceholder) return null;
 
-        if (header.id === "rowCheckbox" && withCheckbox) {
+        if ((header.column.columnDef as TableCol<Row>).type === "RowCheckbox" && withCheckbox) {
             return (
                 <th
                     key={`${header.id}_header`}
@@ -564,6 +567,20 @@ const Table: FC<ITableProps> = ({
                             }}
                         />
                     </div>
+                </th>
+            );
+        }
+        if ((header.column.columnDef as TableCol<Row>).type === "Expand" && expandable) {
+            return (
+                <th
+                    key={`${header.id}_header`}
+                    colSpan={header.colSpan}
+                    className={classNames("table__th", {
+                        table__th_group: header.subHeaders.length
+                    })}
+                    aria-label="expand"
+                >
+                    <div className="table__content table__content_empty" />
                 </th>
             );
         }
@@ -594,7 +611,7 @@ const Table: FC<ITableProps> = ({
             return <Loader size={loaderSize} text={loaderText} />;
         }
 
-        if (table.getRowModel().flatRows.length > 0) {
+        if (table.getRowModel().rows.length > 0) {
             return (
                 <>
                     {withVirtualScroll && tableContainerRef.current ? (
@@ -706,7 +723,7 @@ const Table: FC<ITableProps> = ({
                     </div>
                 </div>
                 <div className="dataTable__toolbar_actions">
-                    {headerContent && <div className="dataTable__toolbar_content">{headerContent}</div>}
+                    {headerContent}
                     {editableMode ? (
                         <>
                             <div className="dropdownMenu__footer_buutonGroup">
@@ -961,7 +978,7 @@ const Table: FC<ITableProps> = ({
                     </thead>
 
                     <tbody>{renderTableBody()}</tbody>
-                    {table.getRowModel().flatRows.length > 0 && (
+                    {table.getRowModel().rows.length > 0 && (
                         <tfoot>
                             {table.getFooterGroups().map((footerGroups) => {
                                 return (
@@ -977,7 +994,7 @@ const Table: FC<ITableProps> = ({
                 </table>
             </div>
 
-            {withPagination && table.getRowModel().flatRows.length > 0 && (
+            {withPagination && table.getRowModel().rows.length > 0 && (
                 <div className="dataTable__pagination">
                     <div className="dataTable__pagination_controls">
                         <Pagination
