@@ -90,6 +90,7 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
     };
 
     return (
+        // todo: add "table__th_actions_active" classname, if
         <div className="table__th_actions">
             {header.column.getCanSort() && (
                 <Button

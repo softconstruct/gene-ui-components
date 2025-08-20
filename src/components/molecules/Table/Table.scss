@@ -1,5 +1,7 @@
 .dataTable {
     background-color: var(--guit-sem-color-background-neutral-1);
+    position: relative;
+    z-index: 0;
 
     &__toolbar {
         display: flex;
@@ -497,6 +499,7 @@
             text-align: start;
         }
 
+        &_active,
         &:hover {
             #{$that}_actions {
                 opacity: 1;

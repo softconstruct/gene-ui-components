@@ -83,7 +83,7 @@ export const cellRenderer: () => CellRenderer = () => {
             if (rowCellRenderer) return rowCellRenderer(data);
 
             return (
-                <Tooltip>
+                <Tooltip text={value}>
                     <>
                         <span className="table__td_text">{value}</span>
                         {withCopy && (
