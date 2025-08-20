@@ -18,16 +18,6 @@ interface IVirtualScrollTBody {
     hasNextPage?: boolean;
     isFetchingNextPage?: boolean;
     fetchNextPage?: () => void;
-    onRowClick?: (event: string) => void;
-    onRowPinToggle?: (rowId: string) => void;
-    onRowTag?: (rowId: string) => void;
-    onRowClock?: (rowId: string) => void;
-    onRowReload?: (rowId: string) => void;
-    onRowCopy?: (rowId: string) => void;
-    onRowDownload?: (rowId: string) => void;
-    onRowShow?: (rowId: string) => void;
-    onRowDelete?: (rowId: string) => void;
-    onCellEdit?: (rowIndex: number, columnType: string, value: any) => void;
 }
 
 const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
@@ -41,17 +31,7 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
     fetchNextPage,
     expandable,
     withCheckbox,
-    editableMode,
-    onRowClick,
-    onCellEdit,
-    onRowPinToggle,
-    onRowTag,
-    onRowClock,
-    onRowReload,
-    onRowCopy,
-    onRowDownload,
-    onRowShow,
-    onRowDelete
+    editableMode
 }) => {
     const rowVirtualizer = useVirtualizer({
         count: centerRows.length,
@@ -84,16 +64,6 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                     expandable={expandable}
                     withCheckbox={withCheckbox}
                     editableMode={editableMode}
-                    onRowClick={onRowClick}
-                    {...(onCellEdit && { handleCellEdit: onCellEdit })}
-                    {...(onRowDelete && { onRowDelete })}
-                    {...(onRowPinToggle && { onRowPinToggle })}
-                    {...(onRowTag && { onRowTag })}
-                    {...(onRowClock && { onRowClock })}
-                    {...(onRowReload && { onRowReload })}
-                    {...(onRowCopy && { onRowCopy })}
-                    {...(onRowDownload && { onRowDownload })}
-                    {...(onRowShow && { onRowShow })}
                 />
             ))}
             {virtualItems.map((virtualRow) => {
@@ -106,16 +76,6 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                         expandable={expandable}
                         withCheckbox={withCheckbox}
                         editableMode={editableMode}
-                        onRowClick={onRowClick}
-                        {...(onCellEdit && { handleCellEdit: onCellEdit })}
-                        {...(onRowDelete && { onRowDelete })}
-                        {...(onRowPinToggle && { onRowPinToggle })}
-                        {...(onRowTag && { onRowTag })}
-                        {...(onRowClock && { onRowClock })}
-                        {...(onRowReload && { onRowReload })}
-                        {...(onRowCopy && { onRowCopy })}
-                        {...(onRowDownload && { onRowDownload })}
-                        {...(onRowShow && { onRowShow })}
                     />
                 );
             })}

@@ -4,6 +4,7 @@ import { IconProps } from "@geneui/icons";
 
 import Copy from "@components/atoms/Copy";
 import Pill, { IPillProps } from "@components/atoms/Pill";
+import Text from "@components/atoms/Text";
 import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
 import Switch, { ISwitchProps } from "@components/molecules/Switch";
 import TextField from "@components/molecules/TextField";
@@ -83,14 +84,16 @@ export const cellRenderer: () => CellRenderer = () => {
             if (rowCellRenderer) return rowCellRenderer(data);
 
             return (
-                <Tooltip text={value}>
-                    <>
-                        <span className="table__td_text">{value}</span>
-                        {withCopy && (
-                            <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />
-                        )}
-                    </>
-                </Tooltip>
+                <>
+                    <Tooltip text={value}>
+                        <Text as="span" className="table__td_text">
+                            {value}
+                        </Text>
+                    </Tooltip>
+                    {withCopy && (
+                        <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />
+                    )}
+                </>
             );
         },
         Dropdown: ({ rowCellRenderer, data, withEditMode, withCopy, onChange }) => {

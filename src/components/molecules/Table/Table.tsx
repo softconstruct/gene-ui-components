@@ -1,7 +1,9 @@
-import React, { FC, ReactNode, useEffect, useState } from "react";
+import React, { ChangeEvent, createContext, FC, ReactNode, useEffect, useMemo, useState } from "react";
 import {
     Column,
     ColumnFiltersState,
+    ColumnPinningState,
+    ExpandedState,
     flexRender,
     getCoreRowModel,
     getExpandedRowModel,
@@ -9,8 +11,11 @@ import {
     getPaginationRowModel,
     getSortedRowModel,
     Header,
+    Row as TanstackRow,
+    RowPinningState,
     SortingState,
-    useReactTable
+    useReactTable,
+    VisibilityState
 } from "@tanstack/react-table";
 import classNames from "classnames";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
@@ -34,10 +39,89 @@ import VirtualScrollTBody from "@components/molecules/Table/VirtualScrollTBody";
 // Styles
 import "./Table.scss";
 
-// hooks
-import { useTableState } from "./hooks";
+interface ITableActions {
+    /**
+     * A callback function that is triggered when a row is clicked. The ID of the clicked row is passed as an argument.
+     */
+    onRowClick?: (id: string) => void;
+    /**
+     * A callback function that is triggered when the main checkbox in the table header is toggled.
+     */
+    onColumnCheck?: () => void;
+    /**
+     * A callback function that is triggered when the value of the global search input changes.
+     */
+    onGlobalFilterChange?: (filter: string) => void;
+    /**
+     * A callback function that is triggered when column visibility or order is updated via the "Manage Columns" menu.
+     */
+    onManageColumns?: (event: IOrderedColumns[]) => void;
+    /**
+     * A callback function that is triggered when the column configuration is restored to its default settings from the "Manage Columns" menu.
+     */
+    onManageColumnRestore?: (event: IOrderedColumns[]) => void;
+    /**
+     * A callback function that is triggered whenever the sorting state of the table changes.
+     */
+    onSortChange?: (sorting: SortingState) => void;
+    /**
+     * A callback function that is triggered when the current page changes. The new page number is passed as an argument.
+     */
+    onPageChange?: (pageNumber: number) => void;
+    /**
+     * A callback function that is triggered when the page size changes. The new page size is passed as an argument.
+     */
+    onPageSizeChange?: (size: number) => void;
+    /**
+     * A callback function that is triggered whenever the row selection changes. An array of the selected row data is passed as an argument.
+     */
+    onRowSelect?: (selectedRow: TanstackRow<Row>) => void;
+    /**
+     * A callback function that is triggered when a cell value is edited in editable mode.
+     */
+    onCellEdit?: (rowIndex: number, columnType: string, value: any) => void;
+    /**
+     * A callback function that is triggered when the "Save" button is clicked in editable mode. The updated data is passed as an argument.
+     */
+    onSave?: () => void;
+    /**
+     * A callback function that is triggered when a row is pinned. The ID of the pinned row is passed as an argument.
+     */
+    onRowPinToggle?: (rowId: string) => void;
+    /**
+     * A callback function for the tag action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowTag?: (rowId: string) => void;
+    /**
+     * A callback function for the clock action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowClock?: (rowId: string) => void;
+    /**
+     * A callback function for the reload action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowReload?: (rowId: string) => void;
+    /**
+     * A callback function for the copy action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowCopy?: (rowId: string) => void;
+    /**
+     * A callback function for the download action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowDownload?: (rowId: string) => void;
+    /**
+     * A callback function for the show action button on a row. The ID of the row is passed as an argument.
+     */
+    onRowShow?: (rowId: string) => void;
+    /**
+     * A callback function that is triggered when a row is deleted. The ID of the deleted row is passed as an argument.
+     */
+    onRowDelete?: (rowId: string) => void;
+    onEdit?: () => void;
+    onCancel?: () => void;
+    selectedRows?: string[];
+}
 
-interface ITableProps {
+interface ITableProps extends ITableActions {
     /**
      * An array of column definitions that configure the table's structure, data accessors, and rendering.
      */
@@ -59,29 +143,9 @@ interface ITableProps {
     withCheckbox?: boolean;
 
     /**
-     * A callback function that is triggered when a row is clicked. The ID of the clicked row is passed as an argument.
-     */
-    onRowClick?: (id: string) => void;
-
-    /**
-     * A callback function that is triggered when the main checkbox in the table header is toggled.
-     */
-    onColumnCheck?: () => void;
-
-    /**
      * An optional CSS class name to apply to the table container for custom styling.
      */
     className?: string;
-
-    /**
-     * A callback function that is triggered when the value of the global search input changes.
-     */
-    onGlobalFilterChange?: (filter: string) => void;
-
-    /**
-     * A callback function that is triggered when column visibility or order is updated via the "Manage Columns" menu.
-     */
-    onManageColumns?: (event: IOrderedColumns[]) => void;
 
     /**
      * An object defining optional bulk actions that appear when one or more rows are selected.
@@ -134,26 +198,6 @@ interface ITableProps {
     withVirtualScroll?: boolean;
 
     /**
-     * A callback function that is triggered when the column configuration is restored to its default settings from the "Manage Columns" menu.
-     */
-    onManageColumnRestore?: (event: IOrderedColumns[]) => void;
-
-    /**
-     * A callback function that is triggered whenever the sorting state of the table changes.
-     */
-    onSortChange?: (sorting: SortingState) => void;
-
-    /**
-     * A callback function that is triggered when the current page changes. The new page number is passed as an argument.
-     */
-    onPageChange?: (pageNumber: number) => void;
-
-    /**
-     * A callback function that is triggered when the page size changes. The new page size is passed as an argument.
-     */
-    onPageSizeChange?: (size: number) => void;
-
-    /**
      * Displays an input field in the pagination control that allows users to manually enter a page number.
      */
     showInputPageField?: boolean;
@@ -162,16 +206,6 @@ interface ITableProps {
      * Enables manual pagination, where the component expects the consumer to handle pagination logic (e.g., fetching data for the current page).
      */
     withManualPagination?: boolean;
-
-    /**
-     * A callback function that is triggered whenever the row selection changes. An array of the selected row data is passed as an argument.
-     */
-    onRowSelect?: (selectedRows: any[]) => void;
-
-    /**
-     * A callback function that is triggered when a cell value is edited in editable mode.
-     */
-    onCellEdit?: (rowIndex: number, columnType: string, value: any) => void;
 
     /**
      * Enables dynamic fetching of data for infinite scrolling or virtualized lists.
@@ -192,11 +226,6 @@ interface ITableProps {
      * A function to be called to fetch the next page of data for dynamic loading.
      */
     fetchNextPage?: () => void;
-
-    /**
-     * A callback function that is triggered when the "Save" button is clicked in editable mode. The updated data is passed as an argument.
-     */
-    onSave?: () => void;
 
     /**
      * A boolean that, when `true`, displays a loading indicator over the table.
@@ -233,50 +262,11 @@ interface ITableProps {
      */
     headerContent?: ReactNode;
 
-    /**
-     * A callback function that is triggered when a row is pinned. The ID of the pinned row is passed as an argument.
-     */
-    onRowPinToggle?: (rowId: string) => void;
-
-    /**
-     * A callback function for the tag action button on a row. The ID of the row is passed as an argument.
-     */
-    onRowTag?: (rowId: string) => void;
-
-    /**
-     * A callback function for the clock action button on a row. The ID of the row is passed as an argument.
-     */
-    onRowClock?: (rowId: string) => void;
-
-    /**
-     * A callback function for the reload action button on a row. The ID of the row is passed as an argument.
-     */
-    onRowReload?: (rowId: string) => void;
-
-    /**
-     * A callback function for the copy action button on a row. The ID of the row is passed as an argument.
-     */
-    onRowCopy?: (rowId: string) => void;
-
-    /**
-     * A callback function for the download action button on a row. The ID of the row is passed as an argument.
-     */
-    onRowDownload?: (rowId: string) => void;
-
-    /**
-     * A callback function for the show action button on a row. The ID of the row is passed as an argument.
-     */
-    onRowShow?: (rowId: string) => void;
-
-    /**
-     * A callback function that is triggered when a row is deleted. The ID of the deleted row is passed as an argument.
-     */
-    onRowDelete?: (rowId: string) => void;
     editableMode?: boolean;
-    onEdit?: () => void;
-    onCancel?: () => void;
     keepPinnedRows?: boolean;
 }
+
+export const TableContext = createContext<ITableActions>({});
 
 const Table: FC<ITableProps> = ({
     columns,
@@ -327,35 +317,52 @@ const Table: FC<ITableProps> = ({
     editableMode,
     onEdit,
     onCancel,
-    keepPinnedRows
+    keepPinnedRows,
+    onRowSelect,
+    selectedRows
 }) => {
-    const {
-        data,
-        sorting,
-        columnVisibility,
-        globalFilter,
-        expanded,
-        columnPinning,
-        rowPinning,
-        menuOpened,
-        setData,
-        setSorting,
-        setColumnVisibility,
-        setColumnPinning,
-        setRowPinning,
-        setExpanded,
-        setMenuOpened,
-        setGlobalFilter
-    } = useTableState<Row>({
-        initialData: externalData,
-        initialPageSize,
-        callbacks: {
+    const memoizedTableContextValue = useMemo(
+        () => ({
+            onRowClick,
+            onColumnCheck,
+            onGlobalFilterChange,
+            onManageColumns,
+            onManageColumnRestore,
             onSortChange,
+            onPageChange,
+            onPageSizeChange,
+            onRowSelect,
+            onCellEdit,
             onSave,
-            onGlobalFilterChange
-        }
-    });
+            onRowPinToggle,
+            onRowTag,
+            onRowClock,
+            onRowReload,
+            onRowCopy,
+            onRowDownload,
+            onRowShow,
+            onRowDelete,
+            onEdit,
+            onCancel
+        }),
+        []
+    );
+
     const tableContainerRef = React.useRef<HTMLDivElement>(null);
+
+    const [data, setData] = useState<Row[]>(deepCloneWithFunctions(externalData));
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const [expanded, setExpanded] = useState<ExpandedState>({});
+    const [globalFilter, setGlobalFilter] = useState("");
+    const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
+        left: ["expand", "rowCheckbox"]
+    });
+    const [rowPinning, setRowPinning] = useState<RowPinningState>({
+        top: [],
+        bottom: []
+    });
+    const [menuOpened, setMenuOpened] = useState(false);
     const accessEditableMode: Record<string, boolean> = {};
     const accessCopyable: Record<string, boolean> = {};
     const [tableColumns, setTableColumns] = useState<TableCol<Row>[]>(deepCloneWithFunctions(columns));
@@ -395,9 +402,8 @@ const Table: FC<ITableProps> = ({
         columns,
         initialState: {
             sorting,
-            columnPinning: {
-                left: ["expand", "rowCheckbox"]
-            },
+            columnPinning,
+            ...(selectedRows && { rowSelection: Object.fromEntries(selectedRows.map((key) => [key, true])) }),
             ...(withPagination &&
                 !withVirtualScroll && {
                     pagination: { pageSize: initialPageSize, pageIndex: initialPageIndex }
@@ -520,6 +526,11 @@ const Table: FC<ITableProps> = ({
             [column.id]: !visibleColumns[column.id]
         });
     };
+    const handleGlobalFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { value } = event.target;
+        setGlobalFilter(value);
+        onGlobalFilterChange?.(value);
+    };
 
     const onColumnPin = (column: Column<Row, unknown>, groupIndex: number, columnIndex: number) => {
         const isPinned = column.getIsPinned();
@@ -621,7 +632,6 @@ const Table: FC<ITableProps> = ({
                                 centerRows={table.getCenterRows()}
                                 columnCount={table.getHeaderGroups().length || 1}
                                 tableContainerRef={tableContainerRef.current}
-                                onRowClick={onRowClick}
                                 expandable={expandable}
                                 editableMode={!!editableMode}
                                 withCheckbox={withCheckbox}
@@ -643,19 +653,9 @@ const Table: FC<ITableProps> = ({
                     ) : (
                         <TBody
                             table={table}
-                            onRowClick={onRowClick}
                             expandable={expandable}
                             editableMode={!!editableMode}
                             withCheckbox={withCheckbox}
-                            {...(onCellEdit && { onCellEdit })}
-                            {...(onRowDelete && { onRowDelete })}
-                            {...(onRowPinToggle && { onRowPinToggle })}
-                            {...(onRowTag && { onRowTag })}
-                            {...(onRowClock && { onRowClock })}
-                            {...(onRowReload && { onRowReload })}
-                            {...(onRowCopy && { onRowCopy })}
-                            {...(onRowDownload && { onRowDownload })}
-                            {...(onRowShow && { onRowShow })}
                         />
                     )}
                 </>
@@ -692,330 +692,344 @@ const Table: FC<ITableProps> = ({
     };
 
     return (
-        <div className={classNames("dataTable")}>
-            <div className={classNames("dataTable__toolbar toolbar")}>
-                <div className="dataTable__toolbar_search">
-                    {withGlobalFilter && (
-                        <input
-                            className="dataTable__toolbar_searchInput"
-                            type="text"
-                            placeholder={globalFilterPlaceholder}
-                            value={globalFilter}
-                            onChange={(e) => setGlobalFilter(e.target.value)}
-                            style={{ width: "100%" }}
-                        />
-                    )}
-                    <div className="dataTable__bulkActions">
-                        {withCheckbox && (
-                            <>
-                                <div className="dataTable__bulkActions_selected">
-                                    {table.getSelectedRowModel().rows.length} selected
-                                </div>
-                                <Divider direction="vertical" />
-                                <Button
-                                    appearance="primary"
-                                    layout="text"
-                                    size="medium"
-                                    disabled={bulkActions?.disabled}
-                                    onClick={() => table.getSelectedRowModel().rows.length && table.resetRowSelection()}
-                                >
-                                    Deselect
-                                </Button>
-                            </>
+        <TableContext.Provider value={memoizedTableContextValue}>
+            <div className={classNames("dataTable")}>
+                <div className={classNames("dataTable__toolbar toolbar")}>
+                    <div className="dataTable__toolbar_search">
+                        {withGlobalFilter && (
+                            <input
+                                className="dataTable__toolbar_searchInput"
+                                type="text"
+                                placeholder={globalFilterPlaceholder}
+                                value={globalFilter}
+                                onChange={(e) => handleGlobalFilterChange(e)}
+                                style={{ width: "100%" }}
+                            />
                         )}
-                        {!!bulkActions?.list.length && <BulkActions bulkActions={bulkActions} />}
+                        <div className="dataTable__bulkActions">
+                            {withCheckbox && (
+                                <>
+                                    <div className="dataTable__bulkActions_selected">
+                                        {table.getSelectedRowModel().rows.length} selected
+                                    </div>
+                                    <Divider direction="vertical" />
+                                    <Button
+                                        appearance="primary"
+                                        layout="text"
+                                        size="medium"
+                                        disabled={bulkActions?.disabled}
+                                        onClick={() =>
+                                            table.getSelectedRowModel().rows.length && table.resetRowSelection()
+                                        }
+                                    >
+                                        Deselect
+                                    </Button>
+                                </>
+                            )}
+                            {!!bulkActions?.list.length && <BulkActions bulkActions={bulkActions} />}
+                        </div>
                     </div>
-                </div>
-                <div className="dataTable__toolbar_actions">
-                    {headerContent}
-                    {editableMode ? (
-                        <>
-                            <div className="dropdownMenu__footer_buutonGroup">
+                    <div className="dataTable__toolbar_actions">
+                        {headerContent}
+                        {editableMode ? (
+                            <>
+                                <div className="dropdownMenu__footer_buutonGroup">
+                                    <Button
+                                        appearance="secondary"
+                                        layout="fill"
+                                        size="medium"
+                                        onClick={() => tableEditAction("cancel")}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        appearance="primary"
+                                        layout="fill"
+                                        size="medium"
+                                        onClick={() => tableEditAction("save")}
+                                    >
+                                        Save
+                                    </Button>
+                                </div>
+                            </>
+                        ) : (
+                            <>
                                 <Button
                                     appearance="secondary"
-                                    layout="fill"
+                                    layout="outline"
                                     size="medium"
-                                    onClick={() => tableEditAction("cancel")}
+                                    Icon={Globe}
+                                    onClick={() => tableEditAction("edit")}
                                 >
-                                    Cancel
+                                    Edit
                                 </Button>
-                                <Button
-                                    appearance="primary"
-                                    layout="fill"
-                                    size="medium"
-                                    onClick={() => tableEditAction("save")}
-                                >
-                                    Save
-                                </Button>
-                            </div>
-                        </>
-                    ) : (
-                        <>
-                            <Button
-                                appearance="secondary"
-                                layout="outline"
-                                size="medium"
-                                Icon={Globe}
-                                onClick={() => tableEditAction("edit")}
-                            >
-                                Edit
-                            </Button>
-                            {withManageColumns && (
-                                <div className="dataTable__toolbar_dropdownMenu">
-                                    <Button
-                                        className="dataTable__toolbar_dropdownMenu_manageColumns"
-                                        appearance="secondary"
-                                        layout="outline"
-                                        size="medium"
-                                        disabled={isManageColumnsDisabled}
-                                        Icon={Globe}
-                                        onClick={() => setMenuOpened(!menuOpened)}
-                                    >
-                                        {manageColumnsTitle}
-                                    </Button>
+                                {withManageColumns && (
+                                    <div className="dataTable__toolbar_dropdownMenu">
+                                        <Button
+                                            className="dataTable__toolbar_dropdownMenu_manageColumns"
+                                            appearance="secondary"
+                                            layout="outline"
+                                            size="medium"
+                                            disabled={isManageColumnsDisabled}
+                                            Icon={Globe}
+                                            onClick={() => setMenuOpened(!menuOpened)}
+                                        >
+                                            {manageColumnsTitle}
+                                        </Button>
 
-                                    {menuOpened && (
-                                        <div className="dropdownMenu">
-                                            <div className="dropdownMenu__header">
-                                                <input type="text" placeholder="Search" style={{ width: "100%" }} />
-                                            </div>
-
-                                            <Scrollbar>
-                                                <div className="dropdownMenu__main">
-                                                    <div className="dropdownMenu__columns">
-                                                        <div className="dropdownMenu__columns_header">
-                                                            <p className="dropdownMenu__columns_title ellipsis-text">
-                                                                Active Columns
-                                                            </p>
-                                                        </div>
-                                                        <DragDropContext onDragEnd={handleDragEnd}>
-                                                            {orderedColumns.map((item, groupIndex) => {
-                                                                return (
-                                                                    <Droppable droppableId={item.id} key={item.id}>
-                                                                        {(provided, snapshot) => (
-                                                                            <div
-                                                                                {...provided.droppableProps}
-                                                                                ref={provided.innerRef}
-                                                                                className={classNames("columns-list", {
-                                                                                    "columns-list--dragging-over":
-                                                                                        snapshot.isDraggingOver
-                                                                                })}
-                                                                            >
-                                                                                <span key={item.id}>{item.title}</span>
-                                                                                {item.columns.map((column, index) => {
-                                                                                    if (
-                                                                                        (
-                                                                                            column.columnDef as TableCol<Row>
-                                                                                        ).type === "Expand" ||
-                                                                                        (
-                                                                                            column.columnDef as TableCol<Row>
-                                                                                        ).type === "RowCheckbox"
-                                                                                    ) {
-                                                                                        return null;
-                                                                                    }
-
-                                                                                    return (
-                                                                                        <Draggable
-                                                                                            key={column.id}
-                                                                                            draggableId={column.id}
-                                                                                            index={index}
-                                                                                        >
-                                                                                            {(
-                                                                                                draggableProvided,
-                                                                                                draggableSnapshot
-                                                                                            ) => (
-                                                                                                <div
-                                                                                                    ref={
-                                                                                                        draggableProvided.innerRef
-                                                                                                    }
-                                                                                                    {...(draggableProvided.draggableProps as React.HTMLAttributes<HTMLDivElement>)}
-                                                                                                    className={classNames(
-                                                                                                        "dropdownMenu__columns_item",
-                                                                                                        {
-                                                                                                            "dropdownMenu__columns_item--dragging":
-                                                                                                                draggableSnapshot.isDragging,
-                                                                                                            "dropdownMenu__columns_item--disabled":
-                                                                                                                (
-                                                                                                                    column.columnDef as TableCol<unknown>
-                                                                                                                )
-                                                                                                                    .disabled
-                                                                                                        }
-                                                                                                    )}
-                                                                                                    role="tab"
-                                                                                                    tabIndex={0}
-                                                                                                >
-                                                                                                    <Label
-                                                                                                        className="dropdownMenu__columns_placeholder"
-                                                                                                        text={
-                                                                                                            (
-                                                                                                                column.columnDef as TableCol<Row>
-                                                                                                            ).header
-                                                                                                        }
-                                                                                                    >
-                                                                                                        <Checkbox
-                                                                                                            name="item"
-                                                                                                            value="item"
-                                                                                                            checked={
-                                                                                                                visibleColumns[
-                                                                                                                    column
-                                                                                                                        .id
-                                                                                                                ]
-                                                                                                            }
-                                                                                                            onChange={() =>
-                                                                                                                handleColumnVisibility(
-                                                                                                                    column
-                                                                                                                )
-                                                                                                            }
-                                                                                                        />
-                                                                                                    </Label>
-                                                                                                    <div className="dropdownMenu__columns_actions">
-                                                                                                        <Button
-                                                                                                            appearance="secondary"
-                                                                                                            layout="text"
-                                                                                                            size="small"
-                                                                                                            Icon={
-                                                                                                                column.getIsPinned()
-                                                                                                                    ? PinFilled
-                                                                                                                    : Pin
-                                                                                                            }
-                                                                                                            onClick={() =>
-                                                                                                                onColumnPin(
-                                                                                                                    column,
-                                                                                                                    groupIndex,
-                                                                                                                    index
-                                                                                                                )
-                                                                                                            }
-                                                                                                            className="dropdownMenu__columns_icon"
-                                                                                                        />
-                                                                                                        <div
-                                                                                                            {...draggableProvided.dragHandleProps}
-                                                                                                        >
-                                                                                                            <Button
-                                                                                                                appearance="secondary"
-                                                                                                                layout="text"
-                                                                                                                size="small"
-                                                                                                                Icon={
-                                                                                                                    ThreeDotsVertical
-                                                                                                                }
-                                                                                                                onClick={() => {}}
-                                                                                                                className="dropdownMenu__columns_icon"
-                                                                                                            />
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            )}
-                                                                                        </Draggable>
-                                                                                    );
-                                                                                })}
-                                                                                {provided.placeholder}
-                                                                            </div>
-                                                                        )}
-                                                                    </Droppable>
-                                                                );
-                                                            })}
-                                                        </DragDropContext>
-                                                    </div>
-                                                    <Divider />
+                                        {menuOpened && (
+                                            <div className="dropdownMenu">
+                                                <div className="dropdownMenu__header">
+                                                    <input type="text" placeholder="Search" style={{ width: "100%" }} />
                                                 </div>
-                                            </Scrollbar>
 
-                                            <div className="dropdownMenu__footer">
-                                                <Button
-                                                    appearance="secondary"
-                                                    layout="text"
-                                                    size="medium"
-                                                    onClick={() => handleManageColumnsRestore()}
-                                                >
-                                                    Restore Defaults
-                                                </Button>
-                                                <div className="dropdownMenu__footer_buutonGroup">
+                                                <Scrollbar>
+                                                    <div className="dropdownMenu__main">
+                                                        <div className="dropdownMenu__columns">
+                                                            <div className="dropdownMenu__columns_header">
+                                                                <p className="dropdownMenu__columns_title ellipsis-text">
+                                                                    Active Columns
+                                                                </p>
+                                                            </div>
+                                                            <DragDropContext onDragEnd={handleDragEnd}>
+                                                                {orderedColumns.map((item, groupIndex) => {
+                                                                    return (
+                                                                        <Droppable droppableId={item.id} key={item.id}>
+                                                                            {(provided, snapshot) => (
+                                                                                <div
+                                                                                    {...provided.droppableProps}
+                                                                                    ref={provided.innerRef}
+                                                                                    className={classNames(
+                                                                                        "columns-list",
+                                                                                        {
+                                                                                            "columns-list--dragging-over":
+                                                                                                snapshot.isDraggingOver
+                                                                                        }
+                                                                                    )}
+                                                                                >
+                                                                                    <span key={item.id}>
+                                                                                        {item.title}
+                                                                                    </span>
+                                                                                    {item.columns.map(
+                                                                                        (column, index) => {
+                                                                                            if (
+                                                                                                (
+                                                                                                    column.columnDef as TableCol<Row>
+                                                                                                ).type === "Expand" ||
+                                                                                                (
+                                                                                                    column.columnDef as TableCol<Row>
+                                                                                                ).type === "RowCheckbox"
+                                                                                            ) {
+                                                                                                return null;
+                                                                                            }
+
+                                                                                            return (
+                                                                                                <Draggable
+                                                                                                    key={column.id}
+                                                                                                    draggableId={
+                                                                                                        column.id
+                                                                                                    }
+                                                                                                    index={index}
+                                                                                                >
+                                                                                                    {(
+                                                                                                        draggableProvided,
+                                                                                                        draggableSnapshot
+                                                                                                    ) => (
+                                                                                                        <div
+                                                                                                            ref={
+                                                                                                                draggableProvided.innerRef
+                                                                                                            }
+                                                                                                            {...(draggableProvided.draggableProps as React.HTMLAttributes<HTMLDivElement>)}
+                                                                                                            className={classNames(
+                                                                                                                "dropdownMenu__columns_item",
+                                                                                                                {
+                                                                                                                    "dropdownMenu__columns_item--dragging":
+                                                                                                                        draggableSnapshot.isDragging,
+                                                                                                                    "dropdownMenu__columns_item--disabled":
+                                                                                                                        (
+                                                                                                                            column.columnDef as TableCol<unknown>
+                                                                                                                        )
+                                                                                                                            .disabled
+                                                                                                                }
+                                                                                                            )}
+                                                                                                            role="tab"
+                                                                                                            tabIndex={0}
+                                                                                                        >
+                                                                                                            <Label
+                                                                                                                className="dropdownMenu__columns_placeholder"
+                                                                                                                text={
+                                                                                                                    (
+                                                                                                                        column.columnDef as TableCol<Row>
+                                                                                                                    )
+                                                                                                                        .header
+                                                                                                                }
+                                                                                                            >
+                                                                                                                <Checkbox
+                                                                                                                    name="item"
+                                                                                                                    value="item"
+                                                                                                                    checked={
+                                                                                                                        visibleColumns[
+                                                                                                                            column
+                                                                                                                                .id
+                                                                                                                        ]
+                                                                                                                    }
+                                                                                                                    onChange={() =>
+                                                                                                                        handleColumnVisibility(
+                                                                                                                            column
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                />
+                                                                                                            </Label>
+                                                                                                            <div className="dropdownMenu__columns_actions">
+                                                                                                                <Button
+                                                                                                                    appearance="secondary"
+                                                                                                                    layout="text"
+                                                                                                                    size="small"
+                                                                                                                    Icon={
+                                                                                                                        column.getIsPinned()
+                                                                                                                            ? PinFilled
+                                                                                                                            : Pin
+                                                                                                                    }
+                                                                                                                    onClick={() =>
+                                                                                                                        onColumnPin(
+                                                                                                                            column,
+                                                                                                                            groupIndex,
+                                                                                                                            index
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                    className="dropdownMenu__columns_icon"
+                                                                                                                />
+                                                                                                                <div
+                                                                                                                    {...draggableProvided.dragHandleProps}
+                                                                                                                >
+                                                                                                                    <Button
+                                                                                                                        appearance="secondary"
+                                                                                                                        layout="text"
+                                                                                                                        size="small"
+                                                                                                                        Icon={
+                                                                                                                            ThreeDotsVertical
+                                                                                                                        }
+                                                                                                                        onClick={() => {}}
+                                                                                                                        className="dropdownMenu__columns_icon"
+                                                                                                                    />
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    )}
+                                                                                                </Draggable>
+                                                                                            );
+                                                                                        }
+                                                                                    )}
+                                                                                    {provided.placeholder}
+                                                                                </div>
+                                                                            )}
+                                                                        </Droppable>
+                                                                    );
+                                                                })}
+                                                            </DragDropContext>
+                                                        </div>
+                                                        <Divider />
+                                                    </div>
+                                                </Scrollbar>
+
+                                                <div className="dropdownMenu__footer">
                                                     <Button
                                                         appearance="secondary"
-                                                        layout="fill"
+                                                        layout="text"
                                                         size="medium"
-                                                        onClick={() => setMenuOpened(false)}
+                                                        onClick={() => handleManageColumnsRestore()}
                                                     >
-                                                        Cancel
+                                                        Restore Defaults
                                                     </Button>
-                                                    <Button
-                                                        className="dropdownMenu__footer_buttonGroup_save"
-                                                        appearance="primary"
-                                                        layout="fill"
-                                                        size="medium"
-                                                        onClick={handleManageColumns}
-                                                    >
-                                                        Save
-                                                    </Button>
+                                                    <div className="dropdownMenu__footer_buutonGroup">
+                                                        <Button
+                                                            appearance="secondary"
+                                                            layout="fill"
+                                                            size="medium"
+                                                            onClick={() => setMenuOpened(false)}
+                                                        >
+                                                            Cancel
+                                                        </Button>
+                                                        <Button
+                                                            className="dropdownMenu__footer_buttonGroup_save"
+                                                            appearance="primary"
+                                                            layout="fill"
+                                                            size="medium"
+                                                            onClick={handleManageColumns}
+                                                        >
+                                                            Save
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </>
-                    )}
-                </div>
-            </div>
-            <div ref={tableContainerRef} style={{ height: "500px", overflow: "auto" }}>
-                <table className={classNames("table", className)}>
-                    <thead
-                        className={classNames({
-                            table__header_sticky: withStickyHeader
-                        })}
-                    >
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <tr key={`${headerGroup.id}_header`} className="table__row table__row_thead">
-                                {headerGroup.headers.map((header) => {
-                                    const col = header.column.columnDef as TableCol<unknown>;
-
-                                    if (col.editable) {
-                                        accessEditableMode[header.id] = true;
-                                    }
-
-                                    if (col.copyable) {
-                                        accessCopyable[header.id] = true;
-                                    }
-                                    return renderTableHeaderCell(header);
-                                })}
-                            </tr>
-                        ))}
-                    </thead>
-
-                    <tbody>{renderTableBody()}</tbody>
-                    {table.getRowModel().rows.length > 0 && (
-                        <tfoot>
-                            {table.getFooterGroups().map((footerGroups) => {
-                                return (
-                                    <tr key={`${footerGroups.id}_footer`} className="table__row table__row_tfoot">
-                                        {footerGroups.headers.map((footer) => {
-                                            return renderTableFooterCell(footer);
-                                        })}
-                                    </tr>
-                                );
-                            })}
-                        </tfoot>
-                    )}
-                </table>
-            </div>
-
-            {withPagination && table.getRowModel().rows.length > 0 && (
-                <div className="dataTable__pagination">
-                    <div className="dataTable__pagination_controls">
-                        <Pagination
-                            current={initialPageIndex + 1}
-                            totalItems={data.length}
-                            currentPageItemsLength={initialPageSize}
-                            totalPages={table.getPageCount()}
-                            rowsPerPageOptions={pageSizes}
-                            onPageChange={handlePageChange}
-                            onPageSizeChange={handlePageSizeChange}
-                            showInputPageField={showInputPageField}
-                        />
+                                        )}
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
                 </div>
-            )}
-            <Divider />
-        </div>
+                <div ref={tableContainerRef} style={{ height: "500px", overflow: "auto" }}>
+                    <table className={classNames("table", className)}>
+                        <thead
+                            className={classNames({
+                                table__header_sticky: withStickyHeader
+                            })}
+                        >
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <tr key={`${headerGroup.id}_header`} className="table__row table__row_thead">
+                                    {headerGroup.headers.map((header) => {
+                                        const col = header.column.columnDef as TableCol<unknown>;
+
+                                        if (col.editable) {
+                                            accessEditableMode[header.id] = true;
+                                        }
+
+                                        if (col.copyable) {
+                                            accessCopyable[header.id] = true;
+                                        }
+                                        return renderTableHeaderCell(header);
+                                    })}
+                                </tr>
+                            ))}
+                        </thead>
+
+                        <tbody>{renderTableBody()}</tbody>
+                        {table.getRowModel().rows.length > 0 && (
+                            <tfoot>
+                                {table.getFooterGroups().map((footerGroups) => {
+                                    return (
+                                        <tr key={`${footerGroups.id}_footer`} className="table__row table__row_tfoot">
+                                            {footerGroups.headers.map((footer) => {
+                                                return renderTableFooterCell(footer);
+                                            })}
+                                        </tr>
+                                    );
+                                })}
+                            </tfoot>
+                        )}
+                    </table>
+                </div>
+
+                {withPagination && table.getRowModel().rows.length > 0 && (
+                    <div className="dataTable__pagination">
+                        <div className="dataTable__pagination_controls">
+                            <Pagination
+                                current={initialPageIndex + 1}
+                                totalItems={data.length}
+                                currentPageItemsLength={initialPageSize}
+                                totalPages={table.getPageCount()}
+                                rowsPerPageOptions={pageSizes}
+                                onPageChange={handlePageChange}
+                                onPageSizeChange={handlePageSizeChange}
+                                showInputPageField={showInputPageField}
+                            />
+                        </div>
+                    </div>
+                )}
+                <Divider />
+            </div>
+        </TableContext.Provider>
     );
 };
 

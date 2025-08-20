@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import { Row } from "@tanstack/react-table";
 import classNames from "classnames";
 
@@ -6,6 +6,7 @@ import { ChevronDown, ChevronRight, Clock, Copy, Download, Pin, PinFilled, Recyc
 
 import Button from "@components/atoms/Button";
 import { CellClassNames } from "@components/molecules/Table/helpers";
+import { TableContext } from "@components/molecules/Table/Table";
 
 import Checkbox from "../Checkbox";
 import { Row as RowData, TableCol } from ".";
@@ -17,35 +18,23 @@ interface ITableRow {
     expandable?: boolean;
     withCheckbox?: boolean;
     editableMode: boolean;
-    onRowClick?: (event: string) => void;
-    onRowPinToggle?: (rowId: string) => void;
-    onRowTag?: (rowId: string) => void;
-    onRowClock?: (rowId: string) => void;
-    onRowReload?: (rowId: string) => void;
-    onRowCopy?: (rowId: string) => void;
-    onRowDownload?: (rowId: string) => void;
-    onRowShow?: (rowId: string) => void;
-    onRowDelete?: (rowId: string) => void;
-    handleCellEdit?: (rowIndex: number, columnType: string, value: any) => void;
 }
 
-const TableRow: FC<ITableRow> = ({
-    row,
-    rowIndex,
-    expandable,
-    withCheckbox,
-    editableMode,
-    onRowClick,
-    handleCellEdit,
-    onRowPinToggle,
-    onRowTag,
-    onRowClock,
-    onRowReload,
-    onRowCopy,
-    onRowDownload,
-    onRowShow,
-    onRowDelete
-}) => {
+const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, editableMode }) => {
+    const {
+        onRowClick,
+        onCellEdit,
+        onRowPinToggle,
+        onRowTag,
+        onRowClock,
+        onRowReload,
+        onRowCopy,
+        onRowDownload,
+        onRowShow,
+        onRowDelete,
+        onRowSelect
+    } = useContext(TableContext);
+
     const handleRowDelete = () => {
         onRowDelete?.(row.id);
     };
@@ -58,6 +47,7 @@ const TableRow: FC<ITableRow> = ({
                     table__pinned: row.getIsPinned(),
                     table__pinned_horizontal: row.getIsPinned()
                 })}
+                onClick={() => onRowClick?.(row.id)}
             >
                 {expandable && (
                     <td className="table__td">
@@ -84,7 +74,7 @@ const TableRow: FC<ITableRow> = ({
                                 checked={row.getIsSelected()}
                                 onChange={() => {
                                     row.toggleSelected();
-                                    onRowClick?.(row.id);
+                                    onRowSelect?.(row);
                                 }}
                             />
                         </div>
@@ -105,8 +95,8 @@ const TableRow: FC<ITableRow> = ({
                                         withEditMode={editableMode}
                                         rowCellRenderer={(cell.column.columnDef as TableCol<unknown>).rowCellRenderer}
                                         withCopy={(cell.column.columnDef as TableCol<unknown>).copyable}
-                                        {...(handleCellEdit && {
-                                            onChange: (e) => handleCellEdit(rowIndex, type, e.target.value)
+                                        {...(onCellEdit && {
+                                            onChange: (e) => onCellEdit(rowIndex, type, e.target.value)
                                         })}
                                     />
                                 </div>
