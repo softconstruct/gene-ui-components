@@ -91,7 +91,7 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
                                 <div className={classNames(`table__content ${CellClassNames[type]}`)}>
                                     <Cell
                                         type={type as ICellProps["type"]}
-                                        data={row.original[(cell.column.columnDef as TableCol<unknown>).type]?.data}
+                                        data={row.original[(cell.column.columnDef as TableCol<unknown>).type]}
                                         withEditMode={editableMode}
                                         rowCellRenderer={(cell.column.columnDef as TableCol<unknown>).rowCellRenderer}
                                         withCopy={(cell.column.columnDef as TableCol<unknown>).copyable}

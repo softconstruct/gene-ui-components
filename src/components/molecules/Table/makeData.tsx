@@ -20,78 +20,56 @@ const range = (len: number) => {
 const newRow = (): Row => {
     return {
         id: faker.datatype.uuid(),
-        Graph: {
-            type: "Graph",
-            data: faker.image.image(148, 28)
-        },
-        Text: {
-            type: "Text",
-            data: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!
-        },
-        Number: {
-            type: "Number",
-            data: `${faker.datatype.number({ min: 1000 })}`
-        },
-        LongText: {
-            type: "LongText",
-            data: faker.lorem.text()
-        },
+        Graph: faker.image.image(148, 28),
+        Text: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!,
+        Number: `${faker.datatype.number({ min: 1000 })}`,
+        LongText: faker.lorem.text(),
         Dropdown: {
-            type: "Dropdown",
-            data: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!
-        },
+            value: faker.helpers.shuffle<string>(["Value 1", "Value 2", "Value 3"])[0]!,
+            options: ["Value 1", "Value 2", "Value 3"]
+        } as any,
         Status: {
-            type: "Status",
-            data: {
-                text: faker.word.adjective(),
-                appearance: faker.helpers.shuffle<IPillProps["appearance"]>([
-                    "warning",
-                    "error",
-                    "inverse",
-                    "informative",
-                    "neutral",
-                    "success",
-                    "purple",
-                    "lagoon",
-                    "magenta",
-                    "slate"
-                ])[0]
-            } as IPillProps
+            text: faker.word.adjective(),
+            appearance: faker.helpers.shuffle<IPillProps["appearance"]>([
+                "warning",
+                "error",
+                "inverse",
+                "informative",
+                "neutral",
+                "success",
+                "purple",
+                "lagoon",
+                "magenta",
+                "slate"
+            ])[0]!
         },
         Pill: {
-            type: "Pill",
-            data: {}
+            text: faker.word.adjective(),
+            appearance: faker.helpers.shuffle<IPillProps["appearance"]>([
+                "warning",
+                "error",
+                "inverse",
+                "informative",
+                "neutral",
+                "success",
+                "purple",
+                "lagoon",
+                "magenta",
+                "slate"
+            ])[0]!
         },
-        Icon: {
-            type: "Icon",
-            data: Globe
-        },
-        Flag: {
-            type: "Flag",
-            data: Globe
-        },
+        Icon: Globe,
+        Flag: Globe,
         Checkbox: {
-            type: "Checkbox",
-            data: {
-                value: faker.word.adjective(),
-                checked: faker.helpers.shuffle<boolean>([true, false])[0]!
-            } as ICheckboxProps
-        },
+            value: faker.word.adjective(),
+            checked: faker.helpers.shuffle<boolean>([true, false])[0]!
+        } as ICheckboxProps,
         Switch: {
-            type: "Switch",
-            data: {
-                value: faker.word.adjective(),
-                checked: faker.helpers.shuffle<boolean>([true, false])[0]!
-            } as ISwitchProps
-        },
+            value: faker.word.adjective(),
+            checked: faker.helpers.shuffle<boolean>([true, false])[0]!
+        } as ISwitchProps,
         isPinned: faker.helpers.shuffle<boolean>([false, true])[0]!,
-        rowStatus: faker.helpers.shuffle<Row["rowStatus"]>([
-            "default",
-            "zebra",
-            "red",
-            "green",
-            "highlighted"
-        ])[0]! as Row["rowStatus"],
+        rowStatus: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!,
         expandedData: () => <h1>Swap data</h1>
     };
 };

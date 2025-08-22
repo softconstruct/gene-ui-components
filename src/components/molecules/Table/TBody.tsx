@@ -13,9 +13,11 @@ interface ITableBody {
 }
 
 const TBody: FC<ITableBody> = ({ table, expandable, withCheckbox, editableMode }) => {
+    const allRows = [...table.getTopRows(), ...table.getCenterRows()];
+
     return (
         <>
-            {table.getTopRows().map((row, rowIndex) => (
+            {allRows.map((row, rowIndex) => (
                 <TableRow
                     key={row.id}
                     row={row}
@@ -25,18 +27,6 @@ const TBody: FC<ITableBody> = ({ table, expandable, withCheckbox, editableMode }
                     editableMode={editableMode}
                 />
             ))}
-            {table.getCenterRows().map((row, rowIndex) => {
-                return (
-                    <TableRow
-                        key={row.id}
-                        row={row}
-                        rowIndex={rowIndex}
-                        expandable={expandable}
-                        withCheckbox={withCheckbox}
-                        editableMode={editableMode}
-                    />
-                );
-            })}
         </>
     );
 };

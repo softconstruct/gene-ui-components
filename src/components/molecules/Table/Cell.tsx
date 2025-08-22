@@ -10,14 +10,14 @@ import Switch, { ISwitchProps } from "@components/molecules/Switch";
 import TextField from "@components/molecules/TextField";
 import Tooltip from "@components/molecules/Tooltip";
 
-import { CellType } from "./type";
+import { Cell as CellTypes, CellType } from "./type";
 
 interface ICellProps {
     type: CellType;
     withEditMode: boolean;
     data?: string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
     onChange?: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
-    rowCellRenderer?: (data?: any) => JSX.Element;
+    rowCellRenderer?: (data?: CellTypes) => JSX.Element;
     withCopy?: boolean;
 }
 
@@ -38,7 +38,6 @@ export const cellRenderer: () => CellRenderer = () => {
         },
         Text: ({ rowCellRenderer, data, withEditMode, inputType = "text", withCopy, onChange }) => {
             const value = data as string;
-
             if (withEditMode) {
                 return (
                     <TextField
@@ -97,17 +96,28 @@ export const cellRenderer: () => CellRenderer = () => {
             );
         },
         Dropdown: ({ rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
-            const value = data as string;
+            const { value, options } = data as any;
+            const [dropDownValue, setDropDownValue] = useState<string>(value);
+
+            const onDropDownChange = (e: ChangeEvent<HTMLSelectElement>) => {
+                setDropDownValue(e.target.value);
+                onChange?.(e);
+            };
+
             if (withEditMode) {
                 return (
                     <select
                         name="dropdown"
                         id="dropdown"
                         style={{ width: "160px" }}
-                        value={value}
-                        {...(onChange && { onChange: (e) => onChange(e) })}
+                        value={dropDownValue}
+                        {...(onChange && { onChange: onDropDownChange })}
                     >
-                        <option value="Value">Value</option>
+                        {options.map((option: string) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
                     </select>
                 );
             }
@@ -116,9 +126,14 @@ export const cellRenderer: () => CellRenderer = () => {
 
             return (
                 <>
-                    <span className="table__td_text ellipsis-text">{value}</span>
+                    <span className="table__td_text ellipsis-text">{dropDownValue}</span>
                     {withCopy && (
-                        <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />
+                        <Copy
+                            value={dropDownValue}
+                            size="small"
+                            appearance="secondary"
+                            className="table__content_copy"
+                        />
                     )}
                 </>
             );

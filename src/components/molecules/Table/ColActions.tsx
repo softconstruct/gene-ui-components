@@ -18,11 +18,11 @@ interface IColActionsProps {
     header: Header<Row, unknown>;
 }
 
-const getFilterOptionLabelByColumnType = (data: Cell["data"] | undefined, type: string) => {
+const getFilterOptionLabelByColumnType = (data: Cell | undefined, type: string) => {
     switch (type) {
         case "status":
         case "pill":
-            return (data as IPillProps).text;
+            return (data as IPillProps)?.text;
         case "checkbox":
         case "switch":
             return (data as ICheckboxProps).value;
@@ -43,8 +43,8 @@ const getFilterOption = (column: Column<Row, unknown>): string[] => {
         ...new Set(
             flatRows
                 .map((row) => {
-                    const cellData: Cell["data"] | undefined =
-                        row.original[(column.columnDef as TableCol<ICellProps>).type as CellType]?.data;
+                    const cellData: Cell | undefined =
+                        row.original[(column.columnDef as TableCol<ICellProps>).type as CellType];
                     return getFilterOptionLabelByColumnType(
                         cellData,
                         (column.columnDef as TableCol<ICellProps>).type.toLowerCase()

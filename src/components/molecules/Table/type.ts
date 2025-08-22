@@ -1,5 +1,5 @@
 import { FC, JSX, ReactNode } from "react";
-import { Column, ColumnDef, PaginationState, SortingState } from "@tanstack/react-table";
+import { Column, ColumnDef } from "@tanstack/react-table";
 import { HeaderContext } from "@tanstack/table-core/build/lib/core/headers";
 
 import { IconProps } from "@geneui/icons";
@@ -25,10 +25,7 @@ export type CellType =
     | "Checkbox"
     | "Switch";
 
-export type Cell = {
-    type: CellType;
-    data: string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
-};
+export type Cell = string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
 
 type TableRowCells = {
     [K in CellType]?: Cell;
@@ -53,7 +50,7 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     isCheckboxDisabled?: boolean;
     enableSorting?: boolean;
     isSortingDisabled?: boolean;
-    rowCellRenderer?: (data?: any) => JSX.Element;
+    rowCellRenderer?: (data?: Cell) => JSX.Element;
     editable?: boolean;
     isEditDisabled?: boolean;
     copyable?: boolean;
@@ -69,33 +66,6 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     minWidth?: number;
     maxWidth?: number;
 };
-
-export type LoadingState = "idle" | "loading" | "error" | "success";
-
-export type SelectionMode = "single" | "multiple" | "none";
-
-export interface TableState {
-    sorting: SortingState;
-    pagination: PaginationState;
-    globalFilter: string;
-    columnVisibility: Record<string, boolean>;
-}
-
-export interface TableCallbacks<T = any> {
-    onSortChange?: (sorting: SortingState) => void;
-    onPageChange?: (pagination: PaginationState) => void;
-    onRowSelect?: (selectedRows: T[]) => void;
-    onRowClick?: (row: T) => void;
-    onCellEdit?: (rowIndex: number, columnType: string, value: any) => void;
-    onSave?: () => void;
-    onGlobalFilterChange?: (filter: string) => void;
-}
-
-export interface BulkActionList {
-    id?: string | number;
-    label: string;
-    action: (selectedRows: Row) => void;
-}
 
 export interface BulkAction {
     label: string;

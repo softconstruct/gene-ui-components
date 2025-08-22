@@ -130,7 +130,7 @@ const TableComponent: FC<ITableProps> = (props) => {
             columnType === "Switch" || columnType === "Checkbox"
                 ? {
                       value,
-                      checked: !(tableData[rowIndex][columnType]?.data as ISwitchProps).checked
+                      checked: !(tableData[rowIndex][columnType] as ISwitchProps).checked
                   }
                 : value;
         const newData = [...tableData];

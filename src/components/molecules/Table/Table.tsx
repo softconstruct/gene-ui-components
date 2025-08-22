@@ -79,7 +79,7 @@ interface ITableActions {
     /**
      * A callback function that is triggered when a cell value is edited in editable mode.
      */
-    onCellEdit?: (rowIndex: number, columnType: string, value: any) => void;
+    onCellEdit?: (rowIndex: number, columnType: string, value: unknown) => void;
     /**
      * A callback function that is triggered when the "Save" button is clicked in editable mode. The updated data is passed as an argument.
      */
