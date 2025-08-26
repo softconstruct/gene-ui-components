@@ -16,7 +16,7 @@ interface ICellProps {
     type: CellType;
     withEditMode: boolean;
     data?: string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
-    onChange?: (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+    onChange?: (data: unknown) => void;
     rowCellRenderer?: (data?: CellTypes) => JSX.Element;
     withCopy?: boolean;
 }
@@ -41,10 +41,14 @@ export const cellRenderer: () => CellRenderer = () => {
             if (withEditMode) {
                 return (
                     <TextField
-                        numericOnly={inputType === "number"}
+                        numericOnly={inputType === "Number"}
                         placeholder="Row Text"
                         value={value}
-                        {...(onChange && { onChange: (e) => onChange(e) })}
+                        {...(onChange && {
+                            onChange: (e) => {
+                                onChange(e.target.value);
+                            }
+                        })}
                     />
                 );
             }
@@ -101,7 +105,10 @@ export const cellRenderer: () => CellRenderer = () => {
 
             const onDropDownChange = (e: ChangeEvent<HTMLSelectElement>) => {
                 setDropDownValue(e.target.value);
-                onChange?.(e);
+                onChange?.({
+                    value: e.target.value,
+                    options
+                });
             };
 
             if (withEditMode) {
@@ -176,10 +183,12 @@ export const cellRenderer: () => CellRenderer = () => {
         Checkbox: ({ rowCellRenderer, data, withEditMode, onChange }) => {
             const props = data as ICheckboxProps;
             const [checked, setChecked] = useState<boolean>(!!props.checked);
-
             const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
                 setChecked((prev) => !prev);
-                onChange?.(e);
+                onChange?.({
+                    value: props.value,
+                    checked: e.target.checked
+                });
             };
 
             if (withEditMode)
@@ -204,7 +213,10 @@ export const cellRenderer: () => CellRenderer = () => {
 
             const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
                 setChecked((prev) => !prev);
-                onChange?.(e);
+                onChange?.({
+                    value: props.value,
+                    checked: e.target.checked
+                });
             };
 
             if (withEditMode)
@@ -225,7 +237,7 @@ export const cellRenderer: () => CellRenderer = () => {
 };
 
 const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
-    if (!data) return null;
+    if (!data && !withEditMode) return null;
 
     const cellTypeWithNumber = type === "Number" ? "Text" : type;
     const CellItem = cellRenderer()[cellTypeWithNumber];

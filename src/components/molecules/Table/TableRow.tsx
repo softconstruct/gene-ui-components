@@ -39,6 +39,10 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
         onRowDelete?.(row.id);
     };
 
+    const handleCellEdit = (index: number, type: TableCol<ICellProps>["type"], data: unknown) => {
+        onCellEdit?.(index, type, data);
+    };
+
     return (
         <>
             <tr
@@ -96,7 +100,7 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
                                         rowCellRenderer={(cell.column.columnDef as TableCol<unknown>).rowCellRenderer}
                                         withCopy={(cell.column.columnDef as TableCol<unknown>).copyable}
                                         {...(onCellEdit && {
-                                            onChange: (e) => onCellEdit(rowIndex, type, e.target.value)
+                                            onChange: (data) => handleCellEdit(rowIndex, type, data)
                                         })}
                                     />
                                 </div>
