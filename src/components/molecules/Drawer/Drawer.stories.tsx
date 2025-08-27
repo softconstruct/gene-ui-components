@@ -3,13 +3,14 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { Globe } from "@geneui/icons";
 
+// Components
+import Avatar from "@components/atoms/Avatar";
 import Button from "@components/atoms/Button";
 import Pill from "@components/atoms/Pill";
+import Drawer, { IDrawerProps } from "@components/molecules/Drawer/Drawer";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-// Components
-import Drawer, { IDrawerProps } from "./index";
 
 const meta: Meta<IDrawerProps> = {
     title: "Molecules/Drawer",
@@ -82,7 +83,13 @@ const DrawerTemplate: FC = (props) => {
                     }
                 ]}
             >
-                <Button onClick={() => setIsNestedOpen(true)}>Open Nested drawer</Button>
+                <div
+                    className="flex_wrapper"
+                    style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "start" }}
+                >
+                    <Avatar size="large" />
+                    <Button onClick={() => setIsNestedOpen(true)}>Open Nested drawer</Button>
+                </div>
             </Drawer>
             <Drawer
                 size="small"
@@ -91,7 +98,6 @@ const DrawerTemplate: FC = (props) => {
                 onClose={handleNestedClose}
                 title="Nested Drawer"
                 footerContent={<Pill appearance="success" text="Footer Content" Icon={Globe} filled />}
-                // headerContent={<Pill appearance="success" text="Footer Content" Icon={Globe} filled />}
             >
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Assumenda corporis ex itaque magnam nisi
                 praesentium quisquam sint vero. Adipisci aspernatur at eum magnam nihil odio optio recusandae sequi sit

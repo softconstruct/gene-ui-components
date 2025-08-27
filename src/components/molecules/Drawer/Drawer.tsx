@@ -12,6 +12,7 @@ import ButtonGroup from "@components/molecules/ButtonGroup";
 import Tooltip from "@components/molecules/Tooltip";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
+// Hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
