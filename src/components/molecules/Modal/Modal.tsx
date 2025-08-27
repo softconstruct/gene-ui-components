@@ -97,7 +97,7 @@ interface IModalProps {
     actions?: IButtonProps[];
     /**
      * If `true`, disables scrolling on the `body` element when the modal is open.
-     * @default false
+     * @default true
      */
     lockBodyScroll?: boolean;
 }
@@ -126,7 +126,7 @@ const Modal: FC<IModalProps> = ({
     position = "center",
     footerContent,
     actions,
-    lockBodyScroll
+    lockBodyScroll = true
 }) => {
     const { geneUIProviderRef, breakpoint } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
