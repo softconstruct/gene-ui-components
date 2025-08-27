@@ -116,7 +116,7 @@ const Drawer: FC<IDrawerProps> = ({
     onClose,
     shouldCloseOnEscapePress = true,
     shouldCloseOnOverlayClick = true,
-    lockBodyScroll = false,
+    lockBodyScroll = true,
     children,
     actions,
     footerContent,

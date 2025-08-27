@@ -39,7 +39,8 @@ const meta: Meta<IDrawerProps> = {
         size: "large",
         shouldCloseOnOverlayClick: true,
         shouldCloseOnEscapePress: true,
-        hasCloseButton: true
+        hasCloseButton: true,
+        lockBodyScroll: false
     }
 };
 
