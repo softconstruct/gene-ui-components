@@ -54,6 +54,8 @@ const DrawerTemplate: FC = (props) => {
     const [isOpen, setIsOpen] = useState(!!open);
     const [isNestedOpen, setIsNestedOpen] = useState(false);
 
+    const { children } = props;
+
     useEffect(() => {
         setIsOpen(open);
     }, [open]);
@@ -85,13 +87,15 @@ const DrawerTemplate: FC = (props) => {
                     }
                 ]}
             >
-                <div
-                    className="flex_wrapper"
-                    style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "start" }}
-                >
-                    <Avatar size="large" />
-                    <Button onClick={() => setIsNestedOpen(true)}>Open Nested drawer</Button>
-                </div>
+                {children || (
+                    <div
+                        className="flex_wrapper"
+                        style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "start" }}
+                    >
+                        <Avatar size="large" />
+                        <Button onClick={() => setIsNestedOpen(true)}>Open Nested drawer</Button>
+                    </div>
+                )}
             </Drawer>
             <Drawer
                 size="small"
@@ -112,6 +116,7 @@ const DrawerTemplate: FC = (props) => {
 const DrawerInlineTemplate: FC = (props) => {
     const { open } = props;
     const [isOpen, setIsOpen] = useState(!!open);
+    const { children } = props;
 
     useEffect(() => {
         setIsOpen(open);
@@ -141,12 +146,14 @@ const DrawerInlineTemplate: FC = (props) => {
                     }
                 ]}
             >
-                <div
-                    className="flex_wrapper"
-                    style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "start" }}
-                >
-                    <Avatar size="large" />
-                </div>
+                {children || (
+                    <div
+                        className="flex_wrapper"
+                        style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "start" }}
+                    >
+                        <Avatar size="large" />
+                    </div>
+                )}
             </Drawer>
         </div>
     );
