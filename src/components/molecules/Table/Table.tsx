@@ -973,7 +973,7 @@ const Table: FC<ITableProps> = ({
                     <table className={classNames("table", className)}>
                         <thead
                             className={classNames({
-                                table__header_sticky: withStickyHeader
+                                table__thead_sticky: withStickyHeader
                             })}
                         >
                             {table.getHeaderGroups().map((headerGroup) => (
