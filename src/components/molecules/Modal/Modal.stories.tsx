@@ -43,7 +43,8 @@ const meta: Meta<typeof Modal> = {
         hasCloseButton: true,
         title: "Modal Title",
         shouldCloseOnOverlayClick: true,
-        shouldCloseOnEscapePress: true
+        shouldCloseOnEscapePress: true,
+        lockBodyScroll: false
     }
 };
 
