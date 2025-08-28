@@ -30,7 +30,8 @@ const meta: Meta<IDrawerProps> = {
         children: args({ control: "text", ...propCategory.content }),
         actions: args({ control: "false", ...propCategory.functionality }),
         headerContent: args({ control: "text", ...propCategory.content }),
-        footerContent: args({ control: "text", ...propCategory.content })
+        footerContent: args({ control: "text", ...propCategory.content }),
+        variant: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         withPadding: true,
@@ -108,6 +109,56 @@ const DrawerTemplate: FC = (props) => {
     );
 };
 
+const DrawerInlineTemplate: FC = (props) => {
+    const { open } = props;
+    const [isOpen, setIsOpen] = useState(!!open);
+
+    useEffect(() => {
+        setIsOpen(open);
+    }, [open]);
+
+    const handleClose = () => {
+        setIsOpen(false);
+    };
+
+    return (
+        <div style={{ height: "100vh", width: "100%", display: "flex" }}>
+            <Drawer
+                {...props}
+                onClose={handleClose}
+                open={isOpen}
+                headerContent={<Pill appearance="lagoon" text="Header Content" Icon={Globe} filled />}
+                actions={[
+                    {
+                        children: "Secondary",
+                        appearance: "secondary",
+                        onClick: handleClose
+                    },
+                    {
+                        children: "Primary",
+                        appearance: "primary"
+                    }
+                ]}
+            >
+                <div
+                    className="flex_wrapper"
+                    style={{ display: "flex", flexDirection: "column", gap: "16px", alignItems: "start" }}
+                >
+                    <Avatar size="large" />
+                </div>
+            </Drawer>
+            <Button onClick={() => setIsOpen(true)}>Open Drawer</Button>
+        </div>
+    );
+};
+
 export const Default: Story = {
     render: (props) => <DrawerTemplate {...props} />
+};
+
+export const InlineContent: Story = {
+    render: (props) => <DrawerInlineTemplate {...props} />,
+    args: {
+        variant: "inline"
+    }
 };

@@ -100,6 +100,10 @@ interface IDrawerProps {
      * Custom content or component to be displayed in the header, typically to the left of the X button.
      */
     headerContent?: ReactNode;
+    /**
+     * @default "overlay"
+     */
+    variant?: "overlay" | "inline";
 }
 
 /**
@@ -120,7 +124,8 @@ const Drawer: FC<IDrawerProps> = ({
     children,
     actions,
     footerContent,
-    headerContent
+    headerContent,
+    variant = "overlay"
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
@@ -150,7 +155,7 @@ const Drawer: FC<IDrawerProps> = ({
     }, [open, shouldCloseOnEscapePress, onClose]);
 
     const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
-        if (shouldCloseOnOverlayClick && event.target === event.currentTarget) {
+        if (shouldCloseOnOverlayClick && event.target === event.currentTarget && variant === "overlay") {
             onClose?.();
         }
     };
@@ -158,7 +163,7 @@ const Drawer: FC<IDrawerProps> = ({
     const drawerContent = (
         <div
             className={classNames(
-                `drawer drawer_variant_portal drawer_position_${position} `,
+                `drawer drawer_variant_${variant} drawer_position_${position} `,
                 {
                     drawer_withPadding: withPadding
                 },
@@ -231,7 +236,18 @@ const Drawer: FC<IDrawerProps> = ({
         </div>
     );
 
-    return <>{providerCurrent && open ? createPortal(drawerContent, providerCurrent) : null}</>;
+    if (!open) return null;
+
+    if (variant === "overlay") {
+        if (providerCurrent) {
+            return createPortal(drawerContent, providerCurrent);
+        }
+        return null;
+    }
+    if (variant === "inline") {
+        return drawerContent;
+    }
+    return null;
 };
 
 export { IDrawerProps, Drawer as default };
