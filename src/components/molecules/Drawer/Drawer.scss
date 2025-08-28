@@ -8,6 +8,20 @@
         height: 100%;
     }
 
+    &_size {
+        &_large {
+            max-width: 50%;
+        }
+
+        &_medium {
+            max-width: 33.33%;
+        }
+
+        &_small {
+            max-width: 33.33%;
+        }
+    }
+
     &__header {
         display: flex;
         align-items: center;
@@ -85,6 +99,11 @@
                         var(--guit-sem-shadow-floating-3-position-y-1) var(--guit-sem-shadow-floating-3-spread-2)
                         var(--guit-sem-color-floating-3-rgba-2);
             }
+        }
+
+        &_inline {
+            height: 100%;
+            width: 100%;
         }
     }
 

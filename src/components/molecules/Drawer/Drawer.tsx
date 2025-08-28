@@ -42,6 +42,7 @@ interface IDrawerProps {
     open?: boolean;
     /**
      * Defines the size of the Drawer, affecting its width or height depending on the position.
+     * On variant `inline`, size can be only `large` or `medium`.
      * @default "medium"
      */
     size?: "small" | "medium" | "large";
@@ -101,6 +102,9 @@ interface IDrawerProps {
      */
     headerContent?: ReactNode;
     /**
+     * Controls how the Drawer is rendered, either as a global overlay or as an inline element within the layout.
+     * - `'overlay'`: (Default) Renders the Drawer using a portal, making it appear on top of all other page content. It is positioned relative to the viewport via the `position` prop and includes a backdrop. This is ideal for modal-like interactions.
+     * - `'inline'`: Renders the Drawer directly within the document flow where it is placed. It does not use a portal or have an overlay. In this mode, the `position` prop has no effect, as the component simply occupies space within its parent container, pushing adjacent content.
      * @default "overlay"
      */
     variant?: "overlay" | "inline";
@@ -163,16 +167,18 @@ const Drawer: FC<IDrawerProps> = ({
     const drawerContent = (
         <div
             className={classNames(
-                `drawer drawer_variant_${variant} drawer_position_${position} `,
+                `drawer drawer_variant_${variant} `,
                 {
-                    drawer_withPadding: withPadding
+                    drawer_withPadding: withPadding,
+                    [`drawer_position_${position}`]: variant === "overlay",
+                    [`drawer_size_${size}`]: variant === "inline"
                 },
                 className
             )}
             onClick={handleOverlayClick}
             role="presentation"
         >
-            <div className={`drawer__wrapper drawer__wrapper_size_${size}`}>
+            <div className={classNames("drawer__wrapper", { [`drawer__wrapper_size_${size}`]: variant === "overlay" })}>
                 {(hasCloseButton || title || headerContent) && (
                     <div className="drawer__header">
                         {title && (

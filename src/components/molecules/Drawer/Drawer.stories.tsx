@@ -122,7 +122,8 @@ const DrawerInlineTemplate: FC = (props) => {
     };
 
     return (
-        <div style={{ height: "100vh", width: "100%", display: "flex" }}>
+        <div style={{ height: "100vh", width: "100%", display: "flex", justifyContent: "space-between" }}>
+            <Button onClick={() => setIsOpen((prev) => !prev)}>{isOpen ? `Close` : `Open`} Drawer</Button>
             <Drawer
                 {...props}
                 onClose={handleClose}
@@ -147,7 +148,6 @@ const DrawerInlineTemplate: FC = (props) => {
                     <Avatar size="large" />
                 </div>
             </Drawer>
-            <Button onClick={() => setIsOpen(true)}>Open Drawer</Button>
         </div>
     );
 };
