@@ -104,6 +104,8 @@
         &_inline {
             height: 100%;
             width: 100%;
+            border-inline-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-neutral-2);
         }
     }
 
