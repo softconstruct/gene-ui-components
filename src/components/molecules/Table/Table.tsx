@@ -79,7 +79,7 @@ interface ITableActions {
     /**
      * A callback function that is triggered when a cell value is edited in editable mode.
      */
-    onCellEdit?: (rowIndex: number, columnType: string, value: unknown) => void;
+    onCellEdit?: (rowIndex: number, columnType: string, data: unknown) => void;
     /**
      * A callback function that is triggered when the "Save" button is clicked in editable mode. The updated data is passed as an argument.
      */
@@ -639,15 +639,6 @@ const Table: FC<ITableProps> = ({
                                 hasNextPage={hasNextPage}
                                 isFetchingNextPage={isFetchingNextPage}
                                 fetchNextPage={fetchNextPage}
-                                {...(onCellEdit && { onCellEdit })}
-                                {...(onRowDelete && { onRowDelete })}
-                                {...(onRowPinToggle && { onRowPinToggle })}
-                                {...(onRowTag && { onRowTag })}
-                                {...(onRowClock && { onRowClock })}
-                                {...(onRowReload && { onRowReload })}
-                                {...(onRowCopy && { onRowCopy })}
-                                {...(onRowDownload && { onRowDownload })}
-                                {...(onRowShow && { onRowShow })}
                             />
                         </>
                     ) : (
@@ -1011,7 +1002,7 @@ const Table: FC<ITableProps> = ({
                     </table>
                 </div>
 
-                {withPagination && table.getRowModel().rows.length > 0 && (
+                {withPagination && !withVirtualScroll && table.getRowModel().rows.length > 0 && (
                     <div className="dataTable__pagination">
                         <div className="dataTable__pagination_controls">
                             <Pagination

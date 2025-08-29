@@ -2,7 +2,6 @@ import React, { FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IMenuItemProps } from "@components/molecules/Menu";
-import { ISwitchProps } from "@components/molecules/Switch";
 import { defaultColumns, withGroupedColumns, withPinnedColumns } from "@components/molecules/Table/Columns";
 // Components
 import { deepCloneWithFunctions } from "@components/molecules/Table/helpers";
@@ -45,7 +44,7 @@ const bulkActionsMock: BulkAction = {
     ]
 };
 
-const externalData = makeData(10);
+const externalData = makeData(100);
 
 const meta: Meta<ITableProps> = {
     title: "Molecules/Table",
@@ -127,18 +126,8 @@ const TableComponent: FC<ITableProps> = (props) => {
     const [editableState, setEditableState] = useState(false);
 
     const onCellEdit: ITableProps["onCellEdit"] = (rowIndex, columnType, value) => {
-        const updatedData =
-            columnType === "Switch" || columnType === "Checkbox"
-                ? {
-                      value,
-                      checked: !(tableData[rowIndex][columnType] as ISwitchProps).checked
-                  }
-                : value;
         const newData = [...tableData];
-        if (newData[rowIndex] && typeof newData[rowIndex] === "object") {
-            (newData[rowIndex] as any)[columnType].data = updatedData;
-        }
-
+        (newData[rowIndex] as any)[columnType] = value;
         setUpdatedTableData(newData);
     };
 
