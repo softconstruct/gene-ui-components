@@ -173,7 +173,7 @@
         "@floating-ui/react": "^0.26.16",
         "@floating-ui/react-dom": "^2.1.2",
         "@floating-ui/utils": "^0.2.8",
-        "@geneui/icons": "^1.4.2",
+        "@geneui/icons": "^1.4.3",
         "@geneui/tokens": "^1.0.2",
         "@tanstack/react-table": "^8.21.3",
         "@tanstack/react-virtual": "^3.13.12",

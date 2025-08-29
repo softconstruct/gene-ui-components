@@ -13,6 +13,7 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 const meta: Meta<IButtonGroupProps> = {
     title: "Molecules/ButtonGroup",
     component: ButtonGroup,
+    subcomponents: { Button },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         children: args({ control: "array", ...propCategory.content }),

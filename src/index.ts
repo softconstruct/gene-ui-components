@@ -27,6 +27,16 @@ export { Steps, Step, IStepProps, IStepsProps } from "./components/molecules/Ste
 export { default as Tag, ITagProps } from "./components/molecules/Tag";
 export { default as Switch, ISwitchProps } from "./components/molecules/Switch";
 export { Timelines, TimelinePoint, ITimelinesProps, ITimelinePointProps } from "./components/molecules/Timeline";
+export {
+    Products,
+    Product,
+    IProductsProps,
+    IProductProps,
+    ProductsMainSection,
+    IProductsMainSectionProps,
+    ProductsSecondarySection,
+    IProductsSecondarySectionProps
+} from "./components/molecules/Products";
 export { default as QRCode, IQRCodeProps } from "./components/molecules/QRCode";
 export { KeyValue, Key, Value, IKeyValueProps, IKeyProps, IValueProps } from "./components/molecules/KeyValue";
 export { Menu, MenuItem, IMenuProps, IMenuItemProps } from "./components/molecules/Menu";
@@ -36,6 +46,9 @@ export { default as Profile, IProfileProps, IProfileData } from "./components/mo
 export { default as Pagination } from "./components/molecules/Pagination";
 export { default as TextField } from "./components/molecules/TextField";
 export { default as ButtonGroup } from "./components/molecules/ButtonGroup";
+export { default as Notification } from "./components/molecules/Notification";
+export { default as Modal } from "./components/molecules/Modal";
+export { default as Drawer } from "./components/molecules/Drawer";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";

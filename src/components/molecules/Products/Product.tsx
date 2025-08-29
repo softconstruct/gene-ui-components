@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import React, { cloneElement, FC, isValidElement, ReactNode, useContext } from "react";
 import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
@@ -9,13 +9,13 @@ import Text from "@components/atoms/Text";
 
 import { ProductsContext } from "./Products";
 
-interface IProductProps {
+export interface IProductProps {
     /**
      * Unique id for `Product`.
      */
     id?: string | number;
     /**
-     * The text displayed as the `title` for the `Product`, describing its purpose.<br>
+     * The text displayed as the `title` for the `Product`.
      */
     title: string;
     /**
@@ -28,38 +28,81 @@ interface IProductProps {
      */
     Icon: FC<IconProps>;
     /**
-     * Indicates whether the `Product` is `disabled`, preventing user interaction, focus, click etc...
+     * Indicates whether the `Product` is `disabled`.
      */
     disabled?: boolean;
     /**
      * Indicates whether the `Product` is currently selected.
-     * When `true`, the product will display with a selected visual style.
      */
     selected?: boolean;
+    /**
+     * The navigation path for the product, used by the render prop.
+     */
+    path?: string;
+    /**
+     * Custom render function for the product link.<br />
+     * Example usage:
+     * ```render={() => <a href={product.path} aria-label={product.title} />}```
+     */
+    render?: () => ReactNode;
 }
 
-const ProductButton: FC<Omit<IProductProps, "withBadge">> = (props) => {
-    const { title, Icon, disabled, selected } = props;
+const ProductButton: FC<IProductProps> = (props) => {
+    const { title, Icon, disabled, selected, render } = props;
     const { onChange } = useContext(ProductsContext);
 
-    return (
-        <button
-            type="button"
-            disabled={disabled}
-            className={classNames("products__item", {
-                products__item_disabled: disabled,
-                products__item_selected: selected
-            })}
-            onClick={() => onChange(props)}
-        >
+    const onClickHandler = () => {
+        if (onChange && !disabled) {
+            onChange(props);
+        }
+    };
+
+    const productContent = (
+        <>
             <span className="products__item_logo">
                 <Icon size={48} />
             </span>
             <Text as="span" className="products__item_title" alignment="center">
                 {title}
             </Text>
-        </button>
+        </>
     );
+
+    const commonProps = {
+        className: classNames("products__item", {
+            products__item_disabled: disabled,
+            products__item_selected: selected
+        }),
+        disabled
+    };
+
+    const interactiveElement = (() => {
+        if (render) {
+            const renderedElement = render();
+            if (isValidElement(renderedElement)) {
+                const originalOnClick = (renderedElement.props as { onClick?: (event: React.MouseEvent) => void })
+                    .onClick;
+
+                const propsToApply = {
+                    ...commonProps,
+                    className: classNames(commonProps.className, renderedElement.props.className),
+                    onClick: (event: React.MouseEvent) => {
+                        originalOnClick?.(event);
+                        onClickHandler();
+                    }
+                };
+                return cloneElement(renderedElement, propsToApply, productContent);
+            }
+        }
+
+        return (
+            <button type="button" {...commonProps} onClick={onClickHandler}>
+                {productContent}
+            </button>
+        );
+    })();
+
+    return interactiveElement;
 };
 
 const Product: FC<IProductProps> = (props) => {
@@ -74,4 +117,4 @@ const Product: FC<IProductProps> = (props) => {
     );
 };
 
-export { IProductProps, Product as default };
+export { Product as default };
