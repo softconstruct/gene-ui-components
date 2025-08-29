@@ -19,7 +19,8 @@ const paddingBlacklist = {
     "organisms-globalheader": true,
     "molecules-navigation": true,
     "molecules-products": true,
-    "molecules-profile": true
+    "molecules-profile": true,
+    "molecules-drawer": true
 };
 
 const CustomDecorator = ({ children }) => {

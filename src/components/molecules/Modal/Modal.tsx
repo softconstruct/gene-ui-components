@@ -40,13 +40,13 @@ interface IModalProps {
     /**
      * When `true`, allows the modal to be closed by pressing the Escape key.
      * Calls `onClose`.
-     * @default false
+     * @default true
      */
     shouldCloseOnEscapePress?: boolean;
     /**
      * When `true`, allows the modal to be closed by clicking on the semi-transparent background overlay.
      * Calls `onClose`.
-     * @default false
+     * @default true
      */
     shouldCloseOnOverlayClick?: boolean;
     /**
@@ -59,6 +59,8 @@ interface IModalProps {
     status?: "informative" | "warning" | "error";
     /**
      * The main content of the modal, displayed between the header and footer.
+     * If provided as a string, it will be wrapped in a paragraph element.
+     * Else you can provide any content as children.
      */
     children?: ReactNode;
     /**
@@ -114,8 +116,8 @@ const Modal: FC<IModalProps> = ({
     open,
     title,
     hasCloseButton,
-    shouldCloseOnEscapePress = false,
-    shouldCloseOnOverlayClick = false,
+    shouldCloseOnEscapePress = true,
+    shouldCloseOnOverlayClick = true,
     onClose,
     status,
     children,
@@ -124,7 +126,7 @@ const Modal: FC<IModalProps> = ({
     position = "center",
     footerContent,
     actions,
-    lockBodyScroll
+    lockBodyScroll = true
 }) => {
     const { geneUIProviderRef, breakpoint } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
