@@ -1,9 +1,13 @@
 .dataTable {
-    background-color: var(--guit-sem-color-background-neutral-1);
+    display: flex;
+    flex-direction: column;
     position: relative;
     z-index: 0;
+    height: 100%;
+    background-color: var(--guit-sem-color-background-neutral-1);
 
     &__toolbar {
+        flex: none;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -31,6 +35,10 @@
             position: relative;
             z-index: 1;
         }
+    }
+
+    &__content {
+        flex: 1;
     }
 
     &__bulkActions {
@@ -397,10 +405,12 @@
     width: 100%;
     border-collapse: separate;
 
-    &__header_sticky {
-        position: sticky;
-        top: 0;
-        z-index: 2;
+    &__thead {
+        &_sticky {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
     }
 
     &__row {
@@ -465,6 +475,72 @@
                 background-color: var(--guit-sem-color-background-brand-1);
             }
         }
+
+        &_pinned {
+            position: sticky;
+            z-index: 2;
+
+            // todo: remove next style from CSS, count table header height and add the value as a "top" property value
+            top: 8.2rem;
+
+            &::after {
+                content: "";
+                pointer-events: none;
+                position: absolute;
+                inset-inline: 0;
+                height: 0.4rem;
+                top: 100%;
+                background: linear-gradient(
+                    to bottom,
+                    var(--guit-sem-color-floating-1-rgba-1),
+                    var(--guit-ref-color-transparent-neutral-800-0)
+                );
+            }
+
+            #{ $this }__td {
+                border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                    var(--guit-sem-color-border-neutral-3);
+            }
+        }
+    }
+
+    &__th,
+    &__td {
+        &_pinned {
+            position: sticky;
+            left: 0;
+            z-index: 1;
+            background-color: inherit;
+            border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-neutral-3);
+
+            &::after {
+                top: 0;
+                bottom: -0.1rem;
+                width: 0.4rem;
+                content: "";
+                pointer-events: none;
+                position: absolute;
+            }
+
+            [dir="ltr"] &::after {
+                left: 100%;
+                background: linear-gradient(
+                    to right,
+                    var(--guit-sem-color-floating-1-rgba-1),
+                    var(--guit-ref-color-transparent-neutral-800-0)
+                );
+            }
+
+            [dir="rtl"] &::after {
+                right: 100%;
+                background: linear-gradient(
+                    to left,
+                    var(--guit-sem-color-floating-1-rgba-1),
+                    var(--guit-ref-color-transparent-neutral-800-0)
+                );
+            }
+        }
     }
 
     &__th {
@@ -472,7 +548,7 @@
 
         vertical-align: middle;
 
-        &:not(&#{ $this }__pinned):not(:has(> #{ $this }__content_expand)):not(:last-child) {
+        &:not(&#{ $that }_pinned):not(:has(> #{ $this }__content_expand)):not(:last-child) {
             border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
                 var(--guit-sem-color-border-neutral-2);
         }
@@ -499,13 +575,6 @@
             text-align: start;
         }
 
-        &_active,
-        &:hover {
-            #{$that}_actions {
-                opacity: 1;
-            }
-        }
-
         &_actions {
             flex: none;
             display: flex;
@@ -519,16 +588,15 @@
         $that: &;
 
         vertical-align: middle;
+        border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-1);
 
-        &:not(&#{ $this }__pinned):not(:has(> #{ $this }__content_expand)):not(:last-child):not(
+        &:not(&#{ $that }_pinned):not(:has(> #{ $this }__content_expand)):not(:last-child):not(
                 :has(+ .table__actionsWrapper)
             ) {
             border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
                 var(--guit-sem-color-border-neutral-2);
         }
-
-        border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-            var(--guit-sem-color-border-neutral-1);
 
         #{ $that }_group {
             #{ $this }__content {
@@ -548,6 +616,13 @@
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
             color: var(--guit-sem-color-foreground-neutral-2);
         }
+
+        &_active,
+        &:hover {
+            #{$that}_actions {
+                opacity: 1;
+            }
+        }
     }
 
     &__actionsWrapper {
@@ -555,7 +630,7 @@
         position: sticky;
         inset-inline-end: 0;
         top: 0;
-        z-index: 1;
+        z-index: 2;
         border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-1);
     }
@@ -725,71 +800,6 @@
             justify-content: center;
             padding-block: var(--guit-ref-spacing-medium);
             padding-inline: var(--guit-ref-spacing-large);
-        }
-    }
-
-    &__pinned {
-        $that: &;
-
-        position: relative;
-        z-index: 1;
-
-        &::after {
-            content: "";
-            pointer-events: none;
-            position: absolute;
-        }
-
-        &_vertical {
-            border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-                var(--guit-sem-color-border-neutral-3);
-
-            &::after {
-                top: 0;
-                bottom: -0.1rem;
-                width: 0.4rem;
-            }
-
-            [dir="ltr"] &::after {
-                left: 100%;
-                background: linear-gradient(
-                    to right,
-                    var(--guit-sem-color-floating-1-rgba-1),
-                    var(--guit-ref-color-transparent-neutral-800-0)
-                );
-            }
-
-            [dir="rtl"] &::after {
-                right: 100%;
-                background: linear-gradient(
-                    to left,
-                    var(--guit-sem-color-floating-1-rgba-1),
-                    var(--guit-ref-color-transparent-neutral-800-0)
-                );
-            }
-        }
-
-        &_horizontal {
-            border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-                var(--guit-sem-color-border-neutral-3);
-
-            &::after {
-                inset-inline: 0;
-                height: 0.4rem;
-                top: 100%;
-                background: linear-gradient(
-                    to bottom,
-                    var(--guit-sem-color-floating-1-rgba-1),
-                    var(--guit-ref-color-transparent-neutral-800-0)
-                );
-            }
-        }
-
-        &#{ $that }_vertical#{ $that }_horizontal {
-            border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-                var(--guit-sem-color-border-neutral-3);
-            border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-                var(--guit-sem-color-border-neutral-3);
         }
     }
 }

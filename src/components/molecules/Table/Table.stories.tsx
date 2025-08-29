@@ -5,6 +5,7 @@ import { IMenuItemProps } from "@components/molecules/Menu";
 import { defaultColumns, withGroupedColumns, withPinnedColumns } from "@components/molecules/Table/Columns";
 // Components
 import { deepCloneWithFunctions } from "@components/molecules/Table/helpers";
+import TableLayoutTmp from "@components/molecules/Table/TableLayoutTmp";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -331,6 +332,10 @@ export const WithOutData: Story = {
             />
         );
     }
+};
+
+export const TableLayoutTmpStory: Story = {
+    render: () => <TableLayoutTmp />
 };
 
 export default meta;

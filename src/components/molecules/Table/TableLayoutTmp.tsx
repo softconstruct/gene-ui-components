@@ -156,7 +156,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                 </div>
             </div>
 
-            <Scrollbar>
+            <Scrollbar className="dataTable__content">
                 <table className={classNames("table", className)}>
                     <colgroup>
                         {tableData[0].cells.map((_, colIndex) => (
@@ -165,7 +165,8 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                         ))}
                     </colgroup>
 
-                    <thead>
+                    {/* todo: add next className for HEADER sticky state - "table__thead_sticky" */}
+                    <thead className="table__thead">
                         <tr className="table__row table__row_thead">
                             <th className="table__th table__th_group" colSpan={columnsLength + 1}>
                                 <div className="table__content">
@@ -188,7 +189,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                 </div>
                             </th>
 
-                            {/* todo: add next classNames for similar states - "table__pinned", "table__pinned_vertical", "table__pinned_horizontal" */}
+                            {/* todo: add next className for COLUMN pinned state - "table__th_pinned" */}
                             <th key="header-2" className="table__th" style={{ width: "120px" }}>
                                 {/* todo: add next classNames for similar states - "table__content_empty" */}
                                 <div className="table__content table__content_empty">
@@ -354,7 +355,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                             </th>
                             {tableData[0].cells.slice(3).map((cellIndex) => (
                                 <>
-                                    {/* todo: add next classNames for similar states - "table__pinned", "table__pinned_vertical", "table__pinned_horizontal" */}
+                                    {/* todo: add next className for COLUMN pinned state - "table__th_pinned" */}
                                     {/* eslint-disable-next-line react/no-array-index-key */}
                                     <th key={`header-${cellIndex}`} className="table__th">
                                         {/* todo: add next classNames for similar states - "table__content_empty" */}
@@ -371,8 +372,9 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                         {tableData.slice(1, -1).map(({ id, cells }) => (
                             <>
                                 {/* todo: add next classNames for similar states - "table__row_selected", "table__row_red", "table__row_green", "table__row_highlighted" */}
+                                {/* todo: add next className for ROW pinned state - "table__row_pinned" */}
                                 <tr key={id} className="table__row table__row_tbody">
-                                    {/* todo: add next classNames next to "table__td" classname, for similar states - "table__pinned", "table__pinned_horizontal" */}
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     {/* todo: add next className for similar states - "table__expand" */}
                                     <td key={`${id}-0`} className="table__td">
                                         {/* todo: add next classNames for similar states - "table__content_empty", "table__content_expand", "table__content_checkbox" */}
@@ -388,7 +390,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
-                                    {/* todo: add next classNames next to "table__td" classname, for similar states - "table__pinned", "table__pinned_horizontal" */}
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-1`} className="table__td">
                                         {/* todo: add next classNames for similar states - "table__content_empty", "table__content_expand", "table__content_checkbox" */}
                                         <div className="table__content table__content_checkbox">
@@ -397,13 +399,14 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
-                                    {/* todo: add next classNames next to "table__td" classname, for similar states - "table__pinned", "table__pinned_vertical", "table__pinned_horizontal" */}
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-2`} className="table__td">
                                         {/* todo: add next classNames next to "table__content" classname, for similar states - "table__content_empty", "table__content_graph", "table__content_status", "table__content_pill", ...  */}
                                         {/* todo: ... "table__content_text", "table__content_textArea", "table__content_dropdown", "table__content_check", "table__content_check_checkbox", "table__content_check_text", "table__content_switch" */}
                                         <div className="table__content table__content_empty" />
                                     </td>
 
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-3`} className="table__td">
                                         <div className="table__content table__content_graph">
                                             {/* todo: import "graph" here */}
@@ -411,6 +414,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-4`} className="table__td">
                                         {/* todo: add next classNames for similar states - "table__content_text_string", "table__content_text_numeric" */}
                                         <div className="table__content table__content_text table__content_text_string">
@@ -430,6 +434,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-5`} className="table__td">
                                         {/* todo: add next classNames for similar states - "table__content_text_string", "table__content_text_numeric" */}
                                         <div className="table__content table__content_text table__content_text_numeric">
@@ -449,6 +454,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-6`} className="table__td">
                                         <div className="table__content table__content_text table__content_textArea">
                                             {/* todo: conditionally toggle next fields with "Text Area" in "Editable" mode */}
@@ -462,6 +468,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-7`} className="table__td">
                                         {/* todo: conditionally toggle next fields with "Dropdown" in "Editable" mode */}
                                         <div className="table__content table__content_text table__content_dropdown">
@@ -478,6 +485,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-8`} className="table__td">
                                         <div className="table__content table__content_status">
                                             {/* todo: change "Pill" components "appearance" as a status to next values: "informative", "neutral", "error", "success", "warning" */}
@@ -485,6 +493,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-9`} className="table__td">
                                         <div className="table__content table__content_pill">
                                             <Pill
@@ -497,6 +506,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-10`} className="table__td">
                                         <div className="table__content table__content_icon">
                                             {/* todo: import icon as a component for "Icon" and "Flag" case */}
@@ -504,6 +514,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-12`} className="table__td">
                                         <div className="table__content table__content_check table__content_check_text">
                                             {/* todo: conditionally toggle next fields with "Checkbox" in "Editable" mode */}
@@ -513,6 +524,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-11`} className="table__td">
                                         <div className="table__content table__content_check table__content_check_checkbox">
                                             {/* todo: conditionally toggle next fields with "Checkbox" in "Editable" mode */}
@@ -523,6 +535,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         </div>
                                     </td>
 
+                                    {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                     <td key={`${id}-13`} className="table__td">
                                         <div className="table__content table__content_switch">
                                             {/* todo: conditionally toggle next fields with "Switch" in "Editable" mode */}
@@ -535,7 +548,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
 
                                     {cells.slice(14).map((cellData, cellIndex) => (
                                         <>
-                                            {/* todo: add next classNames for similar states - "table__pinned", "table__pinned_vertical", "table__pinned_horizontal" */}
+                                            {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                             {/* eslint-disable-next-line react/no-array-index-key */}
                                             <td key={`${id}-${cellIndex}`} className="table__td">
                                                 <div className="table__content table__content_empty">
@@ -623,6 +636,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                     <tfoot>
                         {tableData.slice(-1).map(({ id, cells }) => (
                             <tr key={id} className="table__row table__row_tfoot">
+                                {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                 <td key={`${id}-0`} className="table__td">
                                     {/* todo: add next classNames for similar states - "table__content_empty", "table__content_expand", "table__content_checkbox" */}
                                     <div className="table__content table__content_expand">
@@ -636,6 +650,8 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         />
                                     </div>
                                 </td>
+
+                                {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                 <td key={`${id}-1`} className="table__td">
                                     {/* todo: add next classNames for similar states - "table__content_empty", "table__content_expand", "table__content_checkbox" */}
                                     <div className="table__content table__content_checkbox">
@@ -643,6 +659,8 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                         {/* <Checkbox name="item" value="item" checked /> */}
                                     </div>
                                 </td>
+
+                                {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                 <td key={`${id}-2`} className="table__td">
                                     {/* todo: add next classNames for similar states - "table__content_empty", "table__content_expand", "table__content_checkbox" */}
                                     <div className="table__content table__content_empty">
@@ -651,7 +669,7 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                                 </td>
                                 {cells.slice(3).map((cellIndex) => (
                                     <>
-                                        {/* todo: add next classNames for similar states - "table__pinned", "table__pinned_vertical", "table__pinned_horizontal" */}
+                                        {/* todo: add next className for COLUMN pinned state - "table__td_pinned" */}
                                         {/* eslint-disable-next-line react/no-array-index-key */}
                                         <td key={`${id}-${cellIndex}`} className="table__td">
                                             {/* todo: add next classNames for similar states - "table__content_empty", "table__content_expand", "table__content_checkbox" */}
@@ -672,7 +690,6 @@ const TableLayoutTmp: FC<ITableProps> = ({ className }) => {
                     </tfoot>
                 </table>
             </Scrollbar>
-            <Divider />
         </div>
     );
 };
