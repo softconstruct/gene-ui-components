@@ -1,7 +1,6 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 
@@ -10,6 +9,8 @@ import Empty, { IEmptyProps } from "./index";
 
 describe("Empty ", () => {
     let setup: ReactWrapper<IEmptyProps>;
+    const mockOnClose = jest.fn();
+    const mockOnClick = jest.fn();
     beforeEach(() => {
         setup = mount(<Empty message="some message" />);
     });
@@ -55,58 +56,34 @@ describe("Empty ", () => {
     //
     //     expect(wrapper.find(".empty__image").props().src).toBe(src);
     // });
-    //
-    it("renders primary and secondary action buttons texts correctly", () => {
-        const wrapper = setup.setProps({
-            primaryActionText: "Confirm",
-            secondaryActionText: "Cancel"
-        });
-        wrapper.update();
-        const buttons = wrapper.find(ButtonGroup).find(Button);
 
-        expect(buttons).toHaveLength(2);
-        expect(buttons.at(0).text()).toBe("Cancel");
-        expect(buttons.at(1).text()).toBe("Confirm");
-        wrapper.unmount();
+    it("should render action buttons when provided", () => {
+        const actions = [
+            { children: "Cancel", appearance: "secondary" as const, onClick: mockOnClose },
+            { children: "Reload", appearance: "primary" as const, onClick: mockOnClick }
+        ];
+        const wrapper = setup.setProps({ actions });
+
+        expect(wrapper.find(ButtonGroup).exists()).toBeTruthy();
+
+        expect(wrapper.text()).toContain("Cancel");
+        expect(wrapper.text()).toContain("Reload");
     });
 
-    it("calls onPrimaryActionClick when the primary action button is clicked", () => {
-        const onPrimaryActionClickMock = jest.fn();
-        const wrapper = setup.setProps({
-            primaryActionText: "Primary",
-            onPrimaryActionClick: onPrimaryActionClickMock
-        });
-
-        wrapper.update();
-
-        const primaryButton = wrapper
-            .find(Button)
-            .filterWhere((n) => n.text() === "Primary" && n.prop("appearance") === "primary");
-        expect(primaryButton).toHaveLength(1);
-        primaryButton.simulate("click");
-        expect(onPrimaryActionClickMock).toHaveBeenCalledTimes(1);
-        wrapper.unmount();
+    it("should not render ButtonGroup when actions is empty", () => {
+        const wrapper = setup.setProps({ actions: [] });
+        expect(wrapper.find(ButtonGroup).exists()).toBeFalsy();
     });
 
-    it("calls onSecondaryActionClick when the secondary action button is clicked", () => {
-        const onSecondaryActionClickMock = jest.fn();
-        const wrapper = setup.setProps({
-            secondaryActionText: "Secondary",
-            onSecondaryActionClick: onSecondaryActionClickMock
-        });
+    it("should filter out actions without children", () => {
+        const actions = [
+            { children: "Valid Button", appearance: "primary" as const },
+            { children: undefined, appearance: "secondary" as const }
+        ];
+        const wrapper = setup.setProps({ actions });
+        expect(wrapper.text()).toContain("Valid Button");
 
-        wrapper.update();
-
-        const secondaryButton = wrapper
-            .find(Button)
-            .filterWhere(
-                (n) =>
-                    n.text() === "Secondary" && n.prop("appearance") === "secondary" && n.prop("layout") === "outline"
-            );
-        expect(secondaryButton).toHaveLength(1);
-        secondaryButton.simulate("click");
-        expect(onSecondaryActionClickMock).toHaveBeenCalledTimes(1);
-        wrapper.unmount();
+        expect(wrapper.find(ButtonGroup).exists()).toBeTruthy();
     });
 
     it("renders loading prop correctly", () => {

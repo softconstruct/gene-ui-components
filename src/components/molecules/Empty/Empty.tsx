@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import classNames from "classnames";
 
-import Button from "@components/atoms/Button";
+import Button, { IButtonProps } from "@components/atoms/Button";
 import Skeleton from "@components/atoms/Skeleton";
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
@@ -30,25 +30,16 @@ interface IEmptyProps {
      */
     // src?: unknown;
     /**
-     * The text to display on the primary action button.
-     * **Note: The primary action button will not be rendered if this prop is not provided.**
+     * An array of action button objects to display in the `empty` component's footer.
+     * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
+     * Each object conforms to the `IButtonProps` interface, allowing full customization of each button.
+     * @example
+     * actions={[
+     * { children: 'Cancel', appearance: 'secondary', onClick: handleCancel },
+     * { children: 'Reload', appearance: 'primary', onClick: handleReload }
+     * ]}
      */
-    primaryActionText?: string;
-    /**
-     * The text to display on the secondary action button.
-     * **Note: The secondary action button will not be rendered if this prop is not provided.**
-     */
-    secondaryActionText?: string;
-    /**
-     * Callback function for the primary action button.
-     * This is only relevant if `primaryActionText` is also provided.
-     */
-    onPrimaryActionClick?: () => void;
-    /**
-     * Callback function for the secondary action button.
-     * This is only relevant if `secondaryActionText` is also provided.
-     */
-    onSecondaryActionClick?: () => void;
+    actions?: IButtonProps[];
     /**
      * When set to `true`, the component will display a skeleton instead of its content.
      */
@@ -91,10 +82,7 @@ const Empty: FC<IEmptyProps> = ({
     message,
     description,
     // src,
-    primaryActionText,
-    secondaryActionText,
-    onPrimaryActionClick,
-    onSecondaryActionClick,
+    actions,
     loading
     // appearance = "noData"
 }) => {
@@ -132,18 +120,19 @@ const Empty: FC<IEmptyProps> = ({
                                 </Text>
                             )}
                         </div>
-                        <ButtonGroup size="medium">
-                            {!!secondaryActionText && (
-                                <Button appearance="secondary" onClick={onSecondaryActionClick} layout="outline">
-                                    {secondaryActionText}
-                                </Button>
-                            )}
-                            {!!primaryActionText && (
-                                <Button appearance="primary" onClick={onPrimaryActionClick}>
-                                    {primaryActionText}
-                                </Button>
-                            )}
-                        </ButtonGroup>
+                        {actions && actions.length > 0 && (
+                            <ButtonGroup size="medium">
+                                {actions.map((action: IButtonProps) => {
+                                    const { children: buttonChildren } = action;
+                                    const key = `action-${buttonChildren}`;
+                                    return buttonChildren ? (
+                                        <Button key={key} {...action}>
+                                            {buttonChildren}
+                                        </Button>
+                                    ) : null;
+                                })}
+                            </ButtonGroup>
+                        )}
                     </div>
                 </>
             )}

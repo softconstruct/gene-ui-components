@@ -12,19 +12,25 @@ const meta: Meta<IEmptyProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         message: args({ control: "text", ...propCategory.content }),
         description: args({ control: "text", ...propCategory.content }),
-        src: args({ control: "text", ...propCategory.content }),
-        primaryActionText: args({ control: "text", ...propCategory.content }),
-        secondaryActionText: args({ control: "text", ...propCategory.content }),
-        onPrimaryActionClick: args({ control: "false", ...propCategory.action }),
-        onSecondaryActionClick: args({ control: "false", ...propCategory.action }),
-        loading: args({ control: "boolean", ...propCategory.states }),
-        appearance: args({ control: "select", ...propCategory.appearance })
+        // src: args({ control: "text", ...propCategory.content }),
+        actions: args({ control: "false", ...propCategory.functionality }),
+        loading: args({ control: "boolean", ...propCategory.states })
+        // appearance: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         message: "Some short message",
         description: "Some detailed description for the Empty component",
-        primaryActionText: "Primary action",
-        secondaryActionText: "Secondary action"
+        actions: [
+            {
+                children: "Secondary",
+                appearance: "secondary",
+                layout: "outline"
+            },
+            {
+                children: "Primary",
+                appearance: "primary"
+            }
+        ]
     }
 };
 
