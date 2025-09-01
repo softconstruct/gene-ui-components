@@ -53,41 +53,33 @@
 
     &_size {
         &_xLarge {
-            min-width: 64rem;
-            max-width: 82rem;
-
-            #{ $this }__body {
-                min-height: 32rem;
+            #{ $this }__container {
+                min-width: 64rem;
+                max-width: 82rem;
                 max-height: 82rem;
             }
         }
 
         &_large {
-            min-width: 52rem;
-            max-width: 64rem;
-
-            #{ $this }__body {
-                min-height: 26rem;
+            #{ $this }__container {
+                min-width: 52rem;
+                max-width: 64rem;
                 max-height: 64rem;
             }
         }
 
         &_medium {
-            min-width: 28rem;
-            max-width: 52rem;
-
-            #{ $this }__body {
-                min-height: 14rem;
+            #{ $this }__container {
+                min-width: 28rem;
+                max-width: 52rem;
                 max-height: 52rem;
             }
         }
 
         &_small {
-            min-width: 16rem;
-            max-width: 28rem;
-
-            #{ $this }__body {
-                min-height: 4rem;
+            #{ $this }__container {
+                min-width: 16rem;
+                max-width: 28rem;
                 max-height: 52rem;
             }
         }
@@ -124,6 +116,7 @@
     }
 
     &__header {
+        flex: none;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -160,7 +153,10 @@
     }
 
     &__body {
+        flex: 1;
         min-width: 0;
+        min-height: 0;
+        height: 100%;
 
         &_withPadding {
             padding-block: var(--guit-ref-spacing-large);
@@ -177,6 +173,7 @@
     }
 
     &__footer {
+        flex: none;
         display: flex;
         align-items: center;
         justify-content: space-between;

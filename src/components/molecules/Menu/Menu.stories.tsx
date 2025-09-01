@@ -78,32 +78,32 @@ export default meta;
 
 type Story = StoryObj<IMenuProps>;
 
-const StoryComponent: FC = (props) => {
+const StoryComponent: FC<IMenuProps> = (props) => {
     const [menuData, setMenuData] = useState(data);
     const [propsForPopover, setPropsForPopover] = useState({});
 
     const handleMenuChange = (menuItemData) => {
-        const updateSelected = (items, targetId) => {
+        const updateSelected = (items) => {
             return items.map((item) => {
                 const isSelected = item.id === menuItemData.id;
                 const updatedItem = { ...item, selected: isSelected };
 
                 if (item.children) {
-                    updatedItem.children = updateSelected(item.children, targetId);
+                    updatedItem.children = updateSelected(item.children);
                 }
 
                 return updatedItem;
             });
         };
 
-        setMenuData(updateSelected(menuData, menuItemData.id));
+        setMenuData(updateSelected(menuData));
     };
 
     const Elements = MenuItemRecursion(menuData);
 
     return (
         <div style={{ height: "98vh" }}>
-            <Button {...propsForPopover}>test</Button>
+            <Button {...propsForPopover}>Open Menu</Button>
             <Menu {...props} onChange={handleMenuChange} setPropsForPopover={setPropsForPopover}>
                 {Elements}
             </Menu>
@@ -118,4 +118,53 @@ export const Default: Story = {
 export const Swappable: Story = {
     render: (props) => <StoryComponent {...props} />,
     args: { swappable: true }
+};
+
+const WithRenderStoryComponent: FC<IMenuProps> = (props) => {
+    const [propsForPopover, setPropsForPopover] = useState({});
+
+    return (
+        <div style={{ height: "98vh" }}>
+            <Button {...propsForPopover}>Open Menu</Button>
+            <Menu {...props} setPropsForPopover={setPropsForPopover}>
+                <MenuItem id="home">Home</MenuItem>
+                <MenuItem
+                    id="profile"
+                    render={(linkData) => (
+                        // eslint-disable-next-line jsx-a11y/anchor-has-content
+                        <a
+                            href={`/users/${linkData.id}`}
+                            aria-label={linkData.title}
+                            onClick={(e) => {
+                                e.preventDefault();
+                            }}
+                        />
+                    )}
+                >
+                    Link
+                </MenuItem>
+                <MenuItem id="settings" title="Settings">
+                    <MenuItem
+                        id="test"
+                        render={(linkData) => (
+                            // eslint-disable-next-line jsx-a11y/anchor-has-content
+                            <a
+                                href={`/settings/${linkData.id}`}
+                                aria-label={linkData.title}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                }}
+                            />
+                        )}
+                    >
+                        Nested link
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+        </div>
+    );
+};
+
+export const WithRender: Story = {
+    render: (props) => <WithRenderStoryComponent {...props} />
 };

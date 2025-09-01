@@ -90,4 +90,22 @@ describe("Button ", () => {
         const wrapper = setup.setProps({ type });
         expect(wrapper.find("button").props().type).toBe(type);
     });
+
+    it("handles onFocus event", () => {
+        const onFocusMock = jest.fn();
+        const wrapper = setup.setProps({ onFocus: onFocusMock });
+
+        wrapper.find("button").simulate("focus");
+
+        expect(onFocusMock).toHaveBeenCalled();
+    });
+
+    it("handles onBlur event", () => {
+        const onBlurMock = jest.fn();
+        const wrapper = setup.setProps({ onBlur: onBlurMock });
+
+        wrapper.find("button").simulate("blur");
+
+        expect(onBlurMock).toHaveBeenCalled();
+    });
 });

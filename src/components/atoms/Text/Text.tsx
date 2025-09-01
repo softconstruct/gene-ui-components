@@ -78,13 +78,18 @@ interface ITextProps {
      * Text content
      */
     children: string;
+    /**
+     * A unique identifier for the text element.
+     * Useful for accessibility purposes, like `aria-labelledby`.
+     */
+    id?: string;
 }
 
 /**
  * Text component which has predefined tokens
  */
 const Text = forwardRef<HTMLHeadingElement, ITextProps>(
-    ({ className, variant = "bodyMediumMedium", children, as, alignment = "start" }: ITextProps, ref) => {
+    ({ className, variant = "bodyMediumMedium", children, as, alignment = "start", id }: ITextProps, ref) => {
         const Component = as;
 
         const computedClassNames = classNames(
@@ -97,7 +102,7 @@ const Text = forwardRef<HTMLHeadingElement, ITextProps>(
         );
 
         return (
-            <Component className={computedClassNames} ref={ref}>
+            <Component className={computedClassNames} ref={ref} id={id}>
                 {children}
             </Component>
         );

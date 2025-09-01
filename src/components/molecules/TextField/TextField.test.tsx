@@ -162,4 +162,30 @@ describe("TextField ", () => {
 
         expect(onClear).toHaveBeenCalledTimes(1);
     });
+
+    it("should block non-digit characters when numericOnly is true", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(<TextField numericOnly onChange={onChange} />);
+
+        // Try typing "abc123"
+        wrapper.find("input").simulate("change", {
+            target: { value: "abc123" }
+        });
+
+        // Only digits should be passed
+        expect(onChange).toHaveBeenCalledWith(
+            expect.objectContaining({
+                target: expect.objectContaining({ value: "123" })
+            })
+        );
+    });
+
+    it.each<ITextFieldProps["inputMode"]>(["numeric", "decimal", "tel", "text", "search", "email", "url"])(
+        'should have "%s" inputMode',
+        (inputMode) => {
+            const wrapper = setup.setProps({ inputMode });
+
+            expect(wrapper.find(".textField__input").props().inputMode).toEqual(inputMode);
+        }
+    );
 });
