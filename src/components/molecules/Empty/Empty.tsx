@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import classNames from "classnames";
 
 import Button, { IButtonProps } from "@components/atoms/Button";
@@ -26,9 +26,8 @@ interface IEmptyProps {
     description?: string;
     /**
      * The source URL for a custom image.
-     * **Note: This prop is only used when appearance is set to `custom`.
      */
-    // src?: unknown;
+    src?: string;
     /**
      * An array of action button objects to display in the `empty` component's footer.
      * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
@@ -46,46 +45,42 @@ interface IEmptyProps {
     loading?: boolean;
     /**
      * Determines the visual style of the `Empty component`.<br>
-     * Possible values: `star | heart | emoji | number`
+     * Possible values: `noData | noResult | success | warning | info | error | notFound | forbidden | serverError`
+     * Default value is `noData`
      */
-    // appearance?:
-    //     | "noData"
-    //     | "noResult"
-    //     | "success"
-    //     | "warning"
-    //     | "info"
-    //     | "error"
-    //     | "notFound"
-    //     | "forbidden"
-    //     | "serverError"
-    //     | "custom";
+    appearance?:
+        | "noData"
+        | "noResult"
+        | "success"
+        | "warning"
+        | "info"
+        | "error"
+        | "notFound"
+        | "forbidden"
+        | "serverError";
 }
-
-// const getEmptyImageByAppearance = (appearance: IEmptyProps["appearance"], src?: string) => ({
-//     noData: "./src/noData",
-//     noResult: "./src/noResult",
-//     success: "./src/success",
-//     warning: "./src/warning",
-//     info: "./src/info",
-//     error: "./src/error",
-//     notFound: "./src/notFound",
-//     forbidden: "./src/forbidden",
-//     serverError: "./src/serverError",
-//     custom: src
-// });
 
 /**
  * The Empty component visually represents chronological events or steps in a process. It is commonly used in dashboards, order tracking, and activity feeds to display key milestones or updates in a structured manner.
  */
-const Empty: FC<IEmptyProps> = ({
-    className,
-    message,
-    description,
-    // src,
-    actions,
-    loading
-    // appearance = "noData"
-}) => {
+const Empty: FC<IEmptyProps> = ({ className, message, description, src, actions, loading, appearance = "noData" }) => {
+    const [image, setImage] = useState<string>();
+
+    useEffect(() => {
+        if (src) {
+            setImage(src);
+            return;
+        }
+
+        import(`./../../../assets/images/${appearance}.svg`)
+            .then((img) => {
+                setImage(img.default);
+            })
+            .catch((err) => {
+                console.error("Failed to load image:", err);
+            });
+    }, [appearance, src]);
+
     return (
         <div className={classNames("empty", className)}>
             {loading ? (
@@ -98,12 +93,7 @@ const Empty: FC<IEmptyProps> = ({
                 </div>
             ) : (
                 <>
-                    {/* todo: add image source for each state of "Empty" component */}
-                    {/* <img src="getEmptyImageByAppearance(appearance)" className="empty__image" alt="empty image" /> */}
-
-                    {/* todo: implement "Swap" component for Custom case */}
-                    <div className="swapComponent" style={{ width: "21rem", height: "14rem", background: "#F4E1EC" }} />
-
+                    <img src={image} className="empty__image" alt="empty" />
                     <div className="empty__content">
                         <div className="empty__info">
                             <Text as="p" variant="subheadingMediumSemibold" alignment="center" className="empty__title">
