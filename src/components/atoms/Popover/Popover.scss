@@ -116,6 +116,7 @@
     }
 
     &__header {
+        flex: none;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -152,8 +153,10 @@
     }
 
     &__body {
+        flex: 1;
         min-width: 0;
         min-height: 0;
+        height: 100%;
 
         &_withPadding {
             padding-block: var(--guit-ref-spacing-large);
@@ -170,6 +173,7 @@
     }
 
     &__footer {
+        flex: none;
         display: flex;
         align-items: center;
         justify-content: space-between;
