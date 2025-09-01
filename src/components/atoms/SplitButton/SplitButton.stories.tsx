@@ -24,12 +24,14 @@ type Story = StoryObj<ISplitButtonProps>;
 
 export const Default: Story = {
     render: (props) => (
-        <SplitButton {...props}>
-            <ActionIItem>213</ActionIItem>
-            <ActionIItem>213</ActionIItem>
-            <ActionIItem>213</ActionIItem>
-            <ActionIItem>213</ActionIItem>
-            <ActionIItem>213</ActionIItem>
-        </SplitButton>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100px" }}>
+            <SplitButton {...props}>
+                <ActionIItem>213</ActionIItem>
+                <ActionIItem>213</ActionIItem>
+                <ActionIItem>213</ActionIItem>
+                <ActionIItem>213</ActionIItem>
+                <ActionIItem>213</ActionIItem>
+            </SplitButton>
+        </div>
     )
 };

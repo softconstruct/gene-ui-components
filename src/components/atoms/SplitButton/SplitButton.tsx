@@ -1,4 +1,5 @@
 import React, { FC, PointerEvent, useState } from "react";
+import classNames from "classnames";
 
 import { CaretDownFilled, IconProps } from "@geneui/icons";
 
@@ -56,7 +57,9 @@ const SplitButton: FC<ISplitButtonProps> = ({
     onClick,
     loading
 }) => {
-    const [props, setProps] = useState({});
+    const [propsForPopover, setPropsForPopover] = useState({});
+
+    const buttonsClassNames = `splitButton__button splitButton__button_size_${size} splitButton__button_type_${type} splitButton__button_appearance_${appearance}`;
 
     return (
         <div className="splitButton">
@@ -65,7 +68,7 @@ const SplitButton: FC<ISplitButtonProps> = ({
                     type="button"
                     disabled={disabled}
                     onClick={onClick}
-                    className={`splitButton__button splitButton__button_size_${size} splitButton__button_type_${type} splitButton__button_appearance_${appearance} splitButton__button_loading`}
+                    className={classNames(buttonsClassNames, "splitButton__button_loading")}
                 >
                     {/* todo: change appearance value from "inverse" to "brand" or "neutral", depending on SplitButton "type" and "appearance" */}
                     <Loader size="small" appearance="inverse" />
@@ -76,7 +79,7 @@ const SplitButton: FC<ISplitButtonProps> = ({
                         type="button"
                         disabled={disabled}
                         onClick={onClick}
-                        className={`splitButton__button splitButton__button_size_${size} splitButton__button_type_${type} splitButton__button_appearance_${appearance} ${Icon ? "splitButton__button_icon_before" : ""}`}
+                        className={classNames(buttonsClassNames, `${Icon ? "splitButton__button_icon_before" : ""}`)}
                     >
                         {Icon && <Icon size={20} className="button__icon" />}
                         <span className="splitButton__text">Button</span>
@@ -84,21 +87,21 @@ const SplitButton: FC<ISplitButtonProps> = ({
 
                     <button
                         type="button"
-                        {...props}
                         disabled={disabled}
-                        className={`splitButton__button splitButton__button_size_${size} splitButton__button_type_${type} splitButton__button_appearance_${appearance} splitButton__button_icon_only`}
+                        className={classNames(buttonsClassNames, "splitButton__button_icon_only")}
+                        {...propsForPopover}
                     >
                         <CaretDownFilled className="splitButton__icon" />
                     </button>
                     <Menu
                         onChange={() => {}}
-                        setPropsForPopover={setProps}
+                        setPropsForPopover={setPropsForPopover}
                         swappable
-                        position="bottom-left"
+                        position="bottom-right"
                         size="small"
                     >
-                        <MenuItem id="0" title="Menu Item" />
-                        <MenuItem id="0" title="Menu Item" />
+                        <MenuItem id="0">action 1</MenuItem>
+                        <MenuItem id="0">action 2</MenuItem>
                     </Menu>
                 </>
             )}
