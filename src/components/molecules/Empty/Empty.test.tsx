@@ -12,7 +12,7 @@ describe("Empty ", () => {
     const mockOnClose = jest.fn();
     const mockOnClick = jest.fn();
     beforeEach(() => {
-        setup = mount(<Empty message="some message" />);
+        setup = mount(<Empty title="some message" />);
     });
 
     it("renders without crashing", () => {
@@ -26,16 +26,16 @@ describe("Empty ", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    it("renders message prop correctly", () => {
-        const message = "test message";
-        const wrapper = setup.setProps({ message });
+    it("renders title prop correctly", () => {
+        const title = "test message";
+        const wrapper = setup.setProps({ title });
 
-        const title = wrapper
+        const element = wrapper
             .find(Text)
             .findWhere((item) => item.hasClass("empty__title"))
             .at(1);
 
-        expect(title.text()).toBe(message);
+        expect(element.text()).toBe(title);
     });
 
     it("renders description prop correctly", () => {
@@ -50,12 +50,12 @@ describe("Empty ", () => {
         expect(desc.text()).toBe(description);
     });
 
-    // it("renders src prop correctly", () => {
-    //     const src = "https://picsum.photos/id/64/200/300";
-    //     const wrapper = setup.setProps({ appearance: "custom", src });
-    //
-    //     expect(wrapper.find(".empty__image").props().src).toBe(src);
-    // });
+    it("renders src prop correctly", () => {
+        const src = "https://picsum.photos/id/64/200/300";
+        const wrapper = setup.setProps({ src });
+
+        expect(wrapper.find(".empty__image").props().src).toBe(src);
+    });
 
     it("should render action buttons when provided", () => {
         const actions = [
@@ -84,12 +84,5 @@ describe("Empty ", () => {
         expect(wrapper.text()).toContain("Valid Button");
 
         expect(wrapper.find(ButtonGroup).exists()).toBeTruthy();
-    });
-
-    it("renders loading prop correctly", () => {
-        const loading = true;
-        const wrapper = setup.setProps({ loading });
-
-        expect(wrapper.find(".empty__skeleton").exists()).toBeTruthy();
     });
 });
