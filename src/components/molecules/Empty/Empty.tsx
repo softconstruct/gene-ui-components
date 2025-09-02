@@ -58,12 +58,26 @@ interface IEmptyProps {
         | "notFound"
         | "forbidden"
         | "serverError";
+    /**
+     * Empty component size
+     * Possible values: `small | medium`
+     */
+    size?: "medium" | "small";
 }
 
 /**
  * The Empty component visually represents chronological events or steps in a process. It is commonly used in dashboards, order tracking, and activity feeds to display key milestones or updates in a structured manner.
  */
-const Empty: FC<IEmptyProps> = ({ className, message, description, src, actions, loading, appearance = "noData" }) => {
+const Empty: FC<IEmptyProps> = ({
+    className,
+    message,
+    description,
+    src,
+    actions,
+    loading,
+    appearance = "noData",
+    size = "medium"
+}) => {
     const [image, setImage] = useState<string>();
 
     useEffect(() => {
@@ -82,7 +96,7 @@ const Empty: FC<IEmptyProps> = ({ className, message, description, src, actions,
     }, [appearance, src]);
 
     return (
-        <div className={classNames("empty", className)}>
+        <div className={classNames(`empty empty_size_${size}`, className)}>
             {loading ? (
                 <div className="empty__skeleton">
                     <Skeleton height={140} width={210} />
@@ -96,7 +110,19 @@ const Empty: FC<IEmptyProps> = ({ className, message, description, src, actions,
                     <img src={image} className="empty__image" alt="empty" />
                     <div className="empty__content">
                         <div className="empty__info">
-                            <Text as="p" variant="subheadingMediumSemibold" alignment="center" className="empty__title">
+                            <Text
+                                as="p"
+                                variant={
+                                    // eslint-disable-next-line no-nested-ternary
+                                    size === "medium"
+                                        ? "subheadingMediumSemibold"
+                                        : size === "small"
+                                          ? "labelLargeSemibold"
+                                          : undefined
+                                }
+                                alignment="center"
+                                className="empty__title"
+                            >
                                 {message}
                             </Text>
                             {description && (
@@ -111,7 +137,7 @@ const Empty: FC<IEmptyProps> = ({ className, message, description, src, actions,
                             )}
                         </div>
                         {actions && actions.length > 0 && (
-                            <ButtonGroup size="medium">
+                            <ButtonGroup size={size}>
                                 {actions.map((action: IButtonProps) => {
                                     const { children: buttonChildren } = action;
                                     const key = `action-${buttonChildren}`;

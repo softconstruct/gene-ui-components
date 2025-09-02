@@ -1,21 +1,47 @@
 .empty {
+    $this: &;
+
     display: flex;
     flex-direction: column;
     align-items: center;
     row-gap: var(--guit-ref-spacing-large);
-    width: 32rem;
+
+    &_size {
+        &_medium {
+            width: 32rem;
+
+            #{ $this }__image {
+                width: 21rem;
+                height: 14rem;
+            }
+
+            #{ $this }__content {
+                row-gap: var(--guit-ref-spacing-2xlarge);
+            }
+        }
+
+        &_small {
+            width: 24rem;
+
+            #{ $this }__image {
+                width: 14rem;
+                height: 9.4rem;
+            }
+
+            #{ $this }__content {
+                row-gap: var(--guit-ref-spacing-large);
+            }
+        }
+    }
 
     &__image {
-        width: 21rem;
-        height: 14rem;
-        object-fit: cover;
+        object-fit: contain;
     }
 
     &__content {
         display: flex;
         flex-direction: column;
         align-items: center;
-        row-gap: var(--guit-ref-spacing-2xlarge);
         width: 100%;
     }
 
