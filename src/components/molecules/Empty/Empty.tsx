@@ -39,10 +39,6 @@ interface IEmptyProps {
      */
     actions?: IButtonProps[];
     /**
-     * When set to `true`, the component will display a skeleton instead of its content.
-     */
-    loading?: boolean;
-    /**
      * Determines the visual style of the `Empty component`.<br>
      * Possible values: `noData | noResult | success | warning | info | error | notFound | forbidden | serverError`
      * Default value is `noData`
