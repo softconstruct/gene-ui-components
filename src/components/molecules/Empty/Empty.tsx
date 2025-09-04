@@ -63,7 +63,7 @@ interface IEmptyProps {
 const textVariantMap = {
     medium: "subheadingMediumSemibold",
     small: "labelLargeSemibold"
-};
+} as const;
 
 /**
  * The Empty component visually represents chronological events or steps in a process. It is commonly used in dashboards, order tracking, and activity feeds to display key milestones or updates in a structured manner.
