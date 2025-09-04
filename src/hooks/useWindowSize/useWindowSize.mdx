@@ -40,4 +40,5 @@ export default ExampleComponent;
 - This hook listens for the resize event on the window and updates the width and height accordingly.
 - It initializes with the current window dimensions when the component mounts.
 - The event listener is removed when the component unmounts to prevent memory leaks.
+- It also uses debounce with the value 100ms, height, and width will be updated each 100ms during the resize event.
 </div> 

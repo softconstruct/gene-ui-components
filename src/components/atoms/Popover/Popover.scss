@@ -53,56 +53,70 @@
 
     &_size {
         &_xLarge {
-            width: 72rem;
-            #{ $this }__body {
-                height: 15.4rem;
-            }
-            #{ $this }__footer {
-                height: 6.4rem;
+            #{ $this }__container {
+                min-width: 64rem;
+                max-width: 82rem;
+                max-height: 82rem;
             }
         }
 
         &_large {
-            width: 48rem;
-        }
-
-        &_medium {
-            width: 36rem;
-        }
-
-        &_large,
-        &_medium {
-            #{ $this }__body {
-                height: 17.2rem;
+            #{ $this }__container {
+                min-width: 52rem;
+                max-width: 64rem;
+                max-height: 64rem;
             }
-            #{ $this }__footer {
-                height: 5.6rem;
+        }
+
+        &_medium {
+            #{ $this }__container {
+                min-width: 28rem;
+                max-width: 52rem;
+                max-height: 52rem;
             }
         }
 
         &_small {
-            width: 24rem;
-            #{ $this }__body {
-                height: 8.8rem;
-            }
-            #{ $this }__footer {
-                height: 5.6rem;
+            #{ $this }__container {
+                min-width: 16rem;
+                max-width: 28rem;
+                max-height: 52rem;
             }
         }
 
-        &_mobile {
-            min-width: 32rem;
-            width: 100%;
-            #{ $this }__body {
-                height: 17.2rem;
-            }
+        &_large,
+        &_xLarge {
             #{ $this }__footer {
                 height: 6.4rem;
+            }
+        }
+
+        &_fitContent {
+            width: fit-content;
+        }
+
+        &_reference {
+            width: var(--parent-width);
+            min-width: auto;
+        }
+    }
+
+    &__container {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+
+        &_height {
+            &_full {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
             }
         }
     }
 
     &__header {
+        flex: none;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -111,6 +125,7 @@
             var(--guit-sem-color-border-neutral-2);
         padding-inline: var(--guit-ref-spacing-large);
         height: 4.8rem;
+        overflow: hidden;
     }
 
     &__title {
@@ -126,7 +141,7 @@
         }
 
         &_text {
-            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
             font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
             font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
             line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
@@ -138,17 +153,27 @@
     }
 
     &__body {
-        padding-block: var(--guit-ref-spacing-large);
-        padding-inline: var(--guit-ref-spacing-large);
+        flex: 1;
+        min-width: 0;
+        min-height: 0;
+        height: 100%;
+
+        &_withPadding {
+            padding-block: var(--guit-ref-spacing-large);
+            padding-inline: var(--guit-ref-spacing-large);
+        }
     }
 
     &__content {
         width: 100%;
         height: 100%;
-        overflow-y: auto;
+
+        // todo need to investigate why we need overflow auto
+        // overflow-y: auto;
     }
 
     &__footer {
+        flex: none;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -157,6 +182,7 @@
             var(--guit-sem-color-border-neutral-2);
         padding-block: var(--guit-ref-spacing-large);
         padding-inline: var(--guit-ref-spacing-large);
+        overflow: hidden;
 
         &_buttons {
             display: flex;

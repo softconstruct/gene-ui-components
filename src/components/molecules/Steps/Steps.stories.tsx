@@ -18,8 +18,8 @@ const meta: Meta<IStepsProps> = {
 const stepsMockData: IStepProps[] = [
     { label: "Step 1", description: "description 1", id: 1, state: "complete" },
     { label: "Step 2", description: "description 2", id: 2, state: "complete" },
-    { label: "Step 3", description: "description 3", id: 3, state: "current", isLoading: true },
-    { label: "Step 4", id: 4, isLoading: false, state: "incomplete", disabled: true }
+    { label: "Step 3", description: "description 3", id: 3, state: "current", loading: true },
+    { label: "Step 4", id: 4, loading: false, state: "incomplete", disabled: true }
 ];
 
 type Story = StoryObj<IStepsProps>;
@@ -30,13 +30,13 @@ const StepsStory: Story = {
         className: args({ control: "false", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance }),
-        isLinear: args({ control: "boolean", ...propCategory.functionality }),
+        linear: args({ control: "boolean", ...propCategory.functionality }),
         onChange: args({ control: "false", ...propCategory.action }),
         children: args({ control: "false", ...propCategory.content })
     },
     args: {
         direction: "vertical",
-        isLinear: false,
+        linear: false,
         type: "dot"
     },
     render: (props) => {
@@ -52,11 +52,11 @@ const StepsStory: Story = {
 
 const StepStory: StoryStep = storyObjBuilder({
     argTypes: {
-        isLoading: args({ control: "boolean", ...propCategory.states }),
+        loading: args({ control: "boolean", ...propCategory.states }),
         error: args({ control: "boolean", ...propCategory.states }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         label: args({ control: "text", ...propCategory.content }),
-        stepNumber: args({ control: "number", ...propCategory.content }),
+        stepNumber: args({ control: "false", ...propCategory.content }),
         id: args({ control: "false", ...propCategory.others }),
         description: args({ control: "text", ...propCategory.content }),
         state: args({ control: "select", ...propCategory.appearance, options: ["incomplete", "current", "complete"] })

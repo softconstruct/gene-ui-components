@@ -1,16 +1,18 @@
 import React, { FC, ReactElement, useLayoutEffect, useMemo, useState } from "react";
 import classNames from "classnames";
+
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
 
+import Button from "@components/atoms/Button";
+
 // Hooks
-import useSwipe from "../../../hooks/useSwipe";
+import useSwipe from "@hooks/useSwipe";
 
 // Styles
 import "./Carousel.scss";
 
 // Components
 import CarouselItem from "./CarouselItem";
-import Button from "../../atoms/Button";
 
 interface ICarouselProps {
     /**

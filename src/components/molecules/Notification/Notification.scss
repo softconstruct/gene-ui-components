@@ -1,0 +1,146 @@
+.notification {
+    $this: &;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-medium);
+    width: 100%;
+    max-width: 32rem;
+    padding: var(--guit-ref-spacing-large);
+    border-radius: var(--guit-ref-radius-3xsmall);
+    border-inline-start: var(--guit-ref-border-width-thicker) var(--guit-ref-border-style-solid);
+    overflow: hidden;
+
+    &_variant {
+        &_sectionMessage {
+            min-width: 16rem;
+
+            &#{ $this }_status {
+                &_informative {
+                    background-color: var(--guit-sem-color-background-informative);
+                }
+
+                &_success {
+                    background-color: var(--guit-sem-color-background-success-1);
+                }
+
+                &_warning {
+                    background-color: var(--guit-sem-color-background-warning-1);
+                }
+
+                &_error {
+                    background-color: var(--guit-sem-color-background-error-1);
+                }
+
+                &_insight {
+                    background-color: var(--guit-sem-color-background-recommendation-1);
+                }
+            }
+        }
+
+        &_toast {
+            position: fixed;
+            right: 0;
+            top: 0;
+            min-width: 24rem;
+            max-width: 32rem;
+            background-color: var(--guit-sem-color-background-neutral-1);
+            box-shadow:
+                var(--guit-sem-shadow-floating-3-position-x-1) var(--guit-sem-shadow-floating-3-position-y-1)
+                    var(--guit-sem-shadow-floating-3-blur-1) var(--guit-sem-shadow-floating-3-spread-1)
+                    var(--guit-sem-color-floating-3-rgba-1),
+                var(--guit-sem-shadow-floating-3-position-x-2) var(--guit-sem-shadow-floating-3-position-y-2)
+                    var(--guit-sem-shadow-floating-3-blur-2) var(--guit-sem-shadow-floating-3-spread-2)
+                    var(--guit-sem-color-floating-3-rgba-2);
+        }
+    }
+
+    &_status {
+        &_informative {
+            border-inline-start-color: var(--guit-sem-color-border-informative);
+
+            #{ $this }__icon {
+                color: var(--guit-sem-color-foreground-informative);
+            }
+        }
+
+        &_success {
+            border-inline-start-color: var(--guit-sem-color-border-success);
+
+            #{ $this }__icon {
+                color: var(--guit-sem-color-foreground-success);
+            }
+        }
+
+        &_warning {
+            border-inline-start-color: var(--guit-sem-color-border-warning);
+
+            #{ $this }__icon {
+                color: var(--guit-sem-color-foreground-warning);
+            }
+        }
+
+        &_error {
+            border-inline-start-color: var(--guit-sem-color-border-error);
+
+            #{ $this }__icon {
+                color: var(--guit-sem-color-foreground-error);
+            }
+        }
+
+        &_insight {
+            border-inline-start-color: var(--guit-sem-color-border-recommendation);
+
+            #{ $this }__icon {
+                color: var(--guit-sem-color-foreground-recommendation);
+            }
+        }
+    }
+
+    &__wrapper {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--guit-ref-spacing-medium);
+        width: 100%;
+    }
+
+    &__icon,
+    &__button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+    }
+
+    &__icon {
+        width: var(--guit-sem-dimension-width-small-nudge);
+        height: var(--guit-sem-dimension-height-small-nudge);
+    }
+
+    &__actions {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    &__content {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--guit-ref-spacing-xsmall);
+        width: 100%;
+    }
+
+    &__textGroup {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-3xsmall);
+        width: 100%;
+    }
+
+    &__title {
+        color: var(--guit-sem-color-foreground-neutral-2);
+    }
+
+    &__description {
+        color: var(--guit-sem-color-foreground-neutral-2);
+    }
+}

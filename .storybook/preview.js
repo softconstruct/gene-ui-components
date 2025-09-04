@@ -95,6 +95,7 @@ export const parameters = {
                 "Introduction",
                 "Changelog",
                 "Getting started",
+                "Provider",
                 "Atoms",
                 "Molecules",
                 "Organisms",

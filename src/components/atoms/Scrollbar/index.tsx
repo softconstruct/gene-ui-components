@@ -1,1 +1,1 @@
-export { IScrollbarProps, default } from "./Scrollbar";
+export { IScrollbarProps, ScrollbarRefType, default } from "./Scrollbar";

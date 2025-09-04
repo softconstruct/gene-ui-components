@@ -1,9 +1,9 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-import { InfoOutline } from "@geneui/icons";
-
 // Components
+import { Info as InfoIcon } from "@geneui/icons";
+
 import Info, { IInfoProps } from "./index";
 
 describe("Info ", () => {
@@ -37,7 +37,7 @@ describe("Info ", () => {
             XSmall: 16
         } as const;
 
-        if (size) expect(wrapper.find(InfoOutline).props().size).toEqual(iconSizes[size]);
+        if (size) expect(wrapper.find(InfoIcon).props().size).toEqual(iconSizes[size]);
     });
 
     it("renders className prop correctly", () => {

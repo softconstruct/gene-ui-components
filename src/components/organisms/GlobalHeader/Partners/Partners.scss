@@ -1,0 +1,118 @@
+@use "../../../../assets/styles/mixins";
+
+.partners {
+    $this: &;
+
+    &__popoverBody {
+        border-radius: var(--guit-ref-radius-2xsmall);
+        padding-block: var(--guit-ref-spacing-3xsmall);
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    }
+
+    &__popoverContent {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    &__loader {
+        width: 100%;
+        height: 100%;
+    }
+
+    &__header {
+        flex: none;
+        display: flex;
+        flex-direction: column;
+        row-gap: var(--guit-ref-spacing-xsmall);
+        padding-top: var(--guit-ref-spacing-3xsmall);
+        padding-bottom: var(--guit-ref-spacing-xsmall);
+        padding-inline: var(--guit-ref-spacing-large);
+        border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+    }
+
+    &__title {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        column-gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__titleName {
+        flex: 1;
+        color: var(--guit-sem-color-foreground-neutral-2);
+    }
+
+    &__titleID {
+        flex: none;
+        color: var(--guit-sem-color-foreground-neutral-1);
+    }
+
+    &__scrollbar {
+        flex: 1;
+        min-height: 0;
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        row-gap: var(--guit-ref-spacing-3xsmall);
+        padding-block: var(--guit-ref-spacing-3xsmall);
+        padding-inline: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__partner {
+        display: flex;
+        gap: var(--guit-ref-spacing-xsmall);
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding-block: var(--guit-ref-spacing-2xsmall);
+        padding-inline: var(--guit-ref-spacing-medium);
+        border-radius: var(--guit-ref-radius-3xsmall);
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-nudge-hover);
+            }
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            #{ $this }__partnerName,
+            #{ $this }__partnerID {
+                color: var(--guit-sem-color-foreground-disabled);
+            }
+        }
+
+        &:active:not(:disabled) {
+            background-color: var(--guit-sem-color-background-neutral-1-nudge-pressed);
+        }
+
+        &_selected {
+            #{ $this }__partnerName,
+            #{ $this }__partnerID {
+                color: var(--guit-sem-color-foreground-selected);
+            }
+        }
+
+        &:not(:disabled):not(#{ $this }__partner_selected) {
+            #{ $this }__partnerName {
+                color: var(--guit-sem-color-foreground-neutral-2);
+            }
+            #{ $this }__partnerID {
+                color: var(--guit-sem-color-foreground-neutral-1);
+            }
+        }
+    }
+
+    &__partnerName {
+        flex: 1;
+    }
+
+    &__partnerID {
+        flex: none;
+    }
+}

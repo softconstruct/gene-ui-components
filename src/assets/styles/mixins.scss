@@ -1,0 +1,5 @@
+@mixin media-hover {
+    @media screen and (hover: hover) {
+        @content;
+    }
+}

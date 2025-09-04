@@ -47,7 +47,13 @@
                     "Popover": ["PopoverBody", "PopoverFooter"],
                     "PopoverFooterActions": ["Button"],
                     "KeyValue": ["Key", "Value"],
-                    "Value": ["Pill", "TextLink", "Text"]
+                    "Value": ["Pill", "TextLink", "Text"],
+                    "Timeline": ["TimelinePoint"],
+                    "Products": ["ProductsMainSection", "ProductsSecondarySection"],
+                    "ProductsMainSection": ["Product"],
+                    "ProductsSecondarySection": ["Product"],
+                    "Menu": ["MenuItem"],
+                    "ButtonGroup": ["Button"]
                 }
             }
         ],

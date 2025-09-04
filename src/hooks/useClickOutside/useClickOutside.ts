@@ -1,10 +1,11 @@
-import { RefObject, useCallback, useEffect, useRef } from "react";
+import { MutableRefObject, useCallback, useEffect, useRef } from "react";
+import { ReferenceType } from "@floating-ui/react";
 
 type IClickOutside = (node: HTMLElement | null) => void;
 
 const useClickOutside = (
     callback: (e: MouseEvent) => void,
-    relativeElements?: RefObject<HTMLElement>[]
+    relativeElements?: MutableRefObject<ReferenceType | null>[]
 ): IClickOutside => {
     const ref = useRef<HTMLElement | null>(null);
 
@@ -13,9 +14,16 @@ const useClickOutside = (
             const { target } = e;
             if (!(target instanceof Node)) return;
 
-            const isNotRelativeTarget = !relativeElements?.some((relativeRef) => relativeRef.current?.contains(target));
+            const isNotRelativeTarget = !relativeElements?.some((relativeRef) => {
+                if (!(relativeRef.current instanceof Element)) return false;
 
-            if (ref.current && !ref.current.contains(target) && isNotRelativeTarget) {
+                return relativeRef.current?.contains(target as Node);
+            });
+
+            if (
+                (ref.current && !ref.current.contains(target) && isNotRelativeTarget) ||
+                (!ref.current && isNotRelativeTarget)
+            ) {
                 callback(e);
             }
         },

@@ -1,20 +1,22 @@
 import { useMemo } from "react";
 
-import { OS } from "@types";
+import { OSTypes } from "@types";
 
-interface IDeviceInfo {
-    isMobile: boolean;
-    isDesktop: boolean;
-    os: OS;
+export interface IDeviceInfo {
+    isMobileDevice: boolean;
+    isDesktopDevice: boolean;
+    isTouch: boolean;
+    os: OSTypes;
     isWindows: boolean;
     isMacOS: boolean;
     isLinux: boolean;
     isAndroid: boolean;
     isIOS: boolean;
+    theme: "light" | "dark";
 }
 
 // Map of OS detection patterns
-const osPatterns: [OS, RegExp][] = [
+const osPatterns: [OSTypes, RegExp][] = [
     ["Windows", /\b(windows nt|win)\b/i],
     ["iOS", /\b(iPhone|iPad|iPod).*?OS \d+/i],
     ["Android", /\bandroid\b/i],
@@ -26,14 +28,16 @@ const useDeviceInfo = (): IDeviceInfo => {
     return useMemo<IDeviceInfo>(() => {
         if (typeof navigator === "undefined") {
             return {
-                isMobile: false,
-                isDesktop: false,
+                isMobileDevice: false,
+                isDesktopDevice: false,
+                isTouch: false,
                 os: "Unknown",
                 isWindows: false,
                 isMacOS: false,
                 isLinux: false,
                 isAndroid: false,
-                isIOS: false
+                isIOS: false,
+                theme: "light"
             }; // Safe for SSR
         }
 
@@ -48,18 +52,29 @@ const useDeviceInfo = (): IDeviceInfo => {
         const isAndroid = detectedOS === "Android";
         const isIOS = detectedOS === "iOS";
 
-        const isMobile = isAndroid || isIOS;
-        const isDesktop = isWindows || isMacOS || isLinux;
+        const isMobileDevice = isAndroid || isIOS;
+        const isDesktopDevice = isWindows || isMacOS || isLinux;
+
+        // Detect touch device
+        const isTouch =
+            "ontouchstart" in window ||
+            navigator.maxTouchPoints > 0 ||
+            (window.matchMedia && window.matchMedia("(pointer: coarse)").matches) ||
+            false;
+
+        const theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 
         return {
-            isMobile,
-            isDesktop,
+            isMobileDevice,
+            isDesktopDevice,
+            isTouch,
             os: detectedOS,
             isWindows,
             isMacOS,
             isLinux,
             isAndroid,
-            isIOS
+            isIOS,
+            theme
         };
     }, []);
 };
