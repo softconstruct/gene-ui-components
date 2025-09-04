@@ -39,8 +39,8 @@ interface IEmptyProps {
      */
     actions?: IButtonProps[];
     /**
-     * Determines the visual style of the `Empty component`.<br>
-     * Possible values: `noData | noResult | success | warning | info | error | notFound | forbidden | serverError`
+     * Determines the visual style of the `Empty` component.<br>
+     * Possible values: `noData | noResult | success | warning | info |`<br>` error | notFound | forbidden | serverError`
      * Default value is `noData`
      */
     appearance?:
@@ -60,6 +60,11 @@ interface IEmptyProps {
     size?: "medium" | "small";
 }
 
+const textVariantMap = {
+    medium: "subheadingMediumSemibold",
+    small: "labelLargeSemibold"
+};
+
 /**
  * The Empty component visually represents chronological events or steps in a process. It is commonly used in dashboards, order tracking, and activity feeds to display key milestones or updates in a structured manner.
  */
@@ -78,19 +83,7 @@ const Empty: FC<IEmptyProps> = ({
         return (
             <div className="empty__info">
                 {title && (
-                    <Text
-                        as="p"
-                        variant={
-                            // eslint-disable-next-line no-nested-ternary
-                            size === "medium"
-                                ? "subheadingMediumSemibold"
-                                : size === "small"
-                                  ? "labelLargeSemibold"
-                                  : undefined
-                        }
-                        alignment="center"
-                        className="empty__title"
-                    >
+                    <Text as="p" variant={textVariantMap[size]} alignment="center" className="empty__title">
                         {title}
                     </Text>
                 )}
