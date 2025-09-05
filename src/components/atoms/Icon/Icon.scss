@@ -1,0 +1,93 @@
+@use "../../../assets/styles/mixins";
+
+.icon-catalog {
+    $this: &;
+
+    padding: var(--guit-ref-spacing-large);
+
+    &_header {
+        margin-bottom: var(--guit-ref-spacing-large);
+    }
+
+    &_search {
+        margin: var(--guit-ref-spacing-large) 0;
+    }
+
+    &_grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: var(--guit-ref-spacing-medium);
+        margin-top: var(--guit-ref-spacing-large);
+    }
+
+    &_empty-state {
+        text-align: center;
+        padding: var(--guit-ref-spacing-medium) 0;
+    }
+
+    &_limit-notice {
+        text-align: center;
+        padding: var(--guit-ref-spacing-small) 0;
+        margin-top: var(--guit-ref-spacing-medium);
+        background-color: var(--guit-sem-color-background-neutral-1);
+        border-radius: var(--guit-ref-border-radius-small);
+    }
+}
+
+.icon-card {
+    $this: &;
+
+    border: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style);
+    border-radius: var(--guit-ref-radius-medium);
+    padding: var(--guit-ref-spacing-medium);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--guit-ref-spacing-xsmall);
+
+    &_icon {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &_name {
+        flex: 1;
+    }
+
+    &_keywords {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--guit-ref-spacing-2xsmall);
+        margin-top: var(--guit-ref-spacing-xsmall);
+        width: 100%;
+    }
+
+    &_keyword {
+        background-color: var(--guit-sem-color-background-neutral-2);
+        color: var(--guit-sem-color-foreground-neutral-2);
+        padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-xsmall);
+        border-radius: var(--guit-ref-border-radius-small);
+        font-size: var(--guit-ref-font-size-2xsmall);
+        font-weight: var(--guit-ref-font-weight-medium);
+        white-space: nowrap;
+    }
+
+    &_copy {
+        opacity: 0;
+        transition: opacity var(--guit-ref-motion-duration-fast) var(--guit-ref-motion-easing-ease);
+        position: absolute;
+        top: var(--guit-ref-spacing-xsmall);
+        right: var(--guit-ref-spacing-xsmall);
+    }
+
+    @include mixins.media-hover {
+        &:hover {
+            #{ $this }_copy {
+                opacity: 1;
+            }
+        }
+    }
+}
