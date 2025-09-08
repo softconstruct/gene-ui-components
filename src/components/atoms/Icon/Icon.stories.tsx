@@ -1,30 +1,33 @@
-import React, { useMemo, useState } from "react";
+import React, { ChangeEvent, ComponentType, FC, ReactNode, useMemo, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+import classNames from "classnames";
 
+// Icons
 import * as Icons from "@geneui/icons";
 import { Magnifier } from "@geneui/icons";
 import type { Icon } from "@geneui/icons/metadata";
-import metadata from "@geneui/icons/metadata";
+import iconsMetadata from "@geneui/icons/metadata";
 
+// Components
 import Copy from "@components/atoms/Copy";
+import Divider from "@components/atoms/Divider";
 import Text from "@components/atoms/Text";
 import TextField from "@components/molecules/TextField";
 
 // Styles
 import "./Icon.scss";
 
-interface IconWithMetadata {
+interface IIconWithMetadata {
     name: string;
-    component: React.ComponentType<{ size?: number }>;
+    IconComponent: ComponentType<{ size?: number }>;
     metadata: Icon;
 }
 
-interface IconCardProps {
-    name: string;
-    component: React.ComponentType<{ size?: number }>;
+interface IIconCardProps extends IIconWithMetadata {
+    searchTerm: string;
 }
 
-const getMatchPriority = (icon: IconWithMetadata, searchTerm: string) => {
+const getMatchPriority = (icon: IIconWithMetadata, searchTerm: string) => {
     const iconNameLower = icon.name.toLowerCase();
     const searchLower = searchTerm.toLowerCase();
 
@@ -43,20 +46,79 @@ const getMatchPriority = (icon: IconWithMetadata, searchTerm: string) => {
     return 0; // No match
 };
 
-const IconCard: React.FC<IconCardProps> = ({ name, component: IconComponent }) => {
+// Function to find all matching parts using regex
+const findMatches = (
+    text: string,
+    searchTerm: string
+): Array<{ textSegment: string; isMatch: boolean; index: number }> => {
+    if (!searchTerm.trim()) {
+        return [{ textSegment: text, isMatch: false, index: 0 }];
+    }
+
+    const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
+    const textSegments = text.split(regex);
+
+    return textSegments.map((textSegment, index) => ({
+        textSegment,
+        isMatch: searchTerm.toLowerCase() === textSegment.toLowerCase(),
+        index: index + 1
+    }));
+};
+
+const highlightName = (text: string, searchTerm: string): ReactNode => {
+    const matches = findMatches(text, searchTerm);
+
+    return matches.map(({ textSegment, isMatch, index }) => (
+        <Text
+            key={index}
+            variant="labelSmallSemibold"
+            as="span"
+            className={classNames({ iconCatalog_highlight: isMatch })}
+        >
+            {textSegment}
+        </Text>
+    ));
+};
+
+// Function to highlight only keywords
+const highlightKeywords = (keywords: string[], searchTerm: string): ReactNode => {
+    if (!searchTerm.trim()) {
+        return keywords.map((keyword) => (
+            <div key={keyword} className="iconCard__keyword">
+                <Text variant="labelSmallSemibold" as="span">
+                    {keyword}
+                </Text>
+            </div>
+        ));
+    }
+
+    return keywords.map((keyword) => {
+        const highlightedText = highlightName(keyword, searchTerm);
+
+        return (
+            <div key={keyword} className="iconCard__keyword">
+                {highlightedText}
+            </div>
+        );
+    });
+};
+
+const IconCard: FC<IIconCardProps> = ({ name, IconComponent, metadata, searchTerm = "" }) => {
     const copyValue = `<${name} />`;
 
     return (
-        <div className="icon-card">
-            <div className="icon-card_icon">
+        <div className="iconCard">
+            <div className="iconCard__icon">
                 <IconComponent size={32} />
             </div>
-            <Text as="span" variant="labelSmallSemibold" className="icon-card_name">
-                {name}
-            </Text>
-            <div className="icon-card_copy">
+            <div className="iconCard__name">{highlightName(name, searchTerm)}</div>
+            <Divider />
+            {metadata.keywords && metadata.keywords.length > 0 && (
+                <div className="iconCard__keywords">{highlightKeywords(metadata?.keywords || [], searchTerm)}</div>
+            )}
+            <div className="iconCard__copy">
                 <Copy
-                    value={`<${name} />`}
+                    value={copyValue}
                     size="medium"
                     appearance="primary"
                     copyTooltipText={`Copy ${copyValue}`}
@@ -67,59 +129,61 @@ const IconCard: React.FC<IconCardProps> = ({ name, component: IconComponent }) =
     );
 };
 
-const IconsCatalogComponent: React.FC = () => {
+const IconsCatalogComponent: FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
 
-    // Map metadata to actual icon components
-    const iconsWithMetadata = useMemo((): IconWithMetadata[] => {
-        return Object.entries(metadata || {})
-            .map(([iconName, iconData]) => {
-                const IconComponent = (Icons as Record<string, React.ComponentType<{ size?: number }>>)[iconName];
+    // Map icons metadata to actual icon components
+    const iconsWithMetadata = useMemo((): IIconWithMetadata[] => {
+        return Object.entries(iconsMetadata || {})
+            .map(([iconName, metadata]) => {
+                const IconComponent = (Icons as Record<string, ComponentType<{ size?: number }>>)[iconName];
                 return {
                     name: iconName,
-                    component: IconComponent,
-                    metadata: iconData
+                    IconComponent,
+                    metadata
                 };
             })
-            .filter((item): item is IconWithMetadata => !!item.component); // Only include icons that exist
-    }, [metadata]);
+            .filter((iconWithComponent): iconWithComponent is IIconWithMetadata => !!iconWithComponent.IconComponent); // Only include icons that exist
+    }, [iconsMetadata]);
 
     // Filter icons based on search term - exact name match first, then start with match, then partial name, then keywords
-    const filteredIcons = useMemo((): IconWithMetadata[] => {
+    const filteredIcons = useMemo((): IIconWithMetadata[] => {
         if (!searchTerm.trim()) return iconsWithMetadata;
 
         return iconsWithMetadata
             .map((icon) => ({ icon, priority: getMatchPriority(icon, searchTerm.toLowerCase()) }))
-            .filter((item) => item.priority > 0)
-            .sort((a, b) => b.priority - a.priority)
-            .map((item) => item.icon);
+            .filter((iconWithPriority) => iconWithPriority.priority > 0)
+            .sort((firstIcon, secondIcon) => secondIcon.priority - firstIcon.priority)
+            .map((prioritizedIcon) => prioritizedIcon.icon);
     }, [iconsWithMetadata, searchTerm]);
 
     return (
-        <div className="icon-catalog">
-            <div className="icon-catalog_header">
+        <div className="iconCatalog">
+            <div className="iconCatalog__header">
                 <Text as="h1" variant="headingXLargeSemibold">
                     {`Icons Catalog ${filteredIcons.length} of ${iconsWithMetadata.length} icons`}
                 </Text>
             </div>
 
-            <div className="icon-catalog_search">
+            <div className="iconCatalog__search">
                 <TextField
                     placeholder="Search icons by name or keywords..."
                     value={searchTerm}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
                     IconBefore={Magnifier}
+                    clearable
+                    onClear={() => setSearchTerm("")}
                 />
             </div>
 
-            <div className="icon-catalog_grid">
-                {filteredIcons.map(({ name, component }) => (
-                    <IconCard key={name} name={name} component={component} />
+            <div className="iconCatalog__grid">
+                {filteredIcons.map((iconItem) => (
+                    <IconCard key={iconItem.metadata.id} {...iconItem} searchTerm={searchTerm} />
                 ))}
             </div>
 
             {filteredIcons.length === 0 && searchTerm && (
-                <div className="icon-catalog_empty-state">
+                <div className="iconCatalog__empty">
                     <Text as="p" variant="bodyMediumSemibold">
                         {`No icons found for "${searchTerm}"`}
                     </Text>

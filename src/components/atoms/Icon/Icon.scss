@@ -1,91 +1,95 @@
 @use "../../../assets/styles/mixins";
 
-.icon-catalog {
-    $this: &;
-
+.iconCatalog {
     padding: var(--guit-ref-spacing-large);
 
-    &_header {
+    &__header {
         margin-bottom: var(--guit-ref-spacing-large);
     }
 
-    &_search {
+    &__search {
         margin: var(--guit-ref-spacing-large) 0;
     }
 
-    &_grid {
+    &__grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         gap: var(--guit-ref-spacing-medium);
         margin-top: var(--guit-ref-spacing-large);
     }
 
-    &_empty-state {
+    &__empty {
         text-align: center;
         padding: var(--guit-ref-spacing-medium) 0;
     }
 
-    &_limit-notice {
-        text-align: center;
-        padding: var(--guit-ref-spacing-small) 0;
-        margin-top: var(--guit-ref-spacing-medium);
-        background-color: var(--guit-sem-color-background-neutral-1);
-        border-radius: var(--guit-ref-border-radius-small);
+    &_highlight {
+        background-color: var(--guit-sem-color-background-warning-1);
+        color: var(--guit-sem-color-foreground-warning-1);
+        border-radius: var(--guit-ref-border-radius-2xsmall);
+        white-space: pre-wrap;
     }
 }
 
-.icon-card {
+.iconCard {
     $this: &;
 
     border: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style);
+    border-color: var(--guit-sem-color-border-neutral-2);
     border-radius: var(--guit-ref-radius-medium);
     padding: var(--guit-ref-spacing-medium);
     text-align: center;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     gap: var(--guit-ref-spacing-xsmall);
+    position: relative;
 
-    &_icon {
+    &__icon {
         height: 40px;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
-    &_name {
-        flex: 1;
+    &__name {
+        margin-bottom: 1rem;
     }
 
-    &_keywords {
+    &__keywords {
         display: flex;
         flex-wrap: wrap;
-        gap: var(--guit-ref-spacing-2xsmall);
         margin-top: var(--guit-ref-spacing-xsmall);
         width: 100%;
+        justify-content: center;
     }
 
-    &_keyword {
-        background-color: var(--guit-sem-color-background-neutral-2);
-        color: var(--guit-sem-color-foreground-neutral-2);
-        padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-xsmall);
-        border-radius: var(--guit-ref-border-radius-small);
+    &__keyword {
+        display: inline-flex;
+        align-items: center;
+        padding-top: var(--guit-ref-spacing-4xsmall);
+        padding-bottom: var(--guit-ref-spacing-4xsmall);
+        min-width: var(--guit-sem-dimension-width-medium);
+        padding-inline-start: var(--guit-ref-spacing-xsmall);
+        padding-inline-end: var(--guit-ref-spacing-xsmall);
+        border-radius: var(--guit-ref-radius-4xsmall);
         font-size: var(--guit-ref-font-size-2xsmall);
         font-weight: var(--guit-ref-font-weight-medium);
-        white-space: nowrap;
+        color: var(--guit-sem-color-foreground-informative);
+        white-space: pre-wrap;
     }
 
-    &_copy {
-        opacity: 0;
-        transition: opacity var(--guit-ref-motion-duration-fast) var(--guit-ref-motion-easing-ease);
+    &__copy {
         position: absolute;
         top: var(--guit-ref-spacing-xsmall);
         right: var(--guit-ref-spacing-xsmall);
+        opacity: 0;
     }
 
     @include mixins.media-hover {
         &:hover {
-            #{ $this }_copy {
+            #{ $this }__copy {
                 opacity: 1;
             }
         }
