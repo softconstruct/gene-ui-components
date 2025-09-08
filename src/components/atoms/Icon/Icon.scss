@@ -13,7 +13,7 @@
 
     &__grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
         gap: var(--guit-ref-spacing-medium);
         margin-top: var(--guit-ref-spacing-large);
     }
@@ -47,7 +47,7 @@
     position: relative;
 
     &__icon {
-        height: 40px;
+        height: 4rem;
         display: flex;
         align-items: center;
         justify-content: center;
