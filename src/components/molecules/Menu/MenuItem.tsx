@@ -20,6 +20,7 @@ import { IconProps } from "@geneui/icons";
 import Loader from "@components/atoms/Loader";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+import Empty from "@components/molecules/Empty";
 import MenuItemButton from "@components/molecules/Menu/MenuItemButton";
 
 // Helpers
@@ -107,7 +108,7 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
         id,
         divider,
         ComponentRender,
-        emptyText = "No data to show",
+        emptyText,
         paths,
         generatedId,
         loading,
@@ -207,7 +208,7 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
         if (Children.count(children) === 0) {
             return (
                 <div className="menu__empty">
-                    <h1>{emptyText}</h1>
+                    <Empty title={emptyText} size="small" />
                 </div>
             );
         }
@@ -309,7 +310,7 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
                     >
                         <PopoverBody
                             withPadding={false}
-                            className={`menu__body menu__body_size menu__body_size_${size}`}
+                            className={`menu__body menu__body_size_${size}`}
                             withScrollbar={false}
                         >
                             <div
