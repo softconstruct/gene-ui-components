@@ -13,6 +13,7 @@ import {
     Header,
     Row as TanstackRow,
     RowPinningState,
+    RowSelectionState,
     SortingState,
     useReactTable,
     VisibilityState
@@ -26,7 +27,8 @@ import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import Label from "@components/atoms/Label";
 import Loader, { ILoaderProps } from "@components/atoms/Loader";
-import Scrollbar from "@components/atoms/Scrollbar";
+import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
+import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
 import Pagination from "@components/molecules/Pagination";
 import BulkActions from "@components/molecules/Table/BulkActions";
@@ -43,11 +45,11 @@ interface ITableActions {
     /**
      * A callback function that is triggered when a row is clicked. The ID of the clicked row is passed as an argument.
      */
-    onRowClick?: (id: string) => void;
+    onRowClick?: (data: TanstackRow<Row>) => void;
     /**
      * A callback function that is triggered when the main checkbox in the table header is toggled.
      */
-    onColumnCheck?: () => void;
+    onSelectAllRows?: () => void;
     /**
      * A callback function that is triggered when the value of the global search input changes.
      */
@@ -118,12 +120,22 @@ interface ITableActions {
     onRowDelete?: (rowId: string) => void;
     onEdit?: () => void;
     onCancel?: () => void;
-    selectedRows?: string[];
 }
 
 interface ITableProps extends ITableActions {
     /**
      * An array of column definitions that configure the table's structure, data accessors, and rendering.
+     * This prop extends the `ColumnDef` interface from `@tanstack/react-table`.
+     * Key properties include:
+     * - `id` (string): A unique identifier for the column.
+     * - `header` (string | function): The content for the column header.
+     * - `accessorKey` (string): The key to access data from a row object.
+     * - `accessorFn` (function): A function to get a cell's value from a row object.
+     * - `enableSorting` (boolean): Enables sorting for the column.
+     * - `enableColumnFilter` (boolean): Enables filtering for the column.
+     * - `rowCellRenderer` (function): A custom function to render the cell's content.
+     *
+     * For more information on column properties, see the official TanStack Table documentation: https://tanstack.com/table/v8/docs/api/core/column-def
      */
     columns: TableCol<Row>[];
 
@@ -251,17 +263,14 @@ interface ITableProps extends ITableActions {
      * Enables the "Manage Columns" menu button and its functionality.
      */
     withManageColumns?: boolean;
-
     /**
      * Custom title for the "Manage Columns" button.
      */
     manageColumnsTitle?: string;
-
     /**
      * A React node to be rendered as additional content in the table's header toolbar.
      */
     headerContent?: ReactNode;
-
     editableMode?: boolean;
     keepPinnedRows?: boolean;
 }
@@ -274,7 +283,7 @@ const Table: FC<ITableProps> = ({
     withCheckbox,
     expandable,
     onRowClick,
-    onColumnCheck,
+    onSelectAllRows,
     onManageColumns,
     onManageColumnRestore,
     className,
@@ -318,38 +327,9 @@ const Table: FC<ITableProps> = ({
     onEdit,
     onCancel,
     keepPinnedRows,
-    onRowSelect,
-    selectedRows
+    onRowSelect
 }) => {
-    const memoizedTableContextValue = useMemo(
-        () => ({
-            onRowClick,
-            onColumnCheck,
-            onGlobalFilterChange,
-            onManageColumns,
-            onManageColumnRestore,
-            onSortChange,
-            onPageChange,
-            onPageSizeChange,
-            onRowSelect,
-            onCellEdit,
-            onSave,
-            onRowPinToggle,
-            onRowTag,
-            onRowClock,
-            onRowReload,
-            onRowCopy,
-            onRowDownload,
-            onRowShow,
-            onRowDelete,
-            onEdit,
-            onCancel
-        }),
-        []
-    );
-
-    const tableContainerRef = React.useRef<HTMLDivElement>(null);
-
+    const scrollbarContainerRef = React.useRef<ScrollbarRefType>(null);
     const [data, setData] = useState<Row[]>(deepCloneWithFunctions(externalData));
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -372,10 +352,46 @@ const Table: FC<ITableProps> = ({
 
     const [columnOrder, setColumnOrder] = useState<string[]>([]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [selectedRows, setSelectedRows] = useState<RowSelectionState>({});
+
+    const handleRowClick = (row: TanstackRow<Row>) => {
+        if (editableMode) return;
+        onRowClick?.(row);
+    };
+
+    const memoizedTableContextValue = useMemo(
+        () => ({
+            onRowClick: handleRowClick,
+            onSelectAllRows,
+            onGlobalFilterChange,
+            onManageColumns,
+            onManageColumnRestore,
+            onSortChange,
+            onPageChange,
+            onPageSizeChange,
+            onRowSelect,
+            onCellEdit,
+            onSave,
+            onRowPinToggle,
+            onRowTag,
+            onRowClock,
+            onRowReload,
+            onRowCopy,
+            onRowDownload,
+            onRowShow,
+            onRowDelete,
+            onEdit,
+            onCancel
+        }),
+        [editableMode]
+    );
 
     useEffect(() => {
         setData(externalData);
         setRowPinning({ ...rowPinning, top: externalData.filter((item) => item.isPinned).map((item) => item.id) });
+        setSelectedRows(
+            Object.fromEntries(externalData.filter((item) => item.isSelected).map((row) => [[row.id], true]))
+        );
     }, [externalData]);
 
     useEffect(() => {
@@ -403,7 +419,6 @@ const Table: FC<ITableProps> = ({
         initialState: {
             sorting,
             columnPinning,
-            ...(selectedRows && { rowSelection: Object.fromEntries(selectedRows.map((key) => [key, true])) }),
             ...(withPagination &&
                 !withVirtualScroll && {
                     pagination: { pageSize: initialPageSize, pageIndex: initialPageIndex }
@@ -417,7 +432,8 @@ const Table: FC<ITableProps> = ({
             columnPinning,
             columnVisibility,
             globalFilter,
-            columnFilters
+            columnFilters,
+            rowSelection: selectedRows
         },
         getRowId: (row) => row.id,
         ...(withManualPagination && { manualPagination: withManualPagination }),
@@ -443,7 +459,8 @@ const Table: FC<ITableProps> = ({
         onColumnPinningChange: setColumnPinning,
         onExpandedChange: setExpanded,
         onRowPinningChange: setRowPinning,
-        onColumnOrderChange: setColumnOrder
+        onColumnOrderChange: setColumnOrder,
+        onRowSelectionChange: setSelectedRows
     });
 
     useEffect(() => {
@@ -574,7 +591,7 @@ const Table: FC<ITableProps> = ({
                             indeterminate={table.getIsSomePageRowsSelected()}
                             onChange={() => {
                                 table.toggleAllPageRowsSelected();
-                                onColumnCheck?.();
+                                onSelectAllRows?.();
                             }}
                         />
                     </div>
@@ -625,13 +642,13 @@ const Table: FC<ITableProps> = ({
         if (table.getRowModel().rows.length > 0) {
             return (
                 <>
-                    {withVirtualScroll && tableContainerRef.current ? (
+                    {withVirtualScroll && scrollbarContainerRef.current ? (
                         <>
                             <VirtualScrollTBody
                                 topRows={table.getTopRows()}
                                 centerRows={table.getCenterRows()}
                                 columnCount={table.getHeaderGroups().length || 1}
-                                tableContainerRef={tableContainerRef.current}
+                                scrollbarContainerRef={scrollbarContainerRef.current.scrollbarRef}
                                 expandable={expandable}
                                 editableMode={!!editableMode}
                                 withCheckbox={withCheckbox}
@@ -721,28 +738,26 @@ const Table: FC<ITableProps> = ({
                         </div>
                     </div>
                     <div className="dataTable__toolbar_actions">
-                        {headerContent}
+                        {headerContent && <div className="dataTable__toolbar_content">{headerContent}</div>}
                         {editableMode ? (
-                            <>
-                                <div className="dropdownMenu__footer_buutonGroup">
-                                    <Button
-                                        appearance="secondary"
-                                        layout="fill"
-                                        size="medium"
-                                        onClick={() => tableEditAction("cancel")}
-                                    >
-                                        Cancel
-                                    </Button>
-                                    <Button
-                                        appearance="primary"
-                                        layout="fill"
-                                        size="medium"
-                                        onClick={() => tableEditAction("save")}
-                                    >
-                                        Save
-                                    </Button>
-                                </div>
-                            </>
+                            <ButtonGroup size="medium">
+                                <Button
+                                    appearance="secondary"
+                                    layout="fill"
+                                    size="medium"
+                                    onClick={() => tableEditAction("cancel")}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    appearance="primary"
+                                    layout="fill"
+                                    size="medium"
+                                    onClick={() => tableEditAction("save")}
+                                >
+                                    Save
+                                </Button>
+                            </ButtonGroup>
                         ) : (
                             <>
                                 <Button
@@ -932,7 +947,7 @@ const Table: FC<ITableProps> = ({
                                                     >
                                                         Restore Defaults
                                                     </Button>
-                                                    <div className="dropdownMenu__footer_buutonGroup">
+                                                    <ButtonGroup size="medium">
                                                         <Button
                                                             appearance="secondary"
                                                             layout="fill"
@@ -950,7 +965,7 @@ const Table: FC<ITableProps> = ({
                                                         >
                                                             Save
                                                         </Button>
-                                                    </div>
+                                                    </ButtonGroup>
                                                 </div>
                                             </div>
                                         )}
@@ -960,46 +975,51 @@ const Table: FC<ITableProps> = ({
                         )}
                     </div>
                 </div>
-                <div ref={tableContainerRef} style={{ height: "500px", overflow: "auto" }}>
-                    <table className={classNames("table", className)}>
-                        <thead
-                            className={classNames({
-                                table__thead_sticky: withStickyHeader
-                            })}
-                        >
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <tr key={`${headerGroup.id}_header`} className="table__row table__row_thead">
-                                    {headerGroup.headers.map((header) => {
-                                        const col = header.column.columnDef as TableCol<unknown>;
-
-                                        if (col.editable) {
-                                            accessEditableMode[header.id] = true;
-                                        }
-
-                                        if (col.copyable) {
-                                            accessCopyable[header.id] = true;
-                                        }
-                                        return renderTableHeaderCell(header);
-                                    })}
-                                </tr>
-                            ))}
-                        </thead>
-
-                        <tbody>{renderTableBody()}</tbody>
-                        {table.getRowModel().rows.length > 0 && (
-                            <tfoot>
-                                {table.getFooterGroups().map((footerGroups) => {
-                                    return (
-                                        <tr key={`${footerGroups.id}_footer`} className="table__row table__row_tfoot">
-                                            {footerGroups.headers.map((footer) => {
-                                                return renderTableFooterCell(footer);
-                                            })}
-                                        </tr>
-                                    );
+                <div style={{ height: "500px", overflow: "auto" }}>
+                    <Scrollbar ref={scrollbarContainerRef}>
+                        <table className={classNames("table", className)}>
+                            <thead
+                                className={classNames({
+                                    table__thead_sticky: withStickyHeader
                                 })}
-                            </tfoot>
-                        )}
-                    </table>
+                            >
+                                {table.getHeaderGroups().map((headerGroup) => (
+                                    <tr key={`${headerGroup.id}_header`} className="table__row table__row_thead">
+                                        {headerGroup.headers.map((header) => {
+                                            const col = header.column.columnDef as TableCol<unknown>;
+
+                                            if (col.editable) {
+                                                accessEditableMode[header.id] = true;
+                                            }
+
+                                            if (col.copyable) {
+                                                accessCopyable[header.id] = true;
+                                            }
+                                            return renderTableHeaderCell(header);
+                                        })}
+                                    </tr>
+                                ))}
+                            </thead>
+
+                            <tbody>{renderTableBody()}</tbody>
+                            {table.getRowModel().rows.length > 0 && (
+                                <tfoot>
+                                    {table.getFooterGroups().map((footerGroups) => {
+                                        return (
+                                            <tr
+                                                key={`${footerGroups.id}_footer`}
+                                                className="table__row table__row_tfoot"
+                                            >
+                                                {footerGroups.headers.map((footer) => {
+                                                    return renderTableFooterCell(footer);
+                                                })}
+                                            </tr>
+                                        );
+                                    })}
+                                </tfoot>
+                            )}
+                        </table>
+                    </Scrollbar>
                 </div>
 
                 {withPagination && !withVirtualScroll && table.getRowModel().rows.length > 0 && (

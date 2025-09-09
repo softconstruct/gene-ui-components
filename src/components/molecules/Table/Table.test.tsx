@@ -91,7 +91,6 @@ describe("Table ", () => {
     //         ]
     //     };
     //     setup.setProps({ bulkActions });
-    //     console.log(setup.find(BulkActions).debug());
     //     expect(setup.find(BulkActions).exists()).toBeTruthy();
     // });
 });

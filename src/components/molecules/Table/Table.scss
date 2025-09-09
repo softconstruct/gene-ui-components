@@ -171,7 +171,6 @@
         padding-bottom: var(--guit-ref-spacing-xsmall);
         padding-inline: var(--guit-ref-spacing-medium);
 
-        // todo: remove next styles if need, after importing "Button Group" component
         &_buutonGroup {
             flex: none;
             display: flex;
@@ -288,14 +287,6 @@
         padding-top: var(--guit-ref-spacing-medium);
         padding-bottom: var(--guit-ref-spacing-xsmall);
         padding-inline: var(--guit-ref-spacing-medium);
-
-        // todo: remove next styles if need, after importing "Button Group" component
-        &_buutonGroup {
-            flex: none;
-            display: flex;
-            align-items: center;
-            column-gap: var(--guit-ref-spacing-xsmall);
-        }
     }
 
     &__columns {
@@ -581,6 +572,13 @@
             align-items: center;
             column-gap: var(--guit-ref-spacing-xsmall);
             opacity: 0;
+        }
+
+        &_active,
+        &:hover {
+            #{$that}_actions {
+                opacity: 1;
+            }
         }
     }
 

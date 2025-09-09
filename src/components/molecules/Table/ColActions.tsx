@@ -1,6 +1,7 @@
-import React, { ChangeEvent, FC, useState } from "react";
+import React, { ChangeEvent, FC, useEffect, useState } from "react";
 import { Column } from "@tanstack/react-table";
 import { Header } from "@tanstack/table-core";
+import classnames from "classnames";
 
 import { Globe, Magnifier } from "@geneui/icons";
 
@@ -34,9 +35,9 @@ const getFilterOptionLabelByColumnType = (data: Cell | undefined, type: string) 
 const getFilterOption = (column: Column<Row, unknown>): string[] => {
     const colDef = column.columnDef as TableCol<Row>;
     colDef.filterFn = colDef.enablePopoverFilter ? "arrIncludesSome" : "auto";
-    const initialFilteredOptions = (column.columnDef as TableCol<Row>).filterOptions;
-    if (initialFilteredOptions?.length) {
-        return initialFilteredOptions;
+    const initialFilterOptions = (column.columnDef as TableCol<Row>).filterOptions;
+    if (initialFilterOptions?.length) {
+        return initialFilterOptions;
     }
     const { flatRows } = column.getFacetedRowModel();
     return [
@@ -58,8 +59,16 @@ const getFilterOption = (column: Column<Row, unknown>): string[] => {
 export const ColActions: FC<IColActionsProps> = ({ header }) => {
     const [currentSearchInput, setCurrentSearchInput] = useState<string | null>(null);
     const [popoverPropsForContent, setPopoverPropsForContent] = useState({});
+    const [initialFilterOptions, setInitialFilterOptions] = useState<string[]>([]);
+    const [filterOptions, setFilterOptions] = useState<string[]>([]);
     const [filteredValues, setFilteredValues] = useState<string[]>([]);
     const [isFilterPopoverOpen, setIsFilterPopoverOpen] = useState<boolean>(false);
+
+    useEffect(() => {
+        const options = getFilterOption(header.column);
+        setFilterOptions(options);
+        setInitialFilterOptions(options);
+    }, [header.column]);
 
     const handleFilterFromPopover = (column: Column<Row, unknown>) => {
         column.setFilterValue(filteredValues);
@@ -74,14 +83,16 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
 
     const handleSelectAll = () => {
         const { column } = header;
+
         const { flatRows } = column.getFacetedRowModel();
 
         if (flatRows.length === filteredValues.length) {
             setFilteredValues([]);
             return;
         }
-
-        const values = flatRows.map((row) => row.getValue(column.id) as string).filter((item) => Boolean(item));
+        const values = flatRows
+            .map((row) => (row.original[(column.columnDef as TableCol<Row>).type] as ICheckboxProps).value)
+            .filter((item) => Boolean(item));
         setFilteredValues(values);
     };
 
@@ -89,14 +100,21 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
         setFilteredValues([]);
     };
 
+    const handleFilterSearch = (e: ChangeEvent<HTMLInputElement>) => {
+        const filteredOptions = initialFilterOptions.filter((option) => option.includes(e.target.value));
+        setFilterOptions(filteredOptions);
+    };
+
     return (
-        // todo: add "table__th_actions_active" classname, if
         <div className="table__th_actions">
             {header.column.getCanSort() && (
                 <Button
                     appearance="secondary"
                     layout="text"
                     size="small"
+                    className={classnames({
+                        table__th_actions_active: header.column.getIsSorted()
+                    })}
                     disabled={(header.column.columnDef as TableCol<unknown>)?.isSortingDisabled}
                     Icon={SortingIcons[`${header.column.getIsSorted()}`]}
                     onClick={(e) => {
@@ -116,6 +134,9 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                         layout="text"
                         size="small"
                         Icon={Globe}
+                        className={classnames({
+                            table__th_actions_active: isFilterPopoverOpen
+                        })}
                         disabled={(header.column.columnDef as TableCol<Row>)?.isPopoverFilterDisabled}
                         {...popoverPropsForContent}
                         onClick={() => setIsFilterPopoverOpen(true)}
@@ -125,7 +146,12 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                             <div className="filterDropdownMenu">
                                 <div className="filterDropdownMenu__header">
                                     {/* todo: import "Search Field" component instead of next input element */}
-                                    <input type="text" placeholder="Search" style={{ width: "100%" }} />
+                                    <input
+                                        type="text"
+                                        placeholder="Search"
+                                        onChange={handleFilterSearch}
+                                        style={{ width: "100%" }}
+                                    />
 
                                     <div className="filterDropdownMenu__headerSelect">
                                         <div className="filterDropdownMenu__headerSelect_item" role="tab" tabIndex={0}>
@@ -139,7 +165,7 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                                                     <Checkbox
                                                         className="filterDropdownMenu__headerSelect_checkbox"
                                                         name="item"
-                                                        value="item"
+                                                        value="Select All"
                                                         checked={
                                                             header.column.getFacetedRowModel().flatRows.length ===
                                                             filteredValues.length
@@ -165,7 +191,7 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                                 <div className="filterDropdownMenu__main">
                                     <div className="filterDropdownMenu__columns">
                                         {/* todo: add next classNames for similar states - "filterDropdownMenu__columns_item_drag", "filterDropdownMenu__columns_item_disabled" */}
-                                        {getFilterOption(header.column)?.map((option) => (
+                                        {filterOptions?.map((option) => (
                                             <div
                                                 key={option}
                                                 className="filterDropdownMenu__columns_item"
@@ -224,6 +250,9 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                         layout="text"
                         size="small"
                         disabled={(header.column.columnDef as TableCol<unknown>).isColumnFilterDisabled}
+                        className={classnames({
+                            table__th_actions_active: header.column.getIsFiltered()
+                        })}
                         Icon={Magnifier}
                         onClick={() => setCurrentSearchInput(header.column.id)}
                     />

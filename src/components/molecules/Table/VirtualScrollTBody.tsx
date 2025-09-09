@@ -1,6 +1,7 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Row } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import Scrollbars from "react-scrollbars-custom";
 
 import TableRow from "@components/molecules/Table/TableRow";
 
@@ -10,7 +11,7 @@ interface IVirtualScrollTBody {
     topRows: Row<RowData>[];
     centerRows: Row<RowData>[];
     columnCount: number;
-    tableContainerRef: HTMLDivElement;
+    scrollbarContainerRef: Scrollbars | null;
     expandable?: boolean;
     withCheckbox?: boolean;
     editableMode: boolean;
@@ -24,7 +25,7 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
     topRows,
     centerRows,
     columnCount,
-    tableContainerRef,
+    scrollbarContainerRef,
     withDynamicFetch,
     hasNextPage,
     isFetchingNextPage,
@@ -33,19 +34,30 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
     withCheckbox,
     editableMode
 }) => {
+    const [needToFetchData, setNeedToFetchData] = useState(false);
+
     const rowVirtualizer = useVirtualizer({
         count: centerRows.length,
-        getScrollElement: () => tableContainerRef,
+        getScrollElement: () =>
+            scrollbarContainerRef?.contentElement ? scrollbarContainerRef.contentElement?.parentElement : null,
+
+        onChange: () => {
+            if ((rowVirtualizer.range?.endIndex ?? 0) >= centerRows.length - 10 && hasNextPage && !isFetchingNextPage) {
+                setNeedToFetchData(true);
+            } else {
+                setNeedToFetchData(false);
+            }
+        },
         estimateSize: () => 34,
         overscan: 20
     });
 
     useEffect(() => {
         if (!withDynamicFetch) return;
-        if ((rowVirtualizer.range?.endIndex ?? 0) >= centerRows.length - 10 && hasNextPage && !isFetchingNextPage) {
+        if (needToFetchData) {
             fetchNextPage?.();
         }
-    }, [fetchNextPage, hasNextPage, isFetchingNextPage, centerRows.length]);
+    }, [needToFetchData]);
 
     const virtualItems = rowVirtualizer.getVirtualItems();
 

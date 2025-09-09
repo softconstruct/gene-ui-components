@@ -40,7 +40,6 @@ export const defaultColumns: TableCol<Row>[] = [
         editable: true,
         copyable: true,
         isColumnFilterDisabled: true,
-        // rowCellRenderer: (data) => data,
         header: "Title",
         footer: (props) => props.column.id
     },
@@ -52,10 +51,8 @@ export const defaultColumns: TableCol<Row>[] = [
         type: "Number",
         accessorFn: (row) => row.Number,
         enableSorting: true,
-        isSortingDisabled: true,
         editable: true,
         copyable: true,
-        // rowCellRenderer: (data) => <>{data}</>,
         header: "Number",
         footer: (props) => props.column.id
     },
@@ -214,7 +211,6 @@ export const withPinnedColumns: TableCol<Row>[] = [
         editable: true,
         copyable: true,
         isColumnFilterDisabled: true,
-        // rowCellRenderer: (data) => data,
         header: "Title",
         footer: (props) => props.column.id
     },
@@ -226,10 +222,8 @@ export const withPinnedColumns: TableCol<Row>[] = [
         type: "Number",
         accessorFn: (row) => row.Number,
         enableSorting: true,
-        isSortingDisabled: true,
         editable: true,
         copyable: true,
-        // rowCellRenderer: (data) => <>{data}</>,
         header: "Number",
         footer: (props) => props.column.id
     },
@@ -409,7 +403,6 @@ export const withGroupedColumns: TableCol<Row>[] = [
                 editable: true,
                 copyable: true,
                 isColumnFilterDisabled: true,
-                // rowCellRenderer: (data) => data,
                 header: "Title",
                 footer: (props) => props.column.id
             },
@@ -424,7 +417,6 @@ export const withGroupedColumns: TableCol<Row>[] = [
                 isSortingDisabled: true,
                 editable: true,
                 copyable: true,
-                // rowCellRenderer: (data) => <>{data}</>,
                 header: "Number",
                 footer: (props) => props.column.id
             },

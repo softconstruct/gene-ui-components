@@ -34,6 +34,7 @@ type TableRowCells = {
 export type Row = TableRowCells & {
     id: string;
     isPinned: boolean;
+    isSelected: boolean;
     rowStatus: "default" | "zebra" | "red" | "green" | "highlighted";
     expandedData: () => ReactNode | null;
 };

@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IMenuItemProps } from "@components/molecules/Menu";
@@ -9,16 +9,17 @@ import TableLayoutTmp from "@components/molecules/Table/TableLayoutTmp";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import Table, { BulkAction, ITableProps } from "./index";
+import Table, { BulkAction, ITableProps, Row } from "./index";
 import { makeData } from "./makeData";
 
-const HeaderContent = () => (
+const SwapComponent = () => (
     <div
         className="swapComponent"
         style={{
             background: "#F4E1EC",
             padding: ".6rem 1.2rem",
-            color: "#A60063"
+            color: "#A60063",
+            height: "100%"
         }}
     >
         Swap
@@ -63,7 +64,7 @@ const meta: Meta<ITableProps> = {
         onRowDownload: args({ control: "false", ...propCategory.action }),
         onRowShow: args({ control: "false", ...propCategory.action }),
         onRowDelete: args({ control: "false", ...propCategory.action }),
-        onColumnCheck: args({ control: "false", ...propCategory.action }),
+        onSelectAllRows: args({ control: "false", ...propCategory.action }),
         className: args({ control: "false", ...propCategory.appearance }),
         onGlobalFilterChange: args({ control: "false", ...propCategory.action }),
         onManageColumns: args({ control: "false", ...propCategory.action }),
@@ -106,14 +107,16 @@ const meta: Meta<ITableProps> = {
         columns: defaultColumns,
         externalData,
         onRowClick: undefined,
+        onRowPinToggle: undefined,
         onRowTag: undefined,
         onRowClock: undefined,
         onRowReload: undefined,
         onRowCopy: undefined,
         onRowDownload: undefined,
         onRowShow: undefined,
+        onRowDelete: undefined,
         keepPinnedRows: false,
-        headerContent: <HeaderContent />
+        headerContent: <SwapComponent />
     }
 };
 
@@ -121,9 +124,16 @@ type Story = StoryObj<ITableProps>;
 
 const TableComponent: FC<ITableProps> = (props) => {
     const { externalData: data } = props;
-    const [tableData, setTableData] = useState(data);
-    const [updatedTableData, setUpdatedTableData] = useState(deepCloneWithFunctions(data));
+
+    const [tableData, setTableData] = useState<Row[]>([]);
+    const [updatedTableData, setUpdatedTableData] = useState<Row[]>([]);
     const [editableState, setEditableState] = useState(false);
+
+    useEffect(() => {
+        const conedData = deepCloneWithFunctions(data);
+        setTableData(data);
+        setUpdatedTableData(conedData);
+    }, [data]);
 
     const onCellEdit: ITableProps["onCellEdit"] = (rowIndex, columnType, value) => {
         const newData = [...tableData];

@@ -1,4 +1,4 @@
-import { ArrowUp, ArrowUpDown } from "@geneui/icons";
+import { ArrowDown, ArrowUp, ArrowUpDown } from "@geneui/icons";
 
 import { Row, TableCol } from "@components/molecules/Table/type";
 
@@ -19,7 +19,7 @@ export const CellClassNames: { [key: string]: string } = {
 
 export const SortingIcons = {
     asc: ArrowUp,
-    desc: ArrowUp,
+    desc: ArrowDown,
     false: ArrowUpDown
 };
 

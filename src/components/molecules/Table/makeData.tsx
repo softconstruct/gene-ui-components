@@ -68,7 +68,8 @@ const newRow = (): Row => {
             value: faker.word.adjective(),
             checked: faker.helpers.shuffle<boolean>([true, false])[0]!
         } as ISwitchProps,
-        isPinned: faker.helpers.shuffle<boolean>([false, true])[0]!,
+        isPinned: false,
+        isSelected: faker.helpers.shuffle<boolean>([false, true])[0]!,
         rowStatus: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!,
         expandedData: () => <h1>Swap data</h1>
     };
