@@ -74,7 +74,7 @@ const highlightName = (text: string, searchTerm: string): ReactNode => {
     return matches.map(({ textSegment, isMatch, index }) => (
         <Text
             key={index}
-            variant="labelSmallSemibold"
+            variant="labelMediumMedium"
             as="span"
             className={classNames({ iconCatalog_highlight: isMatch })}
         >
@@ -86,11 +86,12 @@ const highlightName = (text: string, searchTerm: string): ReactNode => {
 // Function to highlight only keywords
 const highlightKeywords = (keywords: string[], searchTerm: string): ReactNode => {
     if (!searchTerm.trim()) {
-        return keywords.map((keyword) => (
+        return keywords.map((keyword, index) => (
             <div key={keyword} className="iconCard__keyword">
                 <Text variant="labelSmallSemibold" as="span">
                     {keyword}
                 </Text>
+                {keywords.length - 1 > index && <Divider direction="vertical" className="iconCard__keyword_divider" />}
             </div>
         ));
     }
@@ -156,11 +157,9 @@ const IconsCatalogComponent: FC = () => {
 
     return (
         <div className="iconCatalog">
-            <div className="iconCatalog__header">
-                <Text as="h1" variant="headingXLargeSemibold">
-                    Icons Catalog {filteredIcons.length.toString()} of {iconsWithMetadata.length.toString()} icons
-                </Text>
-            </div>
+            <Text as="h1" variant="headingMediumSemibold" className="iconCatalog__title">
+                @geneui/icons
+            </Text>
 
             <div className="iconCatalog__search">
                 <TextField
@@ -170,6 +169,7 @@ const IconsCatalogComponent: FC = () => {
                     IconBefore={Magnifier}
                     clearable
                     onClear={() => setSearchTerm("")}
+                    helperText={`${filteredIcons.length.toString()} / ${iconsWithMetadata.length.toString()}`}
                 />
             </div>
 
