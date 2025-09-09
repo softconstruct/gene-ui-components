@@ -27,6 +27,12 @@ interface IIconCardProps extends IIconWithMetadata {
     searchTerm: string;
 }
 
+interface IFindMatches {
+    textSegment: string;
+    isMatch: boolean;
+    index: number;
+}
+
 const getMatchPriority = (icon: IIconWithMetadata, searchTerm: string) => {
     const iconNameLower = icon.name.toLowerCase();
     const searchLower = searchTerm.toLowerCase();
@@ -47,10 +53,7 @@ const getMatchPriority = (icon: IIconWithMetadata, searchTerm: string) => {
 };
 
 // Function to find all matching parts using regex
-const findMatches = (
-    text: string,
-    searchTerm: string
-): Array<{ textSegment: string; isMatch: boolean; index: number }> => {
+const findMatches = (text: string, searchTerm: string): IFindMatches[] => {
     if (!searchTerm.trim()) {
         return [{ textSegment: text, isMatch: false, index: 0 }];
     }
@@ -117,13 +120,7 @@ const IconCard: FC<IIconCardProps> = ({ name, IconComponent, metadata, searchTer
                 <div className="iconCard__keywords">{highlightKeywords(metadata?.keywords || [], searchTerm)}</div>
             )}
             <div className="iconCard__copy">
-                <Copy
-                    value={copyValue}
-                    size="medium"
-                    appearance="primary"
-                    copyTooltipText={`Copy ${copyValue}`}
-                    copiedTooltipText="Copied!"
-                />
+                <Copy value={copyValue} copyTooltipText={`Copy ${copyValue}`} copiedTooltipText="Copied!" />
             </div>
         </div>
     );
@@ -161,7 +158,7 @@ const IconsCatalogComponent: FC = () => {
         <div className="iconCatalog">
             <div className="iconCatalog__header">
                 <Text as="h1" variant="headingXLargeSemibold">
-                    {`Icons Catalog ${filteredIcons.length} of ${iconsWithMetadata.length} icons`}
+                    Icons Catalog {filteredIcons.length.toString()} of {iconsWithMetadata.length.toString()} icons
                 </Text>
             </div>
 
@@ -185,7 +182,7 @@ const IconsCatalogComponent: FC = () => {
             {filteredIcons.length === 0 && searchTerm && (
                 <div className="iconCatalog__empty">
                     <Text as="p" variant="bodyMediumSemibold">
-                        {`No icons found for "${searchTerm}"`}
+                        No icons found for &#34;{searchTerm}&#34;
                     </Text>
                     <Text as="p" variant="bodyMediumRegular">
                         Try searching with different keywords or browse all icons
