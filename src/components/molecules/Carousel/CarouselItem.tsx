@@ -9,4 +9,6 @@ export interface ICarouselItemProps {
 
 const CarouselItem: FC<ICarouselItemProps> = ({ children }) => children;
 
+CarouselItem.displayName = "CarouselItem";
+
 export default CarouselItem;

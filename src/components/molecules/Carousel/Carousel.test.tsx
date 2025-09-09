@@ -1,11 +1,32 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
-// Components
+import useDeviceInfo from "@hooks/useDeviceInfo";
+
 import Carousel, { ICarouselProps } from "./index";
 
+// Mock the hooks and context
+jest.mock("@hooks/index", () => ({
+    useSwipe: jest.fn(() => ({ current: null }))
+}));
+
+jest.mock("@hooks/useDeviceInfo", () => ({
+    __esModule: true,
+    default: jest.fn().mockReturnValue({})
+}));
+
+jest.mock("@components/providers/GeneUIProvider", () => ({
+    GeneUIDesignSystemContext: React.createContext({
+        breakpoint: {
+            isMobileBreakpoint: false,
+            isTabletBreakpoint: false,
+            isDesktopBreakpoint: true
+        }
+    })
+}));
+
 const content = Array.from(Array(10).keys()).map((index) => (
-    <div key={index} className="test-content">
+    <div key={`test-content-${index}`} className="test-content">
         {index}
     </div>
 ));
@@ -31,11 +52,6 @@ describe("Carousel ", () => {
     it.each<ICarouselProps["direction"]>(["horizontal", "vertical"])("should have %s direction", (direction) => {
         const wrapper = setup.setProps({ direction });
         expect(wrapper.find(".carousel").hasClass(`carousel_direction_${direction}`)).toBeTruthy();
-    });
-
-    it.each<ICarouselProps["size"]>(["large", "small"])("should have %s size", (size) => {
-        const wrapper = setup.setProps({ size });
-        expect(wrapper.find(".carousel").hasClass(`carousel_size_${size}`)).toBeTruthy();
     });
 
     it("slides forward when forward button is clicked", () => {
@@ -66,6 +82,30 @@ describe("Carousel ", () => {
 
     it("doesn't render slide arrow buttons when withSlideArrows is false", () => {
         const wrapper = setup.setProps({ withSlideArrows: false });
+        expect(wrapper.find(".carousel__button").exists()).toBeFalsy();
+    });
+
+    it("shows arrow buttons on desktop devices", () => {
+        // Default mock already provides desktop breakpoint
+        const wrapper = mount(<Carousel>{content}</Carousel>);
+        expect(wrapper.find(".carousel__button").exists()).toBeTruthy();
+    });
+
+    it("hides arrow buttons on mobile devices", () => {
+        (useDeviceInfo as jest.Mock).mockReturnValue({
+            isMobileDevice: true,
+            isDesktopDevice: false,
+            isTouch: true,
+            os: "Android",
+            isWindows: false,
+            isMacOS: false,
+            isLinux: false,
+            isAndroid: true,
+            isIOS: false,
+            theme: "light"
+        });
+
+        const wrapper = mount(<Carousel>{content}</Carousel>);
         expect(wrapper.find(".carousel__button").exists()).toBeFalsy();
     });
 });

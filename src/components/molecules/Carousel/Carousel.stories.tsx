@@ -1,12 +1,12 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
-import { Search } from "@geneui/icons";
+import React from "react";
+import { Meta, StoryObj } from "@storybook/react";
+
+import { Magnifier } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
 // Components
-import Carousel, { ICarouselProps, CarouselItem } from "./index";
+import Carousel, { CarouselItem, ICarouselProps } from "./index";
 
 const texts = [
     { title: "Slot component", description: "Replace it with any component using the “Component Instance” swapper." },
@@ -61,7 +61,7 @@ const textContent = texts.map(({ title, description }) => (
                     color: "#A60063"
                 }}
             >
-                <Search color="#A60063" />
+                <Magnifier color="#A60063" />
                 <span style={{ marginTop: 16, fontSize: 20 }}>{title}</span>
                 <span style={{ marginTop: 4, fontSize: 14, textAlign: "center" }}>{description}</span>
             </div>
@@ -73,17 +73,15 @@ const meta: Meta<typeof Carousel> = {
     title: "Molecules/Carousel",
     component: Carousel,
     argTypes: {
-        className: args({ control: false, ...propCategory.appearance }),
+        className: args({ control: "false", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
-        size: args({ control: "select", ...propCategory.appearance }),
         withSlideArrows: args({ control: "boolean", ...propCategory.appearance }),
         withIndicators: args({ control: "boolean", ...propCategory.appearance }),
-        children: args({ control: false, ...propCategory.appearance })
+        children: args({ control: "false", ...propCategory.appearance })
     },
     args: {
         children: textContent,
         direction: "horizontal",
-        size: "large",
         withSlideArrows: true,
         withIndicators: true
     } as ICarouselProps
@@ -91,23 +89,26 @@ const meta: Meta<typeof Carousel> = {
 
 export default meta;
 
-const Template: FC<ICarouselProps> = (props) => <Carousel {...props} />;
+type Story = StoryObj<ICarouselProps>;
 
-export const Default = Template.bind({});
+export const Default: Story = {
+    args: {}
+};
 
-Default.args = {} as ICarouselProps;
-
-export const WithImageContent = Template.bind({});
-
-WithImageContent.args = {
-    children: Array.from(Array(8).keys()).map((index) => (
-        <CarouselItem>
-            <img
-                src={`https://picsum.photos/id/${index * 10}/800/500`}
-                alt={`https://picsum.photos/id/${index * 10}/800/500`}
-                width="100%"
-                height="auto"
-            />
-        </CarouselItem>
-    ))
-} as ICarouselProps;
+export const WithImageContent: Story = {
+    args: {
+        children: Array.from(Array(8).keys()).map((index) => (
+            <CarouselItem key={index}>
+                <img
+                    src={`https://picsum.photos/id/${index * 10}/800/500`}
+                    alt={`https://picsum.photos/id/${index * 10}/800/500`}
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover"
+                    }}
+                />
+            </CarouselItem>
+        ))
+    }
+};

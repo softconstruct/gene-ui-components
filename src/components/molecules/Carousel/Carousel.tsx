@@ -1,18 +1,20 @@
-import React, { FC, ReactElement, useLayoutEffect, useMemo, useState } from "react";
+import React, { FC, ReactElement, useMemo, useState } from "react";
+// Utils
 import classNames from "classnames";
 
+// Icons
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
+import CarouselItem from "@components/molecules/Carousel/CarouselItem";
 
 // Hooks
-import useSwipe from "@hooks/useSwipe";
+import { useSwipe } from "@hooks/index";
+import useDeviceInfo from "@hooks/useDeviceInfo";
 
 // Styles
 import "./Carousel.scss";
-
-// Components
-import CarouselItem from "./CarouselItem";
 
 interface ICarouselProps {
     /**
@@ -25,11 +27,6 @@ interface ICarouselProps {
      * Possible values: `horizontal | vertical`
      */
     direction?: "horizontal" | "vertical";
-    /**
-     * Carousel size
-     * Possible values: `large | small`
-     */
-    size?: "large" | "small";
     /**
      * Enables the display of arrows for navigation between slides <br/>
      */
@@ -53,21 +50,19 @@ const Carousel: FC<ICarouselProps> = ({
     className,
     children = [],
     direction = "horizontal",
-    size = "large",
     withSlideArrows = true,
     withIndicators = true
 }) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const [dotsRange, setDotsRange] = useState([0, DOTS_LIMIT]);
     const count = children.length;
+
+    const { isMobileDevice, isTouch } = useDeviceInfo();
 
     const onPrevClick = () => setSelectedIndex((prev) => (prev === 0 ? children.length - 1 : prev - 1));
     const onNextClick = () => setSelectedIndex((prev) => (prev === children.length - 1 ? 0 : prev + 1));
+    const goToSlide = (index: number) => setSelectedIndex(index);
 
-    // TODO: Implement mobile detection and use it to set isMobile value
-    const isMobile = false;
-
-    const areArrowsVisible = withSlideArrows && !isMobile;
+    const areArrowsVisible = withSlideArrows && !isMobileDevice && !isTouch;
 
     const swipeCallbacks = useMemo(() => {
         if (direction === "horizontal") {
@@ -78,44 +73,24 @@ const Carousel: FC<ICarouselProps> = ({
     }, [direction]);
 
     const ref = useSwipe<HTMLDivElement>(swipeCallbacks);
+    const visibleDots = useMemo(() => {
+        if (count <= DOTS_LIMIT) {
+            return Array.from({ length: count }, (_, i) => ({ id: i }));
+        }
 
-    useLayoutEffect(
-        () =>
-            setDotsRange(([min, max]) => {
-                let newMin = min;
-                let newMax = max;
+        const halfLimit = Math.floor(DOTS_LIMIT / 2);
+        let start = Math.max(0, selectedIndex - halfLimit);
+        const end = Math.min(count, start + DOTS_LIMIT);
 
-                if (selectedIndex === 0) {
-                    return [0, DOTS_LIMIT];
-                }
+        if (end - start < DOTS_LIMIT) {
+            start = Math.max(0, end - DOTS_LIMIT);
+        }
 
-                if (selectedIndex === count - 1) {
-                    return [count - DOTS_LIMIT > 0 ? count - DOTS_LIMIT : 0, count];
-                }
-
-                if (selectedIndex >= max - 1 && max !== count) {
-                    newMax++;
-                    newMin++;
-                }
-
-                if (selectedIndex <= min && min !== 0) {
-                    newMax--;
-                    newMin--;
-                }
-
-                return [newMin, newMax];
-            }),
-        [selectedIndex, count]
-    );
+        return Array.from({ length: end - start }, (_, i) => ({ id: start + i }));
+    }, [count, selectedIndex]);
 
     return (
-        <div
-            className={classNames(
-                `carousel carousel_slider carousel_size_${size} carousel_direction_${direction}`,
-                className
-            )}
-            ref={ref}
-        >
+        <div className={classNames(`carousel carousel_slider carousel_direction_${direction}`, className)} ref={ref}>
             {areArrowsVisible && (
                 <Button
                     className="carousel__button carousel__button_back"
@@ -125,7 +100,7 @@ const Carousel: FC<ICarouselProps> = ({
                     ariaLabel="select-previews"
                 />
             )}
-            {children[selectedIndex]}
+            <div className="carousel__item">{children[selectedIndex]}</div>
             {areArrowsVisible && (
                 <Button
                     className="carousel__button carousel__button_forward"
@@ -135,25 +110,26 @@ const Carousel: FC<ICarouselProps> = ({
                     ariaLabel="select-next"
                 />
             )}
-            {withIndicators && (
-                <div className="carousel__dots">
-                    {Array.from(Array(count).keys())
-                        .slice(...dotsRange)
-                        .map((index) => (
-                            <button
-                                type="button"
-                                aria-label={`select slide ${index + 1}`}
-                                onClick={() => setSelectedIndex(index)}
-                                key={index}
-                                className={classNames(
-                                    `carousel__dot ${index === selectedIndex ? "carousel__dot_active" : ""}`
-                                )}
-                            />
-                        ))}
+            {withIndicators && count > 1 && (
+                <div className="carousel__dots" role="tablist">
+                    {visibleDots.map(({ id }) => (
+                        <button
+                            key={id}
+                            type="button"
+                            role="tab"
+                            aria-label={`select slide ${id + 1}`}
+                            aria-selected={id === selectedIndex}
+                            onClick={() => goToSlide(id)}
+                            onTouchEnd={() => goToSlide(id)}
+                            className={classNames("carousel__dot", { carousel__dot_active: id === selectedIndex })}
+                        />
+                    ))}
                 </div>
             )}
         </div>
     );
 };
+
+Carousel.displayName = "Carousel";
 
 export { ICarouselProps, Carousel as default };

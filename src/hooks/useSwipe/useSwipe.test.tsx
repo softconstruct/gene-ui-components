@@ -1,5 +1,6 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
+
 import useSwipe from "./useSwipe";
 
 const simulateTouchEvent = (wrapper: ReactWrapper, eventType: string, clientX: number, clientY: number) => {
