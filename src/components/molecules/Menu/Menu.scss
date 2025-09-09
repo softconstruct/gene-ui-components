@@ -11,21 +11,32 @@
         $that: &;
 
         overflow: hidden;
+        min-height: 3.2rem;
+        max-height: 35.2rem;
 
         &#{ $that }_size {
-            min-height: 3.2rem;
-            max-height: 35.2rem;
-
             &_large {
                 width: 36rem;
+
+                #{ $this }__empty {
+                    padding: var(--guit-ref-spacing-4xlarge);
+                }
             }
 
             &_medium {
                 width: 24rem;
+
+                #{ $this }__empty {
+                    padding: var(--guit-ref-spacing-2xlarge);
+                }
             }
 
             &_small {
                 width: 16rem;
+
+                #{ $this }__empty {
+                    padding: var(--guit-ref-spacing-large);
+                }
             }
         }
 
@@ -75,7 +86,7 @@
 
     &__loader,
     &__empty {
-        height: 100%;
+        height: 34.4rem;
         width: 100%;
         display: flex;
         flex-wrap: wrap;
