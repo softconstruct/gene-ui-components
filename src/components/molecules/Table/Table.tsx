@@ -30,6 +30,7 @@ import Loader, { ILoaderProps } from "@components/atoms/Loader";
 import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
+import Empty, { IEmptyProps } from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
 import BulkActions from "@components/molecules/Table/BulkActions";
 import { ColActions } from "@components/molecules/Table/ColActions";
@@ -273,6 +274,10 @@ interface ITableProps extends ITableActions {
     headerContent?: ReactNode;
     editableMode?: boolean;
     keepPinnedRows?: boolean;
+    emptyTitle?: string;
+    emptyDescription?: string;
+    emptyActions?: IEmptyProps["actions"];
+    emptyAppearance?: IEmptyProps["appearance"];
 }
 
 export const TableContext = createContext<ITableActions>({});
@@ -327,7 +332,8 @@ const Table: FC<ITableProps> = ({
     onEdit,
     onCancel,
     keepPinnedRows,
-    onRowSelect
+    onRowSelect,
+    emptyTitle
 }) => {
     const scrollbarContainerRef = React.useRef<ScrollbarRefType>(null);
     const [data, setData] = useState<Row[]>(deepCloneWithFunctions(externalData));
@@ -356,6 +362,7 @@ const Table: FC<ITableProps> = ({
 
     const handleRowClick = (row: TanstackRow<Row>) => {
         if (editableMode) return;
+        console.log({ row });
         onRowClick?.(row);
     };
 
@@ -670,7 +677,13 @@ const Table: FC<ITableProps> = ({
             );
         }
 
-        return <h1>No data available</h1>;
+        return (
+            <tr>
+                <td colSpan={table.getVisibleFlatColumns().length} rowSpan={14}>
+                    <Empty title={emptyTitle} size="medium" />
+                </td>
+            </tr>
+        );
     };
 
     const renderTableFooterCell = (footer: Header<Row, unknown>) => {

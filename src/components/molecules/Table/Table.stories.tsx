@@ -101,7 +101,11 @@ const meta: Meta<ITableProps> = {
         isManageColumnsDisabled: args({ control: "boolean", ...propCategory.states }),
         withManageColumns: args({ control: "boolean", ...propCategory.states }),
         manageColumnsTitle: args({ control: "text", ...propCategory.content }),
-        headerContent: args({ control: "false", ...propCategory.content })
+        headerContent: args({ control: "false", ...propCategory.content }),
+        emptyTitle: args({ control: "text", ...propCategory.content }),
+        emptyDescription: args({ control: "text", ...propCategory.content }),
+        emptyActions: args({ control: "false", ...propCategory.functionality }),
+        emptyAppearance: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         columns: defaultColumns,
