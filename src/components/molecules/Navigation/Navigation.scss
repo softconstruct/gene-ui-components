@@ -5,6 +5,11 @@
     width: 100%;
     height: 100%;
 
+    &__header {
+        padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-medium);
+        border-bottom: 0.1rem solid var(--guit-sem-color-border-neutral-2);
+    }
+
     &__list {
         display: flex;
         width: var(--guit-sem-dimension-width-3xlarge);
@@ -106,6 +111,7 @@
 
     &__menu {
         display: flex;
+        flex-direction: column;
         width: 20rem;
         height: 100%;
         border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
@@ -169,19 +175,19 @@
 
         &_shift {
             &_1 {
-                padding-inline-start: var(--guit-ref-spacing-5xlarge);
+                padding-inline-start: var(--guit-ref-spacing-2xlarge);
             }
 
             &_2 {
-                padding-inline-start: var(--guit-ref-spacing-8xlarge);
+                padding-inline-start: var(--guit-ref-spacing-5xlarge);
             }
 
             &_3 {
-                padding-inline-start: var(--guit-ref-spacing-9xlarge);
+                padding-inline-start: var(--guit-ref-spacing-8xlarge);
             }
 
             &_4 {
-                padding-inline-start: var(--guit-ref-spacing-10xlarge);
+                padding-inline-start: var(--guit-ref-spacing-9xlarge);
             }
         }
     }
