@@ -82,7 +82,11 @@ export const WithImageContent: Story = {
                 <img
                     src={`https://picsum.photos/id/${index * 10}/800/500`}
                     alt={`https://picsum.photos/id/${index * 10}/800/500`}
-                    className="carousel__image"
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover"
+                    }}
                 />
             </CarouselItem>
         ))
