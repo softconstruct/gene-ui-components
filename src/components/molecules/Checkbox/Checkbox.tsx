@@ -1,4 +1,13 @@
-import React, { ChangeEvent, FC, FocusEvent, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+    ChangeEvent,
+    FC,
+    FocusEvent,
+    MouseEvent as ReactMouseEvent,
+    useEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
 import classNames from "classnames";
 
 import { CheckMark, Minus } from "@geneui/icons";
@@ -71,6 +80,10 @@ interface ICheckboxProps {
      */
     value: string;
     /**
+     *  Fires when the user click on the checkbox. Provides the click event as a callback's argument.
+     */
+    onClick?: (e: ReactMouseEvent<HTMLInputElement, MouseEvent>) => void;
+    /**
      *  Fires when the user changes the checkbox state. Provides the change event as a callback's argument.
      */
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -103,6 +116,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
         type = "rest",
         direction = "horizontal",
         autoFocus,
+        onClick,
         onChange,
         onFocus,
         onBlur,
@@ -118,6 +132,11 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
     const isControlled = "checked" in props;
 
     const [checkedState, setCheckedState] = useState(defaultChecked || false);
+
+    const onClickHandler = (e: ReactMouseEvent<HTMLInputElement, MouseEvent>) => {
+        e.stopPropagation();
+        onClick?.(e);
+    };
 
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         if (!isControlled) {
@@ -179,6 +198,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                             onChange={onChangeHandler}
                             onFocus={onFocusHandler}
                             onBlur={onBlurHandler}
+                            {...(onClick && { onClick: onClickHandler })}
                             checked={resolvedChecked}
                             ref={interRef}
                             {...(name && { name })}

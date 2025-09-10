@@ -24,6 +24,7 @@ const meta: Meta<ICheckboxProps> = {
         direction: args({ control: "select", ...propCategory.appearance }),
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         name: args({ control: "text", ...propCategory.others }),
+        onClick: args({ control: "false", ...propCategory.action }),
         onChange: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
