@@ -15,17 +15,7 @@ jest.mock("@hooks/useDeviceInfo", () => ({
     default: jest.fn().mockReturnValue({})
 }));
 
-jest.mock("@components/providers/GeneUIProvider", () => ({
-    GeneUIDesignSystemContext: React.createContext({
-        breakpoint: {
-            isMobileBreakpoint: false,
-            isTabletBreakpoint: false,
-            isDesktopBreakpoint: true
-        }
-    })
-}));
-
-const content = Array.from(Array(10).keys()).map((index) => (
+const content = Array.from({ length: 10 }, (_, index) => (
     <div key={`test-content-${index}`} className="test-content">
         {index}
     </div>
@@ -107,5 +97,22 @@ describe("Carousel ", () => {
 
         const wrapper = mount(<Carousel>{content}</Carousel>);
         expect(wrapper.find(".carousel__button").exists()).toBeFalsy();
+    });
+
+    it("doesn't show arrow buttons when only one child", () => {
+        const singleChild = [<div key="single">Single</div>];
+        const wrapper = mount(<Carousel>{singleChild}</Carousel>);
+        expect(wrapper.find(".carousel__button").exists()).toBeFalsy();
+    });
+
+    it("navigates when dot is clicked", () => {
+        setup.find(".carousel__dot").at(2).simulate("click");
+        expect(setup.find(".test-content").text()).toEqual("2");
+    });
+
+    it("shows limited dots when more than 6 items", () => {
+        const manyItems = Array.from({ length: 10 }, (_, i) => <div key={i}>Item {i}</div>);
+        const wrapper = mount(<Carousel>{manyItems}</Carousel>);
+        expect(wrapper.find(".carousel__dot")).toHaveLength(6);
     });
 });

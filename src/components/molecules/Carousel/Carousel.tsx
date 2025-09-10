@@ -58,11 +58,11 @@ const Carousel: FC<ICarouselProps> = ({
 
     const { isMobileDevice, isTouch } = useDeviceInfo();
 
-    const onPrevClick = () => setSelectedIndex((prev) => (prev === 0 ? children.length - 1 : prev - 1));
-    const onNextClick = () => setSelectedIndex((prev) => (prev === children.length - 1 ? 0 : prev + 1));
+    const onPrevClick = () => setSelectedIndex((prev) => (prev === 0 ? count - 1 : prev - 1));
+    const onNextClick = () => setSelectedIndex((prev) => (prev === count - 1 ? 0 : prev + 1));
     const goToSlide = (index: number) => setSelectedIndex(index);
 
-    const areArrowsVisible = withSlideArrows && !isMobileDevice && !isTouch;
+    const areArrowsVisible = withSlideArrows && !isMobileDevice && !isTouch && count > 1;
 
     const swipeCallbacks = useMemo(() => {
         if (direction === "horizontal") {
@@ -90,7 +90,7 @@ const Carousel: FC<ICarouselProps> = ({
     }, [count, selectedIndex]);
 
     return (
-        <div className={classNames(`carousel carousel_slider carousel_direction_${direction}`, className)} ref={ref}>
+        <div className={classNames(`carousel carousel_direction_${direction}`, className)} ref={ref}>
             {areArrowsVisible && (
                 <Button
                     className="carousel__button carousel__button_back"

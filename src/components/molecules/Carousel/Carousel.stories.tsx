@@ -1,6 +1,7 @@
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+// Icons
 import { Magnifier } from "@geneui/icons";
 
 // Helpers
@@ -38,32 +39,11 @@ const texts = [
 
 const textContent = texts.map(({ title, description }) => (
     <CarouselItem key={title}>
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-                height: "100%",
-                padding: "0 16px",
-                backgroundColor: "#F4E1EC",
-                border: "1px solid #A60063",
-                fontFamily: "var(--guit-sem-font-heading-medium-semibold-font-family)"
-            }}
-        >
-            <div
-                style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    color: "#A60063"
-                }}
-            >
-                <Magnifier color="#A60063" />
-                <span style={{ marginTop: 16, fontSize: 20 }}>{title}</span>
-                <span style={{ marginTop: 4, fontSize: 14, textAlign: "center" }}>{description}</span>
+        <div className="carouselStory__content">
+            <div className="carouselStory__inner">
+                <Magnifier className="carouselStory__icon" color="#A60063" />
+                <span className="carouselStory__title">{title}</span>
+                <span className="carouselStory__description">{description}</span>
             </div>
         </div>
     </CarouselItem>
@@ -97,16 +77,12 @@ export const Default: Story = {
 
 export const WithImageContent: Story = {
     args: {
-        children: Array.from(Array(8).keys()).map((index) => (
+        children: Array.from({ length: 8 }, (_, index) => (
             <CarouselItem key={index}>
                 <img
                     src={`https://picsum.photos/id/${index * 10}/800/500`}
                     alt={`https://picsum.photos/id/${index * 10}/800/500`}
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover"
-                    }}
+                    className="carousel__image"
                 />
             </CarouselItem>
         ))

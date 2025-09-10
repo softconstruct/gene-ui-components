@@ -28,6 +28,30 @@ const simulateTouchEvent = (wrapper: ReactWrapper, eventType: string, clientX: n
     wrapper.getDOMNode().dispatchEvent(event);
 };
 
+const simulateMouseEvent = (wrapper: ReactWrapper, eventType: string, pageX: number, pageY: number) => {
+    const event = new MouseEvent(eventType, {
+        clientX: pageX,
+        clientY: pageY,
+        bubbles: true,
+        cancelable: true
+    });
+
+    Object.defineProperty(event, "pageX", {
+        value: pageX,
+        writable: false,
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(event, "pageY", {
+        value: pageY,
+        writable: false,
+        enumerable: true,
+        configurable: true
+    });
+
+    wrapper.getDOMNode().dispatchEvent(event);
+};
+
 describe("useSwipe Hook", () => {
     let setup: ReactWrapper;
 
@@ -50,7 +74,7 @@ describe("useSwipe Hook", () => {
                 onSlideDown
             });
 
-            return <div id="carousel" ref={ref} style={{ width: "200px", height: "200px" }} />;
+            return <div id="carousel" ref={ref} style={{ width: "20rem", height: "20rem" }} />;
         };
         setup = mount(<TestComponent />);
     });
@@ -96,5 +120,41 @@ describe("useSwipe Hook", () => {
         expect(onSlideRight).not.toHaveBeenCalled();
         expect(onSlideUp).not.toHaveBeenCalled();
         expect(onSlideDown).not.toHaveBeenCalled();
+    });
+
+    it("handles mouse swipe right", () => {
+        simulateMouseEvent(setup, "mousedown", 150, 100);
+        simulateMouseEvent(setup, "mouseup", 90, 100);
+
+        expect(onSlideRight).toHaveBeenCalled();
+    });
+
+    it("handles mouse swipe left", () => {
+        simulateMouseEvent(setup, "mousedown", 90, 100);
+        simulateMouseEvent(setup, "mouseup", 150, 100);
+
+        expect(onSlideLeft).toHaveBeenCalled();
+    });
+
+    it("handles mouse leave event", () => {
+        simulateMouseEvent(setup, "mousedown", 100, 100);
+        simulateMouseEvent(setup, "mouseleave", 150, 100);
+
+        expect(onSlideLeft).toHaveBeenCalled();
+    });
+
+    it("handles touch cancel event", () => {
+        simulateTouchEvent(setup, "touchstart", 100, 100);
+        simulateTouchEvent(setup, "touchcancel", 100, 100);
+
+        simulateTouchEvent(setup, "touchend", 150, 100);
+        expect(onSlideLeft).not.toHaveBeenCalled();
+    });
+
+    it("cleans up event listeners on unmount", () => {
+        const removeEventListener = jest.spyOn(setup.getDOMNode(), "removeEventListener");
+        setup.unmount();
+
+        expect(removeEventListener).toHaveBeenCalledTimes(6);
     });
 });
