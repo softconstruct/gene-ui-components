@@ -336,6 +336,8 @@ const Table: FC<ITableProps> = ({
     emptyTitle
 }) => {
     const scrollbarContainerRef = React.useRef<ScrollbarRefType>(null);
+    const tableHeadRef = React.useRef<HTMLTableSectionElement>(null);
+    const tableFootRef = React.useRef<HTMLTableSectionElement>(null);
     const [data, setData] = useState<Row[]>(deepCloneWithFunctions(externalData));
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -362,7 +364,6 @@ const Table: FC<ITableProps> = ({
 
     const handleRowClick = (row: TanstackRow<Row>) => {
         if (editableMode) return;
-        console.log({ row });
         onRowClick?.(row);
     };
 
@@ -642,8 +643,25 @@ const Table: FC<ITableProps> = ({
         );
     };
     const renderTableBody = () => {
+        const tableHeadHeight = tableHeadRef.current?.getBoundingClientRect().height || 0;
+        const tableFootHeight = tableFootRef.current?.getBoundingClientRect().height || 0;
+
         if (loading) {
-            return <Loader size={loaderSize} text={loaderText} />;
+            return (
+                <tr>
+                    <td colSpan={table.getVisibleFlatColumns().length}>
+                        <div
+                            className="table__empty"
+                            style={{
+                                top: tableHeadHeight,
+                                bottom: tableFootHeight
+                            }}
+                        >
+                            <Loader size={loaderSize} text={loaderText} />
+                        </div>
+                    </td>
+                </tr>
+            );
         }
 
         if (table.getRowModel().rows.length > 0) {
@@ -679,8 +697,21 @@ const Table: FC<ITableProps> = ({
 
         return (
             <tr>
-                <td colSpan={table.getVisibleFlatColumns().length} rowSpan={14}>
-                    <Empty title={emptyTitle} size="medium" />
+                <td colSpan={table.getVisibleFlatColumns().length}>
+                    <div
+                        className="table__empty"
+                        style={{
+                            top: tableHeadHeight,
+                            bottom: tableFootHeight
+                        }}
+                    >
+                        <Empty
+                            title={emptyTitle}
+                            description="some description"
+                            actions={[{ children: "Reload", appearance: "secondary" }]}
+                            size="medium"
+                        />
+                    </div>
                 </td>
             </tr>
         );
@@ -988,52 +1019,52 @@ const Table: FC<ITableProps> = ({
                         )}
                     </div>
                 </div>
-                <div style={{ height: "500px", overflow: "auto" }}>
-                    <Scrollbar ref={scrollbarContainerRef}>
-                        <table className={classNames("table", className)}>
-                            <thead
-                                className={classNames({
-                                    table__thead_sticky: withStickyHeader
-                                })}
-                            >
-                                {table.getHeaderGroups().map((headerGroup) => (
-                                    <tr key={`${headerGroup.id}_header`} className="table__row table__row_thead">
-                                        {headerGroup.headers.map((header) => {
-                                            const col = header.column.columnDef as TableCol<unknown>;
 
-                                            if (col.editable) {
-                                                accessEditableMode[header.id] = true;
-                                            }
+                <Scrollbar
+                    ref={scrollbarContainerRef}
+                    className={classNames({
+                        table__wrapper: table.getRowModel().rows.length === 0 || loading
+                    })}
+                >
+                    <table className={classNames("table", className)}>
+                        <thead
+                            ref={tableHeadRef}
+                            className={classNames({
+                                table__thead_sticky: withStickyHeader
+                            })}
+                        >
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <tr key={`${headerGroup.id}_header`} className="table__row table__row_thead">
+                                    {headerGroup.headers.map((header) => {
+                                        const col = header.column.columnDef as TableCol<unknown>;
 
-                                            if (col.copyable) {
-                                                accessCopyable[header.id] = true;
-                                            }
-                                            return renderTableHeaderCell(header);
+                                        if (col.editable) {
+                                            accessEditableMode[header.id] = true;
+                                        }
+
+                                        if (col.copyable) {
+                                            accessCopyable[header.id] = true;
+                                        }
+                                        return renderTableHeaderCell(header);
+                                    })}
+                                </tr>
+                            ))}
+                        </thead>
+
+                        <tbody>{renderTableBody()}</tbody>
+                        <tfoot ref={tableFootRef}>
+                            {table.getFooterGroups().map((footerGroups) => {
+                                return (
+                                    <tr key={`${footerGroups.id}_footer`} className="table__row table__row_tfoot">
+                                        {footerGroups.headers.map((footer) => {
+                                            return renderTableFooterCell(footer);
                                         })}
                                     </tr>
-                                ))}
-                            </thead>
-
-                            <tbody>{renderTableBody()}</tbody>
-                            {table.getRowModel().rows.length > 0 && (
-                                <tfoot>
-                                    {table.getFooterGroups().map((footerGroups) => {
-                                        return (
-                                            <tr
-                                                key={`${footerGroups.id}_footer`}
-                                                className="table__row table__row_tfoot"
-                                            >
-                                                {footerGroups.headers.map((footer) => {
-                                                    return renderTableFooterCell(footer);
-                                                })}
-                                            </tr>
-                                        );
-                                    })}
-                                </tfoot>
-                            )}
-                        </table>
-                    </Scrollbar>
-                </div>
+                                );
+                            })}
+                        </tfoot>
+                    </table>
+                </Scrollbar>
 
                 {withPagination && !withVirtualScroll && table.getRowModel().rows.length > 0 && (
                     <div className="dataTable__pagination">
