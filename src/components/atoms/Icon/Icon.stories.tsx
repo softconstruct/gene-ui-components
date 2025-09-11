@@ -11,7 +11,7 @@ import iconsMetadata from "@geneui/icons/metadata";
 // Components
 import Copy from "@components/atoms/Copy";
 import Divider from "@components/atoms/Divider";
-import Text from "@components/atoms/Text";
+import Text, { ITextProps } from "@components/atoms/Text";
 import TextField from "@components/molecules/TextField";
 
 // Styles
@@ -52,32 +52,52 @@ const getMatchPriority = (icon: IIconWithMetadata, searchTerm: string) => {
     return 0; // No match
 };
 
-// Function to find all matching parts using regex
 const findMatches = (text: string, searchTerm: string): IFindMatches[] => {
     if (!searchTerm.trim()) {
         return [{ textSegment: text, isMatch: false, index: 0 }];
     }
 
-    const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")})`, "gi");
-    const textSegments = text.split(regex);
+    const searchLower = searchTerm.toLowerCase();
+    const textLower = text.toLowerCase();
 
-    return textSegments.map((textSegment, index) => ({
-        textSegment,
-        isMatch: searchTerm.toLowerCase() === textSegment.toLowerCase(),
-        index: index + 1
-    }));
+    const index = textLower.indexOf(searchLower);
+
+    if (index === -1) {
+        return [{ textSegment: text, isMatch: false, index: 0 }];
+    }
+    const matchEnd = index + searchTerm.length;
+
+    if (index === 0) {
+        const result = [{ textSegment: text.substring(0, searchTerm.length), isMatch: true, index: 0 }];
+
+        if (matchEnd < text.length) {
+            result.push({ textSegment: text.substring(matchEnd), isMatch: false, index: 1 });
+        }
+
+        return result;
+    }
+
+    const result = [
+        { textSegment: text.substring(0, index), isMatch: false, index: 0 },
+        { textSegment: text.substring(index, matchEnd), isMatch: true, index: 1 }
+    ];
+
+    if (matchEnd < text.length) {
+        result.push({ textSegment: text.substring(matchEnd), isMatch: false, index: 2 });
+    }
+
+    return result;
 };
 
-const highlightName = (text: string, searchTerm: string): ReactNode => {
+const highlightName = (
+    text: string,
+    searchTerm: string,
+    variant: ITextProps["variant"] = "labelMediumMedium"
+): ReactNode => {
     const matches = findMatches(text, searchTerm);
 
     return matches.map(({ textSegment, isMatch, index }) => (
-        <Text
-            key={index}
-            variant="labelMediumMedium"
-            as="span"
-            className={classNames({ iconCatalog_highlight: isMatch })}
-        >
+        <Text key={index} variant={variant} as="span" className={classNames({ iconCatalog_highlight: isMatch })}>
             {textSegment}
         </Text>
     ));
@@ -96,12 +116,13 @@ const highlightKeywords = (keywords: string[], searchTerm: string): ReactNode =>
         ));
     }
 
-    return keywords.map((keyword) => {
-        const highlightedText = highlightName(keyword, searchTerm);
+    return keywords.map((keyword, index) => {
+        const highlightedText = highlightName(keyword, searchTerm, "labelSmallSemibold");
 
         return (
             <div key={keyword} className="iconCard__keyword">
                 {highlightedText}
+                {keywords.length - 1 > index && <Divider direction="vertical" className="iconCard__keyword_divider" />}
             </div>
         );
     });
