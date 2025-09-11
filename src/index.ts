@@ -49,6 +49,7 @@ export { default as ButtonGroup } from "./components/molecules/ButtonGroup";
 export { default as Notification } from "./components/molecules/Notification";
 export { default as Modal } from "./components/molecules/Modal";
 export { default as Drawer } from "./components/molecules/Drawer";
+export { Carousel, CarouselItem, ICarouselProps, ICarouselItemProps } from "./components/molecules/Carousel";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";

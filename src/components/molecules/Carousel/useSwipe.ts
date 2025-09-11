@@ -19,7 +19,12 @@ const getEventPositions = (event: Event) => {
     return { x: mouseEvent.pageX, y: mouseEvent.pageY };
 };
 
-const useSwipe = <T extends HTMLElement>({ onSlideLeft, onSlideRight, onSlideUp, onSlideDown }: ISlideArguments) => {
+export const useSwipe = <T extends HTMLElement>({
+    onSlideLeft,
+    onSlideRight,
+    onSlideUp,
+    onSlideDown
+}: ISlideArguments) => {
     const ref = useRef<T>(null);
     const touchStartPosition = useRef<{ x?: number; y?: number }>({});
 

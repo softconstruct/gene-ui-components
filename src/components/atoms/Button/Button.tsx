@@ -71,9 +71,8 @@ interface IButtonProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-
     /**
-     *  Defines a string value that labels the current element.
+     * An ARIA label for a button provides a short, descriptive text label for screen readers and other assistive technologies to announce when the button has no visible text or the visible text isn't clear enough on its own.
      */
     ariaLabel?: string;
     /**

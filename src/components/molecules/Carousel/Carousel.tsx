@@ -10,11 +10,13 @@ import Button from "@components/atoms/Button";
 import CarouselItem from "@components/molecules/Carousel/CarouselItem";
 
 // Hooks
-import { useSwipe } from "@hooks/index";
 import useDeviceInfo from "@hooks/useDeviceInfo";
 
 // Styles
 import "./Carousel.scss";
+
+// Custom hooks
+import useSwipe from "./useSwipe";
 
 interface ICarouselProps {
     /**
@@ -54,15 +56,16 @@ const Carousel: FC<ICarouselProps> = ({
     withIndicators = true
 }) => {
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const count = children.length;
+    const totalSlides = children.length;
+    const isRTLMode = document.dir === "rtl";
 
     const { isMobileDevice, isTouch } = useDeviceInfo();
 
-    const onPrevClick = () => setSelectedIndex((prev) => (prev === 0 ? count - 1 : prev - 1));
-    const onNextClick = () => setSelectedIndex((prev) => (prev === count - 1 ? 0 : prev + 1));
+    const onPrevClick = () => setSelectedIndex((prev) => (prev === 0 ? totalSlides - 1 : prev - 1));
+    const onNextClick = () => setSelectedIndex((prev) => (prev === totalSlides - 1 ? 0 : prev + 1));
     const goToSlide = (index: number) => setSelectedIndex(index);
 
-    const areArrowsVisible = withSlideArrows && !isMobileDevice && !isTouch && count > 1;
+    const areArrowsVisible = withSlideArrows && !isMobileDevice && !isTouch && totalSlides > 1;
 
     const swipeCallbacks = useMemo(() => {
         if (direction === "horizontal") {
@@ -72,29 +75,29 @@ const Carousel: FC<ICarouselProps> = ({
         return { onSlideUp: onPrevClick, onSlideDown: onNextClick };
     }, [direction]);
 
-    const ref = useSwipe<HTMLDivElement>(swipeCallbacks);
+    const carouselRef = useSwipe<HTMLDivElement>(swipeCallbacks);
     const visibleDots = useMemo(() => {
-        if (count <= DOTS_LIMIT) {
-            return Array.from({ length: count }, (_, i) => ({ id: i }));
+        if (totalSlides <= DOTS_LIMIT) {
+            return Array.from({ length: totalSlides }, (_, i) => ({ id: i }));
         }
 
         const halfLimit = Math.floor(DOTS_LIMIT / 2);
         let start = Math.max(0, selectedIndex - halfLimit);
-        const end = Math.min(count, start + DOTS_LIMIT);
+        const end = Math.min(totalSlides, start + DOTS_LIMIT);
 
         if (end - start < DOTS_LIMIT) {
             start = Math.max(0, end - DOTS_LIMIT);
         }
 
         return Array.from({ length: end - start }, (_, i) => ({ id: start + i }));
-    }, [count, selectedIndex]);
+    }, [totalSlides, selectedIndex]);
 
     return (
-        <div className={classNames(`carousel carousel_direction_${direction}`, className)} ref={ref}>
+        <div className={classNames(`carousel carousel_direction_${direction}`, className)} ref={carouselRef}>
             {areArrowsVisible && (
                 <Button
                     className="carousel__button carousel__button_back"
-                    Icon={ChevronLeft}
+                    Icon={isRTLMode ? ChevronRight : ChevronLeft}
                     appearance="inverse"
                     onClick={onPrevClick}
                     ariaLabel="select-previews"
@@ -104,13 +107,13 @@ const Carousel: FC<ICarouselProps> = ({
             {areArrowsVisible && (
                 <Button
                     className="carousel__button carousel__button_forward"
-                    Icon={ChevronRight}
+                    Icon={isRTLMode ? ChevronLeft : ChevronRight}
                     appearance="inverse"
                     onClick={onNextClick}
                     ariaLabel="select-next"
                 />
             )}
-            {withIndicators && count > 1 && (
+            {withIndicators && totalSlides > 1 && (
                 <div className="carousel__dots" role="tablist">
                     {visibleDots.map(({ id }) => (
                         <button
@@ -129,7 +132,5 @@ const Carousel: FC<ICarouselProps> = ({
         </div>
     );
 };
-
-Carousel.displayName = "Carousel";
 
 export { ICarouselProps, Carousel as default };

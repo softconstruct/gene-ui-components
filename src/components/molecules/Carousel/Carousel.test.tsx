@@ -3,17 +3,61 @@ import { mount, ReactWrapper } from "enzyme";
 
 import useDeviceInfo from "@hooks/useDeviceInfo";
 
-import Carousel, { ICarouselProps } from "./index";
-
-// Mock the hooks and context
-jest.mock("@hooks/index", () => ({
-    useSwipe: jest.fn(() => ({ current: null }))
-}));
+import { Carousel, ICarouselProps } from "./index";
 
 jest.mock("@hooks/useDeviceInfo", () => ({
     __esModule: true,
     default: jest.fn().mockReturnValue({})
 }));
+
+const simulateTouchEvent = (wrapper: ReactWrapper, eventType: string, clientX: number, clientY: number) => {
+    const touch = {
+        clientX,
+        clientY,
+        force: 1,
+        identifier: 1,
+        pageX: clientX,
+        pageY: clientY,
+        radiusX: 1,
+        radiusY: 1,
+        rotationAngle: 0,
+        screenX: clientX,
+        screenY: clientY,
+        target: wrapper.getDOMNode()
+    };
+
+    const event = new TouchEvent(eventType, {
+        touches: [touch],
+        changedTouches: [touch],
+        targetTouches: [touch]
+    });
+
+    wrapper.getDOMNode().dispatchEvent(event);
+};
+
+const simulateMouseEvent = (wrapper: ReactWrapper, eventType: string, pageX: number, pageY: number) => {
+    const event = new MouseEvent(eventType, {
+        clientX: pageX,
+        clientY: pageY,
+        bubbles: true,
+        cancelable: true
+    });
+
+    Object.defineProperty(event, "pageX", {
+        value: pageX,
+        writable: false,
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(event, "pageY", {
+        value: pageY,
+        writable: false,
+        enumerable: true,
+        configurable: true
+    });
+
+    wrapper.getDOMNode().dispatchEvent(event);
+};
 
 const content = Array.from({ length: 10 }, (_, index) => (
     <div key={`test-content-${index}`} className="test-content">
@@ -114,5 +158,78 @@ describe("Carousel ", () => {
         const manyItems = Array.from({ length: 10 }, (_, i) => <div key={i}>Item {i}</div>);
         const wrapper = mount(<Carousel>{manyItems}</Carousel>);
         expect(wrapper.find(".carousel__dot")).toHaveLength(6);
+    });
+
+    it("should navigate on horizontal swipe left", () => {
+        simulateTouchEvent(setup, "touchstart", 100, 50);
+        simulateTouchEvent(setup, "touchend", 50, 50);
+
+        expect(setup.find(".carousel__item").text()).toEqual("1");
+    });
+
+    it("should navigate on horizontal swipe right", () => {
+        expect(setup.find(".test-content").text()).toEqual("0");
+
+        simulateTouchEvent(setup, "touchstart", 50, 50);
+        simulateTouchEvent(setup, "touchend", 100, 50);
+
+        expect(setup.find(".carousel__item").text()).toEqual("9");
+    });
+
+    it("should navigate on vertical swipe up", () => {
+        const wrapper = mount(<Carousel direction="vertical">{content}</Carousel>);
+
+        simulateTouchEvent(wrapper, "touchstart", 50, 100);
+        simulateTouchEvent(wrapper, "touchend", 50, 50);
+
+        expect(wrapper.find(".carousel__item").text()).toEqual("1");
+    });
+
+    it("should not navigate on small swipe movements", () => {
+        simulateTouchEvent(setup, "touchstart", 50, 50);
+        simulateTouchEvent(setup, "touchend", 60, 50);
+
+        expect(setup.find(".carousel__item").text()).toEqual("0");
+    });
+
+    it("should handle mouse swipe navigation", () => {
+        const wrapper = mount(<Carousel direction="horizontal">{content}</Carousel>);
+
+        simulateMouseEvent(wrapper, "mousedown", 100, 50);
+        simulateMouseEvent(wrapper, "mouseup", 50, 50);
+
+        expect(wrapper.find(".carousel__item").text()).toEqual("1");
+    });
+
+    it("should handle empty children array", () => {
+        const wrapper = mount(<Carousel>{[]}</Carousel>);
+        expect(wrapper.find(".carousel").exists()).toBeTruthy();
+        expect(wrapper.find(".carousel__button").exists()).toBeFalsy();
+        expect(wrapper.find(".carousel__dots").exists()).toBeFalsy();
+    });
+
+    it("should handle touch cancel event", () => {
+        const wrapper = mount(<Carousel direction="horizontal">{content}</Carousel>);
+
+        simulateTouchEvent(wrapper, "touchstart", 50, 50);
+        simulateTouchEvent(wrapper, "touchcancel", 50, 50);
+
+        expect(wrapper.find(".test-content").text()).toEqual("0");
+    });
+
+    it("should clean up event listeners on unmount", () => {
+        const removeEventListenerSpy = jest.spyOn(HTMLElement.prototype, "removeEventListener");
+
+        const wrapper = mount(<Carousel>{content}</Carousel>);
+        wrapper.unmount();
+
+        expect(removeEventListenerSpy).toHaveBeenCalledWith("mousedown", expect.any(Function));
+        expect(removeEventListenerSpy).toHaveBeenCalledWith("mouseup", expect.any(Function));
+        expect(removeEventListenerSpy).toHaveBeenCalledWith("mouseleave", expect.any(Function));
+        expect(removeEventListenerSpy).toHaveBeenCalledWith("touchstart", expect.any(Function));
+        expect(removeEventListenerSpy).toHaveBeenCalledWith("touchend", expect.any(Function));
+        expect(removeEventListenerSpy).toHaveBeenCalledWith("touchcancel", expect.any(Function));
+
+        removeEventListenerSpy.mockRestore();
     });
 });

@@ -1,2 +1,2 @@
-export { ICarouselProps, default } from "./Carousel";
+export { ICarouselProps, default as Carousel } from "./Carousel";
 export { ICarouselItemProps, default as CarouselItem } from "./CarouselItem";

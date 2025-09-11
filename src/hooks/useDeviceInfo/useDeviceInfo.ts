@@ -52,9 +52,7 @@ const useDeviceInfo = (): IDeviceInfo => {
         const isAndroid = detectedOS === "Android";
         const isIOS = detectedOS === "iOS";
 
-        const isTablet =
-            /ipad|tablet|kindle|silk|playbook|bb10/i.test(userAgent) || (isAndroid && !/mobile/i.test(userAgent));
-        const isMobileDevice = isAndroid || isIOS || isTablet;
+        const isMobileDevice = isAndroid || isIOS;
         const isDesktopDevice = isWindows || isMacOS || isLinux;
 
         // Detect touch device

@@ -7,7 +7,7 @@ import { Magnifier } from "@geneui/icons";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import Carousel, { CarouselItem, ICarouselProps } from "./index";
+import { Carousel, CarouselItem, ICarouselProps } from "./index";
 
 const texts = [
     { title: "Slot component", description: "Replace it with any component using the “Component Instance” swapper." },
@@ -39,11 +39,46 @@ const texts = [
 
 const textContent = texts.map(({ title, description }) => (
     <CarouselItem key={title}>
-        <div className="carouselStory__content">
-            <div className="carouselStory__inner">
-                <Magnifier className="carouselStory__icon" color="#A60063" />
-                <span className="carouselStory__title">{title}</span>
-                <span className="carouselStory__description">{description}</span>
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                height: "100%",
+                padding: "0 var(--guit-ref-spacing-2xsmall)",
+                backgroundColor: "var(--guit-sem-color-background-accent-magenta-1)",
+                border: "var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-accent-red)"
+            }}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    color: "var(--guit-ref-color-magenta-500base)"
+                }}
+            >
+                <Magnifier style={{ marginBottom: "var(--guit-ref-spacing-2xsmall)" }} color="#A60063" />
+                <span
+                    style={{
+                        marginTop: "var(--guit-ref-spacing-2xsmall)",
+                        fontSize: "2rem"
+                    }}
+                >
+                    {title}
+                </span>
+                <span
+                    style={{
+                        marginTop: "var(--guit-ref-spacing-3xsmall)",
+                        fontSize: "1.4rem",
+                        textAlign: "center"
+                    }}
+                >
+                    {description}
+                </span>
             </div>
         </div>
     </CarouselItem>
@@ -57,13 +92,10 @@ const meta: Meta<typeof Carousel> = {
         direction: args({ control: "select", ...propCategory.appearance }),
         withSlideArrows: args({ control: "boolean", ...propCategory.appearance }),
         withIndicators: args({ control: "boolean", ...propCategory.appearance }),
-        children: args({ control: "false", ...propCategory.appearance })
+        children: args({ control: "false", ...propCategory.content })
     },
     args: {
-        children: textContent,
-        direction: "horizontal",
-        withSlideArrows: true,
-        withIndicators: true
+        children: textContent
     } as ICarouselProps
 };
 
@@ -71,9 +103,7 @@ export default meta;
 
 type Story = StoryObj<ICarouselProps>;
 
-export const Default: Story = {
-    args: {}
-};
+export const Default: Story = {};
 
 export const WithImageContent: Story = {
     args: {
