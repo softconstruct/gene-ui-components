@@ -185,18 +185,20 @@ const TableComponent: FC<ITableProps> = (props) => {
     };
 
     return (
-        <Table
-            {...props}
-            externalData={tableData}
-            bulkActions={bulkActionsMock}
-            onCellEdit={onCellEdit}
-            editableMode={editableState}
-            onRowPinToggle={onRowPinToggle}
-            onRowDelete={onRowDelete}
-            onEdit={onEdit}
-            onSave={onSave}
-            onCancel={onCancel}
-        />
+        <div style={{ height: 700, overflow: "auto" }}>
+            <Table
+                {...props}
+                externalData={tableData}
+                bulkActions={bulkActionsMock}
+                onCellEdit={onCellEdit}
+                editableMode={editableState}
+                onRowPinToggle={onRowPinToggle}
+                onRowDelete={onRowDelete}
+                onEdit={onEdit}
+                onSave={onSave}
+                onCancel={onCancel}
+            />
+        </div>
     );
 };
 
