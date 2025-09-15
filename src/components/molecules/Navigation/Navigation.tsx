@@ -10,6 +10,7 @@ import PopoverBody from "@components/atoms/Popover/PopoverBody";
 import Scrollbar from "@components/atoms/Scrollbar";
 import { IMenuItemProps, Menu, MenuItem } from "@components/molecules/Menu";
 import NavigationItem from "@components/molecules/Navigation/NavigationItem";
+import NavigationMenuHeader from "@components/molecules/Navigation/NavigationMenuHeader";
 import NavigationColItem from "@components/molecules/Navigation/NavigattionColItem";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
@@ -346,6 +347,9 @@ const Navigation: FC<INavigationProps> = ({
                                                 ref={popoverRef}
                                             >
                                                 <PopoverBody withPadding={false}>
+                                                    <NavigationMenuHeader
+                                                        title={clonedNavigationData[hoverDataIndex].title}
+                                                    />
                                                     <div className="navigation__menu_wrapper">
                                                         <NavMenuContent
                                                             data={clonedNavigationData[hoverDataIndex]}
@@ -442,6 +446,7 @@ const Navigation: FC<INavigationProps> = ({
                         currentDataIndex !== null &&
                         hasDataAndChildren(clonedNavigationData, currentDataIndex) && (
                             <div className="navigation__menu">
+                                <NavigationMenuHeader title={clonedNavigationData[currentDataIndex]?.title} />
                                 <Scrollbar>
                                     <div className="navigation__menu_wrapper">
                                         <NavMenuContent
