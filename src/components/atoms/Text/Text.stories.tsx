@@ -16,9 +16,7 @@ const meta: Meta<ITextProps> = {
         children: args({ control: "text", ...propCategory.content }),
         variant: args({ control: "select", ...propCategory.appearance }),
         as: args({ control: "select", ...propCategory.appearance }),
-        alignment: args({ control: "select", ...propCategory.appearance }),
-        truncate: args({ control: "boolean", ...propCategory.appearance }),
-        withTooltip: args({ control: "boolean", ...propCategory.functionality })
+        alignment: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         variant: "headingLargeSemibold"
@@ -43,7 +41,7 @@ export const Variants: Meta = {
     render: () => {
         return (
             <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                <Divider label="Heading" labelPosition="center" />
+                <Divider text="Heading" contentPosition="center" />
                 <Text as="p" variant="headingXLargeSemibold">
                     Text with headingXLargeSemibold variant
                 </Text>
@@ -59,14 +57,14 @@ export const Variants: Meta = {
                 <Text as="p" variant="headingXSmallSemibold">
                     Text with headingXSmallSemibold variant
                 </Text>
-                <Divider label="Subheading" labelPosition="center" />
+                <Divider text="Subheading" contentPosition="center" />
                 <Text as="p" variant="subheadingLargeSemibold">
                     Text with subheadingLargeSemibold variant
                 </Text>
                 <Text as="p" variant="subheadingMediumSemibold">
                     Text with subheadingMediumSemibold variant
                 </Text>
-                <Divider label="Label" labelPosition="center" />
+                <Divider text="Label" contentPosition="center" />
                 <Text as="p" variant="labelLargeSemibold">
                     Text with labelLargeSemibold variant
                 </Text>
@@ -85,7 +83,7 @@ export const Variants: Meta = {
                 <Text as="p" variant="labelSmallMedium">
                     Text with labelSmallMedium variant
                 </Text>
-                <Divider label="Body" labelPosition="center" />
+                <Divider text="Body" contentPosition="center" />
                 <Text as="p" variant="bodyLargeSemibold">
                     Text with bodyLargeSemibold variant
                 </Text>
@@ -104,7 +102,7 @@ export const Variants: Meta = {
                 <Text as="p" variant="bodyMediumRegular">
                     Text with bodyMediumRegular variant
                 </Text>
-                <Divider label="Caption" labelPosition="center" />
+                <Divider text="Caption" contentPosition="center" />
                 <Text as="p" variant="captionLargeSemibold">
                     Text with captionLargeSemibold variant
                 </Text>
@@ -151,21 +149,6 @@ export const Alignment: Meta = {
                     Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a
                     galley of type and scrambled it to make a type specimen book. It has survived not only five
                     centuries, but also the leap into electronic typesetting, remaining essentially unch
-                </Text>
-            </div>
-        );
-    },
-    parameters: {
-        controls: { disable: true }
-    }
-};
-
-export const TruncationWithTooltip: Meta = {
-    render: () => {
-        return (
-            <div style={{ width: "200px" }}>
-                <Text as="p" variant="bodyMediumRegular" alignment="start" truncate>
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                 </Text>
             </div>
         );

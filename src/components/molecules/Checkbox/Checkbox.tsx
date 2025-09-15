@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, FocusEvent, useEffect, useMemo, useRef, useState } from "react";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
 import { CheckMark, Minus } from "@geneui/icons";
@@ -71,6 +71,11 @@ interface ICheckboxProps {
      */
     value: string;
     /**
+     *  Fires when the user click on the checkbox. Provides the click event as a callback's argument.
+     *  This prop is commonly used to prevent event bubbling.
+     */
+    onClick?: (e: MouseEvent<HTMLInputElement>) => void;
+    /**
      *  Fires when the user changes the checkbox state. Provides the change event as a callback's argument.
      */
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -103,6 +108,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
         type = "rest",
         direction = "horizontal",
         autoFocus,
+        onClick,
         onChange,
         onFocus,
         onBlur,
@@ -118,6 +124,8 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
     const isControlled = "checked" in props;
 
     const [checkedState, setCheckedState] = useState(defaultChecked || false);
+
+    const onClickHandler = (e: MouseEvent<HTMLInputElement>) => onClick?.(e);
 
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         if (!isControlled) {
@@ -164,7 +172,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
             {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             <Label
-                labelText={label}
+                text={label}
                 className="checkbox__label"
                 required={required}
                 infoText={infoText}
@@ -179,6 +187,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                             onChange={onChangeHandler}
                             onFocus={onFocusHandler}
                             onBlur={onBlurHandler}
+                            onClick={onClickHandler}
                             checked={resolvedChecked}
                             ref={interRef}
                             {...(name && { name })}
@@ -198,7 +207,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
             </Label>
             {helperText && (
                 <div className="checkbox__infoContainer">
-                    <HelperText text={helperText} isDisabled={disabled} type={type} />
+                    <HelperText text={helperText} disabled={disabled} type={type} />
                 </div>
             )}
         </div>

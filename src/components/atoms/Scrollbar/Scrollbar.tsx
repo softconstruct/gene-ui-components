@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, UIEvent, useEffect, useRef, useState } from "react";
+import React, { forwardRef, ReactNode, UIEvent, useEffect, useImperativeHandle, useRef, useState } from "react";
 import classNames from "classnames";
 import Scrollbars from "react-scrollbars-custom";
 
@@ -40,17 +40,41 @@ interface IScrollbarProps {
      * Automatically scrolls the container to a specific horizontal position (in pixels).
      */
     scrollToLeft?: number;
+    /**
+     * scrollBehaviorSmooth by default is true, set to false if needed instant scroll.
+     */
+    scrollBehaviorSmooth?: boolean;
 }
+
+type ScrollbarRefType = {
+    /**
+     * Reference to the instance of the Scrollbar component
+     */
+    scrollbarRef: Scrollbars | null;
+};
 
 /**
  * Scrollbar is a UI element that allows users to navigate through content that extends beyond the visible area of a container or window. It typically appears along the right side or bottom of the viewport, providing a draggable handle and directional arrows for vertical or horizontal scrolling, enabling users to access all available content.
  */
-const Scrollbar: FC<IScrollbarProps> = (props) => {
-    const { className, children, onScroll, width = "full", height = "full", scrollToTop, scrollToLeft } = props;
+const Scrollbar = forwardRef<ScrollbarRefType, IScrollbarProps>((props, ref) => {
+    const {
+        className,
+        children,
+        onScroll,
+        width = "full",
+        height = "full",
+        scrollToTop,
+        scrollToLeft,
+        scrollBehaviorSmooth = true
+    } = props;
 
     const [scrollDirection, setScrollDirection] = useState<"x" | "y" | null>(null);
     const previousScrollPosition = useRef({ scrollTop: 0, scrollLeft: 0 });
     const scrollbarRef = useRef<Scrollbars | null>(null);
+
+    useImperativeHandle(ref, () => ({
+        scrollbarRef: scrollbarRef.current
+    }));
 
     const scrollStateResetHandler = () => {
         setScrollDirection(null);
@@ -100,10 +124,13 @@ const Scrollbar: FC<IScrollbarProps> = (props) => {
             scrollRefCurrent?.scrollerElement?.scrollTo({
                 ...(hasScrollToTop ? { top: scrollToTop } : {}),
                 ...(hasScrollToLeft ? { left: scrollToLeft } : {}),
-                behavior: "smooth"
+                ...(scrollBehaviorSmooth ? { behavior: "smooth" } : {})
             });
         }
-    }, [scrollToTop, scrollToLeft]);
+        return () => {
+            clearDebounce();
+        };
+    }, [scrollToTop, scrollToLeft, scrollbarRef.current?.scrollerElement?.clientHeight]);
 
     const trackProps = (direction: "x" | "y" | null) => {
         return {
@@ -135,7 +162,6 @@ const Scrollbar: FC<IScrollbarProps> = (props) => {
             role="scrollbar"
             aria-valuenow={0}
             contentProps={{
-                tabIndex: 0,
                 className: "scrollbar__content"
             }}
             minimalThumbSize={30}
@@ -154,6 +180,6 @@ const Scrollbar: FC<IScrollbarProps> = (props) => {
             {children}
         </Scrollbars>
     );
-};
+});
 
-export { IScrollbarProps, Scrollbar as default };
+export { IScrollbarProps, ScrollbarRefType, Scrollbar as default };

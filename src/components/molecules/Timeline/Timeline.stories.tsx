@@ -27,7 +27,8 @@ const TimelineStory: StoryObj<ITimelinesProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
-        position: args({ control: "select", ...propCategory.appearance })
+        position: args({ control: "select", ...propCategory.appearance }),
+        children: args({ control: "false", ...propCategory.content })
     },
     args: {
         direction: "vertical",

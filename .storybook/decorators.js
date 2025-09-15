@@ -15,18 +15,40 @@ const ComponentStageMessage = ({ stage, currentVersion }) => (
 const currentVersionRegex = /v\d\.\d\.\d/;
 const channel = addons.getChannel();
 
+const paddingBlacklist = {
+    "organisms-globalheader": true,
+    "molecules-navigation": true,
+    "molecules-products": true,
+    "molecules-profile": true,
+    "molecules-drawer": true
+};
+
 const CustomDecorator = ({ children }) => {
     const [allowRenderChildren, setAllowRenderChildren] = useState(false);
     const [isDark, setDark] = useState(false);
+    const html = document.querySelector("html");
+    const url = new URL(document.location.href);
+    const [themeParam, setThemeParam] = useState(url.searchParams.get("theme"));
 
     useEffect(() => {
         const currentThem = JSON.parse(localStorage.getItem("sb-addon-themes-3"));
         channel.on(DARK_MODE_EVENT_NAME, setDark);
-        if (currentThem) {
-            setDark(currentThem.current === "dark");
-        }
+
+        if (currentThem) setDark(themeParam ? themeParam === "dark" : currentThem.current === "dark");
+
         return () => channel.off(DARK_MODE_EVENT_NAME, setDark);
     }, [channel]);
+
+    useEffect(() => {
+        if (!themeParam) {
+            html.style.colorScheme = isDark ? "dark" : "light";
+        } else {
+            html.style.colorScheme = themeParam;
+            if ((themeParam === "light" && isDark) || (themeParam === "dark" && !isDark)) {
+                setThemeParam(null);
+            }
+        }
+    }, [isDark, themeParam]);
 
     let type;
     const componentStageGetter = (children, num) => {
@@ -71,40 +93,26 @@ const CustomDecorator = ({ children }) => {
         <ComponentStageMessage currentVersion={currentVersion} stage={componentStageProp?.type} />
     );
 
+    const paddingForWrapper = paddingBlacklist[children._owner?.pendingProps?.componentId]
+        ? {}
+        : { padding: "8px 16px" };
+
     return (
-        <>
-            <GeneUIProvider>
-                {componentStageProp && (
-                    <div data-stage-alert style={{ padding: "16px 16px 0" }}>
-                        {/*<Alert*/}
-                        {/*    title={componentStageProp?.type.replace(/^\w/, (c) => c.toUpperCase())}*/}
-                        {/*    message={alertMessage}*/}
-                        {/*    style={{ marginBottom: "10px" }}*/}
-                        {/*    type={type}*/}
-                        {/*/>*/}
-                    </div>
-                )}
-                <div style={{ position: "relative", height: "100%", padding: "8px 16px" }}>
-                    <div>{allowRenderChildren && children}</div>
+        <GeneUIProvider theme={isDark ? "dark" : "light"}>
+            {componentStageProp && (
+                <div data-stage-alert style={{ padding: "16px 16px 0" }}>
+                    {/*<Alert*/}
+                    {/*    title={componentStageProp?.type.replace(/^\w/, (c) => c.toUpperCase())}*/}
+                    {/*    message={alertMessage}*/}
+                    {/*    style={{ marginBottom: "10px" }}*/}
+                    {/*    type={type}*/}
+                    {/*/>*/}
                 </div>
-            </GeneUIProvider>
-            {isDark ? (
-                <style>
-                    {`:root {
-          --background: #171c26;
-          --background-hover: #262f3f;
-          --background-sc: #fff;
-          --background-rgb: 23,28,38;
-          --background-sc-rgb: 255,255,255;
-          --page-background: #0b1017;
-          color-scheme: dark; // todo remove 'color-scheme' after provide theme function form GeneUIProvider
-          
-          }`}
-                </style>
-            ) : (
-                ""
             )}
-        </>
+            <div style={{ position: "relative", height: "100%", ...paddingForWrapper }}>
+                <div>{allowRenderChildren && children}</div>
+            </div>
+        </GeneUIProvider>
     );
 };
 

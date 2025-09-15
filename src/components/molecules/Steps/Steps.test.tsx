@@ -1,7 +1,7 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-import { SuccessFill, UnavailableOutline } from "@geneui/icons";
+import { SuccessFilled, Unavailable } from "@geneui/icons";
 
 // Components
 import { IStepProps, IStepsProps, Step, Steps } from "@components/molecules/Steps";
@@ -43,8 +43,8 @@ describe("Steps ", () => {
         expect(wrapper.find(`steps__status_${type}`)).toBeTruthy();
     });
 
-    it("renders isLinear prop correctly", () => {
-        const wrapper = setup.setProps({ isLinear: true });
+    it("renders linear prop correctly", () => {
+        const wrapper = setup.setProps({ linear: true });
         expect(wrapper.find(".steps").hasClass("steps_linear")).toBeTruthy();
     });
 
@@ -72,11 +72,11 @@ describe("Steps ", () => {
             </Steps>
         );
         if (state === "incomplete") {
-            expect(wrapper.find(UnavailableOutline)).toBeTruthy();
+            expect(wrapper.find(Unavailable)).toBeTruthy();
         } else if (state === "current") {
-            expect(wrapper.find(UnavailableOutline)).toBeTruthy();
+            expect(wrapper.find(Unavailable)).toBeTruthy();
         } else if (state === "complete") {
-            expect(wrapper.find(SuccessFill)).toBeTruthy();
+            expect(wrapper.find(SuccessFilled)).toBeTruthy();
         }
     });
 
