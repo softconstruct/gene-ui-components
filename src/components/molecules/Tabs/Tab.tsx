@@ -90,9 +90,8 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, closab
             {title && <span className="tabs__button_text">{title}</span>}
             {closable && (
                 <Button
-                    displayType="text"
                     appearance="secondary"
-                    size="XSmall"
+                    size="small"
                     onClick={(e) => {
                         e.stopPropagation();
                         if (index === undefined) return;

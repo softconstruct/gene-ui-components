@@ -15,6 +15,7 @@ import React, {
 } from "react";
 import classNames from "classnames";
 
+// Icons
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
 
 // Components
@@ -28,7 +29,7 @@ import useWindowSize from "@hooks/useWindowSize";
 // Styles
 import "./Tabs.scss";
 
-import { ITabProps } from ".";
+import type { ITabProps } from "./Tab";
 
 interface ITabsProps {
     /**
@@ -51,7 +52,6 @@ interface ITabsProps {
      * Possible values: `line | contained`
      */
     type?: "line" | "contained";
-
     /**
      * The prop responsible for showing the loading skeleton if passed true. The default value is false
      * boolean
@@ -136,7 +136,6 @@ const Tabs: FC<ITabsProps> = ({
         }
     }, [parentRef.current]);
 
-    /* eslint consistent-return: off */
     useEffect(() => {
         const animationFrame = requestAnimationFrame(() => {
             return requestAnimationFrame(() => {
@@ -261,7 +260,6 @@ const Tabs: FC<ITabsProps> = ({
                                 ref={leftButtonRef}
                                 size={size}
                                 appearance="secondary"
-                                displayType="text"
                                 fullWidth
                                 Icon={isRTLMode ? ChevronRight : ChevronLeft}
                                 onClick={() => slideShift()}
@@ -287,7 +285,6 @@ const Tabs: FC<ITabsProps> = ({
                                 ref={rightButtonRef}
                                 size={size}
                                 appearance="secondary"
-                                displayType="text"
                                 fullWidth
                                 Icon={isRTLMode ? ChevronLeft : ChevronRight}
                                 onClick={() => slideShift(true)}

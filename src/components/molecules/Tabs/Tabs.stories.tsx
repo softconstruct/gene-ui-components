@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { TagOutline } from "@geneui/icons";
+import { Tag as TagOutline } from "@geneui/icons";
 
 // Components
 import Pill from "@components/atoms/Pill";
