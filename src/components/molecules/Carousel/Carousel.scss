@@ -14,15 +14,15 @@
                 transform-origin: top center;
 
                 &_back {
-                    inset-inline-start: 1.6rem;
+                    inset-inline-start: var(--guit-ref-spacing-large);
                 }
 
                 &_forward {
-                    inset-inline-end: 1.6rem;
+                    inset-inline-end: var(--guit-ref-spacing-large);
                 }
             }
             #{ $this }__dots {
-                bottom: 1.6rem;
+                bottom: var(--guit-ref-spacing-large);
                 left: 50%;
                 transform: translateX(-50%);
                 padding-inline: var(--guit-ref-spacing-2xsmall);
@@ -38,16 +38,16 @@
                 rotate: 90deg;
 
                 &_back {
-                    top: 1.6rem;
+                    top: var(--guit-ref-spacing-large);
                 }
 
                 &_forward {
-                    bottom: 1.6rem;
+                    bottom: var(--guit-ref-spacing-large);
                 }
             }
             #{ $this }__dots {
                 flex-direction: column;
-                inset-inline-end: 1.6rem;
+                inset-inline-end: var(--guit-ref-spacing-large);
                 top: 50%;
                 transform: translateY(-50%);
                 padding-inline: var(--guit-ref-spacing-3xsmall);
