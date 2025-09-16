@@ -1,0 +1,101 @@
+@use "../../../assets/styles/mixins";
+
+.iconCatalog {
+    &__title {
+        color: var(--guit-ref-color-magenta-400);
+        margin-bottom: var(--guit-ref-spacing-medium);
+    }
+
+    &__search {
+        padding-block: var(--guit-ref-spacing-large);
+        position: sticky;
+        top: 0;
+        background-color: var(--guit-sem-color-border-neutral-1);
+        z-index: 1;
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(26rem, 1fr));
+        gap: var(--guit-ref-spacing-medium);
+        margin-bottom: var(--guit-ref-spacing-large);
+    }
+
+    &__empty {
+        text-align: center;
+        padding: var(--guit-ref-spacing-medium) 0;
+    }
+
+    &_highlight {
+        background-color: var(--guit-sem-color-background-warning-1);
+        color: var(--guit-sem-color-foreground-warning-1);
+        border-radius: var(--guit-ref-border-radius-2xsmall);
+        white-space: pre-wrap;
+    }
+}
+
+.iconCard {
+    $this: &;
+
+    border: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style);
+    border-color: var(--guit-sem-color-border-neutral-2);
+    border-radius: var(--guit-ref-radius-2xsmall);
+    padding: var(--guit-ref-spacing-small);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: var(--guit-ref-spacing-xsmall);
+    position: relative;
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-block: var(--guit-ref-spacing-2xsmall);
+    }
+
+    &__name {
+        margin-bottom: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__keywords {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
+    }
+
+    &__keyword {
+        display: inline-flex;
+        align-items: center;
+        padding-block: var(--guit-ref-spacing-4xsmall);
+        min-width: var(--guit-sem-dimension-width-medium);
+        border-radius: var(--guit-ref-radius-4xsmall);
+        font-size: var(--guit-ref-font-size-2xsmall);
+        font-weight: var(--guit-ref-font-weight-medium);
+        color: var(--guit-sem-color-foreground-informative);
+        white-space: pre-wrap;
+
+        &_divider {
+            margin-inline: var(--guit-ref-spacing-small);
+            height: var(--guit-ref-sizing-3xsmall);
+        }
+    }
+
+    &__copy {
+        position: absolute;
+        top: var(--guit-ref-spacing-xsmall);
+        right: var(--guit-ref-spacing-xsmall);
+        opacity: 0;
+    }
+
+    @include mixins.media-hover {
+        &:hover {
+            #{ $this }__copy {
+                opacity: 1;
+            }
+        }
+    }
+}
