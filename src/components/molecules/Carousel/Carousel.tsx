@@ -94,24 +94,24 @@ const Carousel: FC<ICarouselProps> = ({
 
     return (
         <div className={classNames(`carousel carousel_direction_${direction}`, className)} ref={carouselRef}>
-            {areArrowsVisible && (
-                <Button
-                    className="carousel__button carousel__button_back"
-                    Icon={isRTLMode ? ChevronRight : ChevronLeft}
-                    appearance="inverse"
-                    onClick={onPrevClick}
-                    ariaLabel="select-previews"
-                />
-            )}
             <div className="carousel__item">{children[selectedIndex]}</div>
             {areArrowsVisible && (
-                <Button
-                    className="carousel__button carousel__button_forward"
-                    Icon={isRTLMode ? ChevronLeft : ChevronRight}
-                    appearance="inverse"
-                    onClick={onNextClick}
-                    ariaLabel="select-next"
-                />
+                <>
+                    <Button
+                        className="carousel__button carousel__button_back"
+                        Icon={isRTLMode ? ChevronRight : ChevronLeft}
+                        appearance="inverse"
+                        onClick={onPrevClick}
+                        ariaLabel="select-previews"
+                    />
+                    <Button
+                        className="carousel__button carousel__button_forward"
+                        Icon={isRTLMode ? ChevronLeft : ChevronRight}
+                        appearance="inverse"
+                        onClick={onNextClick}
+                        ariaLabel="select-next"
+                    />
+                </>
             )}
             {withIndicators && totalSlides > 1 && (
                 <div className="carousel__dots" role="tablist">
