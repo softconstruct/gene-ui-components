@@ -22,7 +22,9 @@ const meta: Meta<INavigationProps> = {
         activePath: args({ control: "false", ...propCategory.states }),
         onClick: args({ control: "false", ...propCategory.action }),
         onNavigationCreateDataClick: args({ control: "false", ...propCategory.action }),
-        moreMenuTitle: args({ control: "false", ...propCategory.content })
+        moreMenuTitle: args({ control: "text", ...propCategory.content }),
+        render: args({ control: "false", ...propCategory.content }),
+        compact: args({ control: "boolean", ...propCategory.appearance })
     }
 };
 
@@ -57,4 +59,12 @@ type Story = StoryObj<INavigationProps>;
 
 export const Default: Story = {
     render: (props) => <NavigationStoryComponent {...props} />
+};
+
+export const WithRender: Story = {
+    render: (props) => <NavigationStoryComponent {...props} />,
+    args: {
+        // eslint-disable-next-line jsx-a11y/anchor-has-content
+        render: (linkData) => <a aria-label={linkData.title} href={linkData.path ? "javascript:void(0)" : undefined} />
+    }
 };

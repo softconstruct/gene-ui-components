@@ -417,7 +417,10 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                         ? { ...floatingStyles, "--parent-width": `${parentElement?.offsetWidth}px` }
                                         : floatingStyles
                                 }
-                                className={`popover ${fitReference && "popover_size_reference"} popover_size_${size} popover_position_${currentDirection}`}
+                                className={classNames(
+                                    `popover popover_position_${currentDirection} popover_size_${size}`,
+                                    { popover_size_reference: fitReference }
+                                )}
                                 ref={refs.setFloating}
                                 {...getFloatingProps()}
                             >

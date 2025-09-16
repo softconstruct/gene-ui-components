@@ -1,4 +1,4 @@
-import React, { FC, useRef } from "react";
+import React, { cloneElement, FC, isValidElement, useRef } from "react";
 import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
@@ -9,6 +9,8 @@ import Tooltip from "@components/molecules/Tooltip";
 
 // Hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
+
+import { INavigationProps } from "../Navigation";
 
 interface INavigationColItemProps {
     Icon?: FC<IconProps>;
@@ -24,6 +26,8 @@ interface INavigationColItemProps {
     isVisible?: boolean;
     hasChildren?: boolean;
     currentSelected?: boolean;
+    render?: INavigationProps["render"];
+    compact?: boolean;
 }
 
 const NavigationColItem: FC<INavigationColItemProps> = ({
@@ -39,7 +43,9 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
     path,
     isVisible,
     hasChildren,
-    currentSelected
+    currentSelected,
+    render,
+    compact = false
 }) => {
     const textRef = useRef<HTMLHeadingElement | null>(null);
     const isTruncated: boolean = useEllipsisDetection(textRef, [title]);
@@ -55,24 +61,47 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
         }
     };
 
-    return (
-        <div className="navigation__listItem">
-            <button
-                type="button"
-                disabled={disabled || !isVisible}
-                className={classNames("navigation__iconButton", {
-                    navigation__iconButton_selected: selected,
-                    navigation__iconButton_currentSelected: currentSelected && !selected && opened,
-                    navigation__iconButton_pointer_none: selected && !hasChildren,
-                    navigation__iconButton_disabled: disabled
-                })}
-                onClick={() => onClickHandler(index)}
-                onMouseEnter={() => onMouseEnterHandler(index)}
-                {...propsForPopover}
-            >
+    const propsToApply = {
+        ...propsForPopover,
+        "aria-label": title,
+        disabled: disabled || !isVisible,
+        className: classNames("navigation__iconButton", {
+            navigation__iconButton_selected: selected,
+            navigation__iconButton_currentSelected: currentSelected && !selected && opened,
+            navigation__iconButton_pointer_none: selected && !hasChildren,
+            navigation__iconButton_disabled: disabled
+        }),
+        onClick: () => onClickHandler(index || 0),
+        onMouseEnter: () => onMouseEnterHandler(index || 0)
+    };
+
+    const linkData = {
+        path,
+        title,
+        Icon,
+        isActive: selected,
+        hasChildren,
+        isDisabled: disabled
+    };
+
+    const interactiveElement = (() => {
+        if (render && path) {
+            const renderedElement = render(linkData);
+            if (isValidElement(renderedElement)) {
+                return cloneElement(renderedElement, { ...propsToApply }, Icon && <Icon />);
+            }
+        }
+        return (
+            <button type="button" {...propsToApply}>
                 {Icon && <Icon />}
             </button>
-            {title && (
+        );
+    })();
+
+    return (
+        <div className="navigation__listItem">
+            {interactiveElement}
+            {title && !compact && (
                 <Tooltip text={title} isVisible={isTruncated}>
                     <Text
                         as="p"
