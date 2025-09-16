@@ -37,24 +37,30 @@ interface ISplitButtonProps {
      * A callback function that is called when the `button` is clicked or entered. <br>
      * It receives an argument containing the event object, which can be a mouse or keyboard event.
      */
-    onClick: (e: PointerEvent<HTMLButtonElement>) => void;
+    onPrimaryButtonClick?: (e: PointerEvent<HTMLButtonElement>) => void;
     /**
      * Indicates whether the `SplitButton` is in a loading state.
      * When set to `true` a `skeleton` indicator will be shown instead of the `Avatar`.
      */
     loading?: boolean;
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
 }
 
 /**
  * A split button allows users to choose from several related actions. The primary action is displayed as the button label, while additional actions are accessible from a dropdown menu.
  */
 const SplitButton: FC<ISplitButtonProps> = ({
+    className,
     size = "large",
     disabled = false,
     type = "fill",
     appearance = "primary",
     Icon,
-    onClick,
+    onPrimaryButtonClick,
     loading
 }) => {
     const [propsForPopover, setPropsForPopover] = useState({});
@@ -62,12 +68,12 @@ const SplitButton: FC<ISplitButtonProps> = ({
     const buttonsClassNames = `splitButton__button splitButton__button_size_${size} splitButton__button_type_${type} splitButton__button_appearance_${appearance}`;
 
     return (
-        <div className="splitButton">
+        <div className={classNames("splitButton", className)}>
             {loading ? (
                 <button
                     type="button"
                     disabled={disabled}
-                    onClick={onClick}
+                    onClick={onPrimaryButtonClick}
                     className={classNames(buttonsClassNames, "splitButton__button_loading")}
                 >
                     {/* todo: change appearance value from "inverse" to "brand" or "neutral", depending on SplitButton "type" and "appearance" */}
@@ -78,7 +84,7 @@ const SplitButton: FC<ISplitButtonProps> = ({
                     <button
                         type="button"
                         disabled={disabled}
-                        onClick={onClick}
+                        onClick={onPrimaryButtonClick}
                         className={classNames(buttonsClassNames, `${Icon ? "splitButton__button_icon_before" : ""}`)}
                     >
                         {Icon && <Icon size={20} className="button__icon" />}

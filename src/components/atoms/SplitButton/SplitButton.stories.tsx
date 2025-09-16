@@ -10,7 +10,7 @@ const meta: Meta<ISplitButtonProps> = {
     title: "Atoms/SplitButton",
     component: SplitButton,
     argTypes: {
-        // className: args({ control: "false", ...propCategory.appearance }),
+        className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         appearance: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance })
