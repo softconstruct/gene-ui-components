@@ -1,15 +1,15 @@
 import React, { FC, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import Drawer from "@components/molecules/Drawer";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { defaultColumns, withGroupedColumns, withPinnedColumns } from "@components/molecules/Table/Columns";
 // Components
 import { deepCloneWithFunctions } from "@components/molecules/Table/helpers";
-import TableLayoutTmp from "@components/molecules/Table/TableLayoutTmp";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import Table, { BulkAction, ITableProps, Row } from "./index";
+import Table, { BulkAction, IManageColumnsData, ITableProps, Row, TableCol } from "./index";
 import { makeData } from "./makeData";
 
 const SwapComponent = () => (
@@ -72,7 +72,6 @@ const meta: Meta<ITableProps> = {
         withGlobalFilter: args({ control: "boolean", ...propCategory.functionality }),
         globalFilterPlaceholder: args({ control: "text", ...propCategory.content }),
         withStickyHeader: args({ control: "boolean", ...propCategory.appearance }),
-        sortableColumns: args({ control: "boolean", ...propCategory.functionality }),
         pageSizes: args({ control: "false", ...propCategory.functionality }),
         initialPageSize: args({ control: "number", ...propCategory.content }),
         initialPageIndex: args({ control: "number", ...propCategory.content }),
@@ -127,11 +126,13 @@ const meta: Meta<ITableProps> = {
 type Story = StoryObj<ITableProps>;
 
 const TableComponent: FC<ITableProps> = (props) => {
-    const { externalData: data } = props;
+    const { externalData: data, columns } = props;
 
     const [tableData, setTableData] = useState<Row[]>([]);
     const [updatedTableData, setUpdatedTableData] = useState<Row[]>([]);
     const [editableState, setEditableState] = useState(false);
+    const [isDrawerOpened, setIsDrawerOpened] = useState(false);
+    const [tableColumns, setTableColumns] = useState<TableCol<Row>[]>(() => columns);
 
     useEffect(() => {
         const conedData = deepCloneWithFunctions(data);
@@ -184,16 +185,51 @@ const TableComponent: FC<ITableProps> = (props) => {
         );
     };
 
+    const handleColumnsMange = (columnsData: IManageColumnsData[]) => {
+        const [column] = columnsData;
+        setTableColumns((prev) => {
+            const newData: TableCol<Row>[] = [];
+            prev.forEach((item) => {
+                newData.push({
+                    ...item,
+                    order: column.columns[item.id].order
+                });
+            });
+            return newData;
+        });
+    };
+
+    const handleManageColumnRestore = () => {
+        setTableColumns(() => [...columns]);
+    };
+
+    const handleRowClick = () => {
+        setIsDrawerOpened(true);
+    };
+
     return (
         <div style={{ height: 700, overflow: "auto" }}>
+            <Drawer
+                title="Row Details"
+                open={isDrawerOpened}
+                shouldCloseOnOverlayClick
+                hasCloseButton
+                onClose={() => setIsDrawerOpened(false)}
+            >
+                <SwapComponent />
+            </Drawer>
             <Table
                 {...props}
+                columns={tableColumns}
                 externalData={tableData}
                 bulkActions={bulkActionsMock}
                 onCellEdit={onCellEdit}
                 editableMode={editableState}
                 onRowPinToggle={onRowPinToggle}
                 onRowDelete={onRowDelete}
+                onManageColumns={handleColumnsMange}
+                onManageColumnRestore={handleManageColumnRestore}
+                onRowClick={handleRowClick}
                 onEdit={onEdit}
                 onSave={onSave}
                 onCancel={onCancel}
@@ -348,10 +384,6 @@ export const WithOutData: Story = {
             />
         );
     }
-};
-
-export const TableLayoutTmpStory: Story = {
-    render: () => <TableLayoutTmp />
 };
 
 export default meta;

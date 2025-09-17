@@ -138,6 +138,7 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
                             <Checkbox
                                 name="item"
                                 value="item"
+                                onClick={(e) => e.stopPropagation()}
                                 checked={row.getIsSelected()}
                                 onChange={(event) => handleCheckboxChange(event)}
                             />
@@ -186,17 +187,7 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
             {row.getIsExpanded() && (
                 <tr className="table__row table__row_tbody">
                     <td className="table__td table__td_expanded" colSpan={row.getVisibleCells().length}>
-                        <div
-                            className="swapComponent"
-                            style={{
-                                height: "20rem",
-                                backgroundColor: "#F4E1EC",
-                                padding: "1.6rem",
-                                color: "#A60063"
-                            }}
-                        >
-                            {row?.original.expandedData()}
-                        </div>
+                        {row?.original.expandedData()}
                     </td>
                 </tr>
             )}

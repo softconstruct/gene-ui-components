@@ -10,6 +10,7 @@ import { IMenuItemProps } from "@components/molecules/Menu";
 import { ISwitchProps } from "@components/molecules/Switch";
 
 export type CellType =
+    | "Group"
     | "Empty"
     | "Expand"
     | "RowCheckbox"
@@ -27,7 +28,7 @@ export type CellType =
 
 export type Cell = string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
 
-type TableRowCells = {
+export type TableRowCells = {
     [K in CellType]?: Cell;
 };
 
@@ -82,4 +83,15 @@ export interface IOrderedColumns {
     isPinned?: boolean;
     order?: number;
     columns: Column<Row, unknown>[];
+}
+
+export type OrderType = {
+    order: number;
+};
+
+export interface IManageColumnsData {
+    groupId?: string;
+    columns: {
+        [key: string]: OrderType;
+    };
 }

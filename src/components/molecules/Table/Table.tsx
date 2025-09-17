@@ -1,16 +1,13 @@
-import React, { ChangeEvent, createContext, FC, ReactNode, useEffect, useMemo, useState } from "react";
+import React, { createContext, FC, ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import {
-    Column,
     ColumnFiltersState,
     ColumnPinningState,
     ExpandedState,
-    flexRender,
     getCoreRowModel,
     getExpandedRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
-    Header,
     Row as TanstackRow,
     RowPinningState,
     RowSelectionState,
@@ -19,25 +16,18 @@ import {
     VisibilityState
 } from "@tanstack/react-table";
 import classNames from "classnames";
-import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 
-import { Globe, Pin, PinFilled, ThreeDotsVertical } from "@geneui/icons";
-
-import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
-import Label from "@components/atoms/Label";
-import Loader, { ILoaderProps } from "@components/atoms/Loader";
+import { ILoaderProps } from "@components/atoms/Loader";
 import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
-import ButtonGroup from "@components/molecules/ButtonGroup";
-import Checkbox from "@components/molecules/Checkbox";
-import Empty, { IEmptyProps } from "@components/molecules/Empty";
+import { IEmptyProps } from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
-import BulkActions from "@components/molecules/Table/BulkActions";
-import { ColActions } from "@components/molecules/Table/ColActions";
 import { deepCloneWithFunctions } from "@components/molecules/Table/helpers";
 import TBody from "@components/molecules/Table/TBody";
-import { BulkAction, IOrderedColumns, Row, TableCol } from "@components/molecules/Table/type";
-import VirtualScrollTBody from "@components/molecules/Table/VirtualScrollTBody";
+import TFoot from "@components/molecules/Table/TFoot";
+import THead from "@components/molecules/Table/THead";
+import Toolbar from "@components/molecules/Table/Toolbar";
+import { BulkAction, IManageColumnsData, IOrderedColumns, Row, TableCol } from "@components/molecules/Table/type";
 
 // Styles
 import "./Table.scss";
@@ -58,11 +48,11 @@ interface ITableActions {
     /**
      * A callback function that is triggered when column visibility or order is updated via the "Manage Columns" menu.
      */
-    onManageColumns?: (event: IOrderedColumns[]) => void;
+    onManageColumns?: (event: IManageColumnsData[]) => void;
     /**
      * A callback function that is triggered when the column configuration is restored to its default settings from the "Manage Columns" menu.
      */
-    onManageColumnRestore?: (event: IOrderedColumns[]) => void;
+    onManageColumnRestore?: () => void;
     /**
      * A callback function that is triggered whenever the sorting state of the table changes.
      */
@@ -179,11 +169,6 @@ interface ITableProps extends ITableActions {
      * A boolean that determines whether the table header should remain fixed at the top during vertical scrolling.
      */
     withStickyHeader?: boolean;
-
-    /**
-     * Enables sorting functionality for columns, provided the `columnDef` has `enableSorting` set to `true`.
-     */
-    sortableColumns?: boolean;
 
     /**
      * An array of numbers used to populate the page size dropdown, allowing users to change the number of rows displayed per page.
@@ -333,9 +318,12 @@ const Table: FC<ITableProps> = ({
     onCancel,
     keepPinnedRows,
     onRowSelect,
-    emptyTitle
+    emptyTitle,
+    emptyDescription,
+    emptyActions,
+    emptyAppearance
 }) => {
-    const scrollbarContainerRef = React.useRef<ScrollbarRefType>(null);
+    const scrollbarContainerRef = useRef<ScrollbarRefType>(null);
     const tableHeadRef = React.useRef<HTMLTableSectionElement>(null);
     const tableFootRef = React.useRef<HTMLTableSectionElement>(null);
     const [data, setData] = useState<Row[]>(deepCloneWithFunctions(externalData));
@@ -350,12 +338,6 @@ const Table: FC<ITableProps> = ({
         top: [],
         bottom: []
     });
-    const [menuOpened, setMenuOpened] = useState(false);
-    const accessEditableMode: Record<string, boolean> = {};
-    const accessCopyable: Record<string, boolean> = {};
-    const [tableColumns, setTableColumns] = useState<TableCol<Row>[]>(deepCloneWithFunctions(columns));
-    const [visibleColumns, setVisibleColumns] = useState<{ [key: string]: boolean }>({});
-    const [manageColumnsData, setManageColumnsData] = useState<IOrderedColumns[]>([]);
     const [orderedColumns, setOrderedColumns] = useState<IOrderedColumns[]>([]);
 
     const [columnOrder, setColumnOrder] = useState<string[]>([]);
@@ -418,7 +400,6 @@ const Table: FC<ITableProps> = ({
         );
 
         setColumnOrder(columnIds);
-        setVisibleColumns(columnVisibilities);
     }, [orderedColumns]);
 
     const table = useReactTable<Row>({
@@ -472,7 +453,7 @@ const Table: FC<ITableProps> = ({
     });
 
     useEffect(() => {
-        if (!table || !tableColumns.length) return;
+        if (!table) return;
         const cols: IOrderedColumns[] = [];
         table.getHeaderGroups().forEach((headerGroup) => {
             headerGroup.headers.forEach((header) => {
@@ -502,236 +483,7 @@ const Table: FC<ITableProps> = ({
             });
         });
         setOrderedColumns(cols);
-    }, [tableColumns]);
-
-    const handleDragEnd = (result: DropResult) => {
-        if (!result.destination) {
-            return;
-        }
-        const sourceID = result.source.droppableId;
-        const sourceIndex = result.source.index;
-        const destinationIndex = result.destination.index;
-
-        if (sourceIndex === destinationIndex) {
-            return;
-        }
-        const currentColumns = orderedColumns.find((item) => item.id === sourceID);
-
-        if (!currentColumns) return;
-
-        const currentGroupIndex = orderedColumns.indexOf(currentColumns);
-        const newColumns = currentColumns;
-        const [reorderedColumn] = newColumns.columns.splice(sourceIndex, 1);
-        newColumns.columns.splice(destinationIndex, 0, reorderedColumn);
-
-        const orderedManageColumns = [
-            ...orderedColumns.slice(0, currentGroupIndex),
-            newColumns,
-            ...orderedColumns.slice(currentGroupIndex + 1)
-        ];
-        setManageColumnsData(orderedManageColumns);
-    };
-
-    const tableEditAction = (type: "cancel" | "edit" | "save") => {
-        if (type === "save") onSave?.();
-        if (type === "edit") onEdit?.();
-        if (type === "cancel") onCancel?.();
-    };
-
-    const handleManageColumns = () => {
-        onManageColumns?.(manageColumnsData);
-        setColumnVisibility(visibleColumns);
-        setMenuOpened(false);
-        if (manageColumnsData.length > 0) setOrderedColumns(manageColumnsData);
-    };
-
-    const handleColumnVisibility = (column: Column<Row, unknown>) => {
-        setVisibleColumns({
-            ...visibleColumns,
-            [column.id]: !visibleColumns[column.id]
-        });
-    };
-    const handleGlobalFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { value } = event.target;
-        setGlobalFilter(value);
-        onGlobalFilterChange?.(value);
-    };
-
-    const onColumnPin = (column: Column<Row, unknown>, groupIndex: number, columnIndex: number) => {
-        const isPinned = column.getIsPinned();
-        if (!isPinned) {
-            column.pin("left");
-        } else {
-            column.pin(false);
-        }
-        setTableColumns((prev) => {
-            if (!prev[groupIndex].columns?.length) {
-                return prev;
-            }
-            const currentColumn = prev[groupIndex].columns?.[columnIndex];
-            if (currentColumn) currentColumn.order = !isPinned ? columnIndex + 1 : 1;
-            return prev;
-        });
-    };
-
-    const handleManageColumnsRestore = () => {
-        setTableColumns(deepCloneWithFunctions(columns));
-        onManageColumnRestore?.(manageColumnsData);
-    };
-
-    const renderTableHeaderCell = (header: Header<Row, unknown>) => {
-        if (header.isPlaceholder) return null;
-
-        if ((header.column.columnDef as TableCol<Row>).type === "RowCheckbox" && withCheckbox) {
-            return (
-                <th
-                    key={`${header.id}_header`}
-                    colSpan={header.colSpan}
-                    className={classNames("table__th", {
-                        table__th_group: header.subHeaders.length
-                    })}
-                >
-                    <div className="table__content table__content_empty">
-                        <Checkbox
-                            name="column"
-                            value="column"
-                            checked={table.getIsAllPageRowsSelected()}
-                            indeterminate={table.getIsSomePageRowsSelected()}
-                            onChange={() => {
-                                table.toggleAllPageRowsSelected();
-                                onSelectAllRows?.();
-                            }}
-                        />
-                    </div>
-                </th>
-            );
-        }
-        if ((header.column.columnDef as TableCol<Row>).type === "Expand" && expandable) {
-            return (
-                <th
-                    key={`${header.id}_header`}
-                    colSpan={header.colSpan}
-                    className={classNames("table__th", {
-                        table__th_group: header.subHeaders.length
-                    })}
-                    aria-label="expand"
-                >
-                    <div className="table__content table__content_empty" />
-                </th>
-            );
-        }
-
-        if (header.id === "rowCheckbox") return null;
-
-        return (
-            <th
-                key={`${header.id}_header`}
-                colSpan={header.colSpan}
-                className={classNames("table__th", {
-                    table__th_group: header.subHeaders.length
-                })}
-            >
-                <div className="table__content table__content_empty">
-                    <div className="table__content table__content_header">
-                        <span className="table__th_text ellipsis-text">
-                            {(header.column.columnDef as TableCol<Row>).header}
-                        </span>
-                        {header.id !== "expand" && <ColActions header={header} />}
-                    </div>
-                </div>
-            </th>
-        );
-    };
-    const renderTableBody = () => {
-        const tableHeadHeight = tableHeadRef.current?.getBoundingClientRect().height || 0;
-        const tableFootHeight = tableFootRef.current?.getBoundingClientRect().height || 0;
-
-        if (loading) {
-            return (
-                <tr>
-                    <td colSpan={table.getVisibleFlatColumns().length}>
-                        <div
-                            className="table__empty"
-                            style={{
-                                top: tableHeadHeight,
-                                bottom: tableFootHeight
-                            }}
-                        >
-                            <Loader size={loaderSize} text={loaderText} />
-                        </div>
-                    </td>
-                </tr>
-            );
-        }
-
-        if (table.getRowModel().rows.length > 0) {
-            return (
-                <>
-                    {withVirtualScroll && scrollbarContainerRef.current ? (
-                        <>
-                            <VirtualScrollTBody
-                                topRows={table.getTopRows()}
-                                centerRows={table.getCenterRows()}
-                                columnCount={table.getHeaderGroups().length || 1}
-                                scrollbarContainerRef={scrollbarContainerRef.current.scrollbarRef}
-                                expandable={expandable}
-                                editableMode={!!editableMode}
-                                withCheckbox={withCheckbox}
-                                withDynamicFetch={withDynamicFetch}
-                                hasNextPage={hasNextPage}
-                                isFetchingNextPage={isFetchingNextPage}
-                                fetchNextPage={fetchNextPage}
-                            />
-                        </>
-                    ) : (
-                        <TBody
-                            table={table}
-                            expandable={expandable}
-                            editableMode={!!editableMode}
-                            withCheckbox={withCheckbox}
-                        />
-                    )}
-                </>
-            );
-        }
-
-        return (
-            <tr>
-                <td colSpan={table.getVisibleFlatColumns().length}>
-                    <div
-                        className="table__empty"
-                        style={{
-                            top: tableHeadHeight,
-                            bottom: tableFootHeight
-                        }}
-                    >
-                        <Empty
-                            title={emptyTitle}
-                            description="some description"
-                            actions={[{ children: "Reload", appearance: "secondary" }]}
-                            size="medium"
-                        />
-                    </div>
-                </td>
-            </tr>
-        );
-    };
-
-    const renderTableFooterCell = (footer: Header<Row, unknown>) => {
-        if (footer.id === "rowCheckbox" && !withCheckbox) return null;
-
-        return (
-            <td key={`${footer.id}_footer`} className="table__td" colSpan={footer.colSpan}>
-                <div className="table__content table__content_empty table__content_text_numeric">
-                    <span className="ellipsis-text table__td_text">
-                        {footer?.column?.columnDef?.footer
-                            ? flexRender(footer.column.columnDef.footer, footer.getContext())
-                            : null}
-                    </span>
-                </div>
-            </td>
-        );
-    };
+    }, [columns]);
 
     const handlePageChange = (pageNumber: number) => {
         table.setPageIndex(pageNumber - 1);
@@ -743,347 +495,85 @@ const Table: FC<ITableProps> = ({
         onPageSizeChange?.(size);
     };
 
+    const onGlobalFilterInputChange = (value: string) => {
+        setGlobalFilter(value);
+    };
+
     return (
         <TableContext.Provider value={memoizedTableContextValue}>
             <div className={classNames("dataTable")}>
-                <div className={classNames("dataTable__toolbar toolbar")}>
-                    <div className="dataTable__toolbar_search">
-                        {withGlobalFilter && (
-                            <input
-                                className="dataTable__toolbar_searchInput"
-                                type="text"
-                                placeholder={globalFilterPlaceholder}
-                                value={globalFilter}
-                                onChange={(e) => handleGlobalFilterChange(e)}
-                                style={{ width: "100%" }}
-                            />
-                        )}
-                        <div className="dataTable__bulkActions">
-                            {withCheckbox && (
-                                <>
-                                    <div className="dataTable__bulkActions_selected">
-                                        {table.getSelectedRowModel().rows.length} selected
-                                    </div>
-                                    <Divider direction="vertical" />
-                                    <Button
-                                        appearance="primary"
-                                        layout="text"
-                                        size="medium"
-                                        disabled={bulkActions?.disabled}
-                                        onClick={() =>
-                                            table.getSelectedRowModel().rows.length && table.resetRowSelection()
-                                        }
-                                    >
-                                        Deselect
-                                    </Button>
-                                </>
-                            )}
-                            {!!bulkActions?.list.length && <BulkActions bulkActions={bulkActions} />}
-                        </div>
-                    </div>
-                    <div className="dataTable__toolbar_actions">
-                        {headerContent && <div className="dataTable__toolbar_content">{headerContent}</div>}
-                        {editableMode ? (
-                            <ButtonGroup size="medium">
-                                <Button
-                                    appearance="secondary"
-                                    layout="fill"
-                                    size="medium"
-                                    onClick={() => tableEditAction("cancel")}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    appearance="primary"
-                                    layout="fill"
-                                    size="medium"
-                                    onClick={() => tableEditAction("save")}
-                                >
-                                    Save
-                                </Button>
-                            </ButtonGroup>
-                        ) : (
-                            <>
-                                <Button
-                                    appearance="secondary"
-                                    layout="outline"
-                                    size="medium"
-                                    Icon={Globe}
-                                    onClick={() => tableEditAction("edit")}
-                                >
-                                    Edit
-                                </Button>
-                                {withManageColumns && (
-                                    <div className="dataTable__toolbar_dropdownMenu">
-                                        <Button
-                                            className="dataTable__toolbar_dropdownMenu_manageColumns"
-                                            appearance="secondary"
-                                            layout="outline"
-                                            size="medium"
-                                            disabled={isManageColumnsDisabled}
-                                            Icon={Globe}
-                                            onClick={() => setMenuOpened(!menuOpened)}
-                                        >
-                                            {manageColumnsTitle}
-                                        </Button>
-
-                                        {menuOpened && (
-                                            <div className="dropdownMenu">
-                                                <div className="dropdownMenu__header">
-                                                    <input type="text" placeholder="Search" style={{ width: "100%" }} />
-                                                </div>
-
-                                                <Scrollbar>
-                                                    <div className="dropdownMenu__main">
-                                                        <div className="dropdownMenu__columns">
-                                                            <div className="dropdownMenu__columns_header">
-                                                                <p className="dropdownMenu__columns_title ellipsis-text">
-                                                                    Active Columns
-                                                                </p>
-                                                            </div>
-                                                            <DragDropContext onDragEnd={handleDragEnd}>
-                                                                {orderedColumns.map((item, groupIndex) => {
-                                                                    return (
-                                                                        <Droppable droppableId={item.id} key={item.id}>
-                                                                            {(provided, snapshot) => (
-                                                                                <div
-                                                                                    {...provided.droppableProps}
-                                                                                    ref={provided.innerRef}
-                                                                                    className={classNames(
-                                                                                        "columns-list",
-                                                                                        {
-                                                                                            "columns-list--dragging-over":
-                                                                                                snapshot.isDraggingOver
-                                                                                        }
-                                                                                    )}
-                                                                                >
-                                                                                    <span key={item.id}>
-                                                                                        {item.title}
-                                                                                    </span>
-                                                                                    {item.columns.map(
-                                                                                        (column, index) => {
-                                                                                            if (
-                                                                                                (
-                                                                                                    column.columnDef as TableCol<Row>
-                                                                                                ).type === "Expand" ||
-                                                                                                (
-                                                                                                    column.columnDef as TableCol<Row>
-                                                                                                ).type === "RowCheckbox"
-                                                                                            ) {
-                                                                                                return null;
-                                                                                            }
-
-                                                                                            return (
-                                                                                                <Draggable
-                                                                                                    key={column.id}
-                                                                                                    draggableId={
-                                                                                                        column.id
-                                                                                                    }
-                                                                                                    index={index}
-                                                                                                >
-                                                                                                    {(
-                                                                                                        draggableProvided,
-                                                                                                        draggableSnapshot
-                                                                                                    ) => (
-                                                                                                        <div
-                                                                                                            ref={
-                                                                                                                draggableProvided.innerRef
-                                                                                                            }
-                                                                                                            {...(draggableProvided.draggableProps as React.HTMLAttributes<HTMLDivElement>)}
-                                                                                                            className={classNames(
-                                                                                                                "dropdownMenu__columns_item",
-                                                                                                                {
-                                                                                                                    "dropdownMenu__columns_item--dragging":
-                                                                                                                        draggableSnapshot.isDragging,
-                                                                                                                    "dropdownMenu__columns_item--disabled":
-                                                                                                                        (
-                                                                                                                            column.columnDef as TableCol<unknown>
-                                                                                                                        )
-                                                                                                                            .disabled
-                                                                                                                }
-                                                                                                            )}
-                                                                                                            role="tab"
-                                                                                                            tabIndex={0}
-                                                                                                        >
-                                                                                                            <Label
-                                                                                                                className="dropdownMenu__columns_placeholder"
-                                                                                                                text={
-                                                                                                                    (
-                                                                                                                        column.columnDef as TableCol<Row>
-                                                                                                                    )
-                                                                                                                        .header
-                                                                                                                }
-                                                                                                            >
-                                                                                                                <Checkbox
-                                                                                                                    name="item"
-                                                                                                                    value="item"
-                                                                                                                    checked={
-                                                                                                                        visibleColumns[
-                                                                                                                            column
-                                                                                                                                .id
-                                                                                                                        ]
-                                                                                                                    }
-                                                                                                                    onChange={() =>
-                                                                                                                        handleColumnVisibility(
-                                                                                                                            column
-                                                                                                                        )
-                                                                                                                    }
-                                                                                                                />
-                                                                                                            </Label>
-                                                                                                            <div className="dropdownMenu__columns_actions">
-                                                                                                                <Button
-                                                                                                                    appearance="secondary"
-                                                                                                                    layout="text"
-                                                                                                                    size="small"
-                                                                                                                    Icon={
-                                                                                                                        column.getIsPinned()
-                                                                                                                            ? PinFilled
-                                                                                                                            : Pin
-                                                                                                                    }
-                                                                                                                    onClick={() =>
-                                                                                                                        onColumnPin(
-                                                                                                                            column,
-                                                                                                                            groupIndex,
-                                                                                                                            index
-                                                                                                                        )
-                                                                                                                    }
-                                                                                                                    className="dropdownMenu__columns_icon"
-                                                                                                                />
-                                                                                                                <div
-                                                                                                                    {...draggableProvided.dragHandleProps}
-                                                                                                                >
-                                                                                                                    <Button
-                                                                                                                        appearance="secondary"
-                                                                                                                        layout="text"
-                                                                                                                        size="small"
-                                                                                                                        Icon={
-                                                                                                                            ThreeDotsVertical
-                                                                                                                        }
-                                                                                                                        onClick={() => {}}
-                                                                                                                        className="dropdownMenu__columns_icon"
-                                                                                                                    />
-                                                                                                                </div>
-                                                                                                            </div>
-                                                                                                        </div>
-                                                                                                    )}
-                                                                                                </Draggable>
-                                                                                            );
-                                                                                        }
-                                                                                    )}
-                                                                                    {provided.placeholder}
-                                                                                </div>
-                                                                            )}
-                                                                        </Droppable>
-                                                                    );
-                                                                })}
-                                                            </DragDropContext>
-                                                        </div>
-                                                        <Divider />
-                                                    </div>
-                                                </Scrollbar>
-
-                                                <div className="dropdownMenu__footer">
-                                                    <Button
-                                                        appearance="secondary"
-                                                        layout="text"
-                                                        size="medium"
-                                                        onClick={() => handleManageColumnsRestore()}
-                                                    >
-                                                        Restore Defaults
-                                                    </Button>
-                                                    <ButtonGroup size="medium">
-                                                        <Button
-                                                            appearance="secondary"
-                                                            layout="fill"
-                                                            size="medium"
-                                                            onClick={() => setMenuOpened(false)}
-                                                        >
-                                                            Cancel
-                                                        </Button>
-                                                        <Button
-                                                            className="dropdownMenu__footer_buttonGroup_save"
-                                                            appearance="primary"
-                                                            layout="fill"
-                                                            size="medium"
-                                                            onClick={handleManageColumns}
-                                                        >
-                                                            Save
-                                                        </Button>
-                                                    </ButtonGroup>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </>
-                        )}
-                    </div>
-                </div>
-
-                <Scrollbar
-                    ref={scrollbarContainerRef}
-                    className={classNames({
-                        table__wrapper: table.getRowModel().rows.length === 0 || loading
-                    })}
-                >
+                <Toolbar
+                    isGrouped={table.getHeaderGroups().length > 1}
+                    orderedColumns={orderedColumns}
+                    manageColumnsTitle={manageColumnsTitle}
+                    withManageColumns={withManageColumns}
+                    isManageColumnsDisabled={isManageColumnsDisabled}
+                    withCheckbox={withCheckbox}
+                    editableMode={editableMode}
+                    headerContent={headerContent}
+                    withGlobalFilter={withGlobalFilter}
+                    globalFilter={globalFilter}
+                    globalFilterPlaceholder={globalFilterPlaceholder}
+                    bulkActions={bulkActions}
+                    selectedRowsLength={table.getSelectedRowModel().rows.length}
+                    onRowsDeselect={() => table.resetRowSelection()}
+                    globalFilterSetter={onGlobalFilterInputChange}
+                    visibleColumns={columnVisibility}
+                />
+                <Scrollbar ref={scrollbarContainerRef}>
                     <table className={classNames("table", className)}>
-                        <thead
+                        <THead
                             ref={tableHeadRef}
-                            className={classNames({
-                                table__thead_sticky: withStickyHeader
-                            })}
-                        >
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <tr key={`${headerGroup.id}_header`} className="table__row table__row_thead">
-                                    {headerGroup.headers.map((header) => {
-                                        const col = header.column.columnDef as TableCol<unknown>;
-
-                                        if (col.editable) {
-                                            accessEditableMode[header.id] = true;
-                                        }
-
-                                        if (col.copyable) {
-                                            accessCopyable[header.id] = true;
-                                        }
-                                        return renderTableHeaderCell(header);
-                                    })}
-                                </tr>
-                            ))}
-                        </thead>
-
-                        <tbody>{renderTableBody()}</tbody>
-                        <tfoot ref={tableFootRef}>
-                            {table.getFooterGroups().map((footerGroups) => {
-                                return (
-                                    <tr key={`${footerGroups.id}_footer`} className="table__row table__row_tfoot">
-                                        {footerGroups.headers.map((footer) => {
-                                            return renderTableFooterCell(footer);
-                                        })}
-                                    </tr>
-                                );
-                            })}
-                        </tfoot>
+                            table={table}
+                            expandable={expandable}
+                            withCheckbox={withCheckbox}
+                            withStickyHeader={withStickyHeader}
+                        />
+                        <TBody
+                            table={table}
+                            expandable={expandable}
+                            withCheckbox={withCheckbox}
+                            editableMode={editableMode}
+                            scrollbarContainerRef={scrollbarContainerRef.current}
+                            loaderSize={loaderSize}
+                            loaderText={loaderText}
+                            loading={loading}
+                            withVirtualScroll={withVirtualScroll}
+                            withDynamicFetch={withDynamicFetch}
+                            fetchNextPage={fetchNextPage}
+                            isFetchingNextPage={isFetchingNextPage}
+                            hasNextPage={hasNextPage}
+                            emptyTitle={emptyTitle}
+                            emptyDescription={emptyDescription}
+                            emptyActions={emptyActions}
+                            emptyAppearance={emptyAppearance}
+                            tableHeadRef={tableHeadRef.current}
+                            tableFootRef={tableFootRef.current}
+                        />
+                        {table.getRowModel().rows.length > 0 && (
+                            <TFoot ref={tableFootRef} table={table} withCheckbox={withCheckbox} />
+                        )}
                     </table>
                 </Scrollbar>
-
-                {withPagination && !withVirtualScroll && table.getRowModel().rows.length > 0 && (
-                    <div className="dataTable__pagination">
-                        <div className="dataTable__pagination_controls">
-                            <Pagination
-                                current={initialPageIndex + 1}
-                                totalItems={data.length}
-                                currentPageItemsLength={initialPageSize}
-                                totalPages={table.getPageCount()}
-                                rowsPerPageOptions={pageSizes}
-                                onPageChange={handlePageChange}
-                                onPageSizeChange={handlePageSizeChange}
-                                showInputPageField={showInputPageField}
-                            />
-                        </div>
-                    </div>
-                )}
-                <Divider />
             </div>
+
+            {withPagination && !withVirtualScroll && table.getRowModel().rows.length > 0 && (
+                <div className="dataTable__pagination">
+                    <div className="dataTable__pagination_controls">
+                        <Pagination
+                            current={initialPageIndex + 1}
+                            totalItems={data.length}
+                            currentPageItemsLength={initialPageSize}
+                            totalPages={table.getPageCount()}
+                            rowsPerPageOptions={pageSizes}
+                            onPageChange={handlePageChange}
+                            onPageSizeChange={handlePageSizeChange}
+                            showInputPageField={showInputPageField}
+                        />
+                    </div>
+                </div>
+            )}
+            <Divider />
         </TableContext.Provider>
     );
 };

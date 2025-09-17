@@ -13,7 +13,7 @@ import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
 import { ICellProps } from "@components/molecules/Table/Cell";
 import Filter from "@components/molecules/Table/Filter";
 import { SortingIcons } from "@components/molecules/Table/helpers";
-import { Cell, CellType, Row, TableCol } from "@components/molecules/Table/type";
+import { Cell, Row, TableCol, TableRowCells } from "@components/molecules/Table/type";
 
 interface IColActionsProps {
     header: Header<Row, unknown>;
@@ -35,7 +35,7 @@ const getFilterOptionLabelByColumnType = (data: Cell | undefined, type: string) 
 const getFilterOption = (column: Column<Row, unknown>): string[] => {
     const colDef = column.columnDef as TableCol<Row>;
     colDef.filterFn = colDef.enablePopoverFilter ? "arrIncludesSome" : "auto";
-    const initialFilterOptions = (column.columnDef as TableCol<Row>).filterOptions;
+    const initialFilterOptions = colDef.filterOptions;
     if (initialFilterOptions?.length) {
         return initialFilterOptions;
     }
@@ -44,8 +44,8 @@ const getFilterOption = (column: Column<Row, unknown>): string[] => {
         ...new Set(
             flatRows
                 .map((row) => {
-                    const cellData: Cell | undefined =
-                        row.original[(column.columnDef as TableCol<ICellProps>).type as CellType];
+                    const rowOriginal = row.original as TableRowCells;
+                    const cellData: Cell | undefined = rowOriginal[colDef.type];
                     return getFilterOptionLabelByColumnType(
                         cellData,
                         (column.columnDef as TableCol<ICellProps>).type.toLowerCase()

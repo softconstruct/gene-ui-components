@@ -1,0 +1,294 @@
+import React, { FC, useContext, useEffect, useState } from "react";
+import { Column, VisibilityState } from "@tanstack/react-table";
+import classNames from "classnames";
+import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
+
+import { Pin, PinFilled, ThreeDotsVertical } from "@geneui/icons";
+
+import Button from "@components/atoms/Button";
+import Divider from "@components/atoms/Divider";
+import Label from "@components/atoms/Label";
+import Scrollbar from "@components/atoms/Scrollbar";
+import ButtonGroup from "@components/molecules/ButtonGroup";
+import Checkbox from "@components/molecules/Checkbox";
+import { TableContext } from "@components/molecules/Table/Table";
+import { IManageColumnsData, IOrderedColumns, Row, TableCol } from "@components/molecules/Table/type";
+
+interface IManageColumns {
+    onMenuClose: () => void;
+    visibleColumns?: VisibilityState;
+    orderedColumns?: IOrderedColumns[];
+    isGrouped?: boolean;
+}
+
+const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onMenuClose, isGrouped }) => {
+    const { onManageColumns, onManageColumnRestore } = useContext(TableContext);
+    const [columns, setColumns] = useState<IOrderedColumns[] | null>(null);
+    const [columnsVisibility, setColumnsVisibility] = useState<VisibilityState>({});
+    const [savedColumnData, setSavedColumnData] = useState<IManageColumnsData[] | null>(null);
+
+    const getInitialColumns = () => [...(orderedColumns || [])];
+
+    useEffect(() => {
+        if (!visibleColumns) return;
+        setColumnsVisibility(visibleColumns);
+    }, [visibleColumns]);
+
+    useEffect(() => {
+        const columnsWithOrder = getInitialColumns();
+        setColumns(columnsWithOrder);
+    }, [orderedColumns]);
+
+    const handleManageColumns = () => {
+        onMenuClose();
+        if (!columns?.length || !savedColumnData?.length) return;
+        onManageColumns?.(savedColumnData);
+    };
+
+    const handleColumnVisibility = (column: Column<Row, unknown>) => {
+        const col = column.columnDef as TableCol<Row>;
+        col.isVisible = !col.isVisible;
+        setColumnsVisibility({
+            ...columnsVisibility,
+            [column.id]: !columnsVisibility[column.id]
+        });
+    };
+
+    const handleManageColumnsRestore = () => {
+        if (!orderedColumns?.length) return;
+        onManageColumnRestore?.();
+    };
+
+    const onColumnPin = (column: Column<Row, unknown>, groupIndex: number, columnIndex: number) => {
+        const col = column.columnDef as TableCol<Row>;
+        col.isPinned = !col.isPinned;
+        setColumns((prev) => {
+            if (!prev) return null;
+            if (!prev[groupIndex].columns?.length) {
+                return prev;
+            }
+            const currentColumn = prev[groupIndex].columns?.[columnIndex];
+            if (currentColumn) (currentColumn.columnDef as TableCol<Row>).order = col.isPinned ? columnIndex + 1 : 1;
+            prev[groupIndex].columns.sort((a, b) => {
+                const aIsPinned = (a.columnDef as TableCol<Row>).isPinned;
+                const bIsPinned = (b.columnDef as TableCol<Row>).isPinned;
+                const aOrder = (a.columnDef as TableCol<Row>).order;
+                const bOrder = (b.columnDef as TableCol<Row>).order;
+
+                if (aIsPinned && !bIsPinned) {
+                    return -1;
+                }
+                if (!aIsPinned && bIsPinned) {
+                    return 1;
+                }
+                return aOrder - bOrder;
+            });
+            return [...prev];
+        });
+    };
+
+    // const reorderedColumns = (groups: IOrderedColumns[]) =>
+    //     groups.map((group) =>
+    //         group.columns.map((column, index) => {
+    //             column.columnDef.order = index + 1;
+    //             return column;
+    //         })
+    //     );
+
+    const handleDragEnd = (result: DropResult) => {
+        if (!result.destination || !columns?.length) {
+            return;
+        }
+        const sourceID = result.source.droppableId;
+        const sourceIndex = result.source.index;
+        const destinationIndex = result.destination.index;
+
+        if (sourceIndex === destinationIndex) {
+            return;
+        }
+        const currentColumns = columns.find((item) => item.id === sourceID);
+        if (!currentColumns) return;
+
+        const currentGroupIndex = columns.indexOf(currentColumns);
+        const newColumns = currentColumns;
+        const [reorderedColumn] = newColumns.columns.splice(sourceIndex, 1);
+        newColumns.columns.splice(destinationIndex, 0, reorderedColumn);
+
+        const orderedManageColumns = [
+            ...columns.slice(0, currentGroupIndex),
+            newColumns,
+            ...columns.slice(currentGroupIndex + 1)
+        ];
+
+        setSavedColumnData((prev) => {
+            const [reorderedColumns] = orderedManageColumns.map((group) =>
+                group.columns.reduce(
+                    (acc, column, index) => {
+                        const updatedColumn = {
+                            ...column,
+                            columnDef: {
+                                ...(column.columnDef as TableCol<Row>),
+                                order: index + 1
+                            }
+                        };
+                        return {
+                            ...acc,
+                            [updatedColumn.id]: {
+                                order: (updatedColumn.columnDef as TableCol<Row>).order
+                            }
+                        };
+                    },
+                    {} as Record<string, { order: number }>
+                )
+            );
+
+            if (isGrouped) {
+                const currentGroup = prev?.find((item) => item.groupId === sourceID);
+                if (currentGroup && prev?.length) {
+                    const updatedGroup = {
+                        ...currentGroup,
+                        columns: { ...reorderedColumns }
+                    };
+
+                    return prev?.map((item) => (item.groupId === sourceID ? updatedGroup : item));
+                }
+                const reorderedColumnsWithGroup: IManageColumnsData = {
+                    groupId: sourceID,
+                    columns: { ...reorderedColumns }
+                };
+                return [...(prev || []), reorderedColumnsWithGroup];
+            }
+
+            return [{ columns: reorderedColumns }];
+        });
+
+        setColumns(orderedManageColumns);
+    };
+
+    const renderDraggableSection = (dragCols: Column<Row, unknown>[], groupIndex: number) => {
+        return dragCols.map((column, index) => {
+            if (
+                (column.columnDef as TableCol<Row>).type === "Expand" ||
+                (column.columnDef as TableCol<Row>).type === "RowCheckbox"
+            ) {
+                return null;
+            }
+            return (
+                <Draggable key={column.id} draggableId={`${column.parent?.id}_${column.id}`} index={index}>
+                    {(draggableProvided, draggableSnapshot) => (
+                        <div
+                            ref={draggableProvided.innerRef}
+                            {...(draggableProvided.draggableProps as React.HTMLAttributes<HTMLDivElement>)}
+                            className={classNames("dropdownMenu__columns_item", {
+                                "dropdownMenu__columns_item--dragging": draggableSnapshot.isDragging,
+                                "dropdownMenu__columns_item--disabled": (column.columnDef as TableCol<unknown>).disabled
+                            })}
+                            role="tab"
+                            tabIndex={0}
+                        >
+                            <Label
+                                className="dropdownMenu__columns_placeholder"
+                                text={(column.columnDef as TableCol<Row>).header}
+                            >
+                                <Checkbox
+                                    name="item"
+                                    value="item"
+                                    checked={columnsVisibility[column.id]}
+                                    onChange={() => handleColumnVisibility(column)}
+                                />
+                            </Label>
+                            <div className="dropdownMenu__columns_actions">
+                                <Button
+                                    appearance="secondary"
+                                    layout="text"
+                                    size="small"
+                                    Icon={(column.columnDef as TableCol<Row>).isPinned ? PinFilled : Pin}
+                                    onClick={() => onColumnPin(column, groupIndex, index)}
+                                    className="dropdownMenu__columns_icon"
+                                />
+                                <div {...draggableProvided.dragHandleProps}>
+                                    <Button
+                                        appearance="secondary"
+                                        layout="text"
+                                        size="small"
+                                        Icon={ThreeDotsVertical}
+                                        onClick={() => {}}
+                                        className="dropdownMenu__columns_icon"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </Draggable>
+            );
+        });
+    };
+
+    const renderDroppableSection = (cols: IOrderedColumns[]) => {
+        return cols?.map((item, groupIndex) => {
+            return (
+                <Droppable droppableId={item.id} key={item.id}>
+                    {(provided, snapshot) => (
+                        <div
+                            {...provided.droppableProps}
+                            ref={provided.innerRef}
+                            className={classNames("columns-list", {
+                                "columns-list--dragging-over": snapshot.isDraggingOver
+                            })}
+                        >
+                            <span>{item.title}</span>
+
+                            {!!item.columns?.length && renderDraggableSection(item.columns, groupIndex)}
+
+                            {provided.placeholder}
+                        </div>
+                    )}
+                </Droppable>
+            );
+        });
+    };
+
+    if (!columns?.length) return null;
+
+    return (
+        <div className="dropdownMenu">
+            <div className="dropdownMenu__header">
+                <input type="text" placeholder="Search" style={{ width: "100%" }} />
+            </div>
+
+            <Scrollbar>
+                <div className="dropdownMenu__main">
+                    <div className="dropdownMenu__columns">
+                        <div className="dropdownMenu__columns_header">
+                            <p className="dropdownMenu__columns_title ellipsis-text">Active Columns</p>
+                        </div>
+                        <DragDropContext onDragEnd={handleDragEnd}>{renderDroppableSection(columns)}</DragDropContext>
+                    </div>
+                    <Divider />
+                </div>
+            </Scrollbar>
+
+            <div className="dropdownMenu__footer">
+                <Button appearance="secondary" layout="text" size="medium" onClick={() => handleManageColumnsRestore()}>
+                    Restore Defaults
+                </Button>
+                <ButtonGroup size="medium">
+                    <Button appearance="secondary" layout="fill" size="medium" onClick={() => onMenuClose()}>
+                        Cancel
+                    </Button>
+                    <Button
+                        className="dropdownMenu__footer_buttonGroup_save"
+                        appearance="primary"
+                        layout="fill"
+                        size="medium"
+                        onClick={handleManageColumns}
+                    >
+                        Save
+                    </Button>
+                </ButtonGroup>
+            </div>
+        </div>
+    );
+};
+
+export { ManageColumns as default };
