@@ -34,7 +34,8 @@ interface ICarouselProps {
      */
     withSlideArrows?: boolean;
     /**
-     * Enables the display of indicators <br/>
+     * Enables the display of indicators. <br/>
+     * Note: On mobile devices, indicators are hidden regardless of this prop value.
      */
     withIndicators?: boolean;
     /**
