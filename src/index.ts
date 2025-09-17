@@ -50,6 +50,7 @@ export { default as Notification, INotificationProps } from "./components/molecu
 export { default as Modal, IModalProps } from "./components/molecules/Modal";
 export { default as Drawer, IDrawerProps } from "./components/molecules/Drawer";
 export { default as Empty, IEmptyProps } from "./components/molecules/Empty";
+export { Carousel, CarouselItem, ICarouselProps, ICarouselItemProps } from "./components/molecules/Carousel";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";

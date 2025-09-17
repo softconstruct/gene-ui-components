@@ -72,6 +72,10 @@ interface IButtonProps {
      */
     className?: string;
     /**
+     * An ARIA label for a button provides a short, descriptive text label for screen readers and other assistive technologies to announce when the button has no visible text or the visible text isn't clear enough on its own.
+     */
+    ariaLabel?: string;
+    /**
      * The button type attribute for HTML form behavior. <br>
      * Possible values: `button | submit | reset` <br>
      * Default: `button`
@@ -114,6 +118,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             className,
             iconPosition,
             loading,
+            ariaLabel,
             type = "button",
             onBlur,
             onFocus
@@ -148,6 +153,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                         button_loading: loading
                     }
                 )}
+                aria-label={ariaLabel}
             >
                 {loading && (
                     <Loader
