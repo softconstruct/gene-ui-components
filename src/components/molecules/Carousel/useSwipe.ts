@@ -33,9 +33,6 @@ export const useSwipe = <T extends HTMLElement>({
         if (!element) return undefined;
 
         const onStart = (event: Event) => {
-            if ("touches" in event) {
-                event.preventDefault();
-            }
             touchStartPosition.current = getEventPositions(event);
         };
 
@@ -76,9 +73,9 @@ export const useSwipe = <T extends HTMLElement>({
         element.addEventListener("mousedown", onStart);
         element.addEventListener("mouseup", onEnd);
         element.addEventListener("mouseleave", onEnd);
-        element.addEventListener("touchstart", onStart);
-        element.addEventListener("touchend", onEnd);
-        element.addEventListener("touchcancel", onCancel);
+        element.addEventListener("touchstart", onStart, { passive: true });
+        element.addEventListener("touchend", onEnd, { passive: true });
+        element.addEventListener("touchcancel", onCancel, { passive: true });
 
         return () => {
             element.removeEventListener("mousedown", onStart);

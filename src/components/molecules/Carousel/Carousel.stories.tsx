@@ -48,7 +48,7 @@ const textContent = texts.map(({ title, description }) => (
                 width: "100%",
                 height: "100%",
                 padding: "0 var(--guit-ref-spacing-2xsmall)",
-                backgroundColor: "var(--guit-sem-color-background-accent-magenta-1)",
+                backgroundColor: "#F4E1EC",
                 border: "var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-accent-red)"
             }}
         >

@@ -1,5 +1,6 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
+import { act } from "react-dom/test-utils";
 
 import useDeviceInfo from "@hooks/useDeviceInfo";
 
@@ -32,7 +33,9 @@ const simulateTouchEvent = (wrapper: ReactWrapper, eventType: string, clientX: n
         targetTouches: [touch]
     });
 
-    wrapper.getDOMNode().dispatchEvent(event);
+    act(() => {
+        wrapper.getDOMNode().dispatchEvent(event);
+    });
 };
 
 const simulateMouseEvent = (wrapper: ReactWrapper, eventType: string, pageX: number, pageY: number) => {
@@ -56,7 +59,9 @@ const simulateMouseEvent = (wrapper: ReactWrapper, eventType: string, pageX: num
         configurable: true
     });
 
-    wrapper.getDOMNode().dispatchEvent(event);
+    act(() => {
+        wrapper.getDOMNode().dispatchEvent(event);
+    });
 };
 
 const content = Array.from({ length: 10 }, (_, index) => (
