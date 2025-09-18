@@ -1,0 +1,24 @@
+.git
+.github
+
+node_modules
+
+# Ignore artifacts:
+dist
+stats
+storybook-static
+
+coverage
+docs
+
+**/.prettierignore
+
+**/.eslintignore
+
+
+**/*.svg
+
+**/*.mdx
+**/*.md
+
+**/*.ico

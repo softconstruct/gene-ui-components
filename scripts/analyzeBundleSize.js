@@ -1,15 +1,15 @@
-import inquirer from 'inquirer';
-import chalk from 'chalk';
-import figlet from 'figlet';
-import process from 'process';
-import ora from 'ora';
+import inquirer from "inquirer";
+import chalk from "chalk";
+import figlet from "figlet";
+import process from "process";
+import ora from "ora";
 
-import { execCommand } from './utils';
+import { execCommand } from "./utils";
 
 const spinner = ora({
-    color: 'yellow',
-    text: 'Analyzing bundle size... \n\n',
-    fail: 'Something went wrong please see errors bellow!'
+    color: "yellow",
+    text: "Analyzing bundle size... \n\n",
+    fail: "Something went wrong please see errors bellow!"
 });
 
 const messages = {
@@ -19,8 +19,8 @@ const messages = {
 const init = () => {
     console.log(
         chalk.yellow(
-            figlet.textSync('Analyze bundle size', {
-                font: 'small'
+            figlet.textSync("Analyze bundle size", {
+                font: "small"
             })
         )
     );
@@ -29,11 +29,11 @@ const init = () => {
 const askQuestions = () => {
     const questions = [
         {
-            name: 'visualizationType',
-            type: 'list',
-            prefix: '[?]',
-            message: 'Please choose the bundle size visualization type: ',
-            choices: ['treemap', 'network', 'sunburst']
+            name: "visualizationType",
+            type: "list",
+            prefix: "[?]",
+            message: "Please choose the bundle size visualization type: ",
+            choices: ["treemap", "network", "sunburst"]
         }
     ];
 
@@ -42,8 +42,8 @@ const askQuestions = () => {
 
 const analyzeBundleSize = async (visualizationType) => {
     try {
-        await execCommand('rm -rf stats');
-        await execCommand('npm run build');
+        await execCommand("rm -rf stats");
+        await execCommand("npm run build");
         await execCommand(`open-cli stats/${visualizationType}.html`);
     } catch (error) {
         return {
@@ -71,7 +71,7 @@ const main = async () => {
     }
 };
 
-process.on('exit', (code) => {
+process.on("exit", (code) => {
     if (code !== 0) {
         spinner.fail(messages.ERROR(`process exited with ${code} status code`));
     }

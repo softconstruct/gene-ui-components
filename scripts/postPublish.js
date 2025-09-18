@@ -1,10 +1,10 @@
-import { execCommand } from './utils';
-import pgk from '../package.json';
+import { execCommand } from "./utils";
+import pgk from "../package.json";
 
-const filesToCommit = 'package.json package-lock.json CHANGELOG.md';
+const filesToCommit = "package.json package-lock.json CHANGELOG.md";
 const commitMessage = `Bump up library version to ${pgk.version}`;
 const tagName = `v${pgk.version}`;
-const defaultBranch = 'main';
+const defaultBranch = "main";
 
 // First, remove the current milestone tag as the semantic-release
 // plugin does not have an API to disable the push of the generated tag

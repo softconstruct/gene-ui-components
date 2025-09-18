@@ -1,1 +1,1 @@
-export { default as default } from './useEllipsisDetection';
+export { default } from "./useEllipsisDetection";

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.4](https://github.com/softconstruct/gene-ui-components/compare/v2.16.3...v2.16.4) (2024-10-29)
+
+
+### Bug Fixes
+
+* **Tooltip:** change render method ([#205](https://github.com/softconstruct/gene-ui-components/issues/205)) ([b79ee3b](https://github.com/softconstruct/gene-ui-components/commit/b79ee3b58a154e22d17a04ce07128c8a7673b02c))
+
 ## [2.16.3](https://github.com/softconstruct/gene-ui-components/compare/v2.16.2...v2.16.3) (2024-10-16)
 
 

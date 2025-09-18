@@ -1,51 +1,46 @@
-const path = require('path');
+const path = require("path");
 
 module.exports = {
     stories: [
-        './../stories/introduction.mdx',
-        './../stories/changelog.mdx',
-        './../stories/gettingStarted.mdx',
-        './../src/lib/**/**/*.stories.tsx',
-        './../stories/**/**/*.stories.jsx',
-        './../stories/**/*.chromatic.stories.tsx',
-        './../src/hooks/**/*.mdx'
+        "./../stories/introduction.mdx",
+        "./../stories/changelog.mdx",
+        "./../stories/gettingStarted.mdx",
+        "./../stories/provider.mdx",
+        "./../src/components/**/**/*.stories.tsx",
+        "./../src/hooks/**/*.mdx"
     ],
     addons: [
-        '@storybook/preset-scss',
-        'storybook-dark-mode',
+        "@storybook/preset-scss",
+        "storybook-dark-mode",
         {
-            name: '@storybook/addon-essentials',
+            name: "@storybook/addon-essentials",
             options: {
                 backgrounds: true
             }
         },
-        '@storybook/addon-a11y',
-        '@storybook/addon-jest'
+        "@storybook/addon-a11y",
+        "@storybook/addon-jest",
+        "@storybook/addon-webpack5-compiler-babel"
     ],
-    staticDirs: ['./public'],
+    staticDirs: ["./public"],
     framework: {
-        name: '@storybook/react-webpack5',
+        name: "@storybook/react-webpack5",
         options: {
             fastRefresh: true
         }
     },
     core: {
-        builder: 'webpack5'
+        builder: "webpack5"
     },
     typescript: {
-        reactDocgen: 'react-docgen-typescript-plugin'
+        reactDocgen: "react-docgen-typescript-plugin"
     },
     webpackFinal: async (config, options) => {
         const aliasPaths = {
-            src: '../src/',
-            utils: '../src/utils',
-            lib: '../src/lib/',
-            wrappers: '../src/wrappers/index.js',
-            configs: '../src/configs.js',
-            hooks: '../src/hooks/index.ts',
-            indexof: '../src/utils/indexof.js',
-            stories: '../stories/',
-            components: '../src/index.ts'
+            src: "../src/",
+            hooks: "../src/hooks/index.ts",
+            components: "../src/index.ts",
+            stories: "../stories/"
         };
 
         for (let aliasPath in aliasPaths) {
@@ -54,12 +49,27 @@ module.exports = {
 
         // Hardcode to specify custom babel config file path for storybook
         // as the last one not supporting the babel custom config file path
-        const babelLoader = config.module.rules[3].use[0];
-        babelLoader.options = {
-            ...babelLoader.options,
-            babelrc: true,
-            configFile: './.storybook/.babelrc'
-        };
+        const babelLoaderRule = config.module.rules.find((rule) => {
+            // Example: if the rule has a 'use' that includes 'babel-loader'
+            return (
+                rule.use &&
+                rule.use.some((useEntry) => {
+                    return typeof useEntry === "object" && useEntry.loader && useEntry.loader.includes("babel-loader");
+                })
+            );
+        });
+
+        if (babelLoaderRule) {
+            // If you really need to override Babel options, do so carefully
+            // Example if the loader is the first item in "use" (common case)
+            const babelLoader = babelLoaderRule.use[0];
+            babelLoader.options = {
+                ...babelLoader.options,
+                babelrc: true,
+                configFile: "./.storybook/.babelrc"
+            };
+        }
+
         options.cache.set = () => Promise.resolve();
 
         return config;
@@ -67,7 +77,5 @@ module.exports = {
     features: {
         previewMdx2: true
     },
-    docs: {
-        autodocs: true
-    }
+    docs: {}
 };

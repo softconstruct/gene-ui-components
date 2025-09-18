@@ -1,17 +1,17 @@
-import inquirer from 'inquirer';
-import chalk from 'chalk';
-import figlet from 'figlet';
-import process from 'process';
-import ora from 'ora';
+import inquirer from "inquirer";
+import chalk from "chalk";
+import figlet from "figlet";
+import process from "process";
+import ora from "ora";
 
-import { execCommand, isFileExists } from './utils';
+import { execCommand, isFileExists } from "./utils";
 
-const reportFilePath = 'coverage/lcov-report/index.html';
+const reportFilePath = "coverage/lcov-report/index.html";
 
 const spinner = ora({
-    color: 'yellow',
-    text: 'Opening the existing coverage report... \n\n',
-    fail: 'Something went wrong please see errors bellow!'
+    color: "yellow",
+    text: "Opening the existing coverage report... \n\n",
+    fail: "Something went wrong please see errors bellow!"
 });
 
 const messages = {
@@ -21,8 +21,8 @@ const messages = {
 const init = () => {
     console.log(
         chalk.yellow(
-            figlet.textSync('Preparing tests report from JEST', {
-                font: 'small'
+            figlet.textSync("Preparing tests report from JEST", {
+                font: "small"
             })
         )
     );
@@ -31,12 +31,12 @@ const init = () => {
 const askQuestions = () => {
     const questions = [
         {
-            name: 'isGenerateNewReport',
-            type: 'list',
-            prefix: '[?]',
-            message: 'Do you want to generate a new test coverage report or see what already exists: ',
-            choices: ['Yes generate new one', 'No see already exists'],
-            filter: (value) => value.startsWith('Yes')
+            name: "isGenerateNewReport",
+            type: "list",
+            prefix: "[?]",
+            message: "Do you want to generate a new test coverage report or see what already exists: ",
+            choices: ["Yes generate new one", "No see already exists"],
+            filter: (value) => value.startsWith("Yes")
         }
     ];
 
@@ -46,8 +46,8 @@ const askQuestions = () => {
 const generateTestsCoverageReport = async (isGenerateNewReport) => {
     try {
         if (isGenerateNewReport) {
-            await execCommand('rm -rf coverage');
-            await execCommand('npm run test');
+            await execCommand("rm -rf coverage");
+            await execCommand("npm run test");
         }
 
         await execCommand(`open-cli ${reportFilePath}`);
@@ -69,7 +69,7 @@ const main = async () => {
     const { isGenerateNewReport } = isAskQuestions ? await askQuestions() : { isGenerateNewReport: true };
 
     if (isGenerateNewReport) {
-        spinner.text = 'Collecting test coverage... \n\n';
+        spinner.text = "Collecting test coverage... \n\n";
     }
 
     spinner.start();
@@ -84,7 +84,7 @@ const main = async () => {
     }
 };
 
-process.on('exit', (code) => {
+process.on("exit", (code) => {
     if (code !== 0) {
         spinner.fail(messages.ERROR(`process exited with ${code} status code`));
     }

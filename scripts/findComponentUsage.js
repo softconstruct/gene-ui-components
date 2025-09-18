@@ -1,18 +1,18 @@
-import { readdir, readFile } from 'fs/promises';
-import path from 'path';
-import inquirer from 'inquirer';
-import chalk from 'chalk';
-import figlet from 'figlet';
-import process from 'process';
-import ora from 'ora';
-import treeify from 'treeify';
+import { readdir, readFile } from "fs/promises";
+import path from "path";
+import inquirer from "inquirer";
+import chalk from "chalk";
+import figlet from "figlet";
+import process from "process";
+import ora from "ora";
+import treeify from "treeify";
 
-const basePath = '../src/lib/';
+const basePath = "../src/lib/";
 
 const spinner = ora({
-    color: 'yellow',
-    text: 'Searching the component usage... \n\n',
-    fail: 'Something went wrong please see errors bellow!'
+    color: "yellow",
+    text: "Searching the component usage... \n\n",
+    fail: "Something went wrong please see errors bellow!"
 });
 
 const messages = {
@@ -24,8 +24,8 @@ const messages = {
 const init = () => {
     console.log(
         chalk.yellow(
-            figlet.textSync('Find component usage', {
-                font: 'small'
+            figlet.textSync("Find component usage", {
+                font: "small"
             })
         )
     );
@@ -34,10 +34,10 @@ const init = () => {
 const askQuestions = (componentsList = []) => {
     const questions = [
         {
-            name: 'name',
-            type: 'list',
-            prefix: '[?]',
-            message: 'Please choose the component: ',
+            name: "name",
+            type: "list",
+            prefix: "[?]",
+            message: "Please choose the component: ",
             choices: componentsList
         }
     ];
@@ -45,7 +45,7 @@ const askQuestions = (componentsList = []) => {
     return inquirer.prompt(questions);
 };
 
-const formatComponentsNames = (list = [], level = 'atoms') =>
+const formatComponentsNames = (list = [], level = "atoms") =>
     list
         .filter((dirent) => dirent.isDirectory())
         .map(({ name }) => ({
@@ -58,9 +58,9 @@ const getComponentsList = async (withTree = false) => {
     const molecules = await readdir(path.join(__dirname, `${basePath}molecules`), { withFileTypes: true });
     const organisms = await readdir(path.join(__dirname, `${basePath}organisms`), { withFileTypes: true });
 
-    const formattedAtoms = [...formatComponentsNames(atoms, 'atoms')];
-    const formattedMolecules = [...formatComponentsNames(molecules, 'molecules')];
-    const formattedOrganisms = [...formatComponentsNames(organisms, 'organisms')];
+    const formattedAtoms = [...formatComponentsNames(atoms, "atoms")];
+    const formattedMolecules = [...formatComponentsNames(molecules, "molecules")];
+    const formattedOrganisms = [...formatComponentsNames(organisms, "organisms")];
 
     if (withTree) {
         return {
@@ -84,7 +84,7 @@ const findComponentUsage = async (usedComponentName) => {
         for (let i = 0; i < componentsListLength; i++) {
             const { name, level } = componentsList[i];
 
-            const fileContent = await readFile(path.join(__dirname, `${basePath}${level}/${name}/index.js`), 'utf8');
+            const fileContent = await readFile(path.join(__dirname, `${basePath}${level}/${name}/index.js`), "utf8");
 
             if (fileContent.search(`<${usedComponentName}`) !== -1) {
                 if (level in matchedComponents) {
@@ -124,12 +124,12 @@ const main = async () => {
         spinner.fail(messages.ERROR(usageSearchResult?.error));
         process.exit(1);
     } else {
-        console.log(chalk.yellow(treeify.asTree(usageSearchResult.matchedComponents, false)), '\n\n');
+        console.log(chalk.yellow(treeify.asTree(usageSearchResult.matchedComponents, false)), "\n\n");
         spinner.succeed(messages.SUCCESS(answers.name));
     }
 };
 
-process.on('exit', (code) => {
+process.on("exit", (code) => {
     if (code !== 0) {
         spinner.fail(messages.ERROR(`process exited with ${code} status code`));
     }
