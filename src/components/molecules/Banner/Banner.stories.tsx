@@ -1,4 +1,7 @@
+import React, { useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+
+import Button from "@components/atoms/Button";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -12,7 +15,7 @@ const meta: Meta<typeof Banner> = {
         text: args({ control: "text", ...propCategory.content }),
         type: args({ control: "select", ...propCategory.appearance }),
         visible: args({ control: "boolean", ...propCategory.functionality }),
-        onClose: args({ control: false, ...propCategory.action })
+        onClose: args({ control: "false", ...propCategory.action })
     },
     args: {
         text: "Description text goes here.",
@@ -24,4 +27,23 @@ export default meta;
 
 type Story = StoryObj<IBannerProps>;
 
-export const Default: Story = {};
+const BannerStory = (props: IBannerProps) => {
+    const [open, setOpen] = useState(true);
+
+    const onCloseHandler = () => setOpen(false);
+
+    return (
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
+            <Banner {...props} open={open} onClose={onCloseHandler} />
+            {!open && (
+                <Button onClick={() => setOpen(true)} appearance="primary">
+                    Show Banner
+                </Button>
+            )}
+        </div>
+    );
+};
+
+export const Default: Story = {
+    render: (props) => <BannerStory {...props} />
+};

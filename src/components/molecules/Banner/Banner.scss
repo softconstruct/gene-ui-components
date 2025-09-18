@@ -1,11 +1,10 @@
-// For banner need to change @media queries!!!!
-
 .banner {
     $this: &;
 
     display: flex;
     flex-wrap: wrap;
     align-items: flex-start;
+    width: 100%;
     padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-large);
 
     &_device {

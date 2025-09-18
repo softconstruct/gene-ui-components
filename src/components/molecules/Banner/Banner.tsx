@@ -6,9 +6,6 @@ import Button from "@components/atoms/Button";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
-// Hooks
-import { useStateControlled } from "@hooks/index";
-
 // Styles
 import "./Banner.scss";
 
@@ -18,16 +15,16 @@ interface IBannerProps {
      */
     text: string;
     /**
+     * Controls the visibility of the banner. Set to `true` to show and `false` to hide.
+     */
+    open?: boolean;
+    /**
      * Type of banner <br/>
      * Possible values: `informational | warning | error`
      */
     type?: "informational" | "warning" | "error";
     /**
-     * Determines is component works with their internal state or the state should be controlled from parent component
-     */
-    visible?: boolean;
-    /**
-     * Callback which calls when close button is pressed, in case of controlled mode the hide function should be controlled from parent using this function
+     * Callback function triggered when the close (X) button is clicked.
      */
     onClose?: () => void;
 }
@@ -41,17 +38,15 @@ const typeIcons: Record<Exclude<IBannerProps["type"], undefined>, React.FC<IconP
 /**
  * Banner component is a prominent, horizontally-oriented message box designed to capture the user's attention and convey important information across the top of a page. It is used for announcements, alerts, promotions, or updates that need to be immediately visible to users.
  */
-const Banner: FC<IBannerProps> = ({ type = "informational", text, visible, onClose }) => {
-    const [isOpen, setIsOpen] = useStateControlled(visible, true);
+const Banner: FC<IBannerProps> = ({ type = "informational", text, onClose, open }) => {
     const {
         breakpoint: { currentBreakpoint }
     } = useContext(GeneUIDesignSystemContext);
     const close = () => {
-        setIsOpen(false);
         onClose?.();
     };
 
-    if (!isOpen) {
+    if (!open) {
         return null;
     }
 
