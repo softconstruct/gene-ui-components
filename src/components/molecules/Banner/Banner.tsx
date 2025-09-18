@@ -1,9 +1,10 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 
 import { Error, IconProps, Info, Warning, X } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import ButtonGroup from "@components/molecules/ButtonGroup";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Hooks
 import { useStateControlled } from "@hooks/index";
@@ -42,7 +43,9 @@ const typeIcons: Record<Exclude<IBannerProps["type"], undefined>, React.FC<IconP
  */
 const Banner: FC<IBannerProps> = ({ type = "informational", text, visible, onClose }) => {
     const [isOpen, setIsOpen] = useStateControlled(visible, true);
-
+    const {
+        breakpoint: { currentBreakpoint }
+    } = useContext(GeneUIDesignSystemContext);
     const close = () => {
         setIsOpen(false);
         onClose?.();
@@ -52,11 +55,10 @@ const Banner: FC<IBannerProps> = ({ type = "informational", text, visible, onClo
         return null;
     }
 
-    const Icon = typeIcons[type];
+    const Icon: FC<IconProps> = typeIcons[type];
 
     return (
-        // For banner add banner_desktop, banner_tablet or banner_mobile
-        <div className={`banner banner_state_${type}`}>
+        <div className={`banner banner_state_${type} banner_device_${currentBreakpoint}`}>
             <div className="banner__content">
                 <Icon className="banner__icon" />
                 <p className="banner__text">{text}</p>

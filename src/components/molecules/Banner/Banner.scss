@@ -8,13 +8,15 @@
     align-items: flex-start;
     padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-large);
 
-    &_desktop,
-    &_tablet {
-        gap: var(--guit-ref-spacing-xsmall);
-    }
+    &_device {
+        &_desktop,
+        &_tablet {
+            gap: var(--guit-ref-spacing-xsmall);
+        }
 
-    &_mobile {
-        gap: var(--guit-sem-spacing-medium);
+        &_mobile {
+            gap: var(--guit-sem-spacing-medium);
+        }
     }
 
     &_state {
