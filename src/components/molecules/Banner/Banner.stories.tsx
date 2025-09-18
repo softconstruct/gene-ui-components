@@ -1,5 +1,4 @@
-import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -18,13 +17,11 @@ const meta: Meta<typeof Banner> = {
     args: {
         text: "Description text goes here.",
         type: "informational"
-    } as IBannerProps
+    }
 };
 
 export default meta;
 
-const Template: FC<IBannerProps> = (props) => <Banner {...props} />;
+type Story = StoryObj<IBannerProps>;
 
-export const Default = Template.bind({});
-
-Default.args = {} as IBannerProps;
+export const Default: Story = {};

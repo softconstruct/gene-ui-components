@@ -1,8 +1,9 @@
 import React, { FC } from "react";
 
-import { Error, IconProps, Info, Warning } from "@geneui/icons";
+import { Error, IconProps, Info, Warning, X } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
+import ButtonGroup from "@components/molecules/ButtonGroup";
 
 // Hooks
 import { useStateControlled } from "@hooks/index";
@@ -59,14 +60,16 @@ const Banner: FC<IBannerProps> = ({ type = "informational", text, visible, onClo
             <div className="banner__content">
                 <Icon className="banner__icon" />
                 <p className="banner__text">{text}</p>
-                <Button onClick={close} className="banner__button" />
             </div>
-            {/* // For banner__actions add banner_mobile */}
-            {/* <div className="banner__actions"> */}
-            {/*    <button>Action 1</button> */}
-            {/*    <button>Action 2</button> */}
-            {/* </div> */}
-            {/*  Here should be close button which has banner__button */}
+            <ButtonGroup className="banner__actions">
+                <Button layout="text" size="small" appearance="secondary" className="banner__button">
+                    action 1
+                </Button>
+                <Button layout="text" size="small" appearance="secondary" className="banner__button">
+                    action 2
+                </Button>
+            </ButtonGroup>
+            <Button layout="text" size="small" onClick={close} className="banner__button" Icon={X} />
         </div>
     );
 };
