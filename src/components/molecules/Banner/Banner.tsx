@@ -1,8 +1,9 @@
-import React, { FC, useContext } from "react";
+import React, { FC, useCallback, useContext, useMemo } from "react";
+import classNames from "classnames";
 
 import { Error, IconProps, Info, Warning, X } from "@geneui/icons";
 
-// components
+// Components
 import Button, { IButtonProps } from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
@@ -18,20 +19,22 @@ interface IBannerProps {
      */
     className?: string;
     /**
-     * Text of the banner
+     * The main text content displayed in the banner.
      */
     text: string;
     /**
      * Controls the visibility of the banner. Set to `true` to show and `false` to hide.
+     * @default true
      */
     open?: boolean;
     /**
-     *  Defines the semantic meaning and visual style (color, icon) of the notification.
-     *  Possible values: `informative | warning | error`
+     * Defines the semantic meaning and visual style (color, icon) of the notification.
+     * @default "informative"
      */
     status?: "informative" | "warning" | "error";
     /**
      * Callback function triggered when the close (X) button is clicked.
+     * **Note: The close button will not be rendered if this prop is not provided.**
      */
     onClose?: () => void;
     /**
@@ -94,28 +97,49 @@ const Banner: FC<IBannerProps> = ({
     onSecondaryActionClick
 }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
-    const currentBreakpoint = breakpoint?.currentBreakpoint || "desktop";
-    const onCloseHandler = () => {
+
+    const currentBreakpoint = useMemo(
+        () => breakpoint?.currentBreakpoint || "desktop",
+        [breakpoint?.currentBreakpoint]
+    );
+
+    const onCloseHandler = useCallback(() => {
         onClose?.();
-    };
+    }, [onClose]);
+
+    const config = useMemo(() => {
+        if (!bannerConfig[status]) {
+            return bannerConfig.informative;
+        }
+        return bannerConfig[status];
+    }, [status]);
+
+    const Icon: FC<IconProps> = config.icon;
+
+    const bannerClassName = useMemo(
+        () => classNames("banner", `banner_state_${status}`, className),
+        [status, className]
+    );
+
+    const actionsClassName = useMemo(
+        () => classNames("banner__actions", `banner__actions_${currentBreakpoint}`),
+        [currentBreakpoint]
+    );
 
     if (!open) {
         return null;
     }
 
-    const config = bannerConfig[status];
-    const Icon: FC<IconProps> = config.icon;
-
     return (
-        <div className={`banner banner_state_${status} ${className || ""}`}>
+        <div className={bannerClassName} role="alert" aria-live="polite" aria-atomic="true">
             <div className="banner__content">
-                <Icon className="banner__icon" size={20} />
+                <Icon className="banner__icon" size={20} aria-hidden="true" />
                 <Text as="p" variant="bodyMediumMedium" className="banner__text">
                     {text}
                 </Text>
             </div>
             {primaryActionText || secondaryActionText ? (
-                <ButtonGroup size="small" className={`banner__actions banner__actions_${currentBreakpoint}`}>
+                <ButtonGroup size="small" className={actionsClassName}>
                     {primaryActionText && (
                         <Button
                             layout="text"
