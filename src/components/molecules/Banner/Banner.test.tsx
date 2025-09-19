@@ -9,7 +9,7 @@ const text = "Title";
 describe("Banner ", () => {
     let setup: ReactWrapper<IBannerProps>;
     beforeEach(() => {
-        setup = mount(<Banner text={text} type="informational" />);
+        setup = mount(<Banner text={text} type="informational" open />);
     });
 
     it("renders without crashing", () => {
@@ -34,8 +34,8 @@ describe("Banner ", () => {
         expect(wrapper.find(".banner_state_error").exists()).toBeTruthy();
     });
 
-    it("should not be visible", () => {
-        const wrapper = setup.setProps({ visible: false });
+    it("should not be open", () => {
+        const wrapper = setup.setProps({ open: false });
         wrapper.update();
         expect(wrapper.find(".banner").exists()).toBeFalsy();
     });

@@ -39,9 +39,8 @@ const typeIcons: Record<Exclude<IBannerProps["type"], undefined>, React.FC<IconP
  * Banner component is a prominent, horizontally-oriented message box designed to capture the user's attention and convey important information across the top of a page. It is used for announcements, alerts, promotions, or updates that need to be immediately visible to users.
  */
 const Banner: FC<IBannerProps> = ({ type = "informational", text, onClose, open }) => {
-    const {
-        breakpoint: { currentBreakpoint }
-    } = useContext(GeneUIDesignSystemContext);
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
+    const currentBreakpoint = breakpoint?.currentBreakpoint || "desktop";
     const close = () => {
         onClose?.();
     };
