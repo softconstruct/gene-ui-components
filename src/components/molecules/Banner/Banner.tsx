@@ -29,6 +29,26 @@ interface IBannerProps {
      * Callback function triggered when the close (X) button is clicked.
      */
     onClose?: () => void;
+    /**
+     * The text to display on the primary action button.
+     * **Note: The primary action button will not be rendered if this prop is not provided.**
+     */
+    primaryActionText?: string;
+    /**
+     * The text to display on the secondary action button.
+     * **Note: The secondary action button will not be rendered if this prop is not provided.**
+     */
+    secondaryActionText?: string;
+    /**
+     * Callback function for the primary action button.
+     * This is only relevant if `primaryActionText` is also provided.
+     */
+    onPrimaryActionClick?: () => void;
+    /**
+     * Callback function for the secondary action button.
+     * This is only relevant if `secondaryActionText` is also provided.
+     */
+    onSecondaryActionClick?: () => void;
 }
 
 type BannerStatus = Exclude<IBannerProps["status"], undefined>;
@@ -57,7 +77,16 @@ const bannerConfig: Record<
 /**
  * Banner component is a prominent, horizontally-oriented message box designed to capture the user's attention and convey important information across the top of a page. It is used for announcements, alerts, promotions, or updates that need to be immediately visible to users.
  */
-const Banner: FC<IBannerProps> = ({ status = "informative", text, onClose, open }) => {
+const Banner: FC<IBannerProps> = ({
+    status = "informative",
+    text,
+    onClose,
+    open,
+    primaryActionText,
+    secondaryActionText,
+    onPrimaryActionClick,
+    onSecondaryActionClick
+}) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const currentBreakpoint = breakpoint?.currentBreakpoint || "desktop";
     const close = () => {
@@ -79,14 +108,32 @@ const Banner: FC<IBannerProps> = ({ status = "informative", text, onClose, open 
                     {text}
                 </Text>
             </div>
-            <ButtonGroup size="small" className={`banner__actions banner__actions_${currentBreakpoint}`}>
-                <Button layout="text" size="small" appearance={config.buttonAppearance} className="banner__button">
-                    action 1
-                </Button>
-                <Button layout="text" size="small" appearance={config.buttonAppearance} className="banner__button">
-                    action 2
-                </Button>
-            </ButtonGroup>
+            {primaryActionText || secondaryActionText ? (
+                <ButtonGroup size="small" className={`banner__actions banner__actions_${currentBreakpoint}`}>
+                    {primaryActionText && (
+                        <Button
+                            layout="text"
+                            size="small"
+                            appearance={config.buttonAppearance}
+                            className="banner__button"
+                            onClick={onPrimaryActionClick}
+                        >
+                            {primaryActionText}
+                        </Button>
+                    )}
+                    {secondaryActionText && (
+                        <Button
+                            layout="text"
+                            size="small"
+                            appearance={config.buttonAppearance}
+                            className="banner__button"
+                            onClick={onSecondaryActionClick}
+                        >
+                            {secondaryActionText}
+                        </Button>
+                    )}
+                </ButtonGroup>
+            ) : null}
             <Button
                 layout="text"
                 size="small"

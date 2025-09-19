@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+// Components
 import Button from "@components/atoms/Button";
+import Banner, { IBannerProps } from "@components/molecules/Banner";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-// Components
-import Banner, { IBannerProps } from "./index";
 
 const meta: Meta<typeof Banner> = {
     title: "Molecules/Banner",
@@ -14,7 +14,12 @@ const meta: Meta<typeof Banner> = {
     argTypes: {
         text: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.appearance }),
-        onClose: args({ control: "false", ...propCategory.action })
+        onClose: args({ control: "false", ...propCategory.action }),
+        primaryActionText: args({ control: "text", ...propCategory.content }),
+        secondaryActionText: args({ control: "text", ...propCategory.content }),
+        onPrimaryActionClick: args({ control: "false", ...propCategory.action }),
+        onSecondaryActionClick: args({ control: "false", ...propCategory.action }),
+        open: args({ control: "boolean", ...propCategory.states })
     },
     args: {
         text: "Description text goes here.",
@@ -45,4 +50,9 @@ const BannerStory = (props: IBannerProps) => {
 
 export const Default: Story = {
     render: (props) => <BannerStory {...props} />
+};
+
+export const WithAction: Story = {
+    render: (props) => <BannerStory {...props} />,
+    args: { primaryActionText: "Primary Action", secondaryActionText: "Secondary Action" }
 };
