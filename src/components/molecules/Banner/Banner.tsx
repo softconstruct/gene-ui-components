@@ -13,6 +13,11 @@ import "./Banner.scss";
 
 interface IBannerProps {
     /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
+    /**
      * Text of the banner
      */
     text: string;
@@ -78,6 +83,7 @@ const bannerConfig: Record<
  * Banner component is a prominent, horizontally-oriented message box designed to capture the user's attention and convey important information across the top of a page. It is used for announcements, alerts, promotions, or updates that need to be immediately visible to users.
  */
 const Banner: FC<IBannerProps> = ({
+    className,
     status = "informative",
     text,
     onClose,
@@ -89,7 +95,7 @@ const Banner: FC<IBannerProps> = ({
 }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const currentBreakpoint = breakpoint?.currentBreakpoint || "desktop";
-    const close = () => {
+    const onCloseHandler = () => {
         onClose?.();
     };
 
@@ -101,7 +107,7 @@ const Banner: FC<IBannerProps> = ({
     const Icon: FC<IconProps> = config.icon;
 
     return (
-        <div className={`banner banner_state_${status}`}>
+        <div className={`banner banner_state_${status} ${className || ""}`}>
             <div className="banner__content">
                 <Icon className="banner__icon" size={20} />
                 <Text as="p" variant="bodyMediumMedium" className="banner__text">
@@ -134,14 +140,17 @@ const Banner: FC<IBannerProps> = ({
                     )}
                 </ButtonGroup>
             ) : null}
-            <Button
-                layout="text"
-                size="small"
-                appearance={config.buttonAppearance}
-                className="banner__button"
-                Icon={X}
-                onClick={close}
-            />
+            {onClose && (
+                <Button
+                    appearance={config.buttonAppearance}
+                    layout="text"
+                    size="small"
+                    className="banner__close"
+                    onClick={onCloseHandler}
+                    Icon={X}
+                    ariaLabel="Close"
+                />
+            )}
         </div>
     );
 };

@@ -12,6 +12,7 @@ const meta: Meta<typeof Banner> = {
     title: "Molecules/Banner",
     component: Banner,
     argTypes: {
+        className: args({ control: "false", ...propCategory.appearance }),
         text: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.appearance }),
         onClose: args({ control: "false", ...propCategory.action }),
@@ -38,7 +39,7 @@ const BannerStory = (props: IBannerProps) => {
 
     return (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
-            <Banner {...props} open={open} onClose={onCloseHandler} />
+            <Banner onClose={onCloseHandler} {...props} open={open} />
             {!open && (
                 <Button onClick={() => setOpen(true)} appearance="primary">
                     Show Banner
