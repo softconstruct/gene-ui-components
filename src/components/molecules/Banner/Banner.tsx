@@ -3,6 +3,7 @@ import React, { FC, useContext } from "react";
 import { Error, IconProps, Info, Warning, X } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
+import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
@@ -52,20 +53,29 @@ const Banner: FC<IBannerProps> = ({ type = "informational", text, onClose, open 
     const Icon: FC<IconProps> = typeIcons[type];
 
     return (
-        <div className={`banner banner_state_${type} banner_device_${currentBreakpoint}`}>
+        <div className={`banner banner_state_${type}`}>
             <div className="banner__content">
-                <Icon className="banner__icon" />
-                <p className="banner__text">{text}</p>
+                <Icon className="banner__icon" size={20} />
+                <Text as="p" variant="bodyMediumMedium" className="banner__text">
+                    {text}
+                </Text>
             </div>
-            <ButtonGroup className="banner__actions">
-                <Button layout="text" size="small" appearance="secondary" className="banner__button">
+            <ButtonGroup size="small" className={`banner__actions banner__actions_${currentBreakpoint}`}>
+                <Button layout="text" size="small" appearance="transparent" className="banner__button">
                     action 1
                 </Button>
-                <Button layout="text" size="small" appearance="secondary" className="banner__button">
+                <Button layout="text" size="small" appearance="transparent" className="banner__button">
                     action 2
                 </Button>
             </ButtonGroup>
-            <Button layout="text" size="small" onClick={close} className="banner__button" Icon={X} />
+            <Button
+                layout="text"
+                size="small"
+                appearance="transparent"
+                className="banner__button"
+                Icon={X}
+                onClick={close}
+            />
         </div>
     );
 };

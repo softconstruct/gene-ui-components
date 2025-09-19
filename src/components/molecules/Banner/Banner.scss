@@ -6,17 +6,8 @@
     align-items: flex-start;
     width: 100%;
     padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-large);
-
-    &_device {
-        &_desktop,
-        &_tablet {
-            gap: var(--guit-ref-spacing-xsmall);
-        }
-
-        &_mobile {
-            gap: var(--guit-sem-spacing-medium);
-        }
-    }
+    column-gap: var(--guit-ref-spacing-xsmall);
+    row-gap: var(--guit-ref-spacing-medium);
 
     &_state {
         &_informational,
@@ -51,6 +42,7 @@
         gap: var(--guit-ref-spacing-xsmall);
         flex: 1;
         min-width: 0;
+        padding-block: var(--guit-ref-spacing-4xsmall);
     }
 
     &__actions {
@@ -65,15 +57,8 @@
         }
     }
 
-    &__text {
-        font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
-        font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
-        font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
-        line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
-    }
-
     &__icon,
     &__button {
-        flex: 0 0 auto;
+        flex: none;
     }
 }
