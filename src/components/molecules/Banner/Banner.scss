@@ -10,7 +10,7 @@
     row-gap: var(--guit-ref-spacing-medium);
 
     &_state {
-        &_informational,
+        &_informative,
         &_error {
             #{ $this }__icon,
             #{ $this }__text {
@@ -18,7 +18,7 @@
             }
         }
 
-        &_informational {
+        &_informative {
             background-color: var(--guit-sem-color-background-brand-2);
         }
 

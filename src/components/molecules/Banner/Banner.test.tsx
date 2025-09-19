@@ -9,7 +9,7 @@ const text = "Title";
 describe("Banner ", () => {
     let setup: ReactWrapper<IBannerProps>;
     beforeEach(() => {
-        setup = mount(<Banner text={text} type="informational" open />);
+        setup = mount(<Banner text={text} status="informative" open />);
     });
 
     it("renders without crashing", () => {
@@ -17,20 +17,20 @@ describe("Banner ", () => {
     });
 
     it("renders text", () => {
-        expect(setup.find(".banner__text").text()).toEqual(text);
+        expect(setup.find(".banner__text").first().text()).toEqual(text);
     });
 
-    it("renders type informational", () => {
-        expect(setup.find(".banner_state_informational").exists()).toBeTruthy();
+    it("renders status informative", () => {
+        expect(setup.find(".banner_state_informative").exists()).toBeTruthy();
     });
 
-    it("renders type warning", () => {
-        const wrapper = setup.setProps({ type: "warning" });
+    it("renders status warning", () => {
+        const wrapper = setup.setProps({ status: "warning" });
         expect(wrapper.find(".banner_state_warning").exists()).toBeTruthy();
     });
 
-    it("renders type error", () => {
-        const wrapper = setup.setProps({ type: "error" });
+    it("renders status error", () => {
+        const wrapper = setup.setProps({ status: "error" });
         expect(wrapper.find(".banner_state_error").exists()).toBeTruthy();
     });
 

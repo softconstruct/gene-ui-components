@@ -13,13 +13,12 @@ const meta: Meta<typeof Banner> = {
     component: Banner,
     argTypes: {
         text: args({ control: "text", ...propCategory.content }),
-        type: args({ control: "select", ...propCategory.appearance }),
-        visible: args({ control: "boolean", ...propCategory.functionality }),
+        status: args({ control: "select", ...propCategory.appearance }),
         onClose: args({ control: "false", ...propCategory.action })
     },
     args: {
         text: "Description text goes here.",
-        type: "informational"
+        status: "informative"
     }
 };
 
