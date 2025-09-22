@@ -12,10 +12,6 @@
         min-height: 0;
         max-height: 100%;
         padding: 0.2rem;
-
-        &:not(#{ $that }_expanded) {
-            overflow: hidden;
-        }
     }
 
     &__tags {
@@ -27,6 +23,18 @@
         flex-wrap: wrap;
         gap: var(--guit-ref-spacing-xsmall);
         padding: 0.2rem;
+
+        &_size {
+            &_small {
+                overflow: hidden;
+                max-height: calc(var(--guit-sem-dimension-height-small) * 2 + var(--guit-ref-spacing-xsmall) * 2);
+            }
+
+            &_medium {
+                overflow: hidden;
+                max-height: calc(var(--guit-sem-dimension-height-medium) * 2 + var(--guit-ref-spacing-xsmall) * 2);
+            }
+        }
     }
 
     &__showButton {
