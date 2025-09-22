@@ -39,7 +39,7 @@ const BannerStory = (props: IBannerProps) => {
 
     return (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
-            <Banner onClose={onCloseHandler} {...props} open={open} />
+            <Banner {...props} open={open} onClose={onCloseHandler} />
             {!open && (
                 <Button onClick={() => setOpen(true)} appearance="primary">
                     Show Banner
