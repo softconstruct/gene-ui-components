@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { faker } from "@faker-js/faker";
 import { Meta, StoryObj } from "@storybook/react";
 
@@ -119,4 +119,41 @@ const DifferentTagCountsStory = (props: ITagGroupProps) => {
 
 export const WithDifferentTagCounts: StoryObj<ITagGroupProps> = {
     render: (props) => <DifferentTagCountsStory {...props} />
+};
+
+const RemovableTagsStory = (props: ITagGroupProps) => {
+    const [tags, setTags] = useState(tagsArray.slice(0, 8));
+
+    const handleRemoveTag = (tagId: string) => {
+        setTags((prevTags) => prevTags.filter((tag) => tag.id !== tagId));
+    };
+
+    return (
+        <>
+            <Text as="p" variant="labelMediumSemibold">
+                {`Removable Tags (${tags.length.toString()} remaining)`}
+            </Text>
+            <div style={{ marginBottom: 16 }}>
+                <Text as="p" variant="labelMediumSemibold">
+                    Click the X button on any tag to remove it. The remaining tags will be passed to the TagGroup.
+                </Text>
+            </div>
+            <TagGroup {...props}>
+                {tags.map(({ id, text }) => (
+                    <Tag key={id} text={text} onClose={() => handleRemoveTag(id)} />
+                ))}
+            </TagGroup>
+            {tags.length === 0 && (
+                <div style={{ marginTop: 16, padding: 16, backgroundColor: "#f5f5f5", borderRadius: 8 }}>
+                    <Text as="p" variant="labelMediumSemibold">
+                        All tags have been removed! Add more tags to see them in the TagGroup.
+                    </Text>
+                </div>
+            )}
+        </>
+    );
+};
+
+export const WithRemovableTags: StoryObj<ITagGroupProps> = {
+    render: (props) => <RemovableTagsStory {...props} />
 };
