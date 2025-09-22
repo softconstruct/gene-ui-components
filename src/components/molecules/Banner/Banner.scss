@@ -46,12 +46,8 @@
     }
 
     &__actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: var(--guit-ref-spacing-xsmall);
-        flex: 0 0 auto;
-
         &_mobile {
+            justify-content: flex-end;
             width: 100%;
             order: 3;
         }
