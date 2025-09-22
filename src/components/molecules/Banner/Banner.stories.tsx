@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Components
@@ -33,15 +33,19 @@ export default meta;
 type Story = StoryObj<IBannerProps>;
 
 const BannerStory = (props: IBannerProps) => {
-    const [open, setOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(true);
 
-    const onCloseHandler = () => setOpen(false);
+    useEffect(() => {
+        setIsOpen(!!props?.open);
+    }, [props?.open]);
+
+    const onCloseHandler = () => setIsOpen(false);
 
     return (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", width: "100%" }}>
-            <Banner {...props} open={open} onClose={onCloseHandler} />
-            {!open && (
-                <Button onClick={() => setOpen(true)} appearance="primary">
+            <Banner {...props} open={isOpen} onClose={onCloseHandler} />
+            {!isOpen && (
+                <Button onClick={() => setIsOpen(true)} appearance="primary">
                     Show Banner
                 </Button>
             )}
@@ -50,7 +54,8 @@ const BannerStory = (props: IBannerProps) => {
 };
 
 export const Default: Story = {
-    render: (props) => <BannerStory {...props} />
+    render: (props) => <BannerStory {...props} />,
+    args: { open: true }
 };
 
 export const WithAction: Story = {

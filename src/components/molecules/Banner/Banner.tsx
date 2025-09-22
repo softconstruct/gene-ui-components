@@ -61,13 +61,12 @@ interface IBannerProps {
 
 type BannerStatus = Exclude<IBannerProps["status"], undefined>;
 
-const bannerConfig: Record<
-    BannerStatus,
-    {
-        icon: React.FC<IconProps>;
-        buttonAppearance: Exclude<IButtonProps["appearance"], undefined>;
-    }
-> = {
+interface IBannerConfig {
+    icon: React.FC<IconProps>;
+    buttonAppearance: Exclude<IButtonProps["appearance"], undefined>;
+}
+
+const bannerConfig: Record<BannerStatus, IBannerConfig> = {
     error: {
         icon: Error,
         buttonAppearance: "inverse"
@@ -108,7 +107,7 @@ const Banner: FC<IBannerProps> = ({
 
     const Icon: FC<IconProps> = config.icon;
 
-    const bannerClassName = classNames("banner", `banner_state_${status}`, className);
+    const bannerClassName = classNames("banner", `banner_status_${status}`, className);
 
     const actionsClassName = classNames("banner__actions", `banner__actions_${currentBreakpoint}`);
 
@@ -117,7 +116,7 @@ const Banner: FC<IBannerProps> = ({
     }
 
     return (
-        <div className={bannerClassName} role="alert" aria-live="polite" aria-atomic="true">
+        <div className={bannerClassName} role="alert" aria-atomic="true">
             <div className="banner__content">
                 <Icon className="banner__icon" size={20} aria-hidden="true" />
                 <Text as="p" variant="bodyMediumMedium" className="banner__text">

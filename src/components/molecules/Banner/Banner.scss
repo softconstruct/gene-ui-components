@@ -9,7 +9,7 @@
     column-gap: var(--guit-ref-spacing-xsmall);
     row-gap: var(--guit-ref-spacing-medium);
 
-    &_state {
+    &_status {
         &_informative,
         &_error {
             #{ $this }__icon,
