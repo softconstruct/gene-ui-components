@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useMemo } from "react";
+import React, { FC, useContext } from "react";
 import classNames from "classnames";
 
 import { Error, IconProps, Info, Warning, X } from "@geneui/icons";
@@ -98,33 +98,19 @@ const Banner: FC<IBannerProps> = ({
 }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
 
-    const currentBreakpoint = useMemo(
-        () => breakpoint?.currentBreakpoint || "desktop",
-        [breakpoint?.currentBreakpoint]
-    );
+    const currentBreakpoint = breakpoint?.currentBreakpoint || "desktop";
 
-    const onCloseHandler = useCallback(() => {
+    const onCloseHandler = () => {
         onClose?.();
-    }, [onClose]);
+    };
 
-    const config = useMemo(() => {
-        if (!bannerConfig[status]) {
-            return bannerConfig.informative;
-        }
-        return bannerConfig[status];
-    }, [status]);
+    const config = !bannerConfig[status] ? bannerConfig.informative : bannerConfig[status];
 
     const Icon: FC<IconProps> = config.icon;
 
-    const bannerClassName = useMemo(
-        () => classNames("banner", `banner_state_${status}`, className),
-        [status, className]
-    );
+    const bannerClassName = classNames("banner", `banner_state_${status}`, className);
 
-    const actionsClassName = useMemo(
-        () => classNames("banner__actions", `banner__actions_${currentBreakpoint}`),
-        [currentBreakpoint]
-    );
+    const actionsClassName = classNames("banner__actions", `banner__actions_${currentBreakpoint}`);
 
     if (!open) {
         return null;
