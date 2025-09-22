@@ -54,6 +54,7 @@
                     "ProductsSecondarySection": ["Product"],
                     "Menu": ["MenuItem"],
                     "ButtonGroup": ["Button"],
+                    "Carousel": ["CarouselItem"],
                     "TagGroup": ["Tag"]
                 }
             }
