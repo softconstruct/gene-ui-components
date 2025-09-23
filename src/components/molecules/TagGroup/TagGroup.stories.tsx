@@ -21,17 +21,9 @@ const meta: Meta<ITagGroupProps> = {
     component: TagGroup,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        size: {
-            control: "select",
-            options: ["medium", "small"],
-            description: "Size of the tags and show more/less button",
-            table: {
-                category: "Appearance"
-            }
-        },
-        showMoreText: args({ control: "text", ...propCategory.content }),
-        showLessText: args({ control: "text", ...propCategory.content }),
-        children: args({ control: "false", ...propCategory.content })
+        size: args({ control: "select", ...propCategory.appearance }),
+        children: args({ control: "false", ...propCategory.content }),
+        renderToggleText: args({ control: "false", ...propCategory.action })
     },
     args: {
         size: "medium"
@@ -53,8 +45,7 @@ const DefaultStory = (props: ITagGroupProps) => {
 const TagGroupStory: StoryObj<ITagGroupProps> = {
     render: (props) => <DefaultStory {...props} />,
     args: {
-        showMoreText: `Show all (${tagsArray.length})`,
-        showLessText: "Show less"
+        renderToggleText: (expanded) => (expanded ? "Show less" : "Show more")
     }
 };
 
@@ -73,11 +64,7 @@ const DifferentTagTypesStory = (props: ITagGroupProps) => {
 };
 
 export const WithDifferentTagTypes: StoryObj<ITagGroupProps> = {
-    render: (props) => <DifferentTagTypesStory {...props} />,
-    args: {
-        showMoreText: "Show more",
-        showLessText: "Show less"
-    }
+    render: (props) => <DifferentTagTypesStory {...props} />
 };
 
 const DifferentTagCountsStory = (props: ITagGroupProps) => {
