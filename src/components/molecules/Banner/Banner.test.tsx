@@ -44,7 +44,7 @@ describe("Banner ", () => {
 
     it.each<IBannerProps["status"]>(["informative", "warning", "error"])("should have %s status", (status) => {
         const wrapper = setup.setProps({ status });
-        expect(wrapper.find(".banner").hasClass(`banner_state_${status}`)).toBeTruthy();
+        expect(wrapper.find(".banner").hasClass(`banner_status_${status}`)).toBeTruthy();
     });
 
     it("should not be open when open prop is false", () => {
