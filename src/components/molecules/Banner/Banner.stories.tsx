@@ -60,5 +60,9 @@ export const Default: Story = {
 
 export const WithAction: Story = {
     render: (props) => <BannerStory {...props} />,
-    args: { primaryActionText: "Primary Action", secondaryActionText: "Secondary Action" }
+    args: {
+        primaryActionText: "Primary Action",
+        secondaryActionText: "Secondary Action",
+        open: true
+    }
 };
