@@ -6,7 +6,6 @@ import { ChevronDown, ChevronUp } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
-import type { ITagProps } from "@components/molecules/Tag/Tag";
 
 // Hooks
 import useWindowSize from "@hooks/useWindowSize";
@@ -27,7 +26,7 @@ interface ITagGroupProps {
      * Size for all `<Tag/>` components within the `<TagGroup/>`.<br/>
      * Possible values: `medium | small`;
      */
-    size?: ITagProps["size"];
+    size?: "medium" | "small";
     /**
      * Provide `<Tag/>` components to be rendered in the `<TagGroup/>`
      */
