@@ -33,10 +33,16 @@ const meta: Meta<ITagGroupProps> = {
 export default meta;
 
 const DefaultStory = (props: ITagGroupProps) => {
+    const [tags, setTags] = useState(tagsArray);
+
+    const handleRemoveTag = (tagId: string) => {
+        setTags((prevTags) => prevTags.filter((tag) => tag.id !== tagId));
+    };
+
     return (
         <TagGroup {...props}>
-            {tagsArray.map(({ id, text }) => (
-                <Tag key={id} text={text} withIcon={false} />
+            {tags.map(({ id, text }) => (
+                <Tag key={id} text={text} withIcon={false} onClose={() => handleRemoveTag(id)} />
             ))}
         </TagGroup>
     );
@@ -51,31 +57,31 @@ const TagGroupStory: StoryObj<ITagGroupProps> = {
 
 export { TagGroupStory as Default };
 
-const DifferentTagTypesStory = (props: ITagGroupProps) => {
-    const tagStatus: Array<"rest" | "warning" | "error"> = ["rest", "warning", "error"];
-
-    return (
-        <TagGroup {...props}>
-            {tagsArray.slice(0, 5).map(({ id, text }, index) => (
-                <Tag key={id} text={text} status={tagStatus[index % tagStatus.length]} />
-            ))}
-        </TagGroup>
-    );
-};
-
-export const WithDifferentTagTypes: StoryObj<ITagGroupProps> = {
-    render: (props) => <DifferentTagTypesStory {...props} />
-};
-
 const DifferentTagCountsStory = (props: ITagGroupProps) => {
+    const [tags2, setTags2] = useState(tagsArray.slice(0, 2));
+    const [tags6, setTags6] = useState(tagsArray.slice(0, 6));
+    const [tags100, setTags100] = useState(tagsArray);
+
+    const handleRemoveTag2 = (tagId: string) => {
+        setTags2((prevTags) => prevTags.filter((tag) => tag.id !== tagId));
+    };
+
+    const handleRemoveTag6 = (tagId: string) => {
+        setTags6((prevTags) => prevTags.filter((tag) => tag.id !== tagId));
+    };
+
+    const handleRemoveTag100 = (tagId: string) => {
+        setTags100((prevTags) => prevTags.filter((tag) => tag.id !== tagId));
+    };
+
     return (
         <>
             <Text as="p" variant="labelMediumSemibold">
                 2 tags
             </Text>
             <TagGroup {...props}>
-                {tagsArray.slice(0, 2).map(({ id, text }) => (
-                    <Tag key={id} text={text} />
+                {tags2.map(({ id, text }) => (
+                    <Tag key={id} text={text} onClose={() => handleRemoveTag2(id)} />
                 ))}
             </TagGroup>
             <div style={{ height: 40, display: "flex", alignItems: "center" }}>
@@ -85,8 +91,8 @@ const DifferentTagCountsStory = (props: ITagGroupProps) => {
                 6 tags
             </Text>
             <TagGroup {...props}>
-                {tagsArray.slice(0, 6).map(({ id, text }) => (
-                    <Tag key={id} text={text} />
+                {tags6.map(({ id, text }) => (
+                    <Tag key={id} text={text} onClose={() => handleRemoveTag6(id)} />
                 ))}
             </TagGroup>
             <div style={{ height: 40, display: "flex", alignItems: "center" }}>
@@ -96,8 +102,8 @@ const DifferentTagCountsStory = (props: ITagGroupProps) => {
                 100 tags
             </Text>
             <TagGroup {...props}>
-                {tagsArray.map(({ id, text }) => (
-                    <Tag key={id} text={text} />
+                {tags100.map(({ id, text }) => (
+                    <Tag key={id} text={text} onClose={() => handleRemoveTag100(id)} />
                 ))}
             </TagGroup>
         </>
@@ -106,41 +112,4 @@ const DifferentTagCountsStory = (props: ITagGroupProps) => {
 
 export const WithDifferentTagCounts: StoryObj<ITagGroupProps> = {
     render: (props) => <DifferentTagCountsStory {...props} />
-};
-
-const RemovableTagsStory = (props: ITagGroupProps) => {
-    const [tags, setTags] = useState(tagsArray.slice(0, 8));
-
-    const handleRemoveTag = (tagId: string) => {
-        setTags((prevTags) => prevTags.filter((tag) => tag.id !== tagId));
-    };
-
-    return (
-        <>
-            <Text as="p" variant="labelMediumSemibold">
-                {`Removable Tags (${tags.length.toString()} remaining)`}
-            </Text>
-            <div style={{ marginBottom: 16 }}>
-                <Text as="p" variant="labelMediumSemibold">
-                    Click the X button on any tag to remove it. The remaining tags will be passed to the TagGroup.
-                </Text>
-            </div>
-            <TagGroup {...props}>
-                {tags.map(({ id, text }) => (
-                    <Tag key={id} text={text} onClose={() => handleRemoveTag(id)} />
-                ))}
-            </TagGroup>
-            {tags.length === 0 && (
-                <div style={{ marginTop: 16, padding: 16, backgroundColor: "#f5f5f5", borderRadius: 8 }}>
-                    <Text as="p" variant="labelMediumSemibold">
-                        All tags have been removed! Add more tags to see them in the TagGroup.
-                    </Text>
-                </div>
-            )}
-        </>
-    );
-};
-
-export const WithRemovableTags: StoryObj<ITagGroupProps> = {
-    render: (props) => <RemovableTagsStory {...props} />
 };
