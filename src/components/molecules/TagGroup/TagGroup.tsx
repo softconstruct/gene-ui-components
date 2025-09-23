@@ -63,6 +63,8 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium", re
         setIsExpanded((prevExpanded) => !prevExpanded);
     };
 
+    const buttonSizeMap = size === "small" ? "small" : "medium";
+
     return (
         <div className={classNames("tagGroup", className)}>
             <div className={classNames("tagGroup__container", { tagGroup__container_expanded: isExpanded })}>
@@ -78,7 +80,7 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium", re
                     <Button
                         className="tagGroup__showButton"
                         appearance="secondary"
-                        size={size}
+                        size={buttonSizeMap}
                         layout="text"
                         iconPosition="after"
                         Icon={isExpanded ? ChevronUp : ChevronDown}

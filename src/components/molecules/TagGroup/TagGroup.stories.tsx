@@ -52,12 +52,12 @@ const TagGroupStory: StoryObj<ITagGroupProps> = {
 export { TagGroupStory as Default };
 
 const DifferentTagTypesStory = (props: ITagGroupProps) => {
-    const tagTypes: Array<"rest" | "warning" | "error"> = ["rest", "warning", "error"];
+    const tagStatus: Array<"rest" | "warning" | "error"> = ["rest", "warning", "error"];
 
     return (
         <TagGroup {...props}>
             {tagsArray.slice(0, 5).map(({ id, text }, index) => (
-                <Tag key={id} text={text} type={tagTypes[index % tagTypes.length]} />
+                <Tag key={id} text={text} status={tagStatus[index % tagStatus.length]} />
             ))}
         </TagGroup>
     );
