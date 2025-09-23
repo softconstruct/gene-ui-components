@@ -34,7 +34,7 @@
         }
     }
 
-    &_state {
+    &_status {
         &_rest {
             background-color: var(--guit-sem-color-background-neutral-4);
 
@@ -61,16 +61,16 @@
                 color: var(--guit-sem-color-foreground-warning);
             }
         }
+    }
 
-        &_disabled {
-            background-color: var(--guit-sem-color-background-disabled);
-            pointer-events: none;
-            user-select: none;
+    &_disabled {
+        background-color: var(--guit-sem-color-background-disabled);
+        pointer-events: none;
+        user-select: none;
 
-            #{ $this }__icon,
-            #{ $this }__text {
-                color: var(--guit-sem-color-foreground-disabled);
-            }
+        #{ $this }__icon,
+        #{ $this }__text {
+            color: var(--guit-sem-color-foreground-disabled);
         }
     }
 

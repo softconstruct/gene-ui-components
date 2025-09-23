@@ -10,7 +10,7 @@ const meta: Meta<ITagProps> = {
     component: Tag,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        type: args({ control: "select", ...propCategory.appearance }),
+        status: args({ control: "select", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         withIcon: args({ control: "boolean", ...propCategory.content }),

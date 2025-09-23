@@ -14,13 +14,7 @@ import "./Tag.scss";
 
 import Tooltip from "../Tooltip";
 
-type TagTypes = "rest" | "error" | "warning";
-
-const icons: Record<TagTypes, FC<IconProps>> = {
-    rest: TagIcon,
-    warning: CircleAlert,
-    error: TriangleAlert
-};
+type TagStatus = "rest" | "error" | "warning";
 
 interface ITagProps {
     /**
@@ -28,10 +22,11 @@ interface ITagProps {
      */
     text: string;
     /**
-     * Tag type <br/>
+     * Tag status <br/>
      * Possible values: `rest | error | warning`
+     * @default "rest"
      */
-    type?: TagTypes;
+    status?: TagStatus;
     /**
      * Disables tag
      */
@@ -56,13 +51,19 @@ interface ITagProps {
     className?: string;
 }
 
+const icons: Record<TagStatus, FC<IconProps>> = {
+    rest: TagIcon,
+    warning: TriangleAlert,
+    error: CircleAlert
+} as const;
+
 /**
  * Tag is used to label, categorize, and organize content within an interface. It can be used to highlight keywords, topics, or attributes related to an item. Tags enhance user navigation and search functionality by providing a quick way to filter and identify relevant information.
  */
 const Tag: FC<ITagProps> = ({
     className,
     text,
-    type = "rest",
+    status = "rest",
     disabled,
     size = "medium",
     withIcon = true,
@@ -71,19 +72,17 @@ const Tag: FC<ITagProps> = ({
     const textRef = useRef<HTMLSpanElement | null>(null);
     const isTruncated = useEllipsisDetection(textRef, [text]);
 
-    const Icon = icons[type];
+    const Icon = icons[status];
 
     const handleButtonClick = () => {
-        if (onClose) {
-            onClose();
-        }
+        onClose?.();
     };
 
     return (
         <div
             className={classNames("tag", `tag_size_${size}`, className, {
-                [`tag_state_${type}`]: !disabled,
-                tag_state_disabled: disabled,
+                [`tag_status_${status}`]: !disabled,
+                tag_disabled: disabled,
                 tag_withIcon: withIcon
             })}
         >
