@@ -49,6 +49,10 @@ interface ITagProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Tab index for keyboard navigation
+     */
+    tabIndex?: number;
 }
 
 const icons: Record<TagStatus, FC<IconProps>> = {
@@ -67,7 +71,8 @@ const Tag: FC<ITagProps> = ({
     disabled,
     size = "medium",
     withIcon = true,
-    onClose
+    onClose,
+    tabIndex
 }) => {
     const textRef = useRef<HTMLSpanElement | null>(null);
     const isTruncated = useEllipsisDetection(textRef, [text]);
@@ -100,6 +105,7 @@ const Tag: FC<ITagProps> = ({
                 size={size}
                 onClick={handleButtonClick}
                 disabled={disabled}
+                tabIndex={tabIndex}
             />
         </div>
     );
