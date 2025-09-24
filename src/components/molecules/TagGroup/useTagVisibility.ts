@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { ReactNode, useCallback, useLayoutEffect, useRef, useState } from "react";
 
 // Constants
 const INITIAL_TAGS_TO_SHOW = 10;
@@ -69,13 +69,13 @@ export const useTagVisibility = ({ childrenArray, isExpanded, width }: IUseTagVi
             }
             return {
                 visibleCount: Math.min(childrenArray.length, currentState.visibleCount + TAGS_INCREMENT_STEP),
-                shouldShowToggleButton: false,
+                shouldShowToggleButton: childrenArray.length > currentState.visibleCount,
                 overflowStartIndex: -1
             };
         });
     }, [childrenArray.length, isExpanded, findOverflowElement]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!containerRef.current) {
             return;
         }
