@@ -89,6 +89,11 @@ interface IButtonProps {
      *  Event handler for when the button element receives focus. Provides the focus event as a callback's argument.
      */
     onFocus?: (e: FocusEvent<HTMLButtonElement>) => void;
+    /**
+     * Tab index for keyboard navigation. When loading, automatically set to -1 to prevent focus.
+     * @default 0
+     */
+    tabIndex?: number;
 }
 
 const loadingTypes = {
@@ -121,7 +126,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             ariaLabel,
             type = "button",
             onBlur,
-            onFocus
+            onFocus,
+            tabIndex = 0
         }: IButtonProps,
         ref
     ) => {
@@ -139,7 +145,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 type={type || "button"}
                 onClick={onClick}
                 disabled={disabled && !loading}
-                {...(loading ? { tabIndex: -1 } : {})}
+                tabIndex={loading ? -1 : tabIndex}
                 className={classNames(
                     `button button_size_${size} 
                     button_color_${appearance} 
