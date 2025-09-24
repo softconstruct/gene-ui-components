@@ -53,9 +53,19 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium", re
     });
 
     const renderChildren = (childrenToRender: ReactNode[]) => {
-        return childrenToRender.map((child) =>
-            isValidElement(child) ? cloneElement(child, { ...child.props, size }) : child
-        );
+        return childrenToRender.map((child, index) => {
+            if (!isValidElement(child)) return child;
+
+            const shouldSkipTab =
+                !isExpanded && tagVisibility.overflowStartIndex > -1 && index >= tagVisibility.overflowStartIndex;
+            const tabIndex = shouldSkipTab ? -1 : 0;
+
+            return cloneElement(child, {
+                ...child.props,
+                size,
+                tabIndex
+            });
+        });
     };
 
     const handleToggleExpanded = () => {
@@ -66,9 +76,13 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium", re
 
     return (
         <div className={classNames("tagGroup", className)}>
-            <div className={classNames("tagGroup__container", { tagGroup__container_expanded: isExpanded })}>
+            <div
+                className={classNames("tagGroup__container", { tagGroup__container_expanded: isExpanded })}
+                aria-expanded={isExpanded}
+            >
                 <div
                     ref={containerRef}
+                    id="tagGroup-tags"
                     className={classNames("tagGroup__tags", {
                         [`tagGroup__tags_size_${size}`]: !isExpanded
                     })}
@@ -84,6 +98,7 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium", re
                         iconPosition="after"
                         Icon={isExpanded ? ChevronUp : ChevronDown}
                         onClick={handleToggleExpanded}
+                        aria-controls="tagGroup-tags"
                     >
                         {renderToggleText?.(isExpanded) || ""}
                     </Button>

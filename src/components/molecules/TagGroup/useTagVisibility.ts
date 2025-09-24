@@ -8,6 +8,7 @@ const MAX_ALLOWED_LINES = 2;
 interface ITagVisibilityState {
     visibleCount: number;
     shouldShowToggleButton: boolean;
+    overflowStartIndex: number; // Index of the first element that starts wrapping to the 3rd line (MAX_ALLOWED_LINES + 1)
 }
 
 interface IUseTagVisibilityProps {
@@ -19,47 +20,67 @@ interface IUseTagVisibilityProps {
 export const useTagVisibility = ({ childrenArray, isExpanded, width }: IUseTagVisibilityProps) => {
     const [tagVisibility, setTagVisibility] = useState<ITagVisibilityState>({
         visibleCount: INITIAL_TAGS_TO_SHOW,
-        shouldShowToggleButton: false
+        shouldShowToggleButton: false,
+        overflowStartIndex: -1
     });
 
     const containerRef = useRef<HTMLDivElement | null>(null);
 
-    const calculateOptimalTagDisplay = useCallback(() => {
+    const findOverflowElement = useCallback((container: HTMLElement): number => {
+        const firstTagElement = container.firstElementChild as HTMLElement;
+        if (!firstTagElement) return -1;
+
+        const firstTagTopPosition = firstTagElement.offsetTop;
+        const tagHeight = firstTagElement.offsetHeight;
+
+        if (tagHeight === 0) return -1;
+
+        // Find first element that overflows to MAX_ALLOWED_LINES'th line
+        for (let i = 0; i < container.childNodes.length; i++) {
+            const childElement = container.childNodes[i] as HTMLElement;
+            const elementLineNumber =
+                childElement.offsetTop === firstTagTopPosition
+                    ? 1
+                    : Math.ceil((childElement.offsetTop - firstTagTopPosition) / tagHeight);
+
+            if (elementLineNumber > MAX_ALLOWED_LINES) {
+                return i;
+            }
+        }
+
+        return -1;
+    }, []);
+
+    const calculateTagVisibility = useCallback(() => {
         const container = containerRef.current;
         if (!container || isExpanded) return;
 
-        const firstTagElement = container.firstElementChild as HTMLElement;
-        const lastTagElement = container.lastElementChild as HTMLElement;
-
-        if (!firstTagElement || !lastTagElement) return;
-
-        const firstTagTopPosition = firstTagElement.offsetTop;
-        const lastTagTopPosition = lastTagElement.offsetTop;
-        const singleLineHeight = lastTagElement.offsetHeight;
-
-        const currentLineCount =
-            lastTagTopPosition === firstTagTopPosition
-                ? 1
-                : Math.floor((lastTagTopPosition - firstTagTopPosition) / singleLineHeight) + 1;
+        const firstOverflowElementIndex = findOverflowElement(container);
 
         setTagVisibility((currentState) => {
-            if (currentLineCount > MAX_ALLOWED_LINES) {
-                return { ...currentState, shouldShowToggleButton: true };
+            const hasOverflow = firstOverflowElementIndex > -1;
+
+            if (hasOverflow) {
+                return {
+                    visibleCount: currentState.visibleCount,
+                    shouldShowToggleButton: true,
+                    overflowStartIndex: firstOverflowElementIndex
+                };
             }
             return {
                 visibleCount: Math.min(childrenArray.length, currentState.visibleCount + TAGS_INCREMENT_STEP),
-                shouldShowToggleButton:
-                    childrenArray.length > currentState.visibleCount || currentLineCount > MAX_ALLOWED_LINES
+                shouldShowToggleButton: false,
+                overflowStartIndex: -1
             };
         });
-    }, [childrenArray.length, isExpanded]);
+    }, [childrenArray.length, isExpanded, findOverflowElement]);
 
     useEffect(() => {
         if (!containerRef.current) {
             return;
         }
-        calculateOptimalTagDisplay();
-    }, [width, calculateOptimalTagDisplay]);
+        calculateTagVisibility();
+    }, [width, calculateTagVisibility]);
 
     return {
         tagVisibility,
