@@ -1,18 +1,19 @@
 import React, { FC, useRef } from "react";
 import classNames from "classnames";
 
+// Icons
 import { CircleAlert, IconProps, Tag as TagIcon, TriangleAlert, X } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
+import Text from "@components/atoms/Text";
+import Tooltip from "@components/molecules/Tooltip";
 
 // Hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./Tag.scss";
-
-import Tooltip from "../Tooltip";
 
 type TagStatus = "rest" | "error" | "warning";
 
@@ -98,9 +99,9 @@ const Tag: FC<ITagProps> = ({
         >
             {withIcon && <Icon className="tag__icon" size={20} />}
             <Tooltip text={text} isVisible={isTruncated}>
-                <span ref={textRef} className="tag__text ellipsis-text">
+                <Text variant="labelMediumMedium" as="span" className="tag__text ellipsis-text">
                     {text}
-                </span>
+                </Text>
             </Tooltip>
             <Button
                 className="tag__button"

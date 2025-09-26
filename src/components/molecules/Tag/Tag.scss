@@ -14,13 +14,6 @@
             &#{ $this }_withIcon {
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
             }
-
-            #{ $this }__text {
-                font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
-                font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
-                font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
-                line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
-            }
         }
 
         &_medium {
