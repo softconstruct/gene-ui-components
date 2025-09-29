@@ -1,0 +1,70 @@
+import { Meta } from '@storybook/blocks';
+import useContainerSize from './useContainerSize';
+
+<Meta title="Hooks/useContainerSize" />
+
+<div style={{paddingInlineStart:'20px'}}>
+
+## useContainerSize
+
+This hook provides the current width and height of a container element and updates dynamically when the container resizes using ResizeObserver.
+
+#### Returns
+
+An object containing:
+-   **`containerRef`**: A ref object that should be attached to the element you want to measure.
+-   **`sizes`**: An object with `width` and `height` properties representing the container dimensions in pixels.
+
+#### Parameters
+
+-   **`observeResize`** (optional): Whether to observe resize changes. Defaults to `true`.
+
+#### Usage
+
+```js
+import React, { FC } from 'react';
+import { useContainerSize } from '@geneui/components';
+
+const ExampleComponent: FC = () => {
+    const { containerRef, sizes } = useContainerSize();
+
+    return (
+        <div ref={containerRef}>
+            <p>Container Width: {sizes.width}px</p>
+            <p>Container Height: {sizes.height}px</p>
+        </div>
+    );
+};
+
+export default ExampleComponent;
+```
+
+#### Advanced Usage
+
+```js
+import React, { FC } from 'react';
+import { useContainerSize } from '@geneui/components';
+
+const ExampleComponent: FC = () => {
+    // Disable resize observation for better performance
+    const { containerRef, sizes } = useContainerSize({ observeResize: false });
+
+    return (
+        <div ref={containerRef}>
+            <p>Container Width: {sizes.width}px</p>
+            <p>Container Height: {sizes.height}px</p>
+        </div>
+    );
+};
+
+export default ExampleComponent;
+```
+
+#### Notes
+
+- This hook uses ResizeObserver API to efficiently track container size changes.
+- It initializes with the current container dimensions when the component mounts.
+- The ResizeObserver is automatically cleaned up when the component unmounts to prevent memory leaks.
+- If `observeResize` is set to `false`, the hook will only measure the initial size and won't track changes.
+- The hook returns a ref that must be attached to the element you want to measure.
+</div>
