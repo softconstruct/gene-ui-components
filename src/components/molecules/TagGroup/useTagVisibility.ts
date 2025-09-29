@@ -80,7 +80,7 @@ export const useTagVisibility = ({ childrenArray, isExpanded, width }: IUseTagVi
             return;
         }
         calculateTagVisibility();
-    }, [width, calculateTagVisibility]);
+    }, [width, calculateTagVisibility, tagVisibility.visibleCount]);
 
     return {
         tagVisibility,
