@@ -31,9 +31,9 @@ interface IPillProps {
     iconAlignment?: "before" | "after";
     /**
      * Pill visual appearance
-     * When `isFill` prop set to `true`, the `pill` will have a solid fill, providing a more prominent visual appearance. If `false`, the `pill` will be displayed with an outlined style.
+     * When `filled` prop set to `true`, the `pill` will have a solid fill, providing a more prominent visual appearance. If `false`, the `pill` will be displayed with an outlined style.
      */
-    isFill?: boolean;
+    filled?: boolean;
     /**
      * Pill size
      * Possible values: `smallNudge | small | medium`
@@ -43,7 +43,7 @@ interface IPillProps {
      * Pill icon <br/>
      * The `Icon` prop accepts a JSX element that will be displayed alongside the `text`
      */
-    Icon?: React.FC<IconProps>;
+    Icon?: FC<IconProps>;
     /**
      * Displays a dot `Icon` when no custom `Icon` is provided. <br/>
      * If `true`, a dot icon will be shown unless a custom `Icon` is specified. <br/>
@@ -52,10 +52,10 @@ interface IPillProps {
 
     withDot?: boolean;
     /**
-     * Pill color <br/>
+     * Pill appearance <br/>
      * Possible values: `informative | neutral | error | success | warning | purple | lagoon | magenta | slate | inverse`
      */
-    color?:
+    appearance?:
         | "informative"
         | "neutral"
         | "error"
@@ -77,11 +77,11 @@ interface IPillProps {
  * A Pill component used to display concise information or categorize content. Often used for labels or status indicators, Pill components are visually distinct and can convey different meanings through text and color coding.
  */
 const Pill: FC<IPillProps> = ({
-    color = "informative",
+    appearance = "informative",
     size = "medium",
     text,
     iconAlignment = "before",
-    isFill,
+    filled,
     withDot = true,
     Icon,
     className
@@ -104,15 +104,19 @@ const Pill: FC<IPillProps> = ({
 
     return (
         <div
-            className={classNames(`pill pill_size_${size} pill_color_${color}`, className, {
+            className={classNames(`pill pill_size_${size} pill_color_${appearance}`, className, {
                 [`pill_icon_${isWithDot ? "before" : iconAlignment}`]: text && iconContent,
                 pill_icon_only: !text,
-                pill_fill: isFill
+                pill_fill: filled
             })}
         >
             {iconContent}
             {text && (
-                <Tooltip text={text} isVisible={isTruncated} appearance={color === "inverse" ? "inverse" : "default"}>
+                <Tooltip
+                    text={text}
+                    isVisible={isTruncated}
+                    appearance={appearance === "inverse" ? "inverse" : "default"}
+                >
                     <span ref={textRef} className="pill__text ellipsis-text">
                         {text}
                     </span>

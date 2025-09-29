@@ -1,4 +1,4 @@
-import React, { createContext, JSX, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, JSX, MutableRefObject, ReactElement, useEffect, useMemo, useRef, useState } from "react";
 
 import { bootstrap } from "@geneui/tokens";
 
@@ -6,6 +6,7 @@ import LogoMarkSVG from "@components/atoms/Logo/LogoMarkSVG";
 import LogoTypeSVG from "@components/atoms/Logo/LogoTypeSVG";
 
 import useBreakpoint, { IBreakpoint } from "@hooks/useBreakpoint";
+import useDeviceInfo, { IDeviceInfo } from "@hooks/useDeviceInfo";
 
 import { ThemesTypes } from "@types";
 
@@ -20,8 +21,8 @@ import pgk from "../../../../package.json";
 type TokensType = { [key: string]: string | number };
 
 type LogoType = {
-    logotype: React.ReactElement;
-    logomark: React.ReactElement;
+    logotype: ReactElement;
+    logomark: ReactElement;
 };
 
 const defaultLogo: LogoType = {
@@ -34,8 +35,9 @@ const defaultTokens: TokensType = bootstrap();
 interface IGeneUIDesignSystemContext {
     theme: ThemesTypes;
     tokens: TokensType;
-    geneUIProviderRef: React.MutableRefObject<null>;
+    geneUIProviderRef: MutableRefObject<null>;
     breakpoint: IBreakpoint | null;
+    deviceInfo: IDeviceInfo | null;
     logo: LogoType;
 }
 
@@ -44,6 +46,7 @@ const GeneUIDesignSystemContext = createContext<IGeneUIDesignSystemContext>({
     tokens: {},
     geneUIProviderRef: { current: null },
     breakpoint: null,
+    deviceInfo: null,
     logo: defaultLogo
 });
 
@@ -51,7 +54,7 @@ interface IGeneUIProviderProps {
     /**
      * Any valid React node
      */
-    children: React.ReactElement;
+    children: ReactElement;
     /**
      * Tokens library object defined by style-dictionary standard,
      * and GeneUI tokens package rules
@@ -83,12 +86,15 @@ function GeneUIProvider({
         desktop: +tokens.GuitRefBreakpointDesktop
     });
 
+    const deviceInfo = useDeviceInfo();
+
     const contextValue = useMemo(
         () => ({
-            theme,
+            theme: theme === "system" ? deviceInfo.theme : theme,
             tokens,
             geneUIProviderRef,
             breakpoint: currentBreakpoint,
+            deviceInfo,
             logo: logo || defaultLogo
         }),
         [theme, tokens, geneUIProviderRef, currentBreakpoint]
@@ -106,7 +112,7 @@ function GeneUIProvider({
                 className="gene-ui-provider"
                 data-gene-ui-version={pgk.version}
                 ref={geneUIProviderRef}
-                style={{ height: "100%" }}
+                style={{ colorScheme: theme, height: "100%" }}
             >
                 {isRefExist && children}
             </div>

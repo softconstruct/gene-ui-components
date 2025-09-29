@@ -1,9 +1,5 @@
-import React, { FC, useRef } from "react";
+import React, { forwardRef } from "react";
 import classNames from "classnames";
-
-import Tooltip from "@components/molecules/Tooltip";
-
-import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./Text.scss";
@@ -83,51 +79,34 @@ interface ITextProps {
      */
     children: string;
     /**
-     * If true, the text will be truncated with ellipsis when it overflows.
-     * This is typically used to limit text to a single line or prevent overflow.
+     * A unique identifier for the text element.
+     * Useful for accessibility purposes, like `aria-labelledby`.
      */
-    truncate?: boolean;
-    /**
-     * If true, a tooltip will be displayed when the text is truncated and hovered.
-     * The tooltip will show the full text content when it's truncated.
-     */
-    withTooltip?: boolean;
+    id?: string;
 }
 
 /**
  * Text component which has predefined tokens
  */
-const Text: FC<ITextProps> = ({
-    className,
-    variant = "bodyMediumMedium",
-    children,
-    as,
-    alignment = "start",
-    truncate = false,
-    withTooltip = true
-}) => {
-    const textRef = useRef(null);
+const Text = forwardRef<HTMLHeadingElement, ITextProps>(
+    ({ className, variant = "bodyMediumMedium", children, as, alignment = "start", id }: ITextProps, ref) => {
+        const Component = as;
 
-    const isTruncated = useEllipsisDetection(textRef);
-    const Component = as;
+        const computedClassNames = classNames(
+            "text",
+            {
+                [`text_variant_${variant}`]: variant,
+                [`text_alignment_${alignment}`]: alignment
+            },
+            className
+        );
 
-    const computedClassNames = classNames(
-        "text",
-        {
-            [`text_variant_${variant}`]: variant,
-            [`text_alignment_${alignment}`]: alignment,
-            "ellipsis-text": truncate
-        },
-        className
-    );
-
-    return (
-        <Tooltip text={children} isVisible={isTruncated && withTooltip}>
-            <Component ref={textRef} className={computedClassNames}>
+        return (
+            <Component className={computedClassNames} ref={ref} id={id}>
                 {children}
             </Component>
-        </Tooltip>
-    );
-};
+        );
+    }
+);
 
 export { ITextProps, Text as default };

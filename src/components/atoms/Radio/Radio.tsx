@@ -144,7 +144,7 @@ const Radio: FC<IRadioProps> = (props) => {
             {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             <Label
-                labelText={label}
+                text={label}
                 className="radio__label"
                 required={required}
                 infoText={infoText}
@@ -173,7 +173,7 @@ const Radio: FC<IRadioProps> = (props) => {
             </Label>
             {helperText && (
                 <div className="radio__infoContainer">
-                    <HelperText text={helperText} isDisabled={disabled} type={type} />
+                    <HelperText text={helperText} disabled={disabled} type={type} />
                 </div>
             )}
         </div>

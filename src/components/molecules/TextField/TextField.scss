@@ -1,0 +1,230 @@
+.textField {
+    $the: &;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-3xsmall);
+
+    &__label {
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        row-gap: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__wrapper {
+        $this: &;
+
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border-width: var(--guit-ref-border-width-thin);
+        border-style: var(--guit-ref-border-style-solid);
+
+        &_size {
+            &_large,
+            &_medium {
+                #{ $the }__input {
+                    font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+                    font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+                    font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+                    line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+                }
+            }
+
+            &_large {
+                gap: var(--guit-ref-spacing-xsmall);
+                height: var(--guit-sem-dimension-height-large);
+                border-radius: var(--guit-ref-radius-2xsmall);
+
+                &:not(#{ $this }_iconBefore, &#{ $this }_iconAfter, &#{ $this }_withIcons) {
+                    padding: var(--guit-ref-spacing-small) var(--guit-ref-spacing-large);
+                }
+
+                &#{ $this }_iconBefore {
+                    padding-top: var(--guit-ref-spacing-small);
+                    padding-bottom: var(--guit-ref-spacing-small);
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-large);
+                }
+
+                &#{ $this }_iconAfter {
+                    padding-top: var(--guit-ref-spacing-xsmall);
+                    padding-bottom: var(--guit-ref-spacing-xsmall);
+                    padding-inline-start: var(--guit-ref-spacing-large);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
+                }
+
+                &#{ $this }_withIcons {
+                    padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-medium);
+                }
+            }
+
+            &_medium {
+                gap: var(--guit-ref-spacing-xsmall);
+                height: var(--guit-sem-dimension-height-medium);
+                border-radius: var(--guit-ref-radius-3xsmall);
+
+                &:not(#{ $this }_iconBefore, &#{ $this }_iconAfter, &#{ $this }_withIcons) {
+                    padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-medium);
+                }
+
+                &#{ $this }_iconBefore {
+                    padding-top: var(--guit-ref-spacing-2xsmall);
+                    padding-bottom: var(--guit-ref-spacing-2xsmall);
+                    padding-inline-start: var(--guit-ref-spacing-xsmall);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
+                }
+
+                &#{ $this }_iconAfter {
+                    padding-top: var(--guit-ref-spacing-3xsmall);
+                    padding-bottom: var(--guit-ref-spacing-3xsmall);
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-xsmall);
+                }
+
+                &#{ $this }_withIcons {
+                    padding: var(--guit-ref-spacing-3xsmall) var(--guit-ref-spacing-xsmall);
+                }
+            }
+
+            &_small {
+                gap: var(--guit-ref-spacing-2xsmall);
+                height: var(--guit-sem-dimension-height-small);
+                border-radius: var(--guit-ref-radius-3xsmall);
+
+                &:not(#{ $this }_iconBefore, &#{ $this }_iconAfter, &#{ $this }_withIcons) {
+                    padding: var(--guit-ref-radius-3xsmall) var(--guit-ref-spacing-medium);
+                }
+
+                &#{ $this }_iconBefore {
+                    padding-top: var(--guit-ref-radius-3xsmall);
+                    padding-bottom: var(--guit-ref-radius-3xsmall);
+                    padding-inline-start: var(--guit-ref-spacing-xsmall);
+                    padding-inline-end: var(--guit-ref-spacing-medium);
+                }
+
+                &#{ $this }_iconAfter {
+                    padding-top: var(--guit-ref-spacing-4xsmall);
+                    padding-bottom: var(--guit-ref-spacing-4xsmall);
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+                    padding-inline-end: var(--guit-ref-spacing-xsmall);
+                }
+
+                &#{ $this }_withIcons {
+                    padding: var(--guit-ref-spacing-4xsmall) var(--guit-ref-spacing-xsmall);
+                }
+
+                #{ $the }__input {
+                    font-family: var(--guit-sem-font-caption-large-medium-font-family);
+                    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+                    font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
+                    line-height: var(--guit-sem-font-caption-large-medium-line-height);
+                    letter-spacing: var(--guit-sem-font-caption-large-medium-letter-spacing);
+                }
+            }
+        }
+
+        &_readOnly,
+        &_error {
+            #{ $the }__input {
+                color: var(--guit-sem-color-foreground-neutral-2);
+            }
+        }
+
+        &_readOnly {
+            border-color: transparent;
+            background-color: var(--guit-sem-color-background-neutral-2);
+        }
+
+        &_error {
+            border-color: var(--guit-sem-color-border-error);
+        }
+
+        &_disabled {
+            border-color: var(--guit-sem-color-border-disabled-1);
+            pointer-events: none;
+            user-select: none;
+
+            #{ $the }__icon,
+            #{ $the }__input {
+                color: var(--guit-sem-color-foreground-disabled);
+            }
+        }
+
+        &:hover {
+            background-color: var(--guit-sem-color-background-neutral-1-hover);
+        }
+
+        &:active {
+            background-color: var(--guit-sem-color-background-neutral-1-pressed);
+        }
+
+        &:not(&#{ $this }_disabled) {
+            &:focus-within {
+                outline-offset: var(--guit-ref-border-width-thin);
+                outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                    var(--guit-sem-color-border-focus);
+
+                #{ $the }__input {
+                    color: var(--guit-sem-color-foreground-neutral-2);
+                }
+            }
+
+            #{ $the }__icon {
+                color: var(--guit-sem-color-foreground-neutral-1);
+            }
+        }
+
+        &:not(&#{ $this }_readOnly, &#{ $this }_error, &#{ $this }_disabled) {
+            border-color: var(--guit-sem-color-border-neutral-2);
+
+            #{ $the }__input {
+                color: var(--guit-sem-color-foreground-neutral-2);
+            }
+        }
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+    }
+
+    &__input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: transparent;
+        outline: none;
+
+        &::placeholder {
+            color: var(--guit-sem-color-foreground-neutral-1);
+        }
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        flex: 0 0 auto;
+    }
+
+    &__info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    &__characterLimit {
+        margin-inline-start: auto;
+        white-space: nowrap;
+        color: var(--guit-sem-color-foreground-neutral-2);
+
+        &_disabled {
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+}
