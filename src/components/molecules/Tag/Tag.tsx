@@ -112,7 +112,7 @@ const Tag: FC<ITagProps> = ({
                 onClick={handleButtonClick}
                 disabled={disabled}
                 tabIndex={tabIndex}
-                ariaLabel={ariaLabel}
+                ariaLabel={ariaLabel || text}
             />
         </div>
     );
