@@ -13,6 +13,34 @@ jest.mock("@hooks/useWindowSize", () => ({
     default: jest.fn()
 }));
 
+// Mock DOM layout properties for JSDOM
+Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
+    writable: true,
+    value: 32 // Mock tag height
+});
+
+Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
+    writable: true,
+    value: 100
+});
+
+Object.defineProperty(HTMLElement.prototype, "offsetTop", {
+    get() {
+        const container = this.parentElement;
+        if (!container) return 0;
+
+        const containerWidth = container.offsetWidth || 500; // Default width
+        const tagWidth = 100; // Mock tag width
+        const tagHeight = 32; // Mock tag height
+        const tagsPerLine = Math.floor(containerWidth / tagWidth);
+
+        const index = Array.from(container.children).indexOf(this);
+        const lineNumber = Math.floor(index / tagsPerLine);
+
+        return lineNumber * tagHeight;
+    }
+});
+
 describe("TagGroup", () => {
     let setup: ReactWrapper<ITagGroupProps>;
 
