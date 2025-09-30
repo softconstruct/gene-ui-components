@@ -73,3 +73,4 @@ export { default as useWindowSize } from "./hooks/useWindowSize";
 export { default as useClickOutside } from "./hooks/useClickOutside";
 export { default as useDeviceInfo } from "./hooks/useDeviceInfo";
 export { default as useBreakpoint } from "./hooks/useBreakpoint";
+export { default as useContainerSize } from "./hooks/useContainerSize";
