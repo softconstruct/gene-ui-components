@@ -178,4 +178,23 @@ describe("TagGroup", () => {
         const renderedTags = setup.find(Tag);
         expect(renderedTags.length).toBe(tagsCount);
     });
+
+    it("hides toggle button when items are removed and no overflow remains", () => {
+        const manyTags = createTags(20);
+        const wrapper = mount(<TagGroup>{manyTags}</TagGroup>);
+
+        expect(wrapper.find("button.tagGroup__showButton").exists()).toBeTruthy();
+
+        const toggleButton = wrapper.find("button.tagGroup__showButton");
+        toggleButton.simulate("click");
+
+        expect(wrapper.find("button.tagGroup__showButton").exists()).toBeTruthy();
+
+        const fewTags = createTags(2);
+        wrapper.setProps({ children: fewTags });
+
+        wrapper.update();
+
+        expect(wrapper.find("button.tagGroup__showButton").exists()).toBeFalsy();
+    });
 });

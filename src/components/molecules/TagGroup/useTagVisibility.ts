@@ -53,12 +53,20 @@ export const useTagVisibility = ({ childrenArray, isExpanded, width }: IUseTagVi
 
     const calculateTagVisibility = useCallback(() => {
         const container = containerRef.current;
-        if (!container || isExpanded) return;
+        if (!container) return;
 
         const firstOverflowElementIndex = findOverflowElement(container);
 
         setTagVisibility((currentState) => {
             const hasOverflow = firstOverflowElementIndex > -1;
+
+            if (isExpanded) {
+                return {
+                    visibleCount: childrenArray.length,
+                    shouldShowToggleButton: hasOverflow,
+                    overflowStartIndex: firstOverflowElementIndex
+                };
+            }
 
             if (hasOverflow) {
                 return {
