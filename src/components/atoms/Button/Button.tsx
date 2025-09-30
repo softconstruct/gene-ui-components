@@ -6,6 +6,9 @@ import { IconProps } from "@geneui/icons";
 // Components
 import Loader from "@components/atoms/Loader";
 
+// Types
+import { Booleanish } from "@types";
+
 // Styles
 import "./Button.scss";
 
@@ -76,6 +79,12 @@ interface IButtonProps {
      */
     ariaLabel?: string;
     /**
+     * Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed.
+     * Used for accessibility to inform screen readers about the state of expandable content.
+     * Possible values: `boolean | "true" | "false"`
+     */
+    "aria-expanded"?: Booleanish;
+    /**
      * The button type attribute for HTML form behavior. <br>
      * Possible values: `button | submit | reset` <br>
      * Default: `button`
@@ -127,7 +136,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             type = "button",
             onBlur,
             onFocus,
-            tabIndex = 0
+            tabIndex = 0,
+            "aria-expanded": ariaExpanded
         }: IButtonProps,
         ref
     ) => {
@@ -160,6 +170,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                     }
                 )}
                 aria-label={ariaLabel}
+                aria-expanded={ariaExpanded}
             >
                 {loading && (
                     <Loader
