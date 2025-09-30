@@ -57,7 +57,7 @@ interface ITagProps {
     /**
      * ARIA label for the remove button (X button). Provides descriptive text for screen readers to announce the remove action. Essential for accessibility since the remove button is an interactive element with an action but no visible text.
      */
-    ariaLabel?: string;
+    "aria-label"?: string;
 }
 
 const icons: Record<TagStatus, FC<IconProps>> = {
@@ -78,7 +78,7 @@ const Tag: FC<ITagProps> = ({
     withIcon = true,
     onClose,
     tabIndex,
-    ariaLabel
+    "aria-label": ariaLabel
 }) => {
     const textRef = useRef<HTMLSpanElement | null>(null);
     const isTruncated = useEllipsisDetection(textRef, [text]);
@@ -112,7 +112,7 @@ const Tag: FC<ITagProps> = ({
                 onClick={handleButtonClick}
                 disabled={disabled}
                 tabIndex={tabIndex}
-                ariaLabel={ariaLabel || text}
+                aria-label={ariaLabel || text}
             />
         </div>
     );

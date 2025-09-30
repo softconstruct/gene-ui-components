@@ -17,7 +17,7 @@ const meta: Meta<ITagProps> = {
         text: args({ control: "text", ...propCategory.content }),
         onClose: args({ control: "false", ...propCategory.action }),
         tabIndex: args({ control: "number", ...propCategory.others }),
-        ariaLabel: args({ control: "text", ...propCategory.others })
+        "aria-label": args({ control: "text", ...propCategory.others })
     },
     args: {
         text: "Tag",

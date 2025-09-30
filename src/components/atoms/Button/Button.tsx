@@ -77,7 +77,7 @@ interface IButtonProps {
     /**
      * An ARIA label for a button provides a short, descriptive text label for screen readers and other assistive technologies to announce when the button has no visible text or the visible text isn't clear enough on its own.
      */
-    ariaLabel?: string;
+    "aria-label"?: string;
     /**
      * Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed.
      * Used for accessibility to inform screen readers about the state of expandable content.
@@ -132,7 +132,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             className,
             iconPosition,
             loading,
-            ariaLabel,
+            "aria-label": ariaLabel,
             type = "button",
             onBlur,
             onFocus,
