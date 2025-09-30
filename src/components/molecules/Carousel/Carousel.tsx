@@ -103,14 +103,14 @@ const Carousel: FC<ICarouselProps> = ({
                         Icon={isRTLMode ? ChevronRight : ChevronLeft}
                         appearance="inverse"
                         onClick={onPrevClick}
-                        ariaLabel="select-previews"
+                        aria-label="select-previews"
                     />
                     <Button
                         className="carousel__button carousel__button_forward"
                         Icon={isRTLMode ? ChevronLeft : ChevronRight}
                         appearance="inverse"
                         onClick={onNextClick}
-                        ariaLabel="select-next"
+                        aria-label="select-next"
                     />
                 </>
             )}

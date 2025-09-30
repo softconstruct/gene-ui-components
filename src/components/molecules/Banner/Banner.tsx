@@ -157,7 +157,7 @@ const Banner: FC<IBannerProps> = ({
                     className="banner__close"
                     onClick={onCloseHandler}
                     Icon={X}
-                    ariaLabel="Close"
+                    aria-label="Close"
                 />
             )}
         </div>

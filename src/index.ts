@@ -52,6 +52,8 @@ export { default as Drawer, IDrawerProps } from "./components/molecules/Drawer";
 export { default as Empty, IEmptyProps } from "./components/molecules/Empty";
 export { Carousel, CarouselItem, ICarouselProps, ICarouselItemProps } from "./components/molecules/Carousel";
 export { default as Banner, IBannerProps } from "./components/molecules/Banner";
+export { default as TagGroup, ITagGroupProps } from "./components/molecules/TagGroup";
+
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
 
@@ -71,3 +73,4 @@ export { default as useWindowSize } from "./hooks/useWindowSize";
 export { default as useClickOutside } from "./hooks/useClickOutside";
 export { default as useDeviceInfo } from "./hooks/useDeviceInfo";
 export { default as useBreakpoint } from "./hooks/useBreakpoint";
+export { default as useContainerSize } from "./hooks/useContainerSize";
