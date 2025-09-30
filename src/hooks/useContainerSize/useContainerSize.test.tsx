@@ -77,4 +77,13 @@ describe("useContainerSize", () => {
         expect(wrapper.find('[data-testid="width"]').text()).toBe("300");
         expect(wrapper.find('[data-testid="height"]').text()).toBe("200");
     });
+
+    it("should not observe resize when observeResize is false", () => {
+        mockObserve.mockClear();
+
+        wrapper = mount(<TestComponent observeResize={false} />);
+        const container = wrapper.find('[data-testid="container"]').getDOMNode();
+
+        expect(mockObserve).not.toHaveBeenCalledWith(container);
+    });
 });
