@@ -76,10 +76,7 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium", re
 
     return (
         <div className={classNames("tagGroup", className)}>
-            <div
-                className={classNames("tagGroup__container", { tagGroup__container_expanded: isExpanded })}
-                aria-expanded={isExpanded}
-            >
+            <div className={classNames("tagGroup__container", { tagGroup__container_expanded: isExpanded })}>
                 <div
                     ref={containerRef}
                     id="tagGroup-tags"
@@ -98,7 +95,7 @@ const TagGroup: FC<ITagGroupProps> = ({ className, children, size = "medium", re
                         iconPosition="after"
                         Icon={isExpanded ? ChevronUp : ChevronDown}
                         onClick={handleToggleExpanded}
-                        aria-controls="tagGroup-tags"
+                        aria-expanded={isExpanded}
                     >
                         {renderToggleText?.(isExpanded) || ""}
                     </Button>
