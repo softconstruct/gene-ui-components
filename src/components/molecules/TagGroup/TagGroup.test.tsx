@@ -16,7 +16,7 @@ jest.mock("@hooks/useWindowSize", () => ({
 // Mock DOM layout properties for JSDOM
 Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
     writable: true,
-    value: 32 // Mock tag height
+    value: 32
 });
 
 Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
@@ -29,9 +29,9 @@ Object.defineProperty(HTMLElement.prototype, "offsetTop", {
         const container = this.parentElement;
         if (!container) return 0;
 
-        const containerWidth = container.offsetWidth || 500; // Default width
-        const tagWidth = 100; // Mock tag width
-        const tagHeight = 32; // Mock tag height
+        const containerWidth = container.offsetWidth || 500;
+        const tagWidth = 100;
+        const tagHeight = 32;
         const tagsPerLine = Math.floor(containerWidth / tagWidth);
 
         const index = Array.from(container.children).indexOf(this);
