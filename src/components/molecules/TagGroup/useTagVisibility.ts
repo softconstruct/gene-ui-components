@@ -57,7 +57,7 @@ export const useTagVisibility = ({ childrenArray, isExpanded, width }: IUseTagVi
 
         const firstOverflowElementIndex = findOverflowElement(container);
 
-        setTagVisibility((currentState) => {
+        setTagVisibility(({ visibleCount }) => {
             const hasOverflow = firstOverflowElementIndex > -1;
 
             if (isExpanded) {
@@ -70,14 +70,14 @@ export const useTagVisibility = ({ childrenArray, isExpanded, width }: IUseTagVi
 
             if (hasOverflow) {
                 return {
-                    visibleCount: currentState.visibleCount,
+                    visibleCount,
                     shouldShowToggleButton: true,
                     overflowStartIndex: firstOverflowElementIndex
                 };
             }
             return {
-                visibleCount: Math.min(childrenArray.length, currentState.visibleCount + TAGS_INCREMENT_STEP),
-                shouldShowToggleButton: childrenArray.length > currentState.visibleCount,
+                visibleCount: Math.min(childrenArray.length, visibleCount + TAGS_INCREMENT_STEP),
+                shouldShowToggleButton: childrenArray.length > visibleCount,
                 overflowStartIndex: -1
             };
         });
