@@ -20,11 +20,13 @@ const meta: Meta<IButtonProps> = {
         loading: args({ control: "boolean", ...propCategory.states }),
         Icon: args({ control: "false", ...propCategory.content }),
         name: args({ control: "false", ...propCategory.others }),
-        ariaLabel: args({ control: "text", ...propCategory.others }),
+        "aria-label": args({ control: "text", ...propCategory.others }),
+        "aria-expanded": args({ control: "text", ...propCategory.others }),
         onClick: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
-        type: args({ control: "select", ...propCategory.functionality })
+        type: args({ control: "select", ...propCategory.functionality }),
+        tabIndex: args({ control: "number", ...propCategory.others })
     },
     args: {
         children: "Button",
