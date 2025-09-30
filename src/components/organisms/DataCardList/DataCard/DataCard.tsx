@@ -97,7 +97,7 @@ const DataCard: FC<IDataCardProps> = ({ cardData, role, className, size = "mediu
                 {isShowMoreVisible && (
                     <Button
                         appearance="secondary"
-                        displayType="text"
+                        layout="text"
                         size="large"
                         fullWidth
                         onClick={() => setIsShowMoreMenuOpen(true)}
