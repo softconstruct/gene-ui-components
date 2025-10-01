@@ -40,12 +40,24 @@ interface IInfoProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Provides an accessible label for the info icon button for screen readers.<br>
+     * If not provided, defaults to "press enter to open tooltip". This label describes the button's purpose and interaction method.
+     */
+    "aria-label"?: string;
 }
 
 /**
  * Info icon component used to provide additional contextual information to users. It appears as a small icon, and is placed near elements where further explanation or clarification is useful.
  */
-const Info: FC<IInfoProps> = ({ infoText, disabled, size = "smallNudge", appearance = "default", className }) => {
+const Info: FC<IInfoProps> = ({
+    infoText,
+    disabled,
+    size = "smallNudge",
+    appearance = "default",
+    className,
+    "aria-label": ariaLabel
+}) => {
     const [alwaysShow, setAlwaysShow] = useState(false);
 
     const keyDownHandler = (event: KeyboardEvent<HTMLButtonElement>) => {
@@ -70,7 +82,7 @@ const Info: FC<IInfoProps> = ({ infoText, disabled, size = "smallNudge", appeara
         <Tooltip text={infoText} alwaysShow={alwaysShow} appearance={appearance === "inverse" ? "inverse" : "default"}>
             <button
                 type="button"
-                aria-label="press enter to open tooltip"
+                aria-label={ariaLabel || "press enter to open tooltip"}
                 disabled={disabled}
                 aria-pressed={alwaysShow}
                 className={buttonClassNames}
