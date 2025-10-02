@@ -2,7 +2,7 @@
     $this: &;
 
     border-radius: var(--guit-ref-radius-2xsmall);
-    border: 1px solid var(--guit-sem-color-border-neutral-2); // todo 1px? or rem or var(--guit-ref-border-width-1xsmall)
+    border: var(--guit-ref-border-width-1xsmall) solid var(--guit-sem-color-border-neutral-2);
     padding: var(--guit-ref-spacing-large);
 
     &__listWrapper {
