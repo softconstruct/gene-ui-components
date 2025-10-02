@@ -7,7 +7,7 @@ import DataCard, { IDataCardProps } from "./index";
 describe("DataCard ", () => {
     let setup: ReactWrapper<IDataCardProps>;
     beforeEach(() => {
-        setup = mount(<DataCard />);
+        setup = mount(<DataCard cardData={[]} />);
     });
 
     it("renders without crashing", () => {

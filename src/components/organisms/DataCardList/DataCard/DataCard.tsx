@@ -1,4 +1,4 @@
-import React, { AriaRole, FC, useState } from "react";
+import React, { AriaRole, FC } from "react";
 import classNames from "classnames";
 
 // Component
@@ -72,11 +72,7 @@ const valueRenderer = (value: RowValue) => {
  * DataCard Component is a row for DataCard component
  */
 const DataCard: FC<IDataCardProps> = ({ cardData, role, className, size = "medium" }) => {
-    const [isShowMoreMenuOpen, setIsShowMoreMenuOpen] = useState(false);
     const isShowMoreVisible = cardData.length > SHOWING_ROWS_COUNT;
-
-    // TODO: Remove when menu is implemented
-    console.log("isShowMoreMenuOpen", isShowMoreMenuOpen);
 
     return (
         <div className={classNames("dataCard", className)} role={role}>
@@ -95,13 +91,7 @@ const DataCard: FC<IDataCardProps> = ({ cardData, role, className, size = "mediu
             ))}
             <div className="dataCard__buttons">
                 {isShowMoreVisible && (
-                    <Button
-                        appearance="secondary"
-                        layout="text"
-                        size="large"
-                        fullWidth
-                        onClick={() => setIsShowMoreMenuOpen(true)}
-                    >
+                    <Button appearance="secondary" layout="text" size="large" fullWidth>
                         Show more
                     </Button>
                 )}

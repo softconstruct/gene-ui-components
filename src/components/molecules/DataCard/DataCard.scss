@@ -1,5 +1,24 @@
 .dataCard {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    border-radius: var(--guit-ref-radius-2xsmall);
+    border: 1px solid var(--guit-sem-color-border-neutral-2); // todo 1px? or rem or var(--guit-ref-border-width-1xsmall)
+    padding: var(--guit-ref-spacing-large);
+
+    &__listWrapper {
+        display: flex;
+        flex-direction: column;
+        row-gap: var(--guit-ref-spacing-large);
+        padding-bottom: var(--guit-ref-spacing-large);
+    }
+
+    &__keyValue {
+        height: 2.4rem;
+    }
+
+    &__footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--guit-ref-spacing-xsmall);
+    }
 }
