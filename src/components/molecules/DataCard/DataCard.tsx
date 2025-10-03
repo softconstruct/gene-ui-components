@@ -172,7 +172,7 @@ const DataCard: FC<IDataCardProps> = ({
     const menuElements = renderMenuItemRecursion(actions);
 
     return (
-        <div className={classNames("dataCard", className)} role="table">
+        <div className={classNames("dataCard", className)}>
             <DataList data={cardData.slice(0, MAX_VISIBLE_ROWS)} />
             <div className="dataCard__footer">
                 {isShowMoreVisible && (
