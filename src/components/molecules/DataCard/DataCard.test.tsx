@@ -2,8 +2,6 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
-import { DocumentPen, RecycleBin } from "@geneui/icons";
-
 // Components
 import Button from "@components/atoms/Button";
 import Pill from "@components/atoms/Pill";
@@ -12,33 +10,13 @@ import TextLink from "@components/atoms/TextLink";
 import { KeyValue } from "@components/molecules/KeyValue";
 import { IMenuItemProps, Menu } from "@components/molecules/Menu";
 
+// Data
+import { baseCardData, basicActions, emptyCardData, longCardData } from "../../../../stories/data/__dataCard";
 import DataCard, { IDataCardProps } from "./index";
 
 describe("DataCard ", () => {
     let setup: ReactWrapper<IDataCardProps>;
     const mockOnActionClick = jest.fn();
-
-    const baseCardData: IDataCardProps["cardData"] = [
-        { key: "Name", value: { type: "text", text: "John Doe" }, infoText: "Full name" },
-        { key: "Status", value: { type: "pill", text: "Active", appearance: "magenta" } },
-        { key: "Email", value: { type: "textLink", text: "john@example.com", href: "mailto:john@example.com" } }
-    ];
-
-    const longCardData: IDataCardProps["cardData"] = [
-        { key: "Name", value: { type: "text", text: "John Doe" } },
-        { key: "Status", value: { type: "pill", text: "Active", appearance: "magenta" } },
-        { key: "Email", value: { type: "textLink", text: "john@example.com", href: "mailto:john@example.com" } },
-        { key: "Role", value: { type: "text", text: "Administrator" } },
-        { key: "Department", value: { type: "text", text: "Engineering" } },
-        { key: "Manager", value: { type: "text", text: "Jane Smith" } },
-        { key: "Location", value: { type: "text", text: "New York" } },
-        { key: "Phone", value: { type: "textLink", text: "+1 (555) 123-4567", href: "tel:+15551234567" } }
-    ];
-
-    const actions: IDataCardProps["actions"] = [
-        { id: "1", title: "Edit", IconAfter: DocumentPen },
-        { id: "2", title: "Delete", IconAfter: RecycleBin, danger: true }
-    ];
 
     const createWrapper = (props: Partial<IDataCardProps> = {}) => {
         const defaultProps: IDataCardProps = {
@@ -103,7 +81,7 @@ describe("DataCard ", () => {
     });
 
     it("renders actionsText prop correctly", () => {
-        setup = createWrapper({ actions, actionsText: "Custom Actions" });
+        setup = createWrapper({ actions: basicActions, actionsText: "Custom Actions" });
         const actionButton = setup.find(Button).last();
         expect(actionButton.text()).toBe("Custom Actions");
     });
@@ -118,7 +96,7 @@ describe("DataCard ", () => {
     });
 
     it("renders actions menu when actions prop is provided", () => {
-        setup = createWrapper({ actions });
+        setup = createWrapper({ actions: basicActions });
         expect(setup.find(Menu)).toHaveLength(1);
         expect(setup.find(Button)).toHaveLength(1); // Only Actions button (no Show More for short data)
     });
@@ -137,12 +115,12 @@ describe("DataCard ", () => {
     });
 
     it("handles onActionClick callback", () => {
-        setup = createWrapper({ actions, onActionClick: mockOnActionClick });
+        setup = createWrapper({ actions: basicActions, onActionClick: mockOnActionClick });
         const menu = setup.find(Menu);
         // Simulate menu item click
         const onChange = menu.prop("onChange") as (menuItem: IMenuItemProps) => void;
-        onChange(actions[0]);
-        expect(mockOnActionClick).toHaveBeenCalledWith(actions[0]);
+        onChange(basicActions[0]);
+        expect(mockOnActionClick).toHaveBeenCalledWith(basicActions[0]);
     });
 
     it("renders Spreadsheet when Show More is clicked", () => {
@@ -196,7 +174,7 @@ describe("DataCard ", () => {
     });
 
     it("renders empty cardData gracefully", () => {
-        setup = createWrapper({ cardData: [] });
+        setup = createWrapper({ cardData: emptyCardData });
         expect(setup.find(KeyValue)).toHaveLength(0);
         expect(setup.find(Button)).toHaveLength(0);
     });
