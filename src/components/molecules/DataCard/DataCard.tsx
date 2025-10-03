@@ -69,6 +69,11 @@ interface IDataCardProps {
      * Each item can contain nested children for submenu functionality. When provided, the actions button will be rendered.
      */
     actions?: IMenuItemProps[];
+    /**
+     * Callback function triggered when a menu item is clicked.
+     * Receives the clicked menu item as an argument.
+     */
+    onActionClick?: (menuItem: IMenuItemProps) => void;
 }
 
 const MAX_VISIBLE_ROWS = 6;
@@ -149,6 +154,7 @@ const DataCard: FC<IDataCardProps> = ({
     cardData = [],
     showMoreText = "Show more",
     actionsText = "Actions",
+    onActionClick,
     className,
     actions
 }) => {
@@ -159,7 +165,9 @@ const DataCard: FC<IDataCardProps> = ({
     const onShowMoreToggle = () => {
         setOpen((prev) => !prev);
     };
-    const handleMenuChange = () => {};
+    const handleMenuChange = (menuItem: IMenuItemProps) => {
+        onActionClick?.(menuItem);
+    };
 
     const menuElements = renderMenuItemRecursion(actions);
 

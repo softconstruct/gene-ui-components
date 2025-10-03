@@ -62,7 +62,8 @@ const meta: Meta<IDataCardProps> = {
         cardData: args({ control: "false", ...propCategory.content }),
         showMoreText: args({ control: "text", ...propCategory.content }),
         actionsText: args({ control: "text", ...propCategory.content }),
-        actions: args({ control: "false", ...propCategory.content })
+        actions: args({ control: "false", ...propCategory.content }),
+        onActionClick: args({ control: "false", ...propCategory.action })
     },
     args: {}
 };
