@@ -5,6 +5,9 @@ import { DocsContainer } from "./components/DocContainer";
 import { themes } from "@storybook/theming";
 import { softConstructThem } from "./softConstructThem";
 
+// Import global styles
+import "./style.css";
+
 import { Title, Subtitle, Description, Controls, Stories } from "@storybook/blocks";
 import { withTests } from "@storybook/addon-jest";
 import results from "../coverage/.jest-test-results.json";
