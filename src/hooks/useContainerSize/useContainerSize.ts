@@ -30,11 +30,11 @@ export interface IContainerSize {
  * );
  * ```
  */
-const useContainerSize = ({ observeResize = true }: IUseContainerSizeProps = {}): {
-    containerRef: RefObject<HTMLElement>;
+const useContainerSize = <T extends HTMLElement = HTMLElement>({ observeResize = true }: IUseContainerSizeProps = {}): {
+    containerRef: RefObject<T>;
     sizes: IContainerSize;
 } => {
-    const containerRef = useRef<HTMLElement>(null);
+    const containerRef = useRef<T>(null);
     const [sizes, setSizes] = useState<IContainerSize>({ width: 0, height: 0 });
 
     const updateSize = useCallback(() => {
