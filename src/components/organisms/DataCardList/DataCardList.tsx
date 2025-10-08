@@ -1,28 +1,36 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useRef } from "react";
 import classNames from "classnames";
 // Components
-import { Index, IndexRange, InfiniteLoader, List, ListRowProps } from "react-virtualized";
+import {
+    CellMeasurer,
+    CellMeasurerCache,
+    Index,
+    IndexRange,
+    InfiniteLoader,
+    List,
+    ListRowProps
+} from "react-virtualized";
+
+import Loader from "@components/atoms/Loader";
+import DataCard, { IDataCardProps } from "@components/molecules/DataCard";
+import { IMenuItemProps } from "@components/molecules/Menu";
+
+import useContainerSize from "@hooks/useContainerSize";
 
 // Styles
 import "./DataCardList.scss";
 
-import Loader from "../../atoms/Loader";
-import DataCard, { IDataCardProps } from "./DataCard";
-
 const noop = () => Promise.resolve();
-type Data = IDataCardProps["cardData"][];
-
-const DIMENSIONS = { height: 400, width: 280 };
 
 interface IDataCardListProps {
     /**
      * The data used to render the list of DataCard components.
      */
-    data: Data;
+    data: IDataCardProps["cardData"][];
     /**
      * Function to load the next page of data when the user scrolls near the end of the list.
      */
-    loadNextPage?: (params: IndexRange) => Promise<any>;
+    loadNextPage?: (params: IndexRange) => Promise<void>;
     /**
      * Indicates whether more data is available to load.
      * If `true`, the `loadNextPage` function will be triggered when the user reaches the end of the list.
@@ -37,7 +45,15 @@ interface IDataCardListProps {
      * Defines the size of each DataCard.
      * Possible values: `'medium'` | `'large'`.
      */
-    size?: IDataCardProps["size"];
+    size?: "medium" | "large";
+    /** Actions to display on each DataCard. */
+    actions?: IMenuItemProps[];
+    /** Custom text for Show More button on each DataCard. */
+    showMoreText?: string;
+    /** Custom text for Actions button on each DataCard. */
+    actionsText?: string;
+    /** Callback when an action is clicked in any DataCard. */
+    onActionClick?: (menuItem: IMenuItemProps) => void;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -54,46 +70,46 @@ const DataCardList: FC<IDataCardListProps> = ({
     loadNextPage,
     hasNextPage,
     size = "medium",
-    isNextPageLoading
+    isNextPageLoading,
+    actions,
+    showMoreText,
+    actionsText,
+    onActionClick
 }) => {
-    const ref = useRef<HTMLDivElement>(null);
     const rowCount = hasNextPage ? data.length + 1 : data.length;
     const loadMoreRows = isNextPageLoading || !loadNextPage ? noop : loadNextPage;
     const isRowLoaded = ({ index }: Index) => !hasNextPage || index < data.length;
-    const [dimensions, setDimensions] = useState(DIMENSIONS);
+    const cache = useRef(new CellMeasurerCache({ defaultHeight: size === "medium" ? 326 : 374, fixedWidth: true }));
+    const { containerRef, sizes } = useContainerSize<HTMLDivElement>();
 
-    useEffect(() => {
-        const resizeHandler = () => {
-            if (ref.current) {
-                const { height, width } = ref.current.getBoundingClientRect();
-                setDimensions({ height, width });
-            }
-        };
-        window.addEventListener("resize", resizeHandler);
-        resizeHandler();
-
-        return () => window.removeEventListener("resize", resizeHandler);
-    }, [ref.current]);
-
-    const rowRenderer = ({ index, key, style }: ListRowProps, itemSize: IDataCardListProps["size"]) => (
-        <div key={key} style={style} role="row">
-            <DataCard cardData={data[index]} size={itemSize} role="cell" />
-        </div>
+    const rowRenderer = ({ index, key, style, parent }: ListRowProps) => (
+        <CellMeasurer cache={cache.current} columnIndex={0} key={key} parent={parent} rowIndex={index}>
+            <div style={style}>
+                <DataCard
+                    cardData={data[index]}
+                    actions={actions}
+                    showMoreText={showMoreText}
+                    actionsText={actionsText}
+                    onActionClick={onActionClick}
+                />
+            </div>
+        </CellMeasurer>
     );
 
     return (
-        <div className={classNames("dataCardList", className)} ref={ref}>
+        <div className={classNames("dataCardList", className)} ref={containerRef}>
             <InfiniteLoader isRowLoaded={isRowLoaded} loadMoreRows={loadMoreRows} rowCount={rowCount} threshold={1}>
                 {({ onRowsRendered, registerChild }) => (
                     <>
                         <List
                             ref={registerChild}
                             onRowsRendered={onRowsRendered}
-                            rowRenderer={(props) => rowRenderer(props, size)}
-                            height={dimensions.height}
-                            rowHeight={size === "medium" ? 326 : 374}
+                            rowRenderer={rowRenderer}
+                            height={sizes.height || 400}
+                            rowHeight={cache.current.rowHeight}
                             rowCount={data.length}
-                            width={dimensions.width}
+                            width={sizes.width || 280}
+                            deferredMeasurementCache={cache.current}
                         />
                         {isNextPageLoading && (
                             <div className="dataCardList__loader">

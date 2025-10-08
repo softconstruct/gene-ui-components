@@ -4,14 +4,14 @@ import { mount, ReactWrapper } from "enzyme";
 import { InfiniteLoader } from "react-virtualized";
 
 import Loader from "@components/atoms/Loader";
+import DataCard from "@components/molecules/DataCard";
 import DataCardList, { IDataCardListProps } from "@components/organisms/DataCardList";
-import DataCard from "@components/organisms/DataCardList/DataCard";
 
 const ELEMENTS_COUNT = 5;
 
-const data: IDataCardListProps["data"] = Array.from(Array(ELEMENTS_COUNT).keys()).map(() =>
-    Array.from(Array(8).keys()).map(() => ({
-        key: "Title",
+const data: IDataCardListProps["data"] = Array.from(Array(ELEMENTS_COUNT).keys()).map((cardIndex) =>
+    Array.from(Array(8).keys()).map((rowIndex) => ({
+        key: `Title ${cardIndex}-${rowIndex}`,
         value: { text: "Description", type: "text" }
     }))
 );
@@ -61,9 +61,11 @@ describe("DataCard ", () => {
         expect(wrapper.find(InfiniteLoader).props().rowCount).toEqual(ELEMENTS_COUNT + 1);
     });
 
-    it.each<IDataCardListProps["size"]>(["large", "medium"])("should have %s size", (size) => {
+    // With CellMeasurer, rowHeight is a function; ensure it's provided
+    it.each<IDataCardListProps["size"]>(["large", "medium"])("should provide dynamic rowHeight for %s", (size) => {
         const wrapper = setup.setProps({ size });
-        expect(wrapper.find(DataCard).at(0).props().size).toEqual(size);
+        const listProps = wrapper.find(InfiniteLoader).find("List").props() as any;
+        expect(typeof listProps.rowHeight).toBe("function");
     });
 
     it("handles loadNextPage", () => {

@@ -1,12 +1,20 @@
-import React, { Dispatch, FC, SetStateAction, useMemo, useState } from "react";
+import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
+import { extendedActions } from "../../../../stories/data/__dataCard";
+// Static data
+import {
+    defaultData,
+    minimalTwoRowData,
+    pillData,
+    randomRichData,
+    textLinkData,
+    totalCount
+} from "../../../../stories/data/__dataCardList";
 // Components
 import DataCardList, { IDataCardListProps } from "./index";
-
-const totalCount = 100;
 
 const meta: Meta = {
     title: "Organisms/DataCardList",
@@ -56,18 +64,14 @@ const argTypes = {
 
 const DefaultDataCardListComponent: FC = (props) => {
     const [dataCount, setDataCount] = useState(10);
-
-    const data: IDataCardListProps["data"] = useMemo(
-        () =>
-            Array.from(Array(dataCount).keys()).map((index) =>
-                Array.from(Array(8).keys()).map((rowIndex) => ({
-                    key: `Card ${index} Row ${rowIndex}`,
-                    value: { text: "Description", type: "text" }
-                }))
-            ),
-        [dataCount]
+    return (
+        <TemplateHOC
+            {...props}
+            data={defaultData.slice(0, dataCount)}
+            dataCount={dataCount}
+            setDataCount={setDataCount}
+        />
     );
-    return <TemplateHOC {...props} data={data} dataCount={dataCount} setDataCount={setDataCount} />;
 };
 
 const DefaultDataCardListStory: Story = storyObjBuilder({
@@ -80,19 +84,9 @@ const DefaultDataCardListStory: Story = storyObjBuilder({
 
 const DataCardListWithPillValueComponent: FC = (props) => {
     const [dataCount, setDataCount] = useState(10);
-
-    const data: IDataCardListProps["data"] = useMemo(
-        () =>
-            Array.from(Array(dataCount).keys()).map((index) =>
-                Array.from(Array(8).keys()).map((rowIndex) => ({
-                    infoText: "Info text",
-                    key: `Card ${index} Row ${rowIndex}`,
-                    value: { text: "Pill", type: "pill", isFill: true }
-                }))
-            ),
-        [dataCount]
+    return (
+        <TemplateHOC {...props} data={pillData.slice(0, dataCount)} dataCount={dataCount} setDataCount={setDataCount} />
     );
-    return <TemplateHOC {...props} data={data} dataCount={dataCount} setDataCount={setDataCount} />;
 };
 
 const DataCardListWithPillValueStory: Story = storyObjBuilder({
@@ -105,18 +99,14 @@ const DataCardListWithPillValueStory: Story = storyObjBuilder({
 
 const DataCardListWithTextLinkComponent: FC = (props) => {
     const [dataCount, setDataCount] = useState(10);
-
-    const data: IDataCardListProps["data"] = useMemo(
-        () =>
-            Array.from(Array(dataCount).keys()).map((index) =>
-                Array.from(Array(8).keys()).map((rowIndex) => ({
-                    key: `Card ${index} Row ${rowIndex}`,
-                    value: { text: "Text Link", type: "textLink", href: "#" }
-                }))
-            ),
-        [dataCount]
+    return (
+        <TemplateHOC
+            {...props}
+            data={textLinkData.slice(0, dataCount)}
+            dataCount={dataCount}
+            setDataCount={setDataCount}
+        />
     );
-    return <TemplateHOC {...props} data={data} dataCount={dataCount} setDataCount={setDataCount} />;
 };
 
 const DataCardListWithTextLinkStory: Story = storyObjBuilder({
@@ -132,4 +122,49 @@ export {
     DefaultDataCardListStory as Default,
     DataCardListWithPillValueStory as WithPillValue,
     DataCardListWithTextLinkStory as WithTextLink
+};
+
+// New stories
+const WithActionsAndShowMoreComponent: FC = (props) => {
+    const [dataCount, setDataCount] = useState(20);
+    return (
+        <TemplateHOC
+            {...props}
+            data={randomRichData.slice(0, dataCount)}
+            dataCount={dataCount}
+            setDataCount={setDataCount}
+            actions={extendedActions}
+            showMoreText="Show more"
+            actionsText="Actions"
+        />
+    );
+};
+
+const WithActionsAndShowMoreStory: Story = storyObjBuilder({
+    argTypes: { ...argTypes },
+    args: { size: "medium" },
+    render: (props) => <WithActionsAndShowMoreComponent {...props} />
+});
+
+const WithoutActionsNoShowMoreComponent: FC = (props) => {
+    const [dataCount, setDataCount] = useState(20);
+    return (
+        <TemplateHOC
+            {...props}
+            data={minimalTwoRowData.slice(0, dataCount)}
+            dataCount={dataCount}
+            setDataCount={setDataCount}
+        />
+    );
+};
+
+const WithoutActionsNoShowMoreStory: Story = storyObjBuilder({
+    argTypes: { ...argTypes },
+    args: { size: "medium" },
+    render: (props) => <WithoutActionsNoShowMoreComponent {...props} />
+});
+
+export {
+    WithActionsAndShowMoreStory as WithActionsAndShowMore,
+    WithoutActionsNoShowMoreStory as WithoutActionsNoShowMore
 };
