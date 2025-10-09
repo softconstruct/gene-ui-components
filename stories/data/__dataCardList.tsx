@@ -1,61 +1,209 @@
+import { Copy, DocumentPen, Download, Eye, RecycleBin } from "@geneui/icons";
+
+import { IMenuItemProps } from "@components/molecules/Menu";
 import { IDataCardListProps } from "@components/organisms/DataCardList";
 
 // Static datasets for DataCardList stories (no dynamic generation)
 
-// 10 cards, 8 rows each, text values
-export const defaultData: IDataCardListProps["data"] = Array.from(Array(10).keys()).map((index) =>
-    Array.from(Array(8).keys()).map((rowIndex) => ({
-        key: `Card ${index} Row ${rowIndex}`,
-        value: { text: "Description", type: "text" }
-    }))
-);
-
-// 10 cards, 8 rows with pill values and infoText
-export const pillData: IDataCardListProps["data"] = Array.from(Array(10).keys()).map((index) =>
-    Array.from(Array(8).keys()).map((rowIndex) => ({
-        infoText: "Info text",
-        key: `Card ${index} Row ${rowIndex}`,
-        value: { text: "Pill", type: "pill", filled: true }
-    }))
-);
-
-// 10 cards, 8 rows with text links
-export const textLinkData: IDataCardListProps["data"] = Array.from(Array(10).keys()).map((index) =>
-    Array.from(Array(8).keys()).map((rowIndex) => ({
-        key: `Card ${index} Row ${rowIndex}`,
-        value: { text: "Text Link", type: "textLink", href: "#" }
-    }))
-);
-
 export const totalCount = 100;
 
-// Random-like mixed dataset with text, pill, and textLink, enough rows to show "Show More"
-export const randomRichData: IDataCardListProps["data"] = Array.from(Array(20).keys()).map((index) => [
-    { key: `Name ${index}`, value: { type: "text", text: "John Doe" } },
-    {
-        key: `Status ${index}`,
-        value: {
-            type: "pill",
-            text: index % 2 ? "Active" : "Pending",
-            appearance: index % 2 ? "magenta" : "informative",
-            filled: true
-        }
-    },
-    {
-        key: `Email ${index}`,
-        value: { type: "textLink", text: `user${index}@example.com`, href: `mailto:user${index}@example.com` }
-    },
-    { key: `Role ${index}`, value: { type: "text", text: index % 3 === 0 ? "Administrator" : "User" } },
-    { key: `Projects ${index}`, value: { type: "text", text: String(10 + index) } },
-    { key: `Manager ${index}`, value: { type: "text", text: "Jane Smith" } },
-    { key: `Location ${index}`, value: { type: "text", text: "New York" } }
-]);
+// Unique names and emails for variety
+const names = [
+    "John Doe",
+    "Jane Smith",
+    "Michael Johnson",
+    "Emily Davis",
+    "David Wilson",
+    "Sarah Brown",
+    "James Taylor",
+    "Jessica Anderson",
+    "Robert Thomas",
+    "Linda Martinez",
+    "William Garcia",
+    "Patricia Rodriguez",
+    "Richard Lee",
+    "Barbara White",
+    "Joseph Harris",
+    "Susan Clark",
+    "Thomas Lewis",
+    "Nancy Walker",
+    "Charles Hall",
+    "Karen Allen",
+    "Christopher Young",
+    "Betty King",
+    "Daniel Wright",
+    "Lisa Scott",
+    "Matthew Green",
+    "Sandra Adams",
+    "Anthony Baker",
+    "Ashley Nelson",
+    "Mark Carter",
+    "Donna Mitchell",
+    "Paul Perez",
+    "Carol Roberts",
+    "Steven Turner",
+    "Michelle Phillips",
+    "Andrew Campbell",
+    "Kimberly Parker",
+    "Joshua Evans",
+    "Elizabeth Edwards",
+    "Brian Collins",
+    "Helen Stewart"
+];
 
-// Minimal dataset with two rows per card; no show more
-export const minimalTwoRowData: IDataCardListProps["data"] = Array.from(Array(20).keys()).map((index) => [
-    { key: `Name ${index}`, value: { type: "text", text: "John Doe" } },
-    {
-        key: `Email ${index}`,
-        value: { type: "textLink", text: `user${index}@example.com`, href: `mailto:user${index}@example.com` }
-    }
-]);
+const roles = [
+    "Administrator",
+    "Developer",
+    "Designer",
+    "Manager",
+    "Analyst",
+    "Engineer",
+    "Consultant",
+    "Specialist",
+    "Coordinator",
+    "Director"
+];
+
+const departments = [
+    "Engineering",
+    "Marketing",
+    "Sales",
+    "HR",
+    "Finance",
+    "Operations",
+    "IT",
+    "Support",
+    "Product",
+    "Legal"
+];
+
+const locations = [
+    "New York",
+    "San Francisco",
+    "London",
+    "Berlin",
+    "Tokyo",
+    "Sydney",
+    "Toronto",
+    "Paris",
+    "Amsterdam",
+    "Singapore"
+];
+
+const statuses = ["Active", "Pending", "Inactive", "On Leave", "Remote"];
+
+const subscriptions = ["Premium", "Basic", "Enterprise", "Trial", "Free"];
+
+// 1. Short data with unique names and emails - 40 cards
+export const shortUniqueData: IDataCardListProps["data"] = Array.from(Array(40).keys()).map((index) => ({
+    cardData: [
+        { key: "Name", value: { type: "text", text: names[index % names.length] } },
+        {
+            key: "Email",
+            value: {
+                type: "textLink",
+                text: `${names[index % names.length].toLowerCase().replace(" ", ".")}@example.com`,
+                href: `mailto:${names[index % names.length].toLowerCase().replace(" ", ".")}@example.com`
+            }
+        }
+    ]
+}));
+
+// 2. Long data with unique values - 20 cards
+export const longUniqueData: IDataCardListProps["data"] = Array.from(Array(20).keys()).map((index) => ({
+    cardData: [
+        { key: "Name", value: { type: "text", text: names[index % names.length] } },
+        {
+            key: "Status",
+            value: {
+                type: "pill",
+                text: statuses[index % statuses.length],
+                appearance: index % 2 ? "magenta" : "informative",
+                filled: true
+            }
+        },
+        {
+            key: "Email",
+            value: {
+                type: "textLink",
+                text: `${names[index % names.length].toLowerCase().replace(" ", ".")}@example.com`,
+                href: `mailto:${names[index % names.length].toLowerCase().replace(" ", ".")}@example.com`
+            }
+        },
+        { key: "Role", value: { type: "text", text: roles[index % roles.length] } },
+        {
+            key: "Last Login",
+            value: {
+                type: "text",
+                text: `2023-${String((index % 12) + 1).padStart(2, "0")}-${String((index % 28) + 1).padStart(2, "0")} ${(index % 12) + 1}:${String(index % 60).padStart(2, "0")} ${index % 2 ? "AM" : "PM"}`
+            }
+        },
+        {
+            key: "Subscription",
+            value: {
+                type: "pill",
+                text: subscriptions[index % subscriptions.length],
+                appearance: "informative",
+                filled: true
+            }
+        },
+        { key: "Projects", value: { type: "text", text: String(10 + index) } },
+        { key: "Tasks", value: { type: "text", text: String(20 + index * 2) } },
+        { key: "Department", value: { type: "text", text: departments[index % departments.length] } },
+        { key: "Manager", value: { type: "text", text: names[(index + 5) % names.length] } },
+        { key: "Location", value: { type: "text", text: locations[index % locations.length] } },
+        {
+            key: "Phone",
+            value: {
+                type: "textLink",
+                text: `+1 (${String((index % 900) + 100)}) ${String((index % 900) + 100)}-${String((index % 9000) + 1000)}`,
+                href: `tel:+1${String((index % 900) + 100)}${String((index % 900) + 100)}${String((index % 9000) + 1000)}`
+            }
+        }
+    ]
+}));
+
+// 3. Data with unique actions per card - 20 cards
+const actionsVariants: IMenuItemProps[][] = [
+    [
+        { id: "1", title: "Edit", IconAfter: DocumentPen },
+        { id: "2", title: "Delete", IconAfter: RecycleBin, danger: true }
+    ],
+    [], // No actions
+    [{ id: "1", title: "View Details", IconAfter: Eye }],
+    [
+        { id: "1", title: "Edit", IconAfter: DocumentPen },
+        { id: "2", title: "Copy", IconAfter: Copy },
+        { id: "3", title: "Delete", IconAfter: RecycleBin, danger: true }
+    ],
+    [{ id: "1", title: "Download", IconAfter: Download }],
+    [
+        { id: "1", title: "View", IconAfter: Eye },
+        { id: "2", title: "Edit", IconAfter: DocumentPen }
+    ]
+];
+
+export const uniqueActionsData: IDataCardListProps["data"] = Array.from(Array(20).keys()).map((index) => ({
+    cardData: [
+        { key: "Name", value: { type: "text", text: names[index % names.length] } },
+        {
+            key: "Status",
+            value: {
+                type: "pill",
+                text: statuses[index % statuses.length],
+                appearance: index % 2 ? "magenta" : "informative",
+                filled: true
+            }
+        },
+        {
+            key: "Email",
+            value: {
+                type: "textLink",
+                text: `${names[index % names.length].toLowerCase().replace(" ", ".")}@example.com`,
+                href: `mailto:${names[index % names.length].toLowerCase().replace(" ", ".")}@example.com`
+            }
+        },
+        { key: "Role", value: { type: "text", text: roles[index % roles.length] } }
+    ],
+    actions: actionsVariants[index % actionsVariants.length]
+}));
