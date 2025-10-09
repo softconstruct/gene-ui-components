@@ -171,6 +171,8 @@ const DataCard: FC<IDataCardProps> = ({
 
     const menuElements = renderMenuItemRecursion(actions);
 
+    const hasActions = actions && actions.length > 0;
+
     return (
         <div className={classNames("dataCard", className)}>
             <DataList data={cardData.slice(0, MAX_VISIBLE_ROWS)} />
@@ -180,7 +182,7 @@ const DataCard: FC<IDataCardProps> = ({
                         {showMoreText}
                     </Button>
                 )}
-                {actions && (
+                {hasActions && (
                     <>
                         <Button appearance="secondary" size="large" fullWidth {...propsForPopover}>
                             {actionsText}

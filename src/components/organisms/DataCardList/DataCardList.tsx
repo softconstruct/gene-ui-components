@@ -15,6 +15,7 @@ import Loader from "@components/atoms/Loader";
 import DataCard, { IDataCardProps } from "@components/molecules/DataCard";
 import { IMenuItemProps } from "@components/molecules/Menu";
 
+// Hooks
 import useContainerSize from "@hooks/useContainerSize";
 
 // Styles
@@ -26,7 +27,7 @@ interface IDataCardListProps {
     /**
      * The data used to render the list of DataCard components.
      */
-    data: IDataCardProps["cardData"][];
+    data: IDataCardProps[];
     /**
      * Function to load the next page of data when the user scrolls near the end of the list.
      */
@@ -86,11 +87,11 @@ const DataCardList: FC<IDataCardListProps> = ({
         <CellMeasurer cache={cache.current} columnIndex={0} key={key} parent={parent} rowIndex={index}>
             <div style={style}>
                 <DataCard
-                    cardData={data[index]}
-                    actions={actions}
+                    cardData={data[index].cardData}
+                    actions={data[index].actions || actions}
                     showMoreText={showMoreText}
                     actionsText={actionsText}
-                    onActionClick={onActionClick}
+                    onActionClick={data[index].onActionClick || onActionClick}
                 />
             </div>
         </CellMeasurer>
@@ -105,10 +106,10 @@ const DataCardList: FC<IDataCardListProps> = ({
                             ref={registerChild}
                             onRowsRendered={onRowsRendered}
                             rowRenderer={rowRenderer}
-                            height={sizes.height || 400}
+                            height={sizes.height}
                             rowHeight={cache.current.rowHeight}
                             rowCount={data.length}
-                            width={sizes.width || 280}
+                            width={sizes.width}
                             deferredMeasurementCache={cache.current}
                         />
                         {isNextPageLoading && (
