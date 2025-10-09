@@ -1,8 +1,10 @@
 import React, { FC } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+// Components
 import Pill from "@components/atoms/Pill";
 import TextLink from "@components/atoms/TextLink";
+import DataCard, { IDataCardProps } from "@components/molecules/DataCard";
 import { Key, Value } from "@components/molecules/KeyValue";
 import { MenuItem } from "@components/molecules/Menu";
 
@@ -10,13 +12,11 @@ import { MenuItem } from "@components/molecules/Menu";
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Data
 import { extendedActions, extendedCardData, longCardData } from "../../../../stories/data/__dataCard";
-// Components
-import DataCard, { IDataCardProps } from "./index";
 
 const meta: Meta<IDataCardProps> = {
     title: "Molecules/DataCard",
     component: DataCard,
-    subcomponents: { Pill, TextLink, MenuItem, Key, Value } as any,
+    subcomponents: { Pill, TextLink, MenuItem, Key, Value },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         cardData: args({ control: "false", ...propCategory.content }),
@@ -46,7 +46,7 @@ export const WithLongData: Story = {
 };
 
 export const WithoutActions: Story = {
-    render: (props) => <DataCardStory {...props} actions={undefined} />
+    render: (props) => <DataCard {...props} cardData={extendedCardData} />
 };
 
 export const WithCustomTexts: Story = {
