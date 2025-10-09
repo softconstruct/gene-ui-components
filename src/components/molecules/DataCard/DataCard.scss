@@ -2,23 +2,26 @@
     $this: &;
 
     border-radius: var(--guit-ref-radius-2xsmall);
-    border: 1px solid var(--guit-sem-color-border-neutral-2);
+    border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
     padding: var(--guit-ref-spacing-large);
 
     &__listWrapper {
         display: flex;
         flex-direction: column;
         row-gap: var(--guit-ref-spacing-large);
-        padding-bottom: var(--guit-ref-spacing-large);
     }
 
     &__keyValue {
-        height: 2.4rem;
+        overflow: hidden;
     }
 
     &__footer {
         display: flex;
         justify-content: flex-end;
         gap: var(--guit-ref-spacing-xsmall);
+
+        &:not(:empty) {
+            margin-top: var(--guit-ref-spacing-large);
+        }
     }
 }
