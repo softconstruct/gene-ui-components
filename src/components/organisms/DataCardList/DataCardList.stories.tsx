@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useState } from "react";
+import React, { FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -7,8 +7,8 @@ import { extendedActions } from "../../../../stories/data/__dataCard";
 // Static data
 import {
     longUniqueData,
+    pureVirtualizationData,
     shortUniqueData,
-    totalCount,
     uniqueActionsData
 } from "../../../../stories/data/__dataCardList";
 // Components
@@ -17,36 +17,6 @@ import DataCardList, { IDataCardListProps } from "./index";
 const meta: Meta = {
     title: "Organisms/DataCardList",
     component: DataCardList
-};
-
-const TemplateHOC: FC<IDataCardListProps & { dataCount: number; setDataCount: Dispatch<SetStateAction<number>> }> = ({
-    data,
-    dataCount,
-    setDataCount,
-    ...rest
-}) => {
-    const [isLoading, setIsLoading] = useState(false);
-
-    const loadNextPage = async () => {
-        setIsLoading(true);
-        await new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(false);
-                setDataCount((prev) => prev + 10);
-            }, 3000);
-        });
-        setIsLoading(false);
-    };
-
-    return (
-        <DataCardList
-            {...rest}
-            data={data}
-            loadNextPage={loadNextPage}
-            hasNextPage={dataCount < totalCount}
-            isNextPageLoading={isLoading}
-        />
-    );
 };
 
 type Story = StoryObj<IDataCardListProps>;
@@ -60,13 +30,30 @@ const argTypes = {
 };
 
 const LongUniqueDataComponent: FC = (props) => {
-    const [dataCount, setDataCount] = useState(20);
+    const [dataCount, setDataCount] = useState(10);
+    const [data, setData] = useState(longUniqueData.slice(0, 10));
+    const [isLoading, setIsLoading] = useState(false);
+
+    const loadNextPage = async () => {
+        setIsLoading(true);
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                const newCount = dataCount + 10;
+                setDataCount(newCount);
+                setData(longUniqueData.slice(0, newCount));
+                setIsLoading(false);
+                resolve(true);
+            }, 2000);
+        });
+    };
+
     return (
-        <TemplateHOC
+        <DataCardList
             {...props}
-            data={longUniqueData.slice(0, dataCount)}
-            dataCount={dataCount}
-            setDataCount={setDataCount}
+            data={data}
+            loadNextPage={loadNextPage}
+            hasNextPage={dataCount < longUniqueData.length}
+            isNextPageLoading={isLoading}
             actions={extendedActions}
         />
     );
@@ -74,44 +61,93 @@ const LongUniqueDataComponent: FC = (props) => {
 
 export const Default: Story = storyObjBuilder({
     argTypes: { ...argTypes },
-    args: { size: "medium" },
+    args: {},
     render: (props) => <LongUniqueDataComponent {...props} />
 });
 
 const ShortUniqueDataComponent: FC = (props) => {
-    const [dataCount, setDataCount] = useState(40);
+    const [dataCount, setDataCount] = useState(10);
+    const [data, setData] = useState(shortUniqueData.slice(0, 10));
+    const [isLoading, setIsLoading] = useState(false);
+
+    const loadNextPage = async () => {
+        setIsLoading(true);
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                const newCount = dataCount + 10;
+                setDataCount(newCount);
+                setData(shortUniqueData.slice(0, newCount));
+                setIsLoading(false);
+                resolve(true);
+            }, 2000);
+        });
+    };
+
     return (
-        <TemplateHOC
+        <DataCardList
             {...props}
-            data={shortUniqueData.slice(0, dataCount)}
-            dataCount={dataCount}
-            setDataCount={setDataCount}
+            data={data}
+            loadNextPage={loadNextPage}
+            hasNextPage={dataCount < shortUniqueData.length}
+            isNextPageLoading={isLoading}
         />
     );
 };
 
 export const ShortData: Story = storyObjBuilder({
     argTypes: { ...argTypes },
-    args: { size: "medium" },
+    args: {},
     render: (props) => <ShortUniqueDataComponent {...props} />
 });
 
 const UniqueActionsComponent: FC = (props) => {
-    const [dataCount, setDataCount] = useState(20);
+    const [dataCount, setDataCount] = useState(10);
+    const [data, setData] = useState(uniqueActionsData.slice(0, 10));
+    const [isLoading, setIsLoading] = useState(false);
+
+    const loadNextPage = async () => {
+        setIsLoading(true);
+        await new Promise((resolve) => {
+            setTimeout(() => {
+                const newCount = dataCount + 10;
+                setDataCount(newCount);
+                setData(uniqueActionsData.slice(0, newCount));
+                setIsLoading(false);
+                resolve(true);
+            }, 2000);
+        });
+    };
+
     return (
-        <TemplateHOC
+        <DataCardList
             {...props}
-            data={uniqueActionsData.slice(0, dataCount)}
-            dataCount={dataCount}
-            setDataCount={setDataCount}
+            data={data}
+            loadNextPage={loadNextPage}
+            hasNextPage={dataCount < uniqueActionsData.length}
+            isNextPageLoading={isLoading}
         />
     );
 };
 
 export const UniqueActions: Story = storyObjBuilder({
     argTypes: { ...argTypes },
-    args: { size: "medium" },
     render: (props) => <UniqueActionsComponent {...props} />
+});
+
+const PureVirtualizationComponent: FC = (props) => {
+    return (
+        <DataCardList
+            {...props}
+            data={pureVirtualizationData}
+            // No loadNextPage, hasNextPage, or isNextPageLoading - pure virtualization only
+        />
+    );
+};
+
+export const PureVirtualization: Story = storyObjBuilder({
+    argTypes: { ...argTypes },
+    args: {},
+    render: (props) => <PureVirtualizationComponent {...props} />
 });
 
 export default meta;

@@ -207,3 +207,30 @@ export const uniqueActionsData: IDataCardListProps["data"] = Array.from(Array(20
     ],
     actions: actionsVariants[index % actionsVariants.length]
 }));
+
+// Helper functions for pure virtualization data
+const getRole = (idx: number): string => {
+    if (idx % 3 === 0) return "Admin";
+    if (idx % 2 === 0) return "User";
+    return "Guest";
+};
+
+const getStatus = (idx: number): string => {
+    if (idx % 4 === 0) return "Active";
+    if (idx % 3 === 0) return "Inactive";
+    return "Pending";
+};
+
+// Pure virtualization data - 100 static items
+export const pureVirtualizationData: IDataCardListProps["data"] = Array.from(Array(100).keys()).map((index) => ({
+    cardData: [
+        { key: "Name", value: { text: `User ${index + 1}`, type: "text" } },
+        { key: "Email", value: { text: `user${index + 1}@example.com`, type: "text" } },
+        { key: "Role", value: { text: getRole(index), type: "text" } },
+        { key: "Status", value: { text: getStatus(index), type: "text" } },
+        { key: "Department", value: { text: `Department ${(index % 5) + 1}`, type: "text" } },
+        { key: "Location", value: { text: index % 2 === 0 ? "New York" : "San Francisco", type: "text" } },
+        { key: "Last Login", value: { text: `2023-12-${String((index % 28) + 1).padStart(2, "0")}`, type: "text" } },
+        { key: "Projects", value: { text: `${(index % 10) + 1}`, type: "text" } }
+    ]
+}));

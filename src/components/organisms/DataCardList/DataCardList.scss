@@ -1,6 +1,14 @@
 .dataCardList {
     height: 100%;
 
+    &__dataCard {
+        margin-bottom: var(--guit-ref-spacing-small);
+
+        &--last {
+            margin-bottom: 0;
+        }
+    }
+
     &__loader {
         margin-top: var(--guit-ref-spacing-xlarge);
         text-align: center;
