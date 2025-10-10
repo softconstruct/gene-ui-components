@@ -175,11 +175,11 @@
         "@floating-ui/utils": "^0.2.8",
         "@geneui/icons": "^1.4.3",
         "@geneui/tokens": "^1.0.2",
+        "@tanstack/react-virtual": "^3.13.12",
         "classnames": "^2.3.2",
         "qrcode.react": "^4.2.0",
         "react-is": "^17.0.2",
-        "react-scrollbars-custom": "^4.1.1",
-        "react-virtualized": "^9.22.5"
+        "react-scrollbars-custom": "^4.1.1"
     },
     "husky": {
         "hooks": {
