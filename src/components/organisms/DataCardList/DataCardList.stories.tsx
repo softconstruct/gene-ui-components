@@ -11,12 +11,14 @@ import {
     shortUniqueData,
     uniqueActionsData
 } from "../../../../stories/data/__dataCardList";
+import DataCard from "./DataCard";
 // Components
 import DataCardList, { IDataCardListProps } from "./index";
 
 const meta: Meta = {
     title: "Organisms/DataCardList",
-    component: DataCardList
+    component: DataCardList,
+    subcomponents: { DataCard }
 };
 
 type Story = StoryObj<IDataCardListProps>;
