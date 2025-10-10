@@ -1,7 +1,7 @@
 import { Copy, DocumentPen, Download, Eye, RecycleBin } from "@geneui/icons";
 
-import { IDataCardProps } from "@components/molecules/DataCard";
 import { IMenuItemProps } from "@components/molecules/Menu";
+import { IDataCardProps } from "@components/organisms/DataCardList/DataCard";
 
 // Base card data - used in both stories and tests
 export const baseCardData: IDataCardProps["cardData"] = [

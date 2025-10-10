@@ -11,7 +11,7 @@ import { KeyValue } from "@components/molecules/KeyValue";
 import { IMenuItemProps, Menu } from "@components/molecules/Menu";
 
 // Data
-import { baseCardData, basicActions, emptyCardData, longCardData } from "../../../../stories/data/__dataCard";
+import { baseCardData, basicActions, emptyCardData, longCardData } from "../../../../../stories/data/__dataCard";
 import DataCard, { IDataCardProps } from "./index";
 
 describe("DataCard ", () => {

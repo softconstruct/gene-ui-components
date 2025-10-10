@@ -4,17 +4,17 @@ import { Meta, StoryObj } from "@storybook/react";
 // Components
 import Pill from "@components/atoms/Pill";
 import TextLink from "@components/atoms/TextLink";
-import DataCard, { IDataCardProps } from "@components/molecules/DataCard";
 import { Key, Value } from "@components/molecules/KeyValue";
 import { MenuItem } from "@components/molecules/Menu";
+import DataCard, { IDataCardProps } from "@components/organisms/DataCardList/DataCard/index";
 
 // Helpers
-import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import { args, propCategory } from "../../../../../stories/assets/storybook.globals";
 // Data
-import { extendedActions, extendedCardData, longCardData } from "../../../../stories/data/__dataCard";
+import { extendedActions, extendedCardData, longCardData } from "../../../../../stories/data/__dataCard";
 
 const meta: Meta<IDataCardProps> = {
-    title: "Molecules/DataCard",
+    title: "Organisms/DataCardList/DataCard",
     component: DataCard,
     subcomponents: { Pill, TextLink, MenuItem, Key, Value },
     argTypes: {

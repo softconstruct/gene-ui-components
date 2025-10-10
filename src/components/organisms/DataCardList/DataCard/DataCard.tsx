@@ -10,7 +10,7 @@ import { Key, KeyValue, Value } from "@components/molecules/KeyValue";
 // Styles
 import "./DataCard.scss";
 
-import { IMenuItemProps, Menu, MenuItem, Spreadsheet } from "../../../index";
+import { IMenuItemProps, Menu, MenuItem, Spreadsheet } from "../../../../index";
 
 interface TextValue {
     text: string;
