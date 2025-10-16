@@ -122,23 +122,21 @@ const DataCardList: FC<IDataCardListProps> = ({
         <div className={classNames("dataCardList", className)} ref={containerRef}>
             <Scrollbar height="full" ref={scrollbarRef}>
                 <div
-                    style={{
-                        height: `${(virtualizer.getTotalSize() + (isNextPageLoading ? LOADER_HEIGHT : 0)) / REM_BASE}rem`,
-                        width: "100%",
-                        position: "relative"
-                    }}
+                    className="dataCardList__container"
+                    style={
+                        {
+                            "--virtual-container-height": `${(virtualizer.getTotalSize() + (isNextPageLoading ? LOADER_HEIGHT : 0)) / REM_BASE}rem`
+                        } as React.CSSProperties
+                    }
                 >
                     {items.map((virtualItem) => (
                         <div
                             key={virtualItem.key}
+                            className="dataCardList__item"
                             data-index={virtualItem.index}
                             ref={virtualizer.measureElement}
                             style={{
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
-                                width: "100%",
-                                transform: `translateY(${virtualItem.start / REM_BASE}rem)`
+                                "--virtual-item-transform": `translateY(${virtualItem.start / REM_BASE}rem)`
                             }}
                         >
                             <DataCard
@@ -157,9 +155,7 @@ const DataCardList: FC<IDataCardListProps> = ({
                         <div
                             className="dataCardList__loader"
                             style={{
-                                position: "absolute",
-                                top: `${virtualizer.getTotalSize() / REM_BASE}rem`,
-                                width: "100%"
+                                "--virtual-loader-top": `${virtualizer.getTotalSize() / REM_BASE}rem`
                             }}
                         >
                             <Loader size="small" />
