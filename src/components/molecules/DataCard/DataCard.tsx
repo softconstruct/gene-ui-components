@@ -4,13 +4,13 @@ import classNames from "classnames";
 // Component
 import Button from "@components/atoms/Button";
 import Pill, { IPillProps } from "@components/atoms/Pill";
+import Spreadsheet from "@components/atoms/Spreadsheet";
 import TextLink, { ITextLinkProps } from "@components/atoms/TextLink";
 import { Key, KeyValue, Value } from "@components/molecules/KeyValue";
+import { IMenuItemProps, Menu, MenuItem } from "@components/molecules/Menu";
 
 // Styles
 import "./DataCard.scss";
-
-import { IMenuItemProps, Menu, MenuItem, Spreadsheet } from "../../../../index";
 
 interface TextValue {
     text: string;

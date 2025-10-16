@@ -3,8 +3,8 @@ import { mount, ReactWrapper } from "enzyme";
 
 import Loader from "@components/atoms/Loader";
 import Scrollbar from "@components/atoms/Scrollbar";
+import DataCard from "@components/molecules/DataCard";
 import DataCardList, { IDataCardListProps } from "@components/organisms/DataCardList";
-import DataCard from "@components/organisms/DataCardList/DataCard";
 
 const ELEMENTS_COUNT = 5;
 

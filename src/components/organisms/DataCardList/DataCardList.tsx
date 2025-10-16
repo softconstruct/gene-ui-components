@@ -5,12 +5,11 @@ import classNames from "classnames";
 // Components
 import Loader from "@components/atoms/Loader";
 import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
+import DataCard, { IDataCardProps } from "@components/molecules/DataCard";
 import { IMenuItemProps } from "@components/molecules/Menu";
 
 // Styles
 import "./DataCardList.scss";
-
-import DataCard, { IDataCardProps } from "./DataCard";
 
 // Constants
 const VIRTUALIZER_OVERSCAN = 2; // Number of items to render outside visible area

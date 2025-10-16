@@ -6,17 +6,23 @@ import Pill from "@components/atoms/Pill";
 import TextLink from "@components/atoms/TextLink";
 import { Key, Value } from "@components/molecules/KeyValue";
 import { MenuItem } from "@components/molecules/Menu";
-import DataCard, { IDataCardProps } from "@components/organisms/DataCardList/DataCard/index";
 
 // Helpers
-import { args, propCategory } from "../../../../../stories/assets/storybook.globals";
+import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Data
-import { extendedActions, extendedCardData, longCardData } from "../../../../../stories/data/__dataCard";
+import { extendedActions, extendedCardData, longCardData } from "../../../../stories/data/__dataCard";
+import DataCard, { IDataCardProps } from "./DataCard";
 
 const meta: Meta<IDataCardProps> = {
-    title: "Organisms/DataCardList/DataCard",
+    title: "Molecules/DataCard",
     component: DataCard,
-    subcomponents: { Pill, TextLink, MenuItem, Key, Value },
+    subcomponents: {
+        Pill: Pill as React.ComponentType<unknown>,
+        TextLink: TextLink as React.ComponentType<unknown>,
+        MenuItem: MenuItem as React.ComponentType<unknown>,
+        Key: Key as React.ComponentType<unknown>,
+        Value: Value as React.ComponentType<unknown>
+    },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         cardData: args({ control: "false", ...propCategory.content }),

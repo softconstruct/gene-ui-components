@@ -1,6 +1,8 @@
 import React, { FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import DataCard from "@components/molecules/DataCard";
+
 // Helpers
 import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
 import { extendedActions } from "../../../../stories/data/__dataCard";
@@ -11,14 +13,13 @@ import {
     shortUniqueData,
     uniqueActionsData
 } from "../../../../stories/data/__dataCardList";
-import DataCard from "./DataCard";
 // Components
 import DataCardList, { IDataCardListProps } from "./index";
 
 const meta: Meta = {
     title: "Organisms/DataCardList",
     component: DataCardList,
-    subcomponents: { DataCard }
+    subcomponents: { DataCard: DataCard as React.ComponentType<unknown> }
 };
 
 type Story = StoryObj<IDataCardListProps>;
@@ -137,13 +138,7 @@ export const UniqueActions: Story = storyObjBuilder({
 });
 
 const PureVirtualizationComponent: FC = (props) => {
-    return (
-        <DataCardList
-            {...props}
-            data={pureVirtualizationData}
-            // No loadNextPage, hasNextPage, or isNextPageLoading - pure virtualization only
-        />
-    );
+    return <DataCardList {...props} data={pureVirtualizationData} />;
 };
 
 export const PureVirtualization: Story = storyObjBuilder({
