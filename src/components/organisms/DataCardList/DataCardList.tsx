@@ -150,9 +150,7 @@ const DataCardList: FC<IDataCardListProps> = ({
                             }}
                         >
                             <DataCard
-                                className={classNames("dataCardList__dataCard", {
-                                    "dataCardList__dataCard--last": virtualItem.index === data.length - 1
-                                })}
+                                className="dataCardList__dataCard"
                                 cardData={data[virtualItem.index].cardData}
                                 actions={data[virtualItem.index].actions || actions}
                                 showMoreText={showMoreText}
