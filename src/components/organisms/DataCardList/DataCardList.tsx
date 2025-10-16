@@ -13,9 +13,9 @@ import "./DataCardList.scss";
 
 // Constants
 const VIRTUALIZER_OVERSCAN = 2; // Number of items to render outside visible area
-const LOADER_HEIGHT = 60; // Height for loading indicator in pixels
 const REM_BASE = 10; // Base value for rem conversion (1rem = 10px)
-const DEFAULT_ITEM_ESTIMATE = 320; // Fallback estimate in pixels used before first measurement
+const DEFAULT_ITEM_ESTIMATE = 0; // Fallback estimate in pixels used before first measurement
+const DEFAULT_LOADER_HEIGHT = 0; // Fallback height for loading indicator in pixels
 
 // Runtime measurement cache for per-item sizes to avoid hard-coded layout assumptions
 const itemSizeCache = new Map<number, number>();
@@ -88,6 +88,7 @@ const DataCardList: FC<IDataCardListProps> = ({
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const scrollbarRef = useRef<ScrollbarRefType>(null);
+    const loaderRef = useRef<HTMLDivElement>(null);
 
     const virtualizer = useVirtualizer({
         count: data.length,
@@ -108,6 +109,15 @@ const DataCardList: FC<IDataCardListProps> = ({
 
     const items = virtualizer.getVirtualItems();
 
+    // Get loader height dynamically
+    const getLoaderHeight = useCallback(() => {
+        if (loaderRef.current) {
+            const { height } = loaderRef.current.getBoundingClientRect();
+            return height > 0 ? height : DEFAULT_LOADER_HEIGHT;
+        }
+        return DEFAULT_LOADER_HEIGHT;
+    }, []);
+
     useEffect(() => {
         const lastItem = items.at(-1);
 
@@ -125,7 +135,7 @@ const DataCardList: FC<IDataCardListProps> = ({
                     className="dataCardList__container"
                     style={
                         {
-                            "--virtual-container-height": `${(virtualizer.getTotalSize() + (isNextPageLoading ? LOADER_HEIGHT : 0)) / REM_BASE}rem`
+                            "--virtual-container-height": `${(virtualizer.getTotalSize() + (isNextPageLoading ? getLoaderHeight() : 0)) / REM_BASE}rem`
                         } as React.CSSProperties
                     }
                 >
@@ -153,6 +163,7 @@ const DataCardList: FC<IDataCardListProps> = ({
                     ))}
                     {isNextPageLoading && (
                         <div
+                            ref={loaderRef}
                             className="dataCardList__loader"
                             style={{
                                 "--virtual-loader-top": `${virtualizer.getTotalSize() / REM_BASE}rem`
