@@ -111,7 +111,7 @@ const CustomDecorator = ({ children }) => {
                 </div>
             )}
             <div style={{ position: "relative", height: "100%", ...paddingForWrapper }}>
-                <div>{allowRenderChildren && children}</div>
+                {allowRenderChildren && children}
             </div>
         </GeneUIProvider>
     );

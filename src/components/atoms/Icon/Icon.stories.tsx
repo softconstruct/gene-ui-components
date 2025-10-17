@@ -1,5 +1,6 @@
-import React, { ChangeEvent, ComponentType, FC, ReactNode, useMemo, useState } from "react";
+import React, { ChangeEvent, ComponentType, FC, ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
 
 // Icons
@@ -11,8 +12,11 @@ import iconsMetadata from "@geneui/icons/metadata";
 // Components
 import Copy from "@components/atoms/Copy";
 import Divider from "@components/atoms/Divider";
+import Scrollbar from "@components/atoms/Scrollbar";
 import Text, { ITextProps } from "@components/atoms/Text";
 import TextField from "@components/molecules/TextField";
+
+import useContainerSize from "@hooks/useContainerSize";
 
 // Styles
 import "./Icon.scss";
@@ -150,6 +154,24 @@ const IconCard: FC<IIconCardProps> = ({ name, IconComponent, metadata, searchTer
 
 const IconsCatalogComponent: FC = () => {
     const [searchTerm, setSearchTerm] = useState("");
+    const [columnCount, setColumnCount] = useState(3);
+    const [rowHeight, setRowHeight] = useState(0);
+    const scrollElementRef = useRef<HTMLDivElement>(null);
+    const { containerRef, sizes } = useContainerSize<HTMLDivElement>();
+
+    // Calculate column count based on container width
+    useEffect(() => {
+        const containerWidth = sizes.width;
+        if (containerWidth === 0) return;
+
+        const padding = 32; // Account for any padding/margins
+
+        // Calculate how many columns can fit with equal width distribution
+        const availableWidth = containerWidth - padding;
+        const columns = Math.floor(availableWidth / 300); // Use 300px as a reasonable card width
+
+        setColumnCount(Math.max(1, Math.min(columns, 8))); // Cap at 8 columns max
+    }, [sizes.width]);
 
     // Map icons metadata to actual icon components
     const iconsWithMetadata = useMemo((): IIconWithMetadata[] => {
@@ -176,8 +198,27 @@ const IconsCatalogComponent: FC = () => {
             .map((prioritizedIcon) => prioritizedIcon.icon);
     }, [iconsWithMetadata, searchTerm]);
 
+    const rowCount = Math.ceil(filteredIcons.length / columnCount);
+
+    const virtualizer = useVirtualizer({
+        count: rowCount,
+        getScrollElement: () => scrollElementRef.current,
+        estimateSize: () => rowHeight,
+        overscan: 5,
+        measureElement: (element) => {
+            if (element) {
+                const { height } = element.getBoundingClientRect();
+                setRowHeight(height);
+                return height;
+            }
+            return rowHeight;
+        }
+    });
+
+    const items = virtualizer.getVirtualItems();
+
     return (
-        <div className="iconCatalog">
+        <div className="iconCatalog" ref={containerRef}>
             <Text as="h1" variant="headingMediumSemibold" className="iconCatalog__title">
                 @geneui/icons
             </Text>
@@ -190,20 +231,61 @@ const IconsCatalogComponent: FC = () => {
                     IconBefore={Magnifier}
                     clearable
                     onClear={() => setSearchTerm("")}
-                    helperText={`${filteredIcons.length.toString()} / ${iconsWithMetadata.length.toString()}`}
+                    helperText={`${filteredIcons.length.toString()} / ${iconsWithMetadata.length.toString()} (${columnCount} columns)`}
                 />
             </div>
 
-            <div className="iconCatalog__grid">
-                {filteredIcons.map((iconItem) => (
-                    <IconCard key={iconItem.metadata.id} {...iconItem} searchTerm={searchTerm} />
-                ))}
-            </div>
+            <Scrollbar height="full">
+                <div ref={scrollElementRef} style={{ height: "calc(100vh - 200px)", overflow: "auto" }}>
+                    <div
+                        style={{
+                            height: `${virtualizer.getTotalSize()}px`,
+                            width: "100%",
+                            position: "relative"
+                        }}
+                    >
+                        {items.map((virtualRow) => {
+                            const startIndex = virtualRow.index * columnCount;
+                            const rowIcons = filteredIcons.slice(startIndex, startIndex + columnCount);
+
+                            return (
+                                <div
+                                    key={virtualRow.key}
+                                    data-index={virtualRow.index}
+                                    ref={virtualizer.measureElement}
+                                    style={{
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        width: "100%",
+                                        transform: `translateY(${virtualRow.start}px)`
+                                    }}
+                                >
+                                    <div
+                                        className="iconCatalog__grid"
+                                        style={{
+                                            gridTemplateColumns: `repeat(${columnCount}, 1fr)`
+                                        }}
+                                    >
+                                        {rowIcons.map((iconItem) => (
+                                            <IconCard
+                                                key={iconItem.metadata.id}
+                                                {...iconItem}
+                                                searchTerm={searchTerm}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </Scrollbar>
 
             {filteredIcons.length === 0 && searchTerm && (
                 <div className="iconCatalog__empty">
                     <Text as="p" variant="bodyMediumSemibold">
-                        No icons found for &#34;{searchTerm}&#34;
+                        {`No icons found for "${searchTerm}"`}
                     </Text>
                     <Text as="p" variant="bodyMediumRegular">
                         Try searching with different keywords or browse all icons

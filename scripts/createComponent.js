@@ -80,7 +80,6 @@ const generateCmpStoryTemplate = ({ name, level, props }) => {
     const InterfaceName = `I${name}Props`;
 
     return `
-        import React from "react";
         import { Meta, StoryObj } from "@storybook/react";
         
         // Helpers
