@@ -118,11 +118,6 @@ const DataList: FC<{
     </div>
 );
 
-/**
- * Recursively renders menu items and their children for nested menu structure
- * @param menuData - Array of menu item props to render
- * @returns Array of JSX MenuItem elements
- */
 const renderMenuItemRecursion = (menuData: IMenuItemProps[] = []) => {
     return menuData.map((el) => {
         return (

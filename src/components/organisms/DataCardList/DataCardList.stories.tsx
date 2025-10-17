@@ -5,8 +5,8 @@ import DataCard from "@components/molecules/DataCard";
 
 // Helpers
 import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
-import { extendedActions } from "../../../../stories/data/__dataCard";
 // Static data
+import { extendedActions } from "../../../../stories/data/__dataCard";
 import {
     longUniqueData,
     pureVirtualizationData,

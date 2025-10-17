@@ -54,10 +54,10 @@ export { Carousel, CarouselItem, ICarouselProps, ICarouselItemProps } from "./co
 export { default as Banner, IBannerProps } from "./components/molecules/Banner";
 export { default as TagGroup, ITagGroupProps } from "./components/molecules/TagGroup";
 export { default as DataCard, IDataCardProps } from "./components/molecules/DataCard";
-export { default as DataCardList, IDataCardListProps } from "@components/organisms/DataCardList";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
+export { default as DataCardList, IDataCardListProps } from "@components/organisms/DataCardList";
 
 // Providers
 export {
