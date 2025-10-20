@@ -80,15 +80,6 @@ describe("RadioGroup", () => {
         });
     });
 
-    it("applies left alignment by default", () => {
-        expect(setup.find(".radioGroup").hasClass("radioGroup_left")).toBe(true);
-    });
-
-    it("applies right alignment when specified", () => {
-        setup.setProps({ alignment: "right" });
-        expect(setup.find(".radioGroup").hasClass("radioGroup_right")).toBe(true);
-    });
-
     it("applies error state class when type is error", () => {
         setup.setProps({ type: "error" });
         expect(setup.find(".radioGroup").hasClass("radioGroup_error")).toBe(true);

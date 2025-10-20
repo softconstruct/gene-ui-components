@@ -55,11 +55,6 @@ interface IRadioGroupProps {
      */
     type?: "rest" | "error";
     /**
-     *  The alignment of the radio group content.<br>
-     *  Possible values: `left | right`
-     */
-    alignment?: "left" | "right";
-    /**
      *  Array of radio options to display in the group.<br/>
      *  Each item: `{ value: string; label: string; disabled?: boolean }`
      */
@@ -114,7 +109,6 @@ const RadioGroup: FC<IRadioGroupProps> = (props) => {
         helperText,
         errorMessage,
         type = "rest",
-        alignment = "left",
         options,
         name,
         value,
@@ -158,7 +152,6 @@ const RadioGroup: FC<IRadioGroupProps> = (props) => {
         <div
             className={classNames(
                 "radioGroup",
-                `radioGroup_${alignment}`,
                 {
                     radioGroup_disabled: disabled,
                     radioGroup_readOnly: readOnly,

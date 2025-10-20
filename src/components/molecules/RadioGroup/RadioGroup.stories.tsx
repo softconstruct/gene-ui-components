@@ -17,7 +17,6 @@ const meta: Meta<typeof RadioGroup> = {
         helperText: args({ control: "text", ...propCategory.content }),
         errorMessage: args({ control: "text", ...propCategory.content }),
         type: args({ control: "select", ...propCategory.appearance }),
-        alignment: args({ control: "select", ...propCategory.appearance }),
         options: args({ control: "object", ...propCategory.content }),
         name: args({ control: "text", ...propCategory.others }),
         value: args({ control: "text", ...propCategory.states }),
@@ -113,13 +112,6 @@ export const ReadOnlyState: Story = {
     }
 };
 
-export const RightAlignment: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        alignment: "right"
-    }
-};
-
 export const Required: Story = {
     render: (props) => <Template {...props} />,
     args: {
@@ -137,114 +129,4 @@ export const WithIndividualDisabledOptions: Story = {
             { value: "option4", label: "Option 4", disabled: true }
         ]
     }
-};
-
-// Comprehensive showcase matching the design specification
-export const DesignShowcase: Story = {
-    render: () => (
-        <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap" }}>
-            {/* Left Align - Rest State */}
-            <div style={{ minWidth: "200px" }}>
-                <h3>Left Align - Rest State</h3>
-                <Template
-                    label="Group Label"
-                    helperText="Helper Text"
-                    name="left-rest"
-                    options={[
-                        { value: "opt1", label: "Label" },
-                        { value: "opt2", label: "Label" },
-                        { value: "opt3", label: "Label" },
-                        { value: "opt4", label: "Label" }
-                    ]}
-                />
-            </div>
-
-            {/* Left Align - Error State */}
-            <div style={{ minWidth: "200px" }}>
-                <h3>Left Align - Error State</h3>
-                <Template
-                    label="Group Label"
-                    type="error"
-                    errorMessage="Error message"
-                    name="left-error"
-                    options={[
-                        { value: "opt1", label: "Label" },
-                        { value: "opt2", label: "Label" },
-                        { value: "opt3", label: "Label" },
-                        { value: "opt4", label: "Label" }
-                    ]}
-                />
-            </div>
-
-            {/* Left Align - Disabled State */}
-            <div style={{ minWidth: "200px" }}>
-                <h3>Left Align - Disabled State</h3>
-                <Template
-                    label="Group Label"
-                    helperText="Helper Text"
-                    disabled
-                    name="left-disabled"
-                    options={[
-                        { value: "opt1", label: "Label" },
-                        { value: "opt2", label: "Label" },
-                        { value: "opt3", label: "Label" },
-                        { value: "opt4", label: "Label" }
-                    ]}
-                />
-            </div>
-
-            {/* Left Align - Read Only State */}
-            <div style={{ minWidth: "200px" }}>
-                <h3>Left Align - Read Only State</h3>
-                <Template
-                    label="Group Label"
-                    helperText="Helper Text"
-                    readOnly
-                    defaultValue="opt1"
-                    name="left-readonly"
-                    options={[
-                        { value: "opt1", label: "Label" },
-                        { value: "opt2", label: "Label" },
-                        { value: "opt3", label: "Label" },
-                        { value: "opt4", label: "Label" }
-                    ]}
-                />
-            </div>
-
-            {/* Right Align - Rest State */}
-            <div style={{ minWidth: "200px" }}>
-                <h3>Right Align - Rest State</h3>
-                <Template
-                    label="ملصق"
-                    helperText="النص المساعد"
-                    alignment="right"
-                    name="right-rest"
-                    options={[
-                        { value: "opt1", label: "ملصق" },
-                        { value: "opt2", label: "ملصق" },
-                        { value: "opt3", label: "ملصق" },
-                        { value: "opt4", label: "ملصق" }
-                    ]}
-                />
-            </div>
-
-            {/* Right Align - Error State */}
-            <div style={{ minWidth: "200px" }}>
-                <h3>Right Align - Error State</h3>
-                <Template
-                    label="ملصق"
-                    type="error"
-                    errorMessage="رسالة خطأ"
-                    alignment="right"
-                    name="right-error"
-                    options={[
-                        { value: "opt1", label: "ملصق" },
-                        { value: "opt2", label: "ملصق" },
-                        { value: "opt3", label: "ملصق" },
-                        { value: "opt4", label: "ملصق" }
-                    ]}
-                />
-            </div>
-        </div>
-    )
 };
