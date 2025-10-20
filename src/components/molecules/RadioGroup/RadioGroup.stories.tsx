@@ -9,14 +9,6 @@ import RadioGroup, { IRadioGroupProps } from "./index";
 const meta: Meta<typeof RadioGroup> = {
     title: "Molecules/RadioGroup",
     component: RadioGroup,
-    parameters: {
-        docs: {
-            description: {
-                component:
-                    "RadioGroup lets users pick exactly one option. Provide it an array of options with `{ value, label }`. Example:\n\n```tsx\n<RadioGroup\n  label=\"Payment Method\"\n  name=\"payment\"\n  options={[\n    { value: 'card', label: 'Card' },\n    { value: 'cash', label: 'Cash' },\n    { value: 'bank', label: 'Bank Transfer', disabled: true },\n  ]}\n  value={value}\n  onChange={(v) => setValue(v)}\n/>\n```"
-            }
-        }
-    },
     argTypes: {
         label: args({ control: "text", ...propCategory.content }),
         required: args({ control: "boolean", ...propCategory.states }),
@@ -26,18 +18,15 @@ const meta: Meta<typeof RadioGroup> = {
         errorMessage: args({ control: "text", ...propCategory.content }),
         type: args({ control: "select", ...propCategory.appearance }),
         alignment: args({ control: "select", ...propCategory.appearance }),
-        options: {
-            ...args({ control: "object", ...propCategory.content }),
-            description:
-                "Array of radio options to display. Each item: `{ value: string; label: string; disabled?: boolean }`.\nExample: `[ { value: 'opt1', label: 'Option 1' }, { value: 'opt2', label: 'Option 2', disabled: true } ]`"
-        },
+        options: args({ control: "object", ...propCategory.content }),
         name: args({ control: "text", ...propCategory.others }),
         value: args({ control: "text", ...propCategory.states }),
         defaultValue: args({ control: "text", ...propCategory.states }),
         onChange: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
-        className: args({ control: "false", ...propCategory.appearance })
+        className: args({ control: "false", ...propCategory.appearance }),
+        infoText: args({ control: "text", ...propCategory.content })
     },
     args: {
         label: "Group Label",

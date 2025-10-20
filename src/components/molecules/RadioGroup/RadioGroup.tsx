@@ -60,8 +60,8 @@ interface IRadioGroupProps {
      */
     alignment?: "left" | "right";
     /**
-     *  Array of radio options to display in the group.
-     *  ```
+     *  Array of radio options to display in the group.<br/>
+     *  Each item: `{ value: string; label: string; disabled?: boolean }`
      */
     options: IRadioOption[];
     /**
@@ -93,6 +93,12 @@ interface IRadioGroupProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Additional descriptive text that appears alongside the `label`,
+     * typically displayed as a tooltip triggered by an info icon.
+     * Helps provide extra context or guidance to the user.
+     */
+    infoText?: string;
 }
 
 /**
@@ -101,6 +107,7 @@ interface IRadioGroupProps {
 const RadioGroup: FC<IRadioGroupProps> = (props) => {
     const {
         label,
+        infoText,
         required,
         disabled,
         readOnly,
@@ -160,7 +167,9 @@ const RadioGroup: FC<IRadioGroupProps> = (props) => {
                 className
             )}
         >
-            {label && <Label text={label} required={required} disabled={disabled} readOnly={readOnly} />}
+            {label && (
+                <Label text={label} required={required} disabled={disabled} readOnly={readOnly} infoText={infoText} />
+            )}
 
             <div className="radioGroup__options">
                 {options.map((option) => (
