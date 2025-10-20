@@ -165,7 +165,7 @@ const RadioGroup: FC<IRadioGroupProps> = (props) => {
                         checked={currentValue === option.value}
                         disabled={disabled || option.disabled}
                         readOnly={readOnly}
-                        type={status}
+                        status={status}
                         onChange={(e) => handleChange(option.value, e)}
                         onFocus={handleFocus}
                         onBlur={handleBlur}
