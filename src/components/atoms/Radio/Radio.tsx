@@ -175,7 +175,7 @@ const Radio: FC<IRadioProps> = (props) => {
             </Label>
             {helperText && (
                 <div className="radio__infoContainer">
-                    <HelperText text={helperText} disabled={disabled} type={status} />
+                    <HelperText text={helperText} disabled={disabled} status={status} />
                 </div>
             )}
         </div>
