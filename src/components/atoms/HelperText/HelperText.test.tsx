@@ -25,10 +25,10 @@ describe("HelperText ", () => {
         expect(wrapper.find(`.helperText_size_${size}`).exists()).toBeTruthy();
     });
 
-    it.each<IHelperTextProps["type"]>(["rest", "error", "warning"])('should have "%s" type', (type) => {
-        const wrapper = setup.setProps({ type });
+    it.each<IHelperTextProps["status"]>(["rest", "error", "warning"])('should have "%s" status', (status) => {
+        const wrapper = setup.setProps({ status });
 
-        expect(wrapper.find(`.helperText_type_${type}`).exists()).toBeTruthy();
+        expect(wrapper.find(`.helperText_type_${status}`).exists()).toBeTruthy();
     });
 
     it("renders text prop correctly", () => {
