@@ -15,6 +15,15 @@ const ComponentStageMessage = ({ stage, currentVersion }) => (
 const currentVersionRegex = /v\d\.\d\.\d/;
 const channel = addons.getChannel();
 
+const paddingBlacklist = {
+    "organisms-globalheader": true,
+    "molecules-navigation": true,
+    "molecules-products": true,
+    "molecules-profile": true,
+    "molecules-drawer": true,
+    "molecules-banner": true
+};
+
 const CustomDecorator = ({ children }) => {
     const [allowRenderChildren, setAllowRenderChildren] = useState(false);
     const [isDark, setDark] = useState(false);
@@ -85,6 +94,10 @@ const CustomDecorator = ({ children }) => {
         <ComponentStageMessage currentVersion={currentVersion} stage={componentStageProp?.type} />
     );
 
+    const paddingForWrapper = paddingBlacklist[children._owner?.pendingProps?.componentId]
+        ? {}
+        : { padding: "8px 16px" };
+
     return (
         <GeneUIProvider theme={isDark ? "dark" : "light"}>
             {componentStageProp && (
@@ -97,8 +110,8 @@ const CustomDecorator = ({ children }) => {
                     {/*/>*/}
                 </div>
             )}
-            <div style={{ position: "relative", height: "100%", padding: "8px 16px" }}>
-                <div>{allowRenderChildren && children}</div>
+            <div style={{ position: "relative", height: "100%", ...paddingForWrapper }}>
+                {allowRenderChildren && children}
             </div>
         </GeneUIProvider>
     );
