@@ -175,7 +175,7 @@ const RadioGroup: FC<IRadioGroupProps> = (props) => {
 
             {helperText && (
                 <div className="radioGroup__infoContainer">
-                    <HelperText text={helperText} disabled={disabled} type={status} />
+                    <HelperText text={helperText} disabled={disabled} status={status} />
                 </div>
             )}
         </div>
