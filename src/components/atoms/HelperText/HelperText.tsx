@@ -59,7 +59,7 @@ const HelperText: FC<IHelperTextProps> = ({ size = "medium", status = "rest", te
 
     return (
         <div
-            className={classnames(`helperText helperText_type_${status} helperText_size_${size}`, className, {
+            className={classnames(`helperText helperText_status_${status} helperText_size_${size}`, className, {
                 helperText_disabled: disabled
             })}
         >

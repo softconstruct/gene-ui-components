@@ -28,7 +28,7 @@ describe("HelperText ", () => {
     it.each<IHelperTextProps["status"]>(["rest", "error", "warning"])('should have "%s" status', (status) => {
         const wrapper = setup.setProps({ status });
 
-        expect(wrapper.find(`.helperText_type_${status}`).exists()).toBeTruthy();
+        expect(wrapper.find(`.helperText_status_${status}`).exists()).toBeTruthy();
     });
 
     it("renders text prop correctly", () => {
