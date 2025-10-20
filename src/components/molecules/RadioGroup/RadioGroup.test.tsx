@@ -58,12 +58,6 @@ describe("RadioGroup", () => {
         expect(setup.text()).toContain(helperText);
     });
 
-    it("renders error message when type is error", () => {
-        const errorMessage = "Test error message";
-        setup.setProps({ type: "error", errorMessage });
-        expect(setup.text()).toContain(errorMessage);
-    });
-
     it("applies disabled state correctly", () => {
         setup.setProps({ disabled: true });
         const radioInputs = setup.find('input[type="radio"]');
@@ -78,11 +72,6 @@ describe("RadioGroup", () => {
         radioInputs.forEach((input) => {
             expect(input.prop("readOnly")).toBe(true);
         });
-    });
-
-    it("applies error state class when type is error", () => {
-        setup.setProps({ type: "error" });
-        expect(setup.find(".radioGroup").hasClass("radioGroup_error")).toBe(true);
     });
 
     it("applies disabled state class when disabled", () => {

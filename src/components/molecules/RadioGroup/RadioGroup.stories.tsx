@@ -15,8 +15,7 @@ const meta: Meta<typeof RadioGroup> = {
         disabled: args({ control: "boolean", ...propCategory.states }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
         helperText: args({ control: "text", ...propCategory.content }),
-        errorMessage: args({ control: "text", ...propCategory.content }),
-        type: args({ control: "select", ...propCategory.appearance }),
+        status: args({ control: "select", ...propCategory.appearance }),
         options: args({ control: "object", ...propCategory.content }),
         name: args({ control: "text", ...propCategory.others }),
         value: args({ control: "text", ...propCategory.states }),
@@ -91,9 +90,8 @@ export const WithFiveOptions: Story = {
 export const ErrorState: Story = {
     render: (props) => <Template {...props} />,
     args: {
-        type: "error",
-        errorMessage: "Error message",
-        helperText: undefined
+        status: "error",
+        helperText: "Error message"
     }
 };
 

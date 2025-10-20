@@ -46,14 +46,10 @@ interface IRadioGroupProps {
      */
     helperText?: string;
     /**
-     *  Error message to display when the radio group is in error state.
-     */
-    errorMessage?: string;
-    /**
      *  Determines the radio groups appearance based on its status.<br>
-     *  Possible values: `rest | error`
+     *  Possible values: `rest | warning | error`
      */
-    type?: "rest" | "error";
+    status?: "rest" | "warning" | "error";
     /**
      *  Array of radio options to display in the group.<br/>
      *  Each item: `{ value: string; label: string; disabled?: boolean }`
@@ -107,8 +103,7 @@ const RadioGroup: FC<IRadioGroupProps> = (props) => {
         disabled,
         readOnly,
         helperText,
-        errorMessage,
-        type = "rest",
+        status = "rest",
         options,
         name,
         value,
@@ -145,17 +140,13 @@ const RadioGroup: FC<IRadioGroupProps> = (props) => {
         }
     }, [value, isControlled]);
 
-    const displayText = type === "error" && errorMessage ? errorMessage : helperText;
-    const displayType = type === "error" ? "error" : "rest";
-
     return (
         <div
             className={classNames(
                 "radioGroup",
                 {
                     radioGroup_disabled: disabled,
-                    radioGroup_readOnly: readOnly,
-                    radioGroup_error: type === "error"
+                    radioGroup_readOnly: readOnly
                 },
                 className
             )}
@@ -174,7 +165,7 @@ const RadioGroup: FC<IRadioGroupProps> = (props) => {
                         checked={currentValue === option.value}
                         disabled={disabled || option.disabled}
                         readOnly={readOnly}
-                        type={displayType}
+                        type={status}
                         onChange={(e) => handleChange(option.value, e)}
                         onFocus={handleFocus}
                         onBlur={handleBlur}
@@ -182,9 +173,9 @@ const RadioGroup: FC<IRadioGroupProps> = (props) => {
                 ))}
             </div>
 
-            {displayText && (
+            {helperText && (
                 <div className="radioGroup__infoContainer">
-                    <HelperText text={displayText} disabled={disabled} type={displayType} />
+                    <HelperText text={helperText} disabled={disabled} type={status} />
                 </div>
             )}
         </div>
