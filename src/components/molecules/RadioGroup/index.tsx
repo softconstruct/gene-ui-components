@@ -1,1 +1,2 @@
-export { IRadioGroupProps, default } from "./RadioGroup";
+export { IRadioGroupProps, IRadioOption } from "./RadioGroup";
+export { default } from "./RadioGroup";

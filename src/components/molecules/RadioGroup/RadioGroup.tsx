@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { ChangeEvent, FC, FocusEvent, useEffect, useState } from "react";
 import classNames from "classnames";
 
 import HelperText from "@components/atoms/HelperText";
@@ -8,64 +8,181 @@ import Radio from "@components/atoms/Radio";
 // Styles
 import "./RadioGroup.scss";
 
+export interface IRadioOption {
+    /**
+     * The value of the radio option.
+     * This is what will be returned in onChange and stored as the selected value.
+     */
+    value: string;
+    /**
+     * The label text displayed next to the radio option.
+     */
+    label: string;
+    /**
+     * Optional. Whether this specific option is disabled.
+     */
+    disabled?: boolean;
+}
+
 interface IRadioGroupProps {
     /**
-     *  The text displayed as the label for the checkbox group, describing its purpose or function.
+     *  The text displayed as the label for the radio group, describing its purpose or function.
      */
     label?: string;
     /**
-     *  Specifies whether the checkbox group is mandatory for completing a form.
+     *  Specifies whether the radio group is mandatory for completing a form.
      */
     required?: boolean;
     /**
-     *  Disables the checkbox group, preventing it from being interacted with.
+     *  Disables the entire radio group, preventing it from being interacted with.
      */
     disabled?: boolean;
     /**
-     *  Displays the checkbox group as read-only, where users cannot modify its value.
+     *  Displays the radio group as read-only, where users cannot modify its value.
      */
     readOnly?: boolean;
     /**
-     *  Helper text to provide context or explain any errors related to the checkbox group.
+     *  Helper text to provide context or explain any errors related to the radio group.
      */
     helperText?: string;
     /**
-     *  Determines the checkbox groups appearance based on its status.<br>
+     *  Error message to display when the radio group is in error state.
+     */
+    errorMessage?: string;
+    /**
+     *  Determines the radio groups appearance based on its status.<br>
      *  Possible values: `rest | error`
      */
     type?: "rest" | "error";
+    /**
+     *  The alignment of the radio group content.<br>
+     *  Possible values: `left | right`
+     */
+    alignment?: "left" | "right";
+    /**
+     *  Array of radio options to display in the group.
+     *  ```
+     */
+    options: IRadioOption[];
+    /**
+     *  The name attribute for all radio inputs in the group.
+     */
+    name: string;
+    /**
+     *  The currently selected value (controlled).
+     */
+    value?: string;
+    /**
+     *  The initial selected value (uncontrolled).
+     */
+    defaultValue?: string;
+    /**
+     *  Fires when the user changes the selected radio option.
+     */
+    onChange?: (value: string, event: ChangeEvent<HTMLInputElement>) => void;
+    /**
+     *  Fires when the radio group loses focus.
+     */
+    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    /**
+     *  Fires when the radio group receives focus.
+     */
+    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    // fill RadioGroup component props interface
 }
 
 /**
  * A radio group allows users to select one option from a group of related choices. Each radio in the group is accompanied by a label, and only one radio within the group can be selected at any time.
  */
-const RadioGroup: FC<IRadioGroupProps> = ({
-    label,
-    required,
-    disabled,
-    readOnly,
-    helperText,
-    type = "rest" as const,
-    className
-}) => {
+const RadioGroup: FC<IRadioGroupProps> = (props) => {
+    const {
+        label,
+        required,
+        disabled,
+        readOnly,
+        helperText,
+        errorMessage,
+        type = "rest",
+        alignment = "left",
+        options,
+        name,
+        value,
+        defaultValue,
+        onChange,
+        onBlur,
+        onFocus,
+        className
+    } = props;
+
+    const isControlled = value !== undefined;
+    const [selectedValue, setSelectedValue] = useState(defaultValue || "");
+
+    const currentValue = isControlled ? value : selectedValue;
+
+    const handleChange = (optionValue: string, event: ChangeEvent<HTMLInputElement>) => {
+        if (!isControlled) {
+            setSelectedValue(optionValue);
+        }
+        onChange?.(optionValue, event);
+    };
+
+    const handleFocus = (event: FocusEvent<HTMLInputElement>) => {
+        onFocus?.(event);
+    };
+
+    const handleBlur = (event: FocusEvent<HTMLInputElement>) => {
+        onBlur?.(event);
+    };
+
+    useEffect(() => {
+        if (isControlled && value !== undefined) {
+            setSelectedValue(value);
+        }
+    }, [value, isControlled]);
+
+    const displayText = type === "error" && errorMessage ? errorMessage : helperText;
+    const displayType = type === "error" ? "error" : "rest";
+
     return (
-        <div className={classNames("radioGroup", className)}>
-            <Label text={label} required={required} disabled={disabled} readOnly={readOnly} />
+        <div
+            className={classNames(
+                "radioGroup",
+                `radioGroup_${alignment}`,
+                {
+                    radioGroup_disabled: disabled,
+                    radioGroup_readOnly: readOnly,
+                    radioGroup_error: type === "error"
+                },
+                className
+            )}
+        >
+            {label && <Label text={label} required={required} disabled={disabled} readOnly={readOnly} />}
 
-            <Radio label="Label" type={type} value="" name="name" disabled={disabled} readOnly={readOnly} />
-            <Radio label="Label" type={type} value="" name="name" disabled={disabled} readOnly={readOnly} />
-            <Radio label="Label" type={type} value="" name="name" disabled={disabled} readOnly={readOnly} />
-            <Radio label="Label" type={type} value="" name="name" disabled={disabled} readOnly={readOnly} />
+            <div className="radioGroup__options">
+                {options.map((option) => (
+                    <Radio
+                        key={option.value}
+                        label={option.label}
+                        value={option.value}
+                        name={name}
+                        checked={currentValue === option.value}
+                        disabled={disabled || option.disabled}
+                        readOnly={readOnly}
+                        type={displayType}
+                        onChange={(e) => handleChange(option.value, e)}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
+                    />
+                ))}
+            </div>
 
-            {helperText && (
-                <div className="checkbox__infoContainer">
-                    <HelperText text={helperText} disabled={disabled} type={type} />
+            {displayText && (
+                <div className="radioGroup__infoContainer">
+                    <HelperText text={displayText} disabled={disabled} type={displayType} />
                 </div>
             )}
         </div>

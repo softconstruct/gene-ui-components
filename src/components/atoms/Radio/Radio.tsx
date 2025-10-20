@@ -162,6 +162,8 @@ const Radio: FC<IRadioProps> = (props) => {
                             checked={checkedState}
                             value={value}
                             name={name}
+                            disabled={disabled}
+                            readOnly={readOnly}
                             {...(autoFocus && { autoFocus })}
                             {...((disabled || readOnly) && { tabIndex: -1 })}
                         />

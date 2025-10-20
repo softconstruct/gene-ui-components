@@ -1,5 +1,53 @@
 .radioGroup {
-    display: inline-flex;
+    $this: &;
+
+    display: flex;
     flex-direction: column;
-    row-gap: var(--guit-ref-spacing-xsmall);
+    gap: var(--guit-ref-spacing-xsmall);
+
+    &__options {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__infoContainer {
+        display: flex;
+    }
+
+    // Left alignment (default)
+    &_left {
+        text-align: left;
+        direction: ltr;
+    }
+
+    // Right alignment (for RTL languages)
+    &_right {
+        text-align: right;
+        direction: rtl;
+
+        #{$this}__options {
+            align-items: flex-end;
+        }
+
+        #{$this}__infoContainer {
+            justify-content: flex-end;
+        }
+    }
+
+    // Disabled state
+    &_disabled {
+        pointer-events: none;
+        user-select: none;
+    }
+
+    // Read-only state
+    &_readOnly {
+        pointer-events: none;
+    }
+
+    // Error state
+    &_error {
+        // Error styling is handled by individual Radio components
+    }
 }
