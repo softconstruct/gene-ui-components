@@ -57,10 +57,10 @@ interface ICheckboxProps {
      */
     defaultChecked?: boolean;
     /**
-     *  Determines the checkboxes appearance based on its status.<br>
+     *  Determines the checkbox's visual status.<br>
      *  Possible values: `rest | warning | error`
      */
-    type?: "rest" | "warning" | "error";
+    status?: "rest" | "warning" | "error";
     /**
      *  HTML name attribute for the input element.<br>
      *  A unique identifier for the checkbox within a form.
@@ -105,7 +105,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
         disabled,
         helperText,
         readOnly,
-        type = "rest",
+        status = "rest",
         direction = "horizontal",
         autoFocus,
         onClick,
@@ -161,7 +161,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
         <div
             className={classNames(
                 "checkbox ",
-                `checkbox_${type}`,
+                `checkbox_status_${status}`,
                 {
                     checkbox_disabled: disabled,
                     checkbox_readOnly: readOnly,
@@ -207,7 +207,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
             </Label>
             {helperText && (
                 <div className="checkbox__infoContainer">
-                    <HelperText text={helperText} disabled={disabled} type={type} />
+                    <HelperText text={helperText} disabled={disabled} status={status} />
                 </div>
             )}
         </div>

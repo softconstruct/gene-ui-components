@@ -321,7 +321,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                 </Label>
                 {(helperText || characterLimit) && (
                     <div className="textField__info">
-                        {helperText && <HelperText text={helperText} disabled={disabled} type={status || "rest"} />}
+                        {helperText && <HelperText text={helperText} disabled={disabled} status={status} />}
                         {characterLimit && (
                             <Text
                                 as="span"

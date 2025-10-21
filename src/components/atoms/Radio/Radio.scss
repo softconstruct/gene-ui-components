@@ -32,6 +32,7 @@
                     border-color: var(--guit-sem-color-background-selected-2-pressed);
                     color: var(--guit-sem-color-background-selected-2-pressed);
                 }
+
                 #{ $this }__icon {
                     opacity: 1;
                     color: inherit;
@@ -55,6 +56,7 @@
             width: var(--guit-sem-dimension-width-small);
             height: var(--guit-sem-dimension-height-small);
         }
+
         #{ $this }__input {
             &:not(:checked) {
                 & + #{ $this }__imitation {
@@ -101,12 +103,14 @@
     &__infoContainer {
         display: flex;
     }
+
     &:not(#{ $this }_labelTop) {
         gap: var(--guit-ref-spacing-3xsmall);
 
         #{ $this }__infoContainer {
             padding-inline-start: var(--guit-ref-spacing-3xlarge);
         }
+
         #{ $this }__label {
             gap: var(--guit-ref-spacing-medium);
         }
@@ -114,6 +118,7 @@
 
     &_labelTop {
         gap: var(--guit-ref-spacing-3xsmall);
+
         #{ $this }__label {
             flex-direction: column-reverse;
             align-items: flex-start;
@@ -139,6 +144,7 @@
             #{ $this }__imitationHolderInner {
                 #{ $this }__imitation {
                     border-color: var(--guit-sem-color-border-disabled-1);
+
                     #{ $this }__icon {
                         color: var(--guit-sem-color-background-disabled);
                     }
@@ -157,11 +163,13 @@
 
     &_readOnly {
         pointer-events: none;
+
         #{ $this }__imitationHolder {
             #{ $this }__imitationHolderInner {
                 #{ $this }__imitation {
                     border-color: transparent;
-                    background-color: var(--guit-sem-color-background-neutral-3);
+                    background-color: var(--guit-sem-color-background-neutral-4);
+
                     #{ $this }__icon {
                         color: var(--guit-sem-color-foreground-neutral-1);
                     }

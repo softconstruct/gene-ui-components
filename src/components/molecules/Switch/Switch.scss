@@ -157,7 +157,7 @@
         }
     }
 
-    &_type {
+    &_status {
         &_error {
             #{ $this }__input:not(:disabled) + #{ $this }__slider {
                 border-color: var(--guit-sem-color-border-error);

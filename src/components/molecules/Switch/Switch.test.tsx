@@ -113,4 +113,10 @@ describe("Switch", () => {
         const wrapper = setup.setProps({ autoFocus: true });
         expect(wrapper.find(".switch__input").props().autoFocus).toBeTruthy();
     });
+
+    it.each<ISwitchProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
+        const wrapper = setup.setProps({ status });
+
+        expect(wrapper.find(".switch").hasClass(`switch_status_${status}`)).toBeTruthy();
+    });
 });
