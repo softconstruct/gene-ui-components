@@ -499,6 +499,8 @@ const Table: FC<ITableProps> = ({
         setGlobalFilter(value);
     };
 
+    if (!columns.length) return null;
+
     return (
         <TableContext.Provider value={memoizedTableContextValue}>
             <div className={classNames("dataTable")}>
