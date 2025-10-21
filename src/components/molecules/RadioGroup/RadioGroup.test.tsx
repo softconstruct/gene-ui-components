@@ -160,4 +160,98 @@ describe("RadioGroup", () => {
         // Check that there's no group label by looking for the label with the group text
         expect(wrapper.text()).not.toContain("Group Label");
     });
+
+    // Accessibility Tests
+    describe("Accessibility", () => {
+        it("should have role='radiogroup' on the container", () => {
+            const wrapper = mount(<RadioGroup name="test-radio-group" options={mockOptions} />);
+            const container = wrapper.find(".radioGroup");
+            expect(container.prop("role")).toBe("radiogroup");
+        });
+
+        it("should have aria-required='true' when required prop is true", () => {
+            const wrapper = mount(<RadioGroup name="test-radio-group" options={mockOptions} required />);
+            const container = wrapper.find(".radioGroup");
+            expect(container.prop("aria-required")).toBe(true);
+        });
+
+        it("should have aria-required='false' when required prop is false", () => {
+            const wrapper = mount(<RadioGroup name="test-radio-group" options={mockOptions} required={false} />);
+            const container = wrapper.find(".radioGroup");
+            expect(container.prop("aria-required")).toBe(false);
+        });
+
+        it("should not have aria-required attribute when required prop is undefined", () => {
+            const wrapper = mount(<RadioGroup name="test-radio-group" options={mockOptions} />);
+            const container = wrapper.find(".radioGroup");
+            expect(container.prop("aria-required")).toBeUndefined();
+        });
+
+        it("should have aria-invalid='true' when status is 'error'", () => {
+            const wrapper = mount(<RadioGroup name="test-radio-group" options={mockOptions} status="error" />);
+            const container = wrapper.find(".radioGroup");
+            expect(container.prop("aria-invalid")).toBe(true);
+        });
+
+        it("should have aria-invalid='false' when status is 'rest'", () => {
+            const wrapper = mount(<RadioGroup name="test-radio-group" options={mockOptions} status="rest" />);
+            const container = wrapper.find(".radioGroup");
+            expect(container.prop("aria-invalid")).toBe(false);
+        });
+
+        it("should have aria-invalid='false' when status is 'warning'", () => {
+            const wrapper = mount(<RadioGroup name="test-radio-group" options={mockOptions} status="warning" />);
+            const container = wrapper.find(".radioGroup");
+            expect(container.prop("aria-invalid")).toBe(false);
+        });
+
+        it("should have aria-invalid='false' when status is undefined (defaults to 'rest')", () => {
+            const wrapper = mount(<RadioGroup name="test-radio-group" options={mockOptions} />);
+            const container = wrapper.find(".radioGroup");
+            expect(container.prop("aria-invalid")).toBe(false);
+        });
+
+        it("should have all required ARIA attributes when both required and error are true", () => {
+            const wrapper = mount(<RadioGroup name="test-radio-group" options={mockOptions} required status="error" />);
+            const container = wrapper.find(".radioGroup");
+            expect(container.prop("role")).toBe("radiogroup");
+            expect(container.prop("aria-required")).toBe(true);
+            expect(container.prop("aria-invalid")).toBe(true);
+        });
+
+        it("should maintain ARIA attributes when props change", () => {
+            const wrapper = mount(
+                <RadioGroup name="test-radio-group" options={mockOptions} required={false} status="rest" />
+            );
+
+            // Initially should have correct attributes
+            let container = wrapper.find(".radioGroup");
+            expect(container.prop("aria-required")).toBe(false);
+            expect(container.prop("aria-invalid")).toBe(false);
+
+            // Update to required and error
+            wrapper.setProps({ required: true, status: "error" });
+            container = wrapper.find(".radioGroup");
+            expect(container.prop("aria-required")).toBe(true);
+            expect(container.prop("aria-invalid")).toBe(true);
+
+            // Update back to not required and warning
+            wrapper.setProps({ required: false, status: "warning" });
+            container = wrapper.find(".radioGroup");
+            expect(container.prop("aria-required")).toBe(false);
+            expect(container.prop("aria-invalid")).toBe(false);
+        });
+
+        it("should have proper ARIA attributes with all status variants", () => {
+            const statuses: Array<"rest" | "warning" | "error"> = ["rest", "warning", "error"];
+
+            statuses.forEach((status) => {
+                const wrapper = mount(<RadioGroup name="test-radio-group" options={mockOptions} status={status} />);
+                const container = wrapper.find(".radioGroup");
+
+                expect(container.prop("role")).toBe("radiogroup");
+                expect(container.prop("aria-invalid")).toBe(status === "error");
+            });
+        });
+    });
 });

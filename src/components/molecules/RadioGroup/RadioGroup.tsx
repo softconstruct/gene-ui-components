@@ -150,6 +150,9 @@ const RadioGroup: FC<IRadioGroupProps> = (props) => {
                 },
                 className
             )}
+            role="radiogroup"
+            aria-required={required}
+            aria-invalid={status === "error"}
         >
             {label && (
                 <Label text={label} required={required} disabled={disabled} readOnly={readOnly} infoText={infoText} />
