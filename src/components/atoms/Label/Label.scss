@@ -11,11 +11,11 @@
         min-width: 0;
 
         &_readOnly {
-            pointer-events: auto;
+            pointer-events: none;
         }
     }
 
-    &__container-inner {
+    &__containerInner {
         display: flex;
         align-items: center;
         gap: var(--guit-ref-spacing-4xsmall);
@@ -46,5 +46,9 @@
             color: var(--guit-sem-color-foreground-disabled);
             pointer-events: none;
         }
+    }
+
+    &__info {
+        pointer-events: auto;
     }
 }
