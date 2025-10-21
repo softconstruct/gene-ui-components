@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -44,54 +44,20 @@ export default meta;
 type Story = StoryObj<IRadioGroupProps>;
 
 const Template: FC<IRadioGroupProps> = (props) => {
-    const [value, setValue] = useState<string>("");
-
-    return <RadioGroup {...props} value={value} onChange={(newValue: string) => setValue(newValue)} />;
+    return <RadioGroup {...props} />;
 };
 
 export const Default: Story = {
     render: (props) => <Template {...props} />
 };
 
-export const WithTwoOptions: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        options: [
-            { value: "option1", label: "Option 1" },
-            { value: "option2", label: "Option 2" }
-        ]
-    }
-};
-
-export const WithThreeOptions: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        options: [
-            { value: "option1", label: "Option 1" },
-            { value: "option2", label: "Option 2" },
-            { value: "option3", label: "Option 3" }
-        ]
-    }
-};
-
-export const WithFiveOptions: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        options: [
-            { value: "option1", label: "Option 1" },
-            { value: "option2", label: "Option 2" },
-            { value: "option3", label: "Option 3" },
-            { value: "option4", label: "Option 4" },
-            { value: "option5", label: "Option 5" }
-        ]
-    }
-};
-
 export const ErrorState: Story = {
     render: (props) => <Template {...props} />,
     args: {
         status: "error",
-        helperText: "Error message"
+        defaultValue: "option3",
+        helperText: "Error message",
+        required: true
     }
 };
 
@@ -106,14 +72,8 @@ export const ReadOnlyState: Story = {
     render: (props) => <Template {...props} />,
     args: {
         readOnly: true,
-        defaultValue: "option2"
-    }
-};
-
-export const Required: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        required: true
+        defaultValue: "option2",
+        infoText: "This is a read-only radio group"
     }
 };
 
@@ -125,6 +85,7 @@ export const WithIndividualDisabledOptions: Story = {
             { value: "option2", label: "Option 2", disabled: true },
             { value: "option3", label: "Option 3" },
             { value: "option4", label: "Option 4", disabled: true }
-        ]
+        ],
+        status: "warning"
     }
 };
