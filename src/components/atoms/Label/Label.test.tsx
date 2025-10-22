@@ -29,7 +29,7 @@ describe("Label ", () => {
     });
 
     it("renders text prop correctly", () => {
-        expect(setup.find("label").text()).toStrictEqual(text);
+        expect(setup.find(".label").text()).toStrictEqual(text);
     });
 
     it("renders required prop correctly", () => {
@@ -48,8 +48,11 @@ describe("Label ", () => {
     });
 
     it("renders readOnly prop correctly", () => {
-        const wrapper = setup.setProps({ readOnly: true });
-        expect(wrapper.find(".label__container").hasClass("label__container_readOnly")).toBeTruthy();
+        const children = <input type="text" />;
+        const wrapper = setup.setProps({ readOnly: true, children });
+        // Even with children, readOnly should force div rendering
+        expect(wrapper.find("label")).toHaveLength(0);
+        expect(wrapper.find("div").first().hasClass("label")).toBeTruthy();
     });
 
     it("renders loading prop correctly", () => {
@@ -69,5 +72,68 @@ describe("Label ", () => {
         const wrapper = setup.setProps({ children });
 
         expect(wrapper.contains("test children")).toBeTruthy();
+    });
+
+    it("renders as div when no children provided", () => {
+        const wrapper = setup.setProps({});
+        expect(wrapper.find("label")).toHaveLength(0);
+        expect(wrapper.find("div").first().hasClass("label")).toBeTruthy();
+        expect(wrapper.find(".label").hasClass("label_variant_descriptive")).toBeTruthy();
+    });
+
+    it("renders as label when children provided", () => {
+        const children = <input type="text" />;
+        const wrapper = setup.setProps({ children });
+        expect(wrapper.find("label")).toHaveLength(1);
+        expect(wrapper.find("label").hasClass("label")).toBeTruthy();
+        expect(wrapper.find(".label").hasClass("label_variant_interactive")).toBeTruthy();
+    });
+
+    it("renders as div when readOnly is true even with children", () => {
+        const children = <input type="text" />;
+        const wrapper = setup.setProps({ readOnly: true, children });
+        expect(wrapper.find("label")).toHaveLength(0);
+        expect(wrapper.find("div").first().hasClass("label")).toBeTruthy();
+        expect(wrapper.find(".label").hasClass("label_variant_descriptive")).toBeTruthy();
+    });
+
+    it("renders as div when loading regardless of children", () => {
+        const wrapperWithChildren = setup.setProps({ children: <input />, loading: true });
+        const wrapperWithoutChildren = setup.setProps({ loading: true });
+
+        expect(wrapperWithChildren.find("label")).toHaveLength(0);
+        expect(wrapperWithChildren.find("div").first().hasClass("label")).toBeTruthy();
+        expect(wrapperWithoutChildren.find("label")).toHaveLength(0);
+        expect(wrapperWithoutChildren.find("div").first().hasClass("label")).toBeTruthy();
+    });
+
+    it("shows skeleton content when loading", () => {
+        const wrapper = setup.setProps({ loading: true });
+        expect(wrapper.find("span").text()).toBe("skeleton");
+    });
+
+    it("renders as label with checkbox children", () => {
+        const children = <input type="checkbox" />;
+        const wrapper = setup.setProps({ children });
+        expect(wrapper.find("label")).toHaveLength(1);
+        expect(wrapper.find(".label").hasClass("label_variant_interactive")).toBeTruthy();
+    });
+
+    it("renders as label with radio children", () => {
+        const children = <input type="radio" />;
+        const wrapper = setup.setProps({ children });
+        expect(wrapper.find("label")).toHaveLength(1);
+        expect(wrapper.find(".label").hasClass("label_variant_interactive")).toBeTruthy();
+    });
+
+    it("renders as label with select children", () => {
+        const children = (
+            <select>
+                <option>Test</option>
+            </select>
+        );
+        const wrapper = setup.setProps({ children });
+        expect(wrapper.find("label")).toHaveLength(1);
+        expect(wrapper.find(".label").hasClass("label_variant_interactive")).toBeTruthy();
     });
 });

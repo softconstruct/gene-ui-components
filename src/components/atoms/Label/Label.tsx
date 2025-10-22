@@ -69,7 +69,6 @@ const iconSizes = {
 /**
  * Labels identify a component or group of components. Use them with elements such as checkboxes and input fields to guide users in providing specific information, or with plain text to organize information.
  */
-
 const Label: FC<ILabelProps> = ({
     size = "medium",
     text,
@@ -81,55 +80,56 @@ const Label: FC<ILabelProps> = ({
     children,
     readOnly
 }) => {
-    const labelRef = useRef<HTMLLabelElement | null>(null);
+    const labelRef = useRef<HTMLLabelElement | HTMLDivElement | null>(null);
 
     const isTruncated: boolean = useEllipsisDetection(labelRef);
 
-    return (
-        <label className={classnames(`label`, className)}>
-            {children}
-            {loading ? (
+    const Component = children && !readOnly ? "label" : "div";
+
+    const actualVariant = Component === "label" ? "interactive" : "descriptive";
+
+    if (loading) {
+        return (
+            <div className={classnames(`label`, `label_variant_${actualVariant}`, className)}>
                 <span>skeleton</span>
-            ) : (
-                text && (
-                    <span
-                        className={classnames("label__container", { label__container_readOnly: readOnly && !disabled })}
-                    >
-                        <div className="label__containerInner">
-                            {text && (
-                                <Tooltip text={text} isVisible={isTruncated}>
-                                    <span
-                                        ref={labelRef}
-                                        className={classnames(`ellipsis-text label__text label__text_size_${size}`, {
-                                            label__text_disabled: disabled
-                                        })}
-                                    >
-                                        {text}
-                                    </span>
-                                </Tooltip>
-                            )}
-                            {required && (
+            </div>
+        );
+    }
+
+    return (
+        <Component className={classnames(`label`, `label_variant_${actualVariant}`, className)}>
+            {children}
+            {text && (
+                <span className={classnames("label__container")}>
+                    <div className="label__containerInner">
+                        {text && (
+                            <Tooltip text={text} isVisible={isTruncated}>
                                 <span
-                                    className={classnames(`label__asterisk label__text_size_${size} `, {
+                                    ref={labelRef}
+                                    className={classnames(`ellipsis-text label__text label__text_size_${size}`, {
                                         label__text_disabled: disabled
                                     })}
                                 >
-                                    *
+                                    {text}
                                 </span>
-                            )}
-                        </div>
-                        {infoText && (
-                            <Info
-                                infoText={infoText}
-                                disabled={disabled}
-                                size={iconSizes[size]}
-                                className="label__info"
-                            />
+                            </Tooltip>
                         )}
-                    </span>
-                )
+                        {required && (
+                            <span
+                                className={classnames(`label__asterisk label__text_size_${size} `, {
+                                    label__text_disabled: disabled
+                                })}
+                            >
+                                *
+                            </span>
+                        )}
+                    </div>
+                    {infoText && (
+                        <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} className="label__info" />
+                    )}
+                </span>
             )}
-        </label>
+        </Component>
     );
 };
 

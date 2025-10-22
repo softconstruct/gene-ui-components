@@ -4,15 +4,15 @@
     max-width: 100%;
     min-width: 0;
 
+    &_variant_interactive {
+        cursor: pointer;
+    }
+
     &__container {
         display: flex;
         align-items: center;
         gap: var(--guit-ref-spacing-3xsmall);
         min-width: 0;
-
-        &_readOnly {
-            pointer-events: none;
-        }
     }
 
     &__containerInner {
@@ -46,9 +46,5 @@
             color: var(--guit-sem-color-foreground-disabled);
             pointer-events: none;
         }
-    }
-
-    &__info {
-        pointer-events: auto;
     }
 }
