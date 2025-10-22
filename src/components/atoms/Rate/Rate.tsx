@@ -181,7 +181,7 @@ const Rate: FC<IRateProps> = (props) => {
         defaultValue,
         value,
         onChange,
-        size = "small",
+        size = "medium",
         count = 5,
         appearance = "star",
         label = "",
