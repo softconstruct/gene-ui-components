@@ -86,7 +86,7 @@ const Label: FC<ILabelProps> = ({
 
     const Component = children && !readOnly ? "label" : "div";
 
-    const actualVariant = Component === "label" ? "interactive" : "descriptive";
+    const actualVariant = Component === "label" && !disabled ? "interactive" : "descriptive";
 
     if (loading) {
         return (

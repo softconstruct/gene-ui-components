@@ -135,8 +135,6 @@ const Radio: FC<IRadioProps> = (props) => {
                 "radio ",
                 `radio_${status}`,
                 {
-                    radio_disabled: disabled,
-                    radio_readOnly: readOnly,
                     radio_labelTop: direction === "vertical"
                 },
                 className
@@ -151,7 +149,12 @@ const Radio: FC<IRadioProps> = (props) => {
                 disabled={disabled}
                 readOnly={readOnly}
             >
-                <span className="radio__imitationHolder">
+                <span
+                    className={classNames("radio__imitationHolder", {
+                        radio__imitationHolder_disabled: disabled,
+                        radio__imitationHolder_readOnly: readOnly && !disabled
+                    })}
+                >
                     <span className="radio__imitationHolderInner">
                         <input
                             type="radio"

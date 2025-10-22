@@ -70,6 +70,52 @@
                 }
             }
         }
+
+        &_disabled {
+            pointer-events: none;
+            user-select: none;
+
+            #{ $this }__imitationHolderInner {
+                #{ $this }__imitation {
+                    border-color: var(--guit-sem-color-border-disabled-1);
+
+                    #{ $this }__icon {
+                        color: var(--guit-sem-color-background-disabled);
+                    }
+                }
+            }
+
+            #{ $this }__input {
+                &:not(:checked) {
+                    & + #{ $this }__imitation {
+                        border-color: var(--guit-sem-color-border-disabled-1);
+                    }
+                }
+            }
+        }
+
+        &_readOnly {
+            pointer-events: none;
+
+            #{ $this }__imitationHolderInner {
+                #{ $this }__imitation {
+                    border-color: transparent;
+                    background-color: var(--guit-sem-color-background-neutral-4);
+
+                    #{ $this }__icon {
+                        color: var(--guit-sem-color-foreground-neutral-1);
+                    }
+                }
+            }
+
+            #{ $this }__input {
+                &:not(:checked) {
+                    & + #{ $this }__imitation {
+                        border-color: var(--guit-sem-color-border-neutral-2);
+                    }
+                }
+            }
+        }
     }
 
     &__imitationHolderInner {
@@ -131,56 +177,6 @@
             #{ $this }__imitationHolderInner {
                 #{ $this }__imitation {
                     border-color: var(--guit-sem-color-border-error);
-                }
-            }
-        }
-    }
-
-    &_disabled {
-        pointer-events: none;
-        user-select: none;
-
-        #{ $this }__imitationHolder {
-            #{ $this }__imitationHolderInner {
-                #{ $this }__imitation {
-                    border-color: var(--guit-sem-color-border-disabled-1);
-
-                    #{ $this }__icon {
-                        color: var(--guit-sem-color-background-disabled);
-                    }
-                }
-            }
-        }
-
-        #{ $this }__input {
-            &:not(:checked) {
-                & + #{ $this }__imitation {
-                    border-color: var(--guit-sem-color-border-disabled-1);
-                }
-            }
-        }
-    }
-
-    &_readOnly {
-        pointer-events: none;
-
-        #{ $this }__imitationHolder {
-            #{ $this }__imitationHolderInner {
-                #{ $this }__imitation {
-                    border-color: transparent;
-                    background-color: var(--guit-sem-color-background-neutral-4);
-
-                    #{ $this }__icon {
-                        color: var(--guit-sem-color-foreground-neutral-1);
-                    }
-                }
-            }
-        }
-
-        #{ $this }__input {
-            &:not(:checked) {
-                & + #{ $this }__imitation {
-                    border-color: var(--guit-sem-color-border-neutral-2);
                 }
             }
         }
