@@ -1,5 +1,27 @@
 .checkboxGroup {
-    display: inline-flex;
+    $this: &;
+
+    display: flex;
     flex-direction: column;
-    row-gap: var(--guit-ref-spacing-xsmall);
+    align-items: flex-start;
+    gap: var(--guit-ref-spacing-xsmall);
+
+    &__options {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__infoContainer {
+        display: flex;
+    }
+
+    &_disabled {
+        pointer-events: none;
+        user-select: none;
+    }
+
+    &_readOnly {
+        pointer-events: none;
+    }
 }

@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Meta } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -11,24 +11,107 @@ const meta: Meta<typeof CheckboxGroup> = {
     component: CheckboxGroup,
     argTypes: {
         label: args({ control: "text", ...propCategory.content }),
+        required: args({ control: "boolean", ...propCategory.states }),
         disabled: args({ control: "boolean", ...propCategory.states }),
-        helperText: args({ control: "text", ...propCategory.content }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
+        helperText: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.appearance }),
-        className: args({ control: "false", ...propCategory.appearance })
-        // fill CheckboxGroup component argTypes
+        options: args({ control: "object", ...propCategory.content }),
+        name: args({ control: "text", ...propCategory.others }),
+        value: args({ control: "array", ...propCategory.states }),
+        defaultValue: args({ control: "array", ...propCategory.states }),
+        onChange: args({ control: "false", ...propCategory.action }),
+        onBlur: args({ control: "false", ...propCategory.action }),
+        onFocus: args({ control: "false", ...propCategory.action }),
+        className: args({ control: "false", ...propCategory.appearance }),
+        infoText: args({ control: "text", ...propCategory.content })
     },
     args: {
         label: "Group Label",
-        helperText: "Helper Text"
-        // fill CheckboxGroup component args
-    } as ICheckboxGroupProps
+        helperText: "Helper Text",
+        name: "checkboxGroup",
+        options: [
+            { value: "option1", label: "Option 1" },
+            { value: "option2", label: "Option 2" },
+            { value: "option3", label: "Option 3" },
+            { value: "option4", label: "Option 4" }
+        ]
+    }
 };
 
 export default meta;
 
-const Template: FC<ICheckboxGroupProps> = (props) => <CheckboxGroup {...props} />;
+type Story = StoryObj<ICheckboxGroupProps>;
 
-export const Default = Template.bind({});
+const Template: FC<ICheckboxGroupProps> = (props) => {
+    return <CheckboxGroup {...props} />;
+};
 
-Default.args = {} as ICheckboxGroupProps;
+export const Default: Story = {
+    render: (props) => <Template {...props} />
+};
+
+export const ErrorState: Story = {
+    render: (props) => <Template {...props} />,
+    args: {
+        status: "error",
+        defaultValue: ["option3"],
+        helperText: "Error message",
+        required: true
+    }
+};
+
+export const WarningState: Story = {
+    render: (props) => <Template {...props} />,
+    args: {
+        status: "warning",
+        defaultValue: ["option1", "option2"],
+        helperText: "Warning message"
+    }
+};
+
+export const DisabledState: Story = {
+    render: (props) => <Template {...props} />,
+    args: {
+        disabled: true
+    }
+};
+
+export const ReadOnlyState: Story = {
+    render: (props) => <Template {...props} />,
+    args: {
+        readOnly: true,
+        defaultValue: ["option2", "option4"],
+        infoText: "This is a read-only checkbox group"
+    }
+};
+
+export const WithIndividualDisabledOptions: Story = {
+    render: (props) => <Template {...props} />,
+    args: {
+        options: [
+            { value: "option1", label: "Option 1" },
+            { value: "option2", label: "Option 2", disabled: true },
+            { value: "option3", label: "Option 3" },
+            { value: "option4", label: "Option 4", disabled: true }
+        ],
+        status: "warning",
+        defaultValue: ["option1"]
+    }
+};
+
+export const MultipleSelected: Story = {
+    render: (props) => <Template {...props} />,
+    args: {
+        defaultValue: ["option1", "option3", "option4"],
+        helperText: "Multiple options can be selected"
+    }
+};
+
+export const WithoutLabel: Story = {
+    render: (props) => <Template {...props} />,
+    args: {
+        label: undefined,
+        helperText: "Checkbox group without a label"
+    }
+};

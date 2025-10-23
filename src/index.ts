@@ -55,7 +55,7 @@ export { default as Banner, IBannerProps } from "./components/molecules/Banner";
 export { default as TagGroup, ITagGroupProps } from "./components/molecules/TagGroup";
 export { default as DataCard, IDataCardProps } from "./components/molecules/DataCard";
 export { default as RadioGroup, IRadioGroupProps, IRadioOption } from "./components/molecules/RadioGroup";
-export { default as CheckboxGroup, ICheckboxGroupProps } from "./components/molecules/CheckboxGroup";
+export { default as CheckboxGroup, ICheckboxGroupProps, ICheckboxOption } from "./components/molecules/CheckboxGroup";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";

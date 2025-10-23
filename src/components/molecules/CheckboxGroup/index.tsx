@@ -1,1 +1,1 @@
-export { ICheckboxGroupProps, default } from "./CheckboxGroup";
+export { ICheckboxGroupProps, ICheckboxOption, default } from "./CheckboxGroup";
