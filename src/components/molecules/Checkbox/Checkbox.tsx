@@ -163,8 +163,6 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                 "checkbox ",
                 `checkbox_status_${status}`,
                 {
-                    checkbox_disabled: disabled,
-                    checkbox_readOnly: readOnly,
                     checkbox_labelTop: direction === "vertical"
                 },
                 className
@@ -179,7 +177,12 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                 disabled={disabled}
                 readOnly={readOnly}
             >
-                <span className="checkbox__imitationHolder">
+                <span
+                    className={classNames("checkbox__imitationHolder", {
+                        checkbox__imitationHolder_disabled: disabled,
+                        checkbox__imitationHolder_readOnly: readOnly && !disabled
+                    })}
+                >
                     <span className="checkbox__imitationHolderInner">
                         <input
                             type="checkbox"
