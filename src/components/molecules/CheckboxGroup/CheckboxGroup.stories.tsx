@@ -51,6 +51,14 @@ export const Default: Story = {
     render: (props) => <Template {...props} />
 };
 
+export const WithDefaultValue: Story = {
+    render: (props) => <Template {...props} />,
+    args: {
+        defaultValue: ["option2", "option4"],
+        helperText: "Options 2 and 4 are pre-selected"
+    }
+};
+
 export const ErrorState: Story = {
     render: (props) => <Template {...props} />,
     args: {
@@ -113,5 +121,13 @@ export const WithoutLabel: Story = {
     args: {
         label: undefined,
         helperText: "Checkbox group without a label"
+    }
+};
+
+export const DefaultValueTest: Story = {
+    render: (props) => <Template {...props} />,
+    args: {
+        defaultValue: ["option2", "option4"],
+        helperText: "This demonstrates defaultValue - options 2 and 4 are pre-selected (uncontrolled)"
     }
 };

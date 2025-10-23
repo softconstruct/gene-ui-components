@@ -147,13 +147,6 @@ const CheckboxGroup: FC<ICheckboxGroupProps> = ({
         }
     }, [value, isControlled]);
 
-    // Update internal state when defaultValue changes (for uncontrolled mode)
-    useEffect(() => {
-        if (!isControlled && defaultValue !== undefined) {
-            setSelectedValues(defaultValue);
-        }
-    }, [defaultValue, isControlled]);
-
     return (
         <div
             className={classNames(
@@ -164,8 +157,7 @@ const CheckboxGroup: FC<ICheckboxGroupProps> = ({
                 },
                 className
             )}
-            aria-required={required}
-            aria-invalid={status === "error"}
+            role="group"
         >
             {label && (
                 <Label text={label} required={required} disabled={disabled} readOnly={readOnly} infoText={infoText} />

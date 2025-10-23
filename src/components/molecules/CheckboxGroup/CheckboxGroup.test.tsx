@@ -124,9 +124,16 @@ describe("CheckboxGroup", () => {
 
     it("calls onChange when checkbox option is deselected", () => {
         const onChange = jest.fn();
-        setup.setProps({ onChange, defaultValue: ["option1", "option2"] });
+        const wrapper = mount(
+            <CheckboxGroup
+                name="test-checkbox-group"
+                options={mockOptions}
+                onChange={onChange}
+                defaultValue={["option1", "option2"]}
+            />
+        );
 
-        const firstCheckbox = setup.find('input[type="checkbox"]').first();
+        const firstCheckbox = wrapper.find('input[type="checkbox"]').first();
         firstCheckbox.simulate("change", { target: { checked: false, value: "option1" } });
 
         expect(onChange).toHaveBeenCalledWith(["option2"], expect.any(Object));
@@ -185,10 +192,17 @@ describe("CheckboxGroup", () => {
 
     it("handles multiple selections correctly", () => {
         const onChange = jest.fn();
-        setup.setProps({ onChange, defaultValue: ["option1"] });
+        const wrapper = mount(
+            <CheckboxGroup
+                name="test-checkbox-group"
+                options={mockOptions}
+                onChange={onChange}
+                defaultValue={["option1"]}
+            />
+        );
 
         // Select second option
-        const secondCheckbox = setup.find('input[type="checkbox"]').at(1);
+        const secondCheckbox = wrapper.find('input[type="checkbox"]').at(1);
         secondCheckbox.simulate("change", { target: { checked: true, value: "option2" } });
 
         expect(onChange).toHaveBeenCalledWith(["option1", "option2"], expect.any(Object));
@@ -196,10 +210,17 @@ describe("CheckboxGroup", () => {
 
     it("handles deselection correctly", () => {
         const onChange = jest.fn();
-        setup.setProps({ onChange, defaultValue: ["option1", "option2", "option3"] });
+        const wrapper = mount(
+            <CheckboxGroup
+                name="test-checkbox-group"
+                options={mockOptions}
+                onChange={onChange}
+                defaultValue={["option1", "option2", "option3"]}
+            />
+        );
 
         // Deselect second option
-        const secondCheckbox = setup.find('input[type="checkbox"]').at(1);
+        const secondCheckbox = wrapper.find('input[type="checkbox"]').at(1);
         secondCheckbox.simulate("change", { target: { checked: false, value: "option2" } });
 
         expect(onChange).toHaveBeenCalledWith(["option1", "option3"], expect.any(Object));
@@ -213,81 +234,6 @@ describe("CheckboxGroup", () => {
             expect(container.prop("role")).toBe("group");
         });
 
-        it("should have aria-required='true' when required prop is true", () => {
-            const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={mockOptions} required />);
-            const container = wrapper.find(".checkboxGroup");
-            expect(container.prop("aria-required")).toBe(true);
-        });
-
-        it("should have aria-required='false' when required prop is false", () => {
-            const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={mockOptions} required={false} />);
-            const container = wrapper.find(".checkboxGroup");
-            expect(container.prop("aria-required")).toBe(false);
-        });
-
-        it("should not have aria-required attribute when required prop is undefined", () => {
-            const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={mockOptions} />);
-            const container = wrapper.find(".checkboxGroup");
-            expect(container.prop("aria-required")).toBeUndefined();
-        });
-
-        it("should have aria-invalid='true' when status is 'error'", () => {
-            const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={mockOptions} status="error" />);
-            const container = wrapper.find(".checkboxGroup");
-            expect(container.prop("aria-invalid")).toBe(true);
-        });
-
-        it("should have aria-invalid='false' when status is 'rest'", () => {
-            const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={mockOptions} status="rest" />);
-            const container = wrapper.find(".checkboxGroup");
-            expect(container.prop("aria-invalid")).toBe(false);
-        });
-
-        it("should have aria-invalid='false' when status is 'warning'", () => {
-            const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={mockOptions} status="warning" />);
-            const container = wrapper.find(".checkboxGroup");
-            expect(container.prop("aria-invalid")).toBe(false);
-        });
-
-        it("should have aria-invalid='false' when status is undefined (defaults to 'rest')", () => {
-            const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={mockOptions} />);
-            const container = wrapper.find(".checkboxGroup");
-            expect(container.prop("aria-invalid")).toBe(false);
-        });
-
-        it("should have all required ARIA attributes when both required and error are true", () => {
-            const wrapper = mount(
-                <CheckboxGroup name="test-checkbox-group" options={mockOptions} required status="error" />
-            );
-            const container = wrapper.find(".checkboxGroup");
-            expect(container.prop("role")).toBe("group");
-            expect(container.prop("aria-required")).toBe(true);
-            expect(container.prop("aria-invalid")).toBe(true);
-        });
-
-        it("should maintain ARIA attributes when props change", () => {
-            const wrapper = mount(
-                <CheckboxGroup name="test-checkbox-group" options={mockOptions} required={false} status="rest" />
-            );
-
-            // Initially should have correct attributes
-            let container = wrapper.find(".checkboxGroup");
-            expect(container.prop("aria-required")).toBe(false);
-            expect(container.prop("aria-invalid")).toBe(false);
-
-            // Update to required and error
-            wrapper.setProps({ required: true, status: "error" });
-            container = wrapper.find(".checkboxGroup");
-            expect(container.prop("aria-required")).toBe(true);
-            expect(container.prop("aria-invalid")).toBe(true);
-
-            // Update back to not required and warning
-            wrapper.setProps({ required: false, status: "warning" });
-            container = wrapper.find(".checkboxGroup");
-            expect(container.prop("aria-required")).toBe(false);
-            expect(container.prop("aria-invalid")).toBe(false);
-        });
-
         it("should have proper ARIA attributes with all status variants", () => {
             const statuses: Array<"rest" | "warning" | "error"> = ["rest", "warning", "error"];
 
@@ -298,7 +244,6 @@ describe("CheckboxGroup", () => {
                 const container = wrapper.find(".checkboxGroup");
 
                 expect(container.prop("role")).toBe("group");
-                expect(container.prop("aria-invalid")).toBe(status === "error");
             });
         });
     });
