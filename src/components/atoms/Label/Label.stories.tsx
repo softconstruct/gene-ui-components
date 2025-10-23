@@ -17,7 +17,7 @@ const meta: Meta<ILabelProps> = {
         loading: args({ control: "boolean", ...propCategory.states }),
         className: args({ control: "false", ...propCategory.appearance }),
         children: args({ control: "false", ...propCategory.content }),
-        readOnly: args({ control: "false", ...propCategory.states })
+        readOnly: args({ control: "boolean", ...propCategory.states })
     },
     args: {
         size: "medium",

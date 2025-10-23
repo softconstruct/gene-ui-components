@@ -10,12 +10,14 @@ const meta: Meta<ITagProps> = {
     component: Tag,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        type: args({ control: "select", ...propCategory.appearance }),
+        status: args({ control: "select", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         withIcon: args({ control: "boolean", ...propCategory.content }),
         text: args({ control: "text", ...propCategory.content }),
-        onClose: args({ control: "false", ...propCategory.action })
+        onClose: args({ control: "false", ...propCategory.action }),
+        tabIndex: args({ control: "number", ...propCategory.others }),
+        "aria-label": args({ control: "text", ...propCategory.others })
     },
     args: {
         text: "Tag",

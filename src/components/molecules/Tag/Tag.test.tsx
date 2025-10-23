@@ -30,14 +30,14 @@ describe("Tag ", () => {
         expect(setup.find(".tag__text").contains(tagText)).toBeTruthy();
     });
 
-    it.each<ITagProps["type"]>(["rest", "error", "warning"])("should have %s state", (type) => {
-        const wrapper = setup.setProps({ type });
-        expect(wrapper.find(`.tag_state_${type}`).exists()).toBeTruthy();
+    it.each<ITagProps["status"]>(["rest", "error", "warning"])("should have %s status", (status) => {
+        const wrapper = setup.setProps({ status });
+        expect(wrapper.find(`.tag_status_${status}`).exists()).toBeTruthy();
     });
 
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({ disabled: true });
-        expect(wrapper.find(".tag_state_disabled").exists()).toBeTruthy();
+        expect(wrapper.find(".tag_disabled").exists()).toBeTruthy();
     });
 
     it.each<ITagProps["size"]>(["medium", "small"])("should have %s size", (size) => {

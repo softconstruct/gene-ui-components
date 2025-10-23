@@ -1,4 +1,16 @@
-import React, { Children, FC, ReactNode, UIEvent, useContext, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+    Children,
+    cloneElement,
+    FC,
+    isValidElement,
+    ReactNode,
+    UIEvent,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
 import classNames from "classnames";
 import { isValidElementType } from "react-is";
 
@@ -8,6 +20,7 @@ import { IconProps } from "@geneui/icons";
 import Loader from "@components/atoms/Loader";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+import Empty from "@components/molecules/Empty";
 import MenuItemButton from "@components/molecules/Menu/MenuItemButton";
 
 // Helpers
@@ -68,7 +81,7 @@ interface IMenuItemProps {
      */
     paths?: string[];
     /**
-     *  Indicates whether the menu is in a loading state. If true, a loading indicator is displayed instead of the menu items.
+     * Indicates whether the menu is in a loading state. If true, a loading indicator is displayed instead of the menu items.
      */
     loading?: boolean;
     /**
@@ -76,6 +89,10 @@ interface IMenuItemProps {
      */
     loadingText?: string;
     generatedId?: string;
+    /**
+     * Custom render function for the menu item.
+     */
+    render?: (linkData: { id: number | string; title?: string }) => ReactNode;
 }
 
 const MenuItem: FC<IMenuItemProps> = (props) => {
@@ -91,11 +108,12 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
         id,
         divider,
         ComponentRender,
-        emptyText = "No data to show",
+        emptyText,
         paths,
         generatedId,
         loading,
-        loadingText
+        loadingText,
+        render
     } = props;
 
     const [propsForPopover, setPropsForPopover] = useState({});
@@ -127,7 +145,14 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
 
     const onItemClickHandler = (isBack: boolean) => {
         if (onChangeHandler && generatedId) {
-            onChangeHandler({ generatedId, id, isBack, closeMenu: typeof children === "string", item: props });
+            const shouldCloseMenu = !!render || typeof children === "string";
+            onChangeHandler({
+                generatedId,
+                id,
+                isBack,
+                closeMenu: shouldCloseMenu,
+                item: props
+            });
         }
     };
 
@@ -183,7 +208,7 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
         if (Children.count(children) === 0) {
             return (
                 <div className="menu__empty">
-                    <h1>{emptyText}</h1>
+                    <Empty title={emptyText} size="small" />
                 </div>
             );
         }
@@ -197,26 +222,60 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
         return <div className="menu__content">{children}</div>;
     }, [children, emptyText, loading, loadingText, swappable, isActiveSwappableContent]);
 
+    const renderMenuItem = (type: "parent" | "simple" | "custom" | "header") => {
+        if (render && type === "simple") {
+            const renderedElement = render({ id, title: children as string });
+            if (isValidElement(renderedElement)) {
+                const originalOnClick = (renderedElement.props as { onClick?: (event: React.MouseEvent) => void })
+                    .onClick;
+
+                const propsToApply = {
+                    className: classNames("menu__item", renderedElement.props.className, {
+                        menu__item_danger: danger,
+                        menu__item_disabled: disabled,
+                        menu__item_selected: selected,
+                        menu__item_icon_after: !!IconAfter,
+                        menu__item_icon_before: !!IconBefore
+                    }),
+                    onClick: (event: React.MouseEvent) => {
+                        originalOnClick?.(event);
+                        onItemClickHandler(false);
+                    },
+                    disabled
+                };
+
+                return cloneElement(renderedElement, propsToApply, children);
+            }
+        }
+
+        if (type === "custom" && CustomElement) {
+            return CustomElement;
+        }
+
+        return (
+            <MenuItemButton
+                type={type}
+                onItemClickHandler={onItemClickHandler}
+                title={title}
+                IconBefore={IconBefore}
+                IconAfter={IconAfter}
+                disabled={disabled}
+                danger={danger}
+                propsForPopover={propsForPopover}
+                active={popoverOpenState}
+                divider={divider}
+                selected={selected}
+            >
+                {children}
+            </MenuItemButton>
+        );
+    };
+
     return swappable ? (
         <>
             {typeof children !== "string" ? (
                 <>
-                    {/* Parent menu item */}
-                    {isActiveSwappableContent && !popoverOpenState && (
-                        <MenuItemButton
-                            type="parent"
-                            onItemClickHandler={onItemClickHandler}
-                            title={title}
-                            IconBefore={IconBefore}
-                            IconAfter={IconAfter}
-                            disabled={disabled}
-                            danger={danger}
-                            propsForPopover={propsForPopover}
-                            active={popoverOpenState}
-                            divider={divider}
-                        />
-                    )}
-                    {/* menu list wrapper */}
+                    {isActiveSwappableContent && !popoverOpenState && renderMenuItem("parent")}
                     <div
                         className={classNames("menu__list", {
                             menu__list_current: popoverOpenState,
@@ -232,42 +291,14 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
                     </div>
                 </>
             ) : (
-                // Simple menu item
-                isActiveSwappableContent &&
-                (CustomElement || (
-                    <MenuItemButton
-                        type="simple"
-                        onItemClickHandler={onItemClickHandler}
-                        danger={danger}
-                        selected={selected}
-                        disabled={disabled}
-                        IconBefore={IconBefore}
-                        IconAfter={IconAfter}
-                        divider={divider}
-                    >
-                        {children}
-                    </MenuItemButton>
-                ))
+                isActiveSwappableContent && renderMenuItem(ComponentRender ? "custom" : "simple")
             )}
         </>
     ) : (
         <>
             {typeof children !== "string" ? (
                 <>
-                    {/* Parent menu item */}
-                    <MenuItemButton
-                        type="parent"
-                        onItemClickHandler={onItemClickHandler}
-                        title={title}
-                        IconBefore={IconBefore}
-                        IconAfter={IconAfter}
-                        disabled={disabled}
-                        danger={danger}
-                        propsForPopover={propsForPopover}
-                        active={popoverOpenState}
-                        divider={divider}
-                    />
-                    {/* menu list wrapper */}
+                    {renderMenuItem("parent")}
                     <Popover
                         setProps={setPropsForPopover}
                         size={popoverSizeMapping[size]}
@@ -279,7 +310,7 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
                     >
                         <PopoverBody
                             withPadding={false}
-                            className={`menu__body menu__body_size menu__body_size_${size}`}
+                            className={`menu__body menu__body_size_${size}`}
                             withScrollbar={false}
                         >
                             <div
@@ -302,21 +333,7 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
                     </Popover>
                 </>
             ) : (
-                // Simple menu item
-                CustomElement || (
-                    <MenuItemButton
-                        type="simple"
-                        onItemClickHandler={onItemClickHandler}
-                        danger={danger}
-                        selected={selected}
-                        disabled={disabled}
-                        IconBefore={IconBefore}
-                        IconAfter={IconAfter}
-                        divider={divider}
-                    >
-                        {children}
-                    </MenuItemButton>
-                )
+                renderMenuItem(ComponentRender ? "custom" : "simple")
             )}
         </>
     );

@@ -119,11 +119,13 @@
         }
     }
 
-    &_error {
-        #{ $this }__imitationHolder {
-            #{ $this }__imitationHolderInner {
-                #{ $this }__imitation {
-                    border-color: var(--guit-sem-color-border-error);
+    &_status {
+        &_error {
+            #{ $this }__imitationHolder {
+                #{ $this }__imitationHolderInner {
+                    #{ $this }__imitation {
+                        border-color: var(--guit-sem-color-border-error);
+                    }
                 }
             }
         }

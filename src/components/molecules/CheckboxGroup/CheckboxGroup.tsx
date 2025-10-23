@@ -31,9 +31,9 @@ interface ICheckboxGroupProps {
     helperText?: string;
     /**
      *  Determines the checkbox groups appearance based on its status.<br>
-     *  Possible values: `rest | error`
+     *  Possible values: `rest | warning | error`
      */
-    type?: "rest" | "error";
+    status?: "rest" | "warning" | "error";
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -51,21 +51,21 @@ const CheckboxGroup: FC<ICheckboxGroupProps> = ({
     disabled,
     readOnly,
     helperText,
-    type = "rest" as const,
+    status = "rest" as const,
     className
 }) => {
     return (
         <div className={classNames("checkboxGroup", className)}>
             <Label text={label} required={required} disabled={disabled} readOnly={readOnly} />
 
-            <Checkbox label="Label" type={type} value="" name="" disabled={disabled} readOnly={readOnly} />
-            <Checkbox label="Label" type={type} value="" name="" disabled={disabled} readOnly={readOnly} />
-            <Checkbox label="Label" type={type} value="" name="" disabled={disabled} readOnly={readOnly} />
-            <Checkbox label="Label" type={type} value="" name="" disabled={disabled} readOnly={readOnly} />
+            <Checkbox label="Label" status={status} value="" name="" disabled={disabled} readOnly={readOnly} />
+            <Checkbox label="Label" status={status} value="" name="" disabled={disabled} readOnly={readOnly} />
+            <Checkbox label="Label" status={status} value="" name="" disabled={disabled} readOnly={readOnly} />
+            <Checkbox label="Label" status={status} value="" name="" disabled={disabled} readOnly={readOnly} />
 
             {helperText && (
                 <div className="checkbox__infoContainer">
-                    <HelperText text={helperText} disabled={disabled} type={type} />
+                    <HelperText text={helperText} disabled={disabled} status={status} />
                 </div>
             )}
         </div>

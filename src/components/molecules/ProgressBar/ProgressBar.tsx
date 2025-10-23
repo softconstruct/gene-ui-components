@@ -124,7 +124,7 @@ const ProgressBar: FC<IProgressBarProps> = ({
                     <HelperText
                         text={helperText}
                         size={helperTextAndLabelSizeMap[size]}
-                        type={helperTextTypeMap[status]}
+                        status={helperTextTypeMap[status]}
                         className="progressBar__helperText"
                     />
                 )}
