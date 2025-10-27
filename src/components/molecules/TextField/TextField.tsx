@@ -5,10 +5,12 @@ import React, {
     forwardRef,
     useEffect,
     useImperativeHandle,
+    useMemo,
     useRef,
     useState
 } from "react";
 import classNames from "classnames";
+import { nanoid } from "nanoid";
 
 import { Eye, EyeOff, IconProps, X } from "@geneui/icons";
 
@@ -197,6 +199,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
         const [paddingClassesForIcon, setPaddingClassesForIcon] = useState<string>("");
 
+        const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
+
         const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
             const { value: currentValue } = event.target;
             const filteredValue = numericOnly && type !== "password" ? currentValue.replace(/\D/g, "") : currentValue;
@@ -258,67 +262,64 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                     className="textField__label"
                     disabled={disabled}
                     infoText={infoText}
+                    readOnly={readOnly}
+                    labelFor={generatedId}
+                />
+                <div
+                    className={classNames(`textField__wrapper textField__wrapper_size_${size}`, paddingClassesForIcon, {
+                        textField__wrapper_readOnly: readOnly,
+                        textField__wrapper_disabled: disabled,
+                        textField__wrapper_error: status === "error"
+                    })}
                 >
-                    <div
-                        className={classNames(
-                            `textField__wrapper textField__wrapper_size_${size}`,
-                            paddingClassesForIcon,
-                            {
-                                textField__wrapper_readOnly: readOnly,
-                                textField__wrapper_disabled: disabled,
-                                textField__wrapper_error: status === "error"
-                            }
-                        )}
-                    >
-                        {IconBefore && (
-                            <span className="textField__icon">
-                                <IconBefore size={size === "small" ? 20 : 24} />
-                            </span>
-                        )}
-                        <input
-                            {...(id && { id })}
-                            {...(placeholder && { placeholder })}
-                            {...(autoFocus && { autoFocus })}
-                            {...(numericOnly ? { inputMode: "numeric" } : { inputMode })}
-                            autoComplete={autoComplete}
-                            name={name || type}
-                            ref={inputRef}
-                            className="textField__input"
-                            type={isPasswordVisible ? "text" : type}
-                            required={required}
-                            disabled={disabled}
-                            readOnly={readOnly}
-                            value={inputValue}
-                            onChange={handleChange}
-                            onBlur={onBlur}
-                            onFocus={onInputFocus}
-                            aria-invalid={status === "error"}
-                            aria-required={required}
-                        />
-                        <span className="textField__actions">
-                            {clearable && inputValue.length > 0 && !disabled && !readOnly && (
-                                <Button
-                                    Icon={X}
-                                    appearance="secondary"
-                                    size={size === "small" ? "smallNudge" : "small"}
-                                    layout="text"
-                                    disabled={disabled}
-                                    onClick={handleClear}
-                                />
-                            )}
-                            {type === "password" && inputValue.length > 0 && !readOnly && !disabled && (
-                                <Button
-                                    Icon={isPasswordVisible ? Eye : EyeOff}
-                                    appearance="secondary"
-                                    size={size === "small" ? "smallNudge" : "small"}
-                                    layout="text"
-                                    disabled={disabled}
-                                    onClick={showPasswordToggle}
-                                />
-                            )}
+                    {IconBefore && (
+                        <span className="textField__icon">
+                            <IconBefore size={size === "small" ? 20 : 24} />
                         </span>
-                    </div>
-                </Label>
+                    )}
+                    <input
+                        id={generatedId}
+                        {...(placeholder && { placeholder })}
+                        {...(autoFocus && { autoFocus })}
+                        {...(numericOnly ? { inputMode: "numeric" } : { inputMode })}
+                        autoComplete={autoComplete}
+                        name={name || type}
+                        ref={inputRef}
+                        className="textField__input"
+                        type={isPasswordVisible ? "text" : type}
+                        required={required}
+                        disabled={disabled}
+                        readOnly={readOnly}
+                        value={inputValue}
+                        onChange={handleChange}
+                        onBlur={onBlur}
+                        onFocus={onInputFocus}
+                        aria-invalid={status === "error"}
+                        aria-required={required}
+                    />
+                    <span className="textField__actions">
+                        {clearable && inputValue.length > 0 && !disabled && !readOnly && (
+                            <Button
+                                Icon={X}
+                                appearance="secondary"
+                                size={size === "small" ? "smallNudge" : "small"}
+                                layout="text"
+                                disabled={disabled}
+                                onClick={handleClear}
+                            />
+                        )}
+                        {type === "password" && inputValue.length > 0 && !readOnly && !disabled && (
+                            <Button
+                                Icon={isPasswordVisible ? Eye : EyeOff}
+                                appearance="secondary"
+                                size={size === "small" ? "smallNudge" : "small"}
+                                layout="text"
+                                disabled={disabled}
+                                onClick={showPasswordToggle}
+                            />
+                        )}
+                    </span>
+                </div>
                 {(helperText || characterLimit) && (
                     <div className="textField__info">
                         {helperText && <HelperText text={helperText} disabled={disabled} status={status} />}
