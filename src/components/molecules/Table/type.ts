@@ -87,6 +87,7 @@ export interface IOrderedColumns {
 
 export type OrderType = {
     order: number;
+    isPinned: boolean;
 };
 
 export interface IManageColumnsData {

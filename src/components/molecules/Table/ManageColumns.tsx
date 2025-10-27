@@ -12,7 +12,7 @@ import Scrollbar from "@components/atoms/Scrollbar";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
 import { TableContext } from "@components/molecules/Table/Table";
-import { IManageColumnsData, IOrderedColumns, Row, TableCol } from "@components/molecules/Table/type";
+import { IManageColumnsData, IOrderedColumns, OrderType, Row, TableCol } from "@components/molecules/Table/type";
 
 interface IManageColumns {
     onMenuClose: () => void;
@@ -59,7 +59,56 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onM
         onManageColumnRestore?.();
     };
 
+    const getSavedData = (
+        prev: IManageColumnsData[] | null,
+        orderedManageColumns: IOrderedColumns[],
+        sourceID: string
+    ) => {
+        const [reorderedColumns] = orderedManageColumns.map((group) =>
+            group.columns.reduce(
+                (acc, column, index) => {
+                    const updatedColumn = {
+                        ...column,
+                        columnDef: {
+                            ...(column.columnDef as TableCol<Row>),
+                            order: index + 1
+                        }
+                    };
+                    return {
+                        ...acc,
+                        [updatedColumn.id]: {
+                            order: (updatedColumn.columnDef as TableCol<Row>).order,
+                            isPinned: !!(column.columnDef as TableCol<Row>)?.isPinned
+                        }
+                    };
+                },
+                {} as Record<string, OrderType>
+            )
+        );
+
+        if (isGrouped) {
+            const currentGroup = prev?.find((item) => item.groupId === sourceID);
+            if (currentGroup && prev?.length) {
+                const updatedGroup = {
+                    ...currentGroup,
+                    columns: { ...reorderedColumns }
+                };
+
+                return prev?.map((item) => (item.groupId === sourceID ? updatedGroup : item));
+            }
+            const reorderedColumnsWithGroup: IManageColumnsData = {
+                groupId: sourceID,
+                columns: { ...reorderedColumns }
+            };
+            return [...(prev || []), reorderedColumnsWithGroup];
+        }
+
+        return [{ columns: reorderedColumns }];
+    };
+
     const onColumnPin = (column: Column<Row, unknown>, groupIndex: number, columnIndex: number) => {
+        if (!columns?.length) return;
+
         const col = column.columnDef as TableCol<Row>;
         col.isPinned = !col.isPinned;
         setColumns((prev) => {
@@ -85,15 +134,11 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onM
             });
             return [...prev];
         });
-    };
 
-    // const reorderedColumns = (groups: IOrderedColumns[]) =>
-    //     groups.map((group) =>
-    //         group.columns.map((column, index) => {
-    //             column.columnDef.order = index + 1;
-    //             return column;
-    //         })
-    //     );
+        const sourceID = columns?.[groupIndex].id;
+
+        setSavedColumnData((prev) => getSavedData(prev, columns, sourceID));
+    };
 
     const handleDragEnd = (result: DropResult) => {
         if (!result.destination || !columns?.length) {
@@ -120,47 +165,7 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onM
             ...columns.slice(currentGroupIndex + 1)
         ];
 
-        setSavedColumnData((prev) => {
-            const [reorderedColumns] = orderedManageColumns.map((group) =>
-                group.columns.reduce(
-                    (acc, column, index) => {
-                        const updatedColumn = {
-                            ...column,
-                            columnDef: {
-                                ...(column.columnDef as TableCol<Row>),
-                                order: index + 1
-                            }
-                        };
-                        return {
-                            ...acc,
-                            [updatedColumn.id]: {
-                                order: (updatedColumn.columnDef as TableCol<Row>).order
-                            }
-                        };
-                    },
-                    {} as Record<string, { order: number }>
-                )
-            );
-
-            if (isGrouped) {
-                const currentGroup = prev?.find((item) => item.groupId === sourceID);
-                if (currentGroup && prev?.length) {
-                    const updatedGroup = {
-                        ...currentGroup,
-                        columns: { ...reorderedColumns }
-                    };
-
-                    return prev?.map((item) => (item.groupId === sourceID ? updatedGroup : item));
-                }
-                const reorderedColumnsWithGroup: IManageColumnsData = {
-                    groupId: sourceID,
-                    columns: { ...reorderedColumns }
-                };
-                return [...(prev || []), reorderedColumnsWithGroup];
-            }
-
-            return [{ columns: reorderedColumns }];
-        });
+        setSavedColumnData((prev) => getSavedData(prev, orderedManageColumns, sourceID));
 
         setColumns(orderedManageColumns);
     };
