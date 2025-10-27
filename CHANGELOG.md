@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.16.5](https://github.com/softconstruct/gene-ui-components/compare/v2.16.4...v2.16.5) (2025-01-09)
+
+
+### Bug Fixes
+
+* **SuggestionList:** add optional chaining ([#244](https://github.com/softconstruct/gene-ui-components/issues/244)) ([71a02cf](https://github.com/softconstruct/gene-ui-components/commit/71a02cf250fb518cef06ee51791931020f674977))
+
 ## [2.16.4](https://github.com/softconstruct/gene-ui-components/compare/v2.16.3...v2.16.4) (2024-10-29)
 
 
