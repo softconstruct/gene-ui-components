@@ -23,6 +23,19 @@ import Text from "@components/atoms/Text";
 // Styles
 import "./TextField.scss";
 
+// Size mapping objects for Label and HelperText components
+const labelSizeMap = {
+    large: "medium" as const,
+    medium: "medium" as const,
+    small: "small" as const
+};
+
+const helperTextSizeMap = {
+    large: "medium" as const,
+    medium: "medium" as const,
+    small: "small" as const
+};
+
 interface ITextFieldProps {
     /**
      * Additional class for the parent element.
@@ -201,6 +214,9 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
         const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
 
+        const labelSize = labelSizeMap[size] || "medium";
+        const helperTextSize = helperTextSizeMap[size] || "medium";
+
         const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
             const { value: currentValue } = event.target;
             const filteredValue = numericOnly && type !== "password" ? currentValue.replace(/\D/g, "") : currentValue;
@@ -264,6 +280,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                     infoText={infoText}
                     readOnly={readOnly}
                     labelFor={generatedId}
+                    size={labelSize}
                 />
                 <div
                     className={classNames(`textField__wrapper textField__wrapper_size_${size}`, paddingClassesForIcon, {
@@ -322,13 +339,18 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                 </div>
                 {(helperText || characterLimit) && (
                     <div className="textField__info">
-                        {helperText && <HelperText text={helperText} disabled={disabled} status={status} />}
+                        {helperText && (
+                            <HelperText text={helperText} disabled={disabled} status={status} size={helperTextSize} />
+                        )}
                         {characterLimit && (
                             <Text
                                 as="span"
-                                className={classNames(`textField__characterLimit`, {
-                                    textField__characterLimit_disabled: disabled
-                                })}
+                                className={classNames(
+                                    `textField__characterLimit textField__characterLimit_size_${helperTextSize}`,
+                                    {
+                                        textField__characterLimit_disabled: disabled
+                                    }
+                                )}
                             >{`${inputValue.length} / ${characterLimit}`}</Text>
                         )}
                     </div>

@@ -223,6 +223,16 @@
         white-space: nowrap;
         color: var(--guit-sem-color-foreground-neutral-2);
 
+        &_size {
+            &_medium {
+                font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+            }
+
+            &_small {
+                font-size: var(--guit-sem-font-caption-large-medium-font-size);
+            }
+        }
+
         &_disabled {
             color: var(--guit-sem-color-foreground-disabled);
         }
