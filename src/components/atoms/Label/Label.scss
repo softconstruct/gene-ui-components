@@ -4,8 +4,14 @@
     max-width: 100%;
     min-width: 0;
 
-    &_variant_interactive {
-        cursor: pointer;
+    &_variant {
+        &_interactive {
+            cursor: pointer;
+        }
+
+        &_descriptive {
+            pointer-events: none;
+        }
     }
 
     &__container {
