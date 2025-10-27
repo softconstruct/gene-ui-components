@@ -1,7 +1,7 @@
 .label {
     display: inline-flex;
     align-items: center;
-    max-width: 100%;
+    max-width: fit-content;
     min-width: 0;
 
     &_variant {

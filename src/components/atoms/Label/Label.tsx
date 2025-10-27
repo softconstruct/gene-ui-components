@@ -59,6 +59,10 @@ interface ILabelProps {
      * The label will wrap around this element, ensuring proper association for accessibility.
      */
     children?: JSX.Element;
+    /**
+     * ID of the component that the label is labelling.
+     */
+    labelFor?: string;
 }
 
 const iconSizes = {
@@ -78,13 +82,14 @@ const Label: FC<ILabelProps> = ({
     loading,
     className,
     children,
-    readOnly
+    readOnly,
+    labelFor
 }) => {
     const labelRef = useRef<HTMLLabelElement | HTMLDivElement | null>(null);
 
     const isTruncated: boolean = useEllipsisDetection(labelRef);
 
-    const Component = children && !readOnly ? "label" : "div";
+    const Component = !readOnly && (children || labelFor) ? "label" : "div";
 
     const actualVariant = Component === "label" && !disabled ? "interactive" : "descriptive";
 
@@ -97,7 +102,10 @@ const Label: FC<ILabelProps> = ({
     }
 
     return (
-        <Component className={classnames(`label`, `label_variant_${actualVariant}`, className)}>
+        <Component
+            className={classnames(`label`, `label_variant_${actualVariant}`, className)}
+            {...(labelFor && { htmlFor: labelFor })}
+        >
             {children}
             {text && (
                 <span className={classnames("label__container")}>
