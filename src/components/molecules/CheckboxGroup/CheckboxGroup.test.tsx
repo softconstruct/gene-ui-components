@@ -62,8 +62,6 @@ describe("CheckboxGroup", () => {
         setup.setProps({ disabled: true });
         const checkboxInputs = setup.find('input[type="checkbox"]');
         checkboxInputs.forEach((input) => {
-            // Note: The Checkbox component doesn't pass disabled prop to input,
-            // but the disabled state is handled by CSS classes and pointer-events
             expect(input.prop("disabled")).toBeUndefined();
         });
     });
@@ -72,8 +70,6 @@ describe("CheckboxGroup", () => {
         setup.setProps({ readOnly: true });
         const checkboxInputs = setup.find('input[type="checkbox"]');
         checkboxInputs.forEach((input) => {
-            // Note: The Checkbox component doesn't pass readOnly prop to input,
-            // but the readOnly state is handled by CSS classes and pointer-events
             expect(input.prop("readOnly")).toBeUndefined();
         });
     });
@@ -169,8 +165,6 @@ describe("CheckboxGroup", () => {
         setup.setProps({ options: optionsWithDisabled });
 
         const checkboxInputs = setup.find('input[type="checkbox"]');
-        // Note: The Checkbox component doesn't pass disabled prop to input,
-        // but the disabled state is handled by CSS classes and pointer-events
         expect(checkboxInputs.at(0).prop("disabled")).toBeUndefined();
         expect(checkboxInputs.at(1).prop("disabled")).toBeUndefined();
         expect(checkboxInputs.at(2).prop("disabled")).toBeUndefined();
@@ -226,25 +220,93 @@ describe("CheckboxGroup", () => {
         expect(onChange).toHaveBeenCalledWith(["option1", "option3"], expect.any(Object));
     });
 
-    // Accessibility Tests
-    describe("Accessibility", () => {
-        it("should have role='group' on the container", () => {
-            const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={mockOptions} />);
+    it("should have role='group' on the container", () => {
+        const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={mockOptions} />);
+        const container = wrapper.find(".checkboxGroup");
+        expect(container.prop("role")).toBe("group");
+    });
+
+    it("should have proper ARIA attributes with all status variants", () => {
+        const statuses: Array<"rest" | "warning" | "error"> = ["rest", "warning", "error"];
+
+        statuses.forEach((status) => {
+            const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={mockOptions} status={status} />);
             const container = wrapper.find(".checkboxGroup");
+
             expect(container.prop("role")).toBe("group");
         });
+    });
 
-        it("should have proper ARIA attributes with all status variants", () => {
-            const statuses: Array<"rest" | "warning" | "error"> = ["rest", "warning", "error"];
+    it("renders infoText prop correctly", () => {
+        const infoText = "Additional information about this checkbox group";
+        const wrapper = mount(
+            <CheckboxGroup name="test-checkbox-group" options={mockOptions} label="Test Label" infoText={infoText} />
+        );
 
-            statuses.forEach((status) => {
-                const wrapper = mount(
-                    <CheckboxGroup name="test-checkbox-group" options={mockOptions} status={status} />
-                );
-                const container = wrapper.find(".checkboxGroup");
+        expect(wrapper.find("Info")).toHaveLength(1);
+    });
 
-                expect(container.prop("role")).toBe("group");
+    it("applies status prop correctly to all checkboxes", () => {
+        const statuses: Array<"rest" | "warning" | "error"> = ["rest", "warning", "error"];
+
+        statuses.forEach((status) => {
+            const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={mockOptions} status={status} />);
+
+            const checkboxComponents = wrapper.find("Checkbox");
+            checkboxComponents.forEach((checkbox) => {
+                expect(checkbox.prop("status")).toBe(status);
             });
+        });
+    });
+
+    it("applies status prop correctly to HelperText", () => {
+        const statuses: Array<"rest" | "warning" | "error"> = ["rest", "warning", "error"];
+
+        statuses.forEach((status) => {
+            const wrapper = mount(
+                <CheckboxGroup
+                    name="test-checkbox-group"
+                    options={mockOptions}
+                    status={status}
+                    helperText="Test helper text"
+                />
+            );
+
+            const helperTextComponent = wrapper.find("HelperText");
+            expect(helperTextComponent.prop("status")).toBe(status);
+        });
+    });
+
+    it("handles empty options array", () => {
+        const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={[]} />);
+
+        expect(wrapper.find('input[type="checkbox"]')).toHaveLength(0);
+        expect(wrapper.find(".checkboxGroup__options").children()).toHaveLength(0);
+    });
+
+    it("handles invalid defaultValue arrays gracefully", () => {
+        const invalidDefaultValue = ["nonexistent-option", "option1"];
+        const wrapper = mount(
+            <CheckboxGroup name="test-checkbox-group" options={mockOptions} defaultValue={invalidDefaultValue} />
+        );
+
+        const checkboxInputs = wrapper.find('input[type="checkbox"]');
+        expect(checkboxInputs.at(0).prop("checked")).toBe(true); // option1
+        expect(checkboxInputs.at(1).prop("checked")).toBe(false); // option2
+        expect(checkboxInputs.at(2).prop("checked")).toBe(false); // option3
+    });
+
+    it("handles mixed disabled states correctly", () => {
+        const optionsWithMixedDisabled: ICheckboxOption[] = [
+            { value: "option1", label: "Option 1" },
+            { value: "option2", label: "Option 2", disabled: true },
+            { value: "option3", label: "Option 3" }
+        ];
+
+        const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={optionsWithMixedDisabled} disabled />);
+        const checkboxComponents = wrapper.find("Checkbox");
+        checkboxComponents.forEach((checkbox) => {
+            expect(checkbox.prop("disabled")).toBe(true);
         });
     });
 });
