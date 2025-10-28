@@ -62,7 +62,7 @@ describe("CheckboxGroup", () => {
         setup.setProps({ disabled: true });
         const checkboxInputs = setup.find('input[type="checkbox"]');
         checkboxInputs.forEach((input) => {
-            expect(input.prop("disabled")).toBeUndefined();
+            expect(input.prop("disabled")).toBe(true);
         });
     });
 
@@ -166,7 +166,7 @@ describe("CheckboxGroup", () => {
 
         const checkboxInputs = setup.find('input[type="checkbox"]');
         expect(checkboxInputs.at(0).prop("disabled")).toBeUndefined();
-        expect(checkboxInputs.at(1).prop("disabled")).toBeUndefined();
+        expect(checkboxInputs.at(1).prop("disabled")).toBe(true);
         expect(checkboxInputs.at(2).prop("disabled")).toBeUndefined();
     });
 
@@ -304,9 +304,9 @@ describe("CheckboxGroup", () => {
         ];
 
         const wrapper = mount(<CheckboxGroup name="test-checkbox-group" options={optionsWithMixedDisabled} disabled />);
-        const checkboxComponents = wrapper.find("Checkbox");
-        checkboxComponents.forEach((checkbox) => {
-            expect(checkbox.prop("disabled")).toBe(true);
+        const checkboxInputs = wrapper.find('input[type="checkbox"]');
+        checkboxInputs.forEach((input) => {
+            expect(input.prop("disabled")).toBe(true);
         });
     });
 });
