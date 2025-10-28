@@ -64,10 +64,13 @@ const newRow = (): Row => {
             value: faker.word.adjective(),
             checked: faker.helpers.shuffle<boolean>([true, false])[0]!
         } as ICheckboxProps,
-        Switch: {
-            value: faker.word.adjective(),
-            checked: faker.helpers.shuffle<boolean>([true, false])[0]!
-        } as ISwitchProps,
+        Switch: (() => {
+            const checked = faker.helpers.shuffle<boolean>([true, false])[0]!;
+            return {
+                value: checked ? "On" : "Off",
+                checked
+            } as ISwitchProps;
+        })(),
         isPinned: false,
         isSelected: faker.helpers.shuffle<boolean>([false, true])[0]!,
         rowStatus: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!,

@@ -5,6 +5,7 @@ import classnames from "classnames";
 
 import { Globe, Magnifier } from "@geneui/icons";
 
+import Badge from "@components/atoms/Badge";
 import Button from "@components/atoms/Button";
 import Label from "@components/atoms/Label";
 import { IPillProps } from "@components/atoms/Pill";
@@ -17,6 +18,8 @@ import { Cell, Row, TableCol, TableRowCells } from "@components/molecules/Table/
 
 interface IColActionsProps {
     header: Header<Row, unknown>;
+    onColAction?: (event: string, value: boolean) => void;
+    selectAllText?: string;
 }
 
 const getFilterOptionLabelByColumnType = (data: Cell | undefined, type: string) => {
@@ -56,7 +59,7 @@ const getFilterOption = (column: Column<Row, unknown>): string[] => {
     ];
 };
 
-export const ColActions: FC<IColActionsProps> = ({ header }) => {
+export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAllText = "Select All" }) => {
     const [currentSearchInput, setCurrentSearchInput] = useState<string | null>(null);
     const [popoverPropsForContent, setPopoverPropsForContent] = useState({});
     const [initialFilterOptions, setInitialFilterOptions] = useState<string[]>([]);
@@ -69,6 +72,10 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
         setFilterOptions(options);
         setInitialFilterOptions(options);
     }, [header.column]);
+
+    useEffect(() => {
+        onColAction?.(header.id, !!(header.column.getIsFiltered() || header.column.getIsSorted()));
+    }, [header.column.getIsFiltered(), header.column.getIsSorted()]);
 
     const handleFilterFromPopover = (column: Column<Row, unknown>) => {
         column.setFilterValue(filteredValues);
@@ -107,40 +114,77 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
 
     return (
         <div className="table__th_actions">
-            {header.column.getCanSort() && (
-                <Button
-                    appearance="secondary"
-                    layout="text"
-                    size="small"
-                    className={classnames({
-                        table__th_actions_active: header.column.getIsSorted()
-                    })}
-                    disabled={(header.column.columnDef as TableCol<unknown>)?.isSortingDisabled}
-                    Icon={SortingIcons[`${header.column.getIsSorted()}`]}
-                    onClick={(e) => {
-                        return (
-                            (header.column.columnDef as TableCol<unknown>).enableSorting &&
-                            header?.column?.getToggleSortingHandler?.()?.(e)
-                        );
-                    }}
-                />
-            )}
-
-            {/* todo: change icon from "Globe" to some "Filter" icon, when it will implemented */}
-            {(header.column.columnDef as TableCol<Row>).enablePopoverFilter && (
-                <>
+            {header.column.getCanSort() &&
+                (header.column.getIsSorted() ? (
+                    <Badge size="smallNudge">
+                        <Button
+                            appearance="secondary"
+                            layout="text"
+                            size="small"
+                            className={classnames({
+                                table__th_actions_active: header.column.getIsSorted()
+                            })}
+                            disabled={(header.column.columnDef as TableCol<unknown>)?.isSortingDisabled}
+                            Icon={SortingIcons[`${header.column.getIsSorted()}`]}
+                            onClick={(e) => {
+                                return (
+                                    (header.column.columnDef as TableCol<unknown>).enableSorting &&
+                                    header?.column?.getToggleSortingHandler?.()?.(e)
+                                );
+                            }}
+                        />
+                    </Badge>
+                ) : (
                     <Button
                         appearance="secondary"
                         layout="text"
                         size="small"
-                        Icon={Globe}
                         className={classnames({
-                            table__th_actions_active: isFilterPopoverOpen
+                            table__th_actions_active: header.column.getIsSorted()
                         })}
-                        disabled={(header.column.columnDef as TableCol<Row>)?.isPopoverFilterDisabled}
-                        {...popoverPropsForContent}
-                        onClick={() => setIsFilterPopoverOpen(true)}
+                        disabled={(header.column.columnDef as TableCol<unknown>)?.isSortingDisabled}
+                        Icon={SortingIcons[`${header.column.getIsSorted()}`]}
+                        onClick={(e) => {
+                            return (
+                                (header.column.columnDef as TableCol<unknown>).enableSorting &&
+                                header?.column?.getToggleSortingHandler?.()?.(e)
+                            );
+                        }}
                     />
+                ))}
+
+            {/* todo: change icon from "Globe" to some "Filter" icon, when it will implemented */}
+            {(header.column.columnDef as TableCol<Row>).enablePopoverFilter && filterOptions.length > 0 && (
+                <>
+                    {filteredValues.length ? (
+                        <Badge size="smallNudge">
+                            <Button
+                                appearance="secondary"
+                                layout="text"
+                                size="small"
+                                Icon={Globe}
+                                className={classnames({
+                                    table__th_actions_active: isFilterPopoverOpen
+                                })}
+                                disabled={(header.column.columnDef as TableCol<Row>)?.isPopoverFilterDisabled}
+                                {...popoverPropsForContent}
+                                onClick={() => setIsFilterPopoverOpen(true)}
+                            />
+                        </Badge>
+                    ) : (
+                        <Button
+                            appearance="secondary"
+                            layout="text"
+                            size="small"
+                            Icon={Globe}
+                            className={classnames({
+                                table__th_actions_active: isFilterPopoverOpen
+                            })}
+                            disabled={(header.column.columnDef as TableCol<Row>)?.isPopoverFilterDisabled}
+                            {...popoverPropsForContent}
+                            onClick={() => setIsFilterPopoverOpen(true)}
+                        />
+                    )}
                     <Popover setProps={setPopoverPropsForContent} open={isFilterPopoverOpen}>
                         <PopoverBody withPadding={false}>
                             <div className="filterDropdownMenu">
@@ -159,13 +203,13 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
                                                 {/* todo: add 'disabled' attr. for similar state */}
                                                 {/* todo: add 'readOnly checked' attr-s. for 'readOnly state */}
                                                 <Label
-                                                    text="Select All"
+                                                    text={selectAllText}
                                                     className="filterDropdownMenu__headerSelect_text ellipsis-text"
                                                 >
                                                     <Checkbox
                                                         className="filterDropdownMenu__headerSelect_checkbox"
                                                         name="item"
-                                                        value="Select All"
+                                                        value={selectAllText}
                                                         checked={
                                                             header.column.getFacetedRowModel().flatRows.length ===
                                                             filteredValues.length
@@ -245,17 +289,33 @@ export const ColActions: FC<IColActionsProps> = ({ header }) => {
             {/* todo: change icon from "Globe" to some "Search" icon, when it will implemented */}
             {header.column.getCanFilter() && (
                 <>
-                    <Button
-                        appearance="secondary"
-                        layout="text"
-                        size="small"
-                        disabled={(header.column.columnDef as TableCol<unknown>).isColumnFilterDisabled}
-                        className={classnames({
-                            table__th_actions_active: header.column.getIsFiltered()
-                        })}
-                        Icon={Magnifier}
-                        onClick={() => setCurrentSearchInput(header.column.id)}
-                    />
+                    {header.column.getIsFiltered() ? (
+                        <Badge size="smallNudge">
+                            <Button
+                                appearance="secondary"
+                                layout="text"
+                                size="small"
+                                disabled={(header.column.columnDef as TableCol<unknown>).isColumnFilterDisabled}
+                                className={classnames({
+                                    table__th_actions_active: header.column.getIsFiltered()
+                                })}
+                                Icon={Magnifier}
+                                onClick={() => setCurrentSearchInput(header.column.id)}
+                            />
+                        </Badge>
+                    ) : (
+                        <Button
+                            appearance="secondary"
+                            layout="text"
+                            size="small"
+                            disabled={(header.column.columnDef as TableCol<unknown>).isColumnFilterDisabled}
+                            className={classnames({
+                                table__th_actions_active: header.column.getIsFiltered()
+                            })}
+                            Icon={Magnifier}
+                            onClick={() => setCurrentSearchInput(header.column.id)}
+                        />
+                    )}
                     {currentSearchInput === header.column.id && (
                         <Filter column={header.column} onBlur={() => setCurrentSearchInput(null)} />
                     )}

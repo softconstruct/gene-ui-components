@@ -569,6 +569,12 @@
             }
         }
 
+        &_active {
+            #{$that}_actions {
+                opacity: 1;
+            }
+        }
+
         &_text {
             flex: 1;
             font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);

@@ -171,6 +171,12 @@ interface ITableProps extends ITableActions {
     withStickyHeader?: boolean;
 
     /**
+     * Text label for the select all checkbox option.
+     * Displays above individual filter options to allow bulk selection.
+     */
+    selectAllText?: string;
+
+    /**
      * An array of numbers used to populate the page size dropdown, allowing users to change the number of rows displayed per page.
      */
     pageSizes?: number[];
@@ -292,6 +298,7 @@ const Table: FC<ITableProps> = ({
     initialPageIndex = 0,
     withPagination = true,
     withVirtualScroll,
+    selectAllText,
     withStickyHeader,
     withDynamicFetch,
     hasNextPage,
@@ -530,6 +537,7 @@ const Table: FC<ITableProps> = ({
                             expandable={expandable}
                             withCheckbox={withCheckbox}
                             withStickyHeader={withStickyHeader}
+                            selectAllText={selectAllText}
                         />
                         <TBody
                             table={table}

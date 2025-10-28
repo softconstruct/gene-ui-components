@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext } from "react";
+import React, { forwardRef, useContext, useState } from "react";
 import { flexRender, Header, Table } from "@tanstack/react-table";
 import classNames from "classnames";
 
@@ -13,11 +13,17 @@ interface ITableHead {
     expandable?: boolean;
     withCheckbox?: boolean;
     withStickyHeader?: boolean;
+    selectAllText?: string;
 }
 
 const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
-    ({ table, expandable, withCheckbox, withStickyHeader }, ref) => {
+    ({ table, expandable, withCheckbox, withStickyHeader, selectAllText }, ref) => {
         const { onSelectAllRows } = useContext(TableContext);
+        const [activeHeaders, setActiveHeaders] = useState<Record<string, boolean> | null>(null);
+
+        const onColAction = (colId: string, value: boolean) => {
+            setActiveHeaders({ ...activeHeaders, [colId]: value });
+        };
 
         const renderTableHeaderCell = (header: Header<Row, unknown>) => {
             if (header.isPlaceholder) return null;
@@ -68,7 +74,8 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
                     key={`${header.id}_header`}
                     colSpan={header.colSpan}
                     className={classNames("table__th", {
-                        table__th_group: header.subHeaders.length
+                        table__th_group: header.subHeaders.length,
+                        table__th_active: !!activeHeaders?.[header.id]
                     })}
                 >
                     <div className="table__content table__content_empty">
@@ -76,7 +83,9 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
                             <span className="table__th_text ellipsis-text">
                                 {flexRender(header.column.columnDef.header, header.getContext())}
                             </span>
-                            {header.id !== "expand" && <ColActions header={header} />}
+                            {header.id !== "expand" && (
+                                <ColActions header={header} onColAction={onColAction} selectAllText={selectAllText} />
+                            )}
                         </div>
                     </div>
                 </th>

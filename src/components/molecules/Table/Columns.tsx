@@ -153,7 +153,7 @@ export const defaultColumns: TableCol<Row>[] = [
         editable: true,
         copyable: false,
         enableSorting: true,
-        rowCellRenderer: (props) => <Checkbox {...(props as ICheckboxProps)} />,
+        rowCellRenderer: (props) => <Checkbox readOnly {...(props as ICheckboxProps)} />,
         enablePopoverFilter: true,
         header: "Checkbox",
         footer: (props) => props.column.id
@@ -324,7 +324,7 @@ export const withPinnedColumns: TableCol<Row>[] = [
         editable: true,
         copyable: false,
         enableSorting: true,
-        rowCellRenderer: (props) => <Checkbox {...(props as ICheckboxProps)} />,
+        rowCellRenderer: (props) => <Checkbox readOnly {...(props as ICheckboxProps)} />,
         enablePopoverFilter: true,
         header: "Checkbox",
         footer: (props) => props.column.id
@@ -517,7 +517,7 @@ export const withGroupedColumns: TableCol<Row>[] = [
                 editable: true,
                 copyable: false,
                 enableSorting: true,
-                rowCellRenderer: (props) => <Checkbox {...(props as ICheckboxProps)} />,
+                rowCellRenderer: (props) => <Checkbox readOnly {...(props as ICheckboxProps)} />,
                 enablePopoverFilter: true,
                 header: "Checkbox",
                 footer: (props) => props.column.id
