@@ -59,6 +59,23 @@ export const WithDefaultValue: Story = {
     }
 };
 
+const ControlledTemplate: FC<ICheckboxGroupProps> = (props) => {
+    const [selectedValues, setSelectedValues] = React.useState<string[]>([]);
+
+    const handleChange = (newValues: string[]) => {
+        setSelectedValues(newValues);
+    };
+
+    return <CheckboxGroup {...props} value={selectedValues} onChange={handleChange} />;
+};
+
+export const WithControlledValue: Story = {
+    render: (props) => <ControlledTemplate {...props} />,
+    args: {
+        helperText: "Controlled"
+    }
+};
+
 export const WithIndividualDisabledOptions: Story = {
     render: (props) => <Template {...props} />,
     args: {
