@@ -270,6 +270,9 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             }
         }, [IconBefore, type, clearable, inputValue, disabled, readOnly]);
 
+        const isClearable = clearable && inputValue.length > 0 && !disabled && !readOnly;
+        const isPassword = type === "password" && inputValue.length > 0 && !readOnly && !disabled;
+
         return (
             <div className={classNames("textField", className)}>
                 <Label
@@ -314,28 +317,30 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                         aria-invalid={status === "error"}
                         aria-required={required}
                     />
-                    <span className="textField__actions">
-                        {clearable && inputValue.length > 0 && !disabled && !readOnly && (
-                            <Button
-                                Icon={X}
-                                appearance="secondary"
-                                size={size === "small" ? "smallNudge" : "small"}
-                                layout="text"
-                                disabled={disabled}
-                                onClick={handleClear}
-                            />
-                        )}
-                        {type === "password" && inputValue.length > 0 && !readOnly && !disabled && (
-                            <Button
-                                Icon={isPasswordVisible ? Eye : EyeOff}
-                                appearance="secondary"
-                                size={size === "small" ? "smallNudge" : "small"}
-                                layout="text"
-                                disabled={disabled}
-                                onClick={showPasswordToggle}
-                            />
-                        )}
-                    </span>
+                    {(isClearable || isPassword) && (
+                        <span className="textField__actions">
+                            {isClearable && (
+                                <Button
+                                    Icon={X}
+                                    appearance="secondary"
+                                    size={size === "small" ? "smallNudge" : "small"}
+                                    layout="text"
+                                    disabled={disabled}
+                                    onClick={handleClear}
+                                />
+                            )}
+                            {isPassword && (
+                                <Button
+                                    Icon={isPasswordVisible ? Eye : EyeOff}
+                                    appearance="secondary"
+                                    size={size === "small" ? "smallNudge" : "small"}
+                                    layout="text"
+                                    disabled={disabled}
+                                    onClick={showPasswordToggle}
+                                />
+                            )}
+                        </span>
+                    )}
                 </div>
                 {(helperText || characterLimit) && (
                     <div className="textField__info">
