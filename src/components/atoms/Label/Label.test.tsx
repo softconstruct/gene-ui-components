@@ -50,9 +50,9 @@ describe("Label ", () => {
     it("renders readOnly prop correctly", () => {
         const children = <input type="text" />;
         const wrapper = setup.setProps({ readOnly: true, children });
-        // Even with children, readOnly should force div rendering
-        expect(wrapper.find("label")).toHaveLength(0);
-        expect(wrapper.find("div").first().hasClass("label")).toBeTruthy();
+        // readOnly should still render as label but with readOnly class on label
+        expect(wrapper.find("label")).toHaveLength(1);
+        expect(wrapper.find("label").hasClass("label_readOnly")).toBeTruthy();
     });
 
     it("renders loading prop correctly", () => {
@@ -89,12 +89,12 @@ describe("Label ", () => {
         expect(wrapper.find(".label").hasClass("label_variant_interactive")).toBeTruthy();
     });
 
-    it("renders as div when readOnly is true even with children", () => {
+    it("renders as label when readOnly is true even with children", () => {
         const children = <input type="text" />;
         const wrapper = setup.setProps({ readOnly: true, children });
-        expect(wrapper.find("label")).toHaveLength(0);
-        expect(wrapper.find("div").first().hasClass("label")).toBeTruthy();
-        expect(wrapper.find(".label").hasClass("label_variant_descriptive")).toBeTruthy();
+        expect(wrapper.find("label")).toHaveLength(1);
+        expect(wrapper.find("label").hasClass("label")).toBeTruthy();
+        expect(wrapper.find("label").hasClass("label_readOnly")).toBeTruthy();
     });
 
     it("renders as div when loading regardless of children", () => {
@@ -135,5 +135,29 @@ describe("Label ", () => {
         const wrapper = setup.setProps({ children });
         expect(wrapper.find("label")).toHaveLength(1);
         expect(wrapper.find(".label").hasClass("label_variant_interactive")).toBeTruthy();
+    });
+
+    it("renders as label when labelFor is provided without children", () => {
+        const id = "input-id";
+        const wrapper = setup.setProps({ labelFor: id });
+
+        expect(wrapper.find("label")).toHaveLength(1);
+        expect(wrapper.find("label").prop("htmlFor")).toBe(id);
+        expect(wrapper.find(".label").hasClass("label_variant_interactive")).toBeTruthy();
+    });
+
+    it("renders as label when readOnly is true even with labelFor", () => {
+        const wrapper = setup.setProps({ readOnly: true, labelFor: "some-id" });
+
+        expect(wrapper.find("label")).toHaveLength(1);
+        expect(wrapper.find("label").hasClass("label_readOnly")).toBeTruthy();
+    });
+
+    it("does not set htmlFor when labelFor is not provided", () => {
+        const children = <input type="text" />;
+        const wrapper = setup.setProps({ children });
+
+        expect(wrapper.find("label")).toHaveLength(1);
+        expect(wrapper.find("label").prop("htmlFor")).toBeUndefined();
     });
 });

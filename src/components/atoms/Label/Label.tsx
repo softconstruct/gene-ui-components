@@ -89,9 +89,16 @@ const Label: FC<ILabelProps> = ({
 
     const isTruncated: boolean = useEllipsisDetection(labelRef);
 
-    const Component = !readOnly && (children || labelFor) ? "label" : "div";
+    const Component = children || labelFor ? "label" : "div";
 
     const actualVariant = Component === "label" && !disabled ? "interactive" : "descriptive";
+
+    const handlePreventLabelInteraction = (event: React.MouseEvent) => {
+        if (!readOnly || !disabled) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+    };
 
     if (loading) {
         return (
@@ -103,8 +110,17 @@ const Label: FC<ILabelProps> = ({
 
     return (
         <Component
-            className={classnames(`label`, `label_variant_${actualVariant}`, className)}
+            className={classnames(
+                `label`,
+                `label_variant_${actualVariant}`,
+                {
+                    label_readOnly: readOnly
+                },
+                className
+            )}
             {...(labelFor && { htmlFor: labelFor })}
+            onMouseDown={handlePreventLabelInteraction}
+            onClick={handlePreventLabelInteraction}
         >
             {children}
             {text && (

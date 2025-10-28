@@ -14,6 +14,10 @@
         }
     }
 
+    &_readOnly {
+        cursor: default;
+    }
+
     &__container {
         display: flex;
         align-items: center;
