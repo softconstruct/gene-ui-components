@@ -1,6 +1,7 @@
 import React, { ChangeEvent, FC, FocusEvent, useEffect, useState } from "react";
 import classNames from "classnames";
 
+// Components
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
 import Checkbox from "@components/molecules/Checkbox";

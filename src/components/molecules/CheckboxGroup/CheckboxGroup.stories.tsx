@@ -59,41 +59,6 @@ export const WithDefaultValue: Story = {
     }
 };
 
-export const ErrorState: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        status: "error",
-        defaultValue: ["option3"],
-        helperText: "Error message",
-        required: true
-    }
-};
-
-export const WarningState: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        status: "warning",
-        defaultValue: ["option1", "option2"],
-        helperText: "Warning message"
-    }
-};
-
-export const DisabledState: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        disabled: true
-    }
-};
-
-export const ReadOnlyState: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        readOnly: true,
-        defaultValue: ["option2", "option4"],
-        infoText: "This is a read-only checkbox group"
-    }
-};
-
 export const WithIndividualDisabledOptions: Story = {
     render: (props) => <Template {...props} />,
     args: {
@@ -103,31 +68,6 @@ export const WithIndividualDisabledOptions: Story = {
             { value: "option3", label: "Option 3" },
             { value: "option4", label: "Option 4", disabled: true }
         ],
-        status: "warning",
-        defaultValue: ["option1"]
-    }
-};
-
-export const MultipleSelected: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        defaultValue: ["option1", "option3", "option4"],
         helperText: "Multiple options can be selected"
-    }
-};
-
-export const WithoutLabel: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        label: undefined,
-        helperText: "Checkbox group without a label"
-    }
-};
-
-export const DefaultValueTest: Story = {
-    render: (props) => <Template {...props} />,
-    args: {
-        defaultValue: ["option2", "option4"],
-        helperText: "This demonstrates defaultValue - options 2 and 4 are pre-selected (uncontrolled)"
     }
 };
