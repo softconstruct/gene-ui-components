@@ -8,6 +8,7 @@ import React, {
     useRef,
     useState
 } from "react";
+import classNames from "classnames";
 
 // Styles
 import "./SegmentedControl.scss";
@@ -17,6 +18,11 @@ import { HelperText, Label } from "../../../index";
 import { ISegmentedControlItemProps } from "./SegmentedControlItem ";
 
 interface ISegmentedControlProps {
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
     /**
      * Additional descriptive text shown with info icon and tooltip alongside of the label component.
      */
@@ -29,7 +35,6 @@ interface ISegmentedControlProps {
     /**
      * SegmentedControlItem component. Renders inside the component
      */
-
     children:
         | FunctionComponentElement<ISegmentedControlItemProps>
         | FunctionComponentElement<ISegmentedControlItemProps>[];
@@ -63,6 +68,7 @@ interface CSSVariableType extends CSSProperties {
 }
 
 const SegmentedControl: FC<ISegmentedControlProps> = ({
+    className,
     children,
     onChange,
     helperText,
@@ -94,13 +100,15 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     };
 
     return (
-        <div className="segmentedControl" style={cssWitVariable}>
-            <Label text={label} required={required} size={textSizes} infoText={infoText} />
+        <div className={classNames("segmentedControl", className)} style={cssWitVariable}>
+            {label && <Label text={label} required={required} size={textSizes} infoText={infoText} />}
             <div className="segmentedControl__wrapper" ref={ref}>
-                {Children.map(children, (el) => {
-                    return cloneElement(el, {
-                        ...el.props,
-                        selected: selectedElementName ? selectedElementName === el.props.name : el.props.selected,
+                {Children.map(children, (segment) => {
+                    return cloneElement(segment, {
+                        ...segment.props,
+                        selected: selectedElementName
+                            ? selectedElementName === segment.props.name
+                            : segment.props.selected,
                         size,
                         onSelect
                     });
