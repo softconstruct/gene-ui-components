@@ -19,7 +19,7 @@ const meta: Meta<typeof SegmentedControl> = {
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
         onChange: args({ control: "false", ...propCategory.action }),
-        type: args({ control: "select", ...propCategory.appearance })
+        status: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         helperText: "helperText",
@@ -48,8 +48,6 @@ const Template: FC<ISegmentedControlProps> = (props) => {
 };
 
 export const Default = Template.bind({});
-
-Default.args = {};
 
 const WithoutText: FC<ISegmentedControlProps> = (props) => {
     return (

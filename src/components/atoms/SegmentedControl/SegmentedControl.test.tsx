@@ -81,9 +81,9 @@ describe("SegmentedControl ", () => {
         expect(onChange).toHaveBeenCalledWith("test1");
     });
 
-    it.each<ISegmentedControlProps["type"]>(["rest", "warning", "error"])('should have "%s" type', (type) => {
-        const wrapper = setup.setProps({ type, helperText: "test" } as ISegmentedControlProps);
+    it.each<ISegmentedControlProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
+        const wrapper = setup.setProps({ status, helperText: "test" } as ISegmentedControlProps);
 
-        expect(wrapper.find(HelperText).find(`.helperText`).hasClass(`helperText_status_${type}`)).toBeTruthy();
+        expect(wrapper.find(HelperText).find(`.helperText`).hasClass(`helperText_status_${status}`)).toBeTruthy();
     });
 });

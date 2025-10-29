@@ -55,7 +55,7 @@ interface ISegmentedControlProps {
      *  Determines the component appearance based on its status.<br>
      *  Possible values: `rest | warning | error`
      */
-    type?: "rest" | "warning" | "error";
+    status?: "rest" | "warning" | "error";
 }
 
 interface CSSVariableType extends CSSProperties {
@@ -70,7 +70,7 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     infoText,
     required,
     size,
-    type = "rest" as const
+    status = "rest" as const
 }) => {
     const [selectedElementName, setSelectedElementName] = useState("");
     const [contentWidth, setContentWidth] = useState<number | null>(null);
@@ -107,7 +107,12 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
                 })}
             </div>
             {helperText && (
-                <HelperText text={helperText} className="segmentedControl__helperText" size={textSizes} status={type} />
+                <HelperText
+                    text={helperText}
+                    className="segmentedControl__helperText"
+                    size={textSizes}
+                    status={status}
+                />
             )}
         </div>
     );
