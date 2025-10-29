@@ -1,13 +1,4 @@
-import React, {
-    Children,
-    cloneElement,
-    CSSProperties,
-    FC,
-    FunctionComponentElement,
-    useEffect,
-    useRef,
-    useState
-} from "react";
+import React, { Children, cloneElement, FC, FunctionComponentElement, useState } from "react";
 import classNames from "classnames";
 
 // Styles
@@ -63,10 +54,6 @@ interface ISegmentedControlProps {
     status?: "rest" | "warning" | "error";
 }
 
-interface CSSVariableType extends CSSProperties {
-    "--segmented-wrapper-width": string;
-}
-
 const SegmentedControl: FC<ISegmentedControlProps> = ({
     className,
     children,
@@ -79,8 +66,6 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     status = "rest" as const
 }) => {
     const [selectedElementName, setSelectedElementName] = useState("");
-    const [contentWidth, setContentWidth] = useState<number | null>(null);
-    const ref = useRef<HTMLDivElement | null>(null);
 
     const onSelect = (name: string) => {
         setSelectedElementName(name);
@@ -89,20 +74,10 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
 
     const textSizes = size === "large" ? "medium" : size;
 
-    useEffect(() => {
-        if (ref.current?.getBoundingClientRect().width) {
-            setContentWidth(ref.current?.getBoundingClientRect().width);
-        }
-    }, [ref.current]);
-
-    const cssWitVariable: CSSVariableType = {
-        "--segmented-wrapper-width": `${contentWidth}px`
-    };
-
     return (
-        <div className={classNames("segmentedControl", className)} style={cssWitVariable}>
+        <div className={classNames("segmentedControl", className)}>
             {label && <Label text={label} required={required} size={textSizes} infoText={infoText} />}
-            <div className="segmentedControl__wrapper" ref={ref}>
+            <div className="segmentedControl__wrapper">
                 {Children.map(children, (segment) => {
                     return cloneElement(segment, {
                         ...segment.props,
