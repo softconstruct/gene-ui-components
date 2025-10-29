@@ -41,6 +41,10 @@
         }
     }
 
+    &__content {
+        display: flex;
+    }
+
     &__label {
         display: flex;
         max-width: fit-content;
@@ -147,18 +151,34 @@
     &__infoContainer {
         display: flex;
     }
+
     &:not(#{ $this }_labelTop) {
         gap: var(--guit-ref-spacing-3xsmall);
+
         #{ $this }__infoContainer {
             padding-inline-start: var(--guit-ref-spacing-3xlarge);
         }
+
+        #{ $this }__content {
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: var(--guit-ref-spacing-medium);
+        }
+
         #{ $this }__label {
             gap: var(--guit-ref-spacing-medium);
         }
     }
 
     &_labelTop {
+        align-items: flex-start;
         gap: var(--guit-ref-spacing-3xsmall);
+
+        #{ $this }__content {
+            flex-direction: column;
+            gap: var(--guit-ref-spacing-3xsmall);
+        }
+
         #{ $this }__label {
             flex-direction: column-reverse;
             align-items: flex-start;
