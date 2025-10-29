@@ -1,6 +1,7 @@
 .tooltip {
     $this: &;
 
+    z-index: 1;
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -16,6 +17,11 @@
         var(--guit-sem-shadow-floating-2-position-x-2) var(--guit-sem-shadow-floating-2-position-y-2)
             var(--guit-sem-shadow-floating-2-blur-2) var(--guit-sem-shadow-floating-2-spread-2)
             var(--guit-sem-color-floating-2-rgba-2);
+    font-family: var(--guit-sem-font-caption-large-medium-font-family), sans-serif;
+    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
+    line-height: var(--guit-sem-font-caption-large-medium-line-height);
+    letter-spacing: var(--guit-sem-font-caption-large-medium-letter-spacing);
 
     &_position {
         &_top {
@@ -45,10 +51,10 @@
 
     &_color {
         &_default {
-            background-color: var(--guit-sem-color-background-neutral-4);
+            background-color: var(--guit-sem-color-background-neutral-5);
 
             #{ $this }__arrowPath {
-                fill: var(--guit-sem-color-background-neutral-4);
+                fill: var(--guit-sem-color-background-neutral-5);
             }
 
             #{ $this }__text,
@@ -73,6 +79,11 @@
 
     &__arrow {
         position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.2rem;
+        height: 0.4rem;
     }
 
     &__textWrapper {
@@ -86,12 +97,12 @@
         -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        font-family: var(--guit-sem-font-caption-large-medium-font-family);
-        font-size: var(--guit-sem-font-caption-large-medium-font-size);
-        font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
-        line-height: var(--guit-sem-font-caption-large-medium-llne-height);
-        letter-spacing: var(--guit-sem-font-caption-large-medium-letter-spacing);
         word-break: break-word;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: inherit;
+        line-height: inherit;
+        letter-spacing: inherit;
     }
 
     &__icon {

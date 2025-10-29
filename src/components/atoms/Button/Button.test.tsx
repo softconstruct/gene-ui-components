@@ -1,10 +1,12 @@
 import React, { MouseEvent } from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
 import { Globe } from "@geneui/icons";
 
 // Components
+import GeneUIProvider from "@components/providers/GeneUIProvider";
+
 import Button, { IButtonProps } from "./index";
-import GeneUIProvider from "../../providers/GeneUIProvider";
 
 describe("Button ", () => {
     let setup: ReactWrapper<IButtonProps>;
@@ -54,9 +56,14 @@ describe("Button ", () => {
         expect(mockFn).toHaveBeenCalledWith(event);
     });
 
-    it.each<IButtonProps["size"]>(["large", "medium", "small", "XSmall"])("should have %s size", (size) => {
+    it.each<IButtonProps["size"]>(["large", "medium", "small", "smallNudge"])("should have %s size", (size) => {
         const wrapper = setup.setProps({ size });
         expect(wrapper.find(".button").hasClass(`button_size_${size}`)).toBeTruthy();
+    });
+
+    it.each<IButtonProps["iconPosition"]>(["before", "after"])("should have %s position", (iconPosition) => {
+        const wrapper = setup.setProps({ iconPosition, Icon: Globe, children: "Search" });
+        expect(wrapper.find(".button").hasClass(`button_icon_${iconPosition}`)).toBeTruthy();
     });
 
     it.each<IButtonProps["appearance"]>(["primary", "secondary", "danger", "success", "inverse", "transparent"])(
@@ -67,9 +74,9 @@ describe("Button ", () => {
         }
     );
 
-    it.each<IButtonProps["displayType"]>(["fill", "outline", "text"])("should have %s displayType", (displayType) => {
-        const wrapper = setup.setProps({ displayType });
-        expect(wrapper.find(".button").hasClass(`button_type_${displayType}`)).toBeTruthy();
+    it.each<IButtonProps["layout"]>(["fill", "outline", "text"])("should have %s layout", (layout) => {
+        const wrapper = setup.setProps({ layout });
+        expect(wrapper.find(".button").hasClass(`button_type_${layout}`)).toBeTruthy();
     });
 
     it("renders className prop correctly", () => {
@@ -77,5 +84,28 @@ describe("Button ", () => {
         const wrapper = setup.setProps({ className });
 
         expect(wrapper.hasClass(className)).toBeTruthy();
+    });
+
+    it.each<IButtonProps["type"]>(["button", "submit", "reset"])("should have %s type", (type) => {
+        const wrapper = setup.setProps({ type });
+        expect(wrapper.find("button").props().type).toBe(type);
+    });
+
+    it("handles onFocus event", () => {
+        const onFocusMock = jest.fn();
+        const wrapper = setup.setProps({ onFocus: onFocusMock });
+
+        wrapper.find("button").simulate("focus");
+
+        expect(onFocusMock).toHaveBeenCalled();
+    });
+
+    it("handles onBlur event", () => {
+        const onBlurMock = jest.fn();
+        const wrapper = setup.setProps({ onBlur: onBlurMock });
+
+        wrapper.find("button").simulate("blur");
+
+        expect(onBlurMock).toHaveBeenCalled();
     });
 });

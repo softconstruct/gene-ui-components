@@ -1,5 +1,6 @@
 import React, { RefObject } from "react";
 import { mount } from "enzyme";
+
 import useEllipsisDetection from "./useEllipsisDetection";
 
 describe("useEllipsisDetection", () => {

@@ -1,0 +1,167 @@
+.drawer {
+    $this: &;
+
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+    }
+
+    &_size {
+        &_large {
+            max-width: 50%;
+        }
+
+        &_medium {
+            max-width: 33.33%;
+        }
+
+        &_small {
+            max-width: 33.33%;
+        }
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--guit-ref-spacing-medium);
+        flex: 0 0 auto;
+        width: 100%;
+        height: var(--guit-sem-dimension-height-2xlarge);
+        padding: var(--guit-ref-spacing-medium) var(--guit-ref-spacing-large);
+        border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    }
+
+    &__body {
+        width: 100%;
+        height: 100%;
+        min-width: 0;
+        min-height: 0;
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    }
+
+    &__content {
+        width: 100%;
+        height: 100%;
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-medium); // todo why we need this gap
+        flex: 0 0 auto;
+        width: 100%;
+        height: var(--guit-sem-dimension-height-3xlarge);
+        padding: var(--guit-ref-spacing-large);
+        border-top: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+
+        &:has(#{ $this }__buttonGroup:only-child, #{ $this }__button:only-child) {
+            justify-content: flex-end;
+        }
+
+        &:not(:has(#{ $this }__buttonGroup:only-child, #{ $this }__button:only-child)) {
+            justify-content: space-between;
+        }
+    }
+
+    &__title {
+        color: var(--guit-sem-color-foreground-neutral-2);
+        min-width: 1rem;
+    }
+
+    &__headerContent {
+        margin-left: auto;
+    }
+
+    &_variant {
+        &_overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            display: flex;
+            width: 100%;
+            height: 100%;
+            background-color: var(--guit-sem-color-background-transparent-overlay-notheme-1);
+
+            #{ $this }__wrapper {
+                box-shadow:
+                    var(--guit-sem-shadow-floating-3-position-x-1) var(--guit-sem-shadow-floating-3-position-y-1)
+                        var(--guit-sem-shadow-floating-3-blur-1) var(--guit-sem-shadow-floating-3-spread-1)
+                        var(--guit-sem-color-floating-3-rgba-1),
+                    var(--guit-sem-shadow-floating-3-position-x-2) var(--guit-sem-shadow-floating-3-position-y-2)
+                        var(--guit-sem-shadow-floating-3-position-y-1) var(--guit-sem-shadow-floating-3-spread-2)
+                        var(--guit-sem-color-floating-3-rgba-2);
+            }
+        }
+
+        &_inline {
+            height: 100%;
+            width: 100%;
+            border-inline-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-neutral-2);
+        }
+    }
+
+    &_withPadding {
+        #{ $this }__content {
+            padding: var(--guit-ref-spacing-large);
+        }
+    }
+
+    &_position {
+        &_bottom {
+            flex-direction: column;
+            justify-content: flex-end;
+
+            #{ $this }__wrapper {
+                &_size {
+                    &_large {
+                        max-height: 62.22%;
+                    }
+
+                    &_medium {
+                        max-height: 46.67%;
+                    }
+
+                    &_small {
+                        max-height: 31.11%;
+                    }
+                }
+            }
+        }
+
+        &_end,
+        &_start {
+            #{ $this }__wrapper {
+                &_size {
+                    &_large {
+                        max-width: 50%;
+                    }
+
+                    &_medium {
+                        max-width: 33.33%;
+                    }
+
+                    &_small {
+                        max-width: 25%;
+                    }
+                }
+            }
+        }
+
+        &_end {
+            justify-content: flex-end;
+        }
+
+        &_start {
+            justify-content: flex-start;
+        }
+    }
+}

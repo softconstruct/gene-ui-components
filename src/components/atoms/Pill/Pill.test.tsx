@@ -1,5 +1,6 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
+
 import { Globe } from "@geneui/icons";
 
 // Components
@@ -36,8 +37,8 @@ describe("Pill", () => {
         expect(wrapper.find(".pill").hasClass("pill_icon_before")).toBeTruthy();
     });
 
-    it("renders isFill prop correctly", () => {
-        const wrapper = setup.setProps({ isFill: true });
+    it("renders filled prop correctly", () => {
+        const wrapper = setup.setProps({ filled: true });
         expect(wrapper.find(".pill").hasClass("pill_fill")).toBeTruthy();
     });
 
@@ -61,7 +62,7 @@ describe("Pill", () => {
         expect(wrapper.find(".pill").hasClass(`pill_icon_${iconAlignment}`)).toBeTruthy();
     });
 
-    it.each<IPillProps["color"]>([
+    it.each<IPillProps["appearance"]>([
         "informative",
         "neutral",
         "error",
@@ -72,9 +73,9 @@ describe("Pill", () => {
         "magenta",
         "slate",
         "inverse"
-    ])("should have %s color", (color) => {
-        const wrapper = setup.setProps({ color });
-        expect(wrapper.find(".pill").hasClass(`pill_color_${color}`)).toBeTruthy();
+    ])("should have %s appearance", (appearance) => {
+        const wrapper = setup.setProps({ appearance });
+        expect(wrapper.find(".pill").hasClass(`pill_color_${appearance}`)).toBeTruthy();
     });
 
     it("renders className prop correctly", () => {

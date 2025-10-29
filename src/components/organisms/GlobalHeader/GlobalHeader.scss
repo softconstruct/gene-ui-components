@@ -1,0 +1,95 @@
+.globalHeader {
+    $this: &;
+
+    display: flex;
+    justify-content: space-between;
+    column-gap: var(--guit-ref-spacing-2xlarge);
+    padding-inline: var(--guit-ref-spacing-large);
+    background-color: var(--guit-sem-color-background-neutral-5);
+    color-scheme: light;
+
+    &_mobile {
+        padding-block: var(--guit-ref-spacing-small);
+    }
+
+    &:not(#{ $this }_mobile) {
+        padding-block: var(--guit-ref-spacing-medium);
+    }
+
+    &_side {
+        &_left {
+            display: flex;
+            align-items: center;
+            column-gap: var(--guit-ref-spacing-large);
+        }
+
+        &_right {
+            display: flex;
+            align-items: center;
+            column-gap: var(--guit-ref-spacing-xsmall);
+        }
+    }
+
+    &__logo {
+        &_link {
+            border-radius: 0.4rem;
+            text-decoration: none;
+        }
+    }
+
+    &__domain {
+        display: flex;
+        align-items: center;
+        color: var(--guit-sem-color-foreground-inverse-notheme);
+    }
+
+    &__text {
+        color: var(--guit-sem-color-foreground-inverse);
+    }
+
+    &__divider {
+        height: var(--guit-sem-dimension-height-small-nudge);
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        column-gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        column-gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__time {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--guit-sem-color-foreground-inverse-notheme);
+
+        &_mobile {
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
+
+        &_text {
+            color: var(--guit-sem-color-foreground-neutral-1);
+        }
+    }
+
+    &__limit {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-2xsmall);
+        color: var(--guit-sem-color-foreground-inverse-notheme);
+
+        &_label {
+            color: var(--guit-sem-color-foreground-neutral-1);
+        }
+
+        &_limit {
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
+    }
+}

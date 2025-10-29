@@ -1,0 +1,167 @@
+@use "../../../assets/styles/mixins";
+
+.switch {
+    $this: &;
+
+    display: inline-flex;
+    max-width: 100%;
+    flex-direction: column;
+    min-width: 0;
+    row-gap: var(--guit-ref-spacing-3xsmall);
+
+    &__label {
+        display: flex;
+        align-items: center;
+        max-width: fit-content;
+        user-select: none;
+    }
+
+    &__sliderHolder {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__input {
+        width: var(--guit-ref-sizing-none);
+        height: var(--guit-ref-sizing-none);
+        opacity: 0;
+        user-select: none;
+
+        &:focus + #{ $this }__slider {
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
+            outline-offset: 0.1rem;
+        }
+
+        &:not(:disabled) {
+            & + #{ $this }__slider {
+                cursor: pointer;
+            }
+            @include mixins.media-hover {
+                &:hover + #{ $this }__slider {
+                    background-color: var(--guit-sem-color-background-transparent-1-hover);
+                }
+            }
+            &:active + #{ $this }__slider {
+                background-color: var(--guit-sem-color-background-transparent-1-pressed);
+            }
+        }
+
+        &:disabled + #{ $this }__slider {
+            border-color: var(--guit-sem-color-border-disabled-1);
+
+            &::before {
+                background-color: var(--guit-sem-color-foreground-disabled);
+            }
+        }
+
+        &:checked {
+            & + #{ $this }__slider {
+                background-color: var(--guit-sem-color-background-brand-2);
+                border-color: transparent;
+
+                &::before {
+                    inset-inline-start: 2.1rem;
+                }
+            }
+
+            &:not(:disabled) {
+                & + #{ $this }__slider {
+                    &::before {
+                        background-color: var(--guit-sem-color-foreground-inverse);
+                    }
+                }
+                @include mixins.media-hover {
+                    &:hover + #{ $this }__slider {
+                        background-color: var(--guit-sem-color-background-brand-2-hover);
+                    }
+                }
+                &:active + #{ $this }__slider {
+                    background-color: var(--guit-sem-color-background-brand-2-pressed);
+                }
+            }
+
+            &:disabled + #{ $this }__slider {
+                background-color: var(--guit-sem-color-background-disabled);
+            }
+        }
+    }
+
+    &__slider {
+        display: inline-flex;
+        align-items: center;
+        position: relative;
+        width: var(--guit-sem-dimension-width-large);
+        height: var(--guit-sem-dimension-height-small-nudge);
+        background-color: var(--guit-sem-color-background-transparent-1);
+        border-color: var(--guit-sem-color-border-neutral-3);
+        border-style: var(--guit-ref-border-style-solid);
+        border-width: var(--guit-ref-border-width-thin);
+        border-radius: var(--guit-ref-radius-small);
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset-inline-start: 0.1rem;
+            top: 0.1rem;
+            width: var(--guit-sem-dimension-width-xsmall);
+            height: var(--guit-sem-dimension-height-xsmall);
+            background-color: var(--guit-sem-color-foreground-neutral-1);
+            border-radius: var(--guit-ref-radius-full);
+        }
+    }
+
+    &__infoContainer {
+        display: flex;
+    }
+
+    &:has(#{ $this }__input[readonly]) {
+        pointer-events: none;
+
+        #{ $this }__input {
+            &:not(:checked) + #{ $this }__slider {
+                border-color: var(--guit-sem-color-border-neutral-2);
+            }
+            &:checked + #{ $this }__slider::before {
+                background-color: var(--guit-sem-color-foreground-neutral-1);
+            }
+        }
+
+        #{ $this }__slider {
+            background-color: var(--guit-sem-color-background-neutral-4);
+
+            &::before {
+                background-color: var(--guit-sem-color-foreground-neutral-1);
+            }
+        }
+    }
+
+    &_direction {
+        &_horizontal {
+            #{ $this }__infoContainer {
+                padding-inline-start: var(--guit-ref-spacing-8xlarge);
+            }
+            #{ $this }__label {
+                column-gap: var(--guit-ref-spacing-xsmall);
+            }
+        }
+
+        &_vertical {
+            #{ $this }__label {
+                align-items: flex-start;
+                flex-direction: column-reverse;
+                row-gap: var(--guit-ref-spacing-3xsmall);
+            }
+        }
+    }
+
+    &_status {
+        &_error {
+            #{ $this }__input:not(:disabled) + #{ $this }__slider {
+                border-color: var(--guit-sem-color-border-error);
+            }
+        }
+    }
+}

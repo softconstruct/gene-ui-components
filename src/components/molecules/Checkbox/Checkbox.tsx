@@ -1,10 +1,11 @@
-import React, { ChangeEvent, FC, useEffect, useRef, FocusEvent, useState, useMemo } from "react";
-import { CheckMark, MinusOutline } from "@geneui/icons";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
+import { CheckMark, Minus } from "@geneui/icons";
+
 // Components
-import Label from "../../atoms/Label";
-import HelperText from "../../atoms/HelperText";
+import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
 
 // Styles
 import "./Checkbox.scss";
@@ -16,8 +17,9 @@ interface ICheckboxProps {
     label?: string;
     /**
      *  Toggles the label's and HelperText position between above or beside the checkbox.
+     *   Possible values: `horizontal | vertical`
      */
-    vertical?: boolean;
+    direction?: "horizontal" | "vertical";
     /**
      *  Specifies whether the checkbox is mandatory for completing a form.
      */
@@ -43,7 +45,7 @@ interface ICheckboxProps {
      */
     autoFocus?: boolean;
     /**
-     *  Extra information displayed with the label for clarity or guidance.
+     *  Extra information displayed with the tooltip for clarity or guidance.
      */
     infoText?: string;
     /**
@@ -51,19 +53,28 @@ interface ICheckboxProps {
      */
     helperText?: string;
     /**
-     *  The initial checked state of the checkbox before user interaction.
+     *  The initial state of the checkbox was checked before user interaction. This prop does not make the component controlled.
      */
     defaultChecked?: boolean;
     /**
-     *  Determines the checkboxes appearance based on its status.<br>
+     *  Determines the checkbox's visual status.<br>
      *  Possible values: `rest | warning | error`
      */
-    type?: "rest" | "warning" | "error";
+    status?: "rest" | "warning" | "error";
     /**
      *  HTML name attribute for the input element.<br>
      *  A unique identifier for the checkbox within a form.
      */
-    name?: string;
+    name: string;
+    /**
+     * The value of the component that will be returned in the onChange event.
+     */
+    value: string;
+    /**
+     *  Fires when the user click on the checkbox. Provides the click event as a callback's argument.
+     *  This prop is commonly used to prevent event bubbling.
+     */
+    onClick?: (e: MouseEvent<HTMLInputElement>) => void;
     /**
      *  Fires when the user changes the checkbox state. Provides the change event as a callback's argument.
      */
@@ -86,29 +97,35 @@ interface ICheckboxProps {
 /**
  * Checkbox component allows users to select one or more options from a set of choices. Each checkbox can be either checked or unchecked, indicating a binary state. Checkboxes are commonly used in forms, settings, and lists where multiple selections are needed.
  */
-const Checkbox: FC<ICheckboxProps> = ({
-    label,
-    required,
-    infoText,
-    disabled,
-    helperText,
-    readOnly,
-    type = "rest" as const,
-    vertical,
-    autoFocus,
-    onChange,
-    onFocus,
-    onBlur,
-    name,
-    indeterminate,
-    checked,
-    defaultChecked,
-    className
-}) => {
+const Checkbox: FC<ICheckboxProps> = (props) => {
+    const {
+        label,
+        required,
+        infoText,
+        disabled,
+        helperText,
+        readOnly,
+        status = "rest",
+        direction = "horizontal",
+        autoFocus,
+        onClick,
+        onChange,
+        onFocus,
+        onBlur,
+        name,
+        indeterminate,
+        checked,
+        defaultChecked,
+        className,
+        value
+    } = props;
+
     const interRef = useRef<HTMLInputElement>(null);
-    const isControlled = checked !== undefined;
+    const isControlled = "checked" in props;
 
     const [checkedState, setCheckedState] = useState(defaultChecked || false);
+
+    const onClickHandler = (e: MouseEvent<HTMLInputElement>) => onClick?.(e);
 
     const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         if (!isControlled) {
@@ -144,18 +161,18 @@ const Checkbox: FC<ICheckboxProps> = ({
         <div
             className={classNames(
                 "checkbox ",
-                `checkbox_${type}`,
+                `checkbox_status_${status}`,
                 {
                     checkbox_disabled: disabled,
                     checkbox_readOnly: readOnly,
-                    checkbox_labelTop: vertical
+                    checkbox_labelTop: direction === "vertical"
                 },
                 className
             )}
             {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             <Label
-                labelText={label}
+                text={label}
                 className="checkbox__label"
                 required={required}
                 infoText={infoText}
@@ -170,15 +187,17 @@ const Checkbox: FC<ICheckboxProps> = ({
                             onChange={onChangeHandler}
                             onFocus={onFocusHandler}
                             onBlur={onBlurHandler}
+                            onClick={onClickHandler}
                             checked={resolvedChecked}
                             ref={interRef}
                             {...(name && { name })}
                             {...(autoFocus && { autoFocus })}
                             {...((disabled || readOnly) && { tabIndex: -1 })}
+                            value={value}
                         />
                         <span className="checkbox__imitation">
                             {indeterminate && !checked ? (
-                                <MinusOutline className="checkbox__icon" size={16} />
+                                <Minus className="checkbox__icon" size={16} />
                             ) : (
                                 <CheckMark className="checkbox__icon" size={16} />
                             )}
@@ -188,7 +207,7 @@ const Checkbox: FC<ICheckboxProps> = ({
             </Label>
             {helperText && (
                 <div className="checkbox__infoContainer">
-                    <HelperText text={helperText} isDisabled={disabled} type={type} />
+                    <HelperText text={helperText} disabled={disabled} status={status} />
                 </div>
             )}
         </div>

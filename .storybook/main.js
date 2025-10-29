@@ -5,7 +5,9 @@ module.exports = {
         "./../stories/introduction.mdx",
         "./../stories/changelog.mdx",
         "./../stories/gettingStarted.mdx",
+        "./../stories/provider.mdx",
         "./../src/components/**/**/*.stories.tsx",
+        "./../stories/**/**/*.stories.tsx",
         "./../src/hooks/**/*.mdx"
     ],
     addons: [
@@ -18,7 +20,8 @@ module.exports = {
             }
         },
         "@storybook/addon-a11y",
-        "@storybook/addon-jest"
+        "@storybook/addon-jest",
+        "@storybook/addon-webpack5-compiler-babel"
     ],
     staticDirs: ["./public"],
     framework: {
@@ -36,10 +39,9 @@ module.exports = {
     webpackFinal: async (config, options) => {
         const aliasPaths = {
             src: "../src/",
-            utils: "../src/utils",
             hooks: "../src/hooks/index.ts",
-            stories: "../stories/",
-            components: "../src/index.ts"
+            components: "../src/index.ts",
+            stories: "../stories/"
         };
 
         for (let aliasPath in aliasPaths) {
@@ -48,12 +50,27 @@ module.exports = {
 
         // Hardcode to specify custom babel config file path for storybook
         // as the last one not supporting the babel custom config file path
-        const babelLoader = config.module.rules[3].use[0];
-        babelLoader.options = {
-            ...babelLoader.options,
-            babelrc: true,
-            configFile: "./.storybook/.babelrc"
-        };
+        const babelLoaderRule = config.module.rules.find((rule) => {
+            // Example: if the rule has a 'use' that includes 'babel-loader'
+            return (
+                rule.use &&
+                rule.use.some((useEntry) => {
+                    return typeof useEntry === "object" && useEntry.loader && useEntry.loader.includes("babel-loader");
+                })
+            );
+        });
+
+        if (babelLoaderRule) {
+            // If you really need to override Babel options, do so carefully
+            // Example if the loader is the first item in "use" (common case)
+            const babelLoader = babelLoaderRule.use[0];
+            babelLoader.options = {
+                ...babelLoader.options,
+                babelrc: true,
+                configFile: "./.storybook/.babelrc"
+            };
+        }
+
         options.cache.set = () => Promise.resolve();
 
         return config;
@@ -61,7 +78,5 @@ module.exports = {
     features: {
         previewMdx2: true
     },
-    docs: {
-        autodocs: true
-    }
+    docs: {}
 };
