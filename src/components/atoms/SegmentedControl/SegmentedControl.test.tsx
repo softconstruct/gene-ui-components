@@ -1,11 +1,12 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
-import { TagOutline } from "@geneui/icons";
+import { mount, ReactWrapper } from "enzyme";
 
-// Components
-import SegmentedControl, { ISegmentedControlProps, SegmentedControlItem } from "./index";
+import { Tag } from "@geneui/icons";
+
 import HelperText from "../HelperText";
 import Label from "../Label";
+// Components
+import SegmentedControl, { ISegmentedControlProps, SegmentedControlItem } from "./index";
 
 describe("SegmentedControl ", () => {
     let setup: ReactWrapper<ISegmentedControlProps>;
@@ -13,7 +14,7 @@ describe("SegmentedControl ", () => {
     beforeEach(() => {
         setup = mount(
             <SegmentedControl size="large" onChange={jest.fn}>
-                <SegmentedControlItem name="test1" Icon={TagOutline} />
+                <SegmentedControlItem name="test1" Icon={Tag} />
             </SegmentedControl>
         );
     });
@@ -31,7 +32,7 @@ describe("SegmentedControl ", () => {
     });
 
     it("renders Icon prop correctly", () => {
-        expect(setup.find(TagOutline).exists()).toBeTruthy();
+        expect(setup.find(Tag).exists()).toBeTruthy();
     });
 
     it("renders selected  prop correctly", () => {
@@ -83,6 +84,6 @@ describe("SegmentedControl ", () => {
     it.each<ISegmentedControlProps["type"]>(["rest", "warning", "error"])('should have "%s" type', (type) => {
         const wrapper = setup.setProps({ type, helperText: "test" } as ISegmentedControlProps);
 
-        expect(wrapper.find(HelperText).find(`.helperText`).hasClass(`helperText_type_${type}`)).toBeTruthy();
+        expect(wrapper.find(HelperText).find(`.helperText`).hasClass(`helperText_status_${type}`)).toBeTruthy();
     });
 });

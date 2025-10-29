@@ -8,6 +8,7 @@ import React, {
     useRef,
     useState
 } from "react";
+
 // Styles
 import "./SegmentedControl.scss";
 
@@ -94,7 +95,7 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
 
     return (
         <div className="segmentedControl" style={cssWitVariable}>
-            <Label labelText={label} required={required} size={textSizes} infoText={infoText} />
+            <Label text={label} required={required} size={textSizes} infoText={infoText} />
             <div className="segmentedControl__wrapper" ref={ref}>
                 {Children.map(children, (el) => {
                     return cloneElement(el, {
@@ -106,7 +107,7 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
                 })}
             </div>
             {helperText && (
-                <HelperText text={helperText} className="segmentedControl__helperText" size={textSizes} type={type} />
+                <HelperText text={helperText} className="segmentedControl__helperText" size={textSizes} status={type} />
             )}
         </div>
     );
