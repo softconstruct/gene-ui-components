@@ -93,6 +93,10 @@ interface ICheckboxProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * `HTML` `id` attribute for the `input` element
+     */
+    id?: string;
 }
 
 /**
@@ -203,6 +207,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                             {...(autoFocus && { autoFocus })}
                             {...((disabled || readOnly) && { tabIndex: -1 })}
                             value={value}
+                            id={generatedId}
                         />
                         <span className="checkbox__imitation">
                             {indeterminate && !checked ? (
