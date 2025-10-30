@@ -19,12 +19,6 @@ export { Grid, Col, Row, IColProps, IRowProps, IGridProps } from "./components/a
 export { default as Skeleton, ISkeletonProps } from "./components/atoms/Skeleton";
 export { default as Spreadsheet, ISpreadsheetProps } from "./components/atoms/Spreadsheet";
 export { default as Copy, ICopyProps } from "./components/atoms/Copy";
-export {
-    SegmentedControl,
-    ISegmentedControlProps,
-    SegmentedControlItem,
-    ISegmentedControlItemProps
-} from "./components/atoms/SegmentedControl";
 
 // Molecules
 export { default as Tooltip, ITooltipProps } from "./components/molecules/Tooltip";
@@ -62,6 +56,12 @@ export { default as TagGroup, ITagGroupProps } from "./components/molecules/TagG
 export { default as DataCard, IDataCardProps } from "./components/molecules/DataCard";
 export { default as RadioGroup, IRadioGroupProps, IRadioOption } from "./components/molecules/RadioGroup";
 export { default as CheckboxGroup, ICheckboxGroupProps, ICheckboxOption } from "./components/molecules/CheckboxGroup";
+export {
+    SegmentedControl,
+    ISegmentedControlProps,
+    SegmentedControlItem,
+    ISegmentedControlItemProps
+} from "@components/molecules/SegmentedControl";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";

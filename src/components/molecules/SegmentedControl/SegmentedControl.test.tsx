@@ -3,8 +3,9 @@ import { mount, ReactWrapper } from "enzyme";
 
 import { Tag } from "@geneui/icons";
 
-import HelperText from "../HelperText";
-import Label from "../Label";
+import HelperText from "@components/atoms/HelperText";
+import Label from "@components/atoms/Label";
+
 // Components
 import { ISegmentedControlProps, SegmentedControl, SegmentedControlItem } from "./index";
 

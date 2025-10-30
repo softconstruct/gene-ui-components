@@ -9,7 +9,7 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 import { ISegmentedControlProps, SegmentedControl, SegmentedControlItem } from "./index";
 
 const meta: Meta<typeof SegmentedControl> = {
-    title: "Atoms/SegmentedControl",
+    title: "Molecules/SegmentedControl",
     component: SegmentedControl,
     argTypes: {
         required: args({ control: "boolean", ...propCategory.states }),

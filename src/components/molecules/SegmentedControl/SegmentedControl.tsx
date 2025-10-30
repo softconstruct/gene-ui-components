@@ -6,7 +6,7 @@ import "./SegmentedControl.scss";
 
 // Component
 import { HelperText, Label } from "../../../index";
-import { ISegmentedControlItemProps } from "./SegmentedControlItem ";
+import { ISegmentedControlItemProps } from "./SegmentedControlItem";
 
 interface ISegmentedControlProps {
     /**
