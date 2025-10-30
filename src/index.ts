@@ -14,7 +14,7 @@ export { default as Text, ITextProps } from "./components/atoms/Text";
 export { default as TextLink, ITextLinkProps } from "./components/atoms/TextLink";
 export { Popover, PopoverBody, PopoverFooter, PopoverFooterActions, IPopoverProps } from "./components/atoms/Popover";
 export { default as Badge, IBadgeProps } from "./components/atoms/Badge";
-export { default as Scrollbar, ScrollbarRefType, IScrollbarProps } from "./components/atoms/Scrollbar";
+export { default as Scrollbar, IScrollbarProps } from "./components/atoms/Scrollbar";
 export { Grid, Col, Row, IColProps, IRowProps, IGridProps } from "./components/atoms/Grid";
 export { default as Skeleton, ISkeletonProps } from "./components/atoms/Skeleton";
 export { default as Spreadsheet, ISpreadsheetProps } from "./components/atoms/Spreadsheet";
@@ -55,6 +55,7 @@ export { default as Banner, IBannerProps } from "./components/molecules/Banner";
 export { default as TagGroup, ITagGroupProps } from "./components/molecules/TagGroup";
 export { default as DataCard, IDataCardProps } from "./components/molecules/DataCard";
 export { default as RadioGroup, IRadioGroupProps, IRadioOption } from "./components/molecules/RadioGroup";
+export { default as CheckboxGroup, ICheckboxGroupProps, ICheckboxOption } from "./components/molecules/CheckboxGroup";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";

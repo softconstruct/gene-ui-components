@@ -32,11 +32,12 @@ describe("Checkbox ", () => {
 
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({ disabled: true });
-        expect(wrapper.find(".checkbox__imitationHolder").hasClass(`checkbox__imitationHolder_disabled`)).toBeTruthy();
+        expect(wrapper.find("input").props().disabled).toBe(true);
     });
 
     it("renders readOnly prop correctly", () => {
         const wrapper = setup.setProps({ readOnly: true });
+        // expect(wrapper.find(".checkbox").hasClass(`checkbox_readOnly`)).toBeTruthy();
         expect(wrapper.find(".checkbox__imitationHolder").hasClass(`checkbox__imitationHolder_readOnly`)).toBeTruthy();
     });
 

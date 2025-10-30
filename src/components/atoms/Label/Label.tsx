@@ -94,7 +94,7 @@ const Label: FC<ILabelProps> = ({
     const actualVariant = Component === "label" && !disabled ? "interactive" : "descriptive";
 
     const handlePreventLabelInteraction = (event: React.MouseEvent) => {
-        if (!readOnly || !disabled) return;
+        if (!(readOnly || disabled)) return;
 
         event.preventDefault();
         event.stopPropagation();

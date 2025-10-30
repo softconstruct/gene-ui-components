@@ -160,4 +160,63 @@ describe("Label ", () => {
         expect(wrapper.find("label")).toHaveLength(1);
         expect(wrapper.find("label").prop("htmlFor")).toBeUndefined();
     });
+
+    it("prevents click events when readOnly is true", () => {
+        const children = <input type="text" />;
+        const wrapper = setup.setProps({ readOnly: true, children });
+        const clickEvent = { preventDefault: jest.fn(), stopPropagation: jest.fn() };
+
+        wrapper.find("label").simulate("click", clickEvent);
+
+        expect(clickEvent.preventDefault).toHaveBeenCalled();
+        expect(clickEvent.stopPropagation).toHaveBeenCalled();
+    });
+
+    it("prevents mousedown events when readOnly is true", () => {
+        const children = <input type="text" />;
+        const wrapper = setup.setProps({ readOnly: true, children });
+        const mouseDownEvent = { preventDefault: jest.fn(), stopPropagation: jest.fn() };
+
+        wrapper.find("label").simulate("mouseDown", mouseDownEvent);
+
+        expect(mouseDownEvent.preventDefault).toHaveBeenCalled();
+        expect(mouseDownEvent.stopPropagation).toHaveBeenCalled();
+    });
+
+    it("prevents click events when disabled is true", () => {
+        const children = <input type="text" />;
+        const wrapper = setup.setProps({ disabled: true, children });
+        const clickEvent = { preventDefault: jest.fn(), stopPropagation: jest.fn() };
+
+        wrapper.find("label").simulate("click", clickEvent);
+
+        expect(clickEvent.preventDefault).toHaveBeenCalled();
+        expect(clickEvent.stopPropagation).toHaveBeenCalled();
+    });
+
+    it("prevents mousedown events when disabled is true", () => {
+        const children = <input type="text" />;
+        const wrapper = setup.setProps({ disabled: true, children });
+        const mouseDownEvent = { preventDefault: jest.fn(), stopPropagation: jest.fn() };
+
+        wrapper.find("label").simulate("mouseDown", mouseDownEvent);
+
+        expect(mouseDownEvent.preventDefault).toHaveBeenCalled();
+        expect(mouseDownEvent.stopPropagation).toHaveBeenCalled();
+    });
+
+    it("renders as a label element when readOnly is true and has children", () => {
+        const children = <input type="text" />;
+        const wrapper = setup.setProps({ readOnly: true, children });
+
+        expect(wrapper.find("label")).toHaveLength(1);
+        expect(wrapper.find("label").hasClass("label_readOnly")).toBeTruthy();
+    });
+
+    it("renders as a label element when readOnly is true and has labelFor", () => {
+        const wrapper = setup.setProps({ readOnly: true, labelFor: "input-id" });
+
+        expect(wrapper.find("label")).toHaveLength(1);
+        expect(wrapper.find("label").hasClass("label_readOnly")).toBeTruthy();
+    });
 });
