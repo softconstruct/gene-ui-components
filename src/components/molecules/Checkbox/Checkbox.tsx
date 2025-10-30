@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
+import { nanoid } from "nanoid";
 
 import { CheckMark, Minus } from "@geneui/icons";
 
@@ -92,6 +93,10 @@ interface ICheckboxProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * `HTML` `id` attribute for the `input` element
+     */
+    id?: string;
 }
 
 /**
@@ -99,6 +104,7 @@ interface ICheckboxProps {
  */
 const Checkbox: FC<ICheckboxProps> = (props) => {
     const {
+        id,
         label,
         required,
         infoText,
@@ -122,6 +128,8 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
 
     const interRef = useRef<HTMLInputElement>(null);
     const isControlled = "checked" in props;
+
+    const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
 
     const [checkedState, setCheckedState] = useState(defaultChecked || false);
 
@@ -169,14 +177,16 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
             )}
             {...((disabled || readOnly) && { tabIndex: -1 })}
         >
-            <Label
-                text={label}
-                className="checkbox__label"
-                required={required}
-                infoText={infoText}
-                disabled={disabled}
-                readOnly={readOnly}
-            >
+            <div className="checkbox__content">
+                <Label
+                    text={label}
+                    className="checkbox__label"
+                    required={required}
+                    infoText={infoText}
+                    disabled={disabled}
+                    readOnly={readOnly}
+                    labelFor={generatedId}
+                />
                 <span
                     className={classNames("checkbox__imitationHolder", {
                         checkbox__imitationHolder_disabled: disabled,
@@ -198,6 +208,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                             {...(autoFocus && { autoFocus })}
                             {...((disabled || readOnly) && { tabIndex: -1 })}
                             value={value}
+                            id={generatedId}
                         />
                         <span className="checkbox__imitation">
                             {indeterminate && !checked ? (
@@ -208,7 +219,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                         </span>
                     </span>
                 </span>
-            </Label>
+            </div>
             {helperText && (
                 <div className="checkbox__infoContainer">
                     <HelperText text={helperText} disabled={disabled} status={status} />

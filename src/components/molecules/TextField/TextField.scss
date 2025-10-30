@@ -38,25 +38,35 @@
                 border-radius: var(--guit-ref-radius-2xsmall);
 
                 &:not(#{ $this }_iconBefore, &#{ $this }_iconAfter, &#{ $this }_withIcons) {
-                    padding: var(--guit-ref-spacing-small) var(--guit-ref-spacing-large);
+                    #{ $the }__input {
+                        padding: var(--guit-ref-spacing-small) var(--guit-ref-spacing-large);
+                    }
                 }
 
                 &#{ $this }_iconBefore {
-                    padding-top: var(--guit-ref-spacing-small);
-                    padding-bottom: var(--guit-ref-spacing-small);
                     padding-inline-start: var(--guit-ref-spacing-medium);
-                    padding-inline-end: var(--guit-ref-spacing-large);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-small);
+                        padding-inline-end: var(--guit-ref-spacing-large);
+                    }
                 }
 
                 &#{ $this }_iconAfter {
-                    padding-top: var(--guit-ref-spacing-xsmall);
-                    padding-bottom: var(--guit-ref-spacing-xsmall);
-                    padding-inline-start: var(--guit-ref-spacing-large);
                     padding-inline-end: var(--guit-ref-spacing-medium);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-xsmall);
+                        padding-inline-start: var(--guit-ref-spacing-large);
+                    }
                 }
 
                 &#{ $this }_withIcons {
-                    padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-medium);
+                    padding-inline: var(--guit-ref-spacing-medium);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-xsmall);
+                    }
                 }
             }
 
@@ -66,25 +76,35 @@
                 border-radius: var(--guit-ref-radius-3xsmall);
 
                 &:not(#{ $this }_iconBefore, &#{ $this }_iconAfter, &#{ $this }_withIcons) {
-                    padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-medium);
+                    #{ $the }__input {
+                        padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-medium);
+                    }
                 }
 
                 &#{ $this }_iconBefore {
-                    padding-top: var(--guit-ref-spacing-2xsmall);
-                    padding-bottom: var(--guit-ref-spacing-2xsmall);
                     padding-inline-start: var(--guit-ref-spacing-xsmall);
-                    padding-inline-end: var(--guit-ref-spacing-medium);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-2xsmall);
+                        padding-inline-end: var(--guit-ref-spacing-medium);
+                    }
                 }
 
                 &#{ $this }_iconAfter {
-                    padding-top: var(--guit-ref-spacing-3xsmall);
-                    padding-bottom: var(--guit-ref-spacing-3xsmall);
-                    padding-inline-start: var(--guit-ref-spacing-medium);
                     padding-inline-end: var(--guit-ref-spacing-xsmall);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-3xsmall);
+                        padding-inline-start: var(--guit-ref-spacing-medium);
+                    }
                 }
 
                 &#{ $this }_withIcons {
-                    padding: var(--guit-ref-spacing-3xsmall) var(--guit-ref-spacing-xsmall);
+                    padding-inline: var(--guit-ref-spacing-xsmall);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-3xsmall);
+                    }
                 }
             }
 
@@ -94,25 +114,35 @@
                 border-radius: var(--guit-ref-radius-3xsmall);
 
                 &:not(#{ $this }_iconBefore, &#{ $this }_iconAfter, &#{ $this }_withIcons) {
-                    padding: var(--guit-ref-radius-3xsmall) var(--guit-ref-spacing-medium);
+                    #{ $the }__input {
+                        padding: var(--guit-ref-radius-3xsmall) var(--guit-ref-spacing-medium);
+                    }
                 }
 
                 &#{ $this }_iconBefore {
-                    padding-top: var(--guit-ref-radius-3xsmall);
-                    padding-bottom: var(--guit-ref-radius-3xsmall);
                     padding-inline-start: var(--guit-ref-spacing-xsmall);
-                    padding-inline-end: var(--guit-ref-spacing-medium);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-radius-3xsmall);
+                        padding-inline-end: var(--guit-ref-spacing-medium);
+                    }
                 }
 
                 &#{ $this }_iconAfter {
-                    padding-top: var(--guit-ref-spacing-4xsmall);
-                    padding-bottom: var(--guit-ref-spacing-4xsmall);
-                    padding-inline-start: var(--guit-ref-spacing-medium);
                     padding-inline-end: var(--guit-ref-spacing-xsmall);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-4xsmall);
+                        padding-inline-start: var(--guit-ref-spacing-medium);
+                    }
                 }
 
                 &#{ $this }_withIcons {
-                    padding: var(--guit-ref-spacing-4xsmall) var(--guit-ref-spacing-xsmall);
+                    padding-inline: var(--guit-ref-spacing-xsmall);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-4xsmall);
+                    }
                 }
 
                 #{ $the }__input {
