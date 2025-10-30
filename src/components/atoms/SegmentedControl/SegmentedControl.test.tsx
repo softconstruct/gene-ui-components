@@ -6,7 +6,7 @@ import { Tag } from "@geneui/icons";
 import HelperText from "../HelperText";
 import Label from "../Label";
 // Components
-import SegmentedControl, { ISegmentedControlProps, SegmentedControlItem } from "./index";
+import { ISegmentedControlProps, SegmentedControl, SegmentedControlItem } from "./index";
 
 describe("SegmentedControl ", () => {
     let setup: ReactWrapper<ISegmentedControlProps>;
@@ -52,7 +52,8 @@ describe("SegmentedControl ", () => {
     it("renders infoText prop correctly", () => {
         const infoText = "test";
         const wrapper = setup.setProps({
-            infoText
+            infoText,
+            label: "test"
         });
         expect(wrapper.find(Label).props().infoText).toBe(infoText);
     });

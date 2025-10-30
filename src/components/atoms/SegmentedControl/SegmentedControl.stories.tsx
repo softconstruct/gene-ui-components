@@ -6,7 +6,7 @@ import { Tag } from "@geneui/icons";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import SegmentedControl, { ISegmentedControlProps, SegmentedControlItem } from "./index";
+import { ISegmentedControlProps, SegmentedControl, SegmentedControlItem } from "./index";
 
 const meta: Meta<typeof SegmentedControl> = {
     title: "Atoms/SegmentedControl",
@@ -19,7 +19,8 @@ const meta: Meta<typeof SegmentedControl> = {
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
         onChange: args({ control: "false", ...propCategory.action }),
-        status: args({ control: "select", ...propCategory.appearance })
+        status: args({ control: "select", ...propCategory.appearance }),
+        className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
         helperText: "helperText",
