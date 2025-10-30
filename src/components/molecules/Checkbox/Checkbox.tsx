@@ -189,6 +189,7 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                             onBlur={onBlurHandler}
                             onClick={onClickHandler}
                             checked={resolvedChecked}
+                            disabled={disabled}
                             ref={interRef}
                             {...(name && { name })}
                             {...(autoFocus && { autoFocus })}
