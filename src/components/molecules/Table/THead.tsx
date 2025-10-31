@@ -14,10 +14,11 @@ interface ITableHead {
     withCheckbox?: boolean;
     withStickyHeader?: boolean;
     selectAllText?: string;
+    rowCount?: number;
 }
 
 const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
-    ({ table, expandable, withCheckbox, withStickyHeader, selectAllText }, ref) => {
+    ({ table, expandable, withCheckbox, withStickyHeader, selectAllText, rowCount }, ref) => {
         const { onSelectAllRows } = useContext(TableContext);
         const [activeHeaders, setActiveHeaders] = useState<Record<string, boolean> | null>(null);
 
@@ -29,6 +30,8 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
             if (header.isPlaceholder) return null;
 
             if ((header.column.columnDef as TableCol<Row>).type === "RowCheckbox" && withCheckbox) {
+                const isAllSelected = table.getIsAllPageRowsSelected();
+                const isSomeSelected = table.getIsSomePageRowsSelected();
                 return (
                     <th
                         key={`${header.id}_header`}
@@ -36,13 +39,20 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
                         className={classNames("table__th", {
                             table__th_group: header.subHeaders.length
                         })}
+                        scope="col"
                     >
                         <div className="table__content table__content_empty">
                             <Checkbox
                                 name="column"
                                 value="column"
-                                checked={table.getIsAllPageRowsSelected()}
-                                indeterminate={table.getIsSomePageRowsSelected()}
+                                checked={isAllSelected}
+                                indeterminate={isSomeSelected}
+                                aria-label={
+                                    isAllSelected
+                                        ? `Deselect all ${rowCount || 0} rows`
+                                        : `Select all ${rowCount || 0} rows`
+                                }
+                                aria-checked={isAllSelected}
                                 onChange={() => {
                                     table.toggleAllPageRowsSelected();
                                     onSelectAllRows?.();
@@ -60,7 +70,8 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
                         className={classNames("table__th", {
                             table__th_group: header.subHeaders.length
                         })}
-                        aria-label="expand"
+                        scope="col"
+                        aria-label="Expand row"
                     >
                         <div className="table__content table__content_empty" />
                     </th>
@@ -68,21 +79,26 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
             }
 
             if (header.id === "rowCheckbox") return null;
+            if (header.id === "expand") return null;
+
+            const headerText = flexRender(header.column.columnDef.header, header.getContext());
+            const sortDirection = header.column.getIsSorted();
 
             return (
                 <th
                     key={`${header.id}_header`}
                     colSpan={header.colSpan}
+                    scope={header.subHeaders.length ? "colgroup" : "col"}
                     className={classNames("table__th", {
                         table__th_group: header.subHeaders.length,
                         table__th_active: !!activeHeaders?.[header.id]
                     })}
+                    aria-sort={sortDirection}
+                    aria-label={sortDirection}
                 >
                     <div className="table__content table__content_empty">
                         <div className="table__content table__content_header">
-                            <span className="table__th_text ellipsis-text">
-                                {flexRender(header.column.columnDef.header, header.getContext())}
-                            </span>
+                            <span className="table__th_text ellipsis-text">{headerText}</span>
                             {header.id !== "expand" && (
                                 <ColActions header={header} onColAction={onColAction} selectAllText={selectAllText} />
                             )}

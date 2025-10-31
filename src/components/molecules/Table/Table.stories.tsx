@@ -89,7 +89,7 @@ const meta: Meta<ITableProps> = {
         onPageSizeChange: args({ control: "false", ...propCategory.functionality }),
         withManualPagination: args({ control: "boolean", ...propCategory.functionality }),
         keepPinnedRows: args({ control: "boolean", ...propCategory.functionality }),
-        hasNextPage: args({ control: "boolean", ...propCategory.content }),
+        hasNextPage: args({ control: "false", ...propCategory.functionality }),
         showInputPageField: args({ control: "boolean", ...propCategory.content }),
         isFetchingNextPage: args({ control: "boolean", ...propCategory.content }),
         fetchNextPage: args({ control: "false", ...propCategory.action }),

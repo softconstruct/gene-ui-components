@@ -79,23 +79,33 @@ const Toolbar: FC<IToolbar> = ({
                     <input
                         className="dataTable__toolbar_searchInput"
                         type="text"
-                        placeholder={globalFilterPlaceholder}
+                        placeholder={globalFilterPlaceholder || "Search..."}
                         value={globalFilterValue}
                         onChange={(e) => handleGlobalFilterChange(e)}
                         style={{ width: "100%" }}
+                        aria-label="Search table"
+                        aria-describedby="table-search-description"
                     />
                 )}
                 <div className="dataTable__bulkActions">
                     {withCheckbox && (
                         <>
-                            <div className="dataTable__bulkActions_selected">{selectedRowsLength} selected</div>
-                            <Divider direction="vertical" />
+                            <div
+                                className="dataTable__bulkActions_selected"
+                                role="status"
+                                aria-live="polite"
+                                aria-atomic="true"
+                            >
+                                {selectedRowsLength} selected
+                            </div>
+                            <Divider direction="vertical" aria-hidden="true" />
                             <Button
                                 appearance="primary"
                                 layout="text"
                                 size="medium"
-                                disabled={bulkActions?.disabled}
+                                disabled={!selectedRowsLength || bulkActions?.disabled}
                                 onClick={() => selectedRowsLength && onRowsDeselect?.()}
+                                aria-label={`Deselect ${selectedRowsLength} selected rows`}
                             >
                                 Deselect
                             </Button>
@@ -113,6 +123,7 @@ const Toolbar: FC<IToolbar> = ({
                             layout="fill"
                             size="medium"
                             onClick={() => tableEditAction("cancel")}
+                            aria-label="Cancel editing"
                         >
                             Cancel
                         </Button>
@@ -121,6 +132,7 @@ const Toolbar: FC<IToolbar> = ({
                             layout="fill"
                             size="medium"
                             onClick={() => tableEditAction("save")}
+                            aria-label="Save changes"
                         >
                             Save
                         </Button>
@@ -133,6 +145,7 @@ const Toolbar: FC<IToolbar> = ({
                             size="medium"
                             Icon={Globe}
                             onClick={() => tableEditAction("edit")}
+                            aria-label="Edit table"
                         >
                             Edit
                         </Button>
@@ -146,6 +159,9 @@ const Toolbar: FC<IToolbar> = ({
                                     disabled={isManageColumnsDisabled}
                                     Icon={Globe}
                                     onClick={() => setMenuOpened(!menuOpened)}
+                                    aria-label={manageColumnsTitle}
+                                    aria-expanded={menuOpened}
+                                    aria-haspopup="true"
                                 >
                                     {manageColumnsTitle}
                                 </Button>

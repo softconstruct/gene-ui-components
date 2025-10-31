@@ -7,6 +7,15 @@ import { Row, TableCol } from "@components/molecules/Table/type";
 
 export const defaultColumns: TableCol<Row>[] = [
     {
+        id: "expand",
+        isVisible: true,
+        order: 0,
+        enableGlobalFilter: false,
+        type: "Expand",
+        accessorKey: "expand",
+        header: ""
+    },
+    {
         id: "rowCheckbox",
         isVisible: true,
         order: 0,

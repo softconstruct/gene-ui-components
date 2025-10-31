@@ -19,6 +19,7 @@ interface ICellProps {
     onChange?: (data: unknown) => void;
     rowCellRenderer?: (data?: CellTypes) => JSX.Element;
     withCopy?: boolean;
+    ariaLabel?: string;
 }
 
 type CellRenderer = {
@@ -36,7 +37,7 @@ export const cellRenderer: () => CellRenderer = () => {
         Graph: ({ rowCellRenderer, data }) => {
             return rowCellRenderer ? rowCellRenderer(data) : <img src={data as string} alt="" />;
         },
-        Text: ({ rowCellRenderer, data, withEditMode, inputType = "text", withCopy, onChange }) => {
+        Text: ({ rowCellRenderer, data, withEditMode, inputType = "text", withCopy, onChange, ariaLabel }) => {
             const value = data as string;
             if (withEditMode) {
                 return (
@@ -44,6 +45,7 @@ export const cellRenderer: () => CellRenderer = () => {
                         numericOnly={inputType === "Number"}
                         placeholder="Row Text"
                         value={value}
+                        aria-label={ariaLabel || inputType}
                         {...(onChange && {
                             onChange: (e) => {
                                 onChange(e.target.value);
@@ -57,9 +59,17 @@ export const cellRenderer: () => CellRenderer = () => {
 
             return (
                 <>
-                    <span className="table__td_text ellipsis-text">{value}</span>
+                    <span className="table__td_text ellipsis-text" aria-label={ariaLabel}>
+                        {value}
+                    </span>
                     {withCopy && (
-                        <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />
+                        <Copy
+                            value={value}
+                            size="small"
+                            appearance="secondary"
+                            className="table__content_copy"
+                            aria-label={`Copy ${ariaLabel || "cell value"}`}
+                        />
                     )}
                 </>
             );
@@ -236,7 +246,7 @@ export const cellRenderer: () => CellRenderer = () => {
     };
 };
 
-const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
+const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, withCopy, onChange, ariaLabel }) => {
     if (!data && !withEditMode) return null;
 
     const cellTypeWithNumber = type === "Number" ? "Text" : type;
@@ -249,7 +259,8 @@ const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, withC
                 data,
                 inputType: type === "Number" ? type : "Text",
                 withCopy,
-                onChange
+                onChange,
+                ariaLabel
             })}
         </>
     );

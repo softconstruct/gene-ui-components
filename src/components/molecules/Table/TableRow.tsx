@@ -103,25 +103,37 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
         return type !== "Expand" && type !== "RowCheckbox";
     });
 
+    const isSelected = row.getIsSelected();
+    const isExpanded = row.getIsExpanded();
+    const isPinned = row.getIsPinned();
+    const canExpand = row.getCanExpand();
+
     return (
         <>
             <tr
                 className={classNames(`table__row table__row_tbody table__row_${row.original.rowStatus}`, {
-                    table__row_selected: row.getIsSelected(),
-                    table__pinned: row.getIsPinned(),
-                    table__pinned_horizontal: row.getIsPinned()
+                    table__row_selected: isSelected,
+                    table__pinned: isPinned,
+                    table__pinned_horizontal: isPinned
                 })}
                 onClick={handleRowClick}
+                aria-selected={isSelected}
+                aria-expanded={isExpanded}
+                role="row"
             >
                 {expandable && (
                     <td className="table__td">
                         <div className="table__content table__content_expand">
-                            {row.getCanExpand() && (
+                            {canExpand && (
                                 <Button
                                     appearance="secondary"
                                     layout="text"
                                     size="small"
-                                    Icon={!row.getIsExpanded() ? ChevronRight : ChevronDown}
+                                    Icon={!isExpanded ? ChevronRight : ChevronDown}
+                                    aria-label={
+                                        isExpanded ? `Collapse row ${rowIndex + 1}` : `Expand row ${rowIndex + 1}`
+                                    }
+                                    aria-expanded={isExpanded}
                                     onClick={(event) => {
                                         event.stopPropagation();
                                         row.toggleExpanded();
@@ -133,13 +145,14 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
                 )}
 
                 {withCheckbox && (
-                    <td className="table__td">
+                    <td className="table__td" role="gridcell">
                         <div className="table__content table__content_checkbox">
                             <Checkbox
-                                name="item"
-                                value="item"
-                                onClick={(e) => e.stopPropagation()}
-                                checked={row.getIsSelected()}
+                                name={`row-checkbox-${row.id}`}
+                                value={row.id}
+                                checked={isSelected}
+                                aria-label={`Select row ${rowIndex + 1}`}
+                                aria-checked={isSelected}
                                 onChange={(event) => handleCheckboxChange(event)}
                             />
                         </div>
@@ -148,15 +161,19 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
 
                 {visibleCells.map((cell) => {
                     const { type } = cell.column.columnDef as TableCol<ICellProps>;
+                    const colDef = cell.column.columnDef as TableCol<unknown>;
+                    const headerText = colDef.header;
+                    const cellLabel = typeof headerText === "string" ? headerText : `Column ${rowIndex + 1}`;
                     return (
-                        <td key={cell.id} className="table__td">
+                        <td key={cell.id} className="table__td" role={withCheckbox ? "gridcell" : undefined}>
                             <div className={classNames(`table__content ${CellClassNames[type]}`)}>
                                 <Cell
                                     type={type as ICellProps["type"]}
-                                    data={row.original[(cell.column.columnDef as TableCol<unknown>).type]}
+                                    data={row.original[colDef.type]}
                                     withEditMode={editableMode}
-                                    rowCellRenderer={(cell.column.columnDef as TableCol<unknown>).rowCellRenderer}
-                                    withCopy={(cell.column.columnDef as TableCol<unknown>).copyable}
+                                    rowCellRenderer={colDef.rowCellRenderer}
+                                    withCopy={colDef.copyable}
+                                    ariaLabel={cellLabel}
                                     {...(onCellEdit && {
                                         onChange: (data) => handleCellEdit(rowIndex, type, data)
                                     })}
@@ -166,27 +183,48 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
                     );
                 })}
                 {!editableMode && actionsConfig.some((action) => !!action.handler) && (
-                    <td className="table__td table__actionsWrapper">
-                        <div className="table__actions">
+                    <td className="table__td table__actionsWrapper" role="row">
+                        <div className="table__actions" role="group" aria-label={`Actions for row ${rowIndex + 1}`}>
                             {actionsConfig
                                 .filter((action) => action.handler)
-                                .map((action) => (
-                                    <Button
-                                        key={action.name}
-                                        appearance="secondary"
-                                        layout="text"
-                                        size="small"
-                                        Icon={action.icon}
-                                        onClick={handleActionClick(action.handler)}
-                                    />
-                                ))}
+                                .map((action) => {
+                                    const actionLabels: Record<string, string> = {
+                                        pinToggle: isPinned ? `Unpin row ${rowIndex + 1}` : `Pin row ${rowIndex + 1}`,
+                                        tag: `Tag row ${rowIndex + 1}`,
+                                        reload: `Reload row ${rowIndex + 1}`,
+                                        show: `Show row ${rowIndex + 1}`,
+                                        clock: `Clock action for row ${rowIndex + 1}`,
+                                        copy: `Copy row ${rowIndex + 1}`,
+                                        download: `Download row ${rowIndex + 1}`,
+                                        delete: `Delete row ${rowIndex + 1}`
+                                    };
+                                    return (
+                                        <Button
+                                            key={action.name}
+                                            appearance="secondary"
+                                            layout="text"
+                                            size="small"
+                                            Icon={action.icon}
+                                            aria-label={
+                                                actionLabels[action.name] ||
+                                                `Action ${action.name} for row ${rowIndex + 1}`
+                                            }
+                                            onClick={handleActionClick(action.handler)}
+                                        />
+                                    );
+                                })}
                         </div>
                     </td>
                 )}
             </tr>
-            {row.getIsExpanded() && (
-                <tr className="table__row table__row_tbody">
-                    <td className="table__td table__td_expanded" colSpan={row.getVisibleCells().length}>
+            {isExpanded && (
+                <tr className="table__row table__row_tbody" role={withCheckbox ? "row" : undefined}>
+                    <td
+                        className="table__td table__td_expanded"
+                        colSpan={row.getVisibleCells().length}
+                        role="row"
+                        aria-label={`Expanded content for row ${rowIndex + 1}`}
+                    >
                         {row?.original.expandedData()}
                     </td>
                 </tr>

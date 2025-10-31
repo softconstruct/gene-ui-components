@@ -112,8 +112,11 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
         setFilterOptions(filteredOptions);
     };
 
+    const colDef = header.column.columnDef as TableCol<Row>;
+    const headerText = typeof colDef.header === "string" ? colDef.header : "column";
+
     return (
-        <div className="table__th_actions">
+        <div className="table__th_actions" role="group" aria-label={headerText}>
             {header.column.getCanSort() &&
                 (header.column.getIsSorted() ? (
                     <Badge size="smallNudge">
@@ -126,6 +129,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                             })}
                             disabled={(header.column.columnDef as TableCol<unknown>)?.isSortingDisabled}
                             Icon={SortingIcons[`${header.column.getIsSorted()}`]}
+                            aria-label="sorting"
                             onClick={(e) => {
                                 return (
                                     (header.column.columnDef as TableCol<unknown>).enableSorting &&
@@ -144,6 +148,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                         })}
                         disabled={(header.column.columnDef as TableCol<unknown>)?.isSortingDisabled}
                         Icon={SortingIcons[`${header.column.getIsSorted()}`]}
+                        aria-label="sorting"
                         onClick={(e) => {
                             return (
                                 (header.column.columnDef as TableCol<unknown>).enableSorting &&
@@ -167,6 +172,9 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                                     table__th_actions_active: isFilterPopoverOpen
                                 })}
                                 disabled={(header.column.columnDef as TableCol<Row>)?.isPopoverFilterDisabled}
+                                aria-label={`Filter ${headerText}: ${filteredValues.length} selected ${isFilterPopoverOpen ? ", open" : ", click to open filter menu"}`}
+                                aria-expanded={isFilterPopoverOpen}
+                                aria-haspopup="true"
                                 {...popoverPropsForContent}
                                 onClick={() => setIsFilterPopoverOpen(true)}
                             />
@@ -181,6 +189,9 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                                 table__th_actions_active: isFilterPopoverOpen
                             })}
                             disabled={(header.column.columnDef as TableCol<Row>)?.isPopoverFilterDisabled}
+                            aria-label={`Filter ${headerText}${isFilterPopoverOpen ? ", open" : ", click to open filter menu"}`}
+                            aria-expanded={isFilterPopoverOpen}
+                            aria-haspopup="true"
                             {...popoverPropsForContent}
                             onClick={() => setIsFilterPopoverOpen(true)}
                         />
@@ -195,6 +206,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                                         placeholder="Search"
                                         onChange={handleFilterSearch}
                                         style={{ width: "100%" }}
+                                        aria-label={`Search filter options for ${headerText}`}
                                     />
 
                                     <div className="filterDropdownMenu__headerSelect">
@@ -300,6 +312,8 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                                     table__th_actions_active: header.column.getIsFiltered()
                                 })}
                                 Icon={Magnifier}
+                                aria-label={`Filter ${headerText}${currentSearchInput === header.column.id ? ", active" : ", click to search"}`}
+                                aria-expanded={currentSearchInput === header.column.id}
                                 onClick={() => setCurrentSearchInput(header.column.id)}
                             />
                         </Badge>
@@ -313,11 +327,17 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                                 table__th_actions_active: header.column.getIsFiltered()
                             })}
                             Icon={Magnifier}
+                            aria-label={`Filter ${headerText}, click to search`}
+                            aria-expanded={currentSearchInput === header.column.id}
                             onClick={() => setCurrentSearchInput(header.column.id)}
                         />
                     )}
                     {currentSearchInput === header.column.id && (
-                        <Filter column={header.column} onBlur={() => setCurrentSearchInput(null)} />
+                        <Filter
+                            column={header.column}
+                            onBlur={() => setCurrentSearchInput(null)}
+                            headerText={headerText}
+                        />
                     )}
                 </>
             )}

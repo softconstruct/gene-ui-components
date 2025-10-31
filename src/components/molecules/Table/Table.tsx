@@ -508,6 +508,10 @@ const Table: FC<ITableProps> = ({
 
     if (!columns.length) return null;
 
+    const rowCount = table.getRowModel().rows.length;
+    const columnCount = table.getVisibleFlatColumns().length;
+    const selectedRowCount = table.getSelectedRowModel().rows.length;
+
     return (
         <TableContext.Provider value={memoizedTableContextValue}>
             <div className={classNames("dataTable")}>
@@ -524,13 +528,19 @@ const Table: FC<ITableProps> = ({
                     globalFilter={globalFilter}
                     globalFilterPlaceholder={globalFilterPlaceholder}
                     bulkActions={bulkActions}
-                    selectedRowsLength={table.getSelectedRowModel().rows.length}
+                    selectedRowsLength={selectedRowCount}
                     onRowsDeselect={() => table.resetRowSelection()}
                     globalFilterSetter={onGlobalFilterInputChange}
                     visibleColumns={columnVisibility}
                 />
                 <Scrollbar ref={scrollbarContainerRef}>
-                    <table className={classNames("table", className)}>
+                    <table
+                        className={classNames("table", className)}
+                        role="table"
+                        aria-label={className || "Data table"}
+                        aria-rowcount={rowCount > 0 ? rowCount : undefined}
+                        aria-colcount={columnCount}
+                    >
                         <THead
                             ref={tableHeadRef}
                             table={table}
@@ -538,6 +548,7 @@ const Table: FC<ITableProps> = ({
                             withCheckbox={withCheckbox}
                             withStickyHeader={withStickyHeader}
                             selectAllText={selectAllText}
+                            rowCount={rowCount}
                         />
                         <TBody
                             table={table}
