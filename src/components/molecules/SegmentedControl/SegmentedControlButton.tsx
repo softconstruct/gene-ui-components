@@ -1,7 +1,9 @@
-import React, { FC } from "react";
+import React, { FC, useContext } from "react";
 import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
+
+import { SegmentedControlContext } from "@components/molecules/SegmentedControl/SegmentedControl";
 
 // Styles
 import "./SegmentedControl.scss";
@@ -20,33 +22,14 @@ interface ISegmentedControlButtonProps {
      */
     Icon?: FC<IconProps>;
     /**
-     * Size <br>
-     * Possible values: `large | medium | small`
-     */
-    size?: "large" | "medium" | "small";
-    /**
-     * Function that will execute using parameter name for each selection
-     */
-    onSelect?: (name: string) => void;
-    /**
      *Displays the selected item
      */
     selected?: boolean;
-    /**
-     * Tab index managed by parent for roving focus
-     */
-    tabIndex?: number;
 }
 
-const SegmentedControlButton: FC<ISegmentedControlButtonProps> = ({
-    children,
-    name,
-    Icon,
-    size = "medium",
-    selected = false,
-    onSelect,
-    tabIndex
-}) => {
+const SegmentedControlButton: FC<ISegmentedControlButtonProps> = ({ children, name, Icon, selected = false }) => {
+    const { size, onSelect } = useContext(SegmentedControlContext);
+
     const selectHandler = () => {
         onSelect?.(name);
     };
@@ -57,7 +40,7 @@ const SegmentedControlButton: FC<ISegmentedControlButtonProps> = ({
             type="button"
             role="radio"
             aria-checked={selected}
-            tabIndex={tabIndex}
+            tabIndex={selected ? 0 : -1}
             onClick={selectHandler}
             className={classNames(`segmentedControl__button segmentedControl__button_size_${size}`, {
                 segmentedControl__button_icon_only: Icon && !children,

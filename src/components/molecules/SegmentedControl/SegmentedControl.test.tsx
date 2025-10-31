@@ -1,5 +1,6 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
+import { act } from "react-dom/test-utils";
 
 import { Tag } from "@geneui/icons";
 
@@ -14,7 +15,7 @@ describe("SegmentedControl ", () => {
 
     beforeEach(() => {
         setup = mount(
-            <SegmentedControl size="large" onChange={jest.fn}>
+            <SegmentedControl size="large" onChange={jest.fn()}>
                 <SegmentedControlButton name="test1" Icon={Tag} />
             </SegmentedControl>
         );
@@ -78,10 +79,15 @@ describe("SegmentedControl ", () => {
 
     it("renders onChange prop correctly", () => {
         const onChange = jest.fn();
-        const wrapper = setup.setProps({
-            onChange
+        const wrapper = mount(
+            <SegmentedControl size="large" onChange={onChange}>
+                <SegmentedControlButton name="test1" Icon={Tag} />
+            </SegmentedControl>
+        );
+        act(() => {
+            wrapper.find(".segmentedControl__button").simulate("click");
         });
-        wrapper.find(".segmentedControl__button").simulate("click");
+        wrapper.update();
         expect(onChange).toHaveBeenCalledWith("test1");
     });
 

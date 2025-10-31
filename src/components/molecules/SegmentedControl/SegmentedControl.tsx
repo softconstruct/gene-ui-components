@@ -1,4 +1,13 @@
-import React, { Children, cloneElement, FC, FunctionComponentElement, useMemo, useRef, useState } from "react";
+import React, {
+    Children,
+    cloneElement,
+    createContext,
+    FC,
+    FunctionComponentElement,
+    useMemo,
+    useRef,
+    useState
+} from "react";
 import classNames from "classnames";
 
 // Styles
@@ -8,7 +17,12 @@ import "./SegmentedControl.scss";
 import { HelperText, Label } from "../../../index";
 import { ISegmentedControlButtonProps } from "./SegmentedControlButton";
 
-type SegmentedControlButtonInternalProps = ISegmentedControlButtonProps & { tabIndex?: number };
+type SizeType = "large" | "medium" | "small";
+
+interface ISegmentedControlContextProps {
+    size: SizeType;
+    onSelect?: (name: string) => void;
+}
 
 interface ISegmentedControlProps {
     /**
@@ -29,8 +43,8 @@ interface ISegmentedControlProps {
      * SegmentedControlButton component. Renders inside the component
      */
     children:
-        | FunctionComponentElement<SegmentedControlButtonInternalProps>
-        | FunctionComponentElement<SegmentedControlButtonInternalProps>[];
+        | FunctionComponentElement<ISegmentedControlButtonProps>
+        | FunctionComponentElement<ISegmentedControlButtonProps>[];
     /**
      * The actual text content to be displayed as helper text.
      */
@@ -43,7 +57,7 @@ interface ISegmentedControlProps {
      * Size <br>
      * Possible values: `large | medium | small`
      */
-    size?: "large" | "medium" | "small";
+    size?: SizeType;
     /**
      * Indicates whether the label represents a required field.
      * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
@@ -56,6 +70,10 @@ interface ISegmentedControlProps {
     status?: "rest" | "warning" | "error";
 }
 
+export const SegmentedControlContext = createContext<ISegmentedControlContextProps>(
+    {} as ISegmentedControlContextProps
+);
+
 const SegmentedControl: FC<ISegmentedControlProps> = ({
     className,
     children,
@@ -64,13 +82,11 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     label,
     infoText,
     required,
-    size,
+    size = "medium",
     status = "rest" as const
 }) => {
     const initialSelected = useMemo(() => {
-        const arrayChildren = Children.toArray(
-            children
-        ) as FunctionComponentElement<SegmentedControlButtonInternalProps>[];
+        const arrayChildren = Children.toArray(children) as FunctionComponentElement<ISegmentedControlButtonProps>[];
         const found = arrayChildren.find((child) => child.props.selected);
         return found?.props.name ?? "";
     }, [children]);
@@ -82,6 +98,13 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
         setSelectedElementName(name);
         onChange(name);
     };
+
+    const memoizedSegmentedControlContext: ISegmentedControlContextProps = useMemo(() => {
+        return {
+            size,
+            onSelect
+        };
+    }, [size]);
 
     const textSizes = size === "large" ? "medium" : size;
 
@@ -117,37 +140,36 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     };
 
     return (
-        <div className={classNames("segmentedControl", className)}>
-            {label && <Label text={label} required={required} size={textSizes} infoText={infoText} />}
-            <div
-                className="segmentedControl__wrapper"
-                aria-label={label}
-                ref={wrapperRef}
-                onKeyDown={keydownHandler}
-                role="presentation"
-            >
-                {Children.map(children, (segment, index) => {
-                    const isSelected = selectedElementName
-                        ? selectedElementName === segment.props.name
-                        : segment.props.selected || index === 0;
-                    return cloneElement(segment, {
-                        ...segment.props,
-                        selected: isSelected,
-                        size,
-                        onSelect,
-                        tabIndex: isSelected ? 0 : -1
-                    });
-                })}
+        <SegmentedControlContext.Provider value={memoizedSegmentedControlContext}>
+            <div className={classNames("segmentedControl", className)}>
+                {label && <Label text={label} required={required} size={textSizes} infoText={infoText} />}
+                <div
+                    className="segmentedControl__wrapper"
+                    aria-label={label}
+                    ref={wrapperRef}
+                    onKeyDown={keydownHandler}
+                    role="presentation"
+                >
+                    {Children.map(children, (segment, index) => {
+                        const isSelected = selectedElementName
+                            ? selectedElementName === segment.props.name
+                            : segment.props.selected || index === 0;
+                        return cloneElement(segment, {
+                            ...segment.props,
+                            selected: isSelected
+                        });
+                    })}
+                </div>
+                {helperText && (
+                    <HelperText
+                        text={helperText}
+                        className="segmentedControl__helperText"
+                        size={textSizes}
+                        status={status}
+                    />
+                )}
             </div>
-            {helperText && (
-                <HelperText
-                    text={helperText}
-                    className="segmentedControl__helperText"
-                    size={textSizes}
-                    status={status}
-                />
-            )}
-        </div>
+        </SegmentedControlContext.Provider>
     );
 };
 
