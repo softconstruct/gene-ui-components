@@ -25,6 +25,12 @@ describe("SegmentedControl ", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
+    it("renders className prop correctly", () => {
+        const className = "test-class";
+        const wrapper = setup.setProps({ className });
+        expect(wrapper.find(".segmentedControl").hasClass(className)).toBeTruthy();
+    });
+
     it("renders helperText prop correctly", () => {
         const helperText = "test";
         const wrapper = setup.setProps({
@@ -91,9 +97,331 @@ describe("SegmentedControl ", () => {
         expect(onChange).toHaveBeenCalledWith("test1");
     });
 
-    it.each<ISegmentedControlProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
-        const wrapper = setup.setProps({ status, helperText: "test" } as ISegmentedControlProps);
+    it("renders multiple buttons correctly", () => {
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={jest.fn()}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
+            </SegmentedControl>
+        );
 
-        expect(wrapper.find(HelperText).find(`.helperText`).hasClass(`helperText_status_${status}`)).toBeTruthy();
+        expect(wrapper.find(SegmentedControlButton)).toHaveLength(3);
+        expect(wrapper.text()).toContain("Button 1");
+        expect(wrapper.text()).toContain("Button 2");
+        expect(wrapper.text()).toContain("Button 3");
+    });
+
+    it("renders button with text correctly", () => {
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={jest.fn()}>
+                <SegmentedControlButton name="text-button">Text Button</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        expect(wrapper.find(".segmentedControl__text").text()).toBe("Text Button");
+    });
+
+    it("renders button with icon and text correctly", () => {
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={jest.fn()}>
+                <SegmentedControlButton name="icon-text" Icon={Tag}>
+                    Icon Text
+                </SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        expect(wrapper.find(Tag).exists()).toBeTruthy();
+        expect(wrapper.find(".segmentedControl__text").text()).toBe("Icon Text");
+        expect(wrapper.find(".segmentedControl__button_withIcon").exists()).toBeTruthy();
+    });
+
+    it("renders button with icon only correctly", () => {
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={jest.fn()}>
+                <SegmentedControlButton name="icon-only" Icon={Tag} />
+            </SegmentedControl>
+        );
+
+        expect(wrapper.find(Tag).exists()).toBeTruthy();
+        expect(wrapper.find(".segmentedControl__button_icon_only").exists()).toBeTruthy();
+        expect(wrapper.find(".segmentedControl__text").exists()).toBeFalsy();
+    });
+
+    it("selects first button by default when no selected prop is provided", () => {
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={jest.fn()}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const firstButton = wrapper.find(SegmentedControlButton).first();
+        expect(firstButton.find(".segmentedControl__button_selected").exists()).toBeTruthy();
+        expect(firstButton.prop("selected")).toBe(true);
+    });
+
+    it("selects button with selected prop when provided", () => {
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={jest.fn()}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2" selected>
+                    Button 2
+                </SegmentedControlButton>
+                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const buttons = wrapper.find(SegmentedControlButton);
+        expect(buttons.at(1).find(".segmentedControl__button_selected").exists()).toBeTruthy();
+        expect(buttons.at(0).find(".segmentedControl__button_selected").exists()).toBeFalsy();
+        expect(buttons.at(2).find(".segmentedControl__button_selected").exists()).toBeFalsy();
+    });
+
+    it("applies correct tabIndex: 0 for selected button, -1 for others", () => {
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={jest.fn()}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const buttons = wrapper.find("button[role='radio']");
+        expect(buttons.at(0).prop("tabIndex")).toBe(0);
+        expect(buttons.at(1).prop("tabIndex")).toBe(-1);
+        expect(buttons.at(2).prop("tabIndex")).toBe(-1);
+    });
+
+    it("updates tabIndex when selection changes", () => {
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={jest.fn()}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const buttons = wrapper.find("button[role='radio']");
+        expect(buttons.at(0).prop("tabIndex")).toBe(0);
+        expect(buttons.at(1).prop("tabIndex")).toBe(-1);
+
+        act(() => {
+            buttons.at(1).simulate("click");
+        });
+        wrapper.update();
+
+        const updatedButtons = wrapper.find("button[role='radio']");
+        expect(updatedButtons.at(0).prop("tabIndex")).toBe(-1);
+        expect(updatedButtons.at(1).prop("tabIndex")).toBe(0);
+    });
+
+    it("applies correct aria-checked attribute", () => {
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={jest.fn()}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const buttons = wrapper.find("button[role='radio']");
+        expect(buttons.at(0).prop("aria-checked")).toBe(true);
+        expect(buttons.at(1).prop("aria-checked")).toBe(false);
+    });
+
+    it("applies aria-label to wrapper when label prop is provided", () => {
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={jest.fn()} label="Test Label">
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const wrapperDiv = wrapper.find(".segmentedControl__wrapper");
+        expect(wrapperDiv.prop("aria-label")).toBe("Test Label");
+    });
+
+    it("handles keyboard navigation with ArrowRight", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={onChange}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const wrapperDiv = wrapper.find(".segmentedControl__wrapper");
+        act(() => {
+            wrapperDiv.simulate("keyDown", { key: "ArrowRight" });
+        });
+        wrapper.update();
+
+        expect(onChange).toHaveBeenCalledWith("button2");
+        expect(
+            wrapper.find(SegmentedControlButton).at(1).find(".segmentedControl__button_selected").exists()
+        ).toBeTruthy();
+    });
+
+    it("handles keyboard navigation with ArrowDown", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={onChange}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const wrapperDiv = wrapper.find(".segmentedControl__wrapper");
+        act(() => {
+            wrapperDiv.simulate("keyDown", { key: "ArrowDown" });
+        });
+        wrapper.update();
+
+        expect(onChange).toHaveBeenCalledWith("button2");
+    });
+
+    it("handles keyboard navigation with ArrowLeft", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={onChange}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+                <SegmentedControlButton name="button3" selected>
+                    Button 3
+                </SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const wrapperDiv = wrapper.find(".segmentedControl__wrapper");
+        act(() => {
+            wrapperDiv.simulate("keyDown", { key: "ArrowLeft" });
+        });
+        wrapper.update();
+
+        expect(onChange).toHaveBeenCalledWith("button2");
+    });
+
+    it("handles keyboard navigation with ArrowUp", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={onChange}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2" selected>
+                    Button 2
+                </SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const wrapperDiv = wrapper.find(".segmentedControl__wrapper");
+        act(() => {
+            wrapperDiv.simulate("keyDown", { key: "ArrowUp" });
+        });
+        wrapper.update();
+
+        expect(onChange).toHaveBeenCalledWith("button1");
+    });
+
+    it("handles keyboard navigation with Home key", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={onChange}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2" selected>
+                    Button 2
+                </SegmentedControlButton>
+                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const wrapperDiv = wrapper.find(".segmentedControl__wrapper");
+        act(() => {
+            wrapperDiv.simulate("keyDown", { key: "Home" });
+        });
+        wrapper.update();
+
+        expect(onChange).toHaveBeenCalledWith("button1");
+    });
+
+    it("handles keyboard navigation with End key", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={onChange}>
+                <SegmentedControlButton name="button1" selected>
+                    Button 1
+                </SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const wrapperDiv = wrapper.find(".segmentedControl__wrapper");
+        act(() => {
+            wrapperDiv.simulate("keyDown", { key: "End" });
+        });
+        wrapper.update();
+
+        expect(onChange).toHaveBeenCalledWith("button3");
+    });
+
+    it("wraps around when navigating with ArrowRight from last button", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={onChange}>
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+                <SegmentedControlButton name="button3" selected>
+                    Button 3
+                </SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const wrapperDiv = wrapper.find(".segmentedControl__wrapper");
+        act(() => {
+            wrapperDiv.simulate("keyDown", { key: "ArrowRight" });
+        });
+        wrapper.update();
+
+        expect(onChange).toHaveBeenCalledWith("button1");
+    });
+
+    it("wraps around when navigating with ArrowLeft from first button", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={onChange}>
+                <SegmentedControlButton name="button1" selected>
+                    Button 1
+                </SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const wrapperDiv = wrapper.find(".segmentedControl__wrapper");
+        act(() => {
+            wrapperDiv.simulate("keyDown", { key: "ArrowLeft" });
+        });
+        wrapper.update();
+
+        expect(onChange).toHaveBeenCalledWith("button3");
+    });
+
+    it("ignores non-navigation keys", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(
+            <SegmentedControl size="medium" onChange={onChange}>
+                <SegmentedControlButton name="button1" selected>
+                    Button 1
+                </SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
+            </SegmentedControl>
+        );
+
+        const wrapperDiv = wrapper.find(".segmentedControl__wrapper");
+        act(() => {
+            wrapperDiv.simulate("keyDown", { key: "Enter" });
+        });
+
+        // onChange should not be called for non-navigation keys
+        expect(onChange).not.toHaveBeenCalled();
     });
 });

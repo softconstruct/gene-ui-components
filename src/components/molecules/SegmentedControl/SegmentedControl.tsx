@@ -31,43 +31,38 @@ interface ISegmentedControlProps {
      */
     className?: string;
     /**
-     * Additional descriptive text shown with info icon and tooltip alongside of the label component.
+     * Additional descriptive text that appears alongside the `label`,
+     * typically displayed as a tooltip triggered by an info icon.
+     * Helps provide extra context or guidance to the user.
      */
     infoText?: string;
     /**
-     * The text content of the `label`.
-     * This is the main text displayed within the `label`.
+     * The text displayed as the label for the segmented control, describing its purpose or function.
      */
     label?: string;
     /**
-     * SegmentedControlButton component. Renders inside the component
+     * SegmentedControlButton components to display as segments. Renders inside the component.
      */
     children:
         | FunctionComponentElement<ISegmentedControlButtonProps>
         | FunctionComponentElement<ISegmentedControlButtonProps>[];
     /**
-     * The actual text content to be displayed as helper text.
+     * Helper text to provide context or explain any errors related to the segmented control.
      */
     helperText?: string;
     /**
-     *  It works when the user clicks on one of the control items. Returns the value of the `name` prop from the `SegmentedControlButton`.
+     * Fires when the user selects one of the control items. Returns the value of the `name` prop from the `SegmentedControlButton`.
      */
     onChange: (name: string) => void;
     /**
-     * Size <br>
+     * Size of the segmented control.<br>
      * Possible values: `large | medium | small`
      */
     size?: SizeType;
     /**
-     * Indicates whether the label represents a required field.
-     * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
+     * Specifies whether the segmented control is mandatory for completing a form.
      */
     required?: boolean;
-    /**
-     *  Determines the component appearance based on its status.<br>
-     *  Possible values: `rest | warning | error`
-     */
-    status?: "rest" | "warning" | "error";
 }
 
 export const SegmentedControlContext = createContext<ISegmentedControlContextProps>(
@@ -82,8 +77,7 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     label,
     infoText,
     required,
-    size = "medium",
-    status = "rest" as const
+    size = "medium"
 }) => {
     const initialSelected = useMemo(() => {
         const arrayChildren = Children.toArray(children) as FunctionComponentElement<ISegmentedControlButtonProps>[];
@@ -117,17 +111,25 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
             (btn) => btn.getAttribute("name") === (selectedElementName || items[0].getAttribute("name"))
         );
 
-        let nextIndex = currentIndex;
-        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
-            nextIndex = (currentIndex + 1) % items.length;
-        } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
-            nextIndex = (currentIndex - 1 + items.length) % items.length;
-        } else if (e.key === "Home") {
-            nextIndex = 0;
-        } else if (e.key === "End") {
-            nextIndex = items.length - 1;
-        } else {
-            return;
+        let nextIndex: number;
+
+        switch (e.key) {
+            case "ArrowRight":
+            case "ArrowDown":
+                nextIndex = (currentIndex + 1) % items.length;
+                break;
+            case "ArrowLeft":
+            case "ArrowUp":
+                nextIndex = (currentIndex - 1 + items.length) % items.length;
+                break;
+            case "Home":
+                nextIndex = 0;
+                break;
+            case "End":
+                nextIndex = items.length - 1;
+                break;
+            default:
+                return;
         }
 
         e.preventDefault();
@@ -165,7 +167,7 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
                         text={helperText}
                         className="segmentedControl__helperText"
                         size={textSizes}
-                        status={status}
+                        status="rest"
                     />
                 )}
             </div>
