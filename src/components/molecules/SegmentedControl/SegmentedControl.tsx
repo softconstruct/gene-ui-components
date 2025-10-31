@@ -4,6 +4,7 @@ import React, {
     createContext,
     FC,
     FunctionComponentElement,
+    KeyboardEvent,
     useMemo,
     useRef,
     useState
@@ -102,7 +103,7 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
 
     const textSizes = size === "large" ? "medium" : size;
 
-    const keydownHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const keydownHandler = (e: KeyboardEvent<HTMLDivElement>) => {
         if (!wrapperRef.current) return;
         const items = Array.from(wrapperRef.current.querySelectorAll<HTMLButtonElement>('button[role="radio"]'));
         if (items.length === 0) return;
