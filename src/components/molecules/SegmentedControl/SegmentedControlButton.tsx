@@ -6,9 +6,9 @@ import { IconProps } from "@geneui/icons";
 // Styles
 import "./SegmentedControl.scss";
 
-interface ISegmentedControlItemProps {
+interface ISegmentedControlButtonProps {
     /**
-     * The text will shown as content of the `button`.
+     * The text will show as content of the `button`.
      */
     children?: string;
     /**
@@ -25,32 +25,44 @@ interface ISegmentedControlItemProps {
      */
     size?: "large" | "medium" | "small";
     /**
-     * Function that will executed using parameter name for each selection
+     * Function that will execute using parameter name for each selection
      */
     onSelect?: (name: string) => void;
     /**
      *Displays the selected item
      */
     selected?: boolean;
+    /**
+     * Tab index managed by parent for roving focus
+     */
+    tabIndex?: number;
 }
 
-const SegmentedControlItem: FC<ISegmentedControlItemProps> = ({
+const SegmentedControlButton: FC<ISegmentedControlButtonProps> = ({
     children,
     name,
     Icon,
     size = "medium",
     selected = false,
-    onSelect
+    onSelect,
+    tabIndex
 }) => {
+    const selectHandler = () => {
+        onSelect?.(name);
+    };
+
     return (
         <button
             name={name}
             type="button"
-            onClick={() => onSelect?.(name)}
-            className={classNames(`segmentedControl__block segmentedControl__block_size_${size}`, {
-                segmentedControl__block_icon_only: Icon && !children,
-                segmentedControl__block_selected: selected,
-                segmentedControl__block_withIcon: Icon && children
+            role="radio"
+            aria-checked={selected}
+            tabIndex={tabIndex}
+            onClick={selectHandler}
+            className={classNames(`segmentedControl__button segmentedControl__button_size_${size}`, {
+                segmentedControl__button_icon_only: Icon && !children,
+                segmentedControl__button_selected: selected,
+                segmentedControl__button_withIcon: Icon && children
             })}
         >
             {Icon && <Icon size={20} />}
@@ -59,4 +71,4 @@ const SegmentedControlItem: FC<ISegmentedControlItemProps> = ({
     );
 };
 
-export { SegmentedControlItem as default, ISegmentedControlItemProps };
+export { SegmentedControlButton as default, ISegmentedControlButtonProps };

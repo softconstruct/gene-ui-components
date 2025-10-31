@@ -6,7 +6,7 @@ import { Tag } from "@geneui/icons";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import { ISegmentedControlProps, SegmentedControl, SegmentedControlItem } from "./index";
+import { ISegmentedControlProps, SegmentedControl, SegmentedControlButton } from "./index";
 
 const meta: Meta<typeof SegmentedControl> = {
     title: "Molecules/SegmentedControl",
@@ -27,7 +27,7 @@ const meta: Meta<typeof SegmentedControl> = {
         label: "label",
         size: "medium"
     },
-    subcomponents: { SegmentedControlItem: SegmentedControlItem as ComponentType<unknown> }
+    subcomponents: { SegmentedControlButton: SegmentedControlButton as ComponentType<unknown> }
 };
 
 export default meta;
@@ -35,15 +35,15 @@ export default meta;
 const Template: FC<ISegmentedControlProps> = (props) => {
     return (
         <SegmentedControl {...props}>
-            <SegmentedControlItem name="data1" Icon={Tag}>
+            <SegmentedControlButton name="data1" Icon={Tag}>
                 Data1
-            </SegmentedControlItem>
-            <SegmentedControlItem name="data2" Icon={Tag} selected>
+            </SegmentedControlButton>
+            <SegmentedControlButton name="data2" Icon={Tag} selected>
                 Data2
-            </SegmentedControlItem>
-            <SegmentedControlItem name="data3" Icon={Tag}>
+            </SegmentedControlButton>
+            <SegmentedControlButton name="data3" Icon={Tag}>
                 Data3
-            </SegmentedControlItem>
+            </SegmentedControlButton>
         </SegmentedControl>
     );
 };
@@ -53,9 +53,9 @@ export const Default = Template.bind({});
 const WithoutText: FC<ISegmentedControlProps> = (props) => {
     return (
         <SegmentedControl {...props}>
-            <SegmentedControlItem name="data1" selected Icon={Tag} />
-            <SegmentedControlItem name="data2" Icon={Tag} />
-            <SegmentedControlItem name="data3" Icon={Tag} />
+            <SegmentedControlButton name="data1" selected Icon={Tag} />
+            <SegmentedControlButton name="data2" Icon={Tag} />
+            <SegmentedControlButton name="data3" Icon={Tag} />
         </SegmentedControl>
     );
 };
@@ -64,11 +64,11 @@ export const OnlyIcon = WithoutText.bind({});
 const WithoutIcons: FC<ISegmentedControlProps> = (props) => {
     return (
         <SegmentedControl {...props}>
-            <SegmentedControlItem name="data1">Data1</SegmentedControlItem>
-            <SegmentedControlItem name="data2" selected>
+            <SegmentedControlButton name="data1">Data1</SegmentedControlButton>
+            <SegmentedControlButton name="data2" selected>
                 Data2
-            </SegmentedControlItem>
-            <SegmentedControlItem name="data3">Data3 </SegmentedControlItem>
+            </SegmentedControlButton>
+            <SegmentedControlButton name="data3">Data3 </SegmentedControlButton>
         </SegmentedControl>
     );
 };

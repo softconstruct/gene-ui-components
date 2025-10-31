@@ -1,4 +1,4 @@
-import React, { Children, cloneElement, FC, FunctionComponentElement, useState } from "react";
+import React, { Children, cloneElement, FC, FunctionComponentElement, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
 // Styles
@@ -6,7 +6,9 @@ import "./SegmentedControl.scss";
 
 // Component
 import { HelperText, Label } from "../../../index";
-import { ISegmentedControlItemProps } from "./SegmentedControlItem";
+import { ISegmentedControlButtonProps } from "./SegmentedControlButton";
+
+type SegmentedControlButtonInternalProps = ISegmentedControlButtonProps & { tabIndex?: number };
 
 interface ISegmentedControlProps {
     /**
@@ -24,17 +26,17 @@ interface ISegmentedControlProps {
      */
     label?: string;
     /**
-     * SegmentedControlItem component. Renders inside the component
+     * SegmentedControlButton component. Renders inside the component
      */
     children:
-        | FunctionComponentElement<ISegmentedControlItemProps>
-        | FunctionComponentElement<ISegmentedControlItemProps>[];
+        | FunctionComponentElement<SegmentedControlButtonInternalProps>
+        | FunctionComponentElement<SegmentedControlButtonInternalProps>[];
     /**
      * The actual text content to be displayed as helper text.
      */
     helperText?: string;
     /**
-     *  It works when the user clicks on one of the control items. Returns the value of the `name` prop from the `SegmentedControlItem`.
+     *  It works when the user clicks on one of the control items. Returns the value of the `name` prop from the `SegmentedControlButton`.
      */
     onChange: (name: string) => void;
     /**
@@ -65,7 +67,16 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     size,
     status = "rest" as const
 }) => {
-    const [selectedElementName, setSelectedElementName] = useState("");
+    const initialSelected = useMemo(() => {
+        const arrayChildren = Children.toArray(
+            children
+        ) as FunctionComponentElement<SegmentedControlButtonInternalProps>[];
+        const found = arrayChildren.find((child) => child.props.selected);
+        return found?.props.name ?? "";
+    }, [children]);
+
+    const [selectedElementName, setSelectedElementName] = useState(initialSelected);
+    const wrapperRef = useRef<HTMLDivElement | null>(null);
 
     const onSelect = (name: string) => {
         setSelectedElementName(name);
@@ -74,18 +85,57 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
 
     const textSizes = size === "large" ? "medium" : size;
 
+    const keydownHandler = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (!wrapperRef.current) return;
+        const items = Array.from(wrapperRef.current.querySelectorAll<HTMLButtonElement>('button[role="radio"]'));
+        if (items.length === 0) return;
+
+        const currentIndex = items.findIndex(
+            (btn) => btn.getAttribute("name") === (selectedElementName || items[0].getAttribute("name"))
+        );
+
+        let nextIndex = currentIndex;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+            nextIndex = (currentIndex + 1) % items.length;
+        } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+            nextIndex = (currentIndex - 1 + items.length) % items.length;
+        } else if (e.key === "Home") {
+            nextIndex = 0;
+        } else if (e.key === "End") {
+            nextIndex = items.length - 1;
+        } else {
+            return;
+        }
+
+        e.preventDefault();
+        const nextBtn = items[nextIndex];
+        const nextName = nextBtn.getAttribute("name");
+        if (nextName) {
+            onSelect(nextName);
+            nextBtn.focus();
+        }
+    };
+
     return (
         <div className={classNames("segmentedControl", className)}>
             {label && <Label text={label} required={required} size={textSizes} infoText={infoText} />}
-            <div className="segmentedControl__wrapper">
-                {Children.map(children, (segment) => {
+            <div
+                className="segmentedControl__wrapper"
+                aria-label={label}
+                ref={wrapperRef}
+                onKeyDown={keydownHandler}
+                role="presentation"
+            >
+                {Children.map(children, (segment, index) => {
+                    const isSelected = selectedElementName
+                        ? selectedElementName === segment.props.name
+                        : segment.props.selected || index === 0;
                     return cloneElement(segment, {
                         ...segment.props,
-                        selected: selectedElementName
-                            ? selectedElementName === segment.props.name
-                            : segment.props.selected,
+                        selected: isSelected,
                         size,
-                        onSelect
+                        onSelect,
+                        tabIndex: isSelected ? 0 : -1
                     });
                 })}
             </div>

@@ -59,8 +59,8 @@ export { default as CheckboxGroup, ICheckboxGroupProps, ICheckboxOption } from "
 export {
     SegmentedControl,
     ISegmentedControlProps,
-    SegmentedControlItem,
-    ISegmentedControlItemProps
+    SegmentedControlButton,
+    ISegmentedControlButtonProps
 } from "@components/molecules/SegmentedControl";
 
 // Organisms

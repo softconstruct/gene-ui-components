@@ -7,7 +7,7 @@ import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
 
 // Components
-import { ISegmentedControlProps, SegmentedControl, SegmentedControlItem } from "./index";
+import { ISegmentedControlProps, SegmentedControl, SegmentedControlButton } from "./index";
 
 describe("SegmentedControl ", () => {
     let setup: ReactWrapper<ISegmentedControlProps>;
@@ -15,7 +15,7 @@ describe("SegmentedControl ", () => {
     beforeEach(() => {
         setup = mount(
             <SegmentedControl size="large" onChange={jest.fn}>
-                <SegmentedControlItem name="test1" Icon={Tag} />
+                <SegmentedControlButton name="test1" Icon={Tag} />
             </SegmentedControl>
         );
     });
@@ -37,9 +37,9 @@ describe("SegmentedControl ", () => {
     });
 
     it("renders selected  prop correctly", () => {
-        const children = <SegmentedControlItem name="test" selected />;
+        const children = <SegmentedControlButton name="test" selected />;
         const wrapper = setup.setProps({ children });
-        expect(wrapper.find(SegmentedControlItem).find(".segmentedControl__block_selected").exists()).toBeTruthy();
+        expect(wrapper.find(SegmentedControlButton).find(".segmentedControl__button_selected").exists()).toBeTruthy();
     });
 
     it("renders label prop correctly", () => {
@@ -71,7 +71,9 @@ describe("SegmentedControl ", () => {
         const wrapper = setup.setProps({
             size
         });
-        expect(wrapper.find(SegmentedControlItem).find(`.segmentedControl__block_size_${size}`).exists()).toBeTruthy();
+        expect(
+            wrapper.find(SegmentedControlButton).find(`.segmentedControl__button_size_${size}`).exists()
+        ).toBeTruthy();
     });
 
     it("renders onChange prop correctly", () => {
@@ -79,7 +81,7 @@ describe("SegmentedControl ", () => {
         const wrapper = setup.setProps({
             onChange
         });
-        wrapper.find(".segmentedControl__block").simulate("click");
+        wrapper.find(".segmentedControl__button").simulate("click");
         expect(onChange).toHaveBeenCalledWith("test1");
     });
 
