@@ -287,7 +287,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                 />
                 <div
                     className={classNames(`textField__wrapper textField__wrapper_size_${size}`, paddingClassesForIcon, {
-                        textField__wrapper_readOnly: readOnly,
+                        textField__wrapper_readOnly: readOnly && !disabled,
                         textField__wrapper_disabled: disabled,
                         textField__wrapper_error: status === "error"
                     })}
