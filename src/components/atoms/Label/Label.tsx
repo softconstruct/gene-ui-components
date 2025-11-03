@@ -129,7 +129,7 @@ const Label: FC<ILabelProps> = ({
                         {text && (
                             <Tooltip text={text} isVisible={isTruncated}>
                                 <Text
-                                    // ref={labelRef}
+                                    ref={labelRef}
                                     as="span"
                                     variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
                                     className={classnames(`ellipsis-text label__text`, {
