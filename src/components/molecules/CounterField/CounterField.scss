@@ -1,6 +1,44 @@
 .counterField {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
-    background: blue;
+    $this: &;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--guit-ref-spacing-3xsmall);
+
+    // INPUT CONTAINER - Horizontal layout for buttons and text field
+    &__inputContainer {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-xsmall);
+        width: 100%;
+    }
+
+    // BUTTON - Decrement and Increment buttons (icon-only secondary fill buttons)
+    &__button {
+        flex-shrink: 0;
+    }
+
+    // INPUT - Text field for manual value entry
+    &__input {
+        flex: 0 0 auto;
+        width: 8rem; // Figma: 80px fixed width
+    }
+
+    // INFO CONTAINER - Helper text area
+    &__infoContainer {
+        display: flex;
+        width: 100%;
+    }
+
+    // STATE: DISABLED - Prevents all interactions
+    &_disabled {
+        pointer-events: none;
+        user-select: none;
+    }
+
+    // STATE: READ-ONLY - Prevents modifications
+    &_readOnly {
+        pointer-events: none;
+    }
 }
