@@ -1,16 +1,17 @@
-import React, { ChangeEvent, FC, FocusEvent } from "react";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent } from "react";
 import classNames from "classnames";
 
+import { Minus, Plus } from "@geneui/icons";
+
+import Button from "@components/atoms/Button";
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
-import Button from "@components/atoms/Button";
 import TextField from "@components/molecules/TextField";
-import { Plus, Minus } from "@geneui/icons";
 
 // Styles
 import "./CounterField.scss";
 
-interface ICounterFieldProps {
+export interface ICounterFieldProps {
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -48,15 +49,11 @@ interface ICounterFieldProps {
     /**
      * Size of the component. Possible values: `small | medium | large`
      */
-    size?: 'small' | 'medium' | 'large';
+    size?: "small" | "medium" | "large";
     /**
      * The status/validation state of the component. Possible values: `rest | warning | error`
      */
     status?: "rest" | "warning" | "error";
-    /**
-     * Text alignment of the value in the input field. Possible values: `left | center | right`
-     */
-    alignment?: 'left' | 'right';
     /**
      * The main label for the counter field.
      */
@@ -78,7 +75,7 @@ interface ICounterFieldProps {
     /**
      * Fires when the user changes the counter value (via buttons or input).
      */
-    onChange?: (value: number, event: ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (value: number, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => void;
     /**
      * Fires when the input field loses focus.
      */
@@ -90,74 +87,88 @@ interface ICounterFieldProps {
 }
 
 /**
- * CounterField
+ * CounterField allows users to increment or decrement a numeric value using buttons or direct input.
+ * It supports both controlled and uncontrolled modes, with customizable min values and step increments.
  */
-const CounterField: FC<ICounterFieldProps> = ({ label,
+const CounterField: FC<ICounterFieldProps> = ({
+    label,
     infoText,
     required,
     disabled,
     readOnly,
     helperText,
     status = "rest",
-    value,
-    defaultValue,
-    onChange,
-    onBlur,
-    onFocus,
-    min,
-    step,
-    size,
-    alignment,
-    className }) => {
-    return <div className={classNames(
-        "counterField",
-        {
-            counterField_disabled: disabled,
-            counterField_readOnly: readOnly
-        },
-        className
-    )}
-        aria-required={required}
-        aria-invalid={status === "error"}>{label && (
-            <Label text={label} required={required} disabled={disabled} readOnly={readOnly} infoText={infoText} />
+    // value,
+    // defaultValue,
+    // onChange,
+    // onBlur,
+    // onFocus,
+    // min,
+    // step = 1,
+    size = "medium",
+    className
+}) => {
+    return (
+        <div
+            className={classNames(
+                "counterField",
+                `counterField_status_${status}`,
+                {
+                    counterField_disabled: disabled,
+                    counterField_readOnly: readOnly
+                },
+                className
+            )}
+            aria-required={required}
+            aria-invalid={status === "error"}
+            {...((disabled || readOnly) && { tabIndex: -1 })}
+        >
+            {label && (
+                <Label
+                    text={label}
+                    required={required}
+                    disabled={disabled}
+                    readOnly={readOnly}
+                    infoText={infoText}
+                    size={size === "large" ? "medium" : size}
+                />
+            )}
 
-        )}
-        <div className="counterField__inputContainer">
-            <Button
-                appearance="secondary"
-                className="counterField__button"
-                layout="fill"
-                Icon={Minus}
-            />
-            <TextField
-                numericOnly
-                autoComplete="off"
-                className="pagination__input"
-                value={value !== undefined ? String(value) : undefined}
-                onChange={(event: ChangeEvent<HTMLInputElement>) => {
-                    const next = Number(event.target.value);
-                    onChange?.(isNaN(next) ? 0 : next, event);
-                }}
-                onBlur={onBlur}
-                onFocus={onFocus}
-                size={size}
-            />
-            <Button
-                appearance="secondary"
-                className="counterField__button"
-                layout="fill"
-                Icon={Plus}
-            />
-        </div>
-
-        {helperText && (
-            <div className="counterField__infoContainer">
-                <HelperText text={helperText} disabled={disabled} status={status} />
+            <div className="counterField__inputContainer">
+                <Button
+                    appearance="secondary"
+                    className="counterField__button counterField__button_decrement"
+                    layout="fill"
+                    size={size}
+                    Icon={Minus}
+                    aria-label="Decrement value"
+                />
+                <TextField
+                    numericOnly
+                    autoComplete="off"
+                    className="counterField__input"
+                    size={size}
+                    disabled={disabled}
+                    readOnly={readOnly}
+                    status={status}
+                />
+                <Button
+                    appearance="secondary"
+                    className="counterField__button counterField__button_increment"
+                    layout="fill"
+                    size={size}
+                    Icon={Plus}
+                    aria-label="Increment value"
+                />
             </div>
-        )}
 
-
-    </div>;
+            {helperText && (
+                <div className="counterField__infoContainer">
+                    <HelperText text={helperText} disabled={disabled} status={status} />
+                </div>
+            )}
+        </div>
+    );
 };
 
-export { ICounterFieldProps, CounterField as default };
+export default CounterField;
