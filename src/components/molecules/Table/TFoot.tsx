@@ -6,11 +6,13 @@ import { Row } from ".";
 interface ITableFoot {
     table: Table<Row>;
     withCheckbox?: boolean;
+    expandable?: boolean;
 }
 
-const TFoot = forwardRef<HTMLTableSectionElement, ITableFoot>(({ table, withCheckbox }, ref) => {
+const TFoot = forwardRef<HTMLTableSectionElement, ITableFoot>(({ table, withCheckbox, expandable }, ref) => {
     const renderTableFooterCell = (footer: Header<Row, unknown>) => {
         if (footer.id === "rowCheckbox" && !withCheckbox) return null;
+        if (footer.id === "expand" && !expandable) return null;
 
         return (
             <td key={`${footer.id}_footer`} className="table__td" colSpan={footer.colSpan}>

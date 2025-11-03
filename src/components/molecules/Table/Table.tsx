@@ -572,7 +572,12 @@ const Table: FC<ITableProps> = ({
                             tableFootRef={tableFootRef.current}
                         />
                         {table.getRowModel().rows.length > 0 && (
-                            <TFoot ref={tableFootRef} table={table} withCheckbox={withCheckbox} />
+                            <TFoot
+                                ref={tableFootRef}
+                                table={table}
+                                expandable={expandable}
+                                withCheckbox={withCheckbox}
+                            />
                         )}
                     </table>
                 </Scrollbar>

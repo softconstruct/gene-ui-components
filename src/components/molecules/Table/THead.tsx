@@ -26,6 +26,18 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
             setActiveHeaders({ ...activeHeaders, [colId]: value });
         };
 
+        const getAriaSortValue = (
+            sortDirection: false | "asc" | "desc"
+        ): "ascending" | "descending" | "none" | undefined => {
+            if (sortDirection === "asc") {
+                return "ascending";
+            }
+            if (sortDirection === "desc") {
+                return "descending";
+            }
+            return undefined;
+        };
+
         const renderTableHeaderCell = (header: Header<Row, unknown>) => {
             if (header.isPlaceholder) return null;
 
@@ -93,8 +105,8 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
                         table__th_group: header.subHeaders.length,
                         table__th_active: !!activeHeaders?.[header.id]
                     })}
-                    aria-sort={sortDirection}
-                    aria-label={sortDirection}
+                    aria-sort={getAriaSortValue(sortDirection)}
+                    aria-label={sortDirection || undefined}
                 >
                     <div className="table__content table__content_empty">
                         <div className="table__content table__content_header">
