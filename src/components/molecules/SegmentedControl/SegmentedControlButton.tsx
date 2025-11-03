@@ -3,6 +3,7 @@ import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
 
+import Text from "@components/atoms/Text";
 import { SegmentedControlContext } from "@components/molecules/SegmentedControl/SegmentedControl";
 
 // Styles
@@ -49,7 +50,11 @@ const SegmentedControlButton: FC<ISegmentedControlButtonProps> = ({ children, na
             })}
         >
             {Icon && <Icon size={20} />}
-            {children && <span className="segmentedControl__text">{children}</span>}
+            {children && (
+                <Text as="span" variant="labelMediumSemibold">
+                    {children}
+                </Text>
+            )}
         </button>
     );
 };
