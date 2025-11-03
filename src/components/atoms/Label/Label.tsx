@@ -1,6 +1,7 @@
 import React, { FC, JSX, useRef } from "react";
 import classnames from "classnames";
 
+import Text from "@components/atoms/Text";
 // Components
 import Tooltip from "@components/molecules/Tooltip";
 
@@ -107,7 +108,6 @@ const Label: FC<ILabelProps> = ({
             </div>
         );
     }
-
     return (
         <Component
             className={classnames(
@@ -128,24 +128,28 @@ const Label: FC<ILabelProps> = ({
                     <div className="label__containerInner">
                         {text && (
                             <Tooltip text={text} isVisible={isTruncated}>
-                                <span
-                                    ref={labelRef}
-                                    className={classnames(`ellipsis-text label__text label__text_size_${size}`, {
+                                <Text
+                                    // ref={labelRef}
+                                    as="span"
+                                    variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
+                                    className={classnames(`ellipsis-text label__text`, {
                                         label__text_disabled: disabled
                                     })}
                                 >
                                     {text}
-                                </span>
+                                </Text>
                             </Tooltip>
                         )}
                         {required && (
-                            <span
-                                className={classnames(`label__asterisk label__text_size_${size} `, {
+                            <Text
+                                as="span"
+                                variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
+                                className={classnames(`label__asterisk`, {
                                     label__text_disabled: disabled
                                 })}
                             >
                                 *
-                            </span>
+                            </Text>
                         )}
                     </div>
                     {infoText && (
