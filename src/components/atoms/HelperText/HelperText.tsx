@@ -3,6 +3,8 @@ import classnames from "classnames";
 
 import { ErrorFilled, IconProps, TriangleAlert } from "@geneui/icons";
 
+import Text from "@components/atoms/Text";
+
 // Styles
 import "./HelperText.scss";
 
@@ -65,6 +67,14 @@ const HelperText: FC<IHelperTextProps> = ({ size = "medium", status = "rest", te
         >
             {iconMap[status] && <div className="helperText__icon">{iconMap[status]}</div>}
             <p className="helperText__text">{text}</p>
+
+            <Text
+                as="p"
+                variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
+                className="helperText__text"
+            >
+                {text}
+            </Text>
         </div>
     );
 };
