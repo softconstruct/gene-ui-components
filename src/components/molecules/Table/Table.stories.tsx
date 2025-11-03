@@ -53,7 +53,7 @@ const meta: Meta<ITableProps> = {
     argTypes: {
         columns: args({ control: "false", ...propCategory.content }),
         externalData: args({ control: "false", ...propCategory.content }),
-        expandable: args({ control: "boolean", ...propCategory.content }),
+        withExpandable: args({ control: "boolean", ...propCategory.content }),
         withCheckbox: args({ control: "boolean", ...propCategory.content }),
         onRowClick: args({ control: "false", ...propCategory.action }),
         onRowPinToggle: args({ control: "false", ...propCategory.action }),
@@ -67,7 +67,7 @@ const meta: Meta<ITableProps> = {
         onSelectAllRows: args({ control: "false", ...propCategory.action }),
         className: args({ control: "false", ...propCategory.appearance }),
         onGlobalFilterChange: args({ control: "false", ...propCategory.action }),
-        onManageColumns: args({ control: "false", ...propCategory.action }),
+        onManageColumnsChange: args({ control: "false", ...propCategory.action }),
         bulkActions: args({ control: "false", ...propCategory.functionality }),
         withGlobalFilter: args({ control: "boolean", ...propCategory.functionality }),
         globalFilterPlaceholder: args({ control: "text", ...propCategory.content }),
@@ -85,7 +85,7 @@ const meta: Meta<ITableProps> = {
         onEdit: args({ control: "false", ...propCategory.action }),
         onCancel: args({ control: "false", ...propCategory.action }),
         withDynamicFetch: args({ control: "boolean", ...propCategory.functionality }),
-        editableMode: args({ control: "boolean", ...propCategory.functionality }),
+        withEditMode: args({ control: "boolean", ...propCategory.functionality }),
         onPageSizeChange: args({ control: "false", ...propCategory.functionality }),
         withManualPagination: args({ control: "boolean", ...propCategory.functionality }),
         keepPinnedRows: args({ control: "boolean", ...propCategory.functionality }),
@@ -224,10 +224,10 @@ const TableComponent: FC<ITableProps> = (props) => {
                 externalData={tableData}
                 bulkActions={bulkActionsMock}
                 onCellEdit={onCellEdit}
-                editableMode={editableState}
+                withEditMode={editableState}
                 onRowPinToggle={onRowPinToggle}
                 onRowDelete={onRowDelete}
-                onManageColumns={handleColumnsMange}
+                onManageColumnsChange={handleColumnsMange}
                 onManageColumnRestore={handleManageColumnRestore}
                 onRowClick={handleRowClick}
                 onEdit={onEdit}

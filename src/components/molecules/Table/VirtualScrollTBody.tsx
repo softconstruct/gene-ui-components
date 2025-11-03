@@ -12,9 +12,9 @@ interface IVirtualScrollTBody {
     centerRows: Row<RowData>[];
     columnCount: number;
     scrollbarContainerRef: Scrollbars | null;
-    expandable?: boolean;
+    withExpandable?: boolean;
     withCheckbox?: boolean;
-    editableMode: boolean;
+    withEditMode: boolean;
     withDynamicFetch?: boolean;
     hasNextPage?: boolean;
     isFetchingNextPage?: boolean;
@@ -30,9 +30,9 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    expandable,
+    withExpandable,
     withCheckbox,
-    editableMode
+    withEditMode
 }) => {
     const [needToFetchData, setNeedToFetchData] = useState(false);
 
@@ -73,9 +73,9 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                     key={row.id}
                     row={row}
                     rowIndex={row.index}
-                    expandable={expandable}
+                    withExpandable={withExpandable}
                     withCheckbox={withCheckbox}
-                    editableMode={editableMode}
+                    withEditMode={withEditMode}
                 />
             ))}
             {virtualItems.map((virtualRow) => {
@@ -85,9 +85,9 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                         key={row.id}
                         row={row}
                         rowIndex={virtualRow.index}
-                        expandable={expandable}
+                        withExpandable={withExpandable}
                         withCheckbox={withCheckbox}
-                        editableMode={editableMode}
+                        withEditMode={withEditMode}
                     />
                 );
             })}

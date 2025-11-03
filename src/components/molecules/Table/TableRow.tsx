@@ -15,12 +15,12 @@ import Cell, { ICellProps } from "./Cell";
 interface ITableRow {
     row: Row<RowData>;
     rowIndex: number;
-    expandable?: boolean;
+    withExpandable?: boolean;
     withCheckbox?: boolean;
-    editableMode: boolean;
+    withEditMode: boolean;
 }
 
-const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, editableMode }) => {
+const TableRow: FC<ITableRow> = ({ row, rowIndex, withExpandable, withCheckbox, withEditMode }) => {
     const {
         onRowClick,
         onCellEdit,
@@ -121,7 +121,7 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
                 aria-expanded={isExpanded}
                 role="row"
             >
-                {expandable && (
+                {withExpandable && (
                     <td className="table__td">
                         <div className="table__content table__content_expand">
                             {canExpand && (
@@ -170,7 +170,7 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
                                 <Cell
                                     type={type as ICellProps["type"]}
                                     data={row.original[colDef.type]}
-                                    withEditMode={editableMode}
+                                    withEditMode={withEditMode}
                                     rowCellRenderer={colDef.rowCellRenderer}
                                     withCopy={colDef.copyable}
                                     ariaLabel={cellLabel}
@@ -182,7 +182,7 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, expandable, withCheckbox, edit
                         </td>
                     );
                 })}
-                {!editableMode && actionsConfig.some((action) => !!action.handler) && (
+                {!withEditMode && actionsConfig.some((action) => !!action.handler) && (
                     <td className="table__td table__actionsWrapper" role="row">
                         <div className="table__actions" role="group" aria-label={`Actions for row ${rowIndex + 1}`}>
                             {actionsConfig

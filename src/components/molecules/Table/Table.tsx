@@ -39,8 +39,9 @@ interface ITableActions {
     onRowClick?: (data: TanstackRow<Row>) => void;
     /**
      * A callback function that is triggered when the main checkbox in the table header is toggled.
+     * @param isAllSelected - Whether all rows are now selected
      */
-    onSelectAllRows?: () => void;
+    onSelectAllRows?: (isAllSelected: boolean) => void;
     /**
      * A callback function that is triggered when the value of the global search input changes.
      */
@@ -48,7 +49,7 @@ interface ITableActions {
     /**
      * A callback function that is triggered when column visibility or order is updated via the "Manage Columns" menu.
      */
-    onManageColumns?: (event: IManageColumnsData[]) => void;
+    onManageColumnsChange?: (event: IManageColumnsData[]) => void;
     /**
      * A callback function that is triggered when the column configuration is restored to its default settings from the "Manage Columns" menu.
      */
@@ -138,7 +139,7 @@ interface ITableProps extends ITableActions {
     /**
      * Enables expandable rows, allowing for additional content to be revealed below a row when clicked.
      */
-    expandable?: boolean;
+    withExpandable?: boolean;
 
     /**
      * Shows a checkbox for each row.
@@ -263,7 +264,7 @@ interface ITableProps extends ITableActions {
      * A React node to be rendered as additional content in the table's header toolbar.
      */
     headerContent?: ReactNode;
-    editableMode?: boolean;
+    withEditMode?: boolean;
     keepPinnedRows?: boolean;
     emptyTitle?: string;
     emptyDescription?: string;
@@ -277,10 +278,10 @@ const Table: FC<ITableProps> = ({
     columns,
     externalData,
     withCheckbox,
-    expandable,
+    withExpandable,
     onRowClick,
     onSelectAllRows,
-    onManageColumns,
+    onManageColumnsChange,
     onManageColumnRestore,
     className,
     onSortChange,
@@ -320,7 +321,7 @@ const Table: FC<ITableProps> = ({
     onRowShow,
     onRowDelete,
     onCellEdit,
-    editableMode,
+    withEditMode,
     onEdit,
     onCancel,
     keepPinnedRows,
@@ -333,7 +334,7 @@ const Table: FC<ITableProps> = ({
     const scrollbarContainerRef = useRef<ScrollbarRefType>(null);
     const tableHeadRef = React.useRef<HTMLTableSectionElement>(null);
     const tableFootRef = React.useRef<HTMLTableSectionElement>(null);
-    const [data, setData] = useState<Row[]>(deepCloneWithFunctions(externalData));
+    const [data, setData] = useState<Row[]>(() => deepCloneWithFunctions(externalData));
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
     const [sorting, setSorting] = useState<SortingState>([]);
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -352,7 +353,7 @@ const Table: FC<ITableProps> = ({
     const [selectedRows, setSelectedRows] = useState<RowSelectionState>({});
 
     const handleRowClick = (row: TanstackRow<Row>) => {
-        if (editableMode) return;
+        if (withEditMode) return;
         onRowClick?.(row);
     };
 
@@ -361,7 +362,7 @@ const Table: FC<ITableProps> = ({
             onRowClick: handleRowClick,
             onSelectAllRows,
             onGlobalFilterChange,
-            onManageColumns,
+            onManageColumnsChange,
             onManageColumnRestore,
             onSortChange,
             onPageChange,
@@ -380,12 +381,15 @@ const Table: FC<ITableProps> = ({
             onEdit,
             onCancel
         }),
-        [editableMode]
+        [withEditMode]
     );
 
     useEffect(() => {
-        setData(externalData);
-        setRowPinning({ ...rowPinning, top: externalData.filter((item) => item.isPinned).map((item) => item.id) });
+        setData(deepCloneWithFunctions(externalData));
+        setRowPinning((prevRowPinning) => ({
+            ...prevRowPinning,
+            top: externalData.filter((item) => item.isPinned).map((item) => item.id)
+        }));
         setSelectedRows(
             Object.fromEntries(externalData.filter((item) => item.isSelected).map((row) => [[row.id], true]))
         );
@@ -522,7 +526,7 @@ const Table: FC<ITableProps> = ({
                     withManageColumns={withManageColumns}
                     isManageColumnsDisabled={isManageColumnsDisabled}
                     withCheckbox={withCheckbox}
-                    editableMode={editableMode}
+                    withEditMode={withEditMode}
                     headerContent={headerContent}
                     withGlobalFilter={withGlobalFilter}
                     globalFilter={globalFilter}
@@ -544,7 +548,7 @@ const Table: FC<ITableProps> = ({
                         <THead
                             ref={tableHeadRef}
                             table={table}
-                            expandable={expandable}
+                            withExpandable={withExpandable}
                             withCheckbox={withCheckbox}
                             withStickyHeader={withStickyHeader}
                             selectAllText={selectAllText}
@@ -552,9 +556,9 @@ const Table: FC<ITableProps> = ({
                         />
                         <TBody
                             table={table}
-                            expandable={expandable}
+                            withExpandable={withExpandable}
                             withCheckbox={withCheckbox}
-                            editableMode={editableMode}
+                            withEditMode={withEditMode}
                             scrollbarContainerRef={scrollbarContainerRef.current}
                             loaderSize={loaderSize}
                             loaderText={loaderText}
@@ -575,7 +579,7 @@ const Table: FC<ITableProps> = ({
                             <TFoot
                                 ref={tableFootRef}
                                 table={table}
-                                expandable={expandable}
+                                withExpandable={withExpandable}
                                 withCheckbox={withCheckbox}
                             />
                         )}

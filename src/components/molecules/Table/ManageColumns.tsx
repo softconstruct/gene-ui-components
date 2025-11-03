@@ -22,7 +22,7 @@ interface IManageColumns {
 }
 
 const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onMenuClose, isGrouped }) => {
-    const { onManageColumns, onManageColumnRestore } = useContext(TableContext);
+    const { onManageColumnsChange, onManageColumnRestore } = useContext(TableContext);
     const [columns, setColumns] = useState<IOrderedColumns[] | null>(null);
     const [columnsVisibility, setColumnsVisibility] = useState<VisibilityState>({});
     const [savedColumnData, setSavedColumnData] = useState<IManageColumnsData[] | null>(null);
@@ -42,7 +42,7 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onM
     const handleManageColumns = () => {
         onMenuClose();
         if (!columns?.length || !savedColumnData?.length) return;
-        onManageColumns?.(savedColumnData);
+        onManageColumnsChange?.(savedColumnData);
     };
 
     const handleColumnVisibility = (column: Column<Row, unknown>) => {
@@ -217,7 +217,6 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onM
                                         layout="text"
                                         size="small"
                                         Icon={ThreeDotsVertical}
-                                        onClick={() => {}}
                                         className="dropdownMenu__columns_icon"
                                     />
                                 </div>

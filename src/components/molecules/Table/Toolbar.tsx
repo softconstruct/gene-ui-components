@@ -23,7 +23,7 @@ interface IToolbar {
     selectedRowsLength?: number;
     onRowsDeselect?: () => void;
     headerContent?: ReactNode;
-    editableMode?: boolean;
+    withEditMode?: boolean;
     withManageColumns?: boolean;
     manageColumnsTitle?: string;
     isManageColumnsDisabled?: boolean;
@@ -42,7 +42,7 @@ const Toolbar: FC<IToolbar> = ({
     selectedRowsLength,
     onRowsDeselect,
     headerContent,
-    editableMode,
+    withEditMode,
     withManageColumns,
     manageColumnsTitle,
     isManageColumnsDisabled,
@@ -116,7 +116,7 @@ const Toolbar: FC<IToolbar> = ({
             </div>
             <div className="dataTable__toolbar_actions">
                 {headerContent && <div className="dataTable__toolbar_content">{headerContent}</div>}
-                {editableMode ? (
+                {withEditMode ? (
                     <ButtonGroup size="medium">
                         <Button
                             appearance="secondary"

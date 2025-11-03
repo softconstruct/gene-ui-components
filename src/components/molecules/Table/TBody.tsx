@@ -11,9 +11,9 @@ import { Row } from ".";
 
 interface ITableBody {
     table: Table<Row>;
-    expandable?: boolean;
+    withExpandable?: boolean;
     withCheckbox?: boolean;
-    editableMode?: boolean;
+    withEditMode?: boolean;
     loading?: boolean;
     loaderSize?: ILoaderProps["size"];
     loaderText?: string;
@@ -33,9 +33,9 @@ interface ITableBody {
 
 const TBody: FC<ITableBody> = ({
     table,
-    expandable,
+    withExpandable,
     withCheckbox,
-    editableMode = false,
+    withEditMode = false,
     loading,
     loaderSize,
     loaderText,
@@ -85,8 +85,8 @@ const TBody: FC<ITableBody> = ({
                                 centerRows={table.getCenterRows()}
                                 columnCount={table.getHeaderGroups().length || 1}
                                 scrollbarContainerRef={scrollbarContainerRef.scrollbarRef}
-                                expandable={expandable}
-                                editableMode={editableMode}
+                                withExpandable={withExpandable}
+                                withEditMode={withEditMode}
                                 withCheckbox={withCheckbox}
                                 withDynamicFetch={withDynamicFetch}
                                 hasNextPage={hasNextPage}
@@ -100,9 +100,9 @@ const TBody: FC<ITableBody> = ({
                                 key={row.id}
                                 row={row}
                                 rowIndex={rowIndex}
-                                expandable={expandable}
+                                withExpandable={withExpandable}
                                 withCheckbox={withCheckbox}
-                                editableMode={editableMode}
+                                withEditMode={withEditMode}
                             />
                         ))
                     )}

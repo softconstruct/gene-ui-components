@@ -10,7 +10,7 @@ import { Row, TableCol } from ".";
 
 interface ITableHead {
     table: Table<Row>;
-    expandable?: boolean;
+    withExpandable?: boolean;
     withCheckbox?: boolean;
     withStickyHeader?: boolean;
     selectAllText?: string;
@@ -18,7 +18,7 @@ interface ITableHead {
 }
 
 const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
-    ({ table, expandable, withCheckbox, withStickyHeader, selectAllText, rowCount }, ref) => {
+    ({ table, withExpandable, withCheckbox, withStickyHeader, selectAllText, rowCount }, ref) => {
         const { onSelectAllRows } = useContext(TableContext);
         const [activeHeaders, setActiveHeaders] = useState<Record<string, boolean> | null>(null);
 
@@ -67,14 +67,14 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
                                 aria-checked={isAllSelected}
                                 onChange={() => {
                                     table.toggleAllPageRowsSelected();
-                                    onSelectAllRows?.();
+                                    onSelectAllRows?.(table.getIsAllPageRowsSelected());
                                 }}
                             />
                         </div>
                     </th>
                 );
             }
-            if ((header.column.columnDef as TableCol<Row>).type === "Expand" && expandable) {
+            if ((header.column.columnDef as TableCol<Row>).type === "Expand" && withExpandable) {
                 return (
                     <th
                         key={`${header.id}_header`}

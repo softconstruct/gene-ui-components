@@ -28,7 +28,7 @@ describe("Table", () => {
         onRowClick: jest.fn(),
         onSelectAllRows: jest.fn(),
         onGlobalFilterChange: jest.fn(),
-        onManageColumns: jest.fn(),
+        onManageColumnsChange: jest.fn(),
         onSortChange: jest.fn(),
         onPageChange: jest.fn(),
         onPageSizeChange: jest.fn(),
@@ -59,7 +59,7 @@ describe("Table", () => {
     });
 
     it("renders with expandable prop", () => {
-        setup.setProps({ expandable: true });
+        setup.setProps({ withExpandable: true });
         expect(setup.find(".table__content_expand").exists()).toBeTruthy();
     });
 
@@ -173,8 +173,8 @@ describe("Table", () => {
     });
 
     it("calls 'onEdit' when the component is set to 'editableMode' and the edit action is performed", () => {
-        setup.setProps({ editableMode: false });
-        setup.setProps({ onEdit: defaultProps.onEdit, editableMode: true });
+        setup.setProps({ withEditMode: false });
+        setup.setProps({ onEdit: defaultProps.onEdit, withEditMode: true });
         expect(defaultProps.onEdit).not.toHaveBeenCalled();
     });
 });
