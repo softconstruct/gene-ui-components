@@ -4,8 +4,6 @@ import { mount, ReactWrapper } from "enzyme";
 // Components
 import { Info } from "@geneui/icons";
 
-import Text from "@components/atoms/Text";
-
 // Components
 import GeneUIProvider from "../../providers/GeneUIProvider";
 import Label, { ILabelProps } from "./index";
@@ -27,7 +25,8 @@ describe("Label ", () => {
     it.each<ILabelProps["size"]>(["medium", "small"])('should have "%s" size', (size) => {
         const wrapper = setup.setProps({ size });
         const expectedVariant = size === "medium" ? "labelMediumMedium" : "labelSmallMedium";
-        expect(wrapper.find(Text).prop("variant")).toBe(expectedVariant);
+        const labelText = wrapper.find(".label__text").hostNodes().at(0);
+        expect(labelText.hasClass(`text_variant_${expectedVariant}`)).toBeTruthy();
     });
 
     it("renders text prop correctly", () => {
@@ -36,7 +35,7 @@ describe("Label ", () => {
 
     it("renders required prop correctly", () => {
         const wrapper = setup.setProps({ required: true });
-        expect(wrapper.find(".label__asterisk").text()).toStrictEqual("*");
+        expect(wrapper.find(".label__asterisk").hostNodes().text()).toStrictEqual("*");
     });
 
     it("renders infoText prop correctly", () => {
