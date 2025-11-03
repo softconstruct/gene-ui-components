@@ -51,7 +51,7 @@ const SegmentedControlButton: FC<ISegmentedControlButtonProps> = ({ children, na
         >
             {Icon && <Icon size={20} />}
             {children && (
-                <Text as="span" variant="labelMediumSemibold">
+                <Text as="span" variant="labelMediumSemibold" className="segmentedControl__text">
                     {children}
                 </Text>
             )}

@@ -119,7 +119,7 @@ describe("SegmentedControl ", () => {
             </SegmentedControl>
         );
 
-        expect(wrapper.find(".segmentedControl__text").text()).toBe("Text Button");
+        expect(wrapper.find(".segmentedControl__text").hostNodes().text()).toBe("Text Button");
     });
 
     it("renders button with icon and text correctly", () => {
@@ -132,7 +132,7 @@ describe("SegmentedControl ", () => {
         );
 
         expect(wrapper.find(Tag).exists()).toBeTruthy();
-        expect(wrapper.find(".segmentedControl__text").text()).toBe("Icon Text");
+        expect(wrapper.find(".segmentedControl__text").hostNodes().text()).toBe("Icon Text");
         expect(wrapper.find(".segmentedControl__button_withIcon").exists()).toBeTruthy();
     });
 
