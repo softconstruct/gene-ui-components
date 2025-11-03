@@ -66,8 +66,6 @@ const HelperText: FC<IHelperTextProps> = ({ size = "medium", status = "rest", te
             })}
         >
             {iconMap[status] && <div className="helperText__icon">{iconMap[status]}</div>}
-            <p className="helperText__text">{text}</p>
-
             <Text
                 as="p"
                 variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
