@@ -1,4 +1,4 @@
-import React, { ComponentType, FC } from "react";
+import React, { ComponentType, FC, useState } from "react";
 import { Meta } from "@storybook/react";
 
 import { Tag } from "@geneui/icons";
@@ -6,7 +6,36 @@ import { Tag } from "@geneui/icons";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
-import { ISegmentedControlProps, SegmentedControl, SegmentedControlButton } from "./index";
+import {
+    ISegmentedControlButtonProps,
+    ISegmentedControlProps,
+    SegmentedControl,
+    SegmentedControlButton
+} from "./index";
+
+const segmentedControlData: ISegmentedControlButtonProps[] = [
+    {
+        name: "data1",
+        Icon: Tag,
+        children: "data1",
+        selected: true
+    },
+    {
+        name: "data2",
+        Icon: Tag,
+        children: "data2"
+    },
+    {
+        name: "data3",
+        Icon: Tag,
+        children: "data3"
+    },
+    {
+        name: "data4",
+        Icon: Tag,
+        children: "data4"
+    }
+];
 
 const meta: Meta<typeof SegmentedControl> = {
     title: "Molecules/SegmentedControl",
@@ -32,17 +61,22 @@ const meta: Meta<typeof SegmentedControl> = {
 export default meta;
 
 const Template: FC<ISegmentedControlProps> = (props) => {
+    const [segmentedControls, setSegmentedControls] = useState<ISegmentedControlButtonProps[]>(segmentedControlData);
+    const onChangeHandler = (name: string) => {
+        setSegmentedControls((prev) => {
+            return prev.map((el) => ({ ...el, selected: el.name === name }));
+        });
+    };
+
     return (
-        <SegmentedControl {...props}>
-            <SegmentedControlButton name="data1" Icon={Tag}>
-                Data1
-            </SegmentedControlButton>
-            <SegmentedControlButton name="data2" Icon={Tag} selected>
-                Data2
-            </SegmentedControlButton>
-            <SegmentedControlButton name="data3" Icon={Tag}>
-                Data3
-            </SegmentedControlButton>
+        <SegmentedControl {...props} onChange={onChangeHandler}>
+            {segmentedControls.map(({ name, Icon, children, selected }) => {
+                return (
+                    <SegmentedControlButton name={name} Icon={Icon} selected={selected}>
+                        {children}
+                    </SegmentedControlButton>
+                );
+            })}
         </SegmentedControl>
     );
 };
