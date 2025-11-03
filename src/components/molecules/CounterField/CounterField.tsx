@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, FocusEvent, MouseEvent } from "react";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useState } from "react";
 import classNames from "classnames";
 
 import { Minus, Plus } from "@geneui/icons";
@@ -98,16 +98,77 @@ const CounterField: FC<ICounterFieldProps> = ({
     readOnly,
     helperText,
     status = "rest",
-    // value,
-    // defaultValue,
-    // onChange,
-    // onBlur,
-    // onFocus,
-    // min,
-    // step = 1,
+    value,
+    defaultValue = 0,
+    onChange,
+    onBlur,
+    onFocus,
+    min = 0,
+    step = 1,
     size = "medium",
     className
 }) => {
+    const isControlled = value !== undefined;
+
+    const [internalValue, setInternalValue] = useState(defaultValue || min);
+
+    const currentValue = isControlled ? value : internalValue;
+
+    const clampToMin = (nextValue: number) => {
+        if (nextValue < min) {
+            return min;
+        }
+        return nextValue;
+    };
+
+    const updateValue = (nextValue: number, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => {
+        const clampedValue = clampToMin(nextValue);
+
+        if (!isControlled) {
+            setInternalValue(clampedValue);
+        }
+
+        onChange?.(clampedValue, event);
+    };
+
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const inputValue = event.target.value;
+
+        // Handle empty or just minus sign by clamping to the minimum value
+        if (inputValue === "" || inputValue === "-") {
+            const nextValue = min;
+            updateValue(nextValue, event);
+            return;
+        }
+
+        const parsedValue = parseInt(inputValue, 10);
+
+        if (!Number.isNaN(parsedValue)) {
+            updateValue(parsedValue, event);
+        }
+    };
+
+    const handleDecrement = (event: MouseEvent<HTMLButtonElement>) => {
+        const nextValue = currentValue - step;
+        updateValue(nextValue, event);
+    };
+
+    const handleIncrement = (event: MouseEvent<HTMLButtonElement>) => {
+        const nextValue = currentValue + step;
+        updateValue(nextValue, event);
+    };
+
+    const isDecrementDisabled = disabled || readOnly || currentValue <= min;
+
+    const onFocusHandler = (e: FocusEvent<HTMLInputElement>) => onFocus?.(e);
+
+    const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => onBlur?.(e);
+
+    useEffect(() => {
+        if (isControlled) {
+            setInternalValue(value);
+        }
+    }, [value, isControlled]);
     return (
         <div
             className={classNames(
@@ -141,13 +202,19 @@ const CounterField: FC<ICounterFieldProps> = ({
                     layout="fill"
                     size={size}
                     Icon={Minus}
+                    disabled={isDecrementDisabled}
                     aria-label="Decrement value"
+                    onClick={handleDecrement}
                 />
                 <TextField
                     numericOnly
                     autoComplete="off"
+                    onBlur={onBlurHandler}
+                    onFocus={onFocusHandler}
+                    onChange={handleInputChange}
                     className="counterField__input"
                     size={size}
+                    value={String(currentValue)}
                     disabled={disabled}
                     readOnly={readOnly}
                     status={status}
@@ -158,7 +225,9 @@ const CounterField: FC<ICounterFieldProps> = ({
                     layout="fill"
                     size={size}
                     Icon={Plus}
+                    disabled={disabled || readOnly}
                     aria-label="Increment value"
+                    onClick={handleIncrement}
                 />
             </div>
 
