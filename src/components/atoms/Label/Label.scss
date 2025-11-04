@@ -3,14 +3,11 @@
     align-items: center;
     max-width: 100%;
     min-width: 0;
+    gap: var(--guit-ref-spacing-3xsmall);
 
     &_variant {
         &_interactive {
             cursor: pointer;
-        }
-
-        &_descriptive {
-            pointer-events: none;
         }
     }
 

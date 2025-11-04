@@ -86,9 +86,9 @@ const Label: FC<ILabelProps> = ({
     readOnly,
     labelFor
 }) => {
-    const labelRef = useRef<HTMLLabelElement | HTMLDivElement | null>(null);
+    const labelTextRef = useRef<HTMLSpanElement | null>(null);
 
-    const isTruncated: boolean = useEllipsisDetection(labelRef);
+    const isTruncated: boolean = useEllipsisDetection(labelTextRef);
 
     const Component = children || labelFor ? "label" : "div";
 
@@ -108,6 +108,35 @@ const Label: FC<ILabelProps> = ({
             </div>
         );
     }
+
+    const TextAndRequired = text ? (
+        <>
+            <Tooltip text={text} isVisible={isTruncated}>
+                <Text
+                    ref={labelTextRef}
+                    as="span"
+                    variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
+                    className={classnames(`ellipsis-text label__text`, {
+                        label__text_disabled: disabled
+                    })}
+                >
+                    {text}
+                </Text>
+            </Tooltip>
+            {required && (
+                <Text
+                    as="span"
+                    variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
+                    className={classnames(`label__asterisk`, {
+                        label__text_disabled: disabled
+                    })}
+                >
+                    *
+                </Text>
+            )}
+        </>
+    ) : null;
+
     return (
         <Component
             className={classnames(
@@ -123,39 +152,27 @@ const Label: FC<ILabelProps> = ({
             onClick={handlePreventLabelInteraction}
         >
             {children}
-            {text && (
+            {TextAndRequired && !labelFor ? (
                 <span className={classnames("label__container")}>
-                    <div className="label__containerInner">
-                        {text && (
-                            <Tooltip text={text} isVisible={isTruncated}>
-                                <Text
-                                    ref={labelRef}
-                                    as="span"
-                                    variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
-                                    className={classnames(`ellipsis-text label__text`, {
-                                        label__text_disabled: disabled
-                                    })}
-                                >
-                                    {text}
-                                </Text>
-                            </Tooltip>
-                        )}
-                        {required && (
-                            <Text
-                                as="span"
-                                variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
-                                className={classnames(`label__asterisk`, {
-                                    label__text_disabled: disabled
-                                })}
-                            >
-                                *
-                            </Text>
-                        )}
-                    </div>
+                    <div className="label__containerInner">{TextAndRequired}</div>
                     {infoText && (
                         <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} className="label__info" />
                     )}
                 </span>
+            ) : (
+                TextAndRequired && (
+                    <>
+                        {TextAndRequired}
+                        {infoText && (
+                            <Info
+                                infoText={infoText}
+                                disabled={disabled}
+                                size={iconSizes[size]}
+                                className="label__info"
+                            />
+                        )}
+                    </>
+                )
             )}
         </Component>
     );
