@@ -22,14 +22,12 @@ interface ISegmentedControlButtonProps {
      * The `Icon` prop accepts a React Functional Component that will be displayed alongside the button text.
      */
     Icon?: FC<IconProps>;
-    /**
-     *Displays the selected item
-     */
-    selected?: boolean;
 }
 
-const SegmentedControlButton: FC<ISegmentedControlButtonProps> = ({ children, name, Icon, selected = false }) => {
-    const { size, onSelect } = useContext(SegmentedControlContext);
+const SegmentedControlButton: FC<ISegmentedControlButtonProps> = ({ children, name, Icon }) => {
+    const { size, onSelect, selectedValue } = useContext(SegmentedControlContext);
+
+    const isSelected = selectedValue === name;
 
     const selectHandler = () => {
         onSelect?.(name);
@@ -40,12 +38,12 @@ const SegmentedControlButton: FC<ISegmentedControlButtonProps> = ({ children, na
             name={name}
             type="button"
             role="radio"
-            aria-checked={selected}
-            tabIndex={selected ? 0 : -1}
+            aria-checked={isSelected}
+            tabIndex={isSelected ? 0 : -1}
             onClick={selectHandler}
             className={classNames(`segmentedControl__button segmentedControl__button_size_${size}`, {
                 segmentedControl__button_icon_only: Icon && !children,
-                segmentedControl__button_selected: selected,
+                segmentedControl__button_selected: isSelected,
                 segmentedControl__button_withIcon: Icon && children
             })}
         >

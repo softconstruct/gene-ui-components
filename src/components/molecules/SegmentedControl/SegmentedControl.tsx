@@ -1,6 +1,5 @@
 import React, {
     Children,
-    cloneElement,
     createContext,
     FC,
     FunctionComponentElement,
@@ -23,6 +22,7 @@ type SizeType = "large" | "medium" | "small";
 interface ISegmentedControlContextProps {
     size: SizeType;
     onSelect?: (name: string) => void;
+    selectedValue?: string;
 }
 
 interface ISegmentedControlProps {
@@ -54,7 +54,7 @@ interface ISegmentedControlProps {
     /**
      * Fires when the user selects one of the control items. Returns the value of the `name` prop from the `SegmentedControlButton`.
      */
-    onChange: (name: string) => void;
+    onChange?: (name: string) => void;
     /**
      * Size of the segmented control.<br>
      * Possible values: `large | medium | small`
@@ -64,6 +64,11 @@ interface ISegmentedControlProps {
      * Specifies whether the segmented control is mandatory for completing a form.
      */
     required?: boolean;
+    /**
+     * Controlled selected value. When provided, the component renders selection based on this value
+     * and does not manage its own selection state.
+     */
+    value?: string;
 }
 
 export const SegmentedControlContext = createContext<ISegmentedControlContextProps>(
@@ -78,28 +83,34 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     label,
     infoText,
     required,
-    size = "medium"
+    size = "medium",
+    value
 }) => {
-    const initialSelected = useMemo(() => {
+    const initialSelectedFromChildren = useMemo(() => {
         const arrayChildren = Children.toArray(children) as FunctionComponentElement<ISegmentedControlButtonProps>[];
-        const found = arrayChildren.find((child) => child.props.selected);
-        return found?.props.name ?? "";
+
+        return arrayChildren[0]?.props.name ?? "";
     }, [children]);
 
-    const [selectedElementName, setSelectedElementName] = useState(initialSelected);
+    const [uncontrolledSelected, setUncontrolledSelected] = useState<string>(() => initialSelectedFromChildren);
     const wrapperRef = useRef<HTMLDivElement | null>(null);
 
     const onSelect = (name: string) => {
-        setSelectedElementName(name);
-        onChange(name);
+        if (value === undefined) {
+            setUncontrolledSelected(name);
+        }
+        onChange?.(name);
     };
+
+    const selectedElementName = value !== undefined ? value : uncontrolledSelected;
 
     const memoizedSegmentedControlContext: ISegmentedControlContextProps = useMemo(() => {
         return {
             size,
-            onSelect
+            onSelect,
+            selectedValue: selectedElementName
         };
-    }, [size]);
+    }, [size, onSelect, selectedElementName]);
 
     const textSizes = size === "large" ? "medium" : size;
 
@@ -153,15 +164,7 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
                     onKeyDown={keydownHandler}
                     role="presentation"
                 >
-                    {Children.map(children, (segment, index) => {
-                        const isSelected = selectedElementName
-                            ? selectedElementName === segment.props.name
-                            : segment.props.selected || index === 0;
-                        return cloneElement(segment, {
-                            ...segment.props,
-                            selected: isSelected
-                        });
-                    })}
+                    {children}
                 </div>
                 {helperText && (
                     <HelperText

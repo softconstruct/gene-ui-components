@@ -17,8 +17,7 @@ const segmentedControlData: ISegmentedControlButtonProps[] = [
     {
         name: "data1",
         Icon: Tag,
-        children: "data1",
-        selected: true
+        children: "data1"
     },
     {
         name: "data2",
@@ -61,18 +60,16 @@ const meta: Meta<typeof SegmentedControl> = {
 export default meta;
 
 const Template: FC<ISegmentedControlProps> = (props) => {
-    const [segmentedControls, setSegmentedControls] = useState<ISegmentedControlButtonProps[]>(segmentedControlData);
+    const [selectedVal, setSelectedVal] = useState<string>("data2");
     const onChangeHandler = (name: string) => {
-        setSegmentedControls((prev) => {
-            return prev.map((el) => ({ ...el, selected: el.name === name }));
-        });
+        setSelectedVal(name);
     };
 
     return (
-        <SegmentedControl {...props} onChange={onChangeHandler}>
-            {segmentedControls.map(({ name, Icon, children, selected }) => {
+        <SegmentedControl {...props} value={selectedVal} onChange={onChangeHandler}>
+            {segmentedControlData.map(({ name, Icon, children }) => {
                 return (
-                    <SegmentedControlButton name={name} Icon={Icon} selected={selected}>
+                    <SegmentedControlButton name={name} Icon={Icon}>
                         {children}
                     </SegmentedControlButton>
                 );
@@ -86,23 +83,10 @@ export const Default = Template.bind({});
 const WithoutText: FC<ISegmentedControlProps> = (props) => {
     return (
         <SegmentedControl {...props}>
-            <SegmentedControlButton name="data1" selected Icon={Tag} />
-            <SegmentedControlButton name="data2" Icon={Tag} />
-            <SegmentedControlButton name="data3" Icon={Tag} />
+            {segmentedControlData.map(({ Icon, name }) => (
+                <SegmentedControlButton name={name} Icon={Icon} />
+            ))}
         </SegmentedControl>
     );
 };
 export const OnlyIcon = WithoutText.bind({});
-
-const WithoutIcons: FC<ISegmentedControlProps> = (props) => {
-    return (
-        <SegmentedControl {...props}>
-            <SegmentedControlButton name="data1">Data1</SegmentedControlButton>
-            <SegmentedControlButton name="data2" selected>
-                Data2
-            </SegmentedControlButton>
-            <SegmentedControlButton name="data3">Data3 </SegmentedControlButton>
-        </SegmentedControl>
-    );
-};
-export const OnlyText = WithoutIcons.bind({});

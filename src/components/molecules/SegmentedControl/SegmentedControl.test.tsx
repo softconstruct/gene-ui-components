@@ -43,12 +43,6 @@ describe("SegmentedControl ", () => {
         expect(setup.find(Tag).exists()).toBeTruthy();
     });
 
-    it("renders selected  prop correctly", () => {
-        const children = <SegmentedControlButton name="test" selected />;
-        const wrapper = setup.setProps({ children });
-        expect(wrapper.find(SegmentedControlButton).find(".segmentedControl__button_selected").exists()).toBeTruthy();
-    });
-
     it("renders label prop correctly", () => {
         const label = "test";
         const wrapper = setup.setProps({
@@ -146,37 +140,6 @@ describe("SegmentedControl ", () => {
         expect(wrapper.find(Tag).exists()).toBeTruthy();
         expect(wrapper.find(".segmentedControl__button_icon_only").exists()).toBeTruthy();
         expect(wrapper.find(".segmentedControl__text").exists()).toBeFalsy();
-    });
-
-    it("selects first button by default when no selected prop is provided", () => {
-        const wrapper = mount(
-            <SegmentedControl size="medium" onChange={jest.fn()}>
-                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
-                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
-                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
-            </SegmentedControl>
-        );
-
-        const firstButton = wrapper.find(SegmentedControlButton).first();
-        expect(firstButton.find(".segmentedControl__button_selected").exists()).toBeTruthy();
-        expect(firstButton.prop("selected")).toBe(true);
-    });
-
-    it("selects button with selected prop when provided", () => {
-        const wrapper = mount(
-            <SegmentedControl size="medium" onChange={jest.fn()}>
-                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
-                <SegmentedControlButton name="button2" selected>
-                    Button 2
-                </SegmentedControlButton>
-                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
-            </SegmentedControl>
-        );
-
-        const buttons = wrapper.find(SegmentedControlButton);
-        expect(buttons.at(1).find(".segmentedControl__button_selected").exists()).toBeTruthy();
-        expect(buttons.at(0).find(".segmentedControl__button_selected").exists()).toBeFalsy();
-        expect(buttons.at(2).find(".segmentedControl__button_selected").exists()).toBeFalsy();
     });
 
     it("applies correct tabIndex: 0 for selected button, -1 for others", () => {
@@ -283,12 +246,10 @@ describe("SegmentedControl ", () => {
     it("handles keyboard navigation with ArrowLeft", () => {
         const onChange = jest.fn();
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={onChange}>
+            <SegmentedControl size="medium" onChange={onChange} value="button3">
                 <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
                 <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
-                <SegmentedControlButton name="button3" selected>
-                    Button 3
-                </SegmentedControlButton>
+                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
             </SegmentedControl>
         );
 
@@ -304,11 +265,9 @@ describe("SegmentedControl ", () => {
     it("handles keyboard navigation with ArrowUp", () => {
         const onChange = jest.fn();
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={onChange}>
+            <SegmentedControl size="medium" onChange={onChange} value="button2">
                 <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
-                <SegmentedControlButton name="button2" selected>
-                    Button 2
-                </SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
             </SegmentedControl>
         );
 
@@ -324,11 +283,9 @@ describe("SegmentedControl ", () => {
     it("handles keyboard navigation with Home key", () => {
         const onChange = jest.fn();
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={onChange}>
+            <SegmentedControl size="medium" onChange={onChange} value="button2">
                 <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
-                <SegmentedControlButton name="button2" selected>
-                    Button 2
-                </SegmentedControlButton>
+                <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
                 <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
             </SegmentedControl>
         );
@@ -345,10 +302,8 @@ describe("SegmentedControl ", () => {
     it("handles keyboard navigation with End key", () => {
         const onChange = jest.fn();
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={onChange}>
-                <SegmentedControlButton name="button1" selected>
-                    Button 1
-                </SegmentedControlButton>
+            <SegmentedControl size="medium" onChange={onChange} value="button1">
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
                 <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
                 <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
             </SegmentedControl>
@@ -366,12 +321,10 @@ describe("SegmentedControl ", () => {
     it("wraps around when navigating with ArrowRight from last button", () => {
         const onChange = jest.fn();
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={onChange}>
+            <SegmentedControl size="medium" onChange={onChange} value="button3">
                 <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
                 <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
-                <SegmentedControlButton name="button3" selected>
-                    Button 3
-                </SegmentedControlButton>
+                <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
             </SegmentedControl>
         );
 
@@ -387,10 +340,8 @@ describe("SegmentedControl ", () => {
     it("wraps around when navigating with ArrowLeft from first button", () => {
         const onChange = jest.fn();
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={onChange}>
-                <SegmentedControlButton name="button1" selected>
-                    Button 1
-                </SegmentedControlButton>
+            <SegmentedControl size="medium" onChange={onChange} value="button1">
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
                 <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
                 <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
             </SegmentedControl>
@@ -408,10 +359,8 @@ describe("SegmentedControl ", () => {
     it("ignores non-navigation keys", () => {
         const onChange = jest.fn();
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={onChange}>
-                <SegmentedControlButton name="button1" selected>
-                    Button 1
-                </SegmentedControlButton>
+            <SegmentedControl size="medium" onChange={onChange} value="button1">
+                <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
                 <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
             </SegmentedControl>
         );
