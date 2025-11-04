@@ -48,7 +48,8 @@ const meta: Meta<typeof SegmentedControl> = {
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
         onChange: args({ control: "false", ...propCategory.action }),
-        className: args({ control: "false", ...propCategory.appearance })
+        className: args({ control: "false", ...propCategory.appearance }),
+        value: args({ control: "false", ...propCategory.content })
     },
     args: {
         helperText: "helperText",

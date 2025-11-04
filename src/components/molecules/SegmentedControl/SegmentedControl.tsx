@@ -75,9 +75,9 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     infoText,
     required,
     size = "medium",
-    value = ""
+    value
 }) => {
-    const [uncontrolledSelected, setUncontrolledSelected] = useState<string>(() => value);
+    const [uncontrolledSelected, setUncontrolledSelected] = useState<string>("");
     const wrapperRef = useRef<HTMLDivElement | null>(null);
 
     const onSelect = (name: string) => {
