@@ -15,7 +15,7 @@ describe("SegmentedControl ", () => {
 
     beforeEach(() => {
         setup = mount(
-            <SegmentedControl size="large" onChange={jest.fn()}>
+            <SegmentedControl value="test1" size="large" onChange={jest.fn()}>
                 <SegmentedControlButton name="test1" Icon={Tag} />
             </SegmentedControl>
         );
@@ -80,7 +80,7 @@ describe("SegmentedControl ", () => {
     it("renders onChange prop correctly", () => {
         const onChange = jest.fn();
         const wrapper = mount(
-            <SegmentedControl size="large" onChange={onChange}>
+            <SegmentedControl value="test1" size="large" onChange={onChange}>
                 <SegmentedControlButton name="test1" Icon={Tag} />
             </SegmentedControl>
         );
@@ -93,7 +93,7 @@ describe("SegmentedControl ", () => {
 
     it("renders multiple buttons correctly", () => {
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={jest.fn()}>
+            <SegmentedControl value="button1" size="medium" onChange={jest.fn()}>
                 <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
                 <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
                 <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
@@ -108,7 +108,7 @@ describe("SegmentedControl ", () => {
 
     it("renders button with text correctly", () => {
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={jest.fn()}>
+            <SegmentedControl value="text-button" size="medium" onChange={jest.fn()}>
                 <SegmentedControlButton name="text-button">Text Button</SegmentedControlButton>
             </SegmentedControl>
         );
@@ -118,7 +118,7 @@ describe("SegmentedControl ", () => {
 
     it("renders button with icon and text correctly", () => {
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={jest.fn()}>
+            <SegmentedControl value="icon-text" size="medium" onChange={jest.fn()}>
                 <SegmentedControlButton name="icon-text" Icon={Tag}>
                     Icon Text
                 </SegmentedControlButton>
@@ -132,7 +132,7 @@ describe("SegmentedControl ", () => {
 
     it("renders button with icon only correctly", () => {
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={jest.fn()}>
+            <SegmentedControl value="icon-only" size="medium" onChange={jest.fn()}>
                 <SegmentedControlButton name="icon-only" Icon={Tag} />
             </SegmentedControl>
         );
@@ -144,7 +144,7 @@ describe("SegmentedControl ", () => {
 
     it("applies correct tabIndex: 0 for selected button, -1 for others", () => {
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={jest.fn()}>
+            <SegmentedControl value="button1" size="medium" onChange={jest.fn()}>
                 <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
                 <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
                 <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
@@ -158,8 +158,15 @@ describe("SegmentedControl ", () => {
     });
 
     it("updates tabIndex when selection changes", () => {
-        const wrapper = mount(
-            <SegmentedControl size="medium" onChange={jest.fn()}>
+        let currentValue = "button1";
+        let wrapper: ReactWrapper<ISegmentedControlProps>;
+        const onChange = jest.fn((newValue) => {
+            currentValue = newValue;
+            wrapper.setProps({ value: currentValue });
+        });
+
+        wrapper = mount(
+            <SegmentedControl value="button1" size="medium" onChange={onChange}>
                 <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
                 <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
             </SegmentedControl>
@@ -181,7 +188,7 @@ describe("SegmentedControl ", () => {
 
     it("applies correct aria-checked attribute", () => {
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={jest.fn()}>
+            <SegmentedControl value="button1" size="medium" onChange={jest.fn()}>
                 <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
                 <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
             </SegmentedControl>
@@ -194,7 +201,7 @@ describe("SegmentedControl ", () => {
 
     it("applies aria-label to wrapper when label prop is provided", () => {
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={jest.fn()} label="Test Label">
+            <SegmentedControl value="button1" size="medium" onChange={jest.fn()} label="Test Label">
                 <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
             </SegmentedControl>
         );
@@ -204,9 +211,14 @@ describe("SegmentedControl ", () => {
     });
 
     it("handles keyboard navigation with ArrowRight", () => {
-        const onChange = jest.fn();
-        const wrapper = mount(
-            <SegmentedControl size="medium" onChange={onChange}>
+        let currentValue = "button1";
+        let wrapper: ReactWrapper<ISegmentedControlProps>;
+        const onChange = jest.fn((newValue) => {
+            currentValue = newValue;
+            wrapper.setProps({ value: currentValue });
+        });
+        wrapper = mount(
+            <SegmentedControl value={currentValue} size="medium" onChange={onChange}>
                 <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
                 <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
                 <SegmentedControlButton name="button3">Button 3</SegmentedControlButton>
@@ -228,7 +240,7 @@ describe("SegmentedControl ", () => {
     it("handles keyboard navigation with ArrowDown", () => {
         const onChange = jest.fn();
         const wrapper = mount(
-            <SegmentedControl size="medium" onChange={onChange}>
+            <SegmentedControl value="button1" size="medium" onChange={onChange}>
                 <SegmentedControlButton name="button1">Button 1</SegmentedControlButton>
                 <SegmentedControlButton name="button2">Button 2</SegmentedControlButton>
             </SegmentedControl>
