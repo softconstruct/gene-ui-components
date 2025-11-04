@@ -56,6 +56,12 @@ export { default as TagGroup, ITagGroupProps } from "./components/molecules/TagG
 export { default as DataCard, IDataCardProps } from "./components/molecules/DataCard";
 export { default as RadioGroup, IRadioGroupProps, IRadioOption } from "./components/molecules/RadioGroup";
 export { default as CheckboxGroup, ICheckboxGroupProps, ICheckboxOption } from "./components/molecules/CheckboxGroup";
+export {
+    SegmentedControl,
+    ISegmentedControlProps,
+    SegmentedControlButton,
+    ISegmentedControlButtonProps
+} from "@components/molecules/SegmentedControl";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
