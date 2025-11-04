@@ -1,5 +1,5 @@
-import React, { ComponentType, FC, useState } from "react";
-import { Meta } from "@storybook/react";
+import React, { ComponentType, FC, useEffect, useState } from "react";
+import { Meta, StoryObj } from "@storybook/react";
 
 import { Tag } from "@geneui/icons";
 
@@ -39,6 +39,7 @@ const segmentedControlData: ISegmentedControlButtonProps[] = [
 const meta: Meta<typeof SegmentedControl> = {
     title: "Molecules/SegmentedControl",
     component: SegmentedControl,
+    subcomponents: { SegmentedControlButton: SegmentedControlButton as ComponentType<unknown> },
     argTypes: {
         required: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
@@ -53,17 +54,25 @@ const meta: Meta<typeof SegmentedControl> = {
         helperText: "helperText",
         label: "label",
         size: "medium"
-    },
-    subcomponents: { SegmentedControlButton: SegmentedControlButton as ComponentType<unknown> }
+    }
 };
 
 export default meta;
 
-const Template: FC<ISegmentedControlProps> = (props) => {
-    const [selectedVal, setSelectedVal] = useState<string>("data2");
+type Story = StoryObj<ISegmentedControlProps>;
+
+const SegmentedControlComponent: FC<ISegmentedControlProps> = (props) => {
+    const { value } = props;
+    const [selectedVal, setSelectedVal] = useState<string>();
     const onChangeHandler = (name: string) => {
         setSelectedVal(name);
     };
+
+    useEffect(() => {
+        if (!value) return;
+
+        setSelectedVal(value);
+    }, [value]);
 
     return (
         <SegmentedControl {...props} value={selectedVal} onChange={onChangeHandler}>
@@ -78,15 +87,27 @@ const Template: FC<ISegmentedControlProps> = (props) => {
     );
 };
 
-export const Default = Template.bind({});
-
-const WithoutText: FC<ISegmentedControlProps> = (props) => {
-    return (
-        <SegmentedControl {...props}>
-            {segmentedControlData.map(({ Icon, name }) => (
-                <SegmentedControlButton name={name} Icon={Icon} />
-            ))}
-        </SegmentedControl>
-    );
+export const Default: Story = {
+    render: (props) => {
+        return <SegmentedControlComponent {...props} />;
+    }
 };
-export const OnlyIcon = WithoutText.bind({});
+
+export const WithControlledValue: Story = {
+    render: (props) => <SegmentedControlComponent {...props} />,
+    args: {
+        value: "data2"
+    }
+};
+
+export const WithoutText: Story = {
+    render: (props) => {
+        return (
+            <SegmentedControl {...props}>
+                {segmentedControlData.map(({ Icon, name }) => (
+                    <SegmentedControlButton name={name} Icon={Icon} />
+                ))}
+            </SegmentedControl>
+        );
+    }
+};

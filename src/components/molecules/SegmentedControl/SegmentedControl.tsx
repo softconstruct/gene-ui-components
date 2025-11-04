@@ -1,13 +1,4 @@
-import React, {
-    Children,
-    createContext,
-    FC,
-    FunctionComponentElement,
-    KeyboardEvent,
-    useMemo,
-    useRef,
-    useState
-} from "react";
+import React, { createContext, FC, FunctionComponentElement, KeyboardEvent, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
 // Styles
@@ -84,15 +75,9 @@ const SegmentedControl: FC<ISegmentedControlProps> = ({
     infoText,
     required,
     size = "medium",
-    value
+    value = ""
 }) => {
-    const initialSelectedFromChildren = useMemo(() => {
-        const arrayChildren = Children.toArray(children) as FunctionComponentElement<ISegmentedControlButtonProps>[];
-
-        return arrayChildren[0]?.props.name ?? "";
-    }, [children]);
-
-    const [uncontrolledSelected, setUncontrolledSelected] = useState<string>(() => initialSelectedFromChildren);
+    const [uncontrolledSelected, setUncontrolledSelected] = useState<string>(() => value);
     const wrapperRef = useRef<HTMLDivElement | null>(null);
 
     const onSelect = (name: string) => {
