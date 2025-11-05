@@ -11,13 +11,13 @@ import Label from "@components/atoms/Label";
 import { IPillProps } from "@components/atoms/Pill";
 import { Popover, PopoverBody, PopoverFooter, PopoverFooterActions } from "@components/atoms/Popover";
 import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
-import { ICellProps } from "@components/molecules/Table/Cell";
 import Filter from "@components/molecules/Table/Filter";
 import { SortingIcons } from "@components/molecules/Table/helpers";
 import { Cell, Row, TableCol, TableRowCells } from "@components/molecules/Table/type";
 
 interface IColActionsProps {
     header: Header<Row, unknown>;
+    columnsMap: Map<string, TableCol<Row>>;
     onColAction?: (event: string, value: boolean) => void;
     selectAllText?: string;
 }
@@ -35,9 +35,9 @@ const getFilterOptionLabelByColumnType = (data: Cell | undefined, type: string) 
     }
 };
 
-const getFilterOption = (column: Column<Row, unknown>): string[] => {
-    const colDef = column.columnDef as TableCol<Row>;
-    colDef.filterFn = colDef.enablePopoverFilter ? "arrIncludesSome" : "auto";
+const getFilterOption = (column: Column<Row, unknown>, columnsMap: Map<string, TableCol<Row>>): string[] => {
+    const colDef = columnsMap.get(column.id);
+    if (!colDef) return [];
     const initialFilterOptions = colDef.filterOptions;
     if (initialFilterOptions?.length) {
         return initialFilterOptions;
@@ -49,17 +49,14 @@ const getFilterOption = (column: Column<Row, unknown>): string[] => {
                 .map((row) => {
                     const rowOriginal = row.original as TableRowCells;
                     const cellData: Cell | undefined = rowOriginal[colDef.type];
-                    return getFilterOptionLabelByColumnType(
-                        cellData,
-                        (column.columnDef as TableCol<ICellProps>).type.toLowerCase()
-                    );
+                    return getFilterOptionLabelByColumnType(cellData, colDef.type.toLowerCase());
                 })
                 .filter((item) => item !== undefined)
         )
     ];
 };
 
-export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAllText = "Select All" }) => {
+export const ColActions: FC<IColActionsProps> = ({ header, columnsMap, onColAction, selectAllText = "Select All" }) => {
     const [currentSearchInput, setCurrentSearchInput] = useState<string | null>(null);
     const [popoverPropsForContent, setPopoverPropsForContent] = useState({});
     const [initialFilterOptions, setInitialFilterOptions] = useState<string[]>([]);
@@ -68,10 +65,10 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
     const [isFilterPopoverOpen, setIsFilterPopoverOpen] = useState<boolean>(false);
 
     useEffect(() => {
-        const options = getFilterOption(header.column);
+        const options = getFilterOption(header.column, columnsMap);
         setFilterOptions(options);
         setInitialFilterOptions(options);
-    }, [header.column]);
+    }, [header.column, columnsMap]);
 
     useEffect(() => {
         onColAction?.(header.id, !!(header.column.getIsFiltered() || header.column.getIsSorted()));
@@ -97,8 +94,13 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
             setFilteredValues([]);
             return;
         }
+        const colDef = columnsMap.get(column.id);
+        if (!colDef) {
+            setFilteredValues([]);
+            return;
+        }
         const values = flatRows
-            .map((row) => (row.original[(column.columnDef as TableCol<Row>).type] as ICheckboxProps).value)
+            .map((row) => (row.original[colDef.type] as ICheckboxProps).value)
             .filter((item) => Boolean(item));
         setFilteredValues(values);
     };
@@ -112,7 +114,8 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
         setFilterOptions(filteredOptions);
     };
 
-    const colDef = header.column.columnDef as TableCol<Row>;
+    const colDef = columnsMap.get(header.column.id);
+    if (!colDef) return null;
     const headerText = typeof colDef.header === "string" ? colDef.header : "column";
 
     return (
@@ -127,14 +130,11 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                             className={classnames({
                                 table__th_actions_active: header.column.getIsSorted()
                             })}
-                            disabled={(header.column.columnDef as TableCol<unknown>)?.isSortingDisabled}
+                            disabled={colDef?.isSortingDisabled}
                             Icon={SortingIcons[`${header.column.getIsSorted()}`]}
                             aria-label="sorting"
                             onClick={(e) => {
-                                return (
-                                    (header.column.columnDef as TableCol<unknown>).enableSorting &&
-                                    header?.column?.getToggleSortingHandler?.()?.(e)
-                                );
+                                return colDef?.enableSorting && header?.column?.getToggleSortingHandler?.()?.(e);
                             }}
                         />
                     </Badge>
@@ -146,20 +146,17 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                         className={classnames({
                             table__th_actions_active: header.column.getIsSorted()
                         })}
-                        disabled={(header.column.columnDef as TableCol<unknown>)?.isSortingDisabled}
+                        disabled={colDef?.isSortingDisabled}
                         Icon={SortingIcons[`${header.column.getIsSorted()}`]}
                         aria-label="sorting"
                         onClick={(e) => {
-                            return (
-                                (header.column.columnDef as TableCol<unknown>).enableSorting &&
-                                header?.column?.getToggleSortingHandler?.()?.(e)
-                            );
+                            return colDef?.enableSorting && header?.column?.getToggleSortingHandler?.()?.(e);
                         }}
                     />
                 ))}
 
             {/* todo: change icon from "Globe" to some "Filter" icon, when it will implemented */}
-            {(header.column.columnDef as TableCol<Row>).enablePopoverFilter && filterOptions.length > 0 && (
+            {colDef.enablePopoverFilter && filterOptions.length > 0 && (
                 <>
                     {filteredValues.length ? (
                         <Badge size="smallNudge">
@@ -171,7 +168,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                                 className={classnames({
                                     table__th_actions_active: isFilterPopoverOpen
                                 })}
-                                disabled={(header.column.columnDef as TableCol<Row>)?.isPopoverFilterDisabled}
+                                disabled={colDef?.isPopoverFilterDisabled}
                                 aria-label={`Filter ${headerText}: ${filteredValues.length} selected ${isFilterPopoverOpen ? ", open" : ", click to open filter menu"}`}
                                 aria-expanded={isFilterPopoverOpen}
                                 aria-haspopup="true"
@@ -188,7 +185,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                             className={classnames({
                                 table__th_actions_active: isFilterPopoverOpen
                             })}
-                            disabled={(header.column.columnDef as TableCol<Row>)?.isPopoverFilterDisabled}
+                            disabled={colDef?.isPopoverFilterDisabled}
                             aria-label={`Filter ${headerText}${isFilterPopoverOpen ? ", open" : ", click to open filter menu"}`}
                             aria-expanded={isFilterPopoverOpen}
                             aria-haspopup="true"
@@ -307,7 +304,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                                 appearance="secondary"
                                 layout="text"
                                 size="small"
-                                disabled={(header.column.columnDef as TableCol<unknown>).isColumnFilterDisabled}
+                                disabled={colDef?.isColumnFilterDisabled}
                                 className={classnames({
                                     table__th_actions_active: header.column.getIsFiltered()
                                 })}
@@ -322,7 +319,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, onColAction, selectAl
                             appearance="secondary"
                             layout="text"
                             size="small"
-                            disabled={(header.column.columnDef as TableCol<unknown>).isColumnFilterDisabled}
+                            disabled={colDef?.isColumnFilterDisabled}
                             className={classnames({
                                 table__th_actions_active: header.column.getIsFiltered()
                             })}

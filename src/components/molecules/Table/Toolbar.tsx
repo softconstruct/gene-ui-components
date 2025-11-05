@@ -8,7 +8,7 @@ import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import ManageColumns from "@components/molecules/Table/ManageColumns";
 import { TableContext } from "@components/molecules/Table/Table";
-import { BulkAction, IOrderedColumns } from "@components/molecules/Table/type";
+import { BulkAction, IOrderedColumns, Row, TableCol } from "@components/molecules/Table/type";
 
 import ButtonGroup from "../ButtonGroup";
 import BulkActions from "./BulkActions";
@@ -29,6 +29,7 @@ interface IToolbar {
     isManageColumnsDisabled?: boolean;
     visibleColumns?: VisibilityState;
     orderedColumns?: IOrderedColumns[];
+    columnsMap: Map<string, TableCol<Row>>;
     isGrouped?: boolean;
 }
 
@@ -48,6 +49,7 @@ const Toolbar: FC<IToolbar> = ({
     isManageColumnsDisabled,
     visibleColumns,
     orderedColumns,
+    columnsMap,
     isGrouped
 }) => {
     const { onSave, onEdit, onCancel, onGlobalFilterChange } = useContext(TableContext);
@@ -170,6 +172,7 @@ const Toolbar: FC<IToolbar> = ({
                                         isGrouped={isGrouped}
                                         orderedColumns={orderedColumns}
                                         visibleColumns={visibleColumns}
+                                        columnsMap={columnsMap}
                                         onMenuClose={() => setMenuOpened(false)}
                                     />
                                 )}

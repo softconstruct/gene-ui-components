@@ -6,6 +6,7 @@ import { IMenuItemProps } from "@components/molecules/Menu";
 import { defaultColumns, withGroupedColumns, withPinnedColumns } from "@components/molecules/Table/Columns";
 // Components
 import { deepCloneWithFunctions } from "@components/molecules/Table/helpers";
+import { TablePropsType } from "@components/molecules/Table/Table";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -47,7 +48,7 @@ const bulkActionsMock: BulkAction = {
 
 const externalData = makeData(100);
 
-const meta: Meta<ITableProps> = {
+const meta: Meta<TablePropsType> = {
     title: "Molecules/Table",
     component: Table,
     argTypes: {
@@ -140,7 +141,7 @@ const TableComponent: FC<ITableProps> = (props) => {
         setUpdatedTableData(conedData);
     }, [data]);
 
-    const onCellEdit: ITableProps["onCellEdit"] = (rowIndex, columnType, value) => {
+    const onCellEdit: ITableProps["onCellEdit"] = (rowIndex: number, columnType: string, value: unknown) => {
         const newData = [...tableData];
         (newData[rowIndex] as any)[columnType] = value;
         setUpdatedTableData(newData);

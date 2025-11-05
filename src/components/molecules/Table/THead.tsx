@@ -10,6 +10,7 @@ import { Row, TableCol } from ".";
 
 interface ITableHead {
     table: Table<Row>;
+    columnsMap: Map<string, TableCol<Row>>;
     withExpandable?: boolean;
     withCheckbox?: boolean;
     withStickyHeader?: boolean;
@@ -18,7 +19,7 @@ interface ITableHead {
 }
 
 const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
-    ({ table, withExpandable, withCheckbox, withStickyHeader, selectAllText, rowCount }, ref) => {
+    ({ table, columnsMap, withExpandable, withCheckbox, withStickyHeader, selectAllText, rowCount }, ref) => {
         const { onSelectAllRows } = useContext(TableContext);
         const [activeHeaders, setActiveHeaders] = useState<Record<string, boolean> | null>(null);
 
@@ -41,7 +42,11 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
         const renderTableHeaderCell = (header: Header<Row, unknown>) => {
             if (header.isPlaceholder) return null;
 
-            if ((header.column.columnDef as TableCol<Row>).type === "RowCheckbox" && withCheckbox) {
+            const columnId = header.column.id;
+            const colDef = columnsMap.get(columnId);
+            if (!colDef) return null;
+
+            if (colDef.type === "RowCheckbox" && withCheckbox) {
                 const isAllSelected = table.getIsAllPageRowsSelected();
                 const isSomeSelected = table.getIsSomePageRowsSelected();
                 return (
@@ -74,7 +79,7 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
                     </th>
                 );
             }
-            if ((header.column.columnDef as TableCol<Row>).type === "Expand" && withExpandable) {
+            if (colDef.type === "Expand" && withExpandable) {
                 return (
                     <th
                         key={`${header.id}_header`}
@@ -112,7 +117,12 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
                         <div className="table__content table__content_header">
                             <span className="table__th_text ellipsis-text">{headerText}</span>
                             {header.id !== "expand" && (
-                                <ColActions header={header} onColAction={onColAction} selectAllText={selectAllText} />
+                                <ColActions
+                                    header={header}
+                                    columnsMap={columnsMap}
+                                    onColAction={onColAction}
+                                    selectAllText={selectAllText}
+                                />
                             )}
                         </div>
                     </div>

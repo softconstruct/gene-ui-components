@@ -5,13 +5,14 @@ import Scrollbars from "react-scrollbars-custom";
 
 import TableRow from "@components/molecules/Table/TableRow";
 
-import { Row as RowData } from ".";
+import { Row as RowData, TableCol } from ".";
 
 interface IVirtualScrollTBody {
     topRows: Row<RowData>[];
     centerRows: Row<RowData>[];
     columnCount: number;
     scrollbarContainerRef: Scrollbars | null;
+    columnsMap: Map<string, TableCol<RowData>>;
     withExpandable?: boolean;
     withCheckbox?: boolean;
     withEditMode: boolean;
@@ -26,6 +27,7 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
     centerRows,
     columnCount,
     scrollbarContainerRef,
+    columnsMap,
     withDynamicFetch,
     hasNextPage,
     isFetchingNextPage,
@@ -73,6 +75,7 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                     key={row.id}
                     row={row}
                     rowIndex={row.index}
+                    columnsMap={columnsMap}
                     withExpandable={withExpandable}
                     withCheckbox={withCheckbox}
                     withEditMode={withEditMode}
@@ -85,6 +88,7 @@ const VirtualScrollTBody: FC<IVirtualScrollTBody> = ({
                         key={row.id}
                         row={row}
                         rowIndex={virtualRow.index}
+                        columnsMap={columnsMap}
                         withExpandable={withExpandable}
                         withCheckbox={withCheckbox}
                         withEditMode={withEditMode}

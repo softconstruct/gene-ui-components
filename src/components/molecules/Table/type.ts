@@ -43,7 +43,7 @@ export type Row = TableRowCells & {
 export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     id: string;
     header?: string | null;
-    footer?: (props: HeaderContext<Row, unknown>) => ReactNode;
+    footer?: (props: HeaderContext<T extends object ? T : never, unknown>) => ReactNode;
     type: CellType;
     order: number;
     disabled?: boolean;
@@ -63,7 +63,7 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     isPopoverFilterDisabled?: boolean;
     filterOptions?: string[];
     resizable?: boolean;
-    columns?: TableCol<Row>[];
+    columns?: TableCol<T>[];
     width?: number | string;
     minWidth?: number;
     maxWidth?: number;
@@ -76,13 +76,13 @@ export interface BulkAction {
     list: IMenuItemProps[];
 }
 
-export interface IOrderedColumns {
+export interface IOrderedColumns<T = Row> {
     id: string;
     title?: string | null;
     isVisible?: boolean;
     isPinned?: boolean;
     order?: number;
-    columns: Column<Row, unknown>[];
+    columns: Column<T extends object ? T : never, unknown>[];
 }
 
 export type OrderType = {

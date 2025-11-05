@@ -1,4 +1,4 @@
-import React, { createContext, FC, ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     ColumnFiltersState,
     ColumnPinningState,
@@ -12,6 +12,7 @@ import {
     RowPinningState,
     RowSelectionState,
     SortingState,
+    Updater,
     useReactTable,
     VisibilityState
 } from "@tanstack/react-table";
@@ -32,11 +33,11 @@ import { BulkAction, IManageColumnsData, IOrderedColumns, Row, TableCol } from "
 // Styles
 import "./Table.scss";
 
-interface ITableActions {
+interface ITableActions<TRow extends Row = Row> {
     /**
      * A callback function that is triggered when a row is clicked. The ID of the clicked row is passed as an argument.
      */
-    onRowClick?: (data: TanstackRow<Row>) => void;
+    onRowClick?: (data: TanstackRow<TRow>) => void;
     /**
      * A callback function that is triggered when the main checkbox in the table header is toggled.
      * @param isAllSelected - Whether all rows are now selected
@@ -69,7 +70,7 @@ interface ITableActions {
     /**
      * A callback function that is triggered whenever the row selection changes. An array of the selected row data is passed as an argument.
      */
-    onRowSelect?: (selectedRow: TanstackRow<Row>) => void;
+    onRowSelect?: (selectedRow: TanstackRow<TRow>) => void;
     /**
      * A callback function that is triggered when a cell value is edited in editable mode.
      */
@@ -114,7 +115,7 @@ interface ITableActions {
     onCancel?: () => void;
 }
 
-interface ITableProps extends ITableActions {
+interface ITablePropsBase<TRow extends Row = Row> extends ITableActions<TRow> {
     /**
      * An array of column definitions that configure the table's structure, data accessors, and rendering.
      * This prop extends the `ColumnDef` interface from `@tanstack/react-table`.
@@ -129,12 +130,12 @@ interface ITableProps extends ITableActions {
      *
      * For more information on column properties, see the official TanStack Table documentation: https://tanstack.com/table/v8/docs/api/core/column-def
      */
-    columns: TableCol<Row>[];
+    columns: TableCol<TRow>[];
 
     /**
      * The array of data objects to be displayed in the table. Each object represents a single row.
      */
-    externalData: Row[];
+    externalData: TRow[];
 
     /**
      * Enables expandable rows, allowing for additional content to be revealed below a row when clicked.
@@ -213,26 +214,6 @@ interface ITableProps extends ITableActions {
     withManualPagination?: boolean;
 
     /**
-     * Enables dynamic fetching of data for infinite scrolling or virtualized lists.
-     */
-    withDynamicFetch?: boolean;
-
-    /**
-     * A boolean indicating if there is a next page of data to be fetched for dynamic loading.
-     */
-    hasNextPage?: boolean;
-
-    /**
-     * A boolean indicating if the next page of data is currently being fetched.
-     */
-    isFetchingNextPage?: boolean;
-
-    /**
-     * A function to be called to fetch the next page of data for dynamic loading.
-     */
-    fetchNextPage?: () => void;
-
-    /**
      * A boolean that, when `true`, displays a loading indicator over the table.
      */
     loading?: boolean;
@@ -272,9 +253,49 @@ interface ITableProps extends ITableActions {
     emptyAppearance?: IEmptyProps["appearance"];
 }
 
-export const TableContext = createContext<ITableActions>({});
+interface ITablePropsWithoutDynamicFetch<TRow extends Row = Row> extends ITablePropsBase<TRow> {
+    /**
+     * Enables dynamic fetching of data for infinite scrolling or virtualized lists.
+     */
+    withDynamicFetch?: false;
+    /**
+     * A boolean indicating if there is a next page of data to be fetched for dynamic loading.
+     */
+    hasNextPage?: boolean;
+    /**
+     * A boolean indicating if the next page of data is currently being fetched.
+     */
+    isFetchingNextPage?: boolean;
+    /**
+     * A function to be called to fetch the next page of data for dynamic loading.
+     */
+    fetchNextPage?: () => void;
+}
 
-const Table: FC<ITableProps> = ({
+interface ITablePropsWithDynamicFetch<TRow extends Row = Row> extends ITablePropsBase<TRow> {
+    /**
+     * Enables dynamic fetching of data for infinite scrolling or virtualized lists.
+     */
+    withDynamicFetch: true;
+    /**
+     * A boolean indicating if there is a next page of data to be fetched for dynamic loading.
+     */
+    hasNextPage: boolean;
+    /**
+     * A boolean indicating if the next page of data is currently being fetched.
+     */
+    isFetchingNextPage: boolean;
+    /**
+     * A function to be called to fetch the next page of data for dynamic loading.
+     */
+    fetchNextPage: () => void;
+}
+
+type TablePropsType<TRow extends Row = Row> = ITablePropsWithoutDynamicFetch<TRow> | ITablePropsWithDynamicFetch<TRow>;
+
+export const TableContext = createContext<ITableActions<Row>>({});
+
+const Table: FC<TablePropsType<Row>> = ({
     columns,
     externalData,
     withCheckbox,
@@ -352,6 +373,47 @@ const Table: FC<ITableProps> = ({
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [selectedRows, setSelectedRows] = useState<RowSelectionState>({});
 
+    // Create a map of column IDs to original TableCol definitions
+    // This preserves type information and avoids type assertions
+    const columnsMap = useMemo(() => {
+        const map = new Map<string, TableCol<Row>>();
+        const extractColumns = (cols: TableCol<Row>[]) => {
+            cols.forEach((col) => {
+                if (col.id) {
+                    map.set(col.id, col);
+                }
+                if (col.columns) {
+                    extractColumns(col.columns);
+                }
+            });
+        };
+        extractColumns(columns);
+        return map;
+    }, [columns]);
+
+    // Prepare columns with filterFn set to avoid mutations later
+    type PreparedColumn = TableCol<Row> & {
+        filterFn?: string;
+        columns?: PreparedColumn[];
+    };
+
+    const preparedColumns = useMemo(() => {
+        const prepareColumns = (cols: TableCol<Row>[]): PreparedColumn[] => {
+            return cols.map((col) => {
+                const preparedCol = { ...col } as PreparedColumn;
+                // Set filterFn based on enablePopoverFilter to avoid mutation in ColActions
+                if (col.enablePopoverFilter !== undefined) {
+                    preparedCol.filterFn = col.enablePopoverFilter ? "arrIncludesSome" : "auto";
+                }
+                if (col.columns) {
+                    preparedCol.columns = prepareColumns(col.columns);
+                }
+                return preparedCol;
+            });
+        };
+        return prepareColumns(columns);
+    }, [columns]);
+
     const handleRowClick = (row: TanstackRow<Row>) => {
         if (withEditMode) return;
         onRowClick?.(row);
@@ -381,7 +443,29 @@ const Table: FC<ITableProps> = ({
             onEdit,
             onCancel
         }),
-        [withEditMode]
+        [
+            handleRowClick,
+            onSelectAllRows,
+            onGlobalFilterChange,
+            onManageColumnsChange,
+            onManageColumnRestore,
+            onSortChange,
+            onPageChange,
+            onPageSizeChange,
+            onRowSelect,
+            onCellEdit,
+            onSave,
+            onRowPinToggle,
+            onRowTag,
+            onRowClock,
+            onRowReload,
+            onRowCopy,
+            onRowDownload,
+            onRowShow,
+            onRowDelete,
+            onEdit,
+            onCancel
+        ]
     );
 
     useEffect(() => {
@@ -400,25 +484,42 @@ const Table: FC<ITableProps> = ({
         const columnVisibilities: { [key: string]: boolean } = {};
         orderedColumns.forEach((item) =>
             item.columns.forEach((col) => {
-                if (!col.columnDef.id) {
+                const columnId = col.columnDef.id;
+                if (!columnId) {
                     return;
                 }
-                columnIds.push(col.columnDef.id);
-                columnVisibilities[col.columnDef.id] = !!(col.columnDef as TableCol<Row>).isVisible;
-                col.toggleVisibility(!!(col.columnDef as TableCol<Row>).isVisible);
-                if ((col.columnDef as TableCol<Row>).isPinned) col.pin("left");
+                const originalCol = columnsMap.get(columnId);
+                if (!originalCol) {
+                    return;
+                }
+                columnIds.push(columnId);
+                columnVisibilities[columnId] = !!originalCol.isVisible;
+                col.toggleVisibility(!!originalCol.isVisible);
+                if (originalCol.isPinned) col.pin("left");
             })
         );
 
         setColumnOrder(columnIds);
-    }, [orderedColumns]);
+    }, [orderedColumns, columnsMap]);
+
+    const getRowId = useCallback((row: Row) => row.id, []);
+    const getRowCanExpand = useCallback((row: TanstackRow<Row>) => !!row.original.expandedData, []);
+
+    const handleSortingChange = useCallback(
+        (updater: Updater<SortingState>) => {
+            setSorting((prevSorting) => {
+                const newSorting = typeof updater === "function" ? updater(prevSorting) : updater;
+                onSortChange?.(newSorting);
+                return newSorting;
+            });
+        },
+        [onSortChange]
+    );
 
     const table = useReactTable<Row>({
         data,
-        columns,
+        columns: preparedColumns,
         initialState: {
-            sorting,
-            columnPinning,
             ...(withPagination &&
                 !withVirtualScroll && {
                     pagination: { pageSize: initialPageSize, pageIndex: initialPageIndex }
@@ -435,7 +536,7 @@ const Table: FC<ITableProps> = ({
             columnFilters,
             rowSelection: selectedRows
         },
-        getRowId: (row) => row.id,
+        getRowId,
         ...(withManualPagination && { manualPagination: withManualPagination }),
         onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
@@ -448,13 +549,10 @@ const Table: FC<ITableProps> = ({
                 getPaginationRowModel: getPaginationRowModel()
             }),
         getSortedRowModel: getSortedRowModel(),
-        getRowCanExpand: (row) => !!row.original.expandedData,
+        getRowCanExpand,
         enableGlobalFilter: withGlobalFilter,
         onColumnFiltersChange: setColumnFilters,
-        onSortingChange: (e) => {
-            setSorting(e);
-            onSortChange?.(sorting);
-        },
+        onSortingChange: handleSortingChange,
         onColumnVisibilityChange: setColumnVisibility,
         onColumnPinningChange: setColumnPinning,
         onExpandedChange: setExpanded,
@@ -463,17 +561,20 @@ const Table: FC<ITableProps> = ({
         onRowSelectionChange: setSelectedRows
     });
 
-    useEffect(() => {
-        if (!table) return;
+    const memoizedOrderedColumns = useMemo(() => {
+        if (!table) return [];
         const cols: IOrderedColumns[] = [];
         table.getHeaderGroups().forEach((headerGroup) => {
             headerGroup.headers.forEach((header) => {
                 if (header.getContext().column.columns.length && header.getContext().column.columnDef.header) {
+                    const originalCol = columnsMap.get(header.column.id);
                     cols.push({
                         id: header.column.id,
-                        title: (header.column.columnDef as TableCol<Row>).header || null,
+                        title: originalCol?.header || null,
                         columns: header.column.columns.sort((a, b) => {
-                            return (a.columnDef as TableCol<Row>).order - (b.columnDef as TableCol<Row>).order;
+                            const aCol = columnsMap.get(a.columnDef.id || "");
+                            const bCol = columnsMap.get(b.columnDef.id || "");
+                            return (aCol?.order || 0) - (bCol?.order || 0);
                         })
                     });
                 } else {
@@ -486,15 +587,21 @@ const Table: FC<ITableProps> = ({
                             columns: headerGroup.headers
                                 .map((item) => item.column)
                                 .sort((a, b) => {
-                                    return (a.columnDef as TableCol<Row>).order - (b.columnDef as TableCol<Row>).order;
+                                    const aCol = columnsMap.get(a.columnDef.id || "");
+                                    const bCol = columnsMap.get(b.columnDef.id || "");
+                                    return (aCol?.order || 0) - (bCol?.order || 0);
                                 })
                         });
                     }
                 }
             });
         });
-        setOrderedColumns(cols);
-    }, [columns]);
+        return cols;
+    }, [table, columnsMap]);
+
+    useEffect(() => {
+        setOrderedColumns(memoizedOrderedColumns);
+    }, [memoizedOrderedColumns]);
 
     const handlePageChange = (pageNumber: number) => {
         table.setPageIndex(pageNumber - 1);
@@ -510,18 +617,24 @@ const Table: FC<ITableProps> = ({
         setGlobalFilter(value);
     };
 
+    const handleRowsDeselect = () => {
+        table.resetRowSelection();
+    };
+
     if (!columns.length) return null;
 
     const rowCount = table.getRowModel().rows.length;
     const columnCount = table.getVisibleFlatColumns().length;
     const selectedRowCount = table.getSelectedRowModel().rows.length;
+    const isGrouped = table.getHeaderGroups().length > 1;
 
     return (
         <TableContext.Provider value={memoizedTableContextValue}>
             <div className={classNames("dataTable")}>
                 <Toolbar
-                    isGrouped={table.getHeaderGroups().length > 1}
+                    isGrouped={isGrouped}
                     orderedColumns={orderedColumns}
+                    columnsMap={columnsMap}
                     manageColumnsTitle={manageColumnsTitle}
                     withManageColumns={withManageColumns}
                     isManageColumnsDisabled={isManageColumnsDisabled}
@@ -533,7 +646,7 @@ const Table: FC<ITableProps> = ({
                     globalFilterPlaceholder={globalFilterPlaceholder}
                     bulkActions={bulkActions}
                     selectedRowsLength={selectedRowCount}
-                    onRowsDeselect={() => table.resetRowSelection()}
+                    onRowsDeselect={handleRowsDeselect}
                     globalFilterSetter={onGlobalFilterInputChange}
                     visibleColumns={columnVisibility}
                 />
@@ -548,6 +661,7 @@ const Table: FC<ITableProps> = ({
                         <THead
                             ref={tableHeadRef}
                             table={table}
+                            columnsMap={columnsMap}
                             withExpandable={withExpandable}
                             withCheckbox={withCheckbox}
                             withStickyHeader={withStickyHeader}
@@ -556,6 +670,7 @@ const Table: FC<ITableProps> = ({
                         />
                         <TBody
                             table={table}
+                            columnsMap={columnsMap}
                             withExpandable={withExpandable}
                             withCheckbox={withCheckbox}
                             withEditMode={withEditMode}
@@ -575,7 +690,7 @@ const Table: FC<ITableProps> = ({
                             tableHeadRef={tableHeadRef.current}
                             tableFootRef={tableFootRef.current}
                         />
-                        {table.getRowModel().rows.length > 0 && (
+                        {rowCount > 0 && (
                             <TFoot
                                 ref={tableFootRef}
                                 table={table}
@@ -587,11 +702,11 @@ const Table: FC<ITableProps> = ({
                 </Scrollbar>
             </div>
 
-            {withPagination && !withVirtualScroll && table.getRowModel().rows.length > 0 && (
+            {withPagination && !withVirtualScroll && rowCount > 0 && (
                 <div className="dataTable__pagination">
                     <div className="dataTable__pagination_controls">
                         <Pagination
-                            current={initialPageIndex + 1}
+                            current={table.getState().pagination.pageIndex + 1}
                             totalItems={data.length}
                             currentPageItemsLength={initialPageSize}
                             totalPages={table.getPageCount()}
@@ -608,4 +723,4 @@ const Table: FC<ITableProps> = ({
     );
 };
 
-export { ITableProps, Table as default };
+export { TablePropsType, Table as default };

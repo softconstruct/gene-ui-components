@@ -15,12 +15,13 @@ import Cell, { ICellProps } from "./Cell";
 interface ITableRow {
     row: Row<RowData>;
     rowIndex: number;
+    columnsMap: Map<string, TableCol<RowData>>;
     withExpandable?: boolean;
     withCheckbox?: boolean;
     withEditMode: boolean;
 }
 
-const TableRow: FC<ITableRow> = ({ row, rowIndex, withExpandable, withCheckbox, withEditMode }) => {
+const TableRow: FC<ITableRow> = ({ row, rowIndex, columnsMap, withExpandable, withCheckbox, withEditMode }) => {
     const {
         onRowClick,
         onCellEdit,
@@ -99,8 +100,9 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, withExpandable, withCheckbox, 
     ];
 
     const visibleCells = row.getVisibleCells().filter((cell) => {
-        const { type } = cell.column.columnDef as TableCol<ICellProps>;
-        return type !== "Expand" && type !== "RowCheckbox";
+        const colDef = columnsMap.get(cell.column.id);
+        if (!colDef) return false;
+        return colDef.type !== "Expand" && colDef.type !== "RowCheckbox";
     });
 
     const isSelected = row.getIsSelected();
@@ -160,22 +162,22 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, withExpandable, withCheckbox, 
                 )}
 
                 {visibleCells.map((cell) => {
-                    const { type } = cell.column.columnDef as TableCol<ICellProps>;
-                    const colDef = cell.column.columnDef as TableCol<unknown>;
+                    const colDef = columnsMap.get(cell.column.id);
+                    if (!colDef) return null;
                     const headerText = colDef.header;
                     const cellLabel = typeof headerText === "string" ? headerText : `Column ${rowIndex + 1}`;
                     return (
                         <td key={cell.id} className="table__td" role={withCheckbox ? "gridcell" : undefined}>
-                            <div className={classNames(`table__content ${CellClassNames[type]}`)}>
+                            <div className={classNames(`table__content ${CellClassNames[colDef.type]}`)}>
                                 <Cell
-                                    type={type as ICellProps["type"]}
+                                    type={colDef.type as ICellProps["type"]}
                                     data={row.original[colDef.type]}
                                     withEditMode={withEditMode}
                                     rowCellRenderer={colDef.rowCellRenderer}
                                     withCopy={colDef.copyable}
                                     ariaLabel={cellLabel}
                                     {...(onCellEdit && {
-                                        onChange: (data) => handleCellEdit(rowIndex, type, data)
+                                        onChange: (data) => handleCellEdit(rowIndex, colDef.type, data)
                                     })}
                                 />
                             </div>

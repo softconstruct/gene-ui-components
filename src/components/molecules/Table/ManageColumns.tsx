@@ -14,14 +14,21 @@ import Checkbox from "@components/molecules/Checkbox";
 import { TableContext } from "@components/molecules/Table/Table";
 import { IManageColumnsData, IOrderedColumns, OrderType, Row, TableCol } from "@components/molecules/Table/type";
 
+type MutableColumnDef = {
+    isVisible?: boolean;
+    isPinned?: boolean;
+    order?: number;
+};
+
 interface IManageColumns {
     onMenuClose: () => void;
     visibleColumns?: VisibilityState;
     orderedColumns?: IOrderedColumns[];
+    columnsMap: Map<string, TableCol<Row>>;
     isGrouped?: boolean;
 }
 
-const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onMenuClose, isGrouped }) => {
+const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, columnsMap, onMenuClose, isGrouped }) => {
     const { onManageColumnsChange, onManageColumnRestore } = useContext(TableContext);
     const [columns, setColumns] = useState<IOrderedColumns[] | null>(null);
     const [columnsVisibility, setColumnsVisibility] = useState<VisibilityState>({});
@@ -46,8 +53,10 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onM
     };
 
     const handleColumnVisibility = (column: Column<Row, unknown>) => {
-        const col = column.columnDef as TableCol<Row>;
-        col.isVisible = !col.isVisible;
+        const col = columnsMap.get(column.id);
+        if (!col) return;
+        const columnDef = column.columnDef as MutableColumnDef;
+        columnDef.isVisible = !col.isVisible;
         setColumnsVisibility({
             ...columnsVisibility,
             [column.id]: !columnsVisibility[column.id]
@@ -67,18 +76,20 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onM
         const [reorderedColumns] = orderedManageColumns.map((group) =>
             group.columns.reduce(
                 (acc, column, index) => {
+                    const colDef = columnsMap.get(column.id);
+                    if (!colDef) return acc;
                     const updatedColumn = {
                         ...column,
                         columnDef: {
-                            ...(column.columnDef as TableCol<Row>),
+                            ...colDef,
                             order: index + 1
                         }
                     };
                     return {
                         ...acc,
                         [updatedColumn.id]: {
-                            order: (updatedColumn.columnDef as TableCol<Row>).order,
-                            isPinned: !!(column.columnDef as TableCol<Row>)?.isPinned
+                            order: colDef.order,
+                            isPinned: !!colDef.isPinned
                         }
                     };
                 },
@@ -109,20 +120,29 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onM
     const onColumnPin = (column: Column<Row, unknown>, groupIndex: number, columnIndex: number) => {
         if (!columns?.length) return;
 
-        const col = column.columnDef as TableCol<Row>;
-        col.isPinned = !col.isPinned;
+        const col = columnsMap.get(column.id);
+        if (!col) return;
+        const columnDef = column.columnDef as MutableColumnDef;
+        columnDef.isPinned = !col.isPinned;
         setColumns((prev) => {
             if (!prev) return null;
             if (!prev[groupIndex].columns?.length) {
                 return prev;
             }
             const currentColumn = prev[groupIndex].columns?.[columnIndex];
-            if (currentColumn) (currentColumn.columnDef as TableCol<Row>).order = col.isPinned ? columnIndex + 1 : 1;
+            const currentColDef = currentColumn ? columnsMap.get(currentColumn.id) : null;
+            const newIsPinned = !col.isPinned;
+            if (currentColumn && currentColDef) {
+                const currentColumnDef = currentColumn.columnDef as MutableColumnDef;
+                currentColumnDef.order = newIsPinned ? columnIndex + 1 : 1;
+            }
             prev[groupIndex].columns.sort((a, b) => {
-                const aIsPinned = (a.columnDef as TableCol<Row>).isPinned;
-                const bIsPinned = (b.columnDef as TableCol<Row>).isPinned;
-                const aOrder = (a.columnDef as TableCol<Row>).order;
-                const bOrder = (b.columnDef as TableCol<Row>).order;
+                const aColDef = columnsMap.get(a.id);
+                const bColDef = columnsMap.get(b.id);
+                const aIsPinned = aColDef?.isPinned ?? false;
+                const bIsPinned = bColDef?.isPinned ?? false;
+                const aOrder = aColDef?.order ?? 0;
+                const bOrder = bColDef?.order ?? 0;
 
                 if (aIsPinned && !bIsPinned) {
                     return -1;
@@ -172,10 +192,8 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onM
 
     const renderDraggableSection = (dragCols: Column<Row, unknown>[], groupIndex: number) => {
         return dragCols.map((column, index) => {
-            if (
-                (column.columnDef as TableCol<Row>).type === "Expand" ||
-                (column.columnDef as TableCol<Row>).type === "RowCheckbox"
-            ) {
+            const colDef = columnsMap.get(column.id);
+            if (!colDef || colDef.type === "Expand" || colDef.type === "RowCheckbox") {
                 return null;
             }
             return (
@@ -186,14 +204,14 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onM
                             {...(draggableProvided.draggableProps as React.HTMLAttributes<HTMLDivElement>)}
                             className={classNames("dropdownMenu__columns_item", {
                                 "dropdownMenu__columns_item--dragging": draggableSnapshot.isDragging,
-                                "dropdownMenu__columns_item--disabled": (column.columnDef as TableCol<unknown>).disabled
+                                "dropdownMenu__columns_item--disabled": colDef.disabled
                             })}
                             role="tab"
                             tabIndex={0}
                         >
                             <Label
                                 className="dropdownMenu__columns_placeholder"
-                                text={(column.columnDef as TableCol<Row>).header}
+                                text={typeof colDef.header === "string" ? colDef.header : ""}
                             >
                                 <Checkbox
                                     name="item"
@@ -207,7 +225,7 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, onM
                                     appearance="secondary"
                                     layout="text"
                                     size="small"
-                                    Icon={(column.columnDef as TableCol<Row>).isPinned ? PinFilled : Pin}
+                                    Icon={colDef.isPinned ? PinFilled : Pin}
                                     onClick={() => onColumnPin(column, groupIndex, index)}
                                     className="dropdownMenu__columns_icon"
                                 />

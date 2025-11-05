@@ -7,10 +7,11 @@ import Empty, { IEmptyProps } from "@components/molecules/Empty";
 import TableRow from "@components/molecules/Table/TableRow";
 import VirtualScrollTBody from "@components/molecules/Table/VirtualScrollTBody";
 
-import { Row } from ".";
+import { Row, TableCol } from ".";
 
 interface ITableBody {
     table: Table<Row>;
+    columnsMap: Map<string, TableCol<Row>>;
     withExpandable?: boolean;
     withCheckbox?: boolean;
     withEditMode?: boolean;
@@ -33,6 +34,7 @@ interface ITableBody {
 
 const TBody: FC<ITableBody> = ({
     table,
+    columnsMap,
     withExpandable,
     withCheckbox,
     withEditMode = false,
@@ -85,6 +87,7 @@ const TBody: FC<ITableBody> = ({
                                 centerRows={table.getCenterRows()}
                                 columnCount={table.getHeaderGroups().length || 1}
                                 scrollbarContainerRef={scrollbarContainerRef.scrollbarRef}
+                                columnsMap={columnsMap}
                                 withExpandable={withExpandable}
                                 withEditMode={withEditMode}
                                 withCheckbox={withCheckbox}
@@ -100,6 +103,7 @@ const TBody: FC<ITableBody> = ({
                                 key={row.id}
                                 row={row}
                                 rowIndex={rowIndex}
+                                columnsMap={columnsMap}
                                 withExpandable={withExpandable}
                                 withCheckbox={withCheckbox}
                                 withEditMode={withEditMode}
