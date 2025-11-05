@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useState } from "react";
 import classNames from "classnames";
 
 import { Minus, Plus } from "@geneui/icons";
@@ -133,14 +133,11 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value;
-
-        // Handle empty or just minus sign by clamping to the minimum value
         if (inputValue === "" || inputValue === "-") {
             const nextValue = min;
             updateValue(nextValue, event);
             return;
         }
-
         const parsedValue = parseInt(inputValue, 10);
 
         if (!Number.isNaN(parsedValue)) {
@@ -164,11 +161,6 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => onBlur?.(e);
 
-    useEffect(() => {
-        if (isControlled) {
-            setInternalValue(value);
-        }
-    }, [value, isControlled]);
     return (
         <div
             className={classNames(
