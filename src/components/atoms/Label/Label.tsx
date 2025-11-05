@@ -152,7 +152,7 @@ const Label: FC<ILabelProps> = ({
             onClick={handlePreventLabelInteraction}
         >
             {children}
-            {TextAndRequired && !labelFor ? (
+            {(TextAndRequired && !labelFor) || infoText ? (
                 <span className={classnames("label__container")}>
                     <div className="label__containerInner">{TextAndRequired}</div>
                     {infoText && (
@@ -160,19 +160,7 @@ const Label: FC<ILabelProps> = ({
                     )}
                 </span>
             ) : (
-                TextAndRequired && (
-                    <>
-                        {TextAndRequired}
-                        {infoText && (
-                            <Info
-                                infoText={infoText}
-                                disabled={disabled}
-                                size={iconSizes[size]}
-                                className="label__info"
-                            />
-                        )}
-                    </>
-                )
+                TextAndRequired
             )}
         </Component>
     );

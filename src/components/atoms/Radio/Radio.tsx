@@ -151,6 +151,7 @@ const Radio: FC<IRadioProps> = (props) => {
             <div className="radio__content">
                 <Label
                     text={label}
+                    className="radio__label"
                     required={required}
                     infoText={infoText}
                     disabled={disabled}

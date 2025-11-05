@@ -46,11 +46,6 @@
         display: flex;
     }
 
-    &__label {
-        display: flex;
-        max-width: fit-content;
-    }
-
     &__imitationHolder {
         flex: 0 0 auto;
         display: flex;
@@ -165,10 +160,6 @@
             justify-content: flex-end;
             gap: var(--guit-ref-spacing-medium);
         }
-
-        #{ $this }__label {
-            gap: var(--guit-ref-spacing-medium);
-        }
     }
 
     &_labelTop {
@@ -177,12 +168,6 @@
 
         #{ $this }__content {
             flex-direction: column;
-            align-items: flex-start;
-            gap: var(--guit-ref-spacing-3xsmall);
-        }
-
-        #{ $this }__label {
-            flex-direction: column-reverse;
             align-items: flex-start;
             gap: var(--guit-ref-spacing-3xsmall);
         }
