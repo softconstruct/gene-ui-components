@@ -62,6 +62,7 @@ export {
     SegmentedControlButton,
     ISegmentedControlButtonProps
 } from "@components/molecules/SegmentedControl";
+export { default as Accordion } from "./components/molecules/Accordion";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
