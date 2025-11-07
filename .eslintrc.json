@@ -55,7 +55,8 @@
                     "Menu": ["MenuItem"],
                     "ButtonGroup": ["Button"],
                     "Carousel": ["CarouselItem"],
-                    "TagGroup": ["Tag"]
+                    "TagGroup": ["Tag"],
+                    "SegmentedControl": ["SegmentedControlButton"]
                 }
             }
         ],

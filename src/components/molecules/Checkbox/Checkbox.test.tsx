@@ -33,6 +33,7 @@ describe("Checkbox ", () => {
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({ disabled: true });
         expect(wrapper.find(".checkbox").hasClass(`checkbox_disabled`)).toBeTruthy();
+        expect(wrapper.find("input").props().disabled).toBe(true);
     });
 
     it("renders readOnly prop correctly", () => {
