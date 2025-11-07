@@ -1,5 +1,150 @@
+@use "../../../assets/styles/mixins";
+
 .accordion {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    &:not(:last-child) {
+        margin-bottom: var(--guit-ref-spacing-xsmall);
+    }
+
+    &_size {
+        &_large {
+            #{ $this }__header {
+                height: var(--guit-sem-dimension-height-xlarge);
+                padding-inline: var(--guit-ref-spacing-medium);
+            }
+            #{ $this }__body {
+                padding: var(--guit-ref-spacing-xsmall);
+            }
+        }
+
+        &_medium {
+            #{ $this }__header {
+                height: var(--guit-sem-dimension-height-large);
+                padding-inline: var(--guit-ref-spacing-xsmall);
+            }
+            #{ $this }__body {
+                padding: var(--guit-ref-spacing-medium);
+            }
+        }
+
+        &_small {
+            #{ $this }__header {
+                height: var(--guit-sem-dimension-height-medium);
+                padding-inline: var(--guit-ref-spacing-xsmall);
+            }
+            #{ $this }__body {
+                padding: var(--guit-ref-spacing-medium);
+            }
+        }
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        column-gap: var(--guit-ref-spacing-3xsmall);
+        background-color: var(--guit-sem-color-background-neutral-1);
+        padding-block: var(--guit-ref-spacing-xsmall);
+        border-top-left-radius: var(--guit-ref-radius-3xsmall);
+        border-top-right-radius: var(--guit-ref-radius-3xsmall);
+        border-width: var(--guit-ref-border-width-thin);
+        border-style: var(--guit-ref-border-style-solid);
+    }
+
+    &__body {
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+        border-bottom-left-radius: var(--guit-ref-radius-3xsmall);
+        border-bottom-right-radius: var(--guit-ref-radius-3xsmall);
+        border-bottom-width: var(--guit-ref-border-width-thin);
+        border-bottom-style: var(--guit-ref-border-style-solid);
+        border-left-width: var(--guit-ref-border-width-thin);
+        border-left-style: var(--guit-ref-border-style-solid);
+        border-right-width: var(--guit-ref-border-width-thin);
+        border-right-style: var(--guit-ref-border-style-solid);
+    }
+
+    &:not(&#{ $this }_expanded) {
+        #{ $this }__header {
+            border-bottom-left-radius: var(--guit-ref-radius-3xsmall);
+            border-bottom-right-radius: var(--guit-ref-radius-3xsmall);
+        }
+        &:not(&#{ $this }_disabled) {
+            #{ $this }__header {
+                border-bottom-color: var(--guit-sem-color-border-neutral-2);
+            }
+        }
+        &#{ $this }_disabled {
+            #{ $this }__header {
+                border-bottom-color: var(--guit-sem-color-border-disabled-1);
+            }
+        }
+    }
+
+    &_expanded {
+        #{ $this }__header {
+            border-bottom-color: transparent;
+        }
+    }
+
+    &:not(&#{ $this }_disabled) {
+        #{ $this }__header {
+            border-top-color: var(--guit-sem-color-border-neutral-2);
+            border-left-color: var(--guit-sem-color-border-neutral-2);
+            border-right-color: var(--guit-sem-color-border-neutral-2);
+        }
+        #{ $this }__body {
+            border-bottom-color: var(--guit-sem-color-border-neutral-2);
+            border-left-color: var(--guit-sem-color-border-neutral-2);
+            border-right-color: var(--guit-sem-color-border-neutral-2);
+        }
+    }
+
+    &#{ $this }_disabled {
+        pointer-events: none;
+
+        #{ $this }__header {
+            border-top-color: var(--guit-sem-color-border-disabled-1);
+            border-left-color: var(--guit-sem-color-border-disabled-1);
+            border-right-color: var(--guit-sem-color-border-disabled-1);
+        }
+        #{ $this }__body {
+            border-bottom-color: var(--guit-sem-color-border-disabled-1);
+            border-left-color: var(--guit-sem-color-border-disabled-1);
+            border-right-color: var(--guit-sem-color-border-disabled-1);
+        }
+
+        #{ $this }__title,
+        #{ $this }__icon {
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+
+    @include mixins.media-hover {
+        &:hover {
+            #{ $this }__header {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
+        }
+    }
+
+    &:active {
+        #{ $this }__header {
+            background-color: var(--guit-sem-color-background-neutral-1-pressed);
+        }
+    }
+
+    &__title {
+        flex: 1;
+    }
+
+    &__icon {
+        flex: none;
+    }
+
+    &__content {
+        height: 14rem;
+
+        // todo: remove background-color after content implementation
+        background-color: #f6c6ce;
+    }
 }

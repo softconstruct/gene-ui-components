@@ -9,10 +9,16 @@ const meta: Meta<IAccordionProps> = {
     title: "Molecules/Accordion",
     component: Accordion,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance })
+        className: args({ control: "false", ...propCategory.appearance }),
+        disabled: args({ control: "boolean", ...propCategory.states }),
+        size: args({ control: "select", ...propCategory.appearance }),
+        withIcon: args({ control: "boolean", ...propCategory.content }),
+        title: args({ control: "text", ...propCategory.content })
         // fill Accordion component argTypes
     },
     args: {
+        title: "Accordion Item",
+        withIcon: true
         // fill Accordion component args
     }
 };

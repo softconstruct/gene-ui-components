@@ -6,8 +6,10 @@ import Accordion, { IAccordionProps } from "./index";
 
 describe("Accordion ", () => {
     let setup: ReactWrapper<IAccordionProps>;
+    const title = "Accordion Item";
+
     beforeEach(() => {
-        setup = mount(<Accordion />);
+        setup = mount(<Accordion title={title} />);
     });
 
     it("renders without crashing", () => {
