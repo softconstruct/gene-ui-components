@@ -36,7 +36,7 @@ describe("SegmentedControl ", () => {
         const wrapper = setup.setProps({
             helperText
         });
-        expect(wrapper.find(HelperText).find(".helperText__text").text()).toBe(helperText);
+        expect(wrapper.find(HelperText).first().props().text).toBe(helperText);
     });
 
     it("renders Icon prop correctly", () => {
