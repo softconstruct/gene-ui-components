@@ -21,20 +21,6 @@
 
         &:checked,
         &:indeterminate {
-            &:hover {
-                & + #{ $this }__imitation {
-                    background-color: var(--guit-sem-color-background-selected-2-hover);
-                    border-color: var(--guit-sem-color-background-selected-2-hover);
-                }
-            }
-
-            &:active {
-                & + #{ $this }__imitation {
-                    background-color: var(--guit-sem-color-background-selected-2-pressed);
-                    border-color: var(--guit-sem-color-background-selected-2-pressed);
-                }
-            }
-
             & + #{ $this }__imitation {
                 background-color: var(--guit-sem-color-background-selected-2);
                 border-color: var(--guit-sem-color-background-selected-2);
@@ -64,19 +50,25 @@
             height: var(--guit-sem-dimension-height-small);
         }
 
-        #{ $this }__input {
-            &:not(:checked, :indeterminate) {
-                &:hover {
-                    & + #{ $this }__imitation {
-                        background-color: var(--guit-sem-color-background-transparent-1-hover);
-                    }
-                }
+        &:hover {
+            #{ $this }__input:not(:checked, :indeterminate):not(:active) + #{ $this }__imitation {
+                background-color: var(--guit-sem-color-background-transparent-1-hover);
+            }
 
-                &:active {
-                    & + #{ $this }__imitation {
-                        background-color: var(--guit-sem-color-background-transparent-1-pressed);
-                    }
-                }
+            #{ $this }__input:is(:checked, :indeterminate):not(:active) + #{ $this }__imitation {
+                background-color: var(--guit-sem-color-background-selected-2-hover);
+                border-color: var(--guit-sem-color-background-selected-2-hover);
+            }
+        }
+
+        &:active {
+            #{ $this }__input:not(:checked, :indeterminate) + #{ $this }__imitation {
+                background-color: var(--guit-sem-color-background-transparent-1-pressed);
+            }
+
+            #{ $this }__input:is(:checked, :indeterminate) + #{ $this }__imitation {
+                background-color: var(--guit-sem-color-background-selected-2-pressed);
+                border-color: var(--guit-sem-color-background-selected-2-pressed);
             }
         }
 
@@ -118,14 +110,6 @@
 
                 &:checked,
                 &:indeterminate {
-                    &:hover,
-                    &:active {
-                        & + #{ $this }__imitation {
-                            background-color: var(--guit-sem-color-background-neutral-4);
-                            border-color: transparent;
-                        }
-                    }
-
                     & + #{ $this }__imitation {
                         border-color: transparent;
                         background-color: var(--guit-sem-color-background-neutral-4);
