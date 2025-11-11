@@ -149,6 +149,31 @@ const Radio: FC<IRadioProps> = (props) => {
             {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             <div className="radio__content">
+                <span
+                    className={classNames("radio__imitationHolder", {
+                        radio__imitationHolder_disabled: disabled,
+                        radio__imitationHolder_readOnly: readOnly && !disabled
+                    })}
+                >
+                    <input
+                        type="radio"
+                        className="radio__input"
+                        onChange={onChangeHandler}
+                        onFocus={onFocusHandler}
+                        onBlur={onBlurHandler}
+                        checked={checkedState}
+                        value={value}
+                        name={name}
+                        id={generatedId}
+                        disabled={disabled}
+                        readOnly={readOnly}
+                        {...(autoFocus && { autoFocus })}
+                        {...((disabled || readOnly) && { tabIndex: -1 })}
+                    />
+                    <span className="radio__imitation">
+                        <CircleFilled className="radio__icon" />
+                    </span>
+                </span>
                 <Label
                     text={label}
                     className="radio__label"
@@ -158,33 +183,6 @@ const Radio: FC<IRadioProps> = (props) => {
                     readOnly={readOnly}
                     labelFor={generatedId}
                 />
-                <span
-                    className={classNames("radio__imitationHolder", {
-                        radio__imitationHolder_disabled: disabled,
-                        radio__imitationHolder_readOnly: readOnly && !disabled
-                    })}
-                >
-                    <span className="radio__imitationHolderInner">
-                        <input
-                            type="radio"
-                            className="radio__input"
-                            onChange={onChangeHandler}
-                            onFocus={onFocusHandler}
-                            onBlur={onBlurHandler}
-                            checked={checkedState}
-                            value={value}
-                            name={name}
-                            id={generatedId}
-                            disabled={disabled}
-                            readOnly={readOnly}
-                            {...(autoFocus && { autoFocus })}
-                            {...((disabled || readOnly) && { tabIndex: -1 })}
-                        />
-                        <span className="radio__imitation">
-                            <CircleFilled className="radio__icon" />
-                        </span>
-                    </span>
-                </span>
             </div>
             {helperText && (
                 <div className="radio__infoContainer">
