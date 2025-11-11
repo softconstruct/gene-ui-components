@@ -178,6 +178,36 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
             {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             <div className="checkbox__content">
+                <span
+                    className={classNames("checkbox__imitationHolder", {
+                        checkbox__imitationHolder_disabled: disabled,
+                        checkbox__imitationHolder_readOnly: readOnly && !disabled
+                    })}
+                >
+                    <input
+                        type="checkbox"
+                        className="checkbox__input"
+                        onChange={onChangeHandler}
+                        onFocus={onFocusHandler}
+                        onBlur={onBlurHandler}
+                        onClick={onClickHandler}
+                        checked={resolvedChecked}
+                        disabled={disabled}
+                        ref={interRef}
+                        {...(name && { name })}
+                        {...(autoFocus && { autoFocus })}
+                        {...((disabled || readOnly) && { tabIndex: -1 })}
+                        value={value}
+                        id={generatedId}
+                    />
+                    <span className="checkbox__imitation">
+                        {indeterminate && !checked ? (
+                            <Minus className="checkbox__icon" size={16} />
+                        ) : (
+                            <CheckMark className="checkbox__icon" size={16} />
+                        )}
+                    </span>
+                </span>
                 <Label
                     text={label}
                     className="checkbox__label"
@@ -187,38 +217,6 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                     readOnly={readOnly}
                     labelFor={generatedId}
                 />
-                <span
-                    className={classNames("checkbox__imitationHolder", {
-                        checkbox__imitationHolder_disabled: disabled,
-                        checkbox__imitationHolder_readOnly: readOnly && !disabled
-                    })}
-                >
-                    <span className="checkbox__imitationHolderInner">
-                        <input
-                            type="checkbox"
-                            className="checkbox__input"
-                            onChange={onChangeHandler}
-                            onFocus={onFocusHandler}
-                            onBlur={onBlurHandler}
-                            onClick={onClickHandler}
-                            checked={resolvedChecked}
-                            disabled={disabled}
-                            ref={interRef}
-                            {...(name && { name })}
-                            {...(autoFocus && { autoFocus })}
-                            {...((disabled || readOnly) && { tabIndex: -1 })}
-                            value={value}
-                            id={generatedId}
-                        />
-                        <span className="checkbox__imitation">
-                            {indeterminate && !checked ? (
-                                <Minus className="checkbox__icon" size={16} />
-                            ) : (
-                                <CheckMark className="checkbox__icon" size={16} />
-                            )}
-                        </span>
-                    </span>
-                </span>
             </div>
             {helperText && (
                 <div className="checkbox__infoContainer">
