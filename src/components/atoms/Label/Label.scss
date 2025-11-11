@@ -38,6 +38,7 @@
         &_disabled {
             color: var(--guit-sem-color-foreground-disabled);
             pointer-events: none;
+            user-select: none;
         }
     }
 }
