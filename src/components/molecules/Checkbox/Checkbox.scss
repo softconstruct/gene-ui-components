@@ -34,6 +34,7 @@
                     border-color: var(--guit-sem-color-background-selected-2-pressed);
                 }
             }
+
             & + #{ $this }__imitation {
                 background-color: var(--guit-sem-color-background-selected-2);
                 border-color: var(--guit-sem-color-background-selected-2);
@@ -93,6 +94,7 @@
                     & + #{ $this }__imitation {
                         border-color: var(--guit-sem-color-border-disabled-1);
                         background-color: var(--guit-sem-color-background-disabled);
+
                         #{ $this }__icon {
                             color: var(--guit-sem-color-foreground-inverse-disabled);
                         }
@@ -112,8 +114,18 @@
             pointer-events: none;
 
             #{ $this }__input {
+                pointer-events: none;
+
                 &:checked,
                 &:indeterminate {
+                    &:hover,
+                    &:active {
+                        & + #{ $this }__imitation {
+                            background-color: var(--guit-sem-color-background-neutral-4);
+                            border-color: transparent;
+                        }
+                    }
+
                     & + #{ $this }__imitation {
                         border-color: transparent;
                         background-color: var(--guit-sem-color-background-neutral-4);
@@ -125,6 +137,14 @@
                 }
 
                 &:not(:checked, :indeterminate) {
+                    &:hover,
+                    &:active {
+                        & + #{ $this }__imitation {
+                            background-color: var(--guit-sem-color-background-neutral-4);
+                            border-color: var(--guit-sem-color-border-neutral-2);
+                        }
+                    }
+
                     & + #{ $this }__imitation {
                         background-color: var(--guit-sem-color-background-neutral-4);
                         border-color: var(--guit-sem-color-border-neutral-2);

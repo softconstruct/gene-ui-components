@@ -148,7 +148,6 @@ const Label: FC<ILabelProps> = ({
                 className
             )}
             {...(labelFor && { htmlFor: labelFor })}
-            onMouseDown={handlePreventLabelInteraction}
             onClick={handlePreventLabelInteraction}
         >
             {children}
