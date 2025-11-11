@@ -95,7 +95,7 @@ const Label: FC<ILabelProps> = ({
                     <span
                         className={classnames("label__container", { label__container_readOnly: readOnly && !disabled })}
                     >
-                        <div className="label__container-inner">
+                        <div className="label__containerInner">
                             {text && (
                                 <Tooltip text={text} isVisible={isTruncated}>
                                     <span
@@ -118,7 +118,14 @@ const Label: FC<ILabelProps> = ({
                                 </span>
                             )}
                         </div>
-                        {infoText && <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} />}
+                        {infoText && (
+                            <Info
+                                infoText={infoText}
+                                disabled={disabled}
+                                size={iconSizes[size]}
+                                className="label__info"
+                            />
+                        )}
                     </span>
                 )
             )}

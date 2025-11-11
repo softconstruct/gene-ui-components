@@ -149,7 +149,7 @@ describe("TextField ", () => {
     it.each<ITextFieldProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
         const wrapper = setup.setProps({ status, helperText: "test helper text" });
 
-        expect(wrapper.find(HelperText).props().type).toEqual(status);
+        expect(wrapper.find(HelperText).props().status).toEqual(status);
     });
 
     it("fires onClear when the clear button is clicked", () => {

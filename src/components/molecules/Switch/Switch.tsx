@@ -77,10 +77,10 @@ interface ISwitchProps {
      */
     autoFocus?: boolean;
     /**
-     *  Determines the switch appearance based on its status.<br>
+     *  Determines the switch's visual status.<br>
      *  Possible values: `rest | warning | error`
      */
-    type?: "rest" | "warning" | "error";
+    status?: "rest" | "warning" | "error";
 }
 
 /**
@@ -94,7 +94,7 @@ const Switch: FC<ISwitchProps> = (props) => {
         disabled,
         helperText,
         readOnly,
-        type = "rest",
+        status = "rest",
         direction = "horizontal",
         autoFocus,
         onChange,
@@ -124,7 +124,7 @@ const Switch: FC<ISwitchProps> = (props) => {
 
     return (
         <div
-            className={classNames("switch", `switch_direction_${direction}`, `switch_type_${type}`, className)}
+            className={classNames("switch", `switch_direction_${direction}`, `switch_status_${status}`, className)}
             {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             <Label
@@ -155,7 +155,7 @@ const Switch: FC<ISwitchProps> = (props) => {
             </Label>
             {helperText && (
                 <div className="switch__infoContainer">
-                    <HelperText text={helperText} disabled={disabled} type={type} />
+                    <HelperText text={helperText} disabled={disabled} status={status} />
                 </div>
             )}
         </div>

@@ -14,25 +14,20 @@
             &#{ $this }_withIcon {
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
             }
-
-            #{ $this }__text {
-                font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
-                font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
-                font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
-                line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
-            }
         }
 
         &_medium {
             gap: var(--guit-ref-spacing-xsmall);
+            height: var(--guit-sem-dimension-height-medium);
         }
 
         &_small {
             gap: var(--guit-ref-spacing-2xsmall);
+            height: var(--guit-sem-dimension-height-small);
         }
     }
 
-    &_state {
+    &_status {
         &_rest {
             background-color: var(--guit-sem-color-background-neutral-4);
 
@@ -59,16 +54,16 @@
                 color: var(--guit-sem-color-foreground-warning);
             }
         }
+    }
 
-        &_disabled {
-            background-color: var(--guit-sem-color-background-disabled);
-            pointer-events: none;
-            user-select: none;
+    &_disabled {
+        background-color: var(--guit-sem-color-background-disabled);
+        pointer-events: none;
+        user-select: none;
 
-            #{ $this }__icon,
-            #{ $this }__text {
-                color: var(--guit-sem-color-foreground-disabled);
-            }
+        #{ $this }__icon,
+        #{ $this }__text {
+            color: var(--guit-sem-color-foreground-disabled);
         }
     }
 

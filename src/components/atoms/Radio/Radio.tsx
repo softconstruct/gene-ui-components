@@ -53,10 +53,10 @@ interface IRadioProps {
      */
     defaultChecked?: boolean;
     /**
-     *  Determines the radios appearance based on its status.<br>
+     *  Determines the radio's visual status.<br>
      *  Possible values: `rest | warning | error`
      */
-    type?: "rest" | "warning" | "error";
+    status?: "rest" | "warning" | "error";
     /**
      *  HTML name attribute for the input element.<br>
      *  A unique identifier for the radio within a form.
@@ -96,7 +96,7 @@ const Radio: FC<IRadioProps> = (props) => {
         disabled,
         helperText,
         readOnly,
-        type = "rest",
+        status = "rest",
         direction = "horizontal ",
         autoFocus,
         onChange,
@@ -133,7 +133,7 @@ const Radio: FC<IRadioProps> = (props) => {
         <div
             className={classNames(
                 "radio ",
-                `radio_${type}`,
+                `radio_${status}`,
                 {
                     radio_disabled: disabled,
                     radio_readOnly: readOnly,
@@ -162,6 +162,8 @@ const Radio: FC<IRadioProps> = (props) => {
                             checked={checkedState}
                             value={value}
                             name={name}
+                            disabled={disabled}
+                            readOnly={readOnly}
                             {...(autoFocus && { autoFocus })}
                             {...((disabled || readOnly) && { tabIndex: -1 })}
                         />
@@ -173,7 +175,7 @@ const Radio: FC<IRadioProps> = (props) => {
             </Label>
             {helperText && (
                 <div className="radio__infoContainer">
-                    <HelperText text={helperText} disabled={disabled} type={type} />
+                    <HelperText text={helperText} disabled={disabled} status={status} />
                 </div>
             )}
         </div>

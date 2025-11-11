@@ -3,7 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 // Components
 import Button from "@components/atoms/Button";
-import { IMenuProps, Menu, MenuItem } from "@components/molecules/Menu/index";
+import { IMenuItemProps, IMenuProps, Menu, MenuItem } from "@components/molecules/Menu/index";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -14,7 +14,6 @@ const meta: Meta<typeof Menu> = {
     component: Menu,
     subcomponents: { MenuItem },
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance }),
         swappable: args({ control: "boolean", ...propCategory.appearance }),
         onChange: args({ control: "false", ...propCategory.action }),
         onOpenChange: args({ control: "false", ...propCategory.action }),
@@ -47,10 +46,10 @@ const meta: Meta<typeof Menu> = {
     },
     args: {
         onOpenChange: () => {}
-    } as IMenuProps
+    }
 };
 
-const MenuItemRecursion = (menuData) => {
+const MenuItemRecursion = (menuData: IMenuItemProps[]) => {
     return menuData.map((el) => {
         return (
             <MenuItem
@@ -68,7 +67,7 @@ const MenuItemRecursion = (menuData) => {
                 emptyText={el.emptyText}
                 ComponentRender={el.ComponentRender}
             >
-                {el.children ? MenuItemRecursion(el.children) : el.title}
+                {el.children ? MenuItemRecursion(el.children as IMenuItemProps[]) : el.title}
             </MenuItem>
         );
     });

@@ -20,7 +20,7 @@ const meta: Meta<IRadioProps> = {
         required: args({ control: "boolean", ...propCategory.states }),
         helperText: args({ control: "text", ...propCategory.content }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
-        type: args({ control: "select", ...propCategory.appearance }),
+        status: args({ control: "select", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         onChange: args({ control: "false", ...propCategory.action }),

@@ -53,7 +53,10 @@
                     "ProductsMainSection": ["Product"],
                     "ProductsSecondarySection": ["Product"],
                     "Menu": ["MenuItem"],
-                    "ButtonGroup": ["Button"]
+                    "ButtonGroup": ["Button"],
+                    "Carousel": ["CarouselItem"],
+                    "TagGroup": ["Tag"],
+                    "SegmentedControl": ["SegmentedControlButton"]
                 }
             }
         ],

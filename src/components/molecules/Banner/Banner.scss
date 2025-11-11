@@ -1,0 +1,60 @@
+.banner {
+    $this: &;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    width: 100%;
+    padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-large);
+    column-gap: var(--guit-ref-spacing-xsmall);
+    row-gap: var(--guit-ref-spacing-medium);
+
+    &_status {
+        &_informative,
+        &_error {
+            #{ $this }__icon,
+            #{ $this }__text {
+                color: var(--guit-sem-color-foreground-inverse);
+            }
+        }
+
+        &_informative {
+            background-color: var(--guit-sem-color-background-brand-2);
+        }
+
+        &_warning {
+            background-color: var(--guit-sem-color-background-warning-2);
+
+            #{ $this }__icon,
+            #{ $this }__text {
+                color: var(--guit-sem-color-foreground-neutral-2);
+            }
+        }
+
+        &_error {
+            background-color: var(--guit-sem-color-background-error-2);
+        }
+    }
+
+    &__content {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--guit-ref-spacing-xsmall);
+        flex: 1;
+        min-width: 0;
+        padding-block: var(--guit-ref-spacing-4xsmall);
+    }
+
+    &__actions {
+        &_mobile {
+            justify-content: flex-end;
+            width: 100%;
+            order: 3;
+        }
+    }
+
+    &__icon,
+    &__button {
+        flex: none;
+    }
+}

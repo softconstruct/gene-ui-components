@@ -5,3 +5,4 @@ export { default as useWindowSize } from "./useWindowSize";
 export { default as useClickOutside } from "./useClickOutside";
 export { default as useDeviceInfo } from "./useDeviceInfo";
 export { default as useBreakpoint } from "./useBreakpoint";
+export { default as useContainerSize } from "./useContainerSize";

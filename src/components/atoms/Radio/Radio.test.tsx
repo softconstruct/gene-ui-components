@@ -113,10 +113,10 @@ describe("Radio ", () => {
         expect(onBlurMock).toHaveBeenCalled();
     });
 
-    it.each<IRadioProps["type"]>(["rest", "warning", "error"])('should have "%s" type', (type) => {
-        const wrapper = setup.setProps({ type });
+    it.each<IRadioProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
+        const wrapper = setup.setProps({ status });
 
-        expect(wrapper.find(".radio").hasClass(`radio_${type}`)).toBeTruthy();
+        expect(wrapper.find(".radio").hasClass(`radio_${status}`)).toBeTruthy();
     });
 
     it("renders className prop correctly", () => {

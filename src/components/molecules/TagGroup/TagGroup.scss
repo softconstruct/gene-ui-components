@@ -1,0 +1,43 @@
+.tagGroup {
+    $this: &;
+
+    height: 100%;
+
+    &__container {
+        $that: &;
+
+        display: grid;
+        grid-template-rows: 1fr auto;
+        grid-gap: var(--guit-ref-spacing-xsmall);
+        min-height: 0;
+        max-height: 100%;
+        padding: 0.2rem;
+    }
+
+    &__tags {
+        $that: &;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--guit-ref-spacing-xsmall);
+        padding: 0.2rem;
+
+        &_size {
+            &_small {
+                overflow: hidden;
+                max-height: calc(var(--guit-sem-dimension-height-small) * 2 + var(--guit-ref-spacing-xsmall) * 2);
+            }
+
+            &_medium {
+                overflow: hidden;
+                max-height: calc(var(--guit-sem-dimension-height-medium) * 2 + var(--guit-ref-spacing-xsmall) * 2);
+            }
+        }
+    }
+
+    &__showButton {
+        justify-self: end;
+    }
+}
