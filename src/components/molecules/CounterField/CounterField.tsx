@@ -88,11 +88,11 @@ export interface ICounterFieldProps {
     /**
      * Fires when the input field loses focus.
      */
-    onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    onInputBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
      * Fires when the input field receives focus.
      */
-    onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
+    onInputFocus?: (event: FocusEvent<HTMLInputElement>) => void;
 }
 
 /**
@@ -112,8 +112,8 @@ const CounterField: FC<ICounterFieldProps> = ({
     value,
     defaultValue = 0,
     onChange,
-    onBlur,
-    onFocus,
+    onInputBlur,
+    onInputFocus,
     min = 0,
     step = 1,
     size = "medium",
@@ -168,9 +168,9 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     const isDecrementDisabled = disabled || readOnly || currentValue <= min;
 
-    const onFocusHandler = (e: FocusEvent<HTMLInputElement>) => onFocus?.(e);
+    const onFocusHandler = (e: FocusEvent<HTMLInputElement>) => onInputFocus?.(e);
 
-    const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => onBlur?.(e);
+    const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => onInputBlur?.(e);
 
     return (
         <div
@@ -185,7 +185,6 @@ const CounterField: FC<ICounterFieldProps> = ({
             )}
             aria-required={required}
             aria-invalid={status === "error"}
-            {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             {label && (
                 <Label
