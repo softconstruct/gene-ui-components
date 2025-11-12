@@ -71,6 +71,15 @@ export interface ICounterFieldProps {
      */
     required?: boolean;
 
+    // ARIA LABELS
+    /**
+     * The aria label for the increment button.
+     */
+    ariaLabelIncrement?: string;
+    /**
+     * The aria label for the decrement button.
+     */
+    ariaLabelDecrement?: string;
     // ACTIONS
     /**
      * Fires when the user changes the counter value (via buttons or input).
@@ -87,8 +96,8 @@ export interface ICounterFieldProps {
 }
 
 /**
- * CounterField allows users to increment or decrement a numeric value using buttons or direct input.
- * It supports both controlled and uncontrolled modes, with customizable min values and step increments.
+ * The Counter Field component is an input field designed to increment or decrement a numerical value.
+ * It typically includes buttons for increasing or decreasing the count and can be configured to accept user input directly.
  */
 const CounterField: FC<ICounterFieldProps> = ({
     label,
@@ -97,6 +106,8 @@ const CounterField: FC<ICounterFieldProps> = ({
     disabled,
     readOnly,
     helperText,
+    ariaLabelIncrement = "Increment value",
+    ariaLabelDecrement = "Decrement value",
     status = "rest",
     value,
     defaultValue = 0,
@@ -190,12 +201,12 @@ const CounterField: FC<ICounterFieldProps> = ({
             <div className="counterField__inputContainer">
                 <Button
                     appearance="secondary"
-                    className="counterField__button counterField__button_decrement"
+                    className="counterField__button counterField__button_decrement_action"
                     layout="fill"
                     size={size}
                     Icon={Minus}
                     disabled={isDecrementDisabled}
-                    aria-label="Decrement value"
+                    aria-label={ariaLabelDecrement}
                     onClick={handleDecrement}
                 />
                 <TextField
@@ -213,12 +224,12 @@ const CounterField: FC<ICounterFieldProps> = ({
                 />
                 <Button
                     appearance="secondary"
-                    className="counterField__button counterField__button_increment"
+                    className="counterField__button counterField__button_increment_action"
                     layout="fill"
                     size={size}
                     Icon={Plus}
                     disabled={disabled || readOnly}
-                    aria-label="Increment value"
+                    aria-label={ariaLabelIncrement}
                     onClick={handleIncrement}
                 />
             </div>
