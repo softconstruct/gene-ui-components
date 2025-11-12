@@ -19,16 +19,13 @@ const meta: Meta<ICounterFieldProps> = {
         max: args({ control: "number", ...propCategory.validation }),
         min: args({ control: "number", ...propCategory.validation }),
         step: args({ control: "number", defaultValue: 1, ...propCategory.validation }),
-
         size: args({ control: "select", ...propCategory.appearance }),
         status: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
-
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
         helperText: args({ control: "text", ...propCategory.content }),
         required: args({ control: "boolean", ...propCategory.states }),
-
         onChange: args({ control: "false", ...propCategory.action }),
         onInputBlur: args({ control: "false", ...propCategory.action }),
         onInputFocus: args({ control: "false", ...propCategory.action })
@@ -50,11 +47,7 @@ export default meta;
 
 type Story = StoryObj<ICounterFieldProps>;
 
-const Template: FC<ICounterFieldProps> = ({ ...props }) => (
-    <div style={{ maxWidth: 400 }}>
-        <CounterField {...props} />
-    </div>
-);
+const Template: FC<ICounterFieldProps> = ({ ...props }) => <CounterField {...props} />;
 
 export const Default: Story = {
     render: ({ ...props }) => <Template {...props} />,
