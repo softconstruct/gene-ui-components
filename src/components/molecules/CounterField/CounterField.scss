@@ -6,7 +6,6 @@
     align-items: flex-start;
     gap: var(--guit-ref-spacing-3xsmall);
 
-    // INPUT CONTAINER - Horizontal layout for buttons and text field
     &__inputContainer {
         display: flex;
         align-items: center;
@@ -14,30 +13,25 @@
         width: 100%;
     }
 
-    // BUTTON - Decrement and Increment buttons (icon-only secondary fill buttons)
     &__button {
         flex-shrink: 0;
     }
 
-    // INPUT - Text field for manual value entry
     &__input {
         flex: 0 0 auto;
-        width: 8rem; // Figma: 80px fixed width
+        width: 8rem;
     }
 
-    // INFO CONTAINER - Helper text area
     &__infoContainer {
         display: flex;
         width: 100%;
     }
 
-    // STATE: DISABLED - Prevents all interactions
     &_disabled {
         pointer-events: none;
         user-select: none;
     }
 
-    // STATE: READ-ONLY - Prevents modifications
     &_readOnly {
         pointer-events: none;
     }
