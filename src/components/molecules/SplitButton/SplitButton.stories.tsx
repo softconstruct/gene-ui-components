@@ -1,14 +1,15 @@
-import React from "react";
+import React, { ComponentType } from "react";
 import { Meta, StoryObj } from "@storybook/react";
-import { args, propCategory } from "stories/assets/storybook.globals";
 
+import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Helpers
 // Components
-import SplitButton, { ActionIItem, ISplitButtonProps } from "./index";
+import { ISplitButtonProps, SplitButton, SplitButtonItem } from "./index";
 
 const meta: Meta<ISplitButtonProps> = {
-    title: "Atoms/SplitButton",
+    title: "Molecules/SplitButton",
     component: SplitButton,
+    subcomponents: { SplitButtonItem: SplitButtonItem as ComponentType<unknown> },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
@@ -26,11 +27,11 @@ export const Default: Story = {
     render: (props) => (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100px" }}>
             <SplitButton {...props}>
-                <ActionIItem>213</ActionIItem>
-                <ActionIItem>213</ActionIItem>
-                <ActionIItem>213</ActionIItem>
-                <ActionIItem>213</ActionIItem>
-                <ActionIItem>213</ActionIItem>
+                <SplitButtonItem>213</SplitButtonItem>
+                <SplitButtonItem>213</SplitButtonItem>
+                <SplitButtonItem>213</SplitButtonItem>
+                <SplitButtonItem>213</SplitButtonItem>
+                <SplitButtonItem>213</SplitButtonItem>
             </SplitButton>
         </div>
     )

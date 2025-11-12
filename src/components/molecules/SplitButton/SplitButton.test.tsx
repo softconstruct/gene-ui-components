@@ -2,7 +2,7 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import SplitButton, { ISplitButtonProps } from "./index";
+import { ISplitButtonProps, SplitButton } from "./index";
 
 describe("SplitButton ", () => {
     let setup: ReactWrapper<ISplitButtonProps>;
