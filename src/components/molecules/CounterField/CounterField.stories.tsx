@@ -16,7 +16,7 @@ const meta: Meta<ICounterFieldProps> = {
         readOnly: args({ control: "boolean", ...propCategory.states }),
         ariaLabelIncrement: args({ control: "text", ...propCategory.others }),
         ariaLabelDecrement: args({ control: "text", ...propCategory.others }),
-
+        max: args({ control: "number", ...propCategory.validation }),
         min: args({ control: "number", ...propCategory.validation }),
         step: args({ control: "number", defaultValue: 1, ...propCategory.validation }),
 
@@ -30,8 +30,8 @@ const meta: Meta<ICounterFieldProps> = {
         required: args({ control: "boolean", ...propCategory.states }),
 
         onChange: args({ control: "false", ...propCategory.action }),
-        onBlur: args({ control: "false", ...propCategory.action }),
-        onFocus: args({ control: "false", ...propCategory.action })
+        onInputBlur: args({ control: "false", ...propCategory.action }),
+        onInputFocus: args({ control: "false", ...propCategory.action })
     },
 
     args: {

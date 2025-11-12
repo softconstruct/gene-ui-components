@@ -42,6 +42,10 @@ interface ICounterFieldProps {
      */
     min?: number;
     /**
+     * The maximum allowed value.
+     */
+    max?: number;
+    /**
      * The amount by which the value increases or decreases.
      */
     step?: number;
@@ -116,6 +120,7 @@ const CounterField: FC<ICounterFieldProps> = ({
     onInputBlur,
     onInputFocus,
     min = 0,
+    max,
     step = 1,
     size = "medium",
     className
@@ -126,15 +131,18 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     const currentValue = isControlled ? value : internalValue;
 
-    const clampToMin = (nextValue: number) => {
-        if (nextValue < min) {
+    const clampValue = (nextValue: number) => {
+        if (min !== undefined && nextValue < min) {
             return min;
+        }
+        if (max !== undefined && nextValue > max) {
+            return max;
         }
         return nextValue;
     };
 
     const updateValue = (nextValue: number, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => {
-        const clampedValue = clampToMin(nextValue);
+        const clampedValue = clampValue(nextValue);
 
         if (!isControlled) {
             setInternalValue(clampedValue);
@@ -167,7 +175,9 @@ const CounterField: FC<ICounterFieldProps> = ({
         updateValue(nextValue, event);
     };
 
-    const isDecrementDisabled = disabled || readOnly || currentValue <= min;
+    const isDecrementDisabled = disabled || readOnly || (min !== undefined && currentValue <= min);
+
+    const isIncrementDisabled = disabled || readOnly || (max !== undefined && currentValue >= max);
 
     const onFocusHandler = (e: FocusEvent<HTMLInputElement>) => onInputFocus?.(e);
 
@@ -228,7 +238,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     layout="fill"
                     size={size}
                     Icon={Plus}
-                    disabled={disabled || readOnly}
+                    disabled={isIncrementDisabled}
                     aria-label={ariaLabelIncrement}
                     onClick={handleIncrement}
                 />
