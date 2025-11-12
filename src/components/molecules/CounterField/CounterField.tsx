@@ -3,6 +3,7 @@ import classNames from "classnames";
 
 import { Minus, Plus } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
@@ -11,7 +12,7 @@ import TextField from "@components/molecules/TextField";
 // Styles
 import "./CounterField.scss";
 
-export interface ICounterFieldProps {
+interface ICounterFieldProps {
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -242,4 +243,4 @@ const CounterField: FC<ICounterFieldProps> = ({
     );
 };
 
-export default CounterField;
+export { ICounterFieldProps, CounterField as default };
