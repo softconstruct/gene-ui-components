@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { ChangeEvent, FC, MouseEvent, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -55,18 +55,15 @@ export const Default: Story = {
 };
 
 const ControlledTemplate: FC<ICounterFieldProps> = ({ value, onChange, ...props }) => {
-    const [internalValue, setInternalValue] = React.useState<number>(value ?? 0);
+    const [internalValue, setInternalValue] = useState<number>(value ?? 0);
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (value !== undefined) {
             setInternalValue(value);
         }
     }, [value]);
 
-    const handleChange = (
-        newValue: number,
-        event: React.ChangeEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>
-    ) => {
+    const handleChange = (newValue: number, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => {
         setInternalValue(newValue);
         onChange?.(newValue, event);
     };
