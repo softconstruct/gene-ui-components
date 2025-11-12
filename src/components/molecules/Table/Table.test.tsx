@@ -6,6 +6,7 @@ import Loader from "@components/atoms/Loader";
 import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
+import BulkActions from "@components/molecules/Table/BulkActions";
 import { ColActions } from "@components/molecules/Table/ColActions";
 import { defaultColumns } from "@components/molecules/Table/Columns";
 import { makeData } from "@components/molecules/Table/makeData";
@@ -13,15 +14,15 @@ import THead from "@components/molecules/Table/THead";
 import VirtualScrollTBody from "@components/molecules/Table/VirtualScrollTBody";
 
 // Components
-import Table, { BulkActions, ITableProps, Row } from "./index";
+import Table, { Row, TablePropsType } from "./index";
 
 const mockData: Row[] = makeData(10);
 const emptyData: Row[] = [];
 
 describe("Table", () => {
-    let setup: ReactWrapper<ITableProps>;
+    let setup: ReactWrapper<TablePropsType>;
 
-    const defaultProps: ITableProps = {
+    const defaultProps: TablePropsType = {
         columns: defaultColumns,
         externalData: mockData,
         onSave: jest.fn(),

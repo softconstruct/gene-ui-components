@@ -15,6 +15,7 @@ interface ITableBody {
     withExpandable?: boolean;
     withCheckbox?: boolean;
     withEditMode?: boolean;
+    hasRowActions?: boolean;
     loading?: boolean;
     loaderSize?: ILoaderProps["size"];
     loaderText?: string;
@@ -38,6 +39,7 @@ const TBody: FC<ITableBody> = ({
     withExpandable,
     withCheckbox,
     withEditMode = false,
+    hasRowActions = false,
     loading,
     loaderSize,
     loaderText,
@@ -55,6 +57,8 @@ const TBody: FC<ITableBody> = ({
     tableFootRef
 }) => {
     const allRows = [...table.getTopRows(), ...table.getCenterRows()];
+    const visibleColumnCount = table.getVisibleFlatColumns().length;
+    const totalColumnCount = hasRowActions ? visibleColumnCount + 1 : visibleColumnCount;
 
     const renderTableBody = () => {
         const tableHeadHeight = tableHeadRef?.getBoundingClientRect().height || 0;
@@ -62,7 +66,7 @@ const TBody: FC<ITableBody> = ({
         if (loading) {
             return (
                 <tr>
-                    <td colSpan={table.getVisibleFlatColumns().length}>
+                    <td colSpan={totalColumnCount || 1}>
                         <div
                             className="table__empty"
                             style={{
@@ -85,9 +89,10 @@ const TBody: FC<ITableBody> = ({
                             <VirtualScrollTBody
                                 topRows={table.getTopRows()}
                                 centerRows={table.getCenterRows()}
-                                columnCount={table.getHeaderGroups().length || 1}
+                                columnCount={totalColumnCount || 1}
                                 scrollbarContainerRef={scrollbarContainerRef.scrollbarRef}
                                 columnsMap={columnsMap}
+                                hasRowActions={hasRowActions}
                                 withExpandable={withExpandable}
                                 withEditMode={withEditMode}
                                 withCheckbox={withCheckbox}
@@ -107,6 +112,7 @@ const TBody: FC<ITableBody> = ({
                                 withExpandable={withExpandable}
                                 withCheckbox={withCheckbox}
                                 withEditMode={withEditMode}
+                                hasRowActions={hasRowActions}
                             />
                         ))
                     )}
@@ -116,7 +122,7 @@ const TBody: FC<ITableBody> = ({
 
         return (
             <tr>
-                <td colSpan={table.getVisibleFlatColumns().length}>
+                <td colSpan={totalColumnCount || 1}>
                     <div
                         className="table__empty"
                         style={{

@@ -19,9 +19,18 @@ interface ITableRow {
     withExpandable?: boolean;
     withCheckbox?: boolean;
     withEditMode: boolean;
+    hasRowActions?: boolean;
 }
 
-const TableRow: FC<ITableRow> = ({ row, rowIndex, columnsMap, withExpandable, withCheckbox, withEditMode }) => {
+const TableRow: FC<ITableRow> = ({
+    row,
+    rowIndex,
+    columnsMap,
+    withExpandable,
+    withCheckbox,
+    withEditMode,
+    hasRowActions = false
+}) => {
     const {
         onRowClick,
         onCellEdit,
@@ -109,6 +118,8 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, columnsMap, withExpandable, wi
     const isExpanded = row.getIsExpanded();
     const isPinned = row.getIsPinned();
     const canExpand = row.getCanExpand();
+    const showActions = !withEditMode && actionsConfig.some((action) => !!action.handler);
+    const expandedColSpan = row.getVisibleCells().length + (hasRowActions && showActions ? 1 : 0);
 
     return (
         <>
@@ -184,8 +195,8 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, columnsMap, withExpandable, wi
                         </td>
                     );
                 })}
-                {!withEditMode && actionsConfig.some((action) => !!action.handler) && (
-                    <td className="table__td table__actionsWrapper" role="row">
+                {showActions && (
+                    <td className="table__td table__actionsWrapper">
                         <div className="table__actions" role="group" aria-label={`Actions for row ${rowIndex + 1}`}>
                             {actionsConfig
                                 .filter((action) => action.handler)
@@ -223,7 +234,7 @@ const TableRow: FC<ITableRow> = ({ row, rowIndex, columnsMap, withExpandable, wi
                 <tr className="table__row table__row_tbody" role={withCheckbox ? "row" : undefined}>
                     <td
                         className="table__td table__td_expanded"
-                        colSpan={row.getVisibleCells().length}
+                        colSpan={expandedColSpan}
                         role="row"
                         aria-label={`Expanded content for row ${rowIndex + 1}`}
                     >

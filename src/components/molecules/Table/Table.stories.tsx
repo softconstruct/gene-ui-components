@@ -10,7 +10,7 @@ import { TablePropsType } from "@components/molecules/Table/Table";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import Table, { BulkAction, IManageColumnsData, ITableProps, Row, TableCol } from "./index";
+import Table, { BulkAction, IManageColumnsData, Row, TableCol } from "./index";
 import { makeData } from "./makeData";
 
 const SwapComponent = () => (
@@ -73,6 +73,7 @@ const meta: Meta<TablePropsType> = {
         withGlobalFilter: args({ control: "boolean", ...propCategory.functionality }),
         globalFilterPlaceholder: args({ control: "text", ...propCategory.content }),
         withStickyHeader: args({ control: "boolean", ...propCategory.appearance }),
+        withStickyFooter: args({ control: "boolean", ...propCategory.appearance }),
         pageSizes: args({ control: "false", ...propCategory.functionality }),
         initialPageSize: args({ control: "number", ...propCategory.content }),
         initialPageIndex: args({ control: "number", ...propCategory.content }),
@@ -124,9 +125,9 @@ const meta: Meta<TablePropsType> = {
     }
 };
 
-type Story = StoryObj<ITableProps>;
+type Story = StoryObj<TablePropsType>;
 
-const TableComponent: FC<ITableProps> = (props) => {
+const TableComponent: FC<TablePropsType> = (props) => {
     const { externalData: data, columns } = props;
 
     const [tableData, setTableData] = useState<Row[]>([]);
@@ -141,7 +142,7 @@ const TableComponent: FC<ITableProps> = (props) => {
         setUpdatedTableData(conedData);
     }, [data]);
 
-    const onCellEdit: ITableProps["onCellEdit"] = (rowIndex: number, columnType: string, value: unknown) => {
+    const onCellEdit: TablePropsType["onCellEdit"] = (rowIndex: number, columnType: string, value: unknown) => {
         const newData = [...tableData];
         (newData[rowIndex] as any)[columnType] = value;
         setUpdatedTableData(newData);
@@ -240,13 +241,13 @@ const TableComponent: FC<ITableProps> = (props) => {
 };
 
 export const Default: Story = {
-    render: (props) => <TableComponent {...props} columns={defaultColumns} withManageColumns />
+    render: (props: TablePropsType) => <TableComponent {...props} columns={defaultColumns} withManageColumns />
 };
 
 export const WithStickyHeader: Story = {
     argTypes: {},
     args: {},
-    render: (props) => {
+    render: (props: TablePropsType) => {
         return (
             <TableComponent
                 {...props}
@@ -265,7 +266,7 @@ export const WithStickyHeader: Story = {
     }
 };
 
-const TableWithVirtualScroll: FC<ITableProps> = (props) => {
+const TableWithVirtualScroll: FC<TablePropsType> = (props) => {
     const [tableData, setTableData] = useState(makeData(50));
     const [hasNextPage, setHasNextPage] = useState(true);
     const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
@@ -275,11 +276,11 @@ const TableWithVirtualScroll: FC<ITableProps> = (props) => {
         setIsFetchingNextPage(true);
         setTimeout(() => {
             setTableData((prev) => {
-                const newData = makeData(50);
+                const newData = makeData(30);
                 return [...prev, ...newData];
             });
             setIsFetchingNextPage(false);
-        }, 2000);
+        }, 5000);
     };
 
     return (
@@ -302,13 +303,13 @@ const TableWithVirtualScroll: FC<ITableProps> = (props) => {
 export const WithVirtualScroll: Story = {
     argTypes: {},
     args: {},
-    render: (props) => <TableWithVirtualScroll {...props} />
+    render: (props: TablePropsType) => <TableWithVirtualScroll {...props} />
 };
 
 export const WithPinnedColumns: Story = {
     argTypes: {},
     args: {},
-    render: (props) => {
+    render: (props: TablePropsType) => {
         return (
             <TableComponent
                 {...props}
@@ -327,7 +328,7 @@ export const WithPinnedColumns: Story = {
 export const WithGroupedColumns: Story = {
     argTypes: {},
     args: {},
-    render: (props) => {
+    render: (props: TablePropsType) => {
         return (
             <TableComponent
                 {...props}
@@ -336,7 +337,7 @@ export const WithGroupedColumns: Story = {
                 initialPageSize={25}
                 initialPageIndex={0}
                 withCheckbox
-                expandable
+                withExpandable
                 withGlobalFilter
                 withPagination
                 withStickyHeader
@@ -349,7 +350,7 @@ export const WithGroupedColumns: Story = {
 export const WithExpendRowsColumns: Story = {
     argTypes: {},
     args: {},
-    render: (props) => {
+    render: (props: TablePropsType) => {
         return (
             <TableComponent
                 {...props}
@@ -359,7 +360,7 @@ export const WithExpendRowsColumns: Story = {
                 initialPageIndex={0}
                 withCheckbox
                 withGlobalFilter
-                expandable
+                withExpandable
                 withPagination
                 bulkActions={bulkActionsMock}
             />
@@ -370,7 +371,7 @@ export const WithExpendRowsColumns: Story = {
 export const WithOutData: Story = {
     argTypes: {},
     args: {},
-    render: (props) => {
+    render: (props: TablePropsType) => {
         return (
             <TableComponent
                 {...props}

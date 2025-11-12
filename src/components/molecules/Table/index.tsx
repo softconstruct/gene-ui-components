@@ -1,3 +1,2 @@
 export * from "./type";
-export { default, ITableProps } from "./Table";
-export { default as BulkActions } from "./BulkActions";
+export { default, TablePropsType } from "./Table";

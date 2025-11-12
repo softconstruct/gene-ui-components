@@ -173,6 +173,11 @@ interface ITablePropsBase<TRow extends Row = Row> extends ITableActions<TRow> {
     withStickyHeader?: boolean;
 
     /**
+     * A boolean that determines whether the table footer should remain fixed at the top during vertical scrolling.
+     */
+    withStickyFooter?: boolean;
+
+    /**
      * Text label for the select all checkbox option.
      * Displays above individual filter options to allow bulk selection.
      */
@@ -322,6 +327,7 @@ const Table: FC<TablePropsType<Row>> = ({
     withVirtualScroll,
     selectAllText,
     withStickyHeader,
+    withStickyFooter,
     withDynamicFetch,
     hasNextPage,
     isFetchingNextPage,
@@ -373,8 +379,6 @@ const Table: FC<TablePropsType<Row>> = ({
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [selectedRows, setSelectedRows] = useState<RowSelectionState>({});
 
-    // Create a map of column IDs to original TableCol definitions
-    // This preserves type information and avoids type assertions
     const columnsMap = useMemo(() => {
         const map = new Map<string, TableCol<Row>>();
         const extractColumns = (cols: TableCol<Row>[]) => {
@@ -391,7 +395,6 @@ const Table: FC<TablePropsType<Row>> = ({
         return map;
     }, [columns]);
 
-    // Prepare columns with filterFn set to avoid mutations later
     type PreparedColumn = TableCol<Row> & {
         filterFn?: string;
         columns?: PreparedColumn[];
@@ -401,7 +404,6 @@ const Table: FC<TablePropsType<Row>> = ({
         const prepareColumns = (cols: TableCol<Row>[]): PreparedColumn[] => {
             return cols.map((col) => {
                 const preparedCol = { ...col } as PreparedColumn;
-                // Set filterFn based on enablePopoverFilter to avoid mutation in ColActions
                 if (col.enablePopoverFilter !== undefined) {
                     preparedCol.filterFn = col.enablePopoverFilter ? "arrIncludesSome" : "auto";
                 }
@@ -603,6 +605,20 @@ const Table: FC<TablePropsType<Row>> = ({
         setOrderedColumns(memoizedOrderedColumns);
     }, [memoizedOrderedColumns]);
 
+    const hasRowActions = () => {
+        if (withEditMode) return false;
+        return [
+            onRowPinToggle,
+            onRowTag,
+            onRowClock,
+            onRowReload,
+            onRowCopy,
+            onRowDownload,
+            onRowShow,
+            onRowDelete
+        ].some(Boolean);
+    };
+
     const handlePageChange = (pageNumber: number) => {
         table.setPageIndex(pageNumber - 1);
         onPageChange?.(pageNumber);
@@ -674,6 +690,7 @@ const Table: FC<TablePropsType<Row>> = ({
                             withExpandable={withExpandable}
                             withCheckbox={withCheckbox}
                             withEditMode={withEditMode}
+                            hasRowActions={hasRowActions()}
                             scrollbarContainerRef={scrollbarContainerRef.current}
                             loaderSize={loaderSize}
                             loaderText={loaderText}
@@ -696,6 +713,7 @@ const Table: FC<TablePropsType<Row>> = ({
                                 table={table}
                                 withExpandable={withExpandable}
                                 withCheckbox={withCheckbox}
+                                withStickyFooter={withStickyFooter}
                             />
                         )}
                     </table>
