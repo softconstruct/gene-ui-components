@@ -116,7 +116,8 @@ describe("TextField ", () => {
 
     it("renders infoText prop correctly", () => {
         const infoText = "infoText";
-        const wrapper = setup.setProps({ infoText });
+        const label = "test-label";
+        const wrapper = setup.setProps({ infoText, label });
         expect(wrapper.find(Label).props().infoText).toBe(infoText);
     });
 
