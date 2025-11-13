@@ -1,23 +1,72 @@
 import React, { FC } from "react";
 import classNames from "classnames";
 
-// Styles
+import { Download, Eye, IconProps, Image, RecycleBin } from "@geneui/icons";
+
+import Button from "@components/atoms/Button";
+import Text from "@components/atoms/Text";
+
 import "./FileUploadList.scss";
 
+import { ButtonGroup } from "../../../index";
+
 interface IFileUploadListProps {
-    /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
-     */
     className?: string;
-    // fill FileUploadList component props interface
+    Icon?: FC<IconProps>;
 }
 
-/**
- * The File Upload List component is designed to facilitate the display and management of files uploaded by users. This component provides a clear and organized list of uploaded files, including essential details such as file name, size, upload date, and available actions (e.g., download, remove, rename, or preview). The component ensures a consistent, accessible, and user-friendly experience aligned with Gene UI design standards.
- */
-const FileUploadList: FC<IFileUploadListProps> = ({ className }) => {
-    return <div className={classNames("fileUploadList", className)}>FileUploadList</div>;
+const FileUploadList: FC<IFileUploadListProps> = ({ className, Icon = Image }) => {
+    return (
+        <div className={classNames("fileUploadList", className)}>
+            {/* States => (image,audio,video, document) */}
+            <div className="fileUploadList__row audio">
+                <div className="fileUploadList__item">
+                    <div className="fileUploadList__file">
+                        <Icon className={`fileUploadList__fileIcon ${"avatar__icon"}`} size={16} />
+                    </div>
+                    <Text className="fileUploadList__text ellipsis-text" as="span" variant="labelMediumMedium">
+                        Film Name
+                    </Text>
+                </div>
+                <div className="fileUploadList__item">
+                    <Text className="fileUploadList__text ellipsis-text" as="span" variant="labelMediumMedium">
+                        10:03 AM
+                    </Text>
+                </div>
+                <div className="fileUploadList__item">
+                    <Text className="fileUploadList__text ellipsis-text" as="span" variant="labelMediumMedium">
+                        1,3 MB
+                    </Text>
+                </div>
+                <div className="fileUploadList__item">
+                    <ButtonGroup className="fileUploadList__actions" size="small">
+                        <Button
+                            size="small"
+                            layout="text"
+                            appearance="secondary"
+                            className="fileUploadList__button"
+                            Icon={RecycleBin}
+                        />
+
+                        <Button
+                            size="small"
+                            layout="text"
+                            appearance="secondary"
+                            className="fileUploadList__button"
+                            Icon={Download}
+                        />
+                        <Button
+                            size="small"
+                            layout="text"
+                            appearance="secondary"
+                            className="fileUploadList__button"
+                            Icon={Eye}
+                        />
+                    </ButtonGroup>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export { IFileUploadListProps, FileUploadList as default };
