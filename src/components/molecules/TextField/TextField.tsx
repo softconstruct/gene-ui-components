@@ -275,16 +275,18 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
         return (
             <div className={classNames("textField", className)}>
-                <Label
-                    text={label}
-                    required={required}
-                    className="textField__label"
-                    disabled={disabled}
-                    infoText={infoText}
-                    readOnly={readOnly}
-                    labelFor={generatedId}
-                    size={labelSize}
-                />
+                {label && (
+                    <Label
+                        text={label}
+                        required={required}
+                        className="textField__label"
+                        disabled={disabled}
+                        infoText={infoText}
+                        readOnly={readOnly}
+                        labelFor={generatedId}
+                        size={labelSize}
+                    />
+                )}
                 <div
                     className={classNames(`textField__wrapper textField__wrapper_size_${size}`, paddingClassesForIcon, {
                         textField__wrapper_readOnly: readOnly && !disabled,

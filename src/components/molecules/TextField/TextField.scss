@@ -207,12 +207,11 @@
         height: 100%;
         border: none;
         background-color: transparent;
-        border-color: var(--guit-sem-color-border-neutral-2);
+        color: var(--guit-sem-color-foreground-neutral-2);
         outline: none;
-        color: var(--guit-sem-color-foreground-neutral-1);
 
         &::placeholder {
-            color: inherit;
+            color: var(--guit-sem-color-foreground-neutral-1);
         }
     }
 
