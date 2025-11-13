@@ -1,5 +1,82 @@
 .fileUploadList {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    display: inline-flex;
+    flex-direction: column;
+    row-gap: var(--guit-ref-spacing-xsmall);
+    width: 100%;
+
+    &__row {
+        display: inline-grid;
+        grid-template-columns: 1fr 1fr 1fr auto;
+        width: 100%;
+        height: 3.2rem;
+
+        &.image {
+            #{ $this }__file {
+                background-color: var(--guit-sem-color-background-accent-purple-1);
+            }
+
+            #{ $this }__fileIcon {
+                color: var(--guit-sem-color-foreground-accent-purple);
+            }
+        }
+
+        &.video {
+            #{ $this }__file {
+                background-color: var(--guit-sem-color-background-accent-orange-1);
+            }
+
+            #{ $this }__fileIcon {
+                color: var(--guit-sem-color-foreground-accent-orange-2);
+            }
+        }
+
+        &.audio {
+            #{ $this }__file {
+                background-color: var(--guit-sem-color-background-accent-lagoon-1);
+            }
+
+            #{ $this }__fileIcon {
+                color: var(--guit-sem-color-foreground-accent-green);
+            }
+        }
+
+        &.document {
+            #{ $this }__file {
+                background-color: var(--guit-sem-color-background-accent-magenta-1);
+            }
+
+            #{ $this }__fileIcon {
+                fill: var(--guit-sem-color-foreground-accent-magenta);
+            }
+        }
+    }
+
+    &__item {
+        min-width: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: flex-start;
+        column-gap: var(--guit-ref-spacing-xsmall);
+        padding-block: var(--guit-ref-spacing-3xsmall);
+        padding-inline: var(--guit-ref-spacing-medium);
+
+        &:first-child {
+            padding-inline-start: 0;
+        }
+
+        &:last-child {
+            padding-inline-end: 0;
+            flex: 0 0 auto;
+            justify-content: flex-end;
+        }
+    }
+
+    &__file {
+        width: 2.4rem;
+        height: 2.4rem;
+        padding: var(--guit-ref-spacing-3xsmall);
+        border-radius: var(--guit-ref-radius-3xsmall);
+    }
 }
