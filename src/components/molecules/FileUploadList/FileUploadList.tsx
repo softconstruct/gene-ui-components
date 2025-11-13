@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import classNames from "classnames";
 
-import { Download, Eye, Image, RecycleBin } from "@geneui/icons";
+import { Download, Eye, IconProps, Image, RecycleBin } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
@@ -12,21 +12,17 @@ import { ButtonGroup } from "../../../index";
 
 interface IFileUploadListProps {
     className?: string;
+    Icon?: FC<IconProps>;
 }
 
-const FileUploadList: FC<IFileUploadListProps> = ({ className }) => {
+const FileUploadList: FC<IFileUploadListProps> = ({ className, Icon = Image }) => {
     return (
         <div className={classNames("fileUploadList", className)}>
             {/* States => (image,audio,video, document) */}
-            <div className="fileUploadList__row image">
+            <div className="fileUploadList__row audio">
                 <div className="fileUploadList__item">
                     <div className="fileUploadList__file">
-                        <Image
-                            size={16}
-                            color="rgba(85, 62, 183, 1)"
-                            aria-hidden
-                            className="fileUploadList__fileIcon"
-                        />
+                        <Icon className={`fileUploadList__fileIcon ${"avatar__icon"}`} size={16} />
                     </div>
                     <Text className="fileUploadList__text ellipsis-text" as="span" variant="labelMediumMedium">
                         Film Name
