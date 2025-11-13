@@ -37,7 +37,6 @@ describe("Checkbox ", () => {
 
     it("renders readOnly prop correctly", () => {
         const wrapper = setup.setProps({ readOnly: true });
-        // expect(wrapper.find(".checkbox").hasClass(`checkbox_readOnly`)).toBeTruthy();
         expect(wrapper.find(".checkbox__imitationHolder").hasClass(`checkbox__imitationHolder_readOnly`)).toBeTruthy();
     });
 
