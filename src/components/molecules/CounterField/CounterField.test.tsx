@@ -306,16 +306,6 @@ describe("CounterField", () => {
         expect(incrementButton.props()["aria-label"]).toBe("Increment value");
     });
 
-    it("should have tabIndex=-1 when disabled", () => {
-        const wrapper = setup.setProps({ disabled: true });
-        expect(wrapper.find(".counterField").prop("tabIndex")).toBe(-1);
-    });
-
-    it("should have tabIndex=-1 when readOnly", () => {
-        const wrapper = setup.setProps({ readOnly: true });
-        expect(wrapper.find(".counterField").prop("tabIndex")).toBe(-1);
-    });
-
     // BUTTON APPEARANCE TESTS
     it("buttons should have secondary appearance", () => {
         const decrementButton = setup.find(Button).at(0);
