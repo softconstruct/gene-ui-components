@@ -34,6 +34,7 @@
 
     &__content {
         display: flex;
+        min-height: var(--guit-sem-font-label-medium-default-medium-line-height);
     }
 
     &__imitationHolder {
@@ -44,11 +45,6 @@
         width: var(--guit-sem-dimension-width-xsmall);
         height: var(--guit-sem-dimension-height-xsmall);
         position: relative;
-
-        &:only-child {
-            width: var(--guit-sem-dimension-width-small);
-            height: var(--guit-sem-dimension-height-small);
-        }
 
         &:hover {
             #{ $this }__input:not(:checked, :indeterminate):not(:active) + #{ $this }__imitation {
