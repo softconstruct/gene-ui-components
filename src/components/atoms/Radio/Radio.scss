@@ -36,6 +36,7 @@
     &__content {
         display: flex;
         max-width: 100%;
+        min-height: var(--guit-sem-font-label-medium-default-medium-line-height);
     }
 
     &__imitationHolder {
@@ -69,11 +70,6 @@
                 border-color: var(--guit-sem-color-background-selected-2-pressed);
                 color: var(--guit-sem-color-background-selected-2-pressed);
             }
-        }
-
-        &:only-child {
-            width: var(--guit-sem-dimension-width-small);
-            height: var(--guit-sem-dimension-height-small);
         }
 
         &_disabled {
