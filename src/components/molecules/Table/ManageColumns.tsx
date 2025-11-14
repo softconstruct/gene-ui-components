@@ -9,6 +9,7 @@ import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import Label from "@components/atoms/Label";
 import Scrollbar from "@components/atoms/Scrollbar";
+import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
 import { TableContext } from "@components/molecules/Table/Table";
@@ -258,7 +259,7 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, col
                                 "columns-list--dragging-over": snapshot.isDraggingOver
                             })}
                         >
-                            <span>{item.title}</span>
+                            {item.title && <Text as="span">{item.title}</Text>}
 
                             {!!item.columns?.length && renderDraggableSection(item.columns, groupIndex)}
 
@@ -282,7 +283,9 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, col
                 <div className="dropdownMenu__main">
                     <div className="dropdownMenu__columns">
                         <div className="dropdownMenu__columns_header">
-                            <p className="dropdownMenu__columns_title ellipsis-text">Active Columns</p>
+                            <Text as="p" className="dropdownMenu__columns_title ellipsis-text">
+                                Active Columns
+                            </Text>
                         </div>
                         <DragDropContext onDragEnd={handleDragEnd}>{renderDroppableSection(columns)}</DragDropContext>
                     </div>

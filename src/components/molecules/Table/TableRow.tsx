@@ -183,7 +183,7 @@ const TableRow: FC<ITableRow> = ({
                                 <Cell
                                     type={colDef.type as ICellProps["type"]}
                                     data={row.original[colDef.type]}
-                                    withEditMode={withEditMode}
+                                    withEditMode={withEditMode && !!colDef.editable}
                                     rowCellRenderer={colDef.rowCellRenderer}
                                     withCopy={colDef.copyable}
                                     ariaLabel={cellLabel}

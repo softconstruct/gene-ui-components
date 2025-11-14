@@ -59,9 +59,9 @@ export const cellRenderer: () => CellRenderer = () => {
 
             return (
                 <>
-                    <span className="table__td_text ellipsis-text" aria-label={ariaLabel}>
+                    <Text as="span" className="table__td_text ellipsis-text" aria-label={ariaLabel}>
                         {value}
-                    </span>
+                    </Text>
                     {withCopy && (
                         <Copy
                             value={value}
@@ -143,7 +143,9 @@ export const cellRenderer: () => CellRenderer = () => {
 
             return (
                 <>
-                    <span className="table__td_text ellipsis-text">{dropDownValue}</span>
+                    <Text as="span" className="table__td_text ellipsis-text">
+                        {dropDownValue}
+                    </Text>
                     {withCopy && (
                         <Copy
                             value={dropDownValue}
@@ -241,7 +243,11 @@ export const cellRenderer: () => CellRenderer = () => {
 
             if (rowCellRenderer) return rowCellRenderer();
 
-            return <span className="table__td_text">{checked ? "on" : "off"}</span>;
+            return (
+                <Text as="span" className="table__td_text">
+                    {checked ? "on" : "off"}
+                </Text>
+            );
         }
     };
 };
