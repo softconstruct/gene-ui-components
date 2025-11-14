@@ -3,10 +3,10 @@ import { mount, ReactWrapper } from "enzyme";
 
 import { Info, X } from "@geneui/icons";
 
+// Components
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
 
-// Components
 import TextField, { ITextFieldProps } from "./index";
 
 describe("TextField ", () => {
