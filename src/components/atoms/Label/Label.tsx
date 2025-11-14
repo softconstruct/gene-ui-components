@@ -161,6 +161,7 @@ const Label: FC<ILabelProps> = ({
                 className
             )}
             {...(labelFor && { htmlFor: labelFor })}
+            aria-label={text}
             onClick={handlePreventLabelInteraction}
         >
             {children}
