@@ -1,123 +1,44 @@
-import React, { FC, useState } from "react";
-// Utils
+import React, { createContext, FC, ReactNode, useMemo } from "react";
 import classNames from "classnames";
 
-// Icons
-import { ChevronDown, ChevronLeft, ChevronRight, Download, Globe, RecycleBin, Tag } from "@geneui/icons";
-
-// Components
-import Button from "@components/atoms/Button";
-import Scrollbar from "@components/atoms/Scrollbar";
-import Text from "@components/atoms/Text";
-import ButtonGroup from "@components/molecules/ButtonGroup";
-
-// Styles
+// Styles (reuse same SCSS file)
 import "./Accordion.scss";
 
-const buttonSizes = {
-    large: "small",
-    medium: "smallNudge",
-    small: "smallNudge"
-} as const;
+interface IAccordionContextProps {
+    size: "large" | "medium" | "small";
+}
 
-const buttonGroupSizes = {
-    large: "medium",
-    medium: "medium",
-    small: "small"
-} as const;
-
-const textVariants = {
-    large: "bodyLargeMedium",
-    medium: "bodyMediumMedium",
-    small: "bodyMediumMedium"
-} as const;
-
-const iconSizes = {
-    large: 24,
-    medium: 20,
-    small: 20
-} as const;
+const AccordionContext = createContext<IAccordionContextProps>({
+    size: "large"
+});
 
 interface IAccordionProps {
     /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     * Provide `AccordionItem` components to be rendered in the `Accordion`
      */
-    className?: string;
+    children: ReactNode;
     /**
-     * Tag content text
-     */
-    title: string;
-    /**
-     * Disables Accordion
-     */
-    disabled?: boolean;
-    /**
-     * Accordion size <br/>
+     * Accordion size affects all child AccordionItems
      * Possible values: `large | medium | small`
      */
     size?: "large" | "medium" | "small";
     /**
-     * Hides or shows left icon
+     * Additional class for the parent element.
      */
-    withIcon?: boolean;
-    // fill Accordion component props interface
+    className?: string;
 }
 
 /**
- * Accordion component organizes content into expandable and collapsible sections, allowing users to reveal or hide detailed information as needed. Each section, or "panel," typically includes a header that summarizes the content and can be clicked to expand or collapse the corresponding panel.
+ * Accordion component organizes content into expandable and collapsible sections.
  */
-const Accordion: FC<IAccordionProps> = ({ className, title, disabled, size = "large", withIcon = true }) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-    const isRTLMode = document.dir === "rtl";
-    const chevronHorizontalIcon = isRTLMode ? ChevronLeft : ChevronRight;
-
-    const handleToggleExpanded = () => {
-        setIsExpanded((prevExpanded) => !prevExpanded);
-    };
+const Accordion: FC<IAccordionProps> = ({ children, size = "large", className }) => {
+    const contextValue = useMemo(() => ({ size }), [size]);
 
     return (
-        <>
-            <div
-                className={classNames(`accordion accordion_size_${size}`, className, {
-                    accordion_disabled: disabled,
-                    accordion_expanded: isExpanded
-                })}
-            >
-                <div className="accordion__header">
-                    <Button
-                        size={buttonSizes[size]}
-                        appearance="secondary"
-                        layout="text"
-                        Icon={isExpanded ? ChevronDown : chevronHorizontalIcon}
-                        onClick={handleToggleExpanded}
-                        disabled={disabled}
-                        aria-expanded={isExpanded}
-                    />
-
-                    {withIcon && <Tag className="accordion__icon" size={iconSizes[size]} />}
-                    <Text as="span" variant={textVariants[size]} className="accordion__title ellipsis-text">
-                        {title}
-                    </Text>
-                    <ButtonGroup size={buttonGroupSizes[size]}>
-                        <Button appearance="secondary" layout="text" disabled={disabled} Icon={Globe} />
-                        <Button appearance="secondary" layout="text" disabled={disabled} Icon={Download} />
-                        <Button appearance="secondary" layout="text" disabled={disabled} Icon={RecycleBin} />
-                    </ButtonGroup>
-                </div>
-                {isExpanded && (
-                    <div className="accordion__body">
-                        <div className="accordion__content">
-                            <Scrollbar>
-                                {/* todo: remove text after content implementation */}
-                                <span>test</span>
-                            </Scrollbar>
-                        </div>
-                    </div>
-                )}
-            </div>
-        </>
+        <AccordionContext.Provider value={contextValue}>
+            <div className={classNames("accordion", className)}>{children}</div>
+        </AccordionContext.Provider>
     );
 };
 
-export { IAccordionProps, Accordion as default };
+export { IAccordionContextProps, IAccordionProps, Accordion as default };
