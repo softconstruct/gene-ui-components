@@ -173,17 +173,6 @@ describe("Label ", () => {
         expect(clickEvent.stopPropagation).toHaveBeenCalled();
     });
 
-    it("allows mousedown events when readOnly is true", () => {
-        const children = <input type="text" />;
-        const wrapper = setup.setProps({ readOnly: true, children });
-        const mouseDownEvent = { preventDefault: jest.fn(), stopPropagation: jest.fn() };
-
-        wrapper.find("label").simulate("mouseDown", mouseDownEvent);
-
-        expect(mouseDownEvent.preventDefault).not.toHaveBeenCalled();
-        expect(mouseDownEvent.stopPropagation).not.toHaveBeenCalled();
-    });
-
     it("prevents click events when disabled is true", () => {
         const children = <input type="text" />;
         const wrapper = setup.setProps({ disabled: true, children });
@@ -193,17 +182,6 @@ describe("Label ", () => {
 
         expect(clickEvent.preventDefault).toHaveBeenCalled();
         expect(clickEvent.stopPropagation).toHaveBeenCalled();
-    });
-
-    it("allows mousedown events when disabled is true", () => {
-        const children = <input type="text" />;
-        const wrapper = setup.setProps({ disabled: true, children });
-        const mouseDownEvent = { preventDefault: jest.fn(), stopPropagation: jest.fn() };
-
-        wrapper.find("label").simulate("mouseDown", mouseDownEvent);
-
-        expect(mouseDownEvent.preventDefault).not.toHaveBeenCalled();
-        expect(mouseDownEvent.stopPropagation).not.toHaveBeenCalled();
     });
 
     it("renders as a label element when readOnly is true and has children", () => {

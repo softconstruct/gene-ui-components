@@ -1,8 +1,9 @@
 import React, { FC, JSX, useRef } from "react";
 import classnames from "classnames";
 
-import Text from "@components/atoms/Text";
 // Components
+import Info from "@components/atoms/Info";
+import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
 
 // Hooks
@@ -10,8 +11,6 @@ import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./Label.scss";
-
-import Info from "../Info";
 
 interface ILabelProps {
     /**
@@ -90,16 +89,25 @@ const Label: FC<ILabelProps> = ({
 
     const isTruncated: boolean = useEllipsisDetection(labelTextRef);
 
-    const Component = children || labelFor ? "label" : "div";
-
-    const actualVariant = Component === "label" && !disabled ? "interactive" : "descriptive";
-
     const handlePreventLabelInteraction = (event: React.MouseEvent) => {
         if (!(readOnly || disabled)) return;
 
         event.preventDefault();
         event.stopPropagation();
     };
+
+    if (!text && labelFor) return null;
+
+    if (!text && children) {
+        if (className) {
+            return <label className={className}>{children}</label>;
+        }
+        return children;
+    }
+
+    const Component = children || labelFor ? "label" : "div";
+
+    const actualVariant = Component === "label" && !disabled ? "interactive" : "descriptive";
 
     if (loading) {
         return (
@@ -111,28 +119,33 @@ const Label: FC<ILabelProps> = ({
 
     const TextAndRequired = text ? (
         <>
-            <Tooltip text={text} isVisible={isTruncated}>
-                <Text
-                    ref={labelTextRef}
-                    as="span"
-                    variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
-                    className={classnames(`ellipsis-text label__text`, {
-                        label__text_disabled: disabled
-                    })}
-                >
-                    {text}
-                </Text>
-            </Tooltip>
-            {required && (
-                <Text
-                    as="span"
-                    variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
-                    className={classnames(`label__asterisk`, {
-                        label__text_disabled: disabled
-                    })}
-                >
-                    *
-                </Text>
+            <span className="label__containerInner">
+                <Tooltip text={text} isVisible={isTruncated}>
+                    <Text
+                        ref={labelTextRef}
+                        as="span"
+                        variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
+                        className={classnames(`ellipsis-text label__text`, {
+                            label__text_disabled: disabled
+                        })}
+                    >
+                        {text}
+                    </Text>
+                </Tooltip>
+                {required && (
+                    <Text
+                        as="span"
+                        variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
+                        className={classnames(`label__asterisk`, {
+                            label__text_disabled: disabled
+                        })}
+                    >
+                        *
+                    </Text>
+                )}
+            </span>
+            {infoText && (
+                <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} className="label__info" />
             )}
         </>
     ) : null;
@@ -151,13 +164,8 @@ const Label: FC<ILabelProps> = ({
             onClick={handlePreventLabelInteraction}
         >
             {children}
-            {(TextAndRequired && !labelFor) || infoText ? (
-                <span className={classnames("label__container")}>
-                    <div className="label__containerInner">{TextAndRequired}</div>
-                    {infoText && (
-                        <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} className="label__info" />
-                    )}
-                </span>
+            {!labelFor && TextAndRequired ? (
+                <span className={classnames("label__container")}>{TextAndRequired}</span>
             ) : (
                 TextAndRequired
             )}
