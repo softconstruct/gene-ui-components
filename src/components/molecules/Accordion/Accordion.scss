@@ -1,6 +1,6 @@
 @use "../../../assets/styles/mixins";
 
-.accordion {
+.accordionItem {
     $this: &;
 
     &:not(:last-child) {
@@ -13,6 +13,7 @@
                 height: var(--guit-sem-dimension-height-xlarge);
                 padding-inline: var(--guit-ref-spacing-medium);
             }
+
             #{ $this }__body {
                 padding: var(--guit-ref-spacing-xsmall);
             }
@@ -23,6 +24,7 @@
                 height: var(--guit-sem-dimension-height-large);
                 padding-inline: var(--guit-ref-spacing-xsmall);
             }
+
             #{ $this }__body {
                 padding: var(--guit-ref-spacing-medium);
             }
@@ -33,6 +35,7 @@
                 height: var(--guit-sem-dimension-height-medium);
                 padding-inline: var(--guit-ref-spacing-xsmall);
             }
+
             #{ $this }__body {
                 padding: var(--guit-ref-spacing-medium);
             }
@@ -68,11 +71,13 @@
             border-bottom-left-radius: var(--guit-ref-radius-3xsmall);
             border-bottom-right-radius: var(--guit-ref-radius-3xsmall);
         }
+
         &:not(&#{ $this }_disabled) {
             #{ $this }__header {
                 border-bottom-color: var(--guit-sem-color-border-neutral-2);
             }
         }
+
         &#{ $this }_disabled {
             #{ $this }__header {
                 border-bottom-color: var(--guit-sem-color-border-disabled-1);
@@ -92,6 +97,7 @@
             border-left-color: var(--guit-sem-color-border-neutral-2);
             border-right-color: var(--guit-sem-color-border-neutral-2);
         }
+
         #{ $this }__body {
             border-bottom-color: var(--guit-sem-color-border-neutral-2);
             border-left-color: var(--guit-sem-color-border-neutral-2);
@@ -107,6 +113,7 @@
             border-left-color: var(--guit-sem-color-border-disabled-1);
             border-right-color: var(--guit-sem-color-border-disabled-1);
         }
+
         #{ $this }__body {
             border-bottom-color: var(--guit-sem-color-border-disabled-1);
             border-left-color: var(--guit-sem-color-border-disabled-1);

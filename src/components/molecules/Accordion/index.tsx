@@ -1,1 +1,1 @@
-export { IAccordionProps, default } from "./Accordion";
+export { IAccordionItemProps, default as AccordionItem } from "./AccordionItem";
