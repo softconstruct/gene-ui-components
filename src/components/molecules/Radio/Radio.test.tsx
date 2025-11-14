@@ -4,8 +4,8 @@ import { mount, ReactWrapper } from "enzyme";
 // Components
 import { CircleFilled } from "@geneui/icons";
 
-import HelperText from "../HelperText";
-import Label from "../Label";
+import HelperText from "../../atoms/HelperText";
+import Label from "../../atoms/Label";
 import Radio, { IRadioProps } from "./index";
 
 describe("Radio ", () => {

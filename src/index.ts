@@ -9,7 +9,7 @@ export { default as Info, IInfoProps } from "./components/atoms/Info";
 export { default as Button, IButtonProps } from "./components/atoms/Button";
 export { default as Logo, ILogoProps } from "./components/atoms/Logo";
 export { default as Rate, IRateProps } from "./components/atoms/Rate";
-export { default as Radio, IRadioProps } from "./components/atoms/Radio";
+export { default as Radio, IRadioProps } from "@components/molecules/Radio";
 export { default as Text, ITextProps } from "./components/atoms/Text";
 export { default as TextLink, ITextLinkProps } from "./components/atoms/TextLink";
 export { Popover, PopoverBody, PopoverFooter, PopoverFooterActions, IPopoverProps } from "./components/atoms/Popover";
