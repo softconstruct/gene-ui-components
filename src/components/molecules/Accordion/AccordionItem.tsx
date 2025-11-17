@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useContext, useState } from "react";
 // Utils
 import classNames from "classnames";
 
@@ -13,6 +13,9 @@ import ButtonGroup from "@components/molecules/ButtonGroup";
 
 // Styles
 import "./Accordion.scss";
+
+// Context
+import { AccordionContext } from "./Accordion";
 
 const buttonSizes = {
     large: "small",
@@ -53,10 +56,9 @@ interface IAccordionItemProps {
      */
     disabled?: boolean;
     /**
-     * Accordion size <br/>
-     * Possible values: `large | medium | small`
+     * Shows or hides actions
      */
-    size?: "large" | "medium" | "small";
+    actions?: boolean;
     /**
      * Hides or shows left icon
      */
@@ -67,7 +69,9 @@ interface IAccordionItemProps {
 /**
  * Accordion component organizes content into expandable and collapsible sections, allowing users to reveal or hide detailed information as needed. Each section, or "panel," typically includes a header that summarizes the content and can be clicked to expand or collapse the corresponding panel.
  */
-const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, size = "large", withIcon = true }) => {
+const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, withIcon = true, actions = true }) => {
+    const { size } = useContext(AccordionContext);
+
     const [isExpanded, setIsExpanded] = useState(false);
     const isRTLMode = document.dir === "rtl";
     const chevronHorizontalIcon = isRTLMode ? ChevronLeft : ChevronRight;
@@ -80,8 +84,8 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, si
         <>
             <div
                 className={classNames(`accordionItem accordionItem_size_${size}`, className, {
-                    accordion_disabled: disabled,
-                    accordion_expanded: isExpanded
+                    accordionItem_disabled: disabled,
+                    accordionItem_expanded: isExpanded
                 })}
             >
                 <div className="accordionItem__header">
@@ -99,11 +103,13 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, si
                     <Text as="span" variant={textVariants[size]} className="accordionItem__title ellipsis-text">
                         {title}
                     </Text>
-                    <ButtonGroup size={buttonGroupSizes[size]}>
-                        <Button appearance="secondary" layout="text" disabled={disabled} Icon={Globe} />
-                        <Button appearance="secondary" layout="text" disabled={disabled} Icon={Download} />
-                        <Button appearance="secondary" layout="text" disabled={disabled} Icon={RecycleBin} />
-                    </ButtonGroup>
+                    {actions && (
+                        <ButtonGroup size={buttonGroupSizes[size]}>
+                            <Button appearance="secondary" layout="text" disabled={disabled} Icon={Globe} />
+                            <Button appearance="secondary" layout="text" disabled={disabled} Icon={Download} />
+                            <Button appearance="secondary" layout="text" disabled={disabled} Icon={RecycleBin} />
+                        </ButtonGroup>
+                    )}
                 </div>
                 {isExpanded && (
                     <div className="accordionItem__body">

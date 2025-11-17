@@ -8,7 +8,7 @@ interface IAccordionContextProps {
     size: "large" | "medium" | "small";
 }
 
-const AccordionContext = createContext<IAccordionContextProps>({
+export const AccordionContext = createContext<IAccordionContextProps>({
     size: "large"
 });
 
