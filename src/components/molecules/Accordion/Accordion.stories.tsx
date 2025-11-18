@@ -1,6 +1,12 @@
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+// Icons
+import { Download, Globe, RecycleBin, Tag } from "@geneui/icons";
+
+import Button from "@components/atoms/Button";
+import ButtonGroup from "@components/molecules/ButtonGroup";
+
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
@@ -13,16 +19,26 @@ const meta: Meta<IAccordionItemProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
-        withIcon: args({ control: "boolean", ...propCategory.content }),
+        withIconBefore: args({ control: "boolean", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),
-        actions: args({ control: "boolean", ...propCategory.content })
-        // fill Accordion component argTypes
+        IconBefore: args({ control: "false", ...propCategory.content }),
+        actions: args({ control: "false", ...propCategory.content }),
+        children: args({ control: "false", ...propCategory.content }),
+        withActions: args({ control: "boolean", ...propCategory.content })
     },
     args: {
         title: "Accordion Item",
-        withIcon: true,
-        actions: true
-        // fill Accordion component args
+        withIconBefore: true,
+        IconBefore: Tag,
+        actions: (
+            <ButtonGroup size="medium">
+                <Button appearance="secondary" layout="text" Icon={Globe} />
+                <Button appearance="secondary" layout="text" Icon={Download} />
+                <Button appearance="secondary" layout="text" Icon={RecycleBin} />
+            </ButtonGroup>
+        ),
+        children: <div>Accordion content goes here</div>,
+        withActions: true
     }
 };
 

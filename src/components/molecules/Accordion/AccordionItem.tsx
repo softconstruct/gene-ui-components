@@ -1,15 +1,14 @@
-import React, { FC, useContext, useState } from "react";
+import React, { cloneElement, FC, isValidElement, ReactElement, ReactNode, useContext, useState } from "react";
 // Utils
 import classNames from "classnames";
 
-// Icons
-import { ChevronDown, ChevronLeft, ChevronRight, Download, Globe, RecycleBin, Tag } from "@geneui/icons";
+// Icons & Types
+import { ChevronDown, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
-import ButtonGroup from "@components/molecules/ButtonGroup";
 
 // Styles
 import "./Accordion.scss";
@@ -21,12 +20,6 @@ const buttonSizes = {
     large: "small",
     medium: "smallNudge",
     small: "smallNudge"
-} as const;
-
-const buttonGroupSizes = {
-    large: "medium",
-    medium: "medium",
-    small: "small"
 } as const;
 
 const textVariants = {
@@ -48,28 +41,48 @@ interface IAccordionItemProps {
      */
     className?: string;
     /**
-     * Tag content text
+     * The title text displayed in the accordion header
      */
     title: string;
     /**
-     * Disables Accordion
+     * Disables the accordion item, preventing interaction
      */
     disabled?: boolean;
     /**
-     * Shows or hides actions
+     * Icon component to display before the title
      */
-    actions?: boolean;
+    IconBefore?: FC<IconProps>;
     /**
-     * Hides or shows left icon
+     * Whether to show the IconBefore
      */
-    withIcon?: boolean;
-    // fill Accordion component props interface
+    withIconBefore?: boolean;
+    /**
+     * Custom actions to display in the header (typically ButtonGroup with Buttons)
+     */
+    actions?: ReactNode;
+    /**
+     * Content to display when the accordion item is expanded
+     */
+    children: ReactNode;
+    /**
+     * Whether to show the actions
+     */
+    withActions?: boolean;
 }
 
 /**
  * Accordion component organizes content into expandable and collapsible sections, allowing users to reveal or hide detailed information as needed. Each section, or "panel," typically includes a header that summarizes the content and can be clicked to expand or collapse the corresponding panel.
  */
-const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, withIcon = true, actions = true }) => {
+const AccordionItem: FC<IAccordionItemProps> = ({
+    className,
+    title,
+    disabled,
+    IconBefore,
+    withIconBefore = true,
+    actions,
+    children,
+    withActions
+}) => {
     const { size } = useContext(AccordionContext);
 
     const [isExpanded, setIsExpanded] = useState(false);
@@ -79,6 +92,20 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, wi
     const handleToggleExpanded = () => {
         setIsExpanded((prevExpanded) => !prevExpanded);
     };
+
+    const cloneWithDisabled = (element: ReactNode): ReactNode => {
+        if (!isValidElement(element)) return element;
+
+        const clonedChildren = React.Children.map(element.props.children, (child) => cloneWithDisabled(child));
+
+        return cloneElement(element as ReactElement, {
+            ...element.props,
+            disabled: disabled || element.props.disabled,
+            children: clonedChildren
+        });
+    };
+
+    const actionsWithDisabled = disabled && actions ? cloneWithDisabled(actions) : actions;
 
     return (
         <>
@@ -99,25 +126,18 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, wi
                         aria-expanded={isExpanded}
                     />
 
-                    {withIcon && <Tag className="accordionItem__icon" size={iconSizes[size]} />}
+                    {withIconBefore && IconBefore && (
+                        <IconBefore className="accordionItem__icon" size={iconSizes[size]} />
+                    )}
                     <Text as="span" variant={textVariants[size]} className="accordionItem__title ellipsis-text">
                         {title}
                     </Text>
-                    {actions && (
-                        <ButtonGroup size={buttonGroupSizes[size]}>
-                            <Button appearance="secondary" layout="text" disabled={disabled} Icon={Globe} />
-                            <Button appearance="secondary" layout="text" disabled={disabled} Icon={Download} />
-                            <Button appearance="secondary" layout="text" disabled={disabled} Icon={RecycleBin} />
-                        </ButtonGroup>
-                    )}
+                    {withActions && actionsWithDisabled}
                 </div>
                 {isExpanded && (
                     <div className="accordionItem__body">
                         <div className="accordionItem__content">
-                            <Scrollbar>
-                                {/* todo: remove text after content implementation */}
-                                <span>test</span>
-                            </Scrollbar>
+                            <Scrollbar>{children}</Scrollbar>
                         </div>
                     </div>
                 )}
