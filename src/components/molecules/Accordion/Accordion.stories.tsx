@@ -8,27 +8,73 @@ import Button from "@components/atoms/Button";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 
 // Helpers
-import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
+import Accordion, { IAccordionProps } from "./Accordion";
 // Components
-import Accordion from "./Accordion";
 import { AccordionItem, IAccordionItemProps } from "./index";
 
-const meta: Meta<IAccordionItemProps> = {
+const meta: Meta<IAccordionProps> = {
     title: "Molecules/Accordion",
-    component: AccordionItem,
+    component: Accordion,
+    subcomponents: {
+        AccordionItem
+    }
+};
+
+type Story = StoryObj<IAccordionProps>;
+type StoryItem = StoryObj<IAccordionItemProps>;
+
+const AccordionStory: Story = {
+    argTypes: {
+        className: args({ control: "false", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
+        children: args({ control: "false", ...propCategory.content })
+    },
+    args: {
+        size: "large"
+    },
+    render: (props) => {
+        return (
+            <Accordion {...props}>
+                <AccordionItem
+                    title="Accordion Item 1"
+                    IconBefore={Tag}
+                    actions={
+                        <ButtonGroup size="medium">
+                            <Button appearance="secondary" layout="text" Icon={Globe} />
+                            <Button appearance="secondary" layout="text" Icon={Download} />
+                        </ButtonGroup>
+                    }
+                >
+                    <div>Content for accordion item 1</div>
+                </AccordionItem>
+                <AccordionItem
+                    title="Accordion Item 2"
+                    IconBefore={Tag}
+                    actions={
+                        <ButtonGroup size="medium">
+                            <Button appearance="secondary" layout="text" Icon={RecycleBin} />
+                        </ButtonGroup>
+                    }
+                >
+                    <div>Content for accordion item 2</div>
+                </AccordionItem>
+            </Accordion>
+        );
+    }
+};
+
+const AccordionItemStory: StoryItem = storyObjBuilder({
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
-        withIconBefore: args({ control: "boolean", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),
         IconBefore: args({ control: "false", ...propCategory.content }),
         actions: args({ control: "false", ...propCategory.content }),
-        children: args({ control: "false", ...propCategory.content }),
-        withActions: args({ control: "boolean", ...propCategory.content })
+        children: args({ control: "false", ...propCategory.content })
     },
     args: {
         title: "Accordion Item",
-        withIconBefore: true,
         IconBefore: Tag,
         actions: (
             <ButtonGroup size="medium">
@@ -37,19 +83,16 @@ const meta: Meta<IAccordionItemProps> = {
                 <Button appearance="secondary" layout="text" Icon={RecycleBin} />
             </ButtonGroup>
         ),
-        children: <div>Accordion content goes here</div>,
-        withActions: true
+        children: <div>Accordion content goes here</div>
+    },
+    render: (props) => {
+        return (
+            <Accordion size="large">
+                <AccordionItem {...(props as IAccordionItemProps)} />
+            </Accordion>
+        );
     }
-};
+}) as StoryItem;
 
 export default meta;
-
-type Story = StoryObj<IAccordionItemProps>;
-
-export const Default: Story = {
-    render: (props) => (
-        <Accordion size="large">
-            <AccordionItem {...props} />
-        </Accordion>
-    )
-};
+export { AccordionStory as Accordion, AccordionItemStory as AccordionItem };

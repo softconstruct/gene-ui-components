@@ -53,10 +53,6 @@ interface IAccordionItemProps {
      */
     IconBefore?: FC<IconProps>;
     /**
-     * Whether to show the IconBefore
-     */
-    withIconBefore?: boolean;
-    /**
      * Custom actions to display in the header (typically ButtonGroup with Buttons)
      */
     actions?: ReactNode;
@@ -64,25 +60,12 @@ interface IAccordionItemProps {
      * Content to display when the accordion item is expanded
      */
     children: ReactNode;
-    /**
-     * Whether to show the actions
-     */
-    withActions?: boolean;
 }
 
 /**
  * Accordion component organizes content into expandable and collapsible sections, allowing users to reveal or hide detailed information as needed. Each section, or "panel," typically includes a header that summarizes the content and can be clicked to expand or collapse the corresponding panel.
  */
-const AccordionItem: FC<IAccordionItemProps> = ({
-    className,
-    title,
-    disabled,
-    IconBefore,
-    withIconBefore = true,
-    actions,
-    children,
-    withActions
-}) => {
+const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, IconBefore, children, actions }) => {
     const { size } = useContext(AccordionContext);
 
     const [isExpanded, setIsExpanded] = useState(false);
@@ -126,13 +109,11 @@ const AccordionItem: FC<IAccordionItemProps> = ({
                         aria-expanded={isExpanded}
                     />
 
-                    {withIconBefore && IconBefore && (
-                        <IconBefore className="accordionItem__icon" size={iconSizes[size]} />
-                    )}
+                    {IconBefore && <IconBefore className="accordionItem__icon" size={iconSizes[size]} />}
                     <Text as="span" variant={textVariants[size]} className="accordionItem__title ellipsis-text">
                         {title}
                     </Text>
-                    {withActions && actionsWithDisabled}
+                    {actionsWithDisabled}
                 </div>
                 {isExpanded && (
                     <div className="accordionItem__body">
