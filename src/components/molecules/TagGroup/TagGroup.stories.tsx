@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { faker } from "@faker-js/faker";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Components
@@ -10,11 +9,7 @@ import TagGroup, { ITagGroupProps } from "@components/molecules/TagGroup/TagGrou
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
-const tagsArray = Array.from({ length: 100 }, (_, index) => ({
-    id: `tag-${Date.now()}-${index}`,
-    text: faker.name.firstName()
-}));
+import { demoTagItems, sliceDemoTags } from "../../../../stories/data/__tagGroup";
 
 const meta: Meta<ITagGroupProps> = {
     title: "Molecules/TagGroup",
@@ -33,7 +28,7 @@ const meta: Meta<ITagGroupProps> = {
 export default meta;
 
 const DefaultStory = (props: ITagGroupProps) => {
-    const [tags, setTags] = useState(tagsArray);
+    const [tags, setTags] = useState(demoTagItems);
 
     const handleRemoveTag = (tagId: string) => {
         setTags((prevTags) => prevTags.filter((tag) => tag.id !== tagId));
@@ -58,9 +53,9 @@ const TagGroupStory: StoryObj<ITagGroupProps> = {
 export { TagGroupStory as Default };
 
 const DifferentTagCountsStory = (props: ITagGroupProps) => {
-    const [tags2, setTags2] = useState(tagsArray.slice(0, 2));
-    const [tags6, setTags6] = useState(tagsArray.slice(0, 6));
-    const [tags100, setTags100] = useState(tagsArray);
+    const [tags2, setTags2] = useState(sliceDemoTags(2));
+    const [tags6, setTags6] = useState(sliceDemoTags(6));
+    const [tags100, setTags100] = useState(demoTagItems);
 
     const handleRemoveTag2 = (tagId: string) => {
         setTags2((prevTags) => prevTags.filter((tag) => tag.id !== tagId));

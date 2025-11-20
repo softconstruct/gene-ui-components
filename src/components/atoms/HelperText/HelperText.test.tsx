@@ -32,7 +32,7 @@ describe("HelperText ", () => {
     });
 
     it("renders text prop correctly", () => {
-        expect(setup.find(".helperText__text").text()).toStrictEqual("test");
+        expect(setup.find(".helperText__text").hostNodes().text()).toStrictEqual("test");
     });
 
     it("renders Icon prop correctly", () => {

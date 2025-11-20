@@ -5,10 +5,12 @@ import React, {
     forwardRef,
     useEffect,
     useImperativeHandle,
+    useMemo,
     useRef,
     useState
 } from "react";
 import classNames from "classnames";
+import { nanoid } from "nanoid";
 
 import { Eye, EyeOff, IconProps, X } from "@geneui/icons";
 
@@ -20,6 +22,19 @@ import Text from "@components/atoms/Text";
 
 // Styles
 import "./TextField.scss";
+
+// Size mapping objects for Label and HelperText components
+const labelSizeMap = {
+    large: "medium" as const,
+    medium: "medium" as const,
+    small: "small" as const
+};
+
+const helperTextSizeMap = {
+    large: "medium" as const,
+    medium: "medium" as const,
+    small: "small" as const
+};
 
 interface ITextFieldProps {
     /**
@@ -197,6 +212,11 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
         const [paddingClassesForIcon, setPaddingClassesForIcon] = useState<string>("");
 
+        const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
+
+        const labelSize = labelSizeMap[size] || "medium";
+        const helperTextSize = helperTextSizeMap[size] || "medium";
+
         const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
             const { value: currentValue } = event.target;
             const filteredValue = numericOnly && type !== "password" ? currentValue.replace(/\D/g, "") : currentValue;
@@ -250,6 +270,9 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             }
         }, [IconBefore, type, clearable, inputValue, disabled, readOnly]);
 
+        const isClearable = clearable && inputValue.length > 0 && !disabled && !readOnly;
+        const isPassword = type === "password" && inputValue.length > 0 && !readOnly && !disabled;
+
         return (
             <div className={classNames("textField", className)}>
                 <Label
@@ -258,45 +281,45 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                     className="textField__label"
                     disabled={disabled}
                     infoText={infoText}
+                    readOnly={readOnly}
+                    labelFor={generatedId}
+                    size={labelSize}
+                />
+                <div
+                    className={classNames(`textField__wrapper textField__wrapper_size_${size}`, paddingClassesForIcon, {
+                        textField__wrapper_readOnly: readOnly && !disabled,
+                        textField__wrapper_disabled: disabled,
+                        textField__wrapper_error: status === "error"
+                    })}
                 >
-                    <div
-                        className={classNames(
-                            `textField__wrapper textField__wrapper_size_${size}`,
-                            paddingClassesForIcon,
-                            {
-                                textField__wrapper_readOnly: readOnly,
-                                textField__wrapper_disabled: disabled,
-                                textField__wrapper_error: status === "error"
-                            }
-                        )}
-                    >
-                        {IconBefore && (
-                            <span className="textField__icon">
-                                <IconBefore size={size === "small" ? 20 : 24} />
-                            </span>
-                        )}
-                        <input
-                            {...(id && { id })}
-                            {...(placeholder && { placeholder })}
-                            {...(autoFocus && { autoFocus })}
-                            {...(numericOnly ? { inputMode: "numeric" } : { inputMode })}
-                            autoComplete={autoComplete}
-                            name={name || type}
-                            ref={inputRef}
-                            className="textField__input"
-                            type={isPasswordVisible ? "text" : type}
-                            required={required}
-                            disabled={disabled}
-                            readOnly={readOnly}
-                            value={inputValue}
-                            onChange={handleChange}
-                            onBlur={onBlur}
-                            onFocus={onInputFocus}
-                            aria-invalid={status === "error"}
-                            aria-required={required}
-                        />
+                    {IconBefore && (
+                        <span className="textField__icon">
+                            <IconBefore size={size === "small" ? 20 : 24} />
+                        </span>
+                    )}
+                    <input
+                        id={generatedId}
+                        {...(placeholder && { placeholder })}
+                        {...(autoFocus && { autoFocus })}
+                        {...(numericOnly ? { inputMode: "numeric" } : { inputMode })}
+                        autoComplete={autoComplete}
+                        name={name || type}
+                        ref={inputRef}
+                        className="textField__input"
+                        type={isPasswordVisible ? "text" : type}
+                        required={required}
+                        disabled={disabled}
+                        readOnly={readOnly}
+                        value={inputValue}
+                        onChange={handleChange}
+                        onBlur={onBlur}
+                        onFocus={onInputFocus}
+                        aria-invalid={status === "error"}
+                        aria-required={required}
+                    />
+                    {(isClearable || isPassword) && (
                         <span className="textField__actions">
-                            {clearable && inputValue.length > 0 && !disabled && !readOnly && (
+                            {isClearable && (
                                 <Button
                                     Icon={X}
                                     appearance="secondary"
@@ -306,7 +329,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                                     onClick={handleClear}
                                 />
                             )}
-                            {type === "password" && inputValue.length > 0 && !readOnly && !disabled && (
+                            {isPassword && (
                                 <Button
                                     Icon={isPasswordVisible ? Eye : EyeOff}
                                     appearance="secondary"
@@ -317,17 +340,22 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                                 />
                             )}
                         </span>
-                    </div>
-                </Label>
+                    )}
+                </div>
                 {(helperText || characterLimit) && (
                     <div className="textField__info">
-                        {helperText && <HelperText text={helperText} disabled={disabled} status={status} />}
+                        {helperText && (
+                            <HelperText text={helperText} disabled={disabled} status={status} size={helperTextSize} />
+                        )}
                         {characterLimit && (
                             <Text
                                 as="span"
-                                className={classNames(`textField__characterLimit`, {
-                                    textField__characterLimit_disabled: disabled
-                                })}
+                                className={classNames(
+                                    `textField__characterLimit textField__characterLimit_size_${helperTextSize}`,
+                                    {
+                                        textField__characterLimit_disabled: disabled
+                                    }
+                                )}
                             >{`${inputValue.length} / ${characterLimit}`}</Text>
                         )}
                     </div>

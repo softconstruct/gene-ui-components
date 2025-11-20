@@ -19,7 +19,6 @@ const meta: Meta<ITextFieldProps> = {
         required: args({ control: "boolean", ...propCategory.states }),
         clearable: args({ control: "boolean", ...propCategory.states }),
         type: args({ control: "select", ...propCategory.appearance }),
-        validationStatus: args({ control: "object", ...propCategory.appearance }),
         IconBefore: args({ control: "false", ...propCategory.appearance }),
         onChange: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
