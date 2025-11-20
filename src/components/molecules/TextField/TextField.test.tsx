@@ -3,10 +3,10 @@ import { mount, ReactWrapper } from "enzyme";
 
 import { Info, X } from "@geneui/icons";
 
+// Components
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
 
-// Components
 import TextField, { ITextFieldProps } from "./index";
 
 describe("TextField ", () => {
@@ -116,7 +116,8 @@ describe("TextField ", () => {
 
     it("renders infoText prop correctly", () => {
         const infoText = "infoText";
-        const wrapper = setup.setProps({ infoText });
+        const label = "test-label";
+        const wrapper = setup.setProps({ infoText, label });
         expect(wrapper.find(Label).props().infoText).toBe(infoText);
     });
 
