@@ -131,19 +131,19 @@
         }
     }
 
-    @include mixins.media-hover {
-        &:hover {
-            #{ $this }__header {
-                background-color: var(--guit-sem-color-background-neutral-1-hover);
-            }
-        }
-    }
+    // @include mixins.media-hover {
+    //     &:hover {
+    //         #{ $this }__header {
+    //             background-color: var(--guit-sem-color-background-neutral-1-hover);
+    //         }
+    //     }
+    // }
 
-    &:active {
-        #{ $this }__header {
-            background-color: var(--guit-sem-color-background-neutral-1-pressed);
-        }
-    }
+    // &:active {
+    //     #{ $this }__header {
+    //         background-color: var(--guit-sem-color-background-neutral-1-pressed);
+    //     }
+    // }
 
     &__title {
         flex: 1;
@@ -155,8 +155,6 @@
 
     &__content {
         height: 14rem;
-
-        // todo: remove background-color after content implementation
         background-color: #f6c6ce;
     }
 }
