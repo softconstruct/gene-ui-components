@@ -28,7 +28,6 @@ describe("CounterField", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    // LABEL & HELPER TEXT TESTS
     it("renders label prop correctly", () => {
         const label = "Counter Label";
         const wrapper = setup.setProps({ label });
@@ -58,7 +57,6 @@ describe("CounterField", () => {
         expect(wrapper.find(HelperText).props().text).toBe(helperText);
     });
 
-    // SIZE TESTS
     it.each<ICounterFieldProps["size"]>(["small", "medium", "large"])('should have "%s" size', (size) => {
         const wrapper = setup.setProps({ size });
 
@@ -66,7 +64,6 @@ describe("CounterField", () => {
         expect(wrapper.find(TextField).props().size).toBe(size);
     });
 
-    // STATUS TESTS
     it.each<ICounterFieldProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
         const wrapper = setup.setProps({ status, helperText: "test" });
 
@@ -75,7 +72,6 @@ describe("CounterField", () => {
         expect(wrapper.find(HelperText).props().status).toBe(status);
     });
 
-    // DISABLED STATE TESTS
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({ disabled: true });
 
@@ -97,7 +93,6 @@ describe("CounterField", () => {
         expect(wrapper.find(HelperText).props().disabled).toBeTruthy();
     });
 
-    // READONLY STATE TESTS
     it("renders readOnly prop correctly", () => {
         const wrapper = setup.setProps({ readOnly: true });
 
@@ -113,7 +108,6 @@ describe("CounterField", () => {
         expect(wrapper.find(Label).first().props().readOnly).toBeTruthy();
     });
 
-    // VALUE TESTS (CONTROLLED MODE)
     it("renders value prop correctly in controlled mode", () => {
         const value = 10;
         const wrapper = setup.setProps({ value });
@@ -129,7 +123,6 @@ describe("CounterField", () => {
         expect(wrapper.find(TextField).props().value).toBe("10");
     });
 
-    // VALUE TESTS (UNCONTROLLED MODE)
     it("respects defaultValue in uncontrolled mode", () => {
         const wrapper = mount(<CounterField defaultValue={7} />);
 
@@ -140,7 +133,6 @@ describe("CounterField", () => {
         expect(setup.find(TextField).props().value).toBe("0");
     });
 
-    // MIN BOUNDARY TESTS
     it("respects min boundary", () => {
         const min = 5;
         const wrapper = setup.setProps({ min, value: min });
@@ -162,7 +154,6 @@ describe("CounterField", () => {
         expect(decrementButton.props().disabled).toBeFalsy();
     });
 
-    // STEP TESTS
     it("increments by default step of 1", () => {
         const onChange = jest.fn();
         const wrapper = mount(<CounterField value={5} onChange={onChange} />);
@@ -203,7 +194,6 @@ describe("CounterField", () => {
         expect(onChange).toHaveBeenCalledWith(7, expect.any(Object));
     });
 
-    // INCREMENT/DECREMENT BUTTON TESTS
     it("calls onChange when increment button is clicked", () => {
         const onChange = jest.fn();
         const wrapper = setup.setProps({ onChange });
@@ -234,12 +224,10 @@ describe("CounterField", () => {
         expect(decrementButton.props().Icon).toBe(Minus);
     });
 
-    // INPUT FIELD TESTS
     it("passes numericOnly prop to TextField", () => {
         expect(setup.find(TextField).props().numericOnly).toBeTruthy();
     });
 
-    // BUTTON STATES
     it("increment button is not disabled by default", () => {
         const incrementButton = setup.find(Button).at(1);
         expect(incrementButton.props().disabled).toBeFalsy();
@@ -275,7 +263,6 @@ describe("CounterField", () => {
         expect(decrementButton.props().disabled).toBeTruthy();
     });
 
-    // ACCESSIBILITY TESTS
     it("should have aria-required attribute when required is true", () => {
         const wrapper = setup.setProps({ required: true });
         expect(wrapper.find(".counterField").prop("aria-required")).toBe(true);
@@ -306,7 +293,6 @@ describe("CounterField", () => {
         expect(incrementButton.props()["aria-label"]).toBe("Increment value");
     });
 
-    // BUTTON APPEARANCE TESTS
     it("buttons should have secondary appearance", () => {
         const decrementButton = setup.find(Button).at(0);
         const incrementButton = setup.find(Button).at(1);
@@ -323,7 +309,6 @@ describe("CounterField", () => {
         expect(incrementButton.props().layout).toBe("fill");
     });
 
-    // CONTROLLED MODE BEHAVIOR
     it("does not update internal state in controlled mode", () => {
         const onChange = jest.fn();
         const wrapper = mount(<CounterField value={5} onChange={onChange} />);
@@ -331,9 +316,7 @@ describe("CounterField", () => {
         const incrementButton = wrapper.find(Button).at(1);
         incrementButton.simulate("click");
 
-        // Value should remain the same because it's controlled
         expect(wrapper.find(TextField).props().value).toBe("5");
-        // But onChange should have been called
         expect(onChange).toHaveBeenCalledWith(6, expect.any(Object));
     });
 });
