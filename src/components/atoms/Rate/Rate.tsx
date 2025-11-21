@@ -100,6 +100,11 @@ interface IRateProps {
      * that the component is inactive due to form-level or application-level conditions.
      */
     disabled?: boolean;
+    /**
+     * Indicates whether the rating is required.
+     * When true, the Label will display an asterisk to denote a required field.
+     */
+    required?: boolean;
 }
 
 interface CSSVariableType extends CSSProperties {
@@ -181,13 +186,14 @@ const Rate: FC<IRateProps> = (props) => {
         defaultValue,
         value,
         onChange,
-        size = "small",
+        size = "medium",
         count = 5,
         appearance = "star",
         label = "",
         helperText = "",
         infoText,
-        disabled
+        disabled,
+        required
     } = props;
 
     const isControlled = "value" in props;
@@ -305,7 +311,7 @@ const Rate: FC<IRateProps> = (props) => {
             onBlur={() => setDisableMouseMove(false)}
             style={cssWitVariable}
         >
-            <Label text={label} size={size} infoText={infoText} disabled={disabled} />
+            <Label text={label} size={size} infoText={infoText} disabled={disabled} required={required} />
             <div className="rate__content">
                 <>
                     {elements.map((_, i) => {
