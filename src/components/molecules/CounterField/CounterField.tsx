@@ -32,10 +32,6 @@ interface ICounterFieldProps {
      * Disables the counter field, preventing it from being interacted with.
      */
     disabled?: boolean;
-    /**
-     * Makes the counter field read-only, preventing manual input changes.
-     */
-    readOnly?: boolean;
 
     // BOUNDARIES & STEP
     /**
@@ -110,7 +106,6 @@ const CounterField: FC<ICounterFieldProps> = ({
     infoText,
     required,
     disabled,
-    readOnly,
     helperText,
     ariaLabelIncrement = "Increment value",
     ariaLabelDecrement = "Decrement value",
@@ -176,9 +171,9 @@ const CounterField: FC<ICounterFieldProps> = ({
         updateValue(nextValue, event);
     };
 
-    const isDecrementDisabled = disabled || readOnly || (min !== undefined && currentValue <= min);
+    const isDecrementDisabled = disabled || (min !== undefined && currentValue <= min);
 
-    const isIncrementDisabled = disabled || readOnly || (max !== undefined && currentValue >= max);
+    const isIncrementDisabled = disabled || (max !== undefined && currentValue >= max);
 
     const inputId = useMemo(() => `counter-field-${nanoid()}`, []);
 
@@ -192,8 +187,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                 "counterField",
                 `counterField_status_${status}`,
                 {
-                    counterField_disabled: disabled,
-                    counterField_readOnly: readOnly
+                    counterField_disabled: disabled
                 },
                 className
             )}
@@ -205,7 +199,6 @@ const CounterField: FC<ICounterFieldProps> = ({
                     text={label}
                     required={required}
                     disabled={disabled}
-                    readOnly={readOnly}
                     infoText={infoText}
                     size={size === "large" ? "medium" : size}
                     labelFor={inputId}
@@ -234,7 +227,6 @@ const CounterField: FC<ICounterFieldProps> = ({
                     size={size}
                     value={String(currentValue)}
                     disabled={disabled}
-                    readOnly={readOnly}
                     status={status}
                 />
                 <Button

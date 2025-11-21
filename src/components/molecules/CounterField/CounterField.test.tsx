@@ -93,21 +93,6 @@ describe("CounterField", () => {
         expect(wrapper.find(HelperText).props().disabled).toBeTruthy();
     });
 
-    it("renders readOnly prop correctly", () => {
-        const wrapper = setup.setProps({ readOnly: true });
-
-        expect(wrapper.find(".counterField").hasClass("counterField_readOnly")).toBeTruthy();
-        expect(wrapper.find(Button).at(0).props().disabled).toBeTruthy();
-        expect(wrapper.find(Button).at(1).props().disabled).toBeTruthy();
-        expect(wrapper.find(TextField).props().readOnly).toBeTruthy();
-    });
-
-    it("renders readOnly prop on Label correctly", () => {
-        const wrapper = setup.setProps({ label: "Label", readOnly: true });
-
-        expect(wrapper.find(Label).first().props().readOnly).toBeTruthy();
-    });
-
     it("renders value prop correctly in controlled mode", () => {
         const value = 10;
         const wrapper = setup.setProps({ value });
@@ -239,20 +224,8 @@ describe("CounterField", () => {
         expect(incrementButton.props().disabled).toBeTruthy();
     });
 
-    it("increment button is disabled when component is readOnly", () => {
-        const wrapper = setup.setProps({ readOnly: true });
-        const incrementButton = wrapper.find(Button).at(1);
-        expect(incrementButton.props().disabled).toBeTruthy();
-    });
-
     it("decrement button is disabled when disabled prop is true", () => {
         const wrapper = setup.setProps({ disabled: true });
-        const decrementButton = wrapper.find(Button).at(0);
-        expect(decrementButton.props().disabled).toBeTruthy();
-    });
-
-    it("decrement button is disabled when readOnly prop is true", () => {
-        const wrapper = setup.setProps({ readOnly: true });
         const decrementButton = wrapper.find(Button).at(0);
         expect(decrementButton.props().disabled).toBeTruthy();
     });

@@ -13,7 +13,6 @@ const meta: Meta<ICounterFieldProps> = {
         value: args({ control: "number", ...propCategory.states }),
         defaultValue: args({ control: "number", ...propCategory.states }),
         disabled: args({ control: "boolean", ...propCategory.states }),
-        readOnly: args({ control: "boolean", ...propCategory.states }),
         ariaLabelIncrement: args({ control: "text", ...propCategory.others }),
         ariaLabelDecrement: args({ control: "text", ...propCategory.others }),
         max: args({ control: "number", ...propCategory.validation }),
@@ -37,9 +36,9 @@ const meta: Meta<ICounterFieldProps> = {
         step: 1,
         size: "medium",
         status: "rest",
-        label: "Quantity",
+        label: "Label",
         helperText: "Helper text",
-        required: false
+        required: true
     }
 };
 
@@ -55,7 +54,7 @@ export const Default: Story = {
 };
 
 const ControlledTemplate: FC<ICounterFieldProps> = ({ value, onChange, ...props }) => {
-    const [internalValue, setInternalValue] = useState<number>(value ?? 0);
+    const [internalValue, setInternalValue] = useState(value ?? 0);
 
     useEffect(() => {
         if (value !== undefined) {
