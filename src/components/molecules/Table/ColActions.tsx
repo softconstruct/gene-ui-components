@@ -29,7 +29,7 @@ const getFilterOptionLabelByColumnType = (data: Cell | undefined, type: string) 
             return (data as IPillProps)?.text;
         case "checkbox":
         case "switch":
-            return (data as ICheckboxProps).value;
+            return (data as ICheckboxProps)?.value;
         default:
             return data as string;
     }

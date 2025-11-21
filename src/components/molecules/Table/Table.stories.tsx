@@ -1,9 +1,10 @@
 import React, { FC, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+import { TableData } from "stories/data/__table";
 
 import Drawer from "@components/molecules/Drawer";
 import { IMenuItemProps } from "@components/molecules/Menu";
-import { defaultColumns, withGroupedColumns, withPinnedColumns } from "@components/molecules/Table/Columns";
+import { Columns, defaultColumns, withGroupedColumns, withPinnedColumns } from "@components/molecules/Table/Columns";
 // Components
 import { deepCloneWithFunctions } from "@components/molecules/Table/helpers";
 import { TablePropsType } from "@components/molecules/Table/Table";
@@ -194,7 +195,7 @@ const TableComponent: FC<TablePropsType> = (props) => {
             prev.forEach((item) => {
                 newData.push({
                     ...item,
-                    order: column.columns[item.id].order
+                    order: column.columns[item.id]?.order || 1
                 });
             });
             return newData;
@@ -241,7 +242,9 @@ const TableComponent: FC<TablePropsType> = (props) => {
 };
 
 export const Default: Story = {
-    render: (props: TablePropsType) => <TableComponent {...props} columns={defaultColumns} withManageColumns />
+    render: (props: TablePropsType) => {
+        return <TableComponent {...props} withCheckbox externalData={TableData} columns={Columns} withManageColumns />;
+    }
 };
 
 export const WithStickyHeader: Story = {
@@ -267,15 +270,15 @@ export const WithStickyHeader: Story = {
 };
 
 const TableWithVirtualScroll: FC<TablePropsType> = (props) => {
-    const [tableData, setTableData] = useState(makeData(50));
+    const [tableDataVirtualScroll, setTableDataVirtualScroll] = useState(makeData(50));
     const [hasNextPage, setHasNextPage] = useState(true);
     const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
 
     const fetchData = () => {
-        if (tableData.length > 300) setHasNextPage(false);
+        if (tableDataVirtualScroll.length > 300) setHasNextPage(false);
         setIsFetchingNextPage(true);
         setTimeout(() => {
-            setTableData((prev) => {
+            setTableDataVirtualScroll((prev) => {
                 const newData = makeData(30);
                 return [...prev, ...newData];
             });
@@ -287,7 +290,7 @@ const TableWithVirtualScroll: FC<TablePropsType> = (props) => {
         <TableComponent
             {...props}
             columns={defaultColumns}
-            externalData={tableData}
+            externalData={tableDataVirtualScroll}
             withVirtualScroll
             withGlobalFilter
             withCheckbox

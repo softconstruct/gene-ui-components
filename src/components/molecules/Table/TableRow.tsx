@@ -45,8 +45,8 @@ const TableRow: FC<ITableRow> = ({
         onRowSelect
     } = useContext(TableContext);
 
-    const handleCellEdit = (index: number, type: TableCol<ICellProps>["type"], data: unknown) => {
-        onCellEdit?.(index, type, data);
+    const handleCellEdit = (index: number, dataKey: TableCol<ICellProps>["dataKey"], data: unknown) => {
+        onCellEdit?.(index, dataKey, data);
     };
 
     const handleRowClick = () => {
@@ -182,13 +182,13 @@ const TableRow: FC<ITableRow> = ({
                             <div className={classNames(`table__content ${CellClassNames[colDef.type]}`)}>
                                 <Cell
                                     type={colDef.type as ICellProps["type"]}
-                                    data={row.original[colDef.type]}
+                                    data={row.original[colDef.dataKey]}
                                     withEditMode={withEditMode && !!colDef.editable}
                                     rowCellRenderer={colDef.rowCellRenderer}
                                     withCopy={colDef.copyable}
                                     ariaLabel={cellLabel}
                                     {...(onCellEdit && {
-                                        onChange: (data) => handleCellEdit(rowIndex, colDef.type, data)
+                                        onChange: (data) => handleCellEdit(rowIndex, colDef.dataKey, data)
                                     })}
                                 />
                             </div>
@@ -238,7 +238,7 @@ const TableRow: FC<ITableRow> = ({
                         role="row"
                         aria-label={`Expanded content for row ${rowIndex + 1}`}
                     >
-                        {row?.original.expandedData()}
+                        {row?.original.expandedData?.()}
                     </td>
                 </tr>
             )}

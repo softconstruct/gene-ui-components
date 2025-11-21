@@ -21,9 +21,9 @@ const newRow = (): Row => {
     return {
         id: faker.datatype.uuid(),
         Graph: faker.image.image(148, 28),
-        Text: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!,
+        Title: faker.helpers.shuffle<Row["rowStatus"]>(["default", "zebra", "red", "green", "highlighted"])[0]!,
         Number: `${faker.datatype.number({ min: 1000 })}`,
-        LongText: faker.lorem.text(),
+        Description: faker.lorem.text(),
         Dropdown: {
             value: faker.helpers.shuffle<string>(["Value 1", "Value 2", "Value 3"])[0]!,
             options: ["Value 1", "Value 2", "Value 3"]

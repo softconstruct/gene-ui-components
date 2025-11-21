@@ -474,7 +474,7 @@ const Table: FC<TablePropsType<Row>> = ({
         setData(deepCloneWithFunctions(externalData));
         setRowPinning((prevRowPinning) => ({
             ...prevRowPinning,
-            top: externalData.filter((item) => item.isPinned).map((item) => item.id)
+            top: externalData.filter((item) => !!item.isPinned).map((item) => item.id.toString())
         }));
         setSelectedRows(
             Object.fromEntries(externalData.filter((item) => item.isSelected).map((row) => [[row.id], true]))
@@ -504,7 +504,7 @@ const Table: FC<TablePropsType<Row>> = ({
         setColumnOrder(columnIds);
     }, [orderedColumns, columnsMap]);
 
-    const getRowId = useCallback((row: Row) => row.id, []);
+    const getRowId = useCallback((row: Row) => row.id.toString(), []);
     const getRowCanExpand = useCallback((row: TanstackRow<Row>) => !!row.original.expandedData, []);
 
     const handleSortingChange = useCallback(

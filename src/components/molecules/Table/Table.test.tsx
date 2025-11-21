@@ -8,23 +8,22 @@ import Empty from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
 import BulkActions from "@components/molecules/Table/BulkActions";
 import { ColActions } from "@components/molecules/Table/ColActions";
-import { defaultColumns } from "@components/molecules/Table/Columns";
-import { makeData } from "@components/molecules/Table/makeData";
+import { Columns } from "@components/molecules/Table/Columns";
 import THead from "@components/molecules/Table/THead";
 import VirtualScrollTBody from "@components/molecules/Table/VirtualScrollTBody";
 
+import { TableData } from "../../../../stories/data/__table";
 // Components
 import Table, { Row, TablePropsType } from "./index";
 
-const mockData: Row[] = makeData(10);
 const emptyData: Row[] = [];
 
 describe("Table", () => {
     let setup: ReactWrapper<TablePropsType>;
 
     const defaultProps: TablePropsType = {
-        columns: defaultColumns,
-        externalData: mockData,
+        columns: Columns,
+        externalData: TableData,
         onSave: jest.fn(),
         onRowClick: jest.fn(),
         onSelectAllRows: jest.fn(),
@@ -55,7 +54,7 @@ describe("Table", () => {
     });
 
     it("renders with columns prop", () => {
-        setup.setProps({ columns: defaultColumns });
+        setup.setProps({ columns: Columns });
         expect(setup.find(Table).exists()).toBeTruthy();
     });
 

@@ -26,18 +26,27 @@ export type CellType =
     | "Checkbox"
     | "Switch";
 
-export type Cell = string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
+export type Cell =
+    | string
+    | number
+    | boolean
+    | null
+    | unknown
+    | IPillProps
+    | ICheckboxProps
+    | ISwitchProps
+    | FC<IconProps>;
 
 export type TableRowCells = {
-    [K in CellType]?: Cell;
+    [K in string]?: Cell;
 };
 
 export type Row = TableRowCells & {
-    id: string;
-    isPinned: boolean;
-    isSelected: boolean;
-    rowStatus: "default" | "zebra" | "red" | "green" | "highlighted";
-    expandedData: () => ReactNode | null;
+    id: string | number;
+    isPinned?: boolean;
+    isSelected?: boolean;
+    rowStatus?: "default" | "zebra" | "red" | "green" | "highlighted";
+    expandedData?: () => ReactNode | null;
 };
 
 export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
@@ -45,6 +54,7 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     header?: string | null;
     footer?: (props: HeaderContext<T extends object ? T : never, unknown>) => ReactNode;
     type: CellType;
+    dataKey: string;
     order: number;
     disabled?: boolean;
     isPinned?: boolean;
@@ -52,7 +62,7 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     isCheckboxDisabled?: boolean;
     enableSorting?: boolean;
     isSortingDisabled?: boolean;
-    rowCellRenderer?: (data?: Cell) => JSX.Element;
+    rowCellRenderer?: (data?: Cell, editMode?: boolean, onChange?: (value: string | number) => void) => JSX.Element;
     editable?: boolean;
     isEditDisabled?: boolean;
     copyable?: boolean;
@@ -88,6 +98,7 @@ export interface IOrderedColumns<T = Row> {
 export type OrderType = {
     order: number;
     isPinned: boolean;
+    isVisible: boolean;
 };
 
 export interface IManageColumnsData {

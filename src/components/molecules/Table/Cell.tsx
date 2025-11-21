@@ -6,7 +6,6 @@ import Copy from "@components/atoms/Copy";
 import Pill, { IPillProps } from "@components/atoms/Pill";
 import Text from "@components/atoms/Text";
 import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
-import Switch, { ISwitchProps } from "@components/molecules/Switch";
 import TextField from "@components/molecules/TextField";
 import Tooltip from "@components/molecules/Tooltip";
 
@@ -15,9 +14,13 @@ import { Cell as CellTypes, CellType } from "./type";
 interface ICellProps {
     type: CellType;
     withEditMode: boolean;
-    data?: string | number | boolean | IPillProps | ICheckboxProps | ISwitchProps | FC<IconProps>;
+    data?: CellTypes;
     onChange?: (data: unknown) => void;
-    rowCellRenderer?: (data?: CellTypes) => JSX.Element;
+    rowCellRenderer?: (
+        data?: CellTypes,
+        editMode?: boolean,
+        onChange?: (value: string | number) => void
+    ) => JSX.Element;
     withCopy?: boolean;
     ariaLabel?: string;
 }
@@ -34,11 +37,17 @@ export const cellRenderer: () => CellRenderer = () => {
     return {
         Empty: ({ rowCellRenderer }) =>
             rowCellRenderer ? rowCellRenderer() : <div className="table__content table__content_empty" />,
-        Graph: ({ rowCellRenderer, data }) => {
-            return rowCellRenderer ? rowCellRenderer(data) : <img src={data as string} alt="" />;
+        Graph: ({ rowCellRenderer, data, withEditMode, onChange }) => {
+            return rowCellRenderer ? (
+                rowCellRenderer(data, withEditMode, onChange)
+            ) : (
+                <img src={data as string} alt="" />
+            );
         },
         Text: ({ rowCellRenderer, data, withEditMode, inputType = "text", withCopy, onChange, ariaLabel }) => {
             const value = data as string;
+            if (rowCellRenderer) return rowCellRenderer(data, withEditMode, onChange);
+
             if (withEditMode) {
                 return (
                     <TextField
@@ -54,8 +63,6 @@ export const cellRenderer: () => CellRenderer = () => {
                     />
                 );
             }
-
-            if (rowCellRenderer) return rowCellRenderer(data);
 
             return (
                 <>
@@ -77,6 +84,8 @@ export const cellRenderer: () => CellRenderer = () => {
         LongText: ({ rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
             const [value, setValue] = useState<string>(data as string);
 
+            if (rowCellRenderer) return rowCellRenderer(data, withEditMode, onChange);
+
             const handleChange = (e: ChangeEvent<HTMLTextAreaElement> | undefined) => {
                 if (!e) return;
                 setValue(e.target.value);
@@ -94,8 +103,6 @@ export const cellRenderer: () => CellRenderer = () => {
                 );
             }
 
-            if (rowCellRenderer) return rowCellRenderer(data);
-
             return (
                 <>
                     <Tooltip text={value}>
@@ -110,68 +117,35 @@ export const cellRenderer: () => CellRenderer = () => {
             );
         },
         Dropdown: ({ rowCellRenderer, data, withEditMode, withCopy, onChange }) => {
-            const { value, options } = data as any;
-            const [dropDownValue, setDropDownValue] = useState<string>(value);
+            if (rowCellRenderer) return rowCellRenderer(data, withEditMode, onChange);
 
-            const onDropDownChange = (e: ChangeEvent<HTMLSelectElement>) => {
-                setDropDownValue(e.target.value);
-                onChange?.({
-                    value: e.target.value,
-                    options
-                });
-            };
-
-            if (withEditMode) {
-                return (
-                    <select
-                        name="dropdown"
-                        id="dropdown"
-                        style={{ width: "160px" }}
-                        value={dropDownValue}
-                        {...(onChange && { onChange: onDropDownChange })}
-                    >
-                        {options.map((option: string) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </select>
-                );
-            }
-
-            if (rowCellRenderer) return rowCellRenderer(data);
-
+            const value = data as string;
             return (
                 <>
                     <Text as="span" className="table__td_text ellipsis-text">
-                        {dropDownValue}
+                        {value}
                     </Text>
                     {withCopy && (
-                        <Copy
-                            value={dropDownValue}
-                            size="small"
-                            appearance="secondary"
-                            className="table__content_copy"
-                        />
+                        <Copy value={value} size="small" appearance="secondary" className="table__content_copy" />
                     )}
                 </>
             );
         },
-        Status: ({ rowCellRenderer, data }) => {
+        Status: ({ rowCellRenderer, data, withEditMode, onChange }) => {
             /* todo: change "Pill" components "color" as a status to next values: "informative", "neutral", "error", "success", "warning" */
             const props = data as IPillProps;
 
             return rowCellRenderer ? (
-                rowCellRenderer(data)
+                rowCellRenderer(data, withEditMode, onChange)
             ) : (
                 <Pill {...props} text={props.text} appearance={props.appearance} />
             );
         },
-        Pill: ({ rowCellRenderer, data }) => {
+        Pill: ({ rowCellRenderer, data, withEditMode, onChange }) => {
             const props = data as IPillProps;
 
             return rowCellRenderer ? (
-                rowCellRenderer(data)
+                rowCellRenderer(data, withEditMode, onChange)
             ) : (
                 <Pill
                     text={props.text}
@@ -182,21 +156,23 @@ export const cellRenderer: () => CellRenderer = () => {
                 />
             );
         },
-        Icon: ({ rowCellRenderer, data: icon }) => {
+        Icon: ({ rowCellRenderer, data: icon, withEditMode, onChange }) => {
             /* todo: import icon as a component for "Icon" and "Flag" case */
             const Icon = icon as FC<IconProps>;
-            return rowCellRenderer ? rowCellRenderer(icon) : <Icon size={24} />;
+            return rowCellRenderer ? rowCellRenderer(icon, withEditMode, onChange) : <Icon size={24} />;
         },
-        Flag: ({ rowCellRenderer, data: icon }) => {
+        Flag: ({ rowCellRenderer, data: icon, withEditMode, onChange }) => {
             /* todo: import icon as a component for "Icon" and "Flag" case */
             const Icon = icon as FC<IconProps>;
-            return rowCellRenderer ? rowCellRenderer(icon) : <Icon size={24} />;
+            return rowCellRenderer ? rowCellRenderer(icon, withEditMode, onChange) : <Icon size={24} />;
         },
         Checkbox: ({ rowCellRenderer, data, withEditMode, onChange }) => {
+            if (rowCellRenderer) return rowCellRenderer(data, withEditMode, onChange);
+
             const props = data as ICheckboxProps;
-            const [checked, setChecked] = useState<boolean>(!!props.checked);
+            let checked = !!props.value;
             const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-                setChecked((prev) => !prev);
+                checked = !checked;
                 onChange?.({
                     value: props.value,
                     checked: e.target.checked
@@ -215,37 +191,14 @@ export const cellRenderer: () => CellRenderer = () => {
                     />
                 );
 
-            if (rowCellRenderer) return rowCellRenderer(data);
-
             return <Checkbox name="item" value={props.value} checked={checked} readOnly />;
         },
         Switch: ({ rowCellRenderer, data, withEditMode, onChange }) => {
-            const props = data as ISwitchProps;
-            const [checked, setChecked] = useState<boolean>(!!props.checked);
-
-            const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-                setChecked((prev) => !prev);
-                onChange?.({
-                    value: props.value,
-                    checked: e.target.checked
-                });
-            };
-
-            if (withEditMode)
-                return (
-                    <Switch
-                        {...props}
-                        value={props.value}
-                        checked={checked}
-                        {...(onChange && { onChange: handleChange })}
-                    />
-                );
-
-            if (rowCellRenderer) return rowCellRenderer();
-
+            if (rowCellRenderer) return rowCellRenderer(data, withEditMode, onChange);
+            const value = data ? "On" : "Off";
             return (
                 <Text as="span" className="table__td_text">
-                    {checked ? "on" : "off"}
+                    {value}
                 </Text>
             );
         }
@@ -253,8 +206,6 @@ export const cellRenderer: () => CellRenderer = () => {
 };
 
 const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, withCopy, onChange, ariaLabel }) => {
-    if (!data && !withEditMode) return null;
-
     const cellTypeWithNumber = type === "Number" ? "Text" : type;
     const CellItem = cellRenderer()[cellTypeWithNumber];
     return (
