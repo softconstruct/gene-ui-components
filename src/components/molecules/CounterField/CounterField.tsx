@@ -1,5 +1,6 @@
-import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useState } from "react";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useMemo, useState } from "react";
 import classNames from "classnames";
+import { nanoid } from "nanoid";
 
 import { Minus, Plus } from "@geneui/icons";
 
@@ -179,6 +180,8 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     const isIncrementDisabled = disabled || readOnly || (max !== undefined && currentValue >= max);
 
+    const inputId = useMemo(() => `counter-field-${nanoid()}`, []);
+
     const onFocusHandler = (e: FocusEvent<HTMLInputElement>) => onInputFocus?.(e);
 
     const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => onInputBlur?.(e);
@@ -205,6 +208,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     readOnly={readOnly}
                     infoText={infoText}
                     size={size === "large" ? "medium" : size}
+                    labelFor={inputId}
                 />
             )}
 
@@ -220,6 +224,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     onClick={handleDecrement}
                 />
                 <TextField
+                    id={inputId}
                     numericOnly
                     autoComplete="off"
                     onBlur={onBlurHandler}
