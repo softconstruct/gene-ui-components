@@ -1,6 +1,7 @@
 import React, { FC, ReactNode, useContext, useState } from "react";
 // Utils
 import classNames from "classnames";
+import { nanoid } from "nanoid";
 
 // Icons & Types
 import { ChevronDown, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
@@ -112,8 +113,8 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, Ic
                         <ButtonGroup className="accordionItem__actions" size={size}>
                             {actions.map((action: IButtonProps) => {
                                 const { Icon: actionIcon } = action;
-                                const key = `action-${actionIcon?.toString()}`;
-                                return actionIcon ? <Button key={key} {...action} disabled={disabled} /> : null;
+                                const actionId = action.id || `accordion-action-${nanoid()}`;
+                                return actionIcon ? <Button key={actionId} {...action} disabled={disabled} /> : null;
                             })}
                         </ButtonGroup>
                     )}
