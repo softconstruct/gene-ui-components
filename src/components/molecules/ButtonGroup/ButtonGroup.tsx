@@ -1,5 +1,6 @@
 import React, { Children, cloneElement, FC, isValidElement, JSX, ReactNode, useEffect, useState } from "react";
 import classNames from "classnames";
+import { nanoid } from "nanoid";
 
 import { ThreeDotsHorizontal } from "@geneui/icons";
 
@@ -43,9 +44,11 @@ const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "mediu
         if (!children) return;
         const clonedChildren = Children.map(children, (el) => {
             if (isValidElement(el)) {
+                const generatedId = el.props.id || `button-group-${nanoid()}`;
                 return cloneElement(el, {
                     ...el.props,
-                    size: size as IButtonProps["size"]
+                    size: size as IButtonProps["size"],
+                    id: generatedId
                 });
             }
             return el;
@@ -61,8 +64,8 @@ const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "mediu
             const hiddenChildren = childrenArray.slice(MAX_VISIBLE_BUTTONS);
             setSplitChildren(visibleChildren);
             setMenuData(
-                hiddenChildren.map((child, index) => ({
-                    id: String(index),
+                hiddenChildren.map((child) => ({
+                    id: child.props.id,
                     title: child.props.children,
                     IconBefore: child.props.Icon,
                     danger: child.props.appearance === "danger",
@@ -73,7 +76,7 @@ const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "mediu
     }, [children, size]);
 
     const menuSelectHandler = (menuItem: IMenuItemProps) => {
-        const selectedChild = childArray[+menuItem.id + MAX_VISIBLE_BUTTONS];
+        const selectedChild = childArray.find((child) => child.props.id === menuItem.id);
         if (selectedChild) {
             selectedChild.props.onClick?.();
         }
