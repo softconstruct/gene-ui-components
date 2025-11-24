@@ -43,6 +43,7 @@ const AccordionStory: Story = {
                         <ButtonGroup size="medium">
                             <Button appearance="secondary" layout="text" Icon={Globe} />
                             <Button appearance="secondary" layout="text" Icon={Download} />
+                            <Button appearance="secondary" layout="text" Icon={RecycleBin} />
                         </ButtonGroup>
                     }
                 >
@@ -53,6 +54,8 @@ const AccordionStory: Story = {
                     IconBefore={Tag}
                     actions={
                         <ButtonGroup size="medium">
+                            <Button appearance="secondary" layout="text" Icon={Globe} />
+                            <Button appearance="secondary" layout="text" Icon={Download} />
                             <Button appearance="secondary" layout="text" Icon={RecycleBin} />
                         </ButtonGroup>
                     }
