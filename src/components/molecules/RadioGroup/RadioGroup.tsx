@@ -3,7 +3,7 @@ import classNames from "classnames";
 
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
-import Radio from "@components/atoms/Radio";
+import Radio from "@components/molecules/Radio";
 
 // Styles
 import "./RadioGroup.scss";

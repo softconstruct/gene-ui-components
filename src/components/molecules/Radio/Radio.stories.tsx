@@ -26,7 +26,8 @@ const meta: Meta<IRadioProps> = {
         onChange: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
-        className: args({ control: "false", ...propCategory.appearance })
+        className: args({ control: "false", ...propCategory.appearance }),
+        id: args({ control: "text", ...propCategory.others })
     },
     args: {
         label: "Label",

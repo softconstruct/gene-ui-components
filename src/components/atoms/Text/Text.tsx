@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import { createElement, forwardRef } from "react";
 import classNames from "classnames";
 
 // Styles
@@ -88,10 +88,8 @@ interface ITextProps {
 /**
  * Text component which has predefined tokens
  */
-const Text = forwardRef<HTMLHeadingElement, ITextProps>(
+const Text = forwardRef<HTMLHeadingElement | HTMLParagraphElement | HTMLSpanElement, ITextProps>(
     ({ className, variant = "bodyMediumMedium", children, as, alignment = "start", id }: ITextProps, ref) => {
-        const Component = as;
-
         const computedClassNames = classNames(
             "text",
             {
@@ -101,10 +99,14 @@ const Text = forwardRef<HTMLHeadingElement, ITextProps>(
             className
         );
 
-        return (
-            <Component className={computedClassNames} ref={ref} id={id}>
-                {children}
-            </Component>
+        return createElement(
+            as,
+            {
+                ref,
+                id,
+                className: computedClassNames
+            },
+            children
         );
     }
 );

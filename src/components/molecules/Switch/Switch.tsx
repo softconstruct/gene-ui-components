@@ -135,7 +135,12 @@ const Switch: FC<ISwitchProps> = (props) => {
                 disabled={disabled}
                 readOnly={readOnly}
             >
-                <span className="switch__sliderHolder">
+                <span
+                    className={classNames("switch__sliderHolder", {
+                        switch__sliderHolder_disabled: disabled,
+                        switch__sliderHolder_readOnly: readOnly && !disabled
+                    })}
+                >
                     <input
                         type="checkbox"
                         className="switch__input"
