@@ -112,14 +112,12 @@ describe("AccordionItem", () => {
         expect(setup.find(".accordionItem_expanded")).toHaveLength(0);
         expect(setup.find(".accordionItem__body")).toHaveLength(0);
 
-        // Click the chevron button to expand
         setup.find(".accordionItem__header button").first().simulate("click");
         setup.update();
 
         expect(setup.find(".accordionItem_expanded")).toHaveLength(1);
         expect(setup.find(".accordionItem__body")).toHaveLength(1);
 
-        // Click again to collapse
         setup.find(".accordionItem__header button").first().simulate("click");
         setup.update();
 
@@ -148,11 +146,9 @@ describe("AccordionItem", () => {
             </Accordion>
         );
 
-        // Try to click the disabled button
         wrapper.find(".accordionItem__header button").first().simulate("click");
         wrapper.update();
 
-        // Should not expand
         expect(wrapper.find(".accordionItem_expanded")).toHaveLength(0);
         expect(wrapper.find(".accordionItem__body")).toHaveLength(0);
     });
@@ -188,10 +184,8 @@ describe("AccordionItem", () => {
             </Accordion>
         );
 
-        // Content should not be visible initially
         expect(wrapper.find(".test-content")).toHaveLength(0);
 
-        // Expand to see content
         wrapper.find(".accordionItem__header button").first().simulate("click");
         wrapper.update();
 
@@ -204,17 +198,15 @@ describe("AccordionItem", () => {
             <Accordion>
                 <AccordionItem
                     title="Test"
-                    actions={
-                        <button type="button" className="test-action">
-                            Action
-                        </button>
-                    }
+                    actions={[{ Icon: Tag, appearance: "secondary", layout: "text", className: "test-action" }]}
                 >
                     Content
                 </AccordionItem>
             </Accordion>
         );
-        expect(wrapper.find(".test-action")).toHaveLength(1);
+        expect(wrapper.find(ButtonGroup).exists()).toBeTruthy();
+        expect(wrapper.find(ButtonGroup).find(Button).length).toBeGreaterThan(0);
+        expect(wrapper.find(".test-action").length).toBeGreaterThan(0);
     });
 
     it("does not render actions when not provided", () => {
@@ -223,7 +215,8 @@ describe("AccordionItem", () => {
                 <AccordionItem title="Test">Content</AccordionItem>
             </Accordion>
         );
-        expect(wrapper.find(".accordionItem__header").children()).toHaveLength(2); // Only button and title
+        expect(wrapper.find(".accordionItem__header").children()).toHaveLength(2); // Only chevron button and title
+        expect(wrapper.find(ButtonGroup).exists()).toBeFalsy(); // No ButtonGroup
     });
 
     it("disables action buttons when disabled prop is true", () => {
@@ -232,24 +225,23 @@ describe("AccordionItem", () => {
                 <AccordionItem
                     title="Test"
                     disabled
-                    actions={
-                        <ButtonGroup size="medium">
-                            <Button appearance="secondary" layout="text" className="action-button-1" />
-                            <Button appearance="secondary" layout="text" className="action-button-2" />
-                        </ButtonGroup>
-                    }
+                    actions={[
+                        { Icon: Tag, appearance: "secondary", layout: "text", className: "action-button-1" },
+                        { Icon: Tag, appearance: "secondary", layout: "text", className: "action-button-2" }
+                    ]}
                 >
                     Content
                 </AccordionItem>
             </Accordion>
         );
 
-        // Check that ButtonGroup is disabled
-        expect(wrapper.find(ButtonGroup).prop("disabled")).toBe(true);
-        // Check that all buttons inside are disabled
-        wrapper.find(Button).forEach((button) => {
-            expect(button.prop("disabled")).toBe(true);
-        });
+        expect(wrapper.find(ButtonGroup).exists()).toBeTruthy();
+        wrapper
+            .find(ButtonGroup)
+            .find(Button)
+            .forEach((button) => {
+                expect(button.prop("disabled")).toBe(true);
+            });
     });
 
     it("sets aria-expanded attribute correctly", () => {
@@ -261,10 +253,8 @@ describe("AccordionItem", () => {
 
         const button = wrapper.find(".accordionItem__header button").first();
 
-        // Initially collapsed
         expect(button.prop("aria-expanded")).toBe(false);
 
-        // Expand
         button.simulate("click");
         wrapper.update();
 
@@ -299,24 +289,19 @@ describe("AccordionItem", () => {
             </Accordion>
         );
 
-        // Expand first item
         wrapper.find(".accordionItem__header button").at(0).simulate("click");
         wrapper.update();
 
         expect(wrapper.find(".accordionItem_expanded")).toHaveLength(1);
 
-        // Expand third item
         wrapper.find(".accordionItem__header button").at(2).simulate("click");
         wrapper.update();
 
-        // Both should be expanded (independent state)
         expect(wrapper.find(".accordionItem_expanded")).toHaveLength(2);
 
-        // Collapse first item
         wrapper.find(".accordionItem__header button").at(0).simulate("click");
         wrapper.update();
 
-        // Only third should be expanded now
         expect(wrapper.find(".accordionItem_expanded")).toHaveLength(1);
     });
 });
