@@ -1,4 +1,4 @@
-import React, { cloneElement, FC, isValidElement, ReactElement, ReactNode, useContext, useState } from "react";
+import React, { FC, ReactNode, useContext, useState } from "react";
 // Utils
 import classNames from "classnames";
 
@@ -6,9 +6,10 @@ import classNames from "classnames";
 import { ChevronDown, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
 
 // Components
-import Button from "@components/atoms/Button";
+import Button, { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
+import ButtonGroup from "@components/molecules/ButtonGroup";
 
 // Styles
 import "./Accordion.scss";
@@ -53,9 +54,17 @@ interface IAccordionItemProps {
      */
     IconBefore?: FC<IconProps>;
     /**
-     * Custom actions to display in the header (typically ButtonGroup with Buttons)
+     * An array of action button objects to display in the accordion header.
+     * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
+     * Each object conforms to the `IButtonProps` interface, allowing full customization of each button.
+     * For icon-only buttons, use the `Icon` prop instead of `children`.
+     * @example
+     * actions={[
+     *   { Icon: Globe, appearance: 'secondary', layout: 'text', onClick: handleAction },
+     *   { Icon: Download, appearance: 'secondary', layout: 'text' }
+     * ]}
      */
-    actions?: ReactNode;
+    actions?: IButtonProps[];
     /**
      * Content to display when the accordion item is expanded
      */
@@ -75,20 +84,6 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, Ic
     const handleToggleExpanded = () => {
         setIsExpanded((prevExpanded) => !prevExpanded);
     };
-
-    const cloneWithDisabled = (element: ReactNode): ReactNode => {
-        if (!isValidElement(element)) return element;
-
-        const clonedChildren = React.Children.map(element.props.children, (child) => cloneWithDisabled(child));
-
-        return cloneElement(element as ReactElement, {
-            ...element.props,
-            disabled: disabled || element.props.disabled,
-            children: clonedChildren
-        });
-    };
-
-    const actionsWithDisabled = disabled && actions ? cloneWithDisabled(actions) : actions;
 
     return (
         <>
@@ -113,7 +108,15 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, Ic
                     <Text as="span" variant={textVariants[size]} className="accordionItem__title ellipsis-text">
                         {title}
                     </Text>
-                    {actionsWithDisabled}
+                    {actions && actions.length > 0 && (
+                        <ButtonGroup className="accordionItem__actions" size={size}>
+                            {actions.map((action: IButtonProps) => {
+                                const { Icon: actionIcon } = action;
+                                const key = `action-${actionIcon?.toString()}`;
+                                return actionIcon ? <Button key={key} {...action} disabled={disabled} /> : null;
+                            })}
+                        </ButtonGroup>
+                    )}
                 </div>
                 {isExpanded && (
                     <div className="accordionItem__body">
