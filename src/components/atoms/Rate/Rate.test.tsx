@@ -39,6 +39,11 @@ describe("Rate ", () => {
         expect(wrapper.find(Label).contains(label)).toBeTruthy();
     });
 
+    it("renders required prop correctly", () => {
+        const wrapper = setup.setProps({ label: "Label", required: true });
+        expect(wrapper.find(Label).props().required).toBe(true);
+    });
+
     it("renders infoText prop correctly", () => {
         const infoText = "test";
         const wrapper = setup.setProps({ infoText });
