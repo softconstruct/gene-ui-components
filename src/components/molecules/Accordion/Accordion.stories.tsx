@@ -95,7 +95,7 @@ const AccordionItemStory: StoryItem = storyObjBuilder({
             </Accordion>
         );
     }
-}) as StoryItem;
+});
 
 export default meta;
 export { AccordionStory as Accordion, AccordionItemStory as AccordionItem };
