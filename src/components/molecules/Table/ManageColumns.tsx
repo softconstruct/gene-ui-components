@@ -13,7 +13,7 @@ import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
 import { TableContext } from "@components/molecules/Table/Table";
-import { IManageColumnsData, IOrderedColumns, OrderType, Row, TableCol } from "@components/molecules/Table/type";
+import { IOrderedColumns, OrderType, Row, TableCol } from "@components/molecules/Table/type";
 
 type MutableColumnDef = {
     isVisible?: boolean;
@@ -33,8 +33,6 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, col
     const { onManageColumnsChange, onManageColumnRestore } = useContext(TableContext);
     const [columns, setColumns] = useState<IOrderedColumns[] | null>(null);
     const [columnsVisibility, setColumnsVisibility] = useState<VisibilityState>({});
-    const [savedColumnData, setSavedColumnData] = useState<IManageColumnsData[] | null>(null);
-
     const getInitialColumns = () => [...(orderedColumns || [])];
 
     useEffect(() => {
@@ -47,69 +45,64 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, col
         setColumns(columnsWithOrder);
     }, [orderedColumns]);
 
-    const handleManageColumns = () => {
-        onMenuClose();
-        if (!columns?.length || !savedColumnData?.length) return;
-        onManageColumnsChange?.(savedColumnData);
+    const buildColumnsSnapshot = (visibilityState: VisibilityState, groupColumns: Column<Row, unknown>[] = []) => {
+        return (groupColumns || []).reduce(
+            (acc, column, index) => {
+                const colDef = columnsMap.get(column.id);
+                if (!colDef) {
+                    return acc;
+                }
+                const columnDef = column.columnDef as TableCol<Row>;
+                return {
+                    ...acc,
+                    [column.id || columnDef.dataKey]: {
+                        order: index + 1,
+                        isPinned: !!colDef.isPinned,
+                        isVisible: visibilityState[column.id]
+                    }
+                };
+            },
+            {} as Record<string, OrderType>
+        );
     };
 
-    const getSavedData = (
-        prev: IManageColumnsData[] | null,
-        orderedManageColumns: IOrderedColumns[],
-        sourceID: string
-    ) => {
-        const [reorderedColumns] = orderedManageColumns.map((group) =>
-            group.columns.reduce(
-                (acc, column, index) => {
-                    const colDef = columnsMap.get(column.id);
-                    if (!colDef) return acc;
-                    const updatedColumn = {
-                        ...column,
-                        columnDef: {
-                            ...colDef,
-                            order: index + 1
-                        }
-                    };
-                    return {
-                        ...acc,
-                        [updatedColumn.id || updatedColumn.columnDef.dataKey]: {
-                            order: updatedColumn.columnDef.order,
-                            isPinned: !!updatedColumn.columnDef.isPinned,
-                            isVisible: columnsVisibility[updatedColumn.id]
-                        }
-                    };
-                },
-                {} as Record<string, OrderType>
-            )
-        );
-        if (isGrouped) {
-            const currentGroup = prev?.find((item) => item.groupId === sourceID);
-            if (currentGroup && prev?.length) {
-                const updatedGroup = {
-                    ...currentGroup,
-                    columns: { ...reorderedColumns }
-                };
+    const buildManageColumnsPayload = (orderedManageColumns: IOrderedColumns[]) => {
+        const groups = orderedManageColumns
+            .map((group) => ({
+                id: group.id,
+                snapshot: buildColumnsSnapshot(columnsVisibility, group.columns)
+            }))
+            .filter((group) => Object.keys(group.snapshot).length);
 
-                return prev?.map((item) => (item.groupId === sourceID ? updatedGroup : item));
-            }
-            const reorderedColumnsWithGroup: IManageColumnsData = {
-                groupId: sourceID,
-                columns: { ...reorderedColumns }
-            };
-            return [...(prev || []), reorderedColumnsWithGroup];
+        if (isGrouped) {
+            return groups.map((group) => ({
+                groupId: group.id,
+                columns: group.snapshot
+            }));
         }
 
-        return [{ columns: reorderedColumns }];
+        if (!groups.length) return [];
+
+        return [{ columns: groups[0].snapshot }];
     };
 
-    const handleColumnVisibility = (column: Column<Row, unknown>, groupIndex: number) => {
+    const handleManageColumns = () => {
+        if (!columns?.length) {
+            onMenuClose();
+            return;
+        }
+
+        const payload = buildManageColumnsPayload(columns);
+        onMenuClose();
+        if (!payload.length) return;
+        onManageColumnsChange?.(payload);
+    };
+
+    const handleColumnVisibility = (column: Column<Row, unknown>) => {
         if (!columns?.length) return;
         columnsVisibility[column.id] = !columnsVisibility[column.id];
 
         setColumnsVisibility({ ...columnsVisibility });
-
-        const sourceID = columns?.[groupIndex].id;
-        setSavedColumnData((prev) => getSavedData(prev, columns, sourceID));
     };
 
     const handleManageColumnsRestore = () => {
@@ -156,9 +149,6 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, col
             });
             return [...prev];
         });
-
-        const sourceID = columns?.[groupIndex].id;
-        setSavedColumnData((prev) => getSavedData(prev, columns, sourceID));
     };
 
     const handleDragEnd = (result: DropResult) => {
@@ -185,8 +175,6 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, col
             newColumns,
             ...columns.slice(currentGroupIndex + 1)
         ];
-
-        setSavedColumnData((prev) => getSavedData(prev, orderedManageColumns, sourceID));
 
         setColumns(orderedManageColumns);
     };
@@ -218,7 +206,7 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, col
                                     name="item"
                                     value="item"
                                     checked={columnsVisibility[column.id]}
-                                    onChange={() => handleColumnVisibility(column, groupIndex)}
+                                    onChange={() => handleColumnVisibility(column)}
                                 />
                             </Label>
                             <div className="dropdownMenu__columns_actions">

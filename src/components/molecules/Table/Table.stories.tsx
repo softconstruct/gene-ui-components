@@ -129,19 +129,21 @@ const meta: Meta<TablePropsType> = {
 type Story = StoryObj<TablePropsType>;
 
 const TableComponent: FC<TablePropsType> = (props) => {
-    const { externalData: data, columns } = props;
-
+    const { externalData: data, columns, onManageColumnsChange } = props;
     const [tableData, setTableData] = useState<Row[]>([]);
     const [updatedTableData, setUpdatedTableData] = useState<Row[]>([]);
     const [editableState, setEditableState] = useState(false);
     const [isDrawerOpened, setIsDrawerOpened] = useState(false);
-    const [tableColumns, setTableColumns] = useState<TableCol<Row>[]>(() => columns);
-
+    const [tableColumns, setTableColumns] = useState<TableCol<Row>[] | null>(null);
     useEffect(() => {
         const conedData = deepCloneWithFunctions(data);
         setTableData(data);
         setUpdatedTableData(conedData);
     }, [data]);
+
+    useEffect(() => {
+        setTableColumns(columns);
+    }, [columns]);
 
     const onCellEdit: TablePropsType["onCellEdit"] = (rowIndex: number, columnType: string, value: unknown) => {
         const newData = [...tableData];
@@ -192,9 +194,11 @@ const TableComponent: FC<TablePropsType> = (props) => {
         const [column] = columnsData;
         setTableColumns((prev) => {
             const newData: TableCol<Row>[] = [];
-            prev.forEach((item) => {
+            prev?.forEach((item) => {
                 newData.push({
                     ...item,
+                    isVisible: column.columns[item.id]?.isVisible,
+                    isPinned: column.columns[item.id]?.isPinned,
                     order: column.columns[item.id]?.order || 1
                 });
             });
@@ -209,6 +213,8 @@ const TableComponent: FC<TablePropsType> = (props) => {
     const handleRowClick = () => {
         setIsDrawerOpened(true);
     };
+
+    if (!tableColumns?.length) return null;
 
     return (
         <div style={{ height: 700, overflow: "auto" }}>
@@ -230,7 +236,7 @@ const TableComponent: FC<TablePropsType> = (props) => {
                 withEditMode={editableState}
                 onRowPinToggle={onRowPinToggle}
                 onRowDelete={onRowDelete}
-                onManageColumnsChange={handleColumnsMange}
+                onManageColumnsChange={onManageColumnsChange || handleColumnsMange}
                 onManageColumnRestore={handleManageColumnRestore}
                 onRowClick={handleRowClick}
                 onEdit={onEdit}
@@ -241,7 +247,33 @@ const TableComponent: FC<TablePropsType> = (props) => {
     );
 };
 
+const TableWithGroupedColumns: FC<TablePropsType> = (props) => {
+    const [tableColumns, setTableColumns] = useState<TableCol<Row>[]>(withGroupedColumns);
+    const onManageColumns = (columns: IManageColumnsData[]) => {
+        const [column] = columns;
+        setTableColumns((prev) => {
+            const newData: TableCol<Row>[] = [];
+            prev.forEach((group) => {
+                newData.push({
+                    ...group,
+                    columns: group.columns?.map((item) => ({
+                        ...item,
+                        isVisible: column.columns[item.id]?.isVisible,
+                        isPinned: column.columns[item.id]?.isPinned,
+                        order: column.columns[item.id]?.order || 1
+                    }))
+                });
+            });
+            return newData;
+        });
+    };
+    return <Table {...props} columns={tableColumns} onManageColumnsChange={onManageColumns} />;
+};
+
 export const Default: Story = {
+    args: {
+        onManageColumnsChange: undefined
+    },
     render: (props: TablePropsType) => {
         return <TableComponent {...props} withCheckbox externalData={TableData} columns={Columns} withManageColumns />;
     }
@@ -249,7 +281,9 @@ export const Default: Story = {
 
 export const WithStickyHeader: Story = {
     argTypes: {},
-    args: {},
+    args: {
+        onManageColumnsChange: undefined
+    },
     render: (props: TablePropsType) => {
         return (
             <TableComponent
@@ -305,13 +339,17 @@ const TableWithVirtualScroll: FC<TablePropsType> = (props) => {
 
 export const WithVirtualScroll: Story = {
     argTypes: {},
-    args: {},
+    args: {
+        onManageColumnsChange: undefined
+    },
     render: (props: TablePropsType) => <TableWithVirtualScroll {...props} />
 };
 
 export const WithPinnedColumns: Story = {
     argTypes: {},
-    args: {},
+    args: {
+        onManageColumnsChange: undefined
+    },
     render: (props: TablePropsType) => {
         return (
             <TableComponent
@@ -330,12 +368,16 @@ export const WithPinnedColumns: Story = {
 
 export const WithGroupedColumns: Story = {
     argTypes: {},
-    args: {},
+    args: {
+        withManageColumns: true
+    },
     render: (props: TablePropsType) => {
+        const { columns, onManageColumnsChange } = props;
+
         return (
-            <TableComponent
+            <TableWithGroupedColumns
                 {...props}
-                columns={withGroupedColumns}
+                columns={columns}
                 pageSizes={[10, 25, 50, 100]}
                 initialPageSize={25}
                 initialPageIndex={0}
@@ -344,6 +386,7 @@ export const WithGroupedColumns: Story = {
                 withGlobalFilter
                 withPagination
                 withStickyHeader
+                onManageColumnsChange={onManageColumnsChange}
                 bulkActions={bulkActionsMock}
             />
         );
@@ -352,7 +395,9 @@ export const WithGroupedColumns: Story = {
 
 export const WithExpendRowsColumns: Story = {
     argTypes: {},
-    args: {},
+    args: {
+        onManageColumnsChange: undefined
+    },
     render: (props: TablePropsType) => {
         return (
             <TableComponent
@@ -373,7 +418,9 @@ export const WithExpendRowsColumns: Story = {
 
 export const WithOutData: Story = {
     argTypes: {},
-    args: {},
+    args: {
+        onManageColumnsChange: undefined
+    },
     render: (props: TablePropsType) => {
         return (
             <TableComponent

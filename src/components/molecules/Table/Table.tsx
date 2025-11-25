@@ -1,5 +1,6 @@
 import React, { createContext, FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
+    Column,
     ColumnFiltersState,
     ColumnPinningState,
     ExpandedState,
@@ -298,9 +299,14 @@ interface ITablePropsWithDynamicFetch<TRow extends Row = Row> extends ITableProp
 
 type TablePropsType<TRow extends Row = Row> = ITablePropsWithoutDynamicFetch<TRow> | ITablePropsWithDynamicFetch<TRow>;
 
-export const TableContext = createContext<ITableActions<Row>>({});
+type PreparedColumn = TableCol<Row> & {
+    filterFn?: string;
+    columns?: PreparedColumn[];
+};
 
-const Table: FC<TablePropsType<Row>> = ({
+export const TableContext = createContext<ITableActions>({});
+
+const Table: FC<TablePropsType> = ({
     columns,
     externalData,
     withCheckbox,
@@ -394,11 +400,6 @@ const Table: FC<TablePropsType<Row>> = ({
         extractColumns(columns);
         return map;
     }, [columns]);
-
-    type PreparedColumn = TableCol<Row> & {
-        filterFn?: string;
-        columns?: PreparedColumn[];
-    };
 
     const preparedColumns = useMemo(() => {
         const prepareColumns = (cols: TableCol<Row>[]): PreparedColumn[] => {
@@ -565,41 +566,64 @@ const Table: FC<TablePropsType<Row>> = ({
 
     const memoizedOrderedColumns = useMemo(() => {
         if (!table) return [];
-        const cols: IOrderedColumns[] = [];
-        table.getHeaderGroups().forEach((headerGroup) => {
-            headerGroup.headers.forEach((header) => {
-                if (header.getContext().column.columns.length && header.getContext().column.columnDef.header) {
-                    const originalCol = columnsMap.get(header.column.id);
-                    cols.push({
-                        id: header.column.id,
-                        title: originalCol?.header || null,
-                        columns: header.column.columns.sort((a, b) => {
-                            const aCol = columnsMap.get(a.columnDef.id || "");
-                            const bCol = columnsMap.get(b.columnDef.id || "");
-                            return (aCol?.order || 0) - (bCol?.order || 0);
-                        })
-                    });
-                } else {
-                    if (headerGroup.depth > 0) return;
 
-                    if (!cols.length) {
-                        cols.push({
-                            id: headerGroup.id,
-                            title: null,
-                            columns: headerGroup.headers
-                                .map((item) => item.column)
-                                .sort((a, b) => {
-                                    const aCol = columnsMap.get(a.columnDef.id || "");
-                                    const bCol = columnsMap.get(b.columnDef.id || "");
-                                    return (aCol?.order || 0) - (bCol?.order || 0);
-                                })
-                        });
-                    }
+        const tableColumnsMap = new Map(table.getAllColumns().map((column) => [column.id, column]));
+
+        const sortColumns = (a: Column<Row, unknown>, b: Column<Row, unknown>) => {
+            const aCol = columnsMap.get(a.columnDef.id || "");
+            const bCol = columnsMap.get(b.columnDef.id || "");
+            return (aCol?.order || 0) - (bCol?.order || 0);
+        };
+
+        const collectGroups = (cols: PreparedColumn[]): IOrderedColumns[] => {
+            const groups: IOrderedColumns[] = [];
+
+            cols.forEach((col) => {
+                if (!col.columns?.length) {
+                    return;
                 }
+
+                const tableColumn = tableColumnsMap.get(col.id);
+                const childColumns = tableColumn?.columns ? [...tableColumn.columns].sort(sortColumns) : [];
+                const currentColumnDef = columnsMap.get(col.id);
+
+                if (col.header && childColumns.length) {
+                    groups.push({
+                        id: col.id,
+                        title: currentColumnDef?.header || null,
+                        columns: childColumns
+                    });
+                }
+
+                groups.push(...collectGroups(col.columns));
             });
-        });
-        return cols;
-    }, [table, columnsMap]);
+
+            return groups;
+        };
+
+        const groupedColumns = collectGroups(preparedColumns);
+        if (groupedColumns.length) {
+            return groupedColumns;
+        }
+
+        const rootColumns = preparedColumns
+            .map((col) => tableColumnsMap.get(col.id))
+            .filter((col): col is Column<Row, Row> => !!col)
+            .sort(sortColumns);
+
+        if (!rootColumns.length) {
+            return [];
+        }
+
+        const defaultGroupId = table.getHeaderGroups()[0]?.id || "default_group";
+        return [
+            {
+                id: defaultGroupId,
+                title: null,
+                columns: rootColumns
+            }
+        ];
+    }, [table, preparedColumns, columnsMap]);
 
     useEffect(() => {
         setOrderedColumns(memoizedOrderedColumns);
@@ -643,7 +667,6 @@ const Table: FC<TablePropsType<Row>> = ({
     const columnCount = table.getVisibleFlatColumns().length;
     const selectedRowCount = table.getSelectedRowModel().rows.length;
     const isGrouped = table.getHeaderGroups().length > 1;
-
     return (
         <TableContext.Provider value={memoizedTableContextValue}>
             <div className={classNames("dataTable")}>

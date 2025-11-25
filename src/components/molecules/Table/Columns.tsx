@@ -641,6 +641,9 @@ export const defaultColumns: TableCol<Row>[] = [
         enableGlobalFilter: true,
         type: "Dropdown",
         accessorFn: (row) => row.Dropdown,
+        rowCellRenderer: (data, editMode, onChange) => (
+            <CustomGenderDropdown data={data} editMode={editMode} onChange={onChange} />
+        ),
         editable: true,
         copyable: true,
         enableSorting: true,
@@ -823,6 +826,9 @@ export const withPinnedColumns: TableCol<Row>[] = [
         order: 2,
         enableGlobalFilter: true,
         type: "Dropdown",
+        rowCellRenderer: (data, editMode, onChange) => (
+            <CustomGenderDropdown data={data} editMode={editMode} onChange={onChange} />
+        ),
         accessorFn: (row) => row.Dropdown,
         editable: true,
         copyable: true,
@@ -1030,6 +1036,9 @@ export const withGroupedColumns: TableCol<Row>[] = [
                 order: 2,
                 enableGlobalFilter: true,
                 type: "Dropdown",
+                rowCellRenderer: (_, editMode, onChange) => {
+                    return <CustomGenderDropdown data="0" editMode={editMode} onChange={onChange} />;
+                },
                 accessorFn: (row) => row.Dropdown,
                 editable: true,
                 copyable: true,
