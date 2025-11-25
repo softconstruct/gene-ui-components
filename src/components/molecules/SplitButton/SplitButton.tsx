@@ -1,15 +1,36 @@
-import React, { FC, PointerEvent, useState } from "react";
+import React, { FC, useState } from "react";
 import classNames from "classnames";
 
 import { CaretDownFilled, IconProps } from "@geneui/icons";
 
+// Components
+import Button from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
-import { Menu, MenuItem } from "@components/molecules/Menu";
+import { IMenuItemProps, Menu, MenuItem } from "@components/molecules/Menu";
 
 // Styles
 import "./SplitButton.scss";
 
+interface ISplitButtonItemProps {
+    /**
+     * Optional icon shown before the title/content.
+     */
+    Icon?: FC<IconProps>;
+    /**
+     * Title shown for the menu item, when it acts as a parent for nested items.
+     */
+    title?: string;
+    /**
+     * Unique identifier for the item, forwarded to the menu selection callbacks.
+     */
+    id: number | string;
+}
 interface ISplitButtonProps {
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
     /**
      * Size <br>
      * Possible values: `large | medium | small`
@@ -30,24 +51,23 @@ interface ISplitButtonProps {
      */
     appearance?: "primary" | "secondary" | "inverse";
     /**
-     * The `Icon` prop accepts a React Functional Component that will be displayed alongside the button text.
+     * Fires whenever any split-button action is selected (primary or dropdown).
      */
-    Icon?: FC<IconProps>;
-    /**
-     * A callback function that is called when the `button` is clicked or entered. <br>
-     * It receives an argument containing the event object, which can be a mouse or keyboard event.
-     */
-    onPrimaryButtonClick?: (e: PointerEvent<HTMLButtonElement>) => void;
+    onSelect?: (item: ISplitButtonItemProps) => void;
     /**
      * Indicates whether the `SplitButton` is in a loading state.
      * When set to `true` a `skeleton` indicator will be shown instead of the `Avatar`.
      */
     loading?: boolean;
     /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     * Ordered collection of split-button actions; the first item renders as the primary button.<br/>
+     * Example:<br/>
+     * [
+     *   { id: "expand", title: "Expand", Icon: ExpandIcon },<br/>
+     *   { id: "download", title: "Download", Icon: DownloadIcon }
+     * ]
      */
-    className?: string;
+    items: ISplitButtonItemProps[];
 }
 
 /**
@@ -59,13 +79,50 @@ const SplitButton: FC<ISplitButtonProps> = ({
     disabled = false,
     type = "fill",
     appearance = "primary",
-    Icon,
-    onPrimaryButtonClick,
-    loading
+    onSelect,
+    loading,
+    items
 }) => {
     const [propsForPopover, setPropsForPopover] = useState({});
+    const onSelectHandler = (item: IMenuItemProps | ISplitButtonItemProps) => {
+        if (!onSelect) return;
+
+        let icon: FC<IconProps> | undefined;
+
+        if ("IconBefore" in item && item.IconBefore) {
+            icon = item.IconBefore;
+        } else if ("Icon" in item && item.Icon) {
+            icon = item.Icon;
+        }
+
+        onSelect({
+            title: item.title,
+            Icon: icon,
+            id: item.id
+        });
+    };
 
     const buttonsClassNames = `splitButton__button splitButton__button_size_${size} splitButton__button_type_${type} splitButton__button_appearance_${appearance}`;
+    if (items.length === 0) return null;
+    if (items.length === 1) {
+        const [singleItem] = items;
+        return (
+            <Button
+                iconPosition="before"
+                Icon={singleItem.Icon}
+                size={size}
+                disabled={disabled}
+                loading={loading}
+                onClick={() => {
+                    onSelectHandler(singleItem);
+                }}
+            >
+                {singleItem.title}
+            </Button>
+        );
+    }
+
+    const [firstItem, ...restItems] = items;
 
     return (
         <div className={classNames("splitButton", className)}>
@@ -73,7 +130,6 @@ const SplitButton: FC<ISplitButtonProps> = ({
                 <button
                     type="button"
                     disabled={disabled}
-                    onClick={onPrimaryButtonClick}
                     className={classNames(buttonsClassNames, "splitButton__button_loading")}
                 >
                     {/* todo: change appearance value from "inverse" to "brand" or "neutral", depending on SplitButton "type" and "appearance" */}
@@ -84,13 +140,14 @@ const SplitButton: FC<ISplitButtonProps> = ({
                     <button
                         type="button"
                         disabled={disabled}
-                        onClick={onPrimaryButtonClick}
-                        className={classNames(buttonsClassNames, `${Icon ? "splitButton__button_icon_before" : ""}`)}
+                        onClick={() => {
+                            onSelectHandler(firstItem);
+                        }}
+                        className={classNames(buttonsClassNames, { splitButton__button_icon_before: firstItem.Icon })}
                     >
-                        {Icon && <Icon size={20} className="button__icon" />}
-                        <span className="splitButton__text">Button</span>
+                        {firstItem.Icon && <firstItem.Icon size={20} className="button__icon" />}
+                        {firstItem.title && <span className="splitButton__text">{firstItem.title}</span>}
                     </button>
-
                     <button
                         type="button"
                         disabled={disabled}
@@ -100,14 +157,19 @@ const SplitButton: FC<ISplitButtonProps> = ({
                         <CaretDownFilled className="splitButton__icon" />
                     </button>
                     <Menu
-                        onChange={() => {}}
+                        onChange={(item) => {
+                            onSelectHandler(item);
+                        }}
                         setPropsForPopover={setPropsForPopover}
                         swappable
                         position="bottom-right"
                         size="small"
                     >
-                        <MenuItem id="0">action 1</MenuItem>
-                        <MenuItem id="0">action 2</MenuItem>
+                        {restItems.map((item: ISplitButtonItemProps) => (
+                            <MenuItem IconBefore={item.Icon} id={item.id} key={item.id}>
+                                {item.title}
+                            </MenuItem>
+                        ))}
                     </Menu>
                 </>
             )}
