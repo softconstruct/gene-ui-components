@@ -35,7 +35,10 @@ const iconSizes = {
     medium: 20,
     small: 20
 } as const;
-
+type IAccordionActionProps = Omit<
+    IButtonProps,
+    "size" | "fullWidth" | "children" | "iconPosition" | "type" | "disabled"
+>;
 interface IAccordionItemProps {
     /**
      * Additional class for the parent element.
@@ -65,7 +68,7 @@ interface IAccordionItemProps {
      *   { Icon: Download, appearance: 'secondary', layout: 'text' }
      * ]}
      */
-    actions?: IButtonProps[];
+    actions?: IAccordionActionProps[];
     /**
      * Content to display when the accordion item is expanded
      */
@@ -111,7 +114,7 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, Ic
                     </Text>
                     {actions && actions.length > 0 && (
                         <ButtonGroup className="accordionItem__actions" size={size}>
-                            {actions.map((action: IButtonProps) => {
+                            {actions.map((action: IAccordionActionProps) => {
                                 const { Icon: actionIcon } = action;
                                 const actionId = action.id || `accordion-action-${nanoid()}`;
                                 return actionIcon ? <Button key={actionId} {...action} disabled={disabled} /> : null;
