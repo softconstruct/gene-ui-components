@@ -125,54 +125,47 @@ const SplitButton: FC<ISplitButtonProps> = ({
     const [firstItem, ...restItems] = items;
 
     return (
-        <div className={classNames("splitButton", className)}>
-            {loading ? (
-                <button
-                    type="button"
-                    disabled={disabled}
-                    className={classNames(buttonsClassNames, "splitButton__button_loading")}
-                >
-                    {/* todo: change appearance value from "inverse" to "brand" or "neutral", depending on SplitButton "type" and "appearance" */}
-                    <Loader size="small" appearance="inverse" />
-                </button>
-            ) : (
-                <>
-                    <button
-                        type="button"
-                        disabled={disabled}
-                        onClick={() => {
-                            onSelectHandler(firstItem);
-                        }}
-                        className={classNames(buttonsClassNames, { splitButton__button_icon_before: firstItem.Icon })}
-                    >
-                        {firstItem.Icon && <firstItem.Icon size={20} className="button__icon" />}
-                        {firstItem.title && <span className="splitButton__text">{firstItem.title}</span>}
-                    </button>
-                    <button
-                        type="button"
-                        disabled={disabled}
-                        className={classNames(buttonsClassNames, "splitButton__button_icon_only")}
-                        {...propsForPopover}
-                    >
-                        <CaretDownFilled className="splitButton__icon" />
-                    </button>
-                    <Menu
-                        onChange={(item) => {
-                            onSelectHandler(item);
-                        }}
-                        setPropsForPopover={setPropsForPopover}
-                        swappable
-                        position="bottom-right"
-                        size="small"
-                    >
-                        {restItems.map((item: ISplitButtonItemProps) => (
-                            <MenuItem IconBefore={item.Icon} id={item.id} key={item.id}>
-                                {item.title}
-                            </MenuItem>
-                        ))}
-                    </Menu>
-                </>
-            )}
+        <div className={classNames("splitButton", className, { splitButton_loading: loading })}>
+            <Loader loading={loading} size="smallNudge" className="splitButton__loader" />
+            <button
+                type="button"
+                disabled={disabled}
+                onClick={() => {
+                    onSelectHandler(firstItem);
+                }}
+                className={classNames(buttonsClassNames, {
+                    splitButton__button_icon_before: firstItem.Icon,
+                    splitButton__button_loading: loading
+                })}
+            >
+                {firstItem.Icon && <firstItem.Icon size={20} className="button__icon" />}
+                {firstItem.title && <span className="splitButton__text">{firstItem.title}</span>}
+            </button>
+            <button
+                type="button"
+                disabled={disabled}
+                className={classNames(buttonsClassNames, "splitButton__button_icon_only", {
+                    splitButton__button_loading: loading
+                })}
+                {...propsForPopover}
+            >
+                <CaretDownFilled className="splitButton__icon" />
+            </button>
+            <Menu
+                onChange={(item) => {
+                    onSelectHandler(item);
+                }}
+                setPropsForPopover={setPropsForPopover}
+                swappable
+                position="bottom-right"
+                size="small"
+            >
+                {restItems.map((item: ISplitButtonItemProps) => (
+                    <MenuItem IconBefore={item.Icon} id={item.id} key={item.id}>
+                        {item.title}
+                    </MenuItem>
+                ))}
+            </Menu>
         </div>
     );
 };
