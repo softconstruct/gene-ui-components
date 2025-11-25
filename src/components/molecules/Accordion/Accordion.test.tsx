@@ -215,8 +215,8 @@ describe("AccordionItem", () => {
                 <AccordionItem title="Test">Content</AccordionItem>
             </Accordion>
         );
-        expect(wrapper.find(".accordionItem__header").children()).toHaveLength(2); // Only chevron button and title
-        expect(wrapper.find(ButtonGroup).exists()).toBeFalsy(); // No ButtonGroup
+        expect(wrapper.find(".accordionItem__header").children()).toHaveLength(2);
+        expect(wrapper.find(ButtonGroup).exists()).toBeFalsy();
     });
 
     it("disables action buttons when disabled prop is true", () => {

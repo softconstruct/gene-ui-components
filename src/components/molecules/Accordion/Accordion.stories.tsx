@@ -102,7 +102,7 @@ const AccordionItemStory: StoryItem = storyObjBuilder({
         return (
             <Accordion>
                 <AccordionItem
-                    {...(props as IAccordionItemProps)}
+                    {...props}
                     actions={[
                         {
                             Icon: Globe,
