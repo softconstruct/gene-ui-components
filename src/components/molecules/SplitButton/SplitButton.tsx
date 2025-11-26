@@ -5,7 +5,7 @@ import { CaretDownFilled, IconProps } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
-import Loader from "@components/atoms/Loader";
+import Loader, { ILoaderProps } from "@components/atoms/Loader";
 import { IMenuItemProps, Menu, MenuItem } from "@components/molecules/Menu";
 
 // Styles
@@ -70,6 +70,25 @@ interface ISplitButtonProps {
     items: ISplitButtonItemProps[];
 }
 
+type LoaderAppearance = NonNullable<ILoaderProps["appearance"]>;
+type SplitButtonAppearance = NonNullable<ISplitButtonProps["appearance"]>;
+type SplitButtonType = NonNullable<ISplitButtonProps["type"]>;
+
+const loaderAppearanceMap: Record<SplitButtonAppearance, Record<SplitButtonType, LoaderAppearance>> = {
+    primary: {
+        fill: "inverse",
+        outline: "brand"
+    },
+    secondary: {
+        fill: "neutral",
+        outline: "neutral"
+    },
+    inverse: {
+        fill: "neutral",
+        outline: "inverse"
+    }
+};
+
 /**
  * A split button allows users to choose from several related actions. The primary action is displayed as the button label, while additional actions are accessible from a dropdown menu.
  */
@@ -126,7 +145,14 @@ const SplitButton: FC<ISplitButtonProps> = ({
 
     return (
         <div className={classNames("splitButton", className, { splitButton_loading: loading })}>
-            <Loader appearance="inverse" loading={loading} size="smallNudge" className="splitButton__loader" />
+            {loading && (
+                <Loader
+                    appearance={loaderAppearanceMap[appearance][type]}
+                    loading={loading}
+                    size="smallNudge"
+                    className="splitButton__loader"
+                />
+            )}
             <button
                 type="button"
                 disabled={disabled}
