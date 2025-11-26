@@ -10,7 +10,7 @@ import Accordion, { IAccordionProps } from "./Accordion";
 // Components
 import { AccordionItem, IAccordionItemProps } from "./index";
 
-const AccordionContent = (
+const AccordionItemContent = (
     <div
         style={{
             display: "flex",
@@ -99,7 +99,7 @@ const AccordionStory: Story = {
                         }
                     ]}
                 >
-                    {AccordionContent}
+                    {AccordionItemContent}
                 </AccordionItem>
                 <AccordionItem
                     title="Accordion Item 2"
@@ -122,7 +122,7 @@ const AccordionStory: Story = {
                         }
                     ]}
                 >
-                    {AccordionContent}
+                    {AccordionItemContent}
                 </AccordionItem>
             </Accordion>
         );
@@ -132,7 +132,6 @@ const AccordionStory: Story = {
 const AccordionItemStory: StoryItem = storyObjBuilder({
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        disabled: args({ control: "boolean", ...propCategory.states }),
         title: args({ control: "text", ...propCategory.content }),
         IconBefore: args({ control: "false", ...propCategory.content }),
         actions: args({ control: "false", ...propCategory.functionality }),
@@ -141,7 +140,7 @@ const AccordionItemStory: StoryItem = storyObjBuilder({
     args: {
         title: "Accordion Item",
         IconBefore: Tag,
-        children: AccordionContent
+        children: AccordionItemContent
     },
     render: (props) => {
         return (

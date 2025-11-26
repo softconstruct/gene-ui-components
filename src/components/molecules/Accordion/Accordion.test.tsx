@@ -58,16 +58,13 @@ describe("Accordion", () => {
                 <AccordionItem title="Item 1" IconBefore={MockIcon}>
                     Content 1
                 </AccordionItem>
-                <AccordionItem title="Item 2" disabled>
-                    Content 2
-                </AccordionItem>
+                <AccordionItem title="Item 2">Content 2</AccordionItem>
                 <AccordionItem title="Item 3">Content 3</AccordionItem>
             </Accordion>
         );
 
         expect(wrapper.find(AccordionItem)).toHaveLength(3);
         expect(wrapper.find(Tag).exists()).toBeTruthy();
-        expect(wrapper.find(".accordionItem_disabled")).toHaveLength(1);
     });
 });
 
@@ -123,34 +120,6 @@ describe("AccordionItem", () => {
 
         expect(setup.find(".accordionItem_expanded")).toHaveLength(0);
         expect(setup.find(".accordionItem__body")).toHaveLength(0);
-    });
-
-    it("renders disabled prop correctly", () => {
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title="Test" disabled>
-                    Content
-                </AccordionItem>
-            </Accordion>
-        );
-        expect(wrapper.find(".accordionItem_disabled")).toHaveLength(1);
-        expect(wrapper.find(".accordionItem__header button").first().prop("disabled")).toBe(true);
-    });
-
-    it("does not expand when disabled", () => {
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title="Test" disabled>
-                    Content
-                </AccordionItem>
-            </Accordion>
-        );
-
-        wrapper.find(".accordionItem__header button").first().simulate("click");
-        wrapper.update();
-
-        expect(wrapper.find(".accordionItem_expanded")).toHaveLength(0);
-        expect(wrapper.find(".accordionItem__body")).toHaveLength(0);
     });
 
     it("renders IconBefore when provided", () => {
@@ -217,31 +186,6 @@ describe("AccordionItem", () => {
         );
         expect(wrapper.find(".accordionItem__header").children()).toHaveLength(2);
         expect(wrapper.find(ButtonGroup).exists()).toBeFalsy();
-    });
-
-    it("disables action buttons when disabled prop is true", () => {
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem
-                    title="Test"
-                    disabled
-                    actions={[
-                        { Icon: Tag, appearance: "secondary", layout: "text", className: "action-button-1" },
-                        { Icon: Tag, appearance: "secondary", layout: "text", className: "action-button-2" }
-                    ]}
-                >
-                    Content
-                </AccordionItem>
-            </Accordion>
-        );
-
-        expect(wrapper.find(ButtonGroup).exists()).toBeTruthy();
-        wrapper
-            .find(ButtonGroup)
-            .find(Button)
-            .forEach((button) => {
-                expect(button.prop("disabled")).toBe(true);
-            });
     });
 
     it("sets aria-expanded attribute correctly", () => {

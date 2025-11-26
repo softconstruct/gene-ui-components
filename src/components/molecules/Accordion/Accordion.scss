@@ -75,18 +75,7 @@
         #{ $this }__header {
             border-bottom-left-radius: var(--guit-ref-radius-3xsmall);
             border-bottom-right-radius: var(--guit-ref-radius-3xsmall);
-        }
-
-        &:not(&#{ $this }_disabled) {
-            #{ $this }__header {
-                border-bottom-color: var(--guit-sem-color-border-neutral-2);
-            }
-        }
-
-        &#{ $this }_disabled {
-            #{ $this }__header {
-                border-bottom-color: var(--guit-sem-color-border-disabled-1);
-            }
+            border-bottom-color: var(--guit-sem-color-border-neutral-2);
         }
     }
 
@@ -96,39 +85,16 @@
         }
     }
 
-    &:not(&#{ $this }_disabled) {
-        #{ $this }__header {
-            border-top-color: var(--guit-sem-color-border-neutral-2);
-            border-left-color: var(--guit-sem-color-border-neutral-2);
-            border-right-color: var(--guit-sem-color-border-neutral-2);
-        }
-
-        #{ $this }__body {
-            border-bottom-color: var(--guit-sem-color-border-neutral-2);
-            border-left-color: var(--guit-sem-color-border-neutral-2);
-            border-right-color: var(--guit-sem-color-border-neutral-2);
-        }
+    #{ $this }__header {
+        border-top-color: var(--guit-sem-color-border-neutral-2);
+        border-left-color: var(--guit-sem-color-border-neutral-2);
+        border-right-color: var(--guit-sem-color-border-neutral-2);
     }
 
-    &#{ $this }_disabled {
-        pointer-events: none;
-
-        #{ $this }__header {
-            border-top-color: var(--guit-sem-color-border-disabled-1);
-            border-left-color: var(--guit-sem-color-border-disabled-1);
-            border-right-color: var(--guit-sem-color-border-disabled-1);
-        }
-
-        #{ $this }__body {
-            border-bottom-color: var(--guit-sem-color-border-disabled-1);
-            border-left-color: var(--guit-sem-color-border-disabled-1);
-            border-right-color: var(--guit-sem-color-border-disabled-1);
-        }
-
-        #{ $this }__title,
-        #{ $this }__icon {
-            color: var(--guit-sem-color-foreground-disabled);
-        }
+    #{ $this }__body {
+        border-bottom-color: var(--guit-sem-color-border-neutral-2);
+        border-left-color: var(--guit-sem-color-border-neutral-2);
+        border-right-color: var(--guit-sem-color-border-neutral-2);
     }
 
     &__title {

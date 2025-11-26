@@ -35,10 +35,12 @@ const iconSizes = {
     medium: 20,
     small: 20
 } as const;
+
 type IAccordionActionProps = Omit<
     IButtonProps,
     "size" | "fullWidth" | "children" | "iconPosition" | "type" | "disabled"
 >;
+
 interface IAccordionItemProps {
     /**
      * Additional class for the parent element.
@@ -49,10 +51,6 @@ interface IAccordionItemProps {
      * The title text displayed in the accordion header
      */
     title: string;
-    /**
-     * Disables the accordion item, preventing interaction
-     */
-    disabled?: boolean;
     /**
      * Icon component to display before the title
      */
@@ -78,7 +76,7 @@ interface IAccordionItemProps {
 /**
  * Accordion component organizes content into expandable and collapsible sections, allowing users to reveal or hide detailed information as needed. Each section, or "panel," typically includes a header that summarizes the content and can be clicked to expand or collapse the corresponding panel.
  */
-const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, IconBefore, children, actions }) => {
+const AccordionItem: FC<IAccordionItemProps> = ({ className, title, IconBefore, children, actions }) => {
     const { size } = useContext(AccordionContext);
 
     const [isExpanded, setIsExpanded] = useState(false);
@@ -93,7 +91,6 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, Ic
         <>
             <div
                 className={classNames(`accordionItem accordionItem_size_${size}`, className, {
-                    accordionItem_disabled: disabled,
                     accordionItem_expanded: isExpanded
                 })}
             >
@@ -104,7 +101,6 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, Ic
                         layout="text"
                         Icon={isExpanded ? ChevronDown : chevronHorizontalIcon}
                         onClick={handleToggleExpanded}
-                        disabled={disabled}
                         aria-expanded={isExpanded}
                     />
 
@@ -117,7 +113,7 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, Ic
                             {actions.map((action: IAccordionActionProps) => {
                                 const { Icon: actionIcon } = action;
                                 const actionId = action.id || `accordion-action-${nanoid()}`;
-                                return actionIcon ? <Button key={actionId} {...action} disabled={disabled} /> : null;
+                                return actionIcon ? <Button key={actionId} {...action} /> : null;
                             })}
                         </ButtonGroup>
                     )}
@@ -134,4 +130,4 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, disabled, Ic
     );
 };
 
-export { IAccordionItemProps, AccordionItem as default };
+export { IAccordionActionProps, IAccordionItemProps, AccordionItem as default };
