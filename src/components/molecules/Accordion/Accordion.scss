@@ -131,20 +131,6 @@
         }
     }
 
-    // @include mixins.media-hover {
-    //     &:hover {
-    //         #{ $this }__header {
-    //             background-color: var(--guit-sem-color-background-neutral-1-hover);
-    //         }
-    //     }
-    // }
-
-    // &:active {
-    //     #{ $this }__header {
-    //         background-color: var(--guit-sem-color-background-neutral-1-pressed);
-    //     }
-    // }
-
     &__title {
         flex: 1;
     }
@@ -155,6 +141,5 @@
 
     &__content {
         height: 14rem;
-        background-color: #f6c6ce;
     }
 }

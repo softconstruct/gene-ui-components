@@ -2,13 +2,58 @@ import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Icons
-import { Download, Globe, RecycleBin, Tag } from "@geneui/icons";
+import { Download, Globe, Magnifier, RecycleBin, Tag } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
 import Accordion, { IAccordionProps } from "./Accordion";
 // Components
 import { AccordionItem, IAccordionItemProps } from "./index";
+
+const AccordionContent = (
+    <div
+        style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+            padding: "var(--guit-ref-spacing-2xsmall)",
+            backgroundColor: "#F4E1EC",
+            border: "var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-accent-red)"
+        }}
+    >
+        <div
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "var(--guit-ref-color-magenta-500base)"
+            }}
+        >
+            <Magnifier style={{ marginBottom: "var(--guit-ref-spacing-2xsmall)" }} color="#A60063" />
+            <span
+                style={{
+                    marginTop: "var(--guit-ref-spacing-2xsmall)",
+                    fontSize: "2rem"
+                }}
+            >
+                Slot component
+            </span>
+            <span
+                style={{
+                    marginTop: "var(--guit-ref-spacing-3xsmall)",
+                    fontSize: "1.4rem",
+                    textAlign: "center"
+                }}
+            >
+                Replace it with any component using the &quot;Component Instance&quot; swapper.
+            </span>
+        </div>
+    </div>
+);
 
 const meta: Meta<IAccordionProps> = {
     title: "Molecules/Accordion",
@@ -54,7 +99,7 @@ const AccordionStory: Story = {
                         }
                     ]}
                 >
-                    <div>Content for accordion item 1</div>
+                    {AccordionContent}
                 </AccordionItem>
                 <AccordionItem
                     title="Accordion Item 2"
@@ -77,7 +122,7 @@ const AccordionStory: Story = {
                         }
                     ]}
                 >
-                    <div>Content for accordion item 2</div>
+                    {AccordionContent}
                 </AccordionItem>
             </Accordion>
         );
@@ -96,7 +141,7 @@ const AccordionItemStory: StoryItem = storyObjBuilder({
     args: {
         title: "Accordion Item",
         IconBefore: Tag,
-        children: <div>Accordion content goes here</div>
+        children: AccordionContent
     },
     render: (props) => {
         return (
