@@ -126,30 +126,42 @@ const SplitButton: FC<ISplitButtonProps> = ({
 
     return (
         <div className={classNames("splitButton", className, { splitButton_loading: loading })}>
-            <Loader loading={loading} size="smallNudge" className="splitButton__loader" />
+            <Loader appearance="inverse" loading={loading} size="smallNudge" className="splitButton__loader" />
             <button
                 type="button"
                 disabled={disabled}
                 onClick={() => {
                     onSelectHandler(firstItem);
                 }}
-                className={classNames(buttonsClassNames, {
-                    splitButton__button_icon_before: firstItem.Icon,
-                    splitButton__button_loading: loading
+                className={classNames(buttonsClassNames, "splitButton__button_type_main", {
+                    splitButton__button_withIcon: firstItem.Icon,
+                    splitButton__button_disabled: disabled
                 })}
             >
-                {firstItem.Icon && <firstItem.Icon size={20} className="button__icon" />}
-                {firstItem.title && <span className="splitButton__text">{firstItem.title}</span>}
+                {firstItem.Icon && (
+                    <firstItem.Icon
+                        size={20}
+                        className={classNames("splitButton__icon", { splitButton__icon_loading: loading })}
+                    />
+                )}
+                {firstItem.title && (
+                    <span className={classNames("splitButton__text", { splitButton__text_loading: loading })}>
+                        {firstItem.title}
+                    </span>
+                )}
             </button>
             <button
                 type="button"
                 disabled={disabled}
-                className={classNames(buttonsClassNames, "splitButton__button_icon_only", {
-                    splitButton__button_loading: loading
+                className={classNames(buttonsClassNames, "splitButton__button_type_toggle", {
+                    splitButton__button_disabled: disabled
                 })}
                 {...propsForPopover}
             >
-                <CaretDownFilled className="splitButton__icon" />
+                <CaretDownFilled
+                    size={20}
+                    className={classNames("splitButton__icon", { splitButton__icon_loading: loading })}
+                />
             </button>
             <Menu
                 onChange={(item) => {
