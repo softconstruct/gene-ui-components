@@ -44,10 +44,10 @@ interface ISplitButtonProps {
      */
     disabled?: boolean;
     /**
-     * Type <br/>
+     * Layout <br/>
      * Possible values: `fill | outline`
      */
-    type?: "fill" | "outline";
+    layout?: "fill" | "outline";
     /**
      * Indicates the action meaning. <br>
      * Possible values: `primary | secondary | inverse`
@@ -75,9 +75,9 @@ interface ISplitButtonProps {
 
 type LoaderAppearance = NonNullable<ILoaderProps["appearance"]>;
 type SplitButtonAppearance = NonNullable<ISplitButtonProps["appearance"]>;
-type SplitButtonType = NonNullable<ISplitButtonProps["type"]>;
+type SplitButtonLayout = NonNullable<ISplitButtonProps["layout"]>;
 
-const loaderAppearanceMap: Record<SplitButtonAppearance, Record<SplitButtonType, LoaderAppearance>> = {
+const loaderAppearanceMap: Record<SplitButtonAppearance, Record<SplitButtonLayout, LoaderAppearance>> = {
     primary: {
         fill: "inverse",
         outline: "brand"
@@ -99,7 +99,7 @@ const SplitButton: FC<ISplitButtonProps> = ({
     className,
     size = "large",
     disabled = false,
-    type = "fill",
+    layout = "fill",
     appearance = "primary",
     onSelect,
     loading,
@@ -124,7 +124,7 @@ const SplitButton: FC<ISplitButtonProps> = ({
         });
     };
 
-    const buttonsClassNames = `splitButton__button splitButton__button_size_${size} splitButton__button_type_${type} splitButton__button_appearance_${appearance}`;
+    const buttonsClassNames = `splitButton__button splitButton__button_size_${size} splitButton__button_layout_${layout} splitButton__button_appearance_${appearance}`;
     if (items.length === 0) return null;
 
     const [firstItem, ...restItems] = items;
@@ -134,7 +134,7 @@ const SplitButton: FC<ISplitButtonProps> = ({
         <div className={classNames("splitButton", className, { splitButton_loading: loading })} aria-busy={loading}>
             {loading && (
                 <Loader
-                    appearance={loaderAppearanceMap[appearance][type]}
+                    appearance={loaderAppearanceMap[appearance][layout]}
                     loading={loading}
                     size="smallNudge"
                     className="splitButton__loader"
@@ -199,7 +199,7 @@ const SplitButton: FC<ISplitButtonProps> = ({
                     iconPosition="before"
                     Icon={firstItem.Icon}
                     appearance={appearance}
-                    layout={type}
+                    layout={layout}
                     size={size}
                     disabled={disabled}
                     loading={loading}

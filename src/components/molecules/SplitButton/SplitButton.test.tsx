@@ -16,7 +16,7 @@ describe("SplitButton ", () => {
     ];
 
     beforeEach(() => {
-        setup = mount(<SplitButton appearance="primary" type="outline" items={items} />);
+        setup = mount(<SplitButton appearance="primary" layout="outline" items={items} />);
     });
 
     it("renders without crashing", () => {

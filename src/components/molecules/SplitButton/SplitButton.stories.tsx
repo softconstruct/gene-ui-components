@@ -15,7 +15,7 @@ const meta: Meta<ISplitButtonProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
         appearance: args({ control: "select", ...propCategory.appearance }),
-        type: args({ control: "select", ...propCategory.appearance }),
+        layout: args({ control: "select", ...propCategory.appearance }),
         items: args({ control: "array", ...propCategory.content }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         loading: args({ control: "boolean", ...propCategory.states }),

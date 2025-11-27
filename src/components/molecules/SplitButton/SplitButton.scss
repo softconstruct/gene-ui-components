@@ -136,7 +136,7 @@
 
         &_appearance {
             &_primary {
-                &#{ $this }_type {
+                &#{ $this }_layout {
                     &_fill {
                         border-color: transparent;
                         background-color: var(--guit-sem-color-background-brand-2);
@@ -193,7 +193,7 @@
             }
 
             &_secondary {
-                &#{ $this }_type {
+                &#{ $this }_layout {
                     &_fill {
                         border-color: transparent;
                         background-color: var(--guit-sem-color-background-neutral-3);
@@ -251,7 +251,7 @@
             }
 
             &_inverse {
-                &#{ $this }_type {
+                &#{ $this }_layout {
                     &_fill {
                         border-color: transparent;
                         background-color: var(--guit-sem-color-background-inverse);
