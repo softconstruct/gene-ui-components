@@ -1,5 +1,129 @@
+@use "../../../assets/styles/mixins";
+
 .interactiveCard {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
+    background-color: var(--guit-sem-color-background-neutral-1);
+
+    &_size {
+        &_large {
+            gap: var(--guit-ref-spacing-large);
+            padding: var(--guit-ref-spacing-large);
+            border-radius: var(--guit-ref-radius-2xsmall);
+
+            &#{ $this }_withIcon {
+                padding-inline-start: var(--guit-ref-spacing-medium);
+            }
+
+            &#{ $this }_withCheckbox {
+                padding-inline-end: var(--guit-ref-spacing-medium);
+            }
+
+            #{ $this }__main {
+                gap: var(--guit-ref-spacing-medium);
+            }
+        }
+
+        &_medium {
+            gap: var(--guit-ref-spacing-medium);
+            padding: var(--guit-ref-spacing-medium);
+            border-radius: var(--guit-ref-radius-3xsmall);
+
+            &#{ $this }_withIcon {
+                padding-inline-start: var(--guit-ref-spacing-small);
+            }
+
+            &#{ $this }_withCheckbox {
+                padding-inline-end: var(--guit-ref-spacing-small);
+            }
+
+            #{ $this }__main {
+                gap: var(--guit-ref-spacing-xsmall);
+            }
+        }
+
+        &_small {
+            gap: var(--guit-ref-spacing-xsmall);
+            padding: var(--guit-ref-spacing-small);
+            border-radius: var(--guit-ref-radius-3xsmall);
+
+            &#{ $this }_withIcon {
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
+            }
+
+            &#{ $this }_withCheckbox {
+                padding-inline-end: var(--guit-ref-spacing-xsmall);
+            }
+
+            #{ $this }__main {
+                gap: var(--guit-ref-spacing-2xsmall);
+            }
+        }
+    }
+
+    &__main {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__icon {
+        flex: 0 0 auto;
+        color: var(--guit-sem-color-foreground-accent-blue);
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-4xsmall);
+    }
+
+    &__description {
+        color: var(--guit-sem-color-foreground-neutral-1);
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-xsmall);
+        flex: 0 0 auto;
+    }
+
+    &:not(&#{ $this }_interactive) {
+        min-width: 24rem;
+    }
+
+    &_interactive {
+        min-width: 12rem;
+
+        &#{ $this }_withIcon {
+            min-width: 18rem;
+        }
+
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
+        }
+
+        &:active {
+            background-color: var(--guit-sem-color-background-neutral-1-pressed);
+        }
+
+        &#{ $this }_disabled {
+            pointer-events: none;
+            user-select: none;
+            border-color: var(--guit-sem-color-border-disabled-1);
+
+            #{ $this }__icon,
+            #{ $this }__description {
+                color: var(--guit-sem-color-foreground-disabled);
+            }
+        }
+    }
 }
