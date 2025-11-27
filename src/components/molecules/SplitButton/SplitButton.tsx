@@ -1,6 +1,8 @@
 import React, { FC, useState } from "react";
+// Utils
 import classNames from "classnames";
 
+// Icons
 import { CaretDownFilled, IconProps } from "@geneui/icons";
 
 // Components
@@ -25,6 +27,7 @@ interface ISplitButtonItemProps {
      */
     id: number | string;
 }
+
 interface ISplitButtonProps {
     /**
      * Additional class for the parent element.
@@ -123,28 +126,12 @@ const SplitButton: FC<ISplitButtonProps> = ({
 
     const buttonsClassNames = `splitButton__button splitButton__button_size_${size} splitButton__button_type_${type} splitButton__button_appearance_${appearance}`;
     if (items.length === 0) return null;
-    if (items.length === 1) {
-        const [singleItem] = items;
-        return (
-            <Button
-                iconPosition="before"
-                Icon={singleItem.Icon}
-                size={size}
-                disabled={disabled}
-                loading={loading}
-                onClick={() => {
-                    onSelectHandler(singleItem);
-                }}
-            >
-                {singleItem.title}
-            </Button>
-        );
-    }
 
     const [firstItem, ...restItems] = items;
+    const hasMultipleItems = items.length > 1;
 
     return (
-        <div className={classNames("splitButton", className, { splitButton_loading: loading })}>
+        <div className={classNames("splitButton", className, { splitButton_loading: loading })} aria-busy={loading}>
             {loading && (
                 <Loader
                     appearance={loaderAppearanceMap[appearance][type]}
@@ -153,57 +140,75 @@ const SplitButton: FC<ISplitButtonProps> = ({
                     className="splitButton__loader"
                 />
             )}
-            <button
-                type="button"
-                disabled={disabled}
-                onClick={() => {
-                    onSelectHandler(firstItem);
-                }}
-                className={classNames(buttonsClassNames, "splitButton__button_type_main", {
-                    splitButton__button_withIcon: firstItem.Icon,
-                    splitButton__button_disabled: disabled
-                })}
-            >
-                {firstItem.Icon && (
-                    <firstItem.Icon
-                        size={20}
-                        className={classNames("splitButton__icon", { splitButton__icon_loading: loading })}
-                    />
-                )}
-                {firstItem.title && (
-                    <span className={classNames("splitButton__text", { splitButton__text_loading: loading })}>
-                        {firstItem.title}
-                    </span>
-                )}
-            </button>
-            <button
-                type="button"
-                disabled={disabled}
-                className={classNames(buttonsClassNames, "splitButton__button_type_toggle", {
-                    splitButton__button_disabled: disabled
-                })}
-                {...propsForPopover}
-            >
-                <CaretDownFilled
-                    size={20}
-                    className={classNames("splitButton__icon", { splitButton__icon_loading: loading })}
-                />
-            </button>
-            <Menu
-                onChange={(item) => {
-                    onSelectHandler(item);
-                }}
-                setPropsForPopover={setPropsForPopover}
-                swappable
-                position="bottom-right"
-                size="small"
-            >
-                {restItems.map((item: ISplitButtonItemProps) => (
-                    <MenuItem IconBefore={item.Icon} id={item.id} key={item.id}>
-                        {item.title}
-                    </MenuItem>
-                ))}
-            </Menu>
+            {hasMultipleItems ? (
+                <>
+                    <button
+                        type="button"
+                        disabled={disabled}
+                        onClick={() => {
+                            onSelectHandler(firstItem);
+                        }}
+                        className={classNames(buttonsClassNames, "splitButton__button_type_main", {
+                            splitButton__button_withIcon: firstItem.Icon,
+                            splitButton__button_disabled: disabled
+                        })}
+                    >
+                        {firstItem.Icon && (
+                            <firstItem.Icon
+                                size={20}
+                                className={classNames("splitButton__icon", { splitButton__icon_loading: loading })}
+                            />
+                        )}
+                        {firstItem.title && (
+                            <span className={classNames("splitButton__text", { splitButton__text_loading: loading })}>
+                                {firstItem.title}
+                            </span>
+                        )}
+                    </button>
+                    <button
+                        type="button"
+                        disabled={disabled}
+                        className={classNames(buttonsClassNames, "splitButton__button_type_toggle", {
+                            splitButton__button_disabled: disabled
+                        })}
+                        {...propsForPopover}
+                    >
+                        <CaretDownFilled
+                            size={20}
+                            className={classNames("splitButton__icon", { splitButton__icon_loading: loading })}
+                        />
+                    </button>
+                    <Menu
+                        onChange={(item) => {
+                            onSelectHandler(item);
+                        }}
+                        setPropsForPopover={setPropsForPopover}
+                        swappable
+                        position="bottom-right"
+                        size="small"
+                    >
+                        {restItems.map((item: ISplitButtonItemProps) => (
+                            <MenuItem IconBefore={item.Icon} id={item.id} key={item.id}>
+                                {item.title}
+                            </MenuItem>
+                        ))}
+                    </Menu>
+                </>
+            ) : (
+                <Button
+                    iconPosition="before"
+                    Icon={firstItem.Icon}
+                    appearance={appearance}
+                    layout={type}
+                    size={size}
+                    disabled={disabled}
+                    loading={loading}
+                    onClick={() => onSelectHandler(firstItem)}
+                    className={classNames(buttonsClassNames, className)}
+                >
+                    {firstItem.title}
+                </Button>
+            )}
         </div>
     );
 };
