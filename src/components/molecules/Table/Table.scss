@@ -4,6 +4,8 @@
     position: relative;
     z-index: 0;
     height: 100%;
+    min-width: 0;
+    min-height: 0;
     background-color: var(--guit-sem-color-background-neutral-1);
 
     &__toolbar {
@@ -394,7 +396,7 @@
     $this: &;
 
     width: 100%;
-    height: 100%;
+    max-height: 100%;
     border-collapse: separate;
     isolation: isolate;
 

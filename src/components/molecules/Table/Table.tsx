@@ -741,25 +741,25 @@ const Table: FC<TablePropsType> = ({
                         )}
                     </table>
                 </Scrollbar>
-            </div>
 
-            {withPagination && !withVirtualScroll && rowCount > 0 && (
-                <div className="dataTable__pagination">
-                    <div className="dataTable__pagination_controls">
-                        <Pagination
-                            current={table.getState().pagination.pageIndex + 1}
-                            totalItems={data.length}
-                            currentPageItemsLength={initialPageSize}
-                            totalPages={table.getPageCount()}
-                            rowsPerPageOptions={pageSizes}
-                            onPageChange={handlePageChange}
-                            onPageSizeChange={handlePageSizeChange}
-                            showInputPageField={showInputPageField}
-                        />
+                {withPagination && !withVirtualScroll && rowCount > 0 && (
+                    <div className="dataTable__pagination">
+                        <div className="dataTable__pagination_controls">
+                            <Pagination
+                                current={table.getState().pagination.pageIndex + 1}
+                                totalItems={data.length}
+                                currentPageItemsLength={initialPageSize}
+                                totalPages={table.getPageCount()}
+                                rowsPerPageOptions={pageSizes}
+                                onPageChange={handlePageChange}
+                                onPageSizeChange={handlePageSizeChange}
+                                showInputPageField={showInputPageField}
+                            />
+                        </div>
                     </div>
-                </div>
-            )}
-            <Divider />
+                )}
+                <Divider />
+            </div>
         </TableContext.Provider>
     );
 };
