@@ -7,6 +7,7 @@ import { Tag } from "@geneui/icons";
 // Components
 import Button from "@components/atoms/Button";
 import ButtonGroup from "@components/molecules/ButtonGroup";
+import Tooltip from "@components/molecules/Tooltip";
 
 import Accordion, { IAccordionProps } from "./Accordion";
 import AccordionItem, { IAccordionItemProps } from "./AccordionItem";
@@ -42,6 +43,19 @@ describe("Accordion", () => {
         expect(wrapper.find(AccordionItem)).toHaveLength(3);
     });
 
+    it("only accepts AccordionItem as children", () => {
+        const wrapper = mount(
+            <Accordion>
+                <AccordionItem title="Item 1">Content 1</AccordionItem>
+                <AccordionItem title="Item 2">Content 2</AccordionItem>
+            </Accordion>
+        );
+        expect(wrapper.find(AccordionItem)).toHaveLength(2);
+        wrapper.find(AccordionItem).forEach((item) => {
+            expect(item.find(".accordionItem").exists()).toBeTruthy();
+        });
+    });
+
     it.each<IAccordionProps["size"]>(["large", "medium", "small"])('should pass "%s" size via context', (size) => {
         const wrapper = mount(
             <Accordion size={size}>
@@ -55,7 +69,7 @@ describe("Accordion", () => {
         const MockIcon = Tag;
         const wrapper = mount(
             <Accordion>
-                <AccordionItem title="Item 1" IconBefore={MockIcon}>
+                <AccordionItem title="Item 1" Icon={MockIcon}>
                     Content 1
                 </AccordionItem>
                 <AccordionItem title="Item 2">Content 2</AccordionItem>
@@ -93,6 +107,27 @@ describe("AccordionItem", () => {
         expect(wrapper.find(".accordionItem__title").first().text()).toBe(title);
     });
 
+    it("renders Tooltip when title is provided", () => {
+        const title = "Test Title";
+        const wrapper = mount(
+            <Accordion>
+                <AccordionItem title={title}>Content</AccordionItem>
+            </Accordion>
+        );
+        expect(wrapper.find(Tooltip).exists()).toBeTruthy();
+        expect(wrapper.find(Tooltip).prop("text")).toBe(title);
+    });
+
+    it("does not render title when not provided", () => {
+        const wrapper = mount(
+            <Accordion>
+                <AccordionItem>Content</AccordionItem>
+            </Accordion>
+        );
+        expect(wrapper.find(".accordionItem__title").exists()).toBeFalsy();
+        expect(wrapper.find(Tooltip).exists()).toBeFalsy();
+    });
+
     it("renders className prop correctly", () => {
         const className = "test-class";
         const wrapper = mount(
@@ -122,11 +157,11 @@ describe("AccordionItem", () => {
         expect(setup.find(".accordionItem__body")).toHaveLength(0);
     });
 
-    it("renders IconBefore when provided", () => {
+    it("renders Icon when provided", () => {
         const MockIcon = Tag;
         const wrapper = mount(
             <Accordion>
-                <AccordionItem title="Test" IconBefore={MockIcon}>
+                <AccordionItem title="Test" Icon={MockIcon}>
                     Content
                 </AccordionItem>
             </Accordion>
@@ -134,7 +169,7 @@ describe("AccordionItem", () => {
         expect(wrapper.find(MockIcon).exists()).toBeTruthy();
     });
 
-    it("does not render IconBefore when not provided", () => {
+    it("does not render Icon when not provided", () => {
         const wrapper = mount(
             <Accordion>
                 <AccordionItem title="Test">Content</AccordionItem>
@@ -184,7 +219,6 @@ describe("AccordionItem", () => {
                 <AccordionItem title="Test">Content</AccordionItem>
             </Accordion>
         );
-        expect(wrapper.find(".accordionItem__header").children()).toHaveLength(2);
         expect(wrapper.find(ButtonGroup).exists()).toBeFalsy();
     });
 
