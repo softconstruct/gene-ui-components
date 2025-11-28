@@ -1,14 +1,14 @@
 import React, { createContext, FC, ReactNode, useMemo } from "react";
 import classNames from "classnames";
 
-// Styles (reuse same SCSS file)
+// Styles
 import "./Accordion.scss";
 
 interface IAccordionContextProps {
     size: "large" | "medium" | "small";
 }
 
-export const AccordionContext = createContext<IAccordionContextProps>({
+const AccordionContext = createContext<IAccordionContextProps>({
     size: "large"
 });
 
@@ -18,7 +18,7 @@ interface IAccordionProps {
      */
     children: ReactNode;
     /**
-     * Accordion size affects all child AccordionItems
+     * Accordion size affects all child AccordionItems <br/>
      * Possible values: `large | medium | small`
      */
     size?: "large" | "medium" | "small";
@@ -41,4 +41,4 @@ const Accordion: FC<IAccordionProps> = ({ children, size = "large", className })
     );
 };
 
-export { IAccordionContextProps, IAccordionProps, Accordion as default };
+export { AccordionContext, IAccordionContextProps, IAccordionProps, Accordion as default };

@@ -80,7 +80,7 @@ const AccordionStory: Story = {
             <Accordion {...props}>
                 <AccordionItem
                     title="Accordion Item 1"
-                    IconBefore={Tag}
+                    Icon={Tag}
                     actions={[
                         {
                             Icon: Globe,
@@ -103,7 +103,7 @@ const AccordionStory: Story = {
                 </AccordionItem>
                 <AccordionItem
                     title="Accordion Item 2"
-                    IconBefore={Tag}
+                    Icon={Tag}
                     actions={[
                         {
                             Icon: Globe,
@@ -133,13 +133,13 @@ const AccordionItemStory: StoryItem = storyObjBuilder({
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         title: args({ control: "text", ...propCategory.content }),
-        IconBefore: args({ control: "false", ...propCategory.content }),
+        Icon: args({ control: "false", ...propCategory.content }),
         actions: args({ control: "false", ...propCategory.functionality }),
         children: args({ control: "false", ...propCategory.content })
     },
     args: {
         title: "Accordion Item",
-        IconBefore: Tag,
+        Icon: Tag,
         children: AccordionItemContent
     },
     render: (props) => {
@@ -169,6 +169,4 @@ const AccordionItemStory: StoryItem = storyObjBuilder({
         );
     }
 });
-
-export default meta;
-export { AccordionStory as Accordion, AccordionItemStory as AccordionItem };
+export { AccordionStory as Accordion, AccordionItemStory as AccordionItem, meta as default };
