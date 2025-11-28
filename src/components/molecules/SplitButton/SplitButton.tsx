@@ -201,10 +201,10 @@ const SplitButton: FC<ISplitButtonProps> = ({
                     appearance={appearance}
                     layout={layout}
                     size={size}
-                    disabled={disabled}
+                    disabled={disabled || loading}
                     loading={loading}
                     onClick={() => onSelectHandler(firstItem)}
-                    className={classNames(buttonsClassNames, className)}
+                    className="splitButton__button"
                 >
                     {firstItem.title}
                 </Button>
