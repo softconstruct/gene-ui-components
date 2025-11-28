@@ -96,7 +96,11 @@ const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "mediu
                         size={size as IButtonProps["size"]}
                         {...menuPropsForPopover}
                     />
-                    <Menu onChange={menuSelectHandler} setPropsForPopover={setMenuPropsForPopover}>
+                    <Menu
+                        onChange={menuSelectHandler}
+                        setPropsForPopover={setMenuPropsForPopover}
+                        position="bottom-right"
+                    >
                         {menuData.map((item) => {
                             return (
                                 <MenuItem
