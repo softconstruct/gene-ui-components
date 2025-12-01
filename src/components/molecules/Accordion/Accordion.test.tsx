@@ -124,11 +124,9 @@ describe("AccordionItem", () => {
                 <AccordionItem>Content</AccordionItem>
             </Accordion>
         );
-        // Title element exists as spacer, but Tooltip and Text should not exist
         expect(wrapper.find(".accordionItem__title").exists()).toBeTruthy();
         expect(wrapper.find(Tooltip).exists()).toBeFalsy();
         expect(wrapper.find(Text).exists()).toBeFalsy();
-        // Spacer should be empty
         expect(wrapper.find(".accordionItem__title").text()).toBe("");
     });
 
@@ -199,6 +197,21 @@ describe("AccordionItem", () => {
 
         expect(wrapper.find(".test-content")).toHaveLength(1);
         expect(wrapper.find(".test-content").text()).toBe(content);
+    });
+
+    it("renders accordionItem__data div when expanded", () => {
+        const content = "Test Content";
+        const wrapper = mount(
+            <Accordion>
+                <AccordionItem title="Test">{content}</AccordionItem>
+            </Accordion>
+        );
+        expect(wrapper.find(".accordionItem__data").exists()).toBeFalsy();
+        wrapper.find(".accordionItem__header button").first().simulate("click");
+        wrapper.update();
+        expect(wrapper.find(".accordionItem__data").exists()).toBeTruthy();
+        expect(wrapper.find(".accordionItem__data").text()).toBe(content);
+        expect(wrapper.find(".accordionItem__content").find(".accordionItem__data").exists()).toBeTruthy();
     });
 
     it("renders actions when provided", () => {
