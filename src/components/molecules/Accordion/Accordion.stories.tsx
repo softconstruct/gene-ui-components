@@ -8,7 +8,7 @@ import { Download, Globe, Magnifier, RecycleBin, Tag } from "@geneui/icons";
 import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
 import Accordion, { IAccordionProps } from "./Accordion";
 // Components
-import { AccordionItem, IAccordionItemProps } from "./index";
+import AccordionItem, { IAccordionItemProps } from "./AccordionItem";
 
 const AccordionItemContent = (
     <div
@@ -59,7 +59,7 @@ const meta: Meta<IAccordionProps> = {
     title: "Molecules/Accordion",
     component: Accordion,
     subcomponents: {
-        AccordionItem
+        AccordionItem: AccordionItem as React.ComponentType<unknown>
     }
 };
 
@@ -146,7 +146,7 @@ const AccordionItemStory: StoryItem = storyObjBuilder({
         return (
             <Accordion>
                 <AccordionItem
-                    {...props}
+                    {...(props as IAccordionItemProps)}
                     actions={[
                         {
                             Icon: Globe,
