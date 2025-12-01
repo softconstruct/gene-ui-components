@@ -20,7 +20,12 @@
             }
 
             #{ $this }__body {
-                padding: var(--guit-ref-spacing-xsmall);
+                padding-block: var(--guit-ref-spacing-large);
+                padding-inline-start: var(--guit-ref-spacing-large);
+            }
+
+            #{ $this }__data {
+                padding-inline-end: var(--guit-ref-spacing-large);
             }
         }
 
@@ -31,7 +36,12 @@
             }
 
             #{ $this }__body {
-                padding: var(--guit-ref-spacing-medium);
+                padding-block: var(--guit-ref-spacing-medium);
+                padding-inline-start: var(--guit-ref-spacing-medium);
+            }
+
+            #{ $this }__data {
+                padding-inline-end: var(--guit-ref-spacing-medium);
             }
         }
 
@@ -42,7 +52,12 @@
             }
 
             #{ $this }__body {
-                padding: var(--guit-ref-spacing-medium);
+                padding-block: var(--guit-ref-spacing-medium);
+                padding-inline-start: var(--guit-ref-spacing-medium);
+            }
+
+            #{ $this }__data {
+                padding-inline-end: var(--guit-ref-spacing-medium);
             }
         }
     }
@@ -107,5 +122,10 @@
 
     &__content {
         height: 14rem;
+    }
+
+    &__data {
+        width: 100%;
+        height: 100%;
     }
 }
