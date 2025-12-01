@@ -124,8 +124,12 @@ describe("AccordionItem", () => {
                 <AccordionItem>Content</AccordionItem>
             </Accordion>
         );
-        expect(wrapper.find(".accordionItem__title").exists()).toBeFalsy();
+        // Title element exists as spacer, but Tooltip and Text should not exist
+        expect(wrapper.find(".accordionItem__title").exists()).toBeTruthy();
         expect(wrapper.find(Tooltip).exists()).toBeFalsy();
+        expect(wrapper.find(Text).exists()).toBeFalsy();
+        // Spacer should be empty
+        expect(wrapper.find(".accordionItem__title").text()).toBe("");
     });
 
     it("renders className prop correctly", () => {

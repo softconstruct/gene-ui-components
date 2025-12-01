@@ -110,17 +110,20 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, Icon, childr
                         aria-expanded={isExpanded}
                     />
                     {Icon && <Icon className="accordionItem__icon" size={iconSizes[size]} />}
-                    <Tooltip text={title} isVisible={isTruncated}>
-                        <Text
-                            as="span"
-                            variant={textVariants[size]}
-                            className="accordionItem__title ellipsis-text"
-                            ref={titleRef}
-                        >
-                            {title || ""}
-                        </Text>
-                    </Tooltip>
-
+                    {title ? (
+                        <Tooltip text={title} isVisible={isTruncated}>
+                            <Text
+                                as="span"
+                                variant={textVariants[size]}
+                                className="accordionItem__title ellipsis-text"
+                                ref={titleRef}
+                            >
+                                {title}
+                            </Text>
+                        </Tooltip>
+                    ) : (
+                        <div className="accordionItem__title" />
+                    )}
                     {actions && actions.length > 0 && (
                         <ButtonGroup className="accordionItem__actions" size={size}>
                             {actions.map((action: IAccordionActionProps) => {
@@ -134,9 +137,7 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, Icon, childr
                 {isExpanded && (
                     <div className="accordionItem__body">
                         <div className="accordionItem__content">
-                            <Scrollbar>
-                                <div className="accordionItem__data">{children}</div>
-                            </Scrollbar>
+                            <Scrollbar>{children}</Scrollbar>
                         </div>
                     </div>
                 )}
