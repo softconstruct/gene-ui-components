@@ -137,7 +137,9 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, Icon, childr
                 {isExpanded && (
                     <div className="accordionItem__body">
                         <div className="accordionItem__content">
-                            <Scrollbar>{children}</Scrollbar>
+                            <Scrollbar>
+                                <div className="accordionItem__data">{children}</div>
+                            </Scrollbar>
                         </div>
                     </div>
                 )}
