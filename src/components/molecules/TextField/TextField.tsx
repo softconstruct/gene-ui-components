@@ -63,10 +63,11 @@ interface ITextFieldProps {
     /**
      * The type of `TextField`.
      * - `text`: Standard text `input`
+     * - `number`: Number `input` with text-based validation (allows digits, one '-' at start, one '.' for decimals, no '+' symbol)
      * - `password`: Password `input` with visibility toggle.
      * - default `value` is `text`
      */
-    type?: "text" | "password";
+    type?: "text" | "number" | "password";
     /**
      * `Label` text displayed above the `input` field.
      */
@@ -157,15 +158,6 @@ interface ITextFieldProps {
      * `"numeric" | "decimal" | "tel" | "text" | "search" | "email" | "url"`
      */
     inputMode?: "numeric" | "decimal" | "tel" | "text" | "search" | "email" | "url";
-    /**
-     * If `true`, only numeric digits (`0–9`) will be allowed in the input.
-     * This does not allow negative numbers or decimal points.
-     * This applies live filtering on user input and disables all other characters.
-     * Also, automatically sets `inputMode="numeric"` to enable mobile number keyboard.
-     *
-     * Tip: For more complex cases like decimals or negative values, use `onChange` manually.
-     */
-    numericOnly?: boolean;
 }
 
 export interface ITextFieldRef {
@@ -202,8 +194,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             helperText,
             status = "rest",
             onClear,
-            inputMode = "text",
-            numericOnly
+            inputMode = "text"
         },
         ref
     ) => {
@@ -219,16 +210,22 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
         const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
             const { value: currentValue } = event.target;
-            const filteredValue = numericOnly && type !== "password" ? currentValue.replace(/\D/g, "") : currentValue;
-            setInputValue(filteredValue);
+
+            if (type === "number" && currentValue !== "" && !/^-?\d*\.?\d*$/.test(currentValue)) {
+                return;
+            }
 
             onChange?.({
                 ...event,
                 target: {
                     ...event.target,
-                    value: filteredValue
+                    value: currentValue
                 }
             });
+
+            if (value === undefined) {
+                setInputValue(currentValue);
+            }
         };
 
         const handleClear = () => {
@@ -301,12 +298,12 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                         id={generatedId}
                         {...(placeholder && { placeholder })}
                         {...(autoFocus && { autoFocus })}
-                        {...(numericOnly ? { inputMode: "numeric" } : { inputMode })}
+                        {...(type === "number" ? { inputMode: "numeric" } : { inputMode })}
                         autoComplete={autoComplete}
                         name={name || type}
                         ref={inputRef}
                         className="textField__input"
-                        type={isPasswordVisible ? "text" : type}
+                        type={isPasswordVisible || type === "number" ? "text" : type}
                         required={required}
                         disabled={disabled}
                         readOnly={readOnly}

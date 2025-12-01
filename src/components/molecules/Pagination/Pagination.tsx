@@ -11,6 +11,9 @@ import TextField from "@components/molecules/TextField";
 // Styles
 import "./Pagination.scss";
 
+// helpers
+import { allowOnlyDigits } from "../../../helpers";
+
 interface IPaginationProps {
     /**
      * Additional class for the parent element.
@@ -127,6 +130,7 @@ const Pagination: FC<IPaginationProps> = ({
 
     const [currentPage, setCurrentPage] = useState<number>(+current > totalPages ? 1 : +current);
     const [currentPageSize, setCurrentPageSize] = useState<number>(rowsPerPageOptions?.[0] || 0);
+    const [goToPageValue, setGoToPageValue] = useState<string>(() => currentPage.toString());
 
     // Generate the page numbers to display
     const calculatedData = createPageNumbers(currentPage, +totalPages, MAXIMUM_SIZE_IN_VIEW_PORT);
@@ -135,24 +139,31 @@ const Pagination: FC<IPaginationProps> = ({
     useEffect(() => {
         const newCurrentPage = +current > totalPages ? 1 : +current;
         setCurrentPage(newCurrentPage);
+        setGoToPageValue(newCurrentPage.toString());
     }, [current, totalPages]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
+            if (newPage !== +goToPageValue) setGoToPageValue(newPage.toString());
             setCurrentPage(newPage);
             onPageChange?.(newPage);
         }
     };
 
-    const handleGoToPage = (e: ChangeEvent<HTMLInputElement>) => {
-        const value = +e.currentTarget.value;
-        if (Number.isNaN(value) || value < 1) return;
+    const handleGoToPageChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const isNumericValue = allowOnlyDigits(e);
+        if (!isNumericValue) return;
 
-        if (value > totalPages) {
-            handlePageChange(totalPages);
-        } else {
-            handlePageChange(value);
-        }
+        const inputValue = e.currentTarget.value;
+
+        setGoToPageValue(inputValue);
+    };
+
+    const handleGoToPageBlur = () => {
+        const currentPageValue =
+            +goToPageValue > totalPages ? totalPages.toString() : goToPageValue || currentPage.toString();
+        setGoToPageValue(currentPageValue);
+        handlePageChange(+currentPageValue);
     };
 
     const handlePageSizeChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -254,11 +265,11 @@ const Pagination: FC<IPaginationProps> = ({
                         <span>{goToPageLabel}</span>
                         <TextField
                             size="medium"
-                            numericOnly
-                            onChange={handleGoToPage}
+                            onChange={handleGoToPageChange}
+                            onBlur={handleGoToPageBlur}
                             autoComplete="off"
                             className="pagination__input"
-                            value={currentPage.toString()}
+                            value={goToPageValue}
                         />
                         <span>{goToPageSuffixLabel}</span>
                     </div>

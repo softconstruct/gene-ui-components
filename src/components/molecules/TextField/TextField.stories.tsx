@@ -35,8 +35,7 @@ const meta: Meta<ITextFieldProps> = {
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         helperText: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.appearance }),
-        inputMode: args({ control: "select", ...propCategory.appearance }),
-        numericOnly: args({ control: "boolean", ...propCategory.functionality })
+        inputMode: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         size: "large",
