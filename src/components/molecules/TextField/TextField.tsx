@@ -10,7 +10,7 @@ import React, {
     useState
 } from "react";
 import classNames from "classnames";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 
 import { Eye, EyeOff, IconProps, X } from "@geneui/icons";
 
