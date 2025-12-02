@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 
 import { CheckMark, Minus } from "@geneui/icons";
 
