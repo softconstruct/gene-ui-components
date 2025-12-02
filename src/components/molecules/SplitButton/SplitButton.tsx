@@ -1,5 +1,4 @@
 import React, { FC, useState } from "react";
-// Utils
 import classNames from "classnames";
 
 // Icons
@@ -58,8 +57,7 @@ interface ISplitButtonProps {
      */
     onSelect?: (item: ISplitButtonItemProps) => void;
     /**
-     * Indicates whether the `SplitButton` is in a loading state.
-     * When set to `true` a `skeleton` indicator will be shown instead of the `Avatar`.
+     * The prop responsible for showing the loading spinner if passed `true`. The default value is `false`
      */
     loading?: boolean;
     /**
@@ -97,7 +95,7 @@ const loaderAppearanceMap: Record<SplitButtonAppearance, Record<SplitButtonLayou
  */
 const SplitButton: FC<ISplitButtonProps> = ({
     className,
-    size = "large",
+    size = "medium",
     disabled = false,
     layout = "fill",
     appearance = "primary",

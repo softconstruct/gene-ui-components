@@ -55,6 +55,8 @@ type RelativeRefsSetter = (props: {
 
 type SizeType = "large" | "medium" | "small";
 
+type GenericObject = Record<string, unknown>;
+
 interface IMenuContextProps {
     onChangeHandler: (props: OnchangeHandlerType) => void;
     openSelectedPath?: boolean;
@@ -87,7 +89,7 @@ interface IMenuProps {
     /**
      * A function for setting additional props for the Popover component that wraps the menu.
      */
-    setPropsForPopover: Dispatch<SetStateAction<Record<string, unknown>>>;
+    setPropsForPopover: Dispatch<SetStateAction<GenericObject>>;
     /**
      * Menu size.<br/>
      * Default value is `small`.<br/>
@@ -206,10 +208,10 @@ const Menu: FC<IMenuProps> = ({
         [popoverRef.current.floatingElement, ...Object.values(relativeRefs)]
     );
 
-    const enhanceTriggerPropsRef = useRef<(triggerProps: Record<string, unknown>) => Record<string, unknown>>();
+    const enhanceTriggerPropsRef = useRef<(triggerProps: GenericObject) => GenericObject>();
 
     const enhanceTriggerProps = useCallback(
-        (triggerProps: Record<string, unknown>): Record<string, unknown> => {
+        (triggerProps: GenericObject): GenericObject => {
             if (!triggerProps || typeof triggerProps !== "object") {
                 return triggerProps;
             }
@@ -244,7 +246,7 @@ const Menu: FC<IMenuProps> = ({
     enhanceTriggerPropsRef.current = enhanceTriggerProps;
 
     const setReferenceProps = useCallback(
-        (value: SetStateAction<Record<string, unknown>>) => {
+        (value: SetStateAction<GenericObject>) => {
             const enhanceFn = enhanceTriggerPropsRef.current;
             if (!enhanceFn) {
                 // Fallback if ref is not set yet
