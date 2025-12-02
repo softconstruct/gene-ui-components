@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FC, FocusEvent, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 
 import { CircleFilled } from "@geneui/icons";
 
