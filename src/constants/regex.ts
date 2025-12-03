@@ -13,6 +13,29 @@
  */
 export const DIGITS_ONLY = /^\d*$/;
 
+/**
+ * Matches strings that represent a valid, optional negative, integer or decimal number.
+ * * Specifically:
+ * - Allows an optional leading negative sign ('-').
+ * - Allows zero or more digits before the decimal point.
+ * - Allows an optional decimal point ('.').
+ * - Allows zero or more digits after the decimal point.
+ * - Allows the **empty string** ("").
+ * * Note: This pattern will match incomplete numeric strings like ".", "-", or "-.".
+ *
+ * @example
+ * NUMERIC_STRING_PATTERN.test("123")    // true
+ * NUMERIC_STRING_PATTERN.test("-45.6")  // true
+ * NUMERIC_STRING_PATTERN.test(".7")     // true
+ * NUMERIC_STRING_PATTERN.test("1.")     // true
+ * NUMERIC_STRING_PATTERN.test("")       // true
+ * NUMERIC_STRING_PATTERN.test("12a")    // false
+ * NUMERIC_STRING_PATTERN.test("1-2")    // false (minus in middle)
+ * NUMERIC_STRING_PATTERN.test("--4")    // false (double minus)
+ */
+export const NUMERIC_STRING_PATTERN = /^-?\d*\.?\d*$/;
+
 export const REGEX = {
-    DIGITS_ONLY
+    DIGITS_ONLY,
+    NUMERIC_STRING_PATTERN
 } as const;

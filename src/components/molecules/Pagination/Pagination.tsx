@@ -161,7 +161,7 @@ const Pagination: FC<IPaginationProps> = ({
     const handleGoToPageBlur = () => {
         const currentPageValue = goToPageValue > totalPages ? totalPages : goToPageValue || currentPage;
         setGoToPageValue(currentPageValue);
-        handlePageChange(+currentPageValue);
+        handlePageChange(currentPageValue);
     };
 
     const handlePageSizeChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -180,7 +180,7 @@ const Pagination: FC<IPaginationProps> = ({
         handlePageChange(newPage);
     };
 
-    const pageValue = () => (goToPageValue > 0 ? goToPageValue.toString() : "");
+    const pageValue = () => (goToPageValue > 0 ? goToPageValue : "");
 
     return (
         <div className={classNames("pagination", className)}>
