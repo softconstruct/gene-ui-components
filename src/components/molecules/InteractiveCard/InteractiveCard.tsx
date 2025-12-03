@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent } from "react";
+import React, { FC, FocusEvent, MouseEvent } from "react";
 import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
@@ -86,6 +86,10 @@ interface IInteractiveCardProps {
      * This prop is only used when `interactive` is `false` or undefined.
      */
     pill?: IPillProps;
+    /**
+     *  Event handler for when the interactive card element receives focus. Provides the focus event as a callback's argument.
+     */
+    onFocus?: (e: FocusEvent<HTMLButtonElement>) => void;
 }
 
 /**
@@ -103,7 +107,8 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
     interactive,
     onClick,
     action,
-    pill
+    pill,
+    onFocus
 }) => {
     const baseClassName = classNames(
         "interactiveCard",
@@ -118,7 +123,7 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
 
     if (interactive) {
         return (
-            <button type="button" className={baseClassName} onClick={onClick} disabled={disabled}>
+            <button type="button" className={baseClassName} onClick={onClick} disabled={disabled} onFocus={onFocus}>
                 <span className="interactiveCard__main">
                     {Icon && <Icon className="interactiveCard__icon" size={iconSizes[size]} />}
                     <span className="interactiveCard__content">
@@ -139,14 +144,6 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
             </button>
         );
     }
-
-    // // Non-interactive: render as div
-    // const actionElement = action
-    //     ? React.cloneElement(action as React.ReactElement<ICheckboxProps | ISwitchProps>, {
-    //           disabled: disabled || (action.props as ICheckboxProps | ISwitchProps).disabled
-    //     })
-    //     : null;
-
     return (
         <div className={baseClassName}>
             <span className="interactiveCard__main">
