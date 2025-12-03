@@ -1,16 +1,31 @@
-import React, { FC } from "react";
+import React, { FC, MouseEvent } from "react";
 import classNames from "classnames";
 
-import { Globe } from "@geneui/icons";
+import { IconProps } from "@geneui/icons";
 
 import Label from "@components/atoms/Label";
-import Pill from "@components/atoms/Pill";
-import Checkbox from "@components/molecules/Checkbox";
+import Pill, { IPillProps } from "@components/atoms/Pill";
+import { ICheckboxProps } from "@components/molecules/Checkbox";
+import { ISwitchProps } from "@components/molecules/Switch";
 
 // Styles
 import "./InteractiveCard.scss";
 
 import { Text } from "../../../index";
+
+// Size mapping constants - will be used in subsequent commits
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const iconSizes: Record<"large" | "medium" | "small", IconProps["size"]> = {
+    large: 32,
+    medium: 24,
+    small: 20
+} as const;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const textVariants: Record<"large" | "medium" | "small", "labelMediumMedium" | "labelSmallMedium"> = {
+    large: "labelMediumMedium",
+    medium: "labelSmallMedium",
+    small: "labelSmallMedium"
+} as const;
 
 interface IInteractiveCardProps {
     /**
@@ -18,65 +33,145 @@ interface IInteractiveCardProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    // fill InteractiveCard component props interface
+    /**
+     * Size of the interactive card.<br>
+     * Possible values: `large | medium | small`
+     */
+    size?: "large" | "medium" | "small";
+    /**
+     * The label text displayed in the card.
+     */
+    label?: string;
+    /**
+     *  Specifies whether the interactive card is mandatory for completing a form.
+     */
+    required?: boolean;
+    /**
+     * Additional informational text displayed alongside the label via tooltip.
+     */
+    infoText?: string;
+    /**
+     * Description text displayed below the label.
+     */
+    description?: string;
+    /**
+     * Icon component to display before the label.
+     */
+    Icon?: FC<IconProps>;
+    /**
+     * Disables the interactive card.
+     * For interactive cards, this disables the entire card.
+     * For non-interactive cards, this only disables the action (checkbox or switch).
+     */
+    disabled?: boolean;
+    /**
+     * Determines if the card is interactive (rendered as a button) or non-interactive (rendered as a div).
+     * When `true`, the card is rendered as a button and can be clicked.
+     * When `false` or undefined, the card is rendered as a div with optional action controls.
+     */
+    interactive?: boolean;
+    /**
+     * Click handler for interactive cards.
+     * This prop is only used when `interactive` is `true`.
+     */
+    onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Action component for non-interactive cards.
+     * Can be either a Checkbox or Switch configuration object.
+     * This prop is only used when `interactive` is `false` or undefined.
+     */
+    action?: React.ReactElement<ICheckboxProps> | React.ReactElement<ISwitchProps>;
+    /**
+     * Pill component configuration for non-interactive cards.
+     * This prop is only used when `interactive` is `false` or undefined.
+     */
+    pill?: IPillProps;
 }
 
 /**
  * Interactive Card component displays information and engage users through actionable content. Unlike static cards, Interactive Cards respond to user interactions, such as clicks or hovers, triggering actions or revealing additional information.
  */
-const InteractiveCard: FC<IInteractiveCardProps> = ({ className }) => {
-    // Add size classNames for interactiveCard - "interactiveCard_size_large / interactiveCard_size_medium / interactiveCard_size_small"
-    // Add className - "interactiveCard_withIcon" - for interactiveCard, when there is an icon
-    // Add className - "interactiveCard_withCheckbox" - for interactiveCard, when there are pill and checkbox (not pill and Switcher)
-    // Add className - "interactiveCard_disabled" - for interactiveCard, to make it disabled
-    // Add className - "interactiveCard_interactive" - for interactiveCard, to make it button
-    return (
-        <>
-            {/* Interactive */}
-            <button
-                type="button"
-                className={classNames(
-                    "interactiveCard interactiveCard_size_large interactiveCard_interactive interactiveCard_withIcon interactiveCard_withCheckbox",
-                    className
-                )}
-            >
+const InteractiveCard: FC<IInteractiveCardProps> = ({
+    className,
+    size = "large",
+    label,
+    required,
+    infoText,
+    description,
+    Icon,
+    disabled,
+    interactive,
+    onClick,
+    action,
+    pill
+}) => {
+    const baseClassName = classNames(
+        "interactiveCard",
+        `interactiveCard_size_${size}`,
+        {
+            interactiveCard_interactive: interactive,
+            interactiveCard_withIcon: Icon,
+            interactiveCard_disabled: interactive && disabled
+        },
+        className
+    );
+
+    if (interactive) {
+        return (
+            <button type="button" className={baseClassName} onClick={onClick} disabled={disabled}>
                 <span className="interactiveCard__main">
-                    <Globe className="interactiveCard__icon" size={32} />
+                    {Icon && <Icon className="interactiveCard__icon" size={iconSizes[size]} />}
                     <span className="interactiveCard__content">
-                        <Label text="Label" infoText="Label" />
-                        <Text className="interactiveCard__description" as="span" variant="labelMediumMedium">
-                            Description
-                        </Text>
+                        <Label
+                            text={label}
+                            infoText={infoText}
+                            required={required}
+                            size={size === "large" ? "medium" : size}
+                            disabled={disabled}
+                        />
+                        {description && (
+                            <Text className="interactiveCard__description" as="span" variant={textVariants[size]}>
+                                {description}
+                            </Text>
+                        )}
                     </span>
-                </span>
-                <span className="interactiveCard__actions">
-                    <Pill size="small" withDot={false} text="Pill" filled />
-                    <Checkbox name="test" value="test" />
                 </span>
             </button>
+        );
+    }
 
-            {/* Non Interactive */}
-            <div
-                className={classNames(
-                    "interactiveCard interactiveCard_size_large interactiveCard_withIcon interactiveCard_withCheckbox",
-                    className
-                )}
-            >
-                <span className="interactiveCard__main">
-                    <Globe className="interactiveCard__icon" size={32} />
-                    <span className="interactiveCard__content">
-                        <Label text="Label" infoText="Label" />
-                        <Text className="interactiveCard__description" as="span" variant="labelMediumMedium">
-                            Description
+    // // Non-interactive: render as div
+    // const actionElement = action
+    //     ? React.cloneElement(action as React.ReactElement<ICheckboxProps | ISwitchProps>, {
+    //           disabled: disabled || (action.props as ICheckboxProps | ISwitchProps).disabled
+    //     })
+    //     : null;
+
+    return (
+        <div className={baseClassName}>
+            <span className="interactiveCard__main">
+                {Icon && <Icon className="interactiveCard__icon" size={iconSizes[size]} />}
+                <span className="interactiveCard__content">
+                    <Label
+                        text={label}
+                        infoText={infoText}
+                        required={required}
+                        size={size === "large" ? "medium" : size}
+                    />
+                    {description && (
+                        <Text className="interactiveCard__description" as="span" variant={textVariants[size]}>
+                            {description}
                         </Text>
-                    </span>
+                    )}
                 </span>
+            </span>
+            {(pill || action) && (
                 <span className="interactiveCard__actions">
-                    <Pill size="small" withDot={false} text="Pill" filled />
-                    <Checkbox name="test" value="test" />
+                    {pill && <Pill {...pill} />}
+                    {action}
                 </span>
-            </div>
-        </>
+            )}
+        </div>
     );
 };
 
