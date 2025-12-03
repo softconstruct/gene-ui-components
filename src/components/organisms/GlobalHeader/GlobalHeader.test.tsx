@@ -71,6 +71,9 @@ describe("GlobalHeader ", () => {
 
     afterEach(() => {
         jest.clearAllMocks();
+        if (setup) {
+            setup.unmount();
+        }
     });
 
     it("renders without crashing", () => {

@@ -90,6 +90,7 @@
         "@types/jest": "^29.5.11",
         "@types/react-dom": "^18.3.1",
         "@types/react-is": "^18.3.0",
+        "@types/react-virtualized": "^9.22.0",
         "@typescript-eslint/eslint-plugin": "^8.11.0",
         "@typescript-eslint/parser": "^8.11.0",
         "autoprefixer": "^10.4.13",
@@ -174,7 +175,9 @@
         "@floating-ui/utils": "^0.2.8",
         "@geneui/icons": "^1.4.3",
         "@geneui/tokens": "^1.0.2",
+        "@tanstack/react-virtual": "^3.13.12",
         "classnames": "^2.3.2",
+        "nanoid": "^5.1.6",
         "qrcode.react": "^4.2.0",
         "react-is": "^17.0.2",
         "react-scrollbars-custom": "^4.1.1"

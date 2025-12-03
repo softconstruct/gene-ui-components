@@ -20,7 +20,8 @@ const paddingBlacklist = {
     "molecules-navigation": true,
     "molecules-products": true,
     "molecules-profile": true,
-    "molecules-drawer": true
+    "molecules-drawer": true,
+    "molecules-banner": true
 };
 
 const CustomDecorator = ({ children }) => {
@@ -110,7 +111,7 @@ const CustomDecorator = ({ children }) => {
                 </div>
             )}
             <div style={{ position: "relative", height: "100%", ...paddingForWrapper }}>
-                <div>{allowRenderChildren && children}</div>
+                {allowRenderChildren && children}
             </div>
         </GeneUIProvider>
     );

@@ -5,27 +5,7 @@
     gap: var(--guit-ref-spacing-3xsmall);
     max-width: 100%;
 
-    &_size {
-        &_medium {
-            #{ $this }__text {
-                font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
-                font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
-                font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
-                line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
-            }
-        }
-
-        &_small {
-            #{ $this }__text {
-                font-family: var(--guit-sem-font-label-small-default-medium-font-family);
-                font-size: var(--guit-sem-font-label-small-default-medium-font-size);
-                font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
-                line-height: var(--guit-sem-font-label-small-default-medium-line-height);
-            }
-        }
-    }
-
-    &_type {
+    &_status {
         &_rest {
             color: var(--guit-sem-color-foreground-neutral-2);
         }

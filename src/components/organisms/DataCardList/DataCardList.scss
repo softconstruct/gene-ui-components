@@ -1,0 +1,35 @@
+.dataCardList {
+    $this: &;
+
+    height: 100%;
+
+    &__container {
+        width: 100%;
+        position: relative;
+        height: var(--virtual-container-height, 100%);
+    }
+
+    &__item {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        transform: var(--virtual-item-transform, translateY(0));
+
+        &:not(:last-child) {
+            #{ $this }__dataCard {
+                margin-bottom: var(--guit-ref-spacing-medium);
+            }
+        }
+    }
+
+    &__loader {
+        position: absolute;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: var(--guit-ref-spacing-large);
+        top: var(--virtual-loader-top, 0);
+    }
+}

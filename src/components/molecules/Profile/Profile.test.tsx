@@ -13,6 +13,12 @@ describe("Profile ", () => {
         setup = mount(<Profile profileData={profileData} />);
     });
 
+    afterEach(() => {
+        if (setup) {
+            setup.unmount();
+        }
+    });
+
     it("renders without crashing", () => {
         expect(setup.exists()).toBeTruthy();
     });

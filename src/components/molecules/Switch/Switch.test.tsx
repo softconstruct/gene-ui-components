@@ -39,13 +39,13 @@ describe("Switch", () => {
     it("renders disabled prop correctly", () => {
         const helperText = "Helper text";
         const wrapper = setup.setProps({ disabled: true, helperText });
-        expect(wrapper.find(".switch__input").props().disabled).toBeTruthy();
+        expect(wrapper.find('input[type="checkbox"]').props().disabled).toBeTruthy();
         expect(wrapper.find(HelperText).props().disabled).toBeTruthy();
     });
 
     it("renders readOnly prop correctly", () => {
         const wrapper = setup.setProps({ readOnly: true });
-        expect(wrapper.find(".switch__input").props().readOnly).toBeTruthy();
+        expect(wrapper.find('input[type="checkbox"]').props().readOnly).toBeTruthy();
     });
 
     it.each<ISwitchProps["direction"]>(["horizontal", "vertical"])('should have "%s" direction', (direction) => {
@@ -60,34 +60,34 @@ describe("Switch", () => {
     it("renders name prop correctly", () => {
         const name = "switch-name";
         const wrapper = setup.setProps({ name });
-        expect(wrapper.find(".switch__input").props().name).toBe(name);
+        expect(wrapper.find('input[type="checkbox"]').props().name).toBe(name);
     });
 
     it("renders value prop correctly", () => {
         const value = "test";
         const wrapper = setup.setProps({ value });
-        expect(wrapper.find(".switch__input").props().value).toBe(value);
+        expect(wrapper.find('input[type="checkbox"]').props().value).toBe(value);
     });
 
     it("respects defaultChecked in uncontrolled mode", () => {
         const wrapper = mount(<Switch onChange={onChange} defaultChecked />);
-        expect(wrapper.find(".switch__input").props().checked).toBe(true);
+        expect(wrapper.find('input[type="checkbox"]').props().checked).toBe(true);
     });
 
     it("respects checked in controlled mode", () => {
         const wrapper = setup.setProps({ checked: true });
-        expect(wrapper.find(".switch__input").props().checked).toBe(true);
+        expect(wrapper.find('input[type="checkbox"]').props().checked).toBe(true);
     });
 
     it("calls onChange handler on click", () => {
         const wrapper = setup.setProps({ onChange });
-        wrapper.find("input").simulate("change", { target: { checked: true } });
+        wrapper.find('input[type="checkbox"]').simulate("change", { target: { checked: true } });
         expect(onChange).toHaveBeenCalled();
     });
 
     it("calls onChange on Enter key press", () => {
         const wrapper = setup.setProps({ onChange });
-        wrapper.find("input").simulate("keyDown", { key: "Enter", target: { checked: true } });
+        wrapper.find('input[type="checkbox"]').simulate("keyDown", { key: "Enter", target: { checked: true } });
         expect(onChange).toHaveBeenCalled();
     });
 
@@ -95,7 +95,7 @@ describe("Switch", () => {
         const onFocusMock = jest.fn();
         const wrapper = setup.setProps({ onFocus: onFocusMock });
 
-        wrapper.find("input").simulate("focus");
+        wrapper.find('input[type="checkbox"]').simulate("focus");
 
         expect(onFocusMock).toHaveBeenCalled();
     });
@@ -104,13 +104,19 @@ describe("Switch", () => {
         const onBlurMock = jest.fn();
         const wrapper = setup.setProps({ onBlur: onBlurMock });
 
-        wrapper.find("input").simulate("blur");
+        wrapper.find('input[type="checkbox"]').simulate("blur");
 
         expect(onBlurMock).toHaveBeenCalled();
     });
 
     it("renders autoFocus prop correctly", () => {
         const wrapper = setup.setProps({ autoFocus: true });
-        expect(wrapper.find(".switch__input").props().autoFocus).toBeTruthy();
+        expect(wrapper.find('input[type="checkbox"]').props().autoFocus).toBeTruthy();
+    });
+
+    it.each<ISwitchProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
+        const wrapper = setup.setProps({ status });
+
+        expect(wrapper.find(".switch").hasClass(`switch_status_${status}`)).toBeTruthy();
     });
 });

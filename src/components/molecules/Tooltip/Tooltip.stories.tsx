@@ -42,7 +42,7 @@ export const WithIcons: Story = {
         return (
             <div style={{ height: "200px", padding: "200px 300px" }}>
                 <TooltipComponent {...props}>
-                    <HelperText text="hover for tooltip" type="warning" />
+                    <HelperText text="hover for tooltip" status="warning" />
                 </TooltipComponent>
             </div>
         );

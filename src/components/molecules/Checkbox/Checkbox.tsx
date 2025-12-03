@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
+import { nanoid } from "nanoid/non-secure";
 
 import { CheckMark, Minus } from "@geneui/icons";
 
@@ -57,10 +58,10 @@ interface ICheckboxProps {
      */
     defaultChecked?: boolean;
     /**
-     *  Determines the checkboxes appearance based on its status.<br>
+     *  Determines the checkbox's visual status.<br>
      *  Possible values: `rest | warning | error`
      */
-    type?: "rest" | "warning" | "error";
+    status?: "rest" | "warning" | "error";
     /**
      *  HTML name attribute for the input element.<br>
      *  A unique identifier for the checkbox within a form.
@@ -92,6 +93,10 @@ interface ICheckboxProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * `HTML` `id` attribute for the `input` element
+     */
+    id?: string;
 }
 
 /**
@@ -99,13 +104,14 @@ interface ICheckboxProps {
  */
 const Checkbox: FC<ICheckboxProps> = (props) => {
     const {
+        id,
         label,
         required,
         infoText,
         disabled,
         helperText,
         readOnly,
-        type = "rest",
+        status = "rest",
         direction = "horizontal",
         autoFocus,
         onClick,
@@ -122,6 +128,8 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
 
     const interRef = useRef<HTMLInputElement>(null);
     const isControlled = "checked" in props;
+
+    const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
 
     const [checkedState, setCheckedState] = useState(defaultChecked || false);
 
@@ -161,53 +169,58 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
         <div
             className={classNames(
                 "checkbox ",
-                `checkbox_${type}`,
+                `checkbox_status_${status}`,
                 {
-                    checkbox_disabled: disabled,
-                    checkbox_readOnly: readOnly,
                     checkbox_labelTop: direction === "vertical"
                 },
                 className
             )}
             {...((disabled || readOnly) && { tabIndex: -1 })}
         >
-            <Label
-                text={label}
-                className="checkbox__label"
-                required={required}
-                infoText={infoText}
-                disabled={disabled}
-                readOnly={readOnly}
-            >
-                <span className="checkbox__imitationHolder">
-                    <span className="checkbox__imitationHolderInner">
-                        <input
-                            type="checkbox"
-                            className="checkbox__input"
-                            onChange={onChangeHandler}
-                            onFocus={onFocusHandler}
-                            onBlur={onBlurHandler}
-                            onClick={onClickHandler}
-                            checked={resolvedChecked}
-                            ref={interRef}
-                            {...(name && { name })}
-                            {...(autoFocus && { autoFocus })}
-                            {...((disabled || readOnly) && { tabIndex: -1 })}
-                            value={value}
-                        />
-                        <span className="checkbox__imitation">
-                            {indeterminate && !checked ? (
-                                <Minus className="checkbox__icon" size={16} />
-                            ) : (
-                                <CheckMark className="checkbox__icon" size={16} />
-                            )}
-                        </span>
+            <div className="checkbox__content">
+                <span
+                    className={classNames("checkbox__imitationHolder", {
+                        checkbox__imitationHolder_disabled: disabled,
+                        checkbox__imitationHolder_readOnly: readOnly && !disabled
+                    })}
+                >
+                    <input
+                        type="checkbox"
+                        className="checkbox__input"
+                        onChange={onChangeHandler}
+                        onFocus={onFocusHandler}
+                        onBlur={onBlurHandler}
+                        onClick={onClickHandler}
+                        checked={resolvedChecked}
+                        disabled={disabled}
+                        ref={interRef}
+                        {...(name && { name })}
+                        {...(autoFocus && { autoFocus })}
+                        {...((disabled || readOnly) && { tabIndex: -1 })}
+                        value={value}
+                        id={generatedId}
+                    />
+                    <span className="checkbox__imitation">
+                        {indeterminate && !checked ? (
+                            <Minus className="checkbox__icon" size={16} />
+                        ) : (
+                            <CheckMark className="checkbox__icon" size={16} />
+                        )}
                     </span>
                 </span>
-            </Label>
+                <Label
+                    text={label}
+                    className="checkbox__label"
+                    required={required}
+                    infoText={infoText}
+                    disabled={disabled}
+                    readOnly={readOnly}
+                    labelFor={generatedId}
+                />
+            </div>
             {helperText && (
                 <div className="checkbox__infoContainer">
-                    <HelperText text={helperText} disabled={disabled} type={type} />
+                    <HelperText text={helperText} disabled={disabled} status={status} />
                 </div>
             )}
         </div>

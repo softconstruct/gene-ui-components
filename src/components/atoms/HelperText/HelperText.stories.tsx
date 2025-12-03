@@ -12,7 +12,7 @@ const meta: Meta<IHelperTextProps> = {
     component: HelperText,
     argTypes: {
         size: args({ control: "select", ...propCategory.appearance }),
-        type: args({ control: "select", ...propCategory.appearance }),
+        status: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
         text: args({ control: "text", ...propCategory.content }),
         Icon: args({ control: "false", ...propCategory.content }),
@@ -21,8 +21,7 @@ const meta: Meta<IHelperTextProps> = {
     args: {
         size: "medium",
         text: "Helper Text",
-        disabled: false,
-        type: "rest"
+        disabled: false
     }
 };
 
@@ -34,13 +33,13 @@ export const Default: Story = {};
 
 export const Error: Story = {
     args: {
-        type: "error"
+        status: "error"
     }
 };
 
 export const Warning: Story = {
     args: {
-        type: "warning"
+        status: "warning"
     }
 };
 
