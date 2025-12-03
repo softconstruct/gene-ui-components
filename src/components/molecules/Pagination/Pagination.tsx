@@ -156,9 +156,11 @@ const Pagination: FC<IPaginationProps> = ({
         if (!isNumericValue) return;
 
         setGoToPageValue(+inputValue);
+        handlePageChange(+inputValue);
     };
 
     const handleGoToPageBlur = () => {
+        if (currentPage === goToPageValue) return;
         const currentPageValue = goToPageValue > totalPages ? totalPages : goToPageValue || currentPage;
         setGoToPageValue(currentPageValue);
         handlePageChange(currentPageValue);
