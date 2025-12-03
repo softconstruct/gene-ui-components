@@ -130,18 +130,6 @@ describe("AccordionItem", () => {
         expect(wrapper.find(".accordionItem__title").text()).toBe("");
     });
 
-    it("renders className prop correctly", () => {
-        const className = "test-class";
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title="Test" className={className}>
-                    Content
-                </AccordionItem>
-            </Accordion>
-        );
-        expect(wrapper.find(".accordionItem").hasClass(className)).toBeTruthy();
-    });
-
     it("toggles expanded state on chevron button click", () => {
         expect(setup.find(".accordionItem_expanded")).toHaveLength(0);
         expect(setup.find(".accordionItem__body")).toHaveLength(0);

@@ -14,6 +14,11 @@ const AccordionContext = createContext<IAccordionContextProps>({
 
 interface IAccordionProps {
     /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
+    /**
      * Provide `AccordionItem` components to be rendered in the `Accordion`
      */
     children: ReactNode;
@@ -22,16 +27,12 @@ interface IAccordionProps {
      * Possible values: `large | medium | small`
      */
     size?: "large" | "medium" | "small";
-    /**
-     * Additional class for the parent element.
-     */
-    className?: string;
 }
 
 /**
  * Accordion component organizes content into expandable and collapsible sections.
  */
-const Accordion: FC<IAccordionProps> = ({ children, size = "large", className }) => {
+const Accordion: FC<IAccordionProps> = ({ children, size = "medium", className }) => {
     const contextValue = useMemo(() => ({ size }), [size]);
 
     return (

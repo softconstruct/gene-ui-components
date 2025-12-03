@@ -1,9 +1,7 @@
 import React, { FC, ReactNode, useContext, useRef, useState } from "react";
-// Utils
 import classNames from "classnames";
 import { nanoid } from "nanoid";
 
-// Icons & Types
 import { ChevronDown, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
 
 // Components
@@ -19,7 +17,6 @@ import useEllipsisDetection from "@hooks/useEllipsisDetection";
 // Styles
 import "./Accordion.scss";
 
-// Context
 import { AccordionContext } from "./Accordion";
 
 const buttonSizes = {
@@ -46,11 +43,6 @@ type IAccordionActionProps = Omit<
 >;
 
 interface IAccordionItemProps {
-    /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
-     */
-    className?: string;
     /**
      * The title text displayed in the accordion header
      */
@@ -80,23 +72,23 @@ interface IAccordionItemProps {
 /**
  * Accordion component organizes content into expandable and collapsible sections, allowing users to reveal or hide detailed information as needed. Each section, or "panel," typically includes a header that summarizes the content and can be clicked to expand or collapse the corresponding panel.
  */
-const AccordionItem: FC<IAccordionItemProps> = ({ className, title, Icon, children, actions }) => {
+const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions }) => {
     const { size } = useContext(AccordionContext);
 
     const [isExpanded, setIsExpanded] = useState(false);
     const titleRef = useRef<HTMLSpanElement | null>(null);
-    const isTruncated: boolean = useEllipsisDetection(titleRef, [title]);
+    const isTruncated = useEllipsisDetection(titleRef, [title]);
     const isRTLMode = document.dir === "rtl";
     const chevronHorizontalIcon = isRTLMode ? ChevronLeft : ChevronRight;
 
-    const handleToggleExpanded = () => {
+    const handleExpandToggle = () => {
         setIsExpanded((prevExpanded) => !prevExpanded);
     };
 
     return (
         <>
             <div
-                className={classNames(`accordionItem accordionItem_size_${size}`, className, {
+                className={classNames(`accordionItem accordionItem_size_${size}`, {
                     accordionItem_expanded: isExpanded
                 })}
             >
@@ -106,7 +98,7 @@ const AccordionItem: FC<IAccordionItemProps> = ({ className, title, Icon, childr
                         appearance="secondary"
                         layout="text"
                         Icon={isExpanded ? ChevronDown : chevronHorizontalIcon}
-                        onClick={handleToggleExpanded}
+                        onClick={handleExpandToggle}
                         aria-expanded={isExpanded}
                     />
                     {Icon && <Icon className="accordionItem__icon" size={iconSizes[size]} />}
