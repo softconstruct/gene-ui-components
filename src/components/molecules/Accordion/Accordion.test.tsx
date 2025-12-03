@@ -180,10 +180,7 @@ describe("AccordionItem", () => {
     it("renders actions when provided", () => {
         const wrapper = setup.setProps({
             children: (
-                <AccordionItem
-                    title="Test"
-                    actions={[{ Icon: Tag, appearance: "secondary", layout: "text", className: "test-action" }]}
-                >
+                <AccordionItem title="Test" actions={[{ Icon: Tag, className: "test-action" }]}>
                     Content
                 </AccordionItem>
             )
@@ -282,9 +279,9 @@ describe("AccordionItem", () => {
                 <AccordionItem
                     title="Test"
                     actions={[
-                        { Icon: Tag, appearance: "secondary", layout: "text", className: "action-1" },
-                        { Icon: Tag, appearance: "secondary", layout: "text", className: "action-2" },
-                        { Icon: Tag, appearance: "secondary", layout: "text", className: "action-3" }
+                        { Icon: Tag, className: "action-1" },
+                        { Icon: Tag, className: "action-2" },
+                        { Icon: Tag, className: "action-3" }
                     ]}
                 >
                     Content
@@ -302,10 +299,7 @@ describe("AccordionItem", () => {
         const onClickMock = jest.fn();
         const wrapper = setup.setProps({
             children: (
-                <AccordionItem
-                    title="Test"
-                    actions={[{ Icon: Tag, appearance: "secondary", layout: "text", onClick: onClickMock }]}
-                >
+                <AccordionItem title="Test" actions={[{ Icon: Tag, onClick: onClickMock }]}>
                     Content
                 </AccordionItem>
             )
@@ -331,10 +325,7 @@ describe("AccordionItem", () => {
             children: (
                 <AccordionItem
                     title="Test"
-                    actions={[
-                        { Icon: Tag, appearance: "secondary", layout: "text", className: "with-icon" },
-                        { appearance: "secondary", layout: "text", className: "without-icon" }
-                    ]}
+                    actions={[{ Icon: Tag, className: "with-icon" }, { className: "without-icon" }]}
                 >
                     Content
                 </AccordionItem>

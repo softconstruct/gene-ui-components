@@ -81,19 +81,13 @@ export const Default: Story = {
                     Icon={Tag}
                     actions={[
                         {
-                            Icon: Globe,
-                            appearance: "secondary",
-                            layout: "text"
+                            Icon: Globe
                         },
                         {
-                            Icon: Download,
-                            appearance: "secondary",
-                            layout: "text"
+                            Icon: Download
                         },
                         {
-                            Icon: RecycleBin,
-                            appearance: "secondary",
-                            layout: "text"
+                            Icon: RecycleBin
                         }
                     ]}
                 >
@@ -104,19 +98,13 @@ export const Default: Story = {
                     Icon={Tag}
                     actions={[
                         {
-                            Icon: Globe,
-                            appearance: "secondary",
-                            layout: "text"
+                            Icon: Globe
                         },
                         {
-                            Icon: Download,
-                            appearance: "secondary",
-                            layout: "text"
+                            Icon: Download
                         },
                         {
-                            Icon: RecycleBin,
-                            appearance: "secondary",
-                            layout: "text"
+                            Icon: RecycleBin
                         }
                     ]}
                 >
@@ -147,19 +135,13 @@ export const AccordionItemStory: StoryItem = storyObjBuilder({
                     {...(props as IAccordionItemProps)}
                     actions={[
                         {
-                            Icon: Globe,
-                            appearance: "secondary",
-                            layout: "text"
+                            Icon: Globe
                         },
                         {
-                            Icon: Download,
-                            appearance: "secondary",
-                            layout: "text"
+                            Icon: Download
                         },
                         {
-                            Icon: RecycleBin,
-                            appearance: "secondary",
-                            layout: "text"
+                            Icon: RecycleBin
                         }
                     ]}
                 />

@@ -39,7 +39,7 @@ const iconSizes = {
 
 type IAccordionActionProps = Omit<
     IButtonProps,
-    "size" | "fullWidth" | "children" | "iconPosition" | "type" | "disabled"
+    "size" | "fullWidth" | "children" | "iconPosition" | "type" | "disabled" | "layout" | "appearance"
 >;
 
 interface IAccordionItemProps {
@@ -121,7 +121,9 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
                             {actions.map((action: IAccordionActionProps) => {
                                 const { Icon: actionIcon } = action;
                                 const actionId = action.id || `accordion-action-${nanoid()}`;
-                                return actionIcon ? <Button key={actionId} {...action} /> : null;
+                                return actionIcon ? (
+                                    <Button key={actionId} {...action} layout="text" appearance="secondary" />
+                                ) : null;
                             })}
                         </ButtonGroup>
                     )}
