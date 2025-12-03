@@ -38,9 +38,14 @@ export const Default: Story = {
     render: (props) => (
         <div style={{ height: 550 }}>
             <Tabs {...props}>
-                {new Array(25).fill(null).map((_, i) => (
-                    <Tab title={`TAB ${i + 1}`}>tab {i + 1}</Tab>
-                ))}
+                {new Array(25).fill(null).map((_, i) => {
+                    const title = `TAB ${i + 1}`;
+                    return (
+                        <Tab title={title} key={title}>
+                            tab {i + 1}
+                        </Tab>
+                    );
+                })}
             </Tabs>
         </div>
     )
@@ -50,9 +55,14 @@ export const IconOnly: Story = {
     render: (props: ITabsProps) => (
         <div style={{ height: 550 }}>
             <Tabs {...props}>
-                {new Array(25).fill(null).map((_, i) => (
-                    <Tab Icon={TagOutline}>tab {i + 1} </Tab>
-                ))}
+                {new Array(25).fill(null).map((_, i) => {
+                    const key = i + 1;
+                    return (
+                        <Tab Icon={TagOutline} key={key}>
+                            tab {i + 1}{" "}
+                        </Tab>
+                    );
+                })}
             </Tabs>
         </div>
     )
@@ -62,11 +72,14 @@ export const TextOnly: Story = {
     render: (props: ITabsProps) => (
         <div style={{ height: 550 }}>
             <Tabs {...props}>
-                {new Array(25).fill(null).map((_, i) => (
-                    <Tab title={`tab${i + 1}`} Icon={null}>
-                        tab {i + 1}
-                    </Tab>
-                ))}
+                {new Array(25).fill(null).map((_, i) => {
+                    const title = `tab${i + 1}`;
+                    return (
+                        <Tab title={title} key={title}>
+                            tab {i + 1}
+                        </Tab>
+                    );
+                })}
             </Tabs>
         </div>
     )
@@ -76,11 +89,14 @@ export const TemplateWithSwap: Story = {
     render: (props: ITabsProps) => (
         <div style={{ height: 550 }}>
             <Tabs {...props}>
-                {new Array(25).fill(null).map((_, i) => (
-                    <Tab title={`TAB ${i + 1}`} content={<Pill size="medium" text={`${i}`} />}>
-                        tab {i + 1}
-                    </Tab>
-                ))}
+                {new Array(25).fill(null).map((_, i) => {
+                    const title = `TAB ${i + 1}`;
+                    return (
+                        <Tab title={title} content={<Pill size="medium" text={`${i}`} key={title} />}>
+                            tab {i + 1}
+                        </Tab>
+                    );
+                })}
             </Tabs>
         </div>
     )
@@ -90,11 +106,14 @@ export const Vertical: Story = {
     render: (props: ITabsProps) => (
         <div style={{ height: 550 }}>
             <Tabs {...props} direction="vertical">
-                {new Array(25).fill(null).map((_, i) => (
-                    <Tab title={`TAB ${i + 1}`} content={<Pill size="medium" text={`${i}`} />}>
-                        tab {i + 1}
-                    </Tab>
-                ))}
+                {new Array(25).fill(null).map((_, i) => {
+                    const title = `TAB ${i + 1}`;
+                    return (
+                        <Tab title={title} content={<Pill size="medium" text={`${i}`} key={title} />}>
+                            tab {i + 1}
+                        </Tab>
+                    );
+                })}
             </Tabs>
         </div>
     )
