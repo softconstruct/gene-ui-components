@@ -1,55 +1,60 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-// Icons
-import { Tag } from "@geneui/icons";
+import { ChevronDown, ChevronRight, Tag } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
+import Scrollbar from "@components/atoms/Scrollbar";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import Tooltip from "@components/molecules/Tooltip";
 
 import Accordion, { IAccordionProps } from "./Accordion";
-import AccordionItem, { IAccordionItemProps } from "./AccordionItem";
+import AccordionItem from "./AccordionItem";
 
 describe("Accordion", () => {
-    it("renders without crashing", () => {
-        const wrapper = mount(
+    let setup: ReactWrapper<IAccordionProps>;
+
+    beforeEach(() => {
+        setup = mount(
             <Accordion>
                 <AccordionItem title="Test">Content</AccordionItem>
             </Accordion>
         );
-        expect(wrapper.exists()).toBeTruthy();
+    });
+
+    it("renders without crashing", () => {
+        expect(setup.exists()).toBeTruthy();
     });
 
     it("renders className prop correctly", () => {
         const className = "test-class";
-        const wrapper = mount(
-            <Accordion className={className}>
-                <AccordionItem title="Test">Content</AccordionItem>
-            </Accordion>
-        );
+        const wrapper = setup.setProps({ className });
         expect(wrapper.find(".accordion").hasClass(className)).toBeTruthy();
     });
 
     it("renders children correctly", () => {
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title="Item 1">Content 1</AccordionItem>
-                <AccordionItem title="Item 2">Content 2</AccordionItem>
-                <AccordionItem title="Item 3">Content 3</AccordionItem>
-            </Accordion>
-        );
+        const wrapper = setup.setProps({
+            children: (
+                <>
+                    <AccordionItem title="Item 1">Content 1</AccordionItem>
+                    <AccordionItem title="Item 2">Content 2</AccordionItem>
+                    <AccordionItem title="Item 3">Content 3</AccordionItem>
+                </>
+            )
+        });
         expect(wrapper.find(AccordionItem)).toHaveLength(3);
     });
 
     it("only accepts AccordionItem as children", () => {
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title="Item 1">Content 1</AccordionItem>
-                <AccordionItem title="Item 2">Content 2</AccordionItem>
-            </Accordion>
-        );
+        const wrapper = setup.setProps({
+            children: (
+                <>
+                    <AccordionItem title="Item 1">Content 1</AccordionItem>
+                    <AccordionItem title="Item 2">Content 2</AccordionItem>
+                </>
+            )
+        });
         expect(wrapper.find(AccordionItem)).toHaveLength(2);
         wrapper.find(AccordionItem).forEach((item) => {
             expect(item.find(".accordionItem").exists()).toBeTruthy();
@@ -57,25 +62,23 @@ describe("Accordion", () => {
     });
 
     it.each<IAccordionProps["size"]>(["large", "medium", "small"])('should pass "%s" size via context', (size) => {
-        const wrapper = mount(
-            <Accordion size={size}>
-                <AccordionItem title="Test">Content</AccordionItem>
-            </Accordion>
-        );
+        const wrapper = setup.setProps({ size });
         expect(wrapper.find(`.accordionItem_size_${size}`)).toHaveLength(1);
     });
 
     it("renders multiple AccordionItems with different props", () => {
         const MockIcon = Tag;
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title="Item 1" Icon={MockIcon}>
-                    Content 1
-                </AccordionItem>
-                <AccordionItem title="Item 2">Content 2</AccordionItem>
-                <AccordionItem title="Item 3">Content 3</AccordionItem>
-            </Accordion>
-        );
+        const wrapper = setup.setProps({
+            children: (
+                <>
+                    <AccordionItem title="Item 1" Icon={MockIcon}>
+                        Content 1
+                    </AccordionItem>
+                    <AccordionItem title="Item 2">Content 2</AccordionItem>
+                    <AccordionItem title="Item 3">Content 3</AccordionItem>
+                </>
+            )
+        });
 
         expect(wrapper.find(AccordionItem)).toHaveLength(3);
         expect(wrapper.find(Tag).exists()).toBeTruthy();
@@ -83,7 +86,7 @@ describe("Accordion", () => {
 });
 
 describe("AccordionItem", () => {
-    let setup: ReactWrapper<IAccordionItemProps>;
+    let setup: ReactWrapper<IAccordionProps>;
 
     beforeEach(() => {
         setup = mount(
@@ -98,35 +101,18 @@ describe("AccordionItem", () => {
     });
 
     it("renders title prop correctly", () => {
-        const title = "Accordion Item Title";
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title={title}>Content</AccordionItem>
-            </Accordion>
-        );
-        expect(wrapper.find(".accordionItem__title").first().text()).toBe(title);
+        expect(setup.find(".accordionItem__title").first().text()).toBe("Test Title");
     });
 
     it("renders Tooltip when title is provided", () => {
-        const title = "Test Title";
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title={title}>Content</AccordionItem>
-            </Accordion>
-        );
-        expect(wrapper.find(Tooltip).exists()).toBeTruthy();
-        expect(wrapper.find(Tooltip).prop("text")).toBe(title);
+        expect(setup.find(Tooltip).exists()).toBeTruthy();
+        expect(setup.find(Tooltip).prop("text")).toBe("Test Title");
     });
 
     it("does not render title when not provided", () => {
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem>Content</AccordionItem>
-            </Accordion>
-        );
+        const wrapper = setup.setProps({ children: <AccordionItem>Content</AccordionItem> });
         expect(wrapper.find(".accordionItem__title").exists()).toBeTruthy();
         expect(wrapper.find(Tooltip).exists()).toBeFalsy();
-        expect(wrapper.find(Text).exists()).toBeFalsy();
         expect(wrapper.find(".accordionItem__title").text()).toBe("");
     });
 
@@ -149,34 +135,29 @@ describe("AccordionItem", () => {
 
     it("renders Icon when provided", () => {
         const MockIcon = Tag;
-        const wrapper = mount(
-            <Accordion>
+        const wrapper = setup.setProps({
+            children: (
                 <AccordionItem title="Test" Icon={MockIcon}>
                     Content
                 </AccordionItem>
-            </Accordion>
-        );
+            )
+        });
         expect(wrapper.find(MockIcon).exists()).toBeTruthy();
     });
 
     it("does not render Icon when not provided", () => {
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title="Test">Content</AccordionItem>
-            </Accordion>
-        );
-        expect(wrapper.find(Tag).exists()).toBeFalsy();
+        expect(setup.find(Tag).exists()).toBeFalsy();
     });
 
     it("renders children content correctly when expanded", () => {
         const content = "Test Content";
-        const wrapper = mount(
-            <Accordion>
+        const wrapper = setup.setProps({
+            children: (
                 <AccordionItem title="Test">
                     <div className="test-content">{content}</div>
                 </AccordionItem>
-            </Accordion>
-        );
+            )
+        });
 
         expect(wrapper.find(".test-content")).toHaveLength(0);
 
@@ -188,89 +169,69 @@ describe("AccordionItem", () => {
     });
 
     it("renders accordionItem__data div when expanded", () => {
-        const content = "Test Content";
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title="Test">{content}</AccordionItem>
-            </Accordion>
-        );
-        expect(wrapper.find(".accordionItem__data").exists()).toBeFalsy();
-        wrapper.find(".accordionItem__header button").first().simulate("click");
-        wrapper.update();
-        expect(wrapper.find(".accordionItem__data").exists()).toBeTruthy();
-        expect(wrapper.find(".accordionItem__data").text()).toBe(content);
-        expect(wrapper.find(".accordionItem__content").find(".accordionItem__data").exists()).toBeTruthy();
+        expect(setup.find(".accordionItem__data").exists()).toBeFalsy();
+        setup.find(".accordionItem__header button").first().simulate("click");
+        setup.update();
+        expect(setup.find(".accordionItem__data").exists()).toBeTruthy();
+        expect(setup.find(".accordionItem__data").text()).toBe("Test Content");
+        expect(setup.find(".accordionItem__content").find(".accordionItem__data").exists()).toBeTruthy();
     });
 
     it("renders actions when provided", () => {
-        const wrapper = mount(
-            <Accordion>
+        const wrapper = setup.setProps({
+            children: (
                 <AccordionItem
                     title="Test"
                     actions={[{ Icon: Tag, appearance: "secondary", layout: "text", className: "test-action" }]}
                 >
                     Content
                 </AccordionItem>
-            </Accordion>
-        );
+            )
+        });
+        wrapper.update();
         expect(wrapper.find(ButtonGroup).exists()).toBeTruthy();
         expect(wrapper.find(ButtonGroup).find(Button).length).toBeGreaterThan(0);
         expect(wrapper.find(".test-action").length).toBeGreaterThan(0);
     });
 
     it("does not render actions when not provided", () => {
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title="Test">Content</AccordionItem>
-            </Accordion>
-        );
-        expect(wrapper.find(ButtonGroup).exists()).toBeFalsy();
+        expect(setup.find(ButtonGroup).exists()).toBeFalsy();
     });
 
     it("sets aria-expanded attribute correctly", () => {
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title="Test">Content</AccordionItem>
-            </Accordion>
-        );
-
-        const button = wrapper.find(".accordionItem__header button").first();
+        const button = setup.find(".accordionItem__header button").first();
 
         expect(button.prop("aria-expanded")).toBe(false);
 
         button.simulate("click");
-        wrapper.update();
+        setup.update();
 
-        expect(wrapper.find(".accordionItem__header button").first().prop("aria-expanded")).toBe(true);
+        expect(setup.find(".accordionItem__header button").first().prop("aria-expanded")).toBe(true);
     });
 
     it.each<IAccordionProps["size"]>(["large", "medium", "small"])('should apply "%s" size from context', (size) => {
-        const wrapper = mount(
-            <Accordion size={size}>
-                <AccordionItem title="Test">Content</AccordionItem>
-            </Accordion>
-        );
+        const wrapper = setup.setProps({ size });
         expect(wrapper.find(`.accordionItem_size_${size}`)).toHaveLength(1);
     });
 
     it("applies ellipsis to long titles", () => {
         const longTitle = "This is a very long accordion item title that should be truncated";
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title={longTitle}>Content</AccordionItem>
-            </Accordion>
-        );
+        const wrapper = setup.setProps({
+            children: <AccordionItem title={longTitle}>Content</AccordionItem>
+        });
         expect(wrapper.find(".accordionItem__title").first().hasClass("ellipsis-text")).toBeTruthy();
     });
 
     it("each AccordionItem maintains independent expanded state", () => {
-        const wrapper = mount(
-            <Accordion>
-                <AccordionItem title="Item 1">Content 1</AccordionItem>
-                <AccordionItem title="Item 2">Content 2</AccordionItem>
-                <AccordionItem title="Item 3">Content 3</AccordionItem>
-            </Accordion>
-        );
+        const wrapper = setup.setProps({
+            children: (
+                <>
+                    <AccordionItem title="Item 1">Content 1</AccordionItem>
+                    <AccordionItem title="Item 2">Content 2</AccordionItem>
+                    <AccordionItem title="Item 3">Content 3</AccordionItem>
+                </>
+            )
+        });
 
         wrapper.find(".accordionItem__header button").at(0).simulate("click");
         wrapper.update();
@@ -286,5 +247,102 @@ describe("AccordionItem", () => {
         wrapper.update();
 
         expect(wrapper.find(".accordionItem_expanded")).toHaveLength(1);
+    });
+
+    it("changes chevron icon when expanded/collapsed", () => {
+        const button = setup.find(".accordionItem__header button").first();
+
+        expect(button.find(ChevronRight).exists()).toBeTruthy();
+        expect(button.find(ChevronDown).exists()).toBeFalsy();
+
+        button.simulate("click");
+        setup.update();
+
+        expect(setup.find(".accordionItem__header button").first().find(ChevronDown).exists()).toBeTruthy();
+        expect(setup.find(".accordionItem__header button").first().find(ChevronRight).exists()).toBeFalsy();
+
+        setup.find(".accordionItem__header button").first().simulate("click");
+        setup.update();
+
+        expect(setup.find(".accordionItem__header button").first().find(ChevronRight).exists()).toBeTruthy();
+        expect(setup.find(".accordionItem__header button").first().find(ChevronDown).exists()).toBeFalsy();
+    });
+
+    it("renders Scrollbar in expanded content", () => {
+        expect(setup.find(Scrollbar).exists()).toBeFalsy();
+
+        setup.find(".accordionItem__header button").first().simulate("click");
+        setup.update();
+
+        expect(setup.find(Scrollbar).exists()).toBeTruthy();
+    });
+    it("renders multiple actions correctly", () => {
+        const wrapper = setup.setProps({
+            children: (
+                <AccordionItem
+                    title="Test"
+                    actions={[
+                        { Icon: Tag, appearance: "secondary", layout: "text", className: "action-1" },
+                        { Icon: Tag, appearance: "secondary", layout: "text", className: "action-2" },
+                        { Icon: Tag, appearance: "secondary", layout: "text", className: "action-3" }
+                    ]}
+                >
+                    Content
+                </AccordionItem>
+            )
+        });
+        wrapper.update();
+        expect(wrapper.find(ButtonGroup).find(Button)).toHaveLength(3);
+        expect(wrapper.find(".action-1").exists()).toBeTruthy();
+        expect(wrapper.find(".action-2").exists()).toBeTruthy();
+        expect(wrapper.find(".action-3").exists()).toBeTruthy();
+    });
+
+    it("calls action onClick handler when action button is clicked", () => {
+        const onClickMock = jest.fn();
+        const wrapper = setup.setProps({
+            children: (
+                <AccordionItem
+                    title="Test"
+                    actions={[{ Icon: Tag, appearance: "secondary", layout: "text", onClick: onClickMock }]}
+                >
+                    Content
+                </AccordionItem>
+            )
+        });
+        wrapper.update();
+        wrapper.find(ButtonGroup).find(Button).first().simulate("click");
+        expect(onClickMock).toHaveBeenCalled();
+    });
+
+    it("does not render ButtonGroup when actions array is empty", () => {
+        const wrapper = setup.setProps({
+            children: (
+                <AccordionItem title="Test" actions={[]}>
+                    Content
+                </AccordionItem>
+            )
+        });
+        expect(wrapper.find(ButtonGroup).exists()).toBeFalsy();
+    });
+
+    it("does not render action button when action has no Icon", () => {
+        const wrapper = setup.setProps({
+            children: (
+                <AccordionItem
+                    title="Test"
+                    actions={[
+                        { Icon: Tag, appearance: "secondary", layout: "text", className: "with-icon" },
+                        { appearance: "secondary", layout: "text", className: "without-icon" }
+                    ]}
+                >
+                    Content
+                </AccordionItem>
+            )
+        });
+        wrapper.update();
+        expect(wrapper.find(ButtonGroup).find(Button)).toHaveLength(1);
+        expect(wrapper.find(".with-icon").exists()).toBeTruthy();
+        expect(wrapper.find(".without-icon").exists()).toBeFalsy();
     });
 });

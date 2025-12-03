@@ -9,15 +9,10 @@ interface IAccordionContextProps {
 }
 
 const AccordionContext = createContext<IAccordionContextProps>({
-    size: "large"
+    size: "medium"
 });
 
 interface IAccordionProps {
-    /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
-     */
-    className?: string;
     /**
      * Provide `AccordionItem` components to be rendered in the `Accordion`
      */
@@ -27,6 +22,10 @@ interface IAccordionProps {
      * Possible values: `large | medium | small`
      */
     size?: "large" | "medium" | "small";
+    /**
+     * Additional class for the parent element.
+     */
+    className?: string;
 }
 
 /**
