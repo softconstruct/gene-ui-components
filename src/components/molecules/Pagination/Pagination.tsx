@@ -130,7 +130,7 @@ const Pagination: FC<IPaginationProps> = ({
 
     const [currentPage, setCurrentPage] = useState<number>(+current > totalPages ? 1 : +current);
     const [currentPageSize, setCurrentPageSize] = useState<number>(rowsPerPageOptions?.[0] || 0);
-    const [goToPageValue, setGoToPageValue] = useState<string>(() => currentPage.toString());
+    const [goToPageValue, setGoToPageValue] = useState<number>(() => currentPage);
 
     // Generate the page numbers to display
     const calculatedData = createPageNumbers(currentPage, +totalPages, MAXIMUM_SIZE_IN_VIEW_PORT);
@@ -139,29 +139,27 @@ const Pagination: FC<IPaginationProps> = ({
     useEffect(() => {
         const newCurrentPage = +current > totalPages ? 1 : +current;
         setCurrentPage(newCurrentPage);
-        setGoToPageValue(newCurrentPage.toString());
+        setGoToPageValue(newCurrentPage);
     }, [current, totalPages]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
-            if (newPage !== +goToPageValue) setGoToPageValue(newPage.toString());
+            if (newPage !== goToPageValue) setGoToPageValue(newPage);
             setCurrentPage(newPage);
             onPageChange?.(newPage);
         }
     };
 
     const handleGoToPageChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const isNumericValue = allowOnlyDigits(e);
+        const inputValue = e.currentTarget.value;
+        const isNumericValue = allowOnlyDigits(inputValue);
         if (!isNumericValue) return;
 
-        const inputValue = e.currentTarget.value;
-
-        setGoToPageValue(inputValue);
+        setGoToPageValue(+inputValue);
     };
 
     const handleGoToPageBlur = () => {
-        const currentPageValue =
-            +goToPageValue > totalPages ? totalPages.toString() : goToPageValue || currentPage.toString();
+        const currentPageValue = goToPageValue > totalPages ? totalPages : goToPageValue || currentPage;
         setGoToPageValue(currentPageValue);
         handlePageChange(+currentPageValue);
     };
@@ -181,6 +179,8 @@ const Pagination: FC<IPaginationProps> = ({
         const newPage = isForward ? Math.min(currentPage + jumpSize, totalPages) : Math.max(currentPage - jumpSize, 1);
         handlePageChange(newPage);
     };
+
+    const pageValue = () => (goToPageValue > 0 ? goToPageValue.toString() : "");
 
     return (
         <div className={classNames("pagination", className)}>
@@ -269,7 +269,7 @@ const Pagination: FC<IPaginationProps> = ({
                             onBlur={handleGoToPageBlur}
                             autoComplete="off"
                             className="pagination__input"
-                            value={goToPageValue}
+                            value={pageValue()}
                         />
                         <span>{goToPageSuffixLabel}</span>
                     </div>
