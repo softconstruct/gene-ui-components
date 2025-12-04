@@ -1,11 +1,11 @@
-import React, { FC, ReactNode, useContext, useRef, useState } from "react";
+import React, { FC, FocusEvent, MouseEvent, ReactNode, useContext, useRef, useState } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid";
 
 import { ChevronDown, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
 
 // Components
-import Button, { IButtonProps } from "@components/atoms/Button";
+import Button from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
@@ -37,10 +37,40 @@ const iconSizes = {
     small: 20
 } as const;
 
-type IAccordionActionProps = Omit<
-    IButtonProps,
-    "size" | "fullWidth" | "children" | "iconPosition" | "type" | "disabled" | "layout" | "appearance"
->;
+interface IAccordionActionProps {
+    /**
+     * The `Icon` component to display in the action button. If not provided, the action button will not be rendered.
+     */
+    Icon?: FC<IconProps>;
+    /**
+     * A callback function that is called when the button is clicked.
+     */
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * HTML id attribute for the button element.
+     */
+    id?: string;
+    /**
+     * Specifies the name of the button.
+     */
+    name?: string;
+    /**
+     * An ARIA label for the button.
+     */
+    "aria-label"?: string;
+    /**
+     * Event handler for when the button element loses focus.
+     */
+    onBlur?: (e: FocusEvent<HTMLButtonElement>) => void;
+    /**
+     * Event handler for when the button element receives focus.
+     */
+    onFocus?: (e: FocusEvent<HTMLButtonElement>) => void;
+    /**
+     * Tab index for keyboard navigation.
+     */
+    tabIndex?: number;
+}
 
 interface IAccordionItemProps {
     /**
@@ -54,12 +84,12 @@ interface IAccordionItemProps {
     /**
      * An array of action button objects to display in the accordion header.
      * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
-     * Each object conforms to the `IButtonProps` interface, allowing full customization of each button.
-     * For icon-only buttons, use the `Icon` prop instead of `children`.
+     * Each action button is rendered with `layout="text"` and `appearance="secondary"` (these cannot be overridden).
+     * For icon-only buttons, use the `Icon` prop (required).
      * @example
      * actions={[
-     *   { Icon: Globe, appearance: 'secondary', layout: 'text', onClick: handleAction },
-     *   { Icon: Download, appearance: 'secondary', layout: 'text' }
+     *   { Icon: Globe, onClick: handleAction },
+     *   { Icon: Download }
      * ]}
      */
     actions?: IAccordionActionProps[];
@@ -67,13 +97,18 @@ interface IAccordionItemProps {
      * Content to display when the accordion item is expanded
      */
     children: ReactNode;
+    /**
+     * A unique identifier for the accordion item element.
+     * Useful for accessibility purposes, like `aria-labelledby`.
+     */
+    id?: string;
 }
 
 /**
  * Accordion component organizes content into expandable and collapsible sections, allowing users to reveal or hide detailed information as needed. Each section, or "panel," typically includes a header that summarizes the content and can be clicked to expand or collapse the corresponding panel.
  */
-const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions }) => {
-    const { size } = useContext(AccordionContext);
+const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions, id }) => {
+    const { size, onToggle } = useContext(AccordionContext);
 
     const [isExpanded, setIsExpanded] = useState(false);
     const titleRef = useRef<HTMLSpanElement | null>(null);
@@ -82,7 +117,9 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
     const chevronHorizontalIcon = isRTLMode ? ChevronLeft : ChevronRight;
 
     const handleExpandToggle = () => {
-        setIsExpanded((prevExpanded) => !prevExpanded);
+        const currentIsExpanded = !isExpanded;
+        setIsExpanded(currentIsExpanded);
+        onToggle?.({ id, isExpanded: currentIsExpanded });
     };
 
     return (
@@ -91,6 +128,7 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
                 className={classNames(`accordionItem accordionItem_size_${size}`, {
                     accordionItem_expanded: isExpanded
                 })}
+                id={id}
             >
                 <div className="accordionItem__header">
                     <Button
@@ -119,9 +157,8 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
                     {actions && actions.length > 0 && (
                         <ButtonGroup className="accordionItem__actions" size={size}>
                             {actions.map((action: IAccordionActionProps) => {
-                                const { Icon: actionIcon } = action;
                                 const actionId = action.id || `accordion-action-${nanoid()}`;
-                                return actionIcon ? (
+                                return action.Icon ? (
                                     <Button key={actionId} {...action} layout="text" appearance="secondary" />
                                 ) : null;
                             })}

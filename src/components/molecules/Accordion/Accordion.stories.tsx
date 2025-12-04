@@ -71,7 +71,8 @@ export const Default: Story = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
-        children: args({ control: "false", ...propCategory.content })
+        children: args({ control: "false", ...propCategory.content }),
+        onToggle: args({ control: "false", ...propCategory.action })
     },
     render: (props) => {
         return (
@@ -121,7 +122,8 @@ export const AccordionItemStory: StoryItem = storyObjBuilder({
         title: args({ control: "text", ...propCategory.content }),
         Icon: args({ control: "false", ...propCategory.content }),
         actions: args({ control: "false", ...propCategory.functionality }),
-        children: args({ control: "false", ...propCategory.content })
+        children: args({ control: "false", ...propCategory.content }),
+        id: args({ control: "text", ...propCategory.others })
     },
     args: {
         title: "Accordion Item",

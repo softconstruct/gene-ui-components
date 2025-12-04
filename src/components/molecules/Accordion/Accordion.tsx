@@ -4,12 +4,21 @@ import classNames from "classnames";
 // Styles
 import "./Accordion.scss";
 
+interface IAccordionToggleInfo {
+    id?: string;
+    isExpanded: boolean;
+}
+
+type AccordionToggleHandler = (info: IAccordionToggleInfo) => void;
+
 interface IAccordionContextProps {
     size: "large" | "medium" | "small";
+    onToggle: AccordionToggleHandler;
 }
 
 const AccordionContext = createContext<IAccordionContextProps>({
-    size: "medium"
+    size: "medium",
+    onToggle: () => {}
 });
 
 interface IAccordionProps {
@@ -26,13 +35,17 @@ interface IAccordionProps {
      * Additional class for the parent element.
      */
     className?: string;
+    /**
+     * A callback function that is called when the accordion item is toggled.
+     */
+    onToggle?: AccordionToggleHandler;
 }
 
 /**
  * Accordion component organizes content into expandable and collapsible sections.
  */
-const Accordion: FC<IAccordionProps> = ({ children, size = "medium", className }) => {
-    const contextValue = useMemo(() => ({ size }), [size]);
+const Accordion: FC<IAccordionProps> = ({ children, size = "medium", className, onToggle = () => {} }) => {
+    const contextValue = useMemo(() => ({ size, onToggle }), [size, onToggle]);
 
     return (
         <AccordionContext.Provider value={contextValue}>
