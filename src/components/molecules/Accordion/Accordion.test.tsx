@@ -83,6 +83,109 @@ describe("Accordion", () => {
         expect(wrapper.find(AccordionItem)).toHaveLength(3);
         expect(wrapper.find(Tag).exists()).toBeTruthy();
     });
+
+    it("calls onToggle callback when accordion item is toggled", () => {
+        const onToggleMock = jest.fn();
+        const wrapper = setup.setProps({
+            onToggle: onToggleMock,
+            children: (
+                <AccordionItem title="Test" id="test-item-1">
+                    Content
+                </AccordionItem>
+            )
+        });
+
+        expect(onToggleMock).not.toHaveBeenCalled();
+
+        wrapper.find(".accordionItem__header button").first().simulate("click");
+
+        expect(onToggleMock).toHaveBeenCalledTimes(1);
+        expect(onToggleMock).toHaveBeenCalledWith({
+            id: "test-item-1",
+            isExpanded: true
+        });
+
+        wrapper.find(".accordionItem__header button").first().simulate("click");
+
+        expect(onToggleMock).toHaveBeenCalledTimes(2);
+        expect(onToggleMock).toHaveBeenLastCalledWith({
+            id: "test-item-1",
+            isExpanded: false
+        });
+    });
+
+    it("calls onToggle callback with undefined id when id is not provided", () => {
+        const onToggleMock = jest.fn();
+        const wrapper = setup.setProps({
+            onToggle: onToggleMock,
+            children: <AccordionItem title="Test">Content</AccordionItem>
+        });
+
+        wrapper.find(".accordionItem__header button").first().simulate("click");
+
+        expect(onToggleMock).toHaveBeenCalledWith({
+            id: undefined,
+            isExpanded: true
+        });
+    });
+
+    it("calls onToggle callback for each accordion item independently", () => {
+        const onToggleMock = jest.fn();
+        const wrapper = setup.setProps({
+            onToggle: onToggleMock,
+            children: (
+                <>
+                    <AccordionItem title="Item 1" id="item-1">
+                        Content 1
+                    </AccordionItem>
+                    <AccordionItem title="Item 2" id="item-2">
+                        Content 2
+                    </AccordionItem>
+                    <AccordionItem title="Item 3" id="item-3">
+                        Content 3
+                    </AccordionItem>
+                </>
+            )
+        });
+
+        wrapper.find(".accordionItem__header button").at(0).simulate("click");
+
+        expect(onToggleMock).toHaveBeenCalledTimes(1);
+        expect(onToggleMock).toHaveBeenLastCalledWith({
+            id: "item-1",
+            isExpanded: true
+        });
+
+        wrapper.find(".accordionItem__header button").at(1).simulate("click");
+
+        expect(onToggleMock).toHaveBeenCalledTimes(2);
+        expect(onToggleMock).toHaveBeenLastCalledWith({
+            id: "item-2",
+            isExpanded: true
+        });
+
+        wrapper.find(".accordionItem__header button").at(2).simulate("click");
+
+        expect(onToggleMock).toHaveBeenCalledTimes(3);
+        expect(onToggleMock).toHaveBeenLastCalledWith({
+            id: "item-3",
+            isExpanded: true
+        });
+    });
+
+    it("does not throw error when onToggle is not provided", () => {
+        const wrapper = setup.setProps({
+            children: (
+                <AccordionItem title="Test" id="test-item">
+                    Content
+                </AccordionItem>
+            )
+        });
+
+        expect(() => {
+            wrapper.find(".accordionItem__header button").first().simulate("click");
+        }).not.toThrow();
+    });
 });
 
 describe("AccordionItem", () => {
@@ -98,6 +201,26 @@ describe("AccordionItem", () => {
 
     it("renders without crashing", () => {
         expect(setup.find(AccordionItem).exists()).toBeTruthy();
+    });
+
+    it("renders id prop correctly", () => {
+        const wrapper = setup.setProps({
+            children: (
+                <AccordionItem title="Test" id="test-accordion-item">
+                    Content
+                </AccordionItem>
+            )
+        });
+        expect(wrapper.find("#test-accordion-item").exists()).toBeTruthy();
+        expect(wrapper.find(".accordionItem").prop("id")).toBe("test-accordion-item");
+    });
+
+    it("does not render id attribute when id prop is not provided", () => {
+        const wrapper = setup.setProps({
+            children: <AccordionItem title="Test">Content</AccordionItem>
+        });
+        const accordionItem = wrapper.find(".accordionItem");
+        expect(accordionItem.prop("id")).toBeUndefined();
     });
 
     it("renders title prop correctly", () => {
@@ -131,6 +254,36 @@ describe("AccordionItem", () => {
 
         expect(setup.find(".accordionItem_expanded")).toHaveLength(0);
         expect(setup.find(".accordionItem__body")).toHaveLength(0);
+    });
+
+    it("calls onToggle callback with correct id and isExpanded state", () => {
+        const onToggleMock = jest.fn();
+        const wrapper = setup.setProps({
+            onToggle: onToggleMock,
+            children: (
+                <AccordionItem title="Test Title" id="accordion-item-1">
+                    Test Content
+                </AccordionItem>
+            )
+        });
+
+        const button = wrapper.find(".accordionItem__header button").first();
+
+        button.simulate("click");
+
+        expect(onToggleMock).toHaveBeenCalledTimes(1);
+        expect(onToggleMock).toHaveBeenCalledWith({
+            id: "accordion-item-1",
+            isExpanded: true
+        });
+
+        button.simulate("click");
+
+        expect(onToggleMock).toHaveBeenCalledTimes(2);
+        expect(onToggleMock).toHaveBeenLastCalledWith({
+            id: "accordion-item-1",
+            isExpanded: false
+        });
     });
 
     it("renders Icon when provided", () => {
@@ -180,7 +333,7 @@ describe("AccordionItem", () => {
     it("renders actions when provided", () => {
         const wrapper = setup.setProps({
             children: (
-                <AccordionItem title="Test" actions={[{ Icon: Tag, className: "test-action" }]}>
+                <AccordionItem title="Test" actions={[{ Icon: Tag, id: "test-action" }]}>
                     Content
                 </AccordionItem>
             )
@@ -188,7 +341,7 @@ describe("AccordionItem", () => {
         wrapper.update();
         expect(wrapper.find(ButtonGroup).exists()).toBeTruthy();
         expect(wrapper.find(ButtonGroup).find(Button).length).toBeGreaterThan(0);
-        expect(wrapper.find(".test-action").length).toBeGreaterThan(0);
+        expect(wrapper.find(ButtonGroup).find(Button).first().prop("id")).toBe("test-action");
     });
 
     it("does not render actions when not provided", () => {
@@ -279,9 +432,9 @@ describe("AccordionItem", () => {
                 <AccordionItem
                     title="Test"
                     actions={[
-                        { Icon: Tag, className: "action-1" },
-                        { Icon: Tag, className: "action-2" },
-                        { Icon: Tag, className: "action-3" }
+                        { Icon: Tag, id: "action-1" },
+                        { Icon: Tag, id: "action-2" },
+                        { Icon: Tag, id: "action-3" }
                     ]}
                 >
                     Content
@@ -290,9 +443,9 @@ describe("AccordionItem", () => {
         });
         wrapper.update();
         expect(wrapper.find(ButtonGroup).find(Button)).toHaveLength(3);
-        expect(wrapper.find(".action-1").exists()).toBeTruthy();
-        expect(wrapper.find(".action-2").exists()).toBeTruthy();
-        expect(wrapper.find(".action-3").exists()).toBeTruthy();
+        expect(wrapper.find(ButtonGroup).find(Button).at(0).prop("id")).toBe("action-1");
+        expect(wrapper.find(ButtonGroup).find(Button).at(1).prop("id")).toBe("action-2");
+        expect(wrapper.find(ButtonGroup).find(Button).at(2).prop("id")).toBe("action-3");
     });
 
     it("calls action onClick handler when action button is clicked", () => {
@@ -323,17 +476,13 @@ describe("AccordionItem", () => {
     it("does not render action button when action has no Icon", () => {
         const wrapper = setup.setProps({
             children: (
-                <AccordionItem
-                    title="Test"
-                    actions={[{ Icon: Tag, className: "with-icon" }, { className: "without-icon" }]}
-                >
+                <AccordionItem title="Test" actions={[{ Icon: Tag, id: "with-icon" }, { id: "without-icon" }]}>
                     Content
                 </AccordionItem>
             )
         });
         wrapper.update();
         expect(wrapper.find(ButtonGroup).find(Button)).toHaveLength(1);
-        expect(wrapper.find(".with-icon").exists()).toBeTruthy();
-        expect(wrapper.find(".without-icon").exists()).toBeFalsy();
+        expect(wrapper.find(ButtonGroup).find(Button).first().prop("id")).toBe("with-icon");
     });
 });
