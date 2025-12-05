@@ -135,6 +135,8 @@ const Pagination: FC<IPaginationProps> = ({
     // Generate the page numbers to display
     const calculatedData = createPageNumbers(currentPage, +totalPages, MAXIMUM_SIZE_IN_VIEW_PORT);
 
+    const pageValue = goToPageValue > 0 ? goToPageValue : "";
+
     // Effect to sync internal state with external prop changes
     useEffect(() => {
         const newCurrentPage = +current > totalPages ? 1 : +current;
@@ -181,8 +183,6 @@ const Pagination: FC<IPaginationProps> = ({
         const newPage = isForward ? Math.min(currentPage + jumpSize, totalPages) : Math.max(currentPage - jumpSize, 1);
         handlePageChange(newPage);
     };
-
-    const pageValue = () => (goToPageValue > 0 ? goToPageValue : "");
 
     return (
         <div className={classNames("pagination", className)}>
@@ -271,7 +271,7 @@ const Pagination: FC<IPaginationProps> = ({
                             onBlur={handleGoToPageBlur}
                             autoComplete="off"
                             className="pagination__input"
-                            value={pageValue()}
+                            value={pageValue}
                         />
                         <span>{goToPageSuffixLabel}</span>
                     </div>

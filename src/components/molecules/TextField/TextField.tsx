@@ -206,7 +206,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         const [internalValue, setInternalValue] = useState("");
         const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
         const [paddingClassesForIcon, setPaddingClassesForIcon] = useState<string>("");
-        const inputValue = isControlled ? (value ?? "").toString() : internalValue;
+        const inputValue = isControlled ? value.toString() : internalValue;
         const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
 
         const labelSize = labelSizeMap[size] || "medium";
