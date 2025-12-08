@@ -34,8 +34,3 @@ export const DIGITS_ONLY = /^\d*$/;
  * NUMERIC_STRING_PATTERN.test("--4")    // false (double minus)
  */
 export const NUMERIC_STRING_PATTERN = /^-?\d*\.?\d*$/;
-
-export const REGEX = {
-    DIGITS_ONLY,
-    NUMERIC_STRING_PATTERN
-} as const;
