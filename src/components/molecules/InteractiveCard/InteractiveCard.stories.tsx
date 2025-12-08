@@ -1,6 +1,10 @@
+import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Globe } from "@geneui/icons";
+
+import Checkbox from "@components/molecules/Checkbox";
+import Switch from "@components/molecules/Switch";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -22,11 +26,10 @@ const meta: Meta<IInteractiveCardProps> = {
         interactive: args({ control: "false", ...propCategory.states }),
         onClick: args({ control: "false", ...propCategory.action }),
         action: args({ control: "false", ...propCategory.content }),
-        pill: args({ control: "object", ...propCategory.content }),
         onFocus: args({ control: "false", ...propCategory.action })
     },
     args: {
-        size: "large",
+        size: "medium",
         label: "Label",
         required: false,
         infoText: "info text",
@@ -43,3 +46,22 @@ export default meta;
 type Story = StoryObj<IInteractiveCardProps>;
 
 export const Default: Story = {};
+
+export const NonInteractiveWithCheckbox: Story = {
+    args: {
+        interactive: false
+    },
+    render: (props) => (
+        <InteractiveCard
+            {...props}
+            action={<Checkbox onChange={() => {}} name="card-checkbox" value="card-option" />}
+        />
+    )
+};
+
+export const NonInteractiveWithSwitch: Story = {
+    args: {
+        interactive: false
+    },
+    render: (props) => <InteractiveCard {...props} action={<Switch onChange={() => {}} />} />
+};

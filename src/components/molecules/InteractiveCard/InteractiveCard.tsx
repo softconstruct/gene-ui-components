@@ -4,7 +4,7 @@ import classNames from "classnames";
 import { IconProps } from "@geneui/icons";
 
 import Label from "@components/atoms/Label";
-import Pill, { IPillProps } from "@components/atoms/Pill";
+import Pill from "@components/atoms/Pill";
 import { ICheckboxProps } from "@components/molecules/Checkbox";
 import { ISwitchProps } from "@components/molecules/Switch";
 
@@ -13,14 +13,11 @@ import "./InteractiveCard.scss";
 
 import { Text } from "../../../index";
 
-// Size mapping constants - will be used in subsequent commits
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const iconSizes: Record<"large" | "medium" | "small", IconProps["size"]> = {
     large: 32,
     medium: 24,
     small: 20
 } as const;
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const textVariants: Record<"large" | "medium" | "small", "labelMediumMedium" | "labelSmallMedium"> = {
     large: "labelMediumMedium",
     medium: "labelSmallMedium",
@@ -82,11 +79,6 @@ interface IInteractiveCardProps {
      */
     action?: React.ReactElement<ICheckboxProps> | React.ReactElement<ISwitchProps>;
     /**
-     * Pill component configuration for non-interactive cards.
-     * This prop is only used when `interactive` is `false` or undefined.
-     */
-    pill?: IPillProps;
-    /**
      *  Event handler for when the interactive card element receives focus. Provides the focus event as a callback's argument.
      */
     onFocus?: (e: FocusEvent<HTMLButtonElement>) => void;
@@ -107,7 +99,6 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
     interactive,
     onClick,
     action,
-    pill,
     onFocus
 }) => {
     const baseClassName = classNames(
@@ -162,9 +153,9 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
                     )}
                 </span>
             </span>
-            {(pill || action) && (
+            {action && (
                 <span className="interactiveCard__actions">
-                    {pill && <Pill {...pill} />}
+                    <Pill size="small" withDot={false} text="Pill" filled />
                     {action}
                 </span>
             )}
