@@ -263,7 +263,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         useEffect(() => {
             if (defaultValue === undefined) return;
             setInternalValue(defaultValue.toString());
-        }, [defaultValue]);
+        }, []);
 
         useEffect(() => {
             const iconAfter = type === "password" || (clearable && inputValue.length > 0 && !disabled && !readOnly);

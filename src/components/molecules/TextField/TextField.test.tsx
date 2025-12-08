@@ -72,8 +72,7 @@ describe("TextField ", () => {
 
     it("renders defaultValue prop correctly", () => {
         const defaultValue = "test-value";
-        const wrapper = setup.setProps({ defaultValue });
-        wrapper.update();
+        const wrapper = mount(<TextField defaultValue={defaultValue} />);
         expect(wrapper.find("input").prop("value")).toEqual(defaultValue);
     });
 
