@@ -130,7 +130,7 @@ const Pagination: FC<IPaginationProps> = ({
 
     const [currentPage, setCurrentPage] = useState<number>(+current > totalPages ? 1 : +current);
     const [currentPageSize, setCurrentPageSize] = useState<number>(rowsPerPageOptions?.[0] || 0);
-    const [goToPageValue, setGoToPageValue] = useState<number>(() => currentPage);
+    const [goToPageValue, setGoToPageValue] = useState<number>(currentPage);
 
     // Generate the page numbers to display
     const calculatedData = createPageNumbers(currentPage, +totalPages, MAXIMUM_SIZE_IN_VIEW_PORT);
