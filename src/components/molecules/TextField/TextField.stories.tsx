@@ -28,6 +28,7 @@ const meta: Meta<ITextFieldProps> = {
         infoText: args({ control: "text", ...propCategory.content }),
         characterLimit: args({ control: "number", ...propCategory.content }),
         placeholder: args({ control: "text", ...propCategory.content }),
+        defaultValue: args({ control: "text", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content }),
         id: args({ control: "text", ...propCategory.others }),
         name: args({ control: "text", ...propCategory.others }),

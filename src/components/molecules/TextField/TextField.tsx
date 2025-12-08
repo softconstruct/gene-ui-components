@@ -84,6 +84,10 @@ interface ITextFieldProps {
      */
     value?: string | number;
     /**
+     * Default value of the `TextField`. Only provide this if the text field is an `uncontrolled` component; otherwise, use the `value` property.
+     */
+    defaultValue?: string | number;
+    /**
      * `Placeholder` text when `input` is empty
      */
     placeholder?: string;
@@ -178,6 +182,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             name,
             type = "text",
             size = "large",
+            defaultValue,
             value,
             placeholder,
             IconBefore,
@@ -254,6 +259,11 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         }));
 
         const showPasswordToggle = () => setIsPasswordVisible((prev) => !prev);
+
+        useEffect(() => {
+            if (defaultValue === undefined) return;
+            setInternalValue(defaultValue.toString());
+        }, [defaultValue]);
 
         useEffect(() => {
             const iconAfter = type === "password" || (clearable && inputValue.length > 0 && !disabled && !readOnly);

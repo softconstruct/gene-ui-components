@@ -70,6 +70,13 @@ describe("TextField ", () => {
         expect(wrapper.find("input").prop("value")).toEqual(value);
     });
 
+    it("renders defaultValue prop correctly", () => {
+        const defaultValue = "test-value";
+        const wrapper = setup.setProps({ defaultValue });
+        wrapper.update();
+        expect(wrapper.find("input").prop("value")).toEqual(defaultValue);
+    });
+
     it("renders placeholder correctly", () => {
         const placeholder = "test placeholder";
         const wrapper = setup.setProps({ placeholder });
