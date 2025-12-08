@@ -6,9 +6,12 @@ import React, {
     FC,
     FunctionComponentElement,
     JSX,
+    KeyboardEvent as ReactKeyboardEvent,
+    MouseEvent as ReactMouseEvent,
     MutableRefObject,
     ReactElement,
     SetStateAction,
+    useCallback,
     useContext,
     useEffect,
     useMemo,
@@ -52,6 +55,8 @@ type RelativeRefsSetter = (props: {
 
 type SizeType = "large" | "medium" | "small";
 
+type GenericObject = Record<string, unknown>;
+
 interface IMenuContextProps {
     onChangeHandler: (props: OnchangeHandlerType) => void;
     openSelectedPath?: boolean;
@@ -84,7 +89,7 @@ interface IMenuProps {
     /**
      * A function for setting additional props for the Popover component that wraps the menu.
      */
-    setPropsForPopover: Dispatch<SetStateAction<Record<string, unknown>>>;
+    setPropsForPopover: Dispatch<SetStateAction<GenericObject>>;
     /**
      * Menu size.<br/>
      * Default value is `small`.<br/>
@@ -174,6 +179,20 @@ const Menu: FC<IMenuProps> = ({
         setOpenSelectedPathState(openSelectedPath);
     }, [openSelectedPath]);
 
+    const toggleMenuOpen = useCallback(() => {
+        if (isMobileBreakpoint) {
+            setIsOpenState(true);
+            return;
+        }
+
+        setIsOpenState((prev) => {
+            if (prev) {
+                setPaths([]);
+            }
+            return !prev;
+        });
+    }, [isMobileBreakpoint]);
+
     useClickOutside(
         (e) => {
             const onMenuTargetClick =
@@ -181,21 +200,74 @@ const Menu: FC<IMenuProps> = ({
                 popoverRef.current.referenceElement?.current instanceof Node &&
                 popoverRef.current.referenceElement.current.contains(e.target);
 
-            if (onMenuTargetClick) {
-                if (isMobileBreakpoint) {
-                    setIsOpenState(true);
-                } else {
-                    setIsOpenState((prev) => !prev);
-                    if (isOpenState) {
-                        setPaths([]);
-                    }
-                }
-            } else if (!isMobileBreakpoint) {
+            if (!onMenuTargetClick && !isMobileBreakpoint) {
                 setIsOpenState(false);
                 setPaths([]);
             }
         },
         [popoverRef.current.floatingElement, ...Object.values(relativeRefs)]
+    );
+
+    const enhanceTriggerPropsRef = useRef<(triggerProps: GenericObject) => GenericObject>();
+
+    const enhanceTriggerProps = useCallback(
+        (triggerProps: GenericObject): GenericObject => {
+            if (!triggerProps || typeof triggerProps !== "object") {
+                return triggerProps;
+            }
+
+            const { onClick, onKeyDown, ...rest } = triggerProps as {
+                onClick?: (event: ReactMouseEvent<HTMLElement>) => void;
+                onKeyDown?: (event: ReactKeyboardEvent<HTMLElement>) => void;
+                [key: string]: unknown;
+            };
+
+            return {
+                ...rest,
+                onClick: (event: ReactMouseEvent<HTMLElement>) => {
+                    onClick?.(event);
+                    if (!event.defaultPrevented) {
+                        toggleMenuOpen();
+                    }
+                },
+                onKeyDown: (event: ReactKeyboardEvent<HTMLElement>) => {
+                    onKeyDown?.(event);
+                    if (!event.defaultPrevented && (event.key === "Enter" || event.key === " ")) {
+                        event.preventDefault();
+                        toggleMenuOpen();
+                    }
+                }
+            };
+        },
+        [toggleMenuOpen]
+    );
+
+    // Keep the ref updated with the latest function
+    enhanceTriggerPropsRef.current = enhanceTriggerProps;
+
+    const setReferenceProps = useCallback(
+        (value: SetStateAction<GenericObject>) => {
+            const enhanceFn = enhanceTriggerPropsRef.current;
+            if (!enhanceFn) {
+                // Fallback if ref is not set yet
+                if (typeof value === "function") {
+                    setPropsForPopover((prev) => value(prev));
+                } else {
+                    setPropsForPopover(value);
+                }
+                return;
+            }
+
+            if (typeof value === "function") {
+                setPropsForPopover((prev) => {
+                    const nextValue = value(prev);
+                    return enhanceFn(nextValue);
+                });
+            } else {
+                setPropsForPopover(enhanceFn(value));
+            }
+        },
+        [setPropsForPopover]
     );
 
     useEffect(() => {
@@ -293,7 +365,7 @@ const Menu: FC<IMenuProps> = ({
     return (
         <MenuContext.Provider value={memoizedMenuContextValue}>
             <Popover
-                setProps={setPropsForPopover}
+                setProps={setReferenceProps}
                 size={popoverSizeMapping[size]}
                 position={position}
                 withArrow={false}
