@@ -11,7 +11,7 @@ import TextField from "@components/molecules/TextField";
 // Styles
 import "./Pagination.scss";
 
-// helpers
+// Helpers
 import { allowOnlyDigits } from "../../../helpers";
 
 interface IPaginationProps {
@@ -135,7 +135,7 @@ const Pagination: FC<IPaginationProps> = ({
     // Generate the page numbers to display
     const calculatedData = createPageNumbers(currentPage, +totalPages, MAXIMUM_SIZE_IN_VIEW_PORT);
 
-    const pageValue = goToPageValue > 0 ? goToPageValue : "";
+    const pageValue = goToPageValue > 0 ? goToPageValue.toString() : "";
 
     // Effect to sync internal state with external prop changes
     useEffect(() => {
