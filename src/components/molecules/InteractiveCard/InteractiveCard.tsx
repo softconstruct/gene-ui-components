@@ -3,10 +3,11 @@ import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
 
+// Components
 import Label from "@components/atoms/Label";
-import Pill from "@components/atoms/Pill";
-import { ICheckboxProps } from "@components/molecules/Checkbox";
-import { ISwitchProps } from "@components/molecules/Switch";
+import Pill, { IPillProps } from "@components/atoms/Pill";
+import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
+import Switch, { ISwitchProps } from "@components/molecules/Switch";
 
 // Styles
 import "./InteractiveCard.scss";
@@ -40,10 +41,6 @@ interface IInteractiveCardProps {
      */
     label?: string;
     /**
-     *  Specifies whether the interactive card is mandatory for completing a form.
-     */
-    required?: boolean;
-    /**
      * Additional informational text displayed alongside the label via tooltip.
      */
     infoText?: string;
@@ -73,11 +70,15 @@ interface IInteractiveCardProps {
      */
     onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * Action component for non-interactive cards.
-     * Can be either a Checkbox or Switch configuration object.
-     * This prop is only used when `interactive` is `false` or undefined.
+     * Pill component configuration.
+     * When provided, renders a `Pill` with these props.
      */
-    action?: React.ReactElement<ICheckboxProps> | React.ReactElement<ISwitchProps>;
+    pillProps?: IPillProps;
+    /**
+     * Action component configuration.
+     * When provided, renders either `Checkbox` or `Switch` with these props.
+     */
+    actionProps?: ({ type: "checkbox" } & ICheckboxProps) | ({ type: "switch" } & ISwitchProps);
     /**
      *  Event handler for when the interactive card element receives focus. Provides the focus event as a callback's argument.
      */
@@ -91,14 +92,14 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
     className,
     size = "large",
     label,
-    required,
     infoText,
     description,
     Icon,
     disabled,
     interactive,
     onClick,
-    action,
+    actionProps,
+    pillProps,
     onFocus
 }) => {
     const baseClassName = classNames(
@@ -117,14 +118,19 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
             <button type="button" className={baseClassName} onClick={onClick} disabled={disabled} onFocus={onFocus}>
                 <span className="interactiveCard__main">
                     {Icon && <Icon className="interactiveCard__icon" size={iconSizes[size]} />}
-                    <span className="interactiveCard__content">
-                        <Label
-                            text={label}
-                            infoText={infoText}
-                            required={required}
-                            size={size === "large" ? "medium" : size}
-                            disabled={disabled}
-                        />
+                    <span
+                        className={classNames("interactiveCard__content", {
+                            interactiveCard__content_onlyDescription: !label && description
+                        })}
+                    >
+                        {label && (
+                            <Label
+                                text={label}
+                                infoText={infoText}
+                                size={size === "large" ? "medium" : size}
+                                disabled={disabled}
+                            />
+                        )}
                         {description && (
                             <Text className="interactiveCard__description" as="span" variant={textVariants[size]}>
                                 {description}
@@ -139,13 +145,12 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
         <div className={baseClassName}>
             <span className="interactiveCard__main">
                 {Icon && <Icon className="interactiveCard__icon" size={iconSizes[size]} />}
-                <span className="interactiveCard__content">
-                    <Label
-                        text={label}
-                        infoText={infoText}
-                        required={required}
-                        size={size === "large" ? "medium" : size}
-                    />
+                <span
+                    className={classNames("interactiveCard__content", {
+                        interactiveCard__content_onlyDescription: !label && description
+                    })}
+                >
+                    {label && <Label text={label} infoText={infoText} size={size === "large" ? "medium" : size} />}
                     {description && (
                         <Text className="interactiveCard__description" as="span" variant={textVariants[size]}>
                             {description}
@@ -153,10 +158,11 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
                     )}
                 </span>
             </span>
-            {action && (
+            {(pillProps || actionProps) && (
                 <span className="interactiveCard__actions">
-                    <Pill size="small" withDot={false} text="Pill" filled />
-                    {action}
+                    {pillProps && <Pill {...pillProps} />}
+                    {actionProps &&
+                        (actionProps.type === "checkbox" ? <Checkbox {...actionProps} /> : <Switch {...actionProps} />)}
                 </span>
             )}
         </div>

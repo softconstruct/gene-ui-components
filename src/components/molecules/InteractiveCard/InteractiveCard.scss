@@ -83,6 +83,10 @@
         gap: var(--guit-ref-spacing-4xsmall);
         flex: 1;
         min-width: 0;
+
+        &_onlyDescription {
+            align-self: flex-end;
+        }
     }
 
     &__description {
