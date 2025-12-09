@@ -94,6 +94,66 @@ describe("TextField ", () => {
         expect(wrapper.find("input").prop("value")).toEqual(value);
     });
 
+    it("renders controlled component without onChange handler", () => {
+        const initialValue = "initial";
+        const typedValue = "user-typed";
+        const wrapper = mount(<TextField value={initialValue} />);
+
+        expect(wrapper.find("input").prop("value")).toEqual(initialValue);
+
+        wrapper.find(".textField__input").simulate("change", {
+            target: { name: "text", value: typedValue }
+        });
+        wrapper.update();
+
+        expect(wrapper.find("input").prop("value")).toEqual(initialValue);
+    });
+
+    it("renders controlled component with onChange handler", () => {
+        const initialValue = "initial";
+        const newValue = "new-value";
+        const onChange = jest.fn();
+
+        const wrapper = mount(<TextField value={initialValue} onChange={onChange} />);
+
+        expect(wrapper.find("input").prop("value")).toEqual(initialValue);
+
+        wrapper.find(".textField__input").simulate("change", {
+            target: { name: "text", value: newValue }
+        });
+        wrapper.update();
+
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith(
+            expect.objectContaining({
+                target: expect.objectContaining({
+                    value: newValue
+                })
+            })
+        );
+
+        wrapper.setProps({ value: newValue });
+        wrapper.update();
+
+        expect(wrapper.find("input").prop("value")).toEqual(newValue);
+    });
+
+    it("renders uncontrolled component with defaultValue prop", () => {
+        const defaultValue = "default";
+        const newValue = "user-typed-value";
+
+        const wrapper = mount(<TextField defaultValue={defaultValue} />);
+
+        expect(wrapper.find("input").prop("value")).toEqual(defaultValue);
+
+        wrapper.find(".textField__input").simulate("change", {
+            target: { name: "text", value: newValue }
+        });
+        wrapper.update();
+
+        expect(wrapper.find("input").prop("value")).toEqual(newValue);
+    });
+
     it("renders readOnly prop correctly", () => {
         const readOnly = true;
         const wrapper = setup.setProps({ readOnly });
