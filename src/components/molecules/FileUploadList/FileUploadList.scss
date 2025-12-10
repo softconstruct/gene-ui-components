@@ -71,6 +71,12 @@
             flex: 0 0 auto;
             justify-content: flex-end;
         }
+
+        &--progress {
+            grid-column: 1 / span 3;
+            padding-inline: 0;
+            width: 100%;
+        }
     }
 
     &__file {
@@ -78,5 +84,10 @@
         height: 2.4rem;
         padding: var(--guit-ref-spacing-3xsmall);
         border-radius: var(--guit-ref-radius-3xsmall);
+    }
+
+    &__progress {
+        width: 100%;
+        display: block;
     }
 }
