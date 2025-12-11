@@ -10,7 +10,6 @@ import Switch from "@components/molecules/Switch";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-// Components
 import InteractiveCard, { IInteractiveCardProps } from "./index";
 
 const meta: Meta<IInteractiveCardProps> = {

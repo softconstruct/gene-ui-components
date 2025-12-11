@@ -90,7 +90,7 @@ interface IInteractiveCardProps {
  */
 const InteractiveCard: FC<IInteractiveCardProps> = ({
     className,
-    size = "large",
+    size = "medium",
     label,
     infoText,
     description,
@@ -112,6 +112,17 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
         },
         className
     );
+
+    const renderAction = () => {
+        if (actionProps) {
+            return actionProps.type === "checkbox" ? (
+                <Checkbox {...actionProps} disabled={disabled} />
+            ) : (
+                <Switch {...actionProps} disabled={disabled} />
+            );
+        }
+        return <Checkbox disabled={disabled} name="interactive-card-action" value="interactive-card-action" />;
+    };
 
     if (interactive) {
         return (
@@ -161,8 +172,7 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
             {(pillProps || actionProps) && (
                 <span className="interactiveCard__actions">
                     {pillProps && <Pill {...pillProps} />}
-                    {actionProps &&
-                        (actionProps.type === "checkbox" ? <Checkbox {...actionProps} /> : <Switch {...actionProps} />)}
+                    {renderAction()}
                 </span>
             )}
         </div>
