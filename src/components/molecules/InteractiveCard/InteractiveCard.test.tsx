@@ -2,7 +2,7 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import InteractiveCard, { IInteractiveCardProps } from "./index";
+import InteractiveCard, { IInteractiveCardProps } from "@components/molecules/InteractiveCard";
 
 describe("InteractiveCard ", () => {
     let setup: ReactWrapper<IInteractiveCardProps>;

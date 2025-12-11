@@ -6,11 +6,11 @@ import { Globe } from "@geneui/icons";
 // Components
 import Pill from "@components/atoms/Pill";
 import Checkbox from "@components/molecules/Checkbox";
+import InteractiveCard, { IInteractiveCardProps } from "@components/molecules/InteractiveCard";
 import Switch from "@components/molecules/Switch";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import InteractiveCard, { IInteractiveCardProps } from "./index";
 
 const meta: Meta<IInteractiveCardProps> = {
     title: "Molecules/InteractiveCard",

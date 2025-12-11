@@ -6,13 +6,12 @@ import { IconProps } from "@geneui/icons";
 // Components
 import Label from "@components/atoms/Label";
 import Pill, { IPillProps } from "@components/atoms/Pill";
+import Text from "@components/atoms/Text";
 import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
 import Switch, { ISwitchProps } from "@components/molecules/Switch";
 
 // Styles
 import "./InteractiveCard.scss";
-
-import { Text } from "../../../index";
 
 const iconSizes: Record<"large" | "medium" | "small", IconProps["size"]> = {
     large: 32,
