@@ -1,15 +1,26 @@
-import React from "react";
+import React, { ComponentType } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Globe } from "@geneui/icons";
 
+// Components
+import Pill from "@components/atoms/Pill";
+import Checkbox from "@components/molecules/Checkbox";
+import Switch from "@components/molecules/Switch";
+
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+// Components
 import InteractiveCard, { IInteractiveCardProps } from "./index";
 
 const meta: Meta<IInteractiveCardProps> = {
     title: "Molecules/InteractiveCard",
     component: InteractiveCard,
+    subcomponents: {
+        Pill: Pill as ComponentType<unknown>,
+        Checkbox: Checkbox as ComponentType<unknown>,
+        Switch: Switch as ComponentType<unknown>
+    },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", ...propCategory.appearance }),
@@ -32,8 +43,7 @@ const meta: Meta<IInteractiveCardProps> = {
         Icon: Globe,
         disabled: false,
         interactive: true,
-        onClick: (e) => e.preventDefault(),
-        pillProps: { size: "small", withDot: false, text: "Pill", filled: true }
+        onClick: (e) => e.preventDefault()
     }
 };
 
@@ -51,7 +61,8 @@ export const NonInteractiveWithCheckbox: Story = {
             name: "card-checkbox",
             value: "card-option",
             onChange: () => {}
-        }
+        },
+        pillProps: { size: "small", withDot: false, text: "Pill", filled: true }
     },
     render: (props) => <InteractiveCard {...props} />
 };
@@ -62,7 +73,8 @@ export const NonInteractiveWithSwitch: Story = {
         actionProps: {
             type: "switch",
             onChange: () => {}
-        }
+        },
+        pillProps: { size: "small", withDot: false, text: "Pill", filled: true }
     },
     render: (props) => <InteractiveCard {...props} />
 };
