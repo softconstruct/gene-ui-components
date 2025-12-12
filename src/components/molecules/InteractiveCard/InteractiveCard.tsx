@@ -120,7 +120,7 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
                 <Switch {...actionProps} disabled={disabled} />
             );
         }
-        return <Checkbox disabled={disabled} name="interactive-card-action" value="interactive-card-action" />;
+        return <Checkbox disabled={disabled} name="interactive-card-checkbox" value="interactive-card-checkbox" />;
     };
 
     if (interactive) {
@@ -168,12 +168,10 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
                     )}
                 </span>
             </span>
-            {(pillProps || actionProps) && (
-                <span className="interactiveCard__actions">
-                    {pillProps && <Pill {...pillProps} />}
-                    {renderAction()}
-                </span>
-            )}
+            <span className="interactiveCard__actions">
+                {pillProps && <Pill {...pillProps} />}
+                {renderAction()}
+            </span>
         </div>
     );
 };
