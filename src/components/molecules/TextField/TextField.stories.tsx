@@ -62,46 +62,9 @@ export const Default: Story = {
     render: (props) => <StoryTemplate {...props} />
 };
 
-export const Warning: Story = {
-    args: {
-        status: "warning",
-        helperText: "warning text"
-    },
-    render: (props) => <StoryTemplate {...props} />
-};
-
-export const Error: Story = {
-    args: {
-        status: "error",
-        helperText: "error text"
-    },
-    render: (props) => <StoryTemplate {...props} />
-};
-
 export const WithIcon: Story = {
     args: {
         IconBefore: Info
-    },
-    render: (props) => <StoryTemplate {...props} />
-};
-
-export const WithPassword: Story = {
-    args: {
-        type: "password"
-    },
-    render: (props) => <StoryTemplate {...props} />
-};
-
-export const WithCharacterLimit: Story = {
-    args: {
-        characterLimit: 111
-    },
-    render: (props) => <StoryTemplate {...props} />
-};
-
-export const WithoutLabel: Story = {
-    args: {
-        label: ""
     },
     render: (props) => <StoryTemplate {...props} />
 };

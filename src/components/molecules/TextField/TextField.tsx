@@ -198,7 +198,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             characterLimit,
             className,
             autoComplete = "on",
-            autoFocus = false,
+            autoFocus,
             helperText,
             status = "rest",
             onClear,
@@ -280,8 +280,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         const isPassword = type === "password" && inputValue.length > 0 && !readOnly && !disabled;
 
         const inputConditionalProps = {
-            ...(placeholder && { placeholder }),
-            ...(autoFocus && { autoFocus }),
+            placeholder,
+            autoFocus,
             inputMode: type === "number" ? "numeric" : inputMode,
             type: isPasswordVisible || type === "number" ? "text" : type
         };
