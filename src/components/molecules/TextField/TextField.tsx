@@ -23,6 +23,9 @@ import Text from "@components/atoms/Text";
 // Styles
 import "./TextField.scss";
 
+// Helpers
+import { NUMERIC_STRING_PATTERN } from "../../../constants";
+
 // Size mapping objects for Label and HelperText components
 const labelSizeMap = {
     large: "medium" as const,
@@ -63,10 +66,11 @@ interface ITextFieldProps {
     /**
      * The type of `TextField`.
      * - `text`: Standard text `input`
+     * - `number`: Number `input` with text-based validation (allows digits, one '-' at start, one '.' for decimals, no '+' symbol)
      * - `password`: Password `input` with visibility toggle.
      * - default `value` is `text`
      */
-    type?: "text" | "password";
+    type?: "text" | "number" | "password";
     /**
      * `Label` text displayed above the `input` field.
      */
@@ -78,7 +82,11 @@ interface ITextFieldProps {
     /**
      * Controlled `input` value
      */
-    value?: string;
+    value?: string | number;
+    /**
+     * Default value of the `TextField`. Only provide this if the text field is an `uncontrolled` component; otherwise, use the `value` property.
+     */
+    defaultValue?: string | number;
     /**
      * `Placeholder` text when `input` is empty
      */
@@ -157,15 +165,6 @@ interface ITextFieldProps {
      * `"numeric" | "decimal" | "tel" | "text" | "search" | "email" | "url"`
      */
     inputMode?: "numeric" | "decimal" | "tel" | "text" | "search" | "email" | "url";
-    /**
-     * If `true`, only numeric digits (`0–9`) will be allowed in the input.
-     * This does not allow negative numbers or decimal points.
-     * This applies live filtering on user input and disables all other characters.
-     * Also, automatically sets `inputMode="numeric"` to enable mobile number keyboard.
-     *
-     * Tip: For more complex cases like decimals or negative values, use `onChange` manually.
-     */
-    numericOnly?: boolean;
 }
 
 export interface ITextFieldRef {
@@ -183,6 +182,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             name,
             type = "text",
             size = "large",
+            defaultValue,
             value,
             placeholder,
             IconBefore,
@@ -198,20 +198,20 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             characterLimit,
             className,
             autoComplete = "on",
-            autoFocus = false,
+            autoFocus,
             helperText,
             status = "rest",
             onClear,
-            inputMode = "text",
-            numericOnly
+            inputMode = "text"
         },
         ref
     ) => {
+        const isControlled = value !== undefined;
         const inputRef = useRef<HTMLInputElement | null>(null);
-        const [inputValue, setInputValue] = useState("");
+        const [internalValue, setInternalValue] = useState("");
         const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
         const [paddingClassesForIcon, setPaddingClassesForIcon] = useState<string>("");
-
+        const inputValue = isControlled ? value.toString() : internalValue;
         const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
 
         const labelSize = labelSizeMap[size] || "medium";
@@ -219,23 +219,30 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
         const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
             const { value: currentValue } = event.target;
-            const filteredValue = numericOnly && type !== "password" ? currentValue.replace(/\D/g, "") : currentValue;
-            setInputValue(filteredValue);
+
+            if (type === "number" && currentValue !== "" && !NUMERIC_STRING_PATTERN.test(currentValue)) {
+                return;
+            }
 
             onChange?.({
                 ...event,
                 target: {
                     ...event.target,
-                    value: filteredValue
+                    value: currentValue
                 }
             });
+
+            if (!isControlled) {
+                setInternalValue(currentValue);
+            }
         };
 
         const handleClear = () => {
             const refSnapshot = inputRef.current;
             if (!refSnapshot) return;
 
-            setInputValue("");
+            if (!isControlled) setInternalValue("");
+
             refSnapshot.focus();
             onClear?.();
         };
@@ -251,13 +258,12 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             getInputRef: () => inputRef.current
         }));
 
-        useEffect(() => {
-            if (typeof value === "string") {
-                setInputValue(value);
-            }
-        }, [value]);
-
         const showPasswordToggle = () => setIsPasswordVisible((prev) => !prev);
+
+        useEffect(() => {
+            if (defaultValue === undefined) return;
+            setInternalValue(defaultValue.toString());
+        }, []);
 
         useEffect(() => {
             const iconAfter = type === "password" || (clearable && inputValue.length > 0 && !disabled && !readOnly);
@@ -272,6 +278,13 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
         const isClearable = clearable && inputValue.length > 0 && !disabled && !readOnly;
         const isPassword = type === "password" && inputValue.length > 0 && !readOnly && !disabled;
+
+        const inputConditionalProps = {
+            placeholder,
+            autoFocus,
+            inputMode: type === "number" ? "numeric" : inputMode,
+            type: isPasswordVisible || type === "number" ? "text" : type
+        };
 
         return (
             <div className={classNames("textField", className)}>
@@ -299,14 +312,10 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                     )}
                     <input
                         id={generatedId}
-                        {...(placeholder && { placeholder })}
-                        {...(autoFocus && { autoFocus })}
-                        {...(numericOnly ? { inputMode: "numeric" } : { inputMode })}
                         autoComplete={autoComplete}
                         name={name || type}
                         ref={inputRef}
                         className="textField__input"
-                        type={isPasswordVisible ? "text" : type}
                         required={required}
                         disabled={disabled}
                         readOnly={readOnly}
@@ -316,6 +325,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                         onFocus={onInputFocus}
                         aria-invalid={status === "error"}
                         aria-required={required}
+                        {...inputConditionalProps}
                     />
                     {(isClearable || isPassword) && (
                         <span className="textField__actions">

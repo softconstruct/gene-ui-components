@@ -70,6 +70,12 @@ describe("TextField ", () => {
         expect(wrapper.find("input").prop("value")).toEqual(value);
     });
 
+    it("renders defaultValue prop correctly", () => {
+        const defaultValue = "test-value";
+        const wrapper = mount(<TextField defaultValue={defaultValue} />);
+        expect(wrapper.find("input").prop("value")).toEqual(defaultValue);
+    });
+
     it("renders placeholder correctly", () => {
         const placeholder = "test placeholder";
         const wrapper = setup.setProps({ placeholder });
@@ -86,6 +92,66 @@ describe("TextField ", () => {
         const value = "testValue";
         wrapper.find(".textField__input").simulate("change", { target: { name: "value", value } });
         expect(wrapper.find("input").prop("value")).toEqual(value);
+    });
+
+    it("renders controlled component without onChange handler", () => {
+        const initialValue = "initial";
+        const typedValue = "user-typed";
+        const wrapper = mount(<TextField value={initialValue} />);
+
+        expect(wrapper.find("input").prop("value")).toEqual(initialValue);
+
+        wrapper.find(".textField__input").simulate("change", {
+            target: { name: "text", value: typedValue }
+        });
+        wrapper.update();
+
+        expect(wrapper.find("input").prop("value")).toEqual(initialValue);
+    });
+
+    it("renders controlled component with onChange handler", () => {
+        const initialValue = "initial";
+        const newValue = "new-value";
+        const onChange = jest.fn();
+
+        const wrapper = mount(<TextField value={initialValue} onChange={onChange} />);
+
+        expect(wrapper.find("input").prop("value")).toEqual(initialValue);
+
+        wrapper.find(".textField__input").simulate("change", {
+            target: { name: "text", value: newValue }
+        });
+        wrapper.update();
+
+        expect(onChange).toHaveBeenCalledTimes(1);
+        expect(onChange).toHaveBeenCalledWith(
+            expect.objectContaining({
+                target: expect.objectContaining({
+                    value: newValue
+                })
+            })
+        );
+
+        wrapper.setProps({ value: newValue });
+        wrapper.update();
+
+        expect(wrapper.find("input").prop("value")).toEqual(newValue);
+    });
+
+    it("renders uncontrolled component with defaultValue prop", () => {
+        const defaultValue = "default";
+        const newValue = "user-typed-value";
+
+        const wrapper = mount(<TextField defaultValue={defaultValue} />);
+
+        expect(wrapper.find("input").prop("value")).toEqual(defaultValue);
+
+        wrapper.find(".textField__input").simulate("change", {
+            target: { name: "text", value: newValue }
+        });
+        wrapper.update();
+
+        expect(wrapper.find("input").prop("value")).toEqual(newValue);
     });
 
     it("renders readOnly prop correctly", () => {
@@ -162,23 +228,6 @@ describe("TextField ", () => {
         wrapper.find("button").simulate("click");
 
         expect(onClear).toHaveBeenCalledTimes(1);
-    });
-
-    it("should block non-digit characters when numericOnly is true", () => {
-        const onChange = jest.fn();
-        const wrapper = mount(<TextField numericOnly onChange={onChange} />);
-
-        // Try typing "abc123"
-        wrapper.find("input").simulate("change", {
-            target: { value: "abc123" }
-        });
-
-        // Only digits should be passed
-        expect(onChange).toHaveBeenCalledWith(
-            expect.objectContaining({
-                target: expect.objectContaining({ value: "123" })
-            })
-        );
     });
 
     it.each<ITextFieldProps["inputMode"]>(["numeric", "decimal", "tel", "text", "search", "email", "url"])(

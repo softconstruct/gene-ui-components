@@ -59,7 +59,7 @@ interface ICheckboxGroupProps {
     /**
      *  The name attribute for all checkbox inputs in the group.
      */
-    name: string;
+    name?: string;
     /**
      *  The currently selected values (controlled).
      */
