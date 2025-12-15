@@ -38,7 +38,7 @@
                 padding-inline-start: var(--guit-ref-spacing-medium);
             }
 
-            #{ $this }__data {
+            #{ $this }__inner {
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
         }
@@ -54,7 +54,7 @@
                 padding-inline-start: var(--guit-ref-spacing-medium);
             }
 
-            #{ $this }__data {
+            #{ $this }__inner {
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
         }

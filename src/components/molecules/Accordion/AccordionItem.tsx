@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent, ReactNode, useContext, useRef, useState } from "react";
+import React, { FC, MouseEvent, ReactNode, useContext, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid";
 
@@ -105,6 +105,14 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
     const chevronHorizontalIcon = isRTLMode ? ChevronLeft : ChevronRight;
     const hasActions = actions && actions.length > 0;
 
+    const actionsWithIds = useMemo(() => {
+        if (!actions) return [];
+        return actions.map((action) => ({
+            ...action,
+            id: action.id || `accordion-action-${nanoid()}`
+        }));
+    }, [actions]);
+
     const handleExpandToggle = () => {
         setIsExpanded((prev) => {
             const newValue = !prev;
@@ -147,10 +155,9 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
                     )}
                     {hasActions && (
                         <ButtonGroup className="accordionItem__actions" size={size}>
-                            {actions.map((action: IAccordionActionProps) => {
-                                const actionId = action.id || `accordion-action-${nanoid()}`;
+                            {actionsWithIds.map((action) => {
                                 return action.Icon ? (
-                                    <Button key={actionId} {...action} layout="text" appearance="secondary" />
+                                    <Button key={action.id} {...action} layout="text" appearance="secondary" />
                                 ) : null;
                             })}
                         </ButtonGroup>
