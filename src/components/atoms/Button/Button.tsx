@@ -166,10 +166,10 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 className={classNames(
                     `button button_size_${size} 
                     button_color_${appearance} 
-                    button_type_${isTextDisplayForXS ? "text" : layout}`,
+                    button_type_${isTextDisplayForXS ? "text" : layout}
+                    button_width_${fullWidth ? "full" : "fit"}`,
                     className,
                     {
-                        button_fullWidth: fullWidth,
                         button_icon_before: iconPosition === "before" && Icon && children,
                         button_icon_after: iconPosition === "after" && Icon && children,
                         button_icon_only: (!children || isSizeXS) && Icon,
