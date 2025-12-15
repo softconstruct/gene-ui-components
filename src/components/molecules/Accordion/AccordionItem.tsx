@@ -122,58 +122,56 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
     };
 
     return (
-        <>
-            <div
-                className={classNames(`accordionItem accordionItem_size_${size}`, {
-                    accordionItem_expanded: isExpanded
-                })}
-                id={id}
-            >
-                <div className="accordionItem__header">
-                    <Button
-                        size={buttonSizes[size]}
-                        appearance="secondary"
-                        layout="text"
-                        Icon={isExpanded ? ChevronDown : chevronHorizontalIcon}
-                        onClick={handleExpandToggle}
-                        aria-expanded={isExpanded}
-                    />
-                    {Icon && <Icon className="accordionItem__icon" size={iconSizes[size]} />}
-                    {title ? (
-                        <Tooltip text={title} isVisible={isTruncated}>
-                            <Text
-                                as="span"
-                                variant={textVariants[size]}
-                                className="accordionItem__title ellipsis-text"
-                                ref={titleRef}
-                            >
-                                {title}
-                            </Text>
-                        </Tooltip>
-                    ) : (
-                        <div className="accordionItem__title" />
-                    )}
-                    {hasActions && (
-                        <ButtonGroup className="accordionItem__actions" size={size}>
-                            {actionsWithIds.map((action) => {
-                                return action.Icon ? (
-                                    <Button key={action.id} {...action} layout="text" appearance="secondary" />
-                                ) : null;
-                            })}
-                        </ButtonGroup>
-                    )}
-                </div>
-                {isExpanded && (
-                    <div className="accordionItem__body">
-                        <div className="accordionItem__content">
-                            <Scrollbar>
-                                <div className="accordionItem__inner">{children}</div>
-                            </Scrollbar>
-                        </div>
-                    </div>
+        <div
+            className={classNames(`accordionItem accordionItem_size_${size}`, {
+                accordionItem_expanded: isExpanded
+            })}
+            id={id}
+        >
+            <div className="accordionItem__header">
+                <Button
+                    size={buttonSizes[size]}
+                    appearance="secondary"
+                    layout="text"
+                    Icon={isExpanded ? ChevronDown : chevronHorizontalIcon}
+                    onClick={handleExpandToggle}
+                    aria-expanded={isExpanded}
+                />
+                {Icon && <Icon className="accordionItem__icon" size={iconSizes[size]} />}
+                {title ? (
+                    <Tooltip text={title} isVisible={isTruncated}>
+                        <Text
+                            as="span"
+                            variant={textVariants[size]}
+                            className="accordionItem__title ellipsis-text"
+                            ref={titleRef}
+                        >
+                            {title}
+                        </Text>
+                    </Tooltip>
+                ) : (
+                    <div className="accordionItem__title" />
+                )}
+                {hasActions && (
+                    <ButtonGroup className="accordionItem__actions" size={size}>
+                        {actionsWithIds.map((action) => {
+                            return action.Icon ? (
+                                <Button key={action.id} {...action} layout="text" appearance="secondary" />
+                            ) : null;
+                        })}
+                    </ButtonGroup>
                 )}
             </div>
-        </>
+            {isExpanded && (
+                <div className="accordionItem__body">
+                    <div className="accordionItem__content">
+                        <Scrollbar>
+                            <div className="accordionItem__inner">{children}</div>
+                        </Scrollbar>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 
