@@ -15,8 +15,6 @@ const meta: Meta<ICounterFieldProps> = {
         disabled: args({ control: "boolean", ...propCategory.states }),
         ariaLabelIncrement: args({ control: "text", ...propCategory.others }),
         ariaLabelDecrement: args({ control: "text", ...propCategory.others }),
-        max: args({ control: "number", ...propCategory.validation }),
-        min: args({ control: "number", ...propCategory.validation }),
         step: args({ control: "number", defaultValue: 1, ...propCategory.validation }),
         size: args({ control: "select", ...propCategory.appearance }),
         status: args({ control: "select", ...propCategory.appearance }),
@@ -32,7 +30,6 @@ const meta: Meta<ICounterFieldProps> = {
 
     args: {
         defaultValue: 0,
-        min: 0,
         step: 1,
         size: "medium",
         status: "rest",

@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useMemo, useState } from "react";
 import classNames from "classnames";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 
 import { Minus, Plus } from "@geneui/icons";
 
@@ -32,16 +32,6 @@ interface ICounterFieldProps {
      * Disables the counter field, preventing it from being interacted with.
      */
     disabled?: boolean;
-
-    // BOUNDARIES & STEP
-    /**
-     * The minimum allowed value.
-     */
-    min?: number;
-    /**
-     * The maximum allowed value.
-     */
-    max?: number;
     /**
      * The amount by which the value increases or decreases.
      */
@@ -49,11 +39,11 @@ interface ICounterFieldProps {
 
     // APPEARANCE & LAYOUT
     /**
-     * Size of the component. Possible values: `small | medium | large`
+     * Size of the component.<br> Possible values: `small | medium | large`
      */
     size?: "small" | "medium" | "large";
     /**
-     * The status/validation state of the component. Possible values: `rest | warning | error`
+     * The status/validation state of the component.<br> Possible values: `rest | warning | error`
      */
     status?: "rest" | "warning" | "error";
     /**
@@ -115,43 +105,28 @@ const CounterField: FC<ICounterFieldProps> = ({
     onChange,
     onInputBlur,
     onInputFocus,
-    min = 0,
-    max,
     step = 1,
     size = "medium",
     className
 }) => {
     const isControlled = value !== undefined;
 
-    const [internalValue, setInternalValue] = useState(defaultValue || min);
+    const [internalValue, setInternalValue] = useState(defaultValue);
 
     const currentValue = isControlled ? value : internalValue;
 
-    const clampValue = (nextValue: number) => {
-        if (min !== undefined && nextValue < min) {
-            return min;
-        }
-        if (max !== undefined && nextValue > max) {
-            return max;
-        }
-        return nextValue;
-    };
-
     const updateValue = (nextValue: number, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => {
-        const clampedValue = clampValue(nextValue);
-
         if (!isControlled) {
-            setInternalValue(clampedValue);
+            setInternalValue(nextValue);
         }
 
-        onChange?.(clampedValue, event);
+        onChange?.(nextValue, event);
     };
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value;
         if (inputValue === "" || inputValue === "-") {
-            const nextValue = min;
-            updateValue(nextValue, event);
+            updateValue(0, event);
             return;
         }
         const parsedValue = parseInt(inputValue, 10);
@@ -170,10 +145,6 @@ const CounterField: FC<ICounterFieldProps> = ({
         const nextValue = currentValue + step;
         updateValue(nextValue, event);
     };
-
-    const isDecrementDisabled = disabled || (min !== undefined && currentValue <= min);
-
-    const isIncrementDisabled = disabled || (max !== undefined && currentValue >= max);
 
     const inputId = useMemo(() => `counter-field-${nanoid()}`, []);
 
@@ -212,7 +183,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     layout="fill"
                     size={size}
                     Icon={Minus}
-                    disabled={isDecrementDisabled}
+                    disabled={disabled}
                     aria-label={ariaLabelDecrement}
                     onClick={handleDecrement}
                 />
@@ -235,7 +206,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     layout="fill"
                     size={size}
                     Icon={Plus}
-                    disabled={isIncrementDisabled}
+                    disabled={disabled}
                     aria-label={ariaLabelIncrement}
                     onClick={handleIncrement}
                 />
