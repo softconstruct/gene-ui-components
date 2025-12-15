@@ -143,9 +143,15 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
         referenceElement: { current: null }
     });
 
+    const hasNestedContent = useMemo(() => {
+        if (typeof children === "string") return false;
+
+        return !!children;
+    }, [children]);
+
     const onItemClickHandler = (isBack: boolean) => {
         if (onChangeHandler && generatedId) {
-            const shouldCloseMenu = !!render || typeof children === "string";
+            const shouldCloseMenu = !!render || !hasNestedContent;
             onChangeHandler({
                 generatedId,
                 id,
@@ -273,7 +279,7 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
 
     return swappable ? (
         <>
-            {typeof children !== "string" ? (
+            {hasNestedContent ? (
                 <>
                     {isActiveSwappableContent && !popoverOpenState && renderMenuItem("parent")}
                     <div
@@ -296,7 +302,7 @@ const MenuItem: FC<IMenuItemProps> = (props) => {
         </>
     ) : (
         <>
-            {typeof children !== "string" ? (
+            {hasNestedContent ? (
                 <>
                     {renderMenuItem("parent")}
                     <Popover

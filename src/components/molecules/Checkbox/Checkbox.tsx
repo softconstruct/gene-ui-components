@@ -1,6 +1,6 @@
 import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 
 import { CheckMark, Minus } from "@geneui/icons";
 
@@ -63,14 +63,16 @@ interface ICheckboxProps {
      */
     status?: "rest" | "warning" | "error";
     /**
-     *  HTML name attribute for the input element.<br>
-     *  A unique identifier for the checkbox within a form.
+     * Optional, but Recommended for Forms: <br>
+     * Use a unique `name` if the `checkbox` represents a single, independent `Boolean` option. <br>
      */
-    name: string;
+    name?: string;
     /**
-     * The value of the component that will be returned in the onChange event.
+     * The value of the component that will be returned in the onChange event and form submissions.
+     * Required when used in CheckboxGroup to identify which option was selected.
+     * Optional for standalone checkboxes - if not provided, HTML defaults to "on" when submitted in forms.
      */
-    value: string;
+    value?: string;
     /**
      *  Fires when the user click on the checkbox. Provides the click event as a callback's argument.
      *  This prop is commonly used to prevent event bubbling.
@@ -165,6 +167,13 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
         return isControlled ? checked : checkedState;
     }, [checked, checkedState, indeterminate]);
 
+    const inputConditionalProps = {
+        name,
+        autoFocus,
+        ...(value !== undefined && { value }),
+        ...((disabled || readOnly) && { tabIndex: -1 })
+    };
+
     return (
         <div
             className={classNames(
@@ -194,11 +203,8 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                         checked={resolvedChecked}
                         disabled={disabled}
                         ref={interRef}
-                        {...(name && { name })}
-                        {...(autoFocus && { autoFocus })}
-                        {...((disabled || readOnly) && { tabIndex: -1 })}
-                        value={value}
                         id={generatedId}
+                        {...inputConditionalProps}
                     />
                     <span className="checkbox__imitation">
                         {indeterminate && !checked ? (
