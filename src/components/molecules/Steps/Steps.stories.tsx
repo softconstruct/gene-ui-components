@@ -16,10 +16,10 @@ const meta: Meta<IStepsProps> = {
 };
 
 const stepsMockData: IStepProps[] = [
-    { label: "Step 1", description: "description 1", id: 1, state: "complete" },
-    { label: "Step 2", description: "description 2", id: 2, state: "complete" },
-    { label: "Step 3", description: "description 3", id: 3, state: "current", loading: true },
-    { label: "Step 4", id: 4, loading: false, state: "incomplete", disabled: true }
+    { label: { text: "Step 1" }, description: "description 1", id: 1, state: "complete" },
+    { label: { text: "Step 2" }, description: "description 2", id: 2, state: "complete" },
+    { label: { text: "Step 3" }, description: "description 3", id: 3, state: "current", loading: true },
+    { label: { text: "Step 4" }, id: 4, loading: false, state: "incomplete", disabled: true }
 ];
 
 type Story = StoryObj<IStepsProps>;
@@ -30,13 +30,11 @@ const StepsStory: Story = {
         className: args({ control: "false", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance }),
-        linear: args({ control: "boolean", ...propCategory.functionality }),
         onChange: args({ control: "false", ...propCategory.action }),
         children: args({ control: "false", ...propCategory.content })
     },
     args: {
         direction: "vertical",
-        linear: false,
         type: "dot"
     },
     render: (props) => {

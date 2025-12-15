@@ -105,7 +105,7 @@ const Label: FC<ILabelProps> = ({
         return children;
     }
 
-    const Component = children || labelFor ? "label" : "div";
+    const Component = children || labelFor ? "label" : "span";
 
     const actualVariant = Component === "label" && !disabled ? "interactive" : "descriptive";
 

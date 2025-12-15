@@ -14,9 +14,10 @@ interface IStepsContextProps {
      */
     direction?: "vertical" | "horizontal";
     /**
-     * Fires when the user interact with Step label. Provides the Step id as a callback's argument.
+     * Fires when the user interact with Step label. Provides the Step props as a callback's argument.
+     * If provided the labels are interactive else informative.
      */
-    onChange?: (e: string | number) => void;
+    onChange?: (e: IStepProps) => void;
     /**
      * Steps type <br/>
      * Possible values: `dot | numeric`
@@ -34,10 +35,6 @@ interface IStepsProps extends IStepsContextProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    /**
-     * This prop for label click ability. If true the labels are interactive else informative.
-     */
-    linear?: boolean;
 }
 
 export const StepsContext = createContext<IStepsContextProps>({} as IStepsContextProps);
@@ -45,7 +42,7 @@ export const StepsContext = createContext<IStepsContextProps>({} as IStepsContex
 /**
  * Step component is used to guide users through a sequential process by breaking it down into distinct steps. It is commonly employed in multi-step forms, checkout processes, or workflows that require users to complete tasks in a specific order.
  */
-const Steps: FC<IStepsProps> = ({ direction = "horizontal", type = "dot", linear, className, children, onChange }) => {
+const Steps: FC<IStepsProps> = ({ direction = "horizontal", type = "dot", className, children, onChange }) => {
     const memoizedStepsContextValue = useMemo(
         () => ({
             direction,
@@ -57,7 +54,13 @@ const Steps: FC<IStepsProps> = ({ direction = "horizontal", type = "dot", linear
 
     return (
         <StepsContext.Provider value={memoizedStepsContextValue as IStepsContextProps}>
-            <div className={classNames(`steps steps_direction_${direction}`, { steps_linear: linear }, className)}>
+            <div
+                className={classNames(
+                    `steps steps_direction_${direction}`,
+                    { steps_linear: onChange === undefined },
+                    className
+                )}
+            >
                 {Children.toArray(children).map((child, i) => {
                     if (!isValidElement<IStepProps>(child)) return child;
 
