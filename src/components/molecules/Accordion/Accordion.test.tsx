@@ -257,13 +257,13 @@ describe("AccordionItem", () => {
     });
 
     it("renders expanded by default when defaultExpanded is true", () => {
-        const wrapper = setup.setProps({
-            children: (
+        const wrapper = mount(
+            <Accordion>
                 <AccordionItem title="Test" defaultExpanded>
                     Content
                 </AccordionItem>
-            )
-        });
+            </Accordion>
+        );
 
         expect(wrapper.find(".accordionItem_expanded")).toHaveLength(1);
         expect(wrapper.find(".accordionItem__body")).toHaveLength(1);
@@ -272,13 +272,13 @@ describe("AccordionItem", () => {
     });
 
     it("renders collapsed by default when defaultExpanded is false", () => {
-        const wrapper = setup.setProps({
-            children: (
+        const wrapper = mount(
+            <Accordion>
                 <AccordionItem title="Test" defaultExpanded={false}>
                     Content
                 </AccordionItem>
-            )
-        });
+            </Accordion>
+        );
 
         expect(wrapper.find(".accordionItem_expanded")).toHaveLength(0);
         expect(wrapper.find(".accordionItem__body")).toHaveLength(0);
@@ -292,13 +292,13 @@ describe("AccordionItem", () => {
     });
 
     it("allows toggling after initial defaultExpanded state", () => {
-        const wrapper = setup.setProps({
-            children: (
+        const wrapper = mount(
+            <Accordion>
                 <AccordionItem title="Test" defaultExpanded>
                     Content
                 </AccordionItem>
-            )
-        });
+            </Accordion>
+        );
 
         expect(wrapper.find(".accordionItem_expanded")).toHaveLength(1);
 
@@ -316,19 +316,17 @@ describe("AccordionItem", () => {
     });
 
     it("each AccordionItem can have independent defaultExpanded values", () => {
-        const wrapper = setup.setProps({
-            children: (
-                <>
-                    <AccordionItem title="Item 1" defaultExpanded>
-                        Content 1
-                    </AccordionItem>
-                    <AccordionItem title="Item 2" defaultExpanded={false}>
-                        Content 2
-                    </AccordionItem>
-                    <AccordionItem title="Item 3">Content 3</AccordionItem>
-                </>
-            )
-        });
+        const wrapper = mount(
+            <Accordion>
+                <AccordionItem title="Item 1" defaultExpanded>
+                    Content 1
+                </AccordionItem>
+                <AccordionItem title="Item 2" defaultExpanded={false}>
+                    Content 2
+                </AccordionItem>
+                <AccordionItem title="Item 3">Content 3</AccordionItem>
+            </Accordion>
+        );
 
         const expandedItems = wrapper.find(".accordionItem_expanded");
         expect(expandedItems).toHaveLength(1);
