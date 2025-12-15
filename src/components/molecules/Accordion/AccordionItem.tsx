@@ -1,4 +1,4 @@
-import React, { FC, FocusEvent, MouseEvent, ReactNode, useContext, useRef, useState } from "react";
+import React, { FC, MouseEvent, ReactNode, useContext, useRef, useState } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid";
 
@@ -58,18 +58,6 @@ interface IAccordionActionProps {
      * An ARIA label for the button.
      */
     "aria-label"?: string;
-    /**
-     * Event handler for when the button element loses focus.
-     */
-    onBlur?: (e: FocusEvent<HTMLButtonElement>) => void;
-    /**
-     * Event handler for when the button element receives focus.
-     */
-    onFocus?: (e: FocusEvent<HTMLButtonElement>) => void;
-    /**
-     * Tab index for keyboard navigation.
-     */
-    tabIndex?: number;
 }
 
 interface IAccordionItemProps {
@@ -115,11 +103,14 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
     const isTruncated = useEllipsisDetection(titleRef, [title]);
     const isRTLMode = document.dir === "rtl";
     const chevronHorizontalIcon = isRTLMode ? ChevronLeft : ChevronRight;
+    const hasActions = actions && actions.length > 0;
 
     const handleExpandToggle = () => {
-        const currentIsExpanded = !isExpanded;
-        setIsExpanded(currentIsExpanded);
-        onToggle?.({ id, isExpanded: currentIsExpanded });
+        setIsExpanded((prev) => {
+            const newValue = !prev;
+            onToggle?.({ id, isExpanded: newValue });
+            return newValue;
+        });
     };
 
     return (
@@ -154,7 +145,7 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
                     ) : (
                         <div className="accordionItem__title" />
                     )}
-                    {actions && actions.length > 0 && (
+                    {hasActions && (
                         <ButtonGroup className="accordionItem__actions" size={size}>
                             {actions.map((action: IAccordionActionProps) => {
                                 const actionId = action.id || `accordion-action-${nanoid()}`;
@@ -169,7 +160,7 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
                     <div className="accordionItem__body">
                         <div className="accordionItem__content">
                             <Scrollbar>
-                                <div className="accordionItem__data">{children}</div>
+                                <div className="accordionItem__inner">{children}</div>
                             </Scrollbar>
                         </div>
                     </div>

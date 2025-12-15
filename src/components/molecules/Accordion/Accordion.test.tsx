@@ -321,13 +321,13 @@ describe("AccordionItem", () => {
         expect(wrapper.find(".test-content").text()).toBe(content);
     });
 
-    it("renders accordionItem__data div when expanded", () => {
-        expect(setup.find(".accordionItem__data").exists()).toBeFalsy();
+    it("renders accordionItem__inner div when expanded", () => {
+        expect(setup.find(".accordionItem__inner").exists()).toBeFalsy();
         setup.find(".accordionItem__header button").first().simulate("click");
         setup.update();
-        expect(setup.find(".accordionItem__data").exists()).toBeTruthy();
-        expect(setup.find(".accordionItem__data").text()).toBe("Test Content");
-        expect(setup.find(".accordionItem__content").find(".accordionItem__data").exists()).toBeTruthy();
+        expect(setup.find(".accordionItem__inner").exists()).toBeTruthy();
+        expect(setup.find(".accordionItem__inner").text()).toBe("Test Content");
+        expect(setup.find(".accordionItem__content").find(".accordionItem__inner").exists()).toBeTruthy();
     });
 
     it("renders actions when provided", () => {
