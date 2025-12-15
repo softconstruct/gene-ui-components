@@ -90,15 +90,20 @@ interface IAccordionItemProps {
      * Useful for accessibility purposes, like `aria-labelledby`.
      */
     id?: string;
+    /**
+     * Determines whether the accordion item is expanded by default.
+     * If `true`, the accordion item will be expanded on initial render.
+     */
+    defaultExpanded?: boolean;
 }
 
 /**
  * Accordion component organizes content into expandable and collapsible sections, allowing users to reveal or hide detailed information as needed. Each section, or "panel," typically includes a header that summarizes the content and can be clicked to expand or collapse the corresponding panel.
  */
-const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions, id }) => {
+const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions, id, defaultExpanded = false }) => {
     const { size, onToggle } = useContext(AccordionContext);
 
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(defaultExpanded);
     const titleRef = useRef<HTMLSpanElement | null>(null);
     const isTruncated = useEllipsisDetection(titleRef, [title]);
     const isRTLMode = document.dir === "rtl";

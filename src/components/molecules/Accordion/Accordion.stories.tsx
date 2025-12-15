@@ -69,6 +69,7 @@ export const Default: Story = {
                 <AccordionItem
                     title="Accordion Item 2"
                     Icon={Tag}
+                    defaultExpanded
                     actions={[
                         {
                             Icon: Globe
@@ -83,7 +84,7 @@ export const Default: Story = {
                 >
                     <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                         <Text as="h3" variant="labelMediumMedium" alignment="center">
-                            Test content
+                            Default Expanded
                         </Text>
                         <Divider
                             text="GeneUI divider"
@@ -108,7 +109,8 @@ export const AccordionItemStory: StoryItem = storyObjBuilder({
         Icon: args({ control: "false", ...propCategory.content }),
         actions: args({ control: "false", ...propCategory.functionality }),
         children: args({ control: "false", ...propCategory.content }),
-        id: args({ control: "text", ...propCategory.others })
+        id: args({ control: "text", ...propCategory.others }),
+        defaultExpanded: args({ control: "boolean", ...propCategory.states })
     },
     args: {
         title: "Accordion Item",

@@ -256,6 +256,87 @@ describe("AccordionItem", () => {
         expect(setup.find(".accordionItem__body")).toHaveLength(0);
     });
 
+    it("renders expanded by default when defaultExpanded is true", () => {
+        const wrapper = setup.setProps({
+            children: (
+                <AccordionItem title="Test" defaultExpanded>
+                    Content
+                </AccordionItem>
+            )
+        });
+
+        expect(wrapper.find(".accordionItem_expanded")).toHaveLength(1);
+        expect(wrapper.find(".accordionItem__body")).toHaveLength(1);
+        expect(wrapper.find(".accordionItem__header button").first().prop("aria-expanded")).toBe(true);
+        expect(wrapper.find(Scrollbar).exists()).toBeTruthy();
+    });
+
+    it("renders collapsed by default when defaultExpanded is false", () => {
+        const wrapper = setup.setProps({
+            children: (
+                <AccordionItem title="Test" defaultExpanded={false}>
+                    Content
+                </AccordionItem>
+            )
+        });
+
+        expect(wrapper.find(".accordionItem_expanded")).toHaveLength(0);
+        expect(wrapper.find(".accordionItem__body")).toHaveLength(0);
+        expect(wrapper.find(".accordionItem__header button").first().prop("aria-expanded")).toBe(false);
+    });
+
+    it("renders collapsed by default when defaultExpanded is not provided", () => {
+        expect(setup.find(".accordionItem_expanded")).toHaveLength(0);
+        expect(setup.find(".accordionItem__body")).toHaveLength(0);
+        expect(setup.find(".accordionItem__header button").first().prop("aria-expanded")).toBe(false);
+    });
+
+    it("allows toggling after initial defaultExpanded state", () => {
+        const wrapper = setup.setProps({
+            children: (
+                <AccordionItem title="Test" defaultExpanded>
+                    Content
+                </AccordionItem>
+            )
+        });
+
+        expect(wrapper.find(".accordionItem_expanded")).toHaveLength(1);
+
+        wrapper.find(".accordionItem__header button").first().simulate("click");
+        wrapper.update();
+
+        expect(wrapper.find(".accordionItem_expanded")).toHaveLength(0);
+        expect(wrapper.find(".accordionItem__body")).toHaveLength(0);
+
+        wrapper.find(".accordionItem__header button").first().simulate("click");
+        wrapper.update();
+
+        expect(wrapper.find(".accordionItem_expanded")).toHaveLength(1);
+        expect(wrapper.find(".accordionItem__body")).toHaveLength(1);
+    });
+
+    it("each AccordionItem can have independent defaultExpanded values", () => {
+        const wrapper = setup.setProps({
+            children: (
+                <>
+                    <AccordionItem title="Item 1" defaultExpanded>
+                        Content 1
+                    </AccordionItem>
+                    <AccordionItem title="Item 2" defaultExpanded={false}>
+                        Content 2
+                    </AccordionItem>
+                    <AccordionItem title="Item 3">Content 3</AccordionItem>
+                </>
+            )
+        });
+
+        const expandedItems = wrapper.find(".accordionItem_expanded");
+        expect(expandedItems).toHaveLength(1);
+        expect(wrapper.find(".accordionItem__header button").at(0).prop("aria-expanded")).toBe(true);
+        expect(wrapper.find(".accordionItem__header button").at(1).prop("aria-expanded")).toBe(false);
+        expect(wrapper.find(".accordionItem__header button").at(2).prop("aria-expanded")).toBe(false);
+    });
+
     it("calls onToggle callback with correct id and isExpanded state", () => {
         const onToggleMock = jest.fn();
         const wrapper = setup.setProps({
