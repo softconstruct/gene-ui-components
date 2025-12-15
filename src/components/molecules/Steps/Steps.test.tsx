@@ -3,6 +3,7 @@ import { mount, ReactWrapper } from "enzyme";
 
 import { SuccessFilled, Unavailable } from "@geneui/icons";
 
+import Label from "@components/atoms/Label";
 // Components
 import { IStepProps, IStepsProps, Step, Steps } from "@components/molecules/Steps";
 
@@ -11,7 +12,7 @@ describe("Steps ", () => {
     beforeEach(() => {
         setup = mount(
             <Steps>
-                <Step id={33} label="test label" description="test description" />
+                <Step id={33} label={{ text: "test label" }} description="test description" />
             </Steps>
         );
     });
@@ -43,9 +44,13 @@ describe("Steps ", () => {
         expect(wrapper.find(`steps__status_${type}`)).toBeTruthy();
     });
 
-    it("renders linear prop correctly", () => {
-        const wrapper = setup.setProps({ linear: true });
-        expect(wrapper.find(".steps").hasClass("steps_linear")).toBeTruthy();
+    it("renders complete prop correctly", () => {
+        const wrapper = mount(
+            <Steps>
+                <Step id={33} complete />
+            </Steps>
+        );
+        expect(wrapper.find(SuccessFilled)).toBeTruthy();
     });
 
     it("renders error prop correctly", () => {
@@ -58,24 +63,25 @@ describe("Steps ", () => {
     });
 
     it("renders label prop correctly", () => {
-        expect(setup.find(".steps__label").text()).toStrictEqual("test label");
+        expect(setup.find(Label).text()).toStrictEqual("test label");
     });
 
     it("renders description prop correctly", () => {
         expect(setup.find(".steps__description").text()).toStrictEqual("test description");
     });
 
-    it.each<IStepProps["state"]>(["incomplete", "current", "complete"])('should have "%s" state', (state) => {
+    it.each<IStepProps["state"]>(["previous", "current", "next"])('should have "%s" state', (state) => {
         const wrapper = mount(
             <Steps>
                 <Step id={33} state={state} />
             </Steps>
         );
-        if (state === "incomplete") {
+        if (state === "next") {
             expect(wrapper.find(Unavailable)).toBeTruthy();
-        } else if (state === "current") {
+        } else if (state === "previous") {
             expect(wrapper.find(Unavailable)).toBeTruthy();
-        } else if (state === "complete") {
+        } else if (state !== "current") {
+            wrapper.find(Step).setProps({ complete: true });
             expect(wrapper.find(SuccessFilled)).toBeTruthy();
         }
     });
@@ -85,7 +91,7 @@ describe("Steps ", () => {
         const id = 33;
         const wrapper = mount(
             <Steps onChange={onChangeMock}>
-                <Step id={id} label="test label" />
+                <Step id={id} label={{ text: "test label" }} />
             </Steps>
         );
 
@@ -95,6 +101,6 @@ describe("Steps ", () => {
 
         stepLabel.simulate("click");
 
-        expect(onChangeMock).toHaveBeenCalledWith(id);
+        expect(onChangeMock).toHaveBeenCalledWith(wrapper.find(Step).props());
     });
 });

@@ -25,9 +25,14 @@ interface IPointTypesProps {
      */
     loading?: boolean;
     /**
-     * Change the icon for step to mention the Step state.
+     * Change the icon and styling for step to mention the `Step` state.
      */
-    state?: "incomplete" | "current" | "complete";
+    state?: "previous" | "current" | "next";
+    /**
+     * Marks the Step as completed.<br>
+     * When `true` and `state` is not `current`, displays the `SuccessFilled` icon and applies completed styling.<br>
+     */
+    complete?: boolean;
 }
 
 interface IStepProps extends IPointTypesProps {
@@ -54,7 +59,7 @@ type IStepLabelType = {
     changeHandler?: () => void;
 } & Pick<IStepProps, "label" | "disabled" | "loading">;
 
-const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, state }) => {
+const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, state, complete }) => {
     const { type } = useContext(StepsContext);
 
     const stepCount = (num: number) => {
@@ -72,16 +77,25 @@ const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, stat
     }
 
     if (type === "dot") {
-        if (state === "current") {
-            return <Unavailable size={24} className="step_type steps__status_icon steps__status_dot" />;
-        }
-        if (state === "complete") {
+        if (complete && state !== "current") {
             return <SuccessFilled size={24} className="step_type steps__status_icon steps__status_dot" />;
         }
+        if (state !== "next") {
+            return <Unavailable size={24} className="step_type steps__status_icon steps__status_dot" />;
+        }
+
         return <Unavailable size={24} className="step_type steps__status_icon" />;
     }
 
-    return <span className="step_type steps__status_icon steps__status_numeric">{stepCount(stepNumber)}</span>;
+    return (
+        <span className="step_type steps__status_icon steps__status_numeric">
+            {complete && state !== "current" ? (
+                <SuccessFilled size={24} className="step_type steps__status_icon steps__status_dot" />
+            ) : (
+                stepCount(stepNumber)
+            )}
+        </span>
+    );
 };
 
 const StepLabel: FC<IStepLabelType> = ({ label, changeHandler, disabled, loading }) => {
@@ -97,7 +111,7 @@ const StepLabel: FC<IStepLabelType> = ({ label, changeHandler, disabled, loading
 };
 
 const Step: FC<IStepProps> = (props) => {
-    const { id, description, label, loading, stepNumber, disabled, error, state = "incomplete" } = props;
+    const { id, complete, description, label, loading, stepNumber, disabled, error, state } = props;
     const { direction, onChange } = useContext(StepsContext);
     const changeHandler = () => onChange?.(props);
 
@@ -107,17 +121,23 @@ const Step: FC<IStepProps> = (props) => {
             className={classNames("steps__step", {
                 steps__step_disabled: disabled && !error && !loading,
                 steps__step_error: error,
-                steps__step_success: state === "complete",
-                steps__step_current: state === "current"
+                steps__step_success: complete,
+                steps__step_current: state !== "next"
             })}
         >
             <div className="steps__status">
-                <PointTypes stepNumber={stepNumber ?? 1} error={error} loading={loading} state={state} />
+                <PointTypes
+                    stepNumber={stepNumber ?? 1}
+                    error={error}
+                    loading={loading}
+                    complete={complete}
+                    state={state}
+                />
 
                 <Divider
                     className="steps__status_divider"
                     direction={direction}
-                    appearance={state === "complete" && !disabled ? "brand" : "default"}
+                    appearance={(complete || state === "previous") && !disabled ? "brand" : "default"}
                 />
             </div>
             <div className="steps__content">

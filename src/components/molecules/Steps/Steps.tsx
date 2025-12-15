@@ -31,6 +31,10 @@ interface IStepsProps extends IStepsContextProps {
      */
     children: ReactNode;
     /**
+     * Provide current step `index`
+     */
+    current?: number;
+    /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
@@ -39,10 +43,17 @@ interface IStepsProps extends IStepsContextProps {
 
 export const StepsContext = createContext<IStepsContextProps>({} as IStepsContextProps);
 
+const currentStepState = (stepIndex: number, currentIndex?: number): IStepProps["state"] => {
+    if (currentIndex === undefined) return undefined;
+    if (currentIndex > stepIndex) return "previous";
+    if (currentIndex < stepIndex) return "next";
+    return "current";
+};
+
 /**
  * Step component is used to guide users through a sequential process by breaking it down into distinct steps. It is commonly employed in multi-step forms, checkout processes, or workflows that require users to complete tasks in a specific order.
  */
-const Steps: FC<IStepsProps> = ({ direction = "horizontal", type = "dot", className, children, onChange }) => {
+const Steps: FC<IStepsProps> = ({ current, direction = "horizontal", type = "dot", className, children, onChange }) => {
     const memoizedStepsContextValue = useMemo(
         () => ({
             direction,
@@ -66,6 +77,7 @@ const Steps: FC<IStepsProps> = ({ direction = "horizontal", type = "dot", classN
 
                     const stepProps: Partial<IStepProps> = {
                         stepNumber: child.props.stepNumber ?? i + 1,
+                        state: currentStepState(i, current),
                         id: child.props.id ?? i + 1
                     };
 

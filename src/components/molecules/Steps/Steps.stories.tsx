@@ -1,10 +1,10 @@
-import React from "react";
+import React, { FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
-import Step, { IStepProps } from "./Step";
 // Components
+import Step, { IStepProps } from "./Step";
 import Steps, { IStepsProps } from "./Steps";
 
 const meta: Meta<IStepsProps> = {
@@ -16,14 +16,34 @@ const meta: Meta<IStepsProps> = {
 };
 
 const stepsMockData: IStepProps[] = [
-    { label: { text: "Step 1" }, description: "description 1", id: 1, state: "complete" },
-    { label: { text: "Step 2" }, description: "description 2", id: 2, state: "complete" },
-    { label: { text: "Step 3" }, description: "description 3", id: 3, state: "current", loading: true },
-    { label: { text: "Step 4" }, id: 4, loading: false, state: "incomplete", disabled: true }
+    { label: { text: "Step 1" }, description: "description 1", complete: true, id: 1 },
+    { label: { text: "Step 2" }, description: "description 2", complete: true, id: 2 },
+    { label: { text: "Step 3" }, description: "description 3", id: 3, loading: true },
+    { label: { text: "Step 4" }, id: 4, loading: false, disabled: true }
 ];
 
 type Story = StoryObj<IStepsProps>;
 type StoryStep = StoryObj<IStepProps>;
+
+const StepsTemplate: FC<IStepsProps> = (props) => {
+    const { current } = props;
+    const [currentStep, setCurrentStep] = useState<number | undefined>(current);
+    const onStepChange = (step: IStepProps) => {
+        const changingStep = stepsMockData.find((item) => item.id === step.id);
+        if (!changingStep) return;
+
+        const currentIndex = stepsMockData.indexOf(changingStep);
+        setCurrentStep(currentIndex);
+    };
+
+    return (
+        <Steps {...props} current={currentStep} onChange={onStepChange}>
+            {stepsMockData.map((step) => {
+                return <Step {...step} key={step.id} />;
+            })}
+        </Steps>
+    );
+};
 
 const StepsStory: Story = {
     argTypes: {
@@ -31,21 +51,15 @@ const StepsStory: Story = {
         direction: args({ control: "select", ...propCategory.appearance }),
         type: args({ control: "select", ...propCategory.appearance }),
         onChange: args({ control: "false", ...propCategory.action }),
+        current: args({ control: "number", ...propCategory.content }),
         children: args({ control: "false", ...propCategory.content })
     },
     args: {
+        current: 2,
         direction: "vertical",
         type: "dot"
     },
-    render: (props) => {
-        return (
-            <Steps {...props}>
-                {stepsMockData.map((step) => {
-                    return <Step {...step} key={step.id} />;
-                })}
-            </Steps>
-        );
-    }
+    render: (props) => <StepsTemplate {...props} />
 };
 
 const StepStory: StoryStep = storyObjBuilder({
@@ -57,16 +71,16 @@ const StepStory: StoryStep = storyObjBuilder({
         stepNumber: args({ control: "false", ...propCategory.content }),
         id: args({ control: "false", ...propCategory.others }),
         description: args({ control: "text", ...propCategory.content }),
-        state: args({ control: "select", ...propCategory.appearance, options: ["incomplete", "current", "complete"] })
+        complete: args({ control: "boolean", ...propCategory.content }),
+        state: args({ control: "false", ...propCategory.appearance })
     },
     args: {
-        state: "incomplete",
         label: "Label",
         description: "description"
     },
     render: (props) => {
         return (
-            <Steps>
+            <Steps current={0}>
                 <Step id={0} {...props} />
                 <Step id={1} {...props} />
             </Steps>
