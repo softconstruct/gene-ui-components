@@ -63,16 +63,16 @@ interface ICheckboxProps {
      */
     status?: "rest" | "warning" | "error";
     /**
-     * HTML name attribute for the underlying <input type="checkbox"/> element.
-     * * * **Optional, but Recommended for Forms:** <br>
+     * Optional, but Recommended for Forms: <br>
      * Use a unique `name` if the `checkbox` represents a single, independent `Boolean` option. <br>
-     * Use the same `name` across a `group` of `checkboxes` if the user can select multiple options belonging to a single logical data field
      */
     name?: string;
     /**
-     * The value of the component that will be returned in the onChange event.
+     * The value of the component that will be returned in the onChange event and form submissions.
+     * Required when used in CheckboxGroup to identify which option was selected.
+     * Optional for standalone checkboxes - if not provided, HTML defaults to "on" when submitted in forms.
      */
-    value: string;
+    value?: string;
     /**
      *  Fires when the user click on the checkbox. Provides the click event as a callback's argument.
      *  This prop is commonly used to prevent event bubbling.
@@ -168,8 +168,9 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
     }, [checked, checkedState, indeterminate]);
 
     const inputConditionalProps = {
-        ...(name && { name }),
-        ...(autoFocus && { autoFocus }),
+        name,
+        autoFocus,
+        ...(value !== undefined && { value }),
         ...((disabled || readOnly) && { tabIndex: -1 })
     };
 
@@ -202,7 +203,6 @@ const Checkbox: FC<ICheckboxProps> = (props) => {
                         checked={resolvedChecked}
                         disabled={disabled}
                         ref={interRef}
-                        value={value}
                         id={generatedId}
                         {...inputConditionalProps}
                     />
