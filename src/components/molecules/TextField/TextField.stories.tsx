@@ -28,6 +28,7 @@ const meta: Meta<ITextFieldProps> = {
         infoText: args({ control: "text", ...propCategory.content }),
         characterLimit: args({ control: "number", ...propCategory.content }),
         placeholder: args({ control: "text", ...propCategory.content }),
+        defaultValue: args({ control: "text", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content }),
         id: args({ control: "text", ...propCategory.others }),
         name: args({ control: "text", ...propCategory.others }),
@@ -35,8 +36,7 @@ const meta: Meta<ITextFieldProps> = {
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         helperText: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.appearance }),
-        inputMode: args({ control: "select", ...propCategory.appearance }),
-        numericOnly: args({ control: "boolean", ...propCategory.functionality })
+        inputMode: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         size: "large",
@@ -62,46 +62,9 @@ export const Default: Story = {
     render: (props) => <StoryTemplate {...props} />
 };
 
-export const Warning: Story = {
-    args: {
-        status: "warning",
-        helperText: "warning text"
-    },
-    render: (props) => <StoryTemplate {...props} />
-};
-
-export const Error: Story = {
-    args: {
-        status: "error",
-        helperText: "error text"
-    },
-    render: (props) => <StoryTemplate {...props} />
-};
-
 export const WithIcon: Story = {
     args: {
         IconBefore: Info
-    },
-    render: (props) => <StoryTemplate {...props} />
-};
-
-export const WithPassword: Story = {
-    args: {
-        type: "password"
-    },
-    render: (props) => <StoryTemplate {...props} />
-};
-
-export const WithCharacterLimit: Story = {
-    args: {
-        characterLimit: 111
-    },
-    render: (props) => <StoryTemplate {...props} />
-};
-
-export const WithoutLabel: Story = {
-    args: {
-        label: ""
     },
     render: (props) => <StoryTemplate {...props} />
 };
