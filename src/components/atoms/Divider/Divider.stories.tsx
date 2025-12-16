@@ -18,7 +18,7 @@ const meta: Meta<IDividerProps> = {
         Icon: args({ control: "false", ...propCategory.content }),
         text: args({ control: "text", ...propCategory.content }),
         contentPosition: args({ control: "select", ...propCategory.appearance }),
-        content: args({ control: "false", ...propCategory.content }),
+        swappableElement: args({ control: "false", ...propCategory.content }),
         inset: args({ control: "boolean", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance })
     },
@@ -28,7 +28,7 @@ const meta: Meta<IDividerProps> = {
         text: "test",
         contentPosition: "before",
         Icon: Globe,
-        content: <Avatar Icon={Magnifier} color="slate" />
+        swappableElement: <Avatar Icon={Magnifier} color="slate" />
     }
 };
 
@@ -36,7 +36,7 @@ export default meta;
 
 type Story = StoryObj<IDividerProps>;
 
-const StoryComponent: FC = (props) => {
+const StoryComponent: FC<IDividerProps> = (props) => {
     return (
         <div style={{ height: 220 }}>
             <Divider {...props} />
@@ -52,7 +52,7 @@ export const Solid: Story = {
     render: (props) => <StoryComponent {...props} />,
     args: {
         Icon: null,
-        content: undefined,
+        swappableElement: undefined,
         contentPosition: "after"
     }
 };
