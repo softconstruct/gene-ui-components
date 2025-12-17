@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ComponentType } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Download, Globe, RecycleBin, Tag } from "@geneui/icons";
@@ -17,7 +17,7 @@ const meta: Meta<IAccordionProps> = {
     title: "Molecules/Accordion",
     component: Accordion,
     subcomponents: {
-        AccordionItem: AccordionItem as React.ComponentType<unknown>
+        AccordionItem: AccordionItem as ComponentType<unknown>
     }
 };
 
@@ -102,7 +102,7 @@ export const Default: Story = {
     }
 };
 
-export const AccordionItemStory: StoryItem = storyObjBuilder({
+const AccordionItemStory: StoryItem = storyObjBuilder({
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         title: args({ control: "text", ...propCategory.content }),
@@ -138,3 +138,5 @@ export const AccordionItemStory: StoryItem = storyObjBuilder({
         );
     }
 });
+
+export { AccordionItemStory as AccordionItem };
