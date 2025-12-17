@@ -3,12 +3,12 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { Globe, Magnifier } from "@geneui/icons";
 
+// Components
 import Avatar from "@components/atoms/Avatar";
+import Divider, { IDividerProps } from "@components/atoms/Divider";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-// Components
-import Divider, { IDividerProps } from "./index";
 
 const meta: Meta<IDividerProps> = {
     title: "Atoms/Divider",
