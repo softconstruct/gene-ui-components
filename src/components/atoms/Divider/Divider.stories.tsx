@@ -3,9 +3,10 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { Globe, Magnifier } from "@geneui/icons";
 
+import Avatar from "@components/atoms/Avatar";
+
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import Avatar from "../Avatar";
 // Components
 import Divider, { IDividerProps } from "./index";
 
