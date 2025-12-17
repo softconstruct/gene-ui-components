@@ -28,8 +28,7 @@ const meta: Meta<IDividerProps> = {
         direction: "horizontal",
         text: "test",
         contentPosition: "before",
-        Icon: Globe,
-        swappableElement: <Avatar Icon={Magnifier} color="slate" />
+        Icon: Globe
     }
 };
 
@@ -46,6 +45,9 @@ const StoryComponent: FC<IDividerProps> = (props) => {
 };
 
 export const Default: Story = {
+    args: {
+        swappableElement: <Avatar Icon={Magnifier} color="slate" />
+    },
     render: (props) => <StoryComponent {...props} />
 };
 
@@ -53,7 +55,6 @@ export const Solid: Story = {
     render: (props) => <StoryComponent {...props} />,
     args: {
         Icon: null,
-        swappableElement: undefined,
         contentPosition: "after"
     }
 };
