@@ -105,7 +105,7 @@
             &_x {
                 width: 100%;
                 bottom: 0;
-                inset-inline-start: 0;
+                inset-inline-start: var(--guit-ref-spacing-3xsmall);
                 height: 0.6rem;
             }
 
