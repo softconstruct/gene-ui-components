@@ -1,10 +1,11 @@
 import React, { ChangeEvent, FC, MouseEvent, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+// Components
+import CounterField, { ICounterFieldProps } from "@components/molecules/CounterField/CounterField";
+
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-// Components
-import CounterField, { ICounterFieldProps } from "./index";
 
 const meta: Meta<ICounterFieldProps> = {
     title: "Molecules/CounterField",

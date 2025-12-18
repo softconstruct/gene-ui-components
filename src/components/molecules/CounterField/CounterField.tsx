@@ -36,8 +36,6 @@ interface ICounterFieldProps {
      * The amount by which the value increases or decreases.
      */
     step?: number;
-
-    // APPEARANCE & LAYOUT
     /**
      * Size of the component.<br> Possible values: `small | medium | large`
      */
@@ -62,8 +60,6 @@ interface ICounterFieldProps {
      * Indicates that the field is required.
      */
     required?: boolean;
-
-    // ARIA LABELS
     /**
      * The aria label for the increment button.
      */
@@ -72,11 +68,11 @@ interface ICounterFieldProps {
      * The aria label for the decrement button.
      */
     ariaLabelDecrement?: string;
-    // ACTIONS
     /**
      * Fires when the user changes the counter value (via buttons or input).
+     * Receives the raw input string value - parent can convert to number if needed.
      */
-    onChange?: (value: number, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => void;
+    onChange?: (value: string, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => void;
     /**
      * Fires when the input field loses focus.
      */
@@ -111,39 +107,41 @@ const CounterField: FC<ICounterFieldProps> = ({
 }) => {
     const isControlled = value !== undefined;
 
-    const [internalValue, setInternalValue] = useState(defaultValue);
+    const [internalStringValue, setInternalStringValue] = useState(String(defaultValue));
 
-    const currentValue = isControlled ? value : internalValue;
+    const currentStringValue = isControlled ? String(value) : internalStringValue;
 
-    const updateValue = (nextValue: number, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => {
-        if (!isControlled) {
-            setInternalValue(nextValue);
-        }
-
-        onChange?.(nextValue, event);
-    };
+    const validNumericValue = useMemo(() => {
+        const numericValue = Number(currentStringValue);
+        return Number.isFinite(numericValue) ? numericValue : 0;
+    }, [currentStringValue]);
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value;
-        if (inputValue === "" || inputValue === "-") {
-            updateValue(0, event);
-            return;
-        }
-        const parsedValue = parseInt(inputValue, 10);
 
-        if (!Number.isNaN(parsedValue)) {
-            updateValue(parsedValue, event);
+        if (!isControlled) {
+            setInternalStringValue(inputValue);
         }
+
+        onChange?.(inputValue, event);
     };
 
     const handleDecrement = (event: MouseEvent<HTMLButtonElement>) => {
-        const nextValue = currentValue - step;
-        updateValue(nextValue, event);
+        const nextValue = validNumericValue - step;
+        const nextValueString = String(nextValue);
+        if (!isControlled) {
+            setInternalStringValue(nextValueString);
+        }
+        onChange?.(nextValueString, event);
     };
 
     const handleIncrement = (event: MouseEvent<HTMLButtonElement>) => {
-        const nextValue = currentValue + step;
-        updateValue(nextValue, event);
+        const nextValue = validNumericValue + step;
+        const nextValueString = String(nextValue);
+        if (!isControlled) {
+            setInternalStringValue(nextValueString);
+        }
+        onChange?.(nextValueString, event);
     };
 
     const inputId = useMemo(() => `counter-field-${nanoid()}`, []);
@@ -175,7 +173,6 @@ const CounterField: FC<ICounterFieldProps> = ({
                     labelFor={inputId}
                 />
             )}
-
             <div className="counterField__inputContainer">
                 <Button
                     appearance="secondary"
@@ -189,14 +186,14 @@ const CounterField: FC<ICounterFieldProps> = ({
                 />
                 <TextField
                     id={inputId}
-                    numericOnly
+                    type="number"
                     autoComplete="off"
                     onBlur={onBlurHandler}
                     onFocus={onFocusHandler}
                     onChange={handleInputChange}
                     className="counterField__input"
                     size={size}
-                    value={String(currentValue)}
+                    value={currentStringValue}
                     disabled={disabled}
                     status={status}
                 />
@@ -211,7 +208,6 @@ const CounterField: FC<ICounterFieldProps> = ({
                     onClick={handleIncrement}
                 />
             </div>
-
             {helperText && (
                 <div className="counterField__infoContainer">
                     <HelperText text={helperText} disabled={disabled} status={status} />
