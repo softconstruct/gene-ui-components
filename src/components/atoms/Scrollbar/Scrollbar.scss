@@ -70,7 +70,7 @@
         z-index: 100;
         overflow: hidden;
         border-radius: var(--guit-ref-radius-3xsmall);
-        inset-inline-end: var(--guit-ref-spacing-4xsmall);
+        inset-inline-end: 0;
         bottom: var(--guit-ref-spacing-3xsmall) !important;
 
         &_direction {
@@ -105,7 +105,7 @@
             &_x {
                 width: 100%;
                 bottom: 0;
-                inset-inline-start: var(--guit-ref-spacing-3xsmall);
+                inset-inline-start: 0;
                 height: 0.6rem;
             }
 
