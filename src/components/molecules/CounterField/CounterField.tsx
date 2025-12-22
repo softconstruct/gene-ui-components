@@ -23,7 +23,7 @@ interface ICounterFieldProps {
      * The value of the counter (controlled).
      * This is what will be returned in onChange and stored as the selected value.
      */
-    value?: number;
+    value?: number | string;
     /**
      * The initial value of the counter (uncontrolled).
      */

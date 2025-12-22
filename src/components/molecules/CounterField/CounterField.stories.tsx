@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, MouseEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, MouseEvent, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Components
@@ -11,7 +11,7 @@ const meta: Meta<ICounterFieldProps> = {
     title: "Molecules/CounterField",
     component: CounterField,
     argTypes: {
-        value: args({ control: "number", ...propCategory.states }),
+        value: args({ control: "text", ...propCategory.states }),
         defaultValue: args({ control: "number", ...propCategory.states }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         ariaLabelIncrement: args({ control: "text", ...propCategory.others }),
@@ -52,20 +52,19 @@ export const Default: Story = {
 };
 
 const ControlledTemplate: FC<ICounterFieldProps> = ({ value, onChange, ...props }) => {
-    const [internalValue, setInternalValue] = useState(value ?? 0);
+    const isControlled = value !== undefined;
+    const displayValue = isControlled ? value : "0";
+    const [internalStringValue, setInternalStringValue] = useState(displayValue);
 
-    useEffect(() => {
-        if (value !== undefined) {
-            setInternalValue(value);
-        }
-    }, [value]);
-
-    const handleChange = (newValue: number, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => {
-        setInternalValue(newValue);
-        onChange?.(newValue, event);
+    const handleChange = (
+        newValueString: string,
+        event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>
+    ) => {
+        setInternalStringValue(newValueString);
+        onChange?.(newValueString, event);
     };
 
-    return <CounterField {...props} value={internalValue} onChange={handleChange} />;
+    return <CounterField {...props} value={internalStringValue} onChange={handleChange} />;
 };
 
 export const Controlled: Story = {
