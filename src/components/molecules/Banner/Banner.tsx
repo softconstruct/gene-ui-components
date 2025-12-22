@@ -1,0 +1,167 @@
+import React, { FC, useContext } from "react";
+import classNames from "classnames";
+
+import { Error, IconProps, Info, Warning, X } from "@geneui/icons";
+
+// Components
+import Button, { IButtonProps } from "@components/atoms/Button";
+import Text from "@components/atoms/Text";
+import ButtonGroup from "@components/molecules/ButtonGroup";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
+
+// Styles
+import "./Banner.scss";
+
+interface IBannerProps {
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
+    /**
+     * The main text content displayed in the banner.
+     */
+    text: string;
+    /**
+     * Controls the visibility of the banner. Set to `true` to show and `false` to hide.
+     * @default true
+     */
+    open?: boolean;
+    /**
+     * Defines the semantic meaning and visual style (color, icon) of the notification.
+     * @default "informative"
+     */
+    status?: "informative" | "warning" | "error";
+    /**
+     * Callback function triggered when the close (X) button is clicked.
+     * **Note: The close button will not be rendered if this prop is not provided.**
+     */
+    onClose?: () => void;
+    /**
+     * The text to display on the primary action button.
+     * **Note: The primary action button will not be rendered if this prop is not provided.**
+     */
+    primaryActionText?: string;
+    /**
+     * The text to display on the secondary action button.
+     * **Note: The secondary action button will not be rendered if this prop is not provided.**
+     */
+    secondaryActionText?: string;
+    /**
+     * Callback function for the primary action button.
+     * This is only relevant if `primaryActionText` is also provided.
+     */
+    onPrimaryActionClick?: () => void;
+    /**
+     * Callback function for the secondary action button.
+     * This is only relevant if `secondaryActionText` is also provided.
+     */
+    onSecondaryActionClick?: () => void;
+}
+
+type BannerStatus = Exclude<IBannerProps["status"], undefined>;
+
+interface IBannerConfig {
+    icon: React.FC<IconProps>;
+    buttonAppearance: Exclude<IButtonProps["appearance"], undefined>;
+}
+
+const bannerConfig: Record<BannerStatus, IBannerConfig> = {
+    error: {
+        icon: Error,
+        buttonAppearance: "inverse"
+    },
+    warning: {
+        icon: Warning,
+        buttonAppearance: "secondary"
+    },
+    informative: {
+        icon: Info,
+        buttonAppearance: "inverse"
+    }
+} as const;
+
+/**
+ * Banner component is a prominent, horizontally-oriented message box designed to capture the user's attention and convey important information across the top of a page. It is used for announcements, alerts, promotions, or updates that need to be immediately visible to users.
+ */
+const Banner: FC<IBannerProps> = ({
+    className,
+    status = "informative",
+    text,
+    onClose,
+    open,
+    primaryActionText,
+    secondaryActionText,
+    onPrimaryActionClick,
+    onSecondaryActionClick
+}) => {
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
+
+    const currentBreakpoint = breakpoint?.currentBreakpoint || "desktop";
+
+    const onCloseHandler = () => {
+        onClose?.();
+    };
+
+    const config = !bannerConfig[status] ? bannerConfig.informative : bannerConfig[status];
+
+    const Icon: FC<IconProps> = config.icon;
+
+    const bannerClassName = classNames("banner", `banner_status_${status}`, className);
+
+    const actionsClassName = classNames("banner__actions", `banner__actions_${currentBreakpoint}`);
+
+    if (!open) {
+        return null;
+    }
+
+    return (
+        <div className={bannerClassName} role="alert" aria-atomic="true">
+            <div className="banner__content">
+                <Icon className="banner__icon" size={20} aria-hidden="true" />
+                <Text as="p" variant="bodyMediumMedium" className="banner__text">
+                    {text}
+                </Text>
+            </div>
+            {primaryActionText || secondaryActionText ? (
+                <ButtonGroup size="small" className={actionsClassName}>
+                    {primaryActionText && (
+                        <Button
+                            layout="text"
+                            size="small"
+                            appearance={config.buttonAppearance}
+                            className="banner__button"
+                            onClick={onPrimaryActionClick}
+                        >
+                            {primaryActionText}
+                        </Button>
+                    )}
+                    {secondaryActionText && (
+                        <Button
+                            layout="text"
+                            size="small"
+                            appearance={config.buttonAppearance}
+                            className="banner__button"
+                            onClick={onSecondaryActionClick}
+                        >
+                            {secondaryActionText}
+                        </Button>
+                    )}
+                </ButtonGroup>
+            ) : null}
+            {onClose && (
+                <Button
+                    appearance={config.buttonAppearance}
+                    layout="text"
+                    size="small"
+                    className="banner__close"
+                    onClick={onCloseHandler}
+                    Icon={X}
+                    aria-label="Close"
+                />
+            )}
+        </div>
+    );
+};
+
+export { IBannerProps, Banner as default };

@@ -101,7 +101,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, columnsMap, onColActi
         }
         const values = flatRows
             .map((row) => (row.original[colDef.type] as ICheckboxProps).value)
-            .filter((item) => Boolean(item));
+            .filter((item): item is string => Boolean(item));
         setFilteredValues(values);
     };
 

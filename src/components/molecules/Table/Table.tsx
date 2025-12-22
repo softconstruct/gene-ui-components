@@ -747,8 +747,6 @@ const Table: FC<TablePropsType> = ({
                         <div className="dataTable__pagination_controls">
                             <Pagination
                                 current={table.getState().pagination.pageIndex + 1}
-                                totalItems={data.length}
-                                currentPageItemsLength={initialPageSize}
                                 totalPages={table.getPageCount()}
                                 rowsPerPageOptions={pageSizes}
                                 onPageChange={handlePageChange}

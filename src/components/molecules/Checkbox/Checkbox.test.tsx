@@ -32,12 +32,12 @@ describe("Checkbox ", () => {
 
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({ disabled: true });
-        expect(wrapper.find(".checkbox").hasClass(`checkbox_disabled`)).toBeTruthy();
+        expect(wrapper.find("input").props().disabled).toBe(true);
     });
 
     it("renders readOnly prop correctly", () => {
         const wrapper = setup.setProps({ readOnly: true });
-        expect(wrapper.find(".checkbox").hasClass(`checkbox_readOnly`)).toBeTruthy();
+        expect(wrapper.find(".checkbox__imitationHolder").hasClass(`checkbox__imitationHolder_readOnly`)).toBeTruthy();
     });
 
     it("renders vertical prop correctly", () => {
@@ -112,10 +112,10 @@ describe("Checkbox ", () => {
         expect(onBlurMock).toHaveBeenCalled();
     });
 
-    it.each<ICheckboxProps["type"]>(["rest", "warning", "error"])('should have "%s" type', (type) => {
-        const wrapper = setup.setProps({ type });
+    it.each<ICheckboxProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
+        const wrapper = setup.setProps({ status });
 
-        expect(wrapper.find(".checkbox").hasClass(`checkbox_${type}`)).toBeTruthy();
+        expect(wrapper.find(".checkbox").hasClass(`checkbox_status_${status}`)).toBeTruthy();
     });
 
     it("renders className prop correctly", () => {
@@ -129,5 +129,14 @@ describe("Checkbox ", () => {
         const wrapper = setup.setProps({ value });
 
         expect(wrapper.find("input").props().value).toBe(value);
+    });
+
+    it("renders without value prop (optional)", () => {
+        const wrapper = mount(<Checkbox name="test" />);
+        const inputProps = wrapper.find("input").props();
+
+        // When value is not provided, it should not be in the props (or be undefined)
+        expect(inputProps.value).toBeUndefined();
+        expect(wrapper.exists()).toBeTruthy();
     });
 });

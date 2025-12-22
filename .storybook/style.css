@@ -1,3 +1,7 @@
 html {
-    padding: 4px;
+    height: 100%;
+}
+
+body {
+    height: 100%;
 }

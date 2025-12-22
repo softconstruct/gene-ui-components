@@ -4,8 +4,8 @@ import { mount, ReactWrapper } from "enzyme";
 // Components
 import { CircleFilled } from "@geneui/icons";
 
-import HelperText from "../HelperText";
-import Label from "../Label";
+import HelperText from "../../atoms/HelperText";
+import Label from "../../atoms/Label";
 import Radio, { IRadioProps } from "./index";
 
 describe("Radio ", () => {
@@ -38,12 +38,12 @@ describe("Radio ", () => {
 
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({ disabled: true });
-        expect(wrapper.find(".radio").hasClass(`radio_disabled`)).toBeTruthy();
+        expect(wrapper.find(".radio__imitationHolder").hasClass(`radio__imitationHolder_disabled`)).toBeTruthy();
     });
 
     it("renders readOnly prop correctly", () => {
         const wrapper = setup.setProps({ readOnly: true });
-        expect(wrapper.find(".radio").hasClass(`radio_readOnly`)).toBeTruthy();
+        expect(wrapper.find(".radio__imitationHolder").hasClass(`radio__imitationHolder_readOnly`)).toBeTruthy();
     });
 
     it("renders vertical prop correctly", () => {
@@ -113,10 +113,10 @@ describe("Radio ", () => {
         expect(onBlurMock).toHaveBeenCalled();
     });
 
-    it.each<IRadioProps["type"]>(["rest", "warning", "error"])('should have "%s" type', (type) => {
-        const wrapper = setup.setProps({ type });
+    it.each<IRadioProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
+        const wrapper = setup.setProps({ status });
 
-        expect(wrapper.find(".radio").hasClass(`radio_${type}`)).toBeTruthy();
+        expect(wrapper.find(".radio").hasClass(`radio_${status}`)).toBeTruthy();
     });
 
     it("renders className prop correctly", () => {

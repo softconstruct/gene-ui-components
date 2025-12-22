@@ -1,0 +1,28 @@
+.checkboxGroup {
+    $this: &;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--guit-ref-spacing-xsmall);
+
+    &__options {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-xsmall);
+        max-width: 100%;
+    }
+
+    &__infoContainer {
+        display: flex;
+    }
+
+    &_disabled {
+        pointer-events: none;
+        user-select: none;
+    }
+
+    &_readOnly {
+        pointer-events: none;
+    }
+}

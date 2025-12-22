@@ -6,6 +6,9 @@ import { IconProps } from "@geneui/icons";
 // Components
 import Loader from "@components/atoms/Loader";
 
+// Types
+import { Booleanish } from "@types";
+
 // Styles
 import "./Button.scss";
 
@@ -72,6 +75,16 @@ interface IButtonProps {
      */
     className?: string;
     /**
+     * An ARIA label for a button provides a short, descriptive text label for screen readers and other assistive technologies to announce when the button has no visible text or the visible text isn't clear enough on its own.
+     */
+    "aria-label"?: string;
+    /**
+     * Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed.
+     * Used for accessibility to inform screen readers about the state of expandable content.
+     * Possible values: `boolean | "true" | "false"`
+     */
+    "aria-expanded"?: Booleanish;
+    /**
      * The button type attribute for HTML form behavior. <br>
      * Possible values: `button | submit | reset` <br>
      * Default: `button`
@@ -85,6 +98,11 @@ interface IButtonProps {
      *  Event handler for when the button element receives focus. Provides the focus event as a callback's argument.
      */
     onFocus?: (e: FocusEvent<HTMLButtonElement>) => void;
+    /**
+     * Tab index for keyboard navigation. When loading, automatically set to -1 to prevent focus.
+     * @default 0
+     */
+    tabIndex?: number;
 }
 
 const loadingTypes = {
@@ -114,9 +132,12 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             className,
             iconPosition,
             loading,
+            "aria-label": ariaLabel,
             type = "button",
             onBlur,
-            onFocus
+            onFocus,
+            tabIndex = 0,
+            "aria-expanded": ariaExpanded
         }: IButtonProps,
         ref
     ) => {
@@ -134,7 +155,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 type={type || "button"}
                 onClick={onClick}
                 disabled={disabled && !loading}
-                {...(loading ? { tabIndex: -1 } : {})}
+                tabIndex={loading ? -1 : tabIndex}
                 className={classNames(
                     `button button_size_${size} 
                     button_color_${appearance} 
@@ -148,6 +169,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                         button_loading: loading
                     }
                 )}
+                aria-label={ariaLabel}
+                aria-expanded={ariaExpanded}
             >
                 {loading && (
                     <Loader

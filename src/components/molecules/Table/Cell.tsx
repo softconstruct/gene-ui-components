@@ -6,7 +6,7 @@ import Copy from "@components/atoms/Copy";
 import Pill, { IPillProps } from "@components/atoms/Pill";
 import Text from "@components/atoms/Text";
 import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
-import TextField from "@components/molecules/TextField";
+import TextField, { ITextFieldProps } from "@components/molecules/TextField";
 import Tooltip from "@components/molecules/Tooltip";
 
 import { Cell as CellTypes, CellType } from "./type";
@@ -28,7 +28,7 @@ interface ICellProps {
 type CellRenderer = {
     [key: string]: (
         props: Omit<ICellProps, "type"> & {
-            inputType?: "Text" | "Number";
+            inputType?: ITextFieldProps["type"];
         }
     ) => JSX.Element;
 };
@@ -51,7 +51,7 @@ export const cellRenderer: () => CellRenderer = () => {
             if (withEditMode) {
                 return (
                     <TextField
-                        numericOnly={inputType === "Number"}
+                        type={inputType}
                         placeholder="Row Text"
                         value={value}
                         aria-label={ariaLabel || inputType}
@@ -214,7 +214,7 @@ const Cell: FC<ICellProps> = ({ type, rowCellRenderer, data, withEditMode, withC
                 rowCellRenderer,
                 withEditMode,
                 data,
-                inputType: type === "Number" ? type : "Text",
+                inputType: type === "Number" ? "number" : "text",
                 withCopy,
                 onChange,
                 ariaLabel

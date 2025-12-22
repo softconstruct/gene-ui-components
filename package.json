@@ -1,7 +1,7 @@
 {
     "name": "@geneui/components",
     "description": "The Gene UI components library designed for BI tools",
-    "version": "2.16.5",
+    "version": "2.16.4",
     "author": "SoftConstruct",
     "homepage": "https://github.com/softconstruct/gene-ui-components#readme",
     "repository": {
@@ -91,6 +91,7 @@
         "@types/react-beautiful-dnd": "^13.1.8",
         "@types/react-dom": "^18.3.1",
         "@types/react-is": "^18.3.0",
+        "@types/react-virtualized": "^9.22.0",
         "@typescript-eslint/eslint-plugin": "^8.11.0",
         "@typescript-eslint/parser": "^8.11.0",
         "autoprefixer": "^10.4.13",
@@ -179,6 +180,7 @@
         "@tanstack/react-virtual": "^3.13.12",
         "@tanstack/table-core": "^8.21.3",
         "classnames": "^2.3.2",
+        "nanoid": "^5.1.6",
         "qrcode.react": "^4.2.0",
         "react-beautiful-dnd": "^13.1.1",
         "react-is": "^17.0.2",

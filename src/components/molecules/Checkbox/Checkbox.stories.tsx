@@ -20,7 +20,7 @@ const meta: Meta<ICheckboxProps> = {
         required: args({ control: "boolean", ...propCategory.states }),
         helperText: args({ control: "text", ...propCategory.content }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
-        type: args({ control: "select", ...propCategory.appearance }),
+        status: args({ control: "select", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         name: args({ control: "text", ...propCategory.others }),
@@ -28,7 +28,8 @@ const meta: Meta<ICheckboxProps> = {
         onChange: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
-        className: args({ control: "false", ...propCategory.appearance })
+        className: args({ control: "false", ...propCategory.appearance }),
+        id: args({ control: "text", ...propCategory.others })
     },
     args: {
         label: "Label",

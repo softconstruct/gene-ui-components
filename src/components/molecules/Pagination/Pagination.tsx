@@ -11,6 +11,9 @@ import TextField from "@components/molecules/TextField";
 // Styles
 import "./Pagination.scss";
 
+// Helpers
+import { allowOnlyDigits } from "../../../helpers";
+
 interface IPaginationProps {
     /**
      * Additional class for the parent element.
@@ -22,15 +25,6 @@ interface IPaginationProps {
      * This value determines the upper bound of pagination navigation.
      */
     totalPages: number;
-    /**
-     * Total number of data items available.
-     * This value determines the upper bound of pagination navigation.
-     */
-    totalItems?: number;
-    /**
-     * The number of items currently displayed on the active page.
-     */
-    currentPageItemsLength?: number;
     /**
      * The current active page (1-indexed).
      * This value sets the starting point of the pagination and updates dynamically with user interaction.
@@ -123,8 +117,6 @@ const Pagination: FC<IPaginationProps> = ({
     className,
     current = 1,
     totalPages = 25,
-    totalItems,
-    currentPageItemsLength,
     rowsPerPageOptions,
     onPageChange,
     onPageSizeChange,
@@ -137,35 +129,43 @@ const Pagination: FC<IPaginationProps> = ({
     const isRTLMode = document.dir === "rtl";
 
     const [currentPage, setCurrentPage] = useState<number>(+current > totalPages ? 1 : +current);
-    const [currentPageSize, setCurrentPageSize] = useState<number>(
-        currentPageItemsLength || rowsPerPageOptions?.[0] || 0
-    );
+    const [currentPageSize, setCurrentPageSize] = useState<number>(rowsPerPageOptions?.[0] || 0);
+    const [goToPageValue, setGoToPageValue] = useState<number>(currentPage);
 
-    // Generate the page numbers to displays
+    // Generate the page numbers to display
     const calculatedData = createPageNumbers(currentPage, +totalPages, MAXIMUM_SIZE_IN_VIEW_PORT);
+
+    const pageValue = goToPageValue > 0 ? goToPageValue.toString() : "";
 
     // Effect to sync internal state with external prop changes
     useEffect(() => {
         const newCurrentPage = +current > totalPages ? 1 : +current;
         setCurrentPage(newCurrentPage);
+        setGoToPageValue(newCurrentPage);
     }, [current, totalPages]);
 
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= totalPages) {
+            if (newPage !== goToPageValue) setGoToPageValue(newPage);
             setCurrentPage(newPage);
             onPageChange?.(newPage);
         }
     };
 
-    const handleGoToPage = (e: ChangeEvent<HTMLInputElement>) => {
-        const value = +e.currentTarget.value;
-        if (Number.isNaN(value) || value < 1) return;
+    const handleGoToPageChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const inputValue = e.currentTarget.value;
+        const isNumericValue = allowOnlyDigits(inputValue);
+        if (!isNumericValue) return;
 
-        if (value > totalPages) {
-            handlePageChange(totalPages);
-        } else {
-            handlePageChange(value);
-        }
+        setGoToPageValue(+inputValue);
+        handlePageChange(+inputValue);
+    };
+
+    const handleGoToPageBlur = () => {
+        if (currentPage === goToPageValue) return;
+        const currentPageValue = goToPageValue > totalPages ? totalPages : goToPageValue || currentPage;
+        setGoToPageValue(currentPageValue);
+        handlePageChange(currentPageValue);
     };
 
     const handlePageSizeChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -186,11 +186,11 @@ const Pagination: FC<IPaginationProps> = ({
 
     return (
         <div className={classNames("pagination", className)}>
-            {rowsPerPageOptions && totalItems && (
+            {rowsPerPageOptions && (
                 <div className="pagination__perpage">
                     {/* todo: import 'Dropdown' component */}
                     <div className="pagination__select">
-                        <select onChange={handlePageSizeChange} defaultValue={currentPageSize}>
+                        <select onChange={handlePageSizeChange}>
                             {rowsPerPageOptions.map((el) => (
                                 <option value={el} key={el}>
                                     {el}/{pageSizeSuffixLabel}
@@ -201,7 +201,7 @@ const Pagination: FC<IPaginationProps> = ({
 
                     <div className="pagination__perpage_values">
                         <span>{currentPageSize}</span> {pageSizeOfLabel}{" "}
-                        <span className="pagination__perpage_totalItems">{totalItems}</span>
+                        <span className="pagination__perpage_totalItems">{totalPages}</span>
                     </div>
                 </div>
             )}
@@ -268,11 +268,11 @@ const Pagination: FC<IPaginationProps> = ({
                         <span>{goToPageLabel}</span>
                         <TextField
                             size="medium"
-                            numericOnly
-                            onChange={handleGoToPage}
+                            onChange={handleGoToPageChange}
+                            onBlur={handleGoToPageBlur}
                             autoComplete="off"
                             className="pagination__input"
-                            value={currentPage.toString()}
+                            value={pageValue}
                         />
                         <span>{goToPageSuffixLabel}</span>
                     </div>

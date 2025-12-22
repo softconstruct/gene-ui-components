@@ -6,15 +6,9 @@
     display: inline-flex;
     max-width: 100%;
     flex-direction: column;
+    align-items: flex-start;
     min-width: 0;
     row-gap: var(--guit-ref-spacing-3xsmall);
-
-    &__label {
-        display: flex;
-        align-items: center;
-        max-width: fit-content;
-        user-select: none;
-    }
 
     &__sliderHolder {
         flex: 0 0 auto;
@@ -157,7 +151,7 @@
         }
     }
 
-    &_type {
+    &_status {
         &_error {
             #{ $this }__input:not(:disabled) + #{ $this }__slider {
                 border-color: var(--guit-sem-color-border-error);

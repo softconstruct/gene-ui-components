@@ -25,14 +25,14 @@ describe("HelperText ", () => {
         expect(wrapper.find(`.helperText_size_${size}`).exists()).toBeTruthy();
     });
 
-    it.each<IHelperTextProps["type"]>(["rest", "error", "warning"])('should have "%s" type', (type) => {
-        const wrapper = setup.setProps({ type });
+    it.each<IHelperTextProps["status"]>(["rest", "error", "warning"])('should have "%s" status', (status) => {
+        const wrapper = setup.setProps({ status });
 
-        expect(wrapper.find(`.helperText_type_${type}`).exists()).toBeTruthy();
+        expect(wrapper.find(`.helperText_status_${status}`).exists()).toBeTruthy();
     });
 
     it("renders text prop correctly", () => {
-        expect(setup.find(".helperText__text").text()).toStrictEqual("test");
+        expect(setup.find(".helperText__text").hostNodes().text()).toStrictEqual("test");
     });
 
     it("renders Icon prop correctly", () => {

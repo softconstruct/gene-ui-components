@@ -9,7 +9,6 @@ import Pagination, { IPaginationProps } from "./index";
 describe("Pagination", () => {
     let setup: ReactWrapper<IPaginationProps>;
     const baseProps: IPaginationProps = {
-        totalItems: 300,
         totalPages: 10,
         current: 1
     };
@@ -31,11 +30,6 @@ describe("Pagination", () => {
     it("renders correct number of page buttons when totalPages is less than or equal to 5", () => {
         const wrapper = setup.setProps({ totalPages: 4 });
         expect(wrapper.find(".pagination__nav_item").length).toBe(4);
-    });
-
-    it("renders with totalItems prop", () => {
-        const wrapper = setup.setProps({ totalItems: 100, rowsPerPageOptions: [10, 20, 30] });
-        expect(wrapper.find(".pagination__perpage_totalItems").text()).toBe("100");
     });
 
     it("renders correct number of page buttons when totalPages is greater than 5", () => {
@@ -107,8 +101,8 @@ describe("Pagination", () => {
         // Check if the text indicating the page range contains the custom label.
         const perPageValuesText = setup.find(".pagination__perpage_values").text();
         expect(perPageValuesText).toContain(customLabel);
-        // Example assertion: "10 of 300"
-        expect(perPageValuesText).toBe(`10 ${customLabel} 300`);
+        // Example assertion: "10 of 10"
+        expect(perPageValuesText).toBe(`10 ${customLabel} 10`);
     });
 
     it("renders goToPageLabel prop correctly", () => {
