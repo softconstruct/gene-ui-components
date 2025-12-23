@@ -101,35 +101,37 @@
         flex: 0 0 auto;
     }
 
-    &:not(&#{ $this }_interactive) {
-        min-width: 24rem;
-    }
-
-    &_interactive {
-        min-width: 12rem;
-
-        &#{ $this }_withIcon {
-            min-width: 18rem;
+    &_mode {
+        &_static {
+            min-width: 24rem;
         }
 
-        @include mixins.media-hover {
-            &:hover {
-                background-color: var(--guit-sem-color-background-neutral-1-hover);
+        &_interactive {
+            min-width: 12rem;
+
+            &#{ $this }_withIcon {
+                min-width: 18rem;
             }
-        }
 
-        &:active {
-            background-color: var(--guit-sem-color-background-neutral-1-pressed);
-        }
+            @include mixins.media-hover {
+                &:hover {
+                    background-color: var(--guit-sem-color-background-neutral-1-hover);
+                }
+            }
 
-        &#{ $this }_disabled {
-            pointer-events: none;
-            user-select: none;
-            border-color: var(--guit-sem-color-border-disabled-1);
+            &:active {
+                background-color: var(--guit-sem-color-background-neutral-1-pressed);
+            }
 
-            #{ $this }__icon,
-            #{ $this }__description {
-                color: var(--guit-sem-color-foreground-disabled);
+            &#{ $this }_disabled {
+                pointer-events: none;
+                user-select: none;
+                border-color: var(--guit-sem-color-border-disabled-1);
+
+                #{ $this }__icon,
+                #{ $this }__description {
+                    color: var(--guit-sem-color-foreground-disabled);
+                }
             }
         }
     }
