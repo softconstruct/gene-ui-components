@@ -3,13 +3,12 @@ import { mount, ReactWrapper } from "enzyme";
 
 import { Minus, Plus } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
+import CounterField, { ICounterFieldProps } from "@components/molecules/CounterField/CounterField";
 import TextField from "@components/molecules/TextField";
-
-// Components
-import CounterField, { ICounterFieldProps } from "./index";
 
 describe("CounterField", () => {
     let setup: ReactWrapper<ICounterFieldProps>;
@@ -118,85 +117,44 @@ describe("CounterField", () => {
         expect(setup.find(TextField).props().value).toBe("0");
     });
 
-    it("respects min boundary", () => {
-        const min = 5;
-        const wrapper = setup.setProps({ min, value: min });
-
-        expect(wrapper.find(TextField).props().value).toBe(String(min));
-    });
-
-    it("disables decrement button when value equals min", () => {
-        const wrapper = setup.setProps({ value: 0, min: 0 });
-
-        const decrementButton = wrapper.find(Button).at(0);
-        expect(decrementButton.props().disabled).toBeTruthy();
-    });
-
-    it("does not disable decrement button when value is above min", () => {
-        const wrapper = setup.setProps({ value: 5, min: 0 });
-
-        const decrementButton = wrapper.find(Button).at(0);
-        expect(decrementButton.props().disabled).toBeFalsy();
-    });
-
     it("increments by default step of 1", () => {
         const onChange = jest.fn();
-        const wrapper = mount(<CounterField value={5} onChange={onChange} />);
+        const wrapper = setup.setProps({ value: 5, onChange });
 
         const incrementButton = wrapper.find(Button).at(1);
         incrementButton.simulate("click");
 
-        expect(onChange).toHaveBeenCalledWith(6, expect.any(Object));
+        expect(onChange).toHaveBeenCalledWith("6", expect.any(Object));
     });
 
     it("decrements by default step of 1", () => {
-        const onChange = jest.fn();
-        const wrapper = mount(<CounterField value={5} min={0} onChange={onChange} />);
-
-        const decrementButton = wrapper.find(Button).at(0);
-        decrementButton.simulate("click");
-
-        expect(onChange).toHaveBeenCalledWith(4, expect.any(Object));
-    });
-
-    it("increments by custom step", () => {
-        const onChange = jest.fn();
-        const wrapper = mount(<CounterField value={5} step={3} onChange={onChange} />);
-
-        const incrementButton = wrapper.find(Button).at(1);
-        incrementButton.simulate("click");
-
-        expect(onChange).toHaveBeenCalledWith(8, expect.any(Object));
-    });
-
-    it("decrements by custom step", () => {
-        const onChange = jest.fn();
-        const wrapper = mount(<CounterField value={10} min={0} step={3} onChange={onChange} />);
-
-        const decrementButton = wrapper.find(Button).at(0);
-        decrementButton.simulate("click");
-
-        expect(onChange).toHaveBeenCalledWith(7, expect.any(Object));
-    });
-
-    it("calls onChange when increment button is clicked", () => {
-        const onChange = jest.fn();
-        const wrapper = setup.setProps({ onChange });
-
-        const incrementButton = wrapper.find(Button).at(1);
-        incrementButton.simulate("click");
-
-        expect(onChange).toHaveBeenCalled();
-    });
-
-    it("calls onChange when decrement button is clicked", () => {
         const onChange = jest.fn();
         const wrapper = setup.setProps({ value: 5, onChange });
 
         const decrementButton = wrapper.find(Button).at(0);
         decrementButton.simulate("click");
 
-        expect(onChange).toHaveBeenCalled();
+        expect(onChange).toHaveBeenCalledWith("4", expect.any(Object));
+    });
+
+    it("increments by custom step", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 5, step: 3, onChange });
+
+        const incrementButton = wrapper.find(Button).at(1);
+        incrementButton.simulate("click");
+
+        expect(onChange).toHaveBeenCalledWith("8", expect.any(Object));
+    });
+
+    it("decrements by custom step", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 10, step: 3, onChange });
+
+        const decrementButton = wrapper.find(Button).at(0);
+        decrementButton.simulate("click");
+
+        expect(onChange).toHaveBeenCalledWith("7", expect.any(Object));
     });
 
     it("renders Plus icon on increment button", () => {
@@ -209,8 +167,8 @@ describe("CounterField", () => {
         expect(decrementButton.props().Icon).toBe(Minus);
     });
 
-    it("passes numericOnly prop to TextField", () => {
-        expect(setup.find(TextField).props().numericOnly).toBeTruthy();
+    it("passes type='number' prop to TextField", () => {
+        expect(setup.find(TextField).props().type).toBe("number");
     });
 
     it("increment button is not disabled by default", () => {
@@ -230,12 +188,6 @@ describe("CounterField", () => {
         expect(decrementButton.props().disabled).toBeTruthy();
     });
 
-    it("decrement button is disabled when value equals min", () => {
-        const wrapper = setup.setProps({ value: 10, min: 10 });
-        const decrementButton = wrapper.find(Button).at(0);
-        expect(decrementButton.props().disabled).toBeTruthy();
-    });
-
     it("should have aria-required attribute when required is true", () => {
         const wrapper = setup.setProps({ required: true });
         expect(wrapper.find(".counterField").prop("aria-required")).toBe(true);
@@ -246,14 +198,12 @@ describe("CounterField", () => {
         expect(wrapper.find(".counterField").prop("aria-invalid")).toBe(true);
     });
 
-    it("should have aria-invalid='false' when status is 'rest'", () => {
-        const wrapper = setup.setProps({ status: "rest" });
-        expect(wrapper.find(".counterField").prop("aria-invalid")).toBe(false);
-    });
+    it("should have aria-invalid='false' when status is not 'error'", () => {
+        const wrapperRest = setup.setProps({ status: "rest" });
+        expect(wrapperRest.find(".counterField").prop("aria-invalid")).toBe(false);
 
-    it("should have aria-invalid='false' when status is 'warning'", () => {
-        const wrapper = setup.setProps({ status: "warning" });
-        expect(wrapper.find(".counterField").prop("aria-invalid")).toBe(false);
+        const wrapperWarning = setup.setProps({ status: "warning" });
+        expect(wrapperWarning.find(".counterField").prop("aria-invalid")).toBe(false);
     });
 
     it("should have aria-label on decrement button", () => {
@@ -284,12 +234,99 @@ describe("CounterField", () => {
 
     it("does not update internal state in controlled mode", () => {
         const onChange = jest.fn();
-        const wrapper = mount(<CounterField value={5} onChange={onChange} />);
+        const wrapper = setup.setProps({ value: 5, onChange });
 
         const incrementButton = wrapper.find(Button).at(1);
         incrementButton.simulate("click");
 
         expect(wrapper.find(TextField).props().value).toBe("5");
-        expect(onChange).toHaveBeenCalledWith(6, expect.any(Object));
+        expect(onChange).toHaveBeenCalledWith("6", expect.any(Object));
+    });
+
+    it("calls onChange with string value when user types in input", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ onChange });
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("change", { target: { value: "12" } });
+
+        expect(onChange).toHaveBeenCalledWith("12", expect.any(Object));
+    });
+
+    it("calls onChange with intermediate string states like '-'", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ onChange });
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("change", { target: { value: "-" } });
+
+        expect(onChange).toHaveBeenCalledWith("-", expect.any(Object));
+    });
+
+    it("calls onChange with intermediate string states like '.'", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ onChange });
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("change", { target: { value: "." } });
+
+        expect(onChange).toHaveBeenCalledWith(".", expect.any(Object));
+    });
+
+    it("calls onChange with intermediate string states and decimal values", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ onChange });
+
+        const input = wrapper.find(TextField).find("input");
+
+        input.simulate("change", { target: { value: "-5" } });
+        expect(onChange).toHaveBeenCalledWith("-5", expect.any(Object));
+
+        input.simulate("change", { target: { value: "12.5" } });
+        expect(onChange).toHaveBeenCalledWith("12.5", expect.any(Object));
+    });
+
+    it("calls onChange with event object containing correct type", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 5, onChange });
+
+        const incrementButton = wrapper.find(Button).at(1);
+        incrementButton.simulate("click");
+
+        expect(onChange).toHaveBeenCalledWith("6", expect.objectContaining({ type: "click" }));
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("change", { target: { value: "10" } });
+
+        expect(onChange).toHaveBeenCalledWith("10", expect.objectContaining({ type: "change" }));
+    });
+
+    it("handles negative numbers correctly in controlled mode", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: -5, onChange });
+
+        expect(wrapper.find(TextField).props().value).toBe("-5");
+
+        const incrementButton = wrapper.find(Button).at(1);
+        incrementButton.simulate("click");
+
+        expect(onChange).toHaveBeenCalledWith("-4", expect.any(Object));
+    });
+
+    it("handles decimal numbers correctly in controlled mode", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 5.5, onChange });
+
+        expect(wrapper.find(TextField).props().value).toBe("5.5");
+
+        const incrementButton = wrapper.find(Button).at(1);
+        incrementButton.simulate("click");
+
+        expect(onChange).toHaveBeenCalledWith("6.5", expect.any(Object));
+    });
+
+    it("accepts string value prop in controlled mode", () => {
+        const wrapper = setup.setProps({ value: "10" });
+        expect(wrapper.find(TextField).props().value).toBe("10");
     });
 });
