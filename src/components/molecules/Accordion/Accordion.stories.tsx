@@ -89,7 +89,7 @@ export const Default: Story = {
                         <Divider
                             text="GeneUI divider"
                             Icon={Globe}
-                            content={<Avatar fullName="Test Name" onClick={() => {}} />}
+                            swappableElement={<Avatar fullName="Test Name" onClick={() => {}} />}
                             contentPosition="before"
                         />
                         <Button size="medium" fullWidth>
