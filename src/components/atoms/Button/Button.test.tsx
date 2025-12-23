@@ -31,7 +31,7 @@ describe("Button ", () => {
 
     it("renders fullWidth prop correctly", () => {
         const wrapper = setup.setProps({ fullWidth: true });
-        expect(wrapper.find(".button").hasClass("button_fullWidth")).toBeTruthy();
+        expect(wrapper.find(".button").hasClass("button_width_full")).toBeTruthy();
     });
 
     it("renders Icon prop correctly", () => {

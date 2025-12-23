@@ -98,6 +98,16 @@ const Profile: FC<IProfileProps> = ({ className, onToggle, fullName, src, onProf
         if (onToggle) {
             onToggle(e, !isOpen);
         }
+        // Call the onClick from propsForPopover if it exists (from Menu's enhanced props)
+        const popoverOnClick = (
+            propsForPopover as {
+                onClick?: (event: MouseEvent<HTMLElement>) => void;
+            }
+        ).onClick;
+
+        if (popoverOnClick) {
+            popoverOnClick(e as MouseEvent<HTMLElement>);
+        }
 
         setIsOpen((prev) => !prev);
     };
@@ -110,9 +120,9 @@ const Profile: FC<IProfileProps> = ({ className, onToggle, fullName, src, onProf
         <div className="profile">
             <button
                 type="button"
-                onClick={onProfileClickHandler}
                 className={classNames("profile__button", className)}
                 {...propsForPopover}
+                onClick={onProfileClickHandler}
             >
                 <Avatar className="profile__avatar" fullName={fullName} Icon={PersonFilled} src={src} />
                 {!isMobileBreakpoint && (
