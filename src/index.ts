@@ -64,6 +64,7 @@ export {
     ISegmentedControlButtonProps
 } from "@components/molecules/SegmentedControl";
 export { Accordion, AccordionItem, IAccordionProps, IAccordionItemProps } from "./components/molecules/Accordion";
+export { default as NumberField } from "./components/molecules/NumberField";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
