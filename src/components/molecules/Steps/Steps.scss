@@ -73,8 +73,6 @@
         }
 
         &:last-child {
-            flex: 0 0 auto;
-
             #{ $this }__status_divider {
                 display: none;
             }
