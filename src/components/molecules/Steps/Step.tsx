@@ -1,7 +1,7 @@
 import React, { FC, useContext } from "react";
 import classNames from "classnames";
 
-import { Error, SuccessFilled, Unavailable } from "@geneui/icons";
+import { ErrorFilled, SuccessFilled, Unavailable } from "@geneui/icons";
 
 // Components
 import Divider from "@components/atoms/Divider";
@@ -73,7 +73,7 @@ const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, stat
     }
 
     if (error) {
-        return <Error size={24} className="steps__status_icon" />;
+        return <ErrorFilled size={24} className="steps__status_icon" />;
     }
 
     if (type === "dot") {
