@@ -18,6 +18,7 @@ export { Grid, Col, Row, IColProps, IRowProps, IGridProps } from "./components/a
 export { default as Skeleton, ISkeletonProps } from "./components/atoms/Skeleton";
 export { default as Spreadsheet, ISpreadsheetProps } from "./components/atoms/Spreadsheet";
 export { default as Copy, ICopyProps } from "./components/atoms/Copy";
+export { SplitButton, ISplitButtonProps } from "@components/molecules/SplitButton";
 
 // Molecules
 export { default as Tooltip, ITooltipProps } from "./components/molecules/Tooltip";
@@ -62,6 +63,7 @@ export {
     SegmentedControlButton,
     ISegmentedControlButtonProps
 } from "@components/molecules/SegmentedControl";
+export { Accordion, AccordionItem, IAccordionProps, IAccordionItemProps } from "./components/molecules/Accordion";
 export { default as InteractiveCard } from "./components/molecules/InteractiveCard";
 
 // Organisms

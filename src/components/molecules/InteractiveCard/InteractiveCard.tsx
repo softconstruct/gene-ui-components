@@ -144,8 +144,8 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
     const baseClassName = classNames(
         "interactiveCard",
         `interactiveCard_size_${size}`,
+        `interactiveCard_mode_${interactive ? "interactive" : "static"}`,
         {
-            interactiveCard_interactive: interactive,
             interactiveCard_withIcon: Icon,
             interactiveCard_disabled: interactive && disabled
         },
