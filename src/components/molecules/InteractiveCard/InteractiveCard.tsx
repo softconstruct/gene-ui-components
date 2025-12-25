@@ -1,4 +1,4 @@
-import React, { FC, FocusEvent, MouseEvent } from "react";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useMemo } from "react";
 import classNames from "classnames";
 
 import { IconProps } from "@geneui/icons";
@@ -7,8 +7,8 @@ import { IconProps } from "@geneui/icons";
 import Label from "@components/atoms/Label";
 import Pill, { IPillProps } from "@components/atoms/Pill";
 import Text from "@components/atoms/Text";
-import Checkbox, { ICheckboxProps } from "@components/molecules/Checkbox";
-import Switch, { ISwitchProps } from "@components/molecules/Switch";
+import Checkbox from "@components/molecules/Checkbox";
+import Switch from "@components/molecules/Switch";
 
 // Styles
 import "./InteractiveCard.scss";
@@ -23,6 +23,46 @@ const textVariants: Record<"large" | "medium" | "small", "labelMediumMedium" | "
     medium: "labelSmallMedium",
     small: "labelSmallMedium"
 } as const;
+
+interface IInteractiveCardActionProps {
+    /**
+     * The type of action to perform.
+     * Possible values: `checkbox` | `switch`
+     */
+    type: "checkbox" | "switch";
+    /**
+     * The function to call when the action is clicked.
+     */
+    onClick?: (e: MouseEvent<HTMLInputElement>) => void;
+    /**
+     * The function to call when the action is changed.
+     */
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+    /**
+     * The function to call when the action is focused.
+     */
+    onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * The function to call when the action is blurred.
+     */
+    onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * The name of the action.
+     */
+    name?: string;
+    /**
+     * The value of the action.
+     */
+    value?: string;
+    /**
+     * The checked state of the action.
+     */
+    checked?: boolean;
+    /**
+     * The default checked state of the action.
+     */
+    defaultChecked?: boolean;
+}
 
 interface IInteractiveCardProps {
     /**
@@ -72,12 +112,12 @@ interface IInteractiveCardProps {
      * Pill component configuration.
      * When provided, renders a `Pill` with these props.
      */
-    pillProps?: IPillProps;
+    pill?: IPillProps;
     /**
      * Action component configuration.
      * When provided, renders either `Checkbox` or `Switch` with these props.
      */
-    actionProps?: ({ type: "checkbox" } & ICheckboxProps) | ({ type: "switch" } & ISwitchProps);
+    actionProps?: IInteractiveCardActionProps;
     /**
      *  Event handler for when the interactive card element receives focus. Provides the focus event as a callback's argument.
      */
@@ -98,7 +138,7 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
     interactive,
     onClick,
     actionProps,
-    pillProps,
+    pill,
     onFocus
 }) => {
     const baseClassName = classNames(
@@ -112,16 +152,19 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
         className
     );
 
-    const renderAction = () => {
-        if (actionProps) {
-            return actionProps.type === "checkbox" ? (
-                <Checkbox {...actionProps} disabled={disabled} />
-            ) : (
-                <Switch {...actionProps} disabled={disabled} />
+    const actionComponent = useMemo(() => {
+        if (actionProps?.type === "checkbox") {
+            return (
+                <Checkbox
+                    {...actionProps}
+                    disabled={disabled}
+                    name={actionProps?.name || ""}
+                    value={actionProps?.value || ""}
+                />
             );
         }
-        return <Checkbox disabled={disabled} name="interactive-card-checkbox" value="interactive-card-checkbox" />;
-    };
+        return <Switch {...actionProps} disabled={disabled} />;
+    }, [actionProps, disabled]);
 
     if (interactive) {
         return (
@@ -169,8 +212,8 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
                 </span>
             </span>
             <span className="interactiveCard__actions">
-                {pillProps && <Pill {...pillProps} />}
-                {renderAction()}
+                {pill && <Pill {...pill} />}
+                {actionComponent}
             </span>
         </div>
     );

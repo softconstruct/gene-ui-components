@@ -31,7 +31,7 @@ const meta: Meta<IInteractiveCardProps> = {
         interactive: args({ control: "false", ...propCategory.states }),
         onClick: args({ control: "false", ...propCategory.action }),
         actionProps: args({ control: "false", ...propCategory.content }),
-        pillProps: args({ control: "false", ...propCategory.content }),
+        pill: args({ control: "false", ...propCategory.content }),
         onFocus: args({ control: "false", ...propCategory.action })
     },
     args: {
@@ -61,7 +61,7 @@ export const NonInteractiveWithCheckbox: Story = {
             value: "card-option",
             onChange: () => {}
         },
-        pillProps: { size: "small", withDot: false, text: "Pill", filled: true }
+        pill: { size: "small", withDot: false, text: "Pill", filled: true }
     },
     render: (props) => <InteractiveCard {...props} />
 };
@@ -73,7 +73,7 @@ export const NonInteractiveWithSwitch: Story = {
             type: "switch",
             onChange: () => {}
         },
-        pillProps: { size: "small", withDot: false, text: "Pill", filled: true }
+        pill: { size: "small", withDot: false, text: "Pill", filled: true }
     },
     render: (props) => <InteractiveCard {...props} />
 };
