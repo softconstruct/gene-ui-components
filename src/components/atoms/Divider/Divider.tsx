@@ -14,9 +14,9 @@ interface IDividerProps {
     appearance?: "default" | "strong" | "brand" | "inverse";
     /**
      * Divider content <br/>
-     * The `alignContent` prop accepts a JSX element that will be displayed alongside the divider
+     * The prop accepts a JSX element that will be displayed alongside the divider
      */
-    content?: JSX.Element;
+    swappableElement?: JSX.Element;
     /**
      * Divider direction <br/>
      * Possible values: `vertical | horizontal`
@@ -32,12 +32,12 @@ interface IDividerProps {
      */
     text?: string;
     /**
-     * Divider `content` position <br/>
+     * Divider `text` and `icon` positions <br/>
      * Possible values: `before | after | center`
      */
     contentPosition?: "before" | "after" | "center";
     /**
-     * provides space between the edge and the divider
+     * Provides space between the edge and the divider
      */
     inset?: boolean;
     /**
@@ -56,7 +56,7 @@ const Divider: FC<IDividerProps> = ({
     direction = "horizontal",
     text,
     contentPosition = "before",
-    content,
+    swappableElement,
     inset = false,
     className
 }) => {
@@ -74,7 +74,7 @@ const Divider: FC<IDividerProps> = ({
         >
             {direction === "horizontal" && (
                 <>
-                    {content && <div className="divider__element">{content}</div>}
+                    {swappableElement && <div className="divider__element">{swappableElement}</div>}
                     {(text || Icon) && (
                         <div className="divider__label">
                             {text && <span className="divider__text ellipsis-text">{text}</span>}
