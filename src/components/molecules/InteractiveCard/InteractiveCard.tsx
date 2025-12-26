@@ -93,19 +93,13 @@ interface IInteractiveCardProps {
     Icon?: FC<IconProps>;
     /**
      * Disables the interactive card.
-     * For interactive cards, this disables the entire card.
-     * For non-interactive cards, this only disables the action (checkbox or switch).
+     * For interactive cards (when actionProps is not provided), this disables the entire card.
+     * For non-interactive cards (when actionProps is provided), this only disables the action (checkbox or switch).
      */
     disabled?: boolean;
     /**
-     * Determines if the card is interactive (rendered as a button) or non-interactive (rendered as a div).
-     * When `true`, the card is rendered as a button and can be clicked.
-     * When `false` or undefined, the card is rendered as a div with optional action controls.
-     */
-    interactive?: boolean;
-    /**
      * Click handler for interactive cards.
-     * This prop is only used when `interactive` is `true`.
+     * This prop is only used when actionProps is not provided (card is rendered as button).
      */
     onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
     /**
@@ -135,38 +129,35 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
     description,
     Icon,
     disabled,
-    interactive,
     onClick,
     actionProps,
     pill,
     onFocus
 }) => {
+    const isInteractive = !actionProps;
+
     const baseClassName = classNames(
         "interactiveCard",
         `interactiveCard_size_${size}`,
-        `interactiveCard_mode_${interactive ? "interactive" : "static"}`,
+        `interactiveCard_mode_${isInteractive ? "interactive" : "static"}`,
         {
             interactiveCard_withIcon: Icon,
-            interactiveCard_disabled: interactive && disabled
+            interactiveCard_disabled: isInteractive && disabled
         },
         className
     );
 
     const actionComponent = useMemo(() => {
-        if (actionProps?.type === "checkbox") {
-            return (
-                <Checkbox
-                    {...actionProps}
-                    disabled={disabled}
-                    name={actionProps?.name || ""}
-                    value={actionProps?.value || ""}
-                />
-            );
+        if (!actionProps) {
+            return null;
         }
-        return <Switch {...actionProps} disabled={disabled} />;
+        if (actionProps.type === "checkbox") {
+            return <Checkbox {...actionProps} disabled={disabled} />;
+        }
+        return <Switch onChange={actionProps.onChange || (() => {})} {...actionProps} disabled={disabled} />;
     }, [actionProps, disabled]);
 
-    if (interactive) {
+    if (isInteractive) {
         return (
             <button type="button" className={baseClassName} onClick={onClick} disabled={disabled} onFocus={onFocus}>
                 <span className="interactiveCard__main">
@@ -191,6 +182,7 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
                         )}
                     </span>
                 </span>
+                <span className="interactiveCard__actions">{pill && <Pill {...pill} />}</span>
             </button>
         );
     }

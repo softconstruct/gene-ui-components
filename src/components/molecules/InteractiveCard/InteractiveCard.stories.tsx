@@ -28,7 +28,6 @@ const meta: Meta<IInteractiveCardProps> = {
         description: args({ control: "text", ...propCategory.content }),
         Icon: args({ control: "false", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
-        interactive: args({ control: "false", ...propCategory.states }),
         onClick: args({ control: "false", ...propCategory.action }),
         actionProps: args({ control: "false", ...propCategory.content }),
         pill: args({ control: "false", ...propCategory.content }),
@@ -41,7 +40,6 @@ const meta: Meta<IInteractiveCardProps> = {
         description: "description",
         Icon: Globe,
         disabled: false,
-        interactive: true,
         onClick: (e) => e.preventDefault()
     }
 };
@@ -54,7 +52,6 @@ export const Default: Story = {};
 
 export const NonInteractiveWithCheckbox: Story = {
     args: {
-        interactive: false,
         actionProps: {
             type: "checkbox",
             name: "card-checkbox",
@@ -68,7 +65,6 @@ export const NonInteractiveWithCheckbox: Story = {
 
 export const NonInteractiveWithSwitch: Story = {
     args: {
-        interactive: false,
         actionProps: {
             type: "switch",
             onChange: () => {}
