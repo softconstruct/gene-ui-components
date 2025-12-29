@@ -21,6 +21,7 @@ const meta: Meta<ITabsProps> = {
         type: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
         onChange: args({ control: "false", ...propCategory.action }),
+        onClose: args({ control: "false", ...propCategory.action }),
         children: args({ control: "false", ...propCategory.content })
     },
     args: {

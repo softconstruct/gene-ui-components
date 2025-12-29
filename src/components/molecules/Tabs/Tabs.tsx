@@ -66,10 +66,15 @@ interface ITabsProps {
      */
     onChange?: (index: number) => void;
     /**
-     * The prop responsible for showing  close icon fro every tab true. The default value is false
-     * boolean
+     * The prop responsible for showing  close icon for every tab true. The default value is false
      */
     closable?: boolean;
+    /**
+     * Callback fired when a tab's close button is clicked.
+     * If provided, the component operates in controlled mode - the parent should handle tab removal by updating the `children` prop.
+     * If not provided, the component operates in uncontrolled mode and handles tab removal internally.
+     */
+    onClose?: (index: number) => void;
 }
 
 /**
@@ -92,7 +97,8 @@ const Tabs: FC<ITabsProps> = ({
     loading,
     className,
     onChange,
-    closable
+    closable,
+    onClose
 }) => {
     const parentRef = useRef<HTMLDivElement | null>(null);
     const swipedElements = useRef<number>(0);
@@ -104,9 +110,35 @@ const Tabs: FC<ITabsProps> = ({
 
     const [showRightShadows, setShowRightShadows] = useState(true);
 
+    const isControlled = onClose !== undefined;
     const [AllChildren, setAllChildren] = useState<ITabProps["children"][]>(Children.toArray(children));
 
     const { width } = useWindowSize();
+
+    useEffect(() => {
+        if (isControlled) {
+            const newChildren = Children.toArray(children);
+            setAllChildren((prevChildren) => {
+                const prevLength = prevChildren.length;
+
+                if (newChildren.length !== prevLength) {
+                    setSelectedTabIndex((prevIndex) => {
+                        if (prevIndex >= newChildren.length && newChildren.length > 0) {
+                            const newIndex = newChildren.length - 1;
+                            onChange?.(newIndex);
+                            return newIndex;
+                        }
+                        if (newChildren.length === 0) {
+                            return 0;
+                        }
+                        return prevIndex;
+                    });
+                }
+
+                return newChildren;
+            });
+        }
+    }, [children, isControlled, onChange]);
 
     const leftButtonRef = useRef<HTMLButtonElement | null>(null);
     const rightButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -271,16 +303,30 @@ const Tabs: FC<ITabsProps> = ({
     };
 
     const removeTabHandler = (index: number) => {
-        const removedChildFromData = [...AllChildren];
-        removedChildFromData.splice(index, 1);
-        setAllChildren(removedChildFromData);
+        onClose?.(index);
 
-        if (index < selectedTabIndex) {
+        if (!isControlled) {
+            const removedChildFromData = [...AllChildren];
+            removedChildFromData.splice(index, 1);
+            setAllChildren(removedChildFromData);
+
+            if (index < selectedTabIndex) {
+                setSelectedTabIndex((prev) => prev - 1);
+            } else if (index === selectedTabIndex && removedChildFromData.length > 0) {
+                const newIndex = Math.min(selectedTabIndex, removedChildFromData.length - 1);
+                setSelectedTabIndex(newIndex);
+                onChange?.(newIndex);
+            }
+
+            if (!parentRef.current) return;
+            setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
+        } else if (index < selectedTabIndex) {
             setSelectedTabIndex((prev) => prev - 1);
+        } else if (index === selectedTabIndex && AllChildren.length > 1) {
+            const newIndex = Math.min(selectedTabIndex, AllChildren.length - 2);
+            setSelectedTabIndex(newIndex);
+            onChange?.(newIndex);
         }
-
-        if (!parentRef.current) return;
-        setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
     };
 
     const getIndex = (index: number) => {
