@@ -47,10 +47,10 @@ interface ITabsProps {
      */
     size?: "large" | "medium";
     /**
-     * Tabs type <br/>
+     * Tabs layout <br/>
      * Possible values: `line | contained`
      */
-    type?: "line" | "contained";
+    layout?: "line" | "contained";
     /**
      * The prop responsible for showing the loading skeleton if passed true. The default value is false
      * boolean
@@ -98,7 +98,7 @@ export const TabsContext = createContext<IContextProps>({} as IContextProps);
 const Tabs: FC<ITabsProps> = ({
     direction = "vertical",
     size = "large",
-    type = "line",
+    layout = "line",
     children,
     loading,
     className,
@@ -423,7 +423,14 @@ const Tabs: FC<ITabsProps> = ({
 
     return (
         <TabsContext.Provider value={memoizedContextValues}>
-            <div className={classNames(`tabs tabs_${direction} tabs_${type} tabs_${size}`, className, direction, type)}>
+            <div
+                className={classNames(
+                    `tabs tabs_${direction} tabs_${layout} tabs_${size}`,
+                    className,
+                    direction,
+                    layout
+                )}
+            >
                 <div
                     className={classNames("tabs__nav", {
                         tabs__shadow_before: isMobileBreakpoint && showLeftShadows && isHorizontal,

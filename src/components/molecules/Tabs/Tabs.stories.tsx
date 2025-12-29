@@ -18,7 +18,7 @@ const meta: Meta<ITabsProps> = {
         closable: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         direction: args({ control: "select", ...propCategory.appearance }),
-        type: args({ control: "select", ...propCategory.appearance }),
+        layout: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
         onChange: args({ control: "false", ...propCategory.action }),
         onClose: args({ control: "false", ...propCategory.action }),
@@ -28,7 +28,7 @@ const meta: Meta<ITabsProps> = {
     args: {
         direction: "horizontal",
         size: "large",
-        type: "contained"
+        layout: "contained"
     } as ITabsProps,
     subcomponents: { Tab: Tab as FunctionComponent<unknown> }
 };

@@ -49,9 +49,9 @@ describe("Tabs", () => {
         expect(wrapper.find(".tabs").hasClass(`tabs_${size}`)).toBeTruthy();
     });
 
-    it.each<ITabsProps["type"]>(["line", "contained"])('should have "%s" type', (type) => {
-        const wrapper = setup.setProps({ type });
-        expect(wrapper.find(".tabs").hasClass(`tabs_${type}`)).toBeTruthy();
+    it.each<ITabsProps["layout"]>(["line", "contained"])('should have "%s" layout', (layout) => {
+        const wrapper = setup.setProps({ layout });
+        expect(wrapper.find(".tabs").hasClass(`tabs_${layout}`)).toBeTruthy();
     });
 
     it("calls onChange when a tab is clicked", () => {
