@@ -131,26 +131,115 @@ const Tabs: FC<ITabsProps> = ({
     };
 
     useEffect(() => {
-        if (leftButtonRef.current) {
-            disableButton(leftButtonRef, true);
-        }
-    }, [parentRef.current]);
+        const initializeButtons = () => {
+            if (!parentRef.current || !leftButtonRef.current || !rightButtonRef.current) return;
 
-    useEffect(() => {
+            const { scrollWidth } = parentRef.current;
+            const { offsetWidth } = parentRef.current;
+            const currentScroll = parentRef.current.scrollLeft;
+
+            // Initialize swipedElements to match current scroll position
+            swipedElements.current = currentScroll;
+
+            if (isRTLMode) {
+                if (currentScroll >= 0) {
+                    disableButton(leftButtonRef, true);
+                    setShowLeftShadows(false);
+                } else {
+                    disableButton(leftButtonRef, false);
+                    setShowLeftShadows(true);
+                }
+
+                const maxScroll = scrollWidth - offsetWidth;
+                const minScroll = -maxScroll;
+                if (currentScroll <= minScroll) {
+                    disableButton(rightButtonRef, true);
+                    setShowRightShadows(false);
+                } else {
+                    disableButton(rightButtonRef, false);
+                    setShowRightShadows(true);
+                }
+            } else {
+                // LTR mode - left button disabled at start
+                if (currentScroll <= 0) {
+                    disableButton(leftButtonRef, true);
+                    setShowLeftShadows(false);
+                } else {
+                    disableButton(leftButtonRef, false);
+                    setShowLeftShadows(true);
+                }
+
+                if (currentScroll + offsetWidth >= scrollWidth) {
+                    disableButton(rightButtonRef, true);
+                    setShowRightShadows(false);
+                } else {
+                    disableButton(rightButtonRef, false);
+                    setShowRightShadows(true);
+                }
+            }
+        };
+
         const animationFrame = requestAnimationFrame(() => {
             return requestAnimationFrame(() => {
                 if (!parentRef.current) return;
                 setShowArrows(parentRef.current.scrollWidth > width);
+                initializeButtons();
             });
         });
 
         return () => {
             cancelAnimationFrame(animationFrame);
         };
-    }, [closable, width]);
+    }, [closable, width, isRTLMode]);
 
     const slideShift = (isLeft?: boolean) => {
         if (!parentRef.current || !leftButtonRef.current || !rightButtonRef.current) return;
+
+        const { scrollWidth } = parentRef.current;
+        const { offsetWidth } = parentRef.current;
+        const maxScroll = scrollWidth - offsetWidth;
+
+        if (isRTLMode) {
+            if (isLeft) {
+                const currentScroll = parentRef.current.scrollLeft;
+                const minScroll = -maxScroll;
+
+                if (currentScroll > minScroll) {
+                    swipedElements.current = Math.max(currentScroll - offsetWidth, minScroll);
+                }
+
+                if (swipedElements.current <= minScroll) {
+                    rightButtonRef.current.disabled = true;
+                    setShowRightShadows(true);
+                    swipedElements.current = minScroll;
+                } else {
+                    rightButtonRef.current.disabled = false;
+                }
+
+                leftButtonRef.current.disabled = false;
+                updateTransform(swipedElements.current);
+                return;
+            }
+
+            const currentScroll = parentRef.current.scrollLeft;
+
+            if (currentScroll < 0) {
+                swipedElements.current = Math.min(currentScroll + offsetWidth, 0);
+            }
+
+            if (swipedElements.current >= 0) {
+                leftButtonRef.current.disabled = true;
+                setShowLeftShadows(false);
+                swipedElements.current = 0;
+            } else {
+                leftButtonRef.current.disabled = false;
+                setShowLeftShadows(true);
+            }
+
+            rightButtonRef.current.disabled = false;
+            updateTransform(swipedElements.current);
+            return;
+        }
 
         if (isLeft) {
             if (swipedElements.current < parentRef.current.scrollWidth) {
@@ -221,22 +310,48 @@ const Tabs: FC<ITabsProps> = ({
 
         if (!parentRef.current) return;
 
-        if (swipedElements.current <= 0) {
-            disableButton(leftButtonRef, true);
-            setShowLeftShadows(false);
-            swipedElements.current = 0;
-        } else {
-            disableButton(leftButtonRef, false);
-            setShowLeftShadows(true);
-        }
-        if (swipedElements.current + parentRef.current.offsetWidth >= parentRef.current.scrollWidth) {
-            disableButton(rightButtonRef, true);
-            swipedElements.current = parentRef.current.scrollWidth - parentRef.current.offsetWidth;
-            setShowRightShadows(false);
-        } else {
-            disableButton(rightButtonRef, false);
+        const { scrollWidth } = parentRef.current;
+        const { offsetWidth } = parentRef.current;
+        const maxScroll = scrollWidth - offsetWidth;
 
-            setShowRightShadows(true);
+        if (isRTLMode) {
+            const minScroll = -maxScroll;
+
+            if (swipedElements.current >= 0) {
+                disableButton(leftButtonRef, true);
+                setShowLeftShadows(false);
+                swipedElements.current = 0;
+            } else {
+                disableButton(leftButtonRef, false);
+                setShowLeftShadows(true);
+            }
+
+            if (swipedElements.current <= minScroll) {
+                disableButton(rightButtonRef, true);
+                swipedElements.current = minScroll;
+                setShowRightShadows(false);
+            } else {
+                disableButton(rightButtonRef, false);
+                setShowRightShadows(true);
+            }
+        } else {
+            if (swipedElements.current <= 0) {
+                disableButton(leftButtonRef, true);
+                setShowLeftShadows(false);
+                swipedElements.current = 0;
+            } else {
+                disableButton(leftButtonRef, false);
+                setShowLeftShadows(true);
+            }
+            if (swipedElements.current + parentRef.current.offsetWidth >= parentRef.current.scrollWidth) {
+                disableButton(rightButtonRef, true);
+                swipedElements.current = parentRef.current.scrollWidth - parentRef.current.offsetWidth;
+                setShowRightShadows(false);
+            } else {
+                disableButton(rightButtonRef, false);
+
+                setShowRightShadows(true);
+            }
         }
     };
 
