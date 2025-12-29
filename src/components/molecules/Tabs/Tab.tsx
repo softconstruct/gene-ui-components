@@ -71,6 +71,12 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, closab
         }
     }, []);
 
+    const handleCloseClick = (e: MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        if (index === undefined) return;
+        removeTabHandler(index);
+    };
+
     return (
         <div
             role="tab"
@@ -88,18 +94,7 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, closab
         >
             {!error && Icon && <Icon className="tabs__button_icon" size={24} />}
             {title && <span className="tabs__button_text">{title}</span>}
-            {closable && (
-                <Button
-                    appearance="secondary"
-                    size="small"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        if (index === undefined) return;
-                        removeTabHandler(index);
-                    }}
-                    Icon={X}
-                />
-            )}
+            {closable && <Button appearance="secondary" size="small" onClick={handleCloseClick} Icon={X} />}
             {error && <CircleAlert className="tabs__button_iconError" size={24} />}
             {!closable && content}
         </div>
