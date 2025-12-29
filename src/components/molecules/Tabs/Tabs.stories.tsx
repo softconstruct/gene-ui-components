@@ -37,7 +37,7 @@ type Story = StoryObj<ITabsProps>;
 
 export const Default: Story = {
     render: (props) => (
-        <div style={{ height: 550 }}>
+        <div style={{ height: "100%" }}>
             <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => {
                     const title = `TAB ${i + 1}`;
@@ -49,12 +49,15 @@ export const Default: Story = {
                 })}
             </Tabs>
         </div>
-    )
+    ),
+    args: {
+        closable: true
+    }
 };
 
 export const IconOnly: Story = {
     render: (props: ITabsProps) => (
-        <div style={{ height: 550 }}>
+        <div style={{ height: "100%" }}>
             <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => {
                     const key = i + 1;
@@ -71,7 +74,7 @@ export const IconOnly: Story = {
 
 export const TextOnly: Story = {
     render: (props: ITabsProps) => (
-        <div style={{ height: 550 }}>
+        <div style={{ height: "100%" }}>
             <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => {
                     const title = `tab${i + 1}`;
@@ -88,7 +91,7 @@ export const TextOnly: Story = {
 
 export const TemplateWithSwap: Story = {
     render: (props: ITabsProps) => (
-        <div style={{ height: 550 }}>
+        <div style={{ height: "100%" }}>
             <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => {
                     const title = `TAB ${i + 1}`;
@@ -103,9 +106,9 @@ export const TemplateWithSwap: Story = {
     )
 };
 
-export const Vertical: Story = {
+export const VerticalUncontrolled: Story = {
     render: (props: ITabsProps) => (
-        <div style={{ height: 550 }}>
+        <div style={{ height: "100%" }}>
             <Tabs {...props} direction="vertical">
                 {new Array(25).fill(null).map((_, i) => {
                     const title = `TAB ${i + 1}`;
