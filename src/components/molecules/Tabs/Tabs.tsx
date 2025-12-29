@@ -123,14 +123,16 @@ const Tabs: FC<ITabsProps> = ({
 
                 if (newChildren.length !== prevLength) {
                     setSelectedTabIndex((prevIndex) => {
-                        if (prevIndex >= newChildren.length && newChildren.length > 0) {
+                        if (newChildren.length === 0) {
+                            return 0;
+                        }
+
+                        if (prevIndex >= newChildren.length) {
                             const newIndex = newChildren.length - 1;
                             onChange?.(newIndex);
                             return newIndex;
                         }
-                        if (newChildren.length === 0) {
-                            return 0;
-                        }
+
                         return prevIndex;
                     });
                 }
@@ -331,12 +333,6 @@ const Tabs: FC<ITabsProps> = ({
 
             if (!parentRef.current) return;
             setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
-        } else if (index < selectedTabIndex) {
-            setSelectedTabIndex((prev) => prev - 1);
-        } else if (index === selectedTabIndex && AllChildren.length > 1) {
-            const newIndex = Math.min(selectedTabIndex, AllChildren.length - 2);
-            setSelectedTabIndex(newIndex);
-            onChange?.(newIndex);
         }
     };
 

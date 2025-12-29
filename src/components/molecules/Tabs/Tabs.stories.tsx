@@ -117,5 +117,9 @@ export const Vertical: Story = {
                 })}
             </Tabs>
         </div>
-    )
+    ),
+    args: {
+        onClose: undefined,
+        closable: true
+    }
 };
