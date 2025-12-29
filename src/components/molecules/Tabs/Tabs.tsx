@@ -21,6 +21,7 @@ import { ChevronLeft, ChevronRight } from "@geneui/icons";
 // Components
 import Button from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
+import type { ITabProps } from "@components/molecules/Tabs";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Hooks
@@ -28,8 +29,6 @@ import useWindowSize from "@hooks/useWindowSize";
 
 // Styles
 import "./Tabs.scss";
-
-import type { ITabProps } from "./Tab";
 
 interface ITabsProps {
     /**
@@ -60,16 +59,27 @@ interface ITabsProps {
     /**
      * Tab component. Renders inside the component
      */
-    children: FunctionComponentElement<ITabProps> | FunctionComponentElement<ITabProps>[];
+    children?: FunctionComponentElement<ITabProps> | FunctionComponentElement<ITabProps>[];
     /**
      *  It works when the user clicks on one of the control items. Returns  the `index`  from the `Tab`.
      */
     onChange?: (index: number) => void;
     /**
-     * The prop responsible for showing  close icon fro every tab true. The default value is false
-     * boolean
+     * The initial selected tab index (uncontrolled mode).
+     * Use this to set the default selected tab when the component first mounts.
+     * If not provided, defaults to 0. If provided (even if 0), it takes precedence over `defaultSelected` on individual Tab components.
+     */
+    defaultSelectedIndex?: number;
+    /**
+     * The prop responsible for showing  close icon for every tab true. The default value is false
      */
     closable?: boolean;
+    /**
+     * Callback fired when a tab's close button is clicked.
+     * If provided, the component operates in controlled mode - the parent should handle tab removal by updating the `children` prop.
+     * If not provided, the component operates in uncontrolled mode and handles tab removal internally.
+     */
+    onClose?: (index: number) => void;
 }
 
 /**
@@ -80,6 +90,7 @@ interface IContextProps extends Pick<ITabsProps, "size"> {
     getIndex: (i: number) => void;
     selectedTabIndex?: number;
     removeTabHandler: (index: number) => void;
+    hasDefaultSelectedIndex?: boolean;
 }
 
 export const TabsContext = createContext<IContextProps>({} as IContextProps);
@@ -92,21 +103,63 @@ const Tabs: FC<ITabsProps> = ({
     loading,
     className,
     onChange,
-    closable
+    defaultSelectedIndex,
+    closable,
+    onClose
 }) => {
     const parentRef = useRef<HTMLDivElement | null>(null);
     const swipedElements = useRef<number>(0);
 
-    const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+    const initialSelectedIndex = defaultSelectedIndex !== undefined ? defaultSelectedIndex : 0;
+    const [selectedTabIndex, setSelectedTabIndex] = useState(initialSelectedIndex);
     const [showArrows, setShowArrows] = useState(true);
 
     const [showLeftShadows, setShowLeftShadows] = useState(false);
 
     const [showRightShadows, setShowRightShadows] = useState(true);
 
-    const [AllChildren, setAllChildren] = useState<ITabProps["children"][]>(Children.toArray(children));
+    const isControlled = onClose !== undefined;
+    const [AllChildren, setAllChildren] = useState<ITabProps["children"][]>(children ? Children.toArray(children) : []);
 
     const { width } = useWindowSize();
+
+    useEffect(() => {
+        if (isControlled) {
+            const newChildren = children ? Children.toArray(children) : [];
+            setAllChildren((prevChildren) => {
+                const prevLength = prevChildren.length;
+
+                if (newChildren.length !== prevLength) {
+                    setSelectedTabIndex((prevIndex) => {
+                        if (newChildren.length === 0) {
+                            return 0;
+                        }
+
+                        if (prevIndex >= newChildren.length) {
+                            const newIndex = newChildren.length - 1;
+                            onChange?.(newIndex);
+                            return newIndex;
+                        }
+
+                        return prevIndex;
+                    });
+                }
+
+                return newChildren;
+            });
+        } else if (children !== undefined) {
+            const newChildren = Children.toArray(children);
+            setAllChildren(newChildren);
+
+            if (selectedTabIndex >= newChildren.length && newChildren.length > 0) {
+                const newIndex = newChildren.length - 1;
+                setSelectedTabIndex(newIndex);
+                onChange?.(newIndex);
+            } else if (newChildren.length === 0) {
+                setSelectedTabIndex(0);
+            }
+        }
+    }, [children, isControlled, onChange]);
 
     const leftButtonRef = useRef<HTMLButtonElement | null>(null);
     const rightButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -131,26 +184,115 @@ const Tabs: FC<ITabsProps> = ({
     };
 
     useEffect(() => {
-        if (leftButtonRef.current) {
-            disableButton(leftButtonRef, true);
-        }
-    }, [parentRef.current]);
+        const initializeButtons = () => {
+            if (!parentRef.current || !leftButtonRef.current || !rightButtonRef.current) return;
 
-    useEffect(() => {
+            const { scrollWidth } = parentRef.current;
+            const { offsetWidth } = parentRef.current;
+            const currentScroll = parentRef.current.scrollLeft;
+
+            // Initialize swipedElements to match current scroll position
+            swipedElements.current = currentScroll;
+
+            if (isRTLMode) {
+                if (currentScroll >= 0) {
+                    disableButton(leftButtonRef, true);
+                    setShowLeftShadows(false);
+                } else {
+                    disableButton(leftButtonRef, false);
+                    setShowLeftShadows(true);
+                }
+
+                const maxScroll = scrollWidth - offsetWidth;
+                const minScroll = -maxScroll;
+                if (currentScroll <= minScroll) {
+                    disableButton(rightButtonRef, true);
+                    setShowRightShadows(false);
+                } else {
+                    disableButton(rightButtonRef, false);
+                    setShowRightShadows(true);
+                }
+            } else {
+                // LTR mode - left button disabled at start
+                if (currentScroll <= 0) {
+                    disableButton(leftButtonRef, true);
+                    setShowLeftShadows(false);
+                } else {
+                    disableButton(leftButtonRef, false);
+                    setShowLeftShadows(true);
+                }
+
+                if (currentScroll + offsetWidth >= scrollWidth) {
+                    disableButton(rightButtonRef, true);
+                    setShowRightShadows(false);
+                } else {
+                    disableButton(rightButtonRef, false);
+                    setShowRightShadows(true);
+                }
+            }
+        };
+
         const animationFrame = requestAnimationFrame(() => {
             return requestAnimationFrame(() => {
                 if (!parentRef.current) return;
                 setShowArrows(parentRef.current.scrollWidth > width);
+                initializeButtons();
             });
         });
 
         return () => {
             cancelAnimationFrame(animationFrame);
         };
-    }, [closable, width]);
+    }, [closable, width, isRTLMode]);
 
     const slideShift = (isLeft?: boolean) => {
         if (!parentRef.current || !leftButtonRef.current || !rightButtonRef.current) return;
+
+        const { scrollWidth } = parentRef.current;
+        const { offsetWidth } = parentRef.current;
+        const maxScroll = scrollWidth - offsetWidth;
+
+        if (isRTLMode) {
+            if (isLeft) {
+                const currentScroll = parentRef.current.scrollLeft;
+                const minScroll = -maxScroll;
+
+                if (currentScroll > minScroll) {
+                    swipedElements.current = Math.max(currentScroll - offsetWidth, minScroll);
+                }
+
+                if (swipedElements.current <= minScroll) {
+                    rightButtonRef.current.disabled = true;
+                    setShowRightShadows(true);
+                    swipedElements.current = minScroll;
+                } else {
+                    rightButtonRef.current.disabled = false;
+                }
+
+                leftButtonRef.current.disabled = false;
+                updateTransform(swipedElements.current);
+                return;
+            }
+
+            const currentScroll = parentRef.current.scrollLeft;
+
+            if (currentScroll < 0) {
+                swipedElements.current = Math.min(currentScroll + offsetWidth, 0);
+            }
+
+            if (swipedElements.current >= 0) {
+                leftButtonRef.current.disabled = true;
+                setShowLeftShadows(false);
+                swipedElements.current = 0;
+            } else {
+                leftButtonRef.current.disabled = false;
+                setShowLeftShadows(true);
+            }
+
+            rightButtonRef.current.disabled = false;
+            updateTransform(swipedElements.current);
+            return;
+        }
 
         if (isLeft) {
             if (swipedElements.current < parentRef.current.scrollWidth) {
@@ -182,16 +324,24 @@ const Tabs: FC<ITabsProps> = ({
     };
 
     const removeTabHandler = (index: number) => {
-        const removedChildFromData = [...AllChildren];
-        removedChildFromData.splice(index, 1);
-        setAllChildren(removedChildFromData);
+        onClose?.(index);
 
-        if (index < selectedTabIndex) {
-            setSelectedTabIndex((prev) => prev - 1);
+        if (!isControlled) {
+            const removedChildFromData = [...AllChildren];
+            removedChildFromData.splice(index, 1);
+            setAllChildren(removedChildFromData);
+
+            if (index < selectedTabIndex) {
+                setSelectedTabIndex((prev) => prev - 1);
+            } else if (index === selectedTabIndex && removedChildFromData.length > 0) {
+                const newIndex = Math.min(selectedTabIndex, removedChildFromData.length - 1);
+                setSelectedTabIndex(newIndex);
+                onChange?.(newIndex);
+            }
+
+            if (!parentRef.current) return;
+            setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
         }
-
-        if (!parentRef.current) return;
-        setShowArrows(parentRef.current.scrollWidth > window.innerWidth);
     };
 
     const getIndex = (index: number) => {
@@ -207,9 +357,10 @@ const Tabs: FC<ITabsProps> = ({
             size,
             getIndex,
             selectedTabIndex,
-            removeTabHandler
+            removeTabHandler,
+            hasDefaultSelectedIndex: defaultSelectedIndex !== undefined
         }),
-        [size, getIndex, selectedTabIndex, removeTabHandler]
+        [size, getIndex, selectedTabIndex, removeTabHandler, defaultSelectedIndex]
     );
 
     const isHorizontal = direction === "horizontal";
@@ -221,22 +372,48 @@ const Tabs: FC<ITabsProps> = ({
 
         if (!parentRef.current) return;
 
-        if (swipedElements.current <= 0) {
-            disableButton(leftButtonRef, true);
-            setShowLeftShadows(false);
-            swipedElements.current = 0;
-        } else {
-            disableButton(leftButtonRef, false);
-            setShowLeftShadows(true);
-        }
-        if (swipedElements.current + parentRef.current.offsetWidth >= parentRef.current.scrollWidth) {
-            disableButton(rightButtonRef, true);
-            swipedElements.current = parentRef.current.scrollWidth - parentRef.current.offsetWidth;
-            setShowRightShadows(false);
-        } else {
-            disableButton(rightButtonRef, false);
+        const { scrollWidth } = parentRef.current;
+        const { offsetWidth } = parentRef.current;
+        const maxScroll = scrollWidth - offsetWidth;
 
-            setShowRightShadows(true);
+        if (isRTLMode) {
+            const minScroll = -maxScroll;
+
+            if (swipedElements.current >= 0) {
+                disableButton(leftButtonRef, true);
+                setShowLeftShadows(false);
+                swipedElements.current = 0;
+            } else {
+                disableButton(leftButtonRef, false);
+                setShowLeftShadows(true);
+            }
+
+            if (swipedElements.current <= minScroll) {
+                disableButton(rightButtonRef, true);
+                swipedElements.current = minScroll;
+                setShowRightShadows(false);
+            } else {
+                disableButton(rightButtonRef, false);
+                setShowRightShadows(true);
+            }
+        } else {
+            if (swipedElements.current <= 0) {
+                disableButton(leftButtonRef, true);
+                setShowLeftShadows(false);
+                swipedElements.current = 0;
+            } else {
+                disableButton(leftButtonRef, false);
+                setShowLeftShadows(true);
+            }
+            if (swipedElements.current + parentRef.current.offsetWidth >= parentRef.current.scrollWidth) {
+                disableButton(rightButtonRef, true);
+                swipedElements.current = parentRef.current.scrollWidth - parentRef.current.offsetWidth;
+                setShowRightShadows(false);
+            } else {
+                disableButton(rightButtonRef, false);
+
+                setShowRightShadows(true);
+            }
         }
     };
 
@@ -260,6 +437,7 @@ const Tabs: FC<ITabsProps> = ({
                                 ref={leftButtonRef}
                                 size={size}
                                 appearance="secondary"
+                                layout="text"
                                 fullWidth
                                 Icon={isRTLMode ? ChevronRight : ChevronLeft}
                                 onClick={() => slideShift()}
@@ -285,6 +463,7 @@ const Tabs: FC<ITabsProps> = ({
                                 ref={rightButtonRef}
                                 size={size}
                                 appearance="secondary"
+                                layout="text"
                                 fullWidth
                                 Icon={isRTLMode ? ChevronLeft : ChevronRight}
                                 onClick={() => slideShift(true)}

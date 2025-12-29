@@ -130,4 +130,13 @@ describe("Checkbox ", () => {
 
         expect(wrapper.find("input").props().value).toBe(value);
     });
+
+    it("renders without value prop (optional)", () => {
+        const wrapper = mount(<Checkbox name="test" />);
+        const inputProps = wrapper.find("input").props();
+
+        // When value is not provided, it should not be in the props (or be undefined)
+        expect(inputProps.value).toBeUndefined();
+        expect(wrapper.exists()).toBeTruthy();
+    });
 });

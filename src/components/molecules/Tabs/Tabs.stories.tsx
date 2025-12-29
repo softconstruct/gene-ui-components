@@ -21,7 +21,9 @@ const meta: Meta<ITabsProps> = {
         type: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
         onChange: args({ control: "false", ...propCategory.action }),
-        children: args({ control: "false", ...propCategory.content })
+        onClose: args({ control: "false", ...propCategory.action }),
+        children: args({ control: "false", ...propCategory.content }),
+        defaultSelectedIndex: args({ control: "number", ...propCategory.states })
     },
     args: {
         direction: "horizontal",
@@ -36,7 +38,7 @@ type Story = StoryObj<ITabsProps>;
 
 export const Default: Story = {
     render: (props) => (
-        <div style={{ height: 550 }}>
+        <div style={{ height: "100%" }}>
             <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => {
                     const title = `TAB ${i + 1}`;
@@ -48,34 +50,20 @@ export const Default: Story = {
                 })}
             </Tabs>
         </div>
-    )
+    ),
+    args: {
+        closable: true
+    }
 };
 
 export const IconOnly: Story = {
     render: (props: ITabsProps) => (
-        <div style={{ height: 550 }}>
+        <div style={{ height: "100%" }}>
             <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => {
                     const key = i + 1;
                     return (
                         <Tab Icon={TagOutline} key={key}>
-                            tab {i + 1}{" "}
-                        </Tab>
-                    );
-                })}
-            </Tabs>
-        </div>
-    )
-};
-
-export const TextOnly: Story = {
-    render: (props: ITabsProps) => (
-        <div style={{ height: 550 }}>
-            <Tabs {...props}>
-                {new Array(25).fill(null).map((_, i) => {
-                    const title = `tab${i + 1}`;
-                    return (
-                        <Tab title={title} key={title}>
                             tab {i + 1}
                         </Tab>
                     );
@@ -87,7 +75,7 @@ export const TextOnly: Story = {
 
 export const TemplateWithSwap: Story = {
     render: (props: ITabsProps) => (
-        <div style={{ height: 550 }}>
+        <div style={{ height: "100%" }}>
             <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => {
                     const title = `TAB ${i + 1}`;
@@ -102,10 +90,10 @@ export const TemplateWithSwap: Story = {
     )
 };
 
-export const Vertical: Story = {
+export const VerticalUncontrolled: Story = {
     render: (props: ITabsProps) => (
-        <div style={{ height: 550 }}>
-            <Tabs {...props} direction="vertical">
+        <div style={{ height: "100%" }}>
+            <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => {
                     const title = `TAB ${i + 1}`;
                     return (
@@ -116,5 +104,10 @@ export const Vertical: Story = {
                 })}
             </Tabs>
         </div>
-    )
+    ),
+    args: {
+        onClose: undefined,
+        closable: true,
+        direction: "vertical"
+    }
 };

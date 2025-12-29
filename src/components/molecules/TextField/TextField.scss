@@ -15,6 +15,7 @@
         border-width: var(--guit-ref-border-width-thin);
         border-style: var(--guit-ref-border-style-solid);
         border-color: var(--guit-sem-color-border-neutral-2);
+        overflow: hidden;
 
         &_size {
             &_large,

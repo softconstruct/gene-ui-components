@@ -4,7 +4,8 @@ import classNames from "classnames";
 import { CircleAlert, IconProps, X } from "@geneui/icons";
 
 // Components
-import Button from "../../atoms/Button";
+import Button from "@components/atoms/Button";
+
 import { TabsContext } from "./Tabs";
 
 interface ITabProps extends PropsWithChildren {
@@ -52,7 +53,7 @@ interface ITabProps extends PropsWithChildren {
 }
 
 const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, closable = false, content }) => {
-    const { getIndex, size, selectedTabIndex, removeTabHandler } = useContext(TabsContext);
+    const { getIndex, size, selectedTabIndex, removeTabHandler, hasDefaultSelectedIndex } = useContext(TabsContext);
 
     const provideChildren = (e: MouseEvent<HTMLDivElement> & KeyboardEvent<HTMLDivElement>) => {
         if (e?.key) {
@@ -66,10 +67,10 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, closab
     };
 
     useEffect(() => {
-        if (defaultSelected && index) {
+        if (defaultSelected && index !== undefined && !hasDefaultSelectedIndex) {
             getIndex(index);
         }
-    }, []);
+    }, [defaultSelected, index, hasDefaultSelectedIndex, getIndex]);
 
     const handleCloseClick = (e: MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
@@ -94,7 +95,9 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, closab
         >
             {!error && Icon && <Icon className="tabs__button_icon" size={24} />}
             {title && <span className="tabs__button_text">{title}</span>}
-            {closable && <Button appearance="secondary" size="small" onClick={handleCloseClick} Icon={X} />}
+            {closable && (
+                <Button appearance="secondary" size="small" layout="text" onClick={handleCloseClick} Icon={X} />
+            )}
             {error && <CircleAlert className="tabs__button_iconError" size={24} />}
             {!closable && content}
         </div>
