@@ -60,7 +60,7 @@ interface ITabsProps {
     /**
      * Tab component. Renders inside the component
      */
-    children: FunctionComponentElement<ITabProps> | FunctionComponentElement<ITabProps>[];
+    children?: FunctionComponentElement<ITabProps> | FunctionComponentElement<ITabProps>[];
     /**
      *  It works when the user clicks on one of the control items. Returns  the `index`  from the `Tab`.
      */
@@ -111,13 +111,13 @@ const Tabs: FC<ITabsProps> = ({
     const [showRightShadows, setShowRightShadows] = useState(true);
 
     const isControlled = onClose !== undefined;
-    const [AllChildren, setAllChildren] = useState<ITabProps["children"][]>(Children.toArray(children));
+    const [AllChildren, setAllChildren] = useState<ITabProps["children"][]>(children ? Children.toArray(children) : []);
 
     const { width } = useWindowSize();
 
     useEffect(() => {
         if (isControlled) {
-            const newChildren = Children.toArray(children);
+            const newChildren = children ? Children.toArray(children) : [];
             setAllChildren((prevChildren) => {
                 const prevLength = prevChildren.length;
 
@@ -137,6 +137,17 @@ const Tabs: FC<ITabsProps> = ({
 
                 return newChildren;
             });
+        } else if (children !== undefined) {
+            const newChildren = Children.toArray(children);
+            setAllChildren(newChildren);
+
+            if (selectedTabIndex >= newChildren.length && newChildren.length > 0) {
+                const newIndex = newChildren.length - 1;
+                setSelectedTabIndex(newIndex);
+                onChange?.(newIndex);
+            } else if (newChildren.length === 0) {
+                setSelectedTabIndex(0);
+            }
         }
     }, [children, isControlled, onChange]);
 
