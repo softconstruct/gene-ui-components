@@ -421,6 +421,7 @@ const Tabs: FC<ITabsProps> = ({
                                 ref={leftButtonRef}
                                 size={size}
                                 appearance="secondary"
+                                layout="text"
                                 fullWidth
                                 Icon={isRTLMode ? ChevronRight : ChevronLeft}
                                 onClick={() => slideShift()}
@@ -446,6 +447,7 @@ const Tabs: FC<ITabsProps> = ({
                                 ref={rightButtonRef}
                                 size={size}
                                 appearance="secondary"
+                                layout="text"
                                 fullWidth
                                 Icon={isRTLMode ? ChevronLeft : ChevronRight}
                                 onClick={() => slideShift(true)}

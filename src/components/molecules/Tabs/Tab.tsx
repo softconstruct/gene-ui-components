@@ -92,6 +92,7 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, closab
                 <Button
                     appearance="secondary"
                     size="small"
+                    layout="text"
                     onClick={(e) => {
                         e.stopPropagation();
                         if (index === undefined) return;
