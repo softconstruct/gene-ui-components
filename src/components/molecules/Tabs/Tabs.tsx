@@ -71,7 +71,7 @@ interface ITabsProps {
      */
     defaultSelectedIndex?: number;
     /**
-     * The prop responsible for showing  close icon for every tab true. The default value is false
+     * The prop responsible for showing `close` `icon` for every `tab` `true`. The default value is `false`
      */
     closable?: boolean;
     /**
@@ -88,6 +88,7 @@ interface ITabsProps {
 
 interface IContextProps extends Pick<ITabsProps, "size"> {
     getIndex: (i: number) => void;
+    closable: boolean;
     selectedTabIndex?: number;
     removeTabHandler: (index: number) => void;
     hasDefaultSelectedIndex?: boolean;
@@ -104,7 +105,7 @@ const Tabs: FC<ITabsProps> = ({
     className,
     onChange,
     defaultSelectedIndex,
-    closable,
+    closable = false,
     onClose
 }) => {
     const parentRef = useRef<HTMLDivElement | null>(null);
@@ -356,6 +357,7 @@ const Tabs: FC<ITabsProps> = ({
         () => ({
             size,
             getIndex,
+            closable,
             selectedTabIndex,
             removeTabHandler,
             hasDefaultSelectedIndex: defaultSelectedIndex !== undefined

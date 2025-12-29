@@ -39,21 +39,15 @@ interface ITabProps extends PropsWithChildren {
     index?: number;
 
     /**
-     * Determines if the tab can be closed.
-     * When set to `true`, a close button will appear on the tab.
-     * The default value is `false`.
-     */
-    closable?: boolean;
-
-    /**
      * The content of the tab, rendered when the tab is active.
      * Accepts a JSX element.
      */
     content?: JSX.Element;
 }
 
-const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, closable = false, content }) => {
-    const { getIndex, size, selectedTabIndex, removeTabHandler, hasDefaultSelectedIndex } = useContext(TabsContext);
+const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, content }) => {
+    const { getIndex, size, selectedTabIndex, closable, removeTabHandler, hasDefaultSelectedIndex } =
+        useContext(TabsContext);
 
     const provideChildren = (e: MouseEvent<HTMLDivElement> & KeyboardEvent<HTMLDivElement>) => {
         if (e?.key) {
