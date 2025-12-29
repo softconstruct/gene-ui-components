@@ -31,10 +31,6 @@ interface IInteractiveCardActionProps {
      */
     type: "checkbox" | "switch";
     /**
-     * The function to call when the action is clicked.
-     */
-    onClick?: (e: MouseEvent<HTMLInputElement>) => void;
-    /**
      * The function to call when the action is changed.
      */
     onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -151,10 +147,11 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
         if (!actionProps) {
             return null;
         }
-        if (actionProps.type === "checkbox") {
-            return <Checkbox {...actionProps} disabled={disabled} />;
+        const { type, ...restActionProps } = actionProps;
+        if (type === "checkbox") {
+            return <Checkbox {...restActionProps} disabled={disabled} />;
         }
-        return <Switch onChange={actionProps.onChange || (() => {})} {...actionProps} disabled={disabled} />;
+        return <Switch {...restActionProps} disabled={disabled} />;
     }, [actionProps, disabled]);
 
     if (isInteractive) {
