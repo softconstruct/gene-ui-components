@@ -52,7 +52,7 @@ interface ITabProps extends PropsWithChildren {
 }
 
 const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, closable = false, content }) => {
-    const { getIndex, size, selectedTabIndex, removeTabHandler } = useContext(TabsContext);
+    const { getIndex, size, selectedTabIndex, removeTabHandler, hasDefaultSelectedIndex } = useContext(TabsContext);
 
     const provideChildren = (e: MouseEvent<HTMLDivElement> & KeyboardEvent<HTMLDivElement>) => {
         if (e?.key) {
@@ -66,10 +66,10 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, closab
     };
 
     useEffect(() => {
-        if (defaultSelected && index) {
+        if (defaultSelected && index !== undefined && !hasDefaultSelectedIndex) {
             getIndex(index);
         }
-    }, []);
+    }, [defaultSelected, index, hasDefaultSelectedIndex, getIndex]);
 
     return (
         <div

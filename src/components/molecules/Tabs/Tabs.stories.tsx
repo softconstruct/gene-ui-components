@@ -22,7 +22,8 @@ const meta: Meta<ITabsProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         onChange: args({ control: "false", ...propCategory.action }),
         onClose: args({ control: "false", ...propCategory.action }),
-        children: args({ control: "false", ...propCategory.content })
+        children: args({ control: "false", ...propCategory.content }),
+        defaultSelectedIndex: args({ control: "number", ...propCategory.states })
     },
     args: {
         direction: "horizontal",

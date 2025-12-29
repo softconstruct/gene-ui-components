@@ -66,6 +66,12 @@ interface ITabsProps {
      */
     onChange?: (index: number) => void;
     /**
+     * The initial selected tab index (uncontrolled mode).
+     * Use this to set the default selected tab when the component first mounts.
+     * If not provided, defaults to 0. If provided (even if 0), it takes precedence over `defaultSelected` on individual Tab components.
+     */
+    defaultSelectedIndex?: number;
+    /**
      * The prop responsible for showing  close icon for every tab true. The default value is false
      */
     closable?: boolean;
@@ -85,6 +91,7 @@ interface IContextProps extends Pick<ITabsProps, "size"> {
     getIndex: (i: number) => void;
     selectedTabIndex?: number;
     removeTabHandler: (index: number) => void;
+    hasDefaultSelectedIndex?: boolean;
 }
 
 export const TabsContext = createContext<IContextProps>({} as IContextProps);
@@ -97,13 +104,15 @@ const Tabs: FC<ITabsProps> = ({
     loading,
     className,
     onChange,
+    defaultSelectedIndex,
     closable,
     onClose
 }) => {
     const parentRef = useRef<HTMLDivElement | null>(null);
     const swipedElements = useRef<number>(0);
 
-    const [selectedTabIndex, setSelectedTabIndex] = useState(0);
+    const initialSelectedIndex = defaultSelectedIndex !== undefined ? defaultSelectedIndex : 0;
+    const [selectedTabIndex, setSelectedTabIndex] = useState(initialSelectedIndex);
     const [showArrows, setShowArrows] = useState(true);
 
     const [showLeftShadows, setShowLeftShadows] = useState(false);
@@ -349,9 +358,10 @@ const Tabs: FC<ITabsProps> = ({
             size,
             getIndex,
             selectedTabIndex,
-            removeTabHandler
+            removeTabHandler,
+            hasDefaultSelectedIndex: defaultSelectedIndex !== undefined
         }),
-        [size, getIndex, selectedTabIndex, removeTabHandler]
+        [size, getIndex, selectedTabIndex, removeTabHandler, defaultSelectedIndex]
     );
 
     const isHorizontal = direction === "horizontal";
