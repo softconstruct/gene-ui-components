@@ -4,7 +4,8 @@ import classNames from "classnames";
 import { CircleAlert, IconProps, X } from "@geneui/icons";
 
 // Components
-import Button from "../../atoms/Button";
+import Button from "@components/atoms/Button";
+
 import { TabsContext } from "./Tabs";
 
 interface ITabProps extends PropsWithChildren {

@@ -21,6 +21,7 @@ import { ChevronLeft, ChevronRight } from "@geneui/icons";
 // Components
 import Button from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
+import type { ITabProps } from "@components/molecules/Tabs";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Hooks
@@ -28,8 +29,6 @@ import useWindowSize from "@hooks/useWindowSize";
 
 // Styles
 import "./Tabs.scss";
-
-import type { ITabProps } from "./Tab";
 
 interface ITabsProps {
     /**

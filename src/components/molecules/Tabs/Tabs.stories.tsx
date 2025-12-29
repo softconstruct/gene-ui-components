@@ -64,23 +64,6 @@ export const IconOnly: Story = {
                     const key = i + 1;
                     return (
                         <Tab Icon={TagOutline} key={key}>
-                            tab {i + 1}{" "}
-                        </Tab>
-                    );
-                })}
-            </Tabs>
-        </div>
-    )
-};
-
-export const TextOnly: Story = {
-    render: (props: ITabsProps) => (
-        <div style={{ height: "100%" }}>
-            <Tabs {...props}>
-                {new Array(25).fill(null).map((_, i) => {
-                    const title = `tab${i + 1}`;
-                    return (
-                        <Tab title={title} key={title}>
                             tab {i + 1}
                         </Tab>
                     );
@@ -110,7 +93,7 @@ export const TemplateWithSwap: Story = {
 export const VerticalUncontrolled: Story = {
     render: (props: ITabsProps) => (
         <div style={{ height: "100%" }}>
-            <Tabs {...props} direction="vertical">
+            <Tabs {...props}>
                 {new Array(25).fill(null).map((_, i) => {
                     const title = `TAB ${i + 1}`;
                     return (
@@ -124,6 +107,7 @@ export const VerticalUncontrolled: Story = {
     ),
     args: {
         onClose: undefined,
-        closable: true
+        closable: true,
+        direction: "vertical"
     }
 };

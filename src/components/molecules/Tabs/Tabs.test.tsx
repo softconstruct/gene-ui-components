@@ -3,10 +3,9 @@ import { mount, ReactWrapper } from "enzyme";
 
 import { ChevronLeft, ChevronRight, X } from "@geneui/icons";
 
-import Button from "../../atoms/Button";
 // Components
-import Tab from "./Tab";
-import Tabs, { ITabsProps } from "./Tabs";
+import Button from "@components/atoms/Button";
+import { ITabsProps, Tab, Tabs } from "@components/molecules/Tabs";
 
 describe("Tabs", () => {
     let setup: ReactWrapper<ITabsProps>;
