@@ -28,7 +28,8 @@ const meta: Meta<ITabsProps> = {
     args: {
         direction: "horizontal",
         size: "large",
-        layout: "contained"
+        layout: "contained",
+        onChange: undefined
     } as ITabsProps,
     subcomponents: { Tab: Tab as FunctionComponent<unknown> }
 };

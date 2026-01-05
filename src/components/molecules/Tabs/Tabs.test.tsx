@@ -247,23 +247,7 @@ describe("Tabs", () => {
         });
     });
 
-    describe("defaultSelected", () => {
-        it("selects tab with defaultSelected prop on Tab component", () => {
-            const wrapper = mount(
-                <Tabs>
-                    <Tab title="Tab 0">Content 0</Tab>
-                    <Tab title="Tab 1" defaultSelected>
-                        Content 1
-                    </Tab>
-                    <Tab title="Tab 2">Content 2</Tab>
-                </Tabs>
-            );
-
-            // Check if tab 1 is selected by checking the DOM element's aria-selected attribute
-            const tab1Element = wrapper.find(Tab).at(1).find('[role="tab"]').first();
-            expect(tab1Element.prop("aria-selected")).toBe(true);
-        });
-
+    describe("defaultSelectedIndex", () => {
         it("selects tab with defaultSelectedIndex prop on Tabs component", () => {
             const wrapper = mount(
                 <Tabs defaultSelectedIndex={2}>
@@ -282,9 +266,7 @@ describe("Tabs", () => {
             const wrapper = mount(
                 <Tabs defaultSelectedIndex={0}>
                     <Tab title="Tab 0">Content 0</Tab>
-                    <Tab title="Tab 1" defaultSelected>
-                        Content 1
-                    </Tab>
+                    <Tab title="Tab 1">Content 1</Tab>
                     <Tab title="Tab 2">Content 2</Tab>
                 </Tabs>
             );
@@ -306,7 +288,7 @@ describe("Tabs", () => {
 
     it("renders tab content in tabs__stage", () => {
         const wrapper = mount(
-            <Tabs>
+            <Tabs defaultSelectedIndex={0}>
                 <Tab title="Tab 1">Content 1</Tab>
                 <Tab title="Tab 2">Content 2</Tab>
             </Tabs>

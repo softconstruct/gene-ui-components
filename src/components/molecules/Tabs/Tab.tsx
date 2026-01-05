@@ -1,4 +1,4 @@
-import React, { FC, JSX, KeyboardEvent, MouseEvent, PropsWithChildren, useContext, useEffect } from "react";
+import React, { FC, JSX, KeyboardEvent, MouseEvent, PropsWithChildren, useContext } from "react";
 import classNames from "classnames";
 
 import { CircleAlert, IconProps, X } from "@geneui/icons";
@@ -22,12 +22,6 @@ interface ITabProps extends PropsWithChildren {
     Icon?: FC<IconProps> | null;
 
     /**
-     * Determines if the tab is selected by default when the component mounts.
-     * The default value is `false`.
-     */
-    defaultSelected?: boolean;
-
-    /**
      * Indicates whether the tab should be marked as an error state.
      * The default value is `false`.
      */
@@ -45,9 +39,8 @@ interface ITabProps extends PropsWithChildren {
     content?: JSX.Element;
 }
 
-const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, content }) => {
-    const { getIndex, size, selectedTabIndex, closable, removeTabHandler, hasDefaultSelectedIndex } =
-        useContext(TabsContext);
+const Tab: FC<ITabProps> = ({ title, Icon, error, index, content }) => {
+    const { getIndex, size, selectedTabIndex, closable, removeTabHandler } = useContext(TabsContext);
 
     const provideChildren = (e: MouseEvent<HTMLDivElement> & KeyboardEvent<HTMLDivElement>) => {
         if (e?.key) {
@@ -59,12 +52,6 @@ const Tab: FC<ITabProps> = ({ title, Icon, defaultSelected, error, index, conten
 
         getIndex(index!);
     };
-
-    useEffect(() => {
-        if (defaultSelected && index !== undefined && !hasDefaultSelectedIndex) {
-            getIndex(index);
-        }
-    }, [defaultSelected, index, hasDefaultSelectedIndex, getIndex]);
 
     const handleCloseClick = (e: MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();

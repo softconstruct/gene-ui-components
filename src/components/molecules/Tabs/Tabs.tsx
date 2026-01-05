@@ -67,7 +67,7 @@ interface ITabsProps {
     /**
      * The initial selected tab index (uncontrolled mode).
      * Use this to set the default selected tab when the component first mounts.
-     * If not provided, defaults to 0. If provided (even if 0), it takes precedence over `defaultSelected` on individual Tab components.
+     * If not provided, defaults to 0. If provided (even if 0).
      */
     defaultSelectedIndex?: number;
     /**
@@ -91,7 +91,6 @@ interface IContextProps extends Pick<ITabsProps, "size"> {
     closable: boolean;
     selectedTabIndex?: number;
     removeTabHandler: (index: number) => void;
-    hasDefaultSelectedIndex?: boolean;
 }
 
 export const TabsContext = createContext<IContextProps>({} as IContextProps);
@@ -104,15 +103,14 @@ const Tabs: FC<ITabsProps> = ({
     loading,
     className,
     onChange,
-    defaultSelectedIndex,
+    defaultSelectedIndex = 0,
     closable = false,
     onClose
 }) => {
     const parentRef = useRef<HTMLDivElement | null>(null);
     const swipedElements = useRef<number>(0);
 
-    const initialSelectedIndex = defaultSelectedIndex !== undefined ? defaultSelectedIndex : 0;
-    const [selectedTabIndex, setSelectedTabIndex] = useState(initialSelectedIndex);
+    const [selectedTabIndex, setSelectedTabIndex] = useState(defaultSelectedIndex);
     const [showArrows, setShowArrows] = useState(true);
 
     const [showLeftShadows, setShowLeftShadows] = useState(false);
@@ -353,14 +351,13 @@ const Tabs: FC<ITabsProps> = ({
         }
     };
 
-    const memoizedContextValues = useMemo(
+    const memoizedContextValues = useMemo<IContextProps>(
         () => ({
             size,
             getIndex,
             closable,
             selectedTabIndex,
-            removeTabHandler,
-            hasDefaultSelectedIndex: defaultSelectedIndex !== undefined
+            removeTabHandler
         }),
         [size, getIndex, selectedTabIndex, removeTabHandler, defaultSelectedIndex]
     );
