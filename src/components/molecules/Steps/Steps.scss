@@ -152,6 +152,37 @@
             border-width: var(--guit-ref-border-width-thin);
             border-style: var(--guit-ref-border-style-solid);
         }
+
+        &_dot {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            margin: 0.2rem;
+
+            &_empty {
+                font-family: var(--guit-sem-font-body-medium-default-semibold-font-family), sans-serif;
+                font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
+                font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
+                line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
+                border-radius: var(--guit-ref-radius-full);
+                border-width: var(--guit-ref-border-width-thin);
+                border-style: var(--guit-ref-border-style-dashed);
+            }
+
+            &_current {
+                font-family: var(--guit-sem-font-body-medium-default-semibold-font-family), sans-serif;
+                font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
+                font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
+                line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
+                border-radius: var(--guit-ref-radius-full);
+                border-width: var(--guit-ref-border-width-thin);
+                border-style: var(--guit-ref-border-style-dashed);
+                background: linear-gradient(to right, var(--guit-sem-color-foreground-selected) 50%, transparent 50%);
+                background-clip: padding-box;
+            }
+        }
     }
 
     &__content {

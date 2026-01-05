@@ -12,7 +12,7 @@ describe("Steps ", () => {
     beforeEach(() => {
         setup = mount(
             <Steps>
-                <Step id={33} label={{ text: "test label" }} description="test description" />
+                <Step id={33} label="test label" description="test description" />
             </Steps>
         );
     });
@@ -90,8 +90,9 @@ describe("Steps ", () => {
         const onChangeMock = jest.fn();
         const id = 33;
         const wrapper = mount(
-            <Steps onChange={onChangeMock}>
-                <Step id={id} label={{ text: "test label" }} />
+            <Steps onChange={onChangeMock} current={1}>
+                <Step id={id} label="test label" />
+                <Step id={id} label="test label" />
             </Steps>
         );
 
@@ -99,8 +100,8 @@ describe("Steps ", () => {
 
         expect(stepLabel.exists()).toBe(true);
 
-        stepLabel.simulate("click");
+        stepLabel.at(0).simulate("click");
 
-        expect(onChangeMock).toHaveBeenCalledWith(wrapper.find(Step).props());
+        expect(onChangeMock).toHaveBeenCalledWith(wrapper.find(Step).at(0).props());
     });
 });

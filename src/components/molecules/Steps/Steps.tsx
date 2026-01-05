@@ -43,8 +43,7 @@ interface IStepsProps extends IStepsContextProps {
 
 export const StepsContext = createContext<IStepsContextProps>({} as IStepsContextProps);
 
-const currentStepState = (stepIndex: number, currentIndex?: number): IStepProps["state"] => {
-    if (currentIndex === undefined) return undefined;
+const currentStepState = (stepIndex: number, currentIndex: number = 0): IStepProps["state"] => {
     if (currentIndex > stepIndex) return "previous";
     if (currentIndex < stepIndex) return "next";
     return "current";
@@ -60,7 +59,7 @@ const Steps: FC<IStepsProps> = ({ current, direction = "horizontal", type = "dot
             onChange,
             type
         }),
-        [direction, type]
+        [direction, onChange, type]
     );
 
     return (

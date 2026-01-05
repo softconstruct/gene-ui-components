@@ -1,15 +1,15 @@
 import React, { ChangeEvent, FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+// Components
 import Button from "@components/atoms/Button";
+import Divider from "@components/atoms/Divider";
 import Checkbox from "@components/molecules/Checkbox";
 import Modal from "@components/molecules/Modal";
 import Notification from "@components/molecules/Notification";
 
 // Helpers
 import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
-import { Divider } from "../../../index";
-// Components
 import Step, { IStepProps } from "./Step";
 import Steps, { IStepsProps } from "./Steps";
 
@@ -22,10 +22,10 @@ const meta: Meta<IStepsProps> = {
 };
 
 const stepsMockData: IStepProps[] = [
-    { label: { text: "Step 1" }, description: "description 1", complete: true, id: 1 },
-    { label: { text: "Step 2" }, description: "description 2", complete: true, id: 2 },
-    { label: { text: "Step 3" }, description: "description 3", id: 3, loading: true },
-    { label: { text: "Step 4" }, id: 4, loading: false, disabled: true }
+    { label: "Step 1", description: "description 1", complete: true, id: 1 },
+    { label: "Step 2", description: "description 2", complete: true, id: 2 },
+    { label: "Step 3", description: "description 3", id: 3, loading: true },
+    { label: "Step 4", id: 4, loading: false, disabled: true }
 ];
 
 type Story = StoryObj<IStepsProps>;
@@ -63,24 +63,28 @@ const StepsStory: Story = {
 };
 
 const steps = [
-    { label: "Step 1", description: "description 1", complete: false, id: 1 },
+    { label: "Step 1", description: "description 1", complete: false, touched: false, error: false, id: 1 },
     {
         label: "Step 2",
         description: "description 2",
         complete: false,
+        touched: false,
+        error: false,
         id: 2
     },
-    { label: "Step 3", description: "description 3", complete: false, id: 3 },
+    { label: "Step 3", description: "description 3", complete: false, touched: false, error: false, id: 3 },
     {
         label: "Step 4",
         description: "description 4",
         complete: false,
+        touched: false,
+        error: false,
         id: 4
     },
-    { label: "Step 5", description: "description 5", complete: false, id: 5 }
+    { label: "Step 5", description: "description 5", complete: false, touched: false, error: false, id: 5 }
 ];
 
-const StepsWizardTemplate: FC<IStepsProps> = () => {
+const StepsWizardTemplate: FC<IStepsProps> = (props) => {
     const [stepsData, setStepsData] = useState(steps);
     const [isModalOpen, setIsModalOpen] = useState(true);
     const [currentStep, setCurrentStep] = useState<number>(0);
@@ -92,6 +96,7 @@ const StepsWizardTemplate: FC<IStepsProps> = () => {
 
     const onStepChange = (step: IStepProps) => {
         const stepId = step.id && +step.id;
+        stepsData[currentStep].touched = true;
         if (stepId) {
             setCurrentStep(stepId - 1);
         }
@@ -137,6 +142,11 @@ const StepsWizardTemplate: FC<IStepsProps> = () => {
         }
     };
 
+    const isStepDisabled = (index: number) =>
+        index > 0 && !stepsData[index - 1].complete && !stepsData[index - 1].touched;
+    const isError = () =>
+        stepsData.map((item, index) => (item.touched && !item.complete && index !== currentStep ? index : null));
+
     return (
         <>
             <Button onClick={modalToggle}>Open Wizard Modal</Button>
@@ -153,7 +163,8 @@ const StepsWizardTemplate: FC<IStepsProps> = () => {
                         children: isLastStep ? "Finish" : "Next",
                         appearance: "primary",
                         onClick: nextButtonHandler,
-                        disabled: !stepsData[currentStep].complete
+                        disabled:
+                            !stepsData[currentStep].complete || isError().filter((item) => Boolean(item)).length > 0
                     }
                 ]}
                 footerContent={
@@ -163,15 +174,17 @@ const StepsWizardTemplate: FC<IStepsProps> = () => {
                 }
             >
                 <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
-                    <Steps current={currentStep} direction="horizontal" type="numeric" onChange={onStepChange}>
+                    <Steps {...props} current={currentStep} onChange={onStepChange}>
                         {stepsData.map((step, index) => {
                             return (
                                 <Step
+                                    key={step.id}
                                     id={step.id}
-                                    label={{ text: step.label }} // todo: must change structure
+                                    label={step.label}
                                     description={step.description}
-                                    disabled={index === currentStep || (!step.complete && index !== currentStep)} // todo: component must handle
-                                    complete={step.complete && index < currentStep} // todo: investigate the case when all complete and yo go step 1
+                                    disabled={isStepDisabled(index)}
+                                    error={isError().includes(index)}
+                                    complete={step.complete}
                                 />
                             );
                         })}
@@ -180,6 +193,8 @@ const StepsWizardTemplate: FC<IStepsProps> = () => {
                     <Checkbox
                         label={`confirm Step ${currentStep + 1}`}
                         onChange={onCheckBoxChangeHandler}
+                        required
+                        status={stepsData[currentStep].touched && !stepsData[currentStep].complete ? "error" : "rest"}
                         checked={stepsData[currentStep].complete}
                     />
                 </div>
