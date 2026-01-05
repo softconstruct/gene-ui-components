@@ -14,6 +14,7 @@ const meta: Meta<ICounterFieldProps> = {
         value: args({ control: "text", ...propCategory.states }),
         defaultValue: args({ control: "number", ...propCategory.states }),
         disabled: args({ control: "boolean", ...propCategory.states }),
+        readOnly: args({ control: "boolean", ...propCategory.states }),
         ariaLabelIncrement: args({ control: "text", ...propCategory.others }),
         ariaLabelDecrement: args({ control: "text", ...propCategory.others }),
         step: args({ control: "number", defaultValue: 1, ...propCategory.validation }),

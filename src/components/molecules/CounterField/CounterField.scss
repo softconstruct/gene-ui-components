@@ -20,4 +20,8 @@
         display: flex;
         width: 100%;
     }
+
+    &_readOnly {
+        pointer-events: none;
+    }
 }

@@ -92,6 +92,64 @@ describe("CounterField", () => {
         expect(wrapper.find(HelperText).props().disabled).toBeTruthy();
     });
 
+    it("renders readOnly prop correctly", () => {
+        const wrapper = setup.setProps({ readOnly: true });
+        expect(wrapper.find(".counterField").hasClass("counterField_readOnly")).toBeTruthy();
+    });
+
+    it("does not apply readOnly class when disabled is true", () => {
+        const wrapper = setup.setProps({ readOnly: true, disabled: true });
+        expect(wrapper.find(".counterField").hasClass("counterField_readOnly")).toBeFalsy();
+        expect(wrapper.find(".counterField").hasClass("counterField_disabled")).toBeTruthy();
+    });
+
+    it("passes readOnly prop to TextField correctly", () => {
+        const wrapper = setup.setProps({ readOnly: true });
+        expect(wrapper.find(TextField).props().readOnly).toBeTruthy();
+    });
+
+    it("passes readOnly prop to Label correctly", () => {
+        const wrapper = setup.setProps({ label: "Label", readOnly: true });
+        expect(wrapper.find(Label).first().props().readOnly).toBeTruthy();
+    });
+
+    it("disables increment button when readOnly is true", () => {
+        const wrapper = setup.setProps({ readOnly: true });
+        const incrementButton = wrapper.find(Button).at(1);
+        expect(incrementButton.props().disabled).toBeTruthy();
+    });
+
+    it("disables decrement button when readOnly is true", () => {
+        const wrapper = setup.setProps({ readOnly: true });
+        const decrementButton = wrapper.find(Button).at(0);
+        expect(decrementButton.props().disabled).toBeTruthy();
+    });
+
+    it("has tabIndex -1 on container when readOnly is true", () => {
+        const wrapper = setup.setProps({ readOnly: true });
+        expect(wrapper.find(".counterField").prop("tabIndex")).toBe(-1);
+    });
+
+    it("does not call onChange when increment button is clicked in readOnly mode", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 5, readOnly: true, onChange });
+
+        const incrementButton = wrapper.find(Button).at(1);
+        incrementButton.simulate("click");
+
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it("does not call onChange when decrement button is clicked in readOnly mode", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 5, readOnly: true, onChange });
+
+        const decrementButton = wrapper.find(Button).at(0);
+        decrementButton.simulate("click");
+
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
     it("renders value prop correctly in controlled mode", () => {
         const value = 10;
         const wrapper = setup.setProps({ value });

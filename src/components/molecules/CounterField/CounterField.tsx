@@ -33,6 +33,10 @@ interface ICounterFieldProps {
      */
     disabled?: boolean;
     /**
+     * Displays the counter field as read-only, where users cannot modify its value.
+     */
+    readOnly?: boolean;
+    /**
      * The amount by which the value increases or decreases.
      */
     step?: number;
@@ -92,6 +96,7 @@ const CounterField: FC<ICounterFieldProps> = ({
     infoText,
     required,
     disabled,
+    readOnly,
     helperText,
     ariaLabelIncrement = "Increment value",
     ariaLabelDecrement = "Decrement value",
@@ -156,18 +161,21 @@ const CounterField: FC<ICounterFieldProps> = ({
                 "counterField",
                 `counterField_status_${status}`,
                 {
-                    counterField_disabled: disabled
+                    counterField_disabled: disabled,
+                    counterField_readOnly: readOnly && !disabled
                 },
                 className
             )}
             aria-required={required}
             aria-invalid={status === "error"}
+            {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             {label && (
                 <Label
                     text={label}
                     required={required}
                     disabled={disabled}
+                    readOnly={readOnly}
                     infoText={infoText}
                     size={size === "large" ? "medium" : size}
                     labelFor={inputId}
@@ -180,7 +188,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     layout="fill"
                     size={size}
                     Icon={Minus}
-                    disabled={disabled}
+                    disabled={disabled || readOnly}
                     aria-label={ariaLabelDecrement}
                     onClick={handleDecrement}
                 />
@@ -195,6 +203,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     size={size}
                     value={currentStringValue}
                     disabled={disabled}
+                    readOnly={readOnly}
                     status={status}
                 />
                 <Button
@@ -203,7 +212,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     layout="fill"
                     size={size}
                     Icon={Plus}
-                    disabled={disabled}
+                    disabled={disabled || readOnly}
                     aria-label={ariaLabelIncrement}
                     onClick={handleIncrement}
                 />
