@@ -21,6 +21,7 @@ export { default as Copy, ICopyProps } from "./components/atoms/Copy";
 export { SplitButton, ISplitButtonProps } from "@components/molecules/SplitButton";
 
 // Molecules
+export { Tabs, Tab, ITabsProps, ITabProps } from "./components/molecules/Tabs";
 export { default as Tooltip, ITooltipProps } from "./components/molecules/Tooltip";
 export { default as ProgressBar, IProgressBarProps } from "./components/molecules/ProgressBar";
 export { Steps, Step, IStepProps, IStepsProps } from "./components/molecules/Steps";
