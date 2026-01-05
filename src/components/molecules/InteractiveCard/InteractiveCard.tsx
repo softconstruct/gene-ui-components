@@ -100,7 +100,8 @@ interface IInteractiveCardProps {
     onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Pill component configuration.
-     * When provided, renders a `Pill` with these props.
+     * When provided, renders a `Pill` component in the actions area.
+     * Works in both interactive and non-interactive modes, and can appear alongside action components (checkbox/switch) in non-interactive mode.
      */
     pill?: IPillProps;
     /**
