@@ -33,9 +33,9 @@ describe("Divider ", () => {
         expect(wrapper.find(".divider").text()).toBe(TestText);
     });
 
-    it("renders content prop correctly", () => {
-        const content = <Avatar />;
-        const wrapper = setup.setProps({ content });
+    it("renders swappableElement prop correctly", () => {
+        const swappableElement = <Avatar />;
+        const wrapper = setup.setProps({ swappableElement });
         expect(wrapper.find(Avatar)).toBeTruthy();
     });
 

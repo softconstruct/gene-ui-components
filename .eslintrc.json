@@ -56,7 +56,8 @@
                     "ButtonGroup": ["Button"],
                     "Carousel": ["CarouselItem"],
                     "TagGroup": ["Tag"],
-                    "SegmentedControl": ["SegmentedControlButton"]
+                    "SegmentedControl": ["SegmentedControlButton"],
+                    "Accordion": ["AccordionItem"]
                 }
             }
         ],
