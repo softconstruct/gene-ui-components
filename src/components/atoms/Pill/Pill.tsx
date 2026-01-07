@@ -78,7 +78,7 @@ interface IPillProps {
  */
 const Pill: FC<IPillProps> = ({
     appearance = "informative",
-    size = "medium",
+    size = "small",
     text,
     iconAlignment = "before",
     filled,
