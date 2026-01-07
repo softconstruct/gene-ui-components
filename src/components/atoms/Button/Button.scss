@@ -501,8 +501,14 @@
         }
     }
 
-    &_fullWidth {
-        width: 100%;
+    &_width {
+        &_full {
+            width: 100%;
+        }
+
+        &_fit {
+            width: fit-content;
+        }
     }
 
     &_loading {
