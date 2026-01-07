@@ -13,7 +13,7 @@ describe("Steps ", () => {
     beforeEach(() => {
         setup = mount(
             <Steps>
-                <Step id={33} label="test label" description="test description" />
+                <Step label="test label" description="test description" />
             </Steps>
         );
     });
@@ -48,7 +48,7 @@ describe("Steps ", () => {
     it("renders complete prop correctly", () => {
         const wrapper = mount(
             <Steps>
-                <Step id={33} complete />
+                <Step complete />
             </Steps>
         );
         expect(wrapper.find(SuccessFilled)).toBeTruthy();
@@ -57,7 +57,7 @@ describe("Steps ", () => {
     it("renders error prop correctly", () => {
         const wrapper = mount(
             <Steps>
-                <Step id={33} error />
+                <Step error />
             </Steps>
         );
         expect(wrapper.find(".steps__step").hasClass("steps__step_error")).toBeTruthy();
@@ -74,9 +74,9 @@ describe("Steps ", () => {
     it.each<IStepProps["state"]>(["previous", "current", "next"])('should have "%s" state', (state) => {
         const wrapper = mount(
             <Steps>
-                <Step id={33} state={state} />
-                <Step id={34} state={state} />
-                <Step id={35} state={state} />
+                <Step state={state} />
+                <Step state={state} />
+                <Step state={state} />
             </Steps>
         );
 
@@ -91,11 +91,10 @@ describe("Steps ", () => {
 
     it("calls onChange when the step is clicked", () => {
         const onChangeMock = jest.fn();
-        const id = 33;
         const wrapper = mount(
             <Steps onChange={onChangeMock} current={1}>
-                <Step id={id} label="test label" />
-                <Step id={id} label="test label" />
+                <Step label="test label" />
+                <Step label="test label" />
             </Steps>
         );
 

@@ -31,6 +31,15 @@ const stepsMockData: IStepProps[] = [
 type Story = StoryObj<IStepsProps>;
 type StoryStep = StoryObj<IStepProps>;
 
+const argTypes = {
+    className: args({ control: "false", ...propCategory.appearance }),
+    direction: args({ control: "select", ...propCategory.appearance }),
+    type: args({ control: "select", ...propCategory.appearance }),
+    onChange: args({ control: "false", ...propCategory.action }),
+    current: args({ control: "false", ...propCategory.content }),
+    children: args({ control: "false", ...propCategory.content })
+};
+
 const StepsTemplate: FC<IStepsProps> = (props) => {
     const { current } = props;
     const [currentStep, setCurrentStep] = useState<number | undefined>(current);
@@ -52,13 +61,7 @@ const StepsTemplate: FC<IStepsProps> = (props) => {
 };
 
 const StepsStory: Story = {
-    argTypes: {
-        className: args({ control: "false", ...propCategory.appearance }),
-        direction: args({ control: "select", ...propCategory.appearance }),
-        type: args({ control: "select", ...propCategory.appearance }),
-        onChange: args({ control: "false", ...propCategory.action }),
-        current: args({ control: "false", ...propCategory.content })
-    },
+    argTypes: { ...argTypes },
     render: (props) => <StepsTemplate {...props} />
 };
 
@@ -217,15 +220,8 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
     );
 };
 
-const StepsWizard: Story = {
-    argTypes: {
-        className: args({ control: "false", ...propCategory.appearance }),
-        direction: args({ control: "select", ...propCategory.appearance }),
-        type: args({ control: "select", ...propCategory.appearance }),
-        onChange: args({ control: "false", ...propCategory.action }),
-        current: args({ control: "number", ...propCategory.content }),
-        children: args({ control: "false", ...propCategory.content })
-    },
+const StepsWizard: StoryObj<IStepsProps> = {
+    argTypes: { ...argTypes },
     args: {
         current: 2,
         direction: "horizontal",
