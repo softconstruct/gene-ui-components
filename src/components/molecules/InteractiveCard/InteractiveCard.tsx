@@ -139,6 +139,7 @@ const InteractiveCard: FC<IInteractiveCardProps> = ({
         `interactiveCard_mode_${isInteractive ? "interactive" : "static"}`,
         {
             interactiveCard_withIcon: Icon,
+            interactiveCard_withAction: !!actionProps,
             interactiveCard_disabled: isInteractive && disabled
         },
         className

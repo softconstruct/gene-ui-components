@@ -19,7 +19,7 @@
                 padding-inline-start: var(--guit-ref-spacing-medium);
             }
 
-            &#{ $this }_withCheckbox {
+            &#{ $this }_withAction {
                 padding-inline-end: var(--guit-ref-spacing-medium);
             }
 
@@ -37,7 +37,7 @@
                 padding-inline-start: var(--guit-ref-spacing-small);
             }
 
-            &#{ $this }_withCheckbox {
+            &#{ $this }_withAction {
                 padding-inline-end: var(--guit-ref-spacing-small);
             }
 
@@ -55,7 +55,7 @@
                 padding-inline-start: var(--guit-ref-spacing-xsmall);
             }
 
-            &#{ $this }_withCheckbox {
+            &#{ $this }_withAction {
                 padding-inline-end: var(--guit-ref-spacing-xsmall);
             }
 
