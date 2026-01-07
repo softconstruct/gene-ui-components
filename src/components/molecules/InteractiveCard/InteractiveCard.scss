@@ -6,6 +6,7 @@
     display: flex;
     align-items: flex-start;
     width: 100%;
+    min-width: 0;
     border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
     background-color: var(--guit-sem-color-background-neutral-1);
 
@@ -102,17 +103,7 @@
     }
 
     &_mode {
-        &_static {
-            min-width: 24rem;
-        }
-
         &_interactive {
-            min-width: 12rem;
-
-            &#{ $this }_withIcon {
-                min-width: 18rem;
-            }
-
             @include mixins.media-hover {
                 &:hover {
                     background-color: var(--guit-sem-color-background-neutral-1-hover);
