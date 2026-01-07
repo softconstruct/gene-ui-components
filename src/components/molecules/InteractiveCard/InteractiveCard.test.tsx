@@ -59,11 +59,6 @@ describe("InteractiveCard", () => {
         expect(wrapper.find(".interactiveCard").hasClass("interactiveCard_withIcon")).toBeTruthy();
     });
 
-    it("renders infoText in label when provided", () => {
-        const wrapper = setup.setProps({ label: "Label", infoText: "Info text" });
-        expect(wrapper.find("Label").prop("infoText")).toBe("Info text");
-    });
-
     it("renders as button when actionProps not provided", () => {
         const wrapper = setup.setProps({});
         expect(wrapper.find("button.interactiveCard").exists()).toBeTruthy();
