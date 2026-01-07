@@ -148,9 +148,12 @@
             font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
             font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
             line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
-            border-radius: var(--guit-ref-radius-full);
-            border-width: var(--guit-ref-border-width-thin);
-            border-style: var(--guit-ref-border-style-solid);
+
+            &:not(&_success) {
+                border-radius: var(--guit-ref-radius-full);
+                border-width: var(--guit-ref-border-width-thin);
+                border-style: var(--guit-ref-border-style-solid);
+            }
         }
 
         &_dot {
@@ -178,9 +181,45 @@
                 line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
                 border-radius: var(--guit-ref-radius-full);
                 border-width: var(--guit-ref-border-width-thin);
-                border-style: var(--guit-ref-border-style-dashed);
-                background: linear-gradient(to right, var(--guit-sem-color-foreground-selected) 50%, transparent 50%);
+                border-style: var(--guit-ref-border-style-solid);
+                border-color: var(--guit-sem-color-background-transparent-1);
+                background: linear-gradient(
+                    to right,
+                    var(--guit-sem-color-foreground-selected) 50%,
+                    var(--guit-sem-color-background-transparent-1) 50%
+                );
                 background-clip: padding-box;
+                position: relative;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    top: calc(-1 * var(--guit-ref-border-width-thin));
+                    left: calc(-1 * var(--guit-ref-border-width-thin));
+                    right: calc(-1 * var(--guit-ref-border-width-thin));
+                    bottom: calc(-1 * var(--guit-ref-border-width-thin));
+                    border-radius: var(--guit-ref-radius-full);
+                    border-width: var(--guit-ref-border-width-thin);
+                    border-style: var(--guit-ref-border-style-solid);
+                    border-color: var(--guit-sem-color-foreground-selected);
+                    clip-path: polygon(0% 0%, 50% 0%, 50% 100%, 0% 100%);
+                    pointer-events: none;
+                }
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    top: calc(-1 * var(--guit-ref-border-width-thin));
+                    left: calc(-1 * var(--guit-ref-border-width-thin));
+                    right: calc(-1 * var(--guit-ref-border-width-thin));
+                    bottom: calc(-1 * var(--guit-ref-border-width-thin));
+                    border-radius: var(--guit-ref-radius-full);
+                    border-width: var(--guit-ref-border-width-thin);
+                    border-style: var(--guit-ref-border-style-dashed);
+                    border-color: var(--guit-sem-color-foreground-selected);
+                    clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
+                    pointer-events: none;
+                }
             }
         }
     }

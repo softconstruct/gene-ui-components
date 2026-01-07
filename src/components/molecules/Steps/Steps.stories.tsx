@@ -196,6 +196,11 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
                         required
                         status={stepsData[currentStep].touched && !stepsData[currentStep].complete ? "error" : "rest"}
                         checked={stepsData[currentStep].complete}
+                        helperText={
+                            stepsData[currentStep].touched && !stepsData[currentStep].complete
+                                ? "This filed is required!"
+                                : ""
+                        }
                     />
                 </div>
             </Modal>
@@ -219,7 +224,7 @@ const StepsWizard: Story = {
     },
     args: {
         current: 2,
-        direction: "vertical",
+        direction: "horizontal",
         type: "dot"
     },
     render: (props) => <StepsWizardTemplate {...props} />

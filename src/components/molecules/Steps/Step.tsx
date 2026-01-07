@@ -78,7 +78,7 @@ const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, stat
 
     if (type === "dot") {
         if (complete && state !== "current") {
-            return <SuccessFilled size={24} className="step_type steps__status_icon steps__status_dot" />;
+            return <SuccessFilled size={24} className="step_type steps__status_icon" />;
         }
         if (state !== "next") {
             return <span className="step_type steps__status_icon steps__status_dot steps__status_dot_current" />;
@@ -88,9 +88,13 @@ const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, stat
     }
 
     return (
-        <span className="step_type steps__status_icon steps__status_numeric">
+        <span
+            className={classNames("step_type steps__status_icon steps__status_numeric", {
+                steps__status_numeric_success: complete && state !== "current"
+            })}
+        >
             {complete && state !== "current" ? (
-                <SuccessFilled size={24} className="step_type steps__status_icon steps__status_dot" />
+                <SuccessFilled size={24} className="step_type steps__status_icon" />
             ) : (
                 stepCount(stepNumber)
             )}
