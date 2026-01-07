@@ -103,6 +103,11 @@ interface IButtonProps {
      * @default 0
      */
     tabIndex?: number;
+    /**
+     * A unique identifier for the button element.
+     * Useful for accessibility purposes, like `aria-labelledby`.
+     */
+    id?: string;
 }
 
 const loadingTypes = {
@@ -124,6 +129,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             disabled,
             fullWidth,
             name,
+            id,
             size = "medium",
             layout = "fill",
             children,
@@ -149,6 +155,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             <button
                 ref={ref}
                 name={name}
+                id={id}
                 onFocus={onFocus}
                 onBlur={onBlur}
                 // eslint-disable-next-line react/button-has-type
@@ -159,10 +166,10 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 className={classNames(
                     `button button_size_${size} 
                     button_color_${appearance} 
-                    button_type_${isTextDisplayForXS ? "text" : layout}`,
+                    button_type_${isTextDisplayForXS ? "text" : layout}
+                    button_width_${fullWidth ? "full" : "fit"}`,
                     className,
                     {
-                        button_fullWidth: fullWidth,
                         button_icon_before: iconPosition === "before" && Icon && children,
                         button_icon_after: iconPosition === "after" && Icon && children,
                         button_icon_only: (!children || isSizeXS) && Icon,
