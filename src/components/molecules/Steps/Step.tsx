@@ -80,7 +80,7 @@ const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, stat
         if (complete && state !== "current") {
             return <SuccessFilled size={24} className="step_type steps__status_icon" />;
         }
-        if (state !== "next") {
+        if (state === "current") {
             return <span className="step_type steps__status_icon steps__status_dot steps__status_dot_current" />;
         }
 
@@ -131,7 +131,7 @@ const Step: FC<IStepProps> = (props) => {
                 steps__step_disabled: disabled && !error && !loading,
                 steps__step_error: error,
                 steps__step_success: complete && state !== "next",
-                steps__step_current: state !== "next"
+                steps__step_current: state === "current"
             })}
         >
             <div className="steps__status">

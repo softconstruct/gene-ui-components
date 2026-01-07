@@ -43,9 +43,9 @@ interface IStepsProps extends IStepsContextProps {
 
 export const StepsContext = createContext<IStepsContextProps>({} as IStepsContextProps);
 
-const currentStepState = (stepIndex: number, currentIndex: number = 0): IStepProps["state"] => {
+const currentStepState = (stepIndex: number, currentIndex?: number): IStepProps["state"] => {
+    if (currentIndex === undefined || currentIndex < stepIndex) return "next";
     if (currentIndex > stepIndex) return "previous";
-    if (currentIndex < stepIndex) return "next";
     return "current";
 };
 
@@ -61,6 +61,7 @@ const Steps: FC<IStepsProps> = ({ current, direction = "horizontal", type = "dot
         }),
         [direction, onChange, type]
     );
+    const childrenArray = useMemo(() => Children.toArray(children), [children]);
 
     return (
         <StepsContext.Provider value={memoizedStepsContextValue as IStepsContextProps}>
@@ -71,16 +72,20 @@ const Steps: FC<IStepsProps> = ({ current, direction = "horizontal", type = "dot
                     className
                 )}
             >
-                {Children.toArray(children).map((child, i) => {
+                {childrenArray.map((child, i) => {
                     if (!isValidElement<IStepProps>(child)) return child;
 
                     const stepProps: Partial<IStepProps> = {
+                        ...child.props,
                         stepNumber: child.props.stepNumber ?? i + 1,
                         state: currentStepState(i, current),
                         id: child.props.id ?? i + 1
                     };
 
-                    return <child.type {...child.props} {...stepProps} key={child.props.id || i} />;
+                    return React.cloneElement(child, {
+                        ...stepProps,
+                        key: child.props.id || i
+                    });
                 })}
             </div>
         </StepsContext.Provider>

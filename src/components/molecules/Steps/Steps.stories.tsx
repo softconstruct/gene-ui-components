@@ -96,7 +96,11 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
 
     const onStepChange = (step: IStepProps) => {
         const stepId = step.id && +step.id;
-        stepsData[currentStep].touched = true;
+        setStepsData((prev) => {
+            const newData = [...prev];
+            newData[currentStep] = { ...newData[currentStep], touched: true };
+            return newData;
+        });
         if (stepId) {
             setCurrentStep(stepId - 1);
         }
