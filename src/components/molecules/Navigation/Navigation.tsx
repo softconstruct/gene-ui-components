@@ -11,6 +11,7 @@ import Scrollbar from "@components/atoms/Scrollbar";
 import { IMenuItemProps, Menu, MenuItem } from "@components/molecules/Menu";
 import NavigationItem from "@components/molecules/Navigation/NavigationItem";
 import NavigationMenuHeader from "@components/molecules/Navigation/NavigationMenuHeader";
+import NavigationMobile from "@components/molecules/Navigation/NavigationMobile/NavigationMobile";
 import NavigationColItem from "@components/molecules/Navigation/NavigattionColItem";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
@@ -43,6 +44,10 @@ interface INavigationProps {
      * Controls whether the navigation is forced open.
      */
     open?: boolean;
+    /**
+     * Callback when the navigation open state changes. Used for mobile navigation control.
+     */
+    onOpenChange?: (isOpen: boolean) => void;
     /**
      * Array of navigation items data.
      */
@@ -154,6 +159,7 @@ const NavMenuContent: FC<{
 const Navigation: FC<INavigationProps> = ({
     className,
     open,
+    onOpenChange,
     navigationData = [],
     activePath,
     onClick,
@@ -310,7 +316,16 @@ const Navigation: FC<INavigationProps> = ({
     return (
         <div className={classNames("navigation", className)} role="navigation">
             {isMobileBreakpoint ? (
-                <div>Mobile Navigation</div>
+                <NavigationMobile
+                    open={!!open}
+                    onClose={() => onOpenChange?.(false)}
+                    navigationData={navigationData}
+                    navigationCreateData={navigationCreateData}
+                    onClick={onClick}
+                    onNavigationCreateDataClick={onNavigationCreateDataClick}
+                    render={render}
+                    activePathIndex={activePathIndex}
+                />
             ) : (
                 <>
                     <nav className="navigation__list">
