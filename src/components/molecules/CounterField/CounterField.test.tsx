@@ -447,4 +447,64 @@ describe("CounterField", () => {
 
         expect(onChange).toHaveBeenCalledWith("10", expect.any(Object));
     });
+
+    it("clamps value to min when decrementing exceeds min", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 5, min: 0, step: 100, onChange });
+
+        const decrementButton = wrapper.find(Button).at(0);
+        decrementButton.simulate("click");
+
+        expect(onChange).toHaveBeenCalledWith("0", expect.any(Object));
+    });
+
+    it("disables decrement button when value equals min", () => {
+        const wrapper = setup.setProps({ value: 0, min: 0 });
+        const decrementButton = wrapper.find(Button).at(0);
+        expect(decrementButton.props().disabled).toBeTruthy();
+    });
+
+    it("disables decrement button when value is below min", () => {
+        const wrapper = setup.setProps({ value: -5, min: 0 });
+        const decrementButton = wrapper.find(Button).at(0);
+        expect(decrementButton.props().disabled).toBeTruthy();
+    });
+
+    it("enables decrement button when value is above min", () => {
+        const wrapper = setup.setProps({ value: 5, min: 0 });
+        const decrementButton = wrapper.find(Button).at(0);
+        expect(decrementButton.props().disabled).toBeFalsy();
+    });
+
+    it("decrement button is enabled when min is not provided", () => {
+        const wrapper = setup.setProps({ value: -100 });
+        const decrementButton = wrapper.find(Button).at(0);
+        expect(decrementButton.props().disabled).toBeFalsy();
+    });
+
+    it("increment button remains enabled when value is at min", () => {
+        const wrapper = setup.setProps({ value: 0, min: 0 });
+        const incrementButton = wrapper.find(Button).at(1);
+        expect(incrementButton.props().disabled).toBeFalsy();
+    });
+
+    it("handles min with decimal step correctly", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 2, min: 0, step: 2.5, onChange });
+
+        const decrementButton = wrapper.find(Button).at(0);
+        decrementButton.simulate("click");
+
+        expect(onChange).toHaveBeenCalledWith("0", expect.any(Object));
+    });
+
+    it("clamps to min when decrementing from value close to min", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 0.5, min: 0, step: 1, onChange });
+
+        const decrementButton = wrapper.find(Button).at(0);
+        decrementButton.simulate("click");
+
+        expect(onChange).toHaveBeenCalledWith("0", expect.any(Object));
+    });
 });

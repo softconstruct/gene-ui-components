@@ -41,8 +41,12 @@ interface ICounterFieldProps {
      */
     step?: number;
     /**
+     * The minimum value allowed for the counter.
+     * The decrement button will be disabled when the value reaches or is below this minimum.
+     */
+    min?: number;
+    /**
      * The maximum value allowed for the counter.
-     * When incrementing, the value will be clamped to this maximum.
      * The increment button will be disabled when the value reaches or exceeds this maximum.
      */
     max?: number;
@@ -113,6 +117,7 @@ const CounterField: FC<ICounterFieldProps> = ({
     onInputBlur,
     onInputFocus,
     step = 1,
+    min,
     max,
     size = "medium",
     className
@@ -140,7 +145,8 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     const handleDecrement = (event: MouseEvent<HTMLButtonElement>) => {
         const nextValue = validNumericValue - step;
-        const nextValueString = String(nextValue);
+        const clampedValue = min !== undefined ? Math.max(nextValue, min) : nextValue;
+        const nextValueString = String(clampedValue);
         if (!isControlled) {
             setInternalStringValue(nextValueString);
         }
@@ -168,6 +174,12 @@ const CounterField: FC<ICounterFieldProps> = ({
         if (max === undefined) return false;
         return validNumericValue >= max;
     }, [disabled, readOnly, max, validNumericValue]);
+
+    const isDecrementDisabled = useMemo(() => {
+        if (disabled || readOnly) return true;
+        if (min === undefined) return false;
+        return validNumericValue <= min;
+    }, [disabled, readOnly, min, validNumericValue]);
 
     return (
         <div
@@ -202,7 +214,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     layout="fill"
                     size={size}
                     Icon={Minus}
-                    disabled={disabled || readOnly}
+                    disabled={isDecrementDisabled}
                     aria-label={ariaLabelDecrement}
                     onClick={handleDecrement}
                 />

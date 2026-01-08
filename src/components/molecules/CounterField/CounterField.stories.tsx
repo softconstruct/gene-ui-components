@@ -18,6 +18,7 @@ const meta: Meta<ICounterFieldProps> = {
         ariaLabelIncrement: args({ control: "text", ...propCategory.others }),
         ariaLabelDecrement: args({ control: "text", ...propCategory.others }),
         step: args({ control: "number", defaultValue: 1, ...propCategory.validation }),
+        min: args({ control: "number", ...propCategory.validation }),
         max: args({ control: "number", ...propCategory.validation }),
         size: args({ control: "select", ...propCategory.appearance }),
         status: args({ control: "select", ...propCategory.appearance }),
