@@ -62,6 +62,11 @@ const StepsTemplate: FC<IStepsProps> = (props) => {
 
 const StepsStory: Story = {
     argTypes: { ...argTypes },
+    args: {
+        direction: "horizontal",
+        type: "dot",
+        current: 2
+    },
     render: (props) => <StepsTemplate {...props} />
 };
 
@@ -105,7 +110,8 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
             return newData;
         });
         if (stepId) {
-            setCurrentStep(stepId - 1);
+            const targetStepIndex = stepId - 1;
+            setCurrentStep(targetStepIndex);
         }
     };
 
@@ -118,19 +124,20 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
 
     const onCheckBoxChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setStepsData((prev) =>
-            prev.map((item, index) =>
-                index === currentStep
-                    ? {
-                          ...item,
-                          complete: e.currentTarget.checked
-                      }
-                    : item
-            )
+            prev.map((item, index) => {
+                if (index === currentStep) {
+                    return {
+                        ...item,
+                        complete: e.currentTarget.checked
+                    };
+                }
+                return item;
+            })
         );
     };
 
     const handlePrev = () => {
-        setCurrentStep((prev) => prev - 1);
+        onStepChange(stepsData[currentStep - 1]);
     };
 
     const handleFinish = () => {
@@ -145,14 +152,25 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
         if (isLastStep) {
             handleFinish();
         } else {
-            setCurrentStep(currentStep + 1);
+            onStepChange(stepsData[currentStep + 1]);
         }
     };
 
-    const isStepDisabled = (index: number) =>
-        index > 0 && !stepsData[index - 1].complete && !stepsData[index - 1].touched;
-    const isError = () =>
-        stepsData.map((item, index) => (item.touched && !item.complete && index !== currentStep ? index : null));
+    const getErrorStepIndices = () =>
+        stepsData
+            .map((item, index) =>
+                item.touched && !item.complete && (stepsData.length - 1 === index || index !== currentStep)
+                    ? index
+                    : null
+            )
+            .filter((item) => item !== null);
+
+    const isStepEnabled = () =>
+        stepsData.map((item, index) =>
+            item.touched || stepsData[index - 1]?.touched || stepsData[index - 1]?.complete || index === 0
+                ? index
+                : null
+        );
 
     return (
         <>
@@ -164,6 +182,7 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
                 hasCloseButton
                 shouldCloseOnOverlayClick
                 onClose={modalToggle}
+                lockBodyScroll={false}
                 actions={[
                     { children: "Cancel", appearance: "secondary", onClick: modalToggle },
                     {
@@ -171,7 +190,8 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
                         appearance: "primary",
                         onClick: nextButtonHandler,
                         disabled:
-                            !stepsData[currentStep].complete || isError().filter((item) => Boolean(item)).length > 0
+                            (!isStepEnabled().includes(currentStep + 1) && !isLastStep) ||
+                            (isLastStep && getErrorStepIndices().length > 0)
                     }
                 ]}
                 footerContent={
@@ -189,8 +209,8 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
                                     id={step.id}
                                     label={step.label}
                                     description={step.description}
-                                    disabled={isStepDisabled(index)}
-                                    error={isError().includes(index)}
+                                    disabled={!isStepEnabled().includes(index)}
+                                    error={getErrorStepIndices().includes(index) && index !== stepsData.length - 1}
                                     complete={step.complete}
                                 />
                             );
