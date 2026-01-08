@@ -41,6 +41,12 @@ interface ICounterFieldProps {
      */
     step?: number;
     /**
+     * The maximum value allowed for the counter.
+     * When incrementing, the value will be clamped to this maximum.
+     * The increment button will be disabled when the value reaches or exceeds this maximum.
+     */
+    max?: number;
+    /**
      * Size of the component.<br> Possible values: `small | medium | large`
      */
     size?: "small" | "medium" | "large";
@@ -107,6 +113,7 @@ const CounterField: FC<ICounterFieldProps> = ({
     onInputBlur,
     onInputFocus,
     step = 1,
+    max,
     size = "medium",
     className
 }) => {
@@ -142,7 +149,8 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     const handleIncrement = (event: MouseEvent<HTMLButtonElement>) => {
         const nextValue = validNumericValue + step;
-        const nextValueString = String(nextValue);
+        const clampedValue = max !== undefined ? Math.min(nextValue, max) : nextValue;
+        const nextValueString = String(clampedValue);
         if (!isControlled) {
             setInternalStringValue(nextValueString);
         }
@@ -154,6 +162,12 @@ const CounterField: FC<ICounterFieldProps> = ({
     const onFocusHandler = (e: FocusEvent<HTMLInputElement>) => onInputFocus?.(e);
 
     const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => onInputBlur?.(e);
+
+    const isIncrementDisabled = useMemo(() => {
+        if (disabled || readOnly) return true;
+        if (max === undefined) return false;
+        return validNumericValue >= max;
+    }, [disabled, readOnly, max, validNumericValue]);
 
     return (
         <div
@@ -212,7 +226,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     layout="fill"
                     size={size}
                     Icon={Plus}
-                    disabled={disabled || readOnly}
+                    disabled={isIncrementDisabled}
                     aria-label={ariaLabelIncrement}
                     onClick={handleIncrement}
                 />

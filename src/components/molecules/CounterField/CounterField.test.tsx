@@ -387,4 +387,64 @@ describe("CounterField", () => {
         const wrapper = setup.setProps({ value: "10" });
         expect(wrapper.find(TextField).props().value).toBe("10");
     });
+
+    it("clamps value to max when incrementing exceeds max", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 5, max: 10, step: 100, onChange });
+
+        const incrementButton = wrapper.find(Button).at(1);
+        incrementButton.simulate("click");
+
+        expect(onChange).toHaveBeenCalledWith("10", expect.any(Object));
+    });
+
+    it("disables increment button when value equals max", () => {
+        const wrapper = setup.setProps({ value: 10, max: 10 });
+        const incrementButton = wrapper.find(Button).at(1);
+        expect(incrementButton.props().disabled).toBeTruthy();
+    });
+
+    it("disables increment button when value exceeds max", () => {
+        const wrapper = setup.setProps({ value: 15, max: 10 });
+        const incrementButton = wrapper.find(Button).at(1);
+        expect(incrementButton.props().disabled).toBeTruthy();
+    });
+
+    it("enables increment button when value is below max", () => {
+        const wrapper = setup.setProps({ value: 5, max: 10 });
+        const incrementButton = wrapper.find(Button).at(1);
+        expect(incrementButton.props().disabled).toBeFalsy();
+    });
+
+    it("increment button is enabled when max is not provided", () => {
+        const wrapper = setup.setProps({ value: 100 });
+        const incrementButton = wrapper.find(Button).at(1);
+        expect(incrementButton.props().disabled).toBeFalsy();
+    });
+
+    it("decrement button remains enabled when value is at max", () => {
+        const wrapper = setup.setProps({ value: 10, max: 10 });
+        const decrementButton = wrapper.find(Button).at(0);
+        expect(decrementButton.props().disabled).toBeFalsy();
+    });
+
+    it("handles max with decimal step correctly", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 8, max: 10, step: 2.5, onChange });
+
+        const incrementButton = wrapper.find(Button).at(1);
+        incrementButton.simulate("click");
+
+        expect(onChange).toHaveBeenCalledWith("10", expect.any(Object));
+    });
+
+    it("clamps to max when incrementing from value close to max", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 9.5, max: 10, step: 1, onChange });
+
+        const incrementButton = wrapper.find(Button).at(1);
+        incrementButton.simulate("click");
+
+        expect(onChange).toHaveBeenCalledWith("10", expect.any(Object));
+    });
 });
