@@ -76,8 +76,8 @@
         }
     }
 
-    &_color {
-        &_default {
+    &_status {
+        &_rest {
             #{ $this }__fill,
             #{ $this }__loadingBar {
                 background-color: var(--guit-sem-color-background-brand-2);
@@ -127,7 +127,7 @@
         word-break: break-word;
     }
 
-    &__status {
+    &__statusBar {
         margin-inline-start: auto;
         color: var(--guit-sem-color-foreground-neutral-2);
         flex: 0 0 auto;

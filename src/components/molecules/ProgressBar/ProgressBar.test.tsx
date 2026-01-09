@@ -58,10 +58,11 @@ describe("ProgressBar ", () => {
         expect(wrapper.find(".progressBar__percent").text()).toStrictEqual(`${percent}%`);
     });
 
-    it("renders error prop correctly", () => {
-        const wrapper = setup.setProps({ error: true });
+    it.each<IProgressBarProps["status"]>(["rest", "warning", "error"])("should have %s status", (status) => {
+        const wrapper = setup.setProps({ status });
+        const className = status === "warning" ? "rest" : status;
         wrapper.update();
-        expect(wrapper.find(".progressBar").hasClass(`progressBar_color_error`)).toBeTruthy();
+        expect(wrapper.find(".progressBar").hasClass(`progressBar_status_${className}`)).toBeTruthy();
     });
 
     it.each<IProgressBarProps["size"]>(["large", "medium", "small"])("should have %s size", (size) => {

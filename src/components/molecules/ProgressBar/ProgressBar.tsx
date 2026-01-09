@@ -31,10 +31,10 @@ interface IProgressBarProps {
      */
     type?: "determinate" | "indeterminate";
     /**
-     * Indicates an error state for the progress bar.<br>
-     *  When `true`, the progress bar appears in the error style.
+     *  Determines the `ProgressBar` appearance based on its status.<br>
+     *  Possible values: `rest | warning | error`
      */
-    error?: boolean;
+    status?: "rest" | "warning" | "error";
     /**
      *  Adds supplementary information below the progress bar.
      */
@@ -55,8 +55,8 @@ interface IProgressBarProps {
 }
 
 const helperTextTypeMap = {
-    default: "rest",
-    success: "rest",
+    rest: "rest",
+    warning: "warning",
     error: "error"
 } as const;
 
@@ -73,18 +73,21 @@ const ProgressBar: FC<IProgressBarProps> = ({
     className,
     size = "medium",
     type = "determinate",
-    error,
+    status = "rest",
     helperText,
     percent,
     uploadingText,
     infoText,
     label
 }) => {
-    const [status, setStatus] = useState<"default" | "success" | "error">("default");
+    const [progressBarStatus, setProgressBarStatus] = useState<
+        Exclude<IProgressBarProps["status"], undefined> | "success"
+    >(status);
 
     const isDeterminate = type === "determinate";
-    const isTypeDefault = status === "default";
+    const isTypeRest = progressBarStatus === "rest";
     const isPercentLowerThanMax = percent !== undefined && percent < 100;
+    const error = status === "error";
 
     const processedPercent = useMemo(() => {
         let result = percent || 0;
@@ -96,21 +99,24 @@ const ProgressBar: FC<IProgressBarProps> = ({
     }, [percent, error]);
 
     useEffect(() => {
-        if (error && status !== "error") {
-            setStatus("error");
-        } else if (percent !== undefined && !error) {
-            if (percent >= 100 && status !== "success" && isDeterminate) {
-                setStatus("success");
-            } else if ((!isTypeDefault && isPercentLowerThanMax && isDeterminate) || !isDeterminate) {
-                setStatus("default");
+        if (error) {
+            setProgressBarStatus("error");
+            return;
+        }
+
+        if (percent !== undefined && !error) {
+            if (percent >= 100 && progressBarStatus !== "success" && isDeterminate) {
+                setProgressBarStatus("success");
+            } else if ((!isTypeRest && isPercentLowerThanMax && isDeterminate) || !isDeterminate) {
+                setProgressBarStatus("rest");
             }
         }
-    }, [error, isTypeDefault, status, percent, isDeterminate]);
+    }, [error, isTypeRest, status, percent, isDeterminate]);
 
     return (
         <div
             className={classNames(
-                `progressBar progressBar_type_${error ? "determinate" : type} progressBar_size_${size} progressBar_color_${status}`,
+                `progressBar progressBar_type_${error ? "determinate" : type} progressBar_size_${size} progressBar_status_${progressBarStatus}`,
                 className
             )}
         >
@@ -128,8 +134,8 @@ const ProgressBar: FC<IProgressBarProps> = ({
                         className="progressBar__helperText"
                     />
                 )}
-                {isDeterminate && isTypeDefault && isPercentLowerThanMax && (
-                    <p className="progressBar__status">
+                {isDeterminate && isTypeRest && isPercentLowerThanMax && (
+                    <p className="progressBar__statusBar">
                         <span className="progressBar__uploadingText">{uploadingText}</span>
                         <span className="progressBar__percent">{processedPercent}</span>
                     </p>
