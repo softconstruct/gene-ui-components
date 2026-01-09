@@ -56,6 +56,10 @@ interface INavigationMobileProps {
      * Array of indices representing the path to the currently active item.
      */
     activePathIndex: number[] | null;
+    /**
+     * Text for the create button. If not provided, only the icon will be shown.
+     */
+    createButtonText?: string;
 }
 
 interface INavMenuContentMobileProps {
@@ -112,7 +116,8 @@ const NavigationMobile: FC<INavigationMobileProps> = ({
     onClick,
     onNavigationCreateDataClick,
     render,
-    activePathIndex
+    activePathIndex,
+    createButtonText
 }) => {
     const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
 
@@ -209,13 +214,13 @@ const NavigationMobile: FC<INavigationMobileProps> = ({
                         <div className="navigationMobile__footer">
                             <Button
                                 Icon={Plus}
-                                iconPosition="before"
+                                iconPosition={createButtonText ? "before" : undefined}
                                 size="large"
                                 appearance="secondary"
                                 fullWidth
                                 onClick={handleCreateMenuOpen}
                             >
-                                Create
+                                {createButtonText}
                             </Button>
                         </div>
                     )}

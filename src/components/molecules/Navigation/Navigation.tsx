@@ -87,6 +87,10 @@ interface INavigationProps {
      * Hides item titles, showing only icons with tooltips for a compact layout.
      */
     compact?: boolean;
+    /**
+     * Text for the mobile create button. If not provided, only the Plus icon will be shown.
+     */
+    createButtonText?: string;
 }
 
 export const findPath = (
@@ -167,7 +171,8 @@ const Navigation: FC<INavigationProps> = ({
     onNavigationCreateDataClick,
     moreMenuTitle = "More",
     render,
-    compact = false
+    compact = false,
+    createButtonText
 }) => {
     const [currentDataIndex, setCurrentDataIndex] = useState<number | null>(null);
     const [hoverDataIndex, setHoverDataIndex] = useState<number | null>(null);
@@ -337,6 +342,7 @@ const Navigation: FC<INavigationProps> = ({
                     onNavigationCreateDataClick={onNavigationCreateDataClick}
                     render={render}
                     activePathIndex={activePathIndex}
+                    createButtonText={createButtonText}
                 />
             ) : (
                 <>

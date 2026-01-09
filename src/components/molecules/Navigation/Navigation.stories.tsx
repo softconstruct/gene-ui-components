@@ -25,7 +25,8 @@ const meta: Meta<INavigationProps> = {
         onNavigationCreateDataClick: args({ control: "false", ...propCategory.action }),
         moreMenuTitle: args({ control: "text", ...propCategory.content }),
         render: args({ control: "false", ...propCategory.content }),
-        compact: args({ control: "boolean", ...propCategory.appearance })
+        compact: args({ control: "boolean", ...propCategory.appearance }),
+        createButtonText: args({ control: "text", ...propCategory.content })
     }
 };
 
@@ -64,12 +65,16 @@ const NavigationStoryComponent = (props: INavigationProps) => {
 type Story = StoryObj<INavigationProps>;
 
 export const Default: Story = {
-    render: (props) => <NavigationStoryComponent {...props} />
+    render: (props) => <NavigationStoryComponent {...props} />,
+    args: {
+        createButtonText: "Create"
+    }
 };
 
 export const WithRender: Story = {
     render: (props) => <NavigationStoryComponent {...props} />,
     args: {
+        createButtonText: "Create",
         // eslint-disable-next-line jsx-a11y/anchor-has-content
         render: (linkData) => <a aria-label={linkData.title} href={linkData.path ? "javascript:void(0)" : undefined} />
     }
