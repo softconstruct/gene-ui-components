@@ -46,7 +46,7 @@ interface ISwitchProps {
     /**
      *  Fires when the user changes the switch state. Provides the change event as a callback's argument.
      */
-    onChange: (state: ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (state: ChangeEvent<HTMLInputElement>) => void;
     /**
      *  The initial state of the switch was checked before user interaction. This prop does not make the component controlled.
      */

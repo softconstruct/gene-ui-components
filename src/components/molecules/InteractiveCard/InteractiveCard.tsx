@@ -1,0 +1,213 @@
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useMemo } from "react";
+import classNames from "classnames";
+
+import { IconProps } from "@geneui/icons";
+
+// Components
+import Label from "@components/atoms/Label";
+import Pill, { IPillProps } from "@components/atoms/Pill";
+import Text from "@components/atoms/Text";
+import Checkbox from "@components/molecules/Checkbox";
+import Switch from "@components/molecules/Switch";
+
+// Styles
+import "./InteractiveCard.scss";
+
+const iconSizes: Record<"large" | "medium" | "small", IconProps["size"]> = {
+    large: 32,
+    medium: 24,
+    small: 20
+} as const;
+const textVariants: Record<"large" | "medium" | "small", "labelMediumMedium" | "labelSmallMedium"> = {
+    large: "labelMediumMedium",
+    medium: "labelSmallMedium",
+    small: "labelSmallMedium"
+} as const;
+
+interface IInteractiveCardActionProps {
+    /**
+     * The type of action to perform.
+     * Possible values: `checkbox` | `switch`
+     */
+    type: "checkbox" | "switch";
+    /**
+     * The function to call when the action is changed.
+     */
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+    /**
+     * The function to call when the action is focused.
+     */
+    onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * The function to call when the action is blurred.
+     */
+    onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * The name of the action.
+     */
+    name?: string;
+    /**
+     * The value of the action.
+     */
+    value?: string;
+    /**
+     * The checked state of the action.
+     */
+    checked?: boolean;
+    /**
+     * The default checked state of the action.
+     */
+    defaultChecked?: boolean;
+}
+
+interface IInteractiveCardProps {
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
+    /**
+     * Size of the interactive card.<br>
+     * Possible values: `large | medium | small`
+     */
+    size?: "large" | "medium" | "small";
+    /**
+     * The label text displayed in the card.
+     */
+    label?: string;
+    /**
+     * Additional informational text displayed alongside the label via tooltip.
+     */
+    infoText?: string;
+    /**
+     * Description text displayed below the label.
+     */
+    description?: string;
+    /**
+     * Icon component to display before the label.
+     */
+    Icon?: FC<IconProps>;
+    /**
+     * Disables the interactive card.
+     * For interactive cards (when actionProps is not provided), this disables the entire card.
+     * For non-interactive cards (when actionProps is provided), this only disables the action (checkbox or switch).
+     */
+    disabled?: boolean;
+    /**
+     * Click handler for interactive cards.
+     * This prop is only used when actionProps is not provided (card is rendered as button).
+     */
+    onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Pill component configuration.
+     * When provided, renders a `Pill` component in the actions area.
+     * Works in both interactive and non-interactive modes, and can appear alongside action components (checkbox/switch) in non-interactive mode.
+     */
+    pill?: IPillProps;
+    /**
+     * Action component configuration.
+     * When provided, renders either `Checkbox` or `Switch` with these props.
+     */
+    actionProps?: IInteractiveCardActionProps;
+    /**
+     *  Event handler for when the interactive card element receives focus. Provides the focus event as a callback's argument.
+     */
+    onFocus?: (e: FocusEvent<HTMLButtonElement>) => void;
+}
+
+/**
+ * Interactive Card component displays information and engage users through actionable content. Unlike static cards, Interactive Cards respond to user interactions, such as clicks or hovers, triggering actions or revealing additional information.
+ */
+const InteractiveCard: FC<IInteractiveCardProps> = ({
+    className,
+    size = "medium",
+    label,
+    infoText,
+    description,
+    Icon,
+    disabled,
+    onClick,
+    actionProps,
+    pill,
+    onFocus
+}) => {
+    const isInteractive = !actionProps;
+
+    const baseClassName = classNames(
+        "interactiveCard",
+        `interactiveCard_size_${size}`,
+        `interactiveCard_mode_${isInteractive ? "interactive" : "static"}`,
+        {
+            interactiveCard_withIcon: Icon,
+            interactiveCard_withAction: !!actionProps,
+            interactiveCard_disabled: isInteractive && disabled
+        },
+        className
+    );
+
+    const actionComponent = useMemo(() => {
+        if (!actionProps) {
+            return null;
+        }
+        const { type, ...restActionProps } = actionProps;
+        if (type === "checkbox") {
+            return <Checkbox {...restActionProps} disabled={disabled} />;
+        }
+        return <Switch {...restActionProps} disabled={disabled} />;
+    }, [actionProps, disabled]);
+
+    if (isInteractive) {
+        return (
+            <button type="button" className={baseClassName} onClick={onClick} disabled={disabled} onFocus={onFocus}>
+                <span className="interactiveCard__main">
+                    {Icon && <Icon className="interactiveCard__icon" size={iconSizes[size]} />}
+                    <span
+                        className={classNames("interactiveCard__content", {
+                            interactiveCard__content_onlyDescription: !label && description
+                        })}
+                    >
+                        {label && (
+                            <Label
+                                text={label}
+                                infoText={infoText}
+                                size={size === "large" ? "medium" : size}
+                                disabled={disabled}
+                            />
+                        )}
+                        {description && (
+                            <Text className="interactiveCard__description" as="span" variant={textVariants[size]}>
+                                {description}
+                            </Text>
+                        )}
+                    </span>
+                </span>
+                <span className="interactiveCard__actions">{pill && <Pill {...pill} />}</span>
+            </button>
+        );
+    }
+    return (
+        <div className={baseClassName}>
+            <span className="interactiveCard__main">
+                {Icon && <Icon className="interactiveCard__icon" size={iconSizes[size]} />}
+                <span
+                    className={classNames("interactiveCard__content", {
+                        interactiveCard__content_onlyDescription: !label && description
+                    })}
+                >
+                    {label && <Label text={label} infoText={infoText} size={size === "large" ? "medium" : size} />}
+                    {description && (
+                        <Text className="interactiveCard__description" as="span" variant={textVariants[size]}>
+                            {description}
+                        </Text>
+                    )}
+                </span>
+            </span>
+            <span className="interactiveCard__actions">
+                {pill && <Pill {...pill} />}
+                {actionComponent}
+            </span>
+        </div>
+    );
+};
+
+export { IInteractiveCardProps, InteractiveCard as default };
