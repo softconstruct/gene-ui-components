@@ -194,12 +194,24 @@ const Navigation: FC<INavigationProps> = ({
     };
 
     useEffect(() => {
-        setForceOpen(!forceOpen);
+        if (!isMobileBreakpoint) {
+            setForceOpen(!forceOpen);
+        }
     }, [open]);
 
     useEffect(() => {
-        setForceOpen(!!open);
+        if (!isMobileBreakpoint) {
+            setForceOpen(!!open);
+        }
     }, []);
+
+    useEffect(() => {
+        if (!isMobileBreakpoint) {
+            setForceOpen(false);
+            setCurrentDataIndex(null);
+            setHoverDataIndex(null);
+        }
+    }, [isMobileBreakpoint]);
 
     useEffect(() => {
         if (forceOpen && currentDataIndex !== null) {

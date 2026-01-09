@@ -44,7 +44,7 @@ const NavigationStoryComponent = (props: INavigationProps) => {
     };
 
     return (
-        <div style={{ height: "90vh" }}>
+        <div style={{ height: "100%" }}>
             <div style={{ position: "fixed", top: 8, right: 8 }}>
                 <Button onClick={() => setIsNavigationOpen((prev) => !prev)} Icon={HamburgerMenu} />
             </div>
