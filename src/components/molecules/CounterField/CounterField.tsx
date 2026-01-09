@@ -167,7 +167,36 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     const onFocusHandler = (e: FocusEvent<HTMLInputElement>) => onInputFocus?.(e);
 
-    const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => onInputBlur?.(e);
+    const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => {
+        const inputValue = e.target.value;
+        const numericValue = Number(inputValue);
+        if (Number.isFinite(numericValue)) {
+            let clampedValue = numericValue;
+            if (min !== undefined && clampedValue < min) {
+                clampedValue = min;
+            }
+            if (max !== undefined && clampedValue > max) {
+                clampedValue = max;
+            }
+            if (clampedValue !== numericValue) {
+                const clampedValueString = String(clampedValue);
+
+                if (!isControlled) {
+                    setInternalStringValue(clampedValueString);
+                }
+                const syntheticEvent = {
+                    ...e,
+                    target: {
+                        ...e.target,
+                        value: clampedValueString
+                    }
+                } as ChangeEvent<HTMLInputElement>;
+
+                onChange?.(clampedValueString, syntheticEvent);
+            }
+        }
+        onInputBlur?.(e);
+    };
 
     const isIncrementDisabled = useMemo(() => {
         if (disabled || readOnly) return true;

@@ -507,4 +507,92 @@ describe("CounterField", () => {
 
         expect(onChange).toHaveBeenCalledWith("0", expect.any(Object));
     });
+
+    it("clamps value to max on blur when user types value above max", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ max: 10, onChange });
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("change", { target: { value: "100" } });
+        input.simulate("blur", { target: { value: "100" } });
+
+        expect(onChange).toHaveBeenCalledWith("10", expect.any(Object));
+    });
+
+    it("clamps value to min on blur when user types value below min", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ min: 0, onChange });
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("change", { target: { value: "-50" } });
+        input.simulate("blur", { target: { value: "-50" } });
+
+        expect(onChange).toHaveBeenCalledWith("0", expect.any(Object));
+    });
+
+    it("clamps value to both min and max on blur when outside bounds", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ min: 0, max: 10, onChange });
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("change", { target: { value: "100" } });
+        input.simulate("blur", { target: { value: "100" } });
+
+        expect(onChange).toHaveBeenCalledWith("10", expect.any(Object));
+    });
+
+    it("does not clamp value on blur when within bounds", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ min: 0, max: 10, onChange });
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("change", { target: { value: "5" } });
+        input.simulate("blur", { target: { value: "5" } });
+
+        expect(onChange).toHaveBeenCalledWith("5", expect.any(Object));
+    });
+
+    it("clamps to max on blur in controlled mode", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ value: 5, max: 10, onChange });
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("change", { target: { value: "100" } });
+        input.simulate("blur", { target: { value: "100" } });
+
+        expect(onChange).toHaveBeenCalledWith("10", expect.any(Object));
+    });
+
+    it("clamps to min on blur in uncontrolled mode", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(<CounterField min={0} defaultValue={5} onChange={onChange} />);
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("change", { target: { value: "-50" } });
+        input.simulate("blur", { target: { value: "-50" } });
+
+        expect(onChange).toHaveBeenCalledWith("0", expect.any(Object));
+        expect(wrapper.find(TextField).props().value).toBe("0");
+    });
+
+    it("allows typing values outside bounds before blur", () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ max: 10, onChange });
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("change", { target: { value: "100" } });
+        expect(onChange).toHaveBeenCalledWith("100", expect.any(Object));
+        input.simulate("blur", { target: { value: "100" } });
+        expect(onChange).toHaveBeenLastCalledWith("10", expect.any(Object));
+    });
+
+    it("calls onInputBlur after clamping on blur", () => {
+        const onInputBlur = jest.fn();
+        const wrapper = setup.setProps({ max: 10, onInputBlur });
+
+        const input = wrapper.find(TextField).find("input");
+        input.simulate("blur", { target: { value: "100" } });
+
+        expect(onInputBlur).toHaveBeenCalled();
+    });
 });
