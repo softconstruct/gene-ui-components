@@ -66,24 +66,24 @@
             background-color: var(--guit-sem-color-background-neutral-1-pressed);
         }
 
-        &:disabled {
+        &:disabled,
+        &_disabled {
             color: var(--guit-sem-color-foreground-disabled);
             pointer-events: none;
+        }
+
+        &_danger {
+            color: var(--guit-sem-color-foreground-error);
         }
     }
 
     &__createItemIcon {
         flex-shrink: 0;
         color: inherit;
-    }
 
-    &__createItemText {
-        font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
-        font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
-        font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
-        line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
-        color: inherit;
-        text-align: start;
+        &_after {
+            margin-inline-start: auto;
+        }
     }
 
     &_create {

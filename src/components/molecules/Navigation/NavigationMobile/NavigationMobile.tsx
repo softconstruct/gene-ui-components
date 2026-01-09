@@ -1,4 +1,5 @@
 import React, { FC, Fragment, useState } from "react";
+import classNames from "classnames";
 
 import { Plus, X } from "@geneui/icons";
 
@@ -6,6 +7,7 @@ import { Plus, X } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Spreadsheet from "@components/atoms/Spreadsheet";
+import Text from "@components/atoms/Text";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import NavigationItem from "@components/molecules/Navigation/NavigationItem";
 
@@ -13,6 +15,13 @@ import NavigationItem from "@components/molecules/Navigation/NavigationItem";
 import "./NavigationMobile.scss";
 
 import { INavigationCreateData, INavigationData, INavigationProps } from "../Navigation";
+
+const getChildActivePathIndex = (activePathIndex: number[] | null | undefined, index: number): number[] | null => {
+    if (activePathIndex && index === activePathIndex[0]) {
+        return activePathIndex.slice(1);
+    }
+    return null;
+};
 
 interface INavigationMobileProps {
     /**
@@ -23,21 +32,47 @@ interface INavigationMobileProps {
      * Callback when the mobile navigation menu should close.
      */
     onClose: () => void;
+    /**
+     * Array of navigation items data to display in the menu.
+     */
     navigationData: INavigationData[];
+    /**
+     * Data for items shown in the create/add menu at the bottom.
+     */
     navigationCreateData?: INavigationCreateData[];
+    /**
+     * Called when a navigation item is clicked.
+     */
     onClick?: (path: string) => void;
+    /**
+     * Called when a create menu item is clicked.
+     */
     onNavigationCreateDataClick?: (item: INavigationCreateData) => void;
+    /**
+     * Custom render function for navigation links.
+     */
     render?: INavigationProps["render"];
+    /**
+     * Array of indices representing the path to the currently active item.
+     */
     activePathIndex: number[] | null;
 }
 
-const NavMenuContentMobile: FC<{
+interface INavMenuContentMobileProps {
     data?: INavigationData | null;
     depth?: number;
     createClickHandler: (hasChildren: boolean) => (path: string) => void;
     activePathIndex?: number[] | null;
     render?: INavigationProps["render"];
-}> = ({ data, depth = 0, createClickHandler, activePathIndex, render }) => {
+}
+
+const NavMenuContentMobile: FC<INavMenuContentMobileProps> = ({
+    data,
+    depth = 0,
+    createClickHandler,
+    activePathIndex,
+    render
+}) => {
     if (!data) return null;
     return data.children?.map((item, index) => {
         const itemKey = `${item.title}-${item.path}`;
@@ -155,11 +190,10 @@ const NavigationMobile: FC<INavigationMobileProps> = ({
                                                         data={item}
                                                         depth={1}
                                                         createClickHandler={createItemClickHandler}
-                                                        activePathIndex={
-                                                            activePathIndex && index === activePathIndex[0]
-                                                                ? activePathIndex.slice(1)
-                                                                : null
-                                                        }
+                                                        activePathIndex={getChildActivePathIndex(
+                                                            activePathIndex,
+                                                            index
+                                                        )}
                                                         render={render}
                                                     />
                                                 )}
@@ -211,22 +245,35 @@ const NavigationMobile: FC<INavigationMobileProps> = ({
                             <Scrollbar className="navigationMobile__scrollbar">
                                 <div className="navigationMobile__list navigationMobile__list_create">
                                     {navigationCreateData?.map((props: IMenuItemProps, index) => {
-                                        const { title } = props;
+                                        const { title, IconBefore, IconAfter, danger, disabled, id } = props;
                                         return (
                                             <button
-                                                key={`create-mobile-${title}-${props.id || index}`}
+                                                key={`create-mobile-${title}-${id || index}`}
                                                 type="button"
-                                                className="navigationMobile__createItem"
+                                                className={classNames("navigationMobile__createItem", {
+                                                    navigationMobile__createItem_danger: danger,
+                                                    navigationMobile__createItem_disabled: disabled
+                                                })}
                                                 onClick={() => onCreateItemClick(props)}
-                                                disabled={props.disabled}
+                                                disabled={disabled}
                                             >
-                                                {props.IconBefore && (
-                                                    <props.IconBefore
+                                                {IconBefore && (
+                                                    <IconBefore
                                                         className="navigationMobile__createItemIcon"
                                                         size={20}
                                                     />
                                                 )}
-                                                <span className="navigationMobile__createItemText">{title}</span>
+                                                {title && (
+                                                    <Text as="span" variant="bodyMediumMedium">
+                                                        {title}
+                                                    </Text>
+                                                )}
+                                                {IconAfter && (
+                                                    <IconAfter
+                                                        className="navigationMobile__createItemIcon navigationMobile__createItemIcon_after"
+                                                        size={20}
+                                                    />
+                                                )}
                                             </button>
                                         );
                                     })}
