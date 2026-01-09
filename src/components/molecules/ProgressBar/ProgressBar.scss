@@ -37,16 +37,6 @@
     }
 
     &_size {
-        &_large,
-        &_medium {
-            #{ $this }__status {
-                font-family: var(--guit-sem-font-label-medium-default-semibold-font-family);
-                font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
-                font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
-                line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
-            }
-        }
-
         &_large {
             #{ $this }__track {
                 height: var(--guit-sem-dimension-height-xsmall);
@@ -65,13 +55,6 @@
             #{ $this }__track {
                 height: var(--guit-sem-dimension-height-3xsmall);
                 border-radius: var(--guit-ref-radius-3xsmall);
-            }
-
-            #{ $this }__status {
-                font-family: var(--guit-sem-font-label-small-default-medium-font-family);
-                font-size: var(--guit-sem-font-label-small-default-medium-font-size);
-                font-weight: var(--guit-sem-font-label-small-default-medium-font-weight);
-                line-height: var(--guit-sem-font-label-small-default-medium-line-height);
             }
         }
     }

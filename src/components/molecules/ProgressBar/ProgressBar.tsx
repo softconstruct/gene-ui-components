@@ -4,6 +4,7 @@ import classNames from "classnames";
 // Components
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
+import Text from "@components/atoms/Text";
 
 // Styles
 import "./ProgressBar.scss";
@@ -64,6 +65,12 @@ const helperTextAndLabelSizeMap = {
     large: "medium",
     medium: "medium",
     small: "small"
+} as const;
+
+const textVariantMap = {
+    large: "labelMediumSemibold",
+    medium: "labelMediumSemibold",
+    small: "labelSmallMedium"
 } as const;
 
 /**
@@ -136,8 +143,16 @@ const ProgressBar: FC<IProgressBarProps> = ({
                 )}
                 {isDeterminate && isTypeRest && isPercentLowerThanMax && (
                     <p className="progressBar__statusBar">
-                        <span className="progressBar__uploadingText">{uploadingText}</span>
-                        <span className="progressBar__percent">{processedPercent}</span>
+                        {uploadingText && (
+                            <>
+                                <Text as="span" variant={textVariantMap[size]} className="progressBar__uploadingText">
+                                    {uploadingText}
+                                </Text>
+                                <Text as="span" variant={textVariantMap[size]} className="progressBar__percent">
+                                    {processedPercent}
+                                </Text>
+                            </>
+                        )}
                     </p>
                 )}
             </div>
