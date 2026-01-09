@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useState } from "react";
+import React, { FC, Fragment, useLayoutEffect, useRef, useState } from "react";
 import classNames from "classnames";
 
 import { Plus, X } from "@geneui/icons";
@@ -120,6 +120,8 @@ const NavigationMobile: FC<INavigationMobileProps> = ({
     createButtonText
 }) => {
     const [isCreateMenuOpen, setIsCreateMenuOpen] = useState(false);
+    const [scrollToTop, setScrollToTop] = useState<number | undefined>(undefined);
+    const selectedItemRef = useRef<HTMLDivElement | null>(null);
 
     const handleCreateMenuOpen = () => setIsCreateMenuOpen(true);
     const handleCreateMenuClose = () => setIsCreateMenuOpen(false);
@@ -156,6 +158,31 @@ const NavigationMobile: FC<INavigationMobileProps> = ({
         handleForceClose();
     };
 
+    // Auto-scroll to selected item when menu opens
+    useLayoutEffect(() => {
+        if (open && activePathIndex && activePathIndex.length > 0 && selectedItemRef.current) {
+            // Use requestAnimationFrame to ensure DOM is fully rendered
+            requestAnimationFrame(() => {
+                const selectedElement = selectedItemRef.current;
+                if (selectedElement) {
+                    const elementTop = selectedElement.offsetTop;
+                    const elementHeight = selectedElement.offsetHeight;
+                    // Get the parent scrollable container
+                    const listContainer = selectedElement.closest(".navigationMobile__list");
+                    if (listContainer) {
+                        const containerHeight = listContainer.clientHeight;
+                        // Calculate scroll position to center the item
+                        const scrollPosition = elementTop - containerHeight / 2 + elementHeight / 2;
+                        setScrollToTop(Math.max(0, scrollPosition));
+                    }
+                }
+            });
+        } else {
+            // Reset scroll position when menu closes
+            setScrollToTop(undefined);
+        }
+    }, [open, activePathIndex]);
+
     const hasCreateData = navigationCreateData && navigationCreateData.length > 0;
 
     return (
@@ -174,35 +201,45 @@ const NavigationMobile: FC<INavigationMobileProps> = ({
                     </div>
 
                     <div className="navigationMobile__content">
-                        <Scrollbar className="navigationMobile__scrollbar">
+                        <Scrollbar
+                            className="navigationMobile__scrollbar"
+                            scrollToTop={scrollToTop}
+                            scrollBehaviorSmooth
+                        >
                             <div className="navigationMobile__list">
                                 {navigationData.map((item, index) => {
                                     const hasChildren = !!(item.children && item.children.length > 0);
+                                    const isSelected = index === activePathIndex?.[0];
                                     return (
                                         <Fragment key={`mobile-nav-${item.title}-${item.path || index}`}>
-                                            <NavigationItem
-                                                title={item.title}
-                                                path={item.path}
-                                                depth={0}
-                                                Icon={item.Icon}
-                                                onClick={createItemClickHandler(hasChildren)}
-                                                disabled={item.disabled}
-                                                selected={index === activePathIndex?.[0]}
-                                                render={render}
+                                            <div
+                                                ref={isSelected ? selectedItemRef : null}
+                                                className="navigationMobile__itemWrapper"
                                             >
-                                                {hasChildren && (
-                                                    <NavMenuContentMobile
-                                                        data={item}
-                                                        depth={1}
-                                                        createClickHandler={createItemClickHandler}
-                                                        activePathIndex={getChildActivePathIndex(
-                                                            activePathIndex,
-                                                            index
-                                                        )}
-                                                        render={render}
-                                                    />
-                                                )}
-                                            </NavigationItem>
+                                                <NavigationItem
+                                                    title={item.title}
+                                                    path={item.path}
+                                                    depth={0}
+                                                    Icon={item.Icon}
+                                                    onClick={createItemClickHandler(hasChildren)}
+                                                    disabled={item.disabled}
+                                                    selected={isSelected}
+                                                    render={render}
+                                                >
+                                                    {hasChildren && (
+                                                        <NavMenuContentMobile
+                                                            data={item}
+                                                            depth={1}
+                                                            createClickHandler={createItemClickHandler}
+                                                            activePathIndex={getChildActivePathIndex(
+                                                                activePathIndex,
+                                                                index
+                                                            )}
+                                                            render={render}
+                                                        />
+                                                    )}
+                                                </NavigationItem>
+                                            </div>
                                         </Fragment>
                                     );
                                 })}
