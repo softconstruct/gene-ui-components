@@ -55,12 +55,6 @@ interface IProgressBarProps {
     className?: string;
 }
 
-const helperTextTypeMap = {
-    rest: "rest",
-    warning: "warning",
-    error: "error"
-} as const;
-
 const helperTextAndLabelSizeMap = {
     large: "medium",
     medium: "medium",
@@ -87,9 +81,7 @@ const ProgressBar: FC<IProgressBarProps> = ({
     infoText,
     label
 }) => {
-    const [progressBarStatus, setProgressBarStatus] = useState<
-        Exclude<IProgressBarProps["status"], undefined> | "success"
-    >(status);
+    const [progressBarStatus, setProgressBarStatus] = useState<IProgressBarProps["status"] | "success">(status);
 
     const isDeterminate = type === "determinate";
     const isTypeRest = progressBarStatus === "rest";
@@ -137,7 +129,7 @@ const ProgressBar: FC<IProgressBarProps> = ({
                     <HelperText
                         text={helperText}
                         size={helperTextAndLabelSizeMap[size]}
-                        status={helperTextTypeMap[status]}
+                        status={status}
                         className="progressBar__helperText"
                     />
                 )}
