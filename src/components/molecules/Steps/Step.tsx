@@ -130,7 +130,7 @@ const Step: FC<IStepProps> = (props) => {
             className={classNames("steps__step", {
                 steps__step_disabled: disabled && !error && !loading,
                 steps__step_error: error,
-                steps__step_success: complete && state !== "next",
+                steps__step_success: complete,
                 steps__step_current: state === "current"
             })}
         >

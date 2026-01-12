@@ -166,11 +166,7 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
             .filter((item) => item !== null);
 
     const isStepEnabled = () =>
-        stepsData.map((item, index) =>
-            item.touched || stepsData[index - 1]?.touched || stepsData[index - 1]?.complete || index === 0
-                ? index
-                : null
-        );
+        stepsData.map((item, index) => (item.touched || stepsData[index - 1]?.complete || index === 0 ? index : null));
 
     return (
         <>
@@ -191,7 +187,8 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
                         onClick: nextButtonHandler,
                         disabled:
                             (!isStepEnabled().includes(currentStep + 1) && !isLastStep) ||
-                            (isLastStep && getErrorStepIndices().length > 0)
+                            (isLastStep && getErrorStepIndices().length > 0) ||
+                            (isLastStep && !stepsData[stepsData.length - 1].complete)
                     }
                 ]}
                 footerContent={
@@ -210,7 +207,7 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
                                     label={step.label}
                                     description={step.description}
                                     disabled={!isStepEnabled().includes(index)}
-                                    error={getErrorStepIndices().includes(index) && index !== stepsData.length - 1}
+                                    error={getErrorStepIndices().includes(index)}
                                     complete={step.complete}
                                 />
                             );
