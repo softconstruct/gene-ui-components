@@ -148,11 +148,9 @@ const ProgressBar: FC<IProgressBarProps> = ({
                                 {uploadingText}
                             </Text>
                         )}
-                        {processedPercent && (
-                            <Text as="span" variant={textVariantMap[size]} className="progressBar__percent">
-                                {processedPercent}
-                            </Text>
-                        )}
+                        <Text as="span" variant={textVariantMap[size]} className="progressBar__percent">
+                            {processedPercent}
+                        </Text>
                     </p>
                 )}
             </div>
