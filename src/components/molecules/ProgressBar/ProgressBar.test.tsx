@@ -4,6 +4,7 @@ import { mount, ReactWrapper } from "enzyme";
 // Components
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
+import Text from "@components/atoms/Text";
 
 import ProgressBar, { IProgressBarProps } from "./index";
 
@@ -47,15 +48,19 @@ describe("ProgressBar ", () => {
         const uploadingText = "uploadingText";
         const percent = 33;
         const wrapper = setup.setProps({ uploadingText, percent });
-
-        expect(wrapper.find(".progressBar__uploadingText").text()).toStrictEqual(`${uploadingText}`);
+        expect(
+            wrapper
+                .find(Text)
+                .findWhere((item) => item.hasClass("progressBar__uploadingText"))
+                .at(1)
+                .text()
+        ).toStrictEqual(`${uploadingText}`);
     });
 
     it("renders percent prop correctly", () => {
         const percent = 33;
         const wrapper = setup.setProps({ percent });
-
-        expect(wrapper.find(".progressBar__percent").text()).toStrictEqual(`${percent}%`);
+        expect(wrapper.find(Text).text()).toStrictEqual(`${percent}%`);
     });
 
     it.each<IProgressBarProps["status"]>(["rest", "warning", "error"])("should have %s status", (status) => {

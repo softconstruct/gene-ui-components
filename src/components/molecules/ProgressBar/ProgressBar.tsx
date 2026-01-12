@@ -144,14 +144,14 @@ const ProgressBar: FC<IProgressBarProps> = ({
                 {isDeterminate && isTypeRest && isPercentLowerThanMax && (
                     <p className="progressBar__statusBar">
                         {uploadingText && (
-                            <>
-                                <Text as="span" variant={textVariantMap[size]} className="progressBar__uploadingText">
-                                    {uploadingText}
-                                </Text>
-                                <Text as="span" variant={textVariantMap[size]} className="progressBar__percent">
-                                    {processedPercent}
-                                </Text>
-                            </>
+                            <Text as="span" variant={textVariantMap[size]} className="progressBar__uploadingText">
+                                {uploadingText}
+                            </Text>
+                        )}
+                        {processedPercent && (
+                            <Text as="span" variant={textVariantMap[size]} className="progressBar__percent">
+                                {processedPercent}
+                            </Text>
                         )}
                     </p>
                 )}
