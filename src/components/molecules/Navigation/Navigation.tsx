@@ -276,8 +276,10 @@ const Navigation: FC<INavigationProps> = ({
     }, [maxVisibleItems, currentDataIndex, activePathIndex, height, navigationData]);
 
     useEffect(() => {
-        setActivePathIndex(findPath(clonedNavigationData || [], activePath || ""));
-    }, [activePath, clonedNavigationData]);
+        // For mobile, calculate from original navigationData since mobile doesn't use clonedNavigationData
+        const dataSource = isMobileBreakpoint ? navigationData : clonedNavigationData;
+        setActivePathIndex(findPath(dataSource || [], activePath || ""));
+    }, [activePath, clonedNavigationData, navigationData, isMobileBreakpoint]);
 
     const onMouseEnterHandler = (index: number) => {
         if (forceOpen) return;
