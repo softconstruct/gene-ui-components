@@ -595,4 +595,22 @@ describe("CounterField", () => {
 
         expect(onInputBlur).toHaveBeenCalled();
     });
+
+    it("renders autoFocus prop correctly", () => {
+        const wrapper = setup.setProps({ autoFocus: true });
+
+        expect(wrapper.find(TextField).props().autoFocus).toBe(true);
+    });
+
+    it("does not auto focus when autoFocus is false", () => {
+        const wrapper = setup.setProps({ autoFocus: false });
+
+        expect(wrapper.find(TextField).props().autoFocus).toBe(false);
+    });
+
+    it("does not auto focus when autoFocus is not provided", () => {
+        const wrapper = setup.setProps({});
+
+        expect(wrapper.find(TextField).props().autoFocus).toBeUndefined();
+    });
 });

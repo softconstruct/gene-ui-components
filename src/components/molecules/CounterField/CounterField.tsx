@@ -95,6 +95,11 @@ interface ICounterFieldProps {
      * Fires when the input field receives focus.
      */
     onInputFocus?: (event: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * If true, the input element will automatically receive focus when the component mounts.
+     *  Default value is `false`.
+     */
+    autoFocus?: boolean;
 }
 
 /**
@@ -120,7 +125,8 @@ const CounterField: FC<ICounterFieldProps> = ({
     min,
     max,
     size = "medium",
-    className
+    className,
+    autoFocus
 }) => {
     const isControlled = value !== undefined;
 
@@ -260,6 +266,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     disabled={disabled}
                     readOnly={readOnly}
                     status={status}
+                    autoFocus={autoFocus}
                 />
                 <Button
                     appearance="secondary"

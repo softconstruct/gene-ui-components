@@ -29,7 +29,8 @@ const meta: Meta<ICounterFieldProps> = {
         required: args({ control: "boolean", ...propCategory.states }),
         onChange: args({ control: "false", ...propCategory.action }),
         onInputBlur: args({ control: "false", ...propCategory.action }),
-        onInputFocus: args({ control: "false", ...propCategory.action })
+        onInputFocus: args({ control: "false", ...propCategory.action }),
+        autoFocus: args({ control: "boolean", ...propCategory.functionality })
     },
 
     args: {
