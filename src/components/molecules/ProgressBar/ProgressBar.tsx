@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useMemo } from "react";
 import classNames from "classnames";
 
 // Components
@@ -81,47 +81,42 @@ const ProgressBar: FC<IProgressBarProps> = ({
     infoText,
     label
 }) => {
-    const [progressBarStatus, setProgressBarStatus] = useState<IProgressBarProps["status"] | "success">(status);
-
     const isDeterminate = type === "determinate";
-    const isTypeRest = progressBarStatus === "rest";
+    const isTypeRest = status === "rest";
     const isPercentLowerThanMax = percent !== undefined && percent < 100;
-    const error = status === "error";
+    const isError = status === "error";
+    const isSuccess = percent === 100;
+    const effectiveType = isError ? "determinate" : type;
+    const isRestOrWarning = status === "rest" || status === "warning";
 
     const processedPercent = useMemo(() => {
         let result = percent || 0;
 
-        if (result < 0 && !error) result = 0;
-        if (result >= 100 || error) result = 100;
+        if (result < 0 && !isError) result = 0;
+        if (result >= 100 || isError) result = 100;
 
         return `${result}%`;
-    }, [percent, error]);
-
-    useEffect(() => {
-        if (error) {
-            setProgressBarStatus("error");
-            return;
-        }
-
-        if (percent !== undefined && !error) {
-            if (percent >= 100 && progressBarStatus !== "success" && isDeterminate) {
-                setProgressBarStatus("success");
-            } else if ((!isTypeRest && isPercentLowerThanMax && isDeterminate) || !isDeterminate) {
-                setProgressBarStatus("rest");
-            }
-        }
-    }, [error, isTypeRest, status, percent, isDeterminate]);
+    }, [percent, isError]);
 
     return (
         <div
             className={classNames(
-                `progressBar progressBar_type_${error ? "determinate" : type} progressBar_size_${size} progressBar_status_${progressBarStatus}`,
-                className
+                "progressBar",
+                `progressBar_type_${effectiveType}`,
+                `progressBar_size_${size}`,
+                className,
+                {
+                    progressBar_status_error: isError,
+                    progressBar_status_success: isSuccess,
+                    progressBar_status_rest: isRestOrWarning
+                }
             )}
         >
             <Label text={label} size={helperTextAndLabelSizeMap[size]} infoText={infoText} />
             <div className="progressBar__track">
-                {(isDeterminate || error) && <div className="progressBar__fill" style={{ width: processedPercent }} />}
+                {(isDeterminate || isError) && (
+                    <div className="progressBar__fill" style={{ width: processedPercent }} />
+                )}
                 <div className="progressBar__loadingBar" />
             </div>
             <div className="progressBar__info">
