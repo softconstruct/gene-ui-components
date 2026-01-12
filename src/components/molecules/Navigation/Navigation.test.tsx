@@ -51,7 +51,7 @@ describe("Navigation", () => {
         });
     });
 
-    describe("Desktop Navigation", () => {
+    describe("Desktop", () => {
         beforeEach(() => {
             // Ensure desktop mode
             Object.defineProperty(window, "innerWidth", {
@@ -62,24 +62,21 @@ describe("Navigation", () => {
             window.dispatchEvent(new Event("resize"));
         });
 
-        it("renders desktop navigation when not mobile", () => {
+        it("renders navigation when not mobile", () => {
             expect(setup.find(".navigation__list").exists()).toBeTruthy();
         });
 
-        it("calls onClick when navigation item is clicked", () => {
-            // Re-mount with desktop width to ensure desktop navigation is rendered
+        it("calls onClick when item is clicked", () => {
             const desktopWrapper = mount(<Navigation {...defaultProps} />, {
                 wrappingComponent: GeneUIProvider
             });
             desktopWrapper.update();
 
-            // Test clicking on a menu item in the "More" menu, which reliably calls onClick
             const moreButton = desktopWrapper.find(".navigation__moreButton");
             if (moreButton.exists()) {
                 moreButton.simulate("click");
                 desktopWrapper.update();
 
-                // Find and click a MenuItem in the More menu
                 const menuItem = desktopWrapper.find("MenuItem").first();
                 if (menuItem.exists()) {
                     menuItem.simulate("click");
@@ -87,14 +84,11 @@ describe("Navigation", () => {
                     expect(mockOnClick).toHaveBeenCalled();
                 }
             } else {
-                // If no More menu, try clicking on an icon button directly
-                // (for items without children, this should call onClick)
                 const firstItem = desktopWrapper.find(".navigation__iconButton").first();
                 if (firstItem.exists() && !firstItem.prop("disabled")) {
                     firstItem.simulate("click");
                     desktopWrapper.update();
-                    // For items with children, clicking might open popover instead of calling onClick
-                    // So we only assert if onClick was called
+
                     if (mockOnClick.mock.calls.length > 0) {
                         expect(mockOnClick).toHaveBeenCalled();
                     }
@@ -108,7 +102,7 @@ describe("Navigation", () => {
             expect(setup.find(".navigation__listItems").exists()).toBeTruthy();
         });
 
-        it("renders create menu button when navigationCreateData is provided", () => {
+        it("renders create button when navigationCreateData is provided", () => {
             const wrapper = setup.setProps({ navigationCreateData });
             expect(wrapper.find(".navigation__addButton").exists()).toBeTruthy();
         });
@@ -129,17 +123,15 @@ describe("Navigation", () => {
         });
     });
 
-    describe("Mobile Navigation", () => {
+    describe("Mobile", () => {
         let mobileSetup: ReactWrapper<INavigationProps>;
 
         beforeEach(() => {
-            // Set mobile width before mounting
             Object.defineProperty(window, "innerWidth", {
                 writable: true,
                 configurable: true,
                 value: 500
             });
-            // Force window resize event to trigger breakpoint detection
             window.dispatchEvent(new Event("resize"));
             mobileSetup = mount(<Navigation {...defaultProps} activePath="/performance" />, {
                 wrappingComponent: GeneUIProvider
@@ -180,7 +172,7 @@ describe("Navigation", () => {
                 }
             });
 
-            it("calls onOpenChange when clicking outside (Spreadsheet onClose)", () => {
+            it("calls onOpenChange when clicking outside", () => {
                 const spreadsheet = mobileSetup.find("Spreadsheet").first();
                 const onClose = spreadsheet.prop("onClose");
                 if (onClose && typeof onClose === "function") {
@@ -191,14 +183,14 @@ describe("Navigation", () => {
         });
 
         describe("Navigation Items", () => {
-            it("renders all navigation items", () => {
+            it("renders all items", () => {
                 const items = mobileSetup.find(".navigationItem");
                 expect(items.length).toBeGreaterThan(0);
             });
 
-            it("calls onClick when navigation item without children is clicked", () => {
+            it("calls onClick when item without children is clicked", () => {
                 const wrapper = mobileSetup.setProps({ activePath: null });
-                // Find a leaf item (one without children) by checking for items without chevron
+
                 const allItems = wrapper.find(".navigationItem");
                 const leafItem = allItems
                     .filterWhere((item) => !item.find(".navigationItem__chevron").exists())
@@ -318,10 +310,8 @@ describe("Navigation", () => {
 
         describe("Auto-scroll", () => {
             it("scrolls to selected item when menu opens", () => {
-                // Wait for the component to calculate scrollToTop
                 mobileSetup.update();
                 const scrollbar = mobileSetup.find("Scrollbar").first();
-                // scrollToTop might be undefined initially, but the Scrollbar should exist
                 expect(scrollbar.exists()).toBeTruthy();
             });
 
@@ -334,7 +324,7 @@ describe("Navigation", () => {
         });
 
         describe("Nested Navigation", () => {
-            it("renders nested navigation items", () => {
+            it("renders nested items", () => {
                 const itemsWithChildren = mobileSetup.find(".navigationItem").filterWhere((item) => {
                     return item.find(".navigationItem__chevron").exists();
                 });
@@ -364,7 +354,6 @@ describe("Navigation", () => {
 
     describe("Active Path", () => {
         it("highlights active path correctly", () => {
-            // Ensure desktop mode
             Object.defineProperty(window, "innerWidth", {
                 writable: true,
                 configurable: true,
