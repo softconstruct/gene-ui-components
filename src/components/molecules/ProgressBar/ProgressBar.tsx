@@ -62,8 +62,8 @@ const helperTextAndLabelSizeMap = {
 } as const;
 
 const textVariantMap = {
-    large: "labelMediumSemibold",
-    medium: "labelMediumSemibold",
+    large: "labelMediumMedium",
+    medium: "labelMediumMedium",
     small: "labelSmallMedium"
 } as const;
 
