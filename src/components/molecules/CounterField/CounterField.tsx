@@ -130,9 +130,37 @@ const CounterField: FC<ICounterFieldProps> = ({
 }) => {
     const isControlled = value !== undefined;
 
-    const [internalStringValue, setInternalStringValue] = useState(String(defaultValue));
+    // Clamp defaultValue to min/max boundaries
+    const clampedDefaultValue = useMemo(() => {
+        let clamped = defaultValue;
+        if (min !== undefined && clamped < min) {
+            clamped = min;
+        }
+        if (max !== undefined && clamped > max) {
+            clamped = max;
+        }
+        return clamped;
+    }, [defaultValue, min, max]);
 
-    const currentStringValue = isControlled ? String(value) : internalStringValue;
+    const [internalStringValue, setInternalStringValue] = useState(String(clampedDefaultValue));
+
+    // Clamp value prop to min/max boundaries (controlled mode)
+    const clampedValueProp = useMemo(() => {
+        if (value === undefined) return value;
+        const numValue = typeof value === "string" ? Number(value) : value;
+        if (!Number.isFinite(numValue)) return value;
+
+        let clamped = numValue;
+        if (min !== undefined && clamped < min) {
+            clamped = min;
+        }
+        if (max !== undefined && clamped > max) {
+            clamped = max;
+        }
+        return String(clamped);
+    }, [value, min, max]);
+
+    const currentStringValue = isControlled ? clampedValueProp : internalStringValue;
 
     const validNumericValue = useMemo(() => {
         const numericValue = Number(currentStringValue);
