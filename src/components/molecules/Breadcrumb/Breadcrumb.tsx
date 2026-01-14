@@ -1,8 +1,10 @@
 import React, { FC } from "react";
 import classNames from "classnames";
+
+import { ChevronRight, Globe, Tag, ThreeDotsHorizontal } from "@geneui/icons";
+
 // Styles
 import "./Breadcrumb.scss";
-import { ChevronRight, Globe, HorizontalDots, TagOutline } from "@geneui/icons";
 
 interface IBreadcrumbProps {
     /**
@@ -34,7 +36,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className }) => {
                     <li className="breadcrumb__item">
                         {/* todo: add the next classNames for icon alignment: "breadcrumb__link_iconOnly" */}
                         <a className="breadcrumb__link breadcrumb__link_iconOnly" href="#" tabIndex={0}>
-                            <TagOutline size={20} className="breadcrumb__icon" />
+                            <Tag size={20} className="breadcrumb__icon" />
                         </a>
 
                         {/* todo: change "ChevronRight" Icon to "/" as in design file */}
@@ -52,7 +54,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className }) => {
                     <li className="breadcrumb__item">
                         {/* todo: add the next classNames for icon alignment: "breadcrumb__link_iconOnly" */}
                         <span className="breadcrumb__link breadcrumb__link_iconOnly">
-                            <HorizontalDots size={20} className="breadcrumb__icon" />
+                            <ThreeDotsHorizontal size={20} className="breadcrumb__icon" />
 
                             {/* todo: import "Menu" component */}
                         </span>

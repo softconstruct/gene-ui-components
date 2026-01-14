@@ -1,0 +1,252 @@
+.textField {
+    $the: &;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-3xsmall);
+    align-items: flex-start;
+
+    &__wrapper {
+        $this: &;
+
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border-width: var(--guit-ref-border-width-thin);
+        border-style: var(--guit-ref-border-style-solid);
+        border-color: var(--guit-sem-color-border-neutral-2);
+        overflow: hidden;
+
+        &_size {
+            &_large,
+            &_medium {
+                #{ $the }__input {
+                    font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+                    font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+                    font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+                    line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+                }
+            }
+
+            &_large {
+                gap: var(--guit-ref-spacing-xsmall);
+                height: var(--guit-sem-dimension-height-large);
+                border-radius: var(--guit-ref-radius-2xsmall);
+
+                &:not(#{ $this }_iconBefore, &#{ $this }_iconAfter, &#{ $this }_withIcons) {
+                    #{ $the }__input {
+                        padding: var(--guit-ref-spacing-small) var(--guit-ref-spacing-large);
+                    }
+                }
+
+                &#{ $this }_iconBefore {
+                    padding-inline-start: var(--guit-ref-spacing-medium);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-small);
+                        padding-inline-end: var(--guit-ref-spacing-large);
+                    }
+                }
+
+                &#{ $this }_iconAfter {
+                    padding-inline-end: var(--guit-ref-spacing-medium);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-xsmall);
+                        padding-inline-start: var(--guit-ref-spacing-large);
+                    }
+                }
+
+                &#{ $this }_withIcons {
+                    padding-inline: var(--guit-ref-spacing-medium);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-xsmall);
+                    }
+                }
+            }
+
+            &_medium {
+                gap: var(--guit-ref-spacing-xsmall);
+                height: var(--guit-sem-dimension-height-medium);
+                border-radius: var(--guit-ref-radius-3xsmall);
+
+                &:not(#{ $this }_iconBefore, &#{ $this }_iconAfter, &#{ $this }_withIcons) {
+                    #{ $the }__input {
+                        padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-medium);
+                    }
+                }
+
+                &#{ $this }_iconBefore {
+                    padding-inline-start: var(--guit-ref-spacing-xsmall);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-2xsmall);
+                        padding-inline-end: var(--guit-ref-spacing-medium);
+                    }
+                }
+
+                &#{ $this }_iconAfter {
+                    padding-inline-end: var(--guit-ref-spacing-xsmall);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-3xsmall);
+                        padding-inline-start: var(--guit-ref-spacing-medium);
+                    }
+                }
+
+                &#{ $this }_withIcons {
+                    padding-inline: var(--guit-ref-spacing-xsmall);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-3xsmall);
+                    }
+                }
+            }
+
+            &_small {
+                gap: var(--guit-ref-spacing-2xsmall);
+                height: var(--guit-sem-dimension-height-small);
+                border-radius: var(--guit-ref-radius-3xsmall);
+
+                &:not(#{ $this }_iconBefore, &#{ $this }_iconAfter, &#{ $this }_withIcons) {
+                    #{ $the }__input {
+                        padding: var(--guit-ref-radius-3xsmall) var(--guit-ref-spacing-medium);
+                    }
+                }
+
+                &#{ $this }_iconBefore {
+                    padding-inline-start: var(--guit-ref-spacing-xsmall);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-radius-3xsmall);
+                        padding-inline-end: var(--guit-ref-spacing-medium);
+                    }
+                }
+
+                &#{ $this }_iconAfter {
+                    padding-inline-end: var(--guit-ref-spacing-xsmall);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-4xsmall);
+                        padding-inline-start: var(--guit-ref-spacing-medium);
+                    }
+                }
+
+                &#{ $this }_withIcons {
+                    padding-inline: var(--guit-ref-spacing-xsmall);
+
+                    #{ $the }__input {
+                        padding-block: var(--guit-ref-spacing-4xsmall);
+                    }
+                }
+
+                #{ $the }__input {
+                    font-family: var(--guit-sem-font-caption-large-medium-font-family);
+                    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+                    font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
+                    line-height: var(--guit-sem-font-caption-large-medium-line-height);
+                    letter-spacing: var(--guit-sem-font-caption-large-medium-letter-spacing);
+                }
+            }
+        }
+
+        &_readOnly {
+            border-color: transparent;
+            background-color: var(--guit-sem-color-background-neutral-3);
+        }
+
+        &_error {
+            border-color: var(--guit-sem-color-border-error);
+        }
+
+        &_error,
+        &_warning {
+            #{ $the }__input {
+                color: var(--guit-sem-color-foreground-neutral-2);
+            }
+        }
+
+        &_disabled {
+            border-color: var(--guit-sem-color-border-disabled-1);
+            pointer-events: none;
+            user-select: none;
+
+            #{ $the }__icon,
+            #{ $the }__input {
+                color: var(--guit-sem-color-foreground-disabled);
+            }
+        }
+
+        &:hover {
+            background-color: var(--guit-sem-color-background-neutral-1-hover);
+        }
+
+        &:not(&#{ $this }_disabled) {
+            &:focus-within {
+                outline-offset: var(--guit-ref-border-width-thin);
+                outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                    var(--guit-sem-color-border-focus);
+
+                #{ $the }__input {
+                    color: var(--guit-sem-color-foreground-neutral-2);
+                }
+            }
+        }
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        color: var(--guit-sem-color-foreground-neutral-1);
+    }
+
+    &__input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: transparent;
+        color: var(--guit-sem-color-foreground-neutral-2);
+        outline: none;
+
+        &::placeholder {
+            color: var(--guit-sem-color-foreground-neutral-1);
+        }
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        flex: 0 0 auto;
+    }
+
+    &__info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    &__characterLimit {
+        margin-inline-start: auto;
+        white-space: nowrap;
+        color: var(--guit-sem-color-foreground-neutral-2);
+
+        &_size {
+            &_medium {
+                font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+            }
+
+            &_small {
+                font-size: var(--guit-sem-font-caption-large-medium-font-size);
+            }
+        }
+
+        &_disabled {
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+}

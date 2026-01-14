@@ -2,14 +2,15 @@ import React, { FC, JSX, useRef } from "react";
 import classnames from "classnames";
 
 // Components
-import Tooltip from "../../molecules/Tooltip";
+import Info from "@components/atoms/Info";
+import Text from "@components/atoms/Text";
+import Tooltip from "@components/molecules/Tooltip";
 
 // Hooks
-import { useEllipsisDetection } from "../../../hooks";
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./Label.scss";
-import Info from "../Info";
 
 interface ILabelProps {
     /**
@@ -21,7 +22,7 @@ interface ILabelProps {
      * The text content of the `label`.
      * This is the main text displayed within the `label`.
      */
-    labelText: string;
+    text?: string;
     /**
      * Indicates whether the label represents a required field.
      * When set to `true`, a visual indicator (asterisk) will be added to denote that the field is required.
@@ -42,7 +43,12 @@ interface ILabelProps {
      * Indicates whether the `label` is in a loading state.
      * When set to `true` a `skeleton` indicator will be shown instead of the `label` text.
      */
-    isLoading?: boolean;
+    loading?: boolean;
+    /**
+     * Indicates whether the `label` should be read-only.
+     * This prop will not make visual changes but sets `pointer-events: auto` to prevent triggering label click events.
+     */
+    readOnly?: boolean;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -53,6 +59,10 @@ interface ILabelProps {
      * The label will wrap around this element, ensuring proper association for accessibility.
      */
     children?: JSX.Element;
+    /**
+     * ID of the component that the label is labelling.
+     */
+    labelFor?: string;
 }
 
 const iconSizes = {
@@ -63,53 +73,103 @@ const iconSizes = {
 /**
  * Labels identify a component or group of components. Use them with elements such as checkboxes and input fields to guide users in providing specific information, or with plain text to organize information.
  */
-
 const Label: FC<ILabelProps> = ({
     size = "medium",
-    labelText,
+    text,
     disabled,
     required,
     infoText,
-    isLoading,
+    loading,
     className,
-    children
+    children,
+    readOnly,
+    labelFor
 }) => {
-    const labelRef = useRef<HTMLLabelElement | null>(null);
+    const labelTextRef = useRef<HTMLSpanElement | null>(null);
 
-    const isTruncated: boolean = useEllipsisDetection(labelRef);
+    const isTruncated: boolean = useEllipsisDetection(labelTextRef);
+
+    const handlePreventLabelInteraction = (event: React.MouseEvent) => {
+        if (!(readOnly || disabled)) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+    };
+
+    if (!text && labelFor) return null;
+
+    if (!text && children) {
+        if (className) {
+            return <label className={className}>{children}</label>;
+        }
+        return children;
+    }
+
+    const Component = children || labelFor ? "label" : "div";
+
+    const actualVariant = Component === "label" && !disabled ? "interactive" : "descriptive";
+
+    if (loading) {
+        return (
+            <div className={classnames(`label`, `label_variant_${actualVariant}`, className)}>
+                <span>skeleton</span>
+            </div>
+        );
+    }
+
+    const TextAndRequired = text ? (
+        <>
+            <span className="label__containerInner">
+                <Tooltip text={text} isVisible={isTruncated}>
+                    <Text
+                        ref={labelTextRef}
+                        as="span"
+                        variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
+                        className={classnames(`ellipsis-text label__text`, {
+                            label__text_disabled: disabled
+                        })}
+                    >
+                        {text}
+                    </Text>
+                </Tooltip>
+                {required && (
+                    <Text
+                        as="span"
+                        variant={size === "medium" ? "labelMediumMedium" : "labelSmallMedium"}
+                        className={classnames(`label__asterisk`, {
+                            label__text_disabled: disabled
+                        })}
+                    >
+                        *
+                    </Text>
+                )}
+            </span>
+            {infoText && (
+                <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} className="label__info" />
+            )}
+        </>
+    ) : null;
 
     return (
-        <label className={classnames(`label`, className)}>
-            {children}
-            {isLoading ? (
-                <span>skeleton</span>
-            ) : (
-                <span className="label__container">
-                    <div className="label__container-inner">
-                        <Tooltip text={labelText} isVisible={isTruncated}>
-                            <span
-                                ref={labelRef}
-                                className={classnames(`ellipsis-text label__text label__text_size_${size}`, {
-                                    label__text_disabled: disabled
-                                })}
-                            >
-                                {labelText}
-                            </span>
-                        </Tooltip>
-                        {required && (
-                            <span
-                                className={classnames(`label__asterisk label__text_size_${size} `, {
-                                    label__text_disabled: disabled
-                                })}
-                            >
-                                *
-                            </span>
-                        )}
-                    </div>
-                    {infoText && <Info infoText={infoText} disabled={disabled} size={iconSizes[size]} />}
-                </span>
+        <Component
+            className={classnames(
+                `label`,
+                `label_variant_${actualVariant}`,
+                {
+                    label_readOnly: readOnly
+                },
+                className
             )}
-        </label>
+            {...(labelFor && { htmlFor: labelFor })}
+            onClick={handlePreventLabelInteraction}
+        >
+            {children}
+            {!labelFor && TextAndRequired ? (
+                <span className={classnames("label__container")}>{TextAndRequired}</span>
+            ) : (
+                TextAndRequired
+            )}
+        </Component>
     );
 };
 

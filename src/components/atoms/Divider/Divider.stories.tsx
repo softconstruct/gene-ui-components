@@ -1,57 +1,60 @@
 import React, { FC } from "react";
-import { Meta } from "@storybook/react";
-import { Globe, Search } from "@geneui/icons";
+import { Meta, StoryObj } from "@storybook/react";
+
+import { Globe, Magnifier } from "@geneui/icons";
+
+// Components
+import Avatar from "@components/atoms/Avatar";
+import Divider, { IDividerProps } from "@components/atoms/Divider";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 
-// Components
-import Divider, { IDividerProps } from "./index";
-import Avatar from "../Avatar";
-
-const meta: Meta<typeof Divider> = {
+const meta: Meta<IDividerProps> = {
     title: "Atoms/Divider",
     component: Divider,
     argTypes: {
         appearance: args({ control: "select", ...propCategory.appearance }),
-        vertical: args({ control: "boolean", ...propCategory.appearance }),
+        direction: args({ control: "select", ...propCategory.appearance }),
         Icon: args({ control: "false", ...propCategory.content }),
-        label: args({ control: "text", ...propCategory.content }),
-        labelPosition: args({ control: "select", ...propCategory.appearance }),
-        content: args({ control: "false", ...propCategory.content }),
+        text: args({ control: "text", ...propCategory.content }),
+        contentPosition: args({ control: "select", ...propCategory.appearance }),
+        swappableElement: args({ control: "false", ...propCategory.content }),
         inset: args({ control: "boolean", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
         appearance: "brand",
-        vertical: false,
-        label: "test",
-        labelPosition: "before",
-        Icon: Globe,
-        content: <Avatar Icon={Search} color="slate" />
+        direction: "horizontal",
+        text: "test",
+        contentPosition: "before",
+        Icon: Globe
     }
 };
 
 export default meta;
 
-const Template: FC<IDividerProps> = (props) => (
-    <div style={{ height: 220 }}>
-        <Divider {...props} />
-    </div>
-);
+type Story = StoryObj<IDividerProps>;
 
-export const Default = Template.bind({});
+const StoryComponent: FC<IDividerProps> = (props) => {
+    return (
+        <div style={{ height: 220 }}>
+            <Divider {...props} />
+        </div>
+    );
+};
 
-const WithAlignContentComponent: FC<IDividerProps> = (props) => (
-    <div style={{ height: 220 }}>
-        <Divider {...props} />
-    </div>
-);
+export const Default: Story = {
+    args: {
+        swappableElement: <Avatar Icon={Magnifier} color="slate" />
+    },
+    render: (props) => <StoryComponent {...props} />
+};
 
-export const Solid = WithAlignContentComponent.bind({});
-
-Solid.args = {
-    Icon: null,
-    content: undefined,
-    labelPosition: "after"
-} as IDividerProps;
+export const Solid: Story = {
+    render: (props) => <StoryComponent {...props} />,
+    args: {
+        Icon: null,
+        contentPosition: "after"
+    }
+};

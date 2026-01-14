@@ -1,5 +1,6 @@
 import React, { FC, JSX } from "react";
 import classNames from "classnames";
+
 import { IconProps } from "@geneui/icons";
 
 // Styles
@@ -13,30 +14,30 @@ interface IDividerProps {
     appearance?: "default" | "strong" | "brand" | "inverse";
     /**
      * Divider content <br/>
-     * The `alignContent` prop accepts a JSX element that will be displayed alongside the divider
+     * The prop accepts a JSX element that will be displayed alongside the divider
      */
-    content?: JSX.Element;
+    swappableElement?: JSX.Element;
     /**
      * Divider direction <br/>
-     * If the `vertical` prop is `true`, the `Divider` will be displayed vertically otherwise the `Divider` will be displayed horizontally
+     * Possible values: `vertical | horizontal`
      */
-    vertical?: boolean;
+    direction?: "vertical" | "horizontal";
     /**
      * The `Icon` prop accepts a React Functional Component that will be displayed alongside the divider.
      */
     Icon?: FC<IconProps> | null;
     /**
-     * Divider label <br/>
-     * Text which will be displayed with `Divider`. The position of the `label` depends on `labelPosition` prop
+     * Divider text <br/>
+     * Text which will be displayed with `Divider`. The position of the `text` depends on `contentPosition` prop
      */
-    label?: string;
+    text?: string;
     /**
-     * Divider `label` position <br/>
+     * Divider `text` and `icon` positions <br/>
      * Possible values: `before | after | center`
      */
-    labelPosition?: "before" | "after" | "center";
+    contentPosition?: "before" | "after" | "center";
     /**
-     * provides space between the edge and the divider
+     * Provides space between the edge and the divider
      */
     inset?: boolean;
     /**
@@ -52,31 +53,31 @@ interface IDividerProps {
 const Divider: FC<IDividerProps> = ({
     appearance = "default",
     Icon,
-    vertical,
-    label,
-    labelPosition = "before",
-    content,
+    direction = "horizontal",
+    text,
+    contentPosition = "before",
+    swappableElement,
     inset = false,
     className
 }) => {
     return (
         <div
             className={classNames(
-                `divider divider_${inset ? "inset" : "block"} divider_color_${appearance}  `,
+                `divider divider_${inset ? "inset" : "block"} divider_color_${appearance}`,
                 className,
                 {
-                    divider_horizontal: !vertical,
-                    divider_vertical: vertical,
-                    [` divider_withLabel_${labelPosition}`]: (label || Icon) && !vertical
+                    divider_horizontal: direction === "horizontal",
+                    divider_vertical: direction === "vertical",
+                    [` divider_withLabel_${contentPosition}`]: (text || Icon) && direction === "horizontal"
                 }
             )}
         >
-            {!vertical && (
+            {direction === "horizontal" && (
                 <>
-                    {content && <div className="divider__element">{content}</div>}
-                    {(label || Icon) && (
+                    {swappableElement && <div className="divider__element">{swappableElement}</div>}
+                    {(text || Icon) && (
                         <div className="divider__label">
-                            {label && <span className="divider__text ellipsis-text">{label}</span>}
+                            {text && <span className="divider__text ellipsis-text">{text}</span>}
                             {Icon && <Icon className="divider__icon" size={20} />}
                         </div>
                     )}

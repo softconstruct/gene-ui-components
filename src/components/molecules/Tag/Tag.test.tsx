@@ -1,0 +1,58 @@
+import React from "react";
+import { mount, ReactWrapper } from "enzyme";
+
+// Components
+import Button from "@components/atoms/Button";
+
+import Tag, { ITagProps } from "./index";
+
+const tagText = "tag";
+
+describe("Tag ", () => {
+    let setup: ReactWrapper<ITagProps>;
+    const mockFn = jest.fn();
+
+    beforeEach(() => {
+        setup = mount(<Tag text={tagText} onClose={mockFn} />);
+    });
+
+    it("renders without crashing", () => {
+        expect(setup.exists()).toBeTruthy();
+    });
+
+    it("renders className prop correctly", () => {
+        const className = "test-class";
+        const wrapper = setup.setProps({ className });
+        expect(wrapper.hasClass(className)).toBeTruthy();
+    });
+
+    it("renders content text correctly", () => {
+        expect(setup.find(".tag__text").contains(tagText)).toBeTruthy();
+    });
+
+    it.each<ITagProps["status"]>(["rest", "error", "warning"])("should have %s status", (status) => {
+        const wrapper = setup.setProps({ status });
+        expect(wrapper.find(`.tag_status_${status}`).exists()).toBeTruthy();
+    });
+
+    it("renders disabled prop correctly", () => {
+        const wrapper = setup.setProps({ disabled: true });
+        expect(wrapper.find(".tag_disabled").exists()).toBeTruthy();
+    });
+
+    it.each<ITagProps["size"]>(["medium", "small"])("should have %s size", (size) => {
+        const wrapper = setup.setProps({ size });
+        expect(wrapper.find(`.tag_size_${size}`).exists()).toBeTruthy();
+    });
+
+    it("renders withIcon prop correctly", () => {
+        expect(setup.find(".tag__icon").exists()).toBeTruthy();
+        const wrapper = setup.setProps({ withIcon: false });
+        expect(wrapper.find(".tag__icon").exists()).toBeFalsy();
+    });
+
+    it("handles close button's click", () => {
+        setup.find(Button).simulate("click");
+        expect(mockFn).toHaveBeenCalled();
+    });
+});
