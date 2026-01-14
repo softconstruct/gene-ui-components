@@ -7,6 +7,7 @@ import { ErrorFilled, SuccessFilled } from "@geneui/icons";
 import Divider from "@components/atoms/Divider";
 import Label from "@components/atoms/Label";
 import Loader from "@components/atoms/Loader";
+import Text from "@components/atoms/Text";
 
 import { StepsContext } from "./Steps";
 
@@ -73,28 +74,28 @@ const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, stat
     }
 
     if (error) {
-        return <ErrorFilled size={24} className="steps__status_icon" />;
+        return <ErrorFilled size={24} className="steps__icon" />;
     }
 
     if (type === "dot") {
         if (complete && state !== "current") {
-            return <SuccessFilled size={24} className="step_type steps__status_icon" />;
+            return <SuccessFilled size={24} className="steps__icon" />;
         }
         if (state === "current") {
-            return <span className="step_type steps__status_icon steps__status_dot steps__status_dot_current" />;
+            return <span className="steps__icon steps__dot steps__dot_state_current" />;
         }
 
-        return <span className="step_type steps__status_icon steps__status_dot steps__status_dot_empty" />;
+        return <span className="steps__icon steps__dot steps__dot_state_empty" />;
     }
 
     return (
         <span
-            className={classNames("step_type steps__status_icon steps__status_numeric", {
-                steps__status_numeric_success: complete && state !== "current"
+            className={classNames("steps__icon steps__number", {
+                steps__number_success: complete && state !== "current"
             })}
         >
             {complete && state !== "current" ? (
-                <SuccessFilled size={24} className="step_type steps__status_icon" />
+                <SuccessFilled size={24} className="steps__icon" />
             ) : (
                 stepCount(stepNumber)
             )}
@@ -108,7 +109,7 @@ const StepLabel: FC<IStepLabelType> = ({ label, changeHandler, state, disabled, 
     return changeHandler !== undefined ? (
         <button
             type="button"
-            className="steps__label"
+            className="steps__button"
             onClick={changeHandler}
             disabled={disabled || loading || state === "current"}
         >
@@ -127,14 +128,14 @@ const Step: FC<IStepProps> = (props) => {
     return (
         <div
             {...(id && { id: id.toString() })}
-            className={classNames("steps__step", {
-                steps__step_disabled: disabled && !error && !loading,
-                steps__step_error: error,
-                steps__step_success: complete,
-                steps__step_current: state === "current"
+            className={classNames("steps__item", {
+                steps__item_state_disabled: disabled && !error && !loading,
+                steps__item_state_error: error,
+                steps__item_state_success: complete,
+                steps__item_state_current: state === "current"
             })}
         >
-            <div className="steps__status">
+            <div className="steps__indicator">
                 <PointTypes
                     stepNumber={stepNumber ?? 1}
                     error={error}
@@ -144,7 +145,7 @@ const Step: FC<IStepProps> = (props) => {
                 />
 
                 <Divider
-                    className="steps__status_divider"
+                    className="steps__divider"
                     direction={direction}
                     appearance={state === "previous" && !disabled ? "brand" : "default"}
                 />
@@ -157,7 +158,11 @@ const Step: FC<IStepProps> = (props) => {
                     loading={loading}
                     {...(onChange !== undefined && { changeHandler })}
                 />
-                {description && <p className="steps__description">{description}</p>}
+                {description && (
+                    <Text className="steps__description" as="p" variant="bodyMediumRegular">
+                        {description}
+                    </Text>
+                )}
             </div>
         </div>
     );

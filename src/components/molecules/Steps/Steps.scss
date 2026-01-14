@@ -4,14 +4,13 @@
     display: flex;
 
     &_direction {
-        // horizontal direction styles
         &_horizontal {
             flex-direction: row;
 
-            #{ $this }__step {
+            #{ $this }__item {
                 grid-template-rows: 2.4rem 1fr;
             }
-            #{ $this }__status {
+            #{ $this }__indicator {
                 flex-direction: row;
             }
             #{ $this }__content {
@@ -22,22 +21,21 @@
             }
         }
 
-        // vertical direction styles
         &_vertical {
             flex-direction: column;
 
-            #{ $this }__step {
+            #{ $this }__item {
                 grid-template-columns: 2.4rem 1fr;
             }
-            #{ $this }__status {
+            #{ $this }__indicator {
                 flex-direction: column;
             }
         }
     }
 
-    // styles for linear and non-linear cases
     &_linear {
-        #{ $this }__label {
+        #{ $this }__label,
+        #{ $this }__button {
             pointer-events: none;
 
             &:focus-visible {
@@ -47,7 +45,8 @@
     }
 
     &:not(#{ $this }_linear) {
-        #{ $this }__label {
+        #{ $this }__label,
+        #{ $this }__button {
             &:hover {
                 background-color: var(--guit-sem-color-background-neutral-1-hover);
             }
@@ -58,9 +57,7 @@
         }
     }
 
-    // main styles
-
-    &__step {
+    &__item {
         $that: &;
 
         display: inline-grid;
@@ -73,20 +70,22 @@
         }
 
         &:last-child {
-            #{ $this }__status_divider {
+            #{ $this }__divider {
                 display: none;
             }
         }
 
-        &#{ $that }_disabled {
+        &#{ $that }_state_disabled {
             #{ $this }__label,
             #{ $this }__description,
-            #{ $this }__status_icon {
+            #{ $this }__button,
+            #{ $this }__icon {
                 color: var(--guit-sem-color-foreground-disabled);
             }
         }
 
-        #{ $this }__label[disabled] {
+        #{ $this }__label[disabled],
+        #{ $this }__button[disabled] {
             pointer-events: none;
 
             &:focus-visible {
@@ -94,93 +93,84 @@
             }
         }
 
-        &:not(#{ $that }_disabled) {
+        &:not(#{ $that }_state_disabled) {
             #{ $this }__label,
-            #{ $this }__description {
+            #{ $this }__description,
+            #{ $this }__button {
                 color: var(--guit-sem-color-foreground-neutral-2);
             }
 
-            &:not(#{ $this }__step_current, #{ $this }__step_success, #{ $this }__step_error) {
-                #{ $this }__status_icon {
+            &:not(#{ $this }__item_state_current, #{ $this }__item_state_success, #{ $this }__item_state_error) {
+                #{ $this }__icon {
                     color: var(--guit-sem-color-foreground-neutral-1);
                 }
             }
 
-            &#{ $that }_current,
-            &#{ $that }_success {
-                #{ $this }__status_icon {
+            &#{ $that }_state_current,
+            &#{ $that }_state_success {
+                #{ $this }__icon {
                     color: var(--guit-sem-color-foreground-selected);
                 }
             }
 
-            &#{ $that }_error {
-                #{ $this }__status_icon {
+            &#{ $that }_state_error {
+                #{ $this }__icon {
                     color: var(--guit-sem-color-foreground-error);
                 }
             }
         }
     }
 
-    &__status,
+    &__indicator,
     &__content {
         max-width: 100%;
     }
 
-    &__status {
+    &__indicator {
         display: flex;
+    }
 
-        &_icon {
-            flex: 0 0 auto;
-        }
+    &__number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        margin: 0.2rem;
+        border-radius: var(--guit-ref-radius-full);
+        border-width: var(--guit-ref-border-width-thin);
+        border-style: var(--guit-ref-border-style-solid);
+        font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
+        font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
+        font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
+        line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
+    }
 
-        &_divider {
-            flex: 1;
-        }
+    &__dot {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        margin: 0.2rem;
 
-        &_numeric {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 2rem;
-            height: 2rem;
-            margin: 0.2rem;
-            font-family: var(--guit-sem-font-body-medium-default-semibold-font-family), sans-serif;
-            font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
-            font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
-            line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
-
-            &:not(&_success) {
-                border-radius: var(--guit-ref-radius-full);
+        &_state {
+            &_empty,
+            &_current {
                 border-width: var(--guit-ref-border-width-thin);
-                border-style: var(--guit-ref-border-style-solid);
-            }
-        }
-
-        &_dot {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 2rem;
-            height: 2rem;
-            margin: 0.2rem;
-
-            &_empty {
-                font-family: var(--guit-sem-font-body-medium-default-semibold-font-family), sans-serif;
+                border-radius: var(--guit-ref-radius-full);
+                font-family: var(--guit-sem-font-body-medium-default-semibold-font-family);
                 font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
                 font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
                 line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
-                border-radius: var(--guit-ref-radius-full);
-                border-width: var(--guit-ref-border-width-thin);
+            }
+
+            &_empty {
                 border-style: var(--guit-ref-border-style-dashed);
             }
 
             &_current {
-                font-family: var(--guit-sem-font-body-medium-default-semibold-font-family), sans-serif;
-                font-weight: var(--guit-sem-font-body-medium-default-semibold-font-weight);
-                font-size: var(--guit-sem-font-body-medium-default-semibold-font-size);
-                line-height: var(--guit-sem-font-body-medium-default-semibold-line-height);
-                border-radius: var(--guit-ref-radius-full);
-                border-width: var(--guit-ref-border-width-thin);
+                position: relative;
                 border-style: var(--guit-ref-border-style-solid);
                 border-color: var(--guit-sem-color-background-transparent-1);
                 background: linear-gradient(
@@ -189,39 +179,37 @@
                     var(--guit-sem-color-background-transparent-1) 50%
                 );
                 background-clip: padding-box;
-                position: relative;
 
-                &::before {
-                    content: "";
-                    position: absolute;
-                    top: calc(-1 * var(--guit-ref-border-width-thin));
-                    left: calc(-1 * var(--guit-ref-border-width-thin));
-                    right: calc(-1 * var(--guit-ref-border-width-thin));
-                    bottom: calc(-1 * var(--guit-ref-border-width-thin));
-                    border-radius: var(--guit-ref-radius-full);
-                    border-width: var(--guit-ref-border-width-thin);
-                    border-style: var(--guit-ref-border-style-solid);
-                    border-color: var(--guit-sem-color-foreground-selected);
-                    clip-path: polygon(0% 0%, 50% 0%, 50% 100%, 0% 100%);
-                    pointer-events: none;
-                }
-
+                &::before,
                 &::after {
                     content: "";
                     position: absolute;
-                    top: calc(-1 * var(--guit-ref-border-width-thin));
-                    left: calc(-1 * var(--guit-ref-border-width-thin));
-                    right: calc(-1 * var(--guit-ref-border-width-thin));
-                    bottom: calc(-1 * var(--guit-ref-border-width-thin));
+                    inset: calc(-1 * var(--guit-ref-border-width-thin));
                     border-radius: var(--guit-ref-radius-full);
                     border-width: var(--guit-ref-border-width-thin);
-                    border-style: var(--guit-ref-border-style-dashed);
                     border-color: var(--guit-sem-color-foreground-selected);
-                    clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
                     pointer-events: none;
+                }
+
+                &::before {
+                    border-style: var(--guit-ref-border-style-solid);
+                    clip-path: polygon(0% 0%, 50% 0%, 50% 100%, 0% 100%);
+                }
+
+                &::after {
+                    border-style: var(--guit-ref-border-style-dashed);
+                    clip-path: polygon(50% 0%, 100% 0%, 100% 100%, 50% 100%);
                 }
             }
         }
+    }
+
+    &__icon {
+        flex: 0 0 auto;
+    }
+
+    &__divider {
+        flex: 1;
     }
 
     &__content {
@@ -232,25 +220,20 @@
     }
 
     &__label,
-    &__description {
+    &__description,
+    &__button {
         padding-block: var(--guit-ref-spacing-4xsmall);
         padding-inline: var(--guit-ref-spacing-3xsmall);
         word-break: break-word;
         text-align: left;
     }
 
-    &__label {
+    &__label,
+    &__button {
         font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
         font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
         font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
         line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
         border-radius: var(--guit-ref-radius-3xsmall);
-    }
-
-    &__description {
-        font-family: var(--guit-sem-font-body-medium-default-regular-font-family), sans-serif;
-        font-weight: var(--guit-sem-font-body-medium-default-regular-font-weight);
-        font-size: var(--guit-sem-font-body-medium-default-regular-font-size);
-        line-height: var(--guit-sem-font-body-medium-default-regular-line-height);
     }
 }
