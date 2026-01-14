@@ -17,6 +17,7 @@ const meta: Meta<INavigationProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states }),
+        onOpenChange: args({ control: "false", ...propCategory.action }),
         navigationData: args({ control: "false", ...propCategory.content }),
         navigationCreateData: args({ control: "false", ...propCategory.content }),
         activePath: args({ control: "false", ...propCategory.states }),
@@ -24,7 +25,8 @@ const meta: Meta<INavigationProps> = {
         onNavigationCreateDataClick: args({ control: "false", ...propCategory.action }),
         moreMenuTitle: args({ control: "text", ...propCategory.content }),
         render: args({ control: "false", ...propCategory.content }),
-        compact: args({ control: "boolean", ...propCategory.appearance })
+        compact: args({ control: "boolean", ...propCategory.appearance }),
+        createButtonText: args({ control: "text", ...propCategory.content })
     }
 };
 
@@ -38,15 +40,20 @@ const NavigationStoryComponent = (props: INavigationProps) => {
         setActivePath(path);
     };
 
+    const onOpenChangeHandler = (isOpen: boolean) => {
+        setIsNavigationOpen(isOpen);
+    };
+
     return (
-        <div style={{ height: "90vh" }}>
+        <div style={{ height: "100%" }}>
             <div style={{ position: "fixed", top: 8, right: 8 }}>
                 <Button onClick={() => setIsNavigationOpen((prev) => !prev)} Icon={HamburgerMenu} />
             </div>
             <Navigation
-                open={isNavigationOpen}
-                navigationData={navigationData}
                 {...props}
+                open={isNavigationOpen}
+                onOpenChange={onOpenChangeHandler}
+                navigationData={navigationData}
                 activePath={activePath}
                 onClick={onClickHandler}
                 navigationCreateData={navigationCreateData}
@@ -58,12 +65,16 @@ const NavigationStoryComponent = (props: INavigationProps) => {
 type Story = StoryObj<INavigationProps>;
 
 export const Default: Story = {
-    render: (props) => <NavigationStoryComponent {...props} />
+    render: (props) => <NavigationStoryComponent {...props} />,
+    args: {
+        createButtonText: "Create"
+    }
 };
 
 export const WithRender: Story = {
     render: (props) => <NavigationStoryComponent {...props} />,
     args: {
+        createButtonText: "Create",
         // eslint-disable-next-line jsx-a11y/anchor-has-content
         render: (linkData) => <a aria-label={linkData.title} href={linkData.path ? "javascript:void(0)" : undefined} />
     }
