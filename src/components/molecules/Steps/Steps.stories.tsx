@@ -158,11 +158,7 @@ const StepsWizardTemplate: FC<IStepsProps> = (props) => {
 
     const getErrorStepIndices = () =>
         stepsData
-            .map((item, index) =>
-                item.touched && !item.complete && (stepsData.length - 1 === index || index !== currentStep)
-                    ? index
-                    : null
-            )
+            .map((item, index) => (item.touched && !item.complete && index !== currentStep ? index : null))
             .filter((item) => item !== null);
 
     const isStepEnabled = () =>

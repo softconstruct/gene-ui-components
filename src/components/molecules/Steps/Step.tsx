@@ -58,7 +58,7 @@ interface IStepProps extends IPointTypesProps {
 
 type IStepLabelType = {
     changeHandler?: () => void;
-} & Pick<IStepProps, "label" | "state" | "disabled" | "loading">;
+} & Pick<IStepProps, "label" | "state" | "disabled">;
 
 const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, state, complete }) => {
     const { type } = useContext(StepsContext);
@@ -103,7 +103,7 @@ const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, stat
     );
 };
 
-const StepLabel: FC<IStepLabelType> = ({ label, changeHandler, state, disabled, loading }) => {
+const StepLabel: FC<IStepLabelType> = ({ label, changeHandler, state, disabled }) => {
     if (!label) return null;
 
     return changeHandler !== undefined ? (
@@ -111,12 +111,12 @@ const StepLabel: FC<IStepLabelType> = ({ label, changeHandler, state, disabled, 
             type="button"
             className="steps__button"
             onClick={changeHandler}
-            disabled={disabled || loading || state === "current"}
+            disabled={disabled || state === "current"}
         >
-            <Label text={label} disabled={disabled || loading} />
+            <Label text={label} disabled={disabled} />
         </button>
     ) : (
-        <Label text={label} disabled={disabled || loading} className="steps__label" />
+        <Label text={label} disabled={disabled} className="steps__label" />
     );
 };
 
@@ -155,7 +155,6 @@ const Step: FC<IStepProps> = (props) => {
                     label={label}
                     state={state}
                     disabled={disabled}
-                    loading={loading}
                     {...(onChange !== undefined && { changeHandler })}
                 />
                 {description && (
