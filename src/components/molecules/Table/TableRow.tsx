@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent as ReactMouseEvent, useContext } from "react";
+import React, { FC, JSX, MouseEvent as ReactMouseEvent, useContext } from "react";
 import { Row } from "@tanstack/react-table";
 import classNames from "classnames";
 
@@ -7,10 +7,15 @@ import { ChevronDown, ChevronRight, Clock, Copy, Download, Eye, Pin, PinFilled, 
 import Button from "@components/atoms/Button";
 import { CellClassNames } from "@components/molecules/Table/helpers";
 import { TableContext } from "@components/molecules/Table/Table";
+import Tooltip from "@components/molecules/Tooltip";
 
 import Checkbox from "../Checkbox";
 import { Row as RowData, TableCol } from ".";
 import Cell, { ICellProps } from "./Cell";
+
+const RowActions: FC<{ title: string; children: JSX.Element }> = ({ title, children }) => {
+    return title ? <Tooltip text={title}>{children}</Tooltip> : children;
+};
 
 interface ITableRow {
     row: Row<RowData>;
@@ -67,41 +72,49 @@ const TableRow: FC<ITableRow> = ({
     const actionsConfig = [
         {
             name: "pinToggle",
+            title: "Pin",
             icon: row.getIsPinned() ? PinFilled : Pin,
             handler: onRowPinToggle
         },
         {
             name: "tag",
+            title: "Tag",
             icon: Tag,
             handler: onRowTag
         },
         {
             name: "reload",
+            title: "Reload",
             icon: Tag,
             handler: onRowReload
         },
         {
             name: "show",
+            title: "Show",
             icon: Eye,
             handler: onRowShow
         },
         {
             name: "clock",
+            title: "Clock",
             icon: Clock,
             handler: onRowClock
         },
         {
             name: "copy",
+            title: "Copy",
             icon: Copy,
             handler: onRowCopy
         },
         {
             name: "download",
+            title: "Download",
             icon: Download,
             handler: onRowDownload
         },
         {
             name: "delete",
+            title: "Delete",
             icon: RecycleBin,
             handler: onRowDelete
         }
@@ -212,18 +225,20 @@ const TableRow: FC<ITableRow> = ({
                                         delete: `Delete row ${rowIndex + 1}`
                                     };
                                     return (
-                                        <Button
-                                            key={action.name}
-                                            appearance="secondary"
-                                            layout="text"
-                                            size="small"
-                                            Icon={action.icon}
-                                            aria-label={
-                                                actionLabels[action.name] ||
-                                                `Action ${action.name} for row ${rowIndex + 1}`
-                                            }
-                                            onClick={handleActionClick(action.handler)}
-                                        />
+                                        <RowActions title={action.title}>
+                                            <Button
+                                                key={action.name}
+                                                appearance="secondary"
+                                                layout="text"
+                                                size="small"
+                                                Icon={action.icon}
+                                                aria-label={
+                                                    actionLabels[action.name] ||
+                                                    `Action ${action.name} for row ${rowIndex + 1}`
+                                                }
+                                                onClick={handleActionClick(action.handler)}
+                                            />
+                                        </RowActions>
                                     );
                                 })}
                         </div>
