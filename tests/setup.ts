@@ -9,3 +9,9 @@ global.ResizeObserver = class ResizeObserver {
     unobserve() {}
     disconnect() {}
 };
+
+// Mock scrollTo for jsdom (used by Scrollbar component)
+Object.defineProperty(HTMLElement.prototype, "scrollTo", {
+    value: jest.fn(),
+    writable: true
+});

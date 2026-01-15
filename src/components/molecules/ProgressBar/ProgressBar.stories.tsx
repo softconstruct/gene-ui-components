@@ -17,7 +17,7 @@ const meta: Meta<IProgressBarProps> = {
         percent: args({ control: "number", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
         label: args({ control: "text", ...propCategory.content }),
-        error: args({ control: "boolean", ...propCategory.states })
+        status: args({ control: "select", ...propCategory.states })
     },
     args: {
         uploadingText: "Uploading",
@@ -25,7 +25,8 @@ const meta: Meta<IProgressBarProps> = {
         helperText: "Helper Text",
         percent: 44,
         size: "medium",
-        label: "Label"
+        label: "Label",
+        status: "rest"
     }
 };
 
