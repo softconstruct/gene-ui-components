@@ -61,8 +61,25 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
         }
     };
 
+    const { onClick: popoverOnClick, ...restPropsForPopover } = propsForPopover;
+
+    let mergedOnClick: ((event: React.MouseEvent<HTMLElement>) => void) | undefined;
+
+    if (popoverOnClick && typeof popoverOnClick === "function") {
+        mergedOnClick = (clickEvent: React.MouseEvent<HTMLElement>) => {
+            // Call Menu's onClick handler (handles popover toggle)
+            (popoverOnClick as (event: React.MouseEvent<HTMLElement>) => void)(clickEvent);
+            // If event wasn't prevented and NavigationColItem has its own onClick, call it too
+            if (!clickEvent.defaultPrevented && onClick) {
+                onClickHandler(index || 0);
+            }
+        };
+    } else if (onClick) {
+        mergedOnClick = () => onClickHandler(index || 0);
+    }
+
     const propsToApply = {
-        ...propsForPopover,
+        ...restPropsForPopover,
         "aria-label": title,
         disabled: disabled || !isVisible,
         className: classNames("navigation__iconButton", {
@@ -71,7 +88,7 @@ const NavigationColItem: FC<INavigationColItemProps> = ({
             navigation__iconButton_pointer_none: selected && !hasChildren,
             navigation__iconButton_disabled: disabled
         }),
-        onClick: () => onClickHandler(index || 0),
+        ...(mergedOnClick && { onClick: mergedOnClick }),
         onMouseEnter: () => onMouseEnterHandler(index || 0)
     };
 
