@@ -638,37 +638,37 @@ describe("CounterField", () => {
     });
 
     it("clamps value prop to max when value exceeds max in controlled mode", () => {
-        const wrapper = setup.setProps({ value: 100, max: 10 });
+        const wrapper = mount(<CounterField value={100} max={10} />);
 
         expect(wrapper.find(TextField).props().value).toBe("10");
     });
 
     it("clamps value prop to min when value is below min in controlled mode", () => {
-        const wrapper = setup.setProps({ value: -50, min: 0 });
+        const wrapper = mount(<CounterField value={-50} min={0} />);
 
         expect(wrapper.find(TextField).props().value).toBe("0");
     });
 
     it("clamps value prop to both min and max when outside bounds in controlled mode", () => {
-        const wrapper = setup.setProps({ value: 100, min: 0, max: 10 });
+        const wrapper = mount(<CounterField value={100} min={0} max={10} />);
 
         expect(wrapper.find(TextField).props().value).toBe("10");
     });
 
     it("does not clamp value prop when within bounds in controlled mode", () => {
-        const wrapper = setup.setProps({ value: 5, min: 0, max: 10 });
+        const wrapper = mount(<CounterField value={5} min={0} max={10} />);
 
         expect(wrapper.find(TextField).props().value).toBe("5");
     });
 
     it("clamps string value prop to max in controlled mode", () => {
-        const wrapper = setup.setProps({ value: "100", max: 10 });
+        const wrapper = mount(<CounterField value="100" max={10} />);
 
         expect(wrapper.find(TextField).props().value).toBe("10");
     });
 
     it("clamps string value prop to min in controlled mode", () => {
-        const wrapper = setup.setProps({ value: "-50", min: 0 });
+        const wrapper = mount(<CounterField value="-50" min={0} />);
 
         expect(wrapper.find(TextField).props().value).toBe("0");
     });
