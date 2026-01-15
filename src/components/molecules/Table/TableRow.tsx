@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, MouseEvent as ReactMouseEvent, useContext } from "react";
+import React, { FC, MouseEvent as ReactMouseEvent, useContext } from "react";
 import { Row } from "@tanstack/react-table";
 import classNames from "classnames";
 
@@ -53,8 +53,7 @@ const TableRow: FC<ITableRow> = ({
         onRowClick?.(row);
     };
 
-    const handleCheckboxChange = (event: ChangeEvent<HTMLInputElement>) => {
-        event.stopPropagation();
+    const handleCheckboxChange = () => {
         row.toggleSelected();
         onRowSelect?.(row);
     };
@@ -166,7 +165,8 @@ const TableRow: FC<ITableRow> = ({
                                 checked={isSelected}
                                 aria-label={`Select row ${rowIndex + 1}`}
                                 aria-checked={isSelected}
-                                onChange={(event) => handleCheckboxChange(event)}
+                                onClick={(e) => e.stopPropagation()}
+                                onChange={handleCheckboxChange}
                             />
                         </div>
                     </td>
