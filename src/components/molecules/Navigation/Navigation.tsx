@@ -11,6 +11,7 @@ import Scrollbar from "@components/atoms/Scrollbar";
 import { IMenuItemProps, Menu, MenuItem } from "@components/molecules/Menu";
 import NavigationItem from "@components/molecules/Navigation/NavigationItem";
 import NavigationMenuHeader from "@components/molecules/Navigation/NavigationMenuHeader";
+import NavigationMobile from "@components/molecules/Navigation/NavigationMobile/NavigationMobile";
 import NavigationColItem from "@components/molecules/Navigation/NavigattionColItem";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
@@ -43,6 +44,10 @@ interface INavigationProps {
      * Controls whether the navigation is forced open.
      */
     open?: boolean;
+    /**
+     * Callback when the navigation open state changes. Used for mobile navigation control.
+     */
+    onOpenChange?: (isOpen: boolean) => void;
     /**
      * Array of navigation items data.
      */
@@ -82,6 +87,10 @@ interface INavigationProps {
      * Hides item titles, showing only icons with tooltips for a compact layout.
      */
     compact?: boolean;
+    /**
+     * Text for the mobile create button. If not provided, only the Plus icon will be shown.
+     */
+    createButtonText?: string;
 }
 
 export const findPath = (
@@ -154,6 +163,7 @@ const NavMenuContent: FC<{
 const Navigation: FC<INavigationProps> = ({
     className,
     open,
+    onOpenChange,
     navigationData = [],
     activePath,
     onClick,
@@ -161,7 +171,8 @@ const Navigation: FC<INavigationProps> = ({
     onNavigationCreateDataClick,
     moreMenuTitle = "More",
     render,
-    compact = false
+    compact = false,
+    createButtonText
 }) => {
     const [currentDataIndex, setCurrentDataIndex] = useState<number | null>(null);
     const [hoverDataIndex, setHoverDataIndex] = useState<number | null>(null);
@@ -188,12 +199,24 @@ const Navigation: FC<INavigationProps> = ({
     };
 
     useEffect(() => {
-        setForceOpen(!forceOpen);
+        if (!isMobileBreakpoint) {
+            setForceOpen(!forceOpen);
+        }
     }, [open]);
 
     useEffect(() => {
-        setForceOpen(!!open);
+        if (!isMobileBreakpoint) {
+            setForceOpen(!!open);
+        }
     }, []);
+
+    useEffect(() => {
+        if (!isMobileBreakpoint) {
+            setForceOpen(false);
+            setCurrentDataIndex(null);
+            setHoverDataIndex(null);
+        }
+    }, [isMobileBreakpoint]);
 
     useEffect(() => {
         if (forceOpen && currentDataIndex !== null) {
@@ -253,8 +276,10 @@ const Navigation: FC<INavigationProps> = ({
     }, [maxVisibleItems, currentDataIndex, activePathIndex, height, navigationData]);
 
     useEffect(() => {
-        setActivePathIndex(findPath(clonedNavigationData || [], activePath || ""));
-    }, [activePath, clonedNavigationData]);
+        // For mobile, calculate from original navigationData since mobile doesn't use clonedNavigationData
+        const dataSource = isMobileBreakpoint ? navigationData : clonedNavigationData;
+        setActivePathIndex(findPath(dataSource || [], activePath || ""));
+    }, [activePath, clonedNavigationData, navigationData, isMobileBreakpoint]);
 
     const onMouseEnterHandler = (index: number) => {
         if (forceOpen) return;
@@ -310,7 +335,17 @@ const Navigation: FC<INavigationProps> = ({
     return (
         <div className={classNames("navigation", className)} role="navigation">
             {isMobileBreakpoint ? (
-                <div>Mobile Navigation</div>
+                <NavigationMobile
+                    open={!!open}
+                    onClose={() => onOpenChange?.(false)}
+                    navigationData={navigationData}
+                    navigationCreateData={navigationCreateData}
+                    onClick={onClick}
+                    onNavigationCreateDataClick={onNavigationCreateDataClick}
+                    render={render}
+                    activePathIndex={activePathIndex}
+                    createButtonText={createButtonText}
+                />
             ) : (
                 <>
                     <nav className="navigation__list">
