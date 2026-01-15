@@ -15,21 +15,112 @@ interface INumberFieldProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    // fill NumberField component props interface
+    /**
+     * The value of the number field (controlled).
+     * This is what will be returned in onChange and stored as the selected value.
+     */
+    // value?: number | string;
+    /**
+     * The initial value of the number field (uncontrolled).
+     */
+    // defaultValue?: number;
+    /**
+     * Disables the number field, preventing it from being interacted with.
+     */
+    disabled?: boolean;
+    /**
+     * Displays the number field as read-only, where users cannot modify its value.
+     */
+    readOnly?: boolean;
+    /**
+     * The amount by which the value increases or decreases.
+     */
+    // step?: number;
+    /**
+     * The minimum value allowed for the number field.
+     * The decrement button will be disabled when the value reaches or is below this minimum.
+     */
+    // min?: number;
+    /**
+     * The maximum value allowed for the number field.
+     * The increment button will be disabled when the value reaches or exceeds this maximum.
+     */
+    // max?: number;
+    /**
+     * Size of the component.<br> Possible values: `small | medium | large`
+     */
+    // size?: "small" | "medium" | "large";
+    /**
+     * The status/validation state of the component.<br> Possible values: `rest | warning | error`
+     */
+    status?: "rest" | "warning" | "error";
+    /**
+     * The main label for the number field.
+     */
+    label?: string;
+    /**
+     * Additional descriptive text that appears alongside the `label`, typically displayed as a tooltip.
+     */
+    // infoText?: string;
+    /**
+     * Helper text that appears below the number field.
+     */
+    helperText?: string;
+    /**
+     * Indicates that the field is required.
+     */
+    // required?: boolean;
+    // /**
+    //  * Fires when the user changes the number field value (via buttons or input).
+    //  * Receives the raw input string value - parent can convert to number if needed.
+    //  */
+    // onChange?: (value: string, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => void;
+    // /**
+    //  * Fires when the input field loses focus.
+    //  */
+    // onInputBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    // /**
+    //  * Fires when the input field receives focus.
+    //  */
+    // onInputFocus?: (event: FocusEvent<HTMLInputElement>) => void;
+    // /**
+    //  * If true, the input element will automatically receive focus when the component mounts.
+    //  *  Default value is `false`.
+    //  */
+    // autoFocus?: boolean;
 }
 
 /**
  * Number Field designed to capture numeric data from users. It is specifically configured to accept only numerical values, ensuring accurate data entry for fields requiring quantities, measurements, or other numerical inputs.
  */
-const NumberField: FC<INumberFieldProps> = ({ className }) => {
+const NumberField: FC<INumberFieldProps> = ({
+    className,
+    // value,
+    // defaultValue,
+    disabled,
+    readOnly,
+    // step,
+    // min,
+    // max,
+    // size,
+    status,
+    label,
+    // infoText,
+    helperText
+    // required,
+    // onChange,
+    // onInputBlur,
+    // onInputFocus,
+    // autoFocus
+}) => {
     return (
         <div className={classNames("numberField", className)}>
-            <Label text="Label" />
+            <Label text={label} />
             {/* Sizes // numberField__wrapper_size_large // numberField__wrapper_size_medium // numberField__wrapper_size_small */}
             <div className="numberField__wrapper numberField__wrapper_size_large">
                 {/* States // numberField__inputWrapper_readOnly // numberField__inputWrapper_disabled */}
                 <div className="numberField__inputWrapper">
-                    <input className="numberField__input" type="text" />
+                    <input className="numberField__input" type="text" disabled={disabled} readOnly={readOnly} />
                 </div>
                 <div className="numberField__actions">
                     {/* States // numberField__action_readOnly // numberField__action_disabled */}
@@ -41,7 +132,11 @@ const NumberField: FC<INumberFieldProps> = ({ className }) => {
                     </button>
                 </div>
             </div>
-            <HelperText text="Helper Text" />
+            {helperText && (
+                <div className="numberField__infoContainer">
+                    <HelperText text={helperText} disabled={disabled} status={status} />
+                </div>
+            )}
         </div>
     );
 };
