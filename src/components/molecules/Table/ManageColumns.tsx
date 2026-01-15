@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, useContext, useEffect, useState } from "react";
 import { Column, VisibilityState } from "@tanstack/react-table";
 import classNames from "classnames";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
@@ -14,6 +14,7 @@ import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
 import { TableContext } from "@components/molecules/Table/Table";
 import { IOrderedColumns, OrderType, Row, TableCol } from "@components/molecules/Table/type";
+import TextField from "@components/molecules/TextField";
 
 type MutableColumnDef = {
     isVisible?: boolean;
@@ -179,6 +180,22 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, col
         setColumns(orderedManageColumns);
     };
 
+    const onColumnSearch = (e: ChangeEvent<HTMLInputElement>) => {
+        const searchedValue = e.target.value;
+
+        const filteredColumns = orderedColumns?.map((group) => {
+            const filteredCols = group.columns.filter(
+                (item) =>
+                    typeof item.columnDef.header === "string" &&
+                    item.columnDef.header?.toLowerCase().trim().includes(searchedValue.trim().toLowerCase())
+            );
+            return { ...group, columns: [...filteredCols] };
+        });
+
+        if (!filteredColumns) return;
+        setColumns(filteredColumns);
+    };
+
     const renderDraggableSection = (dragCols: Column<Row, unknown>[], groupIndex: number) => {
         return dragCols.map((column, index) => {
             const colDef = columnsMap.get(column.id);
@@ -264,7 +281,7 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, col
     return (
         <div className="dropdownMenu">
             <div className="dropdownMenu__header">
-                <input type="text" placeholder="Search" style={{ width: "100%" }} />
+                <TextField type="text" placeholder="Search" onChange={onColumnSearch} />
             </div>
 
             <Scrollbar>
