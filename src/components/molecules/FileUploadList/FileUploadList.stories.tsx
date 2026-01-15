@@ -18,15 +18,6 @@ const meta: Meta<IFileUploadListProps> = {
     }
 };
 
-// No-op functions for storybook handlers
-const noopActionHandler: (id: string | number, event: React.MouseEvent<HTMLButtonElement>) => void = () => {
-    // No-op function for actionHandler
-};
-
-const noopOnCancel: (id: string | number) => void = () => {
-    // No-op function for onCancel
-};
-
 const mockData = [
     {
         id: "1",
@@ -34,11 +25,7 @@ const mockData = [
         time: "08:05AM",
         blob: { size: "6MB", type: "document" },
         Icon: Image,
-        actions: [
-            { Icon: Eye, actionHandler: noopActionHandler },
-            { Icon: Download, actionHandler: noopActionHandler },
-            { Icon: RecycleBin, actionHandler: noopActionHandler }
-        ]
+        actions: [{ Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
     },
     {
         id: "2",
@@ -46,11 +33,7 @@ const mockData = [
         time: "11:42AM",
         blob: { size: "18MB", type: "image" },
         Icon: Bell,
-        actions: [
-            { Icon: Eye, actionHandler: noopActionHandler },
-            { Icon: Download, actionHandler: noopActionHandler },
-            { Icon: RecycleBin, actionHandler: noopActionHandler }
-        ]
+        actions: [{ Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
     },
     {
         id: "3",
@@ -58,11 +41,7 @@ const mockData = [
         time: "02:18PM",
         blob: { size: "15MB", type: "audio" },
         Icon: Eye,
-        actions: [
-            { Icon: Eye, actionHandler: noopActionHandler },
-            { Icon: Download, actionHandler: noopActionHandler },
-            { Icon: RecycleBin, actionHandler: noopActionHandler }
-        ]
+        actions: [{ Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
     },
     {
         id: "4",
@@ -70,46 +49,7 @@ const mockData = [
         time: "06:55PM",
         blob: { size: "320MB", type: "video" },
         Icon: Image,
-        actions: [
-            { Icon: Eye, actionHandler: noopActionHandler },
-            { Icon: Download, actionHandler: noopActionHandler },
-            { Icon: RecycleBin, actionHandler: noopActionHandler }
-        ]
-    }
-];
-
-const mockLoadingData = [
-    {
-        id: "5",
-        name: "Quarterly-report.zip",
-        time: "04:05PM",
-        blob: { size: "120MB", type: "document" },
-        Icon: Image,
-        loading: true,
-        progressPercent: 45,
-        actions: [
-            {
-                Icon: X,
-                actionHandler: noopActionHandler,
-                onCancel: noopOnCancel
-            }
-        ]
-    },
-    {
-        id: "6",
-        name: "Quarterlyt.zip",
-        time: "04:25AM",
-        blob: { size: "180MB", type: "document" },
-        Icon: Image,
-        loading: true,
-        progressPercent: 86,
-        actions: [
-            {
-                Icon: X,
-                actionHandler: noopActionHandler,
-                onCancel: noopOnCancel
-            }
-        ]
+        actions: [{ Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
     }
 ];
 
@@ -145,7 +85,10 @@ const FileUploadItemStory: StoryFileUploadItem = {
         actions: args({ control: "object", ...propCategory.content }),
         id: args({ control: "text", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
-        progressPercent: args({ control: "number", ...propCategory.content })
+        progressPercent: args({ control: "number", ...propCategory.content }),
+        error: args({ control: "boolean", ...propCategory.states }),
+        helperText: args({ control: "text", ...propCategory.content }),
+        uploadingText: args({ control: "text", ...propCategory.content })
     },
     args: {
         id: "1",
@@ -154,34 +97,24 @@ const FileUploadItemStory: StoryFileUploadItem = {
         blob: { size: "10MB", type: "media" },
         Icon: Image,
         actions: [
-            { Icon: Eye, actionHandler: noopActionHandler },
-            { Icon: Download, actionHandler: noopActionHandler },
-            { Icon: RecycleBin, actionHandler: noopActionHandler }
+            {
+                Icon: X,
+                onCancel: () => {}
+            },
+            { Icon: Eye },
+            { Icon: Download },
+            { Icon: RecycleBin }
         ],
         loading: false,
-        progressPercent: 50
+        progressPercent: 50,
+        error: false,
+        helperText: undefined,
+        uploadingText: "Uploading"
     },
     render: (props) => {
         return <FileUploadItem key={props.id} {...props} />;
     }
 };
 
-const FileUploadListLoadingStory: Story = {
-    args: {
-        data: mockLoadingData
-    },
-    render: (props) => (
-        <FileUploadList {...props}>
-            {mockLoadingData.map((file) => (
-                <FileUploadItem key={file.id} {...file} />
-            ))}
-        </FileUploadList>
-    )
-};
-
 export default meta;
-export {
-    FileUploadListStory as FileUploadList,
-    FileUploadItemStory as FileUploadItem,
-    FileUploadListLoadingStory as FileUploadListLoading
-};
+export { FileUploadListStory as FileUploadList, FileUploadItemStory as FileUploadItem };

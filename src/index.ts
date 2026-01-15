@@ -9,7 +9,6 @@ export { default as Info, IInfoProps } from "./components/atoms/Info";
 export { default as Button, IButtonProps } from "./components/atoms/Button";
 export { default as Logo, ILogoProps } from "./components/atoms/Logo";
 export { default as Rate, IRateProps } from "./components/atoms/Rate";
-export { default as Radio, IRadioProps } from "./components/atoms/Radio";
 export { default as Text, ITextProps } from "./components/atoms/Text";
 export { default as TextLink, ITextLinkProps } from "./components/atoms/TextLink";
 export { Popover, PopoverBody, PopoverFooter, PopoverFooterActions, IPopoverProps } from "./components/atoms/Popover";
@@ -19,8 +18,10 @@ export { Grid, Col, Row, IColProps, IRowProps, IGridProps } from "./components/a
 export { default as Skeleton, ISkeletonProps } from "./components/atoms/Skeleton";
 export { default as Spreadsheet, ISpreadsheetProps } from "./components/atoms/Spreadsheet";
 export { default as Copy, ICopyProps } from "./components/atoms/Copy";
+export { SplitButton, ISplitButtonProps } from "@components/molecules/SplitButton";
 
 // Molecules
+export { Tabs, Tab, ITabsProps, ITabProps } from "./components/molecules/Tabs";
 export { default as Tooltip, ITooltipProps } from "./components/molecules/Tooltip";
 export { default as ProgressBar, IProgressBarProps } from "./components/molecules/ProgressBar";
 export { Steps, Step, IStepProps, IStepsProps } from "./components/molecules/Steps";
@@ -42,6 +43,7 @@ export { KeyValue, Key, Value, IKeyValueProps, IKeyProps, IValueProps } from "./
 export { Menu, MenuItem, IMenuProps, IMenuItemProps } from "./components/molecules/Menu";
 export { default as Navigation, INavigationProps, INavigationData } from "./components/molecules/Navigation";
 export { default as Checkbox, ICheckboxProps } from "./components/molecules/Checkbox";
+export { default as Radio, IRadioProps } from "@components/molecules/Radio";
 export { default as Profile, IProfileProps, IProfileData } from "./components/molecules/Profile";
 export { default as Pagination, IPaginationProps } from "./components/molecules/Pagination";
 export { default as TextField, ITextFieldProps } from "./components/molecules/TextField";
@@ -63,6 +65,8 @@ export {
     ISegmentedControlButtonProps
 } from "@components/molecules/SegmentedControl";
 export { default as FileUploadList } from "./components/molecules/FileUploadList";
+export { Accordion, AccordionItem, IAccordionProps, IAccordionItemProps } from "./components/molecules/Accordion";
+export { default as InteractiveCard } from "./components/molecules/InteractiveCard";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";

@@ -15,6 +15,7 @@ const meta: Meta<IRateProps> = {
         helperText: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
         label: args({ control: "text", ...propCategory.content }),
+        required: args({ control: "boolean", ...propCategory.states }),
         onChange: args({ control: "false", ...propCategory.action }),
         count: args({ control: "number", defaultValue: 5, ...propCategory.content }),
         size: args({ control: "select", defaultValue: "small", ...propCategory.appearance }),
@@ -25,7 +26,9 @@ const meta: Meta<IRateProps> = {
     },
     args: {
         count: 5,
-        defaultValue: 0
+        defaultValue: 0,
+        label: "Rate Label",
+        helperText: "Select a rating"
     }
 };
 

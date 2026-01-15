@@ -3,11 +3,12 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { Globe, Magnifier } from "@geneui/icons";
 
+// Components
+import Avatar from "@components/atoms/Avatar";
+import Divider, { IDividerProps } from "@components/atoms/Divider";
+
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import Avatar from "../Avatar";
-// Components
-import Divider, { IDividerProps } from "./index";
 
 const meta: Meta<IDividerProps> = {
     title: "Atoms/Divider",
@@ -18,7 +19,7 @@ const meta: Meta<IDividerProps> = {
         Icon: args({ control: "false", ...propCategory.content }),
         text: args({ control: "text", ...propCategory.content }),
         contentPosition: args({ control: "select", ...propCategory.appearance }),
-        content: args({ control: "false", ...propCategory.content }),
+        swappableElement: args({ control: "false", ...propCategory.content }),
         inset: args({ control: "boolean", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance })
     },
@@ -27,8 +28,7 @@ const meta: Meta<IDividerProps> = {
         direction: "horizontal",
         text: "test",
         contentPosition: "before",
-        Icon: Globe,
-        content: <Avatar Icon={Magnifier} color="slate" />
+        Icon: Globe
     }
 };
 
@@ -36,7 +36,7 @@ export default meta;
 
 type Story = StoryObj<IDividerProps>;
 
-const StoryComponent: FC = (props) => {
+const StoryComponent: FC<IDividerProps> = (props) => {
     return (
         <div style={{ height: 220 }}>
             <Divider {...props} />
@@ -45,6 +45,9 @@ const StoryComponent: FC = (props) => {
 };
 
 export const Default: Story = {
+    args: {
+        swappableElement: <Avatar Icon={Magnifier} color="slate" />
+    },
     render: (props) => <StoryComponent {...props} />
 };
 
@@ -52,7 +55,6 @@ export const Solid: Story = {
     render: (props) => <StoryComponent {...props} />,
     args: {
         Icon: null,
-        content: undefined,
         contentPosition: "after"
     }
 };

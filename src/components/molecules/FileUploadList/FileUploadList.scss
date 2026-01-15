@@ -10,7 +10,7 @@
         display: inline-grid;
         grid-template-columns: 1fr 1fr 1fr auto;
         width: 100%;
-        height: 3.2rem;
+        min-height: 3.2rem;
 
         &.image {
             #{ $this }__file {
@@ -72,10 +72,20 @@
             justify-content: flex-end;
         }
 
+        &--withProgress {
+            padding-block: 0;
+        }
+
         &--progress {
-            grid-column: 1 / span 3;
+            grid-column: 1 / -1;
             padding-inline: 0;
+            padding-block: 0;
+            margin-block-start: calc(-1 * var(--guit-ref-spacing-3xsmall) * 2);
             width: 100%;
+        }
+
+        &--actionsLoading {
+            align-items: flex-start;
         }
     }
 
@@ -89,5 +99,15 @@
     &__progress {
         width: 100%;
         display: block;
+        gap: 0;
+
+        .progressBar {
+            gap: 0;
+        }
+
+        .progressBar__info {
+            gap: 0;
+            margin-block-start: 0;
+        }
     }
 }

@@ -7,11 +7,6 @@ import FileUploadItem from "./FileUploadItem";
 // Components
 import FileUploadList, { IFileUploadListProps } from "./index";
 
-const createAction = () => ({
-    Icon: Image,
-    actionHandler: jest.fn()
-});
-
 const mockData = [
     {
         id: "1",
@@ -19,7 +14,10 @@ const mockData = [
         time: "09:15AM",
         blob: { size: "4.2MB", type: "document" },
         Icon: Bell,
-        actions: [createAction(), { Icon: RecycleBin, actionHandler: jest.fn() }]
+        actions: [
+            { Icon: Image, onClick: jest.fn() },
+            { Icon: RecycleBin, onClick: jest.fn() }
+        ]
     },
     {
         id: "2",
@@ -27,7 +25,10 @@ const mockData = [
         time: "10:30AM",
         blob: { size: "12MB", type: "image" },
         Icon: Bell,
-        actions: [createAction(), { Icon: RecycleBin, actionHandler: jest.fn() }]
+        actions: [
+            { Icon: Image, onClick: jest.fn() },
+            { Icon: RecycleBin, onClick: jest.fn() }
+        ]
     },
     {
         id: "3",
@@ -35,7 +36,10 @@ const mockData = [
         time: "01:05PM",
         blob: { size: "8MB", type: "audio" },
         Icon: Eye,
-        actions: [createAction(), { Icon: RecycleBin, actionHandler: jest.fn() }]
+        actions: [
+            { Icon: Image, onClick: jest.fn() },
+            { Icon: RecycleBin, onClick: jest.fn() }
+        ]
     },
     {
         id: "4",
@@ -43,7 +47,10 @@ const mockData = [
         time: "05:40PM",
         blob: { size: "220MB", type: "video" },
         Icon: Eye,
-        actions: [createAction(), { Icon: RecycleBin, actionHandler: jest.fn() }]
+        actions: [
+            { Icon: Image, onClick: jest.fn() },
+            { Icon: RecycleBin, onClick: jest.fn() }
+        ]
     }
 ];
 
@@ -56,15 +63,15 @@ const uploadingData = [
         Icon: Bell,
         loading: true,
         progressPercent: 45,
+        uploadingText: "Uploading",
         actions: [
             {
                 Icon: Image,
-                actionHandler: jest.fn(),
                 onCancel: jest.fn()
             },
             {
                 Icon: RecycleBin,
-                actionHandler: jest.fn()
+                onClick: jest.fn()
             }
         ]
     }
@@ -79,10 +86,11 @@ const uploadingWithoutCancelData = [
         Icon: Eye,
         loading: true,
         progressPercent: 70,
+        uploadingText: "Uploading",
         actions: [
             {
                 Icon: RecycleBin,
-                actionHandler: jest.fn()
+                onClick: jest.fn()
             }
         ]
     }
@@ -92,7 +100,7 @@ describe("FileUploadList ", () => {
     let setup: ReactWrapper<IFileUploadListProps>;
 
     beforeEach(() => {
-        mockData.forEach(({ actions }) => actions.forEach(({ actionHandler }) => actionHandler?.mockClear?.()));
+        mockData.forEach(({ actions }) => actions.forEach(({ onClick }) => onClick?.mockClear?.()));
         setup = mount(<FileUploadList data={mockData} />);
     });
 
@@ -155,14 +163,15 @@ describe("FileUploadList ", () => {
         expect(wrapper.text()).not.toContain(uploadingData[0].time);
     });
 
-    it("renders no action buttons when uploading item lacks cancel action", () => {
+    it("renders action buttons when uploading item lacks cancel action", () => {
         const wrapper = mount(<FileUploadList data={uploadingWithoutCancelData} />);
 
-        expect(wrapper.find(".fileUploadList__button")).toHaveLength(0);
+        expect(wrapper.find(FileUploadItem).find("button.fileUploadList__button")).toHaveLength(1);
     });
 
-    it("shows only cancel action while uploading", () => {
+    it("shows all actions while uploading", () => {
         const onCancel = jest.fn();
+        const onClick = jest.fn();
         const wrapper = mount(
             <FileUploadList
                 data={[
@@ -174,15 +183,15 @@ describe("FileUploadList ", () => {
                         Icon: Bell,
                         loading: true,
                         progressPercent: 45,
+                        uploadingText: "Uploading",
                         actions: [
                             {
                                 Icon: Image,
-                                actionHandler: jest.fn(),
                                 onCancel
                             },
                             {
                                 Icon: RecycleBin,
-                                actionHandler: jest.fn()
+                                onClick
                             }
                         ]
                     }
@@ -192,23 +201,22 @@ describe("FileUploadList ", () => {
         wrapper.update();
 
         // Verify the FileUploadItem receives loading prop
-        const fileUploadItem = wrapper.find(FileUploadItem);
-        expect(fileUploadItem).toHaveLength(1);
+        const fileUploadItem = wrapper.find(FileUploadItem).first();
         expect(fileUploadItem.prop("loading")).toBe(true);
 
-        // Find buttons - should only be the cancel button
-        const buttons = wrapper.find(".fileUploadList__button");
+        // Find buttons - should show all actions
+        const buttons = fileUploadItem.find("button.fileUploadList__button");
         expect(buttons).toHaveLength(2);
 
         buttons.at(0).simulate("click");
         expect(onCancel).toHaveBeenCalledWith("uploading-test");
     });
 
-    it("calls actionHandler with correct id when not uploading", () => {
-        const firstItemActionHandler = mockData[0].actions[0].actionHandler;
+    it("calls onClick when not uploading", () => {
+        const firstItemOnClick = mockData[0].actions[0].onClick;
         const firstItemButton = setup.find(FileUploadItem).at(0).find("button").at(0);
         firstItemButton.simulate("click");
-        expect(firstItemActionHandler).toHaveBeenCalledWith(mockData[0].id, expect.anything());
+        expect(firstItemOnClick).toHaveBeenCalledWith(expect.anything());
     });
 
     it("calls onCancel with correct id when uploading", () => {
@@ -221,7 +229,6 @@ describe("FileUploadList ", () => {
                         actions: [
                             {
                                 Icon: Image,
-                                actionHandler: jest.fn(),
                                 onCancel
                             }
                         ]
@@ -230,7 +237,8 @@ describe("FileUploadList ", () => {
             />
         );
         wrapper.update();
-        const button = wrapper.find(".fileUploadList__button").at(0);
+        const fileUploadItem = wrapper.find(FileUploadItem).first();
+        const button = fileUploadItem.find("button.fileUploadList__button").at(0);
         button.simulate("click");
         expect(onCancel).toHaveBeenCalledWith(uploadingData[0].id);
     });

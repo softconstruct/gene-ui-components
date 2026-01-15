@@ -26,7 +26,8 @@ const meta: Meta<IButtonProps> = {
         onBlur: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
         type: args({ control: "select", ...propCategory.functionality }),
-        tabIndex: args({ control: "number", ...propCategory.others })
+        tabIndex: args({ control: "number", ...propCategory.others }),
+        id: args({ control: "text", ...propCategory.others })
     },
     args: {
         children: "Button",

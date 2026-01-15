@@ -46,7 +46,7 @@ interface ISwitchProps {
     /**
      *  Fires when the user changes the switch state. Provides the change event as a callback's argument.
      */
-    onChange: (state: ChangeEvent<HTMLInputElement>) => void;
+    onChange?: (state: ChangeEvent<HTMLInputElement>) => void;
     /**
      *  The initial state of the switch was checked before user interaction. This prop does not make the component controlled.
      */
@@ -135,7 +135,12 @@ const Switch: FC<ISwitchProps> = (props) => {
                 disabled={disabled}
                 readOnly={readOnly}
             >
-                <span className="switch__sliderHolder">
+                <span
+                    className={classNames("switch__sliderHolder", {
+                        switch__sliderHolder_disabled: disabled,
+                        switch__sliderHolder_readOnly: readOnly && !disabled
+                    })}
+                >
                     <input
                         type="checkbox"
                         className="switch__input"

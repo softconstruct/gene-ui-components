@@ -1,7 +1,8 @@
-import React, { FC, MouseEvent } from "react";
+import React, { FC, MouseEvent, useMemo } from "react";
 import classNames from "classnames";
+import { nanoid } from "nanoid";
 
-import { IconProps, X } from "@geneui/icons";
+import { IconProps } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
@@ -21,21 +22,32 @@ interface IBlobProps {
     type: string;
 }
 
-export interface IActionProp {
+export interface IFileUploadActionProps {
     /**
-     * Icon rendered inside the action button.
+     * The `Icon` component to display in the action button. If not provided, the action button will not be rendered.
      */
-    Icon: React.FC<IconProps>;
+    Icon?: FC<IconProps>;
     /**
-     * Click handler for the action button.
-     * Receives the file item's unique identifier (id) and the mouse event.
+     * A callback function that is called when the button is clicked.
      */
-    actionHandler: (id: string | number, event: MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Cancels the upload when the file is in loading state.
      * Receives the file item's unique identifier (id).
      */
     onCancel?: (id: string | number) => void;
+    /**
+     * HTML id attribute for the button element.
+     */
+    id?: string;
+    /**
+     * Specifies the name of the button.
+     */
+    name?: string;
+    /**
+     * An ARIA label for the button.
+     */
+    "aria-label"?: string;
 }
 
 interface IFileUploadItem {
@@ -56,9 +68,18 @@ interface IFileUploadItem {
      */
     blob: IBlobProps;
     /**
-     * Action buttons available for the file row.
+     * An array of action button objects to display in the file upload item.
+     * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
+     * Each action button is rendered with `layout="text"` and `appearance="secondary"` (these cannot be overridden).
+     * For icon-only buttons, use the `Icon` prop (required).
+     * @example
+     * actions={[
+     *   { Icon: Eye, onClick: handleAction },
+     *   { Icon: Download, onClick: handleDownload },
+     *   { Icon: X, onCancel: handleCancel }
+     * ]}
      */
-    actions: IActionProp[];
+    actions?: IFileUploadActionProps[];
     /**
      * Icon representing the file type.
      */
@@ -75,6 +96,18 @@ interface IFileUploadItem {
      * Progress percentage for the upload (0-100).
      */
     progressPercent?: number;
+    /**
+     * Indicates an error state for the upload.
+     */
+    error?: boolean;
+    /**
+     * Helper text displayed below the progress bar (e.g., error messages).
+     */
+    helperText?: string;
+    /**
+     * Text displayed during upload progress.
+     */
+    uploadingText?: string;
 }
 
 const FileUploadItem: FC<IFileUploadItem> = ({
@@ -86,32 +119,78 @@ const FileUploadItem: FC<IFileUploadItem> = ({
     actions,
     loading,
     progressPercent,
-    id
+    id,
+    error,
+    helperText,
+    uploadingText
 }) => {
-    const cancelAction = actions.find(({ onCancel }) => Boolean(onCancel));
+    const hasActions = actions && actions.length > 0;
 
-    let visibleActions: IActionProp[];
-    if (loading) {
-        visibleActions = cancelAction ? [cancelAction] : [];
-    } else {
-        visibleActions = actions.filter(({ onCancel }) => !onCancel);
-    }
+    const actionsWithIds = useMemo(() => {
+        if (!actions) return [];
+        return actions.map((action) => {
+            const { onCancel, ...restAction } = action;
+            return {
+                ...restAction,
+                id: action.id || `fileUpload-action-${nanoid()}`,
+                onClick: onCancel
+                    ? () => {
+                          onCancel(id);
+                      }
+                    : action.onClick
+            };
+        });
+    }, [actions, id]);
 
     return (
         <div className={classNames("fileUploadList", className)}>
             {/* States => (image,audio,video, document) */}
             <div className="fileUploadList__row audio">
-                {loading ? (
-                    <div className="fileUploadList__item fileUploadList__item--progress">
-                        <ProgressBar
-                            percent={progressPercent}
-                            size="small"
-                            uploadingText="Uploading"
-                            type="determinate"
-                            label={name}
-                            className="fileUploadList__progress"
-                        />
-                    </div>
+                {loading || error ? (
+                    <>
+                        <div className="fileUploadList__item fileUploadList__item--withProgress">
+                            <div className="fileUploadList__file">
+                                <Icon className={`fileUploadList__fileIcon ${"avatar__icon"}`} size={16} />
+                            </div>
+                            <Text className="fileUploadList__text ellipsis-text" as="span" variant="labelMediumMedium">
+                                {name}
+                            </Text>
+                        </div>
+                        <div className="fileUploadList__item" />
+                        <div className="fileUploadList__item" />
+                        <div
+                            className={classNames("fileUploadList__item", {
+                                "fileUploadList__item--actionsLoading": loading || error
+                            })}
+                        >
+                            {hasActions && (
+                                <ButtonGroup className="fileUploadList__actions" size="small">
+                                    {actionsWithIds.map((action) => {
+                                        return action.Icon ? (
+                                            <Button
+                                                key={action.id}
+                                                {...action}
+                                                layout="text"
+                                                appearance="secondary"
+                                                className="fileUploadList__button"
+                                            />
+                                        ) : null;
+                                    })}
+                                </ButtonGroup>
+                            )}
+                        </div>
+                        <div className="fileUploadList__item fileUploadList__item--progress">
+                            <ProgressBar
+                                percent={progressPercent}
+                                size="small"
+                                uploadingText={uploadingText}
+                                type="determinate"
+                                className="fileUploadList__progress"
+                                error={error}
+                                helperText={helperText}
+                            />
+                        </div>
+                    </>
                 ) : (
                     <>
                         <div className="fileUploadList__item">
@@ -132,34 +211,25 @@ const FileUploadItem: FC<IFileUploadItem> = ({
                                 {blob.size}
                             </Text>
                         </div>
+                        <div className="fileUploadList__item">
+                            {hasActions && (
+                                <ButtonGroup className="fileUploadList__actions" size="small">
+                                    {actionsWithIds.map((action) => {
+                                        return action.Icon ? (
+                                            <Button
+                                                key={action.id}
+                                                {...action}
+                                                layout="text"
+                                                appearance="secondary"
+                                                className="fileUploadList__button"
+                                            />
+                                        ) : null;
+                                    })}
+                                </ButtonGroup>
+                            )}
+                        </div>
                     </>
                 )}
-                <div
-                    className={classNames("fileUploadList__item", { "fileUploadList__item--actionsLoading": loading })}
-                >
-                    <ButtonGroup className="fileUploadList__actions" size="small">
-                        {visibleActions.map(({ Icon: ActionIcon, actionHandler, onCancel }) => {
-                            const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-                                if (loading && onCancel) {
-                                    onCancel(id);
-                                } else {
-                                    actionHandler(id, event);
-                                }
-                            };
-                            return (
-                                <Button
-                                    key={`action-${ActionIcon.name || ActionIcon.displayName || Math.random()}`}
-                                    size="small"
-                                    layout="text"
-                                    appearance="secondary"
-                                    className="fileUploadList__button"
-                                    Icon={ActionIcon ?? X}
-                                    onClick={handleClick}
-                                />
-                            );
-                        })}
-                    </ButtonGroup>
-                </div>
             </div>
         </div>
     );
