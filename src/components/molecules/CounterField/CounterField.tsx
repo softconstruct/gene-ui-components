@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useMemo, useState } from "react";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
 
@@ -102,6 +102,21 @@ interface ICounterFieldProps {
     autoFocus?: boolean;
 }
 
+const clampValue = (value?: number | string, min?: number, max?: number): string => {
+    if (value === undefined) return "";
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) return String(value);
+
+    let clamped = numericValue;
+    if (min !== undefined && clamped < min) {
+        clamped = min;
+    }
+    if (max !== undefined && clamped > max) {
+        clamped = max;
+    }
+    return String(clamped);
+};
+
 /**
  * The Counter Field component is an input field designed to increment or decrement a numerical value.
  * It typically includes buttons for increasing or decreasing the count and can be configured to accept user input directly.
@@ -130,40 +145,47 @@ const CounterField: FC<ICounterFieldProps> = ({
 }) => {
     const isControlled = value !== undefined;
 
-    const clampedDefaultValue = useMemo(() => {
-        let clamped = defaultValue;
-        if (min !== undefined && clamped < min) {
-            clamped = min;
-        }
-        if (max !== undefined && clamped > max) {
-            clamped = max;
-        }
-        return clamped;
-    }, [defaultValue, min, max]);
+    const [internalStringValue, setInternalStringValue] = useState<string>("");
+    const firstRender = useRef(true);
 
-    const [internalStringValue, setInternalStringValue] = useState(String(clampedDefaultValue));
-
-    const clampedValueProp = useMemo(() => {
-        if (value === undefined) return value;
-        const numValue = typeof value === "string" ? Number(value) : value;
-        if (!Number.isFinite(numValue)) return value;
-
-        let clamped = numValue;
-        if (min !== undefined && clamped < min) {
-            clamped = min;
+    useEffect(() => {
+        if (!isControlled) {
+            setInternalStringValue(clampValue(defaultValue, min, max));
         }
-        if (max !== undefined && clamped > max) {
-            clamped = max;
-        }
-        return String(clamped);
-    }, [value, min, max]);
+        firstRender.current = false;
+    }, []);
 
-    const currentStringValue = isControlled ? clampedValueProp : internalStringValue;
+    const getCurrentStringValue = (): string => {
+        if (isControlled) {
+            return firstRender.current ? clampValue(value, min, max) : String(value ?? "");
+        }
+        return internalStringValue;
+    };
+
+    const currentStringValue = getCurrentStringValue();
 
     const validNumericValue = useMemo(() => {
         const numericValue = Number(currentStringValue);
         return Number.isFinite(numericValue) ? numericValue : 0;
     }, [currentStringValue]);
+
+    const handleValueChange = (stepValue: number, event: MouseEvent<HTMLButtonElement>) => {
+        const nextValue = validNumericValue + stepValue;
+
+        let clampedValue = nextValue;
+        if (stepValue > 0 && max !== undefined) {
+            clampedValue = Math.min(nextValue, max);
+        } else if (stepValue < 0 && min !== undefined) {
+            clampedValue = Math.max(nextValue, min);
+        }
+
+        const nextValueString = String(clampedValue);
+
+        if (!isControlled) {
+            setInternalStringValue(nextValueString);
+        }
+        onChange?.(nextValueString, event);
+    };
 
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         const inputValue = event.target.value;
@@ -175,25 +197,8 @@ const CounterField: FC<ICounterFieldProps> = ({
         onChange?.(inputValue, event);
     };
 
-    const handleDecrement = (event: MouseEvent<HTMLButtonElement>) => {
-        const nextValue = validNumericValue - step;
-        const clampedValue = min !== undefined ? Math.max(nextValue, min) : nextValue;
-        const nextValueString = String(clampedValue);
-        if (!isControlled) {
-            setInternalStringValue(nextValueString);
-        }
-        onChange?.(nextValueString, event);
-    };
-
-    const handleIncrement = (event: MouseEvent<HTMLButtonElement>) => {
-        const nextValue = validNumericValue + step;
-        const clampedValue = max !== undefined ? Math.min(nextValue, max) : nextValue;
-        const nextValueString = String(clampedValue);
-        if (!isControlled) {
-            setInternalStringValue(nextValueString);
-        }
-        onChange?.(nextValueString, event);
-    };
+    const handleButtonClick = (event: MouseEvent<HTMLButtonElement>, isIncrement: boolean) =>
+        handleValueChange(isIncrement ? step : -step, event);
 
     const inputId = useMemo(() => `counter-field-${nanoid()}`, []);
 
@@ -201,46 +206,30 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
-        const numericValue = Number(inputValue);
-        if (Number.isFinite(numericValue)) {
-            let clampedValue = numericValue;
-            if (min !== undefined && clampedValue < min) {
-                clampedValue = min;
+        const clampedValueString = clampValue(inputValue, min, max);
+        if (clampedValueString !== inputValue) {
+            if (!isControlled) {
+                setInternalStringValue(clampedValueString);
             }
-            if (max !== undefined && clampedValue > max) {
-                clampedValue = max;
-            }
-            if (clampedValue !== numericValue) {
-                const clampedValueString = String(clampedValue);
-
-                if (!isControlled) {
-                    setInternalStringValue(clampedValueString);
+            const syntheticEvent = {
+                ...e,
+                target: {
+                    ...e.target,
+                    value: clampedValueString
                 }
-                const syntheticEvent = {
-                    ...e,
-                    target: {
-                        ...e.target,
-                        value: clampedValueString
-                    }
-                } as ChangeEvent<HTMLInputElement>;
+            } as ChangeEvent<HTMLInputElement>;
 
-                onChange?.(clampedValueString, syntheticEvent);
-            }
+            onChange?.(clampedValueString, syntheticEvent);
         }
         onInputBlur?.(e);
     };
-
-    const isIncrementDisabled = useMemo(() => {
-        if (disabled || readOnly) return true;
-        if (max === undefined) return false;
-        return validNumericValue >= max;
-    }, [disabled, readOnly, max, validNumericValue]);
-
-    const isDecrementDisabled = useMemo(() => {
-        if (disabled || readOnly) return true;
-        if (min === undefined) return false;
-        return validNumericValue <= min;
-    }, [disabled, readOnly, min, validNumericValue]);
+    const buttonsDisabled = useMemo(() => {
+        const baseDisabled = disabled || readOnly;
+        return {
+            increment: baseDisabled || (max !== undefined && validNumericValue >= max),
+            decrement: baseDisabled || (min !== undefined && validNumericValue <= min)
+        };
+    }, [disabled, readOnly, max, min, validNumericValue]);
 
     return (
         <div
@@ -275,9 +264,9 @@ const CounterField: FC<ICounterFieldProps> = ({
                     layout="fill"
                     size={size}
                     Icon={Minus}
-                    disabled={isDecrementDisabled}
+                    disabled={buttonsDisabled.decrement}
                     aria-label={ariaLabelDecrement}
-                    onClick={handleDecrement}
+                    onClick={(event) => handleButtonClick(event, false)}
                 />
                 <TextField
                     id={inputId}
@@ -300,9 +289,9 @@ const CounterField: FC<ICounterFieldProps> = ({
                     layout="fill"
                     size={size}
                     Icon={Plus}
-                    disabled={isIncrementDisabled}
+                    disabled={buttonsDisabled.increment}
                     aria-label={ariaLabelIncrement}
-                    onClick={handleIncrement}
+                    onClick={(event) => handleButtonClick(event, true)}
                 />
             </div>
             {helperText && (
