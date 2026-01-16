@@ -7,7 +7,7 @@ import Image, { IImageProps } from "./index";
 describe("Image ", () => {
     let setup: ReactWrapper<IImageProps>;
     beforeEach(() => {
-        setup = mount(<Image />);
+        setup = mount(<Image src={''} />);
     });
 
     it("renders without crashing", () => {
@@ -21,5 +21,32 @@ describe("Image ", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    // Your tests here
+    it("renders title prop correctly", () => {
+        const title = "Testing";
+        const wrapper = setup.setProps({ title });
+
+        expect(wrapper.find(Image).props().title).toBe(title);
+    });
+
+    it("renders description prop correctly", () => {
+        const description = "Testing";
+        const wrapper = setup.setProps({ description });
+
+        expect(wrapper.find(Image).props().description).toBe(description);
+    });
+
+
+    it("renders loading prop correctly", () => {
+        const wrapper = setup.setProps({ loading: true });
+
+        expect(wrapper.find(".image__loader").exists());
+    });
+
+    it("renders loadingText prop correctly", () => {
+        const loadingText = "Test loading";
+        const wrapper = setup.setProps({ loading: true, loadingText });
+
+        expect(wrapper.find(Image).props().loadingText).toBe(loadingText);
+    });
+
 });

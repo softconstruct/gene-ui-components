@@ -1,61 +1,187 @@
 import React, { FC } from "react";
 import classNames from "classnames";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { ImageIcon } from "lucide-react";
+import { Eye, IconProps } from "@geneui/icons";
 
-import { Download, Eye, Tag, ThreeDotsHorizontal } from "@geneui/icons";
-
-import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
-import ButtonGroup from "@components/molecules/ButtonGroup";
+import Loader from "@components/atoms/Loader";
+import Button from "@components/atoms/Button";
 import Checkbox from "@components/molecules/Checkbox";
+import ButtonGroup from "@components/molecules/ButtonGroup";
 
 // Styles
 import "./Image.scss";
-// import Loader from "@components/atoms/Loader";
-// eslint-disable-next-line import/no-extraneous-dependencies
-// import { ImageIcon } from "lucide-react";
+
+type ImageAspectRatio = '1:1' | '3:2' | '2:1' | '16:9';
+
+interface IImageAction {
+    /**
+     * Unique identifier for the action item, forwarded to the callback.
+     */
+    id: number | string;
+    /**
+     * Text label for the action, used for tooltips or overflow menus.
+     */
+    label?: string;
+    /**
+     * The icon component to display for this action.
+     */
+    Icon?: FC<IconProps>;
+    /**
+     * Callback triggered when the action item is clicked.
+     */
+    onActionItemClick: (event: React.MouseEvent<HTMLButtonElement>, actionId: number | string) => void;
+}
 
 interface IImageProps {
     /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     * Additional CSS classes for the root element.
+     * Use this for positioning relative to the parent component.
      */
     className?: string;
-    // fill Image component props interface
+    /**
+     * Indicates whether the image resource is currently loading.
+     */
+    loading?: boolean;
+    /**
+     * Text displayed alongside the loader.
+     */
+    loadingText?: string;
+    /**
+     * The primary title text for the image card.
+     */
+    title?: string;
+    /**
+     * A brief description or subtitle for the image.
+     */
+    description?: string;
+    /**
+     * List of action items (buttons) available in the footer.
+     */
+    actions?: IImageAction[];
+    /**
+     * Indicates whether the image card is currently selected.
+     */
+    selected?: boolean;
+    /**
+     * Callback triggered when the selection checkbox is toggled.
+     */
+    onSelectionChange?: () => void;
+    /**
+     * Callback triggered when the image body is clicked.
+     */
+    onImageClick?: () => void;
+    /**
+     * Defines the aspect ratio of the image container.
+     */
+    aspectRatio?: ImageAspectRatio;
+    /**
+     * The source URL of the image to display.
+     */
+    src: string;
+    /**
+     * Indicates if the component is in an error state (e.g., image failed to load).
+     */
+    error?: boolean;
 }
 
 /**
- * The Image Component is used to display visual content within an interface. It supports various image formats, sizes, and ratios, allowing for responsive and accessible image handling.
+ * The Image component displays visual content with support for loading states,
+ * error handling, selection, and footer actions.
  */
-const Image: FC<IImageProps> = ({ className }) => {
+const Image: FC<IImageProps> = ({
+    className,
+    src = "https://placehold.co/600x400",
+    title,
+    description,
+    loading = false,
+    loadingText = 'Loading',
+    error = false,
+    aspectRatio = '1:1',
+    actions = [],
+    selected = false,
+    onSelectionChange,
+    onImageClick,
+}) => {
+    const hasActions = actions && actions.length > 0;
+    const aspectRatioClassName = `image_size_${aspectRatio.replace(':', 'x')}`;
+
     return (
-        // Size - .image_size_1x1, .image_size_3x2, .image_size_2x1, .image_size_16x9
-        // Failed state - .image_failed
-        <article className={classNames("image image_size_3x2", className)}>
-            <div className="image__body">
-                <button type="button" className="image__preview">
-                    <img className="image__img" src="https://picsum.photos/id/849/500/500" alt="" />
+        <article className={classNames(`image ${aspectRatioClassName}`, className)}>
+            <div
+                className="image__body"
+                onClick={onImageClick}
+            >
+                <button
+                    type="button"
+                    className={classNames("image__preview", {
+                        'image_failed': error,
+                    })}
+                >
+                    {!loading && !error && (
+                        <img
+                            className="image__img"
+                            src={src}
+                            alt={title || ""}
+                        />
+                    )}
+
                     <span className="image__content">
-                        <Eye className="image__overlay" size={20} />
-                        {/* <Loader className="image__loader" size="large" text="Loading" textPosition="below" /> */}
-                        {/* <ImageIcon className="image__error" size={24} /> */}
+                        {!loading && !error && (
+                            <Eye className="image__overlay" size={20} />
+                        )}
+                        {loading && (
+                            <Loader
+                                className="image__loader"
+                                size="large"
+                                text={loadingText}
+                                textPosition="below"
+                            />
+                        )}
+                        {error && (
+                            <ImageIcon className="image__error" size={24} />
+                        )}
                     </span>
                 </button>
-                <Checkbox className="image__checkbox" />
+
+                {onSelectionChange && !loading && (
+                    <Checkbox
+                        checked={selected}
+                        onChange={onSelectionChange}
+                        className="image__checkbox"
+                    />
+                )}
             </div>
+
             <div className="image__footer">
                 <div className="image__info">
-                    <Text as="h3" variant="labelMediumSemibold">
-                        Title
-                    </Text>
-                    <Text as="p" variant="bodyMediumRegular">
-                        Description
-                    </Text>
+                    {title && (
+                        <Text as="h3" variant="labelMediumSemibold">
+                            {title}
+                        </Text>
+                    )}
+                    {description && (
+                        <Text as="p" variant="bodyMediumRegular">
+                            {description}
+                        </Text>
+                    )}
                 </div>
-                <ButtonGroup className="image__actions" size="small">
-                    <Button appearance="secondary" layout="text" Icon={Download} />
-                    <Button appearance="secondary" layout="text" Icon={Tag} />
-                    <Button appearance="secondary" layout="text" Icon={ThreeDotsHorizontal} />
-                </ButtonGroup>
+
+                {hasActions && (
+                    <ButtonGroup className="image__actions" size="small">
+                        {actions.map(({ Icon, id, label, onActionItemClick }) => (
+                            <Button
+                                key={id}
+                                onClick={(event) => onActionItemClick(event, id)}
+                                appearance="secondary"
+                                layout="text"
+                                Icon={Icon}
+                                disabled={loading}
+                            />
+                        ))}
+                    </ButtonGroup>
+                )}
             </div>
         </article>
     );
