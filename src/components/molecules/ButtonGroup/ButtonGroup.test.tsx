@@ -52,6 +52,22 @@ describe("ButtonGroup ", () => {
         expect(setup.find(Button).at(1).text()).toBe("secondary");
     });
 
+    it("renders prop iconOnly correct", () => {
+        const wrapper = mount(
+            <ButtonGroup size="large" iconOnly>
+                <Button appearance="primary">Button 1</Button>
+                <Button appearance="secondary">Button 2</Button>
+                <Button appearance="primary">Button 3</Button>
+                <Button appearance="secondary">Button 4</Button>
+            </ButtonGroup>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        wrapper.find(Button).forEach((button) => {
+            expect(button.text()).not.toContain("Button");
+        });
+    });
+
     it("applies size prop to all child buttons", () => {
         const wrapper = mount(
             <ButtonGroup size="large">
