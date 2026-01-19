@@ -27,6 +27,11 @@ interface IButtonGroupProps {
      * Possible values: `large | medium | small | "smallNudge"`
      */
     size?: IButtonProps["size"];
+    /**
+     * Renders visible children as icons only, without labels.
+     * Ignored for menu items.
+     */
+    iconOnly?: boolean;
 }
 
 const MAX_VISIBLE_BUTTONS = 3;
@@ -34,7 +39,7 @@ const MAX_VISIBLE_BUTTONS = 3;
 /**
  * A button group clusters multiple buttons together. Use button groups in toolbars, forms, and modals, etc.
  */
-const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "medium" }) => {
+const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "medium", iconOnly = false }) => {
     const [menuPropsForPopover, setMenuPropsForPopover] = useState({});
     const [splitChildren, setSplitChildren] = useState(children);
     const [menuData, setMenuData] = useState<IMenuItemProps[]>([]);
@@ -42,13 +47,14 @@ const ButtonGroup: FC<IButtonGroupProps> = ({ className, children, size = "mediu
 
     useEffect(() => {
         if (!children) return;
-        const clonedChildren = Children.map(children, (el) => {
+        const clonedChildren = Children.map(children, (el, index) => {
             if (isValidElement(el)) {
                 const generatedId = el.props.id || `button-group-${nanoid()}`;
                 return cloneElement(el, {
                     ...el.props,
                     size: size as IButtonProps["size"],
-                    id: generatedId
+                    id: generatedId,
+                    children: iconOnly && index < MAX_VISIBLE_BUTTONS ? null : el.props.children
                 });
             }
             return el;
