@@ -139,6 +139,7 @@ const TableRow: FC<ITableRow> = ({
                 className={classNames(`table__row table__row_tbody table__row_${row.original.rowStatus}`, {
                     table__row_selected: isSelected,
                     table__pinned: isPinned,
+                    table__row_pinned: isPinned,
                     table__pinned_horizontal: isPinned
                 })}
                 onClick={handleRowClick}
@@ -191,7 +192,13 @@ const TableRow: FC<ITableRow> = ({
                     const headerText = colDef.header;
                     const cellLabel = typeof headerText === "string" ? headerText : `Column ${rowIndex + 1}`;
                     return (
-                        <td key={cell.id} className="table__td" role={withCheckbox ? "gridcell" : undefined}>
+                        <td
+                            key={cell.id}
+                            className={classNames("table__td", {
+                                table__td_pinned: cell.column.getIsPinned()
+                            })}
+                            role={withCheckbox ? "gridcell" : undefined}
+                        >
                             <div className={classNames(`table__content ${CellClassNames[colDef.type]}`)}>
                                 <Cell
                                     type={colDef.type as ICellProps["type"]}

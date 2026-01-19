@@ -108,6 +108,7 @@ const THead = forwardRef<HTMLTableSectionElement, ITableHead>(
                     scope={header.subHeaders.length ? "colgroup" : "col"}
                     className={classNames("table__th", {
                         table__th_group: header.subHeaders.length,
+                        table__td_pinned: header.column.getIsPinned(),
                         table__th_active: !!activeHeaders?.[header.id]
                     })}
                     aria-sort={getAriaSortValue(sortDirection)}
