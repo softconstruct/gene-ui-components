@@ -710,13 +710,18 @@
         min-height: var(--guit-sem-dimension-height-large);
 
         &_empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             column-gap: var(--guit-ref-spacing-xsmall);
             padding-block: var(--guit-ref-spacing-xsmall);
             padding-inline: var(--guit-ref-spacing-large);
         }
 
         &_header {
+            justify-content: space-between;
             column-gap: var(--guit-ref-spacing-xsmall);
+            width: 100%;
         }
 
         &_checkbox {

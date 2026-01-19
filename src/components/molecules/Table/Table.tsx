@@ -733,7 +733,7 @@ const Table: FC<TablePropsType> = ({
                     </table>
                 </Scrollbar>
 
-                {withPagination && !withVirtualScroll && rowCount > 0 && (
+                {withPagination && !withVirtualScroll && rowCount > 0 && !loading && (
                     <div className="dataTable__pagination">
                         <div className="dataTable__pagination_controls">
                             <Pagination
