@@ -58,14 +58,32 @@ export const Default: Story = {
     )
 };
 
-export const NoSplit: Story = {
+export const IconOnly: Story = {
     render: (props) => (
-        <ButtonGroup {...props}>
+        <ButtonGroup iconOnly {...props}>
             <Button size="medium" appearance="primary" Icon={Letter}>
                 primary
             </Button>
             <Button size="medium" appearance="secondary" Icon={Note}>
                 secondary
+            </Button>
+            <Button size="medium" appearance="secondary" Icon={Heart}>
+                with icon
+            </Button>
+            <Button size="medium" appearance="danger" Icon={Heart}>
+                Danger
+            </Button>
+            <Button size="medium" appearance="success" disabled>
+                Disabled
+            </Button>
+            <Button size="medium" appearance="danger" iconPosition="before">
+                Danger
+            </Button>
+            <Button size="medium" appearance="success">
+                Success
+            </Button>
+            <Button size="medium" Icon={Globe} iconPosition="before">
+                With icon
             </Button>
         </ButtonGroup>
     )
