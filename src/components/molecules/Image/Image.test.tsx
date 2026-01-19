@@ -7,7 +7,7 @@ import Image, { IImageProps } from "./index";
 describe("Image ", () => {
     let setup: ReactWrapper<IImageProps>;
     beforeEach(() => {
-        setup = mount(<Image src={''} />);
+        setup = mount(<Image src="" />);
     });
 
     it("renders without crashing", () => {
@@ -35,7 +35,6 @@ describe("Image ", () => {
         expect(wrapper.find(Image).props().description).toBe(description);
     });
 
-
     it("renders loading prop correctly", () => {
         const wrapper = setup.setProps({ loading: true });
 
@@ -48,5 +47,4 @@ describe("Image ", () => {
 
         expect(wrapper.find(Image).props().loadingText).toBe(loadingText);
     });
-
 });

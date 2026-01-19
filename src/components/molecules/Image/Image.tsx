@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent } from "react";
+import React, { ChangeEvent, FC, KeyboardEvent, MouseEvent, useRef } from "react";
 import classNames from "classnames";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ImageIcon } from "lucide-react";
@@ -11,8 +11,12 @@ import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
 
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
+
 // Styles
 import "./Image.scss";
+
+import Tooltip from "../Tooltip";
 
 type ImageAspectRatio = "1:1" | "3:2" | "2:1" | "16:9";
 
@@ -36,6 +40,10 @@ interface IImageAction {
 }
 
 interface IImageProps {
+    /**
+     * Unique identifier for the image component.
+     */
+    id?: string;
     /**
      * Additional CSS classes for the root element.
      * Use this for positioning relative to the parent component.
@@ -68,11 +76,14 @@ interface IImageProps {
     /**
      * Callback triggered when the selection checkbox is toggled.
      */
-    onSelectionChange?: () => void;
+    onSelectionChange?: (e: ChangeEvent<HTMLInputElement>, id: string | null) => void;
     /**
      * Callback triggered when the image body is clicked.
      */
-    // onImageClick?: () => void;
+    onImageClick?: (
+        e: React.MouseEvent<HTMLElement, globalThis.MouseEvent> | React.KeyboardEvent<HTMLElement>,
+        id: string | null
+    ) => void;
     /**
      * Defines the aspect ratio of the image container.
      */
@@ -92,8 +103,9 @@ interface IImageProps {
  * error handling, selection, and footer actions.
  */
 const Image: FC<IImageProps> = ({
+    id = null,
     className,
-    src = "https://picsum.photos/id/237/500/500",
+    src,
     title,
     description,
     loading = false,
@@ -102,17 +114,25 @@ const Image: FC<IImageProps> = ({
     aspectRatio = "1:1",
     actions = [],
     selected = false,
-    onSelectionChange
-    // onImageClick,
+    onSelectionChange,
+    onImageClick
 }) => {
+    const titleRef = useRef<HTMLSpanElement | null>(null);
+    const descriptionRef = useRef<HTMLSpanElement | null>(null);
+    const isTitleTruncated = useEllipsisDetection(titleRef, [title]);
+    const isDescriptionTruncated = useEllipsisDetection(descriptionRef, [description]);
+
     const hasActions = actions && actions.length > 0;
     const aspectRatioClassName = `image_size_${aspectRatio.replace(":", "x")}`;
 
     return (
         <article className={classNames(`image ${aspectRatioClassName}`, className)}>
             <div
+                role="button"
+                tabIndex={0}
                 className="image__body"
-                // onClick={onImageClick}
+                onClick={(e) => onImageClick?.(e, id)}
+                onKeyDown={(e) => onImageClick?.(e, id)}
             >
                 <button
                     type="button"
@@ -127,40 +147,54 @@ const Image: FC<IImageProps> = ({
                         {loading && (
                             <Loader className="image__loader" size="large" text={loadingText} textPosition="below" />
                         )}
-                        {error && <ImageIcon className="image__error" size={24} />}
+                        {error && !loading && <ImageIcon className="image__error" size={24} />}
                     </span>
                 </button>
 
                 {onSelectionChange && !loading && (
-                    <Checkbox checked={selected} onChange={onSelectionChange} className="image__checkbox" />
+                    <div
+                        className="image__checkbox"
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.stopPropagation()}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <Checkbox checked={selected} onChange={(e) => onSelectionChange(e, id)} />
+                    </div>
                 )}
             </div>
 
             <div className="image__footer">
                 <div className="image__info">
                     {title && (
-                        <Text as="h3" variant="labelMediumSemibold">
-                            {title}
-                        </Text>
+                        <Tooltip text={title} isVisible={isTitleTruncated}>
+                            <Text ref={titleRef} as="h3" variant="labelMediumSemibold" className="ellipsis-text">
+                                {title}
+                            </Text>
+                        </Tooltip>
                     )}
                     {description && (
-                        <Text as="p" variant="bodyMediumRegular">
-                            {description}
-                        </Text>
+                        <Tooltip text={description} isVisible={isDescriptionTruncated}>
+                            <Text ref={descriptionRef} as="p" variant="bodyMediumRegular" className="ellipsis-text">
+                                {description}
+                            </Text>
+                        </Tooltip>
                     )}
                 </div>
 
                 {hasActions && (
-                    <ButtonGroup className="image__actions" size="small">
-                        {actions.map(({ Icon, id, onActionItemClick }) => (
+                    <ButtonGroup iconOnly className="image__actions" size="small">
+                        {actions.map(({ Icon, id: actionId, label, onActionItemClick }) => (
                             <Button
-                                key={id}
-                                onClick={(event: MouseEvent<HTMLButtonElement>) => onActionItemClick(event, id)}
+                                key={actionId}
+                                onClick={(event: MouseEvent<HTMLButtonElement>) => onActionItemClick(event, actionId)}
                                 appearance="secondary"
                                 layout="text"
                                 Icon={Icon}
                                 disabled={loading}
-                            />
+                            >
+                                {label}
+                            </Button>
                         ))}
                     </ButtonGroup>
                 )}
