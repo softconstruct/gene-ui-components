@@ -21,7 +21,8 @@ const meta: Meta<IButtonGroupProps> = {
             control: "select",
             options: ["small", "medium", "large", "smallNudge"],
             ...propCategory.appearance
-        })
+        }),
+        iconOnly: args({ control: "boolean", ...propCategory.appearance })
     },
     args: {}
 };
