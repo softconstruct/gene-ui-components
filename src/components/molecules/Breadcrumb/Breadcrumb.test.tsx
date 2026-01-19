@@ -1,5 +1,5 @@
 import React from "react";
-import { ReactWrapper, mount } from "enzyme";
+import { mount, ReactWrapper } from "enzyme";
 
 // Components
 import Breadcrumb, { IBreadcrumbProps } from "./index";
@@ -7,7 +7,7 @@ import Breadcrumb, { IBreadcrumbProps } from "./index";
 describe("Breadcrumb ", () => {
     let setup: ReactWrapper<IBreadcrumbProps>;
     beforeEach(() => {
-        setup = mount(<Breadcrumb />);
+        setup = mount(<Breadcrumb breadCrumbsData={[]} />);
     });
 
     it("renders without crashing", () => {
