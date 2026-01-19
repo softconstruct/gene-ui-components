@@ -1,3 +1,4 @@
+import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { ArrowBounceUp, Document, Receipt } from "@geneui/icons";
@@ -11,8 +12,11 @@ const meta: Meta<IBreadcrumbProps> = {
     title: "Molecules/Breadcrumb",
     component: Breadcrumb,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance })
-        // fill Breadcrumb component argTypes
+        className: args({ control: "false", ...propCategory.appearance }),
+        breadCrumbsData: args({ control: "false", ...propCategory.content }),
+        iconOnly: args({ control: "boolean", ...propCategory.appearance }),
+        render: args({ control: "false", ...propCategory.content }),
+        onClick: args({ control: "false", ...propCategory.action })
     },
     args: {
         // fill Breadcrumb component args
@@ -39,13 +43,36 @@ export const Default: Story = {
 
 export const IconOnly: Story = {
     args: {
+        iconOnly: true,
         breadCrumbsData: [
-            { path: "javascript:void(0)", Icon: Document },
+            { title: "Home", path: "javascript:void(0)", Icon: Document },
             {
+                title: "Products",
                 path: "javascript:void(0)",
                 Icon: Receipt
             },
-            { path: "javascript:void(0)", Icon: ArrowBounceUp }
+            { title: "Current", path: "javascript:void(0)", Icon: ArrowBounceUp }
         ]
     }
+};
+
+export const WithRender: Story = {
+    args: {
+        breadCrumbsData: [
+            { title: "Home", path: "javascript:void(0)" },
+            {
+                title: "Products",
+                path: "javascript:void(0)",
+                Icon: Receipt
+            },
+            { title: "Current Page 1", path: "javascript:void(0)" },
+            { title: "Current Page 2", path: "javascript:void(0)" },
+            { title: "Current Page 3", path: "javascript:void(0)" },
+            { title: "Current Page 4", path: "javascript:void(0)" },
+            { title: "Current Page 5", path: "javascript:void(0)" }
+        ],
+        // eslint-disable-next-line jsx-a11y/anchor-has-content
+        render: (linkData) => <a aria-label={linkData.title} href={linkData.path} />
+    },
+    render: (props) => <Breadcrumb {...props} />
 };

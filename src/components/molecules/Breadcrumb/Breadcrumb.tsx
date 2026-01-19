@@ -1,13 +1,20 @@
-import React, { createContext, FC, useMemo } from "react";
+import React, { createContext, FC, ReactNode, useMemo } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
 
-import { ChevronRight, Globe, Tag, ThreeDotsHorizontal } from "@geneui/icons";
+import { ChevronRight, Globe, IconProps, Tag, ThreeDotsHorizontal } from "@geneui/icons";
 
 import BreadcrumbItem, { IBreadcrumbItemProps } from "@components/molecules/Breadcrumb/BreadCrumbItem";
 
 // Styles
 import "./Breadcrumb.scss";
+
+export type IBreadcrumbRender = (linkData: {
+    path?: string;
+    title?: string;
+    isActive?: boolean;
+    Icon?: FC<IconProps>;
+}) => ReactNode;
 
 interface IBreadcrumbProps {
     /**
@@ -16,9 +23,13 @@ interface IBreadcrumbProps {
      */
     className?: string;
     /**
-     * Custom render function for breadcrumb item.
+     * Custom render function for breadcrumb links.
      */
-    // render?: (linkData: { path?: string; title?: string; isActive?: boolean; Icon?: FC }) => ReactNode;
+    render?: IBreadcrumbRender;
+    /**
+     * Called when a breadcrumb item is clicked.
+     */
+    onClick?: (item: IBreadcrumbItemProps) => void;
     breadCrumbsData: IBreadcrumbItemProps[];
     iconOnly?: boolean;
 }
@@ -26,6 +37,8 @@ interface IBreadcrumbProps {
 interface IBreadcrumbContextProps {
     iconOnly?: boolean;
     isLastItem?: boolean;
+    render?: IBreadcrumbRender;
+    onClick?: (item: IBreadcrumbItemProps) => void;
 }
 
 export const BreadcrumbContext = createContext<IBreadcrumbContextProps>({} as IBreadcrumbContextProps);
@@ -34,15 +47,19 @@ interface BreadcrumbItemWrapperProps {
     props: IBreadcrumbItemProps;
     iconOnly: boolean;
     isLastItem: boolean;
+    render?: IBreadcrumbRender;
+    onClick?: (item: IBreadcrumbItemProps) => void;
 }
 
-const BreadcrumbItemWrapper: FC<BreadcrumbItemWrapperProps> = ({ props, iconOnly, isLastItem }) => {
+const BreadcrumbItemWrapper: FC<BreadcrumbItemWrapperProps> = ({ props, iconOnly, isLastItem, render, onClick }) => {
     const itemContextValue: IBreadcrumbContextProps = useMemo(
         () => ({
             iconOnly,
-            isLastItem
+            isLastItem,
+            render,
+            onClick
         }),
-        [iconOnly, isLastItem]
+        [iconOnly, isLastItem, render, onClick]
     );
 
     return (
@@ -55,7 +72,7 @@ const BreadcrumbItemWrapper: FC<BreadcrumbItemWrapperProps> = ({ props, iconOnly
 /**
  * Breadcrumb component is a navigational aid that displays the user's current location within a website or application. It provides a trail of links back to the starting or entry point, allowing users to easily navigate through the hierarchical structure of the site. Breadcrumbs enhance usability by offering a clear path for users to trace their steps and return to previous sections.
  */
-const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly = false }) => {
+const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly = false, render, onClick }) => {
     return (
         <>
             <div className={classNames("breadcrumb", className)}>
@@ -72,6 +89,8 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly
                                         props={props}
                                         iconOnly={iconOnly}
                                         isLastItem={isLastItem}
+                                        render={render}
+                                        onClick={onClick}
                                     />
                                 );
                             })}

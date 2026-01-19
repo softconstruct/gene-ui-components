@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import React, { cloneElement, FC, isValidElement, useContext } from "react";
 import classNames from "classnames";
 
 import { ChevronRight, FolderOpen, IconProps } from "@geneui/icons";
@@ -17,12 +17,17 @@ interface IBreadcrumbItemProps {
 }
 
 const BreadcrumbItem: FC<IBreadcrumbItemProps> = ({ path, title, Icon }) => {
-    const { iconOnly, isLastItem } = useContext(BreadcrumbContext);
+    const { iconOnly, isLastItem, render, onClick } = useContext(BreadcrumbContext);
 
-    // TODO: if iconOnly and has title , need to show tooltip
+    const itemProps: IBreadcrumbItemProps = { path, title, Icon };
+
+    const onClickHandler = () => {
+        if (onClick && !isLastItem) {
+            onClick(itemProps);
+        }
+    };
+
     // TODO: need to add an icon slash /
-    // TODO: need to add render
-    // TODO: need isLastItem
 
     const renderIcon = () => {
         if (Icon) {
@@ -34,25 +39,67 @@ const BreadcrumbItem: FC<IBreadcrumbItemProps> = ({ path, title, Icon }) => {
         return null;
     };
 
-    return (
-        <li className="breadcrumb__item">
-            {/* todo: add the next classNames for icon alignment: "breadcrumb__link_iconOnly" */}
-            <Tooltip text={title} isVisible={iconOnly && !!title}>
-                <a
-                    className={classNames("breadcrumb__link  ", {
+    const itemContent = (
+        <>
+            {renderIcon()}
+            {title && !iconOnly && (
+                <Text as="span" variant="labelMediumSemibold" className="breadcrumb__title">
+                    {title}
+                </Text>
+            )}
+        </>
+    );
+
+    const linkData = { path, title, isActive: isLastItem, Icon };
+
+    const interactiveElement = (() => {
+        if (render && path && !isLastItem) {
+            const renderedElement = render(linkData);
+            if (isValidElement(renderedElement)) {
+                const propsToApply = {
+                    className: classNames("breadcrumb__link", {
+                        breadcrumb__link_active: isLastItem,
+                        breadcrumb__link_iconOnly: iconOnly
+                    }),
+                    tabIndex: 0,
+                    onClick: onClickHandler
+                };
+                return cloneElement(renderedElement, { ...propsToApply }, itemContent);
+            }
+        }
+
+        if (isLastItem) {
+            return (
+                <span
+                    className={classNames("breadcrumb__link", {
                         breadcrumb__link_active: isLastItem,
                         breadcrumb__link_iconOnly: iconOnly
                     })}
-                    href={path || ""}
-                    tabIndex={0}
+                    aria-current="page"
                 >
-                    {renderIcon()}
-                    {title && !iconOnly && (
-                        <Text as="span" variant="labelMediumSemibold" className="breadcrumb__title">
-                            {title}
-                        </Text>
-                    )}
-                </a>
+                    {itemContent}
+                </span>
+            );
+        }
+
+        return (
+            <button
+                type="button"
+                className={classNames("breadcrumb__link", {
+                    breadcrumb__link_iconOnly: iconOnly
+                })}
+                tabIndex={0}
+                onClick={onClickHandler}
+            >
+                {itemContent}
+            </button>
+        );
+    })();
+
+    return (
+        <li className="breadcrumb__item">
+            <Tooltip text={title} isVisible={iconOnly && !!title}>
+                {interactiveElement}
             </Tooltip>
 
             {/* todo: change "ChevronRight" Icon to "/" as in design file */}
