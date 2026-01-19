@@ -83,7 +83,7 @@ const Toolbar: FC<IToolbar> = ({
                         type="text"
                         placeholder={globalFilterPlaceholder || "Search..."}
                         value={globalFilterValue}
-                        onChange={(e) => handleGlobalFilterChange(e)}
+                        onChange={handleGlobalFilterChange}
                         style={{ width: "100%" }}
                         aria-label="Search table"
                         aria-describedby="table-search-description"

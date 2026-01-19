@@ -25,12 +25,9 @@ interface ITableBody {
     hasNextPage?: boolean;
     isFetchingNextPage?: boolean;
     fetchNextPage?: () => void;
-    emptyTitle?: string;
-    emptyDescription?: string;
-    emptyActions?: IEmptyProps["actions"];
-    emptyAppearance?: IEmptyProps["appearance"];
     tableHeadRef?: HTMLTableSectionElement | null;
     tableFootRef?: HTMLTableSectionElement | null;
+    noDataProps?: IEmptyProps;
 }
 
 const TBody: FC<ITableBody> = ({
@@ -49,12 +46,9 @@ const TBody: FC<ITableBody> = ({
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
-    emptyTitle,
-    emptyDescription,
-    emptyActions,
-    emptyAppearance,
     tableHeadRef,
-    tableFootRef
+    tableFootRef,
+    noDataProps
 }) => {
     const allRows = [...table.getTopRows(), ...table.getCenterRows()];
     const visibleColumnCount = table.getVisibleFlatColumns().length;
@@ -130,13 +124,7 @@ const TBody: FC<ITableBody> = ({
                             bottom: tableFootHeight
                         }}
                     >
-                        <Empty
-                            title={emptyTitle}
-                            description={emptyDescription}
-                            actions={emptyActions}
-                            appearance={emptyAppearance}
-                            size="medium"
-                        />
+                        <Empty {...noDataProps} size="medium" />
                     </div>
                 </td>
             </tr>

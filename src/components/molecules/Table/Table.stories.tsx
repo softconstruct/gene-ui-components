@@ -104,10 +104,7 @@ const meta: Meta<TablePropsType> = {
         withManageColumns: args({ control: "boolean", ...propCategory.states }),
         manageColumnsTitle: args({ control: "text", ...propCategory.content }),
         headerContent: args({ control: "false", ...propCategory.content }),
-        emptyTitle: args({ control: "text", ...propCategory.content }),
-        emptyDescription: args({ control: "text", ...propCategory.content }),
-        emptyActions: args({ control: "false", ...propCategory.functionality }),
-        emptyAppearance: args({ control: "select", ...propCategory.appearance })
+        noDataProps: args({ control: "false", ...propCategory.content })
     },
     args: {
         columns: defaultColumns,
@@ -419,13 +416,18 @@ export const WithExpendRowsColumns: Story = {
 export const WithOutData: Story = {
     argTypes: {},
     args: {
+        noDataProps: {
+            title: "No Data Available",
+            description: "No data is available for display at this moment.",
+            actions: [{ children: "Button", appearance: "primary" }]
+        },
         onManageColumnsChange: undefined
     },
     render: (props: TablePropsType) => {
         return (
             <TableComponent
                 {...props}
-                columns={withGroupedColumns}
+                columns={Columns}
                 externalData={[]}
                 pageSizes={[10, 25, 50, 100]}
                 initialPageSize={25}

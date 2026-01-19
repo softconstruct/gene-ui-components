@@ -3,7 +3,7 @@ import { Column, VisibilityState } from "@tanstack/react-table";
 import classNames from "classnames";
 import { DragDropContext, Draggable, Droppable, DropResult } from "react-beautiful-dnd";
 
-import { Pin, PinFilled, ThreeDotsVertical } from "@geneui/icons";
+import { GripDots, Pin, PinFilled } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
@@ -240,7 +240,7 @@ const ManageColumns: FC<IManageColumns> = ({ orderedColumns, visibleColumns, col
                                         appearance="secondary"
                                         layout="text"
                                         size="small"
-                                        Icon={ThreeDotsVertical}
+                                        Icon={GripDots}
                                         className="dropdownMenu__columns_icon"
                                     />
                                 </div>

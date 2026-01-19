@@ -253,10 +253,7 @@ interface ITablePropsBase<TRow extends Row = Row> extends ITableActions<TRow> {
     headerContent?: ReactNode;
     withEditMode?: boolean;
     keepPinnedRows?: boolean;
-    emptyTitle?: string;
-    emptyDescription?: string;
-    emptyActions?: IEmptyProps["actions"];
-    emptyAppearance?: IEmptyProps["appearance"];
+    noDataProps?: IEmptyProps;
 }
 
 interface ITablePropsWithoutDynamicFetch<TRow extends Row = Row> extends ITablePropsBase<TRow> {
@@ -359,10 +356,7 @@ const Table: FC<TablePropsType> = ({
     onCancel,
     keepPinnedRows,
     onRowSelect,
-    emptyTitle,
-    emptyDescription,
-    emptyActions,
-    emptyAppearance
+    noDataProps
 }) => {
     const scrollbarContainerRef = useRef<ScrollbarRefType>(null);
     const tableHeadRef = React.useRef<HTMLTableSectionElement>(null);
@@ -723,12 +717,9 @@ const Table: FC<TablePropsType> = ({
                             fetchNextPage={fetchNextPage}
                             isFetchingNextPage={isFetchingNextPage}
                             hasNextPage={hasNextPage}
-                            emptyTitle={emptyTitle}
-                            emptyDescription={emptyDescription}
-                            emptyActions={emptyActions}
-                            emptyAppearance={emptyAppearance}
                             tableHeadRef={tableHeadRef.current}
                             tableFootRef={tableFootRef.current}
+                            noDataProps={noDataProps}
                         />
                         {rowCount > 0 && (
                             <TFoot
