@@ -1,19 +1,20 @@
-import React, { FC } from "react";
+import React, { FC, MouseEvent } from "react";
 import classNames from "classnames";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ImageIcon } from "lucide-react";
+
 import { Eye, IconProps } from "@geneui/icons";
 
-import Text from "@components/atoms/Text";
-import Loader from "@components/atoms/Loader";
 import Button from "@components/atoms/Button";
-import Checkbox from "@components/molecules/Checkbox";
+import Loader from "@components/atoms/Loader";
+import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
+import Checkbox from "@components/molecules/Checkbox";
 
 // Styles
 import "./Image.scss";
 
-type ImageAspectRatio = '1:1' | '3:2' | '2:1' | '16:9';
+type ImageAspectRatio = "1:1" | "3:2" | "2:1" | "16:9";
 
 interface IImageAction {
     /**
@@ -71,7 +72,7 @@ interface IImageProps {
     /**
      * Callback triggered when the image body is clicked.
      */
-    onImageClick?: () => void;
+    // onImageClick?: () => void;
     /**
      * Defines the aspect ratio of the image container.
      */
@@ -92,65 +93,46 @@ interface IImageProps {
  */
 const Image: FC<IImageProps> = ({
     className,
-    src = "https://placehold.co/600x400",
+    src = "https://picsum.photos/id/237/500/500",
     title,
     description,
     loading = false,
-    loadingText = 'Loading',
+    loadingText = "Loading",
     error = false,
-    aspectRatio = '1:1',
+    aspectRatio = "1:1",
     actions = [],
     selected = false,
-    onSelectionChange,
-    onImageClick,
+    onSelectionChange
+    // onImageClick,
 }) => {
     const hasActions = actions && actions.length > 0;
-    const aspectRatioClassName = `image_size_${aspectRatio.replace(':', 'x')}`;
+    const aspectRatioClassName = `image_size_${aspectRatio.replace(":", "x")}`;
 
     return (
         <article className={classNames(`image ${aspectRatioClassName}`, className)}>
             <div
                 className="image__body"
-                onClick={onImageClick}
+                // onClick={onImageClick}
             >
                 <button
                     type="button"
                     className={classNames("image__preview", {
-                        'image_failed': error,
+                        image_failed: error
                     })}
                 >
-                    {!loading && !error && (
-                        <img
-                            className="image__img"
-                            src={src}
-                            alt={title || ""}
-                        />
-                    )}
+                    {!loading && !error && <img className="image__img" src={src} alt={title || ""} />}
 
                     <span className="image__content">
-                        {!loading && !error && (
-                            <Eye className="image__overlay" size={20} />
-                        )}
+                        {!loading && !error && <Eye className="image__overlay" size={20} />}
                         {loading && (
-                            <Loader
-                                className="image__loader"
-                                size="large"
-                                text={loadingText}
-                                textPosition="below"
-                            />
+                            <Loader className="image__loader" size="large" text={loadingText} textPosition="below" />
                         )}
-                        {error && (
-                            <ImageIcon className="image__error" size={24} />
-                        )}
+                        {error && <ImageIcon className="image__error" size={24} />}
                     </span>
                 </button>
 
                 {onSelectionChange && !loading && (
-                    <Checkbox
-                        checked={selected}
-                        onChange={onSelectionChange}
-                        className="image__checkbox"
-                    />
+                    <Checkbox checked={selected} onChange={onSelectionChange} className="image__checkbox" />
                 )}
             </div>
 
@@ -170,10 +152,10 @@ const Image: FC<IImageProps> = ({
 
                 {hasActions && (
                     <ButtonGroup className="image__actions" size="small">
-                        {actions.map(({ Icon, id, label, onActionItemClick }) => (
+                        {actions.map(({ Icon, id, onActionItemClick }) => (
                             <Button
                                 key={id}
-                                onClick={(event) => onActionItemClick(event, id)}
+                                onClick={(event: MouseEvent<HTMLButtonElement>) => onActionItemClick(event, id)}
                                 appearance="secondary"
                                 layout="text"
                                 Icon={Icon}
