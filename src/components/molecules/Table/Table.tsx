@@ -47,7 +47,7 @@ interface ITableActions<TRow extends Row = Row> {
     /**
      * A callback function that is triggered when the value of the global search input changes.
      */
-    onGlobalFilterChange?: (filter: string) => void;
+    onGlobalFilterChange?: (filter: string, data: TanstackRow<Row>[]) => void;
     /**
      * A callback function that is triggered when column visibility or order is updated via the "Manage Columns" menu.
      */
@@ -220,6 +220,11 @@ interface ITablePropsBase<TRow extends Row = Row> extends ITableActions<TRow> {
     withManualPagination?: boolean;
 
     /**
+     * Enables manual filtering, where the component expects the consumer to handle global filter logic (e.g., fetching data for the current page).
+     */
+    withManualFiltering?: boolean;
+
+    /**
      * A boolean that, when `true`, displays a loading indicator over the table.
      */
     loading?: boolean;
@@ -301,7 +306,11 @@ type PreparedColumn = TableCol<Row> & {
     columns?: PreparedColumn[];
 };
 
-export const TableContext = createContext<ITableActions>({});
+type TableContextTypes = Omit<ITableActions, "onGlobalFilterChange"> & {
+    onGlobalFilterChange: (filter: string) => void;
+};
+
+export const TableContext = createContext<TableContextTypes>({} as TableContextTypes);
 
 const Table: FC<TablePropsType> = ({
     columns,
@@ -324,6 +333,7 @@ const Table: FC<TablePropsType> = ({
     onPageSizeChange,
     showInputPageField,
     withManualPagination,
+    withManualFiltering,
     initialPageSize = 10,
     initialPageIndex = 0,
     withPagination = true,
@@ -411,60 +421,6 @@ const Table: FC<TablePropsType> = ({
         return prepareColumns(columns);
     }, [columns]);
 
-    const handleRowClick = (row: TanstackRow<Row>) => {
-        if (withEditMode) return;
-        onRowClick?.(row);
-    };
-
-    const memoizedTableContextValue = useMemo(
-        () => ({
-            onRowClick: handleRowClick,
-            onSelectAllRows,
-            onGlobalFilterChange,
-            onManageColumnsChange,
-            onManageColumnRestore,
-            onSortChange,
-            onPageChange,
-            onPageSizeChange,
-            onRowSelect,
-            onCellEdit,
-            onSave,
-            onRowPinToggle,
-            onRowTag,
-            onRowClock,
-            onRowReload,
-            onRowCopy,
-            onRowDownload,
-            onRowShow,
-            onRowDelete,
-            onEdit,
-            onCancel
-        }),
-        [
-            handleRowClick,
-            onSelectAllRows,
-            onGlobalFilterChange,
-            onManageColumnsChange,
-            onManageColumnRestore,
-            onSortChange,
-            onPageChange,
-            onPageSizeChange,
-            onRowSelect,
-            onCellEdit,
-            onSave,
-            onRowPinToggle,
-            onRowTag,
-            onRowClock,
-            onRowReload,
-            onRowCopy,
-            onRowDownload,
-            onRowShow,
-            onRowDelete,
-            onEdit,
-            onCancel
-        ]
-    );
-
     useEffect(() => {
         setData(deepCloneWithFunctions(externalData));
         setRowPinning((prevRowPinning) => ({
@@ -535,6 +491,7 @@ const Table: FC<TablePropsType> = ({
         },
         getRowId,
         ...(withManualPagination && { manualPagination: withManualPagination }),
+        manualFiltering: withManualFiltering,
         onGlobalFilterChange: setGlobalFilter,
         getCoreRowModel: getCoreRowModel(),
         keepPinnedRows,
@@ -619,6 +576,64 @@ const Table: FC<TablePropsType> = ({
         ];
     }, [table, preparedColumns, columnsMap]);
 
+    const handleRowClick = (row: TanstackRow<Row>) => {
+        if (withEditMode) return;
+        onRowClick?.(row);
+    };
+
+    const handleGlobalFilterChange = (filter: string) => {
+        onGlobalFilterChange?.(filter, table.getRowModel().rows);
+    };
+
+    const memoizedTableContextValue = useMemo(
+        () => ({
+            onRowClick: handleRowClick,
+            onSelectAllRows,
+            onGlobalFilterChange: handleGlobalFilterChange,
+            onManageColumnsChange,
+            onManageColumnRestore,
+            onSortChange,
+            onPageChange,
+            onPageSizeChange,
+            onRowSelect,
+            onCellEdit,
+            onSave,
+            onRowPinToggle,
+            onRowTag,
+            onRowClock,
+            onRowReload,
+            onRowCopy,
+            onRowDownload,
+            onRowShow,
+            onRowDelete,
+            onEdit,
+            onCancel
+        }),
+        [
+            handleRowClick,
+            onSelectAllRows,
+            onGlobalFilterChange,
+            onManageColumnsChange,
+            onManageColumnRestore,
+            onSortChange,
+            onPageChange,
+            onPageSizeChange,
+            onRowSelect,
+            onCellEdit,
+            onSave,
+            onRowPinToggle,
+            onRowTag,
+            onRowClock,
+            onRowReload,
+            onRowCopy,
+            onRowDownload,
+            onRowShow,
+            onRowDelete,
+            onEdit,
+            onCancel
+        ]
+    );
+
     useEffect(() => {
         setOrderedColumns(memoizedOrderedColumns);
     }, [memoizedOrderedColumns]);
@@ -681,6 +696,7 @@ const Table: FC<TablePropsType> = ({
                     selectedRowsLength={selectedRowCount}
                     onRowsDeselect={handleRowsDeselect}
                     globalFilterSetter={onGlobalFilterInputChange}
+                    withManualFiltering={withManualFiltering}
                     visibleColumns={columnVisibility}
                 />
                 <Scrollbar ref={scrollbarContainerRef}>

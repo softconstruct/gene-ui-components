@@ -1,8 +1,10 @@
 import React, { FC, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+import { Row as TanstackRow } from "@tanstack/react-table";
 import { TableData } from "stories/data/__table";
 
 import Drawer from "@components/molecules/Drawer";
+import { IEmptyProps } from "@components/molecules/Empty";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { Columns, defaultColumns, withGroupedColumns, withPinnedColumns } from "@components/molecules/Table/Columns";
 // Components
@@ -91,6 +93,7 @@ const meta: Meta<TablePropsType> = {
         withEditMode: args({ control: "boolean", ...propCategory.functionality }),
         onPageSizeChange: args({ control: "false", ...propCategory.functionality }),
         withManualPagination: args({ control: "boolean", ...propCategory.functionality }),
+        withManualFiltering: args({ control: "boolean", ...propCategory.functionality }),
         keepPinnedRows: args({ control: "boolean", ...propCategory.functionality }),
         hasNextPage: args({ control: "false", ...propCategory.functionality }),
         showInputPageField: args({ control: "boolean", ...propCategory.content }),
@@ -119,6 +122,8 @@ const meta: Meta<TablePropsType> = {
         onRowShow: undefined,
         onRowDelete: undefined,
         keepPinnedRows: false,
+        withGlobalFilter: true,
+        withManualFiltering: false,
         headerContent: <SwapComponent />
     }
 };
@@ -132,6 +137,8 @@ const TableComponent: FC<TablePropsType> = (props) => {
     const [editableState, setEditableState] = useState(false);
     const [isDrawerOpened, setIsDrawerOpened] = useState(false);
     const [tableColumns, setTableColumns] = useState<TableCol<Row>[] | null>(null);
+    const [noData, setNodata] = useState<IEmptyProps>();
+
     useEffect(() => {
         const conedData = deepCloneWithFunctions(data);
         setTableData(data);
@@ -211,6 +218,19 @@ const TableComponent: FC<TablePropsType> = (props) => {
         setIsDrawerOpened(true);
     };
 
+    const onGlobalFilterChange = (_: string, filteredData: TanstackRow<Row>[]) => {
+        if (!filteredData.length) {
+            setNodata(() => {
+                return {
+                    title: "No Results Found",
+                    description: "No results were found matching your criteria.",
+                    actions: undefined,
+                    appearance: "noResult"
+                };
+            });
+        }
+    };
+
     if (!tableColumns?.length) return null;
 
     return (
@@ -231,11 +251,13 @@ const TableComponent: FC<TablePropsType> = (props) => {
                 bulkActions={bulkActionsMock}
                 onCellEdit={onCellEdit}
                 withEditMode={editableState}
+                noDataProps={noData}
                 onRowPinToggle={onRowPinToggle}
                 onRowDelete={onRowDelete}
                 onManageColumnsChange={onManageColumnsChange || handleColumnsMange}
                 onManageColumnRestore={handleManageColumnRestore}
                 onRowClick={handleRowClick}
+                onGlobalFilterChange={onGlobalFilterChange}
                 onEdit={onEdit}
                 onSave={onSave}
                 onCancel={onCancel}

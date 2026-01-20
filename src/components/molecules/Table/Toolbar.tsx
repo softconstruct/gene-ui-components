@@ -18,6 +18,7 @@ interface IToolbar {
     globalFilterPlaceholder?: string;
     globalFilter?: string;
     globalFilterSetter: (value: string) => void;
+    withManualFiltering?: boolean;
     withCheckbox?: boolean;
     bulkActions?: BulkAction;
     selectedRowsLength?: number;
@@ -38,6 +39,7 @@ const Toolbar: FC<IToolbar> = ({
     globalFilterPlaceholder,
     globalFilter,
     globalFilterSetter,
+    withManualFiltering,
     withCheckbox,
     bulkActions,
     selectedRowsLength,
@@ -64,9 +66,12 @@ const Toolbar: FC<IToolbar> = ({
 
     const handleGlobalFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
+        onGlobalFilterChange?.(value);
+
+        if (withManualFiltering) return;
+
         setGlobalFilterValue(value);
         globalFilterSetter(value);
-        onGlobalFilterChange?.(value);
     };
 
     useEffect(() => {
