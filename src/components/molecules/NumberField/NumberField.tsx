@@ -1,5 +1,7 @@
-import React, { FC } from "react";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useMemo, useState } from "react";
 import classNames from "classnames";
+import { nanoid } from "nanoid/non-secure";
+import { NUMERIC_STRING_PATTERN } from "src/constants/regex";
 
 import { ChevronDown, ChevronUp } from "@geneui/icons";
 
@@ -19,11 +21,11 @@ interface INumberFieldProps {
      * The value of the number field (controlled).
      * This is what will be returned in onChange and stored as the selected value.
      */
-    // value?: number | string;
+    value?: number | string;
     /**
      * The initial value of the number field (uncontrolled).
      */
-    // defaultValue?: number;
+    defaultValue?: number | string;
     /**
      * Disables the number field, preventing it from being interacted with.
      */
@@ -49,7 +51,7 @@ interface INumberFieldProps {
     /**
      * Size of the component.<br> Possible values: `small | medium | large`
      */
-    // size?: "small" | "medium" | "large";
+    size?: "small" | "medium" | "large";
     /**
      * The status/validation state of the component.<br> Possible values: `rest | warning | error`
      */
@@ -61,7 +63,7 @@ interface INumberFieldProps {
     /**
      * Additional descriptive text that appears alongside the `label`, typically displayed as a tooltip.
      */
-    // infoText?: string;
+    infoText?: string;
     /**
      * Helper text that appears below the number field.
      */
@@ -69,25 +71,29 @@ interface INumberFieldProps {
     /**
      * Indicates that the field is required.
      */
-    // required?: boolean;
-    // /**
-    //  * Fires when the user changes the number field value (via buttons or input).
-    //  * Receives the raw input string value - parent can convert to number if needed.
-    //  */
-    // onChange?: (value: string, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => void;
-    // /**
-    //  * Fires when the input field loses focus.
-    //  */
-    // onInputBlur?: (event: FocusEvent<HTMLInputElement>) => void;
-    // /**
-    //  * Fires when the input field receives focus.
-    //  */
-    // onInputFocus?: (event: FocusEvent<HTMLInputElement>) => void;
-    // /**
-    //  * If true, the input element will automatically receive focus when the component mounts.
-    //  *  Default value is `false`.
-    //  */
-    // autoFocus?: boolean;
+    required?: boolean;
+    /**
+     * Fires when the user changes the number field value (via buttons or input).
+     * Receives the raw input string value - parent can convert to number if needed.
+     */
+    onChange?: (value: string, event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Fires when the input field loses focus.
+     */
+    onInputBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * Fires when the input field receives focus.
+     */
+    onInputFocus?: (event: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * If true, the input element will automatically receive focus when the component mounts.
+     *  Default value is `false`.
+     */
+    autoFocus?: boolean;
+    /**
+     * `HTML` `id` attribute for the `input` element
+     */
+    id?: string;
 }
 
 /**
@@ -95,46 +101,100 @@ interface INumberFieldProps {
  */
 const NumberField: FC<INumberFieldProps> = ({
     className,
-    // value,
-    // defaultValue,
+    value,
+    defaultValue,
+    id,
     disabled,
     readOnly,
     // step,
     // min,
     // max,
-    // size,
+    size = "medium",
     status,
     label,
-    // infoText,
-    helperText
-    // required,
-    // onChange,
-    // onInputBlur,
-    // onInputFocus,
-    // autoFocus
+    infoText,
+    helperText,
+    required,
+    onChange,
+    onInputBlur,
+    onInputFocus,
+    autoFocus
 }) => {
+    const isControlled = value !== undefined;
+    const [internalValue, setInternalValue] = useState(defaultValue || "");
+    const inputValue = isControlled ? value.toString() : internalValue;
+    const labelSize = size === "large" ? "medium" : size;
+    const helperTextSize = size === "large" ? "medium" : size;
+    const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
+    const handleInputFocus = (event: FocusEvent<HTMLInputElement>) => {
+        onInputFocus?.(event);
+    };
+    const handleInputBlur = (event: FocusEvent<HTMLInputElement>) => {
+        onInputBlur?.(event);
+    };
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { value: currentValue } = event.target;
+
+        if (currentValue !== "" && !NUMERIC_STRING_PATTERN.test(currentValue)) {
+            return;
+        }
+
+        onChange?.(currentValue, event);
+
+        if (!isControlled) {
+            setInternalValue(currentValue);
+        }
+    };
+    const actionButtonClasses = classNames("numberField__action", {
+        numberField__action_readOnly: readOnly && !disabled,
+        numberField__action_disabled: disabled
+    });
+
     return (
         <div className={classNames("numberField", className)}>
-            <Label text={label} />
-            {/* Sizes // numberField__wrapper_size_large // numberField__wrapper_size_medium // numberField__wrapper_size_small */}
-            <div className="numberField__wrapper numberField__wrapper_size_large">
-                {/* States // numberField__inputWrapper_readOnly // numberField__inputWrapper_disabled */}
-                <div className="numberField__inputWrapper">
-                    <input className="numberField__input" type="text" disabled={disabled} readOnly={readOnly} />
+            <Label
+                text={label}
+                disabled={disabled}
+                readOnly={readOnly}
+                required={required}
+                size={labelSize}
+                infoText={infoText}
+                labelFor={generatedId}
+            />
+            <div className={classNames(`numberField__wrapper numberField__wrapper_size_${size}`)}>
+                <div
+                    className={classNames("numberField__inputWrapper", {
+                        numberField__inputWrapper_readOnly: readOnly && !disabled,
+                        numberField__inputWrapper_disabled: disabled,
+                        numberField__inputWrapper_error: status === "error"
+                    })}
+                >
+                    <input
+                        className="numberField__input"
+                        type="number"
+                        disabled={disabled}
+                        readOnly={readOnly}
+                        // eslint-disable-next-line jsx-a11y/no-autofocus
+                        autoFocus={autoFocus}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
+                        onChange={handleChange}
+                        value={inputValue}
+                        id={generatedId}
+                    />
                 </div>
                 <div className="numberField__actions">
-                    {/* States // numberField__action_readOnly // numberField__action_disabled */}
-                    <button type="button" className="numberField__action numberField__action_up">
+                    <button type="button" className={classNames(actionButtonClasses, "numberField__action_up")}>
                         <ChevronUp size={16} />
                     </button>
-                    <button type="button" className="numberField__action numberField__action_down">
+                    <button type="button" className={classNames(actionButtonClasses, "numberField__action_down")}>
                         <ChevronDown size={16} />
                     </button>
                 </div>
             </div>
             {helperText && (
                 <div className="numberField__infoContainer">
-                    <HelperText text={helperText} disabled={disabled} status={status} />
+                    <HelperText text={helperText} disabled={disabled} status={status} size={helperTextSize} />
                 </div>
             )}
         </div>

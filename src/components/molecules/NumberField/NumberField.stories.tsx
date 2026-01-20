@@ -9,33 +9,34 @@ const meta: Meta<INumberFieldProps> = {
     title: "Molecules/NumberField",
     component: NumberField,
     argTypes: {
-        // value: args({ control: "text", ...propCategory.states }),
-        // defaultValue: args({ control: "number", ...propCategory.states }),
+        value: args({ control: "text", ...propCategory.states }),
+        defaultValue: args({ control: "text", ...propCategory.states }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
         // step: args({ control: "number", defaultValue: 1, ...propCategory.validation }),
         // min: args({ control: "number", ...propCategory.validation }),
         // max: args({ control: "number", ...propCategory.validation }),
-        // size: args({ control: "select", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
         status: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
         label: args({ control: "text", ...propCategory.content }),
-        // infoText: args({ control: "text", ...propCategory.content }),
-        helperText: args({ control: "text", ...propCategory.content })
-        // required: args({ control: "boolean", ...propCategory.states }),
-        // onChange: args({ control: "false", ...propCategory.action }),
-        // onInputBlur: args({ control: "false", ...propCategory.action }),
-        // onInputFocus: args({ control: "false", ...propCategory.action }),
-        // autoFocus: args({ control: "boolean", ...propCategory.functionality })
+        infoText: args({ control: "text", ...propCategory.content }),
+        helperText: args({ control: "text", ...propCategory.content }),
+        required: args({ control: "boolean", ...propCategory.states }),
+        onChange: args({ control: "false", ...propCategory.action }),
+        onInputBlur: args({ control: "false", ...propCategory.action }),
+        onInputFocus: args({ control: "false", ...propCategory.action }),
+        autoFocus: args({ control: "boolean", ...propCategory.functionality }),
+        id: args({ control: "text", ...propCategory.others })
     },
     args: {
         // defaultValue: 0,
         // step: 1,
-        // size: "medium",
+        size: "medium",
         status: "rest",
         label: "Label",
-        helperText: "Helper text"
-        // required: true
+        helperText: "Helper text",
+        required: true
     }
 };
 
