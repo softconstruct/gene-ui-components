@@ -67,7 +67,7 @@ export const WithRender: Story = {
             },
             { title: "Current Page 1", path: "javascript:void(0)" },
             { title: "Current Page 2", path: "javascript:void(0)" },
-            { title: "Current Page 3", path: "javascript:void(0)" },
+            { title: "Current Page 3", path: "javascript:void(0)", Icon: Receipt },
             { title: "Current Page 4", path: "javascript:void(0)" },
             { title: "Current Page 5", path: "javascript:void(0)" }
         ],

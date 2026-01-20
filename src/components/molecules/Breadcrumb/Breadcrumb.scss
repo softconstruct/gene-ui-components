@@ -3,7 +3,7 @@
 
     &__list {
         display: flex;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         gap: var(--guit-ref-spacing-4xsmall);
     }
 
@@ -11,6 +11,10 @@
         display: flex;
         align-items: center;
         column-gap: var(--guit-ref-spacing-4xsmall);
+    }
+
+    &__title {
+        white-space: nowrap;
     }
 
     &__link {
@@ -24,16 +28,12 @@
         min-width: var(--guit-sem-dimension-width-medium);
         padding-block: var(--guit-ref-spacing-2xsmall);
 
-        &_disabled {
-            color: var(--guit-sem-color-foreground-disabled);
-            pointer-events: none;
-        }
-
         &_active {
             color: var(--guit-sem-color-background-selected-2);
             pointer-events: none;
         }
-        &:not(#{ $that }_disabled, #{ $that }_active) {
+
+        &:not(#{ $that }_active) {
             color: var(--guit-sem-color-foreground-neutral-2);
         }
 
