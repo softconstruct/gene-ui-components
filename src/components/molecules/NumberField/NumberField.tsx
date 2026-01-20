@@ -37,17 +37,17 @@ interface INumberFieldProps {
     /**
      * The amount by which the value increases or decreases.
      */
-    // step?: number;
+    step?: number;
     /**
      * The minimum value allowed for the number field.
      * The decrement button will be disabled when the value reaches or is below this minimum.
      */
-    // min?: number;
+    min?: number;
     /**
      * The maximum value allowed for the number field.
      * The increment button will be disabled when the value reaches or exceeds this maximum.
      */
-    // max?: number;
+    max?: number;
     /**
      * Size of the component.<br> Possible values: `small | medium | large`
      */
@@ -106,9 +106,9 @@ const NumberField: FC<INumberFieldProps> = ({
     id,
     disabled,
     readOnly,
-    // step,
-    // min,
-    // max,
+    step = 1,
+    min,
+    max,
     size = "medium",
     status,
     label,
@@ -121,7 +121,7 @@ const NumberField: FC<INumberFieldProps> = ({
     autoFocus
 }) => {
     const isControlled = value !== undefined;
-    const [internalValue, setInternalValue] = useState(defaultValue || "");
+    const [internalValue, setInternalValue] = useState(defaultValue?.toString() || "");
     const inputValue = isControlled ? value.toString() : internalValue;
     const labelSize = size === "large" ? "medium" : size;
     const helperTextSize = size === "large" ? "medium" : size;
@@ -145,6 +145,31 @@ const NumberField: FC<INumberFieldProps> = ({
             setInternalValue(currentValue);
         }
     };
+    const validNumericValue = useMemo(() => {
+        const numericValue = Number(inputValue);
+        return Number.isFinite(numericValue) ? numericValue : 0;
+    }, [inputValue]);
+
+    const handleValueChange = (stepValue: number, event: MouseEvent<HTMLButtonElement>) => {
+        const nextValue = validNumericValue + stepValue;
+
+        let clampedValue = nextValue;
+        if (stepValue > 0 && max !== undefined) {
+            clampedValue = Math.min(nextValue, max);
+        } else if (stepValue < 0 && min !== undefined) {
+            clampedValue = Math.max(nextValue, min);
+        }
+
+        const nextValueString = String(clampedValue);
+
+        if (!isControlled) {
+            setInternalValue(nextValueString);
+        }
+        onChange?.(nextValueString, event);
+    };
+    const handleButtonClick = (event: MouseEvent<HTMLButtonElement>, isIncrement: boolean) =>
+        handleValueChange(isIncrement ? step : -step, event);
+
     const actionButtonClasses = classNames("numberField__action", {
         numberField__action_readOnly: readOnly && !disabled,
         numberField__action_disabled: disabled
@@ -184,10 +209,18 @@ const NumberField: FC<INumberFieldProps> = ({
                     />
                 </div>
                 <div className="numberField__actions">
-                    <button type="button" className={classNames(actionButtonClasses, "numberField__action_up")}>
+                    <button
+                        type="button"
+                        className={classNames(actionButtonClasses, "numberField__action_up")}
+                        onClick={(e) => handleButtonClick(e, true)}
+                    >
                         <ChevronUp size={16} />
                     </button>
-                    <button type="button" className={classNames(actionButtonClasses, "numberField__action_down")}>
+                    <button
+                        type="button"
+                        className={classNames(actionButtonClasses, "numberField__action_down")}
+                        onClick={(e) => handleButtonClick(e, false)}
+                    >
                         <ChevronDown size={16} />
                     </button>
                 </div>

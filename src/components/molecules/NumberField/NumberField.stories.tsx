@@ -10,12 +10,12 @@ const meta: Meta<INumberFieldProps> = {
     component: NumberField,
     argTypes: {
         value: args({ control: "text", ...propCategory.states }),
-        defaultValue: args({ control: "text", ...propCategory.states }),
+        defaultValue: args({ control: "number", ...propCategory.states }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
-        // step: args({ control: "number", defaultValue: 1, ...propCategory.validation }),
-        // min: args({ control: "number", ...propCategory.validation }),
-        // max: args({ control: "number", ...propCategory.validation }),
+        step: args({ control: "number", ...propCategory.validation }),
+        min: args({ control: "number", ...propCategory.validation }),
+        max: args({ control: "number", ...propCategory.validation }),
         size: args({ control: "select", ...propCategory.appearance }),
         status: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
@@ -30,8 +30,8 @@ const meta: Meta<INumberFieldProps> = {
         id: args({ control: "text", ...propCategory.others })
     },
     args: {
-        // defaultValue: 0,
-        // step: 1,
+        defaultValue: 0,
+        step: 1,
         size: "medium",
         status: "rest",
         label: "Label",
