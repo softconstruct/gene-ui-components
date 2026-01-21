@@ -262,10 +262,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly
                         <>
                             {/* First visible items */}
                             {visibleFirstItems.map((item) => {
-                                const originalIndex = breadCrumbsData.findIndex(
-                                    (bItem) => bItem.path === item.path && bItem.title === item.title
-                                );
-                                return renderBreadcrumbItem(item, originalIndex, false);
+                                return renderBreadcrumbItem(item, false);
                             })}
                             <li className="breadcrumb__item">
                                 <Tooltip text="More items" isVisible={iconOnly}>
@@ -294,19 +291,16 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly
                                 <ChevronRight size={24} />
                             </li>
                             {/* Last visible items (pre-last and last, or just last) */}
-                            {visibleLastItems.map((item) => {
-                                const originalIndex = breadCrumbsData.findIndex(
-                                    (bItem) => bItem.path === item.path && bItem.title === item.title
-                                );
-                                const isLastItem = originalIndex === breadCrumbsData.length - 1;
-                                return renderBreadcrumbItem(item, originalIndex, isLastItem);
+                            {visibleLastItems.map((item, index) => {
+                                const isLastItem = index === visibleLastItems.length - 1;
+                                return renderBreadcrumbItem(item, isLastItem);
                             })}
                         </>
                     ) : (
                         breadCrumbsData &&
                         breadCrumbsData.map((item, index) => {
                             const isLastItem = index === breadCrumbsData.length - 1;
-                            return renderBreadcrumbItem(item, index, isLastItem);
+                            return renderBreadcrumbItem(item, isLastItem);
                         })
                     )}
                 </ul>
