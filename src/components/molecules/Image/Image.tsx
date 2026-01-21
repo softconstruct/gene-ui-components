@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, KeyboardEvent, MouseEvent, useRef } from "react";
+import React, { ChangeEvent, FC, KeyboardEvent, MouseEvent, useRef, useState } from "react";
 import classNames from "classnames";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ImageIcon } from "lucide-react";
@@ -93,9 +93,13 @@ interface IImageProps {
      */
     src: string;
     /**
-     * Indicates if the component is in an error state (e.g., image failed to load).
+     * Indicates if the component is in a failed state (e.g., image failed to load for preview).
      */
-    error?: boolean;
+    failed?: boolean;
+    /**
+     * Callback triggered when the image fails to load.
+     */
+    onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
 }
 
 /**
@@ -110,13 +114,15 @@ const Image: FC<IImageProps> = ({
     description,
     loading = false,
     loadingText = "Loading",
-    error = false,
+    failed = false,
     aspectRatio = "1:1",
     actions = [],
     selected = false,
     onSelectionChange,
-    onImageClick
+    onImageClick,
+    onError
 }) => {
+    const [imageLoadFailed, setImageLoadFailed] = useState(failed);
     const titleRef = useRef<HTMLSpanElement | null>(null);
     const descriptionRef = useRef<HTMLSpanElement | null>(null);
     const isTitleTruncated = useEllipsisDetection(titleRef, [title]);
@@ -124,6 +130,11 @@ const Image: FC<IImageProps> = ({
 
     const hasActions = actions && actions.length > 0;
     const aspectRatioClassName = `image_size_${aspectRatio.replace(":", "x")}`;
+
+    const onImageLoadError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+        onError?.(e);
+        setImageLoadFailed(true);
+    };
 
     return (
         <article className={classNames(`image ${aspectRatioClassName}`, className)}>
@@ -137,17 +148,19 @@ const Image: FC<IImageProps> = ({
                 <button
                     type="button"
                     className={classNames("image__preview", {
-                        image_failed: error
+                        image_failed: imageLoadFailed
                     })}
                 >
-                    {!loading && !error && <img className="image__img" src={src} alt={title || ""} />}
+                    {!loading && !imageLoadFailed && (
+                        <img className="image__img" onError={onImageLoadError} src={src} alt={title || ""} />
+                    )}
 
                     <span className="image__content">
-                        {!loading && !error && <Eye className="image__overlay" size={20} />}
+                        {!loading && !imageLoadFailed && <Eye className="image__overlay" size={20} />}
                         {loading && (
                             <Loader className="image__loader" size="large" text={loadingText} textPosition="below" />
                         )}
-                        {error && !loading && <ImageIcon className="image__error" size={24} />}
+                        {imageLoadFailed && !loading && <ImageIcon className="image__error" size={24} />}
                     </span>
                 </button>
 

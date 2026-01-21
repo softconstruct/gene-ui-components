@@ -19,7 +19,7 @@ const meta: Meta<IImageProps> = {
         description: args({ control: "text", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
         loadingText: args({ control: "text", ...propCategory.content }),
-        error: args({ control: "boolean", ...propCategory.states }),
+        failed: args({ control: "boolean", ...propCategory.states }),
         aspectRatio: args({ control: "select", ...propCategory.appearance }),
         actions: args({ control: "false", ...propCategory.content }),
         selected: args({ control: "boolean", ...propCategory.states }),
@@ -28,7 +28,7 @@ const meta: Meta<IImageProps> = {
     },
     args: {
         loading: false,
-        error: false,
+        failed: false,
         aspectRatio: "16:9",
         selected: false
     }
