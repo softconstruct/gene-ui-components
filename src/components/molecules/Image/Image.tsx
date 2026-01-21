@@ -1,16 +1,16 @@
-import React, { ChangeEvent, FC, KeyboardEvent, MouseEvent, useRef, useState } from "react";
+import React, { ChangeEvent, FC, KeyboardEvent, MouseEvent, SyntheticEvent, useRef, useState } from "react";
 import classNames from "classnames";
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { ImageIcon } from "lucide-react";
 
-import { Eye, IconProps } from "@geneui/icons";
+import { Eye, IconProps, Image as ImageIcon } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
 
+// Hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
@@ -81,7 +81,7 @@ interface IImageProps {
      * Callback triggered when the image body is clicked.
      */
     onImageClick?: (
-        e: React.MouseEvent<HTMLElement, globalThis.MouseEvent> | React.KeyboardEvent<HTMLElement>,
+        e: React.MouseEvent<HTMLElement, globalThis.MouseEvent> | KeyboardEvent<HTMLElement>,
         id: string | null
     ) => void;
     /**
@@ -99,7 +99,7 @@ interface IImageProps {
     /**
      * Callback triggered when the image fails to load.
      */
-    onError?: (e: React.SyntheticEvent<HTMLImageElement, Event>) => void;
+    onError?: (e: SyntheticEvent<HTMLImageElement, Event>) => void;
 }
 
 /**
@@ -125,27 +125,22 @@ const Image: FC<IImageProps> = ({
     const [imageLoadFailed, setImageLoadFailed] = useState(failed);
     const titleRef = useRef<HTMLSpanElement | null>(null);
     const descriptionRef = useRef<HTMLSpanElement | null>(null);
-    const isTitleTruncated = useEllipsisDetection(titleRef, [title]);
-    const isDescriptionTruncated = useEllipsisDetection(descriptionRef, [description]);
+    const isTitleTruncated = useEllipsisDetection(titleRef);
+    const isDescriptionTruncated = useEllipsisDetection(descriptionRef);
 
     const hasActions = actions && actions.length > 0;
     const aspectRatioClassName = `image_size_${aspectRatio.replace(":", "x")}`;
 
-    const onImageLoadError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const onImageLoadError = (e: SyntheticEvent<HTMLImageElement, Event>) => {
         onError?.(e);
         setImageLoadFailed(true);
     };
 
     return (
         <article className={classNames(`image ${aspectRatioClassName}`, className)}>
-            <div
-                role="button"
-                tabIndex={0}
-                className="image__body"
-                onClick={(e) => onImageClick?.(e, id)}
-                onKeyDown={(e) => onImageClick?.(e, id)}
-            >
+            <div className="image__body">
                 <button
+                    onClick={(e) => onImageClick?.(e, id)}
                     type="button"
                     className={classNames("image__preview", {
                         image_failed: imageLoadFailed
@@ -165,15 +160,11 @@ const Image: FC<IImageProps> = ({
                 </button>
 
                 {onSelectionChange && !loading && (
-                    <div
+                    <Checkbox
                         className="image__checkbox"
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => e.stopPropagation()}
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <Checkbox checked={selected} onChange={(e) => onSelectionChange(e, id)} />
-                    </div>
+                        checked={selected}
+                        onChange={(e) => onSelectionChange(e, id)}
+                    />
                 )}
             </div>
 
