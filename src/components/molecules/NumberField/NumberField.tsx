@@ -170,9 +170,16 @@ const NumberField: FC<INumberFieldProps> = ({
     const handleButtonClick = (event: MouseEvent<HTMLButtonElement>, isIncrement: boolean) =>
         handleValueChange(isIncrement ? step : -step, event);
 
+    const buttonsDisabled = useMemo(() => {
+        const baseDisabled = disabled || readOnly;
+        return {
+            increment: baseDisabled || (max !== undefined && validNumericValue >= max),
+            decrement: baseDisabled || (min !== undefined && validNumericValue <= min)
+        };
+    }, [disabled, readOnly, max, min, validNumericValue]);
+
     const actionButtonClasses = classNames("numberField__action", {
-        numberField__action_readOnly: readOnly && !disabled,
-        numberField__action_disabled: disabled
+        numberField__action_readOnly: readOnly && !disabled
     });
 
     return (
@@ -211,15 +218,21 @@ const NumberField: FC<INumberFieldProps> = ({
                 <div className="numberField__actions">
                     <button
                         type="button"
-                        className={classNames(actionButtonClasses, "numberField__action_up")}
+                        className={classNames(actionButtonClasses, "numberField__action_up", {
+                            numberField__action_disabled: buttonsDisabled.increment
+                        })}
                         onClick={(e) => handleButtonClick(e, true)}
+                        disabled={buttonsDisabled.increment}
                     >
                         <ChevronUp size={16} />
                     </button>
                     <button
                         type="button"
-                        className={classNames(actionButtonClasses, "numberField__action_down")}
+                        className={classNames(actionButtonClasses, "numberField__action_down", {
+                            numberField__action_disabled: buttonsDisabled.decrement
+                        })}
                         onClick={(e) => handleButtonClick(e, false)}
+                        disabled={buttonsDisabled.decrement}
                     >
                         <ChevronDown size={16} />
                     </button>
