@@ -9,7 +9,7 @@ import { IMenuItemProps } from "@components/molecules/Menu";
 import { Columns, defaultColumns, withGroupedColumns, withPinnedColumns } from "@components/molecules/Table/Columns";
 // Components
 import { deepCloneWithFunctions } from "@components/molecules/Table/helpers";
-import { TablePropsType } from "@components/molecules/Table/Table";
+import { ITableProps } from "@components/molecules/Table/Table";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -51,7 +51,7 @@ const bulkActionsMock: BulkAction = {
 
 const externalData = makeData(100);
 
-const meta: Meta<TablePropsType> = {
+const meta: Meta<ITableProps> = {
     title: "Molecules/Table",
     component: Table,
     argTypes: {
@@ -128,9 +128,9 @@ const meta: Meta<TablePropsType> = {
     }
 };
 
-type Story = StoryObj<TablePropsType>;
+type Story = StoryObj<ITableProps>;
 
-const TableComponent: FC<TablePropsType> = (props) => {
+const TableComponent: FC<ITableProps> = (props) => {
     const { externalData: data, columns, onManageColumnsChange } = props;
     const [tableData, setTableData] = useState<Row[]>([]);
     const [updatedTableData, setUpdatedTableData] = useState<Row[]>([]);
@@ -149,7 +149,7 @@ const TableComponent: FC<TablePropsType> = (props) => {
         setTableColumns(columns);
     }, [columns]);
 
-    const onCellEdit: TablePropsType["onCellEdit"] = (rowIndex: number, columnType: string, value: unknown) => {
+    const onCellEdit: ITableProps["onCellEdit"] = (rowIndex: number, columnType: string, value: unknown) => {
         const newData = [...tableData];
         (newData[rowIndex] as any)[columnType] = value;
         setUpdatedTableData(newData);
@@ -163,7 +163,6 @@ const TableComponent: FC<TablePropsType> = (props) => {
     const onEdit = () => {
         setEditableState(true);
     };
-
     const onCancel = () => {
         setEditableState(false);
     };
@@ -266,7 +265,7 @@ const TableComponent: FC<TablePropsType> = (props) => {
     );
 };
 
-const TableWithGroupedColumns: FC<TablePropsType> = (props) => {
+const TableWithGroupedColumns: FC<ITableProps> = (props) => {
     const [tableColumns, setTableColumns] = useState<TableCol<Row>[]>(withGroupedColumns);
     const onManageColumns = (columns: IManageColumnsData[]) => {
         const [column] = columns;
@@ -293,7 +292,7 @@ export const Default: Story = {
     args: {
         onManageColumnsChange: undefined
     },
-    render: (props: TablePropsType) => {
+    render: (props: ITableProps) => {
         return <TableComponent {...props} withCheckbox externalData={TableData} columns={Columns} withManageColumns />;
     }
 };
@@ -303,7 +302,7 @@ export const WithStickyHeader: Story = {
     args: {
         onManageColumnsChange: undefined
     },
-    render: (props: TablePropsType) => {
+    render: (props: ITableProps) => {
         return (
             <TableComponent
                 {...props}
@@ -322,7 +321,7 @@ export const WithStickyHeader: Story = {
     }
 };
 
-const TableWithVirtualScroll: FC<TablePropsType> = (props) => {
+const TableWithVirtualScroll: FC<ITableProps> = (props) => {
     const [tableDataVirtualScroll, setTableDataVirtualScroll] = useState(makeData(50));
     const [hasNextPage, setHasNextPage] = useState(true);
     const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
@@ -361,7 +360,7 @@ export const WithVirtualScroll: Story = {
     args: {
         onManageColumnsChange: undefined
     },
-    render: (props: TablePropsType) => <TableWithVirtualScroll {...props} />
+    render: (props: ITableProps) => <TableWithVirtualScroll {...props} />
 };
 
 export const WithPinnedColumns: Story = {
@@ -369,7 +368,7 @@ export const WithPinnedColumns: Story = {
     args: {
         onManageColumnsChange: undefined
     },
-    render: (props: TablePropsType) => {
+    render: (props: ITableProps) => {
         return (
             <TableComponent
                 {...props}
@@ -390,7 +389,7 @@ export const WithGroupedColumns: Story = {
     args: {
         withManageColumns: true
     },
-    render: (props: TablePropsType) => {
+    render: (props: ITableProps) => {
         const { columns, onManageColumnsChange } = props;
 
         return (
@@ -417,7 +416,7 @@ export const WithExpendRowsColumns: Story = {
     args: {
         onManageColumnsChange: undefined
     },
-    render: (props: TablePropsType) => {
+    render: (props: ITableProps) => {
         return (
             <TableComponent
                 {...props}
@@ -445,7 +444,7 @@ export const WithOutData: Story = {
         },
         onManageColumnsChange: undefined
     },
-    render: (props: TablePropsType) => {
+    render: (props: ITableProps) => {
         return (
             <TableComponent
                 {...props}

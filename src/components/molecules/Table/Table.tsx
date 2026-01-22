@@ -116,7 +116,7 @@ interface ITableActions<TRow extends Row = Row> {
     onCancel?: () => void;
 }
 
-interface ITablePropsBase<TRow extends Row = Row> extends ITableActions<TRow> {
+interface ITableProps<TRow extends Row = Row> extends ITableActions<TRow> {
     /**
      * An array of column definitions that configure the table's structure, data accessors, and rendering.
      * This prop extends the `ColumnDef` interface from `@tanstack/react-table`.
@@ -255,13 +255,6 @@ interface ITablePropsBase<TRow extends Row = Row> extends ITableActions<TRow> {
     /**
      * A React node to be rendered as additional content in the table's header toolbar.
      */
-    headerContent?: ReactNode;
-    withEditMode?: boolean;
-    keepPinnedRows?: boolean;
-    noDataProps?: IEmptyProps;
-}
-
-interface ITablePropsWithoutDynamicFetch<TRow extends Row = Row> extends ITablePropsBase<TRow> {
     /**
      * Enables dynamic fetching of data for infinite scrolling or virtualized lists.
      */
@@ -278,28 +271,11 @@ interface ITablePropsWithoutDynamicFetch<TRow extends Row = Row> extends ITableP
      * A function to be called to fetch the next page of data for dynamic loading.
      */
     fetchNextPage?: () => void;
+    headerContent?: ReactNode;
+    withEditMode?: boolean;
+    keepPinnedRows?: boolean;
+    noDataProps?: IEmptyProps;
 }
-
-interface ITablePropsWithDynamicFetch<TRow extends Row = Row> extends ITablePropsBase<TRow> {
-    /**
-     * Enables dynamic fetching of data for infinite scrolling or virtualized lists.
-     */
-    withDynamicFetch: true;
-    /**
-     * A boolean indicating if there is a next page of data to be fetched for dynamic loading.
-     */
-    hasNextPage: boolean;
-    /**
-     * A boolean indicating if the next page of data is currently being fetched.
-     */
-    isFetchingNextPage: boolean;
-    /**
-     * A function to be called to fetch the next page of data for dynamic loading.
-     */
-    fetchNextPage: () => void;
-}
-
-type TablePropsType<TRow extends Row = Row> = ITablePropsWithoutDynamicFetch<TRow> | ITablePropsWithDynamicFetch<TRow>;
 
 type PreparedColumn = TableCol<Row> & {
     filterFn?: string;
@@ -312,7 +288,7 @@ type TableContextTypes = Omit<ITableActions, "onGlobalFilterChange"> & {
 
 export const TableContext = createContext<TableContextTypes>({} as TableContextTypes);
 
-const Table: FC<TablePropsType> = ({
+const Table: FC<ITableProps> = ({
     columns,
     externalData,
     withCheckbox,
@@ -769,4 +745,4 @@ const Table: FC<TablePropsType> = ({
     );
 };
 
-export { TablePropsType, Table as default };
+export { ITableProps, Table as default };
