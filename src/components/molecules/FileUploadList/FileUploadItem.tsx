@@ -97,9 +97,10 @@ interface IFileUploadItem {
      */
     progressPercent?: number;
     /**
-     * Indicates an error state for the upload.
+     * Determines the ProgressBar appearance based on its status.
+     * Possible values: `rest | warning | error`
      */
-    error?: boolean;
+    status?: "rest" | "warning" | "error";
     /**
      * Helper text displayed below the progress bar (e.g., error messages).
      */
@@ -120,7 +121,7 @@ const FileUploadItem: FC<IFileUploadItem> = ({
     loading,
     progressPercent,
     id,
-    error,
+    status,
     helperText,
     uploadingText
 }) => {
@@ -146,7 +147,7 @@ const FileUploadItem: FC<IFileUploadItem> = ({
         <div className={classNames("fileUploadList", className)}>
             {/* States => (image,audio,video, document) */}
             <div className="fileUploadList__row audio">
-                {loading || error ? (
+                {loading || status === "error" || status === "warning" ? (
                     <>
                         <div className="fileUploadList__item fileUploadList__item--withProgress">
                             <div className="fileUploadList__file">
@@ -160,7 +161,8 @@ const FileUploadItem: FC<IFileUploadItem> = ({
                         <div className="fileUploadList__item" />
                         <div
                             className={classNames("fileUploadList__item", {
-                                "fileUploadList__item--actionsLoading": loading || error
+                                "fileUploadList__item--actionsLoading":
+                                    loading || status === "error" || status === "warning"
                             })}
                         >
                             {hasActions && (
@@ -186,7 +188,7 @@ const FileUploadItem: FC<IFileUploadItem> = ({
                                 uploadingText={uploadingText}
                                 type="determinate"
                                 className="fileUploadList__progress"
-                                error={error}
+                                status={status}
                                 helperText={helperText}
                             />
                         </div>

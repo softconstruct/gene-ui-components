@@ -86,7 +86,7 @@ const FileUploadItemStory: StoryFileUploadItem = {
         id: args({ control: "text", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
         progressPercent: args({ control: "number", ...propCategory.content }),
-        error: args({ control: "boolean", ...propCategory.states }),
+        status: args({ control: "select", ...propCategory.states, options: ["rest", "warning", "error"] }),
         helperText: args({ control: "text", ...propCategory.content }),
         uploadingText: args({ control: "text", ...propCategory.content })
     },
@@ -107,7 +107,7 @@ const FileUploadItemStory: StoryFileUploadItem = {
         ],
         loading: false,
         progressPercent: 50,
-        error: false,
+        status: "rest",
         helperText: undefined,
         uploadingText: "Uploading"
     },
