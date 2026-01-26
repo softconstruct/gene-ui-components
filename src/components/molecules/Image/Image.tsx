@@ -1,7 +1,17 @@
-import React, { ChangeEvent, FC, KeyboardEvent, MouseEvent, SyntheticEvent, useRef, useState } from "react";
+import React, {
+    ChangeEvent,
+    ElementType,
+    FC,
+    KeyboardEvent,
+    MouseEvent,
+    SyntheticEvent,
+    useEffect,
+    useRef,
+    useState
+} from "react";
 import classNames from "classnames";
 
-import { Eye, IconProps, Image as ImageIcon } from "@geneui/icons";
+import { IconProps, Image as ImageIcon } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -36,14 +46,14 @@ interface IImageAction {
     /**
      * Callback triggered when the action item is clicked.
      */
-    onActionItemClick: (event: React.MouseEvent<HTMLButtonElement>, actionId: number | string) => void;
+    onActionItemClick: (actionProps: IImageAction, event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 interface IImageProps {
     /**
      * Unique identifier for the image component.
      */
-    id?: string;
+    id?: string | null;
     /**
      * Additional CSS classes for the root element.
      * Use this for positioning relative to the parent component.
@@ -53,10 +63,6 @@ interface IImageProps {
      * Indicates whether the image resource is currently loading.
      */
     loading?: boolean;
-    /**
-     * Text displayed alongside the loader.
-     */
-    loadingText?: string;
     /**
      * The primary title text for the image card.
      */
@@ -76,22 +82,23 @@ interface IImageProps {
     /**
      * Callback triggered when the selection checkbox is toggled.
      */
-    onSelectionChange?: (e: ChangeEvent<HTMLInputElement>, id: string | null) => void;
+    onCheckboxChange?: (id: string | null, e: ChangeEvent<HTMLInputElement>) => void;
     /**
      * Callback triggered when the image body is clicked.
      */
     onImageClick?: (
-        e: React.MouseEvent<HTMLElement, globalThis.MouseEvent> | KeyboardEvent<HTMLElement>,
-        id: string | null
+        id: string | null,
+        e: MouseEvent<HTMLElement, globalThis.MouseEvent> | KeyboardEvent<HTMLElement>
     ) => void;
     /**
-     * Defines the aspect ratio of the image container.
+     * Defines the aspect ratio of the image container. <br/>
+     * Possible values are `1:1`, `3:2`, `2:1`, and `16:9`.
      */
     aspectRatio?: ImageAspectRatio;
     /**
      * The source URL of the image to display.
      */
-    src: string;
+    src?: string;
     /**
      * Indicates if the component is in a failed state (e.g., image failed to load for preview).
      */
@@ -99,8 +106,16 @@ interface IImageProps {
     /**
      * Callback triggered when the image fails to load.
      */
-    onError?: (e: SyntheticEvent<HTMLImageElement, Event>) => void;
+    onFailed?: (e: SyntheticEvent<HTMLImageElement, Event>) => void;
 }
+
+const aspectRatioClassNamePrefix = "image_size_";
+const imageAspectRatios = {
+    "1:1": `${aspectRatioClassNamePrefix}1x1`,
+    "3:2": `${aspectRatioClassNamePrefix}3x2`,
+    "2:1": `${aspectRatioClassNamePrefix}2x1`,
+    "16:9": `${aspectRatioClassNamePrefix}16x9`
+};
 
 /**
  * The Image component displays visual content with support for loading states,
@@ -113,14 +128,13 @@ const Image: FC<IImageProps> = ({
     title,
     description,
     loading = false,
-    loadingText = "Loading",
     failed = false,
-    aspectRatio = "1:1",
+    aspectRatio = "16:9",
     actions = [],
     selected = false,
-    onSelectionChange,
+    onCheckboxChange,
     onImageClick,
-    onError
+    onFailed
 }) => {
     const [imageLoadFailed, setImageLoadFailed] = useState(failed);
     const titleRef = useRef<HTMLSpanElement | null>(null);
@@ -129,41 +143,66 @@ const Image: FC<IImageProps> = ({
     const isDescriptionTruncated = useEllipsisDetection(descriptionRef);
 
     const hasActions = actions && actions.length > 0;
-    const aspectRatioClassName = `image_size_${aspectRatio.replace(":", "x")}`;
+    const aspectRatioClassName = imageAspectRatios[aspectRatio];
+    const rootClassName = classNames(
+        "image",
+        aspectRatioClassName,
+        {
+            image_failed: imageLoadFailed,
+            image_loading: loading
+        },
+        className
+    );
+
+    const isNotInteractive = loading || imageLoadFailed;
+
+    const ImagePreview: ElementType = isNotInteractive ? "div" : "button";
+
+    useEffect(() => {
+        if (!src) {
+            setImageLoadFailed(true);
+        } else setImageLoadFailed(failed);
+    }, [src, failed]);
 
     const onImageLoadError = (e: SyntheticEvent<HTMLImageElement, Event>) => {
-        onError?.(e);
+        onFailed?.(e);
         setImageLoadFailed(true);
     };
 
     return (
-        <article className={classNames(`image ${aspectRatioClassName}`, className)}>
+        <article className={rootClassName}>
             <div className="image__body">
-                <button
-                    onClick={(e) => onImageClick?.(e, id)}
-                    type="button"
+                <ImagePreview
+                    onClick={isNotInteractive ? undefined : (e) => onImageClick?.(id, e)}
+                    type={isNotInteractive ? undefined : "button"}
                     className={classNames("image__preview", {
                         image_failed: imageLoadFailed
                     })}
                 >
                     {!loading && !imageLoadFailed && (
-                        <img className="image__img" onError={onImageLoadError} src={src} alt={title || ""} />
+                        <img
+                            className="image__img"
+                            onError={onImageLoadError}
+                            src={src}
+                            alt={title || ""}
+                            loading="lazy"
+                            decoding="async"
+                        />
                     )}
 
                     <span className="image__content">
-                        {!loading && !imageLoadFailed && <Eye className="image__overlay" size={20} />}
                         {loading && (
-                            <Loader className="image__loader" size="large" text={loadingText} textPosition="below" />
+                            <Loader className="image__loader" size="small" textPosition="below" appearance="neutral" />
                         )}
-                        {imageLoadFailed && !loading && <ImageIcon className="image__error" size={24} />}
+                        {imageLoadFailed && !loading && <ImageIcon className="image__failed" size={24} />}
                     </span>
-                </button>
+                </ImagePreview>
 
-                {onSelectionChange && !loading && (
+                {onCheckboxChange && !loading && (
                     <Checkbox
                         className="image__checkbox"
                         checked={selected}
-                        onChange={(e) => onSelectionChange(e, id)}
+                        onChange={(e) => onCheckboxChange(id, e)}
                     />
                 )}
             </div>
@@ -172,14 +211,24 @@ const Image: FC<IImageProps> = ({
                 <div className="image__info">
                     {title && (
                         <Tooltip text={title} isVisible={isTitleTruncated}>
-                            <Text ref={titleRef} as="h3" variant="labelMediumSemibold" className="ellipsis-text">
+                            <Text
+                                ref={titleRef}
+                                as="h3"
+                                variant="labelMediumSemibold"
+                                className="image__title ellipsis-text"
+                            >
                                 {title}
                             </Text>
                         </Tooltip>
                     )}
                     {description && (
                         <Tooltip text={description} isVisible={isDescriptionTruncated}>
-                            <Text ref={descriptionRef} as="p" variant="bodyMediumRegular" className="ellipsis-text">
+                            <Text
+                                ref={descriptionRef}
+                                as="p"
+                                variant="bodyMediumRegular"
+                                className="image__description ellipsis-text"
+                            >
                                 {description}
                             </Text>
                         </Tooltip>
@@ -188,18 +237,21 @@ const Image: FC<IImageProps> = ({
 
                 {hasActions && (
                     <ButtonGroup iconOnly className="image__actions" size="small">
-                        {actions.map(({ Icon, id: actionId, label, onActionItemClick }) => (
-                            <Button
-                                key={actionId}
-                                onClick={(event: MouseEvent<HTMLButtonElement>) => onActionItemClick(event, actionId)}
-                                appearance="secondary"
-                                layout="text"
-                                Icon={Icon}
-                                disabled={loading}
-                            >
-                                {label}
-                            </Button>
-                        ))}
+                        {actions.map((props) => {
+                            const { Icon, id: actionId, label, onActionItemClick } = props;
+                            return (
+                                <Button
+                                    key={actionId}
+                                    onClick={(event: MouseEvent<HTMLButtonElement>) => onActionItemClick(props, event)}
+                                    appearance="secondary"
+                                    layout="text"
+                                    Icon={Icon}
+                                    disabled={loading}
+                                >
+                                    {label}
+                                </Button>
+                            );
+                        })}
                     </ButtonGroup>
                 )}
             </div>

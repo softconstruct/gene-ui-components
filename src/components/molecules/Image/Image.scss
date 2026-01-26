@@ -49,7 +49,14 @@
         }
     }
 
-    &:not(#{ $this }_failed) {
+    &_loading {
+        #{ $this }__content {
+            background-color: var(--guit-sem-color-background-neutral-4);
+            cursor: default;
+        }
+    }
+
+    &:not(#{ $this }_failed):not(#{ $this }_loading) {
         #{ $this }__content {
             cursor: pointer;
         }
@@ -120,13 +127,13 @@
     }
 
     &__loader,
-    &__error {
+    &__failed {
         position: absolute;
         inset: 0;
         margin: auto;
     }
 
-    &__error {
+    &__failed {
         color: var(--guit-sem-color-foreground-neutral-2);
     }
 
