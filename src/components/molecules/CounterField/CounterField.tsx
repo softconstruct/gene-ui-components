@@ -13,6 +13,9 @@ import TextField from "@components/molecules/TextField";
 // Styles
 import "./CounterField.scss";
 
+// Helpers
+import { clampValue } from "../../../helpers";
+
 interface ICounterFieldProps {
     /**
      * Additional class for the parent element.
@@ -100,22 +103,11 @@ interface ICounterFieldProps {
      *  Default value is `false`.
      */
     autoFocus?: boolean;
+    /**
+     * `HTML` `id` attribute for the `input` element
+     */
+    id?: string;
 }
-
-const clampValue = (value?: number | string, min?: number, max?: number): string => {
-    if (value === undefined) return "";
-    const numericValue = Number(value);
-    if (!Number.isFinite(numericValue)) return String(value);
-
-    let clamped = numericValue;
-    if (min !== undefined && clamped < min) {
-        clamped = min;
-    }
-    if (max !== undefined && clamped > max) {
-        clamped = max;
-    }
-    return String(clamped);
-};
 
 /**
  * The Counter Field component is an input field designed to increment or decrement a numerical value.
@@ -133,6 +125,7 @@ const CounterField: FC<ICounterFieldProps> = ({
     status = "rest",
     value,
     defaultValue = 0,
+    id,
     onChange,
     onInputBlur,
     onInputFocus,
@@ -164,10 +157,8 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     const currentStringValue = getCurrentStringValue();
 
-    const validNumericValue = useMemo(() => {
-        const numericValue = Number(currentStringValue);
-        return Number.isFinite(numericValue) ? numericValue : 0;
-    }, [currentStringValue]);
+    const numericValue = Number(currentStringValue);
+    const validNumericValue = Number.isFinite(numericValue) ? numericValue : 0;
 
     const handleValueChange = (stepValue: number, event: MouseEvent<HTMLButtonElement>) => {
         const nextValue = validNumericValue + stepValue;
@@ -200,7 +191,7 @@ const CounterField: FC<ICounterFieldProps> = ({
     const handleButtonClick = (event: MouseEvent<HTMLButtonElement>, isIncrement: boolean) =>
         handleValueChange(isIncrement ? step : -step, event);
 
-    const inputId = useMemo(() => `counter-field-${nanoid()}`, []);
+    const inputId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
 
     const onFocusHandler = (e: FocusEvent<HTMLInputElement>) => onInputFocus?.(e);
 

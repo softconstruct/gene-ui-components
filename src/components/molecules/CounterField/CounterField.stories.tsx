@@ -30,7 +30,8 @@ const meta: Meta<ICounterFieldProps> = {
         onChange: args({ control: "false", ...propCategory.action }),
         onInputBlur: args({ control: "false", ...propCategory.action }),
         onInputFocus: args({ control: "false", ...propCategory.action }),
-        autoFocus: args({ control: "boolean", ...propCategory.functionality })
+        autoFocus: args({ control: "boolean", ...propCategory.functionality }),
+        id: args({ control: "text", ...propCategory.others })
     },
 
     args: {
