@@ -1,3 +1,4 @@
+import React, { ChangeEvent, FC, MouseEvent, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -44,4 +45,33 @@ export default meta;
 
 type Story = StoryObj<INumberFieldProps>;
 
-export const Default: Story = {};
+const Template: FC<INumberFieldProps> = ({ ...props }) => <NumberField {...props} />;
+
+export const Default: Story = {
+    render: ({ ...props }) => <Template {...props} />,
+    argTypes: { value: args({ control: "false", ...propCategory.states }) }
+};
+
+const ControlledTemplate: FC<INumberFieldProps> = ({ value, onChange, ...props }) => {
+    const isControlled = value !== undefined;
+    const displayValue = isControlled ? value : "0";
+    const [internalStringValue, setInternalStringValue] = useState(displayValue);
+
+    const handleChange = (
+        newValueString: string,
+        event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>
+    ) => {
+        setInternalStringValue(newValueString);
+        onChange?.(newValueString, event);
+    };
+
+    return <NumberField {...props} value={internalStringValue} onChange={handleChange} />;
+};
+
+export const Controlled: Story = {
+    render: (props) => <ControlledTemplate {...props} />,
+    args: {
+        helperText: "Controlled Number Field"
+    },
+    argTypes: { defaultValue: args({ control: "false", ...propCategory.states }) }
+};
