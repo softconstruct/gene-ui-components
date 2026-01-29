@@ -1,4 +1,5 @@
 import React, {
+    ButtonHTMLAttributes,
     ChangeEvent,
     ElementType,
     FC,
@@ -168,16 +169,18 @@ const Image: FC<IImageProps> = ({
         setImageLoadFailed(true);
     };
 
+    const imagePreviewProps = isNotInteractive
+        ? {}
+        : {
+              type: "button" as ButtonHTMLAttributes<HTMLButtonElement>["type"],
+              onClick: (e: MouseEvent<HTMLElement>) => onImageClick?.(id, e)
+          };
+
     return (
         <article className={rootClassName}>
             <div className="image__body">
                 <ImagePreview
-                    {...(isNotInteractive
-                        ? {}
-                        : {
-                              type: "button",
-                              onClick: (e: MouseEvent<HTMLElement>) => onImageClick?.(id, e)
-                          })}
+                    {...imagePreviewProps}
                     className={classNames("image__preview", {
                         image_failed: imageLoadFailed
                     })}
