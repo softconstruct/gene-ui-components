@@ -14,9 +14,9 @@ import classNames from "classnames";
 
 import { IconProps, Image as ImageIcon } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
-// Components
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
