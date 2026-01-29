@@ -12,7 +12,7 @@ const meta: Meta<IImageProps> = {
     title: "Molecules/Image",
     component: Image,
     argTypes: {
-        id: args({ control: "text", ...propCategory.functionality }),
+        id: args({ control: "text", ...propCategory.others }),
         className: args({ control: "false", ...propCategory.appearance }),
         src: args({ control: "text", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),
@@ -20,7 +20,7 @@ const meta: Meta<IImageProps> = {
         loading: args({ control: "boolean", ...propCategory.states }),
         failed: args({ control: "boolean", ...propCategory.states }),
         aspectRatio: args({ control: "select", ...propCategory.appearance }),
-        actions: args({ control: "false", ...propCategory.content }),
+        actions: args({ control: "false", ...propCategory.functionality }),
         selected: args({ control: "boolean", ...propCategory.states }),
         onImageClick: args({ control: "false", ...propCategory.action }),
         onCheckboxChange: args({ control: "false", ...propCategory.action }),

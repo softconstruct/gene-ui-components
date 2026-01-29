@@ -13,20 +13,19 @@ import classNames from "classnames";
 
 import { IconProps, Image as ImageIcon } from "@geneui/icons";
 
-// Components
 import Button from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
+// Components
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
+import Tooltip from "@components/molecules/Tooltip";
 
 // Hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./Image.scss";
-
-import Tooltip from "../Tooltip";
 
 type ImageAspectRatio = "1:1" | "3:2" | "2:1" | "16:9";
 
@@ -92,7 +91,7 @@ interface IImageProps {
     ) => void;
     /**
      * Defines the aspect ratio of the image container. <br/>
-     * Possible values are `1:1`, `3:2`, `2:1`, and `16:9`.
+     * Possible values: `1:1 | 3:2 | 2:1 | 16:9`
      */
     aspectRatio?: ImageAspectRatio;
     /**
@@ -173,8 +172,12 @@ const Image: FC<IImageProps> = ({
         <article className={rootClassName}>
             <div className="image__body">
                 <ImagePreview
-                    onClick={isNotInteractive ? undefined : (e) => onImageClick?.(id, e)}
-                    type={isNotInteractive ? undefined : "button"}
+                    {...(isNotInteractive
+                        ? {}
+                        : {
+                              type: "button",
+                              onClick: (e: MouseEvent<HTMLElement>) => onImageClick?.(id, e)
+                          })}
                     className={classNames("image__preview", {
                         image_failed: imageLoadFailed
                     })}
