@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useMemo, useState } from "react";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
 import { NUMERIC_STRING_PATTERN } from "src/constants/regex";
@@ -95,6 +95,20 @@ interface INumberFieldProps {
      */
     id?: string;
 }
+const clampValue = (value?: number | string, min?: number, max?: number): string => {
+    if (value === undefined) return "";
+    const numericValue = Number(value);
+    if (!Number.isFinite(numericValue)) return String(value);
+
+    let clamped = numericValue;
+    if (min !== undefined && clamped < min) {
+        clamped = min;
+    }
+    if (max !== undefined && clamped > max) {
+        clamped = max;
+    }
+    return String(clamped);
+};
 
 /**
  * Number Field designed to capture numeric data from users. It is specifically configured to accept only numerical values, ensuring accurate data entry for fields requiring quantities, measurements, or other numerical inputs.
@@ -121,34 +135,27 @@ const NumberField: FC<INumberFieldProps> = ({
     autoFocus
 }) => {
     const isControlled = value !== undefined;
-    const [internalValue, setInternalValue] = useState(defaultValue?.toString() || "");
-    const inputValue = isControlled ? value.toString() : internalValue;
-    const labelSize = size === "large" ? "medium" : size;
-    const helperTextSize = size === "large" ? "medium" : size;
-    const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
-    const handleInputFocus = (event: FocusEvent<HTMLInputElement>) => {
-        onInputFocus?.(event);
-    };
-    const handleInputBlur = (event: FocusEvent<HTMLInputElement>) => {
-        onInputBlur?.(event);
-    };
-    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { value: currentValue } = event.target;
+    const [internalValue, setInternalValue] = useState<string>("");
+    const firstRender = useRef(true);
 
-        if (currentValue !== "" && !NUMERIC_STRING_PATTERN.test(currentValue)) {
-            return;
-        }
-
-        onChange?.(currentValue, event);
-
+    useEffect(() => {
         if (!isControlled) {
-            setInternalValue(currentValue);
+            setInternalValue(clampValue(defaultValue, min, max));
         }
+        firstRender.current = false;
+    }, []);
+
+    const getCurrentStringValue = (): string => {
+        if (isControlled) {
+            return firstRender.current ? clampValue(value, min, max) : String(value ?? "");
+        }
+        return internalValue;
     };
-    const validNumericValue = useMemo(() => {
-        const numericValue = Number(inputValue);
-        return Number.isFinite(numericValue) ? numericValue : 0;
-    }, [inputValue]);
+
+    const currentStringValue = getCurrentStringValue();
+
+    const numericValue = Number(currentStringValue);
+    const validNumericValue = Number.isFinite(numericValue) ? numericValue : 0;
 
     const handleValueChange = (stepValue: number, event: MouseEvent<HTMLButtonElement>) => {
         const nextValue = validNumericValue + stepValue;
@@ -169,6 +176,45 @@ const NumberField: FC<INumberFieldProps> = ({
     };
     const handleButtonClick = (event: MouseEvent<HTMLButtonElement>, isIncrement: boolean) =>
         handleValueChange(isIncrement ? step : -step, event);
+
+    const labelSize = size === "large" ? "medium" : size;
+    const helperTextSize = size === "large" ? "medium" : size;
+    const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
+    const handleInputFocus = (event: FocusEvent<HTMLInputElement>) => {
+        onInputFocus?.(event);
+    };
+    const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => {
+        const inputValue = e.target.value;
+        const clampedValueString = clampValue(inputValue, min, max);
+        if (clampedValueString !== inputValue) {
+            if (!isControlled) {
+                setInternalValue(clampedValueString);
+            }
+            const syntheticEvent = {
+                ...e,
+                target: {
+                    ...e.target,
+                    value: clampedValueString
+                }
+            } as ChangeEvent<HTMLInputElement>;
+
+            onChange?.(clampedValueString, syntheticEvent);
+        }
+        onInputBlur?.(e);
+    };
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { value: currentValue } = event.target;
+
+        if (currentValue !== "" && !NUMERIC_STRING_PATTERN.test(currentValue)) {
+            return;
+        }
+
+        onChange?.(currentValue, event);
+
+        if (!isControlled) {
+            setInternalValue(currentValue);
+        }
+    };
 
     const buttonsDisabled = useMemo(() => {
         const baseDisabled = disabled || readOnly;
@@ -209,9 +255,9 @@ const NumberField: FC<INumberFieldProps> = ({
                         // eslint-disable-next-line jsx-a11y/no-autofocus
                         autoFocus={autoFocus}
                         onFocus={handleInputFocus}
-                        onBlur={handleInputBlur}
+                        onBlur={onBlurHandler}
                         onChange={handleChange}
-                        value={inputValue}
+                        value={currentStringValue}
                         id={generatedId}
                     />
                 </div>
@@ -221,7 +267,7 @@ const NumberField: FC<INumberFieldProps> = ({
                         className={classNames(actionButtonClasses, "numberField__action_up", {
                             numberField__action_disabled: buttonsDisabled.increment
                         })}
-                        onClick={(e) => handleButtonClick(e, true)}
+                        onClick={(event) => handleButtonClick(event, true)}
                         disabled={buttonsDisabled.increment}
                     >
                         <ChevronUp size={16} />
@@ -231,7 +277,7 @@ const NumberField: FC<INumberFieldProps> = ({
                         className={classNames(actionButtonClasses, "numberField__action_down", {
                             numberField__action_disabled: buttonsDisabled.decrement
                         })}
-                        onClick={(e) => handleButtonClick(e, false)}
+                        onClick={(event) => handleButtonClick(event, false)}
                         disabled={buttonsDisabled.decrement}
                     >
                         <ChevronDown size={16} />
