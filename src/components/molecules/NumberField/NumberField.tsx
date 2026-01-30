@@ -1,7 +1,6 @@
 import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
-import { NUMERIC_STRING_PATTERN } from "src/constants/regex";
 
 import { ChevronDown, ChevronUp } from "@geneui/icons";
 
@@ -10,6 +9,8 @@ import Label from "@components/atoms/Label";
 
 // Styles
 import "./NumberField.scss";
+
+import { NUMERIC_STRING_PATTERN } from "../../../constants";
 
 interface INumberFieldProps {
     /**
