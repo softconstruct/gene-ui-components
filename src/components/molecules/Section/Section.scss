@@ -1,5 +1,130 @@
 .section {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    display: flex;
+    flex-direction: column;
+    background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    border-radius: var(--guit-ref-radius-2xsmall);
+    border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
+    height: 36rem;
+
+    &_isInset {
+        #{$this}__body {
+            #{$this}__wrapper {
+                padding-block: var(--guit-ref-spacing-large);
+                padding-inline: var(--guit-ref-spacing-large);
+            }
+        }
+
+        .section__body_hasHeader {
+            #{ $this }__wrapper {
+                border-start-start-radius: var(--guit-ref-radius-2xsmall);
+                border-start-end-radius: var(--guit-ref-radius-2xsmall);
+            }
+        }
+
+        .section__body_hasFooter {
+            #{ $this }__wrapper {
+                border-end-start-radius: var(--guit-ref-radius-2xsmall);
+                border-end-end-radius: var(--guit-ref-radius-2xsmall);
+            }
+        }
+    }
+
+    &__header {
+        flex: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: var(--guit-ref-spacing-medium);
+        border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+        border-start-start-radius: var(--guit-ref-radius-2xsmall);
+        border-start-end-radius: var(--guit-ref-radius-2xsmall);
+        padding-inline: var(--guit-ref-spacing-large);
+        padding-block: var(--guit-ref-spacing-medium);
+        background-color: var(--guit-sem-color-background-neutral-1);
+    }
+
+    &__title {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        column-gap: var(--guit-ref-spacing-4xsmall);
+    }
+
+    &__body {
+        flex: 1;
+        min-width: 0;
+        min-height: 0;
+        height: 100%;
+    }
+
+    &__wrapper {
+        width: 100%;
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__content {
+        flex: 1;
+        min-height: 29.8rem;
+        display: flex;
+        flex-direction: column;
+        row-gap: var(--guit-ref-spacing-large);
+        height: 100%;
+        padding-block: var(--guit-ref-spacing-large);
+        padding-inline: var(--guit-ref-spacing-large);
+        border: 1px solid rgb(166 0 99 / 100%);
+        background-color: rgb(244 225 236 / 100%);
+
+        &_context {
+            display: flex;
+            flex-direction: column;
+            row-gap: var(--guit-ref-spacing-3xsmall);
+            width: 100%;
+        }
+
+        &_title {
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
+            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+            font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
+            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+        }
+
+        &_description {
+            font-family: var(--guit-sem-font-label-medium-default-medium-font-family), sans-serif;
+            font-size: var(--guit-sem-font-label-medium-default-medium-font-size);
+            font-weight: var(--guit-sem-font-label-medium-default-medium-font-weight);
+            line-height: var(--guit-sem-font-label-medium-default-medium-line-height);
+        }
+    }
+
+    &__footer {
+        flex: none;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        column-gap: var(--guit-ref-spacing-medium);
+        border-top: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+        border-end-start-radius: var(--guit-ref-radius-2xsmall);
+        border-end-end-radius: var(--guit-ref-radius-2xsmall);
+        padding-block: var(--guit-ref-spacing-medium);
+        padding-inline: var(--guit-ref-spacing-large);
+        background-color: var(--guit-sem-color-background-neutral-1);
+        height: 5.6rem;
+
+        &:first-child {
+            flex: none;
+        }
+    }
+
+    &__actions {
+        flex: 1;
+        display: flex;
+        justify-content: flex-end;
+    }
 }
