@@ -34,9 +34,11 @@ const Section: FC<ISectionProps> = ({ className }) => {
                         Subtitle
                     </Text>
                 </div>
-                <Button Icon={X} size="small" appearance="secondary" layout="fill" onClick={() => ({})}>
-                    Swap
-                </Button>
+                <div className="section__header_right ">
+                    <Button Icon={X} size="small" appearance="secondary" layout="fill" onClick={() => ({})}>
+                        Swap
+                    </Button>
+                </div>
             </div>
 
             {/* Section Body border radius change hasBody and hasFooter */}
@@ -44,14 +46,14 @@ const Section: FC<ISectionProps> = ({ className }) => {
                 <Scrollbar>
                     <div className="section__wrapper">
                         <div className="section__content">
-                            <CheckMarkCircleFilled className="section__content_icon" size="24" />
+                            <CheckMarkCircleFilled className="section__content_icon" size={24} />
                             <div className="section__content_context">
                                 <p className="section__content_title">Swap</p>
                                 <p className="section__content_description">Swap</p>
                             </div>
                         </div>
                         <div className="section__content">
-                            <CheckMarkCircleFilled className="section__content_icon" size="24" />
+                            <CheckMarkCircleFilled className="section__content_icon" size={24} />
                             <div className="section__content_context">
                                 <p className="section__content_title">Swap</p>
                                 <p className="section__content_description">Swap</p>
