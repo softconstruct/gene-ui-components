@@ -1,25 +1,31 @@
 import React, { FC, MouseEvent, useMemo } from "react";
 import classNames from "classnames";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 
 import { IconProps } from "@geneui/icons";
 
 import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
+import ButtonGroup from "@components/molecules/ButtonGroup";
+import ProgressBar from "@components/molecules/ProgressBar";
 
 import "./FileUploadList.scss";
 
-import { ButtonGroup, ProgressBar } from "../../../index";
-
 interface IBlobProps {
     /**
-     * Human readable size of the uploaded file (e.g. 10MB).
+     * Human-readable size of the uploaded file, displayed in the list.
+     * Use a short, readable format such as "10MB", "4.2MB", or "320MB".
+     * @example
+     * blob={{ size: "6MB", type: "document" }}
      */
-    size: string;
+    size?: string;
     /**
-     * File type used for setting visual state (image, audio, etc.).
+     * File type used to set the row's visual state (background and icon color).
+     * Possible values: `image | video | audio | document`. Each value maps to a distinct accent style in the list item.
+     * @example
+     * blob={{ size: "18MB", type: "image" }}
      */
-    type: string;
+    type?: string;
 }
 
 export interface IFileUploadActionProps {
@@ -52,21 +58,22 @@ export interface IFileUploadActionProps {
 
 interface IFileUploadItem {
     /**
-     * Optional custom class for overriding default styles.
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
     /**
      * Display name of the file.
      */
-    name: string;
+    name?: string;
     /**
      * Time when the file was uploaded or processed.
      */
-    time: string;
+    time?: string;
     /**
      * Basic metadata such as size and type.
      */
-    blob: IBlobProps;
+    blob?: IBlobProps;
     /**
      * An array of action button objects to display in the file upload item.
      * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
@@ -146,7 +153,7 @@ const FileUploadItem: FC<IFileUploadItem> = ({
     return (
         <div className={classNames("fileUploadList", className)}>
             {/* States => (image,audio,video, document) */}
-            <div className="fileUploadList__row audio">
+            <div className={classNames("fileUploadList__row", blob?.type ?? "document")}>
                 {loading || status === "error" || status === "warning" ? (
                     <>
                         <div className="fileUploadList__item fileUploadList__item--withProgress">
@@ -154,7 +161,7 @@ const FileUploadItem: FC<IFileUploadItem> = ({
                                 <Icon className={`fileUploadList__fileIcon ${"avatar__icon"}`} size={16} />
                             </div>
                             <Text className="fileUploadList__text ellipsis-text" as="span" variant="labelMediumMedium">
-                                {name}
+                                {name ?? ""}
                             </Text>
                         </div>
                         <div className="fileUploadList__item" />
@@ -200,17 +207,17 @@ const FileUploadItem: FC<IFileUploadItem> = ({
                                 <Icon className={`fileUploadList__fileIcon ${"avatar__icon"}`} size={16} />
                             </div>
                             <Text className="fileUploadList__text ellipsis-text" as="span" variant="labelMediumMedium">
-                                {name}
+                                {name ?? ""}
                             </Text>
                         </div>
                         <div className="fileUploadList__item">
                             <Text className="fileUploadList__text ellipsis-text" as="span" variant="labelMediumMedium">
-                                {time}
+                                {time ?? ""}
                             </Text>
                         </div>
                         <div className="fileUploadList__item">
                             <Text className="fileUploadList__text ellipsis-text" as="span" variant="labelMediumMedium">
-                                {blob.size}
+                                {blob?.size ?? ""}
                             </Text>
                         </div>
                         <div className="fileUploadList__item">

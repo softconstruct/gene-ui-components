@@ -59,23 +59,20 @@ type StoryFileUploadItem = StoryObj<IFileUploadItem>;
 const FileUploadListStory: Story = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        data: args({ control: "false", ...propCategory.content })
+        files: args({ control: "false", ...propCategory.content })
     },
     args: {
-        data: mockData
+        files: mockData
     },
-    render: (props) => {
-        return (
-            <FileUploadList {...props}>
-                {mockData.map((file) => {
-                    return <FileUploadItem {...file} />;
-                })}
-            </FileUploadList>
-        );
-    }
+    render: (props) => <FileUploadList {...props} />
 };
 
 const FileUploadItemStory: StoryFileUploadItem = {
+    parameters: {
+        controls: {
+            exclude: ["files"]
+        }
+    },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         name: args({ control: "text", ...propCategory.content }),

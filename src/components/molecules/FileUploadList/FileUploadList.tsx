@@ -7,20 +7,21 @@ import FileUploadItem, { IFileUploadItem } from "./FileUploadItem";
 
 interface IFileUploadListProps {
     /**
-     * Optional custom class for styling overrides.
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
     /**
      * Files to be rendered within the list.
      */
-    data: IFileUploadItem[];
+    files: IFileUploadItem[];
 }
 
-const FileUploadList: FC<IFileUploadListProps> = ({ className, data }) => {
+const FileUploadList: FC<IFileUploadListProps> = ({ className, files }) => {
     return (
         <div className={classNames("fileUploadList", className)}>
             {/* States => (image,audio,video, document) */}
-            {data.map((item) => (
+            {files.map((item) => (
                 <FileUploadItem key={item.id} {...item} />
             ))}
         </div>

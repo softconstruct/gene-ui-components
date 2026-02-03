@@ -101,7 +101,7 @@ describe("FileUploadList ", () => {
 
     beforeEach(() => {
         mockData.forEach(({ actions }) => actions.forEach(({ onClick }) => onClick?.mockClear?.()));
-        setup = mount(<FileUploadList data={mockData} />);
+        setup = mount(<FileUploadList files={mockData} />);
     });
 
     it("renders without crashing", () => {
@@ -110,12 +110,12 @@ describe("FileUploadList ", () => {
 
     it("renders className prop correctly", () => {
         const className = "test-class";
-        const wrapper = setup.setProps({ className });
+        setup.setProps({ className });
 
-        expect(wrapper.hasClass(className)).toBeTruthy();
+        expect(setup.hasClass(className)).toBeTruthy();
     });
 
-    it("renders a FileUploadItem per data entry", () => {
+    it("renders a FileUploadItem per file entry", () => {
         expect(setup.find(FileUploadItem)).toHaveLength(mockData.length);
     });
 
@@ -128,14 +128,14 @@ describe("FileUploadList ", () => {
         });
     });
 
-    it("renders no FileUploadItems when data is empty", () => {
-        const wrapper = mount(<FileUploadList data={[]} />);
+    it("renders no FileUploadItems when files is empty", () => {
+        setup.setProps({ files: [] });
 
-        expect(wrapper.find(FileUploadItem)).toHaveLength(0);
-        expect(wrapper.find(".fileUploadList").exists()).toBeTruthy();
+        expect(setup.find(FileUploadItem)).toHaveLength(0);
+        expect(setup.find(".fileUploadList").exists()).toBeTruthy();
     });
 
-    it("updates rendered list when data prop changes", () => {
+    it("updates rendered list when files prop changes", () => {
         const updatedData = [
             {
                 ...mockData[0],
@@ -146,65 +146,56 @@ describe("FileUploadList ", () => {
             }
         ];
 
-        const wrapper = setup.setProps({ data: updatedData });
+        setup.setProps({ files: updatedData });
 
-        expect(wrapper.find(FileUploadItem)).toHaveLength(updatedData.length);
-        expect(wrapper.text()).toContain("Budget-2025.xlsx");
-        expect(wrapper.text()).not.toContain(mockData[1].name);
+        expect(setup.find(FileUploadItem)).toHaveLength(updatedData.length);
+        expect(setup.text()).toContain("Budget-2025.xlsx");
+        expect(setup.text()).not.toContain(mockData[1].name);
     });
 
     it("renders progress bar and hides metadata when an item is uploading", () => {
-        const wrapper = mount(<FileUploadList data={uploadingData} />);
+        setup.setProps({ files: uploadingData });
 
-        expect(wrapper.find(".progressBar")).toHaveLength(1);
-        expect(wrapper.text()).toContain("Uploading");
-        expect(wrapper.text()).toContain(uploadingData[0].name);
-        expect(wrapper.text()).not.toContain(uploadingData[0].blob.size);
-        expect(wrapper.text()).not.toContain(uploadingData[0].time);
+        expect(setup.find(".progressBar")).toHaveLength(1);
+        expect(setup.text()).toContain("Uploading");
+        expect(setup.text()).toContain(uploadingData[0].name);
+        expect(setup.text()).not.toContain(uploadingData[0].blob.size);
+        expect(setup.text()).not.toContain(uploadingData[0].time);
     });
 
     it("renders action buttons when uploading item lacks cancel action", () => {
-        const wrapper = mount(<FileUploadList data={uploadingWithoutCancelData} />);
+        setup.setProps({ files: uploadingWithoutCancelData });
+        setup.update();
 
-        expect(wrapper.find(FileUploadItem).find("button.fileUploadList__button")).toHaveLength(1);
+        expect(setup.find(FileUploadItem).find("button.fileUploadList__button")).toHaveLength(1);
     });
 
     it("shows all actions while uploading", () => {
         const onCancel = jest.fn();
         const onClick = jest.fn();
-        const wrapper = mount(
-            <FileUploadList
-                data={[
-                    {
-                        id: "uploading-test",
-                        name: "Test-file.zip",
-                        time: "11:00AM",
-                        blob: { size: "120MB", type: "document" },
-                        Icon: Bell,
-                        loading: true,
-                        progressPercent: 45,
-                        uploadingText: "Uploading",
-                        actions: [
-                            {
-                                Icon: Image,
-                                onCancel
-                            },
-                            {
-                                Icon: RecycleBin,
-                                onClick
-                            }
-                        ]
-                    }
-                ]}
-            />
-        );
-        wrapper.update();
+        setup.setProps({
+            files: [
+                {
+                    id: "uploading-test",
+                    name: "Test-file.zip",
+                    time: "11:00AM",
+                    blob: { size: "120MB", type: "document" },
+                    Icon: Bell,
+                    loading: true,
+                    progressPercent: 45,
+                    uploadingText: "Uploading",
+                    actions: [
+                        { Icon: Image, onCancel },
+                        { Icon: RecycleBin, onClick }
+                    ]
+                }
+            ]
+        });
+        setup.update();
 
-        // Verify the FileUploadItem receives loading prop
-        const fileUploadItem = wrapper.find(FileUploadItem).first();
+        const fileUploadItem = setup.find(FileUploadItem).first();
         expect(fileUploadItem.prop("loading")).toBe(true);
 
-        // Find buttons - should show all actions
         const buttons = fileUploadItem.find("button.fileUploadList__button");
         expect(buttons).toHaveLength(2);
 
@@ -221,23 +212,17 @@ describe("FileUploadList ", () => {
 
     it("calls onCancel with correct id when uploading", () => {
         const onCancel = jest.fn();
-        const wrapper = mount(
-            <FileUploadList
-                data={[
-                    {
-                        ...uploadingData[0],
-                        actions: [
-                            {
-                                Icon: Image,
-                                onCancel
-                            }
-                        ]
-                    }
-                ]}
-            />
-        );
-        wrapper.update();
-        const fileUploadItem = wrapper.find(FileUploadItem).first();
+        setup.setProps({
+            files: [
+                {
+                    ...uploadingData[0],
+                    actions: [{ Icon: Image, onCancel }]
+                }
+            ]
+        });
+        setup.update();
+
+        const fileUploadItem = setup.find(FileUploadItem).first();
         const button = fileUploadItem.find("button.fileUploadList__button").at(0);
         button.simulate("click");
         expect(onCancel).toHaveBeenCalledWith(uploadingData[0].id);

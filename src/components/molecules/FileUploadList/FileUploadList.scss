@@ -51,6 +51,16 @@
                 color: var(--guit-sem-color-foreground-accent-magenta);
             }
         }
+
+        &.media {
+            #{ $this }__file {
+                background-color: var(--guit-sem-color-background-accent-purple-1);
+            }
+
+            #{ $this }__fileIcon {
+                color: var(--guit-sem-color-foreground-accent-purple);
+            }
+        }
     }
 
     &__item {
