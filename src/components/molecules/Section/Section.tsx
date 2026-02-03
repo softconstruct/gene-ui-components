@@ -15,12 +15,71 @@ interface ISectionProps {
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
-
     className?: string;
-    // fill Section component props interface
+    // /**
+    //  * The size of the section.
+    //  * Possible values: `small | medium | large`
+    //  */
+    // size?: "small" | "medium" | "large";
+    // /**
+    //  * The title text displayed in the section's header.
+    //  */
+    // title?: string;
+    // /**
+    //  * The subtitle text displayed below the title in the section's header.
+    //  */
+    // subtitle?: string;
+    // /**
+    //  * Content to be displayed in the section's header area.
+    //  * When provided, this content will be rendered in the header section.
+    //  */
+    // headerContent?: React.ReactNode;
+    // /**
+    //  * The main content of the section, displayed in the body area.
+    //  * This content will be scrollable if it exceeds the available space.
+    //  */
+    // bodyContent?: React.ReactNode;
+    // /**
+    //  * Content to be displayed in the section's footer area.
+    //  * When provided, this content will be rendered in the footer section.
+    //  */
+    // footerContent?: React.ReactNode;
+    // /**
+    //  * Action button object to display in the section's footer.
+    //  * The object conforms to the `IButtonProps` interface, allowing full customization of the button.
+    //  * @example
+    //  * action={{ children: 'Submit', appearance: 'primary', onClick: handleSubmit }}
+    //  */
+    // action?: IButtonProps;
+    // /**
+    //  * When `true`, displays the header section.
+    //  * When `false`, the header section is hidden.
+    //  */
+    // hasHeader?: boolean;
+    // /**
+    //  * When `true`, displays the footer section.
+    //  * When `false`, the footer section is hidden.
+    //  */
+    // hasFooter?: boolean;
+    // /**
+    //  * When `true`, adds padding around the section's body content.
+    //  */
+    // withPadding?: boolean;
 }
 
-const Section: FC<ISectionProps> = ({ className }) => {
+const Section: FC<ISectionProps> = ({
+    className
+    // size,
+    // title,
+    // subtitle,
+    // headerContent,
+    // bodyContent,
+    // footerContent,
+    // action,
+    // hasHeader,
+    // hasFooter,
+    // withPadding
+}) => {
     return (
         // IsInset
         <div className={classNames("section section_isInset", className)}>
