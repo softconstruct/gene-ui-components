@@ -9,11 +9,9 @@
     height: 36rem;
 
     &_isInset {
-        #{$this}__body {
-            #{$this}__wrapper {
-                padding-block: var(--guit-ref-spacing-large);
-                padding-inline: var(--guit-ref-spacing-large);
-            }
+        #{$this}__wrapper {
+            padding-block: var(--guit-ref-spacing-large);
+            padding-inline: var(--guit-ref-spacing-large);
         }
     }
 
@@ -35,6 +33,7 @@
         &_swap {
             flex: none;
             display: flex;
+            height: 100%;
 
             // Todo Remove
             background: rgb(244 225 236 / 100%);
