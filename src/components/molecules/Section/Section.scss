@@ -30,11 +30,11 @@
         padding-inline: var(--guit-ref-spacing-large);
         padding-block: var(--guit-ref-spacing-medium);
         background-color: var(--guit-sem-color-background-neutral-1);
+        max-height: 6.2rem;
 
-        &_right {
+        &_swap {
             flex: none;
             display: flex;
-            height: 100%;
 
             // Todo Remove
             background: rgb(244 225 236 / 100%);
@@ -44,6 +44,7 @@
 
     &__title {
         flex: 1;
+        min-width: 0;
         display: flex;
         flex-direction: column;
         column-gap: var(--guit-ref-spacing-4xsmall);
@@ -129,10 +130,19 @@
         padding-block: var(--guit-ref-spacing-medium);
         padding-inline: var(--guit-ref-spacing-large);
         background-color: var(--guit-sem-color-background-neutral-1);
-        height: 5.6rem;
+        max-height: 5.6rem;
 
         &:first-child {
             flex: none;
+        }
+
+        &_swap {
+            flex: none;
+            display: flex;
+
+            // Todo Remove
+            background: rgb(244 225 236 / 100%);
+            box-shadow: 0 0 0 1px rgb(166 0 99 / 100%);
         }
     }
 

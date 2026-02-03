@@ -27,14 +27,14 @@ const Section: FC<ISectionProps> = ({ className }) => {
             {/* Section Header */}
             <div className="section__header">
                 <div className="section__title">
-                    <Text variant="labelMediumSemibold" as="span">
+                    <Text variant="labelMediumSemibold" as="span" className="ellipsis-text">
                         Title
                     </Text>
-                    <Text variant="labelSmallMedium" as="span">
+                    <Text variant="labelSmallMedium" as="span" className="ellipsis-text">
                         Subtitle
                     </Text>
                 </div>
-                <div className="section__header_right ">
+                <div className="section__header_swap ">
                     <Button Icon={X} size="small" appearance="secondary" layout="fill" onClick={() => ({})}>
                         Swap
                     </Button>
@@ -65,9 +65,11 @@ const Section: FC<ISectionProps> = ({ className }) => {
 
             {/* Section Footer */}
             <div className="section__footer">
-                <Button Icon={X} size="small" appearance="secondary" layout="fill" onClick={() => ({})}>
-                    Swap
-                </Button>
+                <div className="section__footer_swap">
+                    <Button Icon={X} size="small" appearance="secondary" layout="fill" onClick={() => ({})}>
+                        Swap
+                    </Button>
+                </div>
                 <ButtonGroup className="section__actions" size="medium">
                     <Button name="Primary" size="medium" appearance="secondary" layout="fill" onClick={() => ({})}>
                         Secondary
