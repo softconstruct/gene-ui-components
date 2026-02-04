@@ -6,6 +6,7 @@ import { IconProps } from "@geneui/icons";
 
 import { IPillProps } from "@components/atoms/Pill";
 import { ICheckboxProps } from "@components/molecules/Checkbox";
+import { IMenuItemProps } from "@components/molecules/Menu";
 import { ISwitchProps } from "@components/molecules/Switch";
 
 export type CellType =
@@ -99,4 +100,11 @@ export interface IGlobalFilterInfo {
     placeholder?: string;
     withGlobalFilter?: boolean;
     withManualFiltering?: boolean;
+}
+
+export interface IBulkActions {
+    label: string;
+    onChange: (item: IMenuItemProps) => void;
+    disabled?: boolean;
+    list: IMenuItemProps[];
 }

@@ -7,7 +7,8 @@ import { Globe } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import ButtonGroup from "@components/molecules/ButtonGroup";
-import { IEditActions, IGlobalFilterInfo, IRowSelectionInfo } from "@components/organisms/Table/types";
+import BulkActions from "@components/organisms/Table/BulkActions";
+import { IBulkActions, IEditActions, IGlobalFilterInfo, IRowSelectionInfo } from "@components/organisms/Table/types";
 
 interface IEditActionsProps {
     isEditMode: boolean;
@@ -24,6 +25,7 @@ interface IToolbarProps {
     manageColumnsTitle?: string;
     isManageColumnsDisabled?: boolean;
     globalFilterInfo?: IGlobalFilterInfo;
+    bulkActions?: IBulkActions;
 }
 
 const EditActions: FC<IEditActionsProps> = ({ isEditMode = false, tableEditAction, editActions }) => {
@@ -78,7 +80,8 @@ const Toolbar: FC<IToolbarProps> = ({
     headerContent,
     withEditMode,
     manageColumnsTitle,
-    isManageColumnsDisabled
+    isManageColumnsDisabled,
+    bulkActions
 }) => {
     const [globalFilterValue, setGlobalFilterValue] = useState<string>();
     const [menuOpened, setMenuOpened] = useState(false);
@@ -140,6 +143,7 @@ const Toolbar: FC<IToolbarProps> = ({
                             )}
                         </>
                     )}
+                    {!!bulkActions?.list.length && <BulkActions bulkActions={bulkActions} />}
                 </div>
             </div>
             <div className="dataTable__toolbar_actions">
