@@ -1,9 +1,13 @@
-import React, { FC } from "react";
+import React, { FC, useRef } from "react";
 import classNames from "classnames";
 
 import Button, { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
+import Tooltip from "@components/molecules/Tooltip";
+
+// Hooks
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 import "./Section.scss";
 
@@ -77,22 +81,31 @@ const Section: FC<ISectionProps> = ({
     hasFooter = true,
     withPadding = true
 }) => {
+    const titleRef = useRef<HTMLSpanElement | null>(null);
+    const subtitleRef = useRef<HTMLSpanElement | null>(null);
+
+    const isTitleTruncated: boolean = useEllipsisDetection(titleRef);
+    const isSubtitleTruncated: boolean = useEllipsisDetection(subtitleRef);
+
     return (
-        // IsInset
         <div className={classNames("section section_isInset", className)}>
             {/* Section Header */}
             {hasHeader && (
                 <div className="section__header">
                     <div className="section__title">
                         {title && (
-                            <Text variant="labelMediumSemibold" as="span" className="ellipsis-text">
-                                {title}
-                            </Text>
+                            <Tooltip text={title} isVisible={isTitleTruncated}>
+                                <Text variant="labelMediumSemibold" as="span" className="ellipsis-text" ref={titleRef}>
+                                    {title}
+                                </Text>
+                            </Tooltip>
                         )}
                         {subtitle && (
-                            <Text variant="labelSmallMedium" as="span" className="ellipsis-text">
-                                {subtitle}
-                            </Text>
+                            <Tooltip text={subtitle} isVisible={isSubtitleTruncated}>
+                                <Text variant="labelSmallMedium" as="span" className="ellipsis-text" ref={subtitleRef}>
+                                    {subtitle}
+                                </Text>
+                            </Tooltip>
                         )}
                     </div>
                     <div className="section__header_swap section__header_content">
