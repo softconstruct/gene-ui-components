@@ -70,6 +70,7 @@ export { default as InteractiveCard } from "./components/molecules/InteractiveCa
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
 export { default as DataCardList, IDataCardListProps } from "@components/organisms/DataCardList";
+export { default as Table } from "./components/organisms/Table";
 
 // Providers
 export {
