@@ -21,6 +21,7 @@
     "typings": "index.d.ts",
     "scripts": {
         "start": "npm run test && storybook dev -p 6006",
+        "start:without-tests": "storybook dev -p 6006",
         "dev": "concurrently --kill-others -g \"npm:test:watch\" \"npm:start\"",
         "test": "jest --config ./jest.config.js --rootDir ./ --coverage --json --outputFile=./coverage/.jest-test-results.json",
         "test:watch": "npm run test -- --watchAll --json",

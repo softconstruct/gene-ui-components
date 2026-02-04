@@ -1,0 +1,84 @@
+.datePickerInput {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 160px;
+
+    &__withRange {
+        max-width: 380px;
+    }
+
+    &__label {
+        font-size: 14px;
+        font-weight: 500;
+
+        &_disabled {
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+
+    &__inputWrapper {
+        display: flex;
+        align-items: center;
+        border: 1px solid var(--guit-sem-color-border-neutral-2);
+        border-radius: 4px;
+        padding: 8px 12px;
+        background-color: white;
+        transition: border-color 0.2s;
+
+        &_error {
+            border-color: var(--guit-sem-color-border-error);
+        }
+
+        &_disabled {
+            border: 1px solid var(--guit-sem-color-border-disabled-1);
+            background-color: var(--guit-sem-color-border-disabled-1);
+            cursor: not-allowed;
+        }
+
+        &_readOnly {
+            background-color: var(--guit-sem-color-background-neutral-2);
+        }
+
+        &:focus-within {
+            border-color: var(--guit-sem-color-border-primary);
+            box-shadow: 0 0 0 2px var(--guit-sem-color-border-primary-light);
+        }
+    }
+
+    &__input {
+        border: none;
+        outline: none;
+        font-size: 14px;
+        color: #374151;
+        width: 100%;
+        background-color: transparent;
+        cursor: pointer;
+        text-align: center;
+
+        &::placeholder {
+            color: var(--guit-sem-color-text-neutral-3);
+        }
+
+        &:disabled {
+            background-color: transparent;
+            cursor: not-allowed;
+            color: var(--guit-sem-color-text-neutral-4);
+        }
+    }
+
+    &__icon {
+        margin-left: 12px;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+    }
+
+    &__clearIcon {
+        margin-right: 8px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+    }
+}

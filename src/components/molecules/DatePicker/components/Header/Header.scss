@@ -1,0 +1,27 @@
+.datePickerHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    padding-top: 0;
+
+    &__control {
+        background-color: transparent !important;
+        color: black !important;
+    }
+
+    &__title {
+        font-weight: 600;
+        text-align: center;
+        color: #262627;
+        cursor: pointer;
+
+        &_month {
+            // UI: HEADER MONTH SELECTOR STYLES HERE  
+        }
+
+        &_year {
+            // UI: HEADER YEAR SELECTOR STYLES HERE
+        }
+    }
+}

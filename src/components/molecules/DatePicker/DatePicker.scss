@@ -1,5 +1,112 @@
 .datePicker {
-    // Your styles here
     color: var(--guit-ref-color-magenta-500base);
     font-size: var(--guit-sem-font-caption-large-medium-font-size);
+
+    &__input {
+        display: flex;
+    }
+
+    &__day {
+        &_today {
+            background-color: green;
+        }
+
+        &_past {
+            background-color: red;
+        }
+
+        &_withRange {
+            background-color: aquamarine;
+
+            &:hover {
+                background-color: blue !important;
+            }
+        }
+
+        &_selected {
+            background-color: #1473E6 !important;
+            color: white !important;
+        }
+
+        &_insideSelectedRange {
+            background-color: brown !important;
+        }
+
+        &_outsideOfMonth {
+            //TODO calculation isn't correct yet
+            background-color: transparent !important;
+        }
+    }
+
+    &__presets {
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid #eee;
+        padding: 8px 12px;
+        gap: 4px;
+        min-width: 120px;
+    }
+
+    &__skeleton {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    &__popover {
+        &_content {
+            display: flex;
+        }
+    }
+
+    &__footer {
+        border-top: 1px solid #eee;
+        position: absolute;
+        right: 0;
+        bottom: -15px;
+        display: flex;
+        justify-content: flex-end;
+        padding: 12px 16px;
+        background: #fff;
+        width: 100%;
+    }
+
+    &__popover {
+        &_content {
+            display: flex;
+            flex-direction: row;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 100%;
+        }
+    }
+
+    &__calendar {
+        display: flex;
+        flex-direction: row;
+        padding: 10px;
+        gap: 16px;
+    }
+}
+
+.react-datepicker {
+
+    &__header {
+        padding-top: 0;
+        background-color: transparent !important;
+        border-bottom: none !important;
+        padding-top: 0 !important;
+    }
+
+    &__day {
+        // &--selected {
+        //     background-color: #1473E6 !important;
+        //     color: white !important;
+        // }
+
+        // &--outside-month {
+        //     visibility: hidden !important;
+        //     pointer-events: none !important;
+        // }
+    }
 }
