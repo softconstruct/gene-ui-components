@@ -11,7 +11,6 @@
         left: 0;
         top: 0;
         z-index: 1;
-        background: none;
         appearance: none;
         border: none;
         width: 100%;
@@ -45,6 +44,8 @@
         width: var(--guit-sem-dimension-width-xsmall);
         height: var(--guit-sem-dimension-height-xsmall);
         position: relative;
+        background: var(--guit-sem-color-surface-neutral-1);
+        border-radius: var(--guit-ref-radius-4xsmall);
 
         &:hover {
             #{ $this }__input:not(:checked, :indeterminate):not(:active) + #{ $this }__imitation {

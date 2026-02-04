@@ -49,6 +49,7 @@
         position: relative;
         border-radius: 50%;
         cursor: pointer;
+        background: var(--guit-sem-color-surface-neutral-1);
 
         &:hover {
             #{ $this }__input:not(:checked):not(:active) + #{ $this }__imitation {
