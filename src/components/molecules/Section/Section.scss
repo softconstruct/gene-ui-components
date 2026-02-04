@@ -34,10 +34,6 @@
             flex: none;
             display: flex;
             height: 100%;
-
-            // Todo Remove
-            background: rgb(244 225 236 / 100%);
-            box-shadow: 0 0 0 1px rgb(166 0 99 / 100%);
         }
     }
 
@@ -90,8 +86,6 @@
         height: 100%;
         padding-block: var(--guit-ref-spacing-large);
         padding-inline: var(--guit-ref-spacing-large);
-        border: 1px solid rgb(166 0 99 / 100%);
-        background-color: rgb(244 225 236 / 100%);
 
         &_context {
             display: flex;
@@ -138,10 +132,6 @@
         &_swap {
             flex: none;
             display: flex;
-
-            // Todo Remove
-            background: rgb(244 225 236 / 100%);
-            box-shadow: 0 0 0 1px rgb(166 0 99 / 100%);
         }
     }
 
