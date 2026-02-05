@@ -23,6 +23,7 @@ const BulkActions: React.FC<BulkActionsProps> = ({ bulkActions }) => {
                 size="medium"
                 Icon={CaretDownFilled}
                 iconPosition="after"
+                aria-label={bulkActions.ariaLabel}
                 {...propsForPopover}
             >
                 {bulkActions.label}

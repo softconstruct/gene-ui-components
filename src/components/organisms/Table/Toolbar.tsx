@@ -1,74 +1,84 @@
 import React, { ChangeEvent, FC, ReactNode, useState } from "react";
 import classNames from "classnames";
 
-import { Globe } from "@geneui/icons";
+import { DocumentPen, Globe } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
 import Divider from "@components/atoms/Divider";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import BulkActions from "@components/organisms/Table/BulkActions";
-import { IBulkActions, IEditActions, IGlobalFilterInfo, IRowSelectionInfo } from "@components/organisms/Table/types";
+import ManageColumns from "@components/organisms/Table/ManageColumns";
+import {
+    Actions,
+    IBulkActions,
+    IGlobalFilterInfo,
+    IManageColumnsInfo,
+    IRowSelectionInfo
+} from "@components/organisms/Table/types";
 
 interface IEditActionsProps {
     isEditMode: boolean;
-    tableEditAction?: (type: "secondaryAction" | "onEdit" | "primaryAction") => void;
-    editActions?: IEditActions;
+    editActions?: Actions;
 }
 
 interface IToolbarProps {
     globalFilterSetter?: (value: string) => void;
-    editActions?: IEditActions;
+    editActions?: Actions;
     rowSelectionInfo?: IRowSelectionInfo;
     headerContent?: ReactNode;
     withEditMode?: boolean;
-    manageColumnsTitle?: string;
-    isManageColumnsDisabled?: boolean;
     globalFilterInfo?: IGlobalFilterInfo;
     bulkActions?: IBulkActions;
+    manageColumnsInfo?: IManageColumnsInfo;
 }
 
-const EditActions: FC<IEditActionsProps> = ({ isEditMode = false, tableEditAction, editActions }) => {
-    if (isEditMode)
+const EditActions: FC<IEditActionsProps> = ({ isEditMode = false, editActions }) => {
+    if (isEditMode) {
         return (
             <ButtonGroup size="medium">
-                {editActions?.secondaryActionTitle && (
+                {editActions?.secondary && (
                     <Button
                         appearance="secondary"
                         layout="fill"
                         size="medium"
-                        onClick={() => tableEditAction?.("secondaryAction")}
-                        aria-label="Cancel editing"
+                        onClick={editActions.secondary.onClick}
+                        aria-label={editActions.secondary.ariaLabel || editActions.secondary.label}
+                        disabled={editActions.secondary.disabled}
                     >
-                        {editActions?.secondaryActionTitle}
+                        {editActions.secondary.label}
                     </Button>
                 )}
-                {editActions?.primaryActionTitle && (
+                {editActions?.primary && (
                     <Button
                         appearance="primary"
                         layout="fill"
                         size="medium"
-                        onClick={() => tableEditAction?.("primaryAction")}
-                        aria-label="Save changes"
+                        onClick={editActions.primary.onClick}
+                        aria-label={editActions.primary.ariaLabel || editActions.primary.label}
+                        disabled={editActions.primary.disabled}
                     >
-                        {editActions?.primaryActionTitle}
+                        {editActions.primary.label}
                     </Button>
                 )}
             </ButtonGroup>
         );
+    }
+
+    if (!editActions?.tertiary) return null;
+
     return (
-        editActions?.editButtonTitle && (
-            <Button
-                appearance="secondary"
-                layout="outline"
-                size="medium"
-                Icon={Globe}
-                onClick={() => tableEditAction?.("onEdit")}
-                aria-label="Edit table"
-            >
-                {editActions?.editButtonTitle}
-            </Button>
-        )
+        <Button
+            appearance="secondary"
+            layout="outline"
+            size="medium"
+            Icon={DocumentPen}
+            onClick={editActions.tertiary.onClick}
+            aria-label={editActions.tertiary.ariaLabel || editActions.tertiary.label}
+            disabled={editActions.tertiary.disabled}
+        >
+            {editActions.tertiary.label}
+        </Button>
     );
 };
 
@@ -79,17 +89,11 @@ const Toolbar: FC<IToolbarProps> = ({
     rowSelectionInfo,
     headerContent,
     withEditMode,
-    manageColumnsTitle,
-    isManageColumnsDisabled,
-    bulkActions
+    bulkActions,
+    manageColumnsInfo
 }) => {
     const [globalFilterValue, setGlobalFilterValue] = useState<string>();
     const [menuOpened, setMenuOpened] = useState(false);
-
-    const tableEditAction = (type: "secondaryAction" | "onEdit" | "primaryAction") => {
-        if (editActions === undefined) return;
-        editActions[type]?.();
-    };
 
     const handleGlobalFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { value } = event.target;
@@ -100,6 +104,8 @@ const Toolbar: FC<IToolbarProps> = ({
         setGlobalFilterValue(value);
         globalFilterSetter?.(value);
     };
+
+    const onManageColumnsClose = () => setMenuOpened(false);
 
     return (
         <div className={classNames("dataTable__toolbar toolbar")}>
@@ -148,29 +154,26 @@ const Toolbar: FC<IToolbarProps> = ({
             </div>
             <div className="dataTable__toolbar_actions">
                 {headerContent && <div className="dataTable__toolbar_content">{headerContent}</div>}
-                {editActions !== undefined && (
-                    <EditActions
-                        isEditMode={!!withEditMode}
-                        editActions={editActions}
-                        tableEditAction={tableEditAction}
-                    />
-                )}
-                {manageColumnsTitle && (
+                {editActions !== undefined && <EditActions isEditMode={!!withEditMode} editActions={editActions} />}
+                {manageColumnsInfo?.manageColumnsTitle && (
                     <div className="dataTable__toolbar_dropdownMenu">
                         <Button
                             className="dataTable__toolbar_dropdownMenu_manageColumns"
                             appearance="secondary"
                             layout="outline"
                             size="medium"
-                            disabled={isManageColumnsDisabled}
+                            disabled={manageColumnsInfo.isManageColumnsDisabled}
                             Icon={Globe}
                             onClick={() => setMenuOpened(!menuOpened)}
-                            aria-label={manageColumnsTitle}
+                            aria-label={manageColumnsInfo.manageColumnsTitle}
                             aria-expanded={menuOpened}
                             aria-haspopup="true"
                         >
-                            {manageColumnsTitle}
+                            {manageColumnsInfo.manageColumnsTitle}
                         </Button>
+                        {menuOpened && (
+                            <ManageColumns {...manageColumnsInfo.manageColumns} onMenuClose={onManageColumnsClose} />
+                        )}
                     </div>
                 )}
             </div>

@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IMenuItemProps } from "@components/molecules/Menu";
-import { IBulkActions } from "@components/organisms/Table/types";
+import { Actions, IBulkActions, IManageColumnsInfo } from "@components/organisms/Table/types";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -27,14 +27,46 @@ const bulkActionsMock: IBulkActions = {
     ]
 };
 
+const manageColumnsInfo: IManageColumnsInfo = {
+    manageColumns: {
+        label: "Active Columns",
+        actionsInfo: {
+            primary: {
+                label: "Save"
+            },
+            secondary: {
+                label: "Cancel"
+            },
+            tertiary: {
+                label: "Restore Defaults"
+            }
+        }
+    },
+    manageColumnsTitle: "Manage Columns",
+    isManageColumnsDisabled: false
+};
+
+const editActions: Actions = {
+    primary: {
+        label: "Save"
+    },
+    secondary: {
+        label: "Cancel"
+    },
+    tertiary: {
+        label: "Edit"
+    }
+};
+
 const meta: Meta<ITableProps> = {
     title: "Organisms/Table",
     component: Table,
     argTypes: {
         rowSelectionInfo: args({ control: "false", ...propCategory.content }),
         globalFilterInfo: args({ control: "false", ...propCategory.content }),
-        manageColumnsTitle: args({ control: "string", ...propCategory.content }),
-        bulkActions: args({ control: "string", ...propCategory.content })
+        manageColumnsInfo: args({ control: "false", ...propCategory.content }),
+        bulkActions: args({ control: "false", ...propCategory.content }),
+        editActions: args({ control: "false", ...propCategory.content })
     },
     args: {
         rowSelectionInfo: {
@@ -47,7 +79,8 @@ const meta: Meta<ITableProps> = {
             withManualFiltering: true
         },
         bulkActions: bulkActionsMock,
-        manageColumnsTitle: "Manage Columns"
+        manageColumnsInfo,
+        editActions
     }
 };
 

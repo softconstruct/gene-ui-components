@@ -8,6 +8,7 @@ import { IPillProps } from "@components/atoms/Pill";
 import { ICheckboxProps } from "@components/molecules/Checkbox";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { ISwitchProps } from "@components/molecules/Switch";
+import { IManageColumnsProps } from "@components/organisms/Table/ManageColumns";
 
 export type CellType =
     | "Group"
@@ -86,14 +87,18 @@ export interface IRowSelectionInfo {
     onRowsDeselect?: () => void;
 }
 
-export interface IEditActions {
-    primaryAction?: () => void;
-    primaryActionTitle?: string;
-    secondaryActionTitle?: string;
-    secondaryAction?: () => void;
-    onEdit?: () => void;
-    editButtonTitle?: string;
+export interface IActionConfig {
+    label: string;
+    onClick?: () => void;
+    ariaLabel?: string;
+    disabled?: boolean;
 }
+
+type ActionMap<T extends string> = Partial<Record<T, IActionConfig>>;
+
+type ActionKey = "primary" | "secondary" | "tertiary";
+
+export type Actions = ActionMap<ActionKey>;
 
 export interface IGlobalFilterInfo {
     onChange?: (value: string) => void;
@@ -102,9 +107,13 @@ export interface IGlobalFilterInfo {
     withManualFiltering?: boolean;
 }
 
-export interface IBulkActions {
-    label: string;
+export interface IBulkActions extends Omit<IActionConfig, "onClick"> {
     onChange: (item: IMenuItemProps) => void;
-    disabled?: boolean;
     list: IMenuItemProps[];
+}
+
+export interface IManageColumnsInfo {
+    manageColumns: IManageColumnsProps;
+    manageColumnsTitle?: string;
+    isManageColumnsDisabled?: boolean;
 }
