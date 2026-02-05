@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo, KeyboardEvent } from "react";
+import React, { useState, useEffect, useRef, useCallback, KeyboardEvent } from "react";
 import DatePicker, { CalendarContainer } from "react-datepicker";
 import classNames from "classnames";
 import "react-datepicker/dist/react-datepicker.css";
@@ -9,8 +9,6 @@ import {
     getMinutes,
     getSeconds,
     format,
-    isPast,
-    isSameDay,
     isValid
 } from "date-fns";
 
@@ -21,12 +19,13 @@ import Preset from "./components/Preset/Preset";
 import Header from "./components/Header/Header";
 import Button from "@components/atoms/Button";
 import Tooltip from "@components/molecules/Tooltip";
+import Day from "./components/Day/Day";
 
 // Constants
 import { presetsList, presetsListRange } from "./constants";
 
 import "./DatePicker.scss";
-import { DatePickerSizes, DatePickerViewMode } from "./types";
+import { DatePickerExcludedDates, DatePickerSizes, DatePickerViewMode } from "./types";
 
 type PresetAction = "today" | "yesterday" | "7days" | "14days" | "1month";
 
@@ -93,11 +92,7 @@ interface IDatePickerProps {
     /**
      * Date(s) that should be excluded, if message also passed it will be displayed when date is hovered
      */
-    exludedDates?: Array<{
-        date: Date;
-        message?: string;
-    }>
-    | Array<Date>;
+    excludedDates?: DatePickerExcludedDates;
     /**
      * Months that should be excluded (will not be interactive from month picker)
      */
@@ -266,7 +261,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
     open = false,
     loading = false,
     shouldDisableDate,
-    exludedDates = [],
+    excludedDates = [],
     presetSize = "medium",
     disabledPresets,
     weekStartDay = 1,
@@ -285,8 +280,6 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
     const [endDate, setEndDate] = useState<Date | null>(null);
     const [isOpen, setIsOpen] = useState<boolean>(open);
     const [view, setView] = useState<DatePickerViewMode>("day");
-
-    const today = useMemo(() => new Date(), []);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -341,23 +334,6 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
 
     const presetsToUse = withRange ? presetsListRange : presetsList;
 
-    const getCustomDayClass = useCallback((date: Date) => {
-        const isToday = isSameDay(date, today);
-        const isSelectedStart = startDate && isSameDay(date, startDate);
-        const isSelectedEnd = endDate && isSameDay(date, endDate);
-        const isInsideRange = startDate && endDate && date > startDate && date < endDate;
-        // const isInCurrentMonth = isWithinInterval(date, currentMonthInterval);
-
-        return classNames("datePicker__day", {
-            "datePicker__day_today": isToday,
-            "datePicker__day_past": isPast(date) && !isToday,
-            "datePicker__day_withRange": withRange,
-            // "datePicker__day_outsideOfMonth": !isInCurrentMonth,
-            "datePicker__day_selected": isSelectedStart || isSelectedEnd,
-            "datePicker__day_insideSelectedRange": isInsideRange
-        });
-    }, [startDate, endDate, withRange, today]);
-
     return (
         <div className={className}>
             <div ref={inputClickWrapperRef}>
@@ -400,7 +376,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
                             onChange={handleChange}
                             minDate={minDate}
                             maxDate={maxDate}
-                            excludeDates={exludedDates}
+                            excludeDates={excludedDates}
                             selectsRange={withRange}
                             shouldCloseOnSelect={!withApplyButton}
                             dateFormat={dateFormat}
@@ -413,7 +389,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
                             showYearPicker={view === "year"}
                             monthsShown={withRange && view === "day" ? 2 : 1}
 
-                            dayClassName={getCustomDayClass}
+                            // dayClassName={getCustomDayClass}
 
                             calendarContainer={(props) => (
                                 <CalendarWrapper
@@ -454,6 +430,17 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
                                     view={view}
                                     setView={setView}
                                     date={headerProps.monthDate}
+                                />
+                            )}
+
+                            renderDayContents={(day, date) => (
+                                <Day
+                                    day={day}
+                                    date={date}
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    withRange={withRange}
+                                    excludedDates={[{ date: new Date(), message: "Sqich" }]}
                                 />
                             )}
                         />

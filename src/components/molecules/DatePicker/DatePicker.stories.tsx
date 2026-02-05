@@ -34,7 +34,14 @@ const meta: Meta<IDatePickerProps> = {
         onClean: args({ control: "false", ...propCategory.functionality }),
         disabledPresets: args({ control: "false", ...propCategory.appearance }),
         presetSize: args({ control: "select", ...propCategory.appearance }),
-        exludedDates: args({ control: "false", ...propCategory.functionality }),
+        excludedDates: args({ control: "false", ...propCategory.functionality }),
+        excludedMonths: args({ control: "false", ...propCategory.functionality }),
+        excludedYears: args({ control: "false", ...propCategory.functionality }),
+        maxDate: args({ control: "date", ...propCategory.functionality }),
+        minDate: args({ control: "date", ...propCategory.functionality }),
+        pickerInputContainerClassName: args({ control: "false", ...propCategory.appearance }),
+        weekStartDay: args({ control: "text", ...propCategory.functionality }),
+        size: args({ control: "select", ...propCategory.appearance }),
     },
     args: {
         // fill DatePicker component args
@@ -98,7 +105,7 @@ export const Default: Story = {};
 export const WithExcludedDates: Story = {
     render: (props) => <DatePicker {...props} />,
     args: {
-        exludedDates: [{ date: new Date(), message: "Today's date is not selectable" }]
+        excludedDates: [{ date: new Date(), message: "Today's date is not selectable" }]
     }
 };
 

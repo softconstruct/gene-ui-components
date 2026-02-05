@@ -6,38 +6,6 @@
         display: flex;
     }
 
-    &__day {
-        &_today {
-            background-color: green;
-        }
-
-        &_past {
-            background-color: red;
-        }
-
-        &_withRange {
-            background-color: aquamarine;
-
-            &:hover {
-                background-color: blue !important;
-            }
-        }
-
-        &_selected {
-            background-color: #1473E6 !important;
-            color: white !important;
-        }
-
-        &_insideSelectedRange {
-            background-color: brown !important;
-        }
-
-        &_outsideOfMonth {
-            //TODO calculation isn't correct yet
-            background-color: transparent !important;
-        }
-    }
-
     &__presets {
         display: flex;
         flex-direction: column;
