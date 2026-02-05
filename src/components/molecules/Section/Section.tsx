@@ -89,7 +89,6 @@ const Section: FC<ISectionProps> = ({
 
     return (
         <div className={classNames("section section_isInset", className)}>
-            {/* Section Header */}
             {hasHeader && (
                 <div className="section__header">
                     <div className="section__title">
@@ -113,8 +112,6 @@ const Section: FC<ISectionProps> = ({
                     </div>
                 </div>
             )}
-
-            {/* Section Body */}
             <div
                 className={classNames("section__body", {
                     section__body_withPadding: withPadding,
@@ -132,9 +129,7 @@ const Section: FC<ISectionProps> = ({
                     )}
                 </Scrollbar>
             </div>
-
-            {/* Section Footer */}
-            {hasFooter && (
+            {hasFooter && (footerContent || action) && (
                 <div className="section__footer">
                     <div className="section__footer_swap">
                         {footerContent && <div className="section__footer_content">{footerContent}</div>}

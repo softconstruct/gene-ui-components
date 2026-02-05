@@ -1,6 +1,8 @@
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import { CaretDownFilled } from "@geneui/icons";
+
 import Avatar from "@components/atoms/Avatar";
 import Button from "@components/atoms/Button";
 import Pill from "@components/atoms/Pill";
@@ -10,6 +12,7 @@ import Text from "@components/atoms/Text";
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import ButtonGroup from "../ButtonGroup";
 import QRCode from "../QRCode";
+import { SplitButton } from "../SplitButton";
 // Components
 import Section, { ISectionProps } from "./index";
 
@@ -53,15 +56,8 @@ type Story = StoryObj<ISectionProps>;
 
 export const Default: Story = {
     args: {
-        size: "medium",
-        title: "Title",
-        subtitle: "Subtitle",
         headerContent: (
-            <>
-                <Avatar fullName="John Doe" onClick={() => {}} />
-                <Avatar fullName="Jane Smith" onClick={() => {}} />
-                <Avatar fullName="Bob Johnson" onClick={() => {}} />
-            </>
+            <SplitButton items={[{ title: "Test", Icon: CaretDownFilled, id: "test" }]} onSelect={() => {}} />
         ),
         bodyContent: (
             <>
@@ -107,9 +103,6 @@ export const Default: Story = {
                 </Button>
             </ButtonGroup>
         ),
-        action: { children: "Submit", appearance: "primary", onClick: () => {}, size: "medium", layout: "fill" },
-        hasHeader: true,
-        hasFooter: true,
-        withPadding: true
+        action: { children: "Submit", appearance: "primary", onClick: () => {}, size: "medium", layout: "fill" }
     }
 };
