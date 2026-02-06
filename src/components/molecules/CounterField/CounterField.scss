@@ -9,16 +9,21 @@
     &__inputContainer {
         display: flex;
         gap: var(--guit-ref-spacing-xsmall);
-        width: 100%;
+
+        &_size {
+            &_large,
+            &_medium {
+                gap: var(--guit-ref-spacing-xsmall);
+            }
+
+            &_small {
+                gap: var(--guit-ref-spacing-3xsmall);
+            }
+        }
     }
 
     &__input {
         width: 8rem;
-    }
-
-    &__infoContainer {
-        display: flex;
-        width: 100%;
     }
 
     &_readOnly {

@@ -24,7 +24,8 @@ interface ICounterFieldProps {
     className?: string;
     /**
      * The value of the counter (controlled).
-     * This is what will be returned in onChange and stored as the selected value.
+     * This is what will be returned in onChange and stored as the selected value.<br>
+     * Possible values: `number | string`
      */
     value?: number | string;
     /**
@@ -224,18 +225,9 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     return (
         <div
-            className={classNames(
-                "counterField",
-                `counterField_status_${status}`,
-                {
-                    counterField_disabled: disabled,
-                    counterField_readOnly: readOnly && !disabled
-                },
-                className
-            )}
+            className={classNames("counterField", `counterField_status_${status}`, className)}
             aria-required={required}
             aria-invalid={status === "error"}
-            {...((disabled || readOnly) && { tabIndex: -1 })}
         >
             {label && (
                 <Label
@@ -248,10 +240,10 @@ const CounterField: FC<ICounterFieldProps> = ({
                     labelFor={inputId}
                 />
             )}
-            <div className="counterField__inputContainer">
+            <div className={classNames("counterField__inputContainer", `counterField__inputContainer_size_${size}`)}>
                 <Button
                     appearance="secondary"
-                    className="counterField__button counterField__button_decrement_action"
+                    className="counterField__button"
                     layout="fill"
                     size={size}
                     Icon={Minus}
@@ -276,7 +268,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                 />
                 <Button
                     appearance="secondary"
-                    className="counterField__button counterField__button_increment_action"
+                    className="counterField__button"
                     layout="fill"
                     size={size}
                     Icon={Plus}
@@ -286,9 +278,12 @@ const CounterField: FC<ICounterFieldProps> = ({
                 />
             </div>
             {helperText && (
-                <div className="counterField__infoContainer">
-                    <HelperText text={helperText} disabled={disabled} status={status} />
-                </div>
+                <HelperText
+                    text={helperText}
+                    disabled={disabled}
+                    status={status}
+                    className="counterField__helperText"
+                />
             )}
         </div>
     );
