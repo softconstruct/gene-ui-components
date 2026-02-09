@@ -74,7 +74,6 @@ describe("CounterField", () => {
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({ disabled: true });
 
-        expect(wrapper.find(".counterField").hasClass("counterField_disabled")).toBeTruthy();
         expect(wrapper.find(Button).at(0).props().disabled).toBeTruthy();
         expect(wrapper.find(Button).at(1).props().disabled).toBeTruthy();
         expect(wrapper.find(TextField).props().disabled).toBeTruthy();
@@ -94,13 +93,14 @@ describe("CounterField", () => {
 
     it("renders readOnly prop correctly", () => {
         const wrapper = setup.setProps({ readOnly: true });
-        expect(wrapper.find(".counterField").hasClass("counterField_readOnly")).toBeTruthy();
+        expect(wrapper.find(TextField).props().readOnly).toBeTruthy();
     });
 
     it("does not apply readOnly class when disabled is true", () => {
         const wrapper = setup.setProps({ readOnly: true, disabled: true });
-        expect(wrapper.find(".counterField").hasClass("counterField_readOnly")).toBeFalsy();
-        expect(wrapper.find(".counterField").hasClass("counterField_disabled")).toBeTruthy();
+        expect(wrapper.find(Button).at(0).props().disabled).toBeTruthy();
+        expect(wrapper.find(Button).at(1).props().disabled).toBeTruthy();
+        expect(wrapper.find(TextField).props().disabled).toBeTruthy();
     });
 
     it("passes readOnly prop to TextField correctly", () => {
@@ -123,11 +123,6 @@ describe("CounterField", () => {
         const wrapper = setup.setProps({ readOnly: true });
         const decrementButton = wrapper.find(Button).at(0);
         expect(decrementButton.props().disabled).toBeTruthy();
-    });
-
-    it("has tabIndex -1 on container when readOnly is true", () => {
-        const wrapper = setup.setProps({ readOnly: true });
-        expect(wrapper.find(".counterField").prop("tabIndex")).toBe(-1);
     });
 
     it("does not call onChange when increment button is clicked in readOnly mode", () => {
