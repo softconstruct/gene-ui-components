@@ -224,7 +224,7 @@ const CounterField: FC<ICounterFieldProps> = ({
 
     return (
         <div
-            className={classNames("counterField", `counterField_status_${status}`, className)}
+            className={classNames("counterField", className)}
             aria-required={required}
             aria-invalid={status === "error"}
         >

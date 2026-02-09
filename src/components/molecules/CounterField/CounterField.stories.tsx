@@ -11,7 +11,7 @@ const meta: Meta<ICounterFieldProps> = {
     title: "Molecules/CounterField",
     component: CounterField,
     argTypes: {
-        value: args({ control: "text", ...propCategory.content }),
+        value: args({ control: "number", ...propCategory.content }),
         defaultValue: args({ control: "number", ...propCategory.content }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
