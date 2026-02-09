@@ -228,17 +228,15 @@ const CounterField: FC<ICounterFieldProps> = ({
             aria-required={required}
             aria-invalid={status === "error"}
         >
-            {label && (
-                <Label
-                    text={label}
-                    required={required}
-                    disabled={disabled}
-                    readOnly={readOnly}
-                    infoText={infoText}
-                    size={size === "large" ? "medium" : size}
-                    labelFor={inputId}
-                />
-            )}
+            <Label
+                text={label}
+                required={required}
+                disabled={disabled}
+                readOnly={readOnly}
+                infoText={infoText}
+                size={size === "large" ? "medium" : size}
+                labelFor={inputId}
+            />
             <div className={classNames("counterField__inputContainer", `counterField__inputContainer_size_${size}`)}>
                 <Button
                     appearance="secondary"
