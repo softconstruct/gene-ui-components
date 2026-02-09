@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
 
@@ -139,19 +139,18 @@ const CounterField: FC<ICounterFieldProps> = ({
 }) => {
     const isControlled = value !== undefined;
 
-    const [internalStringValue, setInternalStringValue] = useState<string>("");
-    const firstRender = useRef(true);
-
-    useEffect(() => {
-        if (!isControlled) {
-            setInternalStringValue(clampValue(defaultValue, min, max));
-        }
-        firstRender.current = false;
-    }, []);
+    const [internalStringValue, setInternalStringValue] = useState<string>(() =>
+        !isControlled ? clampValue(defaultValue, min, max) : ""
+    );
+    const hasClampedControlledValue = useRef(false);
 
     const getCurrentStringValue = (): string => {
         if (isControlled) {
-            return firstRender.current ? clampValue(value, min, max) : String(value ?? "");
+            if (!hasClampedControlledValue.current) {
+                hasClampedControlledValue.current = true;
+                return clampValue(value, min, max);
+            }
+            return String(value ?? "");
         }
         return internalStringValue;
     };
@@ -189,8 +188,8 @@ const CounterField: FC<ICounterFieldProps> = ({
         onChange?.(inputValue, event);
     };
 
-    const handleButtonClick = (event: MouseEvent<HTMLButtonElement>, isIncrement: boolean) =>
-        handleValueChange(isIncrement ? step : -step, event);
+    const handleButtonClick = (event: MouseEvent<HTMLButtonElement>, type: "increment" | "decrement") =>
+        handleValueChange(type === "increment" ? step : -step, event);
 
     const inputId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
 
@@ -249,7 +248,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     Icon={Minus}
                     disabled={buttonsDisabled.decrement}
                     aria-label={ariaLabelDecrement}
-                    onClick={(event) => handleButtonClick(event, false)}
+                    onClick={(event) => handleButtonClick(event, "decrement")}
                 />
                 <TextField
                     id={inputId}
@@ -274,7 +273,7 @@ const CounterField: FC<ICounterFieldProps> = ({
                     Icon={Plus}
                     disabled={buttonsDisabled.increment}
                     aria-label={ariaLabelIncrement}
-                    onClick={(event) => handleButtonClick(event, true)}
+                    onClick={(event) => handleButtonClick(event, "increment")}
                 />
             </div>
             {helperText && (
