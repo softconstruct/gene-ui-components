@@ -1,95 +1,242 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 import { mount, ReactWrapper } from "enzyme";
+
+import Loader from "@components/atoms/Loader";
+import Checkbox from "@components/molecules/Checkbox";
+
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Components
 import Image, { IImageProps } from "./index";
 
-describe("Image ", () => {
-    let setup: ReactWrapper<IImageProps>;
+jest.mock("@hooks/useEllipsisDetection", () => ({
+    __esModule: true,
+    default: jest.fn()
+}));
+
+describe("Image Component", () => {
+    let wrapper: ReactWrapper<IImageProps>;
+    const mockUseEllipsisDetection = useEllipsisDetection as jest.Mock;
+
+    const defaultProps: IImageProps = {
+        src: "valid-image.jpg",
+        id: "test-id"
+    };
+
+    const setup = (props: Partial<IImageProps> = {}) => {
+        return mount(<Image {...defaultProps} {...props} />);
+    };
+
     beforeEach(() => {
-        setup = mount(<Image src="" />);
+        jest.clearAllMocks();
+        mockUseEllipsisDetection.mockReturnValue(false);
     });
 
-    const mockFn = jest.fn();
+    describe("Rendering & Structure", () => {
+        it("renders without crashing", () => {
+            wrapper = setup();
+            expect(wrapper.exists()).toBeTruthy();
+        });
 
-    it("renders without crashing", () => {
-        expect(setup.exists()).toBeTruthy();
+        it("renders custom classNames", () => {
+            wrapper = setup({ className: "custom-class" });
+            expect(wrapper.find("article.custom-class").exists()).toBeTruthy();
+        });
+
+        it("renders correct aspect ratio class", () => {
+            wrapper = setup({ aspectRatio: "3x2" });
+            expect(wrapper.find(".image_size_3x2").exists()).toBeTruthy();
+        });
     });
 
-    it("renders className prop correctly", () => {
-        const className = "test-class";
-        const wrapper = setup.setProps({ className });
+    describe("Image Preview Logic", () => {
+        it("renders an <img> tag when not loading and not failed", () => {
+            wrapper = setup();
+            expect(wrapper.find("img.image__img").exists()).toBe(true);
+            expect(wrapper.find("img.image__img").prop("src")).toBe(defaultProps.src);
+        });
 
-        expect(wrapper.hasClass(className)).toBeTruthy();
+        it("renders the preview as a <button> when interactive", () => {
+            wrapper = setup();
+            const previewNode = wrapper.find(".image__preview").hostNodes();
+            expect(previewNode.name()).toBe("button");
+        });
+
+        it("renders the preview as a <div> when loading", () => {
+            wrapper = setup({ loading: true });
+            const previewNode = wrapper.find(".image__preview").hostNodes();
+            expect(previewNode.name()).toBe("div");
+        });
+
+        it("calls onImageClick with correct ID when clicked", () => {
+            const onImageClick = jest.fn();
+            wrapper = setup({ id: "my-id", onImageClick });
+
+            wrapper.find("button.image__preview").simulate("click");
+
+            expect(onImageClick).toHaveBeenCalledTimes(1);
+            expect(onImageClick.mock.calls[0][0]).toBe("my-id");
+        });
     });
 
-    it("renders title prop correctly", () => {
-        const title = "Testing";
-        const wrapper = setup.setProps({ title });
+    describe("Loading State", () => {
+        it("renders Loader and hides Image when loading", () => {
+            wrapper = setup({ loading: true });
 
-        expect(wrapper.find(Image).props().title).toBe(title);
+            expect(wrapper.find(Loader).exists()).toBe(true);
+            expect(wrapper.find("img.image__img").exists()).toBe(false);
+            expect(wrapper.find(".image_loading").exists()).toBe(true);
+        });
     });
 
-    it("renders description prop correctly", () => {
-        const description = "Testing";
-        const wrapper = setup.setProps({ description });
+    describe("Footer & Text Truncation", () => {
+        it("does NOT render footer if no title, description, or actions", () => {
+            wrapper = setup({ title: undefined, description: undefined, actions: [] });
+            expect(wrapper.find(".image__footer").exists()).toBe(false);
+        });
 
-        expect(wrapper.find(Image).props().description).toBe(description);
+        it("renders footer if title exists", () => {
+            const testTitle = "My Title";
+            wrapper = setup({ title: testTitle });
+            expect(wrapper.find(".image__footer").exists()).toBe(true);
+
+            const titleNode = wrapper.find(".image__title").hostNodes();
+
+            expect(titleNode.exists()).toBe(true);
+            expect(titleNode.text()).toBe(testTitle);
+            expect(titleNode.name()).toBe("h3");
+        });
+
+        it("renders footer if description exists", () => {
+            const testDesc = "My Description";
+            wrapper = setup({ description: testDesc });
+
+            const descNode = wrapper.find(".image__description").hostNodes();
+
+            expect(descNode.exists()).toBe(true);
+            expect(descNode.text()).toBe(testDesc);
+            expect(descNode.name()).toBe("p");
+        });
     });
 
-    it("renders loading prop correctly", () => {
-        const wrapper = setup.setProps({ loading: true });
+    describe("Actions", () => {
+        const mockActionClick = jest.fn();
+        const actions = [{ id: "edit", label: "Edit Button", onActionItemClick: mockActionClick }];
 
-        expect(wrapper.find(".image__loader").exists());
+        it("calls action callback when clicked", () => {
+            wrapper = setup({ actions });
+            wrapper.find(".image__actions button").simulate("click");
+            expect(mockActionClick).toHaveBeenCalled();
+            expect(mockActionClick.mock.calls[0][0].id).toBe("edit");
+        });
     });
 
-    it("applies correct aspect ratio classes", () => {
-        const wrapper = setup.setProps({ src: "./image.png", aspectRatio: "1:1" });
-        expect(wrapper.find(".image_size_1x1").exists()).toBe(true);
+    describe("Checkbox / Selection", () => {
+        it("renders Checkbox only when onCheckboxChange is provided", () => {
+            wrapper = setup({ onCheckboxChange: undefined });
+            expect(wrapper.find(Checkbox).exists()).toBe(false);
 
-        const wrapper3b2 = setup.setProps({ src: "./image.png", aspectRatio: "3:2" });
-        expect(wrapper3b2.find(".image_size_3x2").exists()).toBe(true);
+            wrapper = setup({ onCheckboxChange: jest.fn() });
+            expect(wrapper.find(Checkbox).exists()).toBe(true);
+        });
 
-        const wrapper2b1 = setup.setProps({ src: "./image.png", aspectRatio: "2:1" });
-        expect(wrapper2b1.find(".image_size_2x1").exists()).toBe(true);
+        it("calls onCheckboxChange with ID", () => {
+            const onChange = jest.fn();
+            const testId = "check-id";
+            wrapper = setup({ id: testId, onCheckboxChange: onChange });
+
+            const checkbox = wrapper.find(Checkbox);
+            const mockEvent = { target: { checked: true } } as ChangeEvent<HTMLInputElement>;
+            checkbox.prop("onChange")!(mockEvent);
+
+            expect(onChange).toHaveBeenCalledTimes(1);
+            expect(onChange).toHaveBeenCalledWith(testId, mockEvent);
+        });
     });
 
-    it("hides img and shows loader when loading is true", () => {
-        const wrapper = setup.setProps({ src: "/img.png", loading: true });
-        expect(wrapper.find("img.image__img").exists()).toBe(false);
-        expect(wrapper.find(".image__loader").exists()).toBe(true);
+    describe("Error Handling & State Updates", () => {
+        it("enters failed state if failed prop is true", () => {
+            wrapper = setup({ failed: true });
+            expect(wrapper.find(".image__failed").hostNodes().exists()).toBe(true);
+        });
+
+        it("calls onFailed and updates state when native img errors", () => {
+            const onFailed = jest.fn();
+            wrapper = setup({ onFailed, src: "bad-url.png" });
+
+            const img = wrapper.find("img");
+            img.simulate("error");
+
+            expect(onFailed).toHaveBeenCalled();
+
+            wrapper.update();
+            expect(wrapper.find(".image__failed").hostNodes().exists()).toBe(true);
+        });
+
+        it("recovers from failed state when src changes", () => {
+            wrapper = setup({ failed: true });
+            expect(wrapper.find(".image__failed").hostNodes().exists()).toBe(true);
+
+            wrapper.setProps({ src: "new-valid.jpg", failed: false });
+            wrapper.update();
+
+            expect(wrapper.find(".image__failed").hostNodes().exists()).toBe(false);
+            expect(wrapper.find("img").exists()).toBe(true);
+        });
     });
 
-    it("adds image_failed root class when failed prop is true and shows failed icon", () => {
-        const wrapper = setup.setProps({ src: "/img.png", failed: true });
-        expect(wrapper.find(".image__failed").exists()).toBe(true);
-    });
+    describe("Additional Edge Cases", () => {
+        it("passes the 'selected' prop correctly to the Checkbox", () => {
+            wrapper = setup({ onCheckboxChange: jest.fn(), selected: true });
+            expect(wrapper.find(Checkbox).prop("checked")).toBe(true);
 
-    it("renders a button preview when interactive and calls onImageClick with id", () => {
-        const wrapper = mount(<Image id="my-id" src="/img.png" onImageClick={mockFn} />);
-        const preview = wrapper.find(".image__preview");
-        // interactive preview should be a button element
-        expect(preview.getDOMNode().nodeName).toBe("BUTTON");
-        preview.simulate("click");
-        expect(mockFn).toHaveBeenCalled();
-        const [[firstArg]] = mockFn.mock.calls;
-        expect(firstArg).toBe("my-id");
-    });
+            wrapper.setProps({ selected: false });
+            wrapper.update();
+            expect(wrapper.find(Checkbox).prop("checked")).toBe(false);
+        });
 
-    it("renders checkbox when onCheckboxChange provided and forwards change", () => {
-        const wrapper = mount(<Image src="/img.png" onCheckboxChange={mockFn} />);
-        const input = wrapper.find(".image__checkbox input");
-        expect(input.exists()).toBe(true);
-        input.simulate("change", { target: { checked: true } });
-        expect(mockFn).toHaveBeenCalled();
-    });
+        it("does not render the Checkbox if the image is loading, even if onCheckboxChange is present", () => {
+            wrapper = setup({
+                onCheckboxChange: jest.fn(),
+                loading: true
+            });
 
-    it("renders action buttons and triggers their callbacks", () => {
-        const actions = [{ id: "a1", label: "Do", onActionItemClick: mockFn }];
-        const wrapper = mount(<Image src="/img.png" actions={actions} />);
-        const btn = wrapper.find(".image__actions button");
-        expect(btn.exists()).toBe(true);
-        btn.simulate("click");
-        expect(mockFn).toHaveBeenCalled();
+            expect(wrapper.find(Checkbox).exists()).toBe(false);
+        });
+
+        it("disables action buttons when the image is loading", () => {
+            const actions = [{ id: "1", label: "Edit", onActionItemClick: jest.fn() }];
+
+            wrapper = setup({
+                loading: true,
+                actions
+            });
+
+            const buttonNode = wrapper.find(".image__actions button");
+            expect(buttonNode.prop("disabled")).toBe(true);
+        });
+
+        it("renders the footer even if only 'actions' are provided (no title/desc)", () => {
+            const actions = [{ id: "1", label: "Edit", onActionItemClick: jest.fn() }];
+
+            wrapper = setup({
+                title: undefined,
+                description: undefined,
+                actions
+            });
+
+            expect(wrapper.find(".image__footer").exists()).toBe(true);
+        });
+
+        it("switches preview from button to div immediately if 'failed' prop is true", () => {
+            wrapper = setup({
+                failed: true,
+                onImageClick: jest.fn()
+            });
+
+            const previewNode = wrapper.find(".image__preview").hostNodes();
+
+            expect(previewNode.name()).toBe("div");
+        });
     });
 });

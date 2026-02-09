@@ -29,7 +29,7 @@ const meta: Meta<IImageProps> = {
     args: {
         loading: false,
         failed: false,
-        aspectRatio: "16:9",
+        aspectRatio: "16x9",
         selected: false,
         src: "https://picsum.photos/id/237/500/500"
     }

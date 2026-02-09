@@ -79,6 +79,7 @@ interface IImageProps {
     selected?: boolean;
     /**
      * Callback triggered when the selection checkbox is toggled.
+     * Without this prop, the checkbox will not be rendered.
      */
     onCheckboxChange?: (id: string | null, e: ChangeEvent<HTMLInputElement>) => void;
     /**
@@ -90,9 +91,9 @@ interface IImageProps {
     ) => void;
     /**
      * Defines the aspect ratio of the image container. <br/>
-     * Possible values: `1:1 | 3:2 | 2:1 | 16:9`
+     * Possible values: `1x1 | 3x2 | 2x1 | 16x9`
      */
-    aspectRatio?: "1:1" | "3:2" | "2:1" | "16:9";
+    aspectRatio?: "1x1" | "3x2" | "2x1" | "16x9";
     /**
      * The source URL of the image to display.
      */
@@ -108,12 +109,6 @@ interface IImageProps {
 }
 
 const aspectRatioClassNamePrefix = "image_size_";
-const imageAspectRatios = {
-    "1:1": `${aspectRatioClassNamePrefix}1x1`,
-    "3:2": `${aspectRatioClassNamePrefix}3x2`,
-    "2:1": `${aspectRatioClassNamePrefix}2x1`,
-    "16:9": `${aspectRatioClassNamePrefix}16x9`
-};
 
 /**
  * The Image component displays visual content with support for loading states,
@@ -127,7 +122,7 @@ const Image: FC<IImageProps> = ({
     description,
     loading = false,
     failed = false,
-    aspectRatio = "16:9",
+    aspectRatio = "16x9",
     actions = [],
     selected = false,
     onCheckboxChange,
@@ -137,11 +132,14 @@ const Image: FC<IImageProps> = ({
     const [imageLoadFailed, setImageLoadFailed] = useState(failed);
     const titleRef = useRef<HTMLSpanElement | null>(null);
     const descriptionRef = useRef<HTMLSpanElement | null>(null);
+
     const isTitleTruncated = useEllipsisDetection(titleRef);
     const isDescriptionTruncated = useEllipsisDetection(descriptionRef);
 
     const hasActions = actions && actions.length > 0;
-    const aspectRatioClassName = imageAspectRatios[aspectRatio];
+    const aspectRatioClassName = `${aspectRatioClassNamePrefix}${aspectRatio}`;
+    const shouldRenderFooter = title || description || hasActions;
+
     const rootClassName = classNames(
         "image",
         aspectRatioClassName,
@@ -211,54 +209,58 @@ const Image: FC<IImageProps> = ({
                 )}
             </div>
 
-            <div className="image__footer">
-                <div className="image__info">
-                    {title && (
-                        <Tooltip text={title} isVisible={isTitleTruncated}>
-                            <Text
-                                ref={titleRef}
-                                as="h3"
-                                variant="labelMediumSemibold"
-                                className="image__title ellipsis-text"
-                            >
-                                {title}
-                            </Text>
-                        </Tooltip>
-                    )}
-                    {description && (
-                        <Tooltip text={description} isVisible={isDescriptionTruncated}>
-                            <Text
-                                ref={descriptionRef}
-                                as="p"
-                                variant="bodyMediumRegular"
-                                className="image__description ellipsis-text"
-                            >
-                                {description}
-                            </Text>
-                        </Tooltip>
+            {shouldRenderFooter && (
+                <div className="image__footer">
+                    <div className="image__info">
+                        {title && (
+                            <Tooltip text={title} isVisible={isTitleTruncated}>
+                                <Text
+                                    ref={titleRef}
+                                    as="h3"
+                                    variant="labelMediumSemibold"
+                                    className="image__title ellipsis-text"
+                                >
+                                    {title}
+                                </Text>
+                            </Tooltip>
+                        )}
+                        {description && (
+                            <Tooltip text={description} isVisible={isDescriptionTruncated}>
+                                <Text
+                                    ref={descriptionRef}
+                                    as="p"
+                                    variant="bodyMediumRegular"
+                                    className="image__description ellipsis-text"
+                                >
+                                    {description}
+                                </Text>
+                            </Tooltip>
+                        )}
+                    </div>
+
+                    {hasActions && (
+                        <ButtonGroup iconOnly className="image__actions" size="small">
+                            {actions.map((props) => {
+                                const { Icon, id: actionId, label, onActionItemClick } = props;
+                                return (
+                                    <Button
+                                        key={actionId}
+                                        onClick={(event: MouseEvent<HTMLButtonElement>) =>
+                                            onActionItemClick(props, event)
+                                        }
+                                        appearance="secondary"
+                                        layout="text"
+                                        Icon={Icon}
+                                        disabled={loading}
+                                    >
+                                        {label}
+                                    </Button>
+                                );
+                            })}
+                        </ButtonGroup>
                     )}
                 </div>
-
-                {hasActions && (
-                    <ButtonGroup iconOnly className="image__actions" size="small">
-                        {actions.map((props) => {
-                            const { Icon, id: actionId, label, onActionItemClick } = props;
-                            return (
-                                <Button
-                                    key={actionId}
-                                    onClick={(event: MouseEvent<HTMLButtonElement>) => onActionItemClick(props, event)}
-                                    appearance="secondary"
-                                    layout="text"
-                                    Icon={Icon}
-                                    disabled={loading}
-                                >
-                                    {label}
-                                </Button>
-                            );
-                        })}
-                    </ButtonGroup>
-                )}
-            </div>
+            )}
         </article>
     );
 };
