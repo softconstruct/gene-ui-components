@@ -72,7 +72,9 @@ export const Default: Story = {
     render: (props) => {
         return <ImageStory {...props} />;
     },
-    args: {}
+    args: {
+        id: "test id"
+    }
 };
 
 export const ImageCombinations: Story = {
