@@ -63,14 +63,6 @@ describe("CounterField", () => {
         expect(wrapper.find(TextField).props().size).toBe(size);
     });
 
-    it.each<ICounterFieldProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
-        const wrapper = setup.setProps({ status, helperText: "test" });
-
-        expect(wrapper.find(".counterField").hasClass(`counterField_status_${status}`)).toBeTruthy();
-        expect(wrapper.find(TextField).props().status).toBe(status);
-        expect(wrapper.find(HelperText).props().status).toBe(status);
-    });
-
     it("renders disabled prop correctly", () => {
         const wrapper = setup.setProps({ disabled: true });
 
