@@ -17,5 +17,5 @@
         "strict": true,
         "resolveJsonModule": true
     },
-    "include": ["./src/**/*.ts", "./src/**/index.tsx", "./src/**/*.tsx", "./stories/**/*.tsx"]
+    "include": ["./src/**/*.ts", "./src/**/*.d.ts", "./src/**/index.tsx", "./src/**/*.tsx", "./stories/**/*.tsx"]
 }

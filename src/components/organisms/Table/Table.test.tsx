@@ -7,7 +7,7 @@ import Table, { ITableProps } from "./index";
 describe("Table ", () => {
     let setup: ReactWrapper<ITableProps>;
     beforeEach(() => {
-        setup = mount(<Table />);
+        setup = mount(<Table columns={[]} />);
     });
 
     it("renders without crashing", () => {

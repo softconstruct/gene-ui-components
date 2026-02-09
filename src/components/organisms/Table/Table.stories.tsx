@@ -1,12 +1,28 @@
+import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IMenuItemProps } from "@components/molecules/Menu";
+import { Columns } from "@components/organisms/Table/Columns";
 import { Actions, IBulkActions, IManageColumnsInfo } from "@components/organisms/Table/types";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
 import Table, { ITableProps } from "./index";
+
+const SwapComponent = () => (
+    <div
+        className="swapComponent"
+        style={{
+            background: "#F4E1EC",
+            padding: ".6rem 1.2rem",
+            color: "#A60063",
+            height: "100%"
+        }}
+    >
+        Swap
+    </div>
+);
 
 const bulkActionsMock: IBulkActions = {
     label: "Bulk",
@@ -62,13 +78,18 @@ const meta: Meta<ITableProps> = {
     title: "Organisms/Table",
     component: Table,
     argTypes: {
+        columns: args({ control: "false", ...propCategory.content }),
         rowSelectionInfo: args({ control: "false", ...propCategory.content }),
         globalFilterInfo: args({ control: "false", ...propCategory.content }),
         manageColumnsInfo: args({ control: "false", ...propCategory.content }),
         bulkActions: args({ control: "false", ...propCategory.content }),
-        editActions: args({ control: "false", ...propCategory.content })
+        editActions: args({ control: "false", ...propCategory.content }),
+        headerContent: args({ control: "false", ...propCategory.content }),
+        withStickyHeader: args({ control: "boolean", ...propCategory.content }),
+        className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
+        columns: Columns,
         rowSelectionInfo: {
             selectedRowsLength: 0,
             selectedRowsLabel: "selected",
@@ -80,7 +101,8 @@ const meta: Meta<ITableProps> = {
         },
         bulkActions: bulkActionsMock,
         manageColumnsInfo,
-        editActions
+        editActions,
+        headerContent: <SwapComponent />
     }
 };
 

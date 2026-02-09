@@ -51,7 +51,7 @@ export type Row = TableRowCells & {
 };
 
 export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
-    id: string;
+    id?: string;
     header?: string | null;
     footer?: (props: HeaderContext<T extends object ? T : never, unknown>) => ReactNode;
     type: CellType;
