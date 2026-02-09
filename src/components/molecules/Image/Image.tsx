@@ -28,8 +28,6 @@ import useEllipsisDetection from "@hooks/useEllipsisDetection";
 // Styles
 import "./Image.scss";
 
-type ImageAspectRatio = "1:1" | "3:2" | "2:1" | "16:9";
-
 interface IImageAction {
     /**
      * Unique identifier for the action item, forwarded to the callback.
@@ -94,7 +92,7 @@ interface IImageProps {
      * Defines the aspect ratio of the image container. <br/>
      * Possible values: `1:1 | 3:2 | 2:1 | 16:9`
      */
-    aspectRatio?: ImageAspectRatio;
+    aspectRatio?: "1:1" | "3:2" | "2:1" | "16:9";
     /**
      * The source URL of the image to display.
      */
