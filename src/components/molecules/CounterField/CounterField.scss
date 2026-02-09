@@ -3,7 +3,6 @@
 
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
     gap: var(--guit-ref-spacing-3xsmall);
 
     &__inputContainer {
@@ -23,10 +22,15 @@
     }
 
     &__input {
-        width: 8rem;
-    }
+        &_size {
+            &_large,
+            &_medium {
+                width: 8rem;
+            }
 
-    &_readOnly {
-        pointer-events: none;
+            &_small {
+                width: 6rem;
+            }
+        }
     }
 }
