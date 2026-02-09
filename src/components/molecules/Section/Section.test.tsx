@@ -4,7 +4,6 @@ import { mount, ReactWrapper } from "enzyme";
 // Components
 import Button from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
-import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
 
 import Section, { ISectionProps } from "./index";
@@ -30,20 +29,13 @@ describe("Section", () => {
         expect(wrapper.find(".section").hasClass(className)).toBeTruthy();
     });
 
-    it.each<ISectionProps["size"]>(["small", "medium", "large"])("should render with %s size", (size) => {
-        const wrapper = setup.setProps({ size });
-        expect(wrapper.find(".section").hasClass(`section_size_${size}`)).toBeTruthy();
-    });
-
-    it("should have default size of medium", () => {
-        expect(setup.find(".section").hasClass("section_size_medium")).toBeTruthy();
-    });
-
     it("renders title correctly", () => {
         const title = "Section Title";
         const wrapper = setup.setProps({ title });
         expect(wrapper.find(".section__title").exists()).toBeTruthy();
-        expect(wrapper.find(Text).first().text()).toEqual(title);
+        const titleNode = wrapper.find(".section__title .ellipsis-text").at(0);
+        expect(titleNode.exists()).toBeTruthy();
+        expect(titleNode.text()).toEqual(title);
     });
 
     it("renders title with tooltip support", () => {
@@ -53,9 +45,10 @@ describe("Section", () => {
 
     it("renders subtitle correctly", () => {
         const subtitle = "Section Subtitle";
-        const wrapper = setup.setProps({ subtitle });
-        expect(wrapper.find(Text).at(1).exists()).toBeTruthy();
-        expect(wrapper.find(Text).at(1).text()).toEqual(subtitle);
+        const wrapper = setup.setProps({ title: "Title", subtitle });
+        const subtitleNode = wrapper.find(".section__title .ellipsis-text").at(1);
+        expect(subtitleNode.exists()).toBeTruthy();
+        expect(subtitleNode.text()).toEqual(subtitle);
     });
 
     it("renders subtitle with tooltip support", () => {
@@ -64,7 +57,8 @@ describe("Section", () => {
     });
 
     it("does not render subtitle when not provided", () => {
-        expect(setup.find(Text).length).toBe(1);
+        const titleAndSubtitleNodes = setup.find(".section__title .ellipsis-text");
+        expect(titleAndSubtitleNodes).toHaveLength(1);
     });
 
     it("renders header when hasHeader is true", () => {
@@ -213,14 +207,12 @@ describe("Section", () => {
             headerContent,
             bodyContent,
             footerContent,
-            action,
-            size: "large"
+            action
         });
 
         expect(wrapper.find(".section__header").exists()).toBeTruthy();
         expect(wrapper.find(".section__body").exists()).toBeTruthy();
         expect(wrapper.find(".section__footer").exists()).toBeTruthy();
-        expect(wrapper.find(".section_size_large").exists()).toBeTruthy();
         expect(wrapper.text()).toContain("Section Title");
         expect(wrapper.text()).toContain("Section Subtitle");
     });

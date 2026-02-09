@@ -6,7 +6,7 @@
     background-color: var(--guit-sem-color-background-neutral-1-nudge);
     border-radius: var(--guit-ref-radius-2xsmall);
     border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
-    height: 36rem;
+    height: 100%;
 
     &_isInset {
         #{$this}__wrapper {
@@ -79,11 +79,9 @@
 
     &__content {
         flex: 1;
-        min-height: 29.8rem;
         display: flex;
         flex-direction: column;
         row-gap: var(--guit-ref-spacing-large);
-        height: 100%;
         padding-block: var(--guit-ref-spacing-large);
         padding-inline: var(--guit-ref-spacing-large);
 
