@@ -27,6 +27,8 @@ import { presetsList, presetsListRange } from "./constants";
 import "./DatePicker.scss";
 import { DatePickerExcludedDates, DatePickerSizes, DatePickerViewMode } from "./types";
 
+const InternalDatePicker: any = DatePicker;
+
 type PresetAction = "today" | "yesterday" | "7days" | "14days" | "1month";
 
 interface IDatePickerProps {
@@ -298,13 +300,20 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [isOpen]);
 
-    const handleChange = (dates: Date | null | [Date | null, Date | null]) => {
-        if (withRange && Array.isArray(dates)) {
-            const [start, end] = dates;
-            setStartDate(start);
-            setEndDate(end);
-        } else if (!Array.isArray(dates)) {
-            setStartDate(dates);
+    const handleChange = (dates: Date[] | null) => {
+        if (!dates || dates.length === 0) {
+            setStartDate(null);
+            setEndDate(null);
+            return;
+        }
+
+        if (withRange) {
+            const [start, end] = dates as [Date | null, Date | null];
+            setStartDate(start ?? null);
+            setEndDate(end ?? null);
+        } else {
+            const [date] = dates;
+            setStartDate(date ?? null);
             setEndDate(null);
         }
     };
@@ -353,7 +362,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
                         onClear={handleClear}
                         loading={loading}
                         className={pickerInputContainerClassName}
-                        size={size}
+                        size={size === "large" ? "medium" : size}
                     />
                 </div>
             </div>
@@ -368,7 +377,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
             >
                 <div ref={popoverClickWrapperRef}>
                     <PopoverBody withPadding={false}>
-                        <DatePicker
+                        <InternalDatePicker
                             inline
                             selected={startDate}
                             startDate={startDate}
@@ -388,10 +397,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
                             showMonthYearPicker={view === "month"}
                             showYearPicker={view === "year"}
                             monthsShown={withRange && view === "day" ? 2 : 1}
-
-                            // dayClassName={getCustomDayClass}
-
-                            calendarContainer={(props) => (
+                            calendarContainer={(props: any) => (
                                 <CalendarWrapper
                                     {...props}
                                     withPreset={withPreset}
@@ -403,7 +409,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
                                 />
                             )}
 
-                            renderMonthContent={(monthIndex, shortMonth) => (
+                            renderMonthContent={(monthIndex: number, shortMonth: string) => (
                                 <PickerGridItem
                                     label={shortMonth}
                                     value={monthIndex}
@@ -413,7 +419,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
                                 />
                             )}
 
-                            renderYearContent={(year) => (
+                            renderYearContent={(year: number) => (
                                 <PickerGridItem
                                     label={year}
                                     value={year}
@@ -423,7 +429,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
                                 />
                             )}
 
-                            renderCustomHeader={(headerProps) => (
+                            renderCustomHeader={(headerProps: any) => (
                                 <Header
                                     {...headerProps}
                                     size={size}
@@ -433,7 +439,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
                                 />
                             )}
 
-                            renderDayContents={(day, date) => (
+                            renderDayContents={(day: number, date: Date) => (
                                 <Day
                                     day={day}
                                     date={date}
