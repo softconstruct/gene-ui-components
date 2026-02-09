@@ -1,6 +1,4 @@
 .counterField {
-    $this: &;
-
     display: flex;
     flex-direction: column;
     gap: var(--guit-ref-spacing-3xsmall);
@@ -25,7 +23,7 @@
         &_size {
             &_large,
             &_medium {
-                width: 8rem;
+                width: var(--guit-ref-sizing-4xlarge);
             }
 
             &_small {
