@@ -24,8 +24,10 @@ interface ISectionProps {
     size?: "small" | "medium" | "large";
     /**
      * The title text displayed in the section's header.
+     * When provided, the header section will be rendered.
+     * When not provided, the header section will be hidden.
      */
-    title: string;
+    title?: string;
     /**
      * The subtitle text displayed below the title in the section's header.
      */
@@ -53,11 +55,6 @@ interface ISectionProps {
      */
     action?: IButtonProps;
     /**
-     * When `true`, displays the header section.
-     * When `false`, the header section is hidden.
-     */
-    hasHeader?: boolean;
-    /**
      * When `true`, displays the footer section.
      * When `false`, the footer section is hidden.
      */
@@ -77,7 +74,6 @@ const Section: FC<ISectionProps> = ({
     bodyContent,
     footerContent,
     action,
-    hasHeader = true,
     hasFooter = true,
     withPadding = true
 }) => {
@@ -89,16 +85,14 @@ const Section: FC<ISectionProps> = ({
 
     return (
         <div className={classNames("section section_isInset", className)}>
-            {hasHeader && (
+            {title && (
                 <div className="section__header">
                     <div className="section__title">
-                        {title && (
-                            <Tooltip text={title} isVisible={isTitleTruncated}>
-                                <Text variant="labelMediumSemibold" as="span" className="ellipsis-text" ref={titleRef}>
-                                    {title}
-                                </Text>
-                            </Tooltip>
-                        )}
+                        <Tooltip text={title} isVisible={isTitleTruncated}>
+                            <Text variant="labelMediumSemibold" as="span" className="ellipsis-text" ref={titleRef}>
+                                {title}
+                            </Text>
+                        </Tooltip>
                         {subtitle && (
                             <Tooltip text={subtitle} isVisible={isSubtitleTruncated}>
                                 <Text variant="labelSmallMedium" as="span" className="ellipsis-text" ref={subtitleRef}>
@@ -115,7 +109,7 @@ const Section: FC<ISectionProps> = ({
             <div
                 className={classNames("section__body", {
                     section__body_withPadding: withPadding,
-                    section__body_hasHeader: hasHeader,
+                    section__body_hasHeader: !!title,
                     section__body_hasFooter: hasFooter
                 })}
             >

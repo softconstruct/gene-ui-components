@@ -61,13 +61,18 @@ describe("Section", () => {
         expect(titleAndSubtitleNodes).toHaveLength(1);
     });
 
-    it("renders header when hasHeader is true", () => {
-        const wrapper = setup.setProps({ hasHeader: true });
+    it("renders header when title is provided", () => {
+        const wrapper = setup.setProps({ title: "Test Title" });
         expect(wrapper.find(".section__header").exists()).toBeTruthy();
     });
 
-    it("does not render header when hasHeader is false", () => {
-        const wrapper = setup.setProps({ hasHeader: false });
+    it("does not render header when title is not provided", () => {
+        const wrapper = mount(<Section />);
+        expect(wrapper.find(".section__header").exists()).toBeFalsy();
+    });
+
+    it("does not render header when title is empty string", () => {
+        const wrapper = mount(<Section title="" />);
         expect(wrapper.find(".section__header").exists()).toBeFalsy();
     });
 
@@ -83,6 +88,12 @@ describe("Section", () => {
         const wrapper = setup.setProps({ title: "Title", headerContent });
         expect(wrapper.find(".section__title").exists()).toBeTruthy();
         expect(wrapper.find("button").exists()).toBeTruthy();
+    });
+
+    it("does not render header when only headerContent is provided without title", () => {
+        const headerContent = <button type="button">Action</button>;
+        const wrapper = mount(<Section headerContent={headerContent} />);
+        expect(wrapper.find(".section__header").exists()).toBeFalsy();
     });
 
     it("renders body section", () => {
@@ -120,9 +131,14 @@ describe("Section", () => {
         expect(wrapper.find(".section__wrapper").exists()).toBeFalsy();
     });
 
-    it("applies hasHeader class to body when header is present", () => {
-        const wrapper = setup.setProps({ hasHeader: true });
+    it("applies hasHeader class to body when title is provided", () => {
+        const wrapper = setup.setProps({ title: "Test Title" });
         expect(wrapper.find(".section__body").hasClass("section__body_hasHeader")).toBeTruthy();
+    });
+
+    it("does not apply hasHeader class to body when title is not provided", () => {
+        const wrapper = mount(<Section />);
+        expect(wrapper.find(".section__body").hasClass("section__body_hasHeader")).toBeFalsy();
     });
 
     it("applies hasFooter class to body when footer is present", () => {
@@ -182,7 +198,7 @@ describe("Section", () => {
         expect(wrapper.find(".section__footer_actions").exists()).toBeFalsy();
     });
 
-    it("has default hasHeader as true", () => {
+    it("renders header by default when title is provided", () => {
         expect(setup.find(".section__header").exists()).toBeTruthy();
     });
 
@@ -218,7 +234,7 @@ describe("Section", () => {
     });
 
     it("renders minimal section with only title", () => {
-        const wrapper = mount(<Section title="Minimal Title" hasHeader hasFooter={false} />);
+        const wrapper = mount(<Section title="Minimal Title" hasFooter={false} />);
         expect(wrapper.find(".section__header").exists()).toBeTruthy();
         expect(wrapper.find(".section__body").exists()).toBeTruthy();
         expect(wrapper.find(".section__footer").exists()).toBeFalsy();
