@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Download, Eye, Globe, Tag } from "@geneui/icons";
@@ -47,7 +47,12 @@ const imageActions = [
 const imageActionsWithMenu = [...imageActions, { id: "4", Icon: Eye, label: "View", onActionItemClick: () => {} }];
 
 const imageStories = [
-    { id: "1", actions: imageActions, title: "Title", description: "Description" },
+    {
+        id: "1",
+        actions: [{ id: "1", Icon: Tag, label: "Tag", onActionItemClick: () => {} }],
+        title: "Title",
+        description: "Description"
+    },
     {
         id: "2",
         actions: imageActionsWithMenu,
@@ -64,6 +69,11 @@ const ImageStory = ({ selected, ...props }: IImageProps) => {
     const onSelect = () => {
         setImageSelected(!imageSelected);
     };
+
+    useEffect(() => {
+        if (selected === undefined) return;
+        setImageSelected(selected);
+    }, [selected]);
 
     return <Image {...props} selected={imageSelected} onCheckboxChange={onSelect} />;
 };
