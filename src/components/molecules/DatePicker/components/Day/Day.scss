@@ -1,38 +1,91 @@
 .datePicker {
-    &__day {
-        &_today {
-            background-color: green;
-        }
+    $this: &;
 
-        &_past {
-            background-color: red;
-        }
 
-        &_withRange {
-            background-color: aquamarine;
+    &_size {
+        &_large {
+            #{$this}__day {
+                width: 4rem;
+                height: 4rem;
+                border-radius: var(--guit-ref-radius-2xsmall);
+                padding: var(--guit-ref-spacing-small);
+            }
 
-            &:hover {
-                background-color: blue !important;
+            &_medium {
+                #{$this}__day {
+                    width: 3.2rem;
+                    height: 3.2rem;
+                    border-radius: var(--guit-ref-radius-3xsmall);
+                    padding: var(--guit-ref-spacing-2xsmall);
+                }
+            }
+
+            &_small {
+                #{$this}__day {
+                    width: 2.4rem;
+                    height: 2.4rem;
+                    border-radius: var(--guit-ref-radius-3xsmall);
+                    padding-block: var(--guit-ref-spacing-3xsmall);
+                    padding-inline: var(--guit-ref-spacing-4xsmall);
+                }
             }
         }
 
-        &_selected {
-            background-color: #1473E6 !important;
-            color: white !important;
+
+        &__day {
+            font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+            font-size: var(--guit-sem-font-body-medium-default-font-size);
+            font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+            line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--guit-sem-color-background-neutral-1);
+
+            color: var(--guit-sem-color-foreground-neutral-2);
+
+            border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-1);
+
+            &:focus-visible, &:focus-within, &:focus {
+                outline-offset: var(--guit-ref-border-width-thin);
+                outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-focus);
+            }
+
+            &_today {
+                background-color: green;
+            }
+
+            &_past {
+                background-color: red;
+            }
+
+            &_withRange {
+                background-color: aquamarine;
+
+                &:hover {
+                    background-color: blue !important;
+                }
+            }
+
+            &_selected {
+                background-color: #1473E6 !important;
+                color: white !important;
+            }
+
+            &_insideSelectedRange {
+                background-color: brown !important;
+            }
+
+            &_disabled {
+                background-color: gray;
+                cursor: not-allowed;
+            }
+
+            &_outsideOfMonth {
+                //TODO calculation isn't correct yet
+                background-color: transparent !important;
+            }
         }
 
-        &_insideSelectedRange {
-            background-color: brown !important;
-        }
-
-        &_disabled {
-            background-color: gray;
-            cursor: not-allowed;
-        }
-
-        &_outsideOfMonth {
-            //TODO calculation isn't correct yet
-            background-color: transparent !important;
-        }
     }
 }
