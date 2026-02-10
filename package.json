@@ -21,6 +21,7 @@
     "typings": "index.d.ts",
     "scripts": {
         "start": "npm run test && storybook dev -p 6006",
+        "start:without-tests": "storybook dev -p 6006",
         "dev": "concurrently --kill-others -g \"npm:test:watch\" \"npm:start\"",
         "test": "jest --config ./jest.config.js --rootDir ./ --coverage --json --outputFile=./coverage/.jest-test-results.json",
         "test:watch": "npm run test -- --watchAll --json",
@@ -177,8 +178,10 @@
         "@geneui/tokens": "^1.0.2",
         "@tanstack/react-virtual": "^3.13.12",
         "classnames": "^2.3.2",
+        "date-fns": "^4.1.0",
         "nanoid": "^5.1.6",
         "qrcode.react": "^4.2.0",
+        "react-datepicker": "^9.1.0",
         "react-is": "^17.0.2",
         "react-scrollbars-custom": "^4.1.1"
     },
