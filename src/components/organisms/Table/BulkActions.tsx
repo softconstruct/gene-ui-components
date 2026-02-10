@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 
 import { CaretDownFilled } from "@geneui/icons";
 
@@ -12,7 +12,7 @@ interface BulkActionsProps {
     bulkActions: IBulkActions;
 }
 
-const BulkActions: React.FC<BulkActionsProps> = ({ bulkActions }) => {
+const BulkActions: FC<BulkActionsProps> = ({ bulkActions }) => {
     const [propsForPopover, setPropsForPopover] = React.useState({});
 
     return (

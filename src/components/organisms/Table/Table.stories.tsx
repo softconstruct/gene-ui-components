@@ -2,11 +2,11 @@ import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { IMenuItemProps } from "@components/molecules/Menu";
-import { Columns } from "@components/organisms/Table/Columns";
 import { Actions, IBulkActions, IManageColumnsInfo } from "@components/organisms/Table/types";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import { Columns } from "../../../../stories/data/__table";
 // Components
 import Table, { ITableProps } from "./index";
 
@@ -85,6 +85,7 @@ const meta: Meta<ITableProps> = {
         bulkActions: args({ control: "false", ...propCategory.content }),
         editActions: args({ control: "false", ...propCategory.content }),
         headerContent: args({ control: "false", ...propCategory.content }),
+        selectAllText: args({ control: "text", ...propCategory.content }),
         withStickyHeader: args({ control: "boolean", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance })
     },

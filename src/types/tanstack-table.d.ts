@@ -42,8 +42,8 @@ declare module "@tanstack/table-core" {
         isCopyDisabled?: boolean;
         enableColumnFilter?: boolean;
         isColumnFilterDisabled?: boolean;
-        enablePopoverFilter?: boolean;
-        isPopoverFilterDisabled?: boolean;
+        enableSelectFilter?: boolean;
+        isSelectFilter?: boolean;
         filterOptions?: string[];
         resizable?: boolean;
         width?: number | string;

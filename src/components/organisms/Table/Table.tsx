@@ -1,9 +1,10 @@
 import React, { FC, ReactNode } from "react";
-import { ColumnDef, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import THead from "@components/organisms/Table/THead";
+import { createColumns } from "@components/organisms/Table/Columns";
 // Components
+import THead from "@components/organisms/Table/THead";
 import Toolbar from "@components/organisms/Table/Toolbar";
 import {
     Actions,
@@ -11,20 +12,22 @@ import {
     IGlobalFilterInfo,
     IManageColumnsInfo,
     IRowSelectionInfo,
-    Row
+    Row,
+    TableColumns
 } from "@components/organisms/Table/types";
 
 // Styles
 import "./Table.scss";
 
 interface ITableProps {
-    columns: ColumnDef<Row>[];
+    columns: TableColumns<Row>[];
     rowSelectionInfo?: IRowSelectionInfo;
     globalFilterInfo?: IGlobalFilterInfo;
     bulkActions?: IBulkActions;
     manageColumnsInfo?: IManageColumnsInfo;
     editActions?: Actions;
     headerContent?: ReactNode;
+    selectAllText?: string;
     withStickyHeader?: boolean;
     /**
      * Additional class for the parent element.
@@ -44,14 +47,18 @@ const Table: FC<ITableProps> = ({
     editActions,
     globalFilterInfo,
     headerContent,
+    selectAllText,
     withStickyHeader,
     className
 }) => {
+    const cols = createColumns(columns);
+
     const table = useReactTable({
-        columns,
+        columns: cols,
         data: [],
         getCoreRowModel: getCoreRowModel()
     });
+
     return (
         <div className={classNames("dataTable")}>
             <Toolbar
@@ -63,7 +70,11 @@ const Table: FC<ITableProps> = ({
                 headerContent={headerContent}
             />
             <table className={classNames("table", className)} role="table">
-                <THead columns={table.getHeaderGroups()} withStickyHeader={withStickyHeader} />
+                <THead
+                    columns={table.getHeaderGroups()}
+                    withStickyHeader={withStickyHeader}
+                    selectAllText={selectAllText}
+                />
             </table>
         </div>
     );

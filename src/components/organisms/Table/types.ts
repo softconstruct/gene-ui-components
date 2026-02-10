@@ -50,7 +50,7 @@ export type Row = TableRowCells & {
     expandedData?: () => ReactNode | null;
 };
 
-export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
+export type TableColumns<T> = ColumnDef<T extends object ? T : never> & {
     id?: string;
     header?: string | null;
     footer?: (props: HeaderContext<T extends object ? T : never, unknown>) => ReactNode;
@@ -70,11 +70,11 @@ export type TableCol<T> = ColumnDef<T extends object ? T : never> & {
     isCopyDisabled?: boolean;
     enableColumnFilter?: boolean;
     isColumnFilterDisabled?: boolean;
-    enablePopoverFilter?: boolean;
-    isPopoverFilterDisabled?: boolean;
+    enableSelectFilter?: boolean;
+    isSelectFilter?: boolean;
     filterOptions?: string[];
     resizable?: boolean;
-    columns?: TableCol<T>[];
+    columns?: TableColumns<T>[];
     width?: number | string;
     minWidth?: number;
     maxWidth?: number;
@@ -117,3 +117,5 @@ export interface IManageColumnsInfo {
     manageColumnsTitle?: string;
     isManageColumnsDisabled?: boolean;
 }
+
+export type ExpandAndCheckboxTypes = Extract<CellType, "Empty" | "Expand" | "RowCheckbox">;
