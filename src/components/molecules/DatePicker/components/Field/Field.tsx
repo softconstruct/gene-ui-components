@@ -86,8 +86,9 @@ interface IDatePickerInputProps {
     onClear?: () => void;
     /**
      * Defines the size of DatePicker field
+     * Only "small" and "medium" are supported for the field itself.
      */
-    size?: Omit<DatePickerSizes, "large">;
+    size?: Exclude<DatePickerSizes, "large">;
     /**
      * */
     loading?: boolean;

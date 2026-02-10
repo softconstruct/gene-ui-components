@@ -1,12 +1,27 @@
 .datePicker {
     $this: &;
 
-
     color: var(--guit-ref-color-magenta-500base);
     font-size: var(--guit-sem-font-caption-large-medium-font-size);
 
     &__input {
         display: flex;
+    }
+
+    &__day {
+        &_size {
+            &_small {
+                width: 60px;
+            }
+
+            &_medium {
+                width: 100px;
+            }
+
+            &_large {
+                width: 150px;
+            }
+        }
     }
 
     &__presets {
@@ -16,7 +31,6 @@
         padding: 8px 12px;
         gap: 4px;
         min-width: 120px;
-
     }
 
     &__skeleton {
@@ -63,41 +77,10 @@
 }
 
 .react-datepicker {
-
     &__header {
         padding-top: 0;
         background-color: transparent !important;
         border-bottom: none !important;
         padding-top: 0 !important;
     }
-
-    &__day {
-        // &--selected {
-        //     background-color: #1473E6 !important;
-        //     color: white !important;
-        // }
-
-        // &--outside-month {
-        //     visibility: hidden !important;
-        //     pointer-events: none !important;
-        // }
-        width: 4rem;
-        //#{ $this }__day{
-        //    background: #000066 !important;
-        //}
-    }
-
-
-    //&__loader {
-    //    position: absolute;
-    //    top: 0;
-    //    left: 0;
-    //    display: flex;
-    //    align-items: center;
-    //    justify-content: center;
-    //    width: 100%;
-    //    height: 100%;
-    //    border-radius: inherit;
-    //    visibility: hidden;
-    //}
 }
