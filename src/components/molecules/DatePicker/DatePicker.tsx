@@ -196,8 +196,8 @@ const PickerGridItem: React.FC<IPickerGridItemProps> = ({ label, value, excluded
         <div
             role="button"
             tabIndex={isDisabled ? -1 : 0}
-            className={classNames("react-datepicker__grid-item", {
-                "react-datepicker__grid-item--disabled": isDisabled
+            className={classNames("x-datepicker__grid-item", {
+                "x-datepicker__grid-item--disabled": isDisabled
             })}
             onClick={(e) => {
                 e.preventDefault();

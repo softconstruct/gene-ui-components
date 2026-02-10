@@ -1,4 +1,6 @@
 .datePicker {
+    $this: &;
+
     color: var(--guit-ref-color-magenta-500base);
     font-size: var(--guit-sem-font-caption-large-medium-font-size);
 
@@ -40,6 +42,7 @@
     &__popover {
         &_content {
             display: flex;
+            //background: #00f;
         }
     }
 

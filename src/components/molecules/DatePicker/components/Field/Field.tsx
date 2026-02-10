@@ -3,8 +3,6 @@ import React, { KeyboardEvent, MouseEvent } from "react";
 
 // Components
 import Label from "@components/atoms/Label";
-import { Calendar, X, Minus } from "@geneui/icons";
-import HelperText from "@components/atoms/HelperText";
 import Skeleton from "@components/atoms/Skeleton";
 
 // Styles
@@ -12,6 +10,8 @@ import "./Field.scss";
 
 // Types
 import { DatePickerSizes } from "../../types";
+import { Calendar, Minus, X } from "@geneui/icons";
+import { Button, HelperText } from "../../../../../index";
 
 interface IDatePickerInputProps {
     /**
@@ -114,9 +114,8 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
     endDatePlaceholder = "End Date",
     onClear,
     size,
-    loading,
+    loading
 }) => {
-
     const shouldShowClearableIcon = clearable && (startDate || endDate) && !disabled && !readOnly;
 
     const handleClear = (e: MouseEvent | KeyboardEvent) => {
@@ -130,14 +129,10 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
         }
     };
 
-    const renderInput = (
-        value: string | null | undefined,
-        placeholder: string,
-        onClickHandler?: () => void
-    ) => (
+    const renderInput = (value: string | null | undefined, placeholder: string, onClickHandler?: () => void) => (
         <input
             type="text"
-            className="datePickerInput__input"
+            className="datePicker__input"
             placeholder={placeholder}
             value={value || ""}
             disabled={disabled}
@@ -161,65 +156,49 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
 
     return (
         <div
-            className={classNames("datePickerInput", className, {
-                "datePickerInput__withRange": withRange,
-                [`datePickerInput_${size}`]: size
+            className={classNames("datePicker", className, {
+                datePicker_withRange: withRange,
+                [`datePicker_size_${size}`]: size
             })}
         >
-            <Label
-                disabled={disabled}
-                className="datePickerInput__label"
-                required={required}
-                text={labelText}
-            />
+            <Label disabled={disabled} className="datePicker__label" required={required} text={labelText} />
 
-            <div
-                className={classNames("datePickerInput__inputWrapper", {
-                    "datePickerInput__inputWrapper_error": error,
-                    "datePickerInput__inputWrapper_disabled": disabled,
-                    "datePickerInput__inputWrapper_readOnly": readOnly
+            <span
+                className={classNames("datePicker__imitationHolder", {
+                    datePicker__imitationHolder_error: error,
+                    datePicker__imitationHolder_disabled: disabled,
+                    datePicker__imitationHolder_readOnly: readOnly
                 })}
                 onFocus={onFocus}
                 onBlur={onBlur}
             >
                 {renderInput(startDate, startDatePlaceholder, onStartClick)}
-
                 {withRange && (
                     <>
-                        <Minus className="datePickerInput__separator" />
+                        <Minus className="datePicker__icon" size={16} />
                         {renderInput(endDate, endDatePlaceholder, onEndClick)}
                     </>
                 )}
 
-                <div className="datePickerInput__icon" onClick={handleWrapperClick}>
+                <span className="datePicker__iconWrapper" onClick={handleWrapperClick}>
                     {shouldShowClearableIcon && (
-                        <div
-                            role="button"
+                        <Button
                             tabIndex={0}
-                            className="datePickerInput__clearIcon"
+                            className="datePicker__clearIcon"
                             onClick={handleClear}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                    e.preventDefault();
-                                    handleClear(e);
-                                }
-                            }}
+                            Icon={X}
+                            appearance={"inverse"}
                             aria-label="Clear date"
-                        >
-                            <X />
-                        </div>
+                            size={"small"}
+                        />
                     )}
-                    <Calendar />
-                </div>
-            </div>
+
+                    <Calendar size={20} className="datePicker__icon" />
+                </span>
+            </span>
 
             {error && errorMessage && (
-                <HelperText
-                    size={size}
-                    text={errorMessage}
-                    status="error"
-                    className="datePickerInput__errorMessage"
-                />
+                <HelperText size={"medium"} text={errorMessage} status="error" className="datePicker__errorMessage" />
             )}
         </div>
     );
