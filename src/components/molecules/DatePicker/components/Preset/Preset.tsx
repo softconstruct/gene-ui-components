@@ -1,10 +1,11 @@
-import classNames from "classnames";
 import React from "react";
+import classNames from "classnames";
 
 // Components
 import Button from "@components/atoms/Button";
 
-import './Preset.scss';
+import "./Preset.scss";
+
 import { DatePickerSizes } from "../../types";
 
 interface IPresetProps {
@@ -18,7 +19,7 @@ interface IPresetProps {
      */
     onClick: () => void;
     /**
-     * 
+     *
      */
     className?: string;
     /**
@@ -44,8 +45,8 @@ const Preset: React.FC<IPresetProps> = ({ label, onClick, className, selected, s
         <Button
             type="button"
             className={classNames("datePickerPreset", className, {
-                "datePickerPreset_selected": selected,
-                "datePickerPreset_disabled": disabled,
+                datePickerPreset_selected: selected,
+                datePickerPreset_disabled: disabled
             })}
             onClick={onClick}
             size={size}

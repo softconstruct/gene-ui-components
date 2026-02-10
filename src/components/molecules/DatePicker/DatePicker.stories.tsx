@@ -1,12 +1,12 @@
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+// Components
+import Label from "@components/atoms/Label";
+
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-
-// Components
 import DatePicker, { IDatePickerProps } from "./index";
-import Label from "@components/atoms/Label";
 
 const meta: Meta<IDatePickerProps> = {
     title: "Molecules/DatePicker",
@@ -41,7 +41,7 @@ const meta: Meta<IDatePickerProps> = {
         minDate: args({ control: "date", ...propCategory.functionality }),
         pickerInputContainerClassName: args({ control: "false", ...propCategory.appearance }),
         weekStartDay: args({ control: "text", ...propCategory.functionality }),
-        size: args({ control: "select", ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         // fill DatePicker component args
@@ -49,6 +49,12 @@ const meta: Meta<IDatePickerProps> = {
 };
 
 export default meta;
+
+type Case = IDatePickerProps & {
+    id: number;
+    key: string;
+    description: string;
+};
 
 // Constants - cases
 const nonInteractiveStates: Case[] = [
@@ -78,12 +84,6 @@ const minorCases: Case[] = [
 ];
 
 type Story = StoryObj<IDatePickerProps>;
-
-type Case = IDatePickerProps & {
-    id: number;
-    key: string;
-    description: string;
-};
 
 const GrouppedStoriesWrapper = ({ cases }: { cases: Case[] }) => {
     return (

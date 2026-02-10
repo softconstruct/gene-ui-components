@@ -1,5 +1,7 @@
-import classNames from "classnames";
 import React, { KeyboardEvent, MouseEvent } from "react";
+import classNames from "classnames";
+
+import { Calendar, Minus, X } from "@geneui/icons";
 
 // Components
 import Label from "@components/atoms/Label";
@@ -8,10 +10,9 @@ import Skeleton from "@components/atoms/Skeleton";
 // Styles
 import "./Field.scss";
 
+import { Button, HelperText } from "../../../../../index";
 // Types
 import { DatePickerSizes } from "../../types";
-import { Calendar, Minus, X } from "@geneui/icons";
-import { Button, HelperText } from "../../../../../index";
 
 interface IDatePickerInputProps {
     /**
@@ -136,7 +137,7 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
             placeholder={placeholder}
             value={value || ""}
             disabled={disabled}
-            readOnly={true}
+            readOnly
             onClick={(e) => {
                 e.stopPropagation();
                 if (!disabled && !readOnly) onClickHandler?.();
@@ -180,16 +181,16 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
                     </>
                 )}
 
-                <span className="datePicker__iconWrapper" onClick={handleWrapperClick}>
+                <span className="datePicker__iconWrapper" onClick={handleWrapperClick} onKeyDown={handleWrapperClick}>
                     {shouldShowClearableIcon && (
                         <Button
                             tabIndex={0}
                             className="datePicker__clearIcon"
                             onClick={handleClear}
                             Icon={X}
-                            appearance={"inverse"}
+                            appearance="inverse"
                             aria-label="Clear date"
-                            size={"small"}
+                            size="small"
                         />
                     )}
 
@@ -198,7 +199,7 @@ const DatePickerInput: React.FC<IDatePickerInputProps> = ({
             </span>
 
             {error && errorMessage && (
-                <HelperText size={"medium"} text={errorMessage} status="error" className="datePicker__errorMessage" />
+                <HelperText size="medium" text={errorMessage} status="error" className="datePicker__errorMessage" />
             )}
         </div>
     );

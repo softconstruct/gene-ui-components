@@ -3,42 +3,43 @@ import classNames from "classnames";
 import { format, getYear } from "date-fns";
 import { ReactDatePickerCustomHeaderProps } from "react-datepicker";
 
+import { ChevronDoubleLeft, ChevronDoubleRight, ChevronLeft, ChevronRight } from "@geneui/icons";
+
 // Components
 import Button from "@components/atoms/Button";
-import { ChevronLeft, ChevronRight, ChevronDoubleLeft, ChevronDoubleRight } from "@geneui/icons";
+
+import "./Header.scss";
 
 // Types
 import { DatePickerSizes, DatePickerViewMode } from "../../types";
 
-import "./Header.scss";
-
 interface IHeaderCustomProps {
     /**
-    * Additional class for the header element.
-    * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
-  */
+     * Additional class for the header element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
     className?: string;
     /**
-    * View mode of DatePicker
-    * Possible values: `day | month | year`
-    */
+     * View mode of DatePicker
+     * Possible values: `day | month | year`
+     */
     view: DatePickerViewMode;
     /**
- * Callback function to change the active view of picker
- * @param view
- * @returns void
- */
+     * Callback function to change the active view of picker
+     * @param view
+     * @returns void
+     */
     setView: (view: DatePickerViewMode) => void;
     /**
-    * Defines the sizes of DatePicker header
-    */
+     * Defines the sizes of DatePicker header
+     */
     size?: DatePickerSizes;
 }
 
-interface IHeaderProps extends ReactDatePickerCustomHeaderProps, IHeaderCustomProps { }
+interface IHeaderProps extends ReactDatePickerCustomHeaderProps, IHeaderCustomProps {}
 
 const handleKeyDown = (e: KeyboardEvent, callback: () => void) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         callback();
     }
@@ -57,7 +58,7 @@ const Header: React.FC<IHeaderProps> = ({
     prevMonthButtonDisabled,
     nextMonthButtonDisabled,
     prevYearButtonDisabled,
-    nextYearButtonDisabled,
+    nextYearButtonDisabled
 }) => {
     const isDayView = view === "day";
     const startYear = Math.floor(getYear(date) / 10) * 10;
@@ -102,7 +103,7 @@ const Header: React.FC<IHeaderProps> = ({
                     onClick={() => setView("month")}
                     onKeyDown={(e) => handleKeyDown(e, () => setView("month"))}
                 >
-                    {format(date, 'MMM')}
+                    {format(date, "MMM")}
                 </span>{" "}
                 <span
                     className={`${titleBaseClass}_year`}
@@ -118,13 +119,7 @@ const Header: React.FC<IHeaderProps> = ({
     };
 
     return (
-        <div
-            className={classNames(
-                "datePickerHeader",
-                className,
-                { [`datePickerHeader_${size}`]: size }
-            )}
-        >
+        <div className={classNames("datePickerHeader", className, { [`datePickerHeader_${size}`]: size })}>
             <Button
                 className="datePickerHeader__control"
                 onClick={decreaseYear}

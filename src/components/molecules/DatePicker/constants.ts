@@ -3,7 +3,7 @@ const presetsList = [
     { key: "yesterday", label: "Yesterday", action: "yesterday" },
     { key: "7days", label: "7 Days Ago", action: "7days" },
     { key: "14days", label: "14 Days Ago", action: "14days" },
-    { key: "1month", label: "1 Month Ago", action: "1month" },
+    { key: "1month", label: "1 Month Ago", action: "1month" }
 ];
 
 const presetsListRange = [
@@ -15,7 +15,4 @@ const presetsListRange = [
     { key: "1month", label: "1 month ago", action: "1month" }
 ];
 
-export {
-    presetsList,
-    presetsListRange,
-}
+export { presetsList, presetsListRange };
