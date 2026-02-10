@@ -55,11 +55,6 @@ interface ISectionProps {
      */
     action?: IButtonProps;
     /**
-     * When `true`, displays the footer section.
-     * When `false`, the footer section is hidden.
-     */
-    hasFooter?: boolean;
-    /**
      * When `true`, adds padding around the section's body content.
      */
     withPadding?: boolean;
@@ -74,7 +69,6 @@ const Section: FC<ISectionProps> = ({
     bodyContent,
     footerContent,
     action,
-    hasFooter = true,
     withPadding = true
 }) => {
     const titleRef = useRef<HTMLSpanElement | null>(null);
@@ -110,7 +104,7 @@ const Section: FC<ISectionProps> = ({
                 className={classNames("section__body", {
                     section__body_withPadding: withPadding,
                     section__body_hasHeader: !!title,
-                    section__body_hasFooter: hasFooter
+                    section__body_hasFooter: !!(footerContent || action)
                 })}
             >
                 <Scrollbar>
@@ -123,7 +117,7 @@ const Section: FC<ISectionProps> = ({
                     )}
                 </Scrollbar>
             </div>
-            {hasFooter && (footerContent || action) && (
+            {(footerContent || action) && (
                 <div className="section__footer">
                     <div className="section__footer_swap">
                         {footerContent && <div className="section__footer_content">{footerContent}</div>}

@@ -28,7 +28,6 @@ const meta: Meta<ISectionProps> = {
         bodyContent: args({ control: "false", ...propCategory.content }),
         footerContent: args({ control: "false", ...propCategory.content }),
         action: args({ control: "false", ...propCategory.content }),
-        hasFooter: args({ control: "boolean", ...propCategory.states }),
         withPadding: args({ control: "boolean", ...propCategory.states })
     },
     args: {
@@ -43,7 +42,6 @@ const meta: Meta<ISectionProps> = {
             </Button>
         ),
         action: { children: "Submit", appearance: "primary", onClick: () => {}, size: "medium", layout: "fill" },
-        hasFooter: true,
         withPadding: true
     }
 };

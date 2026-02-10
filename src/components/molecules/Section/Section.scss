@@ -28,7 +28,7 @@
         padding-inline: var(--guit-ref-spacing-large);
         padding-block: var(--guit-ref-spacing-medium);
         background-color: var(--guit-sem-color-background-neutral-1);
-        max-height: 6.2rem;
+        min-height: 6.2rem;
 
         &_swap {
             flex: none;

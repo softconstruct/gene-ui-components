@@ -142,30 +142,25 @@ describe("Section", () => {
     });
 
     it("applies hasFooter class to body when footer is present", () => {
-        const wrapper = setup.setProps({ hasFooter: true, action: { children: "Submit" } });
+        const wrapper = setup.setProps({ action: { children: "Submit" } });
         expect(wrapper.find(".section__body").hasClass("section__body_hasFooter")).toBeTruthy();
     });
 
-    it("renders footer when hasFooter is true and footerContent is provided", () => {
+    it("renders footer when footerContent is provided", () => {
         const footerContent = <div className="custom-footer">Custom Footer</div>;
-        const wrapper = setup.setProps({ hasFooter: true, footerContent });
+        const wrapper = setup.setProps({ footerContent });
         expect(wrapper.find(".section__footer").exists()).toBeTruthy();
         expect(wrapper.find(".custom-footer").exists()).toBeTruthy();
     });
 
-    it("renders footer when hasFooter is true and action is provided", () => {
+    it("renders footer when action is provided", () => {
         const action = { children: "Submit", appearance: "primary" as const };
-        const wrapper = setup.setProps({ hasFooter: true, action });
+        const wrapper = setup.setProps({ action });
         expect(wrapper.find(".section__footer").exists()).toBeTruthy();
     });
 
-    it("does not render footer when hasFooter is false", () => {
-        const wrapper = setup.setProps({ hasFooter: false, action: { children: "Submit" } });
-        expect(wrapper.find(".section__footer").exists()).toBeFalsy();
-    });
-
     it("does not render footer when no footerContent or action is provided", () => {
-        const wrapper = setup.setProps({ hasFooter: true, footerContent: undefined, action: undefined });
+        const wrapper = setup.setProps({ footerContent: undefined, action: undefined });
         expect(wrapper.find(".section__footer").exists()).toBeFalsy();
     });
 
@@ -202,11 +197,6 @@ describe("Section", () => {
         expect(setup.find(".section__header").exists()).toBeTruthy();
     });
 
-    it("has default hasFooter as true", () => {
-        const wrapper = setup.setProps({ action: { children: "Submit" } });
-        expect(wrapper.find(".section__footer").exists()).toBeTruthy();
-    });
-
     it("has default withPadding as true", () => {
         expect(setup.find(".section__wrapper").exists()).toBeTruthy();
     });
@@ -234,7 +224,7 @@ describe("Section", () => {
     });
 
     it("renders minimal section with only title", () => {
-        const wrapper = mount(<Section title="Minimal Title" hasFooter={false} />);
+        const wrapper = mount(<Section title="Minimal Title" />);
         expect(wrapper.find(".section__header").exists()).toBeTruthy();
         expect(wrapper.find(".section__body").exists()).toBeTruthy();
         expect(wrapper.find(".section__footer").exists()).toBeFalsy();
