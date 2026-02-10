@@ -11,6 +11,7 @@ import Text from "@components/atoms/Text";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import ButtonGroup from "../ButtonGroup";
+import InteractiveCard from "../InteractiveCard";
 import QRCode from "../QRCode";
 import { SplitButton } from "../SplitButton";
 // Components
@@ -21,17 +22,15 @@ const meta: Meta<ISectionProps> = {
     component: Section,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        size: args({ control: "select", ...propCategory.appearance }),
         title: args({ control: "text", ...propCategory.content }),
         subtitle: args({ control: "text", ...propCategory.content }),
         headerContent: args({ control: "false", ...propCategory.content }),
         bodyContent: args({ control: "false", ...propCategory.content }),
         footerContent: args({ control: "false", ...propCategory.content }),
         action: args({ control: "false", ...propCategory.content }),
-        withPadding: args({ control: "boolean", ...propCategory.states })
+        inset: args({ control: "boolean", ...propCategory.appearance })
     },
     args: {
-        size: "medium",
         title: "Title",
         subtitle: "Subtitle",
         headerContent: <Avatar fullName="Test Name" onClick={() => {}} />,
@@ -42,7 +41,7 @@ const meta: Meta<ISectionProps> = {
             </Button>
         ),
         action: { children: "Submit", appearance: "primary", onClick: () => {}, size: "medium", layout: "fill" },
-        withPadding: true
+        inset: true
     }
 };
 
@@ -61,10 +60,7 @@ export const Default: Story = {
                 <Text as="p" variant="headingMediumSemibold">
                     Section Title
                 </Text>
-                <Text as="p" variant="bodyMediumMedium">
-                    This is a sample body content with multiple components to demonstrate how the Section component
-                    handles different content types.
-                </Text>
+                <InteractiveCard label="Test Label" description="Test Description" />
                 <Pill text="Success" filled />
                 <Pill text="Warning" />
                 <Pill text="Error" />
@@ -76,11 +72,7 @@ export const Default: Story = {
                 <Button size="medium" appearance="secondary">
                     Action Button
                 </Button>
-                {Array.from({ length: 10 }, (_, i) => (
-                    <Text key={String(i)} as="p" variant="bodyMediumRegular">
-                        {`Content item ${i + 1} - This demonstrates scrolling behavior when content exceeds the available space.`}
-                    </Text>
-                ))}
+                <QRCode value="https://geneui-storybook.softconstruct.com/" />
             </>
         ),
         footerContent: (

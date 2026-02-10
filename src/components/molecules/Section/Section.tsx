@@ -18,11 +18,6 @@ interface ISectionProps {
      */
     className?: string;
     /**
-     * The size of the section.
-     * Possible values: `small | medium | large`
-     */
-    size?: "small" | "medium" | "large";
-    /**
      * The title text displayed in the section's header.
      * When provided, the header section will be rendered.
      * When not provided, the header section will be hidden.
@@ -57,19 +52,18 @@ interface ISectionProps {
     /**
      * When `true`, adds padding around the section's body content.
      */
-    withPadding?: boolean;
+    inset?: boolean;
 }
 
 const Section: FC<ISectionProps> = ({
     className,
-    // size,
     title,
     subtitle,
     headerContent,
     bodyContent,
     footerContent,
     action,
-    withPadding = true
+    inset = true
 }) => {
     const titleRef = useRef<HTMLSpanElement | null>(null);
     const subtitleRef = useRef<HTMLSpanElement | null>(null);
@@ -102,13 +96,13 @@ const Section: FC<ISectionProps> = ({
             )}
             <div
                 className={classNames("section__body", {
-                    section__body_withPadding: withPadding,
+                    section__body_withPadding: inset,
                     section__body_hasHeader: !!title,
                     section__body_hasFooter: !!(footerContent || action)
                 })}
             >
                 <Scrollbar>
-                    {withPadding ? (
+                    {inset ? (
                         <div className="section__wrapper">
                             <div className="section__content">{bodyContent}</div>
                         </div>
