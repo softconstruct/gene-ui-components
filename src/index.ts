@@ -66,7 +66,8 @@ export {
     ISegmentedControlButtonProps
 } from "@components/molecules/SegmentedControl";
 export { Accordion, AccordionItem, IAccordionProps, IAccordionItemProps } from "./components/molecules/Accordion";
-export { default as InteractiveCard } from "./components/molecules/InteractiveCard";
+export { default as InteractiveCard, IInteractiveCardProps } from "./components/molecules/InteractiveCard";
+export { default as Image, IImageProps } from "./components/molecules/Image";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
