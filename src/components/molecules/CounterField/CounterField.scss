@@ -1,0 +1,34 @@
+.counterField {
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-3xsmall);
+
+    &__inputContainer {
+        display: flex;
+        gap: var(--guit-ref-spacing-xsmall);
+
+        &_size {
+            &_large,
+            &_medium {
+                gap: var(--guit-ref-spacing-xsmall);
+            }
+
+            &_small {
+                gap: var(--guit-ref-spacing-3xsmall);
+            }
+        }
+    }
+
+    &__input {
+        &_size {
+            &_large,
+            &_medium {
+                width: var(--guit-ref-sizing-4xlarge);
+            }
+
+            &_small {
+                width: 6rem;
+            }
+        }
+    }
+}

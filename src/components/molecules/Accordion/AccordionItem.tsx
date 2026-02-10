@@ -58,6 +58,10 @@ interface IAccordionActionProps {
      * An ARIA label for the button.
      */
     "aria-label"?: string;
+    /**
+     * The text will shown as content of the `button`.
+     */
+    text?: string;
 }
 
 interface IAccordionItemProps {
@@ -73,11 +77,12 @@ interface IAccordionItemProps {
      * An array of action button objects to display in the accordion header.
      * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
      * Each action button is rendered with `layout="text"` and `appearance="secondary"` (these cannot be overridden).
-     * For icon-only buttons, use the `Icon` prop (required).
+     * Buttons can have both `Icon` and `text` props. When `iconOnly` is true, the first 3 visible buttons show only icons, the rest show text.
      * @example
      * actions={[
-     *   { Icon: Globe, onClick: handleAction },
-     *   { Icon: Download }
+     *   { Icon: Globe, text: "View", onClick: handleAction },
+     *   { Icon: Download, text: "Download" },
+     *   { text: "Edit" }
      * ]}
      */
     actions?: IAccordionActionProps[];
@@ -158,11 +163,17 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
                     <div className="accordionItem__title" />
                 )}
                 {hasActions && (
-                    <ButtonGroup className="accordionItem__actions" size={size}>
+                    <ButtonGroup className="accordionItem__actions" size={size} iconOnly>
                         {actionsWithIds.map((action) => {
-                            return action.Icon ? (
-                                <Button key={action.id} {...action} layout="text" appearance="secondary" />
-                            ) : null;
+                            if (action.Icon || action.text) {
+                                const { text: actionText, ...restAction } = action;
+                                return (
+                                    <Button key={action.id} {...restAction} layout="text" appearance="secondary">
+                                        {actionText}
+                                    </Button>
+                                );
+                            }
+                            return null;
                         })}
                     </ButtonGroup>
                 )}
