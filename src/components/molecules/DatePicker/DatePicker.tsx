@@ -262,7 +262,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
     errorMessage,
     open = false,
     loading = false,
-    shouldDisableDate,
+    // shouldDisableDate,
     excludedDates = [],
     presetSize = "medium",
     disabledPresets,
@@ -338,8 +338,15 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
             case '7days': setStartDate(subDays(date, 7)); break;
             case '14days': setStartDate(subDays(date, 14)); break;
             case '1month': setStartDate(subMonths(date, 1)); break;
+            default: break;
         }
     }, [startDate]);
+
+    const generateDayClassName = () => {
+        return classNames("datePicker__day",
+            `datePicker__day_size_${size}`
+        );
+    };
 
     const presetsToUse = withRange ? presetsListRange : presetsList;
 
@@ -393,6 +400,7 @@ const CustomDatePicker: React.FC<IDatePickerProps> = ({
                             isClearable={clearable}
                             calendarStartDay={weekStartDay}
 
+                            dayClassName={generateDayClassName}
                             swapRange
                             showMonthYearPicker={view === "month"}
                             showYearPicker={view === "year"}

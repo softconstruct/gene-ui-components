@@ -6,6 +6,22 @@
         display: flex;
     }
 
+    &__day {
+        &_size {
+            &_small {
+                width: 60px;
+            }
+
+            &_medium {
+                width: 100px;
+            }
+
+            &_large {
+                width: 150px;
+            }
+        }
+    }
+
     &__presets {
         display: flex;
         flex-direction: column;
@@ -58,23 +74,10 @@
 }
 
 .react-datepicker {
-
     &__header {
         padding-top: 0;
         background-color: transparent !important;
         border-bottom: none !important;
         padding-top: 0 !important;
-    }
-
-    &__day {
-        // &--selected {
-        //     background-color: #1473E6 !important;
-        //     color: white !important;
-        // }
-
-        // &--outside-month {
-        //     visibility: hidden !important;
-        //     pointer-events: none !important;
-        // }
     }
 }
