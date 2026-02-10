@@ -95,7 +95,7 @@
         border-color: var(--guit-sem-color-border-neutral-3);
         border-style: var(--guit-ref-border-style-solid);
         border-width: var(--guit-ref-border-width-thin);
-        border-radius: var(--guit-ref-radius-small);
+        border-radius: inherit;
 
         &::before {
             content: "";
