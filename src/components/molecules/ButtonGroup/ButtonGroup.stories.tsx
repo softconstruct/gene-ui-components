@@ -1,10 +1,10 @@
 import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { Globe, Heart, Letter, Magnifier, Note } from "@geneui/icons";
+import { Globe, Heart, Magnifier } from "@geneui/icons";
 
 // Components
-import Button from "@components/atoms/Button";
+import Button, { IButtonProps } from "@components/atoms/Button";
 import ButtonGroup, { IButtonGroupProps } from "@components/molecules/ButtonGroup";
 
 // Helpers
@@ -21,52 +21,52 @@ const meta: Meta<IButtonGroupProps> = {
             control: "select",
             options: ["small", "medium", "large", "smallNudge"],
             ...propCategory.appearance
-        })
+        }),
+        iconOnly: args({ control: "boolean", ...propCategory.appearance })
     },
     args: {}
 };
+
+const buttonsMap: IButtonProps[] = [
+    {
+        children: "Primary",
+        appearance: "primary",
+        iconPosition: "after",
+        Icon: Globe
+    },
+    { children: "Secondary", appearance: "secondary", Icon: Magnifier },
+    { children: "Danger", appearance: "danger", Icon: Heart },
+    { children: "Disabled", appearance: "success", disabled: true },
+    { children: "Danger", appearance: "danger", iconPosition: "before" },
+    { children: "Success", appearance: "success" },
+    { children: "With icon", Icon: Globe, iconPosition: "before" }
+];
 
 export default meta;
 
 type Story = StoryObj<IButtonGroupProps>;
 
 export const Default: Story = {
-    render: (props) => (
-        <ButtonGroup {...props}>
-            <Button size="medium" appearance="primary" Icon={Globe} iconPosition="after">
-                Primary
-            </Button>
-            <Button size="medium" appearance="secondary" Icon={Magnifier}>
-                Secondary
-            </Button>
-            <Button size="medium" appearance="danger" Icon={Heart}>
-                Danger
-            </Button>
-            <Button size="medium" appearance="success" disabled>
-                Disabled
-            </Button>
-            <Button size="medium" appearance="danger" iconPosition="before">
-                Danger
-            </Button>
-            <Button size="medium" appearance="success">
-                Success
-            </Button>
-            <Button size="medium" Icon={Globe} iconPosition="before">
-                With icon
-            </Button>
-        </ButtonGroup>
-    )
+    render: (props) => {
+        return (
+            <ButtonGroup {...props}>
+                {buttonsMap.map((button: IButtonProps) => (
+                    <Button {...button} />
+                ))}
+            </ButtonGroup>
+        );
+    }
 };
 
-export const NoSplit: Story = {
+export const IconOnly: Story = {
     render: (props) => (
         <ButtonGroup {...props}>
-            <Button size="medium" appearance="primary" Icon={Letter}>
-                primary
-            </Button>
-            <Button size="medium" appearance="secondary" Icon={Note}>
-                secondary
-            </Button>
+            {buttonsMap.map((button: IButtonProps) => (
+                <Button {...button} />
+            ))}
         </ButtonGroup>
-    )
+    ),
+    args: {
+        iconOnly: true
+    }
 };
