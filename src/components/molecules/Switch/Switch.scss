@@ -25,7 +25,7 @@
         opacity: 0;
         user-select: none;
 
-        &:focus + #{ $this }__slider {
+        &:focus-visible + #{ $this }__slider {
             outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
                 var(--guit-sem-color-border-focus);
             outline-offset: 0.1rem;
