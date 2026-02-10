@@ -108,8 +108,6 @@ interface IImageProps {
     onFailed?: (e: SyntheticEvent<HTMLImageElement, Event>) => void;
 }
 
-const aspectRatioClassNamePrefix = "image_size_";
-
 /**
  * The Image component displays visual content with support for loading states,
  * error handling, selection, and footer actions.
@@ -137,12 +135,11 @@ const Image: FC<IImageProps> = ({
     const isDescriptionTruncated = useEllipsisDetection(descriptionRef);
 
     const hasActions = actions && actions.length > 0;
-    const aspectRatioClassName = `${aspectRatioClassNamePrefix}${aspectRatio}`;
     const shouldRenderFooter = title || description || hasActions;
 
     const rootClassName = classNames(
         "image",
-        aspectRatioClassName,
+        `image_size_${aspectRatio}`,
         {
             image_failed: imageLoadFailed,
             image_loading: loading
