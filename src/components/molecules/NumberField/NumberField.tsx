@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useEffect, useMemo, useRef, useState } from "react";
+import React, { ChangeEvent, FC, FocusEvent, MouseEvent, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
 
@@ -146,19 +146,18 @@ const NumberField: FC<INumberFieldProps> = ({
     autoFocus
 }) => {
     const isControlled = value !== undefined;
-    const [internalValue, setInternalValue] = useState<string>("");
-    const firstRender = useRef(true);
-
-    useEffect(() => {
-        if (!isControlled) {
-            setInternalValue(clampValue(defaultValue, min, max));
-        }
-        firstRender.current = false;
-    }, []);
+    const [internalValue, setInternalValue] = useState<string>(() =>
+        !isControlled ? clampValue(defaultValue, min, max) : ""
+    );
+    const hasClampedControlledValue = useRef(false);
 
     const getCurrentStringValue = (): string => {
         if (isControlled) {
-            return firstRender.current ? clampValue(value, min, max) : String(value ?? "");
+            if (!hasClampedControlledValue.current) {
+                hasClampedControlledValue.current = true;
+                return clampValue(value, min, max);
+            }
+            return String(value ?? "");
         }
         return internalValue;
     };

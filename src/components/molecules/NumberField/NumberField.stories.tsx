@@ -49,7 +49,7 @@ const Template: FC<INumberFieldProps> = ({ ...props }) => <NumberField {...props
 
 export const Default: Story = {
     render: ({ ...props }) => <Template {...props} />,
-    argTypes: { value: args({ control: "false", ...propCategory.states }) }
+    argTypes: { value: args({ control: "false", ...propCategory.content }) }
 };
 
 const ControlledTemplate: FC<INumberFieldProps> = ({ value, onChange, ...props }) => {
@@ -73,5 +73,5 @@ export const Controlled: Story = {
     args: {
         helperText: "Controlled Number Field"
     },
-    argTypes: { defaultValue: args({ control: "false", ...propCategory.states }) }
+    argTypes: { defaultValue: args({ control: "false", ...propCategory.content }) }
 };
