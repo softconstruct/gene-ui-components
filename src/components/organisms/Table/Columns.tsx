@@ -39,6 +39,7 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
                     );
                 },
                 cell: () => <Cell type={item.type} />,
+                footer: () => <Cell type="Empty" />,
                 type: item.type,
                 dataKey: item.dataKey
             });
@@ -61,6 +62,7 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
             cell: ({ row }) => {
                 return <Cell type={item.type} data={row.original[item.dataKey]} />;
             },
+            footer: () => <Cell type="Empty" />,
             type: item.type,
             dataKey: item.dataKey
         });

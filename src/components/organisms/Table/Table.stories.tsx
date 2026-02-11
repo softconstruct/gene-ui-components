@@ -89,6 +89,7 @@ const meta: Meta<ITableProps> = {
         selectAllText: args({ control: "text", ...propCategory.content }),
         columnResizeDirection: args({ control: "select", ...propCategory.appearance }),
         withStickyHeader: args({ control: "boolean", ...propCategory.content }),
+        withStickyFooter: args({ control: "boolean", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance })
     },
     args: {

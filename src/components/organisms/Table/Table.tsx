@@ -4,6 +4,7 @@ import classNames from "classnames";
 
 import { createColumns } from "@components/organisms/Table/Columns";
 import TBody from "@components/organisms/Table/TBody";
+import TFoot from "@components/organisms/Table/TFoot";
 import THead from "@components/organisms/Table/THead";
 import Toolbar from "@components/organisms/Table/Toolbar";
 // Components
@@ -31,6 +32,7 @@ interface ITableProps {
     headerContent?: ReactNode;
     selectAllText?: string;
     withStickyHeader?: boolean;
+    withStickyFooter?: boolean;
     columnResizeDirection?: "ltr" | "rtl";
     /**
      * Additional class for the parent element.
@@ -53,6 +55,7 @@ const Table: FC<ITableProps> = ({
     headerContent,
     selectAllText,
     withStickyHeader,
+    withStickyFooter,
     columnResizeDirection = "ltr",
     className
 }) => {
@@ -67,6 +70,9 @@ const Table: FC<ITableProps> = ({
     });
 
     const rows = useMemo(() => [...table.getTopRows(), ...table.getCenterRows()], []);
+    const hasFooters = table
+        .getFooterGroups()
+        .some((group) => group.headers.some((header) => header.column.columnDef.footer));
 
     return (
         <div className={classNames("dataTable")}>
@@ -85,6 +91,7 @@ const Table: FC<ITableProps> = ({
                     selectAllText={selectAllText}
                 />
                 <TBody rows={rows} />
+                {hasFooters && <TFoot footer={table.getFooterGroups()} withStickyFooter={withStickyFooter} />}
             </table>
         </div>
     );
