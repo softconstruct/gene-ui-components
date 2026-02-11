@@ -1,11 +1,16 @@
 import React from "react";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import classNames from "classnames";
 
+import Cell from "@components/organisms/Table/Cell";
+import HeaderActions from "@components/organisms/Table/HeaderActions";
+// Helpers
 import { generateDisplayColumnsProps } from "@components/organisms/Table/helpers";
 // Components
-import { ExpandAndCheckboxTypes, Row, TableColumns } from "@components/organisms/Table/types";
+import { HeaderActionsType, Row, TableColumns } from "@components/organisms/Table/types";
 
-import { DISPLAY_COLUMN_MAP, DISPLAY_COLUMN_TYPES } from "./constants";
+// Constants
+import { DISPLAY_COLUMN_TYPES } from "./constants";
 
 const columnHelper = createColumnHelper<Row>();
 
@@ -14,15 +19,26 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
 
     return columns.map((item) => {
         if (DISPLAY_COLUMN_TYPES.includes(item.type)) {
-            const Component = DISPLAY_COLUMN_MAP[item.type as ExpandAndCheckboxTypes];
+            const type = item.type as HeaderActionsType;
 
             return columnHelper.display({
                 ...item,
                 id: item?.id || item.dataKey,
                 header: ({ header }) => {
-                    const componentProps = generateDisplayColumnsProps(item.type, header);
-                    return <Component {...componentProps} />;
+                    const componentProps = generateDisplayColumnsProps(type, header);
+                    return (
+                        <th
+                            colSpan={header.colSpan}
+                            className={classNames("table__th", {
+                                table__th_group: Boolean(header.subHeaders.length)
+                            })}
+                            scope="col"
+                        >
+                            <HeaderActions {...componentProps} />
+                        </th>
+                    );
                 },
+                cell: () => <Cell type={item.type} />,
                 type: item.type,
                 dataKey: item.dataKey
             });
@@ -38,10 +54,13 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
             });
         }
 
-        return columnHelper.accessor((row) => row.dataKey, {
+        return columnHelper.accessor((row) => row[item.dataKey], {
             ...item,
             id: item?.id || item.dataKey,
             header: () => item?.header || null,
+            cell: ({ row }) => {
+                return <Cell type={item.type} data={row.original[item.dataKey]} />;
+            },
             type: item.type,
             dataKey: item.dataKey
         });

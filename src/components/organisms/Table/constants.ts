@@ -1,25 +1,11 @@
-import { FunctionComponent } from "react";
-
 import { ArrowDown, ArrowUp, ArrowUpDown } from "@geneui/icons";
-
-import HeaderCheckboxCell, { IHeaderCheckboxCellProps } from "@components/organisms/Table/HeaderCheckboxCell";
-import HeaderExpandCell, { IHeaderExpandCellProps } from "@components/organisms/Table/HeaderExpandCell";
-
-import { ExpandAndCheckboxTypes } from "./types";
 
 export const DISPLAY_COLUMN_TYPES = ["Empty", "Expand", "RowCheckbox"];
 
-export const DISPLAY_COLUMN_MAP: Record<
-    ExpandAndCheckboxTypes,
-    FunctionComponent<IHeaderExpandCellProps | IHeaderCheckboxCellProps>
-> = {
-    Empty: () => `<div className="table__content table__content_empty" />`,
-    Expand: HeaderExpandCell,
-    RowCheckbox: HeaderCheckboxCell
-};
-
 export const CellClassNames: { [key: string]: string } = {
     Empty: "table__content_empty",
+    Expand: "table__content_expand",
+    RowCheckbox: "table__content_checkbox",
     Graph: "table__content_graph",
     Text: "table__content_text table__content_text_string",
     Number: "table__content_text table__content_text_numeric",

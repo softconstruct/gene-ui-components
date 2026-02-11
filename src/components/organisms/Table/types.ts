@@ -38,11 +38,11 @@ export type Cell =
     | ISwitchProps
     | FC<IconProps>;
 
-export type TableRowCells = {
+export type TRowCells = {
     [K in string]?: Cell;
 };
 
-export type Row = TableRowCells & {
+export type Row = TRowCells & {
     id: string | number;
     isPinned?: boolean;
     isSelected?: boolean;
@@ -118,4 +118,4 @@ export interface IManageColumnsInfo {
     isManageColumnsDisabled?: boolean;
 }
 
-export type ExpandAndCheckboxTypes = Extract<CellType, "Empty" | "Expand" | "RowCheckbox">;
+export type HeaderActionsType = Extract<CellType, "Empty" | "Expand" | "RowCheckbox">;

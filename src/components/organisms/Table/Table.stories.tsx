@@ -6,7 +6,7 @@ import { Actions, IBulkActions, IManageColumnsInfo } from "@components/organisms
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import { Columns } from "../../../../stories/data/__table";
+import { Columns, TableData } from "../../../../stories/data/__table";
 // Components
 import Table, { ITableProps } from "./index";
 
@@ -78,6 +78,7 @@ const meta: Meta<ITableProps> = {
     title: "Organisms/Table",
     component: Table,
     argTypes: {
+        data: args({ control: "false", ...propCategory.content }),
         columns: args({ control: "false", ...propCategory.content }),
         rowSelectionInfo: args({ control: "false", ...propCategory.content }),
         globalFilterInfo: args({ control: "false", ...propCategory.content }),
@@ -86,10 +87,12 @@ const meta: Meta<ITableProps> = {
         editActions: args({ control: "false", ...propCategory.content }),
         headerContent: args({ control: "false", ...propCategory.content }),
         selectAllText: args({ control: "text", ...propCategory.content }),
+        columnResizeDirection: args({ control: "select", ...propCategory.appearance }),
         withStickyHeader: args({ control: "boolean", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
+        data: TableData,
         columns: Columns,
         rowSelectionInfo: {
             selectedRowsLength: 0,
@@ -100,6 +103,7 @@ const meta: Meta<ITableProps> = {
             withGlobalFilter: true,
             withManualFiltering: true
         },
+        columnResizeDirection: "ltr",
         bulkActions: bulkActionsMock,
         manageColumnsInfo,
         editActions,

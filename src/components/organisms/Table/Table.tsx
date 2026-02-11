@@ -1,11 +1,12 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC, ReactNode, useMemo } from "react";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import classNames from "classnames";
 
 import { createColumns } from "@components/organisms/Table/Columns";
-// Components
+import TBody from "@components/organisms/Table/TBody";
 import THead from "@components/organisms/Table/THead";
 import Toolbar from "@components/organisms/Table/Toolbar";
+// Components
 import {
     Actions,
     IBulkActions,
@@ -20,6 +21,7 @@ import {
 import "./Table.scss";
 
 interface ITableProps {
+    data: Row[];
     columns: TableColumns<Row>[];
     rowSelectionInfo?: IRowSelectionInfo;
     globalFilterInfo?: IGlobalFilterInfo;
@@ -29,6 +31,7 @@ interface ITableProps {
     headerContent?: ReactNode;
     selectAllText?: string;
     withStickyHeader?: boolean;
+    columnResizeDirection?: "ltr" | "rtl";
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using `BEM` conventions.
@@ -40,6 +43,7 @@ interface ITableProps {
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets. Data tables are essential for presenting information such as reports, inventories, or user data in a clear, sortable, and filterable manner, allowing users to quickly find, analyze, and manipulate data.
  */
 const Table: FC<ITableProps> = ({
+    data,
     columns,
     rowSelectionInfo,
     manageColumnsInfo,
@@ -49,15 +53,20 @@ const Table: FC<ITableProps> = ({
     headerContent,
     selectAllText,
     withStickyHeader,
+    columnResizeDirection = "ltr",
     className
 }) => {
     const cols = createColumns(columns);
 
     const table = useReactTable({
         columns: cols,
-        data: [],
-        getCoreRowModel: getCoreRowModel()
+        data,
+        getCoreRowModel: getCoreRowModel(),
+        columnResizeMode: "onChange",
+        columnResizeDirection
     });
+
+    const rows = useMemo(() => [...table.getTopRows(), ...table.getCenterRows()], []);
 
     return (
         <div className={classNames("dataTable")}>
@@ -75,6 +84,7 @@ const Table: FC<ITableProps> = ({
                     withStickyHeader={withStickyHeader}
                     selectAllText={selectAllText}
                 />
+                <TBody rows={rows} />
             </table>
         </div>
     );
