@@ -4,6 +4,7 @@ import { nanoid } from "nanoid/non-secure";
 
 import { ChevronDown, ChevronUp } from "@geneui/icons";
 
+// Components
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
 
@@ -20,11 +21,13 @@ interface INumberFieldProps {
     className?: string;
     /**
      * The value of the number field (controlled).
-     * This is what will be returned in onChange and stored as the selected value.
+     * This is what will be returned in onChange and stored as the selected value.<br>
+     * Possible values: `number | string`
      */
     value?: number | string;
     /**
-     * The initial value of the number field (uncontrolled).
+     * The initial value of the number field (uncontrolled).<br>
+     * Possible values: `number | string`
      */
     defaultValue?: number | string;
     /**
@@ -96,6 +99,13 @@ interface INumberFieldProps {
      */
     id?: string;
 }
+
+const iconSizes: Record<"small" | "medium" | "large", 16> = {
+    small: 16,
+    medium: 16,
+    large: 16
+} as const;
+
 const clampValue = (value?: number | string, min?: number, max?: number): string => {
     if (value === undefined) return "";
     const numericValue = Number(value);
@@ -271,7 +281,7 @@ const NumberField: FC<INumberFieldProps> = ({
                         onClick={(event) => handleButtonClick(event, true)}
                         disabled={buttonsDisabled.increment}
                     >
-                        <ChevronUp size={16} />
+                        <ChevronUp size={iconSizes[size]} />
                     </button>
                     <button
                         type="button"
@@ -281,14 +291,18 @@ const NumberField: FC<INumberFieldProps> = ({
                         onClick={(event) => handleButtonClick(event, false)}
                         disabled={buttonsDisabled.decrement}
                     >
-                        <ChevronDown size={16} />
+                        <ChevronDown size={iconSizes[size]} />
                     </button>
                 </div>
             </div>
             {helperText && (
-                <div className="numberField__infoContainer">
-                    <HelperText text={helperText} disabled={disabled} status={status} size={helperTextSize} />
-                </div>
+                <HelperText
+                    text={helperText}
+                    disabled={disabled}
+                    status={status}
+                    size={helperTextSize}
+                    className="numberField__helperText"
+                />
             )}
         </div>
     );
