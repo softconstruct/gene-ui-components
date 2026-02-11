@@ -2,6 +2,8 @@ import React, { FC, ReactNode, useMemo } from "react";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import classNames from "classnames";
 
+import Divider from "@components/atoms/Divider";
+import Pagination from "@components/molecules/Pagination";
 import { createColumns } from "@components/organisms/Table/Columns";
 import TBody from "@components/organisms/Table/TBody";
 import TFoot from "@components/organisms/Table/TFoot";
@@ -31,6 +33,9 @@ interface ITableProps {
     editActions?: Actions;
     headerContent?: ReactNode;
     selectAllText?: string;
+    withToolbar?: boolean;
+    withPagination?: boolean;
+    withVirtualScroll?: boolean;
     withStickyHeader?: boolean;
     withStickyFooter?: boolean;
     columnResizeDirection?: "ltr" | "rtl";
@@ -54,6 +59,9 @@ const Table: FC<ITableProps> = ({
     globalFilterInfo,
     headerContent,
     selectAllText,
+    withPagination,
+    withVirtualScroll,
+    withToolbar,
     withStickyHeader,
     withStickyFooter,
     columnResizeDirection = "ltr",
@@ -76,14 +84,16 @@ const Table: FC<ITableProps> = ({
 
     return (
         <div className={classNames("dataTable")}>
-            <Toolbar
-                globalFilterInfo={globalFilterInfo}
-                rowSelectionInfo={rowSelectionInfo}
-                manageColumnsInfo={manageColumnsInfo}
-                editActions={editActions}
-                bulkActions={bulkActions}
-                headerContent={headerContent}
-            />
+            {withToolbar && (
+                <Toolbar
+                    globalFilterInfo={globalFilterInfo}
+                    rowSelectionInfo={rowSelectionInfo}
+                    manageColumnsInfo={manageColumnsInfo}
+                    editActions={editActions}
+                    bulkActions={bulkActions}
+                    headerContent={headerContent}
+                />
+            )}
             <table className={classNames("table", className)} role="table">
                 <THead
                     columns={table.getHeaderGroups()}
@@ -93,6 +103,17 @@ const Table: FC<ITableProps> = ({
                 <TBody rows={rows} />
                 {hasFooters && <TFoot footer={table.getFooterGroups()} withStickyFooter={withStickyFooter} />}
             </table>
+            {withPagination && !withVirtualScroll && (
+                <div className="dataTable__pagination">
+                    <div className="dataTable__pagination_controls">
+                        <Pagination
+                            current={table.getState().pagination.pageIndex + 1}
+                            totalPages={table.getPageCount()}
+                        />
+                    </div>
+                </div>
+            )}
+            <Divider />
         </div>
     );
 };

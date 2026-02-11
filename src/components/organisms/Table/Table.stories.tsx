@@ -88,6 +88,9 @@ const meta: Meta<ITableProps> = {
         headerContent: args({ control: "false", ...propCategory.content }),
         selectAllText: args({ control: "text", ...propCategory.content }),
         columnResizeDirection: args({ control: "select", ...propCategory.appearance }),
+        withToolbar: args({ control: "boolean", ...propCategory.content }),
+        withPagination: args({ control: "boolean", ...propCategory.content }),
+        withVirtualScroll: args({ control: "boolean", ...propCategory.content }),
         withStickyHeader: args({ control: "boolean", ...propCategory.content }),
         withStickyFooter: args({ control: "boolean", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance })
@@ -108,7 +111,10 @@ const meta: Meta<ITableProps> = {
         bulkActions: bulkActionsMock,
         manageColumnsInfo,
         editActions,
-        headerContent: <SwapComponent />
+        headerContent: <SwapComponent />,
+        withToolbar: true,
+        withPagination: true,
+        withVirtualScroll: false
     }
 };
 
