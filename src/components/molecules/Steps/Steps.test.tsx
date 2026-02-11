@@ -60,7 +60,7 @@ describe("Steps ", () => {
                 <Step error />
             </Steps>
         );
-        expect(wrapper.find(".steps__step").hasClass("steps__step_error")).toBeTruthy();
+        expect(wrapper.find(".steps__item").hasClass("steps__item_state_error")).toBeTruthy();
     });
 
     it("renders label prop correctly", () => {
@@ -68,7 +68,7 @@ describe("Steps ", () => {
     });
 
     it("renders description prop correctly", () => {
-        expect(setup.find(".steps__description").text()).toStrictEqual("test description");
+        expect(setup.find(".steps__description").at(0).text()).toStrictEqual("test description");
     });
 
     it.each<IStepProps["state"]>(["previous", "current", "next"])('should have "%s" state', (state) => {
@@ -82,10 +82,10 @@ describe("Steps ", () => {
 
         if (state === "current") {
             wrapper.setProps({ current: 0 });
-            expect(wrapper.find(".steps__step_current").exists()).toBeTruthy();
+            expect(wrapper.find(".steps__item_state_current").exists()).toBeTruthy();
         } else {
             wrapper.setProps({ current: 1 });
-            expect(wrapper.find(".steps__status_dot_empty").exists()).toBeTruthy();
+            expect(wrapper.find(".steps__dot_state_empty").exists()).toBeTruthy();
         }
     });
 
@@ -98,7 +98,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        const stepLabel = wrapper.find(".steps__label");
+        const stepLabel = wrapper.find("button.steps__button");
 
         expect(stepLabel.exists()).toBe(true);
 
@@ -229,7 +229,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        const numericElements = wrapper.find(".steps__status_numeric");
+        const numericElements = wrapper.find(".steps__number");
         expect(numericElements.at(0).text()).toBe("1");
         expect(numericElements.at(1).text()).toBe("2");
     });
@@ -241,7 +241,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        const numericElements = wrapper.find(".steps__status_numeric");
+        const numericElements = wrapper.find(".steps__number");
         expect(numericElements.at(0).text()).toBe("9");
     });
 
@@ -263,7 +263,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        const numericElement = wrapper.find(".steps__status_numeric");
+        const numericElement = wrapper.find(".steps__number");
         expect(numericElement.text()).toBe("1");
         expect(wrapper.find(SuccessFilled).length).toBe(0);
     });
@@ -275,7 +275,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        expect(wrapper.find(".steps__status_dot_current").exists()).toBeTruthy();
+        expect(wrapper.find(".steps__dot_state_current").exists()).toBeTruthy();
     });
 
     it("shows empty dot when state is next", () => {
@@ -287,7 +287,7 @@ describe("Steps ", () => {
         );
 
         const steps = wrapper.find(Step);
-        expect(steps.at(1).find(".steps__status_dot_empty").exists()).toBeTruthy();
+        expect(steps.at(1).find(".steps__dot_state_empty").exists()).toBeTruthy();
     });
 
     it("shows success icon when complete in dot type", () => {
@@ -308,7 +308,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        expect(wrapper.find(".steps__status_dot_current").exists()).toBeTruthy();
+        expect(wrapper.find(".steps__dot_state_current").exists()).toBeTruthy();
         expect(wrapper.find(SuccessFilled).length).toBe(0);
     });
 
@@ -330,7 +330,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        const button = wrapper.find("button.steps__label");
+        const button = wrapper.find("button.steps__button");
         expect(button.prop("disabled")).toBe(true);
     });
 
@@ -351,7 +351,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        expect(wrapper.find(".steps__step").hasClass("steps__step_error")).toBeTruthy();
+        expect(wrapper.find(".steps__item").hasClass("steps__item_state_error")).toBeTruthy();
     });
 
     it("error state takes priority over other states", () => {
@@ -372,7 +372,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        const button = wrapper.find("button.steps__label");
+        const button = wrapper.find("button.steps__button");
         expect(button.prop("disabled")).toBe(true);
     });
 
@@ -383,7 +383,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        expect(wrapper.find(".steps__step").hasClass("steps__step_disabled")).toBeTruthy();
+        expect(wrapper.find(".steps__item").hasClass("steps__item_state_disabled")).toBeTruthy();
     });
 
     it("does not apply disabled class when error or loading", () => {
@@ -399,8 +399,8 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        expect(wrapper1.find(".steps__step").hasClass("steps__step_disabled")).toBeFalsy();
-        expect(wrapper2.find(".steps__step").hasClass("steps__step_disabled")).toBeFalsy();
+        expect(wrapper1.find(".steps__item").hasClass("steps__item_state_disabled")).toBeFalsy();
+        expect(wrapper2.find(".steps__item").hasClass("steps__item_state_disabled")).toBeFalsy();
     });
 
     it("disables current step label", () => {
@@ -411,7 +411,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        const button = wrapper.find("button.steps__label");
+        const button = wrapper.find("button.steps__button");
         expect(button.prop("disabled")).toBe(true);
     });
 
@@ -435,8 +435,8 @@ describe("Steps ", () => {
         );
 
         const steps = wrapper.find(Step);
-        expect(steps.at(0).find(".steps__step").hasClass("steps__step_success")).toBeTruthy();
-        expect(steps.at(1).find(".steps__step").hasClass("steps__step_success")).toBeTruthy();
+        expect(steps.at(0).find(".steps__item").hasClass("steps__item_state_success")).toBeTruthy();
+        expect(steps.at(1).find(".steps__item").hasClass("steps__item_state_success")).toBeTruthy();
     });
 
     it("applies steps_linear class when onChange is not provided", () => {
@@ -468,7 +468,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        expect(wrapper.find("button.steps__label").exists()).toBeTruthy();
+        expect(wrapper.find("button.steps__button").exists()).toBeTruthy();
     });
 
     it("renders label as Label component when onChange is not provided", () => {
@@ -478,7 +478,7 @@ describe("Steps ", () => {
             </Steps>
         );
 
-        expect(wrapper.find("button.steps__label").length).toBe(0);
+        expect(wrapper.find("button.steps__button").length).toBe(0);
         expect(wrapper.find(Label).exists()).toBeTruthy();
     });
 
