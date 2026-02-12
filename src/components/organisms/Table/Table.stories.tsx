@@ -94,7 +94,10 @@ const meta: Meta<ITableProps> = {
         withStickyHeader: args({ control: "boolean", ...propCategory.content }),
         withStickyFooter: args({ control: "boolean", ...propCategory.content }),
         withManualSorting: args({ control: "boolean", ...propCategory.content }),
+        withFilterFromLeafRows: args({ control: "boolean", ...propCategory.content }),
         onSort: args({ control: "false", ...propCategory.action }),
+        onGlobalFilter: args({ control: "false", ...propCategory.action }),
+        onColumnFilter: args({ control: "false", ...propCategory.action }),
         className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
@@ -118,7 +121,8 @@ const meta: Meta<ITableProps> = {
         withPagination: true,
         withVirtualScroll: false,
         withManualSorting: false,
-        onSort: undefined
+        onSort: undefined,
+        onColumnFilter: undefined
     }
 };
 

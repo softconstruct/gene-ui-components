@@ -1,5 +1,12 @@
 import React, { createContext, FC, ReactNode, useEffect, useMemo, useState } from "react";
-import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table";
+import {
+    ColumnFiltersState,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getSortedRowModel,
+    SortingState,
+    useReactTable
+} from "@tanstack/react-table";
 import classNames from "classnames";
 
 // Components
@@ -25,6 +32,8 @@ import "./Table.scss";
 
 interface ITableActionHandlers {
     onSort?: (event: SortingState) => void;
+    onGlobalFilter?: (event: string) => void;
+    onColumnFilter?: (event: ColumnFiltersState) => void;
 }
 
 interface ITableProps extends ITableActionHandlers {
@@ -43,6 +52,8 @@ interface ITableProps extends ITableActionHandlers {
     withStickyHeader?: boolean;
     withStickyFooter?: boolean;
     withManualSorting?: boolean;
+    withManualFiltering?: boolean;
+    withFilterFromLeafRows?: boolean;
     columnResizeDirection?: "ltr" | "rtl";
     /**
      * Additional class for the parent element.
@@ -71,26 +82,39 @@ const Table: FC<ITableProps> = ({
     withToolbar,
     withStickyHeader,
     withStickyFooter,
+    withFilterFromLeafRows,
     columnResizeDirection = "ltr",
     withManualSorting,
+    withManualFiltering,
     onSort,
+    onGlobalFilter,
+    onColumnFilter,
     className
 }) => {
     const cols = createColumns(columns);
     const [sorting, setSorting] = useState<SortingState>([]);
+    const [globalFilter, setGlobalFilter] = useState<string>("");
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
     const table = useReactTable({
         columns: cols,
         data,
         state: {
-            sorting
+            sorting,
+            globalFilter,
+            columnFilters
         },
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
         columnResizeMode: "onChange",
         columnResizeDirection,
+        filterFromLeafRows: withFilterFromLeafRows,
         manualSorting: withManualSorting,
-        onSortingChange: setSorting
+        manualFiltering: withManualFiltering,
+        onSortingChange: setSorting,
+        onGlobalFilterChange: setGlobalFilter,
+        onColumnFiltersChange: setColumnFilters
     });
 
     const memoizedTableContextValue = useMemo<ITableActionHandlers>(() => ({}), []);
@@ -100,6 +124,17 @@ const Table: FC<ITableProps> = ({
 
         onSort(sorting);
     }, [sorting, onSort]);
+
+    useEffect(() => {
+        if (!onColumnFilter) return;
+
+        onColumnFilter(columnFilters);
+    }, [columnFilters, onColumnFilter]);
+
+    const onGlobalFilterChange = (value: string) => {
+        if (!withManualFiltering) table.setGlobalFilter(value);
+        onGlobalFilter?.(value);
+    };
 
     const rows = [...table.getTopRows(), ...table.getCenterRows()];
 
@@ -118,6 +153,7 @@ const Table: FC<ITableProps> = ({
                         editActions={editActions}
                         bulkActions={bulkActions}
                         headerContent={headerContent}
+                        onGlobalFilterChange={onGlobalFilterChange}
                     />
                 )}
                 <table className={classNames("table", className)} role="table">

@@ -63,6 +63,7 @@ export type TableColumns<T> = ColumnDef<T extends object ? T : never> & {
     isVisible?: boolean;
     isCheckboxDisabled?: boolean;
     enableSorting?: boolean;
+    enableColumnFilters?: boolean;
     isSortingDisabled?: boolean;
     rowCellRenderer?: (data?: Cell, editMode?: boolean, onChange?: (value: string | number) => void) => JSX.Element;
     editable?: boolean;

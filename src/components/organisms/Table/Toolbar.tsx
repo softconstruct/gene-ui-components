@@ -23,7 +23,7 @@ interface IEditActionsProps {
 }
 
 interface IToolbarProps {
-    globalFilterSetter?: (value: string) => void;
+    onGlobalFilterChange?: (value: string) => void;
     editActions?: Actions;
     rowSelectionInfo?: IRowSelectionInfo;
     headerContent?: ReactNode;
@@ -83,7 +83,7 @@ const EditActions: FC<IEditActionsProps> = ({ isEditMode = false, editActions })
 };
 
 const Toolbar: FC<IToolbarProps> = ({
-    globalFilterSetter,
+    onGlobalFilterChange,
     editActions,
     globalFilterInfo,
     rowSelectionInfo,
@@ -92,17 +92,13 @@ const Toolbar: FC<IToolbarProps> = ({
     bulkActions,
     manageColumnsInfo
 }) => {
-    const [globalFilterValue, setGlobalFilterValue] = useState<string>();
     const [menuOpened, setMenuOpened] = useState(false);
 
     const handleGlobalFilterChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (!onGlobalFilterChange) return;
+
         const { value } = event.target;
-        globalFilterInfo?.onChange?.(value);
-
-        if (globalFilterInfo?.withManualFiltering) return;
-
-        setGlobalFilterValue(value);
-        globalFilterSetter?.(value);
+        onGlobalFilterChange?.(String(value));
     };
 
     const onManageColumnsClose = () => setMenuOpened(false);
@@ -115,8 +111,7 @@ const Toolbar: FC<IToolbarProps> = ({
                         className="dataTable__toolbar_searchInput"
                         type="text"
                         placeholder={globalFilterInfo?.placeholder}
-                        onChange={handleGlobalFilterChange}
-                        value={globalFilterValue}
+                        {...(onGlobalFilterChange && { onChange: handleGlobalFilterChange })}
                     />
                 )}
                 <div className="dataTable__bulkActions">

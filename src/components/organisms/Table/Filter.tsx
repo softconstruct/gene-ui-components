@@ -1,22 +1,20 @@
 import React, { FC } from "react";
-import { Column } from "@tanstack/react-table";
-
-import { Row } from "./types";
 
 interface IFilterProps {
-    column: Column<Row, unknown>;
     onBlur: () => void;
+    filterValue?: string;
     filterPlaceholder?: string;
+    handleColumnFilter: (event: string) => void;
 }
 
-const Filter: FC<IFilterProps> = ({ column, onBlur, filterPlaceholder }) => {
+const Filter: FC<IFilterProps> = ({ filterValue, handleColumnFilter, onBlur, filterPlaceholder }) => {
     return (
         <input
             type="text"
-            value={(column.getFilterValue() ?? "") as string}
-            onChange={(e) => column.setFilterValue(e.target.value)}
+            value={filterValue}
             onBlur={onBlur}
             placeholder={filterPlaceholder}
+            onChange={(e) => handleColumnFilter(e.target.value)}
         />
     );
 };

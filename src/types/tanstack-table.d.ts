@@ -35,6 +35,7 @@ declare module "@tanstack/table-core" {
         isVisible?: boolean;
         isCheckboxDisabled?: boolean;
         enableSorting?: boolean;
+        enableColumnFilters?: boolean;
         isSortingDisabled?: boolean;
         editable?: boolean;
         isEditDisabled?: boolean;

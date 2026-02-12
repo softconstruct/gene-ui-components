@@ -37,6 +37,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, filterPlaceholder, se
     const filteredValues: string[] = [];
 
     const handleSortChange = () => column.toggleSorting();
+    const handleColumnFilter = (value: string) => column.setFilterValue(value);
 
     return (
         <div className="table__th_actions" role="group">
@@ -98,9 +99,10 @@ export const ColActions: FC<IColActionsProps> = ({ header, filterPlaceholder, se
             )}
             {currentSearchInput === column.id && (
                 <Filter
-                    column={column}
                     onBlur={() => setCurrentSearchInput(null)}
                     filterPlaceholder={filterPlaceholder}
+                    handleColumnFilter={handleColumnFilter}
+                    filterValue={column.getFilterValue() as string}
                 />
             )}
 
