@@ -4,6 +4,7 @@ import { mount, ReactWrapper } from "enzyme";
 // Components
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
+import Text from "@components/atoms/Text";
 
 import ProgressBar, { IProgressBarProps } from "./index";
 
@@ -47,21 +48,26 @@ describe("ProgressBar ", () => {
         const uploadingText = "uploadingText";
         const percent = 33;
         const wrapper = setup.setProps({ uploadingText, percent });
-
-        expect(wrapper.find(".progressBar__uploadingText").text()).toStrictEqual(`${uploadingText}`);
+        expect(
+            wrapper
+                .find(Text)
+                .findWhere((item) => item.hasClass("progressBar__uploadingText"))
+                .at(1)
+                .text()
+        ).toStrictEqual(`${uploadingText}`);
     });
 
     it("renders percent prop correctly", () => {
         const percent = 33;
         const wrapper = setup.setProps({ percent });
-
-        expect(wrapper.find(".progressBar__percent").text()).toStrictEqual(`${percent}%`);
+        expect(wrapper.find(Text).text()).toStrictEqual(`${percent}%`);
     });
 
-    it("renders error prop correctly", () => {
-        const wrapper = setup.setProps({ error: true });
+    it.each<IProgressBarProps["status"]>(["rest", "warning", "error"])("should have %s status", (status) => {
+        const wrapper = setup.setProps({ status });
+        const className = status === "warning" ? "rest" : status;
         wrapper.update();
-        expect(wrapper.find(".progressBar").hasClass(`progressBar_color_error`)).toBeTruthy();
+        expect(wrapper.find(".progressBar").hasClass(`progressBar_status_${className}`)).toBeTruthy();
     });
 
     it.each<IProgressBarProps["size"]>(["large", "medium", "small"])("should have %s size", (size) => {

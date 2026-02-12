@@ -108,6 +108,11 @@
                     &_down {
                         border-end-end-radius: var(--guit-ref-radius-3xsmall);
                     }
+
+                    svg {
+                        width: 12px;
+                        height: 12px;
+                    }
                 }
             }
         }
@@ -216,10 +221,14 @@
         &_disabled {
             pointer-events: none;
             border-color: var(--guit-sem-color-border-disabled-1);
-            color: var(--guit-sem-color-foreground-disabled);
+            user-select: none;
 
             &::after {
                 background-color: var(--guit-sem-color-border-disabled-1);
+            }
+
+            #{ $the }__input {
+                color: var(--guit-sem-color-foreground-disabled);
             }
         }
     }

@@ -110,7 +110,8 @@ const AccordionItemStory: StoryItem = storyObjBuilder({
         actions: args({ control: "false", ...propCategory.functionality }),
         children: args({ control: "false", ...propCategory.content }),
         id: args({ control: "text", ...propCategory.others }),
-        defaultExpanded: args({ control: "boolean", ...propCategory.states })
+        defaultExpanded: args({ control: "boolean", ...propCategory.states }),
+        text: args({ control: "text", ...propCategory.content })
     },
     args: {
         title: "Accordion Item",
@@ -131,6 +132,18 @@ const AccordionItemStory: StoryItem = storyObjBuilder({
                         },
                         {
                             Icon: RecycleBin
+                        },
+                        {
+                            Icon: Globe,
+                            text: "Globe"
+                        },
+                        {
+                            Icon: Download,
+                            text: "Download"
+                        },
+                        {
+                            Icon: RecycleBin,
+                            text: "Delete"
                         }
                     ]}
                 />

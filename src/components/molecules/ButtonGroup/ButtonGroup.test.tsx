@@ -52,6 +52,42 @@ describe("ButtonGroup ", () => {
         expect(setup.find(Button).at(1).text()).toBe("secondary");
     });
 
+    it("hides visible button labels when iconOnly is true", () => {
+        const wrapper = mount(
+            <ButtonGroup size="large" iconOnly>
+                <Button appearance="primary">Button 1</Button>
+                <Button appearance="secondary">Button 2</Button>
+                <Button appearance="primary">Button 3</Button>
+            </ButtonGroup>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        const buttons = wrapper.find(Button);
+        expect(buttons).toHaveLength(3);
+        buttons.forEach((button) => {
+            expect(button.text()).toBe("");
+        });
+    });
+
+    it("nullifies children for visible buttons when iconOnly is true and there are hidden buttons", () => {
+        const wrapper = mount(
+            <ButtonGroup size="large" iconOnly>
+                <Button appearance="primary">Button 1</Button>
+                <Button appearance="secondary">Button 2</Button>
+                <Button appearance="primary">Button 3</Button>
+                <Button appearance="secondary">Button 4</Button>
+            </ButtonGroup>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        const buttons = wrapper.find(Button);
+
+        // First three buttons are the visible group buttons and should not render their label text
+        buttons.slice(0, 3).forEach((button) => {
+            expect(button.text()).toBe("");
+        });
+    });
+
     it("applies size prop to all child buttons", () => {
         const wrapper = mount(
             <ButtonGroup size="large">
@@ -63,6 +99,20 @@ describe("ButtonGroup ", () => {
 
         wrapper.find(Button).forEach((button) => {
             expect(button.prop("size")).toBe("large");
+        });
+    });
+
+    it("retains default medium button size when iconOnly is false", () => {
+        const wrapper = mount(
+            <ButtonGroup>
+                <Button appearance="primary">Button 1</Button>
+                <Button appearance="secondary">Button 2</Button>
+            </ButtonGroup>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        wrapper.find(Button).forEach((button) => {
+            expect(button.prop("size")).toBe("medium");
         });
     });
 
@@ -105,6 +155,36 @@ describe("ButtonGroup ", () => {
         expect(button.prop("disabled")).toBe(true);
         expect(button.prop("Icon")).toBe(Globe);
         expect(button.prop("onClick")).toBe(mockOnClick1);
+    });
+
+    it("assigns unique ids to child buttons when not provided", () => {
+        const wrapper = mount(
+            <ButtonGroup>
+                <Button appearance="primary">Button 1</Button>
+                <Button id="custom-id" appearance="secondary">
+                    Button 2
+                </Button>
+                <Button appearance="primary">Button 3</Button>
+            </ButtonGroup>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        const buttons = wrapper.find(Button);
+        const ids = buttons.map((button) => button.prop("id"));
+
+        // All buttons should have an id
+        ids.forEach((id) => {
+            expect(id).toBeDefined();
+            expect(typeof id).toBe("string");
+            expect(id).not.toBe("");
+        });
+
+        // IDs should be unique
+        const uniqueIds = new Set(ids);
+        expect(uniqueIds.size).toBe(ids.length);
+
+        // Provided id should be preserved
+        expect(ids).toContain("custom-id");
     });
 
     it("handles empty children correctly", () => {

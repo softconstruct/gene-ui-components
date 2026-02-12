@@ -1,0 +1,381 @@
+.tabs {
+    $this: &;
+
+    display: flex;
+    max-width: 100%;
+    height: 100%;
+
+    &_horizontal {
+        flex-direction: column;
+
+        #{ $this }__wrapper {
+            overflow: hidden;
+            white-space: nowrap;
+            margin-inline: -0.2rem;
+        }
+
+        #{ $this }__nav {
+            &_button {
+                box-shadow: 0 -0.1rem 0 0 var(--guit-sem-color-border-neutral-2) inset;
+                margin-bottom: var(--guit-ref-spacing-4xsmall);
+            }
+        }
+
+        #{ $this }__list {
+            padding: 0.2rem;
+            overflow-x: auto;
+            overflow-y: hidden;
+
+            &::-webkit-scrollbar {
+                width: 0;
+                height: 0;
+            }
+        }
+
+        &#{ $this }_line {
+            #{ $this }__button {
+                transition: transform 0.1s linear;
+
+                &_selected:not(&#{ $this }__button_error) {
+                    box-shadow: 0 calc(-1 * var(--guit-ref-border-width-thick)) 0 0
+                        var(--guit-sem-color-border-selected) inset;
+                }
+
+                &_error {
+                    box-shadow: 0 calc(-1 * var(--guit-ref-border-width-thin)) 0 0 var(--guit-sem-color-border-error)
+                        inset;
+                }
+            }
+        }
+
+        &#{ $this }_contained {
+            #{ $this }__button {
+                &_selected:not(&#{ $this }__button_error) {
+                    box-shadow:
+                        0 var(--guit-ref-border-width-thin) 0 0 var(--guit-sem-color-border-selected) inset,
+                        var(--guit-ref-border-width-thin) 0 0 0 var(--guit-sem-color-border-selected) inset,
+                        calc(-1 * var(--guit-ref-border-width-thin)) 0 0 0 var(--guit-sem-color-border-selected) inset;
+                }
+
+                &_error {
+                    box-shadow: 0 calc(-1 * var(--guit-ref-border-width-thin)) 0 0 var(--guit-sem-color-border-error)
+                        inset;
+                }
+            }
+        }
+
+        #{ $this }__button {
+            &_large {
+                border-top-left-radius: var(--guit-ref-radius-2xsmall);
+                border-top-right-radius: var(--guit-ref-radius-2xsmall);
+            }
+
+            &_medium {
+                border-top-left-radius: var(--guit-ref-radius-3xsmall);
+                border-top-right-radius: var(--guit-ref-radius-3xsmall);
+            }
+
+            &:not(&#{ $this }__button_selected):not(&#{ $this }__button_error) {
+                box-shadow: 0 calc(-1 * var(--guit-ref-border-width-thin)) 0 0 var(--guit-sem-color-border-neutral-2)
+                    inset;
+            }
+        }
+
+        &#{ $this }_large {
+            #{ $this }__nav_button {
+                width: var(--guit-sem-dimension-width-large);
+                height: var(--guit-sem-dimension-height-large);
+            }
+        }
+
+        &#{ $this }_medium {
+            #{ $this }__nav_button {
+                width: var(--guit-sem-dimension-width-medium);
+                height: var(--guit-sem-dimension-height-medium);
+            }
+        }
+    }
+
+    &_vertical {
+        height: 100%;
+        overflow: hidden;
+
+        #{ $this }__nav {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        #{ $this }__nav,
+        #{ $this }__list {
+            flex-direction: column;
+        }
+
+        #{ $this }__list {
+            padding: 0.2rem;
+        }
+
+        #{ $this }__button {
+            [dir="ltr"] & {
+                &_large {
+                    border-top-left-radius: var(--guit-ref-radius-2xsmall);
+                    border-bottom-left-radius: var(--guit-ref-radius-2xsmall);
+                }
+
+                &_medium {
+                    border-top-left-radius: var(--guit-ref-radius-3xsmall);
+                    border-bottom-left-radius: var(--guit-ref-radius-3xsmall);
+                }
+
+                &:not(&#{ $this }__button_selected):not(&#{ $this }__button_error) {
+                    box-shadow: calc(-1 * var(--guit-ref-border-width-thin)) 0 0 0
+                        var(--guit-sem-color-border-neutral-2) inset;
+                }
+
+                &_selected {
+                    box-shadow: calc(-1 * var(--guit-ref-border-width-thick)) 0 0 0
+                        var(--guit-sem-color-border-selected) inset;
+                }
+
+                &_error {
+                    box-shadow: calc(-1 * var(--guit-ref-border-width-thin)) 0 0 0 var(--guit-sem-color-border-error)
+                        inset;
+                }
+            }
+
+            [dir="rtl"] & {
+                &_large {
+                    border-top-right-radius: var(--guit-ref-radius-2xsmall);
+                    border-bottom-right-radius: var(--guit-ref-radius-2xsmall);
+                }
+
+                &_medium {
+                    border-top-right-radius: var(--guit-ref-radius-3xsmall);
+                    border-bottom-right-radius: var(--guit-ref-radius-3xsmall);
+                }
+
+                &:not(&#{ $this }__button_selected):not(&#{ $this }__button_error) {
+                    box-shadow: var(--guit-ref-border-width-thin) 0 0 0 var(--guit-sem-color-border-neutral-2) inset;
+                }
+
+                &_selected {
+                    box-shadow: var(--guit-ref-border-width-thick) 0 0 0 var(--guit-sem-color-border-selected) inset;
+                }
+
+                &_error {
+                    box-shadow: var(--guit-ref-border-width-thin) 0 0 0 var(--guit-sem-color-border-error) inset;
+                }
+            }
+        }
+    }
+
+    &__nav {
+        display: flex;
+        align-items: flex-end;
+        flex: 0 0 auto;
+        background-color: var(--guit-sem-color-background-neutral-1);
+        max-width: 100%;
+        position: relative;
+
+        &_button {
+            flex: 0 0 auto;
+        }
+    }
+
+    &__shadow {
+        position: relative;
+
+        &_before::before,
+        &_after::after {
+            content: "";
+            width: 8.5rem;
+            height: 100%;
+            inset-block: 0;
+            pointer-events: none;
+            position: absolute;
+            z-index: 1;
+        }
+
+        &_before::before {
+            inset-inline-start: -0.2rem;
+
+            [dir="ltr"] & {
+                background: linear-gradient(
+                    90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
+
+            [dir="rtl"] & {
+                background: linear-gradient(
+                    -90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
+        }
+
+        &_after::after {
+            inset-inline-end: -0.2rem;
+
+            [dir="ltr"] & {
+                background: linear-gradient(
+                    -90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
+
+            [dir="rtl"] & {
+                background: linear-gradient(
+                    90deg,
+                    var(--guit-sem-color-background-neutral-1) 0%,
+                    var(--guit-sem-color-background-transparent-inverse-1) 100%
+                );
+            }
+        }
+    }
+
+    &__wrapper {
+        display: flex;
+        flex: 1;
+    }
+
+    &__list {
+        display: flex;
+        flex: 1;
+        box-sizing: border-box;
+        scroll-behavior: smooth;
+    }
+
+    &__button {
+        $that: &;
+
+        display: flex;
+        align-items: center;
+        column-gap: var(--guit-ref-spacing-xsmall);
+        background-color: var(--guit-sem-color-background-neutral-1);
+
+        &_large {
+            height: var(--guit-sem-dimension-height-large);
+            padding-top: var(--guit-ref-spacing-xsmall);
+            padding-bottom: var(--guit-ref-spacing-xsmall);
+
+            &#{ $that }_textOnly:not(&#{ $that }_error) {
+                padding-inline-start: var(--guit-ref-spacing-large);
+                padding-inline-end: var(--guit-ref-spacing-large);
+            }
+            &#{ $that }_icon:not(&#{ $that }_error) {
+                padding-inline-start: var(--guit-ref-spacing-medium);
+                padding-inline-end: var(--guit-ref-spacing-large);
+            }
+            &#{ $that }_iconOnly {
+                padding-inline-start: var(--guit-ref-spacing-medium);
+                padding-inline-end: var(--guit-ref-spacing-medium);
+            }
+            &#{ $that }_error {
+                padding-inline-start: var(--guit-ref-spacing-medium);
+                padding-inline-end: var(--guit-ref-spacing-medium);
+            }
+        }
+
+        &_medium {
+            height: var(--guit-sem-dimension-height-medium);
+            padding-top: var(--guit-ref-spacing-3xsmall);
+            padding-bottom: var(--guit-ref-spacing-3xsmall);
+
+            &#{ $that }_textOnly:not(&#{ $that }_error) {
+                padding-inline-start: var(--guit-ref-spacing-medium);
+                padding-inline-end: var(--guit-ref-spacing-medium);
+            }
+            &#{ $that }_icon:not(&#{ $that }_error) {
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
+                padding-inline-end: var(--guit-ref-spacing-medium);
+            }
+            &#{ $that }_iconOnly {
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
+                padding-inline-end: var(--guit-ref-spacing-xsmall);
+            }
+            &#{ $that }_error {
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
+                padding-inline-end: var(--guit-ref-spacing-xsmall);
+            }
+        }
+
+        &_text {
+            font-family: var(--guit-sem-font-label-medium-default-semibold-font-family), sans-serif;
+            font-weight: var(--guit-sem-font-label-medium-default-semibold-font-weight);
+            font-size: var(--guit-sem-font-label-medium-default-semibold-font-size);
+            line-height: var(--guit-sem-font-label-medium-default-semibold-line-height);
+            text-align: start;
+        }
+
+        &:not(&#{ $that }_selected):not(&#{ $that }_disabled) {
+            cursor: pointer;
+            #{ $that }_icon {
+                color: var(--guit-sem-color-foreground-neutral-2);
+            }
+        }
+
+        &:not(&#{ $that }_selected):not(&#{ $that }_disabled):not(&#{ $that }_error) {
+            #{ $that }_text {
+                color: var(--guit-sem-color-foreground-neutral-2);
+            }
+        }
+
+        &:hover:not(&#{ $that }_selected):not(&#{ $that }_disabled) {
+            background-color: var(--guit-sem-color-background-neutral-1-hover);
+        }
+
+        // state: pressed
+        &:active:not(&#{ $that }_selected):not(&#{ $that }_disabled) {
+            background-color: var(--guit-sem-color-background-neutral-1-pressed);
+        }
+
+        &:focus-visible {
+            z-index: 2;
+        }
+
+        &_selected {
+            cursor: default;
+
+            #{ $that }_icon,
+            #{ $that }_text {
+                color: var(--guit-sem-color-border-selected);
+            }
+        }
+
+        &_error {
+            #{ $that }_iconError,
+            #{ $that }_text {
+                color: var(--guit-sem-color-foreground-error);
+            }
+        }
+
+        &_disabled {
+            pointer-events: none;
+
+            #{ $that }_icon,
+            #{ $that }_text {
+                color: var(--guit-sem-color-foreground-disabled);
+            }
+        }
+
+        &_slot {
+            width: 2.4rem;
+            height: 2.4rem;
+
+            // todo: remove this styles after 'slot' component implementation
+            background-color: #f4e1ec;
+            border: 0.1rem solid #a60063;
+        }
+    }
+
+    &__stage {
+        flex: 1;
+
+        // todo: remove this styles after 'stage' component implementation
+        padding: var(--guit-ref-spacing-xlarge);
+        background-color: var(--guit-sem-color-background-neutral-3);
+    }
+}

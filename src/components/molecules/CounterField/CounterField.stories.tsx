@@ -1,20 +1,23 @@
 import React, { ChangeEvent, FC, MouseEvent, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+// Components
+import CounterField, { ICounterFieldProps } from "@components/molecules/CounterField/CounterField";
+
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-// Components
-import NumberField, { INumberFieldProps } from "./index";
 
-const meta: Meta<INumberFieldProps> = {
-    title: "Molecules/NumberField",
-    component: NumberField,
+const meta: Meta<ICounterFieldProps> = {
+    title: "Molecules/CounterField",
+    component: CounterField,
     argTypes: {
-        value: args({ control: "text", ...propCategory.content }),
+        value: args({ control: "number", ...propCategory.content }),
         defaultValue: args({ control: "number", ...propCategory.content }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
-        step: args({ control: "number", ...propCategory.states }),
+        ariaLabelIncrement: args({ control: "text", ...propCategory.others }),
+        ariaLabelDecrement: args({ control: "text", ...propCategory.others }),
+        step: args({ control: "number", defaultValue: 1, ...propCategory.states }),
         min: args({ control: "number", ...propCategory.states }),
         max: args({ control: "number", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
@@ -30,6 +33,7 @@ const meta: Meta<INumberFieldProps> = {
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         id: args({ control: "text", ...propCategory.others })
     },
+
     args: {
         defaultValue: 0,
         step: 1,
@@ -43,16 +47,16 @@ const meta: Meta<INumberFieldProps> = {
 
 export default meta;
 
-type Story = StoryObj<INumberFieldProps>;
+type Story = StoryObj<ICounterFieldProps>;
 
-const Template: FC<INumberFieldProps> = ({ ...props }) => <NumberField {...props} />;
+const Template: FC<ICounterFieldProps> = ({ ...props }) => <CounterField {...props} />;
 
 export const Default: Story = {
     render: ({ ...props }) => <Template {...props} />,
-    argTypes: { value: args({ control: "false", ...propCategory.content }) }
+    argTypes: { value: args({ control: "false", ...propCategory.states }) }
 };
 
-const ControlledTemplate: FC<INumberFieldProps> = ({ value, onChange, ...props }) => {
+const ControlledTemplate: FC<ICounterFieldProps> = ({ value, onChange, ...props }) => {
     const isControlled = value !== undefined;
     const displayValue = isControlled ? value : "0";
     const [internalStringValue, setInternalStringValue] = useState(displayValue);
@@ -65,13 +69,13 @@ const ControlledTemplate: FC<INumberFieldProps> = ({ value, onChange, ...props }
         onChange?.(newValueString, event);
     };
 
-    return <NumberField {...props} value={internalStringValue} onChange={handleChange} />;
+    return <CounterField {...props} value={internalStringValue} onChange={handleChange} />;
 };
 
 export const Controlled: Story = {
     render: (props) => <ControlledTemplate {...props} />,
     args: {
-        helperText: "Controlled Number Field"
+        helperText: "Controlled Counter"
     },
-    argTypes: { defaultValue: args({ control: "false", ...propCategory.content }) }
+    argTypes: { defaultValue: args({ control: "false", ...propCategory.states }) }
 };

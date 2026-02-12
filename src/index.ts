@@ -21,6 +21,7 @@ export { default as Copy, ICopyProps } from "./components/atoms/Copy";
 export { SplitButton, ISplitButtonProps } from "@components/molecules/SplitButton";
 
 // Molecules
+export { Tabs, Tab, ITabsProps, ITabProps } from "./components/molecules/Tabs";
 export { default as Tooltip, ITooltipProps } from "./components/molecules/Tooltip";
 export { default as ProgressBar, IProgressBarProps } from "./components/molecules/ProgressBar";
 export { Steps, Step, IStepProps, IStepsProps } from "./components/molecules/Steps";
@@ -56,6 +57,7 @@ export { default as Banner, IBannerProps } from "./components/molecules/Banner";
 export { default as TagGroup, ITagGroupProps } from "./components/molecules/TagGroup";
 export { default as DataCard, IDataCardProps } from "./components/molecules/DataCard";
 export { default as RadioGroup, IRadioGroupProps, IRadioOption } from "./components/molecules/RadioGroup";
+export { default as CounterField, ICounterFieldProps } from "./components/molecules/CounterField";
 export { default as CheckboxGroup, ICheckboxGroupProps, ICheckboxOption } from "./components/molecules/CheckboxGroup";
 export {
     SegmentedControl,
@@ -64,7 +66,9 @@ export {
     ISegmentedControlButtonProps
 } from "@components/molecules/SegmentedControl";
 export { Accordion, AccordionItem, IAccordionProps, IAccordionItemProps } from "./components/molecules/Accordion";
-export { default as NumberField } from "./components/molecules/NumberField";
+export { default as NumberField, INumberFieldProps } from "./components/molecules/NumberField";
+export { default as InteractiveCard, IInteractiveCardProps } from "./components/molecules/InteractiveCard";
+export { default as Image, IImageProps } from "./components/molecules/Image";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
