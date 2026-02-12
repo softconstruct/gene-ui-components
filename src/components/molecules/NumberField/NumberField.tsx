@@ -12,6 +12,7 @@ import Label from "@components/atoms/Label";
 import "./NumberField.scss";
 
 import { NUMERIC_STRING_PATTERN } from "../../../constants";
+import { clampValue } from "../../../helpers";
 
 interface INumberFieldProps {
     /**
@@ -105,21 +106,6 @@ const iconSizes: Record<"small" | "medium" | "large", 16> = {
     medium: 16,
     large: 16
 } as const;
-
-const clampValue = (value?: number | string, min?: number, max?: number): string => {
-    if (value === undefined) return "";
-    const numericValue = Number(value);
-    if (!Number.isFinite(numericValue)) return String(value);
-
-    let clamped = numericValue;
-    if (min !== undefined && clamped < min) {
-        clamped = min;
-    }
-    if (max !== undefined && clamped > max) {
-        clamped = max;
-    }
-    return String(clamped);
-};
 
 /**
  * Number Field designed to capture numeric data from users. It is specifically configured to accept only numerical values, ensuring accurate data entry for fields requiring quantities, measurements, or other numerical inputs.
