@@ -145,6 +145,8 @@ const NumberField: FC<INumberFieldProps> = ({
     onInputFocus,
     autoFocus
 }) => {
+    const hasMax = max !== undefined;
+    const hasMin = min !== undefined;
     const isControlled = value !== undefined;
     const [internalValue, setInternalValue] = useState<string>(() =>
         !isControlled ? clampValue(defaultValue, min, max) : ""
@@ -171,9 +173,9 @@ const NumberField: FC<INumberFieldProps> = ({
         const nextValue = validNumericValue + stepValue;
 
         let clampedValue = nextValue;
-        if (stepValue > 0 && max !== undefined) {
+        if (stepValue > 0 && hasMax) {
             clampedValue = Math.min(nextValue, max);
-        } else if (stepValue < 0 && min !== undefined) {
+        } else if (stepValue < 0 && hasMin) {
             clampedValue = Math.max(nextValue, min);
         }
 
@@ -229,8 +231,8 @@ const NumberField: FC<INumberFieldProps> = ({
     const buttonsDisabled = useMemo(() => {
         const baseDisabled = disabled || readOnly;
         return {
-            increment: baseDisabled || (max !== undefined && validNumericValue >= max),
-            decrement: baseDisabled || (min !== undefined && validNumericValue <= min)
+            increment: baseDisabled || (hasMax && validNumericValue >= max),
+            decrement: baseDisabled || (hasMin && validNumericValue <= min)
         };
     }, [disabled, readOnly, max, min, validNumericValue]);
 
