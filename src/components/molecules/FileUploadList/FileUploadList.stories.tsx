@@ -1,12 +1,13 @@
 import React, { ComponentType } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+// Icons
 import { Bell, Download, Eye, Image, RecycleBin, X } from "@geneui/icons";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import FileUploadItem, { IFileUploadItem } from "./FileUploadItem";
 // Components
+import FileUploadItem, { IFileUploadItem } from "./FileUploadItem";
 import FileUploadList, { IFileUploadListProps } from "./index";
 
 const meta: Meta<IFileUploadListProps> = {
@@ -18,7 +19,7 @@ const meta: Meta<IFileUploadListProps> = {
     }
 };
 
-const mockData = [
+const mockData: IFileUploadItem[] = [
     {
         id: "1",
         name: "Brand-styleguide.pdf",
@@ -29,32 +30,49 @@ const mockData = [
     },
     {
         id: "2",
-        name: "Homepage-concept.fig",
-        time: "11:42AM",
-        blob: { size: "18MB", type: "image" },
-        Icon: Bell,
-        actions: [{ Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
+        name: "Quarterly-report.pdf",
+        time: "11:00AM",
+        blob: { size: "12MB", type: "document" },
+        Icon: Image,
+        loading: true,
+        progressPercent: 65,
+        uploadingText: "Uploading...",
+        actions: [{ Icon: X, onCancel: () => {} }, { Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
     },
     {
         id: "3",
-        name: "Narration-final.wav",
-        time: "02:18PM",
-        blob: { size: "15MB", type: "audio" },
-        Icon: Eye,
-        actions: [{ Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
+        name: "Failed-upload.pdf",
+        time: "09:15AM",
+        blob: { size: "8MB", type: "document" },
+        Icon: Image,
+        loading: true,
+        progressPercent: 40,
+        status: "error",
+        helperText: "Upload failed. Please try again.",
+        uploadingText: "Uploading",
+        actions: [{ Icon: X, onCancel: () => {} }, { Icon: RecycleBin }]
     },
     {
         id: "4",
-        name: "Launch-teaser.mp4",
-        time: "06:55PM",
-        blob: { size: "320MB", type: "video" },
-        Icon: Image,
-        actions: [{ Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
+        name: "Large-file.zip",
+        time: "02:30PM",
+        blob: { size: "250MB", type: "document" },
+        Icon: Bell,
+        loading: true,
+        progressPercent: 85,
+        status: "warning",
+        helperText: "File is large. Upload may take a while.",
+        uploadingText: "Uploading...",
+        actions: [{ Icon: X, onCancel: () => {} }, { Icon: Eye }]
     }
 ];
 
 type Story = StoryObj<IFileUploadListProps>;
-type StoryFileUploadItem = StoryObj<IFileUploadItem>;
+
+type FileUploadItemStoryArgs = Omit<IFileUploadItem, "blob"> & {
+    blobSize?: string;
+    blobType?: "image" | "video" | "audio" | "document" | "media";
+};
 
 const FileUploadListStory: Story = {
     argTypes: {
@@ -67,7 +85,9 @@ const FileUploadListStory: Story = {
     render: (props) => <FileUploadList {...props} />
 };
 
-const FileUploadItemStory: StoryFileUploadItem = {
+const blobTypeOptions = ["image", "video", "audio", "document", "media"] as const;
+
+const FileUploadItemStory: StoryObj<FileUploadItemStoryArgs> = {
     parameters: {
         controls: {
             exclude: ["files"]
@@ -75,12 +95,24 @@ const FileUploadItemStory: StoryFileUploadItem = {
     },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
+        id: args({ control: "false", ...propCategory.content }),
         name: args({ control: "text", ...propCategory.content }),
         time: args({ control: "text", ...propCategory.content }),
-        blob: args({ control: "false", ...propCategory.content }),
+        blobSize: {
+            name: "size",
+            control: "text",
+            description: "Human-readable file size (e.g. 10MB, 4.2MB)",
+            table: { category: "Content" }
+        },
+        blobType: {
+            name: "type",
+            control: "select",
+            options: [...blobTypeOptions],
+            description: "File type for row styling (image, video, audio, document, media)",
+            table: { category: "Content" }
+        },
         Icon: args({ control: "false", ...propCategory.content }),
         actions: args({ control: "object", ...propCategory.content }),
-        id: args({ control: "text", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
         progressPercent: args({ control: "number", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.states, options: ["rest", "warning", "error"] }),
@@ -91,7 +123,8 @@ const FileUploadItemStory: StoryFileUploadItem = {
         id: "1",
         name: "File Name",
         time: "10:30AM",
-        blob: { size: "10MB", type: "media" },
+        blobSize: "10MB",
+        blobType: "media",
         Icon: Image,
         actions: [
             {
@@ -108,7 +141,12 @@ const FileUploadItemStory: StoryFileUploadItem = {
         helperText: undefined,
         uploadingText: "Uploading"
     },
-    render: (props) => {
+    render: (storyArgs) => {
+        const { blobSize, blobType, ...rest } = storyArgs;
+        const props = {
+            ...rest,
+            blob: { size: blobSize, type: blobType }
+        };
         return <FileUploadItem key={props.id} {...props} />;
     }
 };

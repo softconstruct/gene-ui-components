@@ -12,6 +12,10 @@
         width: 100%;
         min-height: 3.2rem;
 
+        &--noTime {
+            grid-template-columns: 2fr 1fr auto;
+        }
+
         &.image {
             #{ $this }__file {
                 background-color: var(--guit-sem-color-background-accent-purple-1);
@@ -84,6 +88,15 @@
 
         &--withProgress {
             padding-block: 0;
+        }
+
+        &--colName {
+            grid-column: 1 / 4;
+        }
+
+        &--colActions {
+            grid-column: 4 / 5;
+            justify-self: end;
         }
 
         &--progress {
