@@ -12,6 +12,7 @@ import Label from "@components/atoms/Label";
 import "./NumberField.scss";
 
 import { NUMERIC_STRING_PATTERN } from "../../../constants";
+// Helpers
 import { clampValue } from "../../../helpers";
 
 interface INumberFieldProps {
