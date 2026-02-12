@@ -65,7 +65,7 @@ export {
     ISegmentedControlButtonProps
 } from "@components/molecules/SegmentedControl";
 export { Accordion, AccordionItem, IAccordionProps, IAccordionItemProps } from "./components/molecules/Accordion";
-export { default as NumberField } from "./components/molecules/NumberField";
+export { default as NumberField, INumberFieldProps } from "./components/molecules/NumberField";
 export { default as InteractiveCard } from "./components/molecules/InteractiveCard";
 
 // Organisms

@@ -184,8 +184,8 @@ const NumberField: FC<INumberFieldProps> = ({
         }
         onChange?.(nextValueString, event);
     };
-    const handleButtonClick = (event: MouseEvent<HTMLButtonElement>, isIncrement: boolean) =>
-        handleValueChange(isIncrement ? step : -step, event);
+    const handleButtonClick = (event: MouseEvent<HTMLButtonElement>, type: "increment" | "decrement") =>
+        handleValueChange(type === "increment" ? step : -step, event);
 
     const labelSize = size === "large" ? "medium" : size;
     const helperTextSize = size === "large" ? "medium" : size;
@@ -277,7 +277,7 @@ const NumberField: FC<INumberFieldProps> = ({
                         className={classNames(actionButtonClasses, "numberField__action_up", {
                             numberField__action_disabled: buttonsDisabled.increment
                         })}
-                        onClick={(event) => handleButtonClick(event, true)}
+                        onClick={(event) => handleButtonClick(event, "increment")}
                         disabled={buttonsDisabled.increment}
                     >
                         <ChevronUp size={iconSizes[size]} />
@@ -287,7 +287,7 @@ const NumberField: FC<INumberFieldProps> = ({
                         className={classNames(actionButtonClasses, "numberField__action_down", {
                             numberField__action_disabled: buttonsDisabled.decrement
                         })}
-                        onClick={(event) => handleButtonClick(event, false)}
+                        onClick={(event) => handleButtonClick(event, "decrement")}
                         disabled={buttonsDisabled.decrement}
                     >
                         <ChevronDown size={iconSizes[size]} />
