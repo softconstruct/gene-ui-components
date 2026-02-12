@@ -36,7 +36,7 @@ const argTypes = {
     direction: args({ control: "select", ...propCategory.appearance }),
     type: args({ control: "select", ...propCategory.appearance }),
     onChange: args({ control: "false", ...propCategory.action }),
-    current: args({ control: "false", ...propCategory.content }),
+    current: args({ control: "false", ...propCategory.states }),
     children: args({ control: "false", ...propCategory.content })
 };
 
