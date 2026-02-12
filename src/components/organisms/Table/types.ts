@@ -4,6 +4,7 @@ import { HeaderContext } from "@tanstack/table-core/build/lib/core/headers";
 
 import { IconProps } from "@geneui/icons";
 
+// Components
 import { IPillProps } from "@components/atoms/Pill";
 import { ICheckboxProps } from "@components/molecules/Checkbox";
 import { IMenuItemProps } from "@components/molecules/Menu";

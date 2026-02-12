@@ -93,6 +93,8 @@ const meta: Meta<ITableProps> = {
         withVirtualScroll: args({ control: "boolean", ...propCategory.content }),
         withStickyHeader: args({ control: "boolean", ...propCategory.content }),
         withStickyFooter: args({ control: "boolean", ...propCategory.content }),
+        withManualSorting: args({ control: "boolean", ...propCategory.content }),
+        onSort: args({ control: "false", ...propCategory.action }),
         className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
@@ -114,7 +116,9 @@ const meta: Meta<ITableProps> = {
         headerContent: <SwapComponent />,
         withToolbar: true,
         withPagination: true,
-        withVirtualScroll: false
+        withVirtualScroll: false,
+        withManualSorting: false,
+        onSort: undefined
     }
 };
 

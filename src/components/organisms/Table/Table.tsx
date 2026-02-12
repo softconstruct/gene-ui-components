@@ -1,7 +1,8 @@
-import React, { FC, ReactNode, useMemo } from "react";
-import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import React, { createContext, FC, ReactNode, useEffect, useMemo, useState } from "react";
+import { getCoreRowModel, getSortedRowModel, SortingState, useReactTable } from "@tanstack/react-table";
 import classNames from "classnames";
 
+// Components
 import Divider from "@components/atoms/Divider";
 import Pagination from "@components/molecules/Pagination";
 import { createColumns } from "@components/organisms/Table/Columns";
@@ -9,7 +10,6 @@ import TBody from "@components/organisms/Table/TBody";
 import TFoot from "@components/organisms/Table/TFoot";
 import THead from "@components/organisms/Table/THead";
 import Toolbar from "@components/organisms/Table/Toolbar";
-// Components
 import {
     Actions,
     IBulkActions,
@@ -23,7 +23,11 @@ import {
 // Styles
 import "./Table.scss";
 
-interface ITableProps {
+interface ITableActionHandlers {
+    onSort?: (event: SortingState) => void;
+}
+
+interface ITableProps extends ITableActionHandlers {
     data: Row[];
     columns: TableColumns<Row>[];
     rowSelectionInfo?: IRowSelectionInfo;
@@ -38,6 +42,7 @@ interface ITableProps {
     withVirtualScroll?: boolean;
     withStickyHeader?: boolean;
     withStickyFooter?: boolean;
+    withManualSorting?: boolean;
     columnResizeDirection?: "ltr" | "rtl";
     /**
      * Additional class for the parent element.
@@ -45,6 +50,8 @@ interface ITableProps {
      */
     className?: string;
 }
+
+export const TableContext = createContext<ITableActionHandlers>({} as ITableActionHandlers);
 
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets. Data tables are essential for presenting information such as reports, inventories, or user data in a clear, sortable, and filterable manner, allowing users to quickly find, analyze, and manipulate data.
@@ -65,56 +72,76 @@ const Table: FC<ITableProps> = ({
     withStickyHeader,
     withStickyFooter,
     columnResizeDirection = "ltr",
+    withManualSorting,
+    onSort,
     className
 }) => {
     const cols = createColumns(columns);
+    const [sorting, setSorting] = useState<SortingState>([]);
 
     const table = useReactTable({
         columns: cols,
         data,
+        state: {
+            sorting
+        },
         getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
         columnResizeMode: "onChange",
-        columnResizeDirection
+        columnResizeDirection,
+        manualSorting: withManualSorting,
+        onSortingChange: setSorting
     });
 
-    const rows = useMemo(() => [...table.getTopRows(), ...table.getCenterRows()], []);
+    const memoizedTableContextValue = useMemo<ITableActionHandlers>(() => ({}), []);
+
+    useEffect(() => {
+        if (!onSort) return;
+
+        onSort(sorting);
+    }, [sorting, onSort]);
+
+    const rows = [...table.getTopRows(), ...table.getCenterRows()];
+
     const hasFooters = table
         .getFooterGroups()
         .some((group) => group.headers.some((header) => header.column.columnDef.footer));
 
     return (
-        <div className={classNames("dataTable")}>
-            {withToolbar && (
-                <Toolbar
-                    globalFilterInfo={globalFilterInfo}
-                    rowSelectionInfo={rowSelectionInfo}
-                    manageColumnsInfo={manageColumnsInfo}
-                    editActions={editActions}
-                    bulkActions={bulkActions}
-                    headerContent={headerContent}
-                />
-            )}
-            <table className={classNames("table", className)} role="table">
-                <THead
-                    columns={table.getHeaderGroups()}
-                    withStickyHeader={withStickyHeader}
-                    selectAllText={selectAllText}
-                />
-                <TBody rows={rows} />
-                {hasFooters && <TFoot footer={table.getFooterGroups()} withStickyFooter={withStickyFooter} />}
-            </table>
-            {withPagination && !withVirtualScroll && (
-                <div className="dataTable__pagination">
-                    <div className="dataTable__pagination_controls">
-                        <Pagination
-                            current={table.getState().pagination.pageIndex + 1}
-                            totalPages={table.getPageCount()}
-                        />
+        <TableContext.Provider value={memoizedTableContextValue}>
+            <div className={classNames("dataTable")}>
+                {withToolbar && (
+                    <Toolbar
+                        globalFilterInfo={globalFilterInfo}
+                        rowSelectionInfo={rowSelectionInfo}
+                        manageColumnsInfo={manageColumnsInfo}
+                        editActions={editActions}
+                        bulkActions={bulkActions}
+                        headerContent={headerContent}
+                    />
+                )}
+                <table className={classNames("table", className)} role="table">
+                    <THead
+                        columns={table.getHeaderGroups()}
+                        withStickyHeader={withStickyHeader}
+                        selectAllText={selectAllText}
+                    />
+                    <TBody rows={rows} />
+                    {hasFooters && <TFoot footer={table.getFooterGroups()} withStickyFooter={withStickyFooter} />}
+                </table>
+                {withPagination && !withVirtualScroll && (
+                    <div className="dataTable__pagination">
+                        <div className="dataTable__pagination_controls">
+                            <Pagination
+                                current={table.getState().pagination.pageIndex + 1}
+                                totalPages={table.getPageCount()}
+                            />
+                        </div>
                     </div>
-                </div>
-            )}
-            <Divider />
-        </div>
+                )}
+                <Divider />
+            </div>
+        </TableContext.Provider>
     );
 };
 

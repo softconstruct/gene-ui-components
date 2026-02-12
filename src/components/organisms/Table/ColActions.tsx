@@ -4,6 +4,7 @@ import classnames from "classnames";
 
 import { Globe, Magnifier } from "@geneui/icons";
 
+// Components
 import Badge from "@components/atoms/Badge";
 import Button from "@components/atoms/Button";
 import SelectFilter from "@components/organisms/Table/SelectFilter";
@@ -35,6 +36,8 @@ export const ColActions: FC<IColActionsProps> = ({ header, filterPlaceholder, se
     const [isFilterPopoverOpen, setIsFilterPopoverOpen] = useState<boolean>(false);
     const filteredValues: string[] = [];
 
+    const handleSortChange = () => column.toggleSorting();
+
     return (
         <div className="table__th_actions" role="group">
             {column.getCanSort() && (
@@ -47,6 +50,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, filterPlaceholder, se
                             table__th_actions_active: column.getIsSorted()
                         })}
                         Icon={SortingIcons[`${column.getIsSorted()}`]}
+                        onClick={handleSortChange}
                     />
                 </Action>
             )}
