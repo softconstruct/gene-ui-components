@@ -200,6 +200,10 @@
 
         &_error {
             border-color: var(--guit-sem-color-border-error);
+
+            &::after {
+                background-color: var(--guit-sem-color-border-error);
+            }
         }
 
         &_readOnly {
