@@ -177,8 +177,11 @@
         "@geneui/tokens": "^1.0.2",
         "@tanstack/react-virtual": "^3.13.12",
         "classnames": "^2.3.2",
+        "date-fns": "^4.1.0",
+        "imask": "^7.6.1",
         "nanoid": "^5.1.6",
         "qrcode.react": "^4.2.0",
+        "react-imask": "^7.6.1",
         "react-is": "^17.0.2",
         "react-scrollbars-custom": "^4.1.1"
     },

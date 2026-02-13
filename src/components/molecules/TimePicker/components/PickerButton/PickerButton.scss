@@ -1,0 +1,34 @@
+.pickerButton {
+    background: none;
+    border: none;
+    padding: 10px 0;
+    width: 100%;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    color: #333;
+    transition: all 0.2s ease;
+
+    &_active {
+        background-color: #3b71ca;
+        color: white;
+        box-shadow: 0 2px 4px rgb(59 113 202 / 30%);
+    }
+
+    &_size {
+        &_small {
+            width: 40px;
+        }
+
+        &_medium {
+            width: 60px;
+        }
+
+        &_large {
+            width: 80px;
+        }
+    }
+}

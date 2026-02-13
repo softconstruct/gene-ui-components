@@ -1,5 +1,84 @@
 .timePicker {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    &__body {
+        display: flex;
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        width: fit-content;
+        box-shadow: 0 4px 12px rgb(0 0 0 / 5%);
+        height: 300px;
+        overflow: hidden;
+    }
+
+    &__column {
+        display: flex;
+        flex-direction: column;
+        width: 80px;
+        border-right: 1px solid #e0e0e0;
+    }
+
+    &__header {
+        padding: 16px 0;
+        text-align: center;
+        font-weight: 500;
+        color: #757575;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 14px;
+        position: sticky;
+        background-color: #fff;
+        top: 0;
+    }
+
+    &__list {
+        overflow-y: auto;
+        flex: 1;
+        padding-top: 8px;
+
+        /* Hide scrollbar for clean UI */
+        // scrollbar-width: none;
+
+        /* Firefox */
+    }
+
+    &__item {
+        padding: 10px 0;
+        text-align: center;
+        font-size: 16px;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    &__meridiem {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px;
+        width: 80px;
+        border-left: 1px solid #e0e0e0;
+
+        &__button {
+            background: none;
+            border: none;
+            padding: 10px 0;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            color: #333;
+            transition: all 0.2s ease;
+
+            &_active {
+                background-color: #3b71ca;
+                color: white;
+                box-shadow: 0 2px 4px rgb(59 113 202 / 30%);
+            }
+        }
+    }
 }
