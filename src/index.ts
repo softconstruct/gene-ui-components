@@ -57,6 +57,7 @@ export { default as Banner, IBannerProps } from "./components/molecules/Banner";
 export { default as TagGroup, ITagGroupProps } from "./components/molecules/TagGroup";
 export { default as DataCard, IDataCardProps } from "./components/molecules/DataCard";
 export { default as RadioGroup, IRadioGroupProps, IRadioOption } from "./components/molecules/RadioGroup";
+export { default as CounterField, ICounterFieldProps } from "./components/molecules/CounterField";
 export { default as CheckboxGroup, ICheckboxGroupProps, ICheckboxOption } from "./components/molecules/CheckboxGroup";
 export {
     SegmentedControl,
@@ -65,8 +66,9 @@ export {
     ISegmentedControlButtonProps
 } from "@components/molecules/SegmentedControl";
 export { Accordion, AccordionItem, IAccordionProps, IAccordionItemProps } from "./components/molecules/Accordion";
-export { default as InteractiveCard } from "./components/molecules/InteractiveCard";
-export { default as Section } from "./components/molecules/Section";
+export { default as InteractiveCard, IInteractiveCardProps } from "./components/molecules/InteractiveCard";
+export { default as Section, ISectionProps } from "./components/molecules/Section";
+export { default as Image, IImageProps } from "./components/molecules/Image";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";

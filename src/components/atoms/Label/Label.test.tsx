@@ -75,10 +75,10 @@ describe("Label ", () => {
         expect(wrapper.contains("test children")).toBeTruthy();
     });
 
-    it("renders as div when no children provided", () => {
+    it("renders as span when no children provided", () => {
         const wrapper = setup.setProps({});
         expect(wrapper.find("label")).toHaveLength(0);
-        expect(wrapper.find("div").first().hasClass("label")).toBeTruthy();
+        expect(wrapper.find("span").first().hasClass("label")).toBeTruthy();
         expect(wrapper.find(".label").hasClass("label_variant_descriptive")).toBeTruthy();
     });
 
