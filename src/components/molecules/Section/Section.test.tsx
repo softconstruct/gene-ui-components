@@ -76,23 +76,23 @@ describe("Section", () => {
         expect(wrapper.find(".section__header").exists()).toBeFalsy();
     });
 
-    it("renders headerContent correctly", () => {
-        const headerContent = <div className="custom-header">Custom Header</div>;
-        const wrapper = setup.setProps({ headerContent });
+    it("renders headerSwappable correctly", () => {
+        const headerSwappable = <div className="custom-header">Custom Header</div>;
+        const wrapper = setup.setProps({ headerSwappable });
         expect(wrapper.find(".custom-header").exists()).toBeTruthy();
         expect(wrapper.find(".section__header_content").exists()).toBeTruthy();
     });
 
-    it("renders header with title and headerContent together", () => {
-        const headerContent = <button type="button">Action</button>;
-        const wrapper = setup.setProps({ title: "Title", headerContent });
+    it("renders header with title and headerSwappable together", () => {
+        const headerSwappable = <button type="button">Action</button>;
+        const wrapper = setup.setProps({ title: "Title", headerSwappable });
         expect(wrapper.find(".section__title").exists()).toBeTruthy();
         expect(wrapper.find("button").exists()).toBeTruthy();
     });
 
-    it("does not render header when only headerContent is provided without title", () => {
-        const headerContent = <button type="button">Action</button>;
-        const wrapper = mount(<Section headerContent={headerContent} />);
+    it("does not render header when only headerSwappable is provided without title", () => {
+        const headerSwappable = <button type="button">Action</button>;
+        const wrapper = mount(<Section headerSwappable={headerSwappable} />);
         expect(wrapper.find(".section__header").exists()).toBeFalsy();
     });
 
@@ -142,54 +142,55 @@ describe("Section", () => {
     });
 
     it("applies hasFooter class to body when footer is present", () => {
-        const wrapper = setup.setProps({ action: { children: "Submit" } });
+        const wrapper = setup.setProps({ primaryAction: { children: "Submit" } });
         expect(wrapper.find(".section__body").hasClass("section__body_hasFooter")).toBeTruthy();
     });
 
-    it("renders footer when footerContent is provided", () => {
-        const footerContent = <div className="custom-footer">Custom Footer</div>;
-        const wrapper = setup.setProps({ footerContent });
+    it("renders footer when footerSwappable is provided", () => {
+        const footerSwappable = <div className="custom-footer">Custom Footer</div>;
+        const wrapper = setup.setProps({ footerSwappable });
         expect(wrapper.find(".section__footer").exists()).toBeTruthy();
         expect(wrapper.find(".custom-footer").exists()).toBeTruthy();
     });
 
-    it("renders footer when action is provided", () => {
-        const action = { children: "Submit", appearance: "primary" as const };
-        const wrapper = setup.setProps({ action });
+    it("renders footer when primaryAction is provided", () => {
+        const primaryAction = { children: "Submit" };
+        const wrapper = setup.setProps({ primaryAction });
         expect(wrapper.find(".section__footer").exists()).toBeTruthy();
     });
 
-    it("does not render footer when no footerContent or action is provided", () => {
-        const wrapper = setup.setProps({ footerContent: undefined, action: undefined });
+    it("does not render footer when no footerSwappable or primaryAction is provided", () => {
+        const wrapper = setup.setProps({ footerSwappable: undefined, primaryAction: undefined });
         expect(wrapper.find(".section__footer").exists()).toBeFalsy();
     });
 
-    it("renders action button correctly", () => {
-        const action = { children: "Submit", appearance: "primary" as const, onClick: jest.fn() };
-        const wrapper = setup.setProps({ action });
+    it("renders primaryAction button correctly", () => {
+        const primaryAction = { children: "Submit", onClick: jest.fn() };
+        const wrapper = setup.setProps({ primaryAction });
         expect(wrapper.find(".section__footer_actions").exists()).toBeTruthy();
         expect(wrapper.find(Button).exists()).toBeTruthy();
         expect(wrapper.find(Button).text()).toContain("Submit");
+        expect(wrapper.find(Button).prop("appearance")).toBe("primary");
     });
 
-    it("calls action onClick handler", () => {
+    it("calls primaryAction onClick handler", () => {
         const onClickMock = jest.fn();
-        const action = { children: "Submit", onClick: onClickMock };
-        const wrapper = setup.setProps({ action });
+        const primaryAction = { children: "Submit", onClick: onClickMock };
+        const wrapper = setup.setProps({ primaryAction });
         wrapper.find(Button).simulate("click");
         expect(onClickMock).toHaveBeenCalled();
     });
 
-    it("renders footerContent and action together", () => {
-        const footerContent = <span>Footer Info</span>;
-        const action = { children: "Submit" };
-        const wrapper = setup.setProps({ footerContent, action });
+    it("renders footerSwappable and primaryAction together", () => {
+        const footerSwappable = <span>Footer Info</span>;
+        const primaryAction = { children: "Submit" };
+        const wrapper = setup.setProps({ footerSwappable, primaryAction });
         expect(wrapper.find(".section__footer_content").exists()).toBeTruthy();
         expect(wrapper.find(".section__footer_actions").exists()).toBeTruthy();
     });
 
-    it("does not render action button when action is not provided", () => {
-        const wrapper = setup.setProps({ action: undefined });
+    it("does not render primaryAction button when primaryAction is not provided", () => {
+        const wrapper = setup.setProps({ primaryAction: undefined });
         expect(wrapper.find(".section__footer_actions").exists()).toBeFalsy();
     });
 
@@ -202,18 +203,18 @@ describe("Section", () => {
     });
 
     it("renders complete section with all parts", () => {
-        const headerContent = <button type="button">Header Action</button>;
+        const headerSwappable = <button type="button">Header Action</button>;
         const bodyContent = <p>Body Content</p>;
-        const footerContent = <span>Footer Info</span>;
-        const action = { children: "Submit", appearance: "primary" as const };
+        const footerSwappable = <span>Footer Info</span>;
+        const primaryAction = { children: "Submit" };
 
         const wrapper = setup.setProps({
             title: "Section Title",
             subtitle: "Section Subtitle",
-            headerContent,
+            headerSwappable,
             bodyContent,
-            footerContent,
-            action
+            footerSwappable,
+            primaryAction
         });
 
         expect(wrapper.find(".section__header").exists()).toBeTruthy();
@@ -230,13 +231,13 @@ describe("Section", () => {
         expect(wrapper.find(".section__footer").exists()).toBeFalsy();
     });
 
-    it("handles undefined footerContent gracefully", () => {
-        const wrapper = setup.setProps({ footerContent: undefined });
+    it("handles undefined footerSwappable gracefully", () => {
+        const wrapper = setup.setProps({ footerSwappable: undefined });
         expect(wrapper.find(".section__footer_content").exists()).toBeFalsy();
     });
 
-    it("handles undefined headerContent gracefully", () => {
-        const wrapper = setup.setProps({ headerContent: undefined });
+    it("handles undefined headerSwappable gracefully", () => {
+        const wrapper = setup.setProps({ headerSwappable: undefined });
         expect(wrapper.find(".section__title").exists()).toBeTruthy();
     });
 

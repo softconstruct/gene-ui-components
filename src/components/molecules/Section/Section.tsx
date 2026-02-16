@@ -28,27 +28,28 @@ interface ISectionProps {
      */
     subtitle?: string;
     /**
-     * Content to be displayed in the section's header area.
+     * Swappable content to be displayed in the section's header area.
      * When provided, this content will be rendered in the header section.
      */
-    headerContent?: React.ReactNode;
+    headerSwappable?: React.ReactNode;
     /**
      * The main content of the section, displayed in the body area.
      * This content will be scrollable if it exceeds the available space.
      */
     bodyContent?: React.ReactNode;
     /**
-     * Content to be displayed in the section's footer area.
+     * Swappable content to be displayed in the section's footer area.
      * When provided, this content will be rendered in the footer section.
      */
-    footerContent?: React.ReactNode;
+    footerSwappable?: React.ReactNode;
     /**
-     * Action button object to display in the section's footer.
-     * The object conforms to the `IButtonProps` interface, allowing full customization of the button.
+     * Primary action button object to display in the section's footer.
+     * The button will always use primary appearance.
+     * The object conforms to the `IButtonProps` interface (excluding appearance which is always primary).
      * @example
-     * action={{ children: 'Submit', appearance: 'primary', onClick: handleSubmit }}
+     * primaryAction={{ children: 'Submit', onClick: handleSubmit }}
      */
-    action?: IButtonProps;
+    primaryAction?: Omit<IButtonProps, "appearance">;
     /**
      * When `true`, adds padding around the section's body content.
      */
@@ -63,10 +64,10 @@ const Section: FC<ISectionProps> = ({
     className,
     title,
     subtitle,
-    headerContent,
+    headerSwappable,
     bodyContent,
-    footerContent,
-    action,
+    footerSwappable,
+    primaryAction,
     inset = true,
     id
 }) => {
@@ -95,7 +96,7 @@ const Section: FC<ISectionProps> = ({
                         )}
                     </div>
                     <div className="section__header_swap section__header_content">
-                        {headerContent && <div className="section__header_content">{headerContent}</div>}
+                        {headerSwappable && <div className="section__header_content">{headerSwappable}</div>}
                     </div>
                 </div>
             )}
@@ -103,7 +104,7 @@ const Section: FC<ISectionProps> = ({
                 className={classNames("section__body", {
                     section__body_withPadding: inset,
                     section__body_hasHeader: !!title,
-                    section__body_hasFooter: !!(footerContent || action)
+                    section__body_hasFooter: !!(footerSwappable || primaryAction)
                 })}
             >
                 <Scrollbar>
@@ -116,14 +117,14 @@ const Section: FC<ISectionProps> = ({
                     )}
                 </Scrollbar>
             </div>
-            {(footerContent || action) && (
+            {(footerSwappable || primaryAction) && (
                 <div className="section__footer">
                     <div className="section__footer_swap">
-                        {footerContent && <div className="section__footer_content">{footerContent}</div>}
+                        {footerSwappable && <div className="section__footer_content">{footerSwappable}</div>}
                     </div>
-                    {action && (
+                    {primaryAction && (
                         <div className="section__footer_actions">
-                            <Button {...action} />
+                            <Button {...primaryAction} appearance="primary" />
                         </div>
                     )}
                 </div>

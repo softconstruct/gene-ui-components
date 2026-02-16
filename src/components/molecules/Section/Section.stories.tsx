@@ -22,10 +22,10 @@ const meta: Meta<ISectionProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         title: args({ control: "text", ...propCategory.content }),
         subtitle: args({ control: "text", ...propCategory.content }),
-        headerContent: args({ control: "false", ...propCategory.content }),
+        headerSwappable: args({ control: "false", ...propCategory.content }),
         bodyContent: args({ control: "false", ...propCategory.content }),
-        footerContent: args({ control: "false", ...propCategory.content }),
-        action: args({ control: "false", ...propCategory.content }),
+        footerSwappable: args({ control: "false", ...propCategory.content }),
+        primaryAction: args({ control: "false", ...propCategory.content }),
         inset: args({ control: "boolean", ...propCategory.appearance }),
         id: args({ control: "text", ...propCategory.others })
     },
@@ -64,9 +64,8 @@ const defaultContents = {
         />
     ),
     header: <Avatar fullName="John Doe" onClick={() => {}} />,
-    action: {
+    primaryAction: {
         children: "Submit",
-        appearance: "primary" as const,
         onClick: () => {},
         size: "medium" as const,
         layout: "fill" as const
@@ -87,27 +86,27 @@ const sectionStories: Array<Partial<ISectionProps> & { id: string }> = [
     {
         id: "with-title-header",
         title: "Title",
-        headerContent: defaultContents.header,
+        headerSwappable: defaultContents.header,
         bodyContent: defaultContents.body
     },
     {
         id: "with-footer",
         bodyContent: defaultContents.body,
-        footerContent: defaultContents.footer
+        footerSwappable: defaultContents.footer
     },
     {
         id: "with-footer-action",
         bodyContent: defaultContents.body,
-        footerContent: defaultContents.footer,
-        action: defaultContents.action
+        footerSwappable: defaultContents.footer,
+        primaryAction: defaultContents.primaryAction
     },
     {
         id: "full-section",
         title: "Title",
         subtitle: "Subtitle",
-        headerContent: defaultContents.header,
+        headerSwappable: defaultContents.header,
         bodyContent: defaultContents.body,
-        footerContent: defaultContents.footer
+        footerSwappable: defaultContents.footer
     }
 ];
 
@@ -116,7 +115,7 @@ export const Default: Story = {
         title: "Title",
         subtitle: "Subtitle",
         inset: true,
-        headerContent: defaultContents.header,
+        headerSwappable: defaultContents.header,
         bodyContent: (
             <Text as="p" variant="bodyLargeMedium">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
@@ -165,8 +164,8 @@ export const Default: Story = {
                 et dolore magnam aliquam quaerat voluptatem.
             </Text>
         ),
-        footerContent: defaultContents.footer,
-        action: defaultContents.action
+        footerSwappable: defaultContents.footer,
+        primaryAction: defaultContents.primaryAction
     }
 };
 
