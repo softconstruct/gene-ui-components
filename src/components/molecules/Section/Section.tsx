@@ -53,6 +53,10 @@ interface ISectionProps {
      * When `true`, adds padding around the section's body content.
      */
     inset?: boolean;
+    /**
+     * Unique identifier for the section.
+     */
+    id?: string;
 }
 
 const Section: FC<ISectionProps> = ({
@@ -63,7 +67,8 @@ const Section: FC<ISectionProps> = ({
     bodyContent,
     footerContent,
     action,
-    inset = true
+    inset = true,
+    id
 }) => {
     const titleRef = useRef<HTMLSpanElement | null>(null);
     const subtitleRef = useRef<HTMLSpanElement | null>(null);
@@ -72,7 +77,7 @@ const Section: FC<ISectionProps> = ({
     const isSubtitleTruncated: boolean = useEllipsisDetection(subtitleRef);
 
     return (
-        <div className={classNames("section section_isInset", className)}>
+        <div className={classNames("section section_isInset", className)} id={id}>
             {title && (
                 <div className="section__header">
                     <div className="section__title">

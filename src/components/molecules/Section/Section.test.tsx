@@ -112,22 +112,22 @@ describe("Section", () => {
     });
 
     it("applies withPadding class when true", () => {
-        const wrapper = setup.setProps({ withPadding: true });
+        const wrapper = setup.setProps({ inset: true });
         expect(wrapper.find(".section__body").hasClass("section__body_withPadding")).toBeTruthy();
     });
 
     it("does not apply withPadding class when false", () => {
-        const wrapper = setup.setProps({ withPadding: false });
+        const wrapper = setup.setProps({ inset: false });
         expect(wrapper.find(".section__body").hasClass("section__body_withPadding")).toBeFalsy();
     });
 
     it("renders wrapper div when withPadding is true", () => {
-        const wrapper = setup.setProps({ withPadding: true });
+        const wrapper = setup.setProps({ inset: true });
         expect(wrapper.find(".section__wrapper").exists()).toBeTruthy();
     });
 
     it("does not render wrapper div when withPadding is false", () => {
-        const wrapper = setup.setProps({ withPadding: false });
+        const wrapper = setup.setProps({ inset: false });
         expect(wrapper.find(".section__wrapper").exists()).toBeFalsy();
     });
 
@@ -197,7 +197,7 @@ describe("Section", () => {
         expect(setup.find(".section__header").exists()).toBeTruthy();
     });
 
-    it("has default withPadding as true", () => {
+    it("has default inset as true", () => {
         expect(setup.find(".section__wrapper").exists()).toBeTruthy();
     });
 
