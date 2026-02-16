@@ -23,7 +23,7 @@ const meta: Meta<ISectionProps> = {
         title: args({ control: "text", ...propCategory.content }),
         subtitle: args({ control: "text", ...propCategory.content }),
         headerSwappable: args({ control: "false", ...propCategory.content }),
-        bodyContent: args({ control: "false", ...propCategory.content }),
+        children: args({ control: "false", ...propCategory.content }),
         footerSwappable: args({ control: "false", ...propCategory.content }),
         primaryAction: args({ control: "false", ...propCategory.content }),
         inset: args({ control: "boolean", ...propCategory.appearance }),
@@ -37,7 +37,7 @@ export default meta;
 type Story = StoryObj<ISectionProps>;
 
 const defaultContents = {
-    body: (
+    children: (
         <>
             <Text as="p" variant="bodyLargeMedium">
                 This is the body content of the section. It can contain any React node including text, images, forms,
@@ -72,31 +72,31 @@ const defaultContents = {
     }
 };
 
-const sectionStories: Array<Partial<ISectionProps> & { id: string }> = [
+const sectionStories: Array<Partial<ISectionProps> & { id: string; children?: React.ReactNode }> = [
     {
         id: "body-only",
-        bodyContent: defaultContents.body,
+        children: defaultContents.children,
         inset: false
     },
     {
         id: "with-title",
         title: "Title",
-        bodyContent: defaultContents.body
+        children: defaultContents.children
     },
     {
         id: "with-title-header",
         title: "Title",
         headerSwappable: defaultContents.header,
-        bodyContent: defaultContents.body
+        children: defaultContents.children
     },
     {
         id: "with-footer",
-        bodyContent: defaultContents.body,
+        children: defaultContents.children,
         footerSwappable: defaultContents.footer
     },
     {
         id: "with-footer-action",
-        bodyContent: defaultContents.body,
+        children: defaultContents.children,
         footerSwappable: defaultContents.footer,
         primaryAction: defaultContents.primaryAction
     },
@@ -105,18 +105,22 @@ const sectionStories: Array<Partial<ISectionProps> & { id: string }> = [
         title: "Title",
         subtitle: "Subtitle",
         headerSwappable: defaultContents.header,
-        bodyContent: defaultContents.body,
+        children: defaultContents.children,
         footerSwappable: defaultContents.footer
     }
 ];
 
 export const Default: Story = {
-    args: {
-        title: "Title",
-        subtitle: "Subtitle",
-        inset: true,
-        headerSwappable: defaultContents.header,
-        bodyContent: (
+    render: (props) => (
+        <Section
+            {...props}
+            title="Title"
+            subtitle="Subtitle"
+            inset
+            headerSwappable={defaultContents.header}
+            footerSwappable={defaultContents.footer}
+            primaryAction={defaultContents.primaryAction}
+        >
             <Text as="p" variant="bodyLargeMedium">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
                 dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
@@ -163,17 +167,17 @@ export const Default: Story = {
                 dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore
                 et dolore magnam aliquam quaerat voluptatem.
             </Text>
-        ),
-        footerSwappable: defaultContents.footer,
-        primaryAction: defaultContents.primaryAction
-    }
+        </Section>
+    )
 };
 
 const SectionCombinationsComponent: FC<ISectionProps> = (props) => {
     return (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", maxWidth: "100%" }}>
-            {sectionStories.map(({ id, ...storyData }) => (
-                <Section key={id} {...storyData} {...props} />
+            {sectionStories.map(({ id, children, ...storyData }) => (
+                <Section key={id} {...storyData} {...props}>
+                    {children}
+                </Section>
             ))}
         </div>
     );

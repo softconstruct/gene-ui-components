@@ -104,9 +104,9 @@ describe("Section", () => {
         expect(setup.find(Scrollbar).exists()).toBeTruthy();
     });
 
-    it("renders bodyContent correctly", () => {
-        const bodyContent = <div className="custom-body">Custom Body</div>;
-        const wrapper = setup.setProps({ bodyContent });
+    it("renders children correctly", () => {
+        const children = <div className="custom-body">Custom Body</div>;
+        const wrapper = mount(<Section title="Test Title">{children}</Section>);
         expect(wrapper.find(".custom-body").exists()).toBeTruthy();
         expect(wrapper.find(".section__content").exists()).toBeTruthy();
     });
@@ -204,18 +204,21 @@ describe("Section", () => {
 
     it("renders complete section with all parts", () => {
         const headerSwappable = <button type="button">Header Action</button>;
-        const bodyContent = <p>Body Content</p>;
+        const children = <p>Body Content</p>;
         const footerSwappable = <span>Footer Info</span>;
         const primaryAction = { children: "Submit" };
 
-        const wrapper = setup.setProps({
-            title: "Section Title",
-            subtitle: "Section Subtitle",
-            headerSwappable,
-            bodyContent,
-            footerSwappable,
-            primaryAction
-        });
+        const wrapper = mount(
+            <Section
+                title="Section Title"
+                subtitle="Section Subtitle"
+                headerSwappable={headerSwappable}
+                footerSwappable={footerSwappable}
+                primaryAction={primaryAction}
+            >
+                {children}
+            </Section>
+        );
 
         expect(wrapper.find(".section__header").exists()).toBeTruthy();
         expect(wrapper.find(".section__body").exists()).toBeTruthy();
@@ -241,8 +244,8 @@ describe("Section", () => {
         expect(wrapper.find(".section__title").exists()).toBeTruthy();
     });
 
-    it("handles undefined bodyContent gracefully", () => {
-        const wrapper = setup.setProps({ bodyContent: undefined });
+    it("handles undefined children gracefully", () => {
+        const wrapper = mount(<Section title="Title" />);
         expect(wrapper.find(".section__content").exists()).toBeTruthy();
     });
 

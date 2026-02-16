@@ -37,8 +37,10 @@ interface ISectionProps {
     /**
      * The main content of the section, displayed in the body area.
      * This content will be scrollable if it exceeds the available space.
+     * If provided as a string, it will be rendered as text.
+     * Else you can provide any content as children.
      */
-    bodyContent?: ReactNode;
+    children?: ReactNode;
     /**
      * Swappable content to be displayed in the section's footer area.
      * When provided, this content will be rendered in the footer section.
@@ -67,7 +69,7 @@ const Section: FC<ISectionProps> = ({
     title,
     subtitle,
     headerSwappable,
-    bodyContent,
+    children,
     footerSwappable,
     primaryAction,
     inset = true,
@@ -97,7 +99,7 @@ const Section: FC<ISectionProps> = ({
                             </Tooltip>
                         )}
                     </div>
-                    <div className="section__header_swap section__header_content">
+                    <div className="section__header_swap">
                         {headerSwappable && <div className="section__header_content">{headerSwappable}</div>}
                     </div>
                 </div>
@@ -112,10 +114,10 @@ const Section: FC<ISectionProps> = ({
                 <Scrollbar>
                     {inset ? (
                         <div className="section__wrapper">
-                            <div className="section__content">{bodyContent}</div>
+                            <div className="section__content">{children}</div>
                         </div>
                     ) : (
-                        <div className="section__content">{bodyContent}</div>
+                        <div className="section__content">{children}</div>
                     )}
                 </Scrollbar>
             </div>
