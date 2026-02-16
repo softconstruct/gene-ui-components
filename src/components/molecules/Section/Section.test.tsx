@@ -67,12 +67,12 @@ describe("Section", () => {
     });
 
     it("does not render header when title is not provided", () => {
-        const wrapper = mount(<Section />);
+        const wrapper = setup.setProps({ title: undefined });
         expect(wrapper.find(".section__header").exists()).toBeFalsy();
     });
 
     it("does not render header when title is empty string", () => {
-        const wrapper = mount(<Section title="" />);
+        const wrapper = setup.setProps({ title: "" });
         expect(wrapper.find(".section__header").exists()).toBeFalsy();
     });
 
@@ -92,7 +92,7 @@ describe("Section", () => {
 
     it("does not render header when only headerSwappable is provided without title", () => {
         const headerSwappable = <button type="button">Action</button>;
-        const wrapper = mount(<Section headerSwappable={headerSwappable} />);
+        const wrapper = setup.setProps({ title: undefined, headerSwappable });
         expect(wrapper.find(".section__header").exists()).toBeFalsy();
     });
 
@@ -137,7 +137,7 @@ describe("Section", () => {
     });
 
     it("does not apply hasHeader class to body when title is not provided", () => {
-        const wrapper = mount(<Section />);
+        const wrapper = setup.setProps({ title: undefined });
         expect(wrapper.find(".section__body").hasClass("section__body_hasHeader")).toBeFalsy();
     });
 
@@ -228,7 +228,11 @@ describe("Section", () => {
     });
 
     it("renders minimal section with only title", () => {
-        const wrapper = mount(<Section title="Minimal Title" />);
+        const wrapper = setup.setProps({
+            title: "Minimal Title",
+            footerSwappable: undefined,
+            primaryAction: undefined
+        });
         expect(wrapper.find(".section__header").exists()).toBeTruthy();
         expect(wrapper.find(".section__body").exists()).toBeTruthy();
         expect(wrapper.find(".section__footer").exists()).toBeFalsy();
@@ -245,12 +249,50 @@ describe("Section", () => {
     });
 
     it("handles undefined children gracefully", () => {
-        const wrapper = mount(<Section title="Title" />);
-        expect(wrapper.find(".section__content").exists()).toBeTruthy();
+        expect(setup.find(".section__content").exists()).toBeTruthy();
     });
 
     it("handles all optional props as undefined", () => {
-        const wrapper = mount(<Section title="Title" />);
-        expect(wrapper.exists()).toBeTruthy();
+        expect(setup.exists()).toBeTruthy();
+    });
+
+    it("renders id prop correctly", () => {
+        const id = "section-id-123";
+        const wrapper = setup.setProps({ id });
+        expect(wrapper.find(".section").prop("id")).toBe(id);
+    });
+
+    it("applies hasFooter class to body when footerSwappable is provided", () => {
+        const footerSwappable = <span>Footer Info</span>;
+        const wrapper = setup.setProps({ footerSwappable });
+        expect(wrapper.find(".section__body").hasClass("section__body_hasFooter")).toBeTruthy();
+    });
+
+    it("renders multiple children correctly", () => {
+        const wrapper = mount(
+            <Section title="Test Title">
+                <div className="child-1">Child 1</div>
+                <div className="child-2">Child 2</div>
+                <div className="child-3">Child 3</div>
+            </Section>
+        );
+        expect(wrapper.find(".child-1").exists()).toBeTruthy();
+        expect(wrapper.find(".child-2").exists()).toBeTruthy();
+        expect(wrapper.find(".child-3").exists()).toBeTruthy();
+    });
+
+    it("renders empty children gracefully", () => {
+        const wrapper = mount(<Section title="Title">{null}</Section>);
+        expect(wrapper.find(".section__content").exists()).toBeTruthy();
+    });
+
+    it("renders string children correctly", () => {
+        const wrapper = mount(<Section title="Title">String content</Section>);
+        expect(wrapper.find(".section__content").text()).toContain("String content");
+    });
+
+    it("renders section without children", () => {
+        expect(setup.find(".section__content").exists()).toBeTruthy();
+        expect(setup.find(".section__content").children().length).toBe(0);
     });
 });
