@@ -1,6 +1,7 @@
-import React, { FC, useRef } from "react";
+import React, { FC, ReactNode, useRef } from "react";
 import classNames from "classnames";
 
+// Components
 import Button, { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
@@ -9,6 +10,7 @@ import Tooltip from "@components/molecules/Tooltip";
 // Hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
+// Styles
 import "./Section.scss";
 
 interface ISectionProps {
@@ -31,17 +33,17 @@ interface ISectionProps {
      * Swappable content to be displayed in the section's header area.
      * When provided, this content will be rendered in the header section.
      */
-    headerSwappable?: React.ReactNode;
+    headerSwappable?: ReactNode;
     /**
      * The main content of the section, displayed in the body area.
      * This content will be scrollable if it exceeds the available space.
      */
-    bodyContent?: React.ReactNode;
+    bodyContent?: ReactNode;
     /**
      * Swappable content to be displayed in the section's footer area.
      * When provided, this content will be rendered in the footer section.
      */
-    footerSwappable?: React.ReactNode;
+    footerSwappable?: ReactNode;
     /**
      * Primary action button object to display in the section's footer.
      * The button will always use primary appearance.
@@ -49,7 +51,7 @@ interface ISectionProps {
      * @example
      * primaryAction={{ children: 'Submit', onClick: handleSubmit }}
      */
-    primaryAction?: Omit<IButtonProps, "appearance">;
+    primaryAction?: Omit<IButtonProps, "appearance" | "className">;
     /**
      * When `true`, adds padding around the section's body content.
      */
