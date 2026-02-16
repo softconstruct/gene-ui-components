@@ -1,11 +1,13 @@
 import React, { forwardRef } from "react";
 import { IMaskInput } from "react-imask";
 
+import { TimeValue } from "../../TimePicker";
 import MASKED_INPUT_DEFAULT_BLOCKS from "./constants";
 
-type ValidMaskType = React.ComponentProps<typeof IMaskInput>["mask"];
+type ValidMaskType = NonNullable<React.ComponentProps<typeof IMaskInput>["mask"]>;
 
-interface IMaskedInputProps extends Omit<React.ComponentProps<typeof IMaskInput>, "mask" | "onChange"> {
+interface IMaskedInputProps
+    extends Omit<React.ComponentProps<typeof IMaskInput>, "mask" | "onChange" | "format" | "value"> {
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -14,11 +16,11 @@ interface IMaskedInputProps extends Omit<React.ComponentProps<typeof IMaskInput>
     /**
      *  The pattern mask to apply to the input.
      */
-    format?: ValidMaskType;
+    format: ValidMaskType;
     /**
      * Current value of the input.
      */
-    value?: string;
+    value?: [TimeValue, TimeValue] | TimeValue;
     /**
      * Whether the field is disabled
      */
@@ -85,7 +87,7 @@ const MaskedInput = forwardRef<HTMLInputElement, IMaskedInputProps>(
             }
 
             return {
-                mask: format,
+                mask: format as NonNullable<ValidMaskType>,
                 blocks: mergedBlocks,
                 lazy: false,
                 overwrite: true,
@@ -97,8 +99,8 @@ const MaskedInput = forwardRef<HTMLInputElement, IMaskedInputProps>(
 
         return (
             <IMaskInput
-                {...getMaskOptions()}
-                value={value}
+                {...(getMaskOptions() as any)}
+                value={String(value)}
                 className={className}
                 disabled={disabled}
                 readOnly={readOnly}

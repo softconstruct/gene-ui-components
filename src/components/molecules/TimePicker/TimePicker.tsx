@@ -15,7 +15,7 @@ import PickerButton from "./components/PickerButton/PickerButton";
 import PickerInput from "./components/PickerInput/PickerInput";
 
 // Types
-type TimeValue = string | Date | null;
+export type TimeValue = string | Date | null;
 type Meridiem = "AM" | "PM";
 
 interface ITimePickerProps<M extends "single" | "range" = "single"> {
@@ -164,7 +164,7 @@ const TimePicker = <M extends "single" | "range" = "single">({
     const mode = propMode ?? "single";
     const [pickerValue, setPickerValue] = useState(defaultValue);
     const [isPickerOpen, setIsPickerOpen] = useState(open);
-    const [activeMeridiem, setActiveMeridiem] = useState("AM");
+    const [activeMeridiem, setActiveMeridiem] = useState<Meridiem>("AM");
     const [openPickerAs, setOpenPickerAs] = useState("start");
 
     const parsedDefaultDate = useMemo(() => {
@@ -201,11 +201,26 @@ const TimePicker = <M extends "single" | "range" = "single">({
 
     const handleClean = () => {
         onClean?.();
-        setPickerValue(null);
+        setPickerValue(undefined);
     };
 
-    const handleMeridiemChange = (meridiem: Meridiem) => {
-        setActiveMeridiem(meridiem);
+    const handleTimeSelect = (type: "hour" | "minute" | "second" | "meridiem", val: string) => {
+        if (type === "hour") setActiveHour(val);
+        if (type === "minute") setActiveMinute(val);
+        if (type === "second") setActiveSecond(val);
+        if (type === "meridiem") setActiveMeridiem(val as Meridiem);
+
+        const h = type === "hour" ? val : activeHour || "00";
+        const m = type === "minute" ? val : activeMinute || "00";
+        const s = type === "second" ? val : activeSecond || "00";
+        const mer = type === "meridiem" ? val : activeMeridiem;
+
+        let timeString = `${h}:${m}:${s}`;
+        if (showMeridiem) {
+            timeString = `${timeString} ${mer}`;
+        }
+
+        setPickerValue(timeString as any);
     };
 
     useEffect(() => setIsPickerOpen(open), [open]);
@@ -213,9 +228,24 @@ const TimePicker = <M extends "single" | "range" = "single">({
     useEffect(() => setPickerValue(value), [value]);
 
     const timeColumns = [
-        { header: hourHeaderText, data: hours, active: activeHour, setActive: setActiveHour },
-        { header: minuteHeaderText, data: minutes, active: activeMinute, setActive: setActiveMinute },
-        { header: secondHeaderText, data: seconds, active: activeSecond, setActive: setActiveSecond }
+        {
+            header: hourHeaderText,
+            data: hours,
+            active: activeHour,
+            setActive: (val: string) => handleTimeSelect("hour", val)
+        },
+        {
+            header: minuteHeaderText,
+            data: minutes,
+            active: activeMinute,
+            setActive: (val: string) => handleTimeSelect("minute", val)
+        },
+        {
+            header: secondHeaderText,
+            data: seconds,
+            active: activeSecond,
+            setActive: (val: string) => handleTimeSelect("second", val)
+        }
     ];
 
     return (
@@ -253,7 +283,12 @@ const TimePicker = <M extends "single" | "range" = "single">({
                 onClose={handleClose}
             >
                 <PopoverBody withPadding={false}>
-                    <div className="timePicker__body">
+                    <div
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={(e) => e.preventDefault()}
+                        className="timePicker__body"
+                    >
                         {timeColumns.map((col) => (
                             <div key={col.header} className="timePicker__column">
                                 <div className="timePicker__header">{col.header}</div>
@@ -278,7 +313,7 @@ const TimePicker = <M extends "single" | "range" = "single">({
                                 <PickerButton
                                     active={activeMeridiem === "AM"}
                                     className={classNames("timePicker__meridiem__button")}
-                                    onClick={() => handleMeridiemChange("AM")}
+                                    onClick={() => handleTimeSelect("meridiem", "AM")}
                                     size={size}
                                 >
                                     AM
@@ -286,7 +321,7 @@ const TimePicker = <M extends "single" | "range" = "single">({
                                 <PickerButton
                                     active={activeMeridiem === "PM"}
                                     className={classNames("timePicker__meridiem__button")}
-                                    onClick={() => handleMeridiemChange("PM")}
+                                    onClick={() => handleTimeSelect("meridiem", "PM")}
                                     size={size}
                                 >
                                     PM

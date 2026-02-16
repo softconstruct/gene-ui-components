@@ -13,6 +13,7 @@ import Skeleton from "@components/atoms/Skeleton";
 // Styles
 import "./PickerInput.scss";
 
+import { TimeValue } from "../../TimePicker";
 import MaskedInput from "../MaskedInput/MaskedInput";
 
 interface IPickerInputProps {
@@ -23,7 +24,7 @@ interface IPickerInputProps {
     /**
      * Selected start date as a string.
      */
-    startValue?: Date | string | null;
+    startValue?: [TimeValue, TimeValue] | TimeValue;
     /**
      * Selected end date as a string.
      */
@@ -98,7 +99,7 @@ interface IPickerInputProps {
     /**
      * Format time string.
      */
-    format?: MaskedPattern<string>;
+    format: MaskedPattern<string> | string;
     /**
      * End icon of field.
      */
@@ -152,7 +153,11 @@ const PickerInput: React.FC<IPickerInputProps> = ({
         }
     };
 
-    const renderInput = (value: string | null | undefined, placeholder?: string, onClickHandler?: () => void) => (
+    const renderInput = (
+        value?: [TimeValue, TimeValue] | TimeValue,
+        placeholder?: string,
+        onClickHandler?: () => void
+    ) => (
         <MaskedInput
             className="pickerInput__input"
             value={value || ""}
