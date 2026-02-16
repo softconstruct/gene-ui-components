@@ -1,5 +1,29 @@
 .colorPicker {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    &__inputs {
+        display: flex;
+        gap: 6px;
+    }
+
+    &__rgbInputs {
+        display: flex;
+        gap: 6px;
+    }
+
+    &__rgbaPicker {
+        &__pointer {
+            background-color: red;
+        }
+    }
+
+    &__recents {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        &__color {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+        }
+    }
 }

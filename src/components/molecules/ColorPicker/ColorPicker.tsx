@@ -1,18 +1,28 @@
-import React, { FC, useCallback, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import classNames from "classnames";
 import { HexColorPicker, RgbaColorPicker } from "react-colorful";
 
+import { Square } from "@geneui/icons";
+
+import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
+// Components
+import TextField from "@components/molecules/TextField";
+
+// Styles
 import "./ColorPicker.scss";
 
-const defaultColors = ["#fff", "#000"];
+// Utils
+import { hexToRgb, rgbToHex } from "./utils";
 
-interface RGB {
+const defaultColors = ["#fff", "#000", "red"];
+
+export interface RGB {
     r: number;
     g: number;
     b: number;
 }
 
-interface RGBA extends RGB {
+export interface RGBA extends RGB {
     a: number;
 }
 
@@ -35,6 +45,10 @@ interface IColorPickerProps {
      */
     value?: string;
     /**
+     * Whether picker is open.
+     */
+    open?: boolean;
+    /**
      * Default selected color for color picker.
      */
     defaultColor?: string;
@@ -52,24 +66,9 @@ interface IColorPickerProps {
     onChange?: (hex?: string, rgba?: RGBA | RGB | null, alpha?: number) => void;
 }
 
-function rgbToHex(val: RGB | RGBA): string {
-    const r = val.r.toString(16).padStart(2, "0");
-    const g = val.g.toString(16).padStart(2, "0");
-    const b = val.b.toString(16).padStart(2, "0");
-
-    return `#${r}${g}${b}`;
-}
-
-function hexToRgb(hex: string): RGB | null {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result
-        ? {
-              r: parseInt(result[1], 16),
-              g: parseInt(result[2], 16),
-              b: parseInt(result[3], 16)
-          }
-        : null;
-}
+const TextFieldColorIdentifier: FC<{ color: string }> = ({ color }) => (
+    <Square size={48} style={{ color, width: 10, height: 10 }} />
+);
 
 /**
  * Color Picker allows users to select and apply colors within an application or website.
@@ -83,8 +82,16 @@ const ColorPicker: FC<IColorPickerProps> = ({
     defaultColor,
     recentColors = defaultColors,
     colorPickerProps,
-    onChange
+    onChange,
+    open = false
 }) => {
+    const [popoverOpen, setPopoverOpen] = useState(open);
+    const [propsForPopover, setPropsForPopover] = useState({});
+
+    const popoverRef = useRef<IPopoverRef>({
+        floatingElement: { current: null },
+        referenceElement: { current: null }
+    });
     const initialValue = value || defaultColor;
     const initialPickerValue = typeof initialValue === "object" ? rgbToHex(initialValue) : initialValue;
 
@@ -187,42 +194,73 @@ const ColorPicker: FC<IColorPickerProps> = ({
 
     return (
         <div className={classNames("colorPicker", className)}>
-            {alphaEnabled ? (
-                <RgbaColorPicker
-                    color={colorRGBA}
-                    onChange={handlePickerChange as (val: RGBA) => void}
-                    {...colorPickerProps}
+            <div {...propsForPopover}>
+                <TextField
+                    readOnly
+                    onFocus={() => setPopoverOpen(true)}
+                    value={value}
+                    IconBefore={<TextFieldColorIdentifier color={color} />}
                 />
-            ) : (
-                <HexColorPicker
-                    color={color}
-                    onChange={handlePickerChange as (val: string) => void}
-                    {...colorPickerProps}
-                />
-            )}
-            <div className="colorPicker__recents">
-                {recentColors?.map((recentColor) => (
-                    <button
-                        key={recentColor}
-                        type="button"
-                        aria-label={`Select recent color ${recentColor}`}
-                        onClick={() => applyColorChange(recentColor)}
-                    />
-                ))}
             </div>
-            <div className="colorPicker__inputs">
-                <input value={color} maxLength={7} onChange={handleColorInputChange} placeholder="Hex" />
-                {alphaEnabled && (
-                    <input
-                        type="number"
-                        min={0}
-                        max={100}
-                        placeholder="Alpha"
-                        value={alpha}
-                        onChange={handleAlphaChange}
-                    />
-                )}
-            </div>
+
+            <Popover
+                onClose={() => setPopoverOpen(false)}
+                withArrow={false}
+                ref={popoverRef}
+                position="bottom-left"
+                open={popoverOpen}
+                setProps={setPropsForPopover}
+            >
+                <PopoverBody withPadding={false}>
+                    {alphaEnabled ? (
+                        <RgbaColorPicker
+                            color={colorRGBA}
+                            className="colorPicker__rgbaPicker"
+                            onChange={handlePickerChange as (val: RGBA) => void}
+                            {...colorPickerProps}
+                        />
+                    ) : (
+                        <HexColorPicker
+                            color={color}
+                            onChange={handlePickerChange as (val: string) => void}
+                            {...colorPickerProps}
+                        />
+                    )}
+                    <div className="colorPicker__inputs">
+                        <select name="color_variants">
+                            <option value="rgb">RGB</option>
+                            <option value="rgba">RGBA</option>
+                            <option value="hex">HEX</option>
+                        </select>
+                        {alphaEnabled && (
+                            <TextField type="text" value={color} onChange={handleColorInputChange} placeholder="Hex" />
+                        )}
+                        {alphaEnabled ? (
+                            <TextField type="number" placeholder="Alpha" value={alpha} onChange={handleAlphaChange} />
+                        ) : (
+                            <div className="colorPicker__rgbInputs">
+                                <TextField value={colorRGBA.r} type="number" />
+                                <TextField value={colorRGBA.g} type="number" />
+                                <TextField value={colorRGBA.b} type="number" />
+                            </div>
+                        )}
+                    </div>
+                    <div className="colorPicker__recents">
+                        {recentColors?.map((recentColor) => (
+                            <button
+                                key={recentColor}
+                                type="button"
+                                className="colorPicker__recents__color"
+                                aria-label={`Select recent color ${recentColor}`}
+                                onClick={() => applyColorChange(recentColor)}
+                                style={{
+                                    background: recentColor
+                                }}
+                            />
+                        ))}
+                    </div>
+                </PopoverBody>
+            </Popover>
         </div>
     );
 };

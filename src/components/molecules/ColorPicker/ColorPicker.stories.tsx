@@ -9,12 +9,17 @@ const meta: Meta<IColorPickerProps> = {
     title: "Molecules/ColorPicker",
     component: ColorPicker,
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance })
-        // fill ColorPicker component argTypes
+        className: args({ control: "false", ...propCategory.appearance }),
+        alphaEnabled: args({ control: "boolean", ...propCategory.functionality }),
+        alphaValue: args({ control: "text", ...propCategory.content }),
+        value: args({ control: "text", ...propCategory.content }),
+        defaultColor: args({ control: "text", ...propCategory.content }),
+        recentColors: args({ control: "false", ...propCategory.content }),
+        colorPickerProps: args({ control: "false", ...propCategory.content }),
+        onChange: args({ control: "false", ...propCategory.action }),
+        open: args({ control: "boolean", ...propCategory.functionality })
     },
-    args: {
-        // fill ColorPicker component args
-    }
+    args: {}
 };
 
 export default meta;
