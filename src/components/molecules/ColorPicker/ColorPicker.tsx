@@ -66,10 +66,6 @@ interface IColorPickerProps {
     onChange?: (hex?: string, rgba?: RGBA | RGB | null, alpha?: number) => void;
 }
 
-const TextFieldColorIdentifier: FC<{ color: string }> = ({ color }) => (
-    <Square size={48} style={{ color, width: 10, height: 10 }} />
-);
-
 /**
  * Color Picker allows users to select and apply colors within an application or website.
  * It is widely used in design tools, customization features, and any interface where users need to choose colors, such as for text, backgrounds, or graphical elements.
@@ -192,15 +188,12 @@ const ColorPicker: FC<IColorPickerProps> = ({
         }
     }, [alphaValue]);
 
+    const ColorSquareIcon = useCallback(() => <Square size={28} style={{ color, width: 10, height: 10 }} />, [color]);
+
     return (
         <div className={classNames("colorPicker", className)}>
             <div {...propsForPopover}>
-                <TextField
-                    readOnly
-                    onFocus={() => setPopoverOpen(true)}
-                    value={value}
-                    IconBefore={<TextFieldColorIdentifier color={color} />}
-                />
+                <TextField readOnly onFocus={() => setPopoverOpen(true)} value={value} IconBefore={ColorSquareIcon} />
             </div>
 
             <Popover
