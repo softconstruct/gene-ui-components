@@ -84,10 +84,12 @@ const ColorPicker: FC<IColorPickerProps> = ({
     const [popoverOpen, setPopoverOpen] = useState(open);
     const [propsForPopover, setPropsForPopover] = useState({});
 
+    const containerRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
     });
+
     const initialValue = value || defaultColor;
     const initialPickerValue = typeof initialValue === "object" ? rgbToHex(initialValue) : initialValue;
 
@@ -188,10 +190,37 @@ const ColorPicker: FC<IColorPickerProps> = ({
         }
     }, [alphaValue]);
 
+    useEffect(() => {
+        setPopoverOpen(open);
+    }, [open]);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+            const target = event.target as Node;
+            const isInsideContainer = containerRef.current?.contains(target);
+            // @ts-expect-error: todo check this and remove
+            const isInsidePopover = popoverRef.current?.floatingElement?.current?.contains(target);
+
+            if (!isInsideContainer && !isInsidePopover) {
+                setPopoverOpen(false);
+            }
+        };
+
+        if (popoverOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+            document.addEventListener("touchstart", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener("touchstart", handleClickOutside);
+        };
+    }, [popoverOpen]);
+
     const ColorSquareIcon = useCallback(() => <Square size={28} style={{ color, width: 10, height: 10 }} />, [color]);
 
     return (
-        <div className={classNames("colorPicker", className)}>
+        <div className={classNames("colorPicker", className)} ref={containerRef}>
             <div {...propsForPopover}>
                 <TextField readOnly onFocus={() => setPopoverOpen(true)} value={value} IconBefore={ColorSquareIcon} />
             </div>
