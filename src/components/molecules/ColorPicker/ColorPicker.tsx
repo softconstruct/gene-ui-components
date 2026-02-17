@@ -217,12 +217,18 @@ const ColorPicker: FC<IColorPickerProps> = ({
         };
     }, [popoverOpen]);
 
-    const ColorSquareIcon = useCallback(() => <Square size={28} style={{ color, width: 10, height: 10 }} />, [color]);
+    const ColorSquareIcon = useCallback(() => <Square size={20} style={{ color }} />, [color]);
 
     return (
         <div className={classNames("colorPicker", className)} ref={containerRef}>
             <div {...propsForPopover}>
-                <TextField readOnly onFocus={() => setPopoverOpen(true)} value={value} IconBefore={ColorSquareIcon} />
+                <TextField
+                    className="colorPicker__textFiled"
+                    readOnly
+                    onFocus={() => setPopoverOpen(true)}
+                    value={value}
+                    IconBefore={ColorSquareIcon}
+                />
             </div>
 
             <Popover
@@ -234,52 +240,65 @@ const ColorPicker: FC<IColorPickerProps> = ({
                 setProps={setPropsForPopover}
             >
                 <PopoverBody withPadding={false}>
-                    {alphaEnabled ? (
-                        <RgbaColorPicker
-                            color={colorRGBA}
-                            className="colorPicker__rgbaPicker"
-                            onChange={handlePickerChange as (val: RGBA) => void}
-                            {...colorPickerProps}
-                        />
-                    ) : (
-                        <HexColorPicker
-                            color={color}
-                            onChange={handlePickerChange as (val: string) => void}
-                            {...colorPickerProps}
-                        />
-                    )}
-                    <div className="colorPicker__inputs">
-                        <select name="color_variants">
-                            <option value="rgb">RGB</option>
-                            <option value="rgba">RGBA</option>
-                            <option value="hex">HEX</option>
-                        </select>
-                        {alphaEnabled && (
-                            <TextField type="text" value={color} onChange={handleColorInputChange} placeholder="Hex" />
-                        )}
+                    <div className="colorPicker__wrapper">
                         {alphaEnabled ? (
-                            <TextField type="number" placeholder="Alpha" value={alpha} onChange={handleAlphaChange} />
-                        ) : (
-                            <div className="colorPicker__rgbInputs">
-                                <TextField value={colorRGBA.r} type="number" />
-                                <TextField value={colorRGBA.g} type="number" />
-                                <TextField value={colorRGBA.b} type="number" />
-                            </div>
-                        )}
-                    </div>
-                    <div className="colorPicker__recents">
-                        {recentColors?.map((recentColor) => (
-                            <button
-                                key={recentColor}
-                                type="button"
-                                className="colorPicker__recents__color"
-                                aria-label={`Select recent color ${recentColor}`}
-                                onClick={() => applyColorChange(recentColor)}
-                                style={{
-                                    background: recentColor
-                                }}
+                            <RgbaColorPicker
+                                color={colorRGBA}
+                                onChange={handlePickerChange as (val: RGBA) => void}
+                                {...colorPickerProps}
                             />
-                        ))}
+                        ) : (
+                            <HexColorPicker
+                                color={color}
+                                onChange={handlePickerChange as (val: string) => void}
+                                {...colorPickerProps}
+                            />
+                        )}
+                        <div className="colorPicker__inputs">
+                            <select name="color_variants">
+                                <option value="rgb">RGB</option>
+                                <option value="rgba">RGBA</option>
+                                <option value="hex">HEX</option>
+                            </select>
+                            {alphaEnabled && (
+                                <TextField
+                                    type="text"
+                                    size="small"
+                                    value={color}
+                                    onChange={handleColorInputChange}
+                                    placeholder="Hex"
+                                />
+                            )}
+                            {alphaEnabled ? (
+                                <TextField
+                                    type="number"
+                                    size="small"
+                                    placeholder="Alpha"
+                                    value={alpha}
+                                    onChange={handleAlphaChange}
+                                />
+                            ) : (
+                                <div className="colorPicker__rgbInputs">
+                                    <TextField size="small" value={colorRGBA.r} type="number" />
+                                    <TextField size="small" value={colorRGBA.g} type="number" />
+                                    <TextField size="small" value={colorRGBA.b} type="number" />
+                                </div>
+                            )}
+                        </div>
+                        <div className="colorPicker__recents">
+                            {recentColors?.map((recentColor) => (
+                                <button
+                                    key={recentColor}
+                                    type="button"
+                                    className="colorPicker__recentColor"
+                                    aria-label={`Select recent color ${recentColor}`}
+                                    onClick={() => applyColorChange(recentColor)}
+                                    style={{
+                                        background: recentColor
+                                    }}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </PopoverBody>
             </Popover>
