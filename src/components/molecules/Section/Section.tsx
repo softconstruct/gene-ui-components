@@ -82,7 +82,7 @@ const Section: FC<ISectionProps> = ({
     const isSubtitleTruncated: boolean = useEllipsisDetection(subtitleRef);
 
     return (
-        <div className={classNames("section section_isInset", className)} id={id}>
+        <div className={classNames("section", className)} id={id}>
             {title && (
                 <div className="section__header">
                     <div className="section__title">
@@ -106,9 +106,9 @@ const Section: FC<ISectionProps> = ({
             )}
             <div
                 className={classNames("section__body", {
-                    section__body_withPadding: inset,
                     section__body_hasHeader: !!title,
-                    section__body_hasFooter: !!(footerSwappable || primaryAction)
+                    section__body_hasFooter: !!(footerSwappable || primaryAction),
+                    section__body_withPadding: inset
                 })}
             >
                 <Scrollbar>

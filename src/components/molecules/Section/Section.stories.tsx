@@ -4,11 +4,9 @@ import { Meta, StoryObj } from "@storybook/react";
 import { ArrowRight, ChevronDoubleRight, Download, RecycleBin } from "@geneui/icons";
 
 // Components
-import Avatar from "@components/atoms/Avatar";
-import Button from "@components/atoms/Button";
-import Pill from "@components/atoms/Pill";
+import { Col, Grid, Row } from "@components/atoms/Grid";
+import Logo from "@components/atoms/Logo";
 import Text from "@components/atoms/Text";
-import Image from "@components/molecules/Image";
 import Section, { ISectionProps } from "@components/molecules/Section";
 import { SplitButton } from "@components/molecules/SplitButton";
 
@@ -43,13 +41,6 @@ const defaultContents = {
                 This is the body content of the section. It can contain any React node including text, images, forms,
                 and other components.
             </Text>
-            <Pill text="Success" filled />
-            <Pill text="Warning" />
-            <Pill text="Info" />
-            <Button size="medium" appearance="secondary">
-                Action Button
-            </Button>
-            <Image src="https://picsum.photos/id/237/500/500" aspectRatio="16x9" />
         </>
     ),
     footer: (
@@ -63,7 +54,7 @@ const defaultContents = {
             onSelect={() => {}}
         />
     ),
-    header: <Avatar fullName="John Doe" onClick={() => {}} />,
+    header: <Logo type="logomark" appearance="brand" size="medium" />,
     primaryAction: {
         children: "Submit",
         onClick: () => {},
@@ -74,31 +65,16 @@ const defaultContents = {
 
 const sectionStories: Array<Partial<ISectionProps> & { id: string; children?: React.ReactNode }> = [
     {
-        id: "body-only",
-        children: defaultContents.children,
-        inset: false
-    },
-    {
-        id: "with-title",
-        title: "Title",
-        children: defaultContents.children
-    },
-    {
         id: "with-title-header",
         title: "Title",
         headerSwappable: defaultContents.header,
         children: defaultContents.children
     },
+
     {
-        id: "with-footer",
-        children: defaultContents.children,
-        footerSwappable: defaultContents.footer
-    },
-    {
-        id: "with-footer-action",
-        children: defaultContents.children,
-        footerSwappable: defaultContents.footer,
-        primaryAction: defaultContents.primaryAction
+        id: "with-title",
+        title: "Title",
+        children: defaultContents.children
     },
     {
         id: "full-section",
@@ -107,19 +83,35 @@ const sectionStories: Array<Partial<ISectionProps> & { id: string; children?: Re
         headerSwappable: defaultContents.header,
         children: defaultContents.children,
         footerSwappable: defaultContents.footer
+    },
+    {
+        id: "with-footer",
+        children: defaultContents.children,
+        footerSwappable: defaultContents.footer
+    },
+    {
+        id: "body-only",
+        children: defaultContents.children,
+        inset: false
+    },
+    {
+        id: "with-footer-action",
+        children: defaultContents.children,
+        footerSwappable: defaultContents.footer,
+        primaryAction: defaultContents.primaryAction
     }
 ];
 
 export const Default: Story = {
     render: (props) => (
         <Section
-            {...props}
             title="Title"
             subtitle="Subtitle"
             inset
-            headerSwappable={defaultContents.header}
+            headerSwappable={<Logo type="logotype" appearance="brand" size="medium" />}
             footerSwappable={defaultContents.footer}
             primaryAction={defaultContents.primaryAction}
+            {...props}
         >
             <Text as="p" variant="bodyLargeMedium">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
@@ -173,13 +165,22 @@ export const Default: Story = {
 
 const SectionCombinationsComponent: FC<ISectionProps> = (props) => {
     return (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "16px", maxWidth: "100%" }}>
-            {sectionStories.map(({ id, children, ...storyData }) => (
-                <Section key={id} {...storyData} {...props}>
-                    {children}
-                </Section>
-            ))}
-        </div>
+        <>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", maxWidth: "100%" }} />
+            <Grid>
+                <Row>
+                    {sectionStories.map(({ id, children, ...storyData }) => (
+                        <Col size={6}>
+                            <div style={{ padding: "8px 0" }}>
+                                <Section key={id} {...storyData} {...props}>
+                                    {children}
+                                </Section>
+                            </div>
+                        </Col>
+                    ))}
+                </Row>
+            </Grid>
+        </>
     );
 };
 
