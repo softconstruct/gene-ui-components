@@ -175,6 +175,8 @@
     &__inputWrapper {
         position: relative;
         flex: 1;
+        display: flex;
+        align-items: center;
         min-width: 0;
         height: 100%;
         border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
