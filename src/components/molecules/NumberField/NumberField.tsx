@@ -102,8 +102,8 @@ interface INumberFieldProps {
     id?: string;
 }
 
-const iconSizes: Record<"small" | "medium" | "large", 16> = {
-    small: 16,
+const iconSizes: Record<"small" | "medium" | "large", 12 | 16> = {
+    small: 12,
     medium: 16,
     large: 16
 } as const;
@@ -258,6 +258,7 @@ const NumberField: FC<INumberFieldProps> = ({
                         onChange={handleChange}
                         value={currentStringValue}
                         id={generatedId}
+                        inputMode="numeric"
                     />
                 </div>
                 <div className="numberField__actions">
