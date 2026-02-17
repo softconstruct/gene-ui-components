@@ -1,3 +1,4 @@
+import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -27,3 +28,16 @@ export default meta;
 type Story = StoryObj<IColorPickerProps>;
 
 export const Default: Story = {};
+
+export const WithRecentColors: Story = {
+    render: (props) => {
+        return (
+            <div style={{ width: "100%" }}>
+                <ColorPicker {...props} />
+            </div>
+        );
+    },
+    args: {
+        recentColors: ["#000", "rgb(255,255,0)", "rgba(255,0,0)"]
+    }
+};
