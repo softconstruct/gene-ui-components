@@ -1,3 +1,5 @@
+@use "../../../assets/styles/mixins";
+
 .numberField {
     $the: &;
 
@@ -147,8 +149,10 @@
                 var(--guit-sem-color-border-neutral-2);
         }
 
-        &:hover {
-            background-color: var(--guit-sem-color-background-neutral-1-hover);
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
         }
 
         &:active {
@@ -192,8 +196,10 @@
             pointer-events: none;
         }
 
-        &:hover {
-            background-color: var(--guit-sem-color-background-neutral-1-hover);
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
         }
 
         &:focus-within {
@@ -203,19 +209,19 @@
                 var(--guit-sem-color-border-focus);
         }
 
+        &_readOnly {
+            border-color: transparent;
+            border-inline-end-color: var(--guit-sem-color-border-neutral-2);
+            background-color: var(--guit-sem-color-background-neutral-3);
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+
         &_error {
             border-color: var(--guit-sem-color-border-error);
 
             &::after {
                 background-color: var(--guit-sem-color-border-error);
             }
-        }
-
-        &_readOnly {
-            border-color: transparent;
-            border-inline-end-color: var(--guit-sem-color-border-neutral-2);
-            background-color: var(--guit-sem-color-background-neutral-3);
-            color: var(--guit-sem-color-foreground-disabled);
         }
 
         &_disabled {
