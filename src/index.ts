@@ -67,6 +67,7 @@ export {
 } from "@components/molecules/SegmentedControl";
 export { default as FileUploadList } from "./components/molecules/FileUploadList";
 export { Accordion, AccordionItem, IAccordionProps, IAccordionItemProps } from "./components/molecules/Accordion";
+export { default as NumberField, INumberFieldProps } from "./components/molecules/NumberField";
 export { default as InteractiveCard, IInteractiveCardProps } from "./components/molecules/InteractiveCard";
 export { default as Image, IImageProps } from "./components/molecules/Image";
 
