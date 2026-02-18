@@ -462,6 +462,37 @@ describe("NumberField", () => {
         expect(onInputBlur).toHaveBeenCalled();
     });
 
+    it("preserves empty string on blur to show placeholder", () => {
+        const onChange = jest.fn();
+        const onInputBlur = jest.fn();
+        const wrapper = setup.setProps({ min: 0, max: 10, onChange, onInputBlur });
+
+        const input = wrapper.find("input");
+        // Input starts empty
+        expect(input.props().value).toBe("");
+        // Blur without typing anything
+        input.simulate("blur", { target: { value: "" } });
+
+        // Value should remain empty (not converted to "0")
+        expect(input.props().value).toBe("");
+        // onChange should not be called for empty string
+        expect(onChange).not.toHaveBeenCalled();
+        // onInputBlur should still be called
+        expect(onInputBlur).toHaveBeenCalled();
+    });
+
+    it("preserves empty string on blur in uncontrolled mode", () => {
+        const onChange = jest.fn();
+        const wrapper = mount(<NumberField min={0} max={10} onChange={onChange} />);
+
+        const input = wrapper.find("input");
+        expect(input.props().value).toBe("");
+        input.simulate("blur", { target: { value: "" } });
+
+        expect(input.props().value).toBe("");
+        expect(onChange).not.toHaveBeenCalled();
+    });
+
     it("calls onInputFocus when input receives focus", () => {
         const onInputFocus = jest.fn();
         const wrapper = setup.setProps({ onInputFocus });

@@ -193,6 +193,11 @@ const NumberField: FC<INumberFieldProps> = ({
     };
     const onBlurHandler = (e: FocusEvent<HTMLInputElement>) => {
         const inputValue = e.target.value;
+        // Preserve empty string
+        if (inputValue === "") {
+            onInputBlur?.(e);
+            return;
+        }
         const clampedValueString = clampValue(inputValue, min, max);
         if (clampedValueString !== inputValue) {
             if (!isControlled) {
