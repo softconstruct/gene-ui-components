@@ -11,8 +11,8 @@ import Label from "@components/atoms/Label";
 // Styles
 import "./NumberField.scss";
 
-import { NUMERIC_STRING_PATTERN } from "../../../constants";
 // Helpers
+import { NUMERIC_STRING_PATTERN } from "../../../constants";
 import { clampValue } from "../../../helpers";
 
 interface INumberFieldProps {
@@ -176,8 +176,7 @@ const NumberField: FC<INumberFieldProps> = ({
     const handleButtonClick = (event: MouseEvent<HTMLButtonElement>, type: "increment" | "decrement") =>
         handleValueChange(type === "increment" ? step : -step, event);
 
-    const labelSize = size === "large" ? "medium" : size;
-    const helperTextSize = size === "large" ? "medium" : size;
+    const combinedTextSize = size === "large" ? "medium" : size;
     const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
     const handleInputFocus = (event: FocusEvent<HTMLInputElement>) => {
         onInputFocus?.(event);
@@ -223,9 +222,14 @@ const NumberField: FC<INumberFieldProps> = ({
         };
     }, [disabled, readOnly, max, min, validNumericValue]);
 
-    const actionButtonClasses = classNames("numberField__action", {
-        numberField__action_readOnly: readOnly && !disabled
-    });
+    const autoFocusProp = autoFocus ? { autoFocus } : {};
+
+    const buttonClassnames = (actionType: "increment" | "decrement") => {
+        return classNames(`numberField__action_${actionType}`, "numberField__action", {
+            numberField__action_readOnly: readOnly && !disabled,
+            numberField__action_disabled: buttonsDisabled[actionType]
+        });
+    };
 
     return (
         <div className={classNames("numberField", className)}>
@@ -234,7 +238,7 @@ const NumberField: FC<INumberFieldProps> = ({
                 disabled={disabled}
                 readOnly={readOnly}
                 required={required}
-                size={labelSize}
+                size={combinedTextSize}
                 infoText={infoText}
                 labelFor={generatedId}
             />
@@ -251,22 +255,19 @@ const NumberField: FC<INumberFieldProps> = ({
                         type="number"
                         disabled={disabled}
                         readOnly={readOnly}
-                        // eslint-disable-next-line jsx-a11y/no-autofocus
-                        autoFocus={autoFocus}
                         onFocus={handleInputFocus}
                         onBlur={onBlurHandler}
                         onChange={handleChange}
                         value={currentStringValue}
                         id={generatedId}
                         inputMode="numeric"
+                        {...autoFocusProp}
                     />
                 </div>
                 <div className="numberField__actions">
                     <button
                         type="button"
-                        className={classNames(actionButtonClasses, "numberField__action_up", {
-                            numberField__action_disabled: buttonsDisabled.increment
-                        })}
+                        className={buttonClassnames("increment")}
                         onClick={(event) => handleButtonClick(event, "increment")}
                         disabled={buttonsDisabled.increment}
                     >
@@ -274,9 +275,7 @@ const NumberField: FC<INumberFieldProps> = ({
                     </button>
                     <button
                         type="button"
-                        className={classNames(actionButtonClasses, "numberField__action_down", {
-                            numberField__action_disabled: buttonsDisabled.decrement
-                        })}
+                        className={buttonClassnames("decrement")}
                         onClick={(event) => handleButtonClick(event, "decrement")}
                         disabled={buttonsDisabled.decrement}
                     >
@@ -289,7 +288,7 @@ const NumberField: FC<INumberFieldProps> = ({
                     text={helperText}
                     disabled={disabled}
                     status={status}
-                    size={helperTextSize}
+                    size={combinedTextSize}
                     className="numberField__helperText"
                 />
             )}

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, MouseEvent, useState } from "react";
+import React, { ChangeEvent, FC, MouseEvent, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -31,7 +31,6 @@ const meta: Meta<INumberFieldProps> = {
         id: args({ control: "text", ...propCategory.others })
     },
     args: {
-        defaultValue: 0,
         step: 1,
         size: "medium",
         status: "rest",
@@ -53,9 +52,13 @@ export const Default: Story = {
 };
 
 const ControlledTemplate: FC<INumberFieldProps> = ({ value, onChange, ...props }) => {
-    const isControlled = value !== undefined;
-    const displayValue = isControlled ? value : "0";
-    const [internalStringValue, setInternalStringValue] = useState(displayValue);
+    const [internalStringValue, setInternalStringValue] = useState(value || "");
+
+    useEffect(() => {
+        if (value !== undefined) {
+            setInternalStringValue(value);
+        }
+    }, [value]);
 
     const handleChange = (
         newValueString: string,

@@ -36,11 +36,11 @@
                 }
 
                 #{ $the }__action {
-                    &_up {
+                    &_increment {
                         border-start-end-radius: var(--guit-ref-radius-2xsmall);
                     }
 
-                    &_down {
+                    &_decrement {
                         border-end-end-radius: var(--guit-ref-radius-2xsmall);
                     }
                 }
@@ -68,11 +68,11 @@
                 }
 
                 #{ $the }__action {
-                    &_up {
+                    &_increment {
                         border-start-end-radius: var(--guit-ref-radius-3xsmall);
                     }
 
-                    &_down {
+                    &_decrement {
                         border-end-end-radius: var(--guit-ref-radius-3xsmall);
                     }
                 }
@@ -101,11 +101,11 @@
                 }
 
                 #{ $the }__action {
-                    &_up {
+                    &_increment {
                         border-start-end-radius: var(--guit-ref-radius-3xsmall);
                     }
 
-                    &_down {
+                    &_decrement {
                         border-end-end-radius: var(--guit-ref-radius-3xsmall);
                     }
                 }
@@ -129,13 +129,13 @@
         min-height: 0;
         color: var(--guit-sem-color-foreground-neutral-2);
 
-        &_up {
+        &_increment {
             border-block-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid);
             border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid);
             border-color: var(--guit-sem-color-border-neutral-2);
         }
 
-        &_down {
+        &_decrement {
             border-block-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
                 var(--guit-sem-color-border-neutral-2);
             border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
