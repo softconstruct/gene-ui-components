@@ -274,6 +274,9 @@ const NumberField: FC<INumberFieldProps> = ({
                         {...autoFocusProp}
                         placeholder={placeholder}
                         name={name}
+                        step={step}
+                        min={min}
+                        max={max}
                     />
                 </div>
                 <div className="numberField__actions">

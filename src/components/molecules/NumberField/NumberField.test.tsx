@@ -523,6 +523,54 @@ describe("NumberField", () => {
         expect(wrapper.find("input").props().name).toBeUndefined();
     });
 
+    it("renders step attribute on input correctly", () => {
+        const step = 5;
+        const wrapper = setup.setProps({ step });
+
+        expect(wrapper.find("input").props().step).toBe(step);
+    });
+
+    it("renders default step attribute on input when step is not provided", () => {
+        expect(setup.find("input").props().step).toBe(1);
+    });
+
+    it("renders min attribute on input correctly", () => {
+        const min = 0;
+        const wrapper = setup.setProps({ min });
+
+        expect(wrapper.find("input").props().min).toBe(min);
+    });
+
+    it("does not render min attribute when min prop is not provided", () => {
+        const wrapper = setup.setProps({});
+
+        expect(wrapper.find("input").props().min).toBeUndefined();
+    });
+
+    it("renders max attribute on input correctly", () => {
+        const max = 100;
+        const wrapper = setup.setProps({ max });
+
+        expect(wrapper.find("input").props().max).toBe(max);
+    });
+
+    it("does not render max attribute when max prop is not provided", () => {
+        const wrapper = setup.setProps({});
+
+        expect(wrapper.find("input").props().max).toBeUndefined();
+    });
+
+    it("renders step, min, and max attributes together correctly", () => {
+        const step = 2;
+        const min = 0;
+        const max = 100;
+        const wrapper = setup.setProps({ step, min, max });
+
+        expect(wrapper.find("input").props().step).toBe(step);
+        expect(wrapper.find("input").props().min).toBe(min);
+        expect(wrapper.find("input").props().max).toBe(max);
+    });
+
     it("generates id when id prop is not provided", () => {
         const wrapper = mount(<NumberField label="Label" />);
         const inputId = wrapper.find("input").props().id;
