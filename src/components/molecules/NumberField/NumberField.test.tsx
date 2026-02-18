@@ -6,8 +6,7 @@ import { ChevronDown, ChevronUp } from "@geneui/icons";
 // Components
 import HelperText from "@components/atoms/HelperText";
 import Label from "@components/atoms/Label";
-
-import NumberField, { INumberFieldProps } from "./index";
+import NumberField, { INumberFieldProps } from "@components/molecules/NumberField/NumberField";
 
 describe("NumberField", () => {
     let setup: ReactWrapper<INumberFieldProps>;
@@ -482,7 +481,7 @@ describe("NumberField", () => {
     it("does not auto focus when autoFocus is false", () => {
         const wrapper = setup.setProps({ autoFocus: false });
 
-        expect(wrapper.find("input").props().autoFocus).toBe(false);
+        expect(wrapper.find("input").props().autoFocus).toBeUndefined();
     });
 
     it("does not auto focus when autoFocus is not provided", () => {
@@ -496,6 +495,32 @@ describe("NumberField", () => {
         const wrapper = setup.setProps({ id });
 
         expect(wrapper.find("input").props().id).toBe(id);
+    });
+
+    it("renders placeholder prop correctly", () => {
+        const placeholder = "Type a number...";
+        const wrapper = setup.setProps({ placeholder });
+
+        expect(wrapper.find("input").props().placeholder).toBe(placeholder);
+    });
+
+    it("does not render placeholder when placeholder prop is not provided", () => {
+        const wrapper = setup.setProps({});
+
+        expect(wrapper.find("input").props().placeholder).toBeUndefined();
+    });
+
+    it("renders name prop correctly", () => {
+        const name = "number-input";
+        const wrapper = setup.setProps({ name });
+
+        expect(wrapper.find("input").props().name).toBe(name);
+    });
+
+    it("does not render name when name prop is not provided", () => {
+        const wrapper = setup.setProps({});
+
+        expect(wrapper.find("input").props().name).toBeUndefined();
     });
 
     it("generates id when id prop is not provided", () => {
