@@ -1,11 +1,13 @@
 import React, { FC, useContext } from "react";
 import classNames from "classnames";
 
-import { Error, SuccessFilled, Unavailable } from "@geneui/icons";
+import { ErrorFilled, SuccessFilled } from "@geneui/icons";
 
 // Components
 import Divider from "@components/atoms/Divider";
+import Label from "@components/atoms/Label";
 import Loader from "@components/atoms/Loader";
+import Text from "@components/atoms/Text";
 
 import { StepsContext } from "./Steps";
 
@@ -24,15 +26,20 @@ interface IPointTypesProps {
      */
     loading?: boolean;
     /**
-     * Change the icon for step to mention the Step state.
+     * Change the icon and styling for step to mention the `Step` state.
      */
-    state?: "incomplete" | "current" | "complete";
+    state?: "previous" | "current" | "next";
+    /**
+     * Marks the Step as completed.<br>
+     * When `true` and `state` is not `current`, displays the `SuccessFilled` icon and applies completed styling.<br>
+     */
+    complete?: boolean;
 }
 
 interface IStepProps extends IPointTypesProps {
     /**
-     * The text displayed as the label for the Step, describing its purpose.<br>
-     * The Label can be clickable on not. For more information see the linear prop.
+     * The label for the Step, describing its purpose.<br>
+     * The Label can be clickable on not. For more information see the onChange prop in `Steps` component.
      */
     label?: string;
     /**
@@ -42,14 +49,18 @@ interface IStepProps extends IPointTypesProps {
     /**
      * Unique id for Step.
      */
-    id: string | number;
+    id?: string | number;
     /**
      * Disable state for Steps.
      */
     disabled?: boolean;
 }
 
-const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, state }) => {
+type IStepLabelType = {
+    changeHandler?: () => void;
+} & Pick<IStepProps, "label" | "state" | "disabled">;
+
+const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, state, complete }) => {
     const { type } = useContext(StepsContext);
 
     const stepCount = (num: number) => {
@@ -63,65 +74,94 @@ const PointTypes: FC<IPointTypesProps> = ({ stepNumber = 1, error, loading, stat
     }
 
     if (error) {
-        return <Error size={24} className="steps__status_icon" />;
+        return <ErrorFilled size={24} className="steps__icon" />;
     }
 
     if (type === "dot") {
+        if (complete && state !== "current") {
+            return <SuccessFilled size={24} className="steps__icon" />;
+        }
         if (state === "current") {
-            return <Unavailable size={24} className="step_type steps__status_icon steps__status_dot" />;
+            return <span className="steps__icon steps__dot steps__dot_state_current" />;
         }
-        if (state === "complete") {
-            return <SuccessFilled size={24} className="step_type steps__status_icon steps__status_dot" />;
-        }
-        return <Unavailable size={24} className="step_type steps__status_icon" />;
+
+        return <span className="steps__icon steps__dot steps__dot_state_empty" />;
     }
 
-    return <span className="step_type steps__status_icon steps__status_numeric">{stepCount(stepNumber)}</span>;
+    return (
+        <span
+            className={classNames("steps__icon steps__number", {
+                steps__number_success: complete && state !== "current"
+            })}
+        >
+            {complete && state !== "current" ? (
+                <SuccessFilled size={24} className="steps__icon" />
+            ) : (
+                stepCount(stepNumber)
+            )}
+        </span>
+    );
 };
 
-const Step: FC<IStepProps> = ({
-    description,
-    label,
-    id,
-    loading,
-    stepNumber,
-    disabled,
-    error,
-    state = "incomplete"
-}) => {
+const StepLabel: FC<IStepLabelType> = ({ label, changeHandler, state, disabled }) => {
+    if (!label) return null;
+
+    return changeHandler !== undefined ? (
+        <button
+            type="button"
+            className="steps__button"
+            onClick={changeHandler}
+            disabled={disabled || state === "current"}
+        >
+            <Label text={label} disabled={disabled} />
+        </button>
+    ) : (
+        <Label text={label} disabled={disabled} className="steps__label" />
+    );
+};
+
+const Step: FC<IStepProps> = (props) => {
+    const { id, complete, description, label, loading, stepNumber, disabled, error, state } = props;
     const { direction, onChange } = useContext(StepsContext);
-    const changeHandler = () => onChange?.(id!);
+    const changeHandler = () => onChange?.(props);
 
     return (
         <div
-            className={classNames("steps__step", {
-                steps__step_disabled: disabled && !error && !loading,
-                steps__step_error: error,
-                steps__step_success: state === "complete",
-                steps__step_current: state === "current"
+            {...(id && { id: id.toString() })}
+            className={classNames("steps__item", {
+                steps__item_state_disabled: disabled && !error && !loading,
+                steps__item_state_error: error,
+                steps__item_state_success: complete,
+                steps__item_state_current: state === "current"
             })}
         >
-            <div className="steps__status">
-                <PointTypes stepNumber={stepNumber ?? 1} error={error} loading={loading} state={state} />
+            <div className="steps__indicator">
+                <PointTypes
+                    stepNumber={stepNumber ?? 1}
+                    error={error}
+                    loading={loading}
+                    complete={complete}
+                    state={state}
+                />
 
                 <Divider
-                    className="steps__status_divider"
+                    className="steps__divider"
                     direction={direction}
-                    appearance={state === "complete" && !disabled ? "brand" : "default"}
+                    appearance={state === "previous" && !disabled ? "brand" : "default"}
                 />
             </div>
             <div className="steps__content">
-                {label && (
-                    <button
-                        type="button"
-                        className="steps__label"
-                        onClick={changeHandler}
-                        disabled={disabled || loading}
-                    >
-                        {label}
-                    </button>
+                <StepLabel
+                    label={label}
+                    state={state}
+                    disabled={disabled}
+                    {...(onChange !== undefined && { changeHandler })}
+                />
+                {description && (
+                    <Text className="steps__description" as="p" variant="bodyMediumRegular">
+                        {description}
+                    </Text>
                 )}
-                <p className="steps__description">{description}</p>
             </div>
         </div>
     );
