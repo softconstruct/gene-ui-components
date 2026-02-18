@@ -6,131 +6,76 @@
     row-gap: var(--guit-ref-spacing-xsmall);
     width: 100%;
 
-    &__row {
-        display: inline-grid;
-        grid-template-columns: 1fr 1fr 1fr auto;
+    &__itemWrapper {
+        display: flex;
+        flex-direction: column;
+        row-gap: var(--guit-ref-spacing-3xsmall);
         width: 100%;
-        min-height: 3.2rem;
-
-        &--noTime {
-            grid-template-columns: 2fr 1fr auto;
-        }
-
-        &.image {
-            #{ $this }__file {
-                background-color: var(--guit-sem-color-background-accent-purple-1);
-            }
-
-            #{ $this }__fileIcon {
-                color: var(--guit-sem-color-foreground-accent-purple);
-            }
-        }
-
-        &.video {
-            #{ $this }__file {
-                background-color: var(--guit-sem-color-background-accent-orange-1);
-            }
-
-            #{ $this }__fileIcon {
-                color: var(--guit-sem-color-foreground-accent-orange-2);
-            }
-        }
-
-        &.audio {
-            #{ $this }__file {
-                background-color: var(--guit-sem-color-background-accent-lagoon-1);
-            }
-
-            #{ $this }__fileIcon {
-                color: var(--guit-sem-color-foreground-accent-green);
-            }
-        }
-
-        &.document {
-            #{ $this }__file {
-                background-color: var(--guit-sem-color-background-accent-magenta-1);
-            }
-
-            #{ $this }__fileIcon {
-                color: var(--guit-sem-color-foreground-accent-magenta);
-            }
-        }
-
-        &.media {
-            #{ $this }__file {
-                background-color: var(--guit-sem-color-background-accent-purple-1);
-            }
-
-            #{ $this }__fileIcon {
-                color: var(--guit-sem-color-foreground-accent-purple);
-            }
-        }
     }
 
     &__item {
-        min-width: 0;
-        display: inline-flex;
+        display: flex;
         align-items: center;
-        justify-content: flex-start;
-        column-gap: var(--guit-ref-spacing-xsmall);
-        padding-block: var(--guit-ref-spacing-3xsmall);
-        padding-inline: var(--guit-ref-spacing-medium);
+        gap: var(--guit-ref-spacing-medium);
+    }
 
-        &:first-child {
-            padding-inline-start: 0;
+    &__cell {
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        gap: var(--guit-ref-spacing-xsmall);
+        padding-block: var(--guit-ref-spacing-3xsmall);
+
+        &:not(:last-child) {
+            flex: 1;
         }
 
         &:last-child {
-            padding-inline-end: 0;
             flex: 0 0 auto;
-            justify-content: flex-end;
-        }
-
-        &--withProgress {
-            padding-block: 0;
-        }
-
-        &--colName {
-            grid-column: 1 / 4;
-        }
-
-        &--colActions {
-            grid-column: 4 / 5;
-            justify-self: end;
-        }
-
-        &--progress {
-            grid-column: 1 / -1;
-            padding-inline: 0;
-            padding-block: 0;
-            margin-block-start: calc(-1 * var(--guit-ref-spacing-3xsmall) * 2);
-            width: 100%;
-        }
-
-        &--actionsLoading {
-            align-items: flex-start;
         }
     }
 
     &__file {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         width: 2.4rem;
         height: 2.4rem;
         padding: var(--guit-ref-spacing-3xsmall);
         border-radius: var(--guit-ref-radius-3xsmall);
-    }
 
-    &__progress {
-        width: 100%;
-        display: block;
-        gap: 0;
+        &_type {
+            &_video {
+                background-color: var(--guit-sem-color-background-accent-purple-1);
 
-        .progressBar {
-            gap: 0;
-        }
+                #{ $this }__fileIcon {
+                    color: var(--guit-sem-color-foreground-accent-purple);
+                }
+            }
 
-        .progressBar__info {
-            gap: 0;
-            margin-block-start: 0;
+            &_audio {
+                background-color: var(--guit-sem-color-background-accent-lagoon-1);
+
+                #{ $this }__fileIcon {
+                    color: var(--guit-sem-color-foreground-accent-green);
+                }
+            }
+
+            &_document {
+                background-color: var(--guit-sem-color-background-accent-magenta-1);
+
+                #{ $this }__fileIcon {
+                    color: var(--guit-sem-color-foreground-accent-magenta);
+                }
+            }
+
+            &_media {
+                background-color: var(--guit-sem-color-background-accent-purple-1);
+
+                #{ $this }__fileIcon {
+                    color: var(--guit-sem-color-foreground-accent-purple);
+                }
+            }
         }
     }
 }

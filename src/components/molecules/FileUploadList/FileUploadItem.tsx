@@ -143,7 +143,6 @@ interface IFileUploadItem {
 
 const FileUploadItem: FC<IFileUploadItem> = (props) => {
     const {
-        className,
         name,
         time,
         blob,
@@ -193,16 +192,22 @@ const FileUploadItem: FC<IFileUploadItem> = (props) => {
     }
 
     return (
-        <div className={classNames("fileUploadList__item-wrapper", className)} role="listitem" aria-label={ariaLabel}>
+        <div className="fileUploadList__itemWrapper">
             <div
-                className={classNames("fileUploadList__row", fileType, {
+                className={classNames("fileUploadList__item", fileType, {
                     "fileUploadList__row--noTime": !showProgressLayout && !hasTime
                 })}
+                role="listitem"
+                aria-label={ariaLabel}
             >
                 {showProgressLayout ? (
                     <>
-                        <div className="fileUploadList__item fileUploadList__item--withProgress fileUploadList__item--colName">
-                            <div className="fileUploadList__file">
+                        {/* add classNames fileUploadList__file_type_audio */}
+                        {/* add classNames fileUploadList__file_type_video */}
+                        {/* add classNames fileUploadList__file_type_media */}
+                        {/* add classNames fileUploadList__file_type_document */}
+                        <div className="fileUploadList__cell">
+                            <div className="fileUploadList__file fileUploadList__file_type_audio">
                                 <Icon className="fileUploadList__fileIcon" size={16} />
                             </div>
                             <Tooltip text={fileName} isVisible={isNameTruncated}>
@@ -216,13 +221,9 @@ const FileUploadItem: FC<IFileUploadItem> = (props) => {
                                 </Text>
                             </Tooltip>
                         </div>
-                        <div
-                            className={classNames("fileUploadList__item", "fileUploadList__item--colActions", {
-                                "fileUploadList__item--actionsLoading": showProgressLayout
-                            })}
-                        >
+                        <div className={classNames("fileUploadList__cell", { showProgressLayout })}>
                             {hasActions && (
-                                <ButtonGroup className="fileUploadList__actions" size="small">
+                                <ButtonGroup size="small">
                                     {actionsWithIds.map((action) =>
                                         action.Icon ? (
                                             <Button
@@ -242,64 +243,38 @@ const FileUploadItem: FC<IFileUploadItem> = (props) => {
                                 </ButtonGroup>
                             )}
                         </div>
-                        <div className="fileUploadList__item fileUploadList__item--progress">
-                            <ProgressBar
-                                percent={progressPercent}
-                                size="small"
-                                uploadingText={uploadingText}
-                                type="determinate"
-                                className="fileUploadList__progress"
-                                status={status}
-                                helperText={helperText}
-                            />
-                        </div>
                     </>
                 ) : (
                     <>
-                        <div className="fileUploadList__item">
+                        <div className="fileUploadList__cell">
                             <div className="fileUploadList__file">
                                 <Icon className="fileUploadList__fileIcon" size={16} />
                             </div>
                             <Tooltip text={fileName} isVisible={isNameTruncated}>
-                                <Text
-                                    ref={nameRef}
-                                    className="fileUploadList__text ellipsis-text"
-                                    as="span"
-                                    variant="labelMediumMedium"
-                                >
+                                <Text ref={nameRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
                                     {fileName}
                                 </Text>
                             </Tooltip>
                         </div>
                         {hasTime && (
-                            <div className="fileUploadList__item">
+                            <div className="fileUploadList__cell">
                                 <Tooltip text={fileTime} isVisible={isTimeTruncated}>
-                                    <Text
-                                        ref={timeRef}
-                                        className="fileUploadList__text ellipsis-text"
-                                        as="span"
-                                        variant="labelMediumMedium"
-                                    >
+                                    <Text ref={timeRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
                                         {fileTime}
                                     </Text>
                                 </Tooltip>
                             </div>
                         )}
-                        <div className="fileUploadList__item">
+                        <div className="fileUploadList__cell">
                             <Tooltip text={fileSize} isVisible={isSizeTruncated}>
-                                <Text
-                                    ref={sizeRef}
-                                    className="fileUploadList__text ellipsis-text"
-                                    as="span"
-                                    variant="labelMediumMedium"
-                                >
+                                <Text ref={sizeRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
                                     {fileSize}
                                 </Text>
                             </Tooltip>
                         </div>
-                        <div className="fileUploadList__item">
+                        <div className="fileUploadList__cell">
                             {hasActions && (
-                                <ButtonGroup className="fileUploadList__actions" size="small">
+                                <ButtonGroup size="small">
                                     {actionsWithIds.map((action) =>
                                         action.Icon ? (
                                             <Button
@@ -321,6 +296,14 @@ const FileUploadItem: FC<IFileUploadItem> = (props) => {
                     </>
                 )}
             </div>
+            <ProgressBar
+                percent={progressPercent}
+                size="small"
+                uploadingText={uploadingText}
+                type="determinate"
+                status={status}
+                helperText={helperText}
+            />
         </div>
     );
 };
