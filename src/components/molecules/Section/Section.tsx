@@ -82,6 +82,7 @@ const Section: FC<ISectionProps> = ({
     const isSubtitleTruncated: boolean = useEllipsisDetection(subtitleRef);
 
     return (
+        // Add className for section section_withPadding
         <div className={classNames("section", className)} id={id}>
             {title && (
                 <div className="section__header">
@@ -113,9 +114,7 @@ const Section: FC<ISectionProps> = ({
             >
                 <Scrollbar>
                     {inset ? (
-                        <div className="section__wrapper">
-                            <div className="section__content">{children}</div>
-                        </div>
+                        <div className="section__content">{children}</div>
                     ) : (
                         <div className="section__content">{children}</div>
                     )}
@@ -123,14 +122,8 @@ const Section: FC<ISectionProps> = ({
             </div>
             {(footerSwappable || primaryAction) && (
                 <div className="section__footer">
-                    <div className="section__footer_swap">
-                        {footerSwappable && <div className="section__footer_content">{footerSwappable}</div>}
-                    </div>
-                    {primaryAction && (
-                        <div className="section__footer_actions">
-                            <Button {...primaryAction} appearance="primary" />
-                        </div>
-                    )}
+                    {footerSwappable && <div className="section__footer_content">{footerSwappable}</div>}
+                    {primaryAction && <Button {...primaryAction} appearance="primary" />}
                 </div>
             )}
         </div>
