@@ -71,7 +71,7 @@ type Story = StoryObj<IFileUploadListProps>;
 
 type FileUploadItemStoryArgs = Omit<IFileUploadItem, "blob"> & {
     blobSize?: string;
-    blobType?: "image" | "video" | "audio" | "document" | "media";
+    blobType?: "visual" | "video" | "audio" | "document";
 };
 
 const FileUploadListStory: Story = {
@@ -85,7 +85,7 @@ const FileUploadListStory: Story = {
     render: (props) => <FileUploadList {...props} />
 };
 
-const blobTypeOptions = ["image", "video", "audio", "document", "media"] as const;
+const blobTypeOptions = ["visual", "video", "audio", "document"] as const;
 
 const FileUploadItemStory: StoryObj<FileUploadItemStoryArgs> = {
     parameters: {
@@ -124,8 +124,7 @@ const FileUploadItemStory: StoryObj<FileUploadItemStoryArgs> = {
         name: "File Name",
         time: "10:30AM",
         blobSize: "10MB",
-        blobType: "media",
-        Icon: Image,
+        blobType: "visual",
         actions: [
             {
                 Icon: X,
@@ -147,7 +146,7 @@ const FileUploadItemStory: StoryObj<FileUploadItemStoryArgs> = {
             ...rest,
             blob: { size: blobSize, type: blobType }
         };
-        return <FileUploadItem key={props.id} {...props} />;
+        return <FileUploadItem key={`${props.id}-${blobType}`} {...props} />;
     }
 };
 

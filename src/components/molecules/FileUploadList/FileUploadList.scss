@@ -46,10 +46,10 @@
 
         &_type {
             &_video {
-                background-color: var(--guit-sem-color-background-accent-purple-1);
+                background-color: var(--guit-sem-color-background-accent-orange-1);
 
                 #{ $this }__fileIcon {
-                    color: var(--guit-sem-color-foreground-accent-purple);
+                    color: var(--guit-sem-color-foreground-accent-orange);
                 }
             }
 
@@ -69,7 +69,7 @@
                 }
             }
 
-            &_media {
+            &_visual {
                 background-color: var(--guit-sem-color-background-accent-purple-1);
 
                 #{ $this }__fileIcon {

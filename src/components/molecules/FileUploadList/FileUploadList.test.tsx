@@ -25,7 +25,7 @@ const mockData: IFileUploadItem[] = [
         id: "2",
         name: "UX_Wireframe.sketch",
         time: "10:30AM",
-        blob: { size: "12MB", type: "image" as FileType },
+        blob: { size: "12MB", type: "visual" as FileType },
         Icon: Bell,
         actions: [
             { Icon: Image, onClick: jest.fn() },
@@ -98,7 +98,7 @@ const uploadingWithoutCancelData: IFileUploadItem[] = [
     }
 ];
 
-describe("FileUploadList ", () => {
+describe("FileUploadList", () => {
     let setup: ReactWrapper<IFileUploadListProps>;
 
     beforeEach(() => {
@@ -272,7 +272,7 @@ describe("FileUploadList ", () => {
         expect(setup.text()).toContain("File is large. Upload may take a while.");
     });
 
-    it("applies noTime layout and omits time cell when item has no time", () => {
+    it("omits time cell when item has no time", () => {
         const dataWithoutTime: IFileUploadItem[] = [
             {
                 ...mockData[0],
@@ -283,7 +283,6 @@ describe("FileUploadList ", () => {
         setup.setProps({ files: dataWithoutTime });
         setup.update();
 
-        expect(setup.find(".fileUploadList__row--noTime").exists()).toBe(true);
         expect(setup.text()).not.toContain("09:15AM");
         expect(setup.text()).toContain("Invoice Q1.pdf");
     });
@@ -346,7 +345,7 @@ describe("FileUploadList ", () => {
         expect(buttons.at(1).prop("disabled")).toBe(true);
     });
 
-    it("renders list without crashing when item has missing Icon and item renders nothing", () => {
+    it("renders list when item has no Icon by using type-based icon from icons map", () => {
         const dataWithMissingIcon: IFileUploadItem[] = [
             {
                 ...mockData[0],
@@ -357,6 +356,6 @@ describe("FileUploadList ", () => {
         expect(wrapper.exists()).toBe(true);
         expect(wrapper.find(".fileUploadList").exists()).toBe(true);
         expect(wrapper.find(FileUploadItem)).toHaveLength(1);
-        expect(wrapper.find(".fileUploadList__item-wrapper").length).toBe(0);
+        expect(wrapper.find(".fileUploadList__itemWrapper").length).toBe(1);
     });
 });
