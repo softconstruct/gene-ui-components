@@ -75,6 +75,10 @@ interface INumberFieldProps {
      */
     helperText?: string;
     /**
+     * `HTML` `name` attribute for the `input` element
+     */
+    name?: string;
+    /**
      * Placeholder text when input is empty.
      */
     placeholder?: string;
@@ -135,7 +139,8 @@ const NumberField: FC<INumberFieldProps> = ({
     onChange,
     onInputBlur,
     onInputFocus,
-    autoFocus
+    autoFocus,
+    name
 }) => {
     const hasMax = max !== undefined;
     const hasMin = min !== undefined;
@@ -151,13 +156,7 @@ const NumberField: FC<INumberFieldProps> = ({
                 hasClampedControlledValue.current = true;
                 return clampValue(value, min, max);
             }
-            // Preserve string values as-is to maintain intermediate states like "-0.", "0e", "1e"
-            // This prevents premature normalization that would reset "-0." to "0" or "0e" to "0"
-            if (typeof value === "string") {
-                return value;
-            }
-            // Return empty string for undefined to show placeholder, convert numbers to string
-            return value !== undefined ? String(value) : "";
+            return String(value ?? "");
         }
         return internalValue;
     };
@@ -274,6 +273,7 @@ const NumberField: FC<INumberFieldProps> = ({
                         inputMode="numeric"
                         {...autoFocusProp}
                         placeholder={placeholder}
+                        name={name}
                     />
                 </div>
                 <div className="numberField__actions">

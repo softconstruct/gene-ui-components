@@ -29,7 +29,8 @@ const meta: Meta<INumberFieldProps> = {
         onInputBlur: args({ control: "false", ...propCategory.action }),
         onInputFocus: args({ control: "false", ...propCategory.action }),
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
-        id: args({ control: "text", ...propCategory.others })
+        id: args({ control: "text", ...propCategory.others }),
+        name: args({ control: "text", ...propCategory.others })
     },
     args: {
         step: 1,
