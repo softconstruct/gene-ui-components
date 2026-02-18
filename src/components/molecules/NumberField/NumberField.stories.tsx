@@ -23,6 +23,7 @@ const meta: Meta<INumberFieldProps> = {
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
         helperText: args({ control: "text", ...propCategory.content }),
+        placeholder: args({ control: "text", ...propCategory.content }),
         required: args({ control: "boolean", ...propCategory.states }),
         onChange: args({ control: "false", ...propCategory.action }),
         onInputBlur: args({ control: "false", ...propCategory.action }),
@@ -32,6 +33,7 @@ const meta: Meta<INumberFieldProps> = {
     },
     args: {
         step: 1,
+        placeholder: "Placeholder",
         size: "medium",
         status: "rest",
         label: "Label",
@@ -44,19 +46,29 @@ export default meta;
 
 type Story = StoryObj<INumberFieldProps>;
 
-const Template: FC<INumberFieldProps> = ({ ...props }) => <NumberField {...props} />;
+const StoryTemplate: FC<INumberFieldProps> = (props) => {
+    return (
+        <div style={{ width: 300 }}>
+            <NumberField {...props} />
+        </div>
+    );
+};
 
 export const Default: Story = {
-    render: ({ ...props }) => <Template {...props} />,
+    render: (props) => <StoryTemplate {...props} />,
     argTypes: { value: args({ control: "false", ...propCategory.content }) }
 };
 
 const ControlledTemplate: FC<INumberFieldProps> = ({ value, onChange, ...props }) => {
-    const [internalStringValue, setInternalStringValue] = useState(value || "");
+    const [internalStringValue, setInternalStringValue] = useState<string | undefined>(
+        value !== undefined ? String(value) : undefined
+    );
 
     useEffect(() => {
         if (value !== undefined) {
-            setInternalStringValue(value);
+            setInternalStringValue(String(value));
+        } else {
+            setInternalStringValue(undefined);
         }
     }, [value]);
 
@@ -68,7 +80,11 @@ const ControlledTemplate: FC<INumberFieldProps> = ({ value, onChange, ...props }
         onChange?.(newValueString, event);
     };
 
-    return <NumberField {...props} value={internalStringValue} onChange={handleChange} />;
+    return (
+        <div style={{ width: 300 }}>
+            <NumberField {...props} value={internalStringValue} onChange={handleChange} />
+        </div>
+    );
 };
 
 export const Controlled: Story = {

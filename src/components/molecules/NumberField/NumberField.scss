@@ -17,7 +17,6 @@
 
         &_size {
             &_large {
-                width: 12rem;
                 height: var(--guit-sem-dimension-height-large);
 
                 #{ $the }__inputWrapper {
@@ -49,7 +48,6 @@
             }
 
             &_medium {
-                width: 9.6rem;
                 height: var(--guit-sem-dimension-height-medium);
 
                 #{ $the }__inputWrapper {
@@ -81,7 +79,6 @@
             }
 
             &_small {
-                width: 8rem;
                 height: var(--guit-sem-dimension-height-small);
 
                 #{ $the }__inputWrapper {

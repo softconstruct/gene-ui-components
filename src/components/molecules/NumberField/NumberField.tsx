@@ -75,6 +75,10 @@ interface INumberFieldProps {
      */
     helperText?: string;
     /**
+     * Placeholder text when input is empty.
+     */
+    placeholder?: string;
+    /**
      * Indicates that the field is required.
      */
     required?: boolean;
@@ -126,6 +130,7 @@ const NumberField: FC<INumberFieldProps> = ({
     label,
     infoText,
     helperText,
+    placeholder,
     required,
     onChange,
     onInputBlur,
@@ -146,7 +151,13 @@ const NumberField: FC<INumberFieldProps> = ({
                 hasClampedControlledValue.current = true;
                 return clampValue(value, min, max);
             }
-            return String(value ?? "");
+            // Preserve string values as-is to maintain intermediate states like "-0.", "0e", "1e"
+            // This prevents premature normalization that would reset "-0." to "0" or "0e" to "0"
+            if (typeof value === "string") {
+                return value;
+            }
+            // Return empty string for undefined to show placeholder, convert numbers to string
+            return value !== undefined ? String(value) : "";
         }
         return internalValue;
     };
@@ -262,6 +273,7 @@ const NumberField: FC<INumberFieldProps> = ({
                         id={generatedId}
                         inputMode="numeric"
                         {...autoFocusProp}
+                        placeholder={placeholder}
                     />
                 </div>
                 <div className="numberField__actions">
