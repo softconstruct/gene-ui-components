@@ -1,0 +1,248 @@
+@use "../../../assets/styles/mixins";
+
+.numberField {
+    $the: &;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-3xsmall);
+    align-items: flex-start;
+
+    &__wrapper {
+        $this: &;
+
+        display: flex;
+        align-items: center;
+        width: 100%;
+
+        &_size {
+            &_large {
+                height: var(--guit-sem-dimension-height-large);
+
+                #{ $the }__inputWrapper {
+                    border-start-start-radius: var(--guit-ref-radius-2xsmall);
+                    border-end-start-radius: var(--guit-ref-radius-2xsmall);
+                }
+
+                #{ $the }__input {
+                    padding: var(--guit-ref-spacing-small) var(--guit-ref-spacing-large);
+                    font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+                    font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+                    font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+                    line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+                }
+
+                #{ $the }__actions {
+                    width: 3.2rem;
+                }
+
+                #{ $the }__action {
+                    &_increment {
+                        border-start-end-radius: var(--guit-ref-radius-2xsmall);
+                    }
+
+                    &_decrement {
+                        border-end-end-radius: var(--guit-ref-radius-2xsmall);
+                    }
+                }
+            }
+
+            &_medium {
+                height: var(--guit-sem-dimension-height-medium);
+
+                #{ $the }__inputWrapper {
+                    border-start-start-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-start-radius: var(--guit-ref-radius-3xsmall);
+                }
+
+                #{ $the }__input {
+                    padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-medium);
+                    font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+                    font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+                    font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+                    line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+                }
+
+                #{ $the }__actions {
+                    width: 2.4rem;
+                }
+
+                #{ $the }__action {
+                    &_increment {
+                        border-start-end-radius: var(--guit-ref-radius-3xsmall);
+                    }
+
+                    &_decrement {
+                        border-end-end-radius: var(--guit-ref-radius-3xsmall);
+                    }
+                }
+            }
+
+            &_small {
+                height: var(--guit-sem-dimension-height-small);
+
+                #{ $the }__inputWrapper {
+                    border-start-start-radius: var(--guit-ref-radius-3xsmall);
+                    border-end-start-radius: var(--guit-ref-radius-3xsmall);
+                }
+
+                #{ $the }__input {
+                    padding: var(--guit-ref-spacing-3xsmall) var(--guit-ref-spacing-medium);
+                    font-family: var(--guit-sem-font-caption-large-medium-font-family);
+                    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+                    font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
+                    line-height: var(--guit-sem-font-caption-large-medium-line-height);
+                    letter-spacing: var(--guit-sem-font-caption-large-medium-letter-spacing);
+                }
+
+                #{ $the }__actions {
+                    width: 2rem;
+                }
+
+                #{ $the }__action {
+                    &_increment {
+                        border-start-end-radius: var(--guit-ref-radius-3xsmall);
+                    }
+
+                    &_decrement {
+                        border-end-end-radius: var(--guit-ref-radius-3xsmall);
+                    }
+                }
+            }
+        }
+    }
+
+    &__actions {
+        flex: 0 0 auto;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    &__action {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        width: 100%;
+        min-height: 0;
+        color: var(--guit-sem-color-foreground-neutral-2);
+
+        &_increment {
+            border-block-start: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid);
+            border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid);
+            border-color: var(--guit-sem-color-border-neutral-2);
+        }
+
+        &_decrement {
+            border-block-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-neutral-2);
+            border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-neutral-2);
+        }
+
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
+        }
+
+        &:active {
+            background-color: var(--guit-sem-color-background-neutral-1-pressed);
+        }
+
+        &:focus-within {
+            z-index: 1;
+        }
+
+        &_readOnly {
+            pointer-events: none;
+            border-color: transparent;
+            background-color: var(--guit-sem-color-background-neutral-3);
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+
+        &_disabled {
+            pointer-events: none;
+            border-color: var(--guit-sem-color-border-disabled-1);
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+
+    &__inputWrapper {
+        position: relative;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        height: 100%;
+        border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+        border-inline-end: none;
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset-block: -0.1rem;
+            inset-inline-end: 0;
+            width: 0.1rem;
+            background-color: var(--guit-sem-color-border-neutral-2);
+            pointer-events: none;
+        }
+
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
+        }
+
+        &:focus-within {
+            z-index: 1;
+            outline-offset: var(--guit-ref-border-width-thin);
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
+        }
+
+        &_readOnly {
+            border-color: transparent;
+            border-inline-end-color: var(--guit-sem-color-border-neutral-2);
+            background-color: var(--guit-sem-color-background-neutral-3);
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+
+        &_error {
+            border-color: var(--guit-sem-color-border-error);
+
+            &::after {
+                background-color: var(--guit-sem-color-border-error);
+            }
+        }
+
+        &_disabled {
+            pointer-events: none;
+            border-color: var(--guit-sem-color-border-disabled-1);
+            user-select: none;
+
+            &::after {
+                background-color: var(--guit-sem-color-border-disabled-1);
+            }
+
+            #{ $the }__input {
+                color: var(--guit-sem-color-foreground-disabled);
+            }
+        }
+    }
+
+    &__input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: transparent;
+        color: var(--guit-sem-color-foreground-neutral-2);
+        outline: none;
+
+        &::placeholder {
+            color: var(--guit-sem-color-foreground-neutral-1);
+        }
+    }
+}
