@@ -1,34 +1,51 @@
-.pickerButton {
-    background: none;
-    border: none;
-    padding: 10px 0;
-    width: 100%;
-    text-align: center;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    border-radius: 6px;
-    margin-bottom: 8px;
-    color: #333;
-    transition: all 0.2s ease;
+@use "../../../../../assets/styles/mixins";
 
-    &_active {
-        background-color: #3b71ca;
-        color: white;
-        box-shadow: 0 2px 4px rgb(59 113 202 / 30%);
-    }
+.pickerButton {
+    $this: &;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &_size {
-        &_small {
-            width: 40px;
-        }
-
+        &_large,
         &_medium {
-            width: 60px;
+            font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+            font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+            font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+            line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
         }
 
-        &_large {
-            width: 80px;
+        &_small {
+            font-family: var(--guit-sem-font-caption-large-medium-font-family);
+            font-size: var(--guit-sem-font-caption-large-medium-font-size);
+            font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
+            line-height: var(--guit-sem-font-caption-large-medium-line-height);
+        }
+    }
+
+    &_state {
+        &_selected {
+            background-color: var(--guit-sem-color-background-selected-2);
+            color: var(--guit-sem-color-foreground-inverse);
+        }
+
+        &_disabled {
+            pointer-events: none;
+            user-select: none;
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+
+    &:not(#{$this}_state_selected) {
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
+        }
+
+        &:active {
+            background-color: var(--guit-sem-color-background-neutral-1-pressed);
         }
     }
 }

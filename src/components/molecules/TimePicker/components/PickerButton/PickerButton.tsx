@@ -39,10 +39,14 @@ const PickerButton: FC<IPickerButtonProps> = ({ className, size, onClick, active
             role="button"
             tabIndex={0}
             onKeyDown={onClick}
-            className={classNames(`pickerButton pickerButton_size_${size}`, className, {
-                pickerButton_active: active,
-                pickerButton_disabled: disabled
-            })}
+            className={classNames(
+                `timePicker__pickerButton_size_${size} pickerButton pickerButton_size_${size}`,
+                className,
+                {
+                    pickerButton_state_selected: active,
+                    pickerButton_state_disabled: disabled
+                }
+            )}
             onClick={onClick}
         >
             {children}

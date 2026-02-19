@@ -7,6 +7,7 @@ import { Clock } from "@geneui/icons";
 
 import { Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+import Text from "@components/atoms/Text";
 
 // Styles
 import "./TimePicker.scss";
@@ -161,7 +162,7 @@ const TimePicker = <M extends "single" | "range" = "single">({
     onClose,
     onFocus
 }: ITimePickerProps<M>) => {
-    const mode = propMode ?? "single";
+    const mode = propMode ?? "range";
     const [pickerValue, setPickerValue] = useState(defaultValue);
     const [isPickerOpen, setIsPickerOpen] = useState(open);
     const [activeMeridiem, setActiveMeridiem] = useState<Meridiem>("AM");
@@ -219,7 +220,6 @@ const TimePicker = <M extends "single" | "range" = "single">({
         if (showMeridiem) {
             timeString = `${timeString} ${mer}`;
         }
-
         setPickerValue(timeString as any);
     };
 
@@ -287,32 +287,41 @@ const TimePicker = <M extends "single" | "range" = "single">({
                         role="button"
                         tabIndex={0}
                         onMouseDown={(e) => e.preventDefault()}
-                        className="timePicker__body"
+                        className={classNames("timePicker__wrapper", `timePicker__wrapper_size_${size}`)}
                     >
                         {timeColumns.map((col) => (
                             <div key={col.header} className="timePicker__column">
-                                <div className="timePicker__header">{col.header}</div>
-                                <Scrollbar className="timePicker__list">
-                                    {col.data.map((item) => (
-                                        <PickerButton
-                                            key={item}
-                                            active={col.active === item}
-                                            onClick={() => col.setActive(item)}
-                                            className="timePicker__item"
-                                            size={size}
-                                        >
-                                            {item}
-                                        </PickerButton>
-                                    ))}
-                                </Scrollbar>
+                                <div className="timePicker__headerWrapper">
+                                    <div className="timePicker__header">
+                                        <Text className="ellipsis-text" as="p" variant="bodyMediumSemibold">
+                                            {col.header}
+                                        </Text>
+                                    </div>
+                                </div>
+                                <div className="timePicker__body">
+                                    <Scrollbar>
+                                        <div className="timePicker__list">
+                                            {col.data.map((item) => (
+                                                <PickerButton
+                                                    key={item}
+                                                    active={col.active === item}
+                                                    onClick={() => col.setActive(item)}
+                                                    className="timePicker__pickerButton"
+                                                    size={size}
+                                                >
+                                                    {item}
+                                                </PickerButton>
+                                            ))}
+                                        </div>
+                                    </Scrollbar>
+                                </div>
                             </div>
                         ))}
 
                         {showMeridiem && (
-                            <div className="timePicker__meridiem">
+                            <div className="timePicker__column timePicker__column_meridiem">
                                 <PickerButton
                                     active={activeMeridiem === "AM"}
-                                    className={classNames("timePicker__meridiem__button")}
                                     onClick={() => handleTimeSelect("meridiem", "AM")}
                                     size={size}
                                 >
@@ -320,7 +329,6 @@ const TimePicker = <M extends "single" | "range" = "single">({
                                 </PickerButton>
                                 <PickerButton
                                     active={activeMeridiem === "PM"}
-                                    className={classNames("timePicker__meridiem__button")}
                                     onClick={() => handleTimeSelect("meridiem", "PM")}
                                     size={size}
                                 >

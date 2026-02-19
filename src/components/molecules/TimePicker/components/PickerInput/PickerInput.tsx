@@ -7,7 +7,7 @@ import { IconProps, Minus, X } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import HelperText from "@components/atoms/HelperText";
 // Components
-import Label from "@components/atoms/Label";
+// import Label from "@components/atoms/Label";
 import Skeleton from "@components/atoms/Skeleton";
 
 // Styles
@@ -124,8 +124,8 @@ const PickerInput: React.FC<IPickerInputProps> = ({
     onBlur,
     clearable,
     withRange,
-    required,
-    labelText,
+    // required,
+    // labelText,
     errorMessage,
     error = false,
     disabled,
@@ -147,19 +147,15 @@ const PickerInput: React.FC<IPickerInputProps> = ({
         onClear?.();
     };
 
-    const handleWrapperClick = () => {
-        if (!disabled && !readOnly) {
-            onStartClick?.();
-        }
-    };
-
     const renderInput = (
         value?: [TimeValue, TimeValue] | TimeValue,
         placeholder?: string,
         onClickHandler?: () => void
     ) => (
         <MaskedInput
-            className="pickerInput__input"
+            className={classNames("pickerInput__input", {
+                [`pickerInput__input_size_${size}`]: size
+            })}
             value={value || ""}
             format={format}
             aria-haspopup="dialog"
@@ -184,19 +180,15 @@ const PickerInput: React.FC<IPickerInputProps> = ({
     }
 
     return (
-        <div
-            className={classNames("pickerInput", className, {
-                pickerInput_withRange: withRange,
-                [`pickerInput_size_${size}`]: size
-            })}
-        >
-            <Label disabled={disabled} className="pickerInput__label" required={required} text={labelText} />
+        <>
+            {/* <Label disabled={disabled} className="pickerInput__label" required={required} text={labelText} /> */}
 
-            <span
-                className={classNames("pickerInput__imitationHolder", {
-                    pickerInput__imitationHolder_error: error,
-                    pickerInput__imitationHolder_disabled: disabled,
-                    pickerInput__imitationHolder_readOnly: readOnly
+            <div
+                className={classNames("pickerInput", className, `pickerInput_mode_${withRange ? "range" : "single"}`, {
+                    pickerInput_state_error: error,
+                    pickerInput_state_disabled: disabled,
+                    pickerInput_state_readOnly: readOnly,
+                    [`pickerInput_size_${size}`]: size
                 })}
                 onFocus={onFocus}
                 onBlur={onBlur}
@@ -210,33 +202,27 @@ const PickerInput: React.FC<IPickerInputProps> = ({
                     </>
                 )}
 
-                <span
-                    role="button"
-                    tabIndex={0}
-                    className="pickerInput__iconWrapper"
-                    onClick={handleWrapperClick}
-                    onKeyDown={handleWrapperClick}
-                >
+                <div className="pickerInput__append">
                     {shouldShowClearableIcon && (
                         <Button
                             tabIndex={0}
-                            className="pickerInput__clearIcon"
                             onClick={handleClear}
                             Icon={X}
-                            appearance="inverse"
+                            appearance="secondary"
                             aria-label="Clear"
                             size="small"
+                            layout="text"
                         />
                     )}
 
                     {EndIcon && <EndIcon size={20} className="pickerInput__icon" />}
-                </span>
-            </span>
+                </div>
+            </div>
 
             {error && errorMessage && (
                 <HelperText size="medium" text={errorMessage} status="error" className="pickerInput__errorMessage" />
             )}
-        </div>
+        </>
     );
 };
 
