@@ -4,9 +4,8 @@ import { mount, ReactWrapper } from "enzyme";
 // Components
 import Button from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
+import Section, { ISectionProps } from "@components/molecules/Section";
 import Tooltip from "@components/molecules/Tooltip";
-
-import Section, { ISectionProps } from "./index";
 
 describe("Section", () => {
     let setup: ReactWrapper<ISectionProps>;
@@ -18,10 +17,6 @@ describe("Section", () => {
     it("renders without crashing", () => {
         expect(setup.exists()).toBeTruthy();
     });
-
-    // it("renders with correct default CSS class", () => {
-    //     expect(setup.find(".section").hasClass("section_isInset")).toBeTruthy();
-    // });
 
     it("renders className prop correctly", () => {
         const className = "test-class";
@@ -80,7 +75,7 @@ describe("Section", () => {
         const headerSwappable = <div className="custom-header">Custom Header</div>;
         const wrapper = setup.setProps({ headerSwappable });
         expect(wrapper.find(".custom-header").exists()).toBeTruthy();
-        expect(wrapper.find(".section__header_content").exists()).toBeTruthy();
+        expect(wrapper.find(".section__headerSwappable").exists()).toBeTruthy();
     });
 
     it("renders header with title and headerSwappable together", () => {
@@ -111,25 +106,20 @@ describe("Section", () => {
         expect(wrapper.find(".section__content").exists()).toBeTruthy();
     });
 
-    // it("applies withPadding class when true", () => {
-    //     const wrapper = setup.setProps({ inset: true });
-    //     expect(wrapper.find(".section__body").hasClass("section__body_withPadding")).toBeTruthy();
-    // });
-
     it("does not apply withPadding class when false", () => {
         const wrapper = setup.setProps({ inset: false });
-        expect(wrapper.find(".section__body").hasClass("section__body_withPadding")).toBeFalsy();
+        expect(wrapper.find(".section__content").hasClass("section__content_withPadding")).toBeFalsy();
     });
 
-    it("renders wrapper div when withPadding is true", () => {
+    it("applies withPadding class to content when inset is true", () => {
         const wrapper = setup.setProps({ inset: true });
-        expect(wrapper.find(".section__wrapper").exists()).toBeTruthy();
+        expect(wrapper.find(".section__content").hasClass("section__content_withPadding")).toBeTruthy();
     });
 
-    // it("does not render wrapper div when withPadding is false", () => {
-    //     const wrapper = setup.setProps({ inset: false });
-    //     expect(wrapper.find(".section__wrapper").exists()).toBeFalsy();
-    // });
+    it("does not apply withPadding class to content when inset is false", () => {
+        const wrapper = setup.setProps({ inset: false });
+        expect(wrapper.find(".section__content").hasClass("section__content_withPadding")).toBeFalsy();
+    });
 
     it("applies hasHeader class to body when title is provided", () => {
         const wrapper = setup.setProps({ title: "Test Title" });
@@ -167,7 +157,7 @@ describe("Section", () => {
     it("renders primaryAction button correctly", () => {
         const primaryAction = { children: "Submit", onClick: jest.fn() };
         const wrapper = setup.setProps({ primaryAction });
-        expect(wrapper.find(".section__footer_actions").exists()).toBeTruthy();
+        expect(wrapper.find(".section__action").exists()).toBeTruthy();
         expect(wrapper.find(Button).exists()).toBeTruthy();
         expect(wrapper.find(Button).text()).toContain("Submit");
         expect(wrapper.find(Button).prop("appearance")).toBe("primary");
@@ -185,13 +175,13 @@ describe("Section", () => {
         const footerSwappable = <span>Footer Info</span>;
         const primaryAction = { children: "Submit" };
         const wrapper = setup.setProps({ footerSwappable, primaryAction });
-        expect(wrapper.find(".section__footer_content").exists()).toBeTruthy();
-        expect(wrapper.find(".section__footer_actions").exists()).toBeTruthy();
+        expect(wrapper.find(".section__footerSwappable").exists()).toBeTruthy();
+        expect(wrapper.find(".section__action").exists()).toBeTruthy();
     });
 
     it("does not render primaryAction button when primaryAction is not provided", () => {
         const wrapper = setup.setProps({ primaryAction: undefined });
-        expect(wrapper.find(".section__footer_actions").exists()).toBeFalsy();
+        expect(wrapper.find(".section__action").exists()).toBeFalsy();
     });
 
     it("renders header by default when title is provided", () => {
@@ -199,7 +189,7 @@ describe("Section", () => {
     });
 
     it("has default inset as true", () => {
-        expect(setup.find(".section__wrapper").exists()).toBeTruthy();
+        expect(setup.find(".section__content").hasClass("section__content_withPadding")).toBeTruthy();
     });
 
     it("renders complete section with all parts", () => {
@@ -240,17 +230,13 @@ describe("Section", () => {
 
     it("handles undefined footerSwappable gracefully", () => {
         const wrapper = setup.setProps({ footerSwappable: undefined });
-        expect(wrapper.find(".section__footer_content").exists()).toBeFalsy();
+        expect(wrapper.find(".section__footerSwappable").exists()).toBeFalsy();
     });
 
     it("handles undefined headerSwappable gracefully", () => {
         const wrapper = setup.setProps({ headerSwappable: undefined });
         expect(wrapper.find(".section__title").exists()).toBeTruthy();
     });
-
-    // it("handles undefined children gracefully", () => {
-    //     expect(setup.find(".section__content").exists()).toBeTruthy();
-    // });
 
     it("handles all optional props as undefined", () => {
         expect(setup.exists()).toBeTruthy();
@@ -280,19 +266,4 @@ describe("Section", () => {
         expect(wrapper.find(".child-2").exists()).toBeTruthy();
         expect(wrapper.find(".child-3").exists()).toBeTruthy();
     });
-
-    // it("renders empty children gracefully", () => {
-    //     const wrapper = mount(<Section title="Title">{null}</Section>);
-    //     expect(wrapper.find(".section__content").exists()).toBeTruthy();
-    // });
-
-    // it("renders string children correctly", () => {
-    //     const wrapper = mount(<Section title="Title">String content</Section>);
-    //     expect(wrapper.find(".section__content").text()).toContain("String content");
-    // });
-
-    // it("renders section without children", () => {
-    //     expect(setup.find(".section__content").exists()).toBeTruthy();
-    //     expect(setup.find(".section__content").children().length).toBe(0);
-    // });
 });
