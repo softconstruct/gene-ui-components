@@ -57,7 +57,8 @@
                     "Carousel": ["CarouselItem"],
                     "TagGroup": ["Tag"],
                     "SegmentedControl": ["SegmentedControlButton"],
-                    "Accordion": ["AccordionItem"]
+                    "Accordion": ["AccordionItem"],
+                    "FileUploadList": ["FileUploadItem"]
                 }
             }
         ],

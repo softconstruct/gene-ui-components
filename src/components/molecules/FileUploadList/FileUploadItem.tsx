@@ -36,23 +36,6 @@ const icons: Record<FileType, FC<IconProps>> = {
     document: Document
 } as const;
 
-export interface IBlobProps {
-    /**
-     * Human-readable size of the uploaded file, displayed in the list.
-     * Use a short, readable format such as "10MB", "4.2MB", or "320MB".
-     * @example
-     * blob={{ size: "6MB", type: "document" }}
-     */
-    size?: string;
-    /**
-     * File type used to set the row's visual state (background and icon color).
-     * Possible values: `visual | video | audio | document`. Each value maps to a distinct accent style in the list item. Defaults to "document" if not provided.
-     * @example
-     * blob={{ size: "18MB", type: "visual" }}
-     */
-    type?: FileType;
-}
-
 export interface IFileUploadActionProps {
     /**
      * The `Icon` component to display in the action button. If not provided, the action button will not be rendered.
@@ -83,11 +66,6 @@ export interface IFileUploadActionProps {
 
 interface IFileUploadItem {
     /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
-     */
-    className?: string;
-    /**
      * Display name of the file.
      */
     name?: string;
@@ -96,14 +74,18 @@ interface IFileUploadItem {
      */
     time?: string;
     /**
-     * Basic metadata such as size and type.
+     * Human-readable size of the uploaded file (e.g. "10MB", "4.2MB").
      */
-    blob?: IBlobProps;
+    size?: string;
+    /**
+     * File type for row styling and icon. Possible values: `visual | video | audio | document`. Defaults to "document" if not provided.
+     */
+    type?: FileType;
     /**
      * An array of action button objects to display in the file upload item.
      * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
      * Each action button is rendered with `layout="text"` and `appearance="secondary"` (these cannot be overridden).
-     * For icon-only buttons, use the `Icon` prop (required).
+     * For icon-only buttons, use the `Icon` prop on each action.
      * @example
      * actions={[
      *   { Icon: Eye, onClick: handleAction },
@@ -112,10 +94,6 @@ interface IFileUploadItem {
      * ]}
      */
     actions?: IFileUploadActionProps[];
-    /**
-     * Optional icon override. When not provided, the icon is taken from the file type (see `icons` map).
-     */
-    Icon?: React.FC<IconProps>;
     /**
      * Unique identifier for the file item.
      */
@@ -152,25 +130,26 @@ const FileUploadItem: FC<IFileUploadItem> = (props) => {
     const {
         name,
         time,
-        blob,
-        Icon: iconProp,
+        size,
+        type,
         actions,
         loading,
         progressPercent,
         id,
-        status,
+        status = "rest",
         helperText,
         uploadingText,
         "aria-label": ariaLabel
     } = props;
 
     const hasActions = Array.isArray(actions) && actions.length > 0;
-    const fileType = getFileType(blob?.type);
-    const Icon = iconProp ?? icons[fileType];
+    const fileType = getFileType(type);
+    const Icon = icons[fileType];
+    const hasName = name !== undefined && name !== null && name !== "";
     const fileName = name ?? "Unnamed file";
     const hasTime = time != null && time !== "";
     const fileTime = hasTime ? time : "--:--";
-    const fileSize = blob?.size ?? "Unknown";
+    const fileSize = size ?? "Unknown";
 
     const actionsWithIds = useMemo(() => {
         if (!actions) return [];
@@ -213,23 +192,27 @@ const FileUploadItem: FC<IFileUploadItem> = (props) => {
                         </Text>
                     </Tooltip>
                 </div>
-                {!showProgressLayout && hasTime && (
-                    <div className="fileUploadList__cell">
-                        <Tooltip text={fileTime} isVisible={isTimeTruncated}>
-                            <Text ref={timeRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
-                                {fileTime}
-                            </Text>
-                        </Tooltip>
-                    </div>
-                )}
                 {!showProgressLayout && (
-                    <div className="fileUploadList__cell">
-                        <Tooltip text={fileSize} isVisible={isSizeTruncated}>
-                            <Text ref={sizeRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
-                                {fileSize}
-                            </Text>
-                        </Tooltip>
-                    </div>
+                    <>
+                        {hasTime && (
+                            <div className="fileUploadList__cell">
+                                <Tooltip text={fileTime} isVisible={isTimeTruncated}>
+                                    <Text ref={timeRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
+                                        {fileTime}
+                                    </Text>
+                                </Tooltip>
+                            </div>
+                        )}
+                        {hasName && (
+                            <div className="fileUploadList__cell">
+                                <Tooltip text={fileSize} isVisible={isSizeTruncated}>
+                                    <Text ref={sizeRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
+                                        {fileSize}
+                                    </Text>
+                                </Tooltip>
+                            </div>
+                        )}
+                    </>
                 )}
                 <div className={classNames("fileUploadList__cell", { showProgressLayout })}>
                     {hasActions && (
@@ -266,5 +249,7 @@ const FileUploadItem: FC<IFileUploadItem> = (props) => {
         </div>
     );
 };
+
+FileUploadItem.displayName = "FileUploadItem";
 
 export { IFileUploadItem, FileUploadItem as default };

@@ -1,21 +1,19 @@
-import React, { ComponentType } from "react";
+import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Icons
-import { Bell, Download, Eye, Image, RecycleBin, X } from "@geneui/icons";
+import { Download, Eye, RecycleBin, X } from "@geneui/icons";
 
 // Helpers
-import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
 // Components
-import FileUploadItem, { IFileUploadItem } from "./FileUploadItem";
-import FileUploadList, { IFileUploadListProps } from "./index";
+import FileUploadList, { FileUploadItem, IFileUploadItem, IFileUploadListProps } from "./index";
 
 const meta: Meta<IFileUploadListProps> = {
     title: "Molecules/FileUploadList",
     component: FileUploadList,
     subcomponents: {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        FileUploadItem: FileUploadItem as ComponentType<any>
+        FileUploadItem
     }
 };
 
@@ -24,16 +22,16 @@ const mockData: IFileUploadItem[] = [
         id: "1",
         name: "Brand-styleguide.pdf",
         time: "08:05AM",
-        blob: { size: "6MB", type: "document" },
-        Icon: Image,
+        size: "6MB",
+        type: "document",
         actions: [{ Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
     },
     {
         id: "2",
         name: "Quarterly-report.pdf",
         time: "11:00AM",
-        blob: { size: "12MB", type: "document" },
-        Icon: Image,
+        size: "12MB",
+        type: "visual",
         loading: true,
         progressPercent: 65,
         uploadingText: "Uploading...",
@@ -43,8 +41,8 @@ const mockData: IFileUploadItem[] = [
         id: "3",
         name: "Failed-upload.pdf",
         time: "09:15AM",
-        blob: { size: "8MB", type: "document" },
-        Icon: Image,
+        size: "8MB",
+        type: "audio",
         loading: true,
         progressPercent: 40,
         status: "error",
@@ -56,8 +54,8 @@ const mockData: IFileUploadItem[] = [
         id: "4",
         name: "Large-file.zip",
         time: "02:30PM",
-        blob: { size: "250MB", type: "document" },
-        Icon: Bell,
+        size: "250MB",
+        type: "video",
         loading: true,
         progressPercent: 85,
         status: "warning",
@@ -67,51 +65,42 @@ const mockData: IFileUploadItem[] = [
     }
 ];
 
-type Story = StoryObj<IFileUploadListProps>;
-
-type FileUploadItemStoryArgs = Omit<IFileUploadItem, "blob"> & {
-    blobSize?: string;
-    blobType?: "visual" | "video" | "audio" | "document";
-};
-
-const FileUploadListStory: Story = {
+const FileUploadListStory: StoryObj<IFileUploadListProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        files: args({ control: "false", ...propCategory.content })
+        children: args({ control: "false", ...propCategory.content })
     },
-    args: {
-        files: mockData
-    },
-    render: (props) => <FileUploadList {...props} />
+    args: {},
+    render: (props) => (
+        <FileUploadList {...props}>
+            {mockData.map((item, index) => (
+                <FileUploadItem
+                    key={item.id ?? `fallback-${index}`}
+                    {...item}
+                    aria-label={
+                        item["aria-label"] ??
+                        `File: ${item.name ?? "Unnamed"}, Size: ${item.size ?? "Unknown"}, Time: ${item.time ?? "--:--"}`
+                    }
+                />
+            ))}
+        </FileUploadList>
+    )
 };
 
-const blobTypeOptions = ["visual", "video", "audio", "document"] as const;
-
-const FileUploadItemStory: StoryObj<FileUploadItemStoryArgs> = {
-    parameters: {
-        controls: {
-            exclude: ["files"]
-        }
-    },
+const FileUploadItemStory: StoryObj<IFileUploadItem> = storyObjBuilder({
     argTypes: {
-        className: args({ control: "false", ...propCategory.appearance }),
         id: args({ control: "false", ...propCategory.content }),
         name: args({ control: "text", ...propCategory.content }),
         time: args({ control: "text", ...propCategory.content }),
-        blobSize: {
-            name: "size",
+        size: {
             control: "text",
-            description: "Human-readable file size (e.g. 10MB, 4.2MB)",
-            table: { category: "Content" }
+            ...propCategory.appearance
         },
-        blobType: {
-            name: "type",
+        type: {
             control: "select",
-            options: [...blobTypeOptions],
-            description: "File type for row styling (image, video, audio, document, media)",
-            table: { category: "Content" }
+            options: ["visual", "video", "audio", "document"],
+            ...propCategory.appearance
         },
-        Icon: args({ control: "false", ...propCategory.content }),
         actions: args({ control: "object", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
         progressPercent: args({ control: "number", ...propCategory.content }),
@@ -123,8 +112,8 @@ const FileUploadItemStory: StoryObj<FileUploadItemStoryArgs> = {
         id: "1",
         name: "File Name",
         time: "10:30AM",
-        blobSize: "10MB",
-        blobType: "visual",
+        size: "10MB",
+        type: "visual",
         actions: [
             {
                 Icon: X,
@@ -140,15 +129,14 @@ const FileUploadItemStory: StoryObj<FileUploadItemStoryArgs> = {
         helperText: undefined,
         uploadingText: "Uploading"
     },
-    render: (storyArgs) => {
-        const { blobSize, blobType, ...rest } = storyArgs;
-        const props = {
-            ...rest,
-            blob: { size: blobSize, type: blobType }
-        };
-        return <FileUploadItem key={`${props.id}-${blobType}`} {...props} />;
+    render: (props) => {
+        return (
+            <FileUploadList>
+                <FileUploadItem {...props} />
+            </FileUploadList>
+        );
     }
-};
+});
 
 export default meta;
 export { FileUploadListStory as FileUploadList, FileUploadItemStory as FileUploadItem };
