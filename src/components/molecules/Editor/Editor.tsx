@@ -24,6 +24,10 @@ import "./Editor.scss";
 interface IEditorProps {
     className?: string;
     placeholder?: string;
+    toolbarClassName?: string;
+    wrapperClassName?: string;
+    contentClassName?: string;
+    footerClassName?: string;
     // onSave?: (content: any) => void;
 }
 
@@ -97,56 +101,61 @@ const CustomBoldButton = ({ onChange, editorState }: any) => {
     );
 };
 
-const Editor: FC<IEditorProps> = ({ className, placeholder = "Placeholder" }) => {
+const Editor: FC<IEditorProps> = ({
+    className,
+    placeholder = "Placeholder",
+    toolbarClassName,
+    wrapperClassName,
+    contentClassName,
+    footerClassName
+}) => {
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [isLocked, setIsLocked] = useState(false);
 
     const toggleLock = () => setIsLocked(!isLocked);
 
     return (
-        <div className={classNames("editor-container", className)}>
-            <div className="editor-main-wrapper">
-                <EditorComponent
-                    editorState={editorState}
-                    onEditorStateChange={setEditorState}
-                    readOnly={isLocked}
-                    placeholder={placeholder}
-                    toolbarClassName="editor-toolbar"
-                    wrapperClassName="editor-wrapper"
-                    editorClassName="editor-content"
-                    customStyleMap={customStyleMap}
-                    editorStyle={{ textAlign: "right", direction: "rtl" }}
-                    toolbar={{
-                        options: [
-                            "history",
-                            "blockType",
-                            "fontFamily",
-                            "inline",
-                            "colorPicker",
-                            "textAlign",
-                            "list",
-                            "link",
-                            "embedded",
-                            "image"
-                        ],
-                        history: { inDropdown: false, options: ["undo", "redo"] },
-                        blockType: { inDropdown: true, options: ["Normal", "H1", "H2", "H3", "H4", "H5", "H6"] },
-                        fontFamily: {
-                            component: FontFamilyControl
-                        },
-                        inline: { inDropdown: false, options: ["italic", "underline", "strikethrough"] },
-                        colorPicker: { inDropdown: true },
-                        textAlign: { inDropdown: true },
-                        list: { inDropdown: false, options: ["unordered", "ordered"] },
-                        link: { inDropdown: false, showOpenOptionOnHover: true, defaultTargetOption: "_blank" },
-                        embedded: { className: "embedded-icon" },
-                        image: { className: "image-icon" }
-                    }}
-                    toolbarCustomButtons={[<CustomBoldButton />]}
-                />
-            </div>
+        <div className={classNames("editor", className)}>
+            <EditorComponent
+                editorState={editorState}
+                onEditorStateChange={setEditorState}
+                readOnly={isLocked}
+                placeholder={placeholder}
+                toolbarClassName={classNames("editor__toolbar", toolbarClassName)}
+                wrapperClassName={classNames("editor__wrapper", wrapperClassName)}
+                editorClassName={classNames("editor__content", contentClassName)}
+                customStyleMap={customStyleMap}
+                // editorStyle={{ textAlign: "right", direction: "rtl" }}
+                toolbar={{
+                    options: [
+                        "history",
+                        "blockType",
+                        "fontFamily",
+                        "inline",
+                        "colorPicker",
+                        "textAlign",
+                        "list",
+                        "link",
+                        "embedded",
+                        "image"
+                    ],
+                    history: { inDropdown: false, options: ["undo", "redo"] },
+                    blockType: { inDropdown: true, options: ["Normal", "H1", "H2", "H3", "H4", "H5", "H6"] },
+                    fontFamily: {
+                        component: FontFamilyControl
+                    },
+                    inline: { inDropdown: false, options: ["italic", "underline", "strikethrough"] },
+                    colorPicker: { inDropdown: true },
+                    textAlign: { inDropdown: true },
+                    list: { inDropdown: false, options: ["unordered", "ordered"] },
+                    link: { inDropdown: false, showOpenOptionOnHover: true, defaultTargetOption: "_blank" },
+                    embedded: { className: "embedded-icon" },
+                    image: { className: "image-icon" }
+                }}
+                toolbarCustomButtons={[<CustomBoldButton />]}
+            />
 
-            <div className="editor-footer">
+            <div className={classNames("editor__footer", footerClassName)}>
                 <div className="footer-actions left">
                     <Button className="icon-btn" Icon={Microphone} />
                     <Button className="icon-btn" Icon={Download} />

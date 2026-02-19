@@ -1,12 +1,8 @@
 @import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 .editor {
-    // Your styles here
     color: var(--guit-ref-color-magenta-500base);
     font-size: var(--guit-sem-font-caption-large-medium-font-size);
-}
-
-.editor-container {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background: #fff;
@@ -16,7 +12,7 @@
     font-family: Arial, sans-serif;
     box-shadow: 0 2px 4px rgb(0 0 0 / 5%);
 
-    .editor-toolbar {
+    &__toolbar {
         border: none;
         border-bottom: 1px solid #f0f0f0;
         margin-bottom: 0;
@@ -74,7 +70,7 @@
         }
     }
 
-    .editor-content {
+    &__content {
         min-height: 200px;
         padding: 16px;
         font-size: 14px;
@@ -87,7 +83,7 @@
         }
     }
 
-    .editor-footer {
+    &__footer {
         display: flex;
         align-items: center;
         justify-content: space-between;
