@@ -82,7 +82,6 @@ const Section: FC<ISectionProps> = ({
     const isSubtitleTruncated: boolean = useEllipsisDetection(subtitleRef);
 
     return (
-        // Add className for section section_withPadding
         <div className={classNames("section", className)} id={id}>
             {title && (
                 <div className="section__header">
@@ -100,30 +99,29 @@ const Section: FC<ISectionProps> = ({
                             </Tooltip>
                         )}
                     </div>
-                    <div className="section__header_swap">
-                        {headerSwappable && <div className="section__header_content">{headerSwappable}</div>}
-                    </div>
+                    {headerSwappable && <div className="section__headerSwappable">{headerSwappable}</div>}
                 </div>
             )}
             <div
                 className={classNames("section__body", {
                     section__body_hasHeader: !!title,
-                    section__body_hasFooter: !!(footerSwappable || primaryAction),
-                    section__body_withPadding: inset
+                    section__body_hasFooter: !!(footerSwappable || primaryAction)
                 })}
             >
                 <Scrollbar>
-                    {inset ? (
-                        <div className="section__content">{children}</div>
-                    ) : (
-                        <div className="section__content">{children}</div>
-                    )}
+                    <div className={classNames("section__content", { section__content_withPadding: inset })}>
+                        {children}
+                    </div>
                 </Scrollbar>
             </div>
             {(footerSwappable || primaryAction) && (
                 <div className="section__footer">
-                    {footerSwappable && <div className="section__footer_content">{footerSwappable}</div>}
-                    {primaryAction && <Button {...primaryAction} appearance="primary" />}
+                    {footerSwappable && <div className="section__footerSwappable">{footerSwappable}</div>}
+                    {primaryAction && (
+                        <div className="section__action">
+                            <Button {...primaryAction} appearance="primary" />
+                        </div>
+                    )}
                 </div>
             )}
         </div>

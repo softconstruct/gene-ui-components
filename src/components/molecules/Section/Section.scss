@@ -8,12 +8,6 @@
     border-radius: var(--guit-ref-radius-2xsmall);
     background-color: var(--guit-sem-color-background-neutral-1-nudge);
 
-    &_withPadding {
-        #{ $this }__content {
-            padding: var(--guit-ref-spacing-large);
-        }
-    }
-
     &__header {
         flex: 0 0 auto;
         display: flex;
@@ -27,6 +21,10 @@
         border-start-start-radius: var(--guit-ref-radius-2xsmall);
         border-start-end-radius: var(--guit-ref-radius-2xsmall);
         background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    }
+
+    &__headerSwappable {
+        flex: 0 0 auto;
     }
 
     &__title {
@@ -47,6 +45,10 @@
     &__content {
         width: 100%;
         height: 100%;
+
+        &_withPadding {
+            padding: var(--guit-ref-spacing-large);
+        }
     }
 
     &__footer {
@@ -63,5 +65,13 @@
         padding: var(--guit-ref-spacing-medium) var(--guit-ref-spacing-large);
         background-color: var(--guit-sem-color-background-neutral-1-nudge);
         height: 5.6rem;
+    }
+
+    &__footerSwappable {
+        flex: 0 0 auto;
+    }
+
+    &__action {
+        margin-inline-start: auto;
     }
 }
