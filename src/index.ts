@@ -69,7 +69,7 @@ export { Accordion, AccordionItem, IAccordionProps, IAccordionItemProps } from "
 export { default as NumberField, INumberFieldProps } from "./components/molecules/NumberField";
 export { default as InteractiveCard, IInteractiveCardProps } from "./components/molecules/InteractiveCard";
 export { default as Image, IImageProps } from "./components/molecules/Image";
-export { default as Breadcrumb } from "./components/molecules/Breadcrumb";
+export { default as Breadcrumb, IBreadcrumbProps } from "./components/molecules/Breadcrumb";
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
 export { default as DataCardList, IDataCardListProps } from "@components/organisms/DataCardList";
