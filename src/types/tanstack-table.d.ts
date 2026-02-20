@@ -1,4 +1,4 @@
-import type { RowData } from "@tanstack/table-core";
+import type { Row, RowData } from "@tanstack/table-core";
 
 /**
  * Cell type union for table column definitions.
@@ -50,10 +50,15 @@ declare module "@tanstack/table-core" {
         width?: number | string;
         minWidth?: number;
         maxWidth?: number;
-        rowCellRenderer?: (
-            data?: unknown,
+        renderer?: (
+            data?: Row<RowData>,
             editMode?: boolean,
             onChange?: (value: string | number) => void
         ) => import("react").ReactNode;
+    }
+    interface TableMeta<TData extends RowData> {
+        editMode?: boolean;
+        updateData?: (rowIndex: number, columnId: string, value: string | number) => void;
+        getCellValue?: (row: Row, columnId: string) => unknown;
     }
 }

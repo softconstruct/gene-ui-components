@@ -20,9 +20,13 @@ import {
 interface IEditActionsProps {
     isEditMode: boolean;
     editActions?: Actions;
+    handleSave?: () => void;
+    handleCancel?: () => void;
 }
 
 interface IToolbarProps {
+    handleSave?: () => void;
+    handleCancel?: () => void;
     onGlobalFilterChange?: (value: string) => void;
     editActions?: Actions;
     rowSelectionInfo?: IRowSelectionInfo;
@@ -33,7 +37,7 @@ interface IToolbarProps {
     manageColumnsInfo?: IManageColumnsInfo;
 }
 
-const EditActions: FC<IEditActionsProps> = ({ isEditMode = false, editActions }) => {
+const EditActions: FC<IEditActionsProps> = ({ isEditMode = false, editActions, handleSave, handleCancel }) => {
     if (isEditMode) {
         return (
             <ButtonGroup size="medium">
@@ -42,7 +46,7 @@ const EditActions: FC<IEditActionsProps> = ({ isEditMode = false, editActions })
                         appearance="secondary"
                         layout="fill"
                         size="medium"
-                        onClick={editActions.secondary.onClick}
+                        onClick={handleCancel}
                         aria-label={editActions.secondary.ariaLabel || editActions.secondary.label}
                         disabled={editActions.secondary.disabled}
                     >
@@ -54,7 +58,7 @@ const EditActions: FC<IEditActionsProps> = ({ isEditMode = false, editActions })
                         appearance="primary"
                         layout="fill"
                         size="medium"
-                        onClick={editActions.primary.onClick}
+                        onClick={handleSave}
                         aria-label={editActions.primary.ariaLabel || editActions.primary.label}
                         disabled={editActions.primary.disabled}
                     >
@@ -83,6 +87,8 @@ const EditActions: FC<IEditActionsProps> = ({ isEditMode = false, editActions })
 };
 
 const Toolbar: FC<IToolbarProps> = ({
+    handleSave,
+    handleCancel,
     onGlobalFilterChange,
     editActions,
     globalFilterInfo,
@@ -149,7 +155,14 @@ const Toolbar: FC<IToolbarProps> = ({
             </div>
             <div className="dataTable__toolbar_actions">
                 {headerContent && <div className="dataTable__toolbar_content">{headerContent}</div>}
-                {editActions !== undefined && <EditActions isEditMode={!!withEditMode} editActions={editActions} />}
+                {editActions !== undefined && (
+                    <EditActions
+                        isEditMode={!!withEditMode}
+                        editActions={editActions}
+                        handleSave={handleSave}
+                        handleCancel={handleCancel}
+                    />
+                )}
                 {manageColumnsInfo?.manageColumnsTitle && (
                     <div className="dataTable__toolbar_dropdownMenu">
                         <Button

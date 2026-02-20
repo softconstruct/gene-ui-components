@@ -19,6 +19,7 @@ import THead from "@components/organisms/Table/THead";
 import Toolbar from "@components/organisms/Table/Toolbar";
 import {
     Actions,
+    EditBuffer,
     IBulkActions,
     IGlobalFilterInfo,
     IManageColumnsInfo,
@@ -29,6 +30,9 @@ import {
 
 // Styles
 import "./Table.scss";
+
+// Helpers
+import { getBufferKey, getCellValue, mergeBufferIntoData } from "./helpers";
 
 interface ITableActionHandlers {
     onSort?: (event: SortingState) => void;
@@ -46,6 +50,7 @@ interface ITableProps extends ITableActionHandlers {
     editActions?: Actions;
     headerContent?: ReactNode;
     selectAllText?: string;
+    editMode?: boolean;
     withToolbar?: boolean;
     withPagination?: boolean;
     withVirtualScroll?: boolean;
@@ -77,6 +82,7 @@ const Table: FC<ITableProps> = ({
     globalFilterInfo,
     headerContent,
     selectAllText,
+    editMode,
     withPagination,
     withVirtualScroll,
     withToolbar,
@@ -91,10 +97,22 @@ const Table: FC<ITableProps> = ({
     onColumnFilter,
     className
 }) => {
-    const cols = createColumns(columns);
+    const cols = useMemo(() => createColumns(columns), [columns]);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>("");
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [editBuffer, setEditBuffer] = useState<EditBuffer>(new Map());
+
+    const handleSave = () => {
+        const mergedData = mergeBufferIntoData(data, editBuffer);
+        editActions?.primary?.onClick?.(mergedData);
+        setEditBuffer(new Map());
+    };
+
+    const handleCancel = () => {
+        setEditBuffer(new Map());
+        editActions?.secondary?.onClick?.();
+    };
 
     const table = useReactTable({
         columns: cols,
@@ -103,6 +121,15 @@ const Table: FC<ITableProps> = ({
             sorting,
             globalFilter,
             columnFilters
+        },
+        meta: {
+            editMode,
+            updateData: (rowIndex, columnId, value) => {
+                const rowId = data[rowIndex]?.id;
+                if (rowId == null) return;
+                setEditBuffer((prev) => new Map(prev).set(getBufferKey(rowId, columnId), value));
+            },
+            getCellValue: (row: Row, columnId: string) => getCellValue(row, columnId, editBuffer)
         },
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
@@ -154,6 +181,9 @@ const Table: FC<ITableProps> = ({
                         bulkActions={bulkActions}
                         headerContent={headerContent}
                         onGlobalFilterChange={onGlobalFilterChange}
+                        withEditMode={editMode}
+                        handleSave={handleSave}
+                        handleCancel={handleCancel}
                     />
                 )}
                 <table className={classNames("table", className)} role="table">

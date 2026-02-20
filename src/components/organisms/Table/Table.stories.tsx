@@ -1,13 +1,13 @@
-import React from "react";
+import React, { FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+// Components
 import { IMenuItemProps } from "@components/molecules/Menu";
-import { Actions, IBulkActions, IManageColumnsInfo } from "@components/organisms/Table/types";
+import { Actions, IBulkActions, IManageColumnsInfo, Row } from "@components/organisms/Table/types";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import { Columns, TableData } from "../../../../stories/data/__table";
-// Components
 import Table, { ITableProps } from "./index";
 
 const SwapComponent = () => (
@@ -62,7 +62,7 @@ const manageColumnsInfo: IManageColumnsInfo = {
     isManageColumnsDisabled: false
 };
 
-const editActions: Actions = {
+const defaultEditActions: Actions = {
     primary: {
         label: "Save"
     },
@@ -115,7 +115,7 @@ const meta: Meta<ITableProps> = {
         columnResizeDirection: "ltr",
         bulkActions: bulkActionsMock,
         manageColumnsInfo,
-        editActions,
+        editActions: defaultEditActions,
         headerContent: <SwapComponent />,
         withToolbar: true,
         withPagination: true,
@@ -130,4 +130,45 @@ export default meta;
 
 type Story = StoryObj<ITableProps>;
 
-export const Default: Story = {};
+const TableComponent: FC<ITableProps> = (props) => {
+    const { data } = props;
+    const [tableData, setTableData] = useState(() => data);
+    const [editableState, setEditableState] = useState(false);
+
+    const onSave = (updatedData: Row[]) => {
+        setTableData(updatedData);
+        setEditableState(false);
+    };
+
+    const onEdit = () => {
+        setEditableState(true);
+    };
+    const onCancel = () => {
+        setEditableState(false);
+    };
+
+    const editActions = {
+        primary: { label: "Save", onClick: onSave },
+        secondary: { label: "Cancel", onClick: onCancel },
+        tertiary: { label: "Edit", onClick: onEdit }
+    };
+
+    return (
+        <div style={{ height: 700, overflow: "auto" }}>
+            <Table
+                {...props}
+                data={tableData}
+                bulkActions={bulkActionsMock}
+                editMode={editableState}
+                editActions={editActions}
+            />
+        </div>
+    );
+};
+
+export const Default: Story = {
+    render: (props: ITableProps) => {
+        return <TableComponent {...props} />;
+    },
+    args: {}
+};

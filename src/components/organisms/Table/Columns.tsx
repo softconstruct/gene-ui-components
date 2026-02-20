@@ -38,7 +38,7 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
                         </th>
                     );
                 },
-                cell: () => <Cell type={item.type} />,
+                cell: ({ row }) => <Cell type={item.type} data={row} renderer={item.renderer} />,
                 footer: () => <Cell type="Empty" />,
                 type: item.type,
                 dataKey: item.dataKey
@@ -59,8 +59,31 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
             ...item,
             id: item?.id || item.dataKey,
             header: () => item?.header || null,
-            cell: ({ row }) => {
-                return <Cell type={item.type} data={row.original[item.dataKey]} />;
+            cell: ({ row, table }) => {
+                const editMode = table.options.meta?.editMode;
+                const updateData = table.options.meta?.updateData;
+                const getCellValue = table.options.meta?.getCellValue;
+
+                const effectiveValue =
+                    getCellValue && editMode
+                        ? getCellValue(row.original, item.dataKey)
+                        : (row.original as Record<string, unknown>)[item.dataKey];
+
+                return (
+                    <Cell
+                        type={item.type}
+                        data={row}
+                        renderer={item.renderer}
+                        dataKey={item.dataKey}
+                        editMode={editMode}
+                        value={effectiveValue}
+                        onChange={
+                            updateData && item.editable !== false
+                                ? (value) => updateData(row.index, item.dataKey, value)
+                                : undefined
+                        }
+                    />
+                );
             },
             footer: () => <Cell type="Empty" />,
             type: item.type,
