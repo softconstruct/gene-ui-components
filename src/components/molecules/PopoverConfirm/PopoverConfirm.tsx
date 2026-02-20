@@ -1,23 +1,64 @@
 import React, { FC } from "react";
-import classNames from "classnames";
+
+// Components
+import Button from "@components/atoms/Button";
+import { IPopoverProps, Popover, PopoverBody, PopoverFooter, PopoverFooterActions } from "@components/atoms/Popover";
 
 // Styles
 import "./PopoverConfirm.scss";
 
-interface IPopoverConfirmProps {
+interface IPopoverConfirmProps extends IPopoverProps {
     /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     * Text label for the confirm button.
+     * @default "Confirm"
      */
-    className?: string;
-    // fill PopoverConfirm component props interface
+    confirmText?: string;
+    /**
+     * Text label for the cancel button.
+     * @default "Cancel"
+     */
+    cancelText?: string;
+    /**
+     * Callback fired when the confirm button is clicked.
+     */
+    onConfirm?: () => void;
+    /**
+     * Callback fired when the cancel button is clicked.
+     */
+    onCancel?: () => void;
 }
 
 /**
- * Popover Confirm designed to request and capture user confirmation for actions in a visually prominent yet non-intrusive manner. It overlays the primary content to present a confirmation dialog that includes clear options for users to confirm or cancel the action.
+ * PopoverConfirm is designed to request and capture user confirmation for actions
+ * in a visually prominent yet non-intrusive manner. It overlays the primary content
+ * to present a confirmation dialog that includes clear options for users to confirm
+ * or cancel the action.
  */
-const PopoverConfirm: FC<IPopoverConfirmProps> = ({ className }) => {
-    return <div className={classNames("popoverConfirm", className)}>PopoverConfirm</div>;
+const PopoverConfirm: FC<IPopoverConfirmProps> = ({
+    children,
+    confirmText = "Confirm",
+    cancelText = "Cancel",
+    onConfirm,
+    onCancel,
+    ...popoverProps
+}) => {
+    return (
+        <div className="popoverConfirm">
+            <Popover {...popoverProps}>
+                <PopoverBody>{children}</PopoverBody>
+                <PopoverFooter>
+                    <PopoverFooterActions>
+                        <Button size="small" appearance="secondary" onClick={onCancel}>
+                            {cancelText}
+                        </Button>
+                        <Button size="small" appearance="primary" onClick={onConfirm}>
+                            {confirmText}
+                        </Button>
+                    </PopoverFooterActions>
+                </PopoverFooter>
+            </Popover>
+        </div>
+    );
 };
 
 export { IPopoverConfirmProps, PopoverConfirm as default };
