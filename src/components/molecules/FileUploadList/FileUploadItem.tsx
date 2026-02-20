@@ -184,7 +184,7 @@ const FileUploadItem: FC<IFileUploadItem> = (props) => {
                     <Tooltip text={fileName} isVisible={isNameTruncated}>
                         <Text
                             ref={nameRef}
-                            className={classNames("ellipsis-text", showProgressLayout && "fileUploadList__text")}
+                            className={classNames("ellipsis-text", { fileUploadList__text: showProgressLayout })}
                             as="span"
                             variant="labelMediumMedium"
                         >
