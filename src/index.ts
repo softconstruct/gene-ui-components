@@ -68,6 +68,7 @@ export {
 export { Accordion, AccordionItem, IAccordionProps, IAccordionItemProps } from "./components/molecules/Accordion";
 export { default as NumberField, INumberFieldProps } from "./components/molecules/NumberField";
 export { default as InteractiveCard, IInteractiveCardProps } from "./components/molecules/InteractiveCard";
+export { default as Section, ISectionProps } from "./components/molecules/Section";
 export { default as Image, IImageProps } from "./components/molecules/Image";
 
 // Organisms
