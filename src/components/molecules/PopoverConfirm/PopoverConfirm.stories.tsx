@@ -26,7 +26,7 @@ const meta: Meta<IPopoverConfirmProps> = {
         cancelText: args({ control: "text", ...propCategory.content }),
         setProps: args({ control: "false", ...propCategory.functionality }),
         trigger: args({ control: "select", ...propCategory.functionality }),
-        onClose: args({ control: "false", ...propCategory.action }),
+        onOpenChange: args({ control: "false", ...propCategory.action }),
         onConfirm: args({ control: "false", ...propCategory.action }),
         onCancel: args({ control: "false", ...propCategory.action })
     },
@@ -37,7 +37,7 @@ const meta: Meta<IPopoverConfirmProps> = {
         title: "Confirm action",
         confirmText: "Confirm",
         cancelText: "Cancel",
-        onClose: () => {},
+        onOpenChange: () => {},
         onConfirm: () => {},
         onCancel: () => {}
     }
@@ -49,13 +49,21 @@ type Story = StoryObj<IPopoverConfirmProps>;
 
 const DefaultComponent: FC<IPopoverConfirmProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
+    const [open, setOpen] = useState(false);
 
     return (
         <div style={{ margin: "500px 500px", height: 1000 }}>
-            <PopoverConfirm {...props} setProps={setPropsForContent}>
+            <PopoverConfirm
+                {...props}
+                setProps={setPropsForContent}
+                open={open}
+                onOpenChange={setOpen}
+                onCancel={() => setOpen(false)}
+                onConfirm={() => setOpen(false)}
+            >
                 <span>Are you sure you want to proceed with this action?</span>
             </PopoverConfirm>
-            <Button onClick={() => {}} {...propsForContent}>
+            <Button onClick={() => setOpen(true)} {...propsForContent}>
                 Click to confirm
             </Button>
         </div>

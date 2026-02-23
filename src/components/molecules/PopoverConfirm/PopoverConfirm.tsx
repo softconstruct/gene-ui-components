@@ -1,8 +1,19 @@
-import React, { FC } from "react";
+import React, { FC, MutableRefObject, useEffect, useRef, useState } from "react";
+import { ReferenceType } from "@floating-ui/react";
 
 // Components
 import Button from "@components/atoms/Button";
-import { IPopoverProps, Popover, PopoverBody, PopoverFooter, PopoverFooterActions } from "@components/atoms/Popover";
+import {
+    IPopoverProps,
+    IPopoverRef,
+    Popover,
+    PopoverBody,
+    PopoverFooter,
+    PopoverFooterActions
+} from "@components/atoms/Popover";
+
+// Hooks
+import useClickOutside from "@hooks/useClickOutside";
 
 // Styles
 import "./PopoverConfirm.scss";
@@ -26,6 +37,10 @@ interface IPopoverConfirmProps extends IPopoverProps {
      * Callback fired when the cancel button is clicked.
      */
     onCancel?: () => void;
+    /**
+     * Callback fired when the open state changes (e.g. outside click).
+     */
+    onOpenChange?: (isOpen: boolean) => void;
 }
 
 /**
@@ -40,11 +55,43 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     cancelText = "Cancel",
     onConfirm,
     onCancel,
+    onOpenChange,
+    onClose,
+    open: controlledOpen,
+    defaultOpen = false,
     ...popoverProps
 }) => {
+    const [isOpenState, setIsOpenState] = useState(defaultOpen);
+
+    const popoverRef = useRef<IPopoverRef>({
+        floatingElement: { current: null } as MutableRefObject<ReferenceType | null>,
+        referenceElement: { current: null } as MutableRefObject<ReferenceType | null>
+    });
+
+    useEffect(() => {
+        if (controlledOpen !== undefined) {
+            setIsOpenState(controlledOpen);
+        }
+    }, [controlledOpen]);
+
+    useClickOutside(
+        (e) => {
+            const onReferenceClick =
+                e.target instanceof Node &&
+                popoverRef.current.referenceElement?.current instanceof Node &&
+                popoverRef.current.referenceElement.current.contains(e.target as Node);
+
+            if (!onReferenceClick && isOpenState) {
+                setIsOpenState(false);
+                onOpenChange?.(false);
+                onClose?.();
+            }
+        },
+        [popoverRef.current.floatingElement]
+    );
     return (
         <div className="popoverConfirm">
-            <Popover {...popoverProps}>
+            <Popover {...popoverProps} ref={popoverRef} open={isOpenState} hasCloseButton={false}>
                 <PopoverBody>{children}</PopoverBody>
                 <PopoverFooter>
                     <PopoverFooterActions>
