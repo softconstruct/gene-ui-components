@@ -1,6 +1,8 @@
 import React, { FC, useRef, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import { Info } from "@geneui/icons";
+
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
@@ -22,6 +24,7 @@ const meta: Meta<IPopoverProps> = {
         disableReposition: args({ control: "boolean", ...propCategory.states }),
         children: args({ control: "false", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),
+        Icon: args({ control: "component", ...propCategory.content }),
         setProps: args({ control: "false", ...propCategory.functionality }),
         onClose: args({ control: "false", ...propCategory.action }),
         defaultOpen: args({ control: "boolean", ...propCategory.states }),
@@ -97,7 +100,7 @@ const WithoutFooterComponent: FC<IPopoverProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
     return (
         <div style={{ margin: "500px 500px", height: 1000 }}>
-            <Popover {...props} setProps={setPropsForContent}>
+            <Popover {...props} setProps={setPropsForContent} Icon={Info}>
                 <PopoverBody>
                     <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
                 </PopoverBody>

@@ -1,5 +1,6 @@
 import React, {
     Dispatch,
+    FC,
     forwardRef,
     MutableRefObject,
     ReactNode,
@@ -30,7 +31,7 @@ import {
 import { Placement } from "@floating-ui/utils";
 import classNames from "classnames";
 
-import { Info, X } from "@geneui/icons";
+import { IconProps, X } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -191,6 +192,11 @@ export interface IPopoverProps {
      * @default true
      */
     hasCloseButton?: boolean;
+    /**
+     * Icon displayed in the popover header, next to the title.
+     * @default Info icon
+     */
+    Icon?: FC<IconProps>;
 }
 
 /**
@@ -215,7 +221,8 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             onClose,
             open,
             trigger = "click",
-            hasCloseButton = true
+            hasCloseButton = true,
+            Icon
         },
         popoverRef
     ) => {
@@ -399,7 +406,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                 {title && (
                                     <div className="popover__header">
                                         <p className="popover__title">
-                                            <Info className="popover__title_icon" size={20} />
+                                            {Icon && <Icon className="popover__title_icon" size={20} />}
                                             <span className="popover__title_text ellipsis-text">{title}</span>
                                         </p>
                                         {hasCloseButton && (
@@ -463,7 +470,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                     {title && (
                                         <div className="popover__header">
                                             <p className="popover__title">
-                                                <Info className="popover__title_icon" size={20} />
+                                                {Icon && <Icon className="popover__title_icon" size={20} />}
                                                 <span className="popover__title_text ellipsis-text">{title}</span>
                                             </p>
                                             {hasCloseButton && (
