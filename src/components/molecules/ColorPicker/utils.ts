@@ -8,8 +8,14 @@ function rgbToHex(val: RGB | RGBA): string {
     return `#${r}${g}${b}`;
 }
 
-function hexToRgb(hex: string): RGB | null {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+function hexToRgb(hex: string) {
+    // First, expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    const fullHex = hex.replace(shorthandRegex, (m, r, g, b) => r + r + g + g + b + b);
+
+    // Then run your normal 6-digit check
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(fullHex);
+
     return result
         ? {
               r: parseInt(result[1], 16),
@@ -19,4 +25,6 @@ function hexToRgb(hex: string): RGB | null {
         : null;
 }
 
-export { rgbToHex, hexToRgb };
+const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+
+export { rgbToHex, hexToRgb, clamp };

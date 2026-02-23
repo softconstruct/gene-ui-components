@@ -1,8 +1,17 @@
 .colorPicker {
     width: fit-content;
 
-    &__textFiled {
+    &__textField {
         max-width: 16rem;
+    }
+
+    &__alphaField {
+        max-width: 6rem;
+    }
+
+    &__fieldsWrapper {
+        display: flex;
+        gap: var(--guit-ref-spacing-2xsmall);
     }
 
     &__inputs {

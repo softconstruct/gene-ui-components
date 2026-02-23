@@ -18,7 +18,9 @@ const meta: Meta<IColorPickerProps> = {
         recentColors: args({ control: "false", ...propCategory.content }),
         colorPickerProps: args({ control: "false", ...propCategory.content }),
         onChange: args({ control: "false", ...propCategory.action }),
-        open: args({ control: "boolean", ...propCategory.functionality })
+        open: args({ control: "boolean", ...propCategory.functionality }),
+        format: args({ control: "select", ...propCategory.functionality }),
+        onOutsideClick: args({ control: "false", ...propCategory.action })
     },
     args: {}
 };
@@ -38,6 +40,6 @@ export const WithRecentColors: Story = {
         );
     },
     args: {
-        recentColors: ["#000", "rgb(255,255,0)", "rgba(255,0,0)"]
+        recentColors: ["#000000", "#ffff00", "#ff0000"]
     }
 };

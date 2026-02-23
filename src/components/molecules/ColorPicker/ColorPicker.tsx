@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { HexColorPicker, RgbaColorPicker } from "react-colorful";
 
@@ -8,11 +8,14 @@ import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 // Components
 import TextField from "@components/molecules/TextField";
 
+// Hooks
+import useClickOutside from "@hooks/useClickOutside";
+
 // Styles
 import "./ColorPicker.scss";
 
 // Utils
-import { hexToRgb, rgbToHex } from "./utils";
+import { clamp, hexToRgb, rgbToHex } from "./utils";
 
 export interface RGB {
     r: number;
@@ -23,6 +26,13 @@ export interface RGB {
 export interface RGBA extends RGB {
     a: number;
 }
+
+const DEFAULT_RGBA: RGBA = {
+    r: 170,
+    g: 187,
+    b: 204,
+    a: 1
+};
 
 interface IColorPickerProps {
     /**
@@ -67,6 +77,10 @@ interface IColorPickerProps {
      * Callback which is getting triggered when color is getting changed.
      */
     onChange?: (hex?: string, rgba?: RGBA | RGB | null, alpha?: number) => void;
+    /**
+     * Callback which is getting triggered when user clicks outside of picker popover.
+     */
+    onOutsideClick?: () => void;
 }
 
 /**
@@ -82,267 +96,240 @@ const ColorPicker: FC<IColorPickerProps> = ({
     recentColors,
     colorPickerProps,
     onChange,
-    open = false,
-    format = "hex"
+    open,
+    format = "hex",
+    onOutsideClick
 }) => {
-    const [alpha, setAlpha] = useState<number>(alphaValue);
-    const [selectedFormat, setSelectedFormat] = useState(format);
+    const isColorControlled = value !== undefined;
+    const isOpenControlled = open !== undefined;
 
-    const [popoverOpen, setPopoverOpen] = useState(open);
+    const [isOpen, setIsOpen] = useState<boolean>(open ?? false);
+    const [formatState, setFormatState] = useState<"rgb" | "hex">(format);
+
     const [propsForPopover, setPropsForPopover] = useState({});
 
-    const containerRef = useRef<HTMLDivElement>(null);
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
     });
 
-    const initialValue = value || defaultColor;
+    const [rgba, setRgba] = useState<RGBA>(() => {
+        const initialHex = value ?? defaultColor;
+        const rgb = initialHex ? hexToRgb(initialHex) : null;
 
-    const [color, setColor] = useState<string>(() => {
-        if (!initialValue) return "#aabbcc";
-        return typeof initialValue === "object" ? rgbToHex(initialValue) : initialValue;
+        return rgb ? { ...rgb, a: alphaValue / 100 } : { ...DEFAULT_RGBA };
     });
 
-    const [colorRGBA, setColorRGBA] = useState<RGBA>(() => {
-        const rgba = typeof initialValue === "string" ? hexToRgb(initialValue) : (initialValue as unknown as RGB);
-        const customAlpha = rgba && "a" in rgba ? (rgba as RGBA).a : undefined;
+    const hex = useMemo(() => rgbToHex(rgba), [rgba]);
+    const alpha = useMemo(() => Math.round(rgba.a * 100), [rgba.a]);
 
-        return initialValue && rgba
-            ? { ...rgba, a: customAlpha ?? alphaValue / 100 }
-            : { r: 170, g: 187, b: 204, a: alphaValue / 100 };
-    });
+    const [localHex, setLocalHex] = useState<string>(hex);
 
-    const handlePickerChange = useCallback(
-        (val: string | RGBA) => {
-            const hex = typeof val === "object" ? rgbToHex(val) : val;
-            const rgba = typeof val === "object" ? val : hexToRgb(val);
-
-            let opacity = alpha;
-
-            if (alphaEnabled && rgba && "a" in rgba && (rgba as RGBA).a !== undefined) {
-                const rgbaAlpha = (rgba as RGBA).a;
-                opacity = rgbaAlpha === 0 ? 0 : Math.round(rgbaAlpha * 100) || 100;
-                setAlpha(opacity);
-            }
-
-            setColor(hex);
-
-            if (rgba) {
-                const newRGBA = { ...rgba, a: alphaEnabled ? opacity / 100 : alphaValue / 100 } as RGBA;
-                setColorRGBA(newRGBA);
-                onChange?.(hex, newRGBA, opacity);
-            } else {
-                onChange?.(hex, null, opacity);
-            }
+    const emitChange = useCallback(
+        (next: RGBA) => {
+            onChange?.(rgbToHex(next), next, Math.round(next.a * 100));
         },
-        [alpha, alphaEnabled, alphaValue, onChange]
+        [onChange]
     );
 
-    const applyColorChange = useCallback(
-        (colorValue: string) => {
-            setColor(colorValue);
-            const rgba = hexToRgb(colorValue);
-
-            if (rgba) {
-                const newRGBA = { ...rgba, a: alpha / 100 };
-                setColorRGBA(newRGBA);
-                onChange?.(colorValue, newRGBA, alpha);
-            } else {
-                onChange?.(colorValue, null, alpha);
-            }
-        },
-        [alpha, onChange]
-    );
-
-    const handleColorInputChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            const inputValue = e.target.value;
-
-            setColor(inputValue);
-
-            const rgba = hexToRgb(inputValue);
-            if (rgba) {
-                const newRGBA = { ...rgba, a: alpha / 100 };
-                setColorRGBA(newRGBA);
-                onChange?.(inputValue, newRGBA, alpha);
-            }
-        },
-        [alpha, onChange]
-    );
-
-    const handleRGBInputColorChange = useCallback(
-        (event: React.ChangeEvent<HTMLInputElement>, schemeKey: keyof RGBA) => {
-            const { target } = event;
-            const newValue = Number(target.value);
-
-            setColorRGBA((prev) => {
-                const updatedRGBA = { ...prev, [schemeKey]: newValue };
-                const newHex = rgbToHex(updatedRGBA);
-
-                setColor(newHex);
-                onChange?.(newHex, updatedRGBA, alpha);
-
-                return updatedRGBA;
+    const updateRGBA = useCallback(
+        (updater: (prev: RGBA) => RGBA) => {
+            setRgba((prev) => {
+                const next = updater(prev);
+                emitChange(next);
+                return next;
             });
         },
-        [alpha, onChange]
+        [emitChange]
+    );
+
+    const handlePickerChange = useCallback(
+        (colorValue: string | RGBA) => {
+            if (typeof colorValue === "string") {
+                const rgb = hexToRgb(colorValue);
+                if (!rgb) return;
+
+                updateRGBA((prev) => ({ ...rgb, a: prev.a }));
+            } else {
+                updateRGBA(() => ({
+                    ...colorValue,
+                    a: alphaEnabled ? colorValue.a : alphaValue / 100
+                }));
+            }
+        },
+        [alphaEnabled, alphaValue, updateRGBA]
+    );
+
+    const applyRecentColor = useCallback(
+        (hexColor: string) => {
+            const rgb = hexToRgb(hexColor);
+            if (!rgb) return;
+
+            updateRGBA((prev) => ({ ...rgb, a: prev.a }));
+        },
+        [updateRGBA]
+    );
+    const handleHexInputChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const newValue = e.target.value;
+            setLocalHex(newValue);
+
+            const rgb = hexToRgb(newValue);
+            if (!rgb) return;
+
+            updateRGBA((prev) => ({ ...rgb, a: prev.a }));
+        },
+        [updateRGBA]
+    );
+
+    const handleRGBInputChange = useCallback(
+        (key: keyof RGB, colorValue: number) => {
+            updateRGBA((prev) => ({
+                ...prev,
+                [key]: clamp(colorValue, 0, 255)
+            }));
+        },
+        [updateRGBA]
     );
 
     const handleAlphaChange = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
-            const newAlphaValue = e.target.value;
-            const parsedAlpha = Number(newAlphaValue);
-
-            if (parsedAlpha > 100 || parsedAlpha < 0) {
-                return;
-            }
-
-            const finalAlpha = newAlphaValue === "" ? 0 : parsedAlpha;
-            const finalAlphaDecimal = finalAlpha / 100;
-
-            setAlpha(finalAlpha);
-            setColorRGBA((prev) => {
-                const updatedRGBA = { ...prev, a: finalAlphaDecimal };
-                onChange?.(color, updatedRGBA, finalAlpha);
-                return updatedRGBA;
-            });
+            const nextAlpha = clamp(Number(e.target.value), 0, 100) / 100;
+            updateRGBA((prev) => ({ ...prev, a: nextAlpha }));
         },
-        [color, onChange]
+        [updateRGBA]
     );
 
-    const handleFormatChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedFormat(e.target.value as "rgb" | "hex");
-    }, []);
+    useEffect(() => {
+        if (!isColorControlled || !value) return;
+
+        const rgb = hexToRgb(value);
+        if (!rgb) return;
+
+        setRgba((prev) => ({ ...rgb, a: prev.a }));
+    }, [value, isColorControlled]);
 
     useEffect(() => {
-        if (value) {
-            setColor(value);
-            const rgba = hexToRgb(value);
-            if (rgba) {
-                setColorRGBA((prev) => ({ ...rgba, a: prev.a }));
-            }
-        }
-    }, [value]);
+        if (!defaultColor) return;
+
+        const rgb = hexToRgb(defaultColor);
+        if (!rgb) return;
+
+        setRgba((prev) => ({ ...rgb, a: prev.a }));
+    }, [defaultColor, isColorControlled]);
 
     useEffect(() => {
-        if (alphaValue !== undefined) {
-            setAlpha(alphaValue);
-            setColorRGBA((prev) => ({ ...prev, a: alphaValue / 100 }));
-        }
+        setRgba((prev) => ({
+            ...prev,
+            a: clamp(alphaValue, 0, 100) / 100
+        }));
     }, [alphaValue]);
 
     useEffect(() => {
-        setPopoverOpen(open);
-    }, [open]);
+        if (!isOpenControlled || open === undefined) return;
+        setIsOpen(open);
+    }, [open, isOpenControlled]);
 
     useEffect(() => {
-        setSelectedFormat(format);
+        setFormatState(format);
     }, [format]);
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-            const target = event.target as Node;
-            const isInsideContainer = containerRef.current?.contains(target);
-            // @ts-expect-error: todo check this and remove
-            const isInsidePopover = popoverRef.current?.floatingElement?.current?.contains(target);
-
-            if (!isInsideContainer && !isInsidePopover) {
-                setPopoverOpen(false);
-            }
-        };
-
-        if (popoverOpen) {
-            document.addEventListener("mousedown", handleClickOutside);
-            document.addEventListener("touchstart", handleClickOutside);
+    useClickOutside(() => {
+        if (!isOpenControlled) {
+            setIsOpen(false);
+            return;
         }
+        onOutsideClick?.();
+    }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement]);
 
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-            document.removeEventListener("touchstart", handleClickOutside);
-        };
-    }, [popoverOpen]);
-
+    // check if this is correct
     const ColorSquareIcon = useCallback(
-        () => (
-            <Square
-                size={20}
-                style={{ color: `rgba(${colorRGBA.r}, ${colorRGBA.g}, ${colorRGBA.b}, ${colorRGBA.a})` }}
-            />
-        ),
-        [colorRGBA]
+        () => <Square size={20} style={{ color: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})` }} />,
+        [rgba, localHex]
     );
 
     return (
-        <div className={classNames("colorPicker", className)} ref={containerRef}>
-            <div {...propsForPopover}>
+        <div className={classNames("colorPicker", className)}>
+            <div className="colorPicker__fieldsWrapper" {...propsForPopover}>
                 <TextField
-                    className="colorPicker__textFiled"
+                    className="colorPicker__textField"
                     readOnly
-                    onFocus={() => setPopoverOpen(true)}
-                    value={color}
+                    onFocus={() => !isOpenControlled && setIsOpen(true)}
+                    value={hex}
                     IconBefore={ColorSquareIcon}
                 />
+                {alphaEnabled && (
+                    <TextField className="colorPicker__alphaField" onChange={handleAlphaChange} value={alpha} />
+                )}
             </div>
 
             <Popover
-                onClose={() => setPopoverOpen(false)}
+                onClose={() => !isOpenControlled && setIsOpen(false)}
                 withArrow={false}
                 ref={popoverRef}
                 position="bottom-left"
-                open={popoverOpen}
+                open={isOpen}
                 setProps={setPropsForPopover}
             >
                 <PopoverBody withPadding={false}>
                     <div className="colorPicker__wrapper">
                         {alphaEnabled ? (
                             <RgbaColorPicker
-                                color={colorRGBA}
+                                color={rgba}
                                 onChange={handlePickerChange as (val: RGBA) => void}
                                 {...colorPickerProps}
                             />
                         ) : (
                             <HexColorPicker
-                                color={color}
+                                color={hex}
                                 onChange={handlePickerChange as (val: string) => void}
                                 {...colorPickerProps}
                             />
                         )}
                         <div className="colorPicker__inputs">
-                            <select name="color_variants" value={selectedFormat} onChange={handleFormatChange}>
+                            <select
+                                name="color_formats"
+                                value={formatState}
+                                onChange={(e) => setFormatState(e.target.value as "rgb" | "hex")}
+                            >
                                 <option value="rgb">RGB</option>
                                 <option value="hex">HEX</option>
                             </select>
-                            {selectedFormat === "hex" ? (
+                            {formatState === "hex" ? (
                                 <TextField
                                     type="text"
                                     size="small"
-                                    value={color}
-                                    onChange={handleColorInputChange}
+                                    value={localHex}
+                                    onChange={handleHexInputChange}
                                     placeholder="Hex"
+                                    autoComplete="off"
+                                    className="colorPicker__hexInput"
                                 />
                             ) : (
                                 <div className="colorPicker__rgbInputs">
                                     <TextField
                                         size="small"
-                                        value={colorRGBA.r}
+                                        value={rgba.r}
+                                        autoComplete="off"
                                         type="number"
                                         name="r"
-                                        onChange={(e) => handleRGBInputColorChange(e, "r")}
+                                        onChange={(e) => handleRGBInputChange("r", Number(e.target.value))}
                                     />
                                     <TextField
                                         size="small"
-                                        value={colorRGBA.g}
+                                        autoComplete="off"
+                                        value={rgba.g}
                                         type="number"
                                         name="g"
-                                        onChange={(e) => handleRGBInputColorChange(e, "g")}
+                                        onChange={(e) => handleRGBInputChange("g", Number(e.target.value))}
                                     />
                                     <TextField
                                         size="small"
-                                        value={colorRGBA.b}
+                                        autoComplete="off"
+                                        value={rgba.b}
                                         type="number"
                                         name="b"
-                                        onChange={(e) => handleRGBInputColorChange(e, "b")}
+                                        onChange={(e) => handleRGBInputChange("b", Number(e.target.value))}
                                     />
                                 </div>
                             )}
@@ -352,7 +339,9 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                     type="number"
                                     size="small"
                                     placeholder="Alpha"
+                                    autoComplete="off"
                                     value={alpha}
+                                    className="colorPicker__alphaInput"
                                     onChange={handleAlphaChange}
                                 />
                             )}
@@ -364,7 +353,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                     type="button"
                                     className="colorPicker__recentColor"
                                     aria-label={`Select recent color ${recentColor}`}
-                                    onClick={() => applyColorChange(recentColor)}
+                                    onClick={() => applyRecentColor(recentColor)}
                                     style={{
                                         background: recentColor
                                     }}
