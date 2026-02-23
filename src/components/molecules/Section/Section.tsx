@@ -109,9 +109,7 @@ const Section: FC<ISectionProps> = ({
                 })}
             >
                 <Scrollbar>
-                    <div className={classNames("section__content", { section__content_withPadding: inset })}>
-                        {children}
-                    </div>
+                    <div className={classNames("section__content", { section__content_inset: inset })}>{children}</div>
                 </Scrollbar>
             </div>
             {(footerSwappable || primaryAction) && (

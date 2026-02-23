@@ -106,19 +106,19 @@ describe("Section", () => {
         expect(wrapper.find(".section__content").exists()).toBeTruthy();
     });
 
-    it("does not apply withPadding class when false", () => {
+    it("does not apply inset class when false", () => {
         const wrapper = setup.setProps({ inset: false });
-        expect(wrapper.find(".section__content").hasClass("section__content_withPadding")).toBeFalsy();
+        expect(wrapper.find(".section__content").hasClass("section__content_inset")).toBeFalsy();
     });
 
-    it("applies withPadding class to content when inset is true", () => {
+    it("applies inset class to content when inset is true", () => {
         const wrapper = setup.setProps({ inset: true });
-        expect(wrapper.find(".section__content").hasClass("section__content_withPadding")).toBeTruthy();
+        expect(wrapper.find(".section__content").hasClass("section__content_inset")).toBeTruthy();
     });
 
-    it("does not apply withPadding class to content when inset is false", () => {
+    it("does not apply inset class to content when inset is false", () => {
         const wrapper = setup.setProps({ inset: false });
-        expect(wrapper.find(".section__content").hasClass("section__content_withPadding")).toBeFalsy();
+        expect(wrapper.find(".section__content").hasClass("section__content_inset")).toBeFalsy();
     });
 
     it("applies hasHeader class to body when title is provided", () => {
@@ -189,7 +189,7 @@ describe("Section", () => {
     });
 
     it("has default inset as true", () => {
-        expect(setup.find(".section__content").hasClass("section__content_withPadding")).toBeTruthy();
+        expect(setup.find(".section__content").hasClass("section__content_inset")).toBeTruthy();
     });
 
     it("renders complete section with all parts", () => {
