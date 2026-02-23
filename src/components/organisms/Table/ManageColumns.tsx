@@ -76,7 +76,6 @@ const ManageColumns: FC<IManageColumnsProps> = ({ label, onMenuClose, onColumnSe
                             appearance="primary"
                             layout="fill"
                             size="medium"
-                            onClick={actionsInfo.primary.onClick}
                             aria-label={actionsInfo.primary.ariaLabel || actionsInfo.primary.label}
                             disabled={actionsInfo.primary.disabled}
                         >

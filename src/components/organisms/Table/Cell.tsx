@@ -1,192 +1,168 @@
-import React, { ChangeEvent, FC, JSX } from "react";
-import { Row as RowData } from "@tanstack/react-table";
+import React, { FC } from "react";
 
 import { ChevronRight } from "@geneui/icons";
 
-import Button from "@components/atoms/Button";
 // Components
+import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
 import Checkbox from "@components/molecules/Checkbox";
-import TextField, { ITextFieldProps } from "@components/molecules/TextField";
 import Tooltip from "@components/molecules/Tooltip";
+import CellEdit from "@components/organisms/Table/CellEdit";
 
-import { CellType, Row } from "./types";
-
-interface ICellProps {
-    dataKey?: string;
-    type: CellType;
-    data?: RowData<Row>;
-    value?: unknown;
-    editMode?: boolean;
-    onChange?: (value: string | number) => void;
-    renderer?: (data?: RowData<Row>, editMode?: boolean, onChange?: (value: string | number) => void) => JSX.Element;
-}
+import { CellType, ICellProps } from "./types";
 
 type CellTypesUnion = Exclude<CellType, "Group" | "Number">;
 
-type CellMapType = Record<
-    Exclude<CellTypesUnion, "Group" | "Number">,
-    (
-        props: Omit<ICellProps, "type"> & {
-            inputType?: ITextFieldProps["type"];
-        }
-    ) => JSX.Element
->;
+const emptyContent = <div className="table__content table__content_empty" />;
 
-const CellMap: CellMapType = {
-    Empty: () => <div className="table__content table__content_empty" />,
-    RowCheckbox: () => <Checkbox name="column" value="column" />,
-    Expand: () => <Button appearance="secondary" layout="text" size="small" Icon={ChevronRight} />,
-    Graph: ({ data, renderer, dataKey }) => {
-        if (!data || !dataKey) return <div className="table__content table__content_empty" />;
+const EmptyCell: FC<ICellProps> = () => emptyContent;
 
-        if (renderer) return renderer(data);
+const RowCheckboxCell: FC<ICellProps> = () => <Checkbox name="column" value="column" />;
 
-        return <div className="table__content table__content_empty" />;
-    },
-    Text: ({ data, renderer, dataKey, value, editMode, inputType, onChange }) => {
-        if (!data || !dataKey) return <div className="table__content table__content_empty" />;
-        if (renderer) return renderer(data);
-        const displayValue = value !== undefined ? value : data?.original[dataKey];
-        if (editMode) {
-            return (
-                <TextField
-                    type={inputType ?? "text"}
-                    value={String(displayValue ?? "")}
-                    onChange={(e) => onChange?.(e.target.value)}
-                />
-            );
-        }
-        return (
-            <Text as="span" className="table__td_text ellipsis-text">
-                {String(displayValue ?? "")}
-            </Text>
-        );
-    },
-    LongText: ({ data, renderer, dataKey, editMode, value, inputType, onChange }) => {
-        if (!data || !dataKey) return <div className="table__content table__content_empty" />;
+const ExpandCell: FC<ICellProps> = () => (
+    <Button appearance="secondary" layout="text" size="small" Icon={ChevronRight} />
+);
 
-        if (renderer) return renderer(data);
-        const displayValue = value !== undefined ? value : data?.original[dataKey];
-        if (editMode) {
-            const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-                onChange?.(e.target.value);
-            };
-
-            return (
-                <TextField
-                    type={inputType}
-                    placeholder="Row Text"
-                    value={String(displayValue ?? "")}
-                    {...(onChange && {
-                        onChange: handleInputChange
-                    })}
-                />
-            );
-        }
-
-        return (
-            <Tooltip text={String(displayValue ?? "")}>
-                <Text as="span" className="table__td_text">
-                    {String(displayValue ?? "")}
-                </Text>
-            </Tooltip>
-        );
-    },
-    Dropdown: ({ data, renderer, value, dataKey }) => {
-        if (!data || !dataKey) return <div className="table__content table__content_empty" />;
-        if (renderer) return renderer(data);
-        const displayValue = value !== undefined ? value : data?.original[dataKey];
-        return (
-            <Text as="span" className="table__td_text ellipsis-text">
-                {String(displayValue ?? "")}
-            </Text>
-        );
-    },
-    Status: (props) => {
-        const { data, dataKey, renderer, editMode, onChange } = props;
-        if (!data || !dataKey) return <div className="table__content table__content_empty" />;
-
-        if (renderer) return renderer(data, editMode, onChange);
-
-        return <div className="table__content table__content_empty" />;
-    },
-    Pill: (props) => {
-        const { data, dataKey, renderer, editMode, onChange } = props;
-        if (!data || !dataKey) return <div className="table__content table__content_empty" />;
-
-        if (renderer) return renderer(data, editMode, onChange);
-
-        return <div className="table__content table__content_empty" />;
-    },
-    Icon: ({ data, dataKey, renderer, editMode, onChange }) => {
-        if (!data || !dataKey) return <div className="table__content table__content_empty" />;
-
-        if (renderer) return renderer(data, editMode, onChange);
-        return <div className="table__content table__content_empty" />;
-    },
-    Flag: ({ data, dataKey, renderer, editMode, onChange }) => {
-        if (!data || !dataKey) return <div className="table__content table__content_empty" />;
-
-        if (renderer) return renderer(data, editMode, onChange);
-        return <div className="table__content table__content_empty" />;
-    },
-    Checkbox: (props) => {
-        const { data, dataKey, renderer } = props;
-        if (!data || !dataKey) return <div className="table__content table__content_empty" />;
-
-        if (renderer) return renderer(data);
-        return <div className="table__content table__content_empty" />;
-        // const value = data.original[dataKey] as string;
-
-        // const handleChange = () => {
-        //     onChange?.(value);
-        // };
-        //
-        // if (editMode)
-        //     return (
-        //         <Checkbox
-        //             {...props}
-        //             value={value}
-        //             checked={Boolean(value)}
-        //             {...(onChange && {
-        //                 onChange: handleChange
-        //             })}
-        //         />
-        //     );
-        //
-        // return <Checkbox name="item" value={value} readOnly />;
-    },
-    Switch: ({ data, dataKey, value, renderer }) => {
-        if (!data || !dataKey) return <div className="table__content table__content_empty" />;
-
-        if (renderer) return renderer(data);
-        const displayValue = value !== undefined ? value : data?.original[dataKey];
-        return (
-            <Text as="span" className="table__td_text">
-                {String(displayValue ?? "")}
-            </Text>
-        );
-    }
+const RendererOnlyCell: FC<ICellProps> = ({ data, dataKey, renderer, editMode, onChange }) => {
+    if (data && dataKey && renderer) return renderer(data, editMode, onChange);
+    return emptyContent;
 };
 
-const Cell: FC<ICellProps> = ({ type, renderer, data, dataKey, value, onChange, editMode }) => {
-    const cellTypeWithNumber = type === "Number" ? "Text" : type;
-
-    const CellItem = CellMap[cellTypeWithNumber as CellTypesUnion];
-
-    if (!CellItem) return null;
+const TextCell: FC<ICellProps> = ({ data, renderer, dataKey, value, editMode, inputType, onChange, type }) => {
+    if (!data || !dataKey) return emptyContent;
+    if (renderer) return renderer(data);
+    const displayValue = value !== undefined ? value : data?.original[dataKey];
+    if (editMode)
+        return (
+            <CellEdit
+                type={type === "Number" ? "Number" : "Text"}
+                dataKey={dataKey}
+                value={displayValue}
+                rowId={data.original.id}
+                inputType={inputType}
+                onChange={onChange}
+            />
+        );
 
     return (
-        <CellItem
-            data={data}
-            renderer={renderer}
-            dataKey={dataKey}
-            value={value}
-            editMode={editMode}
-            onChange={onChange}
-        />
+        <Text as="span" className="table__td_text ellipsis-text">
+            {String(displayValue ?? "")}
+        </Text>
     );
 };
 
-export { ICellProps, Cell as default };
+const LongTextCell: FC<ICellProps> = ({ data, renderer, dataKey, editMode, value, onChange }) => {
+    if (!data || !dataKey) return emptyContent;
+    if (renderer) return renderer(data);
+    const displayValue = value !== undefined ? value : data?.original[dataKey];
+    if (editMode)
+        return (
+            <CellEdit
+                type="LongText"
+                dataKey={dataKey}
+                value={displayValue}
+                rowId={data.original.id}
+                onChange={onChange}
+            />
+        );
+
+    return (
+        <Tooltip text={String(displayValue ?? "")}>
+            <Text as="span" className="table__td_text">
+                {String(displayValue ?? "")}
+            </Text>
+        </Tooltip>
+    );
+};
+
+const DropdownCell: FC<ICellProps> = ({ data, renderer, value, dataKey, editMode, onChange }) => {
+    if (!data || !dataKey) return emptyContent;
+    if (renderer) return renderer(data);
+    const displayValue = value !== undefined ? value : data?.original[dataKey];
+    if (editMode)
+        return (
+            <CellEdit
+                type="Dropdown"
+                dataKey={dataKey}
+                value={displayValue}
+                rowId={data.original.id}
+                onChange={onChange}
+            />
+        );
+
+    return (
+        <Text as="span" className="table__td_text ellipsis-text">
+            {String(displayValue ?? "")}
+        </Text>
+    );
+};
+
+const CheckboxCell: FC<ICellProps> = ({ data, dataKey, renderer, editMode, value, onChange }) => {
+    if (!data || !dataKey) return emptyContent;
+    if (renderer) return renderer(data);
+    const displayValue = value !== undefined ? value : data?.original[dataKey];
+    if (editMode)
+        return (
+            <CellEdit
+                type="Checkbox"
+                dataKey={dataKey}
+                value={displayValue}
+                rowId={data.original.id}
+                onChange={onChange}
+            />
+        );
+
+    return (
+        <Text as="span" className="table__td_text">
+            {String(displayValue ?? "")}
+        </Text>
+    );
+};
+
+const SwitchCell: FC<ICellProps> = ({ data, dataKey, value, renderer, editMode, onChange }) => {
+    if (!data || !dataKey) return emptyContent;
+    if (renderer) return renderer(data);
+    const displayValue = value !== undefined ? value : data?.original[dataKey];
+    if (editMode)
+        return (
+            <CellEdit
+                type="Switch"
+                dataKey={dataKey}
+                value={displayValue}
+                rowId={data.original.id}
+                onChange={onChange}
+            />
+        );
+
+    return (
+        <Text as="span" className="table__td_text">
+            {String(displayValue ?? "")}
+        </Text>
+    );
+};
+
+const CellMap: Record<CellTypesUnion, FC<ICellProps>> = {
+    Empty: EmptyCell,
+    RowCheckbox: RowCheckboxCell,
+    Expand: ExpandCell,
+    Graph: RendererOnlyCell,
+    Status: RendererOnlyCell,
+    Pill: RendererOnlyCell,
+    Icon: RendererOnlyCell,
+    Flag: RendererOnlyCell,
+    Text: TextCell,
+    LongText: LongTextCell,
+    Dropdown: DropdownCell,
+    Checkbox: CheckboxCell,
+    Switch: SwitchCell
+};
+
+const Cell: FC<ICellProps> = (props) => {
+    const { type } = props;
+    const cellTypeForMap = type === "Number" ? "Text" : type;
+    const CellItem = CellMap[cellTypeForMap as CellTypesUnion];
+    if (!CellItem) return null;
+    return <CellItem {...props} />;
+};
+
+export { Cell as default };

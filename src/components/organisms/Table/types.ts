@@ -1,4 +1,4 @@
-import { FC, JSX, ReactElement, ReactNode } from "react";
+import { FC, JSX, ReactNode } from "react";
 import { ColumnDef, Row as RowData } from "@tanstack/react-table";
 import { HeaderContext } from "@tanstack/table-core/build/lib/core/headers";
 
@@ -9,7 +9,10 @@ import { IPillProps } from "@components/atoms/Pill";
 import { ICheckboxProps } from "@components/molecules/Checkbox";
 import { IMenuItemProps } from "@components/molecules/Menu";
 import { ISwitchProps } from "@components/molecules/Switch";
+import { ITextFieldProps } from "@components/molecules/TextField";
 import { IManageColumnsProps } from "@components/organisms/Table/ManageColumns";
+
+import type { TableColumns } from "./table-columns";
 
 export type CellType =
     | "Group"
@@ -51,7 +54,7 @@ export type Row = TRowCells & {
     expandedData?: () => ReactNode | null;
 };
 
-type BaseTableColumn<T> = ColumnDef<T extends object ? T : never> & {
+export type BaseTableColumn<T> = ColumnDef<T extends object ? T : never> & {
     id?: string;
     header?: string | null;
     footer?: (props: HeaderContext<T extends object ? T : never, unknown>) => ReactNode;
@@ -76,36 +79,13 @@ type BaseTableColumn<T> = ColumnDef<T extends object ? T : never> & {
     isSelectFilter?: boolean;
     filterOptions?: string[];
     resizable?: boolean;
-    columns?: BaseTableColumn<T>[];
+    columns?: TableColumns<T>[];
     width?: number | string;
     minWidth?: number;
     maxWidth?: number;
 };
 
-type StatusOrPillColumn<T> = BaseTableColumn<T> & {
-    type: "Status" | "Pill";
-    renderer: (
-        data?: RowData<Row>,
-        editMode?: boolean,
-        onChange?: (value: string | number) => void
-    ) => ReactElement<IPillProps>;
-};
-
-type IconOrFlagColumn<T> = BaseTableColumn<T> & {
-    type: "Icon" | "Flag";
-    renderer: (
-        data?: RowData<Row>,
-        editMode?: boolean,
-        onChange?: (value: string | number) => void
-    ) => ReactElement<IconProps>;
-};
-
-type DefaultColumn<T> = BaseTableColumn<T> & {
-    type: Exclude<CellType, "Status" | "Pill" | "Icon" | "Flag">;
-    renderer?: (data?: RowData<Row>, editMode?: boolean, onChange?: (value: string | number) => void) => JSX.Element;
-};
-
-export type TableColumns<T> = StatusOrPillColumn<T> | IconOrFlagColumn<T> | DefaultColumn<T>;
+export type { TableColumns } from "./table-columns";
 
 export interface IRowSelectionInfo {
     selectedRowsLabel?: string;
@@ -153,3 +133,18 @@ export type HeaderActionsType = Extract<CellType, "Empty" | "Expand" | "RowCheck
 
 export type RowId = string | number;
 export type EditBuffer = Map<string, unknown>;
+
+export type EditableCellType = "Text" | "Number" | "LongText" | "Checkbox" | "Switch" | "Dropdown";
+
+export interface ICellProps {
+    type: CellType | EditableCellType;
+    dataKey?: string;
+    data?: RowData<Row>;
+    value?: unknown;
+    rowId?: string | number;
+    editMode?: boolean;
+    onChange?: (value: string | number | boolean) => void;
+    inputType?: ITextFieldProps["type"];
+    options?: { value: string; label: string }[];
+    renderer?: (data?: RowData<Row>, editMode?: boolean, onChange?: (value: string | number) => void) => JSX.Element;
+}

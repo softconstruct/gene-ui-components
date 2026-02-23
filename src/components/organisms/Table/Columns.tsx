@@ -69,6 +69,11 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
                         ? getCellValue(row.original, item.dataKey)
                         : (row.original as Record<string, unknown>)[item.dataKey];
 
+                const dropdownOptions =
+                    item.type === "Dropdown" && item.filterOptions?.length
+                        ? item.filterOptions.map((o) => ({ value: o, label: o }))
+                        : undefined;
+
                 return (
                     <Cell
                         type={item.type}
@@ -77,6 +82,8 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
                         dataKey={item.dataKey}
                         editMode={editMode}
                         value={effectiveValue}
+                        inputType={item.type === "Number" ? "number" : undefined}
+                        options={dropdownOptions}
                         onChange={
                             updateData && item.editable !== false
                                 ? (value) => updateData(row.index, item.dataKey, value)

@@ -58,7 +58,7 @@ declare module "@tanstack/table-core" {
     }
     interface TableMeta<TData extends RowData> {
         editMode?: boolean;
-        updateData?: (rowIndex: number, columnId: string, value: string | number) => void;
+        updateData?: (rowIndex: number, columnId: string, value: string | number | boolean) => void;
         getCellValue?: (row: Row, columnId: string) => unknown;
     }
 }
