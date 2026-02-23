@@ -193,8 +193,8 @@ export interface IPopoverProps {
      */
     hasCloseButton?: boolean;
     /**
-     * Icon displayed in the popover header, next to the title.
-     * @default Info icon
+     * Popover header icon <br/>
+     * The `Icon` prop accepts a JSX element that will be displayed as an avatar.
      */
     Icon?: FC<IconProps>;
 }

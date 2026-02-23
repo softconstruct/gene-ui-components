@@ -1,9 +1,11 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
+import { ErrorFilled, Info, TriangleAlert } from "@geneui/icons";
+
 import GeneUIProvider from "../../providers/GeneUIProvider";
-import Button from "../Button";
 // Components
+import Button from "../Button";
 import { IPopoverProps, Popover, PopoverBody } from "./index";
 import PopoverFooter from "./PopoverFooter";
 import PopoverFooterActions from "./PopoverFooterActions";
@@ -94,5 +96,36 @@ describe("Popover", () => {
             title: "Test Title"
         });
         expect(provider().find(".popover__close").exists()).toBeTruthy();
+    });
+
+    it("does not render icon when Icon prop is not provided", () => {
+        setup.setProps({
+            open: true,
+            title: "Test Title"
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeFalsy();
+    });
+
+    it("renders custom Icon prop correctly", () => {
+        setup.setProps({
+            open: true,
+            title: "Test Title",
+            Icon: ErrorFilled
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+    });
+
+    it("renders different custom icons correctly", () => {
+        setup.setProps({
+            open: true,
+            title: "Test Title",
+            Icon: TriangleAlert
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+
+        setup.setProps({
+            Icon: Info
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
     });
 });
