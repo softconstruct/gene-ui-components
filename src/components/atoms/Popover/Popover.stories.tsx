@@ -18,6 +18,7 @@ const meta: Meta<IPopoverProps> = {
         fitReference: args({ control: "boolean", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states, defaultValue: undefined }),
         withArrow: args({ control: "boolean", ...propCategory.states }),
+        hasCloseButton: args({ control: "boolean", ...propCategory.functionality }),
         disableReposition: args({ control: "boolean", ...propCategory.states }),
         children: args({ control: "false", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),
@@ -31,7 +32,8 @@ const meta: Meta<IPopoverProps> = {
         position: "bottom-left",
         size: "medium",
         title: "Popover",
-        onClose: () => {}
+        onClose: () => {},
+        hasCloseButton: true
     }
 };
 

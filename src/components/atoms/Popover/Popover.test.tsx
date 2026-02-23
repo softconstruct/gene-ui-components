@@ -86,4 +86,13 @@ describe("Popover", () => {
         });
         expect(provider().find(".popover__arrowPath").exists()).toBeTruthy();
     });
+
+    it("renders hasCloseButton prop correctly", () => {
+        setup.setProps({
+            hasCloseButton: true,
+            open: true,
+            title: "Test Title"
+        });
+        expect(provider().find(".popover__close").exists()).toBeTruthy();
+    });
 });

@@ -186,6 +186,11 @@ export interface IPopoverProps {
      * Can be either "click" or "hover".
      */
     trigger?: "click" | "hover";
+    /**
+     * Determines whether the close (X) button is displayed in the popover's header.
+     * @default true
+     */
+    hasCloseButton?: boolean;
 }
 
 /**
@@ -209,7 +214,8 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             disableReposition = false,
             onClose,
             open,
-            trigger = "click"
+            trigger = "click",
+            hasCloseButton = true
         },
         popoverRef
     ) => {
@@ -396,14 +402,16 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                             <Info className="popover__title_icon" size={20} />
                                             <span className="popover__title_text ellipsis-text">{title}</span>
                                         </p>
-                                        <Button
-                                            Icon={X}
-                                            size="small"
-                                            appearance="secondary"
-                                            layout="text"
-                                            className="popover__close"
-                                            onClick={() => setPopoverOpened(false)}
-                                        />
+                                        {hasCloseButton && (
+                                            <Button
+                                                Icon={X}
+                                                size="small"
+                                                appearance="secondary"
+                                                layout="text"
+                                                className="popover__close"
+                                                onClick={() => setPopoverOpened(false)}
+                                            />
+                                        )}
                                     </div>
                                 )}
                                 {children}
@@ -458,14 +466,16 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                                 <Info className="popover__title_icon" size={20} />
                                                 <span className="popover__title_text ellipsis-text">{title}</span>
                                             </p>
-                                            <Button
-                                                Icon={X}
-                                                size="small"
-                                                appearance="secondary"
-                                                layout="text"
-                                                className="popover__close"
-                                                onClick={() => setPopoverOpened(false)}
-                                            />
+                                            {hasCloseButton && (
+                                                <Button
+                                                    Icon={X}
+                                                    size="small"
+                                                    appearance="secondary"
+                                                    layout="text"
+                                                    className="popover__close"
+                                                    onClick={() => setPopoverOpened(false)}
+                                                />
+                                            )}
                                         </div>
                                     )}
                                     {children}
