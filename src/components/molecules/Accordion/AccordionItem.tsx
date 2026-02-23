@@ -1,6 +1,6 @@
 import React, { FC, MouseEvent, ReactNode, useContext, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
-import { nanoid } from "nanoid";
+import { nanoid } from "nanoid/non-secure";
 
 import { ChevronDown, ChevronLeft, ChevronRight, IconProps } from "@geneui/icons";
 
