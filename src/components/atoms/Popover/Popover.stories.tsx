@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from "react";
+import React, { ComponentType, FC, useRef, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Info } from "@geneui/icons";
@@ -7,12 +7,15 @@ import { Info } from "@geneui/icons";
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
 import Button from "../Button";
-import { IPopoverProps, Popover, PopoverBody, PopoverFooter, PopoverFooterActions } from "./index";
+import { IPopoverProps, Popover, PopoverBody, PopoverFooter } from "./index";
 
 const meta: Meta<IPopoverProps> = {
     title: "Atoms/Popover",
     component: Popover,
-    subcomponents: { PopoverBody, PopoverFooter, PopoverFooterActions },
+    subcomponents: {
+        PopoverBody: PopoverBody as ComponentType<unknown>,
+        PopoverFooter: PopoverFooter as ComponentType<unknown>
+    },
     argTypes: {
         position: args({ control: "select", ...propCategory.appearance }),
         margin: args({ control: "number", ...propCategory.appearance }),
@@ -68,20 +71,24 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
                 </PopoverBody>
 
                 {!fitReference && size !== "small" && (
-                    <PopoverFooter>
+                    <PopoverFooter
+                        actions={[
+                            {
+                                text: "Secondary",
+                                appearance: "secondary",
+                                onClick: () => {}
+                            },
+                            {
+                                text: "Primary",
+                                appearance: "primary",
+                                onClick: () => {}
+                            }
+                        ]}
+                    >
                         <div
                             className="swapComponent"
                             style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
                         />
-
-                        <PopoverFooterActions>
-                            <Button onClick={() => {}} size="medium" appearance="inverse">
-                                Primary
-                            </Button>
-                            <Button onClick={() => {}} size="medium" appearance="primary">
-                                Secondary
-                            </Button>
-                        </PopoverFooterActions>
                     </PopoverFooter>
                 )}
             </Popover>
@@ -124,20 +131,24 @@ const WithoutHeaderComponent: FC<IPopoverProps> = (props) => {
                 <PopoverBody>
                     <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
                 </PopoverBody>
-                <PopoverFooter>
+                <PopoverFooter
+                    actions={[
+                        {
+                            text: "Primary",
+                            appearance: "inverse",
+                            onClick: () => {}
+                        },
+                        {
+                            text: "Secondary",
+                            appearance: "primary",
+                            onClick: () => {}
+                        }
+                    ]}
+                >
                     <div
                         className="swapComponent"
                         style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
                     />
-
-                    <PopoverFooterActions>
-                        <Button onClick={() => {}} size="medium" appearance="inverse">
-                            Primary
-                        </Button>
-                        <Button onClick={() => {}} size="medium" appearance="primary">
-                            Secondary
-                        </Button>
-                    </PopoverFooterActions>
                 </PopoverFooter>
             </Popover>
             <Button onClick={() => {}} {...propsForContent}>
