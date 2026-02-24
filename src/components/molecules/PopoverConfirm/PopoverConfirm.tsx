@@ -1,5 +1,8 @@
 import React, { FC, MutableRefObject, useEffect, useRef, useState } from "react";
 import { ReferenceType } from "@floating-ui/react";
+import classNames from "classnames";
+
+import { ErrorFilled, IconProps, TriangleAlert } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -20,27 +23,32 @@ import "./PopoverConfirm.scss";
 
 interface IPopoverConfirmProps extends IPopoverProps {
     /**
-     * Text label for the confirm button.
+     * Text label for the primary button.
      * @default "Confirm"
      */
-    confirmText?: string;
+    primaryButtonText?: string;
     /**
-     * Text label for the cancel button.
+     * Text label for the secondary button.
      * @default "Cancel"
      */
-    cancelText?: string;
+    secondaryButtonText?: string;
     /**
-     * Callback fired when the confirm button is clicked.
+     * Callback fired when the primary button is clicked.
      */
     onConfirm?: () => void;
     /**
-     * Callback fired when the cancel button is clicked.
+     * Callback fired when the secondary button is clicked.
      */
     onCancel?: () => void;
     /**
      * Callback fired when the open state changes (e.g. outside click).
      */
     onOpenChange?: (isOpen: boolean) => void;
+    /**
+     * Visual status of the confirm dialog. Changes the header icon and the primary button appearance.<br/>
+     * Possible values: `error | warning`
+     */
+    status?: "error" | "warning";
 }
 
 /**
@@ -51,14 +59,15 @@ interface IPopoverConfirmProps extends IPopoverProps {
  */
 const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     children,
-    confirmText = "Confirm",
-    cancelText = "Cancel",
+    primaryButtonText = "Confirm",
+    secondaryButtonText = "Cancel",
     onConfirm,
     onCancel,
     onOpenChange,
     onClose,
     open: controlledOpen,
     defaultOpen = false,
+    status = "warning",
     ...popoverProps
 }) => {
     const [isOpenState, setIsOpenState] = useState(defaultOpen);
@@ -89,17 +98,25 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
         },
         [popoverRef.current.floatingElement]
     );
+
+    const primaryButtonAppearance = status === "error" ? "danger" : "primary";
+
+    const IconComponent = status === "error" ? ErrorFilled : TriangleAlert;
+    const headerIcon: FC<IconProps> = ({ className, ...props }: IconProps) => (
+        <IconComponent {...props} className={classNames(className, `popoverConfirm__title_icon_${status}`)} size={20} />
+    );
+
     return (
         <div className="popoverConfirm">
-            <Popover {...popoverProps} ref={popoverRef} open={isOpenState} hasCloseButton={false}>
+            <Popover {...popoverProps} ref={popoverRef} open={isOpenState} hasCloseButton={false} Icon={headerIcon}>
                 <PopoverBody>{children}</PopoverBody>
                 <PopoverFooter>
                     <PopoverFooterActions>
                         <Button size="small" appearance="secondary" onClick={onCancel}>
-                            {cancelText}
+                            {secondaryButtonText}
                         </Button>
-                        <Button size="small" appearance="primary" onClick={onConfirm}>
-                            {confirmText}
+                        <Button size="small" appearance={primaryButtonAppearance} onClick={onConfirm}>
+                            {primaryButtonText}
                         </Button>
                     </PopoverFooterActions>
                 </PopoverFooter>

@@ -1,7 +1,9 @@
-.popoverConfirm {
-    .popover__footer_buttons {
-        display: flex;
-        justify-content: flex-end;
-        gap: 10px;
+.popoverConfirm__title_icon {
+    &_error {
+        color: var(--guit-sem-color-foreground-error);
+    }
+
+    &_warning {
+        color: var(--guit-sem-color-foreground-warning);
     }
 }

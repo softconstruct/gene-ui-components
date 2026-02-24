@@ -46,23 +46,23 @@ describe("PopoverConfirm", () => {
         expect(provider().find(".popover__header").text()).toContain("Test Title");
     });
 
-    it("renders default confirmText when open", () => {
+    it("renders default primaryButtonText when open", () => {
         setup.setProps({ open: true });
         expect(provider().find(".popover__footer_buttons").find(Button).last().text()).toBe("Confirm");
     });
 
-    it("renders default cancelText when open", () => {
+    it("renders default secondaryButtonText when open", () => {
         setup.setProps({ open: true });
         expect(provider().find(".popover__footer_buttons").find(Button).first().text()).toBe("Cancel");
     });
 
-    it("renders custom confirmText when open", () => {
-        setup.setProps({ open: true, confirmText: "Delete" });
+    it("renders custom primaryButtonText when open", () => {
+        setup.setProps({ open: true, primaryButtonText: "Delete" });
         expect(provider().find(".popover__footer_buttons").find(Button).last().text()).toBe("Delete");
     });
 
-    it("renders custom cancelText when open", () => {
-        setup.setProps({ open: true, cancelText: "Go back" });
+    it("renders custom secondaryButtonText when open", () => {
+        setup.setProps({ open: true, secondaryButtonText: "Go back" });
         expect(provider().find(".popover__footer_buttons").find(Button).first().text()).toBe("Go back");
     });
 
@@ -101,5 +101,21 @@ describe("PopoverConfirm", () => {
     it("renders withArrow prop correctly", () => {
         setup.setProps({ open: true, withArrow: true });
         expect(provider().find(".popover__arrowPath").exists()).toBeTruthy();
+    });
+
+    it("confirm button has danger appearance when status is error", () => {
+        setup.setProps({ open: true, status: "error" });
+        expect(provider().find(".popover__footer_buttons").find(Button).last().prop("appearance")).toBe("danger");
+    });
+
+    it("confirm button has primary appearance when status is warning", () => {
+        setup.setProps({ open: true, status: "warning" });
+        expect(provider().find(".popover__footer_buttons").find(Button).last().prop("appearance")).toBe("primary");
+    });
+
+    it.each<IPopoverConfirmProps["status"]>(["error", "warning"])("renders %p status header icon", (status) => {
+        setup.setProps({ open: true, status, title: "Test Title" });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+        expect(provider().find(`.popoverConfirm__title_icon_${status}`).exists()).toBeTruthy();
     });
 });
