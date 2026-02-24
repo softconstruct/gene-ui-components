@@ -12,9 +12,31 @@ const meta: Meta<IPopoverConfirmProps> = {
     title: "Molecules/PopoverConfirm",
     component: PopoverConfirm,
     argTypes: {
-        position: args({ control: "select", ...propCategory.appearance }),
+        position: args({
+            control: "select",
+            ...propCategory.appearance,
+            options: [
+                "bottom-center",
+                "bottom-left",
+                "bottom-right",
+                "left-bottom",
+                "left-center",
+                "left-top",
+                "right-bottom",
+                "right-center",
+                "right-top",
+                "top-center",
+                "top-left",
+                "top-right",
+                "auto"
+            ]
+        }),
         margin: args({ control: "number", ...propCategory.appearance }),
-        size: args({ control: "select", ...propCategory.appearance }),
+        size: args({
+            control: "select",
+            ...propCategory.appearance,
+            options: ["xLarge", "large", "medium", "small", "fitContent"]
+        }),
         fitReference: args({ control: "boolean", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states, defaultValue: undefined }),
         withArrow: args({ control: "boolean", ...propCategory.states }),

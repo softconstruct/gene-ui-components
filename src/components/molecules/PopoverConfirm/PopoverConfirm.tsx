@@ -21,7 +21,11 @@ import useClickOutside from "@hooks/useClickOutside";
 // Styles
 import "./PopoverConfirm.scss";
 
-interface IPopoverConfirmProps extends IPopoverProps {
+interface IPopoverConfirmProps extends Omit<IPopoverProps, "title"> {
+    /**
+     * Title displayed in the popover header. Required for PopoverConfirm.
+     */
+    title: string;
     /**
      * Text label for the primary button.
      * @default "Confirm"
