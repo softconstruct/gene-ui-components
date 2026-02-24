@@ -30,12 +30,12 @@ interface IPopoverConfirmProps extends Omit<IPopoverProps, "title"> {
      * Text label for the primary button.
      * @default "Confirm"
      */
-    primaryButtonText?: string;
+    primaryButtonText: string;
     /**
      * Text label for the secondary button.
      * @default "Cancel"
      */
-    secondaryButtonText?: string;
+    secondaryButtonText: string;
     /**
      * Callback fired when the primary button is clicked.
      */
@@ -68,7 +68,6 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     onConfirm,
     onCancel,
     onOpenChange,
-    onClose,
     open: controlledOpen,
     defaultOpen = false,
     status = "warning",
@@ -97,7 +96,6 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
             if (!onReferenceClick && isOpenState) {
                 setIsOpenState(false);
                 onOpenChange?.(false);
-                onClose?.();
             }
         },
         [popoverRef.current.floatingElement]

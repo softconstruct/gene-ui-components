@@ -3,6 +3,7 @@ import { Meta, StoryObj } from "@storybook/react";
 
 // Components
 import Button from "@components/atoms/Button";
+import Text from "@components/atoms/Text";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -84,7 +85,29 @@ const DefaultComponent: FC<IPopoverConfirmProps> = (props) => {
                 onCancel={() => setOpen(false)}
                 onConfirm={() => setOpen(false)}
             >
-                <span>Are you sure you want to proceed with this action?</span>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <Text as="p" variant="bodyMediumRegular">
+                        Are you sure you want to proceed with this action?
+                    </Text>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "4px" }}>
+                        <p style={{ margin: 0 }}>
+                            <span className="text text_variant_bodyMediumSemibold">• Changes:</span>{" "}
+                            <span className="text text_variant_bodyMediumRegular">
+                                This action will modify your current settings.
+                            </span>
+                        </p>
+                        <p style={{ margin: 0 }}>
+                            <span className="text text_variant_bodyMediumSemibold">• Data Impact:</span>{" "}
+                            <span className="text text_variant_bodyMediumRegular">
+                                Changes may affect your data, including possible deletions.
+                            </span>
+                        </p>
+                        <p style={{ margin: 0 }}>
+                            <span className="text text_variant_bodyMediumSemibold">• Irreversible:</span>{" "}
+                            <span className="text text_variant_bodyMediumRegular">This action cannot be undone.</span>
+                        </p>
+                    </div>
+                </div>
             </PopoverConfirm>
             <Button onClick={() => setOpen(true)} {...propsForContent}>
                 Click to confirm
