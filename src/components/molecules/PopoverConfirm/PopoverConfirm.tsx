@@ -5,15 +5,7 @@ import classNames from "classnames";
 import { ErrorFilled, IconProps, TriangleAlert } from "@geneui/icons";
 
 // Components
-import Button from "@components/atoms/Button";
-import {
-    IPopoverProps,
-    IPopoverRef,
-    Popover,
-    PopoverBody,
-    PopoverFooter,
-    PopoverFooterActions
-} from "@components/atoms/Popover";
+import { IPopoverProps, IPopoverRef, Popover, PopoverBody, PopoverFooter } from "@components/atoms/Popover";
 
 // Hooks
 import useClickOutside from "@hooks/useClickOutside";
@@ -30,12 +22,12 @@ interface IPopoverConfirmProps extends Omit<IPopoverProps, "title"> {
      * Text label for the primary button.
      * @default "Confirm"
      */
-    primaryButtonText: string;
+    primaryButtonText?: string;
     /**
      * Text label for the secondary button.
      * @default "Cancel"
      */
-    secondaryButtonText: string;
+    secondaryButtonText?: string;
     /**
      * Callback fired when the primary button is clicked.
      */
@@ -112,16 +104,20 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
         <div className="popoverConfirm">
             <Popover {...popoverProps} ref={popoverRef} open={isOpenState} hasCloseButton={false} Icon={headerIcon}>
                 <PopoverBody>{children}</PopoverBody>
-                <PopoverFooter>
-                    <PopoverFooterActions>
-                        <Button size="small" appearance="secondary" onClick={onCancel}>
-                            {secondaryButtonText}
-                        </Button>
-                        <Button size="small" appearance={primaryButtonAppearance} onClick={onConfirm}>
-                            {primaryButtonText}
-                        </Button>
-                    </PopoverFooterActions>
-                </PopoverFooter>
+                <PopoverFooter
+                    actions={[
+                        {
+                            text: secondaryButtonText,
+                            appearance: "secondary",
+                            onClick: onCancel
+                        },
+                        {
+                            text: primaryButtonText,
+                            appearance: primaryButtonAppearance,
+                            onClick: onConfirm
+                        }
+                    ]}
+                />
             </Popover>
         </div>
     );

@@ -4,10 +4,10 @@ import { Meta, StoryObj } from "@storybook/react";
 // Components
 import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
+import PopoverConfirm, { IPopoverConfirmProps } from "@components/molecules/PopoverConfirm";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import PopoverConfirm, { IPopoverConfirmProps } from "./index";
 
 const meta: Meta<IPopoverConfirmProps> = {
     title: "Molecules/PopoverConfirm",

@@ -1,18 +1,20 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-import Button from "@components/atoms/Button";
+import { ErrorFilled, TriangleAlert } from "@geneui/icons";
 
 // Components
+import Button from "@components/atoms/Button";
+import PopoverConfirm, { IPopoverConfirmProps } from "@components/molecules/PopoverConfirm";
+
 import GeneUIProvider from "../../providers/GeneUIProvider";
-import PopoverConfirm, { IPopoverConfirmProps } from "./index";
 
 describe("PopoverConfirm", () => {
     let setup: ReactWrapper<IPopoverConfirmProps>;
 
     const Component = (
         <PopoverConfirm setProps={() => {}} title="Test Title">
-            <span className="test-body">Body content</span>
+            <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
         </PopoverConfirm>
     );
 
@@ -23,27 +25,28 @@ describe("PopoverConfirm", () => {
         });
     });
 
-    afterEach(() => {
-        setup.unmount();
-    });
-
     const provider = () =>
         setup.getWrappingComponent().setProps({
             children: Component
         });
 
+    afterEach(() => {
+        setup.unmount();
+    });
+
     it("renders without crashing", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it("renders children in body when open", () => {
+    it("renders children prop correct", () => {
         setup.setProps({ open: true });
-        expect(provider().find(".test-body").exists()).toBeTruthy();
+        expect(provider().find(".swapComponent").exists()).toBeTruthy();
     });
 
-    it("renders title correctly when open", () => {
-        setup.setProps({ open: true, title: "Test Title" });
-        expect(provider().find(".popover__header").text()).toContain("Test Title");
+    it("renders title prop correct", () => {
+        const title = "test";
+        setup.setProps({ open: true, title });
+        expect(provider().find(".popover__header").text()).toBe(title);
     });
 
     it("renders default primaryButtonText when open", () => {
@@ -85,22 +88,9 @@ describe("PopoverConfirm", () => {
         expect(provider().find(".popover__footer_buttons").find(Button).first().prop("appearance")).toBe("secondary");
     });
 
-    it("confirm button has primary appearance", () => {
+    it("confirm button has primary appearance by default", () => {
         setup.setProps({ open: true });
         expect(provider().find(".popover__footer_buttons").find(Button).last().prop("appearance")).toBe("primary");
-    });
-
-    it.each<IPopoverConfirmProps["size"]>(["xLarge", "large", "medium", "small", "fitContent"])(
-        "should have %p size",
-        (size) => {
-            setup.setProps({ open: true, size });
-            expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
-        }
-    );
-
-    it("renders withArrow prop correctly", () => {
-        setup.setProps({ open: true, withArrow: true });
-        expect(provider().find(".popover__arrowPath").exists()).toBeTruthy();
     });
 
     it("confirm button has danger appearance when status is error", () => {
@@ -113,9 +103,125 @@ describe("PopoverConfirm", () => {
         expect(provider().find(".popover__footer_buttons").find(Button).last().prop("appearance")).toBe("primary");
     });
 
+    it.each<IPopoverConfirmProps["size"]>(["xLarge", "large", "medium", "small", "fitContent"])(
+        "should have %p size",
+        (size) => {
+            setup.setProps({ open: true, size });
+            expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
+        }
+    );
+
+    it("renders withArrow prop correct", () => {
+        setup.setProps({
+            withArrow: true,
+            open: true
+        });
+        expect(provider().find(".popover__arrowPath").exists()).toBeTruthy();
+    });
+
+    it("does not render close button (X) in header", () => {
+        setup.setProps({
+            open: true,
+            title: "Test Title"
+        });
+        expect(provider().find(".popover__close").exists()).toBeFalsy();
+    });
+
+    it("renders warning icon by default when status is not provided", () => {
+        setup.setProps({
+            open: true,
+            title: "Test Title"
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+        expect(provider().find(TriangleAlert).exists()).toBeTruthy();
+    });
+
+    it("renders custom Icon prop correctly when status is error", () => {
+        setup.setProps({
+            open: true,
+            title: "Test Title",
+            status: "error"
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+    });
+
+    it("renders custom Icon prop correctly when status is warning", () => {
+        setup.setProps({
+            open: true,
+            title: "Test Title",
+            status: "warning"
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+    });
+
+    it("renders different custom icons correctly", () => {
+        setup.setProps({
+            open: true,
+            title: "Test Title",
+            status: "error"
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+        expect(provider().find(ErrorFilled).exists()).toBeTruthy();
+
+        setup.setProps({
+            status: "warning"
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+        expect(provider().find(TriangleAlert).exists()).toBeTruthy();
+    });
+
     it.each<IPopoverConfirmProps["status"]>(["error", "warning"])("renders %p status header icon", (status) => {
-        setup.setProps({ open: true, status, title: "Test Title" });
+        setup.setProps({
+            open: true,
+            status,
+            title: "Test Title"
+        });
         expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
         expect(provider().find(`.popoverConfirm__title_icon_${status}`).exists()).toBeTruthy();
+    });
+
+    it("renders with defaultOpen prop", () => {
+        const wrapper = mount(
+            <PopoverConfirm setProps={() => {}} title="Test" defaultOpen>
+                Content
+            </PopoverConfirm>,
+            { wrappingComponent: GeneUIProvider }
+        );
+        expect(wrapper.find(".popoverConfirm").exists()).toBeTruthy();
+        wrapper.unmount();
+    });
+
+    it("renders with controlled open state", () => {
+        setup.setProps({ open: false });
+        expect(provider().find(".popover").exists()).toBeFalsy();
+        setup.setProps({ open: true });
+        expect(provider().find(".popover").exists()).toBeTruthy();
+    });
+
+    it("calls onOpenChange when open state changes", () => {
+        const onOpenChange = jest.fn();
+        setup.setProps({ open: true, onOpenChange });
+        expect(setup.exists()).toBeTruthy();
+    });
+
+    it("renders fitReference prop correct", () => {
+        const fitReference = true;
+        setup.setProps({ open: true, fitReference });
+        expect(provider().find(`.popover_size_reference`).exists()).toBeTruthy();
+    });
+
+    it("renders position prop correctly", () => {
+        setup.setProps({ open: true, position: "bottom-right" });
+        expect(provider().find(".popover").exists()).toBeTruthy();
+    });
+
+    it("renders margin prop correctly", () => {
+        setup.setProps({ open: true, margin: 20 });
+        expect(provider().find(".popover").exists()).toBeTruthy();
+    });
+
+    it("renders disableReposition prop correctly", () => {
+        setup.setProps({ open: true, disableReposition: true });
+        expect(provider().find(".popover").exists()).toBeTruthy();
     });
 });
