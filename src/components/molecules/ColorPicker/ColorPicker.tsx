@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { ChangeEvent, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { HexColorPicker, RgbaColorPicker } from "react-colorful";
 
@@ -71,6 +71,7 @@ interface IColorPickerProps {
     colorPickerProps?: Record<string, unknown>;
     /**
      * Format of color.
+     * Possible values: `rgb | hex`.
      */
     format?: "rgb" | "hex";
     /**
@@ -150,6 +151,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
                 if (!rgb) return;
 
                 updateRGBA((prev) => ({ ...rgb, a: prev.a }));
+                setLocalHex(colorValue);
             } else {
                 updateRGBA(() => ({
                     ...colorValue,
@@ -170,7 +172,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
         [updateRGBA]
     );
     const handleHexInputChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
+        (e: ChangeEvent<HTMLInputElement>) => {
             const newValue = e.target.value;
             setLocalHex(newValue);
 
@@ -193,7 +195,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
     );
 
     const handleAlphaChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
+        (e: ChangeEvent<HTMLInputElement>) => {
             const nextAlpha = clamp(Number(e.target.value), 0, 100) / 100;
             updateRGBA((prev) => ({ ...prev, a: nextAlpha }));
         },
@@ -207,6 +209,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
         if (!rgb) return;
 
         setRgba((prev) => ({ ...rgb, a: prev.a }));
+        setLocalHex(value);
     }, [value, isColorControlled]);
 
     useEffect(() => {
@@ -216,6 +219,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
         if (!rgb) return;
 
         setRgba((prev) => ({ ...rgb, a: prev.a }));
+        setLocalHex(defaultColor);
     }, [defaultColor, isColorControlled]);
 
     useEffect(() => {
@@ -242,9 +246,14 @@ const ColorPicker: FC<IColorPickerProps> = ({
         onOutsideClick?.();
     }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement]);
 
-    // check if this is correct
     const ColorSquareIcon = useCallback(
-        () => <Square size={20} style={{ color: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})` }} />,
+        () => (
+            <Square
+                size={20}
+                onClick={() => !isOpenControlled && setIsOpen(true)}
+                style={{ color: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})` }}
+            />
+        ),
         [rgba, localHex]
     );
 
@@ -253,10 +262,9 @@ const ColorPicker: FC<IColorPickerProps> = ({
             <div className="colorPicker__fieldsWrapper" {...propsForPopover}>
                 <TextField
                     className="colorPicker__textField"
-                    readOnly
-                    onFocus={() => !isOpenControlled && setIsOpen(true)}
-                    value={hex}
+                    value={localHex}
                     IconBefore={ColorSquareIcon}
+                    onChange={handleHexInputChange}
                 />
                 {alphaEnabled && (
                     <TextField className="colorPicker__alphaField" onChange={handleAlphaChange} value={alpha} />
