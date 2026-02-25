@@ -63,8 +63,27 @@ describe("Modal ", () => {
         const onCloseMock = jest.fn();
         const wrapper = setup.setProps({ shouldCloseOnOverlayClick: true, onClose: onCloseMock });
         const modalElement = wrapper.find(".modal").first();
+        modalElement.simulate("mousedown", {
+            target: modalElement.getDOMNode(),
+            currentTarget: modalElement.getDOMNode()
+        });
         modalElement.simulate("click", { target: modalElement.getDOMNode(), currentTarget: modalElement.getDOMNode() });
         expect(onCloseMock).toHaveBeenCalled();
+    });
+
+    it("does not close when pointer down starts inside modal and click ends on overlay", () => {
+        const onCloseMock = jest.fn();
+        const wrapper = setup.setProps({ shouldCloseOnOverlayClick: true, onClose: onCloseMock });
+        const modalElement = wrapper.find(".modal").first();
+        const modalWrapperElement = wrapper.find(".modal__wrapper").first();
+
+        modalWrapperElement.simulate("mousedown", {
+            target: modalWrapperElement.getDOMNode(),
+            currentTarget: modalElement.getDOMNode()
+        });
+        modalElement.simulate("click", { target: modalElement.getDOMNode(), currentTarget: modalElement.getDOMNode() });
+
+        expect(onCloseMock).not.toHaveBeenCalled();
     });
 
     it("renders actions correctly", () => {

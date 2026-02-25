@@ -1,5 +1,6 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
+import { act } from "react-dom/test-utils";
 
 import GeneUIProvider from "../../providers/GeneUIProvider";
 import Button from "../Button";
@@ -85,5 +86,29 @@ describe("Popover", () => {
             open: true
         });
         expect(provider().find(".popover__arrowPath").exists()).toBeTruthy();
+    });
+
+    it("does not close when pointer down starts inside popover and click ends outside", () => {
+        const onClose = jest.fn();
+
+        const wrapper = mount(
+            <Popover size="small" margin={0} setProps={() => {}} defaultOpen onClose={onClose}>
+                <PopoverBody>
+                    <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
+                </PopoverBody>
+            </Popover>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        const popoverElement = wrapper.getWrappingComponent().find(".popover").first().getDOMNode() as HTMLElement;
+
+        act(() => {
+            popoverElement.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+            document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+        });
+
+        wrapper.update();
+        expect(onClose).not.toHaveBeenCalled();
+        wrapper.unmount();
     });
 });
