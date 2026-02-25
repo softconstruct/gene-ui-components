@@ -279,7 +279,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         }, [popoverOpened]);
 
         useDismiss(context, {
-            outsidePressEvent: "click"
+            outsidePressEvent: "mousedown"
         });
 
         const role = useRole(context);
