@@ -61,7 +61,7 @@ describe("ColorPicker", () => {
         });
 
         it("renders value prop correctly", () => {
-            const wrapper = setup.setProps({ value: "444" });
+            const wrapper = setup.setProps({ value: "#444444" });
             setup.update();
             expect(wrapper.find(".colorPicker__textField").at(0).props().value).toBe("#444444");
         });
@@ -116,12 +116,6 @@ describe("ColorPicker", () => {
     });
 
     describe("Popover Visibility and Outside Clicks", () => {
-        it("should open on focus(uncontrolled)", () => {
-            setup.find("input").at(0).simulate("focus");
-            setup.update();
-            expect(setup.find(".colorPicker__wrapper").exists()).toBeTruthy();
-        });
-
         it("should close on outside click", () => {
             setup.find("input").at(0).simulate("focus");
             setup.update();

@@ -138,6 +138,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
             setRgba((prev) => {
                 const next = updater(prev);
                 emitChange(next);
+                setLocalHex(rgbToHex(next));
                 return next;
             });
         },
@@ -177,11 +178,12 @@ const ColorPicker: FC<IColorPickerProps> = ({
             setLocalHex(newValue);
 
             const rgb = hexToRgb(newValue);
-            if (!rgb) return;
-
-            updateRGBA((prev) => ({ ...rgb, a: prev.a }));
+            if (rgb) {
+                setRgba((prev) => ({ ...rgb, a: prev.a }));
+                emitChange({ ...rgb, a: rgba.a });
+            }
         },
-        [updateRGBA]
+        [updateRGBA, rgba.a, emitChange]
     );
 
     const handleRGBInputChange = useCallback(
