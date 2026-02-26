@@ -381,21 +381,26 @@ const Navigation: FC<INavigationProps> = ({
                                                 disableReposition={false}
                                                 ref={popoverRef}
                                             >
-                                                <PopoverBody withPadding={false}>
-                                                    <NavigationMenuHeader
-                                                        title={clonedNavigationData[hoverDataIndex].title}
-                                                    />
-                                                    <div className="navigation__menu_wrapper">
-                                                        <NavMenuContent
-                                                            data={clonedNavigationData[hoverDataIndex]}
-                                                            onClick={onItemClickHandler}
-                                                            activePathIndex={
-                                                                activePathIndex && hoverDataIndex === activePathIndex[0]
-                                                                    ? activePathIndex.slice(1)
-                                                                    : null
-                                                            }
-                                                            render={render}
+                                                <PopoverBody withPadding={false} withScrollbar={false}>
+                                                    <div className="navigation__content">
+                                                        <NavigationMenuHeader
+                                                            title={clonedNavigationData[hoverDataIndex].title}
                                                         />
+                                                        <Scrollbar>
+                                                            <div className="navigation__menu_wrapper">
+                                                                <NavMenuContent
+                                                                    data={clonedNavigationData[hoverDataIndex]}
+                                                                    onClick={onItemClickHandler}
+                                                                    activePathIndex={
+                                                                        activePathIndex &&
+                                                                        hoverDataIndex === activePathIndex[0]
+                                                                            ? activePathIndex.slice(1)
+                                                                            : null
+                                                                    }
+                                                                    render={render}
+                                                                />
+                                                            </div>
+                                                        </Scrollbar>
                                                     </div>
                                                 </PopoverBody>
                                             </Popover>
