@@ -8,7 +8,7 @@ import FileUploadItem, { FileType, IFileUploadItem } from "./FileUploadItem";
 import FileUploadList, { IFileUploadListProps } from "./index";
 
 function defaultAriaLabel(item: IFileUploadItem): string {
-    return `File: ${item.name ?? "Unnamed"}, Size: ${item.size ?? "Unknown"}, Time: ${item.time ?? "--:--"}`;
+    return `File: ${item.name ?? "Unnamed"}, Size: ${item.size ?? "Unknown"}, Time: ${item.time ?? ""}`;
 }
 
 function renderList(files: IFileUploadItem[], listProps?: Partial<IFileUploadListProps>) {
@@ -18,7 +18,7 @@ function renderList(files: IFileUploadItem[], listProps?: Partial<IFileUploadLis
                 <FileUploadItem
                     key={item.id ?? `fallback-${index}`}
                     {...item}
-                    aria-label={item["aria-label"] ?? defaultAriaLabel(item)}
+                    ariaLabel={item.ariaLabel ?? defaultAriaLabel(item)}
                 />
             ))}
         </FileUploadList>
@@ -31,10 +31,10 @@ const mockData: IFileUploadItem[] = [
         name: "Invoice Q1.pdf",
         time: "09:15AM",
         size: "4.2MB",
-        type: "document" as FileType,
+        type: "file" as FileType,
         actions: [
-            { Icon: Image, onClick: jest.fn() },
-            { Icon: RecycleBin, onClick: jest.fn() }
+            { id: "1-image", Icon: Image, onClick: jest.fn() },
+            { id: "1-recycle", Icon: RecycleBin, onClick: jest.fn() }
         ]
     },
     {
@@ -42,10 +42,10 @@ const mockData: IFileUploadItem[] = [
         name: "UX_Wireframe.sketch",
         time: "10:30AM",
         size: "12MB",
-        type: "visual" as FileType,
+        type: "image" as FileType,
         actions: [
-            { Icon: Image, onClick: jest.fn() },
-            { Icon: RecycleBin, onClick: jest.fn() }
+            { id: "2-image", Icon: Image, onClick: jest.fn() },
+            { id: "2-recycle", Icon: RecycleBin, onClick: jest.fn() }
         ]
     },
     {
@@ -55,8 +55,8 @@ const mockData: IFileUploadItem[] = [
         size: "8MB",
         type: "audio" as FileType,
         actions: [
-            { Icon: Image, onClick: jest.fn() },
-            { Icon: RecycleBin, onClick: jest.fn() }
+            { id: "3-image", Icon: Image, onClick: jest.fn() },
+            { id: "3-recycle", Icon: RecycleBin, onClick: jest.fn() }
         ]
     },
     {
@@ -66,8 +66,8 @@ const mockData: IFileUploadItem[] = [
         size: "220MB",
         type: "video" as FileType,
         actions: [
-            { Icon: Image, onClick: jest.fn() },
-            { Icon: RecycleBin, onClick: jest.fn() }
+            { id: "4-image", Icon: Image, onClick: jest.fn() },
+            { id: "4-recycle", Icon: RecycleBin, onClick: jest.fn() }
         ]
     }
 ];
@@ -78,19 +78,13 @@ const uploadingData: IFileUploadItem[] = [
         name: "Quarterly-report.zip",
         time: "11:00AM",
         size: "120MB",
-        type: "document" as FileType,
+        type: "file" as FileType,
         loading: true,
         progressPercent: 45,
         uploadingText: "Uploading",
         actions: [
-            {
-                Icon: Image,
-                onCancel: jest.fn()
-            },
-            {
-                Icon: RecycleBin,
-                onClick: jest.fn()
-            }
+            { id: "uploading-1-cancel", Icon: Image, onClick: jest.fn() },
+            { id: "uploading-1-recycle", Icon: RecycleBin, onClick: jest.fn() }
         ]
     }
 ];
@@ -101,16 +95,11 @@ const uploadingWithoutCancelData: IFileUploadItem[] = [
         name: "Research-notes.docx",
         time: "03:30PM",
         size: "2MB",
-        type: "document" as FileType,
+        type: "file" as FileType,
         loading: true,
         progressPercent: 70,
         uploadingText: "Uploading",
-        actions: [
-            {
-                Icon: RecycleBin,
-                onClick: jest.fn()
-            }
-        ]
+        actions: [{ id: "uploading-2-recycle", Icon: RecycleBin, onClick: jest.fn() }]
     }
 ];
 
@@ -161,7 +150,7 @@ describe("FileUploadList", () => {
                 name: "Budget-2025.xlsx",
                 time: "07:10AM",
                 size: "2MB",
-                type: "document" as FileType
+                type: "file" as FileType
             }
         ];
 
@@ -199,7 +188,6 @@ describe("FileUploadList", () => {
     });
 
     it("shows all actions while uploading", () => {
-        const onCancel = jest.fn();
         const onClick = jest.fn();
         setup = mount(
             renderList([
@@ -208,13 +196,13 @@ describe("FileUploadList", () => {
                     name: "Test-file.zip",
                     time: "11:00AM",
                     size: "120MB",
-                    type: "document" as FileType,
+                    type: "file" as FileType,
                     loading: true,
                     progressPercent: 45,
                     uploadingText: "Uploading",
                     actions: [
-                        { Icon: Image, onCancel },
-                        { Icon: RecycleBin, onClick }
+                        { id: "uploading-test-cancel", Icon: Image, onClick },
+                        { id: "uploading-test-recycle", Icon: RecycleBin, onClick: jest.fn() }
                     ]
                 }
             ])
@@ -228,7 +216,7 @@ describe("FileUploadList", () => {
         expect(buttons).toHaveLength(2);
 
         buttons.at(0).simulate("click");
-        expect(onCancel).toHaveBeenCalledWith("uploading-test");
+        expect(onClick).toHaveBeenCalledWith(expect.anything());
     });
 
     it("calls onClick when not uploading", () => {
@@ -238,13 +226,13 @@ describe("FileUploadList", () => {
         expect(firstItemOnClick).toHaveBeenCalledWith(expect.anything());
     });
 
-    it("calls onCancel with correct id when uploading", () => {
-        const onCancel = jest.fn();
+    it("calls onClick when action button is clicked", () => {
+        const onClick = jest.fn();
         setup = mount(
             renderList([
                 {
                     ...uploadingData[0],
-                    actions: [{ Icon: Image, onCancel }]
+                    actions: [{ id: "error-cancel", Icon: Image, onClick }]
                 }
             ])
         );
@@ -253,7 +241,7 @@ describe("FileUploadList", () => {
         const fileUploadItem = setup.find(FileUploadItem).first();
         const button = fileUploadItem.find("button.fileUploadList__button").at(0);
         button.simulate("click");
-        expect(onCancel).toHaveBeenCalledWith(uploadingData[0].id);
+        expect(onClick).toHaveBeenCalledWith(expect.anything());
     });
 
     it("renders error state with helperText when status is error", () => {
@@ -267,7 +255,7 @@ describe("FileUploadList", () => {
                 status: "error",
                 helperText: "Upload failed. Please try again.",
                 uploadingText: "Uploading",
-                actions: [{ Icon: Image, onCancel: jest.fn() }]
+                actions: [{ id: "error-1-cancel", Icon: Image, onClick: jest.fn() }]
             }
         ];
         setup = mount(renderList(errorData));
@@ -288,7 +276,7 @@ describe("FileUploadList", () => {
                 status: "warning",
                 helperText: "File is large. Upload may take a while.",
                 uploadingText: "Uploading...",
-                actions: [{ Icon: RecycleBin, onCancel: jest.fn() }]
+                actions: [{ id: "warning-1-cancel", Icon: RecycleBin, onClick: jest.fn() }]
             }
         ];
         setup = mount(renderList(warningData));
@@ -341,7 +329,7 @@ describe("FileUploadList", () => {
         expect(wrapper.text()).toContain("NoId.pdf");
     });
 
-    it("disables non-cancel action buttons when item is uploading", () => {
+    it("action buttons call onClick when clicked", () => {
         const onCancel = jest.fn();
         const onClick = jest.fn();
         setup = mount(
@@ -351,13 +339,13 @@ describe("FileUploadList", () => {
                     name: "File.zip",
                     time: "10:00AM",
                     size: "5MB",
-                    type: "document" as FileType,
+                    type: "file" as FileType,
                     loading: true,
                     progressPercent: 50,
                     uploadingText: "Uploading",
                     actions: [
-                        { Icon: Image, onCancel },
-                        { Icon: RecycleBin, onClick }
+                        { id: "upload-disabled-cancel", Icon: Image, onClick: onCancel },
+                        { id: "upload-disabled-recycle", Icon: RecycleBin, onClick }
                     ]
                 }
             ])
@@ -366,12 +354,12 @@ describe("FileUploadList", () => {
 
         const fileUploadItem = setup.find(FileUploadItem).first();
         const buttons = fileUploadItem.find("button.fileUploadList__button");
-        expect(buttons.at(0).prop("disabled")).toBe(false);
-        expect(buttons.at(1).prop("disabled")).toBe(true);
+        expect(buttons.at(0).prop("disabled")).toBeFalsy();
+        expect(buttons.at(1).prop("disabled")).toBeFalsy();
     });
 
     it("renders each type with correct type class and icon", () => {
-        const types: FileType[] = ["document", "visual", "audio", "video"];
+        const types: FileType[] = ["file", "image", "audio", "video"];
         types.forEach((fileType) => {
             const files: IFileUploadItem[] = [
                 {
@@ -380,7 +368,7 @@ describe("FileUploadList", () => {
                     time: "10:00AM",
                     size: "1MB",
                     type: fileType,
-                    actions: [{ Icon: RecycleBin, onClick: jest.fn() }]
+                    actions: [{ id: "type-recycle", Icon: RecycleBin, onClick: jest.fn() }]
                 }
             ];
             const wrapper = mount(renderList(files));

@@ -19,26 +19,23 @@ const meta: Meta<IFileUploadListProps> = {
 
 const mockData: IFileUploadItem[] = [
     {
-        id: "1",
         name: "Brand-styleguide.pdf",
         time: "08:05AM",
         size: "6MB",
-        type: "document",
+        type: "file",
         actions: [{ Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
     },
     {
-        id: "2",
         name: "Quarterly-report.pdf",
         time: "11:00AM",
         size: "12MB",
-        type: "visual",
+        type: "image",
         loading: true,
         progressPercent: 65,
         uploadingText: "Uploading...",
-        actions: [{ Icon: X, onCancel: () => {} }, { Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
+        actions: [{ Icon: X }, { Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
     },
     {
-        id: "3",
         name: "Failed-upload.pdf",
         time: "09:15AM",
         size: "8MB",
@@ -48,10 +45,9 @@ const mockData: IFileUploadItem[] = [
         status: "error",
         helperText: "Upload failed. Please try again.",
         uploadingText: "Uploading",
-        actions: [{ Icon: X, onCancel: () => {} }, { Icon: RecycleBin }]
+        actions: [{ Icon: X }, { Icon: RecycleBin }]
     },
     {
-        id: "4",
         name: "Large-file.zip",
         time: "02:30PM",
         size: "250MB",
@@ -61,7 +57,7 @@ const mockData: IFileUploadItem[] = [
         status: "warning",
         helperText: "File is large. Upload may take a while.",
         uploadingText: "Uploading...",
-        actions: [{ Icon: X, onCancel: () => {} }, { Icon: Eye }]
+        actions: [{ Icon: X }, { Icon: Eye }]
     }
 ];
 
@@ -77,9 +73,9 @@ const FileUploadListStory: StoryObj<IFileUploadListProps> = {
                 <FileUploadItem
                     key={item.id ?? `fallback-${index}`}
                     {...item}
-                    aria-label={
-                        item["aria-label"] ??
-                        `File: ${item.name ?? "Unnamed"}, Size: ${item.size ?? "Unknown"}, Time: ${item.time ?? "--:--"}`
+                    ariaLabel={
+                        item.ariaLabel ??
+                        `File: ${item.name ?? "Unnamed"}, Size: ${item.size ?? "Unknown"}, Time: ${item.time ?? ""}`
                     }
                 />
             ))}
@@ -92,15 +88,15 @@ const FileUploadItemStory: StoryObj<IFileUploadItem> = storyObjBuilder({
         id: args({ control: "false", ...propCategory.content }),
         name: args({ control: "text", ...propCategory.content }),
         time: args({ control: "text", ...propCategory.content }),
-        size: {
+        size: args({
             control: "text",
             ...propCategory.appearance
-        },
-        type: {
+        }),
+        type: args({
             control: "select",
-            options: ["visual", "video", "audio", "document"],
+            options: ["image", "video", "audio", "file"],
             ...propCategory.appearance
-        },
+        }),
         actions: args({ control: "object", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
         progressPercent: args({ control: "number", ...propCategory.content }),
@@ -109,20 +105,11 @@ const FileUploadItemStory: StoryObj<IFileUploadItem> = storyObjBuilder({
         uploadingText: args({ control: "text", ...propCategory.content })
     },
     args: {
-        id: "1",
         name: "File Name",
         time: "10:30AM",
         size: "10MB",
-        type: "visual",
-        actions: [
-            {
-                Icon: X,
-                onCancel: () => {}
-            },
-            { Icon: Eye },
-            { Icon: Download },
-            { Icon: RecycleBin }
-        ],
+        type: "image",
+        actions: [{ Icon: X }, { Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }],
         loading: false,
         progressPercent: 50,
         status: "rest",

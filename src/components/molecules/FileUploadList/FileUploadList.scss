@@ -61,7 +61,7 @@
                 }
             }
 
-            &_document {
+            &_file {
                 background-color: var(--guit-sem-color-background-accent-magenta-1);
 
                 #{ $this }__fileIcon {
@@ -69,7 +69,7 @@
                 }
             }
 
-            &_visual {
+            &_image {
                 background-color: var(--guit-sem-color-background-accent-purple-1);
 
                 #{ $this }__fileIcon {
