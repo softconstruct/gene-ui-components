@@ -1,9 +1,17 @@
 import React, { FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+import { VisibilityState } from "@tanstack/react-table";
 
 // Components
 import { IMenuItemProps } from "@components/molecules/Menu";
-import { Actions, IBulkActions, IManageColumnsInfo, Row } from "@components/organisms/Table/types";
+import {
+    IBulkActions,
+    IEditActions,
+    IManageColumnsActions,
+    IManageColumnsInfo,
+    ManageColumnsSavedDataType,
+    Row
+} from "@components/organisms/Table/types";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -46,23 +54,13 @@ const bulkActionsMock: IBulkActions = {
 const manageColumnsInfo: IManageColumnsInfo = {
     manageColumns: {
         label: "Active Columns",
-        actionsInfo: {
-            primary: {
-                label: "Save"
-            },
-            secondary: {
-                label: "Cancel"
-            },
-            tertiary: {
-                label: "Restore Defaults"
-            }
-        }
+        actionsInfo: {}
     },
     manageColumnsTitle: "Manage Columns",
     isManageColumnsDisabled: false
 };
 
-const defaultEditActions: Actions = {
+const defaultEditActions: IEditActions = {
     primary: {
         label: "Save"
     },
@@ -88,13 +86,15 @@ const meta: Meta<ITableProps> = {
         headerContent: args({ control: "false", ...propCategory.content }),
         selectAllText: args({ control: "text", ...propCategory.content }),
         columnResizeDirection: args({ control: "select", ...propCategory.appearance }),
+        editMode: args({ control: "boolean", ...propCategory.states }),
+        withManualFiltering: args({ control: "boolean", ...propCategory.states }),
         withToolbar: args({ control: "boolean", ...propCategory.content }),
         withPagination: args({ control: "boolean", ...propCategory.content }),
-        withVirtualScroll: args({ control: "boolean", ...propCategory.content }),
-        withStickyHeader: args({ control: "boolean", ...propCategory.content }),
-        withStickyFooter: args({ control: "boolean", ...propCategory.content }),
-        withManualSorting: args({ control: "boolean", ...propCategory.content }),
-        withFilterFromLeafRows: args({ control: "boolean", ...propCategory.content }),
+        withVirtualScroll: args({ control: "boolean", ...propCategory.states }),
+        withStickyHeader: args({ control: "boolean", ...propCategory.states }),
+        withStickyFooter: args({ control: "boolean", ...propCategory.states }),
+        withManualSorting: args({ control: "boolean", ...propCategory.states }),
+        withFilterFromLeafRows: args({ control: "boolean", ...propCategory.states }),
         onSort: args({ control: "false", ...propCategory.action }),
         onGlobalFilter: args({ control: "false", ...propCategory.action }),
         onColumnFilter: args({ control: "false", ...propCategory.action }),
@@ -134,6 +134,9 @@ const TableComponent: FC<ITableProps> = (props) => {
     const { data } = props;
     const [tableData, setTableData] = useState(() => data);
     const [editableState, setEditableState] = useState(false);
+    const [pinnedColumns, setPinnedColumns] = useState<string[]>([]);
+    const [columnOrder, setColumnOrder] = useState<string[]>([]);
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>();
 
     const onSave = (updatedData: Row[]) => {
         setTableData(updatedData);
@@ -153,14 +156,44 @@ const TableComponent: FC<ITableProps> = (props) => {
         tertiary: { label: "Edit", onClick: onEdit }
     };
 
+    const handleColumnsSave = (savedData: ManageColumnsSavedDataType) => {
+        const { pinnedColumns: pinnedCols, columnsOrdering, visibilityColumns } = savedData;
+
+        setColumnVisibility(visibilityColumns);
+        setPinnedColumns(pinnedCols || []);
+        setColumnOrder(columnsOrdering);
+    };
+
+    const manageColumnsActions: IManageColumnsActions = {
+        primary: {
+            label: "Save",
+            onClick: handleColumnsSave
+        },
+        secondary: {
+            label: "Cancel"
+        },
+        tertiary: {
+            label: "Restore Defaults"
+        }
+    };
+
+    const manageColumns: IManageColumnsInfo = {
+        ...manageColumnsInfo,
+        manageColumns: { ...manageColumnsInfo.manageColumns, actionsInfo: manageColumnsActions }
+    };
+
     return (
         <div style={{ height: 700, overflow: "auto" }}>
             <Table
                 {...props}
+                columnOrder={columnOrder}
+                columnVisibility={columnVisibility}
+                pinnedColumns={pinnedColumns}
                 data={tableData}
                 bulkActions={bulkActionsMock}
                 editMode={editableState}
                 editActions={editActions}
+                manageColumnsInfo={manageColumns}
             />
         </div>
     );

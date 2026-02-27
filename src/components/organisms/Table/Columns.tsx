@@ -23,7 +23,7 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
 
             return columnHelper.display({
                 ...item,
-                id: item?.id || item.dataKey,
+                id: item.dataKey,
                 header: ({ header }) => {
                     const componentProps = generateDisplayColumnsProps(type, header);
                     return (
@@ -47,7 +47,7 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
 
         if (item.type === "Group") {
             return columnHelper.group({
-                id: item?.id || item.dataKey,
+                id: item.dataKey,
                 header: item.header,
                 type: "Group",
                 dataKey: item.dataKey,
@@ -57,7 +57,7 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
 
         return columnHelper.accessor((row) => row[item.dataKey], {
             ...item,
-            id: item?.id || item.dataKey,
+            id: item.dataKey,
             header: () => item?.header || null,
             cell: ({ row, table }) => {
                 const editMode = table.options.meta?.editMode;

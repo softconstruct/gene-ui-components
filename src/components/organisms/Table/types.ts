@@ -1,5 +1,5 @@
 import { FC, JSX, ReactNode } from "react";
-import { ColumnDef, Row as RowData } from "@tanstack/react-table";
+import { ColumnDef, ColumnPinningState, Row as RowData, VisibilityState } from "@tanstack/react-table";
 import { HeaderContext } from "@tanstack/table-core/build/lib/core/headers";
 
 import { IconProps } from "@geneui/icons";
@@ -55,7 +55,6 @@ export type Row = TRowCells & {
 };
 
 export type BaseTableColumn<T> = ColumnDef<T extends object ? T : never> & {
-    id?: string;
     header?: string | null;
     footer?: (props: HeaderContext<T extends object ? T : never, unknown>) => ReactNode;
     type: CellType;
@@ -87,6 +86,12 @@ export type BaseTableColumn<T> = ColumnDef<T extends object ? T : never> & {
 
 export type { TableColumns } from "./table-columns";
 
+export type ManageColumnsSavedDataType = {
+    visibilityColumns: VisibilityState;
+    pinnedColumns: ColumnPinningState["left"];
+    columnsOrdering: string[];
+};
+
 export interface IRowSelectionInfo {
     selectedRowsLabel?: string;
     selectedRowsLength?: number;
@@ -101,15 +106,26 @@ export interface IActionConfig {
     disabled?: boolean;
 }
 
-export interface IPrimaryActionConfig extends Omit<IActionConfig, "onClick"> {
-    onClick?: (savedData: Row[]) => void;
+interface IEditPrimaryActionConfig extends Omit<IActionConfig, "onClick"> {
+    onClick?: (data: Row[]) => void;
 }
 
-export type Actions = {
-    primary?: IPrimaryActionConfig;
+interface IManageColumnsPrimaryActionConfig extends Omit<IActionConfig, "onClick"> {
+    onClick?: (data: ManageColumnsSavedDataType) => void;
+}
+
+interface BaseActionsType {
     secondary?: IActionConfig;
     tertiary?: IActionConfig;
-};
+}
+
+export interface IEditActions extends BaseActionsType {
+    primary?: IEditPrimaryActionConfig;
+}
+
+export interface IManageColumnsActions extends BaseActionsType {
+    primary?: IManageColumnsPrimaryActionConfig;
+}
 
 export interface IGlobalFilterInfo {
     onChange?: (value: string) => void;

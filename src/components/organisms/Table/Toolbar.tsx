@@ -10,8 +10,8 @@ import ButtonGroup from "@components/molecules/ButtonGroup";
 import BulkActions from "@components/organisms/Table/BulkActions";
 import ManageColumns from "@components/organisms/Table/ManageColumns";
 import {
-    Actions,
     IBulkActions,
+    IEditActions,
     IGlobalFilterInfo,
     IManageColumnsInfo,
     IRowSelectionInfo
@@ -19,7 +19,7 @@ import {
 
 interface IEditActionsProps {
     isEditMode: boolean;
-    editActions?: Actions;
+    editActions?: IEditActions;
     handleSave?: () => void;
     handleCancel?: () => void;
 }
@@ -28,7 +28,7 @@ interface IToolbarProps {
     handleSave?: () => void;
     handleCancel?: () => void;
     onGlobalFilterChange?: (value: string) => void;
-    editActions?: Actions;
+    editActions?: IEditActions;
     rowSelectionInfo?: IRowSelectionInfo;
     headerContent?: ReactNode;
     withEditMode?: boolean;

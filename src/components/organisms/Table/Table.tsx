@@ -1,11 +1,14 @@
 import React, { createContext, FC, ReactNode, useEffect, useMemo, useState } from "react";
 import {
     ColumnFiltersState,
+    ColumnPinningState,
     getCoreRowModel,
     getFilteredRowModel,
     getSortedRowModel,
+    HeaderGroup,
     SortingState,
-    useReactTable
+    useReactTable,
+    VisibilityState
 } from "@tanstack/react-table";
 import classNames from "classnames";
 
@@ -18,9 +21,9 @@ import TFoot from "@components/organisms/Table/TFoot";
 import THead from "@components/organisms/Table/THead";
 import Toolbar from "@components/organisms/Table/Toolbar";
 import {
-    Actions,
     EditBuffer,
     IBulkActions,
+    IEditActions,
     IGlobalFilterInfo,
     IManageColumnsInfo,
     IRowSelectionInfo,
@@ -34,20 +37,27 @@ import "./Table.scss";
 // Helpers
 import { getBufferKey, getCellValue, mergeBufferIntoData } from "./helpers";
 
-interface ITableActionHandlers {
+interface ITableContext {
+    headers: HeaderGroup<Row>[];
+    columnVisibility?: VisibilityState;
+    columnOrder?: string[];
+    pinnedColumns?: ColumnPinningState["left"];
     onSort?: (event: SortingState) => void;
     onGlobalFilter?: (event: string) => void;
     onColumnFilter?: (event: ColumnFiltersState) => void;
 }
 
-interface ITableProps extends ITableActionHandlers {
+interface ITableProps {
     data: Row[];
     columns: TableColumns<Row>[];
+    pinnedColumns?: string[];
+    columnOrder?: string[];
+    columnVisibility?: VisibilityState;
     rowSelectionInfo?: IRowSelectionInfo;
     globalFilterInfo?: IGlobalFilterInfo;
     bulkActions?: IBulkActions;
     manageColumnsInfo?: IManageColumnsInfo;
-    editActions?: Actions;
+    editActions?: IEditActions;
     headerContent?: ReactNode;
     selectAllText?: string;
     editMode?: boolean;
@@ -60,6 +70,9 @@ interface ITableProps extends ITableActionHandlers {
     withManualFiltering?: boolean;
     withFilterFromLeafRows?: boolean;
     columnResizeDirection?: "ltr" | "rtl";
+    onSort?: (event: SortingState) => void;
+    onGlobalFilter?: (event: string) => void;
+    onColumnFilter?: (event: ColumnFiltersState) => void;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using `BEM` conventions.
@@ -67,7 +80,7 @@ interface ITableProps extends ITableActionHandlers {
     className?: string;
 }
 
-export const TableContext = createContext<ITableActionHandlers>({} as ITableActionHandlers);
+export const TableContext = createContext<ITableContext>({} as ITableContext);
 
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets. Data tables are essential for presenting information such as reports, inventories, or user data in a clear, sortable, and filterable manner, allowing users to quickly find, analyze, and manipulate data.
@@ -75,6 +88,9 @@ export const TableContext = createContext<ITableActionHandlers>({} as ITableActi
 const Table: FC<ITableProps> = ({
     data,
     columns,
+    pinnedColumns,
+    columnOrder,
+    columnVisibility,
     rowSelectionInfo,
     manageColumnsInfo,
     bulkActions,
@@ -120,7 +136,12 @@ const Table: FC<ITableProps> = ({
         state: {
             sorting,
             globalFilter,
-            columnFilters
+            columnFilters,
+            columnPinning: {
+                left: pinnedColumns
+            },
+            ...(columnOrder && { columnOrder }),
+            ...(columnVisibility && { columnVisibility })
         },
         meta: {
             editMode,
@@ -144,7 +165,15 @@ const Table: FC<ITableProps> = ({
         onColumnFiltersChange: setColumnFilters
     });
 
-    const memoizedTableContextValue = useMemo<ITableActionHandlers>(() => ({}), []);
+    const memoizedTableContextValue = useMemo<ITableContext>(
+        () => ({
+            headers: table.getHeaderGroups(),
+            columnVisibility,
+            columnOrder,
+            pinnedColumns: table.getState().columnPinning.left
+        }),
+        [table.getHeaderGroups()]
+    );
 
     useEffect(() => {
         if (!onSort) return;
