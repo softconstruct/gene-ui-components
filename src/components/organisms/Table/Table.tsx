@@ -5,6 +5,7 @@ import {
     FilterFn,
     getCoreRowModel,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     HeaderGroup,
     SortingState,
@@ -74,6 +75,27 @@ interface ITableProps {
     onSort?: (event: SortingState) => void;
     onGlobalFilter?: (event: string) => void;
     onColumnFilter?: (event: ColumnFiltersState) => void;
+    pageSizes?: number[];
+    /**
+     * Sets the default number of rows to display per page upon initial render. Defaults to `10`.
+     */
+    initialPageSize?: number;
+    /**
+     * Sets the default page index on initial render. Defaults to `0`.
+     */
+    initialPageIndex?: number;
+    /**
+     * A callback function that is triggered when the current page changes. The new page number is passed as an argument.
+     */
+    onPageChange?: (pageNumber: number) => void;
+    /**
+     * A callback function that is triggered when the page size changes. The new page size is passed as an argument.
+     */
+    onPageSizeChange?: (size: number) => void;
+    /**
+     * Displays an input field in the pagination control that allows users to manually enter a page number.
+     */
+    showInputPageField?: boolean;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using `BEM` conventions.
@@ -112,6 +134,12 @@ const Table: FC<ITableProps> = ({
     onSort,
     onGlobalFilter,
     onColumnFilter,
+    pageSizes = [10, 20, 50, 100],
+    onPageChange,
+    onPageSizeChange,
+    showInputPageField,
+    initialPageSize = 10,
+    initialPageIndex = 0,
     className
 }) => {
     const cols = useMemo(() => createColumns(columns), [columns]);
@@ -134,6 +162,12 @@ const Table: FC<ITableProps> = ({
     const table = useReactTable({
         columns: cols,
         data,
+        initialState: {
+            ...(withPagination &&
+                !withVirtualScroll && {
+                    pagination: { pageSize: initialPageSize, pageIndex: initialPageIndex }
+                })
+        },
         state: {
             sorting,
             globalFilter,
@@ -154,6 +188,7 @@ const Table: FC<ITableProps> = ({
             getCellValue: (row: Row, columnId: string) => getCellValue(row, columnId, editBuffer)
         },
         getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         columnResizeMode: "onChange",
@@ -207,6 +242,16 @@ const Table: FC<ITableProps> = ({
         onGlobalFilter?.(value);
     };
 
+    const handlePageChange = (pageNumber: number) => {
+        table.setPageIndex(pageNumber - 1);
+        onPageChange?.(pageNumber);
+    };
+
+    const handlePageSizeChange = (size: number) => {
+        table.setPageSize(size);
+        onPageSizeChange?.(size);
+    };
+
     const rows = [...table.getTopRows(), ...table.getCenterRows()];
 
     const hasFooters = table
@@ -245,6 +290,10 @@ const Table: FC<ITableProps> = ({
                             <Pagination
                                 current={table.getState().pagination.pageIndex + 1}
                                 totalPages={table.getPageCount()}
+                                rowsPerPageOptions={pageSizes}
+                                onPageChange={handlePageChange}
+                                onPageSizeChange={handlePageSizeChange}
+                                showInputPageField={showInputPageField}
                             />
                         </div>
                     </div>
