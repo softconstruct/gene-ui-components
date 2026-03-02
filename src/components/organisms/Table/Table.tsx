@@ -2,6 +2,7 @@ import React, { createContext, FC, ReactNode, useEffect, useMemo, useState } fro
 import {
     ColumnFiltersState,
     ColumnPinningState,
+    FilterFn,
     getCoreRowModel,
     getFilteredRowModel,
     getSortedRowModel,
@@ -160,6 +161,20 @@ const Table: FC<ITableProps> = ({
         filterFromLeafRows: withFilterFromLeafRows,
         manualSorting: withManualSorting,
         manualFiltering: withManualFiltering,
+        filterFns: {
+            multiSelect: ((row, columnId, filterValue) => {
+                const cellValue = row.getValue(columnId);
+                const cellStr = cellValue != null ? String(cellValue) : "";
+
+                if (Array.isArray(filterValue) && filterValue.length > 0) {
+                    return filterValue.includes(cellValue);
+                }
+                if (typeof filterValue === "string" && filterValue.trim().length > 0) {
+                    return cellStr.toLowerCase().includes(filterValue.trim().toLowerCase());
+                }
+                return true;
+            }) as FilterFn<Row>
+        },
         onSortingChange: setSorting,
         onGlobalFilterChange: setGlobalFilter,
         onColumnFiltersChange: setColumnFilters

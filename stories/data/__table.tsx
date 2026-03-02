@@ -1331,7 +1331,8 @@ export const Columns: TableColumns<Row>[] = [
                 enableSorting: true,
                 editable: true,
                 copyable: true,
-                header: "First Name"
+                header: "First Name",
+                filterOptions: ["Central", "Harbor", "Metro"]
             },
             {
                 id: "lastName",

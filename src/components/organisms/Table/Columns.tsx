@@ -58,6 +58,10 @@ export const createColumns = (columns?: TableColumns<Row>[]): ColumnDef<Row>[] =
         return columnHelper.accessor((row) => row[item.dataKey], {
             ...item,
             id: item.dataKey,
+            ...(item.enableSelectFilter && {
+                filterFn: "multiSelect",
+                enableColumnFilter: true
+            }),
             header: () => item?.header || null,
             cell: ({ row, table }) => {
                 const editMode = table.options.meta?.editMode;

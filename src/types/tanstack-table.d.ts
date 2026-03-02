@@ -1,4 +1,4 @@
-import type { Row, RowData } from "@tanstack/table-core";
+import type { FilterFn, Row, RowData } from "@tanstack/table-core";
 
 /**
  * Cell type union for table column definitions.
@@ -60,5 +60,11 @@ declare module "@tanstack/table-core" {
         editMode?: boolean;
         updateData?: (rowIndex: number, columnId: string, value: string | number | boolean) => void;
         getCellValue?: (row: Row, columnId: string) => unknown;
+    }
+}
+
+declare module "@tanstack/react-table" {
+    interface FilterFns {
+        multiSelect: FilterFn<unknown>;
     }
 }

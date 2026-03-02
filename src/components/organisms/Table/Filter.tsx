@@ -4,10 +4,10 @@ interface IFilterProps {
     onBlur: () => void;
     filterValue?: string;
     filterPlaceholder?: string;
-    handleColumnFilter: (event: string) => void;
+    handleColumnFilter: (value: string) => void;
 }
 
-const Filter: FC<IFilterProps> = ({ filterValue, handleColumnFilter, onBlur, filterPlaceholder }) => {
+const Filter: FC<IFilterProps> = ({ filterValue = "", handleColumnFilter, onBlur, filterPlaceholder }) => {
     return (
         <input
             type="text"

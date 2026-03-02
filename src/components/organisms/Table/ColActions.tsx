@@ -34,10 +34,21 @@ export const ColActions: FC<IColActionsProps> = ({ header, filterPlaceholder, se
     const [currentSearchInput, setCurrentSearchInput] = useState<string | null>(null);
     const [popoverPropsForContent, setPopoverPropsForContent] = useState({});
     const [isFilterPopoverOpen, setIsFilterPopoverOpen] = useState<boolean>(false);
-    const filteredValues: string[] = [];
+
+    const rawFilter = column.getFilterValue();
+    const filteredValues = Array.isArray(rawFilter) ? rawFilter : [];
+    const filterTextValue = typeof rawFilter === "string" ? rawFilter : "";
+    const filterOptions = column.columnDef.filterOptions ?? [];
 
     const handleSortChange = () => column.toggleSorting();
-    const handleColumnFilter = (value: string) => column.setFilterValue(value);
+    const handleColumnFilter = (value: string) => column.setFilterValue(value.trim() || undefined);
+
+    const handleApplySelectFilter = (values: string[]) => {
+        column.setFilterValue(values.length > 0 ? values : undefined);
+        setIsFilterPopoverOpen(false);
+    };
+
+    const handleCloseSelectFilter = () => setIsFilterPopoverOpen(false);
 
     return (
         <div className="table__th_actions" role="group">
@@ -57,7 +68,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, filterPlaceholder, se
             )}
             {column.columnDef.enableSelectFilter && (
                 <>
-                    <Action withBadge={Boolean(filteredValues.length)}>
+                    <Action withBadge={filteredValues.length > 0}>
                         <Button
                             {...popoverPropsForContent}
                             appearance="secondary"
@@ -69,31 +80,35 @@ export const ColActions: FC<IColActionsProps> = ({ header, filterPlaceholder, se
                             })}
                             disabled={column.columnDef?.isSelectFilter}
                             onClick={() => setIsFilterPopoverOpen(true)}
+                            aria-expanded={isFilterPopoverOpen}
                         />
                     </Action>
                     <SelectFilter
                         selectAllText={selectAllText}
                         filteredValues={filteredValues}
+                        filterOptions={filterOptions}
                         column={column}
                         setProps={setPopoverPropsForContent}
                         isSelectFilterOpen={isFilterPopoverOpen}
+                        onApplyFilter={handleApplySelectFilter}
+                        onClose={handleCloseSelectFilter}
                     />
                 </>
             )}
 
-            {/* /!* todo: change icon from "Globe" to some "Search" icon, when it will implemented *!/ */}
             {column.getCanFilter() && (
-                <Action withBadge={column.getIsFiltered()}>
+                <Action withBadge={column.getIsFiltered() && filterTextValue.length > 0}>
                     <Button
                         appearance="secondary"
                         layout="text"
                         size="small"
                         disabled={column.columnDef?.isColumnFilterDisabled}
                         className={classnames({
-                            table__th_actions_active: column.getIsFiltered()
+                            table__th_actions_active: currentSearchInput === column.id
                         })}
                         Icon={Magnifier}
                         onClick={() => setCurrentSearchInput(column.id)}
+                        aria-expanded={currentSearchInput === column.id}
                     />
                 </Action>
             )}
@@ -102,7 +117,7 @@ export const ColActions: FC<IColActionsProps> = ({ header, filterPlaceholder, se
                     onBlur={() => setCurrentSearchInput(null)}
                     filterPlaceholder={filterPlaceholder}
                     handleColumnFilter={handleColumnFilter}
-                    filterValue={column.getFilterValue() as string}
+                    filterValue={filterTextValue}
                 />
             )}
 
