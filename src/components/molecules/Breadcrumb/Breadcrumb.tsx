@@ -2,11 +2,11 @@ import React, { createContext, FC, ReactNode, useCallback, useEffect, useMemo, u
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
 
-import { ChevronRight, IconProps, ThreeDotsHorizontal } from "@geneui/icons";
+import { IconProps, LineSlash, ThreeDotsHorizontal } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
-import BreadcrumbItem, { IBreadcrumbItemProps } from "@components/molecules/Breadcrumb/BreadCrumbItem";
+import BreadcrumbItem, { IBreadcrumbItemProps } from "@components/molecules/Breadcrumb/BreadcrumbItem";
 import { IMenuItemProps, Menu, MenuItem } from "@components/molecules/Menu";
 import Tooltip from "@components/molecules/Tooltip";
 
@@ -93,103 +93,138 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly
     const isProcessingRef = useRef<boolean>(false);
     const prevIsOverflowingRef = useRef<boolean>(false);
 
-    const shouldShowEllipsis = breadCrumbsData && breadCrumbsData.length > MAX_VISIBLE_BREADCRUMB_ITEMS;
+    const itemsCount = breadCrumbsData?.length ?? 0;
+    const isCountMode = itemsCount > MAX_VISIBLE_BREADCRUMB_ITEMS; // 7+ items
+    const isResponsiveMode = itemsCount > 1 && !isCountMode; // 2–6 items
 
     const isOverflowing = useEllipsisDetection(listRef, [breadCrumbsData, visibleFirstItemsCount, showPreLastItem]);
+
+    const maxFirstVisible = Math.max(0, itemsCount - 1);
+    const hasHiddenResponsiveItems = isResponsiveMode && visibleFirstItemsCount < maxFirstVisible;
+    const shouldShowEllipsis = itemsCount > 1 && (isCountMode || isOverflowing || hasHiddenResponsiveItems);
     const { containerRef, sizes: containerSizes } = useContainerSize<HTMLDivElement>();
 
     // Reset state when breadCrumbsData changes
     useEffect(() => {
-        setVisibleFirstItemsCount(FIRST_VISIBLE_ITEMS);
-        setShowPreLastItem(true);
+        const total = breadCrumbsData?.length ?? 0;
+
+        if (total > MAX_VISIBLE_BREADCRUMB_ITEMS) {
+            setVisibleFirstItemsCount(FIRST_VISIBLE_ITEMS);
+            setShowPreLastItem(true);
+        } else if (total > 1) {
+            setVisibleFirstItemsCount(total - 1);
+            setShowPreLastItem(false);
+        } else {
+            setVisibleFirstItemsCount(0);
+            setShowPreLastItem(false);
+        }
         isProcessingRef.current = false;
         prevIsOverflowingRef.current = false;
     }, [breadCrumbsData]);
 
-    // Hide one item when overflowing
     const hideOneItem = useCallback(() => {
-        if (visibleFirstItemsCount > 0) {
-            setVisibleFirstItemsCount((prev) => Math.max(0, prev - 1));
-            return true;
-        }
-        if (showPreLastItem && breadCrumbsData && breadCrumbsData.length > 1) {
-            setShowPreLastItem(false);
-            return true;
-        }
-        return false;
-    }, [visibleFirstItemsCount, showPreLastItem, breadCrumbsData]);
-
-    // Restore one item when space available
-    const restoreOneItem = useCallback(() => {
-        if (!showPreLastItem && breadCrumbsData && breadCrumbsData.length > 1) {
-            setShowPreLastItem(true);
-            return true;
-        }
-        if (visibleFirstItemsCount < FIRST_VISIBLE_ITEMS) {
-            setVisibleFirstItemsCount((prev) => Math.min(FIRST_VISIBLE_ITEMS, prev + 1));
-            return true;
-        }
-        return false;
-    }, [visibleFirstItemsCount, showPreLastItem, breadCrumbsData]);
-
-    // Handle overflow: only act when isOverflowing CHANGES
-    useEffect(() => {
-        if (!shouldShowEllipsis || !breadCrumbsData) return;
-
-        const wasOverflowing = prevIsOverflowingRef.current;
-        const overflowChanged = wasOverflowing !== isOverflowing;
-        prevIsOverflowingRef.current = isOverflowing;
-
-        // If we were processing and overflow status changed, we can process again
-        if (isProcessingRef.current && overflowChanged) {
-            isProcessingRef.current = false;
+        if (!breadCrumbsData || breadCrumbsData.length <= 1) {
+            return false;
         }
 
-        // If still processing (waiting for recalculation), do nothing
-        if (isProcessingRef.current) {
-            return;
-        }
-
-        // If overflowing and overflow just detected (or still overflowing after processing completed)
-        if (isOverflowing) {
-            const didHide = hideOneItem();
-            if (didHide) {
-                isProcessingRef.current = true; // Wait for next signal
+        if (isCountMode) {
+            if (visibleFirstItemsCount > 0) {
+                setVisibleFirstItemsCount((prev) => Math.max(0, prev - 1));
+                return true;
             }
+            if (showPreLastItem && breadCrumbsData.length > 1) {
+                setShowPreLastItem(false);
+                return true;
+            }
+            return false;
         }
-    }, [isOverflowing, shouldShowEllipsis, breadCrumbsData, hideOneItem]);
+
+        if (isResponsiveMode) {
+            if (visibleFirstItemsCount > 0) {
+                setVisibleFirstItemsCount((prev) => Math.max(0, prev - 1));
+                return true;
+            }
+            return false;
+        }
+
+        return false;
+    }, [breadCrumbsData, isCountMode, isResponsiveMode, visibleFirstItemsCount, showPreLastItem]);
+
+    const restoreOneItem = useCallback(() => {
+        if (!breadCrumbsData || breadCrumbsData.length <= 1) {
+            return false;
+        }
+
+        if (isCountMode) {
+            if (!showPreLastItem && breadCrumbsData.length > 1) {
+                setShowPreLastItem(true);
+                return true;
+            }
+            if (visibleFirstItemsCount < FIRST_VISIBLE_ITEMS) {
+                setVisibleFirstItemsCount((prev) => Math.min(FIRST_VISIBLE_ITEMS, prev + 1));
+                return true;
+            }
+            return false;
+        }
+
+        if (isResponsiveMode) {
+            const maxFirstVisibleForRestore = Math.max(0, breadCrumbsData.length - 1);
+            if (visibleFirstItemsCount < maxFirstVisibleForRestore) {
+                setVisibleFirstItemsCount((prev) => Math.min(maxFirstVisibleForRestore, prev + 1));
+                return true;
+            }
+            return false;
+        }
+
+        return false;
+    }, [breadCrumbsData, isCountMode, isResponsiveMode, visibleFirstItemsCount, showPreLastItem]);
+
+    // Handle overflow: for any itemsCount > 1, keep hiding items while overflowing.
+    useEffect(() => {
+        if (!breadCrumbsData || itemsCount <= 1) return;
+        if (!isOverflowing) return;
+
+        hideOneItem();
+    }, [isOverflowing, breadCrumbsData, itemsCount, hideOneItem]);
 
     // Handle resize out: restore items when container grows and not overflowing
     useEffect(() => {
-        if (!shouldShowEllipsis || !breadCrumbsData) return;
+        if (!breadCrumbsData) return;
+        if (itemsCount <= 1) return;
 
         const currentWidth = containerSizes.width;
         const isGrowing = currentWidth > prevContainerWidth.current;
         prevContainerWidth.current = currentWidth;
 
         // Only try to restore when container is growing and not overflowing
-        const hasHiddenItems = visibleFirstItemsCount < FIRST_VISIBLE_ITEMS || !showPreLastItem;
+        let hasHiddenItems = false;
+
+        if (isCountMode) {
+            hasHiddenItems = visibleFirstItemsCount < FIRST_VISIBLE_ITEMS || !showPreLastItem;
+        } else if (isResponsiveMode) {
+            const maxFirstVisibleLocal = Math.max(0, itemsCount - 1);
+            hasHiddenItems = visibleFirstItemsCount < maxFirstVisibleLocal;
+        }
 
         if (isGrowing && !isOverflowing && hasHiddenItems) {
-            const didRestore = restoreOneItem();
-            if (didRestore) {
-                isProcessingRef.current = true; // Wait for next signal
-            }
+            restoreOneItem();
         }
     }, [
         containerSizes.width,
         isOverflowing,
-        shouldShowEllipsis,
         breadCrumbsData,
         visibleFirstItemsCount,
         showPreLastItem,
         restoreOneItem,
+        isCountMode,
+        isResponsiveMode,
+        itemsCount,
         prevContainerWidth.current
     ]);
 
     // Calculate visible items and menu items based on responsive state
     const { visibleFirstItems, visibleLastItems, menuItems } = useMemo(() => {
-        if (!breadCrumbsData || breadCrumbsData.length === 0) {
+        if (!breadCrumbsData || itemsCount === 0) {
             return { visibleFirstItems: [], visibleLastItems: [], menuItems: [] };
         }
 
@@ -197,38 +232,63 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly
             return { visibleFirstItems: breadCrumbsData, visibleLastItems: [], menuItems: [] };
         }
 
-        const lastItem = breadCrumbsData[breadCrumbsData.length - 1];
-        const firstVisible = breadCrumbsData.slice(0, visibleFirstItemsCount);
-        const preLastItem =
-            showPreLastItem && breadCrumbsData.length > 1 ? breadCrumbsData[breadCrumbsData.length - 2] : null;
+        const total = itemsCount;
+        const lastItem = breadCrumbsData[total - 1];
 
-        const lastVisible = preLastItem ? [preLastItem, lastItem] : [lastItem];
+        if (isCountMode) {
+            // 7+ items: original centre-wrapping behaviour
+            const firstVisible = breadCrumbsData.slice(0, visibleFirstItemsCount);
+            const preLastItem = showPreLastItem && total > 1 ? breadCrumbsData[total - 2] : null;
 
-        // Calculate menu items: everything that's NOT visible
-        // First items that were moved to menu (items that should be visible but aren't)
-        const hiddenFirstItems =
-            visibleFirstItemsCount < FIRST_VISIBLE_ITEMS
-                ? breadCrumbsData.slice(visibleFirstItemsCount, FIRST_VISIBLE_ITEMS)
-                : [];
+            const lastVisible = preLastItem ? [preLastItem, lastItem] : [lastItem];
 
-        // Middle items between first visible and last visible
-        // Always exclude last 2 items (pre-last and last) from middle section
-        const menuStart = Math.max(visibleFirstItemsCount, FIRST_VISIBLE_ITEMS);
-        const menuEnd = breadCrumbsData.length - 2; // Exclude pre-last and last
-        const middleItems = menuStart < menuEnd ? breadCrumbsData.slice(menuStart, menuEnd) : [];
+            const hiddenFirstItems =
+                visibleFirstItemsCount < FIRST_VISIBLE_ITEMS
+                    ? breadCrumbsData.slice(visibleFirstItemsCount, FIRST_VISIBLE_ITEMS)
+                    : [];
 
-        // Pre-last item if it's hidden
-        const hiddenPreLastItem =
-            !showPreLastItem && breadCrumbsData.length > 1 ? [breadCrumbsData[breadCrumbsData.length - 2]] : [];
+            const menuStart = Math.max(visibleFirstItemsCount, FIRST_VISIBLE_ITEMS);
+            const menuEnd = total - 2;
+            const middleItems = menuStart < menuEnd ? breadCrumbsData.slice(menuStart, menuEnd) : [];
 
-        const allMenuItems = [...hiddenFirstItems, ...middleItems, ...hiddenPreLastItem];
+            const hiddenPreLastItem = !showPreLastItem && total > 1 ? [breadCrumbsData[total - 2]] : [];
 
-        return {
-            visibleFirstItems: firstVisible,
-            visibleLastItems: lastVisible,
-            menuItems: allMenuItems
-        };
-    }, [breadCrumbsData, shouldShowEllipsis, visibleFirstItemsCount, showPreLastItem]);
+            const allMenuItems = [...hiddenFirstItems, ...middleItems, ...hiddenPreLastItem];
+
+            return {
+                visibleFirstItems: firstVisible,
+                visibleLastItems: lastVisible,
+                menuItems: allMenuItems
+            };
+        }
+
+        if (isResponsiveMode) {
+            // 2–6 items: collapse from the start, always keeping the last item visible
+            const maxFirstVisibleResponsive = Math.max(0, total - 1);
+            const firstCount = Math.min(visibleFirstItemsCount, maxFirstVisibleResponsive);
+            const firstVisible = breadCrumbsData.slice(0, firstCount);
+            const lastVisible = [lastItem];
+
+            // All items between the first group and the last item go into the menu
+            const responsiveMenuItems = breadCrumbsData.slice(firstCount, total - 1);
+
+            return {
+                visibleFirstItems: firstVisible,
+                visibleLastItems: lastVisible,
+                menuItems: responsiveMenuItems
+            };
+        }
+
+        return { visibleFirstItems: breadCrumbsData, visibleLastItems: [], menuItems: [] };
+    }, [
+        breadCrumbsData,
+        itemsCount,
+        shouldShowEllipsis,
+        visibleFirstItemsCount,
+        showPreLastItem,
+        isCountMode,
+        isResponsiveMode
+    ]);
 
     const menuSelectHandler = (menuItem: IMenuItemProps) => {
         const selectedItem = menuItems.find((item) => {
@@ -288,9 +348,8 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly
                                         );
                                     })}
                                 </Menu>
-                                <ChevronRight size={24} />
+                                <LineSlash size={24} />
                             </li>
-                            {/* Last visible items (pre-last and last, or just last) */}
                             {visibleLastItems.map((item, index) => {
                                 const isLastItem = index === visibleLastItems.length - 1;
                                 return renderBreadcrumbItem(item, isLastItem);

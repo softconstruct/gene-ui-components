@@ -1,14 +1,14 @@
 import React, { cloneElement, FC, isValidElement, useContext } from "react";
 import classNames from "classnames";
 
-import { ChevronRight, FolderOpen, IconProps } from "@geneui/icons";
+import { FolderOpen, IconProps, LineSlash } from "@geneui/icons";
 
 import Text from "@components/atoms/Text";
 import { BreadcrumbContext } from "@components/molecules/Breadcrumb/Breadcrumb";
 import Tooltip from "@components/molecules/Tooltip";
 
 interface IBreadcrumbItemProps {
-    title?: string;
+    title: string;
     path?: string;
     /**
      * Icon component to display before the title
@@ -102,8 +102,7 @@ const BreadcrumbItem: FC<IBreadcrumbItemProps> = ({ path, title, Icon }) => {
                 {interactiveElement}
             </Tooltip>
 
-            {/* todo: change "ChevronRight" Icon to "/" as in design file */}
-            {!isLastItem && <ChevronRight size={24} />}
+            {!isLastItem && <LineSlash size={24} />}
         </li>
     );
 };

@@ -1,7 +1,10 @@
-import React from "react";
+import React, { FC } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { ArrowBounceUp, Document, Receipt } from "@geneui/icons";
+
+import { Col, Grid, Row } from "@components/atoms/Grid";
+import Section from "@components/molecules/Section";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -27,7 +30,97 @@ export default meta;
 
 type Story = StoryObj<IBreadcrumbProps>;
 
+const BreadcrumbVariations: FC<IBreadcrumbProps> = (props) => {
+    return (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ display: "flex", flexWrap: "nowrap" }}>
+                <Grid>
+                    <Row>
+                        <Col size={8}>
+                            <Section title="Col 8 with 5 item">
+                                <Breadcrumb {...props} />
+                            </Section>
+                        </Col>
+                        <Col size={4}>
+                            <Section title="Col 4 with 5 item">
+                                <Breadcrumb {...props} />
+                            </Section>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col size={12}>
+                            <Section title="Col 12 with 9 item">
+                                <Breadcrumb
+                                    {...props}
+                                    breadCrumbsData={[
+                                        { title: "Nav Item 1", path: "javascript:void(0)" },
+                                        {
+                                            title: "Nav Item 2",
+                                            path: "javascript:void(0)",
+                                            Icon: Receipt
+                                        },
+                                        { title: "Nav Item 3", path: "javascript:void(0)" },
+                                        { title: "Nav Item 4", path: "javascript:void(0)" },
+                                        { title: "Nav Item 5", path: "javascript:void(0)" },
+                                        { title: "Nav Item 6", path: "javascript:void(0)" },
+                                        { title: "Nav Item 7", path: "javascript:void(0)" },
+                                        { title: "Nav Item 8", path: "javascript:void(0)" },
+                                        { title: "Nav Item 9", path: "javascript:void(0)" }
+                                    ]}
+                                />
+                            </Section>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col size={12}>
+                            <Section title="Col 12 with 2 item">
+                                <Breadcrumb
+                                    {...props}
+                                    breadCrumbsData={[
+                                        { title: "Nav Item 1", path: "javascript:void(0)" },
+                                        {
+                                            title: "Nav Item 2",
+                                            path: "javascript:void(0)",
+                                            Icon: Receipt
+                                        }
+                                    ]}
+                                />
+                            </Section>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col size={12}>
+                            <Section title="Col 12 with 9 item and icon only">
+                                <Breadcrumb
+                                    iconOnly
+                                    {...props}
+                                    breadCrumbsData={[
+                                        { title: "Nav Item 1", path: "javascript:void(0)" },
+                                        {
+                                            title: "Nav Item 2",
+                                            path: "javascript:void(0)",
+                                            Icon: Receipt
+                                        },
+                                        { title: "Nav Item 3", path: "javascript:void(0)" },
+                                        { title: "Nav Item 4", path: "javascript:void(0)" },
+                                        { title: "Nav Item 5", path: "javascript:void(0)" },
+                                        { title: "Nav Item 6", path: "javascript:void(0)" },
+                                        { title: "Nav Item 7", path: "javascript:void(0)" },
+                                        { title: "Nav Item 8", path: "javascript:void(0)" },
+                                        { title: "Nav Item 9", path: "javascript:void(0)" }
+                                    ]}
+                                />
+                            </Section>
+                        </Col>
+                    </Row>
+                </Grid>
+            </div>
+        </div>
+    );
+};
+
 export const Default: Story = {
+    render: (props) => <BreadcrumbVariations {...props} />,
     args: {
         breadCrumbsData: [
             { title: "Nav Item 1", path: "javascript:void(0)" },
@@ -36,7 +129,9 @@ export const Default: Story = {
                 path: "javascript:void(0)",
                 Icon: Receipt
             },
-            { title: "Nav Item 3", path: "javascript:void(0)" }
+            { title: "Nav Item 3", path: "javascript:void(0)" },
+            { title: "Nav Item 4", path: "javascript:void(0)" },
+            { title: "Nav Item 5", path: "javascript:void(0)" }
         ]
     }
 };
