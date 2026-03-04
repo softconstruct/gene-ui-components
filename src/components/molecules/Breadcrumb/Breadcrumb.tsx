@@ -102,7 +102,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly
     const maxFirstVisible = Math.max(0, itemsCount - 1);
     const hasHiddenResponsiveItems = isResponsiveMode && visibleFirstItemsCount < maxFirstVisible;
     const shouldShowEllipsis = itemsCount > 1 && (isCountMode || isOverflowing || hasHiddenResponsiveItems);
-    const { containerRef, sizes: containerSizes } = useContainerSize<HTMLDivElement>();
+    const { containerRef, sizes: containerSizes } = useContainerSize<HTMLDivElement>({ debounceWait: 100 });
 
     // Reset state when breadCrumbsData changes
     useEffect(() => {
