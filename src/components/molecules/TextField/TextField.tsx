@@ -25,19 +25,8 @@ import "./TextField.scss";
 
 // Helpers
 import { NUMERIC_STRING_PATTERN } from "../../../constants";
-
-// Size mapping objects for Label and HelperText components
-const labelSizeMap = {
-    large: "medium" as const,
-    medium: "medium" as const,
-    small: "small" as const
-};
-
-const helperTextSizeMap = {
-    large: "medium" as const,
-    medium: "medium" as const,
-    small: "small" as const
-};
+// Constants
+import { actionButtonSizeMap, helperTextSizeMap, iconSizeMap, labelSizeMap } from "./constants";
 
 interface ITextFieldProps {
     /**
@@ -215,7 +204,6 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         const inputRef = useRef<HTMLInputElement | null>(null);
         const [internalValue, setInternalValue] = useState("");
         const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-        const [paddingClassesForIcon, setPaddingClassesForIcon] = useState<string>("");
         const inputValue = isControlled ? value.toString() : internalValue;
         const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
 
@@ -270,26 +258,24 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             setInternalValue(defaultValue.toString());
         }, []);
 
-        useEffect(() => {
-            const iconAfter =
-                type === "password" || (clearable && inputValue.length > 0 && !disabled && !readOnly) || IconAfter;
-            if (IconBefore && iconAfter) {
-                setPaddingClassesForIcon("textField__wrapper_withIcons");
-            } else if (IconBefore) {
-                setPaddingClassesForIcon("textField__wrapper_iconBefore");
-            } else if (iconAfter) {
-                setPaddingClassesForIcon("textField__wrapper_iconAfter");
-            }
-        }, [IconBefore, type, clearable, inputValue, disabled, readOnly]);
-
         const isClearable = clearable && inputValue.length > 0 && !disabled && !readOnly;
         const isPassword = type === "password" && inputValue.length > 0 && !readOnly && !disabled;
+        const iconAfter = isPassword || isClearable || IconAfter;
 
         const inputConditionalProps = {
             placeholder,
             autoFocus,
             inputMode: type === "number" ? "numeric" : inputMode,
             type: isPasswordVisible || type === "number" ? "text" : type
+        };
+
+        const paddedClassesForIcon = {
+            textField__wrapper_readOnly: readOnly && !disabled,
+            textField__wrapper_disabled: disabled,
+            textField__wrapper_error: status === "error",
+            textField__wrapper_withIcons: IconBefore && iconAfter,
+            textField__wrapper_iconBefore: IconBefore,
+            textField__wrapper_iconAfter: iconAfter
         };
 
         return (
@@ -304,16 +290,10 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                     labelFor={generatedId}
                     size={labelSize}
                 />
-                <div
-                    className={classNames(`textField__wrapper textField__wrapper_size_${size}`, paddingClassesForIcon, {
-                        textField__wrapper_readOnly: readOnly && !disabled,
-                        textField__wrapper_disabled: disabled,
-                        textField__wrapper_error: status === "error"
-                    })}
-                >
+                <div className={classNames(`textField__wrapper textField__wrapper_size_${size}`, paddedClassesForIcon)}>
                     {IconBefore && (
                         <span className="textField__icon">
-                            <IconBefore size={size === "small" ? 20 : 24} />
+                            <IconBefore size={iconSizeMap[size]} />
                         </span>
                     )}
                     <input
@@ -339,7 +319,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                                 <Button
                                     Icon={X}
                                     appearance="secondary"
-                                    size={size === "small" ? "smallNudge" : "small"}
+                                    size={actionButtonSizeMap[size]}
                                     layout="text"
                                     disabled={disabled}
                                     onClick={handleClear}
@@ -349,7 +329,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                                 <Button
                                     Icon={isPasswordVisible ? Eye : EyeOff}
                                     appearance="secondary"
-                                    size={size === "small" ? "smallNudge" : "small"}
+                                    size={actionButtonSizeMap[size]}
                                     layout="text"
                                     disabled={disabled}
                                     onClick={showPasswordToggle}
@@ -359,7 +339,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                     )}
                     {IconAfter && (
                         <span className="textField__icon">
-                            <IconAfter size={size === "small" ? 20 : 24} />
+                            <IconAfter size={iconSizeMap[size]} />
                         </span>
                     )}
                 </div>

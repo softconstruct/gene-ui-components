@@ -66,9 +66,9 @@ export const Default: Story = {
 export const WithIcons: Story = {
     render: (props) => (
         <>
-            <StoryTemplate {...props} IconBefore={Info} />
+            <StoryTemplate {...props} label="With start icon" IconBefore={Info} />
             <br />
-            <StoryTemplate {...props} IconAfter={Info} />
+            <StoryTemplate {...props} label="With end icon" IconAfter={Info} />
         </>
     )
 };
