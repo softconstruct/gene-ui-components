@@ -1,11 +1,30 @@
-import React, { Dispatch, FC, ReactElement, SetStateAction, useCallback, useEffect, useState } from "react";
+import React, {
+    Children,
+    Dispatch,
+    FC,
+    ReactElement,
+    SetStateAction,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
 import classNames from "classnames";
 
+import Loader from "@components/atoms/Loader";
 // Components
-import { IPopoverProps, Popover, PopoverBody } from "@components/atoms/Popover";
+import { IPopoverProps, IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
+import Scrollbar from "@components/atoms/Scrollbar";
+import Empty from "@components/molecules/Empty";
+
+// Hooks
+import { useClickOutside } from "@hooks/index";
 
 // Styles
 import "./AutoComplete.scss";
+
+import AutoCompleteFooter from "./AutoCompleteFooter";
 
 type SizeType = "large" | "medium" | "small";
 
@@ -33,6 +52,18 @@ interface IAutoCompleteProps {
      */
     setPropsForPopover: Dispatch<SetStateAction<GenericObject>>;
     /**
+     * Indicates whether the autocomplete is in a loading state. If true, a loading indicator is displayed instead of the items.
+     */
+    loading?: boolean;
+    /**
+     * The text to display alongside the loader when loading is true.
+     */
+    loadingText?: string;
+    /**
+     * Text to display when there are no items to show (no results).
+     */
+    emptyText?: string;
+    /**
      * Autocomplete size.<br/>
      * Default value is `small`.<br/>
      * Possible values: `large | medium | small`
@@ -49,6 +80,22 @@ interface IAutoCompleteProps {
      * If omitted, the component manages its own open state.
      */
     open?: boolean;
+    /**
+     * When true, shows the footer with the \"Show more\" button.
+     */
+    showMore?: boolean;
+    /**
+     * Callback when the \"Show more\" button is clicked.
+     */
+    onShowMore?: () => void;
+    /**
+     * Text for the \"Show more\" button.
+     */
+    showMoreLabel?: string;
+    /**
+     * Callback when the open state changes.
+     */
+    onOpenChange?: (isOpen: boolean) => void;
 }
 
 /**
@@ -60,9 +107,20 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
     setPropsForPopover,
     size = "small",
     position = "bottom-left",
-    open
+    open,
+    loading,
+    loadingText,
+    emptyText,
+    showMore,
+    onShowMore,
+    showMoreLabel,
+    onOpenChange
 }) => {
-    const [isOpenState, setIsOpenState] = useState<boolean>(true);
+    const [isOpenState, setIsOpenState] = useState<boolean>(false);
+    const popoverRef = useRef<IPopoverRef>({
+        floatingElement: { current: null },
+        referenceElement: { current: null }
+    });
 
     useEffect(() => {
         if (open !== undefined) {
@@ -70,14 +128,71 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
         }
     }, [open]);
 
+    useEffect(() => {
+        if (onOpenChange) {
+            onOpenChange(isOpenState);
+        }
+    }, [isOpenState, onOpenChange]);
+
+    useClickOutside(
+        (e) => {
+            if (!isOpenState) return;
+
+            const onTargetClick =
+                e.target instanceof Node &&
+                popoverRef.current.referenceElement?.current instanceof Node &&
+                popoverRef.current.referenceElement.current.contains(e.target);
+
+            if (!onTargetClick) {
+                setIsOpenState(false);
+                if (onOpenChange) {
+                    onOpenChange(false);
+                }
+            }
+        },
+        [popoverRef.current.floatingElement]
+    );
+
     const setReferenceProps = useCallback(
         (value: SetStateAction<GenericObject>) => {
-            // For now we simply forward Popover's props to the parent setter.
-            // The parent (e.g. TextField/SearchField) will apply these to the anchor element.
             setPropsForPopover(value);
         },
         [setPropsForPopover]
     );
+
+    const hasChildren = useMemo(() => Children.count(children) > 0, [children]);
+
+    const content = useMemo(() => {
+        if (loading) {
+            return (
+                <div className="autoComplete__loader">
+                    <Loader text={loadingText} textPosition="below" />
+                </div>
+            );
+        }
+        if (!hasChildren) {
+            return (
+                <div className="autoComplete__empty">
+                    <Empty description={emptyText} appearance="noResult" size="small" />
+                </div>
+            );
+        }
+        return (
+            <>
+                <Scrollbar className="autoComplete__scrollbar">
+                    <div className={classNames("autoComplete", className, "autoComplete__content")}>{children}</div>
+                </Scrollbar>
+                {showMore && (
+                    <AutoCompleteFooter
+                        showMore={showMore}
+                        onShowMore={onShowMore}
+                        showMoreLabel={showMoreLabel}
+                        disabled={!hasChildren}
+                    />
+                )}
+            </>
+        );
+    }, [children, className, emptyText, hasChildren, loading, loadingText, onShowMore, showMore, showMoreLabel]);
 
     return (
         <Popover
@@ -89,7 +204,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
             margin={4}
         >
             <PopoverBody withPadding className="autoComplete__body" withScrollbar={false}>
-                <div className={classNames("autoComplete", className)}>{children}</div>
+                {content}
             </PopoverBody>
         </Popover>
     );

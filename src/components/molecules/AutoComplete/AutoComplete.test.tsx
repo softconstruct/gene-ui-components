@@ -7,7 +7,15 @@ import AutoComplete, { IAutoCompleteProps } from "./index";
 describe("AutoComplete ", () => {
     let setup: ReactWrapper<IAutoCompleteProps>;
     beforeEach(() => {
-        setup = mount(<AutoComplete />);
+        setup = mount(
+            <AutoComplete
+                setPropsForPopover={() => {
+                    // Provide a no-op function for setPropsForPopover
+                }}
+            >
+                <div>Test Child</div>
+            </AutoComplete>
+        );
     });
 
     it("renders without crashing", () => {
