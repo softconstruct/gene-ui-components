@@ -2,6 +2,8 @@ import React, {
     Children,
     Dispatch,
     FC,
+    KeyboardEvent as ReactKeyboardEvent,
+    MouseEvent as ReactMouseEvent,
     ReactElement,
     SetStateAction,
     useCallback,
@@ -153,9 +155,68 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
         [popoverRef.current.floatingElement]
     );
 
+    const toggleAutoCompleteOpen = useCallback(() => {
+        setIsOpenState((prev) => !prev);
+    }, []);
+
+    const enhanceTriggerPropsRef = useRef<(triggerProps: GenericObject) => GenericObject>();
+
+    const enhanceTriggerProps = useCallback(
+        (triggerProps: GenericObject): GenericObject => {
+            if (!triggerProps || typeof triggerProps !== "object") {
+                return triggerProps;
+            }
+
+            const { onClick, onKeyDown, ...rest } = triggerProps as {
+                onClick?: (event: ReactMouseEvent<HTMLElement>) => void;
+                onKeyDown?: (event: ReactKeyboardEvent<HTMLElement>) => void;
+                [key: string]: unknown;
+            };
+
+            return {
+                ...rest,
+                onClick: (event: ReactMouseEvent<HTMLElement>) => {
+                    onClick?.(event);
+                    if (!event.defaultPrevented) {
+                        toggleAutoCompleteOpen();
+                    }
+                },
+                onKeyDown: (event: ReactKeyboardEvent<HTMLElement>) => {
+                    onKeyDown?.(event);
+                    if (!event.defaultPrevented && (event.key === "Enter" || event.key === " ")) {
+                        event.preventDefault();
+                        toggleAutoCompleteOpen();
+                    }
+                }
+            };
+        },
+        [toggleAutoCompleteOpen]
+    );
+
+    // Keep the ref updated with the latest function
+    enhanceTriggerPropsRef.current = enhanceTriggerProps;
+
     const setReferenceProps = useCallback(
         (value: SetStateAction<GenericObject>) => {
-            setPropsForPopover(value);
+            const enhanceFn = enhanceTriggerPropsRef.current;
+            if (!enhanceFn) {
+                // Fallback if ref is not set yet
+                if (typeof value === "function") {
+                    setPropsForPopover((prev) => value(prev));
+                } else {
+                    setPropsForPopover(value);
+                }
+                return;
+            }
+
+            if (typeof value === "function") {
+                setPropsForPopover((prev) => {
+                    const nextValue = value(prev);
+                    return enhanceFn(nextValue);
+                });
+            } else {
+                setPropsForPopover(enhanceFn(value));
+            }
         },
         [setPropsForPopover]
     );
@@ -202,6 +263,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
             withArrow={false}
             open={isOpenState}
             margin={4}
+            ref={popoverRef}
         >
             <PopoverBody withPadding className="autoComplete__body" withScrollbar={false}>
                 {content}

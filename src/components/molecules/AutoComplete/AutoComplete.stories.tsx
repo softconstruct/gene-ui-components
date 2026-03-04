@@ -64,11 +64,9 @@ const StoryComponent: FC<IAutoCompleteProps> = (props) => {
 
     return (
         <div style={{ padding: "2rem", minHeight: "400px" }}>
-            <TextField
-                {...propsForPopover}
-                placeholder="Search..."
-                onFocus={() => setPropsForPopover({ open: true })}
-            />
+            <div {...propsForPopover} style={{ display: "inline-block", width: "100%" }}>
+                <TextField placeholder="Search..." />
+            </div>
             <AutoComplete {...props} setPropsForPopover={setPropsForPopover}>
                 {/* Placeholder - AutoCompleteItem will be added later */}
             </AutoComplete>
