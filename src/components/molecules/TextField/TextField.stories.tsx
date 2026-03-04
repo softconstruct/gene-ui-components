@@ -20,6 +20,7 @@ const meta: Meta<ITextFieldProps> = {
         clearable: args({ control: "boolean", ...propCategory.states }),
         type: args({ control: "select", ...propCategory.appearance }),
         IconBefore: args({ control: "false", ...propCategory.appearance }),
+        IconAfter: args({ control: "false", ...propCategory.appearance }),
         onChange: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
@@ -62,9 +63,12 @@ export const Default: Story = {
     render: (props) => <StoryTemplate {...props} />
 };
 
-export const WithIcon: Story = {
-    args: {
-        IconBefore: Info
-    },
-    render: (props) => <StoryTemplate {...props} />
+export const WithIcons: Story = {
+    render: (props) => (
+        <>
+            <StoryTemplate {...props} IconBefore={Info} />
+            <br />
+            <StoryTemplate {...props} IconAfter={Info} />
+        </>
+    )
 };

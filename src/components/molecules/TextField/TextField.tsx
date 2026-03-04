@@ -136,6 +136,10 @@ interface ITextFieldProps {
      */
     IconBefore?: FC<IconProps>; // startIcon
     /**
+     * The `IconAfter` prop accepts a React Functional Component that will be displayed at the end of the `TextField`.
+     */
+    IconAfter?: FC<IconProps>;
+    /**
      * When `true`, shows a `clear button` to reset the `input` value.
      * default value is `false`
      */
@@ -181,11 +185,12 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             id,
             name,
             type = "text",
-            size = "large",
+            size = "medium",
             defaultValue,
             value,
             placeholder,
             IconBefore,
+            IconAfter,
             onChange,
             onFocus,
             onBlur,
@@ -266,7 +271,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         }, []);
 
         useEffect(() => {
-            const iconAfter = type === "password" || (clearable && inputValue.length > 0 && !disabled && !readOnly);
+            const iconAfter =
+                type === "password" || (clearable && inputValue.length > 0 && !disabled && !readOnly) || IconAfter;
             if (IconBefore && iconAfter) {
                 setPaddingClassesForIcon("textField__wrapper_withIcons");
             } else if (IconBefore) {
@@ -349,6 +355,11 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                                     onClick={showPasswordToggle}
                                 />
                             )}
+                        </span>
+                    )}
+                    {IconAfter && (
+                        <span className="textField__icon">
+                            <IconAfter size={size === "small" ? 20 : 24} />
                         </span>
                     )}
                 </div>
