@@ -276,8 +276,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             textField__wrapper_disabled: disabled,
             textField__wrapper_error: status === "error",
             textField__wrapper_withIcons: IconBefore && iconAfter,
-            textField__wrapper_iconBefore: IconBefore,
-            textField__wrapper_iconAfter: iconAfter
+            textField__wrapper_iconBefore: IconBefore && !iconAfter,
+            textField__wrapper_iconAfter: iconAfter && !IconBefore
         };
 
         return (
