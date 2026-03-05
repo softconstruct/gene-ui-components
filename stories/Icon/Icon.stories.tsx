@@ -231,7 +231,7 @@ const IconsCatalogComponent: FC = () => {
                     IconBefore={Magnifier}
                     clearable
                     onClear={() => setSearchTerm("")}
-                    helperText={`${filteredIcons.length.toString()} / ${iconsWithMetadata.length.toString()} (${columnCount} columns)`}
+                    helperText={`${filteredIcons.length.toString()} / ${iconsWithMetadata.length.toString()}`}
                 />
             </div>
 
