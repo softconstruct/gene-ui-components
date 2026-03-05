@@ -9,7 +9,8 @@ import ButtonGroup from "@components/molecules/ButtonGroup";
 
 export interface IPopoverFooterActionProps {
     /**
-     * The `Icon` component to display in the action button. If not provided, the action button will not be rendered.
+     * Optional icon component to display in the action button.
+     * The button can be rendered with just text, with an icon, or with both.
      */
     Icon?: React.FC<IconProps>;
     /**
@@ -52,7 +53,16 @@ export interface IPopoverFooterProps {
      * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
      * @example
      * actions={[
-     *   { Icon: Globe, text: "View", onClick: handleAction },
+     *   {
+     *     Icon: Globe,
+     *     text: "View",
+     *     onClick: handleAction,
+     *     appearance: "primary",
+     *     disabled: false,
+     *     id: "view-button",
+     *     name: "view",
+     *     "aria-label": "View item"
+     *   },
      *   { Icon: Download, text: "Download" },
      *   { text: "Edit" }
      * ]}
@@ -75,7 +85,7 @@ const PopoverFooter: FC<IPopoverFooterProps> = ({ children, actions }) => {
         <div className="popover__footer">
             {children}
             {hasActions && (
-                <ButtonGroup className="popover__footer_buttons" size="medium">
+                <ButtonGroup className="popover__footerActions" size="medium">
                     {actionsWithIds.map((action) => {
                         if (action.Icon || action.text) {
                             const { text: actionText, ...restAction } = action;

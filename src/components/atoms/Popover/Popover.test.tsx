@@ -188,7 +188,7 @@ describe("Popover", () => {
             children: <PopoverFooter actions={[{ text: "Action", onClick: () => {} }]} />
         });
         expect(provider().find(ButtonGroup).exists()).toBeTruthy();
-        expect(provider().find(ButtonGroup).hasClass("popover__footer_buttons")).toBeTruthy();
+        expect(provider().find(ButtonGroup).hasClass("popover__footerActions")).toBeTruthy();
     });
 
     it("does not render ButtonGroup when actions array is empty", () => {

@@ -193,8 +193,8 @@ export interface IPopoverProps {
      */
     hasCloseButton?: boolean;
     /**
-     * Popover header icon <br/>
-     * The `Icon` prop accepts a JSX element that will be displayed as an avatar.
+     * Icon component displayed in the popover header before the title.
+     * The `Icon` prop accepts a React functional component that will be rendered before the title text.
      */
     Icon?: FC<IconProps>;
 }
