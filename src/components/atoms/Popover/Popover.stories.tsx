@@ -6,6 +6,7 @@ import { Info } from "@geneui/icons";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
+import Avatar from "../Avatar";
 import Button from "../Button";
 import { IPopoverProps, Popover, PopoverBody, PopoverFooter } from "./index";
 
@@ -85,10 +86,7 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
                             }
                         ]}
                     >
-                        <div
-                            className="swapComponent"
-                            style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
-                        />
+                        <Avatar size="small" fullName="John Doe" color="blue" />
                     </PopoverFooter>
                 )}
             </Popover>
@@ -168,10 +166,7 @@ const WithoutHeaderComponent: FC<IPopoverProps> = (props) => {
                         }
                     ]}
                 >
-                    <div
-                        className="swapComponent"
-                        style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
-                    />
+                    <Avatar size="small" fullName="Jane Smith" color="purple" />
                 </PopoverFooter>
             </Popover>
             <Button onClick={() => {}} {...propsForContent}>
