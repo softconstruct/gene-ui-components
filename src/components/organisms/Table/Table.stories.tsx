@@ -106,7 +106,8 @@ const meta: Meta<ITableProps> = {
         onColumnFilter: args({ control: "false", ...propCategory.action }),
         onPageChange: args({ control: "false", ...propCategory.action }),
         onPageSizeChange: args({ control: "false", ...propCategory.action }),
-        columnResizeDirection: args({ control: "select", ...propCategory.appearance }),
+        columnResizeMode: args({ control: "select", ...propCategory.functionality }),
+        columnResizeDirection: args({ control: "select", ...propCategory.functionality }),
         className: args({ control: "false", ...propCategory.appearance })
     },
     args: {
@@ -126,6 +127,7 @@ const meta: Meta<ITableProps> = {
         manageColumnsInfo,
         editActions: defaultEditActions,
         headerContent: <SwapComponent />,
+        resizable: true,
         withToolbar: true,
         withPagination: true,
         withVirtualScroll: false,

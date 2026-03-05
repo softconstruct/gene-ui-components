@@ -15,7 +15,6 @@ import Filter from "./Filter";
 
 interface IColActionsProps {
     header: Header<Row, unknown>;
-    onColAction?: (event: string, value: boolean) => void;
     selectAllText?: string;
     filterPlaceholder?: string;
 }
@@ -32,7 +31,7 @@ const Action: FC<IAction> = ({ withBadge, children }) => {
 export const ColActions: FC<IColActionsProps> = ({ header, filterPlaceholder, selectAllText = "Select All" }) => {
     const { column } = header;
     const [currentSearchInput, setCurrentSearchInput] = useState<string | null>(null);
-    const [popoverPropsForContent, setPopoverPropsForContent] = useState({});
+    const [popoverPropsForContent, setPopoverPropsForContent] = useState<Record<string, unknown>>({});
     const [isFilterPopoverOpen, setIsFilterPopoverOpen] = useState<boolean>(false);
 
     const rawFilter = column.getFilterValue();
@@ -87,7 +86,6 @@ export const ColActions: FC<IColActionsProps> = ({ header, filterPlaceholder, se
                         selectAllText={selectAllText}
                         filteredValues={filteredValues}
                         filterOptions={filterOptions}
-                        column={column}
                         setProps={setPopoverPropsForContent}
                         isSelectFilterOpen={isFilterPopoverOpen}
                         onApplyFilter={handleApplySelectFilter}

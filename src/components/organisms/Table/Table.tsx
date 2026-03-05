@@ -2,6 +2,7 @@ import React, { createContext, FC, ReactNode, useEffect, useMemo, useState } fro
 import {
     ColumnFiltersState,
     ColumnPinningState,
+    ColumnSizingState,
     FilterFn,
     getCoreRowModel,
     getFilteredRowModel,
@@ -63,6 +64,7 @@ interface ITableProps {
     headerContent?: ReactNode;
     selectAllText?: string;
     editMode?: boolean;
+    resizable?: boolean;
     withToolbar?: boolean;
     withPagination?: boolean;
     withVirtualScroll?: boolean;
@@ -71,10 +73,18 @@ interface ITableProps {
     withManualSorting?: boolean;
     withManualFiltering?: boolean;
     withFilterFromLeafRows?: boolean;
+    onColumnSizingChange?: (columnData: ColumnSizingState) => void;
+    onColumnSizingRestore?: (columnData: ColumnSizingState) => void;
+    columnResizeMode?: "onEnd" | "onChange";
     columnResizeDirection?: "ltr" | "rtl";
     onSort?: (event: SortingState) => void;
     onGlobalFilter?: (event: string) => void;
     onColumnFilter?: (event: ColumnFiltersState) => void;
+    defaultColumnSizes?: {
+        size?: number;
+        minSize?: number;
+        maxSize?: number;
+    };
     pageSizes?: number[];
     /**
      * Sets the default number of rows to display per page upon initial render. Defaults to `10`.
@@ -124,11 +134,16 @@ const Table: FC<ITableProps> = ({
     editMode,
     withPagination,
     withVirtualScroll,
+    resizable,
     withToolbar,
     withStickyHeader,
     withStickyFooter,
     withFilterFromLeafRows,
+    defaultColumnSizes,
+    columnResizeMode = "onChange",
     columnResizeDirection = "ltr",
+    onColumnSizingChange,
+    onColumnSizingRestore,
     withManualSorting,
     withManualFiltering,
     onSort,
@@ -146,6 +161,7 @@ const Table: FC<ITableProps> = ({
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>("");
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [columnSizing, setColumnSizing] = useState<ColumnSizingState>({});
     const [editBuffer, setEditBuffer] = useState<EditBuffer>(new Map());
 
     const handleSave = () => {
@@ -172,12 +188,15 @@ const Table: FC<ITableProps> = ({
             sorting,
             globalFilter,
             columnFilters,
+            columnSizing,
             columnPinning: {
                 left: pinnedColumns
             },
             ...(columnOrder && { columnOrder }),
             ...(columnVisibility && { columnVisibility })
         },
+        onColumnSizingChange: setColumnSizing,
+        defaultColumn: defaultColumnSizes,
         meta: {
             editMode,
             updateData: (rowIndex, columnId, value) => {
@@ -191,7 +210,7 @@ const Table: FC<ITableProps> = ({
         getPaginationRowModel: getPaginationRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
-        columnResizeMode: "onChange",
+        columnResizeMode,
         columnResizeDirection,
         filterFromLeafRows: withFilterFromLeafRows,
         manualSorting: withManualSorting,
@@ -199,13 +218,13 @@ const Table: FC<ITableProps> = ({
         filterFns: {
             multiSelect: ((row, columnId, filterValue) => {
                 const cellValue = row.getValue(columnId);
-                const cellStr = cellValue != null ? String(cellValue) : "";
+                const normalizedValue = String(cellValue);
 
                 if (Array.isArray(filterValue) && filterValue.length > 0) {
-                    return filterValue.includes(cellValue);
+                    return filterValue.includes(normalizedValue);
                 }
                 if (typeof filterValue === "string" && filterValue.trim().length > 0) {
-                    return cellStr.toLowerCase().includes(filterValue.trim().toLowerCase());
+                    return normalizedValue.toLowerCase().includes(filterValue.trim().toLowerCase());
                 }
                 return true;
             }) as FilterFn<Row>
@@ -222,7 +241,7 @@ const Table: FC<ITableProps> = ({
             columnOrder,
             pinnedColumns: table.getState().columnPinning.left
         }),
-        [table.getHeaderGroups()]
+        [table, columnVisibility, columnOrder]
     );
 
     useEffect(() => {
@@ -275,15 +294,26 @@ const Table: FC<ITableProps> = ({
                         handleCancel={handleCancel}
                     />
                 )}
-                <table className={classNames("table", className)} role="table">
-                    <THead
-                        columns={table.getHeaderGroups()}
-                        withStickyHeader={withStickyHeader}
-                        selectAllText={selectAllText}
-                    />
-                    <TBody rows={rows} />
-                    {hasFooters && <TFoot footer={table.getFooterGroups()} withStickyFooter={withStickyFooter} />}
-                </table>
+                <div className="dataTable__content">
+                    <table
+                        className={classNames("table", className)}
+                        style={{
+                            width: table.getTotalSize()
+                        }}
+                        role="table"
+                    >
+                        <THead
+                            columns={table.getHeaderGroups()}
+                            withStickyHeader={withStickyHeader}
+                            selectAllText={selectAllText}
+                            resizable={resizable}
+                            onColumnSizingChange={onColumnSizingChange}
+                            onColumnSizingRestore={onColumnSizingRestore}
+                        />
+                        <TBody rows={rows} />
+                        {hasFooters && <TFoot footer={table.getFooterGroups()} withStickyFooter={withStickyFooter} />}
+                    </table>
+                </div>
                 {withPagination && !withVirtualScroll && (
                     <div className="dataTable__pagination">
                         <div className="dataTable__pagination_controls">
