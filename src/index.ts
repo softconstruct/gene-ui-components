@@ -11,14 +11,7 @@ export { default as Logo, ILogoProps } from "./components/atoms/Logo";
 export { default as Rate, IRateProps } from "./components/atoms/Rate";
 export { default as Text, ITextProps } from "./components/atoms/Text";
 export { default as TextLink, ITextLinkProps } from "./components/atoms/TextLink";
-export {
-    Popover,
-    PopoverBody,
-    PopoverFooter,
-    IPopoverProps,
-    IPopoverFooterProps,
-    IPopoverFooterActionProps
-} from "./components/atoms/Popover";
+export { Popover, PopoverBody, PopoverFooter, IPopoverProps, IPopoverFooterProps } from "./components/atoms/Popover";
 export { default as Badge, IBadgeProps } from "./components/atoms/Badge";
 export { default as Scrollbar, IScrollbarProps } from "./components/atoms/Scrollbar";
 export { Grid, Col, Row, IColProps, IRowProps, IGridProps } from "./components/atoms/Grid";

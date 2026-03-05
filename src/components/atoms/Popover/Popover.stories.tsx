@@ -107,7 +107,7 @@ const WithoutFooterComponent: FC<IPopoverProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
     return (
         <div style={{ margin: "500px 500px", height: 1000 }}>
-            <Popover {...props} setProps={setPropsForContent} Icon={Info}>
+            <Popover {...props} setProps={setPropsForContent}>
                 <PopoverBody>
                     <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
                 </PopoverBody>
@@ -120,7 +120,10 @@ const WithoutFooterComponent: FC<IPopoverProps> = (props) => {
 };
 
 export const WithoutFooter: Story = {
-    render: (props: IPopoverProps) => <WithoutFooterComponent {...props} />
+    render: (props: IPopoverProps) => <WithoutFooterComponent {...props} />,
+    args: {
+        Icon: Info
+    }
 };
 
 const WithoutHeaderComponent: FC<IPopoverProps> = (props) => {
