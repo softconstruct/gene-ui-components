@@ -15,30 +15,13 @@ const meta: Meta<IPopoverConfirmProps> = {
     argTypes: {
         position: args({
             control: "select",
-            ...propCategory.appearance,
-            options: [
-                "bottom-center",
-                "bottom-left",
-                "bottom-right",
-                "left-bottom",
-                "left-center",
-                "left-top",
-                "right-bottom",
-                "right-center",
-                "right-top",
-                "top-center",
-                "top-left",
-                "top-right",
-                "auto"
-            ]
+            ...propCategory.appearance
         }),
         margin: args({ control: "number", ...propCategory.appearance }),
         size: args({
             control: "select",
-            ...propCategory.appearance,
-            options: ["xLarge", "large", "medium", "small", "fitContent"]
+            ...propCategory.appearance
         }),
-        fitReference: args({ control: "boolean", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states, defaultValue: undefined }),
         withArrow: args({ control: "boolean", ...propCategory.states }),
         disableReposition: args({ control: "boolean", ...propCategory.states }),
@@ -55,8 +38,8 @@ const meta: Meta<IPopoverConfirmProps> = {
         onCancel: args({ control: "false", ...propCategory.action })
     },
     args: {
-        margin: 15,
-        position: "bottom-left",
+        margin: 4,
+        position: "bottom-center",
         size: "medium",
         title: "Confirm action",
         primaryButtonText: "Confirm",

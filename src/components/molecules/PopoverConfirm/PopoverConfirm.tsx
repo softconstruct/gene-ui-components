@@ -1,4 +1,4 @@
-import React, { FC, MutableRefObject, useEffect, useRef, useState } from "react";
+import React, { Dispatch, FC, MutableRefObject, ReactNode, SetStateAction, useEffect, useRef, useState } from "react";
 import { ReferenceType } from "@floating-ui/react";
 import classNames from "classnames";
 
@@ -13,11 +13,15 @@ import useClickOutside from "@hooks/useClickOutside";
 // Styles
 import "./PopoverConfirm.scss";
 
-interface IPopoverConfirmProps extends Omit<IPopoverProps, "title"> {
+interface IPopoverConfirmProps {
     /**
      * Title displayed in the popover header. Required for PopoverConfirm.
      */
     title: string;
+    /**
+     * The content displayed inside the popover.
+     */
+    children: ReactNode;
     /**
      * Text label for the primary button.
      * @default "Confirm"
@@ -43,8 +47,70 @@ interface IPopoverConfirmProps extends Omit<IPopoverProps, "title"> {
     /**
      * Visual status of the confirm dialog. Changes the header icon and the primary button appearance.<br/>
      * Possible values: `error | warning`
+     * @default "warning"
      */
     status?: "error" | "warning";
+    /**
+     * Whether the popover is open initially. Defaults value is `false`.
+     */
+    defaultOpen?: boolean;
+    /**
+     * Define width and height of the popover.<br>
+     * Possible values: `medium | small`
+     * @default "medium"
+     */
+    size?: "medium" | "small";
+    /**
+     * Position of the popover, relative to the reference (trigger, anchor) element.<br><br>
+     * Possible values: `bottom-center | bottom-left | bottom-right | left-bottom | left-center` <br> `left-top | right-bottom | right-center | right-top | top-center | top-left | top-right | auto`
+     * @default "bottom-center"
+     */
+    position?: IPopoverProps["position"];
+    /**
+     * Margin between the popover and its reference (trigger, anchor) element.
+     * @default 4
+     */
+    margin?: number;
+    /**
+     * Function to update popover props dynamically.
+     */
+    setProps: Dispatch<SetStateAction<Record<string, unknown>>>;
+    /**
+     * Show or hide arrows
+     * @default true
+     */
+    withArrow?: boolean;
+    /**
+     * If `true`, disables automatic repositioning of the popover when it would otherwise
+     * overflow or collide with a window boundary. By default, the popover will attempt
+     * to reposition itself (e.g., flip to another side) to remain visible.
+     *
+     * When `disableReposition` is enabled, the popover will instead remain in its
+     * original placement, even if that causes it to overflow the viewport.
+     * This can be useful when you want to handle overflow behavior manually or
+     * maintain consistent placement.
+     *
+     * Note: Even with repositioning disabled, the component still provides
+     * `nudgedLeft` and `nudgedTop` values, which can be used to handle content overflow.
+     */
+    disableReposition?: boolean;
+    /**
+     * Controls the open state of the popover externally.
+     *
+     * If `open` is provided, the component becomes a controlled component,
+     * and its visibility will be dictated by the parent.
+     * If `open` is not provided, the component manages its own open/close
+     * state internally via user interaction (e.g., clicks).
+     *
+     * This allows the component to be used both in controlled and uncontrolled modes.
+     */
+    open?: boolean;
+    /**
+     * Determines how the popover is triggered.
+     * Can be either "click" or "hover".
+     * @default "click"
+     */
+    trigger?: "click" | "hover";
 }
 
 /**
@@ -55,6 +121,7 @@ interface IPopoverConfirmProps extends Omit<IPopoverProps, "title"> {
  */
 const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     children,
+    title,
     primaryButtonText = "Confirm",
     secondaryButtonText = "Cancel",
     onConfirm,
@@ -63,7 +130,13 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     open: controlledOpen,
     defaultOpen = false,
     status = "warning",
-    ...popoverProps
+    size = "medium",
+    position = "bottom-center",
+    margin = 4,
+    setProps,
+    withArrow = true,
+    disableReposition = false,
+    trigger = "click"
 }) => {
     const [isOpenState, setIsOpenState] = useState(defaultOpen);
 
@@ -102,7 +175,21 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
 
     return (
         <div className="popoverConfirm">
-            <Popover {...popoverProps} ref={popoverRef} open={isOpenState} hasCloseButton={false} Icon={headerIcon}>
+            <Popover
+                ref={popoverRef}
+                open={isOpenState}
+                defaultOpen={defaultOpen}
+                size={size}
+                position={position}
+                margin={margin}
+                setProps={setProps}
+                title={title}
+                withArrow={withArrow}
+                disableReposition={disableReposition}
+                trigger={trigger}
+                hasCloseButton={false}
+                Icon={headerIcon}
+            >
                 <PopoverBody>{children}</PopoverBody>
                 <PopoverFooter
                     actions={[
