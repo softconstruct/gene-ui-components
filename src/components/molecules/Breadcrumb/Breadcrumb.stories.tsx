@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-import { ArrowBounceUp, Document, Receipt } from "@geneui/icons";
+import { Receipt } from "@geneui/icons";
 
 import { Col, Grid, Row } from "@components/atoms/Grid";
 import Section from "@components/molecules/Section";
@@ -132,21 +132,6 @@ export const Default: Story = {
             { title: "Nav Item 3", path: "javascript:void(0)" },
             { title: "Nav Item 4", path: "javascript:void(0)" },
             { title: "Nav Item 5", path: "javascript:void(0)" }
-        ]
-    }
-};
-
-export const IconOnly: Story = {
-    args: {
-        iconOnly: true,
-        breadCrumbsData: [
-            { title: "Home", path: "javascript:void(0)", Icon: Document },
-            {
-                title: "Products",
-                path: "javascript:void(0)",
-                Icon: Receipt
-            },
-            { title: "Current", path: "javascript:void(0)", Icon: ArrowBounceUp }
         ]
     }
 };
