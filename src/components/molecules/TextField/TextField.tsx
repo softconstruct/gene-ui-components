@@ -121,11 +121,13 @@ interface ITextFieldProps {
      */
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
-     * The `IconBefore` prop accepts a React Functional Component that will be displayed alongside the `TextField`.
+     * Icon component rendered before the TextField content.
+     * Must be a React component that accepts this library's `IconProps`.
      */
-    IconBefore?: FC<IconProps>; // startIcon
+    IconBefore?: FC<IconProps>;
     /**
-     * The `IconAfter` prop accepts a React Functional Component that will be displayed at the end of the `TextField`.
+     * Icon component rendered after the TextField content.
+     * Must be a React component that accepts this library's `IconProps`.
      */
     IconAfter?: FC<IconProps>;
     /**
