@@ -381,7 +381,11 @@ const Navigation: FC<INavigationProps> = ({
                                                 disableReposition={false}
                                                 ref={popoverRef}
                                             >
-                                                <PopoverBody withPadding={false} withScrollbar={false}>
+                                                <PopoverBody
+                                                    withPadding={false}
+                                                    withScrollbar={false}
+                                                    className="navigation__content"
+                                                >
                                                     <NavigationMenuHeader
                                                         title={clonedNavigationData[hoverDataIndex].title}
                                                     />

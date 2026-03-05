@@ -23,9 +23,7 @@ interface IPopoverBodyProps extends PropsWithChildren {
 const PopoverBody: FC<IPopoverBodyProps> = ({ children, withPadding = true, className, withScrollbar = true }) => {
     return (
         <div className={classNames("popover__body", { popover__body_withPadding: withPadding }, className)}>
-            <div className="popover__content navigation__content">
-                {withScrollbar ? <Scrollbar>{children}</Scrollbar> : children}
-            </div>
+            {withScrollbar ? <Scrollbar>{children}</Scrollbar> : children}
         </div>
     );
 };
