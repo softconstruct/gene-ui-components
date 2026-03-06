@@ -20,6 +20,9 @@ import useClickOutside from "@hooks/useClickOutside";
 // Styles
 import "./PopoverConfirm.scss";
 
+const appearanceByStatus = { error: "danger", warning: "primary" } as const;
+const iconByStatus = { error: ErrorFilled, warning: TriangleAlert } as const;
+
 interface IPopoverConfirmProps {
     /**
      * Title displayed in the popover header. Required for PopoverConfirm.
@@ -189,9 +192,8 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
         [popoverRef.current.floatingElement]
     );
 
-    const primaryButtonAppearance = status === "error" ? "danger" : "primary";
-
-    const IconComponent = status === "error" ? ErrorFilled : TriangleAlert;
+    const primaryButtonAppearance = appearanceByStatus[status];
+    const IconComponent = iconByStatus[status];
     const headerIcon: FC<IconProps> = ({ className, ...props }: IconProps) => (
         <IconComponent {...props} className={classNames(className, `popoverConfirm__titleIcon_${status}`)} size={20} />
     );
