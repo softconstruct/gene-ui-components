@@ -5,7 +5,14 @@ import classNames from "classnames";
 import { ErrorFilled, IconProps, TriangleAlert } from "@geneui/icons";
 
 // Components
-import { IPopoverProps, IPopoverRef, Popover, PopoverBody, PopoverFooter } from "@components/atoms/Popover";
+import {
+    IPopoverFooterActionProps,
+    IPopoverProps,
+    IPopoverRef,
+    Popover,
+    PopoverBody,
+    PopoverFooter
+} from "@components/atoms/Popover";
 
 // Hooks
 import useClickOutside from "@hooks/useClickOutside";
@@ -111,6 +118,21 @@ interface IPopoverConfirmProps {
      * @default "click"
      */
     trigger?: "click" | "hover";
+    /**
+     * Custom action buttons to display in the footer.
+     * If provided, this will override the default secondary/primary button behavior.
+     * If appearance is not specified for an action, it defaults to "primary".
+     * @example
+     * actions={[
+     *   { text: "Delete", appearance: "danger", onClick: handleDelete }
+     * ]}
+     * @example
+     * actions={[
+     *   { text: "Cancel", onClick: handleCancel },
+     *   { text: "Confirm", onClick: handleConfirm }
+     * ]}
+     */
+    actions?: IPopoverFooterActionProps[];
 }
 
 /**
@@ -136,7 +158,8 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     setProps,
     withArrow = true,
     disableReposition = false,
-    trigger = "click"
+    trigger = "click",
+    actions
 }) => {
     const [isOpenState, setIsOpenState] = useState(defaultOpen);
 
@@ -173,6 +196,43 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
         <IconComponent {...props} className={classNames(className, `popoverConfirm__title_icon_${status}`)} size={20} />
     );
 
+    const footerActions = React.useMemo((): IPopoverFooterActionProps[] => {
+        if (actions) {
+            return actions.map((action, index) => {
+                let allowedAppearance = action.appearance || (status === "error" ? "danger" : "primary");
+                if (actions.length === 2) {
+                    if (index === 0) {
+                        allowedAppearance = "secondary";
+                    } else {
+                        allowedAppearance = status === "error" ? "danger" : "primary";
+                    }
+                } else if (status === "error" && allowedAppearance !== "secondary") {
+                    allowedAppearance = "danger";
+                } else if (status === "warning" && allowedAppearance !== "secondary") {
+                    allowedAppearance = "primary";
+                }
+
+                return {
+                    ...action,
+                    appearance: allowedAppearance
+                };
+            });
+        }
+        const defaultActions: IPopoverFooterActionProps[] = [
+            {
+                text: secondaryButtonText,
+                appearance: "secondary",
+                onClick: onCancel
+            },
+            {
+                text: primaryButtonText,
+                appearance: primaryButtonAppearance,
+                onClick: onConfirm
+            }
+        ];
+        return defaultActions;
+    }, [actions, status, secondaryButtonText, primaryButtonText, primaryButtonAppearance, onCancel, onConfirm]);
+
     return (
         <div className="popoverConfirm">
             <Popover
@@ -191,20 +251,7 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
                 Icon={headerIcon}
             >
                 <PopoverBody>{children}</PopoverBody>
-                <PopoverFooter
-                    actions={[
-                        {
-                            text: secondaryButtonText,
-                            appearance: "secondary",
-                            onClick: onCancel
-                        },
-                        {
-                            text: primaryButtonText,
-                            appearance: primaryButtonAppearance,
-                            onClick: onConfirm
-                        }
-                    ]}
-                />
+                <PopoverFooter actions={footerActions} />
             </Popover>
         </div>
     );

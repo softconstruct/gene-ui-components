@@ -67,6 +67,18 @@ const DefaultComponent: FC<IPopoverConfirmProps> = (props) => {
                 onOpenChange={setOpen}
                 onCancel={() => setOpen(false)}
                 onConfirm={() => setOpen(false)}
+                actions={[
+                    {
+                        text: "Cancel",
+                        appearance: "secondary",
+                        onClick: () => setOpen(false)
+                    },
+                    {
+                        text: "Confirm",
+                        appearance: "primary",
+                        onClick: () => setOpen(false)
+                    }
+                ]}
             >
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                     <Text as="p" variant="bodyMediumRegular">
