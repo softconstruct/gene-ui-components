@@ -17,13 +17,11 @@ const meta: Meta<IPopoverConfirmProps> = {
             control: "select",
             ...propCategory.appearance
         }),
-        margin: args({ control: "number", ...propCategory.appearance }),
         size: args({
             control: "select",
             ...propCategory.appearance
         }),
         open: args({ control: "boolean", ...propCategory.states, defaultValue: undefined }),
-        withArrow: args({ control: "boolean", ...propCategory.states }),
         disableReposition: args({ control: "boolean", ...propCategory.states }),
         defaultOpen: args({ control: "boolean", ...propCategory.states }),
         children: args({ control: "false", ...propCategory.content }),
@@ -31,6 +29,7 @@ const meta: Meta<IPopoverConfirmProps> = {
         primaryButtonText: args({ control: "text", ...propCategory.content }),
         secondaryButtonText: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.states }),
+        actions: args({ control: "false", ...propCategory.functionality }),
         setProps: args({ control: "false", ...propCategory.functionality }),
         trigger: args({ control: "select", ...propCategory.functionality }),
         onOpenChange: args({ control: "false", ...propCategory.action }),
@@ -38,7 +37,6 @@ const meta: Meta<IPopoverConfirmProps> = {
         onCancel: args({ control: "false", ...propCategory.action })
     },
     args: {
-        margin: 4,
         position: "bottom-center",
         size: "medium",
         title: "Confirm action",

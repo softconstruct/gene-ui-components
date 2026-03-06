@@ -22,6 +22,7 @@ import "./PopoverConfirm.scss";
 
 const appearanceByStatus = { error: "danger", warning: "primary" } as const;
 const iconByStatus = { error: ErrorFilled, warning: TriangleAlert } as const;
+const MARGIN = 12;
 
 interface IPopoverConfirmProps {
     /**
@@ -77,19 +78,9 @@ interface IPopoverConfirmProps {
      */
     position?: IPopoverProps["position"];
     /**
-     * Margin between the popover and its reference (trigger, anchor) element.
-     * @default 4
-     */
-    margin?: number;
-    /**
      * Function to update popover props dynamically.
      */
     setProps: Dispatch<SetStateAction<Record<string, unknown>>>;
-    /**
-     * Show or hide arrows
-     * @default true
-     */
-    withArrow?: boolean;
     /**
      * If `true`, disables automatic repositioning of the popover when it would otherwise
      * overflow or collide with a window boundary. By default, the popover will attempt
@@ -157,9 +148,7 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     status = "warning",
     size = "medium",
     position = "bottom-center",
-    margin = 4,
     setProps,
-    withArrow = true,
     disableReposition = false,
     trigger = "click",
     actions
@@ -243,10 +232,10 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
                 defaultOpen={defaultOpen}
                 size={size}
                 position={position}
-                margin={margin}
+                margin={MARGIN}
                 setProps={setProps}
                 title={title}
-                withArrow={withArrow}
+                withArrow
                 disableReposition={disableReposition}
                 trigger={trigger}
                 hasCloseButton={false}
