@@ -1,12 +1,12 @@
 import React, { ChangeEvent, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
-import { HexColorPicker, RgbaColorPicker } from "react-colorful";
-
-import { Square } from "@geneui/icons";
+import { HexColorPicker, RgbaColorPicker } from "./CustomColorPickers";
 
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 // Components
 import TextField from "@components/molecules/TextField";
+import Label from "@components/atoms/Label";
+import ColorIndicator from "./components/ColorIndicator/ColorIndicator";
 
 // Hooks
 import useClickOutside from "@hooks/useClickOutside";
@@ -34,6 +34,8 @@ const DEFAULT_RGBA: RGBA = {
     a: 1
 };
 
+const ALPHA_SCALE_MAX = 100;
+
 interface IColorPickerProps {
     /**
      * Additional class for the parent element.
@@ -54,6 +56,24 @@ interface IColorPickerProps {
      */
     value?: string;
     /**
+     * Label of component, displayed above the input field.
+     */
+    label?: string;
+    /**
+     * The size of the picker component.
+     */
+    size?: "small" | "medium" | "large";
+    /**
+     * Additional informational text displayed alongside the label. 
+     * When provided, an info icon will be displayed next to the label, 
+     * which can be hovered over to reveal the additional context or instructions via a tooltip.
+     */
+    labelInfoText?: string;
+    /**
+     * Placeholder value, displayed when component don't have any value.
+     */
+    placeholder?: string;
+    /**
      * Whether picker is open.
      */
     open?: boolean;
@@ -65,10 +85,6 @@ interface IColorPickerProps {
      * Recent colors that should be displayed inside popover of picker.
      */
     recentColors?: string[];
-    /**
-     * Props that react-colorful is accepting.
-     */
-    colorPickerProps?: Record<string, unknown>;
     /**
      * Format of color.
      * Possible values: `rgb | hex`.
@@ -91,20 +107,23 @@ interface IColorPickerProps {
 const ColorPicker: FC<IColorPickerProps> = ({
     className,
     alphaEnabled = false,
-    alphaValue = 100,
+    alphaValue = ALPHA_SCALE_MAX,
     value,
     defaultColor,
     recentColors,
-    colorPickerProps,
     onChange,
     open,
     format = "hex",
+    label,
+    labelInfoText,
+    size = "medium",
+    placeholder,
     onOutsideClick
 }) => {
     const isColorControlled = value !== undefined;
     const isOpenControlled = open !== undefined;
 
-    const [isOpen, setIsOpen] = useState<boolean>(open ?? false);
+    const [isOpen, setIsOpen] = useState(!!open);
     const [formatState, setFormatState] = useState<"rgb" | "hex">(format);
 
     const [propsForPopover, setPropsForPopover] = useState({});
@@ -118,32 +137,26 @@ const ColorPicker: FC<IColorPickerProps> = ({
         const initialHex = value ?? defaultColor;
         const rgb = initialHex ? hexToRgb(initialHex) : null;
 
-        return rgb ? { ...rgb, a: alphaValue / 100 } : { ...DEFAULT_RGBA };
+        return rgb ? { ...rgb, a: alphaValue / ALPHA_SCALE_MAX } : { ...DEFAULT_RGBA };
     });
 
     const hex = useMemo(() => rgbToHex(rgba), [rgba]);
-    const alpha = useMemo(() => Math.round(rgba.a * 100), [rgba.a]);
+    const alpha = useMemo(() => Math.round(rgba.a * ALPHA_SCALE_MAX), [rgba.a]);
 
     const [localHex, setLocalHex] = useState<string>(hex);
 
-    const emitChange = useCallback(
-        (next: RGBA) => {
-            onChange?.(rgbToHex(next), next, Math.round(next.a * 100));
-        },
-        [onChange]
-    );
+    const emitChange = (next: RGBA) => {
+        onChange?.(rgbToHex(next), next, Math.round(next.a * ALPHA_SCALE_MAX));
+    };
 
-    const updateRGBA = useCallback(
-        (updater: (prev: RGBA) => RGBA) => {
-            setRgba((prev) => {
-                const next = updater(prev);
-                emitChange(next);
-                setLocalHex(rgbToHex(next));
-                return next;
-            });
-        },
-        [emitChange]
-    );
+    const updateRGBA = (updater: (prev: RGBA) => RGBA) => {
+        setRgba((prev) => {
+            const next = updater(prev);
+            emitChange(next);
+            setLocalHex(rgbToHex(next));
+            return next;
+        });
+    };
 
     const handlePickerChange = useCallback(
         (colorValue: string | RGBA) => {
@@ -156,53 +169,42 @@ const ColorPicker: FC<IColorPickerProps> = ({
             } else {
                 updateRGBA(() => ({
                     ...colorValue,
-                    a: alphaEnabled ? colorValue.a : alphaValue / 100
+                    a: alphaEnabled ? colorValue.a : alphaValue / ALPHA_SCALE_MAX
                 }));
             }
         },
         [alphaEnabled, alphaValue, updateRGBA]
     );
 
-    const applyRecentColor = useCallback(
-        (hexColor: string) => {
-            const rgb = hexToRgb(hexColor);
-            if (!rgb) return;
+    const applyRecentColor = (hexColor: string) => {
+        const rgb = hexToRgb(hexColor);
+        if (!rgb) return;
 
-            updateRGBA((prev) => ({ ...rgb, a: prev.a }));
-        },
-        [updateRGBA]
-    );
-    const handleHexInputChange = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            const newValue = e.target.value;
-            setLocalHex(newValue);
+        updateRGBA((prev) => ({ ...rgb, a: prev.a }));
+    };
 
-            const rgb = hexToRgb(newValue);
-            if (rgb) {
-                setRgba((prev) => ({ ...rgb, a: prev.a }));
-                emitChange({ ...rgb, a: rgba.a });
-            }
-        },
-        [updateRGBA, rgba.a, emitChange]
-    );
+    const handleHexInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        setLocalHex(newValue);
 
-    const handleRGBInputChange = useCallback(
-        (key: keyof RGB, colorValue: number) => {
-            updateRGBA((prev) => ({
-                ...prev,
-                [key]: clamp(colorValue, 0, 255)
-            }));
-        },
-        [updateRGBA]
-    );
+        const rgb = hexToRgb(newValue);
+        if (rgb) {
+            setRgba((prev) => ({ ...rgb, a: prev.a }));
+            emitChange({ ...rgb, a: rgba.a });
+        }
+    };
 
-    const handleAlphaChange = useCallback(
-        (e: ChangeEvent<HTMLInputElement>) => {
-            const nextAlpha = clamp(Number(e.target.value), 0, 100) / 100;
-            updateRGBA((prev) => ({ ...prev, a: nextAlpha }));
-        },
-        [updateRGBA]
-    );
+    const handleRGBInputChange = (key: keyof RGB, colorValue: number) => {
+        updateRGBA((prev) => ({
+            ...prev,
+            [key]: clamp(colorValue, 0, 255)
+        }));
+    };
+
+    const handleAlphaChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const nextAlpha = clamp(Number(e.target.value), 0, ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX;
+        updateRGBA((prev) => ({ ...prev, a: nextAlpha }));
+    };
 
     useEffect(() => {
         if (!isColorControlled || !value) return;
@@ -227,7 +229,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
     useEffect(() => {
         setRgba((prev) => ({
             ...prev,
-            a: clamp(alphaValue, 0, 100) / 100
+            a: clamp(alphaValue, 0, ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX
         }));
     }, [alphaValue]);
 
@@ -248,29 +250,28 @@ const ColorPicker: FC<IColorPickerProps> = ({
         onOutsideClick?.();
     }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement]);
 
-    const ColorSquareIcon = useCallback(
-        () => (
-            <Square
-                size={20}
-                onClick={() => !isOpenControlled && setIsOpen(true)}
-                style={{ color: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})` }}
-            />
-        ),
-        [rgba, localHex]
-    );
-
     return (
         <div className={classNames("colorPicker", className)}>
             <div className="colorPicker__fieldsWrapper" {...propsForPopover}>
-                <TextField
-                    className="colorPicker__textField"
-                    value={localHex}
-                    IconBefore={ColorSquareIcon}
-                    onChange={handleHexInputChange}
+                <Label
+                    size={size === "large" ? "medium" : size}
+                    text={label}
+                    infoText={labelInfoText}
+                    labelFor="colorPickerTextfield"
                 />
-                {alphaEnabled && (
-                    <TextField className="colorPicker__alphaField" onChange={handleAlphaChange} value={alpha} />
-                )}
+                <>
+                    <TextField
+                        id="colorPickerTextfield"
+                        className="colorPicker__textField"
+                        value={localHex}
+                        IconBefore={() => <ColorIndicator size={size} onClick={() => !isOpenControlled && setIsOpen(true)} color={localHex} alpha={alpha} />}
+                        onChange={handleHexInputChange}
+                        placeholder={placeholder}
+                    />
+                    {alphaEnabled && (
+                        <TextField className="colorPicker__alphaField" onChange={handleAlphaChange} value={alpha} />
+                    )}
+                </>
             </div>
 
             <Popover
@@ -287,16 +288,15 @@ const ColorPicker: FC<IColorPickerProps> = ({
                             <RgbaColorPicker
                                 color={rgba}
                                 onChange={handlePickerChange as (val: RGBA) => void}
-                                {...colorPickerProps}
                             />
                         ) : (
                             <HexColorPicker
                                 color={hex}
                                 onChange={handlePickerChange as (val: string) => void}
-                                {...colorPickerProps}
                             />
                         )}
                         <div className="colorPicker__inputs">
+                            {/**TODO: Replace select with Dropdown component when it will be ready */}
                             <select
                                 name="color_formats"
                                 value={formatState}
@@ -356,8 +356,8 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                 />
                             )}
                         </div>
-                        <div className="colorPicker__recents">
-                            {recentColors?.map((recentColor) => (
+                        {recentColors?.length > 0 && <div className="colorPicker__recents">
+                            {recentColors.map((recentColor) => (
                                 <button
                                     key={recentColor}
                                     type="button"
@@ -369,7 +369,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                     }}
                                 />
                             ))}
-                        </div>
+                        </div>}
                     </div>
                 </PopoverBody>
             </Popover>

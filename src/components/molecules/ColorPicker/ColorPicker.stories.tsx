@@ -12,13 +12,16 @@ const meta: Meta<IColorPickerProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         alphaEnabled: args({ control: "boolean", ...propCategory.functionality }),
-        alphaValue: args({ control: "text", ...propCategory.content }),
+        alphaValue: args({ control: "number", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content }),
+        label: args({ control: "text", ...propCategory.content }),
+        labelInfoText: args({ control: "text", ...propCategory.content }),
+        size: args({ control: "select", ...propCategory.appearance }),
+        placeholder: args({ control: "text", ...propCategory.content }),
         defaultColor: args({ control: "text", ...propCategory.content }),
         recentColors: args({ control: "false", ...propCategory.content }),
-        colorPickerProps: args({ control: "false", ...propCategory.content }),
         onChange: args({ control: "false", ...propCategory.action }),
-        open: args({ control: "boolean", ...propCategory.functionality }),
+        open: args({ control: "boolean", ...propCategory.states }),
         format: args({ control: "select", ...propCategory.functionality }),
         onOutsideClick: args({ control: "false", ...propCategory.action })
     },
@@ -32,13 +35,7 @@ type Story = StoryObj<IColorPickerProps>;
 export const Default: Story = {};
 
 export const WithRecentColors: Story = {
-    render: (props) => {
-        return (
-            <div style={{ width: "100%" }}>
-                <ColorPicker {...props} />
-            </div>
-        );
-    },
+    render: (props) => <ColorPicker {...props} />,
     args: {
         recentColors: ["#000000", "#ffff00", "#ff0000"]
     }
