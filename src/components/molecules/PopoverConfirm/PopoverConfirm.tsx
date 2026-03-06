@@ -193,7 +193,7 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
 
     const IconComponent = status === "error" ? ErrorFilled : TriangleAlert;
     const headerIcon: FC<IconProps> = ({ className, ...props }: IconProps) => (
-        <IconComponent {...props} className={classNames(className, `popoverConfirm__title_icon_${status}`)} size={20} />
+        <IconComponent {...props} className={classNames(className, `popoverConfirm__titleIcon_${status}`)} size={20} />
     );
 
     const footerActions = React.useMemo((): IPopoverFooterActionProps[] => {

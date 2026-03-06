@@ -85,22 +85,30 @@ const DefaultComponent: FC<IPopoverConfirmProps> = (props) => {
                         Are you sure you want to proceed with this action?
                     </Text>
                     <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "4px" }}>
-                        <p style={{ margin: 0 }}>
-                            <span className="text text_variant_bodyMediumSemibold">• Changes:</span>{" "}
-                            <span className="text text_variant_bodyMediumRegular">
+                        <div style={{ margin: 0 }}>
+                            <Text as="span" variant="bodyMediumSemibold">
+                                • Changes:
+                            </Text>{" "}
+                            <Text as="span" variant="bodyMediumRegular">
                                 This action will modify your current settings.
-                            </span>
-                        </p>
-                        <p style={{ margin: 0 }}>
-                            <span className="text text_variant_bodyMediumSemibold">• Data Impact:</span>{" "}
-                            <span className="text text_variant_bodyMediumRegular">
+                            </Text>
+                        </div>
+                        <div style={{ margin: 0 }}>
+                            <Text as="span" variant="bodyMediumSemibold">
+                                • Data Impact:
+                            </Text>{" "}
+                            <Text as="span" variant="bodyMediumRegular">
                                 Changes may affect your data, including possible deletions.
-                            </span>
-                        </p>
-                        <p style={{ margin: 0 }}>
-                            <span className="text text_variant_bodyMediumSemibold">• Irreversible:</span>{" "}
-                            <span className="text text_variant_bodyMediumRegular">This action cannot be undone.</span>
-                        </p>
+                            </Text>
+                        </div>
+                        <div style={{ margin: 0 }}>
+                            <Text as="span" variant="bodyMediumSemibold">
+                                • Irreversible:
+                            </Text>{" "}
+                            <Text as="span" variant="bodyMediumRegular">
+                                This action cannot be undone.
+                            </Text>
+                        </div>
                     </div>
                 </div>
             </PopoverConfirm>
