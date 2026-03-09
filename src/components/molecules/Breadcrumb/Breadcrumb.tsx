@@ -34,14 +34,30 @@ interface IBreadcrumbProps {
      */
     className?: string;
     /**
-     * Custom render function for breadcrumb links.
+     * Custom render function for breadcrumb links.<br />
+     *
+     * Example:
+     * ```tsx
+     * render={({ path, title, isActive }) => (
+     *   <a href={path} aria-current={isActive ? "page" : undefined}>
+     *     {title}
+     *   </a>
+     * )}
+     * ```
      */
     render?: IBreadcrumbRender;
     /**
      * Called when a breadcrumb item is clicked.
      */
     onClick?: (item: IBreadcrumbItemProps) => void;
+    /**
+     * Array of breadcrumb items to display, in order from root to current page.
+     */
     breadCrumbsData: IBreadcrumbItemProps[];
+    /**
+     * If `true`, renders only icons (when provided) and hides text labels.
+     * Useful for very compact layouts.
+     */
     iconOnly?: boolean;
 }
 
@@ -83,14 +99,14 @@ const BreadcrumbItemWrapper: FC<BreadcrumbItemWrapperProps> = ({ props, iconOnly
 /**
  * Breadcrumb component is a navigational aid that displays the user's current location within a website or application. It provides a trail of links back to the starting or entry point, allowing users to easily navigate through the hierarchical structure of the site. Breadcrumbs enhance usability by offering a clear path for users to trace their steps and return to previous sections.
  */
-const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly = false, render, onClick }) => {
+const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], iconOnly = false, render, onClick }) => {
     const [menuPropsForPopover, setMenuPropsForPopover] = useState<Record<string, unknown>>({});
     const [visibleFirstItemsCount, setVisibleFirstItemsCount] = useState(FIRST_VISIBLE_ITEMS);
     const [showPreLastItem, setShowPreLastItem] = useState(true);
     const listRef = useRef<HTMLUListElement>(null);
     const prevContainerWidth = useRef<number>(0);
 
-    const itemsCount = breadCrumbsData?.length ?? 0;
+    const itemsCount = breadCrumbsData?.length || 0;
     const isCountMode = itemsCount > MAX_VISIBLE_BREADCRUMB_ITEMS; // 7+ items
     const isResponsiveMode = itemsCount > 1 && !isCountMode; // 2–6 items
 

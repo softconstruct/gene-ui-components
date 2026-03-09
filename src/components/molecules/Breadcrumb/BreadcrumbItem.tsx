@@ -3,15 +3,24 @@ import classNames from "classnames";
 
 import { FolderOpen, IconProps, LineSlash } from "@geneui/icons";
 
+// Component
 import Text from "@components/atoms/Text";
-import { BreadcrumbContext } from "@components/molecules/Breadcrumb/Breadcrumb";
 import Tooltip from "@components/molecules/Tooltip";
 
+import { BreadcrumbContext } from "./Breadcrumb";
+
 interface IBreadcrumbItemProps {
+    /**
+     * Text label displayed for this breadcrumb segment.
+     */
     title: string;
+    /**
+     * Optional navigation target for this breadcrumb segment.
+     * If provided, the item can be rendered as a link or clickable button.
+     */
     path?: string;
     /**
-     * Icon component to display before the title
+     * Optional icon component rendered before the title.
      */
     Icon?: FC<IconProps>;
 }
@@ -26,8 +35,6 @@ const BreadcrumbItem: FC<IBreadcrumbItemProps> = ({ path, title, Icon }) => {
             onClick(itemProps);
         }
     };
-
-    // TODO: need to add an icon slash /
 
     const renderIcon = () => {
         if (Icon) {
