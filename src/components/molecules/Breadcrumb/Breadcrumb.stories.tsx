@@ -32,7 +32,7 @@ type Story = StoryObj<IBreadcrumbProps>;
 
 const BreadcrumbVariations: FC<IBreadcrumbProps> = (props) => {
     return (
-        <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "100%" }}>
             <div style={{ display: "flex", flexWrap: "nowrap" }}>
                 <Grid>
                     <Row>
@@ -110,6 +110,13 @@ const BreadcrumbVariations: FC<IBreadcrumbProps> = (props) => {
                                         { title: "Nav Item 9", path: "javascript:void(0)" }
                                     ]}
                                 />
+                            </Section>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col size={12}>
+                            <Section title="Col 8 with 5 item">
+                                <Breadcrumb {...props} />
                             </Section>
                         </Col>
                     </Row>
