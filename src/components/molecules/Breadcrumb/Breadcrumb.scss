@@ -13,6 +13,10 @@
         column-gap: var(--guit-ref-spacing-4xsmall);
     }
 
+    &__item_hidden {
+        display: none;
+    }
+
     &__title {
         white-space: nowrap;
     }

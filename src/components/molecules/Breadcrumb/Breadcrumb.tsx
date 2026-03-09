@@ -84,14 +84,11 @@ const BreadcrumbItemWrapper: FC<BreadcrumbItemWrapperProps> = ({ props, iconOnly
  * Breadcrumb component is a navigational aid that displays the user's current location within a website or application. It provides a trail of links back to the starting or entry point, allowing users to easily navigate through the hierarchical structure of the site. Breadcrumbs enhance usability by offering a clear path for users to trace their steps and return to previous sections.
  */
 const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly = false, render, onClick }) => {
-    const [menuPropsForPopover, setMenuPropsForPopover] = useState({});
+    const [menuPropsForPopover, setMenuPropsForPopover] = useState<Record<string, unknown>>({});
     const [visibleFirstItemsCount, setVisibleFirstItemsCount] = useState(FIRST_VISIBLE_ITEMS);
     const [showPreLastItem, setShowPreLastItem] = useState(true);
     const listRef = useRef<HTMLUListElement>(null);
     const prevContainerWidth = useRef<number>(0);
-    // Flag to track if we're waiting for useEllipsisDetection to recalculate
-    const isProcessingRef = useRef<boolean>(false);
-    const prevIsOverflowingRef = useRef<boolean>(false);
 
     const itemsCount = breadCrumbsData?.length ?? 0;
     const isCountMode = itemsCount > MAX_VISIBLE_BREADCRUMB_ITEMS; // 7+ items
@@ -118,8 +115,6 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly
             setVisibleFirstItemsCount(0);
             setShowPreLastItem(false);
         }
-        isProcessingRef.current = false;
-        prevIsOverflowingRef.current = false;
     }, [breadCrumbsData]);
 
     const hideOneItem = useCallback(() => {
@@ -228,12 +223,19 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly
             return { visibleFirstItems: [], visibleLastItems: [], menuItems: [] };
         }
 
-        if (!shouldShowEllipsis) {
-            return { visibleFirstItems: breadCrumbsData, visibleLastItems: [], menuItems: [] };
-        }
-
         const total = itemsCount;
         const lastItem = breadCrumbsData[total - 1];
+
+        if (!shouldShowEllipsis) {
+            const firstVisible = breadCrumbsData.slice(0, total - 1);
+            const lastVisible = [lastItem];
+
+            return {
+                visibleFirstItems: firstVisible,
+                visibleLastItems: lastVisible,
+                menuItems: []
+            };
+        }
 
         if (isCountMode) {
             // 7+ items: original centre-wrapping behaviour
@@ -314,54 +316,55 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly
         );
     };
 
+    const showEllipsisTrigger = shouldShowEllipsis && menuItems.length > 0;
+
     return (
         <div ref={containerRef} className={classNames("breadcrumb", className)}>
             <nav aria-label="breadcrumb navigation">
                 <ul ref={listRef} className="breadcrumb__list">
-                    {shouldShowEllipsis && menuItems.length > 0 ? (
-                        <>
-                            {/* First visible items */}
-                            {visibleFirstItems.map((item) => {
-                                return renderBreadcrumbItem(item, false);
+                    {/* First visible items */}
+                    {visibleFirstItems.map((item) => {
+                        return renderBreadcrumbItem(item, false);
+                    })}
+
+                    {/* Ellipsis menu is always mounted; visibility is controlled via class */}
+                    <li
+                        className={classNames("breadcrumb__item", {
+                            breadcrumb__item_hidden: !showEllipsisTrigger
+                        })}
+                    >
+                        <Tooltip text="More items" isVisible={iconOnly}>
+                            <Button
+                                Icon={ThreeDotsHorizontal}
+                                layout="text"
+                                appearance="secondary"
+                                size="medium"
+                                {...menuPropsForPopover}
+                            />
+                        </Tooltip>
+                        <Menu
+                            onChange={menuSelectHandler}
+                            setPropsForPopover={setMenuPropsForPopover}
+                            position="bottom-right"
+                        >
+                            {menuItems.map((item, index) => {
+                                const itemId = (item.path || item.title) as string;
+                                const key = `${itemId}-${index}`;
+                                return (
+                                    <MenuItem key={key} id={itemId} IconBefore={item.Icon}>
+                                        {item.title}
+                                    </MenuItem>
+                                );
                             })}
-                            <li className="breadcrumb__item">
-                                <Tooltip text="More items" isVisible={iconOnly}>
-                                    <Button
-                                        Icon={ThreeDotsHorizontal}
-                                        layout="text"
-                                        appearance="secondary"
-                                        size="medium"
-                                        {...menuPropsForPopover}
-                                    />
-                                </Tooltip>
-                                <Menu
-                                    onChange={menuSelectHandler}
-                                    setPropsForPopover={setMenuPropsForPopover}
-                                    position="bottom-right"
-                                >
-                                    {menuItems.map((item) => {
-                                        const itemId = item.path || item.title || nanoid();
-                                        return (
-                                            <MenuItem key={itemId} id={itemId} IconBefore={item.Icon}>
-                                                {item.title}
-                                            </MenuItem>
-                                        );
-                                    })}
-                                </Menu>
-                                <LineSlash size={24} />
-                            </li>
-                            {visibleLastItems.map((item, index) => {
-                                const isLastItem = index === visibleLastItems.length - 1;
-                                return renderBreadcrumbItem(item, isLastItem);
-                            })}
-                        </>
-                    ) : (
-                        breadCrumbsData &&
-                        breadCrumbsData.map((item, index) => {
-                            const isLastItem = index === breadCrumbsData.length - 1;
-                            return renderBreadcrumbItem(item, isLastItem);
-                        })
-                    )}
+                        </Menu>
+                        <LineSlash size={24} />
+                    </li>
+
+                    {/* Last visible items */}
+                    {visibleLastItems.map((item, index) => {
+                        const isLastItem = index === visibleLastItems.length - 1;
+                        return renderBreadcrumbItem(item, isLastItem);
+                    })}
                 </ul>
             </nav>
         </div>
