@@ -51,69 +51,65 @@ describe("PopoverConfirm", () => {
 
     it("renders default primaryButtonText when open", () => {
         setup.setProps({ open: true });
-        expect(provider().find(".popover__footer_buttons").find(Button).last().text()).toBe("Confirm");
+        expect(provider().find(".popover__footerActions").find(Button).last().text()).toBe("Confirm");
     });
 
     it("renders default secondaryButtonText when open", () => {
         setup.setProps({ open: true });
-        expect(provider().find(".popover__footer_buttons").find(Button).first().text()).toBe("Cancel");
+        expect(provider().find(".popover__footerActions").find(Button).first().text()).toBe("Cancel");
     });
 
     it("renders custom primaryButtonText when open", () => {
         setup.setProps({ open: true, primaryButtonText: "Delete" });
-        expect(provider().find(".popover__footer_buttons").find(Button).last().text()).toBe("Delete");
+        expect(provider().find(".popover__footerActions").find(Button).last().text()).toBe("Delete");
     });
 
     it("renders custom secondaryButtonText when open", () => {
         setup.setProps({ open: true, secondaryButtonText: "Go back" });
-        expect(provider().find(".popover__footer_buttons").find(Button).first().text()).toBe("Go back");
+        expect(provider().find(".popover__footerActions").find(Button).first().text()).toBe("Go back");
     });
 
     it("calls onConfirm when confirm button is clicked", () => {
         const onConfirm = jest.fn();
         setup.setProps({ open: true, onConfirm });
-        provider().find(".popover__footer_buttons").find(Button).last().simulate("click");
+        provider().find(".popover__footerActions").find(Button).last().simulate("click");
         expect(onConfirm).toHaveBeenCalled();
     });
 
     it("calls onCancel when cancel button is clicked", () => {
         const onCancel = jest.fn();
         setup.setProps({ open: true, onCancel });
-        provider().find(".popover__footer_buttons").find(Button).first().simulate("click");
+        provider().find(".popover__footerActions").find(Button).first().simulate("click");
         expect(onCancel).toHaveBeenCalled();
     });
 
     it("cancel button has secondary appearance", () => {
         setup.setProps({ open: true });
-        expect(provider().find(".popover__footer_buttons").find(Button).first().prop("appearance")).toBe("secondary");
+        expect(provider().find(".popover__footerActions").find(Button).first().prop("appearance")).toBe("secondary");
     });
 
     it("confirm button has primary appearance by default", () => {
         setup.setProps({ open: true });
-        expect(provider().find(".popover__footer_buttons").find(Button).last().prop("appearance")).toBe("primary");
+        expect(provider().find(".popover__footerActions").find(Button).last().prop("appearance")).toBe("primary");
     });
 
     it("confirm button has danger appearance when status is error", () => {
         setup.setProps({ open: true, status: "error" });
-        expect(provider().find(".popover__footer_buttons").find(Button).last().prop("appearance")).toBe("danger");
+        expect(provider().find(".popover__footerActions").find(Button).last().prop("appearance")).toBe("danger");
     });
 
     it("confirm button has primary appearance when status is warning", () => {
         setup.setProps({ open: true, status: "warning" });
-        expect(provider().find(".popover__footer_buttons").find(Button).last().prop("appearance")).toBe("primary");
+        expect(provider().find(".popover__footerActions").find(Button).last().prop("appearance")).toBe("primary");
     });
 
-    it.each<IPopoverConfirmProps["size"]>(["xLarge", "large", "medium", "small", "fitContent"])(
-        "should have %p size",
-        (size) => {
-            setup.setProps({ open: true, size });
-            expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
-        }
-    );
+    it.each<IPopoverConfirmProps["size"]>(["medium", "small"])("should have %p size", (size) => {
+        setup.setProps({ open: true, size });
+        expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
+    });
 
-    it("renders withArrow prop correct", () => {
+    it("renders arrow correctly (always enabled)", () => {
         setup.setProps({
-            withArrow: true,
             open: true
         });
         expect(provider().find(".popover__arrowPath").exists()).toBeTruthy();
@@ -136,22 +132,24 @@ describe("PopoverConfirm", () => {
         expect(provider().find(TriangleAlert).exists()).toBeTruthy();
     });
 
-    it("renders custom Icon prop correctly when status is error", () => {
+    it("renders error icon correctly when status is error", () => {
         setup.setProps({
             open: true,
             title: "Test Title",
             status: "error"
         });
         expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+        expect(provider().find(ErrorFilled).exists()).toBeTruthy();
     });
 
-    it("renders custom Icon prop correctly when status is warning", () => {
+    it("renders warning icon correctly when status is warning", () => {
         setup.setProps({
             open: true,
             title: "Test Title",
             status: "warning"
         });
         expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+        expect(provider().find(TriangleAlert).exists()).toBeTruthy();
     });
 
     it("renders different custom icons correctly", () => {
@@ -177,7 +175,7 @@ describe("PopoverConfirm", () => {
             title: "Test Title"
         });
         expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
-        expect(provider().find(`.popoverConfirm__title_icon_${status}`).exists()).toBeTruthy();
+        expect(provider().find(`.popoverConfirm__titleIcon_${status}`).exists()).toBeTruthy();
     });
 
     it("renders with defaultOpen prop", () => {
@@ -204,19 +202,8 @@ describe("PopoverConfirm", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it("renders fitReference prop correct", () => {
-        const fitReference = true;
-        setup.setProps({ open: true, fitReference });
-        expect(provider().find(`.popover_size_reference`).exists()).toBeTruthy();
-    });
-
     it("renders position prop correctly", () => {
         setup.setProps({ open: true, position: "bottom-right" });
-        expect(provider().find(".popover").exists()).toBeTruthy();
-    });
-
-    it("renders margin prop correctly", () => {
-        setup.setProps({ open: true, margin: 20 });
         expect(provider().find(".popover").exists()).toBeTruthy();
     });
 
