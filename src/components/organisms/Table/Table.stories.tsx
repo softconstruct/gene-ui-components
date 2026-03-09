@@ -129,8 +129,8 @@ const meta: Meta<ITableProps> = {
         headerContent: <SwapComponent />,
         resizable: true,
         withToolbar: true,
-        withPagination: true,
-        withVirtualScroll: false,
+        withPagination: false,
+        withVirtualScroll: true,
         withManualSorting: false,
         onSort: undefined,
         onColumnFilter: undefined

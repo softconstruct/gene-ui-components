@@ -43,6 +43,10 @@
         flex: 1;
     }
 
+    &__virtualizedContent {
+        overflow-y: auto;
+    }
+
     &__bulkActions {
         display: flex;
         align-items: center;

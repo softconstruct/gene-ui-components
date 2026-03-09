@@ -33,6 +33,7 @@ import {
     Row,
     TableColumns
 } from "@components/organisms/Table/types";
+import VirtualizedBody from "@components/organisms/Table/VirtualizedBody";
 
 // Styles
 import "./Table.scss";
@@ -157,6 +158,7 @@ const Table: FC<ITableProps> = ({
     initialPageIndex = 0,
     className
 }) => {
+    const [scrollElement, setScrollElement] = useState<HTMLDivElement | null>(null);
     const cols = useMemo(() => createColumns(columns), [columns]);
     const [sorting, setSorting] = useState<SortingState>([]);
     const [globalFilter, setGlobalFilter] = useState<string>("");
@@ -207,7 +209,7 @@ const Table: FC<ITableProps> = ({
             getCellValue: (row: Row, columnId: string) => getCellValue(row, columnId, editBuffer)
         },
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        ...(withPagination && !withVirtualScroll && { getPaginationRowModel: getPaginationRowModel() }),
         getSortedRowModel: getSortedRowModel(),
         getFilteredRowModel: getFilteredRowModel(),
         columnResizeMode,
@@ -294,7 +296,12 @@ const Table: FC<ITableProps> = ({
                         handleCancel={handleCancel}
                     />
                 )}
-                <div className="dataTable__content">
+                <div
+                    className={classNames("dataTable__content", {
+                        dataTable__virtualizedContent: withVirtualScroll
+                    })}
+                    ref={setScrollElement}
+                >
                     <table
                         className={classNames("table", className)}
                         style={{
@@ -310,7 +317,11 @@ const Table: FC<ITableProps> = ({
                             onColumnSizingChange={onColumnSizingChange}
                             onColumnSizingRestore={onColumnSizingRestore}
                         />
-                        <TBody rows={rows} />
+                        {withVirtualScroll ? (
+                            <VirtualizedBody rows={rows} scrollElement={scrollElement} />
+                        ) : (
+                            <TBody rows={rows} />
+                        )}
                         {hasFooters && <TFoot footer={table.getFooterGroups()} withStickyFooter={withStickyFooter} />}
                     </table>
                 </div>
