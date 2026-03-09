@@ -52,6 +52,40 @@ export default meta;
 
 type Story = StoryObj<IPopoverConfirmProps>;
 
+const confirmContent = (
+    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+        <Text as="p" variant="bodyMediumRegular">
+            Are you sure you want to proceed with this action?
+        </Text>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "4px" }}>
+            <div style={{ margin: 0 }}>
+                <Text as="span" variant="bodyMediumSemibold">
+                    • Changes:
+                </Text>{" "}
+                <Text as="span" variant="bodyMediumRegular">
+                    This action will modify your current settings.
+                </Text>
+            </div>
+            <div style={{ margin: 0 }}>
+                <Text as="span" variant="bodyMediumSemibold">
+                    • Data Impact:
+                </Text>{" "}
+                <Text as="span" variant="bodyMediumRegular">
+                    Changes may affect your data, including possible deletions.
+                </Text>
+            </div>
+            <div style={{ margin: 0 }}>
+                <Text as="span" variant="bodyMediumSemibold">
+                    • Irreversible:
+                </Text>{" "}
+                <Text as="span" variant="bodyMediumRegular">
+                    This action cannot be undone.
+                </Text>
+            </div>
+        </div>
+    </div>
+);
+
 const DefaultComponent: FC<IPopoverConfirmProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
     const [open, setOpen] = useState(false);
@@ -78,37 +112,7 @@ const DefaultComponent: FC<IPopoverConfirmProps> = (props) => {
                     }
                 ]}
             >
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    <Text as="p" variant="bodyMediumRegular">
-                        Are you sure you want to proceed with this action?
-                    </Text>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "4px" }}>
-                        <div style={{ margin: 0 }}>
-                            <Text as="span" variant="bodyMediumSemibold">
-                                • Changes:
-                            </Text>{" "}
-                            <Text as="span" variant="bodyMediumRegular">
-                                This action will modify your current settings.
-                            </Text>
-                        </div>
-                        <div style={{ margin: 0 }}>
-                            <Text as="span" variant="bodyMediumSemibold">
-                                • Data Impact:
-                            </Text>{" "}
-                            <Text as="span" variant="bodyMediumRegular">
-                                Changes may affect your data, including possible deletions.
-                            </Text>
-                        </div>
-                        <div style={{ margin: 0 }}>
-                            <Text as="span" variant="bodyMediumSemibold">
-                                • Irreversible:
-                            </Text>{" "}
-                            <Text as="span" variant="bodyMediumRegular">
-                                This action cannot be undone.
-                            </Text>
-                        </div>
-                    </div>
-                </div>
+                {confirmContent}
             </PopoverConfirm>
             <Button onClick={() => setOpen(true)} {...propsForContent}>
                 Click to confirm
@@ -119,4 +123,29 @@ const DefaultComponent: FC<IPopoverConfirmProps> = (props) => {
 
 export const Default: Story = {
     render: (props: IPopoverConfirmProps) => <DefaultComponent {...props} />
+};
+
+const DefaultOpenComponent: FC<IPopoverConfirmProps> = (props) => {
+    const [propsForContent, setPropsForContent] = useState({});
+
+    return (
+        <div style={{ margin: "500px 500px", height: 1000 }}>
+            <PopoverConfirm
+                {...props}
+                setProps={setPropsForContent}
+                defaultOpen
+                onCancel={() => {}}
+                onConfirm={() => {}}
+            >
+                {confirmContent}
+            </PopoverConfirm>
+            <Button onClick={() => {}} {...propsForContent}>
+                Anchor
+            </Button>
+        </div>
+    );
+};
+
+export const DefaultOpen: Story = {
+    render: (props: IPopoverConfirmProps) => <DefaultOpenComponent {...props} />
 };

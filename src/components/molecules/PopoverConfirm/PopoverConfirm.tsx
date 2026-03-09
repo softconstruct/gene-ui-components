@@ -190,23 +190,15 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     const footerActions = React.useMemo((): IPopoverFooterActionProps[] => {
         if (actions) {
             return actions.map((action, index) => {
-                let allowedAppearance = action.appearance || (status === "error" ? "danger" : "primary");
-                if (actions.length === 2) {
-                    if (index === 0) {
-                        allowedAppearance = "secondary";
-                    } else {
-                        allowedAppearance = status === "error" ? "danger" : "primary";
-                    }
-                } else if (status === "error" && allowedAppearance !== "secondary") {
-                    allowedAppearance = "danger";
-                } else if (status === "warning" && allowedAppearance !== "secondary") {
-                    allowedAppearance = "primary";
+                const isTwoButtons = actions.length === 2;
+                let allowedAppearance: IPopoverFooterActionProps["appearance"];
+                if (isTwoButtons) {
+                    allowedAppearance = index === 0 ? "secondary" : appearanceByStatus[status];
+                } else {
+                    allowedAppearance = action.appearance === "secondary" ? "secondary" : appearanceByStatus[status];
                 }
 
-                return {
-                    ...action,
-                    appearance: allowedAppearance
-                };
+                return { ...action, appearance: allowedAppearance };
             });
         }
         const defaultActions: IPopoverFooterActionProps[] = [
