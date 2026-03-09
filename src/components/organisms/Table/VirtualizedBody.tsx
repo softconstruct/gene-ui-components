@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Row as RowData } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 
@@ -9,18 +9,29 @@ import { Row } from "./types";
 interface IVirtualizedBody {
     rows: RowData<Row>[];
     scrollElement: HTMLDivElement | null;
+    onLoadMore?: () => void;
+    hasMore?: boolean;
+    estimateSize?: number;
+    overscan?: number;
 }
 
-const VirtualizedBody: FC<IVirtualizedBody> = ({ rows, scrollElement }) => {
+const VirtualizedBody: FC<IVirtualizedBody> = ({
+    rows,
+    scrollElement,
+    onLoadMore,
+    hasMore,
+    estimateSize = 33,
+    overscan = 5
+}) => {
     const rowVirtualizer = useVirtualizer<HTMLDivElement, HTMLTableRowElement>({
         count: rows.length,
-        estimateSize: () => 33,
+        estimateSize: () => estimateSize,
         getScrollElement: () => scrollElement,
         measureElement:
             typeof window !== "undefined" && navigator.userAgent.indexOf("Firefox") === -1
                 ? (element) => element?.getBoundingClientRect().height
                 : undefined,
-        overscan: 5
+        overscan
     });
 
     const virtualItems = rowVirtualizer.getVirtualItems();
@@ -30,6 +41,16 @@ const VirtualizedBody: FC<IVirtualizedBody> = ({ rows, scrollElement }) => {
     const paddingBottom = virtualItems.length > 0 ? totalSize - virtualItems[virtualItems.length - 1].end : 0;
 
     const columnCount = rows[0]?.getVisibleCells().length ?? 1;
+
+    useEffect(() => {
+        if (!onLoadMore || !hasMore || virtualItems.length === 0) return;
+        const lastItem = virtualItems[virtualItems.length - 1];
+        const lastIndex = lastItem.index;
+        const threshold = rows.length - 5; // when 5 items from the end
+        if (lastIndex >= threshold) {
+            onLoadMore();
+        }
+    }, [virtualItems, rows.length, onLoadMore, hasMore]);
 
     if (!scrollElement) {
         return <tbody />;

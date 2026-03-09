@@ -69,6 +69,10 @@ interface ITableProps {
     withToolbar?: boolean;
     withPagination?: boolean;
     withVirtualScroll?: boolean;
+    onLoadMore?: () => void;
+    hasMore?: boolean;
+    estimateSize?: number;
+    overscan?: number;
     withStickyHeader?: boolean;
     withStickyFooter?: boolean;
     withManualSorting?: boolean;
@@ -135,6 +139,10 @@ const Table: FC<ITableProps> = ({
     editMode,
     withPagination,
     withVirtualScroll,
+    onLoadMore,
+    hasMore,
+    estimateSize,
+    overscan,
     resizable,
     withToolbar,
     withStickyHeader,
@@ -318,7 +326,14 @@ const Table: FC<ITableProps> = ({
                             onColumnSizingRestore={onColumnSizingRestore}
                         />
                         {withVirtualScroll ? (
-                            <VirtualizedBody rows={rows} scrollElement={scrollElement} />
+                            <VirtualizedBody
+                                rows={rows}
+                                scrollElement={scrollElement}
+                                hasMore={hasMore}
+                                onLoadMore={onLoadMore}
+                                overscan={overscan}
+                                estimateSize={estimateSize}
+                            />
                         ) : (
                             <TBody rows={rows} />
                         )}
