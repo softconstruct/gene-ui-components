@@ -1,7 +1,10 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 
-import { hexToRgb, rgbToHex } from "./utils";
-import type { RGBA } from "./ColorPicker";
+import { hexToRgb, rgbToHex } from "../../utils";
+import type { RGBA } from "../../ColorPicker";
+
+// Styles
+import './CustomColorPickers.scss';
 
 type HexColorPickerProps = {
     color: string;
@@ -235,16 +238,16 @@ const HexColorPicker: FC<HexColorPickerProps> = ({ color, onChange }) => {
     };
 
     return (
-        <div className="colorPicker__picker">
+        <div className="colorPalette">
             <div
-                className="colorPicker__picker__saturation"
+                className="colorPalette__saturation"
                 ref={saturationRef}
                 onMouseDown={handleSaturationStart}
                 onTouchStart={handleSaturationStart}
                 style={saturationBackground}
             >
                 <div
-                    className="colorPicker__picker__saturation-pointer"
+                    className="colorPalette__saturation-pointer"
                     style={{
                         left: pointerLeft,
                         top: pointerTop
@@ -252,14 +255,14 @@ const HexColorPicker: FC<HexColorPickerProps> = ({ color, onChange }) => {
                 />
             </div>
             <div
-                className="colorPicker__picker__hue"
+                className="colorPalette__hue"
                 ref={hueRef}
                 onMouseDown={handleHueStart}
                 onTouchStart={handleHueStart}
                 style={{ backgroundImage: hueBackground }}
             >
                 <div
-                    className="colorPicker__picker__hue-pointer"
+                    className="colorPalette__hue-pointer"
                     style={{
                         left: huePointerLeft
                     }}
@@ -359,16 +362,16 @@ const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
     const alphaGradient = `linear-gradient(90deg, rgba(${rgbForAlpha.r}, ${rgbForAlpha.g}, ${rgbForAlpha.b}, 0) 0%, rgba(${rgbForAlpha.r}, ${rgbForAlpha.g}, ${rgbForAlpha.b}, 1) 100%)`;
 
     return (
-        <div className="colorPicker__picker">
+        <div className="colorPalette">
             <div
-                className="colorPicker__picker__saturation"
+                className="colorPalette__saturation"
                 ref={saturationRef}
                 onMouseDown={handleSaturationStart}
                 onTouchStart={handleSaturationStart}
                 style={saturationBackground}
             >
                 <div
-                    className="colorPicker__picker__saturation-pointer"
+                    className="colorPalette__saturation-pointer"
                     style={{
                         left: pointerLeft,
                         top: pointerTop
@@ -376,31 +379,31 @@ const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
                 />
             </div>
             <div
-                className="colorPicker__picker__hue"
+                className="colorPalette__hue"
                 ref={hueRef}
                 onMouseDown={handleHueStart}
                 onTouchStart={handleHueStart}
                 style={{ backgroundImage: hueBackground }}
             >
                 <div
-                    className="colorPicker__picker__hue-pointer"
+                    className="colorPalette__hue-pointer"
                     style={{
                         left: huePointerLeft
                     }}
                 />
             </div>
             <div
-                className="colorPicker__picker__alpha"
+                className="colorPalette__alpha"
                 ref={alphaRef}
                 onMouseDown={handleAlphaStart}
                 onTouchStart={handleAlphaStart}
             >
                 <div
-                    className="colorPicker__picker__alpha-gradient"
+                    className="colorPalette__alpha-gradient"
                     style={{ backgroundImage: alphaGradient }}
                 />
                 <div
-                    className="colorPicker__picker__alpha-pointer"
+                    className="colorPalette__alpha-pointer"
                     style={{
                         left: alphaPointerLeft
                     }}

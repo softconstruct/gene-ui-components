@@ -1,6 +1,6 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
-import { HexColorPicker } from "react-colorful";
+import { HexColorPicker } from "./components/CustomColorPickers/CustomColorPickers";
 import { act } from "react-dom/test-utils";
 
 // Components

@@ -1,16 +1,28 @@
 import React, { FC } from 'react';
+import classNames from 'classnames';
 
-import { Square } from "@geneui/icons";
+// Utils
 import { hexToRgb } from '../../utils';
-import Button from '@components/atoms/Button';
 
 // Styles
 import './ColorIndicator.scss';
 
 interface IColorIndicator {
+    /**
+     * Callback triggers when color indicator is clicked. 
+     */
     onClick?: () => void;
+    /**
+     * Color that indicator should display.
+     */
     color: string;
+    /**
+     * The size of the color indicator.
+     */
     size?: "small" | "medium" | "large";
+    /**
+     * The alpha value, used to display correct color (alpha value envolved).
+     */
     alpha?: number;
 }
 
@@ -22,22 +34,20 @@ const ColorIndicator: FC<IColorIndicator> = ({
     onClick,
     color,
     size,
-    alpha = 1,
+    alpha = 100,
 }) => {
-    const localRGB = hexToRgb(color) ?? { r: 0, g: 0, b: 0 };
+    const localRGB = hexToRgb(color);
     return (
         <button
             onClick={onClick}
-            className='colorIndicator'
-            style={{ width: 20, height: 20, backgroundColor: `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})` }}
+            className={classNames('colorIndicator', `colorIndicator_size_${size}`)}
+            style={{
+                backgroundColor: localRGB
+                    ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})`
+                    : "purple"
+            }}
         />
     );
 };
 
 export default ColorIndicator;
-
-{/* <Square
-size={size === 'large' ? 24 : 20}
-onClick={onClick}
-style={{ color: `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})` }}
-/> */}
