@@ -322,12 +322,9 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData, iconOnly
         <div ref={containerRef} className={classNames("breadcrumb", className)}>
             <nav aria-label="breadcrumb navigation">
                 <ul ref={listRef} className="breadcrumb__list">
-                    {/* First visible items */}
                     {visibleFirstItems.map((item) => {
                         return renderBreadcrumbItem(item, false);
                     })}
-
-                    {/* Ellipsis menu is always mounted; visibility is controlled via class */}
                     <li
                         className={classNames("breadcrumb__item", {
                             breadcrumb__item_hidden: !showEllipsisTrigger
