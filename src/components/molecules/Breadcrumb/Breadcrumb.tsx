@@ -1,4 +1,4 @@
-import React, { createContext, FC, ReactNode, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { createContext, FC, ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 import { nanoid } from "nanoid/non-secure";
 
@@ -12,13 +12,17 @@ import Tooltip from "@components/molecules/Tooltip";
 
 // Hooks
 import useContainerSize from "@hooks/useContainerSize";
-import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./Breadcrumb.scss";
 
 const MAX_VISIBLE_BREADCRUMB_ITEMS = 6;
-const FIRST_VISIBLE_ITEMS = 2;
+
+type VisibilityConfig = {
+    fitAll: boolean;
+    firstCount: number;
+    lastCount: number;
+};
 
 export type IBreadcrumbRender = (linkData: {
     path?: string;
@@ -101,139 +105,89 @@ const BreadcrumbItemWrapper: FC<BreadcrumbItemWrapperProps> = ({ props, iconOnly
  */
 const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], iconOnly = false, render, onClick }) => {
     const [menuPropsForPopover, setMenuPropsForPopover] = useState<Record<string, unknown>>({});
-    const [visibleFirstItemsCount, setVisibleFirstItemsCount] = useState(FIRST_VISIBLE_ITEMS);
-    const [showPreLastItem, setShowPreLastItem] = useState(true);
     const listRef = useRef<HTMLUListElement>(null);
-    const prevContainerWidth = useRef<number>(0);
+    const measureListRef = useRef<HTMLUListElement>(null);
+
+    const { containerRef, sizes } = useContainerSize<HTMLDivElement>({ debounceWait: 100 });
+    const containerWidth = sizes.width;
 
     const itemsCount = breadCrumbsData?.length || 0;
-    const isCountMode = itemsCount > MAX_VISIBLE_BREADCRUMB_ITEMS; // 7+ items
-    const isResponsiveMode = itemsCount > 1 && !isCountMode; // 2–6 items
 
-    const isOverflowing = useEllipsisDetection(listRef, [breadCrumbsData, visibleFirstItemsCount, showPreLastItem]);
+    const [visibilityConfig, setVisibilityConfig] = useState<VisibilityConfig>({
+        fitAll: true,
+        firstCount: 0,
+        lastCount: 1
+    });
 
-    const maxFirstVisible = Math.max(0, itemsCount - 1);
-    const hasHiddenResponsiveItems = isResponsiveMode && visibleFirstItemsCount < maxFirstVisible;
-    const shouldShowEllipsis = itemsCount > 1 && (isCountMode || isOverflowing || hasHiddenResponsiveItems);
-    const { containerRef, sizes: containerSizes } = useContainerSize<HTMLDivElement>({ debounceWait: 100 });
-
-    // Reset state when breadCrumbsData changes
-    useEffect(() => {
-        const total = breadCrumbsData?.length ?? 0;
-
-        if (total > MAX_VISIBLE_BREADCRUMB_ITEMS) {
-            setVisibleFirstItemsCount(FIRST_VISIBLE_ITEMS);
-            setShowPreLastItem(true);
-        } else if (total > 1) {
-            setVisibleFirstItemsCount(total - 1);
-            setShowPreLastItem(false);
-        } else {
-            setVisibleFirstItemsCount(0);
-            setShowPreLastItem(false);
-        }
-    }, [breadCrumbsData]);
-
-    const hideOneItem = useCallback(() => {
-        if (!breadCrumbsData || breadCrumbsData.length <= 1) {
-            return false;
+    useLayoutEffect(() => {
+        const container = containerRef.current;
+        const measureList = measureListRef.current;
+        if (!container || !measureList || itemsCount <= 1) {
+            setVisibilityConfig({ fitAll: true, firstCount: 0, lastCount: 1 });
+            return;
         }
 
-        if (isCountMode) {
-            if (visibleFirstItemsCount > 0) {
-                setVisibleFirstItemsCount((prev) => Math.max(0, prev - 1));
-                return true;
-            }
-            if (showPreLastItem && breadCrumbsData.length > 1) {
-                setShowPreLastItem(false);
-                return true;
-            }
-            return false;
+        const availableWidth = container.clientWidth;
+        const listStyles = getComputedStyle(measureList);
+        const gap = parseFloat(listStyles.gap) || 0;
+
+        const lis = measureList.querySelectorAll<HTMLLIElement>("li");
+        if (lis.length < itemsCount + 1) {
+            return;
         }
 
-        if (isResponsiveMode) {
-            if (visibleFirstItemsCount > 0) {
-                setVisibleFirstItemsCount((prev) => Math.max(0, prev - 1));
-                return true;
-            }
-            return false;
+        const itemWidths: number[] = [];
+        for (let i = 0; i < itemsCount; i++) {
+            itemWidths.push(lis[i].offsetWidth);
+        }
+        const ellipsisWidth = lis[itemsCount].offsetWidth;
+
+        const totalItemsWidth = itemWidths.reduce((a, b) => a + b, 0);
+        const totalWithGaps = totalItemsWidth + gap * (itemsCount - 1);
+
+        const mustTruncate = itemsCount > MAX_VISIBLE_BREADCRUMB_ITEMS || totalWithGaps > availableWidth;
+
+        if (!mustTruncate) {
+            setVisibilityConfig({ fitAll: true, firstCount: 0, lastCount: 1 });
+            return;
         }
 
-        return false;
-    }, [breadCrumbsData, isCountMode, isResponsiveMode, visibleFirstItemsCount, showPreLastItem]);
+        let bestFirst = 0;
+        let bestLast = 1;
+        const overflowMax = itemsCount > MAX_VISIBLE_BREADCRUMB_ITEMS;
+        const maxTotal = overflowMax ? 4 : Math.min(MAX_VISIBLE_BREADCRUMB_ITEMS, itemsCount - 1);
 
-    const restoreOneItem = useCallback(() => {
-        if (!breadCrumbsData || breadCrumbsData.length <= 1) {
-            return false;
-        }
+        const totals = Array.from({ length: maxTotal }, (_, i) => maxTotal - i);
+        totals.some((total) => {
+            const center = Math.ceil(total / 2);
+            const lastOrder = [
+                ...Array.from({ length: center }, (_, i) => center - i),
+                ...Array.from({ length: total - center }, (_, i) => center + 1 + i)
+            ];
+            const found = lastOrder.some((last) => {
+                const first = total - last;
+                if (first + last >= itemsCount) return false;
+                if (overflowMax && (first > 2 || last > 2)) return false;
 
-        if (isCountMode) {
-            if (!showPreLastItem && breadCrumbsData.length > 1) {
-                setShowPreLastItem(true);
-                return true;
-            }
-            if (visibleFirstItemsCount < FIRST_VISIBLE_ITEMS) {
-                setVisibleFirstItemsCount((prev) => Math.min(FIRST_VISIBLE_ITEMS, prev + 1));
-                return true;
-            }
-            return false;
-        }
+                const sumFirst = itemWidths.slice(0, first).reduce((a, b) => a + b, 0);
+                const sumLast = itemWidths.slice(-last).reduce((a, b) => a + b, 0);
+                const width = sumFirst + ellipsisWidth + sumLast + gap * (first + last);
+                if (width <= availableWidth) {
+                    bestFirst = first;
+                    bestLast = last;
+                    return true;
+                }
+                return false;
+            });
+            return found;
+        });
 
-        if (isResponsiveMode) {
-            const maxFirstVisibleForRestore = Math.max(0, breadCrumbsData.length - 1);
-            if (visibleFirstItemsCount < maxFirstVisibleForRestore) {
-                setVisibleFirstItemsCount((prev) => Math.min(maxFirstVisibleForRestore, prev + 1));
-                return true;
-            }
-            return false;
-        }
+        setVisibilityConfig({ fitAll: false, firstCount: bestFirst, lastCount: bestLast });
+    }, [containerWidth, itemsCount, breadCrumbsData]);
 
-        return false;
-    }, [breadCrumbsData, isCountMode, isResponsiveMode, visibleFirstItemsCount, showPreLastItem]);
+    const { fitAll, firstCount, lastCount } = visibilityConfig;
+    const shouldShowEllipsis = itemsCount > 1 && !fitAll;
 
-    // Handle overflow: for any itemsCount > 1, keep hiding items while overflowing.
-    useEffect(() => {
-        if (!breadCrumbsData || itemsCount <= 1) return;
-        if (!isOverflowing) return;
-
-        hideOneItem();
-    }, [isOverflowing, breadCrumbsData, itemsCount, hideOneItem]);
-
-    // Handle resize out: restore items when container grows and not overflowing
-    useEffect(() => {
-        if (!breadCrumbsData) return;
-        if (itemsCount <= 1) return;
-
-        const currentWidth = containerSizes.width;
-        const isGrowing = currentWidth > prevContainerWidth.current;
-        prevContainerWidth.current = currentWidth;
-
-        // Only try to restore when container is growing and not overflowing
-        let hasHiddenItems = false;
-
-        if (isCountMode) {
-            hasHiddenItems = visibleFirstItemsCount < FIRST_VISIBLE_ITEMS || !showPreLastItem;
-        } else if (isResponsiveMode) {
-            const maxFirstVisibleLocal = Math.max(0, itemsCount - 1);
-            hasHiddenItems = visibleFirstItemsCount < maxFirstVisibleLocal;
-        }
-
-        if (isGrowing && !isOverflowing && hasHiddenItems) {
-            restoreOneItem();
-        }
-    }, [
-        containerSizes.width,
-        isOverflowing,
-        breadCrumbsData,
-        visibleFirstItemsCount,
-        showPreLastItem,
-        restoreOneItem,
-        isCountMode,
-        isResponsiveMode,
-        itemsCount,
-        prevContainerWidth.current
-    ]);
-
-    // Calculate visible items and menu items based on responsive state
     const { visibleFirstItems, visibleLastItems, menuItems } = useMemo(() => {
         if (!breadCrumbsData || itemsCount === 0) {
             return { visibleFirstItems: [], visibleLastItems: [], menuItems: [] };
@@ -245,7 +199,6 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
         if (!shouldShowEllipsis) {
             const firstVisible = breadCrumbsData.slice(0, total - 1);
             const lastVisible = [lastItem];
-
             return {
                 visibleFirstItems: firstVisible,
                 visibleLastItems: lastVisible,
@@ -253,60 +206,16 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
             };
         }
 
-        if (isCountMode) {
-            // 7+ items: original centre-wrapping behaviour
-            const firstVisible = breadCrumbsData.slice(0, visibleFirstItemsCount);
-            const preLastItem = showPreLastItem && total > 1 ? breadCrumbsData[total - 2] : null;
+        const visibleFirst = breadCrumbsData.slice(0, firstCount);
+        const visibleLast = breadCrumbsData.slice(-lastCount);
+        const menuItemsSlice = breadCrumbsData.slice(firstCount, total - lastCount);
 
-            const lastVisible = preLastItem ? [preLastItem, lastItem] : [lastItem];
-
-            const hiddenFirstItems =
-                visibleFirstItemsCount < FIRST_VISIBLE_ITEMS
-                    ? breadCrumbsData.slice(visibleFirstItemsCount, FIRST_VISIBLE_ITEMS)
-                    : [];
-
-            const menuStart = Math.max(visibleFirstItemsCount, FIRST_VISIBLE_ITEMS);
-            const menuEnd = total - 2;
-            const middleItems = menuStart < menuEnd ? breadCrumbsData.slice(menuStart, menuEnd) : [];
-
-            const hiddenPreLastItem = !showPreLastItem && total > 1 ? [breadCrumbsData[total - 2]] : [];
-
-            const allMenuItems = [...hiddenFirstItems, ...middleItems, ...hiddenPreLastItem];
-
-            return {
-                visibleFirstItems: firstVisible,
-                visibleLastItems: lastVisible,
-                menuItems: allMenuItems
-            };
-        }
-
-        if (isResponsiveMode) {
-            // 2–6 items: collapse from the start, always keeping the last item visible
-            const maxFirstVisibleResponsive = Math.max(0, total - 1);
-            const firstCount = Math.min(visibleFirstItemsCount, maxFirstVisibleResponsive);
-            const firstVisible = breadCrumbsData.slice(0, firstCount);
-            const lastVisible = [lastItem];
-
-            // All items between the first group and the last item go into the menu
-            const responsiveMenuItems = breadCrumbsData.slice(firstCount, total - 1);
-
-            return {
-                visibleFirstItems: firstVisible,
-                visibleLastItems: lastVisible,
-                menuItems: responsiveMenuItems
-            };
-        }
-
-        return { visibleFirstItems: breadCrumbsData, visibleLastItems: [], menuItems: [] };
-    }, [
-        breadCrumbsData,
-        itemsCount,
-        shouldShowEllipsis,
-        visibleFirstItemsCount,
-        showPreLastItem,
-        isCountMode,
-        isResponsiveMode
-    ]);
+        return {
+            visibleFirstItems: visibleFirst,
+            visibleLastItems: visibleLast,
+            menuItems: menuItemsSlice
+        };
+    }, [breadCrumbsData, itemsCount, shouldShowEllipsis, firstCount, lastCount]);
 
     const menuSelectHandler = (menuItem: IMenuItemProps) => {
         const selectedItem = menuItems.find((item) => {
@@ -336,6 +245,42 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
 
     return (
         <div ref={containerRef} className={classNames("breadcrumb", className)}>
+            {/* Hidden measurement DOM: all items + ellipsis for width calculation */}
+            <div
+                className="breadcrumb__measure"
+                aria-hidden
+                style={{
+                    position: "absolute",
+                    visibility: "hidden",
+                    pointerEvents: "none",
+                    left: 0,
+                    top: 0
+                }}
+            >
+                <ul ref={measureListRef} className="breadcrumb__list">
+                    {breadCrumbsData.map((item, index) => {
+                        const isLast = index === breadCrumbsData.length - 1;
+                        const pathKey = breadCrumbsData
+                            .slice(0, index + 1)
+                            .map((i) => i.path ?? i.title)
+                            .join("/");
+                        return (
+                            <BreadcrumbItemWrapper
+                                key={`measure-${pathKey}`}
+                                props={item}
+                                iconOnly={iconOnly}
+                                isLastItem={isLast}
+                                render={render}
+                                onClick={onClick}
+                            />
+                        );
+                    })}
+                    <li className="breadcrumb__item">
+                        <Button Icon={ThreeDotsHorizontal} layout="text" appearance="secondary" size="medium" />
+                        <LineSlash size={24} />
+                    </li>
+                </ul>
+            </div>
             <nav aria-label="breadcrumb navigation">
                 <ul ref={listRef} className="breadcrumb__list">
                     {visibleFirstItems.map((item) => {
