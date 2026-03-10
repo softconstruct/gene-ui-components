@@ -115,7 +115,7 @@ const BreadcrumbVariations: FC<IBreadcrumbProps> = (props) => {
                     </Row>
                     <Row>
                         <Col size={12}>
-                            <Section title="Col 8 with 5 item">
+                            <Section title="Col 12 with 5 item">
                                 <Breadcrumb {...props} />
                             </Section>
                         </Col>
