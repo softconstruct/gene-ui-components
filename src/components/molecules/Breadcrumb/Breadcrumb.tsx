@@ -167,7 +167,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
             const found = lastOrder.some((last) => {
                 const first = total - last;
                 if (first + last >= itemsCount) return false;
-                if (overflowMax && (first > 2 || last > 2)) return false;
+                if (first > 2 || last > 2) return false;
 
                 const sumFirst = itemWidths.slice(0, first).reduce((a, b) => a + b, 0);
                 const sumLast = itemWidths.slice(-last).reduce((a, b) => a + b, 0);
