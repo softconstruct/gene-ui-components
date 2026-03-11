@@ -33,8 +33,8 @@ const mockData: IFileUploadItem[] = [
         size: "4.2MB",
         type: "file" as FileType,
         actions: [
-            { id: "1-image", Icon: Image, onClick: jest.fn() },
-            { id: "1-recycle", Icon: RecycleBin, onClick: jest.fn() }
+            { id: "1-image", Icon: Image, name: "Preview image", onClick: jest.fn() },
+            { id: "1-recycle", Icon: RecycleBin, name: "Remove file", onClick: jest.fn() }
         ]
     },
     {
@@ -44,8 +44,8 @@ const mockData: IFileUploadItem[] = [
         size: "12MB",
         type: "image" as FileType,
         actions: [
-            { id: "2-image", Icon: Image, onClick: jest.fn() },
-            { id: "2-recycle", Icon: RecycleBin, onClick: jest.fn() }
+            { id: "2-image", Icon: Image, name: "Preview image", onClick: jest.fn() },
+            { id: "2-recycle", Icon: RecycleBin, name: "Remove file", onClick: jest.fn() }
         ]
     },
     {
@@ -55,8 +55,8 @@ const mockData: IFileUploadItem[] = [
         size: "8MB",
         type: "audio" as FileType,
         actions: [
-            { id: "3-image", Icon: Image, onClick: jest.fn() },
-            { id: "3-recycle", Icon: RecycleBin, onClick: jest.fn() }
+            { id: "3-image", Icon: Image, name: "Preview audio", onClick: jest.fn() },
+            { id: "3-recycle", Icon: RecycleBin, name: "Remove file", onClick: jest.fn() }
         ]
     },
     {
@@ -66,8 +66,8 @@ const mockData: IFileUploadItem[] = [
         size: "220MB",
         type: "video" as FileType,
         actions: [
-            { id: "4-image", Icon: Image, onClick: jest.fn() },
-            { id: "4-recycle", Icon: RecycleBin, onClick: jest.fn() }
+            { id: "4-image", Icon: Image, name: "Preview video", onClick: jest.fn() },
+            { id: "4-recycle", Icon: RecycleBin, name: "Remove file", onClick: jest.fn() }
         ]
     }
 ];
@@ -83,8 +83,8 @@ const uploadingData: IFileUploadItem[] = [
         progressPercent: 45,
         uploadingText: "Uploading",
         actions: [
-            { id: "uploading-1-cancel", Icon: Image, onClick: jest.fn() },
-            { id: "uploading-1-recycle", Icon: RecycleBin, onClick: jest.fn() }
+            { id: "uploading-1-cancel", Icon: Image, name: "Cancel upload", onClick: jest.fn() },
+            { id: "uploading-1-recycle", Icon: RecycleBin, name: "Remove file", onClick: jest.fn() }
         ]
     }
 ];
@@ -99,7 +99,7 @@ const uploadingWithoutCancelData: IFileUploadItem[] = [
         loading: true,
         progressPercent: 70,
         uploadingText: "Uploading",
-        actions: [{ id: "uploading-2-recycle", Icon: RecycleBin, onClick: jest.fn() }]
+        actions: [{ id: "uploading-2-recycle", Icon: RecycleBin, name: "Remove file", onClick: jest.fn() }]
     }
 ];
 
@@ -184,7 +184,7 @@ describe("FileUploadList", () => {
         setup = mount(renderList(uploadingWithoutCancelData));
         setup.update();
 
-        expect(setup.find(FileUploadItem).find("button.fileUploadList__button")).toHaveLength(1);
+        expect(setup.find(FileUploadItem).find("button.fileUploadItem__button")).toHaveLength(1);
     });
 
     it("shows all actions while uploading", () => {
@@ -201,8 +201,8 @@ describe("FileUploadList", () => {
                     progressPercent: 45,
                     uploadingText: "Uploading",
                     actions: [
-                        { id: "uploading-test-cancel", Icon: Image, onClick },
-                        { id: "uploading-test-recycle", Icon: RecycleBin, onClick: jest.fn() }
+                        { id: "uploading-test-cancel", Icon: Image, name: "Cancel upload", onClick },
+                        { id: "uploading-test-recycle", Icon: RecycleBin, name: "Remove file", onClick: jest.fn() }
                     ]
                 }
             ])
@@ -212,7 +212,7 @@ describe("FileUploadList", () => {
         const fileUploadItem = setup.find(FileUploadItem).first();
         expect(fileUploadItem.prop("loading")).toBe(true);
 
-        const buttons = fileUploadItem.find("button.fileUploadList__button");
+        const buttons = fileUploadItem.find("button.fileUploadItem__button");
         expect(buttons).toHaveLength(2);
 
         buttons.at(0).simulate("click");
@@ -232,14 +232,14 @@ describe("FileUploadList", () => {
             renderList([
                 {
                     ...uploadingData[0],
-                    actions: [{ id: "error-cancel", Icon: Image, onClick }]
+                    actions: [{ id: "error-cancel", Icon: Image, name: "Cancel upload", onClick }]
                 }
             ])
         );
         setup.update();
 
         const fileUploadItem = setup.find(FileUploadItem).first();
-        const button = fileUploadItem.find("button.fileUploadList__button").at(0);
+        const button = fileUploadItem.find("button.fileUploadItem__button").at(0);
         button.simulate("click");
         expect(onClick).toHaveBeenCalledWith(expect.anything());
     });
@@ -255,7 +255,7 @@ describe("FileUploadList", () => {
                 status: "error",
                 helperText: "Upload failed. Please try again.",
                 uploadingText: "Uploading",
-                actions: [{ id: "error-1-cancel", Icon: Image, onClick: jest.fn() }]
+                actions: [{ id: "error-1-cancel", Icon: Image, name: "Cancel upload", onClick: jest.fn() }]
             }
         ];
         setup = mount(renderList(errorData));
@@ -276,7 +276,7 @@ describe("FileUploadList", () => {
                 status: "warning",
                 helperText: "File is large. Upload may take a while.",
                 uploadingText: "Uploading...",
-                actions: [{ id: "warning-1-cancel", Icon: RecycleBin, onClick: jest.fn() }]
+                actions: [{ id: "warning-1-cancel", Icon: RecycleBin, name: "Remove file", onClick: jest.fn() }]
             }
         ];
         setup = mount(renderList(warningData));
@@ -344,8 +344,8 @@ describe("FileUploadList", () => {
                     progressPercent: 50,
                     uploadingText: "Uploading",
                     actions: [
-                        { id: "upload-disabled-cancel", Icon: Image, onClick: onCancel },
-                        { id: "upload-disabled-recycle", Icon: RecycleBin, onClick }
+                        { id: "upload-disabled-cancel", Icon: Image, name: "Cancel upload", onClick: onCancel },
+                        { id: "upload-disabled-recycle", Icon: RecycleBin, name: "Remove file", onClick }
                     ]
                 }
             ])
@@ -353,7 +353,7 @@ describe("FileUploadList", () => {
         setup.update();
 
         const fileUploadItem = setup.find(FileUploadItem).first();
-        const buttons = fileUploadItem.find("button.fileUploadList__button");
+        const buttons = fileUploadItem.find("button.fileUploadItem__button");
         expect(buttons.at(0).prop("disabled")).toBeFalsy();
         expect(buttons.at(1).prop("disabled")).toBeFalsy();
     });
@@ -368,11 +368,11 @@ describe("FileUploadList", () => {
                     time: "10:00AM",
                     size: "1MB",
                     type: fileType,
-                    actions: [{ id: "type-recycle", Icon: RecycleBin, onClick: jest.fn() }]
+                    actions: [{ id: "type-recycle", Icon: RecycleBin, name: "Remove file", onClick: jest.fn() }]
                 }
             ];
             const wrapper = mount(renderList(files));
-            expect(wrapper.find(`.fileUploadList__file_type_${fileType}`).exists()).toBe(true);
+            expect(wrapper.find(`.fileUploadItem__file_type_${fileType}`).exists()).toBe(true);
         });
     });
 });

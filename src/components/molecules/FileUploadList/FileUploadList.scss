@@ -5,6 +5,10 @@
     flex-direction: column;
     row-gap: var(--guit-ref-spacing-xsmall);
     width: 100%;
+}
+
+.fileUploadItem {
+    $this: &;
 
     &__itemWrapper {
         display: flex;

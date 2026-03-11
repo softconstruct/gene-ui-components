@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ComponentType } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Icons
@@ -9,11 +9,24 @@ import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/
 // Components
 import FileUploadList, { FileUploadItem, IFileUploadItem, IFileUploadListProps } from "./index";
 
+const ACTIONS = {
+    cancelUpload: { Icon: X, name: "Cancel upload" },
+    retryUpload: { Icon: X, name: "Retry upload" },
+    viewFile: { Icon: Eye, name: "View file" },
+    downloadFile: { Icon: Download, name: "Download file" },
+    removeFile: { Icon: RecycleBin, name: "Remove file" }
+} as const;
+
+const DEFAULT_FILE_ACTIONS = [ACTIONS.viewFile, ACTIONS.downloadFile, ACTIONS.removeFile];
+const UPLOADING_FILE_ACTIONS = [ACTIONS.cancelUpload, ...DEFAULT_FILE_ACTIONS];
+const ERROR_FILE_ACTIONS = [ACTIONS.retryUpload, ACTIONS.removeFile];
+const WARNING_FILE_ACTIONS = [ACTIONS.cancelUpload, ACTIONS.viewFile];
+
 const meta: Meta<IFileUploadListProps> = {
     title: "Molecules/FileUploadList",
     component: FileUploadList,
     subcomponents: {
-        FileUploadItem
+        FileUploadItem: FileUploadItem as ComponentType<unknown>
     }
 };
 
@@ -23,7 +36,7 @@ const mockData: IFileUploadItem[] = [
         time: "08:05AM",
         size: "6MB",
         type: "file",
-        actions: [{ Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
+        actions: DEFAULT_FILE_ACTIONS
     },
     {
         name: "Quarterly-report.pdf",
@@ -33,7 +46,7 @@ const mockData: IFileUploadItem[] = [
         loading: true,
         progressPercent: 65,
         uploadingText: "Uploading...",
-        actions: [{ Icon: X }, { Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }]
+        actions: UPLOADING_FILE_ACTIONS
     },
     {
         name: "Failed-upload.pdf",
@@ -45,7 +58,7 @@ const mockData: IFileUploadItem[] = [
         status: "error",
         helperText: "Upload failed. Please try again.",
         uploadingText: "Uploading",
-        actions: [{ Icon: X }, { Icon: RecycleBin }]
+        actions: ERROR_FILE_ACTIONS
     },
     {
         name: "Large-file.zip",
@@ -57,7 +70,7 @@ const mockData: IFileUploadItem[] = [
         status: "warning",
         helperText: "File is large. Upload may take a while.",
         uploadingText: "Uploading...",
-        actions: [{ Icon: X }, { Icon: Eye }]
+        actions: WARNING_FILE_ACTIONS
     }
 ];
 
@@ -100,7 +113,7 @@ const FileUploadItemStory: StoryObj<IFileUploadItem> = storyObjBuilder({
         actions: args({ control: "object", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
         progressPercent: args({ control: "number", ...propCategory.content }),
-        status: args({ control: "select", ...propCategory.states, options: ["rest", "warning", "error"] }),
+        status: args({ control: "select", options: ["rest", "warning", "error"], ...propCategory.states }),
         helperText: args({ control: "text", ...propCategory.content }),
         uploadingText: args({ control: "text", ...propCategory.content })
     },
@@ -109,7 +122,7 @@ const FileUploadItemStory: StoryObj<IFileUploadItem> = storyObjBuilder({
         time: "10:30AM",
         size: "10MB",
         type: "image",
-        actions: [{ Icon: X }, { Icon: Eye }, { Icon: Download }, { Icon: RecycleBin }],
+        actions: UPLOADING_FILE_ACTIONS,
         loading: false,
         progressPercent: 50,
         status: "rest",

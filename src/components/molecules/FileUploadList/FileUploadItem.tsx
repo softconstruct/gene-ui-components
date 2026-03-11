@@ -24,12 +24,12 @@ export type FileType = "image" | "video" | "audio" | "file";
 const VALID_FILE_TYPES: FileType[] = ["image", "video", "audio", "file"];
 
 /** Returns the given type if it's a valid FileType, otherwise "unknown". */
-function getFileType(type?: string): FileType {
+const getFileType = (type?: string): FileType => {
     if (type && VALID_FILE_TYPES.includes(type as FileType)) {
         return type as FileType;
     }
     return "file";
-}
+};
 
 const icons: Record<FileType, FC<IconProps>> = {
     image: Image,
@@ -42,7 +42,7 @@ export interface IFileUploadActionProps {
     /**
      * The `Icon` component to display in the action button. If not provided, the action button will not be rendered.
      */
-    Icon?: FC<IconProps>;
+    Icon: FC<IconProps>;
     /**
      * A callback function that is called when the button is clicked.
      */
@@ -53,8 +53,10 @@ export interface IFileUploadActionProps {
     id?: string;
     /**
      * Specifies the name of the button.
+     * This is required to avoid rendering empty menu items
+     * when actions are grouped inside a `ButtonGroup`.
      */
-    name?: string;
+    name: string;
     /**
      * An ARIA label for the button.
      */
@@ -157,16 +159,16 @@ const FileUploadItem: FC<IFileUploadItem> = ({
     const showProgressLayout = loading || status === "error" || status === "warning";
 
     return (
-        <div className="fileUploadList__itemWrapper">
-            <div className={classNames("fileUploadList__item")} role="listitem" aria-label={ariaLabel}>
-                <div className="fileUploadList__cell">
-                    <div className={classNames("fileUploadList__file", `fileUploadList__file_type_${fileType}`)}>
-                        <Icon className="fileUploadList__fileIcon" size={16} />
+        <div className="fileUploadItem__itemWrapper">
+            <div className={classNames("fileUploadItem__item")} role="listitem" aria-label={ariaLabel}>
+                <div className="fileUploadItem__cell">
+                    <div className={classNames("fileUploadItem__file", `fileUploadItem__file_type_${fileType}`)}>
+                        <Icon className="fileUploadItem__fileIcon" size={16} />
                     </div>
                     <Tooltip text={name} isVisible={isNameTruncated}>
                         <Text
                             ref={nameRef}
-                            className={classNames("ellipsis-text", { fileUploadList__text: showProgressLayout })}
+                            className={classNames("ellipsis-text", { fileUploadItem__text: showProgressLayout })}
                             as="span"
                             variant="labelMediumMedium"
                         >
@@ -177,7 +179,7 @@ const FileUploadItem: FC<IFileUploadItem> = ({
                 {!showProgressLayout && (
                     <>
                         {time && (
-                            <div className="fileUploadList__cell">
+                            <div className="fileUploadItem__cell">
                                 <Tooltip text={time} isVisible={isTimeTruncated}>
                                     <Text ref={timeRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
                                         {time}
@@ -186,7 +188,7 @@ const FileUploadItem: FC<IFileUploadItem> = ({
                             </div>
                         )}
                         {size && (
-                            <div className="fileUploadList__cell">
+                            <div className="fileUploadItem__cell">
                                 <Tooltip text={size} isVisible={isSizeTruncated}>
                                     <Text ref={sizeRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
                                         {size}
@@ -196,21 +198,19 @@ const FileUploadItem: FC<IFileUploadItem> = ({
                         )}
                     </>
                 )}
-                <div className={classNames("fileUploadList__cell", { showProgressLayout })}>
+                <div className={classNames("fileUploadItem__cell")}>
                     {!!actions?.length && (
                         <ButtonGroup size="small">
-                            {actionsWithIds.map((action) =>
-                                action.Icon ? (
-                                    <Button
-                                        key={action.id}
-                                        {...action}
-                                        layout="text"
-                                        appearance="secondary"
-                                        className="fileUploadList__button"
-                                        aria-label={action["aria-label"] ?? "File action"}
-                                    />
-                                ) : null
-                            )}
+                            {actionsWithIds.map((action) => (
+                                <Button
+                                    key={action.id}
+                                    {...action}
+                                    layout="text"
+                                    appearance="secondary"
+                                    className="fileUploadItem__button"
+                                    aria-label={action["aria-label"] ?? "File action"}
+                                />
+                            ))}
                         </ButtonGroup>
                     )}
                 </div>
@@ -228,7 +228,5 @@ const FileUploadItem: FC<IFileUploadItem> = ({
         </div>
     );
 };
-
-FileUploadItem.displayName = "FileUploadItem";
 
 export { IFileUploadItem, FileUploadItem as default };
