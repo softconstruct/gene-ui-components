@@ -15,6 +15,8 @@ import useContainerSize from "@hooks/useContainerSize";
 // Styles
 import "./Breadcrumb.scss";
 
+import { BREADCRUMB_SEPARATOR_SIZE } from "./Breadcrumb.constants";
+
 const MAX_VISIBLE_BREADCRUMB_ITEMS = 6;
 
 type VisibilityConfig = {
@@ -273,7 +275,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
                     })}
                     <li className="breadcrumb__item">
                         <Button Icon={ThreeDotsHorizontal} layout="text" appearance="secondary" size="medium" />
-                        <LineSlash size={24} />
+                        <LineSlash size={BREADCRUMB_SEPARATOR_SIZE} />
                     </li>
                 </ul>
             </div>
@@ -310,7 +312,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
                                 );
                             })}
                         </Menu>
-                        <LineSlash size={24} />
+                        <LineSlash size={BREADCRUMB_SEPARATOR_SIZE} />
                     </li>
 
                     {/* Last visible items */}

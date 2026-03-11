@@ -8,6 +8,7 @@ import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
 
 import { BreadcrumbContext } from "./Breadcrumb";
+import { BREADCRUMB_ICON_SIZE, BREADCRUMB_SEPARATOR_SIZE } from "./Breadcrumb.constants";
 
 interface IBreadcrumbItemProps {
     /**
@@ -38,10 +39,10 @@ const BreadcrumbItem: FC<IBreadcrumbItemProps> = ({ path, title, Icon }) => {
 
     const renderIcon = () => {
         if (Icon) {
-            return <Icon className="breadcrumb__icon" size={20} />;
+            return <Icon size={BREADCRUMB_ICON_SIZE} />;
         }
         if (iconOnly) {
-            return <FolderOpen className="breadcrumb__icon" size={20} />;
+            return <FolderOpen size={BREADCRUMB_ICON_SIZE} />;
         }
         return null;
     };
@@ -112,7 +113,7 @@ const BreadcrumbItem: FC<IBreadcrumbItemProps> = ({ path, title, Icon }) => {
                 {interactiveElement}
             </Tooltip>
 
-            {!isLastItem && <LineSlash size={24} />}
+            {!isLastItem && <LineSlash size={BREADCRUMB_SEPARATOR_SIZE} />}
         </li>
     );
 };

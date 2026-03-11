@@ -1,0 +1,2 @@
+export const BREADCRUMB_ICON_SIZE = 20;
+export const BREADCRUMB_SEPARATOR_SIZE = 24;
