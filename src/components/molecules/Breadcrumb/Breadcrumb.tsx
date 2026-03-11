@@ -292,6 +292,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
                                 appearance="secondary"
                                 size="medium"
                                 {...menuPropsForPopover}
+                                aria-label="More breadcrumb items"
                             />
                         </Tooltip>
                         <Menu

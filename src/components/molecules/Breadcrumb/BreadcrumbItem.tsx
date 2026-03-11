@@ -66,6 +66,7 @@ const BreadcrumbItem: FC<IBreadcrumbItemProps> = ({ path, title, Icon }) => {
                 const propsToApply = {
                     className: classNames("breadcrumb__link", {
                         breadcrumb__link_active: isLastItem,
+                        breadcrumb__link_iconBefore: !!Icon && !iconOnly,
                         breadcrumb__link_iconOnly: iconOnly
                     }),
                     tabIndex: 0,
@@ -80,6 +81,7 @@ const BreadcrumbItem: FC<IBreadcrumbItemProps> = ({ path, title, Icon }) => {
                 <span
                     className={classNames("breadcrumb__link", {
                         breadcrumb__link_active: isLastItem,
+                        breadcrumb__link_iconBefore: !!Icon && !iconOnly,
                         breadcrumb__link_iconOnly: iconOnly
                     })}
                     aria-current="page"
@@ -93,6 +95,7 @@ const BreadcrumbItem: FC<IBreadcrumbItemProps> = ({ path, title, Icon }) => {
             <button
                 type="button"
                 className={classNames("breadcrumb__link", {
+                    breadcrumb__link_iconBefore: !!Icon && !iconOnly,
                     breadcrumb__link_iconOnly: iconOnly
                 })}
                 tabIndex={0}
