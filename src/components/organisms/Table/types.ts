@@ -55,11 +55,6 @@ export interface IActionConfig {
     disabled?: boolean;
 }
 
-export interface IRowAction extends Partial<IActionConfig> {
-    id?: string;
-    type: RowActionTypes;
-}
-
 export type Row = TRowCells & {
     id: string | number;
     isPinned?: boolean;
@@ -67,6 +62,12 @@ export type Row = TRowCells & {
     rowStatus?: "default" | "zebra" | "red" | "green" | "highlighted";
     expandedData?: () => ReactNode | null;
 };
+
+export interface IRowAction extends Omit<Partial<IActionConfig>, "onClick"> {
+    id?: string;
+    type: RowActionTypes;
+    onClick: (row: RowData<Row>) => void;
+}
 
 export type BaseTableColumn<T> = ColumnDef<T extends object ? T : never> & {
     header?: string | null;

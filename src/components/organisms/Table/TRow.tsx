@@ -15,6 +15,7 @@ interface ITRow {
 
 const TRow: FC<ITRow> = ({ row }) => {
     const { rowActions } = useContext(TableContext);
+
     return (
         <tr className={classNames(`table__row table__row_tbody table__row_${row.original.rowStatus}`)} role="row">
             {row.getVisibleCells().map((cell) => {
@@ -46,6 +47,7 @@ const TRow: FC<ITRow> = ({ row }) => {
                                 <RowActions
                                     key={action.type}
                                     {...action}
+                                    row={row}
                                     type={action.type === "pin" && row.getIsPinned() ? "pinFilled" : action.type}
                                 />
                             );

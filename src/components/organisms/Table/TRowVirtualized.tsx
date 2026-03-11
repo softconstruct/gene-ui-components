@@ -52,6 +52,7 @@ const TRowVirtualized: FC<ITRowVirtualized> = ({ row, virtualRow, rowVirtualizer
                                     <RowActions
                                         key={action.type}
                                         {...action}
+                                        row={row}
                                         type={action.type === "pin" && row.getIsPinned() ? "pinFilled" : action.type}
                                     />
                                 );
