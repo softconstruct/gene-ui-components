@@ -164,14 +164,6 @@
         }
     }
 
-    &__content {
-        width: 100%;
-        height: 100%;
-
-        // todo need to investigate why we need overflow auto
-        // overflow-y: auto;
-    }
-
     &__footer {
         flex: none;
         display: flex;
