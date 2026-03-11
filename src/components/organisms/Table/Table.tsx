@@ -23,12 +23,14 @@ import TBody from "@components/organisms/Table/TBody";
 import TFoot from "@components/organisms/Table/TFoot";
 import THead from "@components/organisms/Table/THead";
 import Toolbar from "@components/organisms/Table/Toolbar";
+import TRow from "@components/organisms/Table/TRow";
 import {
     EditBuffer,
     IBulkActions,
     IEditActions,
     IGlobalFilterInfo,
     IManageColumnsInfo,
+    IRowAction,
     IRowSelectionInfo,
     Row,
     TableColumns
@@ -49,6 +51,7 @@ interface ITableContext {
     onSort?: (event: SortingState) => void;
     onGlobalFilter?: (event: string) => void;
     onColumnFilter?: (event: ColumnFiltersState) => void;
+    rowActions?: IRowAction[];
 }
 
 interface ITableProps {
@@ -59,6 +62,7 @@ interface ITableProps {
     columnVisibility?: VisibilityState;
     rowSelectionInfo?: IRowSelectionInfo;
     globalFilterInfo?: IGlobalFilterInfo;
+    rowActions?: IRowAction[];
     bulkActions?: IBulkActions;
     manageColumnsInfo?: IManageColumnsInfo;
     editActions?: IEditActions;
@@ -131,6 +135,7 @@ const Table: FC<ITableProps> = ({
     columnVisibility,
     rowSelectionInfo,
     manageColumnsInfo,
+    rowActions,
     bulkActions,
     editActions,
     globalFilterInfo,
@@ -249,7 +254,8 @@ const Table: FC<ITableProps> = ({
             headers: table.getHeaderGroups(),
             columnVisibility,
             columnOrder,
-            pinnedColumns: table.getState().columnPinning.left
+            pinnedColumns: table.getState().columnPinning.left,
+            rowActions
         }),
         [table, columnVisibility, columnOrder]
     );
@@ -281,7 +287,8 @@ const Table: FC<ITableProps> = ({
         onPageSizeChange?.(size);
     };
 
-    const rows = [...table.getTopRows(), ...table.getCenterRows()];
+    const pinnedRows = [...table.getTopRows()];
+    const centerRows = [...table.getCenterRows()];
 
     const hasFooters = table
         .getFooterGroups()
@@ -325,9 +332,12 @@ const Table: FC<ITableProps> = ({
                             onColumnSizingChange={onColumnSizingChange}
                             onColumnSizingRestore={onColumnSizingRestore}
                         />
+                        {pinnedRows.map((row) => (
+                            <TRow key={row.id} row={row} />
+                        ))}
                         {withVirtualScroll ? (
                             <VirtualizedBody
-                                rows={rows}
+                                rows={centerRows}
                                 scrollElement={scrollElement}
                                 hasMore={hasMore}
                                 onLoadMore={onLoadMore}
@@ -335,7 +345,7 @@ const Table: FC<ITableProps> = ({
                                 estimateSize={estimateSize}
                             />
                         ) : (
-                            <TBody rows={rows} />
+                            <TBody rows={centerRows} />
                         )}
                         {hasFooters && <TFoot footer={table.getFooterGroups()} withStickyFooter={withStickyFooter} />}
                     </table>

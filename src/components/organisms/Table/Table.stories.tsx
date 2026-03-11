@@ -9,6 +9,7 @@ import {
     IEditActions,
     IManageColumnsActions,
     IManageColumnsInfo,
+    IRowAction,
     ManageColumnsSavedDataType,
     Row
 } from "@components/organisms/Table/types";
@@ -71,6 +72,41 @@ const defaultEditActions: IEditActions = {
         label: "Edit"
     }
 };
+
+const rowActions: IRowAction[] = [
+    {
+        type: "pin",
+        onClick: () => {}
+    },
+    {
+        type: "tag",
+        onClick: () => {}
+    },
+    {
+        type: "reload",
+        onClick: () => {}
+    },
+    {
+        type: "show",
+        onClick: () => {}
+    },
+    {
+        type: "clock",
+        onClick: () => {}
+    },
+    {
+        type: "copy",
+        onClick: () => {}
+    },
+    {
+        type: "download",
+        onClick: () => {}
+    },
+    {
+        type: "delete",
+        onClick: () => {}
+    }
+];
 
 const meta: Meta<ITableProps> = {
     title: "Organisms/Table",
@@ -197,6 +233,7 @@ const TableComponent: FC<ITableProps> = (props) => {
         <div style={{ height: 700, overflow: "auto" }}>
             <Table
                 {...props}
+                rowActions={rowActions}
                 columnOrder={columnOrder}
                 columnVisibility={columnVisibility}
                 pinnedColumns={pinnedColumns}

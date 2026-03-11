@@ -1,4 +1,21 @@
-import { ArrowDown, ArrowUp, ArrowUpDown } from "@geneui/icons";
+import { FC } from "react";
+
+import {
+    ArrowDown,
+    ArrowUp,
+    ArrowUpDown,
+    Clock,
+    Copy,
+    Download,
+    Eye,
+    IconProps,
+    Pin,
+    PinFilled,
+    RecycleBin,
+    Tag
+} from "@geneui/icons";
+
+import { RowActionTypes } from "@components/organisms/Table/types";
 
 export const DISPLAY_COLUMN_TYPES = ["Empty", "Expand", "RowCheckbox"];
 
@@ -23,4 +40,16 @@ export const SortingIcons = {
     asc: ArrowUp,
     desc: ArrowDown,
     false: ArrowUpDown
+};
+
+export const RowActionsIcons: Record<RowActionTypes, FC<IconProps>> = {
+    pin: Pin,
+    pinFilled: PinFilled,
+    tag: Tag,
+    clock: Clock,
+    reload: Pin,
+    copy: Copy,
+    download: Download,
+    show: Eye,
+    delete: RecycleBin
 };

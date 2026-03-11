@@ -46,6 +46,20 @@ export type TRowCells = {
     [K in string]?: Cell;
 };
 
+export type RowActionTypes = "pin" | "pinFilled" | "tag" | "clock" | "reload" | "copy" | "download" | "show" | "delete";
+
+export interface IActionConfig {
+    label: string;
+    onClick?: () => void;
+    ariaLabel?: string;
+    disabled?: boolean;
+}
+
+export interface IRowAction extends Partial<IActionConfig> {
+    id?: string;
+    type: RowActionTypes;
+}
+
 export type Row = TRowCells & {
     id: string | number;
     isPinned?: boolean;
@@ -97,13 +111,6 @@ export interface IRowSelectionInfo {
     selectedRowsLength?: number;
     deselectTitle?: string;
     onRowsDeselect?: () => void;
-}
-
-export interface IActionConfig {
-    label: string;
-    onClick?: () => void;
-    ariaLabel?: string;
-    disabled?: boolean;
 }
 
 interface IEditPrimaryActionConfig extends Omit<IActionConfig, "onClick"> {

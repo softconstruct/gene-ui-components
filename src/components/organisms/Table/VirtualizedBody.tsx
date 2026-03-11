@@ -46,7 +46,7 @@ const VirtualizedBody: FC<IVirtualizedBody> = ({
         if (!onLoadMore || !hasMore || virtualItems.length === 0) return;
         const lastItem = virtualItems[virtualItems.length - 1];
         const lastIndex = lastItem.index;
-        const threshold = rows.length - 5; // when 5 items from the end
+        const threshold = rows.length - overscan;
         if (lastIndex >= threshold) {
             onLoadMore();
         }
