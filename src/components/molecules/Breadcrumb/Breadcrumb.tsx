@@ -1,6 +1,5 @@
 import React, { createContext, FC, ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
-import { nanoid } from "nanoid/non-secure";
 
 import { IconProps, LineSlash, ThreeDotsHorizontal } from "@geneui/icons";
 
@@ -227,19 +226,16 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
         }
     };
 
-    const renderBreadcrumbItem = (item: IBreadcrumbItemProps, isLastItem: boolean) => {
-        const key = nanoid();
-        return (
-            <BreadcrumbItemWrapper
-                key={key}
-                props={item}
-                iconOnly={iconOnly}
-                isLastItem={isLastItem}
-                render={render}
-                onClick={onClick}
-            />
-        );
-    };
+    const renderBreadcrumbItem = (item: IBreadcrumbItemProps, isLastItem: boolean, breadcrumbIndex: number) => (
+        <BreadcrumbItemWrapper
+            key={breadcrumbIndex}
+            props={item}
+            iconOnly={iconOnly}
+            isLastItem={isLastItem}
+            render={render}
+            onClick={onClick}
+        />
+    );
 
     const showEllipsisTrigger = shouldShowEllipsis && menuItems.length > 0;
 
@@ -283,9 +279,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
             </div>
             <nav aria-label="breadcrumb navigation">
                 <ul ref={listRef} className="breadcrumb__list">
-                    {visibleFirstItems.map((item) => {
-                        return renderBreadcrumbItem(item, false);
-                    })}
+                    {visibleFirstItems.map((item, index) => renderBreadcrumbItem(item, false, index))}
                     <li
                         className={classNames("breadcrumb__item", {
                             breadcrumb__item_hidden: !showEllipsisTrigger
@@ -321,7 +315,8 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
                     {/* Last visible items */}
                     {visibleLastItems.map((item, index) => {
                         const isLastItem = index === visibleLastItems.length - 1;
-                        return renderBreadcrumbItem(item, isLastItem);
+                        const breadcrumbIndex = itemsCount - visibleLastItems.length + index;
+                        return renderBreadcrumbItem(item, isLastItem, breadcrumbIndex);
                     })}
                 </ul>
             </nav>
