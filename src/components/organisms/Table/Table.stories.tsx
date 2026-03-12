@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 import { VisibilityState } from "@tanstack/react-table";
 
@@ -108,6 +108,8 @@ const rowActions: IRowAction[] = [
     }
 ];
 
+const PAGE_SIZE = 50;
+
 const meta: Meta<ITableProps> = {
     title: "Organisms/Table",
     component: Table,
@@ -185,6 +187,10 @@ const TableComponent: FC<ITableProps> = (props) => {
     const [columnOrder, setColumnOrder] = useState<string[]>([]);
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>();
 
+    useEffect(() => {
+        setTableData(data);
+    }, [data]);
+
     const onSave = (updatedData: Row[]) => {
         setTableData(updatedData);
         setEditableState(false);
@@ -247,6 +253,47 @@ const TableComponent: FC<ITableProps> = (props) => {
     );
 };
 
+const InfiniteScrollTableComponent: FC<ITableProps> = (props) => {
+    const [rows, setRows] = useState<Row[]>(() => TableData.slice(0, PAGE_SIZE));
+    const [hasMore, setHasMore] = useState<boolean>(TableData.length > PAGE_SIZE);
+    const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+
+    const handleLoadMore = () => {
+        if (isLoadingMore || !hasMore) return;
+
+        setIsLoadingMore(true);
+
+        setTimeout(() => {
+            setRows((currentRows) => {
+                const nextLength = currentRows.length + PAGE_SIZE;
+                const nextRows = TableData.slice(0, nextLength);
+
+                setHasMore(nextRows.length < TableData.length);
+
+                return nextRows;
+            });
+
+            setIsLoadingMore(false);
+        }, 0);
+    };
+
+    return (
+        <div style={{ height: 700, overflow: "auto" }}>
+            <TableComponent
+                {...props}
+                data={rows}
+                rowActions={rowActions}
+                bulkActions={bulkActionsMock}
+                manageColumnsInfo={manageColumnsInfo}
+                onLoadMore={handleLoadMore}
+                hasMore={hasMore}
+                estimateSize={40}
+                overscan={10}
+            />
+        </div>
+    );
+};
+
 export const Default: Story = {
     render: (props: ITableProps) => {
         return <TableComponent {...props} />;
@@ -257,6 +304,16 @@ export const Default: Story = {
 export const VirtualizedTable: Story = {
     render: (props: ITableProps) => {
         return <TableComponent {...props} />;
+    },
+    args: {
+        withPagination: false,
+        withVirtualScroll: true
+    }
+};
+
+export const InfiniteScroll: Story = {
+    render: (props: ITableProps) => {
+        return <InfiniteScrollTableComponent {...props} />;
     },
     args: {
         withPagination: false,
