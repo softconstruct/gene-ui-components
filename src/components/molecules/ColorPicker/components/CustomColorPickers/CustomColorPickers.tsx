@@ -1,10 +1,10 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 
-import { hexToRgb, rgbToHex } from "../../utils";
-import type { RGBA } from "../../ColorPicker";
-
 // Styles
 import "./CustomColorPickers.scss";
+
+import type { RGBA } from "../../ColorPicker";
+import { hexToRgb, rgbToHex } from "../../utils";
 
 type HexColorPickerProps = {
     color: string;
@@ -22,10 +22,10 @@ interface HsvColor {
     v: number; // 0 - 1
 }
 
-const rgbToHsv = (r: number, g: number, b: number): HsvColor => {
-    const rNorm = r / 255;
-    const gNorm = g / 255;
-    const bNorm = b / 255;
+const rgbToHsv = (r: number | string, g: number | string, b: number | string): HsvColor => {
+    const rNorm = Number(r) / 255;
+    const gNorm = Number(g) / 255;
+    const bNorm = Number(b) / 255;
 
     const max = Math.max(rNorm, gNorm, bNorm);
     const min = Math.min(rNorm, gNorm, bNorm);
@@ -106,11 +106,13 @@ const useElementSize = (ref: React.RefObject<HTMLElement>) => {
 
         if (typeof ResizeObserver === "undefined") {
             window.addEventListener("resize", update);
+            // eslint-disable-next-line consistent-return
             return () => window.removeEventListener("resize", update);
         }
 
         const ro = new ResizeObserver(() => update());
         ro.observe(element);
+        // eslint-disable-next-line consistent-return
         return () => ro.disconnect();
     }, [ref]);
 
@@ -235,6 +237,7 @@ const HexColorPicker: FC<HexColorPickerProps> = ({ color, onChange }) => {
 
     return (
         <div className="colorPalette">
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
                 className="colorPalette__saturation"
                 ref={saturationRef}
@@ -250,6 +253,7 @@ const HexColorPicker: FC<HexColorPickerProps> = ({ color, onChange }) => {
                     }}
                 />
             </div>
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
                 className="colorPalette__hue"
                 ref={hueRef}
@@ -358,6 +362,7 @@ const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
 
     return (
         <div className="colorPalette">
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
                 className="colorPalette__saturation"
                 ref={saturationRef}
@@ -373,6 +378,7 @@ const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
                     }}
                 />
             </div>
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
                 className="colorPalette__hue"
                 ref={hueRef}
@@ -387,6 +393,7 @@ const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
                     }}
                 />
             </div>
+            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
             <div
                 className="colorPalette__alpha"
                 ref={alphaRef}

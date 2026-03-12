@@ -1,12 +1,18 @@
 import React, { ChangeEvent, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
+// Icons
+import { Percent } from "@geneui/icons";
+
 // Components
-import { HexColorPicker, RgbaColorPicker } from "./components/CustomColorPickers/CustomColorPickers";
-import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
-import TextField from "@components/molecules/TextField";
 import Label from "@components/atoms/Label";
-import ColorIndicator from "./components/ColorIndicator/ColorIndicator";
+import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
+import ColorPickerTextField from "@components/molecules/ColorPicker/components/ColorPickerTextField/ColorPickerTextField";
+import {
+    HexColorPicker,
+    RgbaColorPicker
+} from "@components/molecules/ColorPicker/components/CustomColorPickers/CustomColorPickers";
+import TextField from "@components/molecules/TextField";
 
 // Hooks
 import useClickOutside from "@hooks/useClickOutside";
@@ -16,10 +22,6 @@ import "./ColorPicker.scss";
 
 // Utils
 import { clamp, hexToRgb, rgbToHex } from "./utils";
-
-// Icons
-import { Percent } from "@geneui/icons";
-import ColorPickerTextField from "@components/molecules/ColorPicker/components/ColorPickerTextField/ColorPickerTextField";
 
 export interface RGB {
     r: number | string;
@@ -271,32 +273,20 @@ const ColorPicker: FC<IColorPickerProps> = ({
                 size={size === "large" ? "medium" : size}
                 text={label}
                 infoText={labelInfoText}
-                labelFor="colorPickerTextfield"
+                labelFor="colorPickerTextField"
             />
-            <ColorPickerTextField />
-            {/* <> */}
-            {/*    <TextField */}
-            {/*        id="colorPickerTextfield" */}
-            {/*        className="colorPicker__textField" */}
-            {/*        value={localHex} */}
-            {/*        IconBefore={() => ( */}
-            {/*            <ColorIndicator size={size} onClick={() => handleOpen(true)} color={localHex} alpha={alpha} /> */}
-            {/*        )} */}
-            {/*        onChange={handleHexInputChange} */}
-            {/*        placeholder={placeholder} */}
-            {/*    /> /}
-            {/*    {alphaEnabled && ( */}
-            {/*        <TextField */}
-            {/*            className="colorPicker__alphaField" */}
-            {/*            onChange={handleAlphaChange} */}
-            {/*            value={alpha} */}
-            {/*            IconAfter={Percent} */}
-            {/*            size="small" */}
-            {/*            autoComplete="off" */}
-            {/*        /> */}
-            {/*    )} */}
-            {/* </> */}
-
+            <ColorPickerTextField
+                id="colorPickerTextField"
+                className="changeMe"
+                value={localHex}
+                alpha={alpha}
+                alphaEnabled={alphaEnabled}
+                onChange={handleHexInputChange}
+                onAlphaChange={handleAlphaChange}
+                placeholder={placeholder}
+                onPickerOpen={handleOpen}
+                size={size}
+            />
             <Popover
                 onClose={() => handleOpen(false)}
                 withArrow={false}
@@ -313,7 +303,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
                             <HexColorPicker color={hex} onChange={handlePickerChange as (val: string) => void} />
                         )}
                         <div className="colorPicker__inputs">
-                            {/**TODO: Replace select with Dropdown component when it will be ready */}
+                            {/** TODO: Replace select with Dropdown component when it will be ready */}
                             <select
                                 name="color_formats"
                                 value={formatState}
