@@ -18,7 +18,7 @@ describe("Breadcrumb", () => {
 
     describe("Rendering", () => {
         beforeEach(() => {
-            setup = mount(<Breadcrumb breadCrumbsData={[]} />, {
+            setup = mount(<Breadcrumb items={[]} />, {
                 wrappingComponent: GeneUIProvider
             });
         });
@@ -46,7 +46,7 @@ describe("Breadcrumb", () => {
 
     describe("Breadcrumb items display", () => {
         it("renders single item without ellipsis", () => {
-            setup = mount(<Breadcrumb breadCrumbsData={createBreadcrumbData(1)} />, {
+            setup = mount(<Breadcrumb items={createBreadcrumbData(1)} />, {
                 wrappingComponent: GeneUIProvider
             });
 
@@ -56,7 +56,7 @@ describe("Breadcrumb", () => {
         });
 
         it("renders two items without ellipsis", () => {
-            setup = mount(<Breadcrumb breadCrumbsData={createBreadcrumbData(2)} />, {
+            setup = mount(<Breadcrumb items={createBreadcrumbData(2)} />, {
                 wrappingComponent: GeneUIProvider
             });
 
@@ -66,7 +66,7 @@ describe("Breadcrumb", () => {
         });
 
         it("renders all items when count is 6 or less and fits", () => {
-            setup = mount(<Breadcrumb breadCrumbsData={createBreadcrumbData(6)} />, {
+            setup = mount(<Breadcrumb items={createBreadcrumbData(6)} />, {
                 wrappingComponent: GeneUIProvider
             });
 
@@ -75,7 +75,7 @@ describe("Breadcrumb", () => {
         });
 
         it("shows ellipsis button when items exceed 6", () => {
-            setup = mount(<Breadcrumb breadCrumbsData={createBreadcrumbData(7)} />, {
+            setup = mount(<Breadcrumb items={createBreadcrumbData(7)} />, {
                 wrappingComponent: GeneUIProvider
             });
 
@@ -86,7 +86,7 @@ describe("Breadcrumb", () => {
         });
 
         it("renders Menu with hidden items when truncated", () => {
-            setup = mount(<Breadcrumb breadCrumbsData={createBreadcrumbData(9)} />, {
+            setup = mount(<Breadcrumb items={createBreadcrumbData(9)} />, {
                 wrappingComponent: GeneUIProvider
             });
 
@@ -101,7 +101,7 @@ describe("Breadcrumb", () => {
 
         it("calls onClick when breadcrumb item is clicked", () => {
             const onClick = jest.fn();
-            setup = mount(<Breadcrumb breadCrumbsData={createBreadcrumbData(3)} onClick={onClick} />, {
+            setup = mount(<Breadcrumb items={createBreadcrumbData(3)} onClick={onClick} />, {
                 wrappingComponent: GeneUIProvider
             });
 
@@ -125,7 +125,7 @@ describe("Breadcrumb", () => {
             );
             setup = mount(
                 <Breadcrumb
-                    breadCrumbsData={[
+                    items={[
                         { title: "Home", path: "/" },
                         { title: "Current", path: "/current" }
                     ]}
@@ -139,7 +139,7 @@ describe("Breadcrumb", () => {
         });
 
         it("applies iconOnly when true", () => {
-            setup = mount(<Breadcrumb breadCrumbsData={createBreadcrumbData(2)} iconOnly />, {
+            setup = mount(<Breadcrumb items={createBreadcrumbData(2)} iconOnly />, {
                 wrappingComponent: GeneUIProvider
             });
 
@@ -148,8 +148,8 @@ describe("Breadcrumb", () => {
     });
 
     describe("Edge cases", () => {
-        it("handles empty breadCrumbsData", () => {
-            setup = mount(<Breadcrumb breadCrumbsData={[]} />, {
+        it("handles empty items", () => {
+            setup = mount(<Breadcrumb items={[]} />, {
                 wrappingComponent: GeneUIProvider
             });
 
@@ -158,10 +158,9 @@ describe("Breadcrumb", () => {
         });
 
         it("renders items with path or title as identifier", () => {
-            setup = mount(
-                <Breadcrumb breadCrumbsData={[{ title: "Root" }, { title: "Current", path: "/current" }]} />,
-                { wrappingComponent: GeneUIProvider }
-            );
+            setup = mount(<Breadcrumb items={[{ title: "Root" }, { title: "Current", path: "/current" }]} />, {
+                wrappingComponent: GeneUIProvider
+            });
 
             const visibleItems = setup.find("nav").find(BreadcrumbItem);
             expect(visibleItems).toHaveLength(2);

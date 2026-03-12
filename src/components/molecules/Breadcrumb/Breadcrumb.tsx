@@ -56,9 +56,17 @@ interface IBreadcrumbProps {
      */
     onClick?: (item: IBreadcrumbItemProps) => void;
     /**
-     * Array of breadcrumb items to display, in order from root to current page.
+     * An array of breadcrumb items to display, in order from root to current page.
+     * Each object conforms to the `IBreadcrumbItemProps` interface.
+     * Memoize this prop to avoid unnecessary visibility recalculations when the breadcrumb trail changes.
+     * @example
+     * items={[
+     *   { title: 'Home', path: '/' },
+     *   { title: 'Products', path: '/products', Icon: Receipt },
+     *   { title: 'Current Page' }
+     * ]}
      */
-    breadCrumbsData: IBreadcrumbItemProps[];
+    items: IBreadcrumbItemProps[];
     /**
      * If `true`, renders only icons (when provided) and hides text labels.
      * Useful for very compact layouts.
@@ -104,7 +112,7 @@ const BreadcrumbItemWrapper: FC<BreadcrumbItemWrapperProps> = ({ props, iconOnly
 /**
  * Breadcrumb component is a navigational aid that displays the user's current location within a website or application. It provides a trail of links back to the starting or entry point, allowing users to easily navigate through the hierarchical structure of the site. Breadcrumbs enhance usability by offering a clear path for users to trace their steps and return to previous sections.
  */
-const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], iconOnly = false, render, onClick }) => {
+const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = false, render, onClick }) => {
     const [menuPropsForPopover, setMenuPropsForPopover] = useState<Record<string, unknown>>({});
     const listRef = useRef<HTMLUListElement>(null);
     const measureListRef = useRef<HTMLUListElement>(null);
@@ -112,7 +120,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
     const { containerRef, sizes } = useContainerSize<HTMLDivElement>({ debounceWait: 100 });
     const containerWidth = sizes.width;
 
-    const itemsCount = breadCrumbsData?.length || 0;
+    const itemsCount = items?.length || 0;
 
     const [visibilityConfig, setVisibilityConfig] = useState<VisibilityConfig>({
         fitAll: true,
@@ -184,21 +192,21 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
         });
 
         setVisibilityConfig({ fitAll: false, firstCount: bestFirst, lastCount: bestLast });
-    }, [containerWidth, itemsCount, breadCrumbsData]);
+    }, [containerWidth, itemsCount, items]);
 
     const { fitAll, firstCount, lastCount } = visibilityConfig;
     const shouldShowEllipsis = itemsCount > 1 && !fitAll;
 
     const { visibleFirstItems, visibleLastItems, menuItems } = useMemo(() => {
-        if (!breadCrumbsData || itemsCount === 0) {
+        if (!items || itemsCount === 0) {
             return { visibleFirstItems: [], visibleLastItems: [], menuItems: [] };
         }
 
         const total = itemsCount;
-        const lastItem = breadCrumbsData[total - 1];
+        const lastItem = items[total - 1];
 
         if (!shouldShowEllipsis) {
-            const firstVisible = breadCrumbsData.slice(0, total - 1);
+            const firstVisible = items.slice(0, total - 1);
             const lastVisible = [lastItem];
             return {
                 visibleFirstItems: firstVisible,
@@ -207,16 +215,16 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
             };
         }
 
-        const visibleFirst = breadCrumbsData.slice(0, firstCount);
-        const visibleLast = breadCrumbsData.slice(-lastCount);
-        const menuItemsSlice = breadCrumbsData.slice(firstCount, total - lastCount);
+        const visibleFirst = items.slice(0, firstCount);
+        const visibleLast = items.slice(-lastCount);
+        const menuItemsSlice = items.slice(firstCount, total - lastCount);
 
         return {
             visibleFirstItems: visibleFirst,
             visibleLastItems: visibleLast,
             menuItems: menuItemsSlice
         };
-    }, [breadCrumbsData, itemsCount, shouldShowEllipsis, firstCount, lastCount]);
+    }, [items, itemsCount, shouldShowEllipsis, firstCount, lastCount]);
 
     const menuSelectHandler = (menuItem: IMenuItemProps) => {
         const selectedItem = menuItems.find((item) => {
@@ -256,9 +264,9 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, breadCrumbsData = [], ico
                 }}
             >
                 <ul ref={measureListRef} className="breadcrumb__list">
-                    {breadCrumbsData.map((item, index) => {
-                        const isLast = index === breadCrumbsData.length - 1;
-                        const pathKey = breadCrumbsData
+                    {items.map((item, index) => {
+                        const isLast = index === items.length - 1;
+                        const pathKey = items
                             .slice(0, index + 1)
                             .map((i) => i.path ?? i.title)
                             .join("/");

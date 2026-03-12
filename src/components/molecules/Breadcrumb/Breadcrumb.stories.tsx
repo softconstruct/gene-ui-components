@@ -16,7 +16,7 @@ const meta: Meta<IBreadcrumbProps> = {
     component: Breadcrumb,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        breadCrumbsData: args({ control: "false", ...propCategory.content }),
+        items: args({ control: "false", ...propCategory.content }),
         iconOnly: args({ control: "boolean", ...propCategory.appearance }),
         render: args({ control: "false", ...propCategory.content }),
         onClick: args({ control: "false", ...propCategory.action })
@@ -52,7 +52,7 @@ const BreadcrumbVariations: FC<IBreadcrumbProps> = (props) => {
                             <Section title="Col 12 with 9 item">
                                 <Breadcrumb
                                     {...props}
-                                    breadCrumbsData={[
+                                    items={[
                                         { title: "Nav Item 1", path: "javascript:void(0)" },
                                         {
                                             title: "Nav Item 2",
@@ -76,7 +76,7 @@ const BreadcrumbVariations: FC<IBreadcrumbProps> = (props) => {
                             <Section title="Col 12 with 2 item">
                                 <Breadcrumb
                                     {...props}
-                                    breadCrumbsData={[
+                                    items={[
                                         { title: "Nav Item 1", path: "javascript:void(0)" },
                                         {
                                             title: "Nav Item 2",
@@ -94,7 +94,7 @@ const BreadcrumbVariations: FC<IBreadcrumbProps> = (props) => {
                                 <Breadcrumb
                                     iconOnly
                                     {...props}
-                                    breadCrumbsData={[
+                                    items={[
                                         { title: "Nav Item 1", path: "javascript:void(0)" },
                                         {
                                             title: "Nav Item 2",
@@ -129,7 +129,7 @@ const BreadcrumbVariations: FC<IBreadcrumbProps> = (props) => {
 export const Default: Story = {
     render: (props) => <BreadcrumbVariations {...props} />,
     args: {
-        breadCrumbsData: [
+        items: [
             { title: "Nav Item 1", path: "javascript:void(0)" },
             {
                 title: "Nav Item 2",
@@ -145,7 +145,7 @@ export const Default: Story = {
 
 export const WithRender: Story = {
     args: {
-        breadCrumbsData: [
+        items: [
             { title: "Home", path: "javascript:void(0)" },
             {
                 title: "Products",
