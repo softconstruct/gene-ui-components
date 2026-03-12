@@ -19,6 +19,7 @@ import { clamp, hexToRgb, rgbToHex } from "./utils";
 
 // Icons
 import { Percent } from "@geneui/icons";
+import ColorPickerTextField from "@components/molecules/ColorPicker/components/ColorPickerTextField/ColorPickerTextField";
 
 export interface RGB {
     r: number | string;
@@ -68,8 +69,8 @@ interface IColorPickerProps {
      */
     size?: "small" | "medium" | "large";
     /**
-     * Additional informational text displayed alongside the label. 
-     * When provided, an info icon will be displayed next to the label, 
+     * Additional informational text displayed alongside the label.
+     * When provided, an info icon will be displayed next to the label,
      * which can be hovered over to reveal the additional context or instructions via a tooltip.
      */
     labelInfoText?: string;
@@ -198,8 +199,8 @@ const ColorPicker: FC<IColorPickerProps> = ({
             emitChange({ ...rgb, a: rgba.a });
             return;
         }
-        setRgba({ r: '', g: '', b: '', a: 100 });
-        emitChange({ r: '', g: '', b: '', a: 100 });
+        setRgba({ r: "", g: "", b: "", a: 100 });
+        emitChange({ r: "", g: "", b: "", a: 100 });
     };
 
     const handleRGBInputChange = (key: keyof RGB, colorValue: number) => {
@@ -218,7 +219,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
         if (!isOpenControlled) {
             setIsOpen(openState);
         }
-    }
+    };
 
     useEffect(() => {
         if (!isColorControlled || !value) return;
@@ -265,35 +266,36 @@ const ColorPicker: FC<IColorPickerProps> = ({
     }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement]);
 
     return (
-        <div className={classNames("colorPicker", className)}>
-            <div className="colorPicker__fieldsWrapper" {...propsForPopover}>
-                <Label
-                    size={size === "large" ? "medium" : size}
-                    text={label}
-                    infoText={labelInfoText}
-                    labelFor="colorPickerTextfield"
-                />
-                <>
-                    <TextField
-                        id="colorPickerTextfield"
-                        className="colorPicker__textField"
-                        value={localHex}
-                        IconBefore={() => <ColorIndicator size={size} onClick={() => handleOpen(true)} color={localHex} alpha={alpha} />}
-                        onChange={handleHexInputChange}
-                        placeholder={placeholder}
-                    />
-                    {alphaEnabled && (
-                        <TextField
-                            className="colorPicker__alphaField"
-                            onChange={handleAlphaChange}
-                            value={alpha}
-                            IconAfter={Percent}
-                            size="small"
-                            autoComplete="off"
-                        />
-                    )}
-                </>
-            </div>
+        <div className={classNames("colorPicker", className)} {...propsForPopover}>
+            <Label
+                size={size === "large" ? "medium" : size}
+                text={label}
+                infoText={labelInfoText}
+                labelFor="colorPickerTextfield"
+            />
+            <ColorPickerTextField />
+            {/* <> */}
+            {/*    <TextField */}
+            {/*        id="colorPickerTextfield" */}
+            {/*        className="colorPicker__textField" */}
+            {/*        value={localHex} */}
+            {/*        IconBefore={() => ( */}
+            {/*            <ColorIndicator size={size} onClick={() => handleOpen(true)} color={localHex} alpha={alpha} /> */}
+            {/*        )} */}
+            {/*        onChange={handleHexInputChange} */}
+            {/*        placeholder={placeholder} */}
+            {/*    /> /}
+            {/*    {alphaEnabled && ( */}
+            {/*        <TextField */}
+            {/*            className="colorPicker__alphaField" */}
+            {/*            onChange={handleAlphaChange} */}
+            {/*            value={alpha} */}
+            {/*            IconAfter={Percent} */}
+            {/*            size="small" */}
+            {/*            autoComplete="off" */}
+            {/*        /> */}
+            {/*    )} */}
+            {/* </> */}
 
             <Popover
                 onClose={() => handleOpen(false)}
@@ -306,15 +308,9 @@ const ColorPicker: FC<IColorPickerProps> = ({
                 <PopoverBody withPadding={false}>
                     <div className="colorPicker__wrapper">
                         {alphaEnabled ? (
-                            <RgbaColorPicker
-                                color={rgba}
-                                onChange={handlePickerChange as (val: RGBA) => void}
-                            />
+                            <RgbaColorPicker color={rgba} onChange={handlePickerChange as (val: RGBA) => void} />
                         ) : (
-                            <HexColorPicker
-                                color={hex}
-                                onChange={handlePickerChange as (val: string) => void}
-                            />
+                            <HexColorPicker color={hex} onChange={handlePickerChange as (val: string) => void} />
                         )}
                         <div className="colorPicker__inputs">
                             {/**TODO: Replace select with Dropdown component when it will be ready */}
@@ -364,20 +360,25 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                 />
                             )}
                         </div>
-                        {recentColors && recentColors?.length > 0 && <div className="colorPicker__recents">
-                            {recentColors.map((recentColor) => (
-                                <button
-                                    key={recentColor}
-                                    type="button"
-                                    className="colorPicker__recentColor"
-                                    aria-label={`Select recent color ${recentColor}`}
-                                    onClick={() => applyRecentColor(recentColor)}
-                                    style={{
-                                        background: recentColor
-                                    }}
-                                />
-                            ))}
-                        </div>}
+
+                        {recentColors && recentColors?.length > 0 && (
+                            <div className="colorPicker__recents">
+                                {recentColors.map((recentColor) => (
+                                    <div className="colorPicker__recentColorWrapper">
+                                        <button
+                                            key={recentColor}
+                                            type="button"
+                                            className="colorPicker__recentColor"
+                                            aria-label={`Select recent color ${recentColor}`}
+                                            onClick={() => applyRecentColor(recentColor)}
+                                            style={{
+                                                background: recentColor
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </PopoverBody>
             </Popover>

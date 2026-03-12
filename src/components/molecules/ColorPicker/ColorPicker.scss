@@ -1,4 +1,7 @@
 .colorPicker {
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-2xsmall);
     width: fit-content;
 
     &__textField {
@@ -9,45 +12,60 @@
         max-width: 6rem;
     }
 
-    &__fieldsWrapper {
-        display: flex;
-        flex-direction: column;
-        gap: var(--guit-ref-spacing-2xsmall);
+    &__alphaInput {
+      max-width: 6rem;
     }
 
     &__inputs {
         display: flex;
-        gap: var(--guit-ref-spacing-2xsmall);
         width: 100%;
+    }
+
+    &__inputsRgb {
+      gap: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__inputsHex {
+      gap: var(--guit-ref-spacing-2xsmall);
     }
 
     &__rgbInputs {
         display: flex;
-        gap: var(--guit-ref-spacing-2xsmall);
+        gap: var(--guit-ref-spacing-3xsmall);
         width: 100%;
+    }
+
+    &__hexInput {
+      width: 100%;
     }
 
     &__recents {
         display: grid;
-        grid-template-columns: repeat(8, 1fr);
-        grid-gap: var(--guit-ref-spacing-xsmall);
+        grid-template-columns: repeat(10, 1fr);
+        grid-gap: var(--guit-ref-spacing-xsmall) 0.5rem;
         width: 100%;
         padding-inline: var(--guit-ref-spacing-3xsmall);
     }
 
+    &__recentColorWrapper {
+
+      width: var(--guit-sem-dimension-width-small);
+      height: var(--guit-sem-dimension-height-small);
+      padding: 0.2rem;
+    }
+
     &__recentColor {
-        width: var(--guit-sem-dimension-width-medium-nudge);
-        height: var(--guit-sem-dimension-height-medium-nudge);
+      width: 100%;
+      height: 100%;
         border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
-        border-radius: var(--guit-ref-radius-3xsmall);
+        border-radius: var(--guit-ref-radius-4xsmall);
     }
 
     &__wrapper {
-        box-sizing: content-box;
         display: flex;
         flex-direction: column;
         gap: var(--guit-ref-spacing-medium);
-        width: 28.8rem;
+        width: 32.5rem;
         padding: var(--guit-ref-spacing-large);
     }
 }

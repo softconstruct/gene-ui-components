@@ -4,7 +4,7 @@ import { hexToRgb, rgbToHex } from "../../utils";
 import type { RGBA } from "../../ColorPicker";
 
 // Styles
-import './CustomColorPickers.scss';
+import "./CustomColorPickers.scss";
 
 type HexColorPickerProps = {
     color: string;
@@ -117,10 +117,7 @@ const useElementSize = (ref: React.RefObject<HTMLElement>) => {
     return size;
 };
 
-const useDrag = (
-    ref: React.RefObject<HTMLElement>,
-    onChange: (relativeX: number, relativeY?: number) => void
-) => {
+const useDrag = (ref: React.RefObject<HTMLElement>, onChange: (relativeX: number, relativeY?: number) => void) => {
     const handlePointerDown = useCallback(
         (event: React.MouseEvent | React.TouchEvent) => {
             event.preventDefault();
@@ -227,8 +224,7 @@ const HexColorPicker: FC<HexColorPickerProps> = ({ color, onChange }) => {
             ? `${huePointerRadiusPx + (h / 360) * (hueSize.width - 2 * huePointerRadiusPx)}px`
             : `${(h / 360) * 100}%`;
 
-    const hueBackground =
-        "linear-gradient(90deg, red, yellow, lime, cyan, blue, magenta, red)";
+    const hueBackground = "linear-gradient(90deg, red, yellow, lime, cyan, blue, magenta, red)";
 
     const saturationBackground = {
         backgroundImage: `
@@ -247,7 +243,7 @@ const HexColorPicker: FC<HexColorPickerProps> = ({ color, onChange }) => {
                 style={saturationBackground}
             >
                 <div
-                    className="colorPalette__saturation-pointer"
+                    className="colorPalette__saturationPointer"
                     style={{
                         left: pointerLeft,
                         top: pointerTop
@@ -262,7 +258,7 @@ const HexColorPicker: FC<HexColorPickerProps> = ({ color, onChange }) => {
                 style={{ backgroundImage: hueBackground }}
             >
                 <div
-                    className="colorPalette__hue-pointer"
+                    className="colorPalette__huePointer"
                     style={{
                         left: huePointerLeft
                     }}
@@ -348,8 +344,7 @@ const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
             ? `${alphaPointerRadiusPx + alpha * (alphaSize.width - 2 * alphaPointerRadiusPx)}px`
             : `${alpha * 100}%`;
 
-    const hueBackground =
-        "linear-gradient(90deg, red, yellow, lime, cyan, blue, magenta, red)";
+    const hueBackground = "linear-gradient(90deg, red, yellow, lime, cyan, blue, magenta, red)";
 
     const saturationBackground = {
         backgroundImage: `
@@ -371,7 +366,7 @@ const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
                 style={saturationBackground}
             >
                 <div
-                    className="colorPalette__saturation-pointer"
+                    className="colorPalette__saturationPointer"
                     style={{
                         left: pointerLeft,
                         top: pointerTop
@@ -386,7 +381,7 @@ const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
                 style={{ backgroundImage: hueBackground }}
             >
                 <div
-                    className="colorPalette__hue-pointer"
+                    className="colorPalette__huePointer"
                     style={{
                         left: huePointerLeft
                     }}
@@ -398,12 +393,9 @@ const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
                 onMouseDown={handleAlphaStart}
                 onTouchStart={handleAlphaStart}
             >
+                <div className="colorPalette__alphaGradient" style={{ backgroundImage: alphaGradient }} />
                 <div
-                    className="colorPalette__alpha-gradient"
-                    style={{ backgroundImage: alphaGradient }}
-                />
-                <div
-                    className="colorPalette__alpha-pointer"
+                    className="colorPalette__alphaPointer"
                     style={{
                         left: alphaPointerLeft
                     }}
@@ -414,4 +406,3 @@ const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
 };
 
 export { HexColorPicker, RgbaColorPicker };
-
