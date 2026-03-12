@@ -1,86 +1,87 @@
 @use "../../../../../assets/styles/mixins";
 
 .colorPickerTextField {
-  display: flex;
-  flex-direction: column;
-  gap: var(--guit-ref-spacing-3xsmall);
-  align-items: flex-start;
-
-  &__wrapper {
     display: flex;
-    align-items: center;
-    gap: var(--guit-ref-spacing-xsmall);
-    width: 30.2rem;
-    height: var(--guit-sem-dimension-height-large);
-    padding-inline: var(--guit-ref-spacing-large) var(--guit-ref-spacing-medium);
-    border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
-    border-radius: var(--guit-ref-radius-2xsmall);
-    overflow: hidden;
-
-    @include mixins.media-hover {
-      &:hover {
-        background-color: var(--guit-sem-color-background-neutral-1-hover);
-      }
-    }
-
-    &:focus-within {
-      outline-offset: var(--guit-ref-border-width-thin);
-      outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-focus);
-    }
-  }
-
-  &__colorIndicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-  }
-
-  &__value {
-    height: 100%;
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__divider {
-    flex: 0 0 auto;
-    width: 2rem;
-    max-height: 2rem;
-  }
-
-  &__percent {
-    display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: var(--guit-ref-spacing-3xsmall);
-    flex: 0 0 auto;
-    width: 5rem;
-    height: 100%;
-    text-align: end;
-  }
+    align-items: flex-start;
 
-  &__input {
-    width: 100%;
-    height: 100%;
-    border: none;
-    background-color: transparent;
-    color: var(--guit-sem-color-foreground-neutral-2);
-    outline: none;
-    font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
-    font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
-    font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
-    line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
-    text-align: inherit;
+    &__wrapper {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-xsmall);
+        width: 30.2rem;
+        height: var(--guit-sem-dimension-height-large);
+        padding-inline: var(--guit-ref-spacing-large) var(--guit-ref-spacing-medium);
+        border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+        border-radius: var(--guit-ref-radius-2xsmall);
+        overflow: hidden;
 
-    &::placeholder {
-      color: var(--guit-sem-color-foreground-neutral-1);
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
+        }
+
+        &:focus-within {
+            outline-offset: var(--guit-ref-border-width-thin);
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
+        }
     }
-  }
 
-  &__icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    color: var(--guit-sem-color-foreground-neutral-1);
-  }
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-2xsmall);
+    }
+
+    &__value {
+        height: 100%;
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__divider {
+        flex: 0 0 auto;
+        width: 2rem;
+        max-height: 2rem;
+    }
+
+    &__percent {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        flex: 0 0 auto;
+        width: 5rem;
+        height: 100%;
+        text-align: end;
+    }
+
+    &__input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: transparent;
+        color: var(--guit-sem-color-foreground-neutral-2);
+        outline: none;
+        font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+        font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+        font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+        line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+        text-align: inherit;
+
+        &::placeholder {
+            color: var(--guit-sem-color-foreground-neutral-1);
+        }
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        color: var(--guit-sem-color-foreground-neutral-1);
+    }
 }

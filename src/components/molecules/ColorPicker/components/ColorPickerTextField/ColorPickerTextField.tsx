@@ -39,19 +39,19 @@ const ColorPickerTextField: FC<IColorPickerTextFieldProps> = ({
     return (
         <div className={classNames("colorPickerTextField", className)}>
             <div className="colorPickerTextField__wrapper">
-                <div className="colorPickerTextField__colorIndicator">
+                <div className="colorPickerTextField__content">
                     <ColorIndicator size={size} onClick={() => onPickerOpen(true)} color={value} alpha={alpha} />
-                </div>
-                <div className="colorPickerTextField__value">
-                    <input
-                        id={id}
-                        type="text"
-                        autoComplete="off"
-                        placeholder={placeholder}
-                        value={value}
-                        className="colorPickerTextField__input"
-                        onChange={onChange}
-                    />
+                    <div className="colorPickerTextField__value">
+                        <input
+                            id={id}
+                            type="text"
+                            autoComplete="off"
+                            placeholder={placeholder}
+                            value={value}
+                            className="colorPickerTextField__input"
+                            onChange={onChange}
+                        />
+                    </div>
                 </div>
                 {alphaEnabled && (
                     <>

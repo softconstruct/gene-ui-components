@@ -38,10 +38,16 @@ const ColorIndicator: FC<IColorIndicator> = ({ onClick, color, size, alpha = 100
             aria-label="Choose color"
             onClick={onClick}
             className={classNames("colorIndicator", `colorIndicator_size_${size}`)}
-            style={{
-                backgroundColor: localRGB ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})` : "purple"
-            }}
-        />
+        >
+            <span
+                className="colorIndicator__wrapper"
+                style={{
+                    backgroundColor: localRGB ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})` : "purple"
+                }}
+            >
+                <span className="colorIndicator__line" />
+            </span>
+        </button>
     );
 };
 
