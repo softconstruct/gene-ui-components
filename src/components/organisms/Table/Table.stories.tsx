@@ -165,8 +165,8 @@ const meta: Meta<ITableProps> = {
         headerContent: <SwapComponent />,
         resizable: true,
         withToolbar: true,
-        withPagination: false,
-        withVirtualScroll: true,
+        withPagination: true,
+        withVirtualScroll: false,
         withManualSorting: false,
         onSort: undefined,
         onColumnFilter: undefined
@@ -252,4 +252,14 @@ export const Default: Story = {
         return <TableComponent {...props} />;
     },
     args: {}
+};
+
+export const VirtualizedTable: Story = {
+    render: (props: ITableProps) => {
+        return <TableComponent {...props} />;
+    },
+    args: {
+        withPagination: false,
+        withVirtualScroll: true
+    }
 };
