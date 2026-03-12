@@ -80,8 +80,7 @@ const BreadcrumbItem: FC<IBreadcrumbItemProps> = ({ path, title, Icon }) => {
         if (isLastItem) {
             return (
                 <span
-                    className={classNames("breadcrumb__link", {
-                        breadcrumb__link_active: isLastItem,
+                    className={classNames("breadcrumb__link breadcrumb__link_active", {
                         breadcrumb__link_iconBefore: !!Icon && !iconOnly,
                         breadcrumb__link_iconOnly: iconOnly
                     })}
