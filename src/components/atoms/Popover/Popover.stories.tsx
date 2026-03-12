@@ -30,7 +30,8 @@ const meta: Meta<IPopoverProps> = {
         setProps: args({ control: "false", ...propCategory.functionality }),
         onClose: args({ control: "false", ...propCategory.action }),
         defaultOpen: args({ control: "boolean", ...propCategory.states }),
-        trigger: args({ control: "boolean", ...propCategory.functionality })
+        trigger: args({ control: "boolean", ...propCategory.functionality }),
+        mobileHeightMode: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         margin: 15,
@@ -54,7 +55,7 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
 
     return (
         <div style={{ margin: "500px 500px", height: 1000 }}>
-            <Popover {...props} title={title} setProps={setPropsForContent} ref={popRef}>
+            <Popover {...props} title={title} setProps={setPropsForContent} ref={popRef} defaultOpen>
                 <PopoverBody>
                     <span>
                         Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of

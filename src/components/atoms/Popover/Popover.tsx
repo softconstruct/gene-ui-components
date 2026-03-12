@@ -197,6 +197,13 @@ export interface IPopoverProps {
      * The `Icon` prop accepts a React functional component that will be rendered before the title text.
      */
     Icon?: FC<IconProps>;
+    /**
+     * Controls the height behavior of the Spreadsheet overlay on mobile view.<br/>
+     * `full` — fixed height of 80vh (default).<br/>
+     * `fit` — shrinks to fit content, capped at 80vh.
+     * @default "full"
+     */
+    mobileHeightMode?: "full" | "fit";
 }
 
 /**
@@ -222,7 +229,8 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             open,
             trigger = "click",
             hasCloseButton = true,
-            Icon
+            Icon,
+            mobileHeightMode = "full"
         },
         popoverRef
     ) => {
@@ -394,6 +402,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                         <Spreadsheet
                             inset={false}
                             open={isPopoverOpened}
+                            heightMode={mobileHeightMode}
                             onClose={() => {
                                 onClose?.();
                             }}
