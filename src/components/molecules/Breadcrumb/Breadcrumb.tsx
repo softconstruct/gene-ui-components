@@ -16,14 +16,7 @@ import useContainerSize from "@hooks/useContainerSize";
 import "./Breadcrumb.scss";
 
 import { BREADCRUMB_SEPARATOR_SIZE } from "./Breadcrumb.constants";
-
-const MAX_VISIBLE_BREADCRUMB_ITEMS = 6;
-
-type VisibilityConfig = {
-    fitAll: boolean;
-    firstCount: number;
-    lastCount: number;
-};
+import { calculateVisibilityConfig, VisibilityConfig } from "./Breadcrumb.helpers";
 
 export type IBreadcrumbRender = (linkData: {
     path?: string;
@@ -120,7 +113,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
     const { containerRef, sizes } = useContainerSize<HTMLDivElement>({ debounceWait: 100 });
     const containerWidth = sizes.width;
 
-    const itemsCount = items?.length || 0;
+    const itemsCount = items.length;
 
     const [visibilityConfig, setVisibilityConfig] = useState<VisibilityConfig>({
         fitAll: true,
@@ -129,69 +122,8 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
     });
 
     useLayoutEffect(() => {
-        const container = containerRef.current;
-        const measureList = measureListRef.current;
-        if (!container || !measureList || itemsCount <= 1) {
-            setVisibilityConfig({ fitAll: true, firstCount: 0, lastCount: 1 });
-            return;
-        }
-
-        const availableWidth = container.clientWidth;
-        const listStyles = getComputedStyle(measureList);
-        const gap = parseFloat(listStyles.gap) || 0;
-
-        const lis = measureList.querySelectorAll<HTMLLIElement>("li");
-        if (lis.length < itemsCount + 1) {
-            return;
-        }
-
-        const itemWidths: number[] = [];
-        for (let i = 0; i < itemsCount; i++) {
-            itemWidths.push(lis[i].offsetWidth);
-        }
-        const ellipsisWidth = lis[itemsCount].offsetWidth;
-
-        const totalItemsWidth = itemWidths.reduce((a, b) => a + b, 0);
-        const totalWithGaps = totalItemsWidth + gap * (itemsCount - 1);
-
-        const mustTruncate = itemsCount > MAX_VISIBLE_BREADCRUMB_ITEMS || totalWithGaps > availableWidth;
-
-        if (!mustTruncate) {
-            setVisibilityConfig({ fitAll: true, firstCount: 0, lastCount: 1 });
-            return;
-        }
-
-        let bestFirst = 0;
-        let bestLast = 1;
-        const overflowMax = itemsCount > MAX_VISIBLE_BREADCRUMB_ITEMS;
-        const maxTotal = overflowMax ? 4 : Math.min(MAX_VISIBLE_BREADCRUMB_ITEMS, itemsCount - 1);
-
-        const totals = Array.from({ length: maxTotal }, (_, i) => maxTotal - i);
-        totals.some((total) => {
-            const center = Math.ceil(total / 2);
-            const lastOrder = [
-                ...Array.from({ length: center }, (_, i) => center - i),
-                ...Array.from({ length: total - center }, (_, i) => center + 1 + i)
-            ];
-            const found = lastOrder.some((last) => {
-                const first = total - last;
-                if (first + last >= itemsCount) return false;
-                if (first > 2 || last > 2) return false;
-
-                const sumFirst = itemWidths.slice(0, first).reduce((a, b) => a + b, 0);
-                const sumLast = itemWidths.slice(-last).reduce((a, b) => a + b, 0);
-                const width = sumFirst + ellipsisWidth + sumLast + gap * (first + last);
-                if (width <= availableWidth) {
-                    bestFirst = first;
-                    bestLast = last;
-                    return true;
-                }
-                return false;
-            });
-            return found;
-        });
-
-        setVisibilityConfig({ fitAll: false, firstCount: bestFirst, lastCount: bestLast });
+        const config = calculateVisibilityConfig(containerRef.current, measureListRef.current, itemsCount);
+        setVisibilityConfig(config);
     }, [containerWidth, itemsCount, items]);
 
     const { fitAll, firstCount, lastCount } = visibilityConfig;
