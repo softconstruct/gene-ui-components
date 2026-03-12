@@ -1,15 +1,15 @@
-import React, { FC } from 'react';
-import classNames from 'classnames';
-
-// Utils
-import { hexToRgb } from '../../utils';
+import React, { FC } from "react";
+import classNames from "classnames";
 
 // Styles
-import './ColorIndicator.scss';
+import "./ColorIndicator.scss";
+
+// Utils
+import { hexToRgb } from "../../utils";
 
 interface IColorIndicator {
     /**
-     * Callback triggers when color indicator is clicked. 
+     * Callback triggers when color indicator is clicked.
      */
     onClick?: () => void;
     /**
@@ -27,24 +27,19 @@ interface IColorIndicator {
 }
 
 /**
- * Sub-component for ColorPicker.
- * Used to show color indicator in TextField component. 
+ * Subcomponent for ColorPicker.
+ * Used to show color indicator in TextField component.
  */
-const ColorIndicator: FC<IColorIndicator> = ({
-    onClick,
-    color,
-    size,
-    alpha = 100,
-}) => {
+const ColorIndicator: FC<IColorIndicator> = ({ onClick, color, size, alpha = 100 }) => {
     const localRGB = hexToRgb(color);
     return (
         <button
+            type="button"
+            aria-label="Choose color"
             onClick={onClick}
-            className={classNames('colorIndicator', `colorIndicator_size_${size}`)}
+            className={classNames("colorIndicator", `colorIndicator_size_${size}`)}
             style={{
-                backgroundColor: localRGB
-                    ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})`
-                    : "purple"
+                backgroundColor: localRGB ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})` : "purple"
             }}
         />
     );
