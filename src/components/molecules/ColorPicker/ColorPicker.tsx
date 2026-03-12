@@ -302,7 +302,12 @@ const ColorPicker: FC<IColorPickerProps> = ({
                         ) : (
                             <HexColorPicker color={hex} onChange={handlePickerChange as (val: string) => void} />
                         )}
-                        <div className="colorPicker__inputs">
+                        <div
+                            className={classNames("colorPicker__inputs", {
+                                colorPicker__inputsRgb: format === "rgb",
+                                colorPicker__inputsHex: format === "hex"
+                            })}
+                        >
                             {/** TODO: Replace select with Dropdown component when it will be ready */}
                             <select
                                 name="color_formats"
