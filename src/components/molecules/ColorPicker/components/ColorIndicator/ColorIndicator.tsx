@@ -40,13 +40,13 @@ const ColorIndicator: FC<IColorIndicator> = ({ onClick, color, size, alpha = 100
             className={classNames("colorIndicator", `colorIndicator_size_${size}`)}
         >
             <span
-                className="colorIndicator__wrapper"
+                className={classNames("colorIndicator__wrapper", {
+                    colorIndicator__wrapper_hasActive: !localRGB
+                })}
                 style={{
-                    backgroundColor: localRGB ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})` : "purple"
+                    backgroundColor: localRGB ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})` : "#fff"
                 }}
-            >
-                <span className="colorIndicator__line" />
-            </span>
+            />
         </button>
     );
 };
