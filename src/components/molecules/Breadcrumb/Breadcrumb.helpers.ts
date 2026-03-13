@@ -12,7 +12,7 @@ export type VisibilityConfig = {
 
 const FIT_ALL_CONFIG: VisibilityConfig = { fitAll: true, firstCount: 0, lastCount: 1 };
 
-export type VisibilityMeasurements = {
+type VisibilityMeasurements = {
     availableWidth: number;
     gap: number;
     itemWidths: number[];
@@ -24,7 +24,7 @@ export type VisibilityMeasurements = {
  * Extracts width measurements from the measurement DOM for visibility calculation.
  * Returns null if measurement is not possible (e.g. DOM not ready).
  */
-export const getVisibilityMeasurements = (
+const getVisibilityMeasurements = (
     container: HTMLElement | null,
     measureList: HTMLElement | null,
     itemsCount: number
@@ -51,7 +51,7 @@ export const getVisibilityMeasurements = (
 /**
  * Determines if breadcrumb items must be truncated to fit the container.
  */
-export const mustTruncate = (measurements: VisibilityMeasurements): boolean => {
+const mustTruncate = (measurements: VisibilityMeasurements): boolean => {
     const { availableWidth, gap, itemWidths, itemsCount } = measurements;
     const totalItemsWidth = itemWidths.reduce((a, b) => a + b, 0);
     const totalWithGaps = totalItemsWidth + gap * (itemsCount - 1);
