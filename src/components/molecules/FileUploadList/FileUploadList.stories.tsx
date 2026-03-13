@@ -83,14 +83,7 @@ const FileUploadListStory: StoryObj<IFileUploadListProps> = {
     render: (props) => (
         <FileUploadList {...props}>
             {mockData.map((item, index) => (
-                <FileUploadItem
-                    key={item.id ?? `fallback-${index}`}
-                    {...item}
-                    ariaLabel={
-                        item.ariaLabel ??
-                        `File: ${item.name ?? "Unnamed"}, Size: ${item.size ?? "Unknown"}, Time: ${item.time ?? ""}`
-                    }
-                />
+                <FileUploadItem key={item.id ?? `fallback-${index}`} {...item} />
             ))}
         </FileUploadList>
     )

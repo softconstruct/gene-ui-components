@@ -60,7 +60,7 @@ export interface IFileUploadActionProps {
     /**
      * An ARIA label for the button.
      */
-    "aria-label"?: string;
+    ariaLabel?: string;
 }
 
 interface IFileUploadItem {
@@ -152,9 +152,22 @@ const FileUploadItem: FC<IFileUploadItem> = ({
     const nameRef = useRef<HTMLSpanElement>(null);
     const timeRef = useRef<HTMLSpanElement>(null);
     const sizeRef = useRef<HTMLSpanElement>(null);
-    const isNameTruncated = useEllipsisDetection(nameRef, [name]);
-    const isTimeTruncated = useEllipsisDetection(timeRef, [time]);
-    const isSizeTruncated = useEllipsisDetection(sizeRef, [size]);
+    const isNameTruncated = useEllipsisDetection(nameRef, []);
+    const isTimeTruncated = useEllipsisDetection(timeRef, []);
+    const isSizeTruncated = useEllipsisDetection(sizeRef, []);
+
+    const metadataCells = [
+        {
+            value: time,
+            ref: timeRef,
+            isTruncated: isTimeTruncated
+        },
+        {
+            value: size,
+            ref: sizeRef,
+            isTruncated: isSizeTruncated
+        }
+    ] as const;
 
     const showProgressLayout = loading || status === "error" || status === "warning";
 
@@ -178,23 +191,22 @@ const FileUploadItem: FC<IFileUploadItem> = ({
                 </div>
                 {!showProgressLayout && (
                     <>
-                        {time && (
-                            <div className="fileUploadItem__cell">
-                                <Tooltip text={time} isVisible={isTimeTruncated}>
-                                    <Text ref={timeRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
-                                        {time}
-                                    </Text>
-                                </Tooltip>
-                            </div>
-                        )}
-                        {size && (
-                            <div className="fileUploadItem__cell">
-                                <Tooltip text={size} isVisible={isSizeTruncated}>
-                                    <Text ref={sizeRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
-                                        {size}
-                                    </Text>
-                                </Tooltip>
-                            </div>
+                        {metadataCells.map(
+                            ({ value, ref, isTruncated }) =>
+                                value && (
+                                    <div key={value} className="fileUploadItem__cell">
+                                        <Tooltip text={value} isVisible={isTruncated}>
+                                            <Text
+                                                ref={ref}
+                                                className="ellipsis-text"
+                                                as="span"
+                                                variant="labelMediumMedium"
+                                            >
+                                                {value}
+                                            </Text>
+                                        </Tooltip>
+                                    </div>
+                                )
                         )}
                     </>
                 )}
@@ -208,7 +220,7 @@ const FileUploadItem: FC<IFileUploadItem> = ({
                                     layout="text"
                                     appearance="secondary"
                                     className="fileUploadItem__button"
-                                    aria-label={action["aria-label"] ?? "File action"}
+                                    aria-label={action.ariaLabel ?? "File action"}
                                 />
                             ))}
                         </ButtonGroup>
