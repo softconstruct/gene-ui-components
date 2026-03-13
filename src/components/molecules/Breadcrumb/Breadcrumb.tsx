@@ -245,8 +245,19 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
                             {menuItems.map((item, index) => {
                                 const itemId = (item.path || item.title) as string;
                                 const key = `${itemId}-${index}`;
+                                const linkData = {
+                                    path: item.path,
+                                    title: item.title,
+                                    isActive: false,
+                                    Icon: item.Icon
+                                };
                                 return (
-                                    <MenuItem key={key} id={itemId} IconBefore={item.Icon}>
+                                    <MenuItem
+                                        key={key}
+                                        id={itemId}
+                                        IconBefore={item.Icon}
+                                        render={render ? () => render(linkData) : undefined}
+                                    >
                                         {item.title}
                                     </MenuItem>
                                 );
