@@ -108,6 +108,19 @@ describe("PopoverConfirm", () => {
         expect(provider().find(`.popover_size_${size}`).exists()).toBeTruthy();
     });
 
+    it("renders popoverConfirm__content class", () => {
+        setup.setProps({ open: true });
+        expect(provider().find(".popoverConfirm__content").exists()).toBeTruthy();
+    });
+
+    it.each<IPopoverConfirmProps["size"]>(["medium", "small"])(
+        "renders popoverConfirm__content with %p size modifier",
+        (size) => {
+            setup.setProps({ open: true, size });
+            expect(provider().find(`.popoverConfirm__content_size_${size}`).exists()).toBeTruthy();
+        }
+    );
+
     it("renders arrow correctly (always enabled)", () => {
         setup.setProps({
             open: true
