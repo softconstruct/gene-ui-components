@@ -140,7 +140,7 @@ const DefaultOpenComponent: FC<IPopoverConfirmProps> = (props) => {
                 {confirmContent}
             </PopoverConfirm>
             <Button onClick={() => {}} {...propsForContent}>
-                Anchor
+                Click to open
             </Button>
         </div>
     );

@@ -7,3 +7,18 @@
         color: var(--guit-sem-color-foreground-warning);
     }
 }
+
+.popoverConfirm__content {
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    &_size {
+        &_medium {
+            height: 19.2rem;
+        }
+
+        &_small {
+            height: 11.2rem;
+        }
+    }
+}

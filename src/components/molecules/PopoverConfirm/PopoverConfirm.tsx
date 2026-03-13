@@ -232,8 +232,13 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
                 trigger={trigger}
                 hasCloseButton={false}
                 Icon={headerIcon}
+                mobileHeightMode="fit"
             >
-                <PopoverBody>{children}</PopoverBody>
+                <PopoverBody>
+                    <div className={classNames("popoverConfirm__content", `popoverConfirm__content_size_${size}`)}>
+                        {children}
+                    </div>
+                </PopoverBody>
                 <PopoverFooter actions={footerActions} />
             </Popover>
         </div>
