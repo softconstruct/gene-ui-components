@@ -18,7 +18,7 @@ import "./Breadcrumb.scss";
 import { BREADCRUMB_SEPARATOR_SIZE } from "./Breadcrumb.constants";
 import { calculateVisibilityConfig, VisibilityConfig } from "./Breadcrumb.helpers";
 
-export type IBreadcrumbRender = (linkData: {
+type IBreadcrumbRender = (linkData: {
     path?: string;
     title?: string;
     isActive?: boolean;
@@ -34,14 +34,13 @@ interface IBreadcrumbProps {
     /**
      * Custom render function for breadcrumb links.<br />
      *
-     * Example:
-     * ```tsx
-     * render={({ path, title, isActive }) => (
-     *   <a href={path} aria-current={isActive ? "page" : undefined}>
+     * Example:<br />
+     * ```tsx```
+     * ```render={({ path, title, isActive }) => (```
+     *   ``` <a href={path} aria-current={isActive ? "page" : undefined}>
      *     {title}
      *   </a>
-     * )}
-     * ```
+     * )}```
      */
     render?: IBreadcrumbRender;
     /**
@@ -107,7 +106,6 @@ const BreadcrumbItemWrapper: FC<BreadcrumbItemWrapperProps> = ({ props, iconOnly
  */
 const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = false, render, onClick }) => {
     const [menuPropsForPopover, setMenuPropsForPopover] = useState<Record<string, unknown>>({});
-    const listRef = useRef<HTMLUListElement>(null);
     const measureListRef = useRef<HTMLUListElement>(null);
 
     const { containerRef, sizes } = useContainerSize<HTMLDivElement>({ debounceWait: 100 });
@@ -220,7 +218,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
                 </ul>
             </div>
             <nav aria-label="breadcrumb navigation">
-                <ul ref={listRef} className="breadcrumb__list">
+                <ul className="breadcrumb__list">
                     {visibleFirstItems.map((item, index) => renderBreadcrumbItem(item, false, index))}
                     <li
                         className={classNames("breadcrumb__item", {
