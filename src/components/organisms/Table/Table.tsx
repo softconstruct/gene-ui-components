@@ -1,7 +1,6 @@
-import React, { createContext, FC, ReactNode, useEffect, useMemo, useState } from "react";
+import React, { createContext, FC, ReactNode, useMemo, useState } from "react";
 import {
     ColumnFiltersState,
-    ColumnPinningState,
     ColumnSizingState,
     FilterFn,
     getCoreRowModel,
@@ -10,6 +9,7 @@ import {
     getSortedRowModel,
     HeaderGroup,
     SortingState,
+    TableState,
     useReactTable,
     VisibilityState
 } from "@tanstack/react-table";
@@ -47,8 +47,8 @@ interface ITableContext {
     headers: HeaderGroup<Row>[];
     columnVisibility?: VisibilityState;
     columnOrder?: string[];
-    pinnedColumns?: ColumnPinningState["left"];
     onSort?: (event: SortingState) => void;
+    state?: TableState;
     onGlobalFilter?: (event: string) => void;
     onColumnFilter?: (event: ColumnFiltersState) => void;
     rowActions?: IRowAction[];
@@ -389,9 +389,21 @@ const Table: FC<ITableProps> = ({
                 return true;
             }) as FilterFn<Row>
         },
-        onSortingChange: setSorting,
+        onSortingChange: (updater) => {
+            setSorting((prev) => {
+                const next = typeof updater === "function" ? updater(prev) : updater;
+                onSort?.(next);
+                return next;
+            });
+        },
         onGlobalFilterChange: setGlobalFilter,
-        onColumnFiltersChange: setColumnFilters
+        onColumnFiltersChange: (updater) => {
+            setColumnFilters((prev) => {
+                const next = typeof updater === "function" ? updater(prev) : updater;
+                onColumnFilter?.(next);
+                return next;
+            });
+        }
     });
 
     const memoizedTableContextValue = useMemo<ITableContext>(
@@ -399,23 +411,12 @@ const Table: FC<ITableProps> = ({
             headers: table.getHeaderGroups(),
             columnVisibility,
             columnOrder,
-            pinnedColumns: table.getState().columnPinning.left,
-            rowActions
+            rowActions,
+            state: table.getState(),
+            onSort
         }),
         [table, columnVisibility, columnOrder, rowActions]
     );
-
-    useEffect(() => {
-        if (!onSort) return;
-
-        onSort(sorting);
-    }, [sorting, onSort]);
-
-    useEffect(() => {
-        if (!onColumnFilter) return;
-
-        onColumnFilter(columnFilters);
-    }, [columnFilters, onColumnFilter]);
 
     const onGlobalFilterChange = (value: string) => {
         if (!withManualFiltering) table.setGlobalFilter(value);

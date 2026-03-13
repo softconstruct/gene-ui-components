@@ -169,9 +169,7 @@ const meta: Meta<ITableProps> = {
         withToolbar: true,
         withPagination: true,
         withVirtualScroll: false,
-        withManualSorting: false,
-        onSort: undefined,
-        onColumnFilter: undefined
+        withManualSorting: false
     }
 };
 

@@ -61,9 +61,10 @@ const ManageColumns: FC<IManageColumnsProps> = ({
     onColumnVisibilityToggle,
     actionsInfo
 }) => {
-    const { headers, columnVisibility, columnOrder, pinnedColumns } = useContext(TableContext);
+    const { headers, columnVisibility, columnOrder, state } = useContext(TableContext);
     const [columns, setColumns] = useState<HeaderGroup<Row>[]>(() => headers);
     const [data, setData] = useState<ManageColumnsSavedDataType>();
+    const pinnedColumns = state?.columnPinning.left;
 
     useEffect(() => {
         if (!pinnedColumns || !columnVisibility || !columnOrder) {
