@@ -45186,7 +45186,7 @@ export const Columns: TableColumns<Row>[] = [
         order: 1,
         enableGlobalFilter: true,
         type: "Status",
-        rowCellRenderer: (value) => {
+        renderer: (value) => {
             const isOpen = (value as number) < 3;
             return <Pill text={isOpen ? "Open" : "Closed"} appearance={isOpen ? "success" : "error"} />;
         },

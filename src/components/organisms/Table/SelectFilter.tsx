@@ -1,4 +1,4 @@
-import React, { ChangeEvent, Dispatch, FC, SetStateAction, useEffect, useMemo, useState } from "react";
+import React, { ChangeEvent, Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 
 import Button from "@components/atoms/Button";
 import Label from "@components/atoms/Label";
@@ -39,11 +39,11 @@ const SelectFilter: FC<ISelectFilter> = ({
         }
     }, [isSelectFilterOpen, filteredValues]);
 
-    const visibleOptions = useMemo(() => {
+    const visibleOptions = () => {
         if (!searchValue.trim()) return filterOptions;
-        const q = searchValue.trim().toLowerCase();
-        return filterOptions.filter((opt) => String(opt).toLowerCase().includes(q));
-    }, [filterOptions, searchValue]);
+        const query = searchValue.trim().toLowerCase();
+        return filterOptions.filter((opt) => String(opt).toLowerCase().includes(query));
+    };
 
     const handleToggleOption = (option: string) => {
         setPendingSelected((prev) => (prev.includes(option) ? prev.filter((v) => v !== option) : [...prev, option]));
@@ -114,7 +114,7 @@ const SelectFilter: FC<ISelectFilter> = ({
 
                     <div className="filterDropdownMenu__main">
                         <div className="filterDropdownMenu__columns">
-                            {visibleOptions.map((option) => (
+                            {visibleOptions().map((option) => (
                                 <div key={option} className="filterDropdownMenu__columns_item">
                                     <div className="filterDropdownMenu__columns_placeholder">
                                         <Label className="filterDropdownMenu__columns_placeholder" text={option}>

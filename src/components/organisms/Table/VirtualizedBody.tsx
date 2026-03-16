@@ -12,7 +12,7 @@ interface IVirtualizedBody {
     onLoadMore?: () => void;
     hasMore?: boolean;
     estimateSize?: number;
-    overscan?: number;
+    overscan: number;
 }
 
 const VirtualizedBody: FC<IVirtualizedBody> = ({
@@ -21,7 +21,7 @@ const VirtualizedBody: FC<IVirtualizedBody> = ({
     onLoadMore,
     hasMore,
     estimateSize = 33,
-    overscan = 5
+    overscan
 }) => {
     const rowVirtualizer = useVirtualizer<HTMLDivElement, HTMLTableRowElement>({
         count: rows.length,

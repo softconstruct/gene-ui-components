@@ -6,16 +6,16 @@ import { EditBuffer, HeaderActionsType, Row, RowId } from "@components/organisms
 
 const BUFFER_KEY_SEP = "::";
 
-export function getBufferKey(rowId: RowId, columnId: string): string {
+export const getBufferKey = (rowId: RowId, columnId: string) => {
     return `${rowId}${BUFFER_KEY_SEP}${columnId}`;
-}
+};
 
-export function getCellValue(row: Row, columnId: string, buffer: EditBuffer): unknown {
+export const getCellValue = (row: Row, columnId: string, buffer: EditBuffer) => {
     const key = getBufferKey(row.id, columnId);
     return buffer.has(key) ? buffer.get(key) : row[columnId];
-}
+};
 
-export function mergeBufferIntoData(data: Row[], buffer: EditBuffer): Row[] {
+export const mergeBufferIntoData = (data: Row[], buffer: EditBuffer) => {
     return data.map((row) => {
         const prefix = `${row.id}${BUFFER_KEY_SEP}`;
         const keys = Array.from(buffer.keys()).filter((k) => k.startsWith(prefix));
@@ -27,7 +27,7 @@ export function mergeBufferIntoData(data: Row[], buffer: EditBuffer): Row[] {
         });
         return next;
     });
-}
+};
 
 export const generateDisplayColumnsProps = (
     type: HeaderActionsType,

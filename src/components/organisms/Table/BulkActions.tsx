@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 
 import { CaretDownFilled } from "@geneui/icons";
 
@@ -13,7 +13,8 @@ interface BulkActionsProps {
 }
 
 const BulkActions: FC<BulkActionsProps> = ({ bulkActions }) => {
-    const [propsForPopover, setPropsForPopover] = React.useState({});
+    const { label, list, ariaLabel, onChange } = bulkActions;
+    const [propsForPopover, setPropsForPopover] = useState({});
 
     return (
         <>
@@ -23,13 +24,13 @@ const BulkActions: FC<BulkActionsProps> = ({ bulkActions }) => {
                 size="medium"
                 Icon={CaretDownFilled}
                 iconPosition="after"
-                aria-label={bulkActions.ariaLabel}
+                aria-label={ariaLabel}
                 {...propsForPopover}
             >
-                {bulkActions.label}
+                {label}
             </Button>
-            <Menu setPropsForPopover={setPropsForPopover} onChange={bulkActions.onChange}>
-                {bulkActions.list.map((item) => (
+            <Menu setPropsForPopover={setPropsForPopover} onChange={onChange}>
+                {list.map((item) => (
                     <MenuItem key={item.id} {...item}>
                         {item.title}
                     </MenuItem>

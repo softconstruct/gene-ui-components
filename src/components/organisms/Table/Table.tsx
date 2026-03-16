@@ -132,20 +132,24 @@ interface ITableProps {
     editMode?: boolean;
     /**
      * Enables column resizing controls in the header.
+     * @default `false`
      */
     resizable?: boolean;
     /**
      * Renders the toolbar section containing filters, bulk actions and edit controls.
+     * @default `false`
      */
     withToolbar?: boolean;
     /**
      * Enables built-in client-side pagination for the table.
      * Ignored when `withVirtualScroll` is true.
+     * @default true
      */
     withPagination?: boolean;
     /**
      * Enables virtualized rendering of the table body.
      * When true, only the visible portion of the center rows is rendered using `VirtualizedBody`.
+     * @default false
      */
     withVirtualScroll?: boolean;
     /**
@@ -160,12 +164,13 @@ interface ITableProps {
     hasMore?: boolean;
     /**
      * Estimated row height in pixels used by the virtualizer before actual measurements are available.
-     * Defaults to `33`.
+     * @default `33`.
      */
     estimateSize?: number;
     /**
      * Number of extra rows to render above and below the visible window when virtual scrolling.
      * Higher values improve scroll smoothness at the cost of rendering more rows.
+     * @default 5
      */
     overscan?: number;
     /**
@@ -199,8 +204,6 @@ interface ITableProps {
     onColumnSizingRestore?: (columnData: ColumnSizingState) => void;
     /**
      * Determines when column resize updates are applied.
-     * - `"onChange"`: update sizes while dragging
-     * - `"onEnd"`: update sizes only after the drag ends
      */
     columnResizeMode?: "onEnd" | "onChange";
     /**
@@ -210,17 +213,17 @@ interface ITableProps {
     columnResizeDirection?: "ltr" | "rtl";
     /**
      * Callback fired whenever the table's internal sorting state changes.
-     * Useful when `withManualSorting` is enabled.
+     * Ignored when `withManualSorting` is disabled.
      */
     onSort?: (event: SortingState) => void;
     /**
      * Callback fired whenever the global filter value changes.
-     * Useful when `withManualFiltering` is enabled.
+     * Ignored for column which `withManualFiltering` prop is disabled
      */
     onGlobalFilter?: (event: string) => void;
     /**
      * Callback fired whenever column-level filters change.
-     * Useful when `withManualFiltering` is enabled.
+     * Ignored when withManualFiltering is disabled
      */
     onColumnFilter?: (event: ColumnFiltersState) => void;
     /**
@@ -233,17 +236,17 @@ interface ITableProps {
     };
     /**
      * Available page size options for the pagination control.
-     * Defaults to `[10, 20, 50, 100]`.
+     * @defaults `[10, 20, 50, 100]`.
      */
     pageSizes?: number[];
     /**
      * Sets the default number of rows to display per page upon initial render.
-     * Defaults to `10`.
+     * @defaults `10`.
      */
     initialPageSize?: number;
     /**
      * Sets the default page index on initial render.
-     * Defaults to `0`.
+     * @defaults `0`.
      */
     initialPageIndex?: number;
     /**
@@ -287,14 +290,14 @@ const Table: FC<ITableProps> = ({
     headerContent,
     selectAllText,
     editMode,
-    withPagination,
-    withVirtualScroll,
+    withPagination = true,
+    withVirtualScroll = false,
     onLoadMore,
     hasMore,
     estimateSize,
-    overscan,
-    resizable,
-    withToolbar,
+    overscan = 5,
+    resizable = false,
+    withToolbar = false,
     withStickyHeader,
     withStickyFooter,
     withFilterFromLeafRows,
@@ -419,6 +422,7 @@ const Table: FC<ITableProps> = ({
     );
 
     const onGlobalFilterChange = (value: string) => {
+        console.log("hello");
         if (!withManualFiltering) table.setGlobalFilter(value);
         onGlobalFilter?.(value);
     };

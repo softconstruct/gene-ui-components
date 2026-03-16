@@ -9,8 +9,9 @@ import React, {
 import { ColumnSizingState, flexRender, Header, HeaderGroup } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import { ColActions } from "./ColActions";
 // Components
+import { ColActions } from "@components/organisms/Table/ColActions";
+
 import { Row } from "./types";
 
 interface ITableHeadProps {

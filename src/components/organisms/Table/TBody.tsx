@@ -1,9 +1,9 @@
 import React, { FC } from "react";
 import { Row as RowData } from "@tanstack/react-table";
 
+// Components
 import TRow from "@components/organisms/Table/TRow";
 
-// Components
 import { Row } from "./types";
 
 interface ITableBody {
