@@ -68,13 +68,37 @@ describe("Notification ", () => {
         wrapper.unmount();
     });
 
+    it("does not render close button when onClose is not provided", () => {
+        const wrapper = mount(<Notification {...baseProps} />, { wrappingComponent: GeneUIProvider });
+
+        const closeButton = wrapper
+            .find(Button)
+            .filterWhere((n) => n.prop("Icon") && n.hasClass("notification__button"));
+
+        expect(closeButton).toHaveLength(0);
+        wrapper.unmount();
+    });
+
+    it("renders close button when onClose is provided", () => {
+        const onCloseMock = jest.fn();
+        const wrapper = mount(<Notification {...baseProps} onClose={onCloseMock} />, {
+            wrappingComponent: GeneUIProvider
+        });
+
+        const closeButton = wrapper
+            .find(Button)
+            .filterWhere((n) => n.prop("Icon") && n.hasClass("notification__button"));
+
+        expect(closeButton).toHaveLength(1);
+        wrapper.unmount();
+    });
+
     it("calls onClose when the close button is clicked", () => {
         const onCloseMock = jest.fn();
         const wrapper = mount(<Notification {...baseProps} onClose={onCloseMock} />, {
             wrappingComponent: GeneUIProvider
         });
 
-        // Find the close button by looking for the X icon button
         const closeButton = wrapper
             .find(Button)
             .filterWhere((n) => n.prop("Icon") && n.hasClass("notification__button"))
