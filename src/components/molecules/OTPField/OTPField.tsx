@@ -294,6 +294,7 @@ const OTPField: FC<IOTPFieldProps> = ({
                     className="otpField__textFieldWrapper"
                     role="group"
                     aria-label="One-time password"
+                    aria-invalid={status === "error" || undefined}
                     onPaste={handlePaste}
                 >
                     {OTP_INDICES.map((index) => (

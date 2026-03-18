@@ -34,6 +34,14 @@ const useCountdown = ({ duration, onExpire }: IUseCountdownOptions): IUseCountdo
 
     /* eslint consistent-return: off */
     useEffect(() => {
+        // Do not run countdown logic when duration is zero or negative.
+        if (duration <= 0) {
+            if (remaining !== 0) {
+                setRemaining(0);
+            }
+            return;
+        }
+
         if (remaining <= 0) {
             onExpireRef.current?.();
             return;
