@@ -24,6 +24,7 @@ const meta: Meta<IOTPFieldProps> = {
         helperText: args({ control: "text", ...propCategory.content }),
         timerDuration: args({ control: "number", ...propCategory.functionality }),
         notification: args({ control: "text", ...propCategory.content }),
+        autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         onChange: args({ control: "false", ...propCategory.action }),
         onComplete: args({ control: "false", ...propCategory.action }),
         onTimerExpire: args({ control: "false", ...propCategory.action }),
@@ -51,7 +52,7 @@ const OTPFieldVariations: FC<IOTPFieldProps> = (props) => {
         {
             id: "default",
             title: "Default",
-            render: <OTPField helperText="Helper text" {...props} />
+            render: <OTPField helperText="Helper text" autoFocus {...props} />
         },
         {
             id: "medium",

@@ -95,6 +95,11 @@ interface IOTPFieldProps {
      * Callback when an input loses focus.
      */
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
+    /**
+     * When `true`, focuses the first OTP input on mount (if not disabled).<br>
+     * Default is `false`.
+     */
+    autoFocus?: boolean;
 }
 
 /**
@@ -114,7 +119,8 @@ const OTPField: FC<IOTPFieldProps> = ({
     onChange,
     onComplete,
     onFocus,
-    onBlur
+    onBlur,
+    autoFocus = false
 }) => {
     const isControlled = controlledValue !== undefined;
 
@@ -173,6 +179,12 @@ const OTPField: FC<IOTPFieldProps> = ({
         const clamped = Math.max(0, Math.min(index, OTP_LENGTH - 1));
         inputRefs.current[clamped]?.focus();
     }, []);
+
+    useEffect(() => {
+        if (autoFocus && !disabled) {
+            focusInput(0);
+        }
+    }, [autoFocus, disabled, focusInput]);
 
     const handleInputFocus = useCallback(
         (event: FocusEvent<HTMLInputElement>) => {

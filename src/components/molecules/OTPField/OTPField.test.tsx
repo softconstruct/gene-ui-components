@@ -46,6 +46,13 @@ describe("OTPField", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
+    it("focuses first input when autoFocus is true", () => {
+        const focusSpy = jest.spyOn(HTMLInputElement.prototype, "focus").mockImplementation(() => undefined);
+        mount(<OTPField autoFocus />);
+        expect(focusSpy).toHaveBeenCalled();
+        focusSpy.mockRestore();
+    });
+
     it("supports uncontrolled defaultValue (string) and maps it to inputs", () => {
         const wrapper = mount(<OTPField defaultValue="1234" />);
         const inputs = wrapper.find("input");
