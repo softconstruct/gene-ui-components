@@ -44,9 +44,21 @@ const normalizeDigitsLength = (digits: string[], length: number): string[] => {
     return [...digits, ...createEmptyDigits(length - digits.length)];
 };
 
-const stringToDigits = (value: string | undefined, length: number): string[] => {
+const stringToDigits = (value: string | number | undefined, length: number): string[] => {
     const digits = createEmptyDigits(length);
-    if (!value) return digits;
+    if (value === undefined || value === "") return digits;
+
+    if (typeof value === "number") {
+        if (!Number.isInteger(value) || value < 0) return digits;
+
+        const str = String(value);
+
+        for (let i = 0; i < length && i < str.length; i += 1) {
+            digits[i] = str[i];
+        }
+
+        return digits;
+    }
 
     const onlyDigits = value.replace(/\D/g, "");
 
@@ -79,12 +91,14 @@ interface IOTPFieldProps {
     size?: IOTPFieldInputProps["size"];
     /**
      * Controlled value. Each character maps to one digit input.
+     * Accepts a string (`"1234"`) or a non-negative integer (`1234`).
      */
-    value?: string;
+    value?: string | number;
     /**
      * Default value for uncontrolled usage.
+     * Accepts a string (`"1234"`) or a non-negative integer (`1234`).
      */
-    defaultValue?: string;
+    defaultValue?: string | number;
     /**
      * Disables the OTP field, preventing interaction.
      */
@@ -158,15 +172,28 @@ const OTPField: FC<IOTPFieldProps> = ({
     );
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-    const lastEmittedValue = useRef<string>(isControlled ? (controlledValue ?? "") : "");
+    const lastEmittedValue = useRef<string>(isControlled ? String(controlledValue ?? "") : "");
+
+    // Refs for handler stability — handlers read the latest values without re-creating.
+    const digitsRef = useRef<string[]>([]);
+    const onChangeRef = useRef(onChange);
+    const onCompleteRef = useRef(onComplete);
+    const onFocusRef = useRef(onFocus);
+    const onBlurRef = useRef(onBlur);
+
+    onChangeRef.current = onChange;
+    onCompleteRef.current = onComplete;
+    onFocusRef.current = onFocus;
+    onBlurRef.current = onBlur;
 
     useEffect(() => {
-        if (isControlled && controlledValue !== lastEmittedValue.current) {
+        if (isControlled && String(controlledValue) !== lastEmittedValue.current) {
             setInternalDigits(stringToDigits(controlledValue, length));
         }
     }, [controlledValue, isControlled, length]);
 
     const digits = useMemo(() => normalizeDigitsLength(internalDigits, length), [internalDigits, length]);
+    digitsRef.current = digits;
 
     const htSize = helperTextSizeMap[size];
 
@@ -185,13 +212,13 @@ const OTPField: FC<IOTPFieldProps> = ({
             lastEmittedValue.current = nextValue;
             setInternalDigits(normalized);
 
-            onChange?.(nextValue);
+            onChangeRef.current?.(nextValue);
 
             if (nextValue.length === length) {
-                onComplete?.(nextValue);
+                onCompleteRef.current?.(nextValue);
             }
         },
-        [length, onChange, onComplete]
+        [length]
     );
 
     const focusInput = useCallback(
@@ -202,12 +229,37 @@ const OTPField: FC<IOTPFieldProps> = ({
         [length]
     );
 
+    const handleInputFocus = useCallback(
+        (event: FocusEvent<HTMLInputElement>) => {
+            if (!disabled) {
+                event.currentTarget.select();
+            }
+
+            onFocusRef.current?.(event);
+        },
+        [disabled]
+    );
+
+    const handleInputClick = useCallback(
+        (event: React.MouseEvent<HTMLInputElement>) => {
+            if (!disabled) {
+                event.currentTarget.select();
+            }
+        },
+        [disabled]
+    );
+
+    const handleInputBlur = useCallback((event: FocusEvent<HTMLInputElement>) => {
+        onBlurRef.current?.(event);
+    }, []);
+
     const handleChange = useCallback(
-        (index: number) => (event: ChangeEvent<HTMLInputElement>) => {
+        (event: ChangeEvent<HTMLInputElement>) => {
             if (disabled) return;
 
+            const index = Number(event.currentTarget.dataset.index);
             const inputValue = event.target.value;
-            const nextDigits = [...digits];
+            const nextDigits = [...digitsRef.current];
 
             if (inputValue === "") {
                 nextDigits[index] = "";
@@ -225,17 +277,19 @@ const OTPField: FC<IOTPFieldProps> = ({
                 focusInput(index + 1);
             }
         },
-        [digits, disabled, emitValueChange, focusInput, length]
+        [disabled, emitValueChange, focusInput, length]
     );
 
     const handleKeyDown = useCallback(
-        (index: number) => (event: KeyboardEvent<HTMLInputElement>) => {
+        (event: KeyboardEvent<HTMLInputElement>) => {
             if (disabled) return;
+
+            const index = Number(event.currentTarget.dataset.index);
 
             if (event.key === "Backspace") {
                 event.preventDefault();
 
-                const nextDigits = [...digits];
+                const nextDigits = [...digitsRef.current];
 
                 if (nextDigits[index]) {
                     nextDigits[index] = "";
@@ -253,7 +307,7 @@ const OTPField: FC<IOTPFieldProps> = ({
                 focusInput(index + 1);
             }
         },
-        [digits, disabled, emitValueChange, focusInput]
+        [disabled, emitValueChange, focusInput]
     );
 
     const handlePaste = useCallback(
@@ -262,7 +316,7 @@ const OTPField: FC<IOTPFieldProps> = ({
             if (disabled) return;
 
             const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, length);
-            const nextDigits = [...digits];
+            const nextDigits = [...digitsRef.current];
 
             for (let i = 0; i < length && i < pasted.length; i += 1) {
                 nextDigits[i] = pasted[i];
@@ -275,10 +329,18 @@ const OTPField: FC<IOTPFieldProps> = ({
                 focusInput(lastIndex);
             }
         },
-        [disabled, digits, emitValueChange, focusInput, length]
+        [disabled, emitValueChange, focusInput, length]
     );
 
     const indices = useMemo(() => Array.from({ length }, (_, i) => i), [length]);
+
+    const refCallbacks = useMemo(
+        () =>
+            Array.from({ length }, (_, i) => (el: HTMLInputElement | null) => {
+                inputRefs.current[i] = el;
+            }),
+        [length]
+    );
 
     const showNotification = status === "error" && !!notification;
 
@@ -294,19 +356,19 @@ const OTPField: FC<IOTPFieldProps> = ({
                     {indices.map((index) => (
                         <OTPFieldInput
                             key={index}
-                            ref={(el) => {
-                                inputRefs.current[index] = el;
-                            }}
+                            ref={refCallbacks[index]}
+                            index={index}
                             className="otpField__textField"
                             size={size}
                             value={digits[index] ?? ""}
                             disabled={disabled}
                             status={status}
                             autoComplete={index === 0 ? "one-time-code" : "off"}
-                            onChange={handleChange(index)}
-                            onKeyDown={handleKeyDown(index)}
-                            onFocus={onFocus}
-                            onBlur={onBlur}
+                            onChange={handleChange}
+                            onKeyDown={handleKeyDown}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
+                            onClick={handleInputClick}
                             aria-label={`Digit ${index + 1} of ${length}`}
                         />
                     ))}

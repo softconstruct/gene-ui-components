@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, FocusEvent, ForwardedRef, forwardRef, KeyboardEvent } from "react";
+import React, { ChangeEvent, FocusEvent, forwardRef, KeyboardEvent, memo, MouseEvent } from "react";
 import classNames from "classnames";
 
 // Styles
@@ -9,6 +9,10 @@ interface IOTPFieldInputProps {
      * Additional class for the input element. Use for placement using BEM conventions.
      */
     className?: string;
+    /**
+     * Position index within the OTP group. Rendered as `data-index` for event delegation.
+     */
+    index: number;
     /**
      * Size of the OTP input box.<br>
      * Possible values: `large | medium`.
@@ -48,52 +52,67 @@ interface IOTPFieldInputProps {
      */
     onBlur?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
+     * Click handler for the input.
+     */
+    onClick?: (event: MouseEvent<HTMLInputElement>) => void;
+    /**
      * Accessible label for screen readers.
      */
     "aria-label": string;
 }
 
-const OTPFieldInput: FC<IOTPFieldInputProps & { forwardedRef?: ForwardedRef<HTMLInputElement> }> = ({
-    className,
-    size,
-    status = "rest",
-    disabled,
-    autoComplete,
-    value,
-    onChange,
-    onKeyDown,
-    onFocus,
-    onBlur,
-    "aria-label": ariaLabel,
-    forwardedRef
-}) => {
-    const sizeClass = `otpFieldInput_size_${size}`;
+const OTPFieldInputBase = forwardRef<HTMLInputElement, IOTPFieldInputProps>(
+    (
+        {
+            className,
+            index,
+            size,
+            status = "rest",
+            disabled,
+            autoComplete,
+            value,
+            onChange,
+            onKeyDown,
+            onFocus,
+            onBlur,
+            onClick,
+            "aria-label": ariaLabel
+        },
+        ref
+    ) => {
+        return (
+            <input
+                ref={ref}
+                data-index={index}
+                type="text"
+                inputMode="numeric"
+                autoComplete={autoComplete}
+                className={classNames(
+                    "otpFieldInput",
+                    `otpFieldInput_size_${size}`,
+                    {
+                        [`otpFieldInput_status_${status}`]: !disabled,
+                        otpFieldInput_disabled: disabled
+                    },
+                    className
+                )}
+                disabled={disabled}
+                value={value}
+                onChange={onChange}
+                onKeyDown={onKeyDown}
+                onFocus={onFocus}
+                onBlur={onBlur}
+                onClick={onClick}
+                aria-label={ariaLabel}
+            />
+        );
+    }
+);
 
-    const stateClasses = {
-        [`otpFieldInput_status_${status}`]: !disabled,
-        otpFieldInput_disabled: disabled
-    };
+OTPFieldInputBase.displayName = "OTPFieldInputBase";
 
-    return (
-        <input
-            ref={forwardedRef}
-            type="text"
-            inputMode="numeric"
-            autoComplete={autoComplete}
-            className={classNames("otpFieldInput", sizeClass, stateClasses, className)}
-            disabled={disabled}
-            value={value}
-            onChange={onChange}
-            onKeyDown={onKeyDown}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            aria-label={ariaLabel}
-        />
-    );
-};
+const OTPFieldInput = memo(OTPFieldInputBase);
 
-const ForwardedOTPFieldInput = forwardRef<HTMLInputElement, IOTPFieldInputProps>((props, ref) => {
-    return <OTPFieldInput {...props} forwardedRef={ref} />;
-});
+OTPFieldInput.displayName = "OTPFieldInput";
 
-export { IOTPFieldInputProps, ForwardedOTPFieldInput as default };
+export { IOTPFieldInputProps, OTPFieldInput as default };
