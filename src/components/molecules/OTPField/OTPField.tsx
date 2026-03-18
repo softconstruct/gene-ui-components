@@ -40,7 +40,6 @@ interface IOTPFieldProps {
     className?: string;
     /**
      * Size of the OTP input boxes.<br>
-     * Possible values: `large | medium`.
      */
     size?: IOTPFieldInputProps["size"];
     /**
@@ -59,7 +58,6 @@ interface IOTPFieldProps {
     disabled?: boolean;
     /**
      * Determines the input appearance based on its status.<br>
-     * Possible values: `rest | error`.
      */
     status?: "rest" | "error";
     /**

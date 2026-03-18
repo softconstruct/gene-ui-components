@@ -15,12 +15,10 @@ interface IOTPFieldInputProps {
     index: number;
     /**
      * Size of the OTP input box.<br>
-     * Possible values: `large | medium`.
      */
     size: "large" | "medium";
     /**
      * Visual state of the input.<br>
-     * Possible values: `rest | error`.
      */
     status?: "rest" | "error";
     /**
