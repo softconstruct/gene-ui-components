@@ -1,5 +1,6 @@
 const OTP_LENGTH = 6;
-const OTP_INDICES = Array.from({ length: OTP_LENGTH }, (_, i) => i) as const;
+type OTPIndices = number[];
+const OTP_INDICES: OTPIndices = Array.from({ length: OTP_LENGTH }, (_, i) => i);
 
 const DIGIT_PATTERN = /^\d$/;
 
