@@ -34,7 +34,13 @@ module.exports = {
         builder: "webpack5"
     },
     typescript: {
-        reactDocgen: "react-docgen-typescript-plugin"
+        reactDocgen: "react-docgen-typescript",
+        reactDocgenTypescriptOptions: {
+            shouldExtractValuesFromUnion: false,
+            shouldExtractLiteralValuesFromEnum: true,
+            shouldSortUnions: true,
+            shouldRemoveUndefinedFromOptional: true
+        }
     },
     webpackFinal: async (config, options) => {
         const aliasPaths = {
