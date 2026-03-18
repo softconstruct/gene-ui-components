@@ -10,7 +10,7 @@
         }
 
         &_medium {
-            max-width: 24.2rem;
+            max-width: 23.2rem;
         }
     }
 
@@ -25,13 +25,8 @@
         gap: var(--guit-ref-spacing-xsmall);
     }
 
-    &__textField {
-        width: var(--guit-sem-dimension-width-large);
-    }
-
     &__content {
         display: flex;
-        align-items: center;
         gap: var(--guit-ref-spacing-xsmall);
     }
 
@@ -42,5 +37,10 @@
 
     &__timer {
         flex: 0 0 auto;
+        margin-inline-start: auto;
+
+        &_disabled {
+            color: var(--guit-sem-color-foreground-disabled);
+        }
     }
 }
