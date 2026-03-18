@@ -13,7 +13,6 @@ const meta: Meta<IOTPFieldProps> = {
     component: OTPField,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        length: args({ control: "number", ...propCategory.appearance }),
         size: args({ control: "select", options: ["large", "medium"], ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         status: args({ control: "select", options: ["rest", "error"], ...propCategory.states }),
@@ -29,7 +28,6 @@ const meta: Meta<IOTPFieldProps> = {
         onBlur: args({ control: "false", ...propCategory.action })
     },
     args: {
-        length: 6,
         size: "large",
         helperText: "Code is valid for",
         timerDuration: 152,

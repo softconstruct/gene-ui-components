@@ -23,6 +23,8 @@ import {
     digitsToString,
     helperTextSizeMap,
     normalizeDigitsLength,
+    OTP_INDICES,
+    OTP_LENGTH,
     stringToDigits
 } from "@components/molecules/OTPField/otpField.helpers";
 import OTPFieldInput, { IOTPFieldInputProps } from "@components/molecules/OTPField/OTPFieldInput/OTPFieldInput";
@@ -36,11 +38,6 @@ interface IOTPFieldProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    /**
-     * Number of OTP digit inputs.<br>
-     * Default is `6`.
-     */
-    length?: number;
     /**
      * Size of the OTP input boxes.<br>
      * Possible values: `large | medium`.
@@ -107,7 +104,6 @@ interface IOTPFieldProps {
  */
 const OTPField: FC<IOTPFieldProps> = ({
     className,
-    length = 6,
     size = "large",
     value: controlledValue,
     defaultValue = "",
@@ -125,7 +121,7 @@ const OTPField: FC<IOTPFieldProps> = ({
     const isControlled = controlledValue !== undefined;
 
     const [internalDigits, setInternalDigits] = useState<string[]>(() =>
-        stringToDigits(isControlled ? controlledValue : defaultValue, length)
+        stringToDigits(isControlled ? controlledValue : defaultValue)
     );
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -145,11 +141,11 @@ const OTPField: FC<IOTPFieldProps> = ({
 
     useEffect(() => {
         if (isControlled && String(controlledValue) !== lastEmittedValue.current) {
-            setInternalDigits(stringToDigits(controlledValue, length));
+            setInternalDigits(stringToDigits(controlledValue));
         }
-    }, [controlledValue, isControlled, length]);
+    }, [controlledValue, isControlled]);
 
-    const digits = useMemo(() => normalizeDigitsLength(internalDigits, length), [internalDigits, length]);
+    const digits = useMemo(() => normalizeDigitsLength(internalDigits), [internalDigits]);
     digitsRef.current = digits;
 
     const htSize = helperTextSizeMap[size];
@@ -161,30 +157,24 @@ const OTPField: FC<IOTPFieldProps> = ({
 
     const showTimer = timerDuration !== undefined && timerDuration > 0;
 
-    const emitValueChange = useCallback(
-        (nextDigits: string[]) => {
-            const normalized = normalizeDigitsLength(nextDigits, length);
-            const nextValue = digitsToString(normalized);
+    const emitValueChange = useCallback((nextDigits: string[]) => {
+        const normalized = normalizeDigitsLength(nextDigits);
+        const nextValue = digitsToString(normalized);
 
-            lastEmittedValue.current = nextValue;
-            setInternalDigits(normalized);
+        lastEmittedValue.current = nextValue;
+        setInternalDigits(normalized);
 
-            onChangeRef.current?.(nextValue);
+        onChangeRef.current?.(nextValue);
 
-            if (nextValue.length === length) {
-                onCompleteRef.current?.(nextValue);
-            }
-        },
-        [length]
-    );
+        if (nextValue.length === OTP_LENGTH) {
+            onCompleteRef.current?.(nextValue);
+        }
+    }, []);
 
-    const focusInput = useCallback(
-        (index: number) => {
-            const clamped = Math.max(0, Math.min(index, length - 1));
-            inputRefs.current[clamped]?.focus();
-        },
-        [length]
-    );
+    const focusInput = useCallback((index: number) => {
+        const clamped = Math.max(0, Math.min(index, OTP_LENGTH - 1));
+        inputRefs.current[clamped]?.focus();
+    }, []);
 
     const handleInputFocus = useCallback(
         (event: FocusEvent<HTMLInputElement>) => {
@@ -230,11 +220,11 @@ const OTPField: FC<IOTPFieldProps> = ({
             nextDigits[index] = digit;
             emitValueChange(nextDigits);
 
-            if (index < length - 1) {
+            if (index < OTP_LENGTH - 1) {
                 focusInput(index + 1);
             }
         },
-        [disabled, emitValueChange, focusInput, length]
+        [disabled, emitValueChange, focusInput]
     );
 
     const handleKeyDown = useCallback(
@@ -272,31 +262,29 @@ const OTPField: FC<IOTPFieldProps> = ({
             event.preventDefault();
             if (disabled) return;
 
-            const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, length);
+            const pasted = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, OTP_LENGTH);
             const nextDigits = [...digitsRef.current];
 
-            for (let i = 0; i < length && i < pasted.length; i += 1) {
+            for (let i = 0; i < OTP_LENGTH && i < pasted.length; i += 1) {
                 nextDigits[i] = pasted[i];
             }
 
             emitValueChange(nextDigits);
-            const lastIndex = Math.min(pasted.length - 1, length - 1);
+            const lastIndex = Math.min(pasted.length - 1, OTP_LENGTH - 1);
 
             if (lastIndex >= 0) {
                 focusInput(lastIndex);
             }
         },
-        [disabled, emitValueChange, focusInput, length]
+        [disabled, emitValueChange, focusInput]
     );
-
-    const indices = useMemo(() => Array.from({ length }, (_, i) => i), [length]);
 
     const refCallbacks = useMemo(
         () =>
-            Array.from({ length }, (_, i) => (el: HTMLInputElement | null) => {
+            Array.from({ length: OTP_LENGTH }, (_, i) => (el: HTMLInputElement | null) => {
                 inputRefs.current[i] = el;
             }),
-        [length]
+        []
     );
 
     const showNotification = status === "error" && !!notification;
@@ -310,7 +298,7 @@ const OTPField: FC<IOTPFieldProps> = ({
                     aria-label="One-time password"
                     onPaste={handlePaste}
                 >
-                    {indices.map((index) => (
+                    {OTP_INDICES.map((index) => (
                         <OTPFieldInput
                             key={index}
                             ref={refCallbacks[index]}
@@ -326,7 +314,7 @@ const OTPField: FC<IOTPFieldProps> = ({
                             onFocus={handleInputFocus}
                             onBlur={handleInputBlur}
                             onClick={handleInputClick}
-                            aria-label={`Digit ${index + 1} of ${length}`}
+                            aria-label={`Digit ${index + 1} of ${OTP_LENGTH}`}
                         />
                     ))}
                 </div>
