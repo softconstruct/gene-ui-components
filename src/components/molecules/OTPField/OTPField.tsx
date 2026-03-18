@@ -16,8 +16,8 @@ import classNames from "classnames";
 import HelperText from "@components/atoms/HelperText";
 import Text from "@components/atoms/Text";
 import Notification from "@components/molecules/Notification";
-// Hooks
 import useCountdown from "@components/molecules/OTPField/hooks/useCountdown";
+// Hooks
 import {
     DIGIT_PATTERN,
     digitsToString,

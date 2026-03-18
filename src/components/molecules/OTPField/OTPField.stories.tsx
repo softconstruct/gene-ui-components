@@ -3,13 +3,13 @@ import { Meta, StoryObj } from "@storybook/react";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { fn } from "@storybook/test";
 
+// Components
 import { Col, Grid, Row } from "@components/atoms/Grid";
+import OTPField, { IOTPFieldProps } from "@components/molecules/OTPField";
 import Section from "@components/molecules/Section";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-// Components
-import OTPField, { IOTPFieldProps } from "./index";
 
 const meta: Meta<IOTPFieldProps> = {
     title: "Molecules/OTPField",
@@ -19,7 +19,7 @@ const meta: Meta<IOTPFieldProps> = {
         size: args({ control: "select", options: ["large", "medium"], ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         status: args({ control: "select", options: ["rest", "error"], ...propCategory.states }),
-        value: args({ control: "text", ...propCategory.content }),
+        value: args({ control: "number", ...propCategory.content }),
         defaultValue: args({ control: "number", ...propCategory.content }),
         helperText: args({ control: "text", ...propCategory.content }),
         timerDuration: args({ control: "number", ...propCategory.functionality }),
@@ -32,9 +32,6 @@ const meta: Meta<IOTPFieldProps> = {
         onBlur: args({ control: "false", ...propCategory.action })
     },
     args: {
-        // size: "large",
-        // helperText: "Code is valid for",
-        // timerDuration: 152,
         onChange: fn(),
         onComplete: fn(),
         onTimerExpire: fn(),
