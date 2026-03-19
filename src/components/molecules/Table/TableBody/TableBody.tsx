@@ -1,41 +1,53 @@
-import React, { FC } from "react";
+import React from "react";
 import { Row } from "@tanstack/table-core";
 
 // Components
 import Loader from "@components/atoms/Loader";
+import Empty from "@components/molecules/Empty";
 import TableRow from "@components/molecules/Table/TableBody/Row/TableRow";
+// Types
+import { ITableErrorTexts } from "@components/molecules/Table/types";
 
 // Styles
 import "./TableBody.scss";
-import Empty from "@components/molecules/Empty";
 
-interface ITableBody {
+/**
+ * Props for the {@link TableBody} component.
+ * @template TData - The shape of the overall row data object.
+ */
+interface ITableBody<TData> {
     /**
-     * Data of rows to be displayed.
+     * An array of TanStack Table row instances to be rendered.
      */
-    rows: Row<any>[];
+    rows: Row<TData>[];
     /**
-     * Whether the table should display loader.
+     * Determines if the table is currently in a loading state.
      */
     loading: boolean;
     /**
-     * Label of loader spinner.
+     * The text label displayed alongside the loading spinner.
      */
     loadingText: string;
     /**
-     *
+     * A collection of text strings used for fallback UIs
+     * (e.g., when no data exists or no search results are found).
      */
-    errorTexts?: any;
+    errorTexts: ITableErrorTexts;
 }
 
 /**
- * TableBody defines the <tbody> section of component.
- * @param rows
- * @param loading
- * @param loadingText
- * @constructor
+ * Renders the `<tbody>` section of the table, including empty and loading states.
+ * * Handles conditional rendering based on the data's status:
+ * - Displays a {@link Loader} if the data is currently fetching.
+ * - Displays an {@link Empty} "No Data" state if the `rows` array is falsy.
+ * - Displays an {@link Empty} "No Results" state if the `rows` array is empty.
+ * - Otherwise, maps through the provided rows to render {@link TableRow} components.
+ *
+ * @template TData - The shape of the overall row data object.
+ * @param props - The properties for the component.
+ * @returns The table body element, or a fallback UI (loader/empty state) depending on the data.
  */
-const TableBody: FC<ITableBody> = ({ rows, loading, loadingText, errorTexts }) => {
+const TableBody = <TData,>({ rows, loading, loadingText, errorTexts }: ITableBody<TData>) => {
     if (loading) {
         return <Loader size="small" text={loadingText} />;
     }

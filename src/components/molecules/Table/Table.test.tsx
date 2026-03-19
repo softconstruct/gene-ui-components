@@ -1,13 +1,20 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
+// Mockup datas
+import { mockColumns, mockData } from "@components/molecules/Table/Table.mock";
+
 // Components
 import Table, { ITableProps } from "./index";
 
+type MockDataType = (typeof mockData)[0];
+
 describe("Table ", () => {
-    let setup: ReactWrapper<ITableProps>;
+    // Pass the inferred type into ITableProps
+    let setup: ReactWrapper<ITableProps<MockDataType>>;
+
     beforeEach(() => {
-        setup = mount(<Table />);
+        setup = mount(<Table columns={mockColumns} data={mockData} />);
     });
 
     it("renders without crashing", () => {

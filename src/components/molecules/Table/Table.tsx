@@ -4,17 +4,22 @@ import classNames from "classnames";
 
 // Components
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
-import TableBody from "@components/molecules/Table/TableBody/TableBody";
-import TableHeader from "@components/molecules/Table/TableHeader/TableHeader";
-
+// Constants
+import { DEFAULT_ERROR_TEXTS } from "@components/molecules/Table/constants";
 // Hooks
 import { useTablePagination } from "@components/molecules/Table/hooks/useTablePagination";
+import TableBody from "@components/molecules/Table/TableBody/TableBody";
+import TableHeader from "@components/molecules/Table/TableHeader/TableHeader";
+// Types
+import { ITableErrorTexts } from "@components/molecules/Table/types";
 
 // Styles
 import "./Table.scss";
 
-import "./DeleteMe.scss";
-
+/**
+ * Props for the {@link Table} component.
+ * @template TData - The shape of the overall row data object.
+ */
 interface ITableProps<TData> {
     /**
      * Additional class for the parent element.
@@ -50,29 +55,28 @@ interface ITableProps<TData> {
      */
     loadingText?: string;
     /**
-     *
+     * An object with error texts, used for various cases (no data, no result found).
      */
-    errorTexts?: any;
+    errorTexts?: ITableErrorTexts;
 }
 
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
- * Data tables are essential for presenting information such as reports, inventories, or user data in a clear,
+ * * Data tables are essential for presenting information such as reports, inventories, or user data in a clear,
  * sortable, and filterable manner, allowing users to quickly find, analyze, and manipulate data.
+ *
+ * @template TData - The shape of the overall row data object.
+ * @param props - The properties for the component.
+ * @returns The fully assembled Table component including headers, body, and optional pagination.
  */
-const Table = <TData extends Record<string, unknown>>({
+const Table = <TData,>({
     className,
-    data = [],
+    data = [] as TData[],
     columns = [],
     pagination = false,
     loading: externalLoading = false,
     loadingText = "Loading...",
-    errorTexts = {
-        noDataAvailableTitle: "No data available",
-        noResultFoundTitle: "No results found",
-        noDataAvailableText: "No data is available for display at this moment.",
-        noResultFoundText: "No results were found matching your criteria."
-    }
+    errorTexts = DEFAULT_ERROR_TEXTS
 }: ITableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
 
