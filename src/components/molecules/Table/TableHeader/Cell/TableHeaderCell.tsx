@@ -31,7 +31,13 @@ interface ITableHeaderCellProps<TData, TValue> {
  * @returns A table header cell element containing the rendered column header, or an empty cell if it's a placeholder.
  */
 const TableHeaderCell = <TData, TValue>({ header }: ITableHeaderCellProps<TData, TValue>) => (
-    <th className="tableHeaderCell">
+    <th
+        className="tableHeaderCell"
+        style={{
+            width: header.getSize(),
+            minWidth: header.getSize()
+        }}
+    >
         {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
     </th>
 );

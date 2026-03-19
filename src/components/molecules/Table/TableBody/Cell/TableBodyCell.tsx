@@ -30,7 +30,15 @@ interface ITableBodyCellProps<TData, TValue> {
  * @returns A table cell element with the rendered content.
  */
 const TableBodyCell = <TData, TValue>({ cell }: ITableBodyCellProps<TData, TValue>) => (
-    <td className="tableBodyCell">{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+    <td
+        className="tableBodyCell"
+        style={{
+            width: cell.column.getSize(),
+            minWidth: cell.column.getSize()
+        }}
+    >
+        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+    </td>
 );
 
 export default TableBodyCell;
