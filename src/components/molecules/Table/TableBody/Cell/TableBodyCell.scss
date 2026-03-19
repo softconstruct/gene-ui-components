@@ -1,0 +1,15 @@
+.tableBodyCell {
+  width: 150px;
+  vertical-align: middle;
+  border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-1);
+  padding: var(--guit-ref-spacing-small);
+  //display: flex;
+  align-items: center;
+  min-height: var(--guit-sem-dimension-height-large);
+  text-align: start;
+  position: relative;
+  min-width: var(--guit-ref-sizing-xsmall);
+  padding-block: var(--guit-ref-spacing-medium);
+  padding-inline: var(--guit-ref-spacing-large);
+  min-height: var(--guit-sem-dimension-height-large);
+}

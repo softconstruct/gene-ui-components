@@ -1,0 +1,8 @@
+.tableHeader {
+  background-color: var(--guit-sem-color-background-neutral-4);
+
+  &__row {
+    padding-block: var(--guit-ref-spacing-xsmall);
+    padding-inline: var(--guit-ref-spacing-large);
+  }
+}

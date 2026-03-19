@@ -70,6 +70,7 @@ export { default as NumberField, INumberFieldProps } from "./components/molecule
 export { default as InteractiveCard, IInteractiveCardProps } from "./components/molecules/InteractiveCard";
 export { default as Section, ISectionProps } from "./components/molecules/Section";
 export { default as Image, IImageProps } from "./components/molecules/Image";
+export { default as Table } from "./components/molecules/Table";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
