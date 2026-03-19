@@ -1,8 +1,12 @@
 .tableHeader {
-  background-color: var(--guit-sem-color-background-neutral-4);
+    &_sticky {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+    }
 
-  &__row {
-    padding-block: var(--guit-ref-spacing-xsmall);
-    padding-inline: var(--guit-ref-spacing-large);
-  }
+    &__row {
+        position: relative;
+        background-color: var(--guit-sem-color-background-neutral-4);
+    }
 }

@@ -1,0 +1,17 @@
+.table__content_empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    position: absolute;
+    inset-inline: 0;
+    pointer-events: none;
+    column-gap: var(--guit-ref-spacing-xsmall);
+    padding-block: var(--guit-ref-spacing-xsmall);
+    padding-inline: var(--guit-ref-spacing-large);
+}
+
+tbody {
+    display: table-row-group; /* ENFORCE vertical stacking */
+    width: 100%;
+}
