@@ -29,7 +29,12 @@ type Story = StoryObj<ITableProps<MockRowType>>;
 
 export const Default: Story = {
     render: (props) => <Table {...props} />,
-    args: { columns: mockColumns, data: mockData }
+    args: {
+        columns: mockColumns,
+        data: mockData,
+        // @ts-expect-error: TODO: check and remove
+        pagination: { rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
+    }
 };
 
 export const NoDataAvailable: Story = {

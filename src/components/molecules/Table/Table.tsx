@@ -1,7 +1,8 @@
 import React, { ReactElement, useState } from "react";
-import { ColumnDef, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { ColumnDef, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import classNames from "classnames";
 
+import Scrollbar from "@components/atoms/Scrollbar";
 // Components
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 // Constants
@@ -73,7 +74,7 @@ const Table = <TData,>({
     className,
     data = [] as TData[],
     columns = [],
-    pagination = false,
+    pagination = true,
     loading: externalLoading = false,
     loadingText = "Loading...",
     errorTexts = DEFAULT_ERROR_TEXTS
@@ -83,7 +84,8 @@ const Table = <TData,>({
     const table = useReactTable({
         data,
         columns,
-        getCoreRowModel: getCoreRowModel()
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel()
     });
 
     const isTableLoading = externalLoading || internalLoading;
@@ -92,15 +94,17 @@ const Table = <TData,>({
 
     return (
         <div className={classNames("dataTable", className)}>
-            <table className={classNames("dataTable__table")}>
-                <TableHeader headerGroups={table.getHeaderGroups()} />
-                <TableBody
-                    loading={isTableLoading}
-                    loadingText={loadingText}
-                    rows={table.getRowModel().rows}
-                    errorTexts={errorTexts}
-                />
-            </table>
+            <Scrollbar>
+                <table className={classNames("dataTable__table")}>
+                    <TableHeader headerGroups={table.getHeaderGroups()} />
+                    <TableBody
+                        loading={isTableLoading}
+                        loadingText={loadingText}
+                        rows={table.getRowModel().rows}
+                        errorTexts={errorTexts}
+                    />
+                </table>
+            </Scrollbar>
             {paginationProps && <Pagination className="dataTable__pagination" {...paginationProps} />}
         </div>
     );

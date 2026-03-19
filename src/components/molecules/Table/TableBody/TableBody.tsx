@@ -49,7 +49,7 @@ interface ITableBody<TData> {
  */
 const TableBody = <TData,>({ rows, loading, loadingText, errorTexts }: ITableBody<TData>) => {
     if (loading) {
-        return <Loader size="small" text={loadingText} />;
+        return <Loader size="large" text={loadingText} textPosition="below" />;
     }
 
     if (!rows) {
@@ -59,6 +59,7 @@ const TableBody = <TData,>({ rows, loading, loadingText, errorTexts }: ITableBod
                 title={errorTexts.noDataAvailableTitle}
                 description={errorTexts.noDataAvailableText}
                 className="table__content_empty"
+                actions={[{ children: "Retry", onClick: () => null }]}
             />
         );
     }
