@@ -16,9 +16,9 @@ const meta: Meta<IOTPFieldProps> = {
     component: OTPField,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        size: args({ control: "select", options: ["large", "medium"], ...propCategory.appearance }),
+        size: args({ control: "select", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
-        status: args({ control: "select", options: ["rest", "error"], ...propCategory.states }),
+        status: args({ control: "select", ...propCategory.states }),
         value: args({ control: "number", ...propCategory.content }),
         defaultValue: args({ control: "number", ...propCategory.content }),
         helperText: args({ control: "text", ...propCategory.content }),
