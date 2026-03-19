@@ -78,6 +78,16 @@ const OTPFieldInputBase = forwardRef<HTMLInputElement, IOTPFieldInputProps>(
         },
         ref
     ) => {
+        const inputClassName = classNames(
+            "otpFieldInput",
+            `otpFieldInput_size_${size}`,
+            {
+                [`otpFieldInput_status_${status}`]: !disabled,
+                otpFieldInput_disabled: disabled
+            },
+            className
+        );
+
         return (
             <input
                 ref={ref}
@@ -85,15 +95,7 @@ const OTPFieldInputBase = forwardRef<HTMLInputElement, IOTPFieldInputProps>(
                 type="text"
                 inputMode="numeric"
                 autoComplete={autoComplete}
-                className={classNames(
-                    "otpFieldInput",
-                    `otpFieldInput_size_${size}`,
-                    {
-                        [`otpFieldInput_status_${status}`]: !disabled,
-                        otpFieldInput_disabled: disabled
-                    },
-                    className
-                )}
+                className={inputClassName}
                 disabled={disabled}
                 value={value}
                 onChange={onChange}
