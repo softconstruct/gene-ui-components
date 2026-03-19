@@ -25,11 +25,17 @@ const ControlledOTPField: FC<{ initial?: string }> = ({ initial = "" }) => {
     return <OTPField value={value} onChange={setValue} />;
 };
 
+const mountOTPField = (props: IOTPFieldProps = {}): ReactWrapper<IOTPFieldProps> => {
+    return mount<IOTPFieldProps>(<OTPField {...props} />);
+};
+
 describe("OTPField", () => {
+    const defaultProps: IOTPFieldProps = {};
     let setup: ReactWrapper<IOTPFieldProps>;
 
     beforeEach(() => {
-        setup = mount(<OTPField />);
+        jest.clearAllMocks();
+        setup = mount(<OTPField {...defaultProps} />);
     });
 
     it("renders without crashing", () => {
@@ -48,13 +54,13 @@ describe("OTPField", () => {
 
     it("focuses first input when autoFocus is true", () => {
         const focusSpy = jest.spyOn(HTMLInputElement.prototype, "focus").mockImplementation(() => undefined);
-        mount(<OTPField autoFocus />);
+        setup.setProps({ autoFocus: true });
         expect(focusSpy).toHaveBeenCalled();
         focusSpy.mockRestore();
     });
 
     it("supports uncontrolled defaultValue (string) and maps it to inputs", () => {
-        const wrapper = mount(<OTPField defaultValue="1234" />);
+        const wrapper = mountOTPField({ defaultValue: "1234" });
         const inputs = wrapper.find("input");
         expect(inputs.at(0).prop("value")).toBe("1");
         expect(inputs.at(1).prop("value")).toBe("2");
@@ -65,7 +71,7 @@ describe("OTPField", () => {
     });
 
     it("supports uncontrolled defaultValue (number) and maps it to inputs", () => {
-        const wrapper = mount(<OTPField defaultValue={1234} />);
+        const wrapper = mountOTPField({ defaultValue: 1234 });
         const inputs = wrapper.find("input");
         expect(inputs.at(0).prop("value")).toBe("1");
         expect(inputs.at(1).prop("value")).toBe("2");
@@ -77,8 +83,8 @@ describe("OTPField", () => {
 
     it("calls onComplete when all 6 digits are entered", () => {
         const onComplete = jest.fn();
-        const wrapper = mount(<OTPField onComplete={onComplete} />);
-        const inputs = wrapper.find("input");
+        setup.setProps({ onComplete });
+        const inputs = setup.find("input");
 
         inputs.at(0).simulate("change", changeEvent(0, "1"));
         inputs.at(1).simulate("change", changeEvent(1, "2"));
@@ -87,28 +93,27 @@ describe("OTPField", () => {
         inputs.at(4).simulate("change", changeEvent(4, "5"));
         inputs.at(5).simulate("change", changeEvent(5, "6"));
 
-        wrapper.update();
+        setup.update();
         expect(onComplete).toHaveBeenCalledWith("123456");
     });
 
     it("calls onChange with normalized digits string", () => {
         const onChange = jest.fn();
-        const wrapper = mount(<OTPField onChange={onChange} />);
-        wrapper.find("input").at(0).simulate("change", changeEvent(0, "1"));
-        wrapper.update();
+        setup.setProps({ onChange });
+        setup.find("input").at(0).simulate("change", changeEvent(0, "1"));
+        setup.update();
         expect(onChange).toHaveBeenCalledWith("1");
     });
 
     it("ignores non-digit input", () => {
-        const wrapper = mount(<OTPField />);
-        wrapper.find("input").at(0).simulate("change", changeEvent(0, "a"));
-        wrapper.update();
-        expect(wrapper.find("input").at(0).prop("value")).toBe("");
+        setup.find("input").at(0).simulate("change", changeEvent(0, "a"));
+        setup.update();
+        expect(setup.find("input").at(0).prop("value")).toBe("");
     });
 
     it("does nothing when disabled (change and keydown)", () => {
         const onChange = jest.fn();
-        const wrapper = mount(<OTPField disabled onChange={onChange} defaultValue="123456" />);
+        const wrapper = mountOTPField({ disabled: true, onChange, defaultValue: "123456" });
         wrapper.find("input").at(0).simulate("change", changeEvent(0, "9"));
         wrapper.find("input").at(0).simulate("keydown", keyDownEvent(0, "Backspace"));
         wrapper.update();
@@ -117,7 +122,7 @@ describe("OTPField", () => {
     });
 
     it("backspace clears the focused digit first, then moves to previous", () => {
-        const wrapper = mount(<OTPField defaultValue="123456" />);
+        const wrapper = mountOTPField({ defaultValue: "123456" });
         const inputs = wrapper.find("input");
 
         inputs.at(2).simulate("keydown", keyDownEvent(2, "Backspace"));
@@ -131,8 +136,7 @@ describe("OTPField", () => {
     });
 
     it("ArrowLeft and ArrowRight move focus between inputs", () => {
-        const wrapper = mount(<OTPField />);
-        const inputs = wrapper.find("input");
+        const inputs = setup.find("input");
 
         const focus0 = jest.spyOn(HTMLInputElement.prototype, "focus").mockImplementation(() => undefined);
 
@@ -160,20 +164,19 @@ describe("OTPField", () => {
     });
 
     it("renders helperText and timer when timerDuration is provided", () => {
-        const wrapper = mount(<OTPField helperText="Code is valid for" timerDuration={30} />);
-        expect(wrapper.text()).toContain("Code is valid for");
+        setup.setProps({ helperText: "Code is valid for", timerDuration: 30 });
+        expect(setup.text()).toContain("Code is valid for");
         // timer formatted string exists (MM:SS)
-        expect(wrapper.text()).toMatch(/00:30/);
+        expect(setup.text()).toMatch(/00:30/);
     });
 
     it("renders notification when status=error and notification is provided", () => {
-        const wrapper = mount(<OTPField status="error" notification="Invalid" />);
-        expect(wrapper.text()).toContain("Invalid");
+        setup.setProps({ status: "error", notification: "Invalid" });
+        expect(setup.text()).toContain("Invalid");
     });
 
     it("sets autocomplete on first input only", () => {
-        const wrapper = mount(<OTPField />);
-        const inputs = wrapper.find("input");
+        const inputs = setup.find("input");
         expect(inputs.at(0).prop("autoComplete")).toBe("one-time-code");
         expect(inputs.at(1).prop("autoComplete")).toBe("off");
     });
@@ -181,8 +184,8 @@ describe("OTPField", () => {
     it("forwards onFocus and onBlur callbacks", () => {
         const onFocus = jest.fn();
         const onBlur = jest.fn();
-        const wrapper = mount(<OTPField onFocus={onFocus} onBlur={onBlur} />);
-        const input0 = wrapper.find("input").at(0);
+        setup.setProps({ onFocus, onBlur });
+        const input0 = setup.find("input").at(0);
         input0.simulate("focus", { currentTarget: { select: jest.fn() } });
         input0.simulate("blur");
         expect(onFocus).toHaveBeenCalled();
@@ -191,8 +194,8 @@ describe("OTPField", () => {
 
     it("selects input value on focus/click", () => {
         const selectSpy = jest.spyOn(HTMLInputElement.prototype, "select").mockImplementation(() => undefined);
-        const wrapper = mount(<OTPField defaultValue="1" />);
-        const input0 = wrapper.find("input").at(0);
+        setup.setProps({ defaultValue: "1" });
+        const input0 = setup.find("input").at(0);
 
         input0.simulate("focus");
         input0.simulate("click");
@@ -201,15 +204,13 @@ describe("OTPField", () => {
     });
 
     it("pastes digits across inputs", () => {
-        const wrapper = mount(<OTPField />);
-
-        wrapper.find(".otpField__textFieldWrapper").simulate("paste", {
+        setup.find(".otpField__textFieldWrapper").simulate("paste", {
             preventDefault: jest.fn(),
             clipboardData: { getData: () => "12-34 56" }
         });
 
-        wrapper.update();
-        const values = wrapper
+        setup.update();
+        const values = setup
             .find("input")
             .map((node) => node.prop("value"))
             .join("");
@@ -220,13 +221,13 @@ describe("OTPField", () => {
         jest.useFakeTimers();
         const onTimerExpire = jest.fn();
 
-        const wrapper = mount(<OTPField timerDuration={1} onTimerExpire={onTimerExpire} />);
+        setup.setProps({ timerDuration: 1, onTimerExpire });
 
         act(() => {
             jest.advanceTimersByTime(1000);
         });
 
-        wrapper.update();
+        setup.update();
         // The hook calls onExpire when remaining <= 0 on the next effect tick
         act(() => {
             jest.runOnlyPendingTimers();
