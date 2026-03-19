@@ -102,7 +102,6 @@ const meta: Meta<IGlobalHeaderProps> = {
     args: {
         logoAs: <a href="/" aria-label="logo" />,
         limitUnit: "1234523",
-        timeLabel: "Time",
         currencyConvertorText: "Currency Convertor",
         fullName: "Full Name"
     }

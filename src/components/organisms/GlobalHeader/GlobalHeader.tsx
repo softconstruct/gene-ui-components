@@ -160,17 +160,19 @@ interface IGlobalHeaderProps {
     /**
      * The time zone to display the time in.
      * If not provided, it will use the local time zone of the user's device.
-     * example: "America/New_York", "Europe/London"
+     * Example: "America/New_York", "Europe/London".
+     * To render the time section at all, you must provide at least one of `timeZone`, `timeFormat`, or `timeLabel`.
      */
     timeZone?: string;
     /**
      * The format of the time to display.
-     * Possible values: "24h" or "12h"
-     * Default is "24h"
+     * Default is "24h".
+     * To render the time section at all, you must provide at least one of `timeZone`, `timeFormat`, or `timeLabel`.
      */
     timeFormat?: "24h" | "12h";
     /**
-     * Label for the time section, in mobile Breakpoint default is "Time"
+     * Label for the time section; in the mobile breakpoint the default is "Time".
+     * To render the time section at all, you must provide at least one of `timeZone`, `timeFormat`, or `timeLabel`.
      */
     timeLabel?: string;
     /**
