@@ -1,0 +1,80 @@
+.breadcrumb {
+    $this: &;
+
+    &__list {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: var(--guit-ref-spacing-4xsmall);
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        column-gap: var(--guit-ref-spacing-4xsmall);
+    }
+
+    &__item_hidden {
+        display: none;
+    }
+
+    &__title {
+        white-space: nowrap;
+    }
+
+    &__measure {
+        &_hidden {
+            position: absolute;
+            visibility: hidden;
+            pointer-events: none;
+            left: 0;
+            top: 0;
+        }
+    }
+
+    &__link {
+        $that: &;
+
+        display: flex;
+        column-gap: var(--guit-ref-spacing-xsmall);
+        border-radius: var(--guit-ref-radius-3xsmall);
+        cursor: pointer;
+        height: var(--guit-sem-dimension-width-medium);
+        min-width: var(--guit-sem-dimension-width-medium);
+        padding-block: var(--guit-ref-spacing-2xsmall);
+
+        &_active {
+            color: var(--guit-sem-color-background-selected-2);
+            pointer-events: none;
+        }
+
+        &:not(#{ $that }_active) {
+            color: var(--guit-sem-color-foreground-neutral-2);
+        }
+
+        &:hover {
+            background-color: var(--guit-sem-color-background-transparent-1-hover);
+        }
+
+        &:active {
+            background-color: var(--guit-sem-color-background-transparent-1-pressed);
+        }
+
+        &:not(&:hover, &:active) {
+            background-color: var(--guit-sem-color-background-transparent-1);
+        }
+
+        &_iconBefore {
+            padding-inline-start: var(--guit-ref-spacing-xsmall);
+            padding-inline-end: var(--guit-ref-spacing-medium);
+        }
+
+        &_iconOnly {
+            padding-inline-start: var(--guit-ref-spacing-2xsmall);
+            padding-inline-end: var(--guit-ref-spacing-2xsmall);
+        }
+        &:not(#{ $that }_iconBefore, #{ $that }_iconOnly) {
+            padding-inline-start: var(--guit-ref-spacing-medium);
+            padding-inline-end: var(--guit-ref-spacing-medium);
+        }
+    }
+}

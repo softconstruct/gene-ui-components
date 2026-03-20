@@ -184,7 +184,14 @@ const HexColorPicker: FC<HexColorPickerProps> = ({ color, onChange }) => {
     useEffect(() => {
         const rgb = hexToRgb(color);
         if (!rgb) return;
-        setHsv(rgbToHsv(rgb.r, rgb.g, rgb.b));
+        setHsv((currentHsv) => {
+            const currentRgb = hsvToRgb(currentHsv.h, currentHsv.s, currentHsv.v);
+
+            if (rgb.r === currentRgb.r && rgb.g === currentRgb.g && rgb.b === currentRgb.b) {
+                return currentHsv;
+            }
+            return rgbToHsv(rgb.r, rgb.g, rgb.b);
+        });
     }, [color]);
 
     const saturationRef = useRef<HTMLDivElement | null>(null);
@@ -280,7 +287,13 @@ const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
     const [alpha, setAlpha] = useState<number>(a ?? 1);
 
     useEffect(() => {
-        setHsv(rgbToHsv(color.r, color.g, color.b));
+        setHsv((currentHsv) => {
+            const currentRgb = hsvToRgb(currentHsv.h, currentHsv.s, currentHsv.v);
+            if (color.r === currentRgb.r && color.g === currentRgb.g && color.b === currentRgb.b) {
+                return currentHsv;
+            }
+            return rgbToHsv(color.r, color.g, color.b);
+        });
         setAlpha(color.a ?? 1);
     }, [color]);
 

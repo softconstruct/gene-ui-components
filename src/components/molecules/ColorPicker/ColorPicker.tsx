@@ -12,6 +12,8 @@ import {
     HexColorPicker,
     RgbaColorPicker
 } from "@components/molecules/ColorPicker/components/CustomColorPickers/CustomColorPickers";
+// Constants
+import { ALPHA_SCALE_MAX, DEFAULT_RGBA, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
 import TextField from "@components/molecules/TextField";
 
 // Hooks
@@ -20,28 +22,10 @@ import useClickOutside from "@hooks/useClickOutside";
 // Styles
 import "./ColorPicker.scss";
 
+// Types
+import { RGB, RGBA } from "./types";
 // Utils
 import { clamp, hexToRgb, rgbToHex } from "./utils";
-
-export interface RGB {
-    r: number | string;
-    g: number | string;
-    b: number | string;
-}
-
-export interface RGBA extends RGB {
-    a: number;
-}
-
-const DEFAULT_RGBA: RGBA = {
-    r: 170,
-    g: 187,
-    b: 204,
-    a: 1
-};
-
-const ALPHA_SCALE_MAX = 100;
-const RGB_CHANNELS: (keyof RGB)[] = ["r", "g", "b"];
 
 interface IColorPickerProps {
     /**
