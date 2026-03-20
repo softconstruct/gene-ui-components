@@ -13,7 +13,7 @@
     }
 
     &__alphaInput {
-      max-width: 6rem;
+        max-width: 6rem;
     }
 
     &__inputs {
@@ -22,11 +22,11 @@
     }
 
     &__inputsRgb {
-      gap: var(--guit-ref-spacing-3xsmall);
+        gap: var(--guit-ref-spacing-3xsmall);
     }
 
     &__inputsHex {
-      gap: var(--guit-ref-spacing-2xsmall);
+        gap: var(--guit-ref-spacing-2xsmall);
     }
 
     &__rgbInputs {
@@ -36,7 +36,7 @@
     }
 
     &__hexInput {
-      width: 100%;
+        width: 100%;
     }
 
     &__recents {
@@ -48,16 +48,16 @@
     }
 
     &__recentColorWrapper {
-
-      width: var(--guit-sem-dimension-width-small);
-      height: var(--guit-sem-dimension-height-small);
-      padding: 0.2rem;
+        width: var(--guit-sem-dimension-width-small);
+        height: var(--guit-sem-dimension-height-small);
+        padding: 0.2rem;
     }
 
     &__recentColor {
-      width: 100%;
-      height: 100%;
-        border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
+        width: 100%;
+        height: 100%;
+        border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
         border-radius: var(--guit-ref-radius-4xsmall);
     }
 
