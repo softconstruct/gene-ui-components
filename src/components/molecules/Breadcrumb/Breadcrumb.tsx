@@ -25,6 +25,8 @@ type IBreadcrumbRender = (linkData: {
     Icon?: FC<IconProps>;
 }) => ReactNode;
 
+type IBreadcrumbClickItem = Pick<IBreadcrumbItemProps, "title" | "path">;
+
 interface IBreadcrumbProps {
     /**
      * Additional class for the parent element.
@@ -46,7 +48,7 @@ interface IBreadcrumbProps {
     /**
      * Called when a breadcrumb item is clicked.
      */
-    onClick?: (item: IBreadcrumbItemProps) => void;
+    onClick?: (item: IBreadcrumbClickItem) => void;
     /**
      * An array of breadcrumb items to display, in order from root to current page.
      * Each object conforms to the `IBreadcrumbItemProps` interface.
@@ -70,7 +72,7 @@ interface IBreadcrumbContextProps {
     iconOnly?: boolean;
     isLastItem?: boolean;
     render?: IBreadcrumbRender;
-    onClick?: (item: IBreadcrumbItemProps) => void;
+    onClick?: (item: IBreadcrumbClickItem) => void;
 }
 
 export const BreadcrumbContext = createContext<IBreadcrumbContextProps>({} as IBreadcrumbContextProps);
@@ -80,7 +82,7 @@ interface BreadcrumbItemWrapperProps {
     iconOnly: boolean;
     isLastItem: boolean;
     render?: IBreadcrumbRender;
-    onClick?: (item: IBreadcrumbItemProps) => void;
+    onClick?: (item: IBreadcrumbClickItem) => void;
 }
 
 const BreadcrumbItemWrapper: FC<BreadcrumbItemWrapperProps> = ({ props, iconOnly, isLastItem, render, onClick }) => {
@@ -157,12 +159,15 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
     }, [items, itemsCount, shouldShowEllipsis, firstCount, lastCount]);
 
     const menuSelectHandler = (menuItem: IMenuItemProps) => {
-        const selectedItem = menuItems.find((item) => {
-            const itemId = item.path || item.title || "";
-            return itemId === menuItem.id;
-        });
+        const selectedItem =
+            typeof menuItem.id === "number"
+                ? menuItems[menuItem.id]
+                : menuItems.find((item) => (item.path || item.title) === menuItem.id);
         if (selectedItem && onClick) {
-            onClick(selectedItem);
+            onClick({
+                title: selectedItem.title,
+                path: selectedItem.path
+            });
         }
     };
 
@@ -252,7 +257,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
                                 return (
                                     <MenuItem
                                         key={key}
-                                        id={itemId}
+                                        id={index}
                                         IconBefore={item.Icon}
                                         render={render ? () => render(linkData) : undefined}
                                     >
@@ -276,4 +281,4 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
     );
 };
 
-export { IBreadcrumbProps, Breadcrumb as default };
+export { IBreadcrumbProps, IBreadcrumbClickItem, Breadcrumb as default };
