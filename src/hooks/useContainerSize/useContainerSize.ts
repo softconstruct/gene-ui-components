@@ -1,11 +1,19 @@
 import { RefObject, useCallback, useEffect, useRef, useState } from "react";
 
+import useDebounceCallback from "@hooks/useDebounceCallback";
+
 interface IUseContainerSizeProps {
     /**
      * Whether to observe resize changes
      * @default true
      */
     observeResize?: boolean;
+    /**
+     * Optional debounce delay (ms) for resize updates.
+     * If 0 or undefined, updates are applied immediately (no debounce).
+     * @default 0
+     */
+    debounceWait?: number;
 }
 
 export interface IContainerSize {
@@ -17,6 +25,7 @@ export interface IContainerSize {
  * Hook to measure container dimensions and observe resize changes
  *
  * @param observeResize - Whether to observe resize changes
+ * @param debounceWait - Optional debounce delay (ms) for resize updates
  * @returns Object containing containerRef and size measurements
  *
  * @example
@@ -30,7 +39,10 @@ export interface IContainerSize {
  * );
  * ```
  */
-const useContainerSize = <T extends HTMLElement = HTMLElement>({ observeResize = true }: IUseContainerSizeProps = {}): {
+const useContainerSize = <T extends HTMLElement = HTMLElement>({
+    observeResize = true,
+    debounceWait = 0
+}: IUseContainerSizeProps = {}): {
     containerRef: RefObject<T>;
     sizes: IContainerSize;
 } => {
@@ -44,21 +56,31 @@ const useContainerSize = <T extends HTMLElement = HTMLElement>({ observeResize =
         setSizes({ width: offsetWidth, height: offsetHeight });
     }, []);
 
+    const { debouncedCallback, clearDebounce } = useDebounceCallback(updateSize, debounceWait);
+
     useEffect(() => {
+        // Initial measurement without debounce to avoid visible layout jump
         updateSize();
 
         if (!observeResize || !containerRef.current) return () => {};
 
         const resizeObserver = new ResizeObserver(() => {
-            updateSize();
+            if (debounceWait > 0) {
+                debouncedCallback();
+            } else {
+                updateSize();
+            }
         });
 
         resizeObserver.observe(containerRef.current);
 
         return () => {
             resizeObserver.disconnect();
+            if (debounceWait > 0) {
+                clearDebounce();
+            }
         };
-    }, [observeResize, updateSize]);
+    }, [observeResize, debounceWait, updateSize, debouncedCallback, clearDebounce]);
 
     return {
         containerRef,
