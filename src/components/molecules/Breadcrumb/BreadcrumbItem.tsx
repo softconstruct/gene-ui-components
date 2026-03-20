@@ -7,7 +7,7 @@ import { FolderOpen, IconProps, LineSlash } from "@geneui/icons";
 import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
 
-import { BreadcrumbContext, IBreadcrumbClickItem } from "./Breadcrumb";
+import { BreadcrumbContext } from "./Breadcrumb";
 import { BREADCRUMB_ICON_SIZE, BREADCRUMB_SEPARATOR_SIZE } from "./Breadcrumb.constants";
 
 interface IBreadcrumbItemProps {
@@ -29,7 +29,7 @@ interface IBreadcrumbItemProps {
 const BreadcrumbItem: FC<IBreadcrumbItemProps> = ({ path, title, Icon }) => {
     const { iconOnly, isLastItem, render, onClick } = useContext(BreadcrumbContext);
 
-    const itemProps: IBreadcrumbClickItem = { path, title };
+    const itemProps: IBreadcrumbItemProps = { path, title, Icon };
 
     const onClickHandler = () => {
         if (onClick && !isLastItem) {

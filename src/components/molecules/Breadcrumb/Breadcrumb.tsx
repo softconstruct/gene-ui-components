@@ -25,8 +25,6 @@ type IBreadcrumbRender = (linkData: {
     Icon?: FC<IconProps>;
 }) => ReactNode;
 
-type IBreadcrumbClickItem = Pick<IBreadcrumbItemProps, "title" | "path">;
-
 interface IBreadcrumbProps {
     /**
      * Additional class for the parent element.
@@ -48,7 +46,7 @@ interface IBreadcrumbProps {
     /**
      * Called when a breadcrumb item is clicked.
      */
-    onClick?: (item: IBreadcrumbClickItem) => void;
+    onClick?: (item: IBreadcrumbItemProps) => void;
     /**
      * An array of breadcrumb items to display, in order from root to current page.
      * Each object conforms to the `IBreadcrumbItemProps` interface.
@@ -72,7 +70,7 @@ interface IBreadcrumbContextProps {
     iconOnly?: boolean;
     isLastItem?: boolean;
     render?: IBreadcrumbRender;
-    onClick?: (item: IBreadcrumbClickItem) => void;
+    onClick?: (item: IBreadcrumbItemProps) => void;
 }
 
 export const BreadcrumbContext = createContext<IBreadcrumbContextProps>({} as IBreadcrumbContextProps);
@@ -82,7 +80,7 @@ interface BreadcrumbItemWrapperProps {
     iconOnly: boolean;
     isLastItem: boolean;
     render?: IBreadcrumbRender;
-    onClick?: (item: IBreadcrumbClickItem) => void;
+    onClick?: (item: IBreadcrumbItemProps) => void;
 }
 
 const BreadcrumbItemWrapper: FC<BreadcrumbItemWrapperProps> = ({ props, iconOnly, isLastItem, render, onClick }) => {
@@ -164,10 +162,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
                 ? menuItems[menuItem.id]
                 : menuItems.find((item) => (item.path || item.title) === menuItem.id);
         if (selectedItem && onClick) {
-            onClick({
-                title: selectedItem.title,
-                path: selectedItem.path
-            });
+            onClick(selectedItem);
         }
     };
 
@@ -281,4 +276,4 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
     );
 };
 
-export { IBreadcrumbProps, IBreadcrumbClickItem, Breadcrumb as default };
+export { IBreadcrumbProps, Breadcrumb as default };
