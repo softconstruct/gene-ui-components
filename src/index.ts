@@ -71,6 +71,7 @@ export { default as InteractiveCard, IInteractiveCardProps } from "./components/
 export { default as Section, ISectionProps } from "./components/molecules/Section";
 export { default as Image, IImageProps } from "./components/molecules/Image";
 export { default as OTPField, IOTPFieldProps } from "./components/molecules/OTPField";
+export { default as PageHeader } from "./components/molecules/PageHeader";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
