@@ -16,7 +16,7 @@ import useContainerSize from "@hooks/useContainerSize";
 import "./Breadcrumb.scss";
 
 import { BREADCRUMB_SEPARATOR_SIZE } from "./Breadcrumb.constants";
-import { calculateVisibilityConfig, VisibilityConfig } from "./Breadcrumb.helpers";
+import { calculateVisibilityConfig, getBreadcrumbPathKey, VisibilityConfig } from "./Breadcrumb.helpers";
 
 type IBreadcrumbRender = (linkData: {
     path?: string;
@@ -105,7 +105,7 @@ const BreadcrumbItemWrapper: FC<BreadcrumbItemWrapperProps> = ({ props, iconOnly
  * Breadcrumb component is a navigational aid that displays the user's current location within a website or application. It provides a trail of links back to the starting or entry point, allowing users to easily navigate through the hierarchical structure of the site. Breadcrumbs enhance usability by offering a clear path for users to trace their steps and return to previous sections.
  */
 const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = false, render, onClick }) => {
-    const [menuPropsForPopover, setMenuPropsForPopover] = useState<Record<string, unknown>>({});
+    const [menuPropsForPopover, setMenuPropsForPopover] = useState({});
     const measureListRef = useRef<HTMLUListElement>(null);
 
     const { containerRef, sizes } = useContainerSize<HTMLDivElement>({ debounceWait: 100 });
@@ -128,15 +128,15 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
     const shouldShowEllipsis = itemsCount > 1 && !fitAll;
 
     const { visibleFirstItems, visibleLastItems, menuItems } = useMemo(() => {
-        if (!items || itemsCount === 0) {
+        if (itemsCount === 0) {
             return { visibleFirstItems: [], visibleLastItems: [], menuItems: [] };
         }
 
-        const total = itemsCount;
-        const lastItem = items[total - 1];
+        const itemsTotal = itemsCount;
+        const lastItem = items[itemsTotal - 1];
 
         if (!shouldShowEllipsis) {
-            const firstVisible = items.slice(0, total - 1);
+            const firstVisible = items.slice(0, itemsTotal - 1);
             const lastVisible = [lastItem];
             return {
                 visibleFirstItems: firstVisible,
@@ -147,7 +147,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
 
         const visibleFirst = items.slice(0, firstCount);
         const visibleLast = items.slice(-lastCount);
-        const menuItemsSlice = items.slice(firstCount, total - lastCount);
+        const menuItemsSlice = items.slice(firstCount, itemsTotal - lastCount);
 
         return {
             visibleFirstItems: visibleFirst,
@@ -160,7 +160,7 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
         const selectedItem =
             typeof menuItem.id === "number"
                 ? menuItems[menuItem.id]
-                : menuItems.find((item) => (item.path || item.title) === menuItem.id);
+                : menuItems.find(({ path, title }) => (path || title) === menuItem.id);
         if (selectedItem && onClick) {
             onClick(selectedItem);
         }
@@ -182,24 +182,11 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
     return (
         <div ref={containerRef} className={classNames("breadcrumb", className)}>
             {/* Hidden measurement DOM: all items + ellipsis for width calculation */}
-            <div
-                className="breadcrumb__measure"
-                aria-hidden
-                style={{
-                    position: "absolute",
-                    visibility: "hidden",
-                    pointerEvents: "none",
-                    left: 0,
-                    top: 0
-                }}
-            >
+            <div className="breadcrumb__measure breadcrumb__measure_hidden" aria-hidden>
                 <ul ref={measureListRef} className="breadcrumb__list">
                     {items.map((item, index) => {
                         const isLast = index === items.length - 1;
-                        const pathKey = items
-                            .slice(0, index + 1)
-                            .map((i) => i.path ?? i.title)
-                            .join("/");
+                        const pathKey = getBreadcrumbPathKey(items, index);
                         return (
                             <BreadcrumbItemWrapper
                                 key={`measure-${pathKey}`}

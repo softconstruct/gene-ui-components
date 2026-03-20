@@ -21,6 +21,16 @@
         white-space: nowrap;
     }
 
+    &__measure {
+        &_hidden {
+            position: absolute;
+            visibility: hidden;
+            pointer-events: none;
+            left: 0;
+            top: 0;
+        }
+    }
+
     &__link {
         $that: &;
 

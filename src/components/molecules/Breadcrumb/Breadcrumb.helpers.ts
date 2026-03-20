@@ -125,3 +125,19 @@ export const calculateVisibilityConfig = (
     const { firstCount, lastCount } = findBestVisibilitySplit(measurements);
     return { fitAll: false, firstCount, lastCount };
 };
+
+type BreadcrumbKeyItem = {
+    path?: string;
+    title: string;
+};
+
+/**
+ * Builds a stable path key for a breadcrumb item based on its position in the trail.
+ * Used for measurement DOM keys (and avoids generating ids per render).
+ */
+export function getBreadcrumbPathKey(items: BreadcrumbKeyItem[], index: number): string {
+    return items
+        .slice(0, index + 1)
+        .map((item) => item.path ?? item.title)
+        .join("/");
+}
