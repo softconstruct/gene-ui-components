@@ -20,9 +20,6 @@ const meta: Meta<IBreadcrumbProps> = {
         iconOnly: args({ control: "boolean", ...propCategory.appearance }),
         render: args({ control: "false", ...propCategory.content }),
         onClick: args({ control: "false", ...propCategory.action })
-    },
-    args: {
-        // fill Breadcrumb component args
     }
 };
 

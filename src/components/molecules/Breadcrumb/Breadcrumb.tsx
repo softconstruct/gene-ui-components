@@ -156,6 +156,24 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
         };
     }, [items, itemsCount, shouldShowEllipsis, firstCount, lastCount]);
 
+    const menuItemRender = useMemo(() => {
+        if (!render) return undefined;
+
+        return ({ id, title }: { id: number | string; title?: string }) => {
+            if (typeof id !== "number") return render({ title, isActive: false });
+
+            const item = menuItems[id];
+            if (!item) return render({ title, isActive: false });
+
+            return render({
+                path: item.path,
+                title: item.title,
+                isActive: false,
+                Icon: item.Icon
+            });
+        };
+    }, [render, menuItems]);
+
     const menuSelectHandler = (menuItem: IMenuItemProps) => {
         const selectedItem =
             typeof menuItem.id === "number"
@@ -230,19 +248,8 @@ const Breadcrumb: FC<IBreadcrumbProps> = ({ className, items = [], iconOnly = fa
                             {menuItems.map((item, index) => {
                                 const itemId = (item.path || item.title) as string;
                                 const key = `${itemId}-${index}`;
-                                const linkData = {
-                                    path: item.path,
-                                    title: item.title,
-                                    isActive: false,
-                                    Icon: item.Icon
-                                };
                                 return (
-                                    <MenuItem
-                                        key={key}
-                                        id={index}
-                                        IconBefore={item.Icon}
-                                        render={render ? () => render(linkData) : undefined}
-                                    >
+                                    <MenuItem key={key} id={index} IconBefore={item.Icon} render={menuItemRender}>
                                         {item.title}
                                     </MenuItem>
                                 );
