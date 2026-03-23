@@ -37,7 +37,7 @@ export const Default: Story = {};
 export const WithRecentColors: Story = {
     render: (props) => <ColorPicker {...props} />,
     args: {
-        recentColors: ["#000000", "#ffff00", "#ff0000"],
+        recentColors: ["", "#000000", "#ffff00", "#ff0000", "rgb(20, 50, 30)"],
         open: true,
         label: "Recent colors"
     }

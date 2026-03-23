@@ -18,3 +18,8 @@ export interface RGBA extends RGB {
     /** The alpha channel value representing opacity, scaled from 0 (transparent) to 1 (opaque). */
     a: number;
 }
+
+/**
+ * The preferred color syntax format to display in the input fields.
+ */
+export type ColorFormat = "rgb" | "hex";
