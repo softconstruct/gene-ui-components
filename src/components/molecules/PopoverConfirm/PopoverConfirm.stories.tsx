@@ -31,7 +31,6 @@ const meta: Meta<IPopoverConfirmProps> = {
         status: args({ control: "select", ...propCategory.states }),
         actions: args({ control: "false", ...propCategory.functionality }),
         setProps: args({ control: "false", ...propCategory.functionality }),
-        trigger: args({ control: "select", ...propCategory.functionality }),
         onOpenChange: args({ control: "false", ...propCategory.action }),
         onConfirm: args({ control: "false", ...propCategory.action }),
         onCancel: args({ control: "false", ...propCategory.action })

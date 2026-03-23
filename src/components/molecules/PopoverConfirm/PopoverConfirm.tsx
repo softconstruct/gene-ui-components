@@ -57,7 +57,6 @@ interface IPopoverConfirmProps {
     onOpenChange?: (isOpen: boolean) => void;
     /**
      * Visual status of the confirm dialog. Changes the header icon and the primary button appearance.<br/>
-     * Possible values: `error | warning`
      * @default "warning"
      */
     status?: "error" | "warning";
@@ -67,7 +66,6 @@ interface IPopoverConfirmProps {
     defaultOpen?: boolean;
     /**
      * Define width and height of the popover.<br>
-     * Possible values: `medium | small`
      * @default "medium"
      */
     size?: "medium" | "small";
@@ -107,12 +105,6 @@ interface IPopoverConfirmProps {
      */
     open?: boolean;
     /**
-     * Determines how the popover is triggered.
-     * Can be either "click" or "hover".
-     * @default "click"
-     */
-    trigger?: "click" | "hover";
-    /**
      * Custom action buttons to display in the footer.
      * If provided, this will override the default secondary/primary button behavior.
      * If appearance is not specified for an action, it defaults to "primary".
@@ -150,7 +142,6 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     position = "bottom-center",
     setProps,
     disableReposition = false,
-    trigger = "click",
     actions
 }) => {
     const [isOpenState, setIsOpenState] = useState(defaultOpen);
@@ -229,7 +220,6 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
                 title={title}
                 withArrow
                 disableReposition={disableReposition}
-                trigger={trigger}
                 hasCloseButton={false}
                 Icon={headerIcon}
                 mobileHeightMode="fit"
