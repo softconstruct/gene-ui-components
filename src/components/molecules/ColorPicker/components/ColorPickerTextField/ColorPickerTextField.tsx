@@ -52,46 +52,43 @@ const ColorPickerTextField: FC<IColorPickerTextFieldProps> = ({
     onAlphaChange,
     onPickerOpen,
     className
-}) => {
-    console.log("AlphaEnabled: ", alphaEnabled);
-    return (
-        <div className={classNames("colorPickerTextField", className)}>
-            <div className="colorPickerTextField__wrapper">
-                <div className="colorPickerTextField__content">
-                    <ColorIndicator size={size} onClick={() => onPickerOpen(true)} color={value} alpha={alpha} />
-                    <div className="colorPickerTextField__value">
+}) => (
+    <div className={classNames("colorPickerTextField", className)}>
+        <div className="colorPickerTextField__wrapper">
+            <div className="colorPickerTextField__content">
+                <ColorIndicator size={size} onClick={() => onPickerOpen(true)} color={value} alpha={alpha} />
+                <div className="colorPickerTextField__value">
+                    <input
+                        id={id}
+                        type="text"
+                        autoComplete="off"
+                        placeholder={placeholder}
+                        value={value}
+                        className={classNames("colorPickerTextField__input", `colorPickerTextField__input_${size}`)}
+                        onChange={onChange}
+                    />
+                </div>
+            </div>
+            {alphaEnabled && (
+                <>
+                    <Divider direction="vertical" className="colorPickerTextField__divider" />
+                    <div className="colorPickerTextField__percent">
                         <input
-                            id={id}
                             type="text"
                             autoComplete="off"
-                            placeholder={placeholder}
-                            value={value}
-                            className={classNames("colorPickerTextField__input", `colorPickerTextField__input_${size}`)}
-                            onChange={onChange}
+                            placeholder="100"
+                            value={alpha}
+                            className="colorPickerTextField__input"
+                            onChange={onAlphaChange}
                         />
-                    </div>
-                </div>
-                {alphaEnabled && (
-                    <>
-                        <Divider direction="vertical" className="colorPickerTextField__divider" />
-                        <div className="colorPickerTextField__percent">
-                            <input
-                                type="text"
-                                autoComplete="off"
-                                placeholder="100"
-                                value={alpha}
-                                className="colorPickerTextField__input"
-                                onChange={onAlphaChange}
-                            />
-                            <div className="colorPickerTextField__icon">
-                                <Percent size={20} />
-                            </div>
+                        <div className="colorPickerTextField__icon">
+                            <Percent size={20} />
                         </div>
-                    </>
-                )}
-            </div>
+                    </div>
+                </>
+            )}
         </div>
-    );
-};
+    </div>
+);
 
 export default ColorPickerTextField;

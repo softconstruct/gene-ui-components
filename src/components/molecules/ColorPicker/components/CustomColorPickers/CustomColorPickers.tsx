@@ -1,9 +1,10 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 
+import { RGBA } from "@components/molecules/ColorPicker/types";
+
 // Styles
 import "./CustomColorPickers.scss";
 
-import type { RGBA } from "../../ColorPicker";
 import { hexToRgb, rgbToHex } from "../../utils";
 
 type HexColorPickerProps = {

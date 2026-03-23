@@ -7,9 +7,9 @@ import { RGB, RGBA } from "./types";
  * @returns A formatted HEX string (e.g., "#ffffff").
  */
 const rgbToHex = (val: RGB | RGBA): string => {
-    const r = val.r.toString(16).padStart(2, "0");
-    const g = val.g.toString(16).padStart(2, "0");
-    const b = val.b.toString(16).padStart(2, "0");
+    const r = Number(val.r).toString(16).padStart(2, "0");
+    const g = Number(val.g).toString(16).padStart(2, "0");
+    const b = Number(val.b).toString(16).padStart(2, "0");
 
     return `#${r}${g}${b}`;
 };

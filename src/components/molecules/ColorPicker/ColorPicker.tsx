@@ -13,7 +13,7 @@ import {
     RgbaColorPicker
 } from "@components/molecules/ColorPicker/components/CustomColorPickers/CustomColorPickers";
 // Constants
-import { ALPHA_SCALE_MAX, DEFAULT_RGBA, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
+import { ALPHA_SCALE_MAX, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
 import TextField from "@components/molecules/TextField";
 
 // Hooks
@@ -36,6 +36,10 @@ interface IColorPickerProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Additional class for the color picker input wrapper.
+     */
+    fieldClassName?: string;
     /**
      * Determines whether the alpha (transparency) slider and input fields are active.
      * When `true`, the picker allows users to select an opacity level.
@@ -110,6 +114,7 @@ interface IColorPickerProps {
  */
 const ColorPicker: FC<IColorPickerProps> = ({
     className,
+    fieldClassName,
     alphaEnabled = true,
     alphaValue,
     value,
@@ -147,7 +152,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
             return { ...parsed, a: hasExplicitAlpha ? parsed.a : (alphaValue ?? ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX };
         }
 
-        return { ...DEFAULT_RGBA };
+        return { r: "", g: "", b: "", a: 1 };
     });
 
     const hex = useMemo(() => rgbToHex(rgba), [defaultColor, rgba]);
@@ -155,9 +160,12 @@ const ColorPicker: FC<IColorPickerProps> = ({
 
     const [localHex, setLocalHex] = useState<string>(hex);
 
-    const emitChange = (next: RGBA) => {
-        onChange?.(rgbToHex(next), next, Math.round(next.a * ALPHA_SCALE_MAX));
-    };
+    const emitChange = useCallback(
+        (next: RGBA) => {
+            onChange?.(rgbToHex(next), next, Math.round(next.a * ALPHA_SCALE_MAX));
+        },
+        [onChange]
+    );
 
     const updateRGBA = (updater: (prev: RGBA) => RGBA) => {
         setRgba((prev) => {
@@ -207,20 +215,23 @@ const ColorPicker: FC<IColorPickerProps> = ({
         }));
     };
 
-    const handleHexInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setLocalHex(newValue);
+    const handleHexInputChange = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+            const newValue = e.target.value;
+            setLocalHex(newValue);
 
-        const rgb = hexToRgb(newValue);
+            const rgb = hexToRgb(newValue);
 
-        if (rgb) {
-            setRgba((prev) => ({ ...rgb, a: prev.a }));
-            emitChange({ ...rgb, a: rgba.a });
-            return;
-        }
-        setRgba({ r: "", g: "", b: "", a: 1 });
-        emitChange({ r: "", g: "", b: "", a: 1 });
-    };
+            if (rgb) {
+                setRgba((prev) => ({ ...rgb, a: prev.a }));
+                emitChange({ ...rgb, a: rgba.a });
+                return;
+            }
+            setRgba({ r: "", g: "", b: "", a: 1 });
+            emitChange({ r: "", g: "", b: "", a: 1 });
+        },
+        [rgba.a, emitChange]
+    );
 
     const handleRGBInputChange = (key: keyof RGB, colorValue: number) => {
         updateRGBA((prev) => ({
@@ -229,16 +240,22 @@ const ColorPicker: FC<IColorPickerProps> = ({
         }));
     };
 
-    const handleAlphaChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const nextAlpha = clamp(Number(e.target.value), 0, ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX;
-        updateRGBA((prev) => ({ ...prev, a: nextAlpha }));
-    };
+    const handleAlphaChange = useCallback(
+        (e: ChangeEvent<HTMLInputElement>) => {
+            const nextAlpha = clamp(Number(e.target.value), 0, ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX;
+            updateRGBA((prev) => ({ ...prev, a: nextAlpha }));
+        },
+        [updateRGBA]
+    );
 
-    const handleOpen = (openState: boolean) => {
-        if (!isOpenControlled) {
-            setIsOpen(openState);
-        }
-    };
+    const handleOpen = useCallback(
+        (openState: boolean) => {
+            if (!isOpenControlled) {
+                setIsOpen(openState);
+            }
+        },
+        [isOpenControlled]
+    );
 
     useEffect(() => {
         if (!isColorControlled || !value) return;
@@ -312,7 +329,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
             />
             <ColorPickerTextField
                 id="colorPickerTextField"
-                className="changeMe"
+                className={fieldClassName}
                 value={localHex}
                 alpha={alpha}
                 alphaEnabled={isAlphaEnabled}
@@ -367,6 +384,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                 <div className="colorPicker__rgbInputs">
                                     {RGB_CHANNELS.map((channel) => (
                                         <TextField
+                                            key={channel}
                                             size="small"
                                             value={rgba[channel]}
                                             autoComplete="off"
@@ -395,7 +413,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
                         {recentColors && recentColors?.length > 0 && (
                             <div className="colorPicker__recents">
                                 {recentColors.map((recentColor) => (
-                                    <div className="colorPicker__recentColorWrapper">
+                                    <div className="colorPicker__recentColorWrapper" key={recentColor}>
                                         <button
                                             key={recentColor}
                                             type="button"

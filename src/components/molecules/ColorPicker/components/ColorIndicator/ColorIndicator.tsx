@@ -1,6 +1,9 @@
 import React, { FC } from "react";
 import classNames from "classnames";
 
+// Constants
+import { ALPHA_SCALE_MAX } from "@components/molecules/ColorPicker/constants";
+
 // Styles
 import "./ColorIndicator.scss";
 
@@ -52,7 +55,7 @@ const ColorIndicator: FC<IColorIndicator> = ({ onClick, color, size, alpha = 100
                 })}
                 style={{
                     backgroundColor: localRGB
-                        ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})`
+                        ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha / ALPHA_SCALE_MAX})`
                         : "transparent"
                 }}
             />
