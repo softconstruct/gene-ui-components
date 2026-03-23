@@ -185,8 +185,8 @@ const ColorPicker: FC<IColorPickerProps> = ({
             emitChange({ ...rgb, a: rgba.a });
             return;
         }
-        setRgba({ r: "", g: "", b: "", a: 100 });
-        emitChange({ r: "", g: "", b: "", a: 100 });
+        setRgba({ r: "", g: "", b: "", a: 1 });
+        emitChange({ r: "", g: "", b: "", a: 1 });
     };
 
     const handleRGBInputChange = (key: keyof RGB, colorValue: number) => {
