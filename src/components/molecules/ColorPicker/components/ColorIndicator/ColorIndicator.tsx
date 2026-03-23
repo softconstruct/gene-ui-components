@@ -7,28 +7,35 @@ import "./ColorIndicator.scss";
 // Utils
 import { hexToRgb } from "../../utils";
 
+/**
+ * Configuration properties for the ColorIndicator component.
+ */
 interface IColorIndicator {
     /**
-     * Callback triggers when color indicator is clicked.
+     * Callback function triggered when the color indicator is clicked.
      */
     onClick?: () => void;
     /**
-     * Color that indicator should display.
+     * The color value (in HEX or RGB format) that the indicator should display.
      */
     color: string;
     /**
-     * The size of the color indicator.
+     * The visual size of the color indicator.
+     * @default "medium"
      */
     size?: "small" | "medium" | "large";
     /**
-     * The alpha value, used to display correct color (alpha value envolved).
+     * The alpha (transparency) value used to display the correct background color opacity.
+     * Scaled from 0 to 100.
+     * @default 100
      */
     alpha?: number;
 }
 
 /**
- * Subcomponent for ColorPicker.
- * Used to show color indicator in TextField component.
+ * Visual color indicator subcomponent for the ColorPicker.
+ * Renders a small swatch reflecting the currently selected color and opacity,
+ * typically displayed inside or alongside the main text field.
  */
 const ColorIndicator: FC<IColorIndicator> = ({ onClick, color, size, alpha = 100 }) => {
     const localRGB = hexToRgb(color);
@@ -44,7 +51,9 @@ const ColorIndicator: FC<IColorIndicator> = ({ onClick, color, size, alpha = 100
                     colorIndicator__wrapper_hasActive: !localRGB
                 })}
                 style={{
-                    backgroundColor: localRGB ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})` : "#fff"
+                    backgroundColor: localRGB
+                        ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha})`
+                        : "transparent"
                 }}
             />
         </button>

@@ -27,6 +27,9 @@ import { RGB, RGBA } from "./types";
 // Utils
 import { clamp, hexToRgb, rgbToHex } from "./utils";
 
+/**
+ * Configuration properties for the ColorPicker component.
+ */
 interface IColorPickerProps {
     /**
      * Additional class for the parent element.
@@ -34,59 +37,68 @@ interface IColorPickerProps {
      */
     className?: string;
     /**
-     * Whether the alpha field slider should be enabled.
-     * When it's true inside picker appears slider to choose alpha value.
+     * Determines whether the alpha (transparency) slider and input fields are active.
+     * When `true`, the picker allows users to select an opacity level.
+     * @default false
      */
     alphaEnabled?: boolean;
     /**
-     * The selected alpha value.
+     * The controlled alpha value, mapped on a scale from 0 to 100.
+     * @default 100
      */
     alphaValue?: number;
     /**
-     * Selected color value.
+     * The controlled color value (HEX string).
+     * If provided, the component operates in controlled mode and ignores `defaultColor`.
      */
     value?: string;
     /**
-     * Label of component, displayed above the input field.
+     * The text label rendered above the primary color input field.
      */
     label?: string;
     /**
-     * The size of the picker component.
+     * Specifies the visual size variant of the color picker inputs and indicators.
+     * @default "medium"
      */
     size?: "small" | "medium" | "large";
     /**
-     * Additional informational text displayed alongside the label.
-     * When provided, an info icon will be displayed next to the label,
-     * which can be hovered over to reveal the additional context or instructions via a tooltip.
+     * Supplementary description text for the label.
+     * Renders an information icon next to the label that displays this text within a tooltip upon hover.
      */
     labelInfoText?: string;
     /**
-     * Placeholder value, displayed when component don't have any value.
+     * Ghost text displayed in the primary color input field when it is empty.
      */
     placeholder?: string;
     /**
-     * Whether picker is open.
+     * The explicitly defined open/closed state of the popover palette.
+     * Passing this prop switches the popover to a controlled state.
      */
     open?: boolean;
     /**
-     * Default selected color for color picker.
+     * The uncontrolled default color value utilized upon initial mount.
      */
     defaultColor?: string;
     /**
-     * Recent colors that should be displayed inside popover of picker.
+     * An array of valid HEX strings representing previously selected or favorite colors.
+     * These are rendered as clickable swatches beneath the main palette.
      */
     recentColors?: string[];
     /**
-     * Format of color.
-     * Possible values: `rgb | hex`.
+     * The preferred color syntax format to display in the input fields.
+     * @default "hex"
      */
     format?: "rgb" | "hex";
     /**
-     * Callback which is getting triggered when color is getting changed.
+     * Callback fired continuously as the user modifies the color.
+     * * @param hex - The 6 or 8 character HEX string representation of the color.
+     * @param rgba - The parsed RGBA/RGB object representing the current state.
+     * @param alpha - The alpha integer value mapped from 0 to 100.
      */
     onChange?: (hex?: string, rgba?: RGBA | RGB | null, alpha?: number) => void;
     /**
-     * Callback which is getting triggered when user clicks outside of picker popover.
+     * Callback fired when a user clicks outside the bounds of an open picker popover.
+     * Used primarily to close the popover in controlled setups.
      */
     onOutsideClick?: () => void;
 }
