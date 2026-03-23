@@ -111,7 +111,7 @@ interface IColorPickerProps {
 const ColorPicker: FC<IColorPickerProps> = ({
     className,
     alphaEnabled = true,
-    alphaValue = ALPHA_SCALE_MAX,
+    alphaValue,
     value,
     defaultColor,
     recentColors,
@@ -144,14 +144,14 @@ const ColorPicker: FC<IColorPickerProps> = ({
 
         if (parsed) {
             const hasExplicitAlpha = initialColor?.toLowerCase().startsWith("rgba");
-            return { ...parsed, a: hasExplicitAlpha ? parsed.a : alphaValue / ALPHA_SCALE_MAX };
+            return { ...parsed, a: hasExplicitAlpha ? parsed.a : (alphaValue ?? ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX };
         }
 
         return { ...DEFAULT_RGBA };
     });
 
-    const hex = useMemo(() => rgbToHex(rgba), [rgba]);
-    const alpha = useMemo(() => Math.round(rgba.a * ALPHA_SCALE_MAX), [defaultColor, rgba.a]);
+    const hex = useMemo(() => rgbToHex(rgba), [defaultColor, rgba]);
+    const alpha = useMemo(() => Math.round(rgba.a * ALPHA_SCALE_MAX), [rgba.a]);
 
     const [localHex, setLocalHex] = useState<string>(hex);
 
@@ -179,7 +179,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
             } else {
                 updateRGBA(() => ({
                     ...colorValue,
-                    a: isAlphaEnabled ? colorValue.a : alphaValue / ALPHA_SCALE_MAX
+                    a: isAlphaEnabled ? colorValue.a : (alphaValue ?? ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX
                 }));
             }
         },
@@ -263,9 +263,6 @@ const ColorPicker: FC<IColorPickerProps> = ({
         if (!parsed) return;
 
         const hasExplicitAlpha = defaultColor.toLowerCase().startsWith("rgba");
-        if (hasExplicitAlpha && !isAlphaEnabled) {
-            setIsAlphaEnabled(true);
-        }
 
         setRgba((prev) => ({
             r: parsed.r,
@@ -277,6 +274,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
     }, [defaultColor, isColorControlled]);
 
     useEffect(() => {
+        if (alphaValue === undefined) return;
         setRgba((prev) => ({
             ...prev,
             a: clamp(alphaValue, 0, ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX
@@ -291,6 +289,10 @@ const ColorPicker: FC<IColorPickerProps> = ({
     useEffect(() => {
         setFormatState(format);
     }, [format]);
+
+    useEffect(() => {
+        setIsAlphaEnabled(alphaEnabled);
+    }, [alphaEnabled]);
 
     useClickOutside(() => {
         if (!isOpenControlled) {
@@ -327,6 +329,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
                 position="bottom-left"
                 open={isOpen}
                 setProps={setPropsForPopover}
+                size={size}
             >
                 <PopoverBody withPadding={false}>
                     <div className="colorPicker__wrapper">

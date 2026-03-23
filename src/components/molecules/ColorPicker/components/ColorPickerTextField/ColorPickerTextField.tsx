@@ -53,6 +53,7 @@ const ColorPickerTextField: FC<IColorPickerTextFieldProps> = ({
     onPickerOpen,
     className
 }) => {
+    console.log("AlphaEnabled: ", alphaEnabled);
     return (
         <div className={classNames("colorPickerTextField", className)}>
             <div className="colorPickerTextField__wrapper">
@@ -65,7 +66,7 @@ const ColorPickerTextField: FC<IColorPickerTextFieldProps> = ({
                             autoComplete="off"
                             placeholder={placeholder}
                             value={value}
-                            className="colorPickerTextField__input"
+                            className={classNames("colorPickerTextField__input", `colorPickerTextField__input_${size}`)}
                             onChange={onChange}
                         />
                     </div>
