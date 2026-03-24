@@ -6,6 +6,8 @@ import { Download, Globe, Heart, Magnifier } from "@geneui/icons";
 // Components
 import Button from "@components/atoms/Button";
 import Breadcrumb from "@components/molecules/Breadcrumb";
+import ButtonGroup from "@components/molecules/ButtonGroup";
+import TextField from "@components/molecules/TextField";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -42,12 +44,18 @@ const breadcrumbElement = (
 );
 
 const iconActionsElement = (
-    <>
+    <ButtonGroup>
         <Button layout="text" Icon={Magnifier} aria-label="Search" />
         <Button layout="text" Icon={Globe} aria-label="Language" />
         <Button layout="text" Icon={Heart} aria-label="Favorites" />
         <Button layout="text" Icon={Download} aria-label="Download" />
-    </>
+    </ButtonGroup>
+);
+
+const textActionsElement = (
+    <div style={{ width: "24rem", paddingBottom: "0.8rem" }}>
+        <TextField placeholder="Search" defaultValue="" onChange={() => null} IconBefore={Magnifier} />
+    </div>
 );
 
 export default meta;
@@ -67,11 +75,27 @@ export const WithBreadcrumb: Story = {
 
 export const WithContent: Story = {
     args: {
-        children: iconActionsElement
+        children: textActionsElement
     }
 };
 
-export const Fixed: Story = {
+export const Sticky: Story = {
+    render: (props) => (
+        <div
+            style={{
+                height: "26rem",
+                overflowY: "auto"
+                // border: "1px dashed var(--guit-sem-color-border-neutral-2)"
+            }}
+        >
+            <PageHeader {...props} fixed />
+            <div style={{ padding: "1.6rem" }}>
+                {Array.from({ length: 20 }, (_, index) => (
+                    <div key={index} style={{ padding: "0.8rem 0" }} />
+                ))}
+            </div>
+        </div>
+    ),
     args: {
         breadcrumb: breadcrumbElement,
         children: iconActionsElement,

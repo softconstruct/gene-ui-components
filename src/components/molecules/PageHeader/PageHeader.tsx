@@ -1,5 +1,8 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC, ReactElement, ReactNode } from "react";
 import classNames from "classnames";
+
+// Components
+import Breadcrumb from "@components/molecules/Breadcrumb";
 
 // Hooks
 import useDeviceInfo from "@hooks/useDeviceInfo";
@@ -14,15 +17,15 @@ interface IPageHeaderProps {
      */
     className?: string;
     /**
-     * Optional breadcrumb element shown above header content.
+     * Optional Breadcrumb component shown above header content.
      */
-    breadcrumb?: ReactNode;
+    breadcrumb?: ReactElement<typeof Breadcrumb>;
     /**
      * Optional header content such as title, subtitle, actions, or custom layout.
      */
     children?: ReactNode;
     /**
-     * Adds raised shadow style when `true`.
+     * Makes the component sticky and applies raised shadow style when `true`.
      */
     fixed?: boolean;
 }
