@@ -62,6 +62,23 @@
             var(--guit-sem-color-border-neutral-2);
         border-radius: var(--guit-ref-radius-4xsmall);
 
+        &_size {
+            &_small {
+                width: 2rem;
+                height: 2rem;
+            }
+
+            &_medium {
+                width: 2.4rem;
+                height: 2.4rem;
+            }
+
+            &_large {
+                width: 3.2rem;
+                height: 3.2rem;
+            }
+        }
+
         &__empty {
             &::after {
                 content: "";

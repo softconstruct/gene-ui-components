@@ -417,9 +417,13 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                         <button
                                             key={recentColor}
                                             type="button"
-                                            className={classNames("colorPicker__recentColor", {
-                                                colorPicker__recentColor__empty: !recentColor
-                                            })}
+                                            className={classNames(
+                                                "colorPicker__recentColor",
+                                                `colorPicker__recentColor_size_${size}`,
+                                                {
+                                                    colorPicker__recentColor__empty: !recentColor
+                                                }
+                                            )}
                                             aria-label={`Select recent color ${recentColor}`}
                                             onClick={() => applyRecentColor(recentColor)}
                                             style={{
