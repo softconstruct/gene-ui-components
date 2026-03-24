@@ -1,11 +1,10 @@
 import React, { FC, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
-// Components
 import TextField from "@components/molecules/TextField";
 
-// Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import AutoCompleteItem from "./AutoCompleteItem";
 import AutoComplete, { IAutoCompleteProps } from "./index";
 
 const meta: Meta<IAutoCompleteProps> = {
@@ -43,9 +42,7 @@ const meta: Meta<IAutoCompleteProps> = {
         open: args({ control: "boolean", ...propCategory.states })
     },
     args: {
-        onOpenChange: () => {
-            console.log("onOpenChange");
-        },
+        onOpenChange: () => {},
         emptyText: "No results",
         loadingText: "Loading...",
         loading: false,
@@ -59,6 +56,24 @@ export default meta;
 
 type Story = StoryObj<IAutoCompleteProps>;
 
+const items = [
+    "Apple",
+    "Banana",
+    "Cherry",
+    "Date",
+    "Elderberry",
+    "Fig",
+    "Grape",
+    "Honeydew",
+    "Kiwi",
+    "Lemon",
+    "Mango",
+    "Nectarine",
+    "Orange",
+    "Papaya",
+    "Quince"
+];
+
 const StoryComponent: FC<IAutoCompleteProps> = (props) => {
     const [propsForPopover, setPropsForPopover] = useState({});
 
@@ -68,7 +83,11 @@ const StoryComponent: FC<IAutoCompleteProps> = (props) => {
                 <TextField placeholder="Search..." />
             </div>
             <AutoComplete {...props} setPropsForPopover={setPropsForPopover}>
-                {/* Placeholder - AutoCompleteItem will be added later */}
+                {items.map((item) => (
+                    <AutoCompleteItem key={item} id={item} onClick={() => console.log("Selected:", item)}>
+                        {item}
+                    </AutoCompleteItem>
+                ))}
             </AutoComplete>
         </div>
     );
@@ -76,4 +95,67 @@ const StoryComponent: FC<IAutoCompleteProps> = (props) => {
 
 export const Default: Story = {
     render: (props) => <StoryComponent {...props} />
+};
+
+export const WithFooter: Story = {
+    render: (props) => <StoryComponent {...props} />,
+    args: {
+        showMore: true,
+        showMoreLabel: "Show more",
+        onShowMore: () => console.log("Show more clicked")
+    }
+};
+
+const WithRenderStoryComponent: FC<IAutoCompleteProps> = (props) => {
+    const [propsForPopover, setPropsForPopover] = useState({});
+
+    return (
+        <div style={{ padding: "2rem", minHeight: "400px" }}>
+            <div {...propsForPopover} style={{ display: "inline-block", width: "100%" }}>
+                <TextField placeholder="Search pages..." />
+            </div>
+            <AutoComplete {...props} setPropsForPopover={setPropsForPopover}>
+                <AutoCompleteItem id="home" onClick={() => console.log("Home clicked")}>
+                    Home
+                </AutoCompleteItem>
+                <AutoCompleteItem
+                    id="profile"
+                    render={(itemData) => (
+                        // eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
+                        <a
+                            href={`/users/${itemData.id}`}
+                            aria-label="Go to Profile"
+                            onClick={(e) => {
+                                e.preventDefault();
+                            }}
+                        />
+                    )}
+                >
+                    Go to Profile
+                </AutoCompleteItem>
+                <AutoCompleteItem
+                    id="settings"
+                    render={(itemData) => (
+                        // eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
+                        <a
+                            href={`/settings/${itemData.id}`}
+                            aria-label="Settings Page"
+                            onClick={(e) => {
+                                e.preventDefault();
+                            }}
+                        />
+                    )}
+                >
+                    Settings Page
+                </AutoCompleteItem>
+                <AutoCompleteItem id="disabled-item" disabled>
+                    Disabled Item
+                </AutoCompleteItem>
+            </AutoComplete>
+        </div>
+    );
+};
+
+export const WithRender: Story = {
+    render: (props) => <WithRenderStoryComponent {...props} />
 };

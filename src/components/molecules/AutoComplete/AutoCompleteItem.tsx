@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react";
+import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
 import classNames from "classnames";
 
 interface IAutoCompleteItemProps {
@@ -23,17 +23,47 @@ interface IAutoCompleteItemProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Custom render function for the autocomplete item.<br/>
+     * Receives item data and should return a React element (e.g. `<a>`, router `<Link>`).<br/>
+     * The returned element will be cloned with autocomplete item classes, click handler, and disabled state injected automatically.
+     */
+    render?: (itemData: { id: number | string }) => ReactNode;
 }
 
 /**
  * AutoCompleteItem represents a single option inside the AutoComplete dropdown.
  */
-const AutoCompleteItem: FC<IAutoCompleteItemProps> = ({ id, children, disabled, onClick, className }) => {
+const AutoCompleteItem: FC<IAutoCompleteItemProps> = ({ id, children, disabled, onClick, className, render }) => {
+    if (render) {
+        const renderedElement = render({ id });
+
+        if (isValidElement(renderedElement)) {
+            const originalOnClick = (renderedElement.props as { onClick?: (event: React.MouseEvent) => void }).onClick;
+
+            const propsToApply = {
+                className: classNames("autoCompleteItem", renderedElement.props.className, className, {
+                    autoCompleteItem_disabled: disabled
+                }),
+                onClick: (event: React.MouseEvent) => {
+                    originalOnClick?.(event);
+                    if (!event.defaultPrevented) {
+                        onClick?.(event as React.MouseEvent<HTMLButtonElement>);
+                    }
+                },
+                disabled,
+                "data-id": id
+            };
+
+            return cloneElement(renderedElement, propsToApply, children);
+        }
+    }
+
     return (
         <button
             type="button"
             role="option"
-            aria-selected={false}
+            aria-selected="false"
             className={classNames("autoCompleteItem", className, {
                 autoCompleteItem_disabled: disabled
             })}

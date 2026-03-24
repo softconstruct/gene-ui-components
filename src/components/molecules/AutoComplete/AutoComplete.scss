@@ -4,6 +4,35 @@
     color: var(--guit-ref-color-magenta-500base);
     font-size: var(--guit-sem-font-caption-large-medium-font-size);
 
+    &__inner {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    &__scrollbar {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-3xsmall);
+        width: 100%;
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+        padding-top: var(--guit-ref-spacing-3xsmall);
+        padding-bottom: var(--guit-ref-spacing-3xsmall);
+        padding-inline-start: var(--guit-ref-spacing-4xsmall);
+    }
+
+    &__content {
+        font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+        font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+        font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+        line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+        padding-top: var(--guit-ref-spacing-3xsmall);
+        padding-bottom: var(--guit-ref-spacing-3xsmall);
+        padding-inline-end: var(--guit-ref-spacing-2xsmall);
+        padding-inline-start: var(--guit-ref-spacing-3xsmall);
+    }
+
     &__footer {
         flex: none;
         display: flex;
@@ -23,5 +52,50 @@
             padding-block: var(--guit-ref-spacing-3xsmall);
             padding-inline: var(--guit-ref-spacing-medium);
         }
+    }
+}
+
+.autoCompleteItem {
+    $this: &;
+
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 3.2rem;
+    color: var(--guit-sem-color-foreground-neutral-2);
+    user-select: none;
+    padding-inline-start: var(--guit-ref-spacing-medium);
+    padding-inline-end: var(--guit-ref-spacing-medium);
+    border-radius: var(--guit-ref-radius-3xsmall);
+
+    &:not(:last-of-type) {
+        margin-bottom: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &:hover {
+        background-color: var(--guit-sem-color-background-neutral-1-nudge-hover);
+    }
+
+    &:active {
+        background-color: var(--guit-sem-color-background-neutral-1-nudge-pressed);
+    }
+
+    &:focus-visible {
+        z-index: 1;
+    }
+
+    &_disabled {
+        pointer-events: none;
+        user-select: none;
+        color: var(--guit-sem-color-foreground-disabled);
+    }
+
+    &__label {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: start;
     }
 }

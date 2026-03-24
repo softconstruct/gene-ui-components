@@ -193,14 +193,12 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
         [toggleAutoCompleteOpen]
     );
 
-    // Keep the ref updated with the latest function
     enhanceTriggerPropsRef.current = enhanceTriggerProps;
 
     const setReferenceProps = useCallback(
         (value: SetStateAction<GenericObject>) => {
             const enhanceFn = enhanceTriggerPropsRef.current;
             if (!enhanceFn) {
-                // Fallback if ref is not set yet
                 if (typeof value === "function") {
                     setPropsForPopover((prev) => value(prev));
                 } else {
@@ -239,7 +237,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
             );
         }
         return (
-            <>
+            <div className="autoComplete__inner">
                 <Scrollbar className="autoComplete__scrollbar">
                     <div className={classNames("autoComplete", className, "autoComplete__content")}>{children}</div>
                 </Scrollbar>
@@ -251,7 +249,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
                         disabled={!hasChildren}
                     />
                 )}
-            </>
+            </div>
         );
     }, [children, className, emptyText, hasChildren, loading, loadingText, onShowMore, showMore, showMoreLabel]);
 
