@@ -18,8 +18,26 @@ describe("PageHeader ", () => {
         const className = "test-class";
         const wrapper = setup.setProps({ className });
 
-        expect(wrapper.hasClass(className)).toBeTruthy();
+        expect(wrapper.find(".pageHeader").hasClass(className)).toBeTruthy();
     });
 
-    // Your tests here
+    it("renders breadcrumb when passed", () => {
+        const wrapper = setup.setProps({ breadcrumb: <div className="test-breadcrumb">Breadcrumb</div> });
+
+        expect(wrapper.find(".pageHeader__breadcrumb").exists()).toBeTruthy();
+        expect(wrapper.find(".test-breadcrumb").exists()).toBeTruthy();
+    });
+
+    it("renders children content when passed", () => {
+        const wrapper = setup.setProps({ children: <div className="test-content">Header content</div> });
+
+        expect(wrapper.find(".pageHeader__content").exists()).toBeTruthy();
+        expect(wrapper.find(".test-content").exists()).toBeTruthy();
+    });
+
+    it("adds fixed modifier class when fixed is true", () => {
+        const wrapper = setup.setProps({ fixed: true });
+
+        expect(wrapper.find(".pageHeader").hasClass("pageHeader_fixed")).toBeTruthy();
+    });
 });

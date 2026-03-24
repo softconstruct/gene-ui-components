@@ -1,5 +1,52 @@
 .pageHeader {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    column-gap: var(--guit-ref-spacing-small);
+
+    &_fixed {
+        border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+        box-shadow: var(--shadowraisedbottomposition-x) var(--shadowraisedbottomposition-y)
+            var(--shadowraisedbottomblur) var(--shadowraisedbottomspread) var(--shadowraisedbottomrgba);
+    }
+
+    &_mobile {
+        flex-direction: column;
+        align-items: stretch;
+        row-gap: var(--guit-ref-spacing-small);
+    }
+
+    &__breadcrumb {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+
+        &:last-child {
+            flex-basis: 100%;
+        }
+    }
+
+    &__content {
+        display: flex;
+        align-items: center;
+        column-gap: var(--guit-ref-spacing-xsmall);
+        margin-inline-start: auto;
+        flex: 0 0 auto;
+        max-width: 100%;
+        white-space: nowrap;
+    }
+
+    &_mobile &__breadcrumb {
+        order: 1;
+        width: 100%;
+    }
+
+    &_mobile &__content {
+        order: 2;
+        width: 100%;
+        margin-inline-start: 0;
+        justify-content: flex-start;
+    }
 }

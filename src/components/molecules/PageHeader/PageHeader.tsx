@@ -1,5 +1,8 @@
-import React, { FC } from "react";
+import React, { FC, ReactNode } from "react";
 import classNames from "classnames";
+
+// Hooks
+import useDeviceInfo from "@hooks/useDeviceInfo";
 
 // Styles
 import "./PageHeader.scss";
@@ -10,14 +13,37 @@ interface IPageHeaderProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    // fill PageHeader component props interface
+    /**
+     * Optional breadcrumb element shown above header content.
+     */
+    breadcrumb?: ReactNode;
+    /**
+     * Optional header content such as title, subtitle, actions, or custom layout.
+     */
+    children?: ReactNode;
+    /**
+     * Adds raised shadow style when `true`.
+     */
+    fixed?: boolean;
 }
 
 /**
  * The Page Header component provides context and navigation aids at the top of a page. It typically includes the page title, breadcrumbs, and optional action buttons, search fields, or secondary navigation links.
  */
-const PageHeader: FC<IPageHeaderProps> = ({ className }) => {
-    return <div className={classNames("pageHeader", className)}>PageHeader</div>;
+const PageHeader: FC<IPageHeaderProps> = ({ className, breadcrumb, children, fixed = false }) => {
+    const { isMobileDevice } = useDeviceInfo();
+
+    return (
+        <div
+            className={classNames("pageHeader", className, {
+                pageHeader_fixed: fixed,
+                pageHeader_mobile: isMobileDevice
+            })}
+        >
+            {breadcrumb && <div className="pageHeader__breadcrumb">{breadcrumb}</div>}
+            {children && <div className="pageHeader__content">{children}</div>}
+        </div>
+    );
 };
 
 export { IPageHeaderProps, PageHeader as default };
