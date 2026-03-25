@@ -17,8 +17,6 @@ import "./ColorPickerTextField.scss";
 interface IColorPickerTextFieldProps {
     /** Unique identifier for the underlying input element. */
     id?: string;
-    /** Optional CSS class name for custom styling of the wrapper element. */
-    className?: string;
     /** Callback triggered when the primary color input value changes. */
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
     /** Callback triggered when the alpha (opacity) input value changes. */
@@ -50,8 +48,7 @@ const ColorPickerTextField: FC<IColorPickerTextFieldProps> = ({
     alphaEnabled,
     onChange,
     onAlphaChange,
-    onPickerOpen,
-    className
+    onPickerOpen
 }) => {
     const validateAlphaValue = (e: KeyboardEvent<HTMLInputElement>) => {
         if (["e", "E", "+", "-", "."].includes(e.key)) {
@@ -60,7 +57,7 @@ const ColorPickerTextField: FC<IColorPickerTextFieldProps> = ({
     };
 
     return (
-        <div className={classNames("colorPickerTextField", className)}>
+        <div className="colorPickerTextField">
             <div className="colorPickerTextField__wrapper">
                 <div className="colorPickerTextField__content">
                     <ColorIndicator size={size} onClick={() => onPickerOpen(true)} color={value} alpha={alpha} />

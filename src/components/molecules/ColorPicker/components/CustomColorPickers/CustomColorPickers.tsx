@@ -2,428 +2,491 @@ import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 
 import { RGBA } from "@components/molecules/ColorPicker/types";
 
-// Styles
 import "./CustomColorPickers.scss";
 
 import { hexToRgb, rgbToHex } from "../../utils";
 
-type HexColorPickerProps = {
+// ============================================================================
+// Interfaces & Types
+// ============================================================================
+
+/**
+ * Configuration properties for the HexColorPicker component.
+ */
+export interface IHexColorPickerProps {
+    /** The currently selected color in HEX format (e.g., "#ff0000"). */
     color: string;
+    /** Callback triggered when the user modifies the color. */
     onChange: (color: string) => void;
-};
-
-type RgbaColorPickerProps = {
-    color: RGBA;
-    onChange: (color: RGBA) => void;
-};
-
-interface HsvColor {
-    h: number; // 0 - 360
-    s: number; // 0 - 1
-    v: number; // 0 - 1
 }
 
-const rgbToHsv = (r: number | string, g: number | string, b: number | string): HsvColor => {
-    const rNorm = Number(r) / 255;
-    const gNorm = Number(g) / 255;
-    const bNorm = Number(b) / 255;
+/**
+ * Configuration properties for the RgbaColorPicker component.
+ */
+export interface IRgbaColorPickerProps {
+    /** The currently selected color in RGBA object format. */
+    color: RGBA;
+    /** Callback triggered when the user modifies the color or opacity. */
+    onChange: (color: RGBA) => void;
+}
 
-    const max = Math.max(rNorm, gNorm, bNorm);
-    const min = Math.min(rNorm, gNorm, bNorm);
-    const delta = max - min;
+/**
+ * Internal representation of a color in the HSV (Hue, Saturation, Value) color space.
+ * This format is mathematically required to accurately calculate 2D palette coordinates.
+ */
+export interface IHsvColor {
+    /** The hue degree on the color wheel (Range: 0 - 360). */
+    hue: number;
+    /** The saturation level (Range: 0 - 1). */
+    saturation: number;
+    /** The brightness/value level (Range: 0 - 1). */
+    value: number;
+}
 
-    let h = 0;
+// ============================================================================
+// Color Mathematics Utilities
+// ============================================================================
 
-    if (delta !== 0) {
-        if (max === rNorm) {
-            h = 60 * (((gNorm - bNorm) / delta) % 6);
-        } else if (max === gNorm) {
-            h = 60 * ((bNorm - rNorm) / delta + 2);
+/**
+ * Converts standard RGB channel values (0-255) into the HSV color space.
+ * * @param red - The red channel value.
+ * @param green - The green channel value.
+ * @param blue - The blue channel value.
+ * @returns An object containing the corresponding Hue, Saturation, and Value.
+ */
+const convertRgbToHsv = (red: number | string, green: number | string, blue: number | string): IHsvColor => {
+    const redNormalized = Number(red) / 255;
+    const greenNormalized = Number(green) / 255;
+    const blueNormalized = Number(blue) / 255;
+
+    const channelMax = Math.max(redNormalized, greenNormalized, blueNormalized);
+    const channelMin = Math.min(redNormalized, greenNormalized, blueNormalized);
+    const channelDelta = channelMax - channelMin;
+
+    let hue = 0;
+
+    if (channelDelta !== 0) {
+        if (channelMax === redNormalized) {
+            hue = 60 * (((greenNormalized - blueNormalized) / channelDelta) % 6);
+        } else if (channelMax === greenNormalized) {
+            hue = 60 * ((blueNormalized - redNormalized) / channelDelta + 2);
         } else {
-            h = 60 * ((rNorm - gNorm) / delta + 4);
+            hue = 60 * ((redNormalized - greenNormalized) / channelDelta + 4);
         }
     }
 
-    if (h < 0) h += 360;
-
-    const s = max === 0 ? 0 : delta / max;
-    const v = max;
-
-    return { h, s, v };
-};
-
-const hsvToRgb = (h: number, s: number, v: number) => {
-    const c = v * s;
-    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
-    const m = v - c;
-
-    let rPrime = 0;
-    let gPrime = 0;
-    let bPrime = 0;
-
-    if (h >= 0 && h < 60) {
-        rPrime = c;
-        gPrime = x;
-    } else if (h >= 60 && h < 120) {
-        rPrime = x;
-        gPrime = c;
-    } else if (h >= 120 && h < 180) {
-        gPrime = c;
-        bPrime = x;
-    } else if (h >= 180 && h < 240) {
-        gPrime = x;
-        bPrime = c;
-    } else if (h >= 240 && h < 300) {
-        rPrime = x;
-        bPrime = c;
-    } else {
-        rPrime = c;
-        bPrime = x;
+    // Ensure hue is always a positive degree
+    if (hue < 0) {
+        hue += 360;
     }
 
-    const r = Math.round((rPrime + m) * 255);
-    const g = Math.round((gPrime + m) * 255);
-    const b = Math.round((bPrime + m) * 255);
+    const saturation = channelMax === 0 ? 0 : channelDelta / channelMax;
+    const value = channelMax;
 
-    return { r, g, b };
+    return { hue, saturation, value };
 };
 
-const useElementSize = (ref: React.RefObject<HTMLElement>) => {
-    const [size, setSize] = useState({ width: 0, height: 0 });
+/**
+ * Converts an HSV color representation back into standard RGB (0-255) channels.
+ * * @param hue - The hue degree (0-360).
+ * @param saturation - The saturation level (0-1).
+ * @param value - The brightness value (0-1).
+ * @returns An object containing the `r`, `g`, and `b` values mapped for the RGBA type.
+ */
+const convertHsvToRgb = (hue: number, saturation: number, value: number) => {
+    const chroma = value * saturation;
+    const hueSector = hue / 60;
+    const intermediateValue = chroma * (1 - Math.abs((hueSector % 2) - 1));
+    const lightnessAdjustment = value - chroma;
+
+    let tempRed = 0;
+    let tempGreen = 0;
+    let tempBlue = 0;
+
+    if (hueSector >= 0 && hueSector < 1) {
+        [tempRed, tempGreen, tempBlue] = [chroma, intermediateValue, 0];
+    } else if (hueSector >= 1 && hueSector < 2) {
+        [tempRed, tempGreen, tempBlue] = [intermediateValue, chroma, 0];
+    } else if (hueSector >= 2 && hueSector < 3) {
+        [tempRed, tempGreen, tempBlue] = [0, chroma, intermediateValue];
+    } else if (hueSector >= 3 && hueSector < 4) {
+        [tempRed, tempGreen, tempBlue] = [0, intermediateValue, chroma];
+    } else if (hueSector >= 4 && hueSector < 5) {
+        [tempRed, tempGreen, tempBlue] = [intermediateValue, 0, chroma];
+    } else {
+        [tempRed, tempGreen, tempBlue] = [chroma, 0, intermediateValue];
+    }
+
+    return {
+        r: Math.round((tempRed + lightnessAdjustment) * 255),
+        g: Math.round((tempGreen + lightnessAdjustment) * 255),
+        b: Math.round((tempBlue + lightnessAdjustment) * 255)
+    };
+};
+
+// ============================================================================
+// Custom DOM Hooks
+// ============================================================================
+
+/**
+ * A highly optimized hook that tracks the physical dimensions of a DOM element.
+ * Utilizes `ResizeObserver` for modern browsers with a standard event listener fallback.
+ * * @param elementRef - A React ref attached to the target HTML element.
+ * @returns An object containing the `width` and `height` of the element in pixels.
+ */
+const useElementDimensions = (elementRef: React.RefObject<HTMLElement>) => {
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
     useEffect(() => {
-        const element = ref.current;
-        if (!element) return;
+        const targetElement = elementRef.current;
+        if (!targetElement) return;
 
-        const update = () => {
-            const rect = element.getBoundingClientRect();
-            setSize({
-                width: Math.round(rect.width),
-                height: Math.round(rect.height)
+        const updateDimensions = () => {
+            const boundingClientRect = targetElement.getBoundingClientRect();
+            setDimensions({
+                width: Math.round(boundingClientRect.width),
+                height: Math.round(boundingClientRect.height)
             });
         };
 
-        update();
+        // Perform initial measurement
+        updateDimensions();
 
-        if (typeof ResizeObserver === "undefined") {
-            window.addEventListener("resize", update);
+        if (typeof ResizeObserver !== "undefined") {
+            const resizeObserver = new ResizeObserver(updateDimensions);
+            resizeObserver.observe(targetElement);
             // eslint-disable-next-line consistent-return
-            return () => window.removeEventListener("resize", update);
+            return () => resizeObserver.disconnect();
         }
 
-        const ro = new ResizeObserver(() => update());
-        ro.observe(element);
+        window.addEventListener("resize", updateDimensions);
         // eslint-disable-next-line consistent-return
-        return () => ro.disconnect();
-    }, [ref]);
+        return () => window.removeEventListener("resize", updateDimensions);
+    }, [elementRef]);
 
-    return size;
+    return dimensions;
 };
 
-const useDrag = (ref: React.RefObject<HTMLElement>, onChange: (relativeX: number, relativeY?: number) => void) => {
-    const handlePointerDown = useCallback(
-        (event: React.MouseEvent | React.TouchEvent) => {
-            event.preventDefault();
+/**
+ * A specialized hook to handle drag-and-drop pointer calculations across palettes and sliders.
+ * Employs the "latest-ref" pattern to guarantee 60fps tracking without triggering React re-renders.
+ * * @param elementRef - The HTML element acting as the drag boundary (e.g., the slider track).
+ * @param onDragChange - Callback providing the relative X and Y positions (normalized between 0 and 1).
+ * @returns A mouse/touch event handler to attach to the `onMouseDown` and `onTouchStart` props.
+ */
+const usePointerDrag = (
+    elementRef: React.RefObject<HTMLElement>,
+    onDragChange: (relativeHorizontalPos: number, relativeVerticalPos: number) => void
+) => {
+    // Store the latest callback in a ref to avoid stale closures during rapid drag events
+    const latestOnChangeRef = useRef(onDragChange);
 
-            const element = ref.current;
-            if (!element) return;
+    useEffect(() => {
+        latestOnChangeRef.current = onDragChange;
+    }, [onDragChange]);
 
-            const getPos = (clientX: number, clientY: number) => {
-                const rect = element.getBoundingClientRect();
-                const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
-                const y = Math.min(Math.max(clientY - rect.top, 0), rect.height);
+    return useCallback(
+        (interactionEvent: React.MouseEvent | React.TouchEvent) => {
+            interactionEvent.preventDefault();
 
-                const relativeX = rect.width === 0 ? 0 : x / rect.width;
-                const relativeY = rect.height === 0 ? 0 : y / rect.height;
+            const targetElement = elementRef.current;
+            if (!targetElement) return;
 
-                onChange(relativeX, relativeY);
+            const calculateAndEmitPosition = (clientX: number, clientY: number) => {
+                const boundingBox = targetElement.getBoundingClientRect();
+
+                // Clamp coordinates to ensure the pointer stays within the element boundaries
+                const boundedX = Math.min(Math.max(clientX - boundingBox.left, 0), boundingBox.width);
+                const boundedY = Math.min(Math.max(clientY - boundingBox.top, 0), boundingBox.height);
+
+                // Normalize the pixel coordinates into a 0 to 1 scale
+                const relativeHorizontalPos = boundingBox.width === 0 ? 0 : boundedX / boundingBox.width;
+                const relativeVerticalPos = boundingBox.height === 0 ? 0 : boundedY / boundingBox.height;
+
+                latestOnChangeRef.current(relativeHorizontalPos, relativeVerticalPos);
             };
 
-            const handleMove = (moveEvent: MouseEvent | TouchEvent) => {
+            const handlePointerMove = (moveEvent: MouseEvent | TouchEvent) => {
                 if ("touches" in moveEvent) {
-                    const touch = moveEvent.touches[0];
-                    if (!touch) return;
-                    getPos(touch.clientX, touch.clientY);
+                    const activeTouch = moveEvent.touches[0];
+                    if (activeTouch) {
+                        calculateAndEmitPosition(activeTouch.clientX, activeTouch.clientY);
+                    }
                 } else {
-                    getPos(moveEvent.clientX, moveEvent.clientY);
+                    const mouseEvent = moveEvent as MouseEvent;
+                    calculateAndEmitPosition(mouseEvent.clientX, mouseEvent.clientY);
                 }
             };
 
-            const handleUp = () => {
-                window.removeEventListener("mousemove", handleMove as any);
-                window.removeEventListener("touchmove", handleMove as any);
-                window.removeEventListener("mouseup", handleUp);
-                window.removeEventListener("touchend", handleUp);
+            const handlePointerUp = () => {
+                window.removeEventListener("mousemove", handlePointerMove);
+                window.removeEventListener("touchmove", handlePointerMove);
+                window.removeEventListener("mouseup", handlePointerUp);
+                window.removeEventListener("touchend", handlePointerUp);
             };
 
-            window.addEventListener("mousemove", handleMove as any);
-            window.addEventListener("touchmove", handleMove as any, { passive: false });
-            window.addEventListener("mouseup", handleUp);
-            window.addEventListener("touchend", handleUp);
+            // Attach global listeners so dragging continues even if the mouse leaves the element bounds
+            window.addEventListener("mousemove", handlePointerMove);
+            window.addEventListener("touchmove", handlePointerMove, { passive: false });
+            window.addEventListener("mouseup", handlePointerUp);
+            window.addEventListener("touchend", handlePointerUp);
 
-            if ("touches" in event) {
-                const touch = event.touches[0];
-                if (touch) {
-                    getPos(touch.clientX, touch.clientY);
+            // Trigger the initial position immediately on click/tap
+            if ("touches" in interactionEvent) {
+                const initialTouch = interactionEvent.touches[0];
+                if (initialTouch) {
+                    calculateAndEmitPosition(initialTouch.clientX, initialTouch.clientY);
                 }
             } else {
-                getPos(event.clientX, event.clientY);
+                const initialMouseEvent = interactionEvent as React.MouseEvent;
+                calculateAndEmitPosition(initialMouseEvent.clientX, initialMouseEvent.clientY);
             }
         },
-        [onChange, ref]
+        [elementRef]
     );
-
-    return handlePointerDown;
 };
 
-const HexColorPicker: FC<HexColorPickerProps> = ({ color, onChange }) => {
-    const initialRgb = hexToRgb(color) ?? { r: 255, g: 255, b: 255 };
-    const initialHsv = rgbToHsv(initialRgb.r, initialRgb.g, initialRgb.b);
+// ============================================================================
+// Interactive Sub-Components
+// ============================================================================
 
-    const [hsv, setHsv] = useState<HsvColor>(initialHsv);
+/** * Interactive 2D Box for selecting Saturation (X-axis) and Value/Brightness (Y-axis).
+ */
+const SaturationBrightnessPalette: FC<{ hsv: IHsvColor; onChange: (saturation: number, value: number) => void }> = ({
+    hsv,
+    onChange
+}) => {
+    const paletteRef = useRef<HTMLDivElement>(null);
+    const dimensions = useElementDimensions(paletteRef);
 
-    useEffect(() => {
-        const rgb = hexToRgb(color);
-        if (!rgb) return;
-        setHsv((currentHsv) => {
-            const currentRgb = hsvToRgb(currentHsv.h, currentHsv.s, currentHsv.v);
-
-            if (rgb.r === currentRgb.r && rgb.g === currentRgb.g && rgb.b === currentRgb.b) {
-                return currentHsv;
-            }
-            return rgbToHsv(rgb.r, rgb.g, rgb.b);
-        });
-    }, [color]);
-
-    const saturationRef = useRef<HTMLDivElement | null>(null);
-    const hueRef = useRef<HTMLDivElement | null>(null);
-    const saturationSize = useElementSize(saturationRef);
-    const hueSize = useElementSize(hueRef);
-
-    const updateColorFromHsv = (next: HsvColor) => {
-        setHsv(next);
-        const rgb = hsvToRgb(next.h, next.s, next.v);
-        onChange(rgbToHex(rgb));
-    };
-
-    const handleSaturationStart = useDrag(saturationRef, (x, y = 0) => {
-        const s = Math.min(Math.max(x, 0), 1);
-        const v = Math.min(Math.max(1 - y, 0), 1);
-        updateColorFromHsv({ ...hsv, s, v });
+    const handleDrag = usePointerDrag(paletteRef, (horizontalPos, verticalPos) => {
+        // Horizontal drag changes Saturation (0 to 1). Vertical drag changes Value/Brightness (1 to 0).
+        onChange(horizontalPos, 1 - verticalPos);
     });
 
-    const handleHueStart = useDrag(hueRef, (x) => {
-        const h = Math.min(Math.max(x, 0), 1) * 360;
-        updateColorFromHsv({ ...hsv, h });
-    });
+    const pointerRadiusPx = 7;
 
-    const { h, s, v } = hsv;
-    const saturationPointerRadiusPx = 7; // 14px pointer
-    const huePointerRadiusPx = 5; // 10px pointer
+    // Calculate exact pixel position if dimensions are known, otherwise fallback to percentage
+    const pointerLeftPosition =
+        dimensions.width > 0
+            ? `${pointerRadiusPx + hsv.saturation * (dimensions.width - 2 * pointerRadiusPx)}px`
+            : `${hsv.saturation * 100}%`;
 
-    const pointerLeft =
-        saturationSize.width > 0
-            ? `${saturationPointerRadiusPx + s * (saturationSize.width - 2 * saturationPointerRadiusPx)}px`
-            : `${s * 100}%`;
-    const pointerTop =
-        saturationSize.height > 0
-            ? `${saturationPointerRadiusPx + (1 - v) * (saturationSize.height - 2 * saturationPointerRadiusPx)}px`
-            : `${(1 - v) * 100}%`;
-    const huePointerLeft =
-        hueSize.width > 0
-            ? `${huePointerRadiusPx + (h / 360) * (hueSize.width - 2 * huePointerRadiusPx)}px`
-            : `${(h / 360) * 100}%`;
-
-    const hueBackground = "linear-gradient(90deg, red, yellow, lime, cyan, blue, magenta, red)";
-
-    const saturationBackground = {
-        backgroundImage: `
-            linear-gradient(0deg, #000, transparent),
-            linear-gradient(90deg, #fff, hsl(${h}, 100%, 50%))
-        `
-    };
+    const pointerTopPosition =
+        dimensions.height > 0
+            ? `${pointerRadiusPx + (1 - hsv.value) * (dimensions.height - 2 * pointerRadiusPx)}px`
+            : `${(1 - hsv.value) * 100}%`;
 
     return (
-        <div className="colorPalette">
-            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+        <div
+            className="colorPalette__saturation"
+            ref={paletteRef}
+            onMouseDown={handleDrag}
+            onTouchStart={handleDrag}
+            style={{
+                backgroundImage: `linear-gradient(0deg, #000, transparent), linear-gradient(90deg, #fff, hsl(${hsv.hue}, 100%, 50%))`
+            }}
+        >
             <div
-                className="colorPalette__saturation"
-                ref={saturationRef}
-                onMouseDown={handleSaturationStart}
-                onTouchStart={handleSaturationStart}
-                style={saturationBackground}
-            >
-                <div
-                    className="colorPalette__saturationPointer"
-                    style={{
-                        left: pointerLeft,
-                        top: pointerTop
-                    }}
-                />
-            </div>
-            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-            <div
-                className="colorPalette__hue"
-                ref={hueRef}
-                onMouseDown={handleHueStart}
-                onTouchStart={handleHueStart}
-                style={{ backgroundImage: hueBackground }}
-            >
-                <div
-                    className="colorPalette__huePointer"
-                    style={{
-                        left: huePointerLeft
-                    }}
-                />
-            </div>
+                className="colorPalette__saturationPointer"
+                style={{ left: pointerLeftPosition, top: pointerTopPosition }}
+            />
         </div>
     );
 };
 
-const RgbaColorPicker: FC<RgbaColorPickerProps> = ({ color, onChange }) => {
-    const { r, g, b, a } = color;
-    const initialHsv = rgbToHsv(r, g, b);
+/** * Interactive horizontal slider for selecting the base Hue degree.
+ */
+const HueSlider: FC<{ hueDegree: number; onChange: (hue: number) => void }> = ({ hueDegree, onChange }) => {
+    const sliderRef = useRef<HTMLDivElement>(null);
+    const dimensions = useElementDimensions(sliderRef);
 
-    const [hsv, setHsv] = useState<HsvColor>(initialHsv);
-    const [alpha, setAlpha] = useState<number>(a ?? 1);
-
-    useEffect(() => {
-        setHsv((currentHsv) => {
-            const currentRgb = hsvToRgb(currentHsv.h, currentHsv.s, currentHsv.v);
-            if (color.r === currentRgb.r && color.g === currentRgb.g && color.b === currentRgb.b) {
-                return currentHsv;
-            }
-            return rgbToHsv(color.r, color.g, color.b);
-        });
-        setAlpha(color.a ?? 1);
-    }, [color]);
-
-    const saturationRef = useRef<HTMLDivElement | null>(null);
-    const hueRef = useRef<HTMLDivElement | null>(null);
-    const alphaRef = useRef<HTMLDivElement | null>(null);
-    const saturationSize = useElementSize(saturationRef);
-    const hueSize = useElementSize(hueRef);
-    const alphaSize = useElementSize(alphaRef);
-
-    const emitChange = (nextHsv: HsvColor, nextAlpha: number) => {
-        const rgb = hsvToRgb(nextHsv.h, nextHsv.s, nextHsv.v);
-        onChange({ ...rgb, a: nextAlpha });
-    };
-
-    const updateHsv = (updater: (prev: HsvColor) => HsvColor) => {
-        setHsv((prev) => {
-            const next = updater(prev);
-            emitChange(next, alpha);
-            return next;
-        });
-    };
-
-    const updateAlpha = (nextAlpha: number) => {
-        const clamped = Math.min(Math.max(nextAlpha, 0), 1);
-        setAlpha(clamped);
-        emitChange(hsv, clamped);
-    };
-
-    const handleSaturationStart = useDrag(saturationRef, (x, y = 0) => {
-        const s = Math.min(Math.max(x, 0), 1);
-        const v = Math.min(Math.max(1 - y, 0), 1);
-        updateHsv((prev) => ({ ...prev, s, v }));
+    const handleDrag = usePointerDrag(sliderRef, (horizontalPos) => {
+        // Map the 0-1 horizontal position to a 0-360 degree hue value
+        onChange(horizontalPos * 360);
     });
 
-    const handleHueStart = useDrag(hueRef, (x) => {
-        const h = Math.min(Math.max(x, 0), 1) * 360;
-        updateHsv((prev) => ({ ...prev, h }));
-    });
-
-    const handleAlphaStart = useDrag(alphaRef, (x) => {
-        updateAlpha(Math.min(Math.max(x, 0), 1));
-    });
-
-    const { h, s, v } = hsv;
-
-    const saturationPointerRadiusPx = 7; // 14px pointer
-    const huePointerRadiusPx = 5; // 10px pointer
-    const alphaPointerRadiusPx = 5; // 10px pointer
-
-    const pointerLeft =
-        saturationSize.width > 0
-            ? `${saturationPointerRadiusPx + s * (saturationSize.width - 2 * saturationPointerRadiusPx)}px`
-            : `${s * 100}%`;
-    const pointerTop =
-        saturationSize.height > 0
-            ? `${saturationPointerRadiusPx + (1 - v) * (saturationSize.height - 2 * saturationPointerRadiusPx)}px`
-            : `${(1 - v) * 100}%`;
-    const huePointerLeft =
-        hueSize.width > 0
-            ? `${huePointerRadiusPx + (h / 360) * (hueSize.width - 2 * huePointerRadiusPx)}px`
-            : `${(h / 360) * 100}%`;
-    const alphaPointerLeft =
-        alphaSize.width > 0
-            ? `${alphaPointerRadiusPx + alpha * (alphaSize.width - 2 * alphaPointerRadiusPx)}px`
-            : `${alpha * 100}%`;
-
-    const hueBackground = "linear-gradient(90deg, red, yellow, lime, cyan, blue, magenta, red)";
-
-    const saturationBackground = {
-        backgroundImage: `
-            linear-gradient(0deg, #000, transparent),
-            linear-gradient(90deg, #fff, hsl(${h}, 100%, 50%))
-        `
-    };
-
-    const rgbForAlpha = hsvToRgb(h, s, v);
-    const alphaGradient = `linear-gradient(90deg, rgba(${rgbForAlpha.r}, ${rgbForAlpha.g}, ${rgbForAlpha.b}, 0) 0%, rgba(${rgbForAlpha.r}, ${rgbForAlpha.g}, ${rgbForAlpha.b}, 1) 100%)`;
+    const pointerRadiusPx = 5;
+    const pointerLeftPosition =
+        dimensions.width > 0
+            ? `${pointerRadiusPx + (hueDegree / 360) * (dimensions.width - 2 * pointerRadiusPx)}px`
+            : `${(hueDegree / 360) * 100}%`;
 
     return (
-        <div className="colorPalette">
-            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-            <div
-                className="colorPalette__saturation"
-                ref={saturationRef}
-                onMouseDown={handleSaturationStart}
-                onTouchStart={handleSaturationStart}
-                style={saturationBackground}
-            >
-                <div
-                    className="colorPalette__saturationPointer"
-                    style={{
-                        left: pointerLeft,
-                        top: pointerTop
-                    }}
-                />
-            </div>
-            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-            <div
-                className="colorPalette__hue"
-                ref={hueRef}
-                onMouseDown={handleHueStart}
-                onTouchStart={handleHueStart}
-                style={{ backgroundImage: hueBackground }}
-            >
-                <div
-                    className="colorPalette__huePointer"
-                    style={{
-                        left: huePointerLeft
-                    }}
-                />
-            </div>
-            {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
-            <div
-                className="colorPalette__alpha"
-                ref={alphaRef}
-                onMouseDown={handleAlphaStart}
-                onTouchStart={handleAlphaStart}
-            >
-                <div className="colorPalette__alphaGradient" style={{ backgroundImage: alphaGradient }} />
-                <div
-                    className="colorPalette__alphaPointer"
-                    style={{
-                        left: alphaPointerLeft
-                    }}
-                />
-            </div>
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+        <div
+            className="colorPalette__hue"
+            ref={sliderRef}
+            onMouseDown={handleDrag}
+            onTouchStart={handleDrag}
+            style={{ backgroundImage: "linear-gradient(90deg, red, yellow, lime, cyan, blue, magenta, red)" }}
+        >
+            <div className="colorPalette__huePointer" style={{ left: pointerLeftPosition }} />
         </div>
     );
 };
 
-export { HexColorPicker, RgbaColorPicker };
+/** * Interactive horizontal slider for selecting Alpha (Opacity) levels.
+ */
+const AlphaSlider: FC<{
+    opacityLevel: number;
+    baseRgb: { r: number; g: number; b: number };
+    onChange: (alpha: number) => void;
+}> = ({ opacityLevel, baseRgb, onChange }) => {
+    const sliderRef = useRef<HTMLDivElement>(null);
+    const dimensions = useElementDimensions(sliderRef);
+
+    const handleDrag = usePointerDrag(sliderRef, (horizontalPos) => {
+        onChange(horizontalPos);
+    });
+
+    const pointerRadiusPx = 5;
+    const pointerLeftPosition =
+        dimensions.width > 0
+            ? `${pointerRadiusPx + opacityLevel * (dimensions.width - 2 * pointerRadiusPx)}px`
+            : `${opacityLevel * 100}%`;
+
+    return (
+        // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+        <div className="colorPalette__alpha" ref={sliderRef} onMouseDown={handleDrag} onTouchStart={handleDrag}>
+            <div
+                className="colorPalette__alphaGradient"
+                style={{
+                    backgroundImage: `linear-gradient(90deg, rgba(${baseRgb.r}, ${baseRgb.g}, ${baseRgb.b}, 0) 0%, rgba(${baseRgb.r}, ${baseRgb.g}, ${baseRgb.b}, 1) 100%)`
+                }}
+            />
+            <div className="colorPalette__alphaPointer" style={{ left: pointerLeftPosition }} />
+        </div>
+    );
+};
+
+// ============================================================================
+// Main Export Components
+// ============================================================================
+
+/**
+ * A standard color picker that handles Hue and Saturation/Brightness,
+ * outputting a solid HEX string.
+ */
+export const HexColorPicker: FC<IHexColorPickerProps> = ({ color, onChange }) => {
+    // Initialize internal state using the provided HEX string
+    const [hsvColor, setHsvColor] = useState<IHsvColor>(() => {
+        const rgbColor = hexToRgb(color) ?? { r: 255, g: 255, b: 255 };
+        return convertRgbToHsv(rgbColor.r, rgbColor.g, rgbColor.b);
+    });
+
+    // Synchronize external color prop changes to local HSV state.
+    // This strict equality check prevents the visual slider pointers from jumping
+    // when a user inputs a lossless color (like Black, which loses Hue data).
+    useEffect(() => {
+        const newRgb = hexToRgb(color);
+        if (!newRgb) return;
+
+        setHsvColor((currentHsv) => {
+            const currentRgb = convertHsvToRgb(currentHsv.hue, currentHsv.saturation, currentHsv.value);
+
+            const isIdenticalColor =
+                newRgb.r === currentRgb.r && newRgb.g === currentRgb.g && newRgb.b === currentRgb.b;
+            if (isIdenticalColor) return currentHsv;
+
+            return convertRgbToHsv(newRgb.r, newRgb.g, newRgb.b);
+        });
+    }, [color]);
+
+    const handleSaturationBrightnessChange = useCallback(
+        (saturation: number, value: number) => {
+            setHsvColor((previousHsv) => {
+                const updatedHsv = { ...previousHsv, saturation, value };
+                const resultingRgb = convertHsvToRgb(updatedHsv.hue, updatedHsv.saturation, updatedHsv.value);
+                onChange(rgbToHex(resultingRgb));
+                return updatedHsv;
+            });
+        },
+        [onChange]
+    );
+
+    const handleHueChange = useCallback(
+        (hueDegree: number) => {
+            setHsvColor((previousHsv) => {
+                const updatedHsv = { ...previousHsv, hue: hueDegree };
+                const resultingRgb = convertHsvToRgb(updatedHsv.hue, updatedHsv.saturation, updatedHsv.value);
+                onChange(rgbToHex(resultingRgb));
+                return updatedHsv;
+            });
+        },
+        [onChange]
+    );
+
+    return (
+        <div className="colorPalette">
+            <SaturationBrightnessPalette hsv={hsvColor} onChange={handleSaturationBrightnessChange} />
+            <HueSlider hueDegree={hsvColor.hue} onChange={handleHueChange} />
+        </div>
+    );
+};
+
+/**
+ * An advanced color picker that handles Hue, Saturation/Brightness, and Opacity,
+ * outputting a mapped RGBA object.
+ */
+export const RgbaColorPicker: FC<IRgbaColorPickerProps> = ({ color, onChange }) => {
+    const [hsvColor, setHsvColor] = useState<IHsvColor>(() => convertRgbToHsv(color.r, color.g, color.b));
+    const [opacityLevel, setOpacityLevel] = useState<number>(color.a ?? 1);
+
+    // Synchronize external RGBA prop changes
+    useEffect(() => {
+        setHsvColor((currentHsv) => {
+            const currentRgb = convertHsvToRgb(currentHsv.hue, currentHsv.saturation, currentHsv.value);
+
+            const isIdenticalColor = color.r === currentRgb.r && color.g === currentRgb.g && color.b === currentRgb.b;
+            if (isIdenticalColor) return currentHsv;
+
+            return convertRgbToHsv(color.r, color.g, color.b);
+        });
+        setOpacityLevel(color.a ?? 1);
+    }, [color]);
+
+    const handleSaturationBrightnessChange = useCallback(
+        (saturation: number, value: number) => {
+            setHsvColor((previousHsv) => {
+                const updatedHsv = { ...previousHsv, saturation, value };
+                const resultingRgb = convertHsvToRgb(updatedHsv.hue, updatedHsv.saturation, updatedHsv.value);
+                onChange({ ...resultingRgb, a: opacityLevel });
+                return updatedHsv;
+            });
+        },
+        [onChange, opacityLevel]
+    );
+
+    const handleHueChange = useCallback(
+        (hueDegree: number) => {
+            setHsvColor((previousHsv) => {
+                const updatedHsv = { ...previousHsv, hue: hueDegree };
+                const resultingRgb = convertHsvToRgb(updatedHsv.hue, updatedHsv.saturation, updatedHsv.value);
+                onChange({ ...resultingRgb, a: opacityLevel });
+                return updatedHsv;
+            });
+        },
+        [onChange, opacityLevel]
+    );
+
+    const handleAlphaChange = useCallback(
+        (newOpacity: number) => {
+            setOpacityLevel(newOpacity);
+            const resultingRgb = convertHsvToRgb(hsvColor.hue, hsvColor.saturation, hsvColor.value);
+            onChange({ ...resultingRgb, a: newOpacity });
+        },
+        [onChange, hsvColor]
+    );
+
+    const currentBaseRgb = convertHsvToRgb(hsvColor.hue, hsvColor.saturation, hsvColor.value);
+
+    return (
+        <div className="colorPalette">
+            <SaturationBrightnessPalette hsv={hsvColor} onChange={handleSaturationBrightnessChange} />
+            <HueSlider hueDegree={hsvColor.hue} onChange={handleHueChange} />
+            <AlphaSlider opacityLevel={opacityLevel} baseRgb={currentBaseRgb} onChange={handleAlphaChange} />
+        </div>
+    );
+};

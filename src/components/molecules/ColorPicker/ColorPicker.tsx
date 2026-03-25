@@ -37,10 +37,6 @@ interface IColorPickerProps {
      */
     className?: string;
     /**
-     * Additional class for the color picker input wrapper.
-     */
-    fieldClassName?: string;
-    /**
      * Determines whether the alpha (transparency) slider and input fields are active.
      * When `true`, the picker allows users to select an opacity level.
      * @default false
@@ -114,8 +110,7 @@ interface IColorPickerProps {
  */
 const ColorPicker: FC<IColorPickerProps> = ({
     className,
-    fieldClassName,
-    alphaEnabled = true,
+    alphaEnabled = false,
     alphaValue,
     value,
     defaultColor,
@@ -329,7 +324,6 @@ const ColorPicker: FC<IColorPickerProps> = ({
             />
             <ColorPickerTextField
                 id="colorPickerTextField"
-                className={fieldClassName}
                 value={localHex}
                 alpha={alpha}
                 alphaEnabled={isAlphaEnabled}
@@ -388,6 +382,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                             size="small"
                                             value={rgba[channel]}
                                             autoComplete="off"
+                                            placeholder={channel}
                                             type="number"
                                             name={channel}
                                             onChange={(e) => handleRGBInputChange(channel, Number(e.target.value))}
@@ -417,13 +412,9 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                         <button
                                             key={recentColor}
                                             type="button"
-                                            className={classNames(
-                                                "colorPicker__recentColor",
-                                                `colorPicker__recentColor_size_${size}`,
-                                                {
-                                                    colorPicker__recentColor__empty: !recentColor
-                                                }
-                                            )}
+                                            className={classNames("colorPicker__recentColor", {
+                                                colorPicker__recentColor__empty: !recentColor
+                                            })}
                                             aria-label={`Select recent color ${recentColor}`}
                                             onClick={() => applyRecentColor(recentColor)}
                                             style={{
