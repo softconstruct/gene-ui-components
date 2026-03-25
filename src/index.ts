@@ -66,10 +66,10 @@ export {
     ISegmentedControlButtonProps
 } from "@components/molecules/SegmentedControl";
 export {
-    default as FileUploadList,
+    FileUploadList,
     FileUploadItem,
     IFileUploadListProps,
-    IFileUploadItem
+    IFileUploadItemProps
 } from "./components/molecules/FileUploadList";
 export { Accordion, AccordionItem, IAccordionProps, IAccordionItemProps } from "./components/molecules/Accordion";
 export { default as NumberField, INumberFieldProps } from "./components/molecules/NumberField";

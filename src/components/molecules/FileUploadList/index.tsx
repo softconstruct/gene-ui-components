@@ -1,2 +1,2 @@
-export { IFileUploadListProps, default as FileUploadList, default } from "./FileUploadList";
-export { IFileUploadItem, default as FileUploadItem } from "./FileUploadItem";
+export { IFileUploadListProps, default as FileUploadList } from "./FileUploadList";
+export { IFileUploadItemProps, default as FileUploadItem } from "./FileUploadItem/FileUploadItem";
