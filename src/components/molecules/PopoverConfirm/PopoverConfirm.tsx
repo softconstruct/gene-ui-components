@@ -34,24 +34,6 @@ interface IPopoverConfirmProps {
      */
     children: ReactNode;
     /**
-     * Text label for the primary button.
-     * @default "Confirm"
-     */
-    primaryButtonText?: string;
-    /**
-     * Text label for the secondary button.
-     * @default "Cancel"
-     */
-    secondaryButtonText?: string;
-    /**
-     * Callback fired when the primary button is clicked.
-     */
-    onConfirm?: () => void;
-    /**
-     * Callback fired when the secondary button is clicked.
-     */
-    onCancel?: () => void;
-    /**
      * Callback fired when the open state changes (e.g. outside click).
      */
     onOpenChange?: (isOpen: boolean) => void;
@@ -113,20 +95,21 @@ interface IPopoverConfirmProps {
      */
     trigger?: "click" | "hover";
     /**
-     * Custom action buttons to display in the footer.
-     * If provided, this will override the default secondary/primary button behavior.
-     * If appearance is not specified for an action, it defaults to "primary".
+     * Action buttons displayed in the footer.
+     * `primary` button is always required. `secondary` is optional.
+     * Button appearances are derived internally:
+     * - `primary`: based on `status` (`warning` -> `primary`, `error` -> `danger`)
+     * - `secondary`: always `secondary`
      * @example
-     * actions={[
-     *   { text: "Delete", appearance: "danger", onClick: handleDelete }
-     * ]}
-     * @example
-     * actions={[
-     *   { text: "Cancel", onClick: handleCancel },
-     *   { text: "Confirm", onClick: handleConfirm }
-     * ]}
+     * actions={{
+     *   secondary: { text: "Cancel", onClick: handleCancel },
+     *   primary: { text: "Delete", onClick: handleDelete }
+     * }}
      */
-    actions?: IPopoverFooterActionProps[];
+    actions?: {
+        primary: Omit<IPopoverFooterActionProps, "appearance">;
+        secondary?: Omit<IPopoverFooterActionProps, "appearance">;
+    };
 }
 
 /**
@@ -138,10 +121,6 @@ interface IPopoverConfirmProps {
 const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     children,
     title,
-    primaryButtonText = "Confirm",
-    secondaryButtonText = "Cancel",
-    onConfirm,
-    onCancel,
     onOpenChange,
     open: controlledOpen,
     defaultOpen = false,
@@ -188,33 +167,27 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     );
 
     const footerActions = React.useMemo((): IPopoverFooterActionProps[] => {
-        if (actions) {
-            return actions.map((action, index) => {
-                const isTwoButtons = actions.length === 2;
-                let allowedAppearance: IPopoverFooterActionProps["appearance"];
-                if (isTwoButtons) {
-                    allowedAppearance = index === 0 ? "secondary" : appearanceByStatus[status];
-                } else {
-                    allowedAppearance = action.appearance === "secondary" ? "secondary" : appearanceByStatus[status];
-                }
+        const currentActions = actions || {
+            primary: { text: "Confirm" },
+            secondary: { text: "Cancel" }
+        };
 
-                return { ...action, appearance: allowedAppearance };
+        const resolvedActions: IPopoverFooterActionProps[] = [];
+
+        if (currentActions.secondary) {
+            resolvedActions.push({
+                ...currentActions.secondary,
+                appearance: "secondary"
             });
         }
-        const defaultActions: IPopoverFooterActionProps[] = [
-            {
-                text: secondaryButtonText,
-                appearance: "secondary",
-                onClick: onCancel
-            },
-            {
-                text: primaryButtonText,
-                appearance: primaryButtonAppearance,
-                onClick: onConfirm
-            }
-        ];
-        return defaultActions;
-    }, [actions, status, secondaryButtonText, primaryButtonText, primaryButtonAppearance, onCancel, onConfirm]);
+
+        resolvedActions.push({
+            ...currentActions.primary,
+            appearance: primaryButtonAppearance
+        });
+
+        return resolvedActions;
+    }, [actions, primaryButtonAppearance]);
 
     return (
         <div className="popoverConfirm">

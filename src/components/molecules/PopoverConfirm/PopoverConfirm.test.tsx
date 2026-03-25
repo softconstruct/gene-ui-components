@@ -49,38 +49,62 @@ describe("PopoverConfirm", () => {
         expect(provider().find(".popover__header").text()).toBe(title);
     });
 
-    it("renders default primaryButtonText when open", () => {
+    it("renders default primary action text when open", () => {
         setup.setProps({ open: true });
         expect(provider().find(".popover__footerActions").find(Button).last().text()).toBe("Confirm");
     });
 
-    it("renders default secondaryButtonText when open", () => {
+    it("renders default secondary action text when open", () => {
         setup.setProps({ open: true });
         expect(provider().find(".popover__footerActions").find(Button).first().text()).toBe("Cancel");
     });
 
-    it("renders custom primaryButtonText when open", () => {
-        setup.setProps({ open: true, primaryButtonText: "Delete" });
+    it("renders custom primary action text when open", () => {
+        setup.setProps({
+            open: true,
+            actions: {
+                primary: { text: "Delete" },
+                secondary: { text: "Cancel" }
+            }
+        });
         expect(provider().find(".popover__footerActions").find(Button).last().text()).toBe("Delete");
     });
 
-    it("renders custom secondaryButtonText when open", () => {
-        setup.setProps({ open: true, secondaryButtonText: "Go back" });
+    it("renders custom secondary action text when open", () => {
+        setup.setProps({
+            open: true,
+            actions: {
+                primary: { text: "Confirm" },
+                secondary: { text: "Go back" }
+            }
+        });
         expect(provider().find(".popover__footerActions").find(Button).first().text()).toBe("Go back");
     });
 
-    it("calls onConfirm when confirm button is clicked", () => {
-        const onConfirm = jest.fn();
-        setup.setProps({ open: true, onConfirm });
+    it("calls primary action onClick when primary button is clicked", () => {
+        const onPrimaryClick = jest.fn();
+        setup.setProps({
+            open: true,
+            actions: {
+                primary: { text: "Confirm", onClick: onPrimaryClick },
+                secondary: { text: "Cancel" }
+            }
+        });
         provider().find(".popover__footerActions").find(Button).last().simulate("click");
-        expect(onConfirm).toHaveBeenCalled();
+        expect(onPrimaryClick).toHaveBeenCalled();
     });
 
-    it("calls onCancel when cancel button is clicked", () => {
-        const onCancel = jest.fn();
-        setup.setProps({ open: true, onCancel });
+    it("calls secondary action onClick when secondary button is clicked", () => {
+        const onSecondaryClick = jest.fn();
+        setup.setProps({
+            open: true,
+            actions: {
+                primary: { text: "Confirm" },
+                secondary: { text: "Cancel", onClick: onSecondaryClick }
+            }
+        });
         provider().find(".popover__footerActions").find(Button).first().simulate("click");
-        expect(onCancel).toHaveBeenCalled();
+        expect(onSecondaryClick).toHaveBeenCalled();
     });
 
     it("cancel button has secondary appearance", () => {

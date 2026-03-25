@@ -26,25 +26,21 @@ const meta: Meta<IPopoverConfirmProps> = {
         defaultOpen: args({ control: "boolean", ...propCategory.states }),
         children: args({ control: "false", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),
-        primaryButtonText: args({ control: "text", ...propCategory.content }),
-        secondaryButtonText: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.states }),
         actions: args({ control: "false", ...propCategory.functionality }),
         setProps: args({ control: "false", ...propCategory.functionality }),
         trigger: args({ control: "select", ...propCategory.functionality }),
-        onOpenChange: args({ control: "false", ...propCategory.action }),
-        onConfirm: args({ control: "false", ...propCategory.action }),
-        onCancel: args({ control: "false", ...propCategory.action })
+        onOpenChange: args({ control: "false", ...propCategory.action })
     },
     args: {
         position: "bottom-center",
         size: "medium",
         title: "Confirm action",
-        primaryButtonText: "Confirm",
-        secondaryButtonText: "Cancel",
         onOpenChange: () => {},
-        onConfirm: () => {},
-        onCancel: () => {}
+        actions: {
+            secondary: { text: "Cancel", onClick: () => {} },
+            primary: { text: "Confirm", onClick: () => {} }
+        }
     }
 };
 
@@ -97,20 +93,10 @@ const DefaultComponent: FC<IPopoverConfirmProps> = (props) => {
                 setProps={setPropsForContent}
                 open={open}
                 onOpenChange={setOpen}
-                onCancel={() => setOpen(false)}
-                onConfirm={() => setOpen(false)}
-                actions={[
-                    {
-                        text: "Cancel",
-                        appearance: "secondary",
-                        onClick: () => setOpen(false)
-                    },
-                    {
-                        text: "Confirm",
-                        appearance: "primary",
-                        onClick: () => setOpen(false)
-                    }
-                ]}
+                actions={{
+                    secondary: { text: "Cancel", onClick: () => setOpen(false) },
+                    primary: { text: "Confirm", onClick: () => setOpen(false) }
+                }}
             >
                 {confirmContent}
             </PopoverConfirm>
@@ -130,13 +116,7 @@ const DefaultOpenComponent: FC<IPopoverConfirmProps> = (props) => {
 
     return (
         <div style={{ margin: "500px 500px", height: 1000 }}>
-            <PopoverConfirm
-                {...props}
-                setProps={setPropsForContent}
-                defaultOpen
-                onCancel={() => {}}
-                onConfirm={() => {}}
-            >
+            <PopoverConfirm {...props} setProps={setPropsForContent} defaultOpen>
                 {confirmContent}
             </PopoverConfirm>
             <Button onClick={() => {}} {...propsForContent}>
