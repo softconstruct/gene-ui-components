@@ -11,9 +11,9 @@
         position: sticky;
         top: 0;
         z-index: 1;
-        box-shadow: var(--shadowraisedbottomposition-x, 0) var(--shadowraisedbottomposition-y, 2px)
-            var(--shadowraisedbottomblur, 8px) var(--shadowraisedbottomspread, 0)
-            var(--shadowraisedbottomrgba, rgb(0 0 0 / 16%));
+        box-shadow: var(--guit-sem-shadow-raised-bottom-position-x, 0)
+            var(--guit-sem-shadow-raised-bottom-position-y, 2px) var(--guit-sem-shadow-raised-bottom-blur, 8px)
+            var(--guit-sem-shadow-raised-bottom-spread, 0) var(--guit-sem-color-raised-bottom-rgba);
     }
 
     &_device {
