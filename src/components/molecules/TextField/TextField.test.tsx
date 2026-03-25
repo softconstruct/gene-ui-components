@@ -70,10 +70,21 @@ describe("TextField ", () => {
         expect(wrapper.find("input").prop("value")).toEqual(value);
     });
 
+    it("renders null value prop as empty string", () => {
+        const wrapper = setup.setProps({ value: null });
+        wrapper.update();
+        expect(wrapper.find("input").prop("value")).toEqual("");
+    });
+
     it("renders defaultValue prop correctly", () => {
         const defaultValue = "test-value";
         const wrapper = mount(<TextField defaultValue={defaultValue} />);
         expect(wrapper.find("input").prop("value")).toEqual(defaultValue);
+    });
+
+    it("renders null defaultValue as empty string", () => {
+        const wrapper = mount(<TextField defaultValue={null} />);
+        expect(wrapper.find("input").prop("value")).toEqual("");
     });
 
     it("renders placeholder correctly", () => {

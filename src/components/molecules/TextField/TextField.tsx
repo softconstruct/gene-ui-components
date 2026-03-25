@@ -71,11 +71,11 @@ interface ITextFieldProps {
     /**
      * Controlled `input` value
      */
-    value?: string | number;
+    value?: string | number | null;
     /**
      * Default value of the `TextField`. Only provide this if the text field is an `uncontrolled` component; otherwise, use the `value` property.
      */
-    defaultValue?: string | number;
+    defaultValue?: string | number | null;
     /**
      * `Placeholder` text when `input` is empty
      */
@@ -206,7 +206,11 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
         const inputRef = useRef<HTMLInputElement | null>(null);
         const [internalValue, setInternalValue] = useState("");
         const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-        const inputValue = isControlled ? value.toString() : internalValue;
+        const normalizeInputValue = (input?: string | number | null) => {
+            if (input === null || input === undefined) return "";
+            return String(input);
+        };
+        const inputValue = isControlled ? normalizeInputValue(value) : internalValue;
         const generatedId = useMemo(() => id || `default-id-${nanoid()}`, [id]);
 
         const labelSize = labelSizeMap[size] || "medium";
@@ -257,7 +261,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
 
         useEffect(() => {
             if (defaultValue === undefined) return;
-            setInternalValue(defaultValue.toString());
+            setInternalValue(normalizeInputValue(defaultValue));
         }, []);
 
         const isClearable = clearable && inputValue.length > 0 && !disabled && !readOnly;
