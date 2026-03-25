@@ -78,6 +78,7 @@ export { default as Section, ISectionProps } from "./components/molecules/Sectio
 export { default as Image, IImageProps } from "./components/molecules/Image";
 export { default as OTPField, IOTPFieldProps } from "./components/molecules/OTPField";
 export { default as Breadcrumb, IBreadcrumbProps, IBreadcrumbItemProps } from "./components/molecules/Breadcrumb";
+export { default as PageHeader, IPageHeaderProps } from "./components/molecules/PageHeader";
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
 export { default as DataCardList, IDataCardListProps } from "@components/organisms/DataCardList";
