@@ -87,6 +87,12 @@ describe("TextField ", () => {
         expect(wrapper.find(Info).exists()).toBeTruthy();
     });
 
+    it("renders IconAfter prop correctly", () => {
+        const wrapper = setup.setProps({ IconAfter: Info });
+        expect(wrapper.find(Info).exists()).toBeTruthy();
+        expect(wrapper.find(".textField__wrapper").hasClass("textField__wrapper_iconAfter")).toBeTruthy();
+    });
+
     it("renders onChange prop correctly", () => {
         const wrapper = setup.setProps({ onChange: jestFn });
         const value = "testValue";

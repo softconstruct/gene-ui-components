@@ -59,6 +59,9 @@ interface INotificationProps {
     secondaryActionText?: string;
     /**
      * Callback function triggered when the close (X) button is clicked.
+     * When provided, the close (X) button is displayed; when omitted, the button is hidden.
+     * Use this to control whether the notification can be manually dismissed (e.g. persistent
+     * form errors vs. dismissible toasts).
      */
     onClose?: () => void;
     /**
@@ -129,14 +132,16 @@ const Notification: FC<INotificationProps> = ({
                         )}
                     </div>
                 </div>
-                <Button
-                    appearance="secondary"
-                    layout="text"
-                    size="small"
-                    className="notification__button"
-                    onClick={onClose}
-                    Icon={X}
-                />
+                {onClose && (
+                    <Button
+                        appearance="secondary"
+                        layout="text"
+                        size="small"
+                        className="notification__button"
+                        onClick={onClose}
+                        Icon={X}
+                    />
+                )}
             </div>
             <ButtonGroup className="notification__actions" size={actionsButtonsSize}>
                 {!!secondaryActionText && (

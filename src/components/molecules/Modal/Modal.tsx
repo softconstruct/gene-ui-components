@@ -131,6 +131,7 @@ const Modal: FC<IModalProps> = ({
     const { geneUIProviderRef, breakpoint } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
     const titleRef = useRef<HTMLHeadingElement | null>(null);
+    const isOverlayPointerDownRef = useRef(false);
 
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
     const isTruncated: boolean = useEllipsisDetection(titleRef);
@@ -165,10 +166,16 @@ const Modal: FC<IModalProps> = ({
         };
     }, [open, shouldCloseOnEscapePress, onClose]);
 
+    const handleOverlayMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+        isOverlayPointerDownRef.current = event.target === event.currentTarget;
+    };
+
     const handleOverlayClick = (event: React.MouseEvent<HTMLDivElement>) => {
-        if (shouldCloseOnOverlayClick && event.target === event.currentTarget) {
+        if (shouldCloseOnOverlayClick && isOverlayPointerDownRef.current && event.target === event.currentTarget) {
             onClose?.();
         }
+
+        isOverlayPointerDownRef.current = false;
     };
 
     const IconComponent = status ? STATUS_ICONS[status] : null;
@@ -180,6 +187,7 @@ const Modal: FC<IModalProps> = ({
                 `modal_position_${isMobileBreakpoint && (size === "xxLarge" || size === "xLarge") ? "center" : position}`,
                 className
             )}
+            onMouseDown={handleOverlayMouseDown}
             onClick={handleOverlayClick}
             role="presentation"
         >
