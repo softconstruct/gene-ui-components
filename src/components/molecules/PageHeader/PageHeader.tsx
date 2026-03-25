@@ -1,8 +1,8 @@
-import React, { FC, ReactElement, ReactNode } from "react";
+import React, { FC, ReactNode } from "react";
 import classNames from "classnames";
 
 // Components
-import Breadcrumb from "@components/molecules/Breadcrumb";
+import Breadcrumb, { IBreadcrumbProps } from "@components/molecules/Breadcrumb";
 
 // Hooks
 import useDeviceInfo from "@hooks/useDeviceInfo";
@@ -17,33 +17,37 @@ interface IPageHeaderProps {
      */
     className?: string;
     /**
-     * Optional Breadcrumb component shown above header content.
+     * Props passed to the `Breadcrumb` component rendered inside the header.
+     * When provided, the breadcrumb trail is displayed on the left side of the page header.
      */
-    breadcrumb?: ReactElement<typeof Breadcrumb>;
+    breadcrumbProps?: IBreadcrumbProps;
     /**
-     * Optional header content such as title, subtitle, actions, or custom layout.
+     * Extra content rendered on the right side of the header (or below breadcrumbs on mobile).
+     * Typical usage: actions, search field, secondary navigation links, etc.
      */
     children?: ReactNode;
     /**
-     * Makes the component sticky and applies raised shadow style when `true`.
+     * If `true`, makes the header sticky (stays at the top of the viewport (relative element) while scrolling).
+     * @default false
      */
-    fixed?: boolean;
+    sticky?: boolean;
 }
 
 /**
  * The Page Header component provides context and navigation aids at the top of a page. It typically includes the page title, breadcrumbs, and optional action buttons, search fields, or secondary navigation links.
  */
-const PageHeader: FC<IPageHeaderProps> = ({ className, breadcrumb, children, fixed = false }) => {
+const PageHeader: FC<IPageHeaderProps> = ({ className, breadcrumbProps, children, sticky = false }) => {
     const { isMobileDevice } = useDeviceInfo();
 
     return (
         <div
             className={classNames("pageHeader", className, {
-                pageHeader_fixed: fixed,
-                pageHeader_mobile: isMobileDevice
+                pageHeader_sticky: sticky,
+                pageHeader_device_mobile: isMobileDevice,
+                pageHeader_device_desktop: !isMobileDevice
             })}
         >
-            {breadcrumb && <div className="pageHeader__breadcrumb">{breadcrumb}</div>}
+            {breadcrumbProps && <Breadcrumb {...breadcrumbProps} className="pageHeader__breadcrumb" />}
             {children && <div className="pageHeader__content">{children}</div>}
         </div>
     );
