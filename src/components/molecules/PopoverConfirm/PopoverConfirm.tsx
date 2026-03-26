@@ -89,12 +89,6 @@ interface IPopoverConfirmProps {
      */
     open?: boolean;
     /**
-     * Determines how the popover is triggered.
-     * Can be either "click" or "hover".
-     * @default "click"
-     */
-    trigger?: "click" | "hover";
-    /**
      * Action buttons displayed in the footer.
      * `primary` button is always required. `secondary` is optional.
      * Button appearances are derived internally:
@@ -129,7 +123,6 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     position = "bottom-center",
     setProps,
     disableReposition = false,
-    trigger = "click",
     actions
 }) => {
     const [isOpenState, setIsOpenState] = useState(defaultOpen);
@@ -202,7 +195,6 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
                 title={title}
                 withArrow
                 disableReposition={disableReposition}
-                trigger={trigger}
                 hasCloseButton={false}
                 Icon={headerIcon}
                 mobileHeightMode="fit"

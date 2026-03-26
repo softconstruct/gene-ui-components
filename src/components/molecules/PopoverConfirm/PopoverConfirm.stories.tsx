@@ -29,7 +29,6 @@ const meta: Meta<IPopoverConfirmProps> = {
         status: args({ control: "select", ...propCategory.states }),
         actions: args({ control: "false", ...propCategory.functionality }),
         setProps: args({ control: "false", ...propCategory.functionality }),
-        trigger: args({ control: "select", ...propCategory.functionality }),
         onOpenChange: args({ control: "false", ...propCategory.action })
     },
     args: {
@@ -54,30 +53,24 @@ const confirmContent = (
             Are you sure you want to proceed with this action?
         </Text>
         <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "4px" }}>
-            <div style={{ margin: 0 }}>
+            <Text as="p" variant="bodyMediumRegular">
                 <Text as="span" variant="bodyMediumSemibold">
-                    • Changes:
-                </Text>{" "}
-                <Text as="span" variant="bodyMediumRegular">
-                    This action will modify your current settings.
+                    • Changes:&nbsp;
                 </Text>
-            </div>
-            <div style={{ margin: 0 }}>
+                This action will modify your current settings.
+            </Text>
+            <Text as="p" variant="bodyMediumRegular">
                 <Text as="span" variant="bodyMediumSemibold">
-                    • Data Impact:
-                </Text>{" "}
-                <Text as="span" variant="bodyMediumRegular">
-                    Changes may affect your data, including possible deletions.
+                    • Data Impact:&nbsp;
                 </Text>
-            </div>
-            <div style={{ margin: 0 }}>
+                Changes may affect your data, including possible deletions.
+            </Text>
+            <Text as="p" variant="bodyMediumRegular">
                 <Text as="span" variant="bodyMediumSemibold">
-                    • Irreversible:
-                </Text>{" "}
-                <Text as="span" variant="bodyMediumRegular">
-                    This action cannot be undone.
+                    • Irreversible:&nbsp;
                 </Text>
-            </div>
+                This action cannot be undone.
+            </Text>
         </div>
     </div>
 );
