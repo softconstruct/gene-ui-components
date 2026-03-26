@@ -72,6 +72,7 @@ export { default as Section, ISectionProps } from "./components/molecules/Sectio
 export { default as Image, IImageProps } from "./components/molecules/Image";
 export { default as OTPField, IOTPFieldProps } from "./components/molecules/OTPField";
 export { default as Breadcrumb, IBreadcrumbProps, IBreadcrumbItemProps } from "./components/molecules/Breadcrumb";
+export { default as PageHeader, IPageHeaderProps } from "./components/molecules/PageHeader";
 export { default as PopoverConfirm, IPopoverConfirmProps } from "./components/molecules/PopoverConfirm";
 
 // Organisms

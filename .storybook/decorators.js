@@ -21,7 +21,8 @@ const paddingBlacklist = {
     "molecules-products": true,
     "molecules-profile": true,
     "molecules-drawer": true,
-    "molecules-banner": true
+    "molecules-banner": true,
+    "molecules-pageheader": true
 };
 
 const CustomDecorator = ({ children }) => {

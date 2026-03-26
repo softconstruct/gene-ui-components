@@ -25,6 +25,8 @@
         &_hidden {
             position: absolute;
             visibility: hidden;
+            max-width: 100%;
+            overflow: hidden;
             pointer-events: none;
             left: 0;
             top: 0;
