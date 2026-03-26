@@ -25,11 +25,7 @@ interface IFileUploadListProps {
 const FileUploadList: FC<IFileUploadListProps> = ({ className, children }) => {
     if (!children) return null;
 
-    return (
-        <div className={classNames("fileUploadList", className)} role="list" aria-label="Uploaded files list">
-            {children}
-        </div>
-    );
+    return <div className={classNames("fileUploadList", className)}>{children}</div>;
 };
 
 export { IFileUploadListProps, FileUploadList as default };

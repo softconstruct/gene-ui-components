@@ -3,9 +3,9 @@ import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import FileUploadList from "@components/molecules/FileUploadList/FileUploadList";
-import { mockData, UPLOADING_FILE_ACTIONS } from "@components/molecules/FileUploadList/FileUploadList.mock";
 
 import { args, propCategory, storyObjBuilder } from "../../../../stories/assets/storybook.globals";
+import { mockData, UPLOADING_FILE_ACTIONS } from "../../../../stories/data/__fileUploadList";
 // Components
 import { FileUploadItem, IFileUploadItemProps, IFileUploadListProps } from "./index";
 
@@ -65,11 +65,14 @@ const FileUploadItemStory: StoryObj<IFileUploadItemProps> = storyObjBuilder({
         helperText: undefined,
         uploadingText: "Uploading"
     },
-    render: (props) => (
-        <FileUploadList>
-            <FileUploadItem {...props} />
-        </FileUploadList>
-    )
+    render: (props: IFileUploadItemProps) => {
+        const { name, ...rest } = props;
+        return (
+            <FileUploadList>
+                <FileUploadItem name={name} {...rest} />
+            </FileUploadList>
+        );
+    }
 });
 
 export default meta;

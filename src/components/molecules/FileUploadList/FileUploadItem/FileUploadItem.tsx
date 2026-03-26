@@ -2,16 +2,12 @@ import React, { FC, MouseEvent, useRef } from "react";
 import classNames from "classnames";
 
 // Icons
-import { IconProps } from "@geneui/icons";
+import { Document, IconProps, Image, NoteMusical, PlaySquare } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
 import ButtonGroup from "@components/molecules/ButtonGroup";
-// Mappers
-import { icons } from "@components/molecules/FileUploadList/FileUploadItem/mappers";
-// Types
-import { FileType } from "@components/molecules/FileUploadList/FileUploadItem/types";
 import ProgressBar from "@components/molecules/ProgressBar";
 import Tooltip from "@components/molecules/Tooltip";
 
@@ -20,6 +16,16 @@ import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./FileUploadItem.scss";
+
+// Types
+export type FileType = "image" | "video" | "audio" | "file";
+
+export const icons: Record<FileType, FC<IconProps>> = {
+    image: Image,
+    video: PlaySquare,
+    audio: NoteMusical,
+    file: Document
+};
 
 interface IFileUploadActionProps {
     /**
@@ -48,16 +54,14 @@ interface IFileUploadActionProps {
 interface IFileUploadItemProps {
     /**
      * Display name of the file.
-     * @default "Unnamed file"
      */
-    name?: string;
+    name: string;
     /**
      * The formatted timestamp indicating when the file was uploaded or processed.
      */
     time?: string;
     /**
      * Human-readable representation of the file size (e.g., "10MB", "4.2MB").
-     * @default "Unknown"
      */
     size?: string;
     /**
@@ -98,10 +102,6 @@ interface IFileUploadItemProps {
      * Status text displayed alongside the progress bar while uploading.
      */
     uploadingText?: string;
-    /**
-     * Accessible label for the list item container.
-     */
-    ariaLabel?: string;
 }
 
 /**
@@ -113,26 +113,25 @@ interface IFileUploadItemProps {
  * - grouped action buttons when `actions` are provided.
  */
 const FileUploadItem: FC<IFileUploadItemProps> = ({
-    name = "Unnamed file",
+    name,
     time,
-    size = "Unknown",
+    size,
     type = "file",
     actions,
     loading,
     progressPercent,
     status = "rest",
     helperText,
-    uploadingText,
-    ariaLabel
+    uploadingText
 }) => {
     const Icon = icons[type];
 
     const nameRef = useRef<HTMLSpanElement>(null);
     const timeRef = useRef<HTMLSpanElement>(null);
     const sizeRef = useRef<HTMLSpanElement>(null);
-    const isNameTruncated = useEllipsisDetection(nameRef, []);
-    const isTimeTruncated = useEllipsisDetection(timeRef, []);
-    const isSizeTruncated = useEllipsisDetection(sizeRef, []);
+    const isNameTruncated = useEllipsisDetection(nameRef);
+    const isTimeTruncated = useEllipsisDetection(timeRef);
+    const isSizeTruncated = useEllipsisDetection(sizeRef);
 
     const shouldShowProgressBar = loading || status === "error" || status === "warning";
     const shouldShowItemActions = actions && actions.length > 0;
@@ -142,59 +141,55 @@ const FileUploadItem: FC<IFileUploadItemProps> = ({
             id: "time",
             value: time,
             ref: timeRef,
-            isTruncated: isTimeTruncated,
-            visible: !shouldShowProgressBar
+            isTruncated: isTimeTruncated
         },
         {
             id: "size",
             value: size,
             ref: sizeRef,
-            isTruncated: isSizeTruncated,
-            visible: !shouldShowProgressBar
+            isTruncated: isSizeTruncated
         }
     ];
 
     return (
-        <div className="fileUploadItem__itemWrapper">
-            <div className={classNames("fileUploadItem__item")} role="listitem" aria-label={ariaLabel}>
+        <div className="fileUploadItem">
+            <div className="fileUploadItem__content">
                 <div className="fileUploadItem__cell">
-                    <div className={classNames("fileUploadItem__file", `fileUploadItem__file_type_${type}`)}>
+                    <div
+                        className={classNames(
+                            "fileUploadItem__iconWrapper",
+                            `fileUploadItem__iconWrapper_type_${type}`
+                        )}
+                    >
                         <Icon className="fileUploadItem__fileIcon" size={16} />
                     </div>
                     <Tooltip text={name} isVisible={isNameTruncated}>
-                        <Text
-                            ref={nameRef}
-                            className={classNames("ellipsis-text", { fileUploadItem__text: shouldShowProgressBar })}
-                            as="span"
-                            variant="labelMediumMedium"
-                        >
+                        <Text ref={nameRef} className="ellipsis-text" as="span" variant="labelMediumMedium">
                             {name}
                         </Text>
                     </Tooltip>
                 </div>
-                {listItemDataColumns.map(
-                    ({ id, value, ref, visible, isTruncated }) =>
-                        value &&
-                        visible && (
-                            <div key={id} className="fileUploadItem__cell">
-                                <Tooltip text={value} isVisible={isTruncated}>
-                                    <Text ref={ref} className="ellipsis-text" as="span" variant="labelMediumMedium">
-                                        {value}
-                                    </Text>
-                                </Tooltip>
-                            </div>
-                        )
-                )}
+                {listItemDataColumns.map(({ id, value, ref, isTruncated }) => (
+                    <div key={id} className="fileUploadItem__cell">
+                        {value && (
+                            <Tooltip text={value} isVisible={isTruncated}>
+                                <Text ref={ref} className="ellipsis-text" as="span" variant="labelMediumMedium">
+                                    {value}
+                                </Text>
+                            </Tooltip>
+                        )}
+                    </div>
+                ))}
                 {shouldShowItemActions && (
-                    <div className={classNames("fileUploadItem__cell")}>
+                    <div className="fileUploadItem__cell">
                         <ButtonGroup size="small">
                             {actions.map((action) => (
                                 <Button
                                     key={action.name}
-                                    {...action}
                                     layout="text"
                                     appearance="secondary"
                                     className="fileUploadItem__button"
+                                    {...action}
                                 />
                             ))}
                         </ButtonGroup>
@@ -204,7 +199,7 @@ const FileUploadItem: FC<IFileUploadItemProps> = ({
             {shouldShowProgressBar && (
                 <ProgressBar
                     percent={progressPercent}
-                    size="small"
+                    size="medium"
                     uploadingText={uploadingText}
                     type="determinate"
                     status={status}

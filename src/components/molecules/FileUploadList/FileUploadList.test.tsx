@@ -3,15 +3,14 @@ import { mount, ReactWrapper } from "enzyme";
 
 import { Image, RecycleBin } from "@geneui/icons";
 
-import { FileType } from "@components/molecules/FileUploadList/FileUploadItem/types";
 import FileUploadList from "@components/molecules/FileUploadList/FileUploadList";
+
 import {
     mockDataForTests,
     uploadingData,
     uploadingWithoutCancelData
-} from "@components/molecules/FileUploadList/FileUploadList.mock";
-
-import FileUploadItem, { IFileUploadItemProps } from "./FileUploadItem/FileUploadItem";
+} from "../../../../tests/__mocks__/fileUploadList";
+import FileUploadItem, { FileType, IFileUploadItemProps } from "./FileUploadItem/FileUploadItem";
 import { IFileUploadListProps } from "./index";
 
 function renderList(files: IFileUploadItemProps[], listProps?: Partial<IFileUploadListProps>) {
@@ -86,7 +85,7 @@ describe("FileUploadList", () => {
         expect(setup.text()).not.toContain(mockDataForTests[1].name);
     });
 
-    it("renders progress bar and hides metadata when an item is uploading", () => {
+    it("renders progress bar when an item is uploading", () => {
         const uploadingWithStatus: IFileUploadItemProps[] = [
             {
                 ...uploadingData[0],
@@ -100,8 +99,6 @@ describe("FileUploadList", () => {
         expect(setup.find(".progressBar")).toHaveLength(1);
         expect(setup.text()).toContain(uploadingData[0].name);
         expect(setup.text()).toContain("Upload in progress.");
-        expect(setup.text()).not.toContain(uploadingData[0].size);
-        expect(setup.text()).not.toContain(uploadingData[0].time);
     });
 
     it("renders action buttons when uploading item lacks cancel action", () => {
@@ -213,15 +210,6 @@ describe("FileUploadList", () => {
         expect(setup.text()).toContain("Invoice Q1.pdf");
     });
 
-    it("has accessibility role and aria-label on list", () => {
-        expect(setup.find('[role="list"]').exists()).toBe(true);
-        expect(setup.find('[role="list"]').prop("aria-label")).toBe("Uploaded files list");
-    });
-
-    it("renders each item with role listitem", () => {
-        expect(setup.find('[role="listitem"]').length).toBe(mockDataForTests.length);
-    });
-
     it("renders without crashing when item has no id using fallback key", () => {
         const dataWithoutId: IFileUploadItemProps[] = [
             {
@@ -285,7 +273,7 @@ describe("FileUploadList", () => {
                 }
             ];
             const wrapper = mount(renderList(files));
-            expect(wrapper.find(`.fileUploadItem__file_type_${fileType}`).exists()).toBe(true);
+            expect(wrapper.find(`.fileUploadItem__iconWrapper_type_${fileType}`).exists()).toBe(true);
         });
     });
 });
