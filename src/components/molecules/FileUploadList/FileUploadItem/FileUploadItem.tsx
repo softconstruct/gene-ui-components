@@ -104,6 +104,14 @@ interface IFileUploadItemProps {
     ariaLabel?: string;
 }
 
+/**
+ * `FileUploadItem` renders a single row inside the `FileUploadList`.
+ *
+ * It can show:
+ * - file metadata (name, and optional time/size) when not uploading,
+ * - a progress bar with contextual helper text when `loading` / `status` indicates upload state,
+ * - grouped action buttons when `actions` are provided.
+ */
 const FileUploadItem: FC<IFileUploadItemProps> = ({
     name = "Unnamed file",
     time,

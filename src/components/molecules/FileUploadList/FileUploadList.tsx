@@ -1,8 +1,5 @@
-import React, { FC, ReactElement } from "react";
+import React, { FC, ReactNode } from "react";
 import classNames from "classnames";
-
-// Types
-import { IFileUploadItemProps } from "@components/molecules/FileUploadList/FileUploadItem/FileUploadItem";
 
 // Styles
 import "./FileUploadList.scss";
@@ -15,9 +12,10 @@ interface IFileUploadListProps {
     className?: string;
     /**
      * The file upload items to be rendered within the list.
+     * If not provided, the component renders `null`.
      * Expects one or more `FileUploadItem` components.
      */
-    children: ReactElement<IFileUploadItemProps> | ReactElement<IFileUploadItemProps>[];
+    children?: ReactNode;
 }
 
 /**
@@ -25,6 +23,8 @@ interface IFileUploadListProps {
  * This component provides a clear and organized list of uploaded files, including key details such as file name, size, date, and actions for each file.
  */
 const FileUploadList: FC<IFileUploadListProps> = ({ className, children }) => {
+    if (!children) return null;
+
     return (
         <div className={classNames("fileUploadList", className)} role="list" aria-label="Uploaded files list">
             {children}

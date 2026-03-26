@@ -42,6 +42,11 @@ describe("FileUploadList", () => {
         expect(setup.hasClass(className)).toBeTruthy();
     });
 
+    it("renders null when no children are provided", () => {
+        const wrapper = mount(<FileUploadList />);
+        expect(wrapper.isEmptyRender()).toBeTruthy();
+    });
+
     it("renders a FileUploadItem per file entry", () => {
         expect(setup.find(FileUploadItem)).toHaveLength(mockDataForTests.length);
     });
