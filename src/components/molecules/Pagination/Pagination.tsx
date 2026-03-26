@@ -200,7 +200,8 @@ const Pagination: FC<IPaginationProps> = ({
                     </div>
 
                     <div className="pagination__perpage_values">
-                        <span>{currentPageSize}</span> {pageSizeOfLabel} <span>{totalPages}</span>
+                        <span>{currentPageSize}</span> {pageSizeOfLabel}{" "}
+                        <span className="pagination__perpage_totalItems">{totalPages}</span>
                     </div>
                 </div>
             )}
