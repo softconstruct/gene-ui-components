@@ -5,7 +5,7 @@ import classNames from "classnames";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
 // Components
-import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
+import Pagination from "@components/molecules/Pagination";
 // Constants
 import { DEFAULT_ERROR_TEXTS } from "@components/molecules/Table/constants";
 // Hooks
@@ -13,7 +13,7 @@ import { useTablePagination } from "@components/molecules/Table/hooks/useTablePa
 import TableBody from "@components/molecules/Table/TableBody/TableBody";
 import TableHeader from "@components/molecules/Table/TableHeader/TableHeader";
 // Types
-import { ITableErrorTexts } from "@components/molecules/Table/types";
+import { ITableErrorTexts, ITablePaginationProps } from "@components/molecules/Table/types";
 
 // Styles
 import "./Table.scss";
@@ -35,7 +35,7 @@ interface ITableProps<TData> {
      *
      * @default false
      */
-    pagination?: boolean | IPaginationProps;
+    pagination?: boolean | ITablePaginationProps;
     /**
      * Data record array to be displayed.
      *

@@ -33,7 +33,6 @@ export const Default: Story = {
     args: {
         columns: mockColumns,
         data: mockData,
-        // @ts-expect-error: TODO: check and remove
         pagination: { rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
     }
 };

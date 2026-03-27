@@ -2,13 +2,13 @@ import { useMemo } from "react";
 import { Table } from "@tanstack/table-core";
 
 // Types
-import { IPaginationProps } from "@components/molecules/Pagination";
+import { ITablePaginationProps } from "@components/molecules/Table/types";
 
-export const useTablePagination = <TData>(paginationProp: boolean | IPaginationProps, table: Table<TData>) => {
+export const useTablePagination = <TData>(paginationProp: boolean | ITablePaginationProps, table: Table<TData>) => {
     const paginationProps = useMemo(() => {
         if (!paginationProp) return null;
 
-        const config: Partial<IPaginationProps> = typeof paginationProp === "object" ? paginationProp : {};
+        const config: Partial<ITablePaginationProps> = typeof paginationProp === "object" ? paginationProp : {};
 
         return {
             ...config,
