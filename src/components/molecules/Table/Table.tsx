@@ -1,8 +1,9 @@
 import React, { ReactElement, useState } from "react";
-import { ColumnDef, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+import { CellContext, ColumnDef, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import classNames from "classnames";
 
 import Scrollbar from "@components/atoms/Scrollbar";
+import Text from "@components/atoms/Text";
 // Components
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 // Constants
@@ -61,6 +62,14 @@ interface ITableProps<TData> {
     errorTexts?: ITableErrorTexts;
 }
 
+const defaultColumn = {
+    cell: <TData, TValue>({ getValue }: CellContext<TData, TValue>) => (
+        <Text className="tableBodyCell__text" as="span" variant="labelMediumMedium">
+            {getValue() as string}
+        </Text>
+    )
+};
+
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
  * * Data tables are essential for presenting information such as reports, inventories, or user data in a clear,
@@ -84,6 +93,7 @@ const Table = <TData,>({
     const table = useReactTable({
         data,
         columns,
+        defaultColumn,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel()
     });

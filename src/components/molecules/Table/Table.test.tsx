@@ -1,10 +1,8 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-// Mockup datas
-import { mockColumns, mockData } from "@components/molecules/Table/Table.mock";
-
 // Components
+import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 import Table, { ITableProps } from "./index";
 
 type MockDataType = (typeof mockData)[0];

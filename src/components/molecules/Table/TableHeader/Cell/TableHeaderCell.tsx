@@ -2,9 +2,10 @@ import React from "react";
 import { flexRender } from "@tanstack/react-table";
 import { Header } from "@tanstack/table-core";
 
+import Text from "@components/atoms/Text";
+
 // Styles
 import "./TableHeaderCell.scss";
-import Text from "@components/atoms/Text";
 
 /**
  * Props for the {@link TableHeaderCell} component.
@@ -41,7 +42,7 @@ const TableHeaderCell = <TData, TValue>({ header }: ITableHeaderCellProps<TData,
     >
         <div className="tableHeaderCell__content">
             <Text className="tableHeaderCell__text" as="span" variant="labelMediumSemibold">
-                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                {flexRender(header.column.columnDef.header, header.getContext()) as string}
             </Text>
         </div>
     </th>
