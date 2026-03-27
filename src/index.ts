@@ -74,6 +74,7 @@ export { default as ColorPicker, IColorPickerProps } from "./components/molecule
 
 export { default as OTPField, IOTPFieldProps } from "./components/molecules/OTPField";
 export { default as Breadcrumb, IBreadcrumbProps, IBreadcrumbItemProps } from "./components/molecules/Breadcrumb";
+export { default as PageHeader, IPageHeaderProps } from "./components/molecules/PageHeader";
 
 // Organisms
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
