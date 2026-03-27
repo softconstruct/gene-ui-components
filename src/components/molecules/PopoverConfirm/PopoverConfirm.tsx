@@ -22,7 +22,7 @@ import "./PopoverConfirm.scss";
 
 const appearanceByStatus = { error: "danger", warning: "primary" } as const;
 const iconByStatus = { error: ErrorFilled, warning: TriangleAlert } as const;
-const MARGIN = 12;
+const DISTANCE_FROM_REFERRAL_ELEMENT = 12;
 
 interface IPopoverConfirmProps {
     /**
@@ -156,7 +156,7 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
     const primaryButtonAppearance = appearanceByStatus[status];
     const IconComponent = iconByStatus[status];
     const headerIcon: FC<IconProps> = ({ className, ...props }: IconProps) => (
-        <IconComponent {...props} className={classNames(className, `popoverConfirm__titleIcon_${status}`)} size={20} />
+        <IconComponent {...props} className={classNames(className, `popoverConfirm__headerIcon_${status}`)} size={20} />
     );
 
     const footerActions = React.useMemo((): IPopoverFooterActionProps[] => {
@@ -190,7 +190,7 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
                 defaultOpen={defaultOpen}
                 size={size}
                 position={position}
-                margin={MARGIN}
+                margin={DISTANCE_FROM_REFERRAL_ELEMENT}
                 setProps={setProps}
                 title={title}
                 withArrow

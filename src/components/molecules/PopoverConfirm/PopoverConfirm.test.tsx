@@ -212,7 +212,7 @@ describe("PopoverConfirm", () => {
             title: "Test Title"
         });
         expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
-        expect(provider().find(`.popoverConfirm__titleIcon_${status}`).exists()).toBeTruthy();
+        expect(provider().find(`.popoverConfirm__headerIcon_${status}`).exists()).toBeTruthy();
     });
 
     it("renders with defaultOpen prop", () => {
