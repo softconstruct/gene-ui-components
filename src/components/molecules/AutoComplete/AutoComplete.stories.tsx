@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useCallback, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import TextField from "@components/molecules/TextField";
@@ -19,6 +19,7 @@ const meta: Meta<IAutoCompleteProps> = {
         emptyText: args({ control: "text", ...propCategory.content }),
         showMore: args({ control: "boolean", ...propCategory.appearance }),
         showMoreLabel: args({ control: "text", ...propCategory.content }),
+        showMoreDisabled: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         position: args({
             control: "select",
@@ -44,7 +45,7 @@ const meta: Meta<IAutoCompleteProps> = {
     args: {
         onOpenChange: () => {},
         emptyText: "No results",
-        loadingText: "Loading...",
+        loadingText: "Loading Info",
         loading: false,
         showMore: false,
         showMoreLabel: "Show more",
@@ -57,22 +58,24 @@ export default meta;
 type Story = StoryObj<IAutoCompleteProps>;
 
 const items = [
-    "Apple",
-    "Banana",
-    "Cherry",
-    "Date",
-    "Elderberry",
-    "Fig",
-    "Grape",
-    "Honeydew",
-    "Kiwi",
-    "Lemon",
-    "Mango",
-    "Nectarine",
-    "Orange",
-    "Papaya",
-    "Quince"
+    "item1",
+    "item2",
+    "item3",
+    "item4",
+    "item5",
+    "item6",
+    "item7",
+    "item8",
+    "item9",
+    "item10",
+    "item11",
+    "item12",
+    "item13",
+    "item14",
+    "item15"
 ];
+
+const PAGE_SIZE = 5;
 
 const StoryComponent: FC<IAutoCompleteProps> = (props) => {
     const [propsForPopover, setPropsForPopover] = useState({});
@@ -97,13 +100,65 @@ export const Default: Story = {
     render: (props) => <StoryComponent {...props} />
 };
 
+const WithFooterStoryComponent: FC<IAutoCompleteProps> = (props) => {
+    const { showMoreDisabled } = props;
+    const [propsForPopover, setPropsForPopover] = useState({});
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+    const visibleItems = items.slice(0, visibleCount);
+    const allLoaded = visibleCount >= items.length;
+    const isShowMoreDisabled = !!showMoreDisabled || allLoaded;
+
+    const handleShowMore = useCallback(() => {
+        setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, items.length));
+    }, []);
+
+    return (
+        <div style={{ padding: "2rem", minHeight: "400px" }}>
+            <div {...propsForPopover} style={{ display: "inline-block", width: "100%" }}>
+                <TextField placeholder="Search..." />
+            </div>
+            <AutoComplete
+                {...props}
+                setPropsForPopover={setPropsForPopover}
+                showMore
+                onShowMore={handleShowMore}
+                showMoreDisabled={isShowMoreDisabled}
+            >
+                {visibleItems.map((item) => (
+                    <AutoCompleteItem key={item} id={item}>
+                        {item}
+                    </AutoCompleteItem>
+                ))}
+            </AutoComplete>
+        </div>
+    );
+};
+
 export const WithFooter: Story = {
-    render: (props) => <StoryComponent {...props} />,
+    render: (props) => <WithFooterStoryComponent {...props} />,
     args: {
-        showMore: true,
-        showMoreLabel: "Show more",
-        onShowMore: () => console.log("Show more clicked")
+        showMoreLabel: "Show more"
     }
+};
+
+const NoResultStoryComponent: FC<IAutoCompleteProps> = (props) => {
+    const [propsForPopover, setPropsForPopover] = useState({});
+
+    return (
+        <div style={{ padding: "2rem", minHeight: "400px" }}>
+            <div {...propsForPopover} style={{ display: "inline-block", width: "100%" }}>
+                <TextField placeholder="Search..." />
+            </div>
+            <AutoComplete {...props} setPropsForPopover={setPropsForPopover}>
+                {[]}
+            </AutoComplete>
+        </div>
+    );
+};
+
+export const NoResult: Story = {
+    render: (props) => <NoResultStoryComponent {...props} />
 };
 
 const WithRenderStoryComponent: FC<IAutoCompleteProps> = (props) => {
@@ -121,7 +176,6 @@ const WithRenderStoryComponent: FC<IAutoCompleteProps> = (props) => {
                 <AutoCompleteItem
                     id="profile"
                     render={(itemData) => (
-                        // eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
                         <a
                             href={`/users/${itemData.id}`}
                             aria-label="Go to Profile"
@@ -136,7 +190,6 @@ const WithRenderStoryComponent: FC<IAutoCompleteProps> = (props) => {
                 <AutoCompleteItem
                     id="settings"
                     render={(itemData) => (
-                        // eslint-disable-next-line jsx-a11y/anchor-has-content, jsx-a11y/control-has-associated-label
                         <a
                             href={`/settings/${itemData.id}`}
                             aria-label="Settings Page"

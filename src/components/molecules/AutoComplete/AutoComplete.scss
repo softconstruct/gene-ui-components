@@ -4,10 +4,55 @@
     color: var(--guit-ref-color-magenta-500base);
     font-size: var(--guit-sem-font-caption-large-medium-font-size);
 
+    &__body {
+        width: 28rem;
+    }
+
     &__inner {
         display: flex;
         flex-direction: column;
-        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+        width: 28rem;
+
+        &_size {
+            &_large {
+                height: 18.4rem;
+            }
+
+            &_medium {
+                height: 16.4rem;
+            }
+
+            &_small {
+                height: 14.4rem;
+            }
+        }
+    }
+
+    &__state {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        &_size {
+            &_large {
+                width: 28rem;
+                height: 18.4rem;
+            }
+
+            &_medium {
+                width: 28rem;
+                height: 16.4rem;
+            }
+
+            &_small {
+                width: 28rem;
+                height: 14.4rem;
+            }
+        }
     }
 
     &__scrollbar {
@@ -36,6 +81,7 @@
     &__footer {
         flex: none;
         display: flex;
+        width: 100%;
         align-items: center;
         justify-content: flex-end;
         border-top: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
@@ -45,7 +91,7 @@
         overflow: hidden;
 
         &_button {
-            width: 28rem;
+            width: auto;
             height: 3.2rem;
             gap: 0;
             border-radius: 0;

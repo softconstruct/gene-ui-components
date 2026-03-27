@@ -32,8 +32,8 @@ type SizeType = "large" | "medium" | "small";
 
 const popoverSizeMapping = {
     large: "medium",
-    medium: "small",
-    small: "small"
+    medium: "medium",
+    small: "medium"
 } as const;
 
 type GenericObject = Record<string, unknown>;
@@ -95,6 +95,11 @@ interface IAutoCompleteProps {
      */
     showMoreLabel?: string;
     /**
+     * Disables the "Show more" button.
+     * Useful when there are no more items to load.
+     */
+    showMoreDisabled?: boolean;
+    /**
      * Callback when the open state changes.
      */
     onOpenChange?: (isOpen: boolean) => void;
@@ -116,6 +121,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
     showMore,
     onShowMore,
     showMoreLabel,
+    showMoreDisabled = false,
     onOpenChange
 }) => {
     const [isOpenState, setIsOpenState] = useState<boolean>(false);
@@ -224,20 +230,32 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
     const content = useMemo(() => {
         if (loading) {
             return (
-                <div className="autoComplete__loader">
+                <div
+                    className={classNames(
+                        "autoComplete__state",
+                        "autoComplete__loader",
+                        `autoComplete__state_size_${size}`
+                    )}
+                >
                     <Loader text={loadingText} textPosition="below" />
                 </div>
             );
         }
         if (!hasChildren) {
             return (
-                <div className="autoComplete__empty">
-                    <Empty description={emptyText} appearance="noResult" size="small" />
+                <div
+                    className={classNames(
+                        "autoComplete__state",
+                        "autoComplete__empty",
+                        `autoComplete__state_size_${size}`
+                    )}
+                >
+                    <Empty description={emptyText} appearance="noResult" size={size === "small" ? "small" : "medium"} />
                 </div>
             );
         }
         return (
-            <div className="autoComplete__inner">
+            <div className={classNames("autoComplete__inner", `autoComplete__inner_size_${size}`)}>
                 <Scrollbar className="autoComplete__scrollbar">
                     <div className={classNames("autoComplete", className, "autoComplete__content")}>{children}</div>
                 </Scrollbar>
@@ -246,12 +264,24 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
                         showMore={showMore}
                         onShowMore={onShowMore}
                         showMoreLabel={showMoreLabel}
-                        disabled={!hasChildren}
+                        disabled={!hasChildren || loading || showMoreDisabled}
                     />
                 )}
             </div>
         );
-    }, [children, className, emptyText, hasChildren, loading, loadingText, onShowMore, showMore, showMoreLabel]);
+    }, [
+        children,
+        className,
+        emptyText,
+        hasChildren,
+        loading,
+        loadingText,
+        onShowMore,
+        showMore,
+        showMoreDisabled,
+        showMoreLabel,
+        size
+    ]);
 
     return (
         <Popover
@@ -263,7 +293,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
             margin={4}
             ref={popoverRef}
         >
-            <PopoverBody withPadding className="autoComplete__body" withScrollbar={false}>
+            <PopoverBody withPadding={false} className="autoComplete__body" withScrollbar={false}>
                 {content}
             </PopoverBody>
         </Popover>
