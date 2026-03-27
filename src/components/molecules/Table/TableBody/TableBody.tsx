@@ -61,7 +61,11 @@ interface ITableBody<TData> {
  */
 const TableBody = <TData,>({ rows, loading, loadingText, errorTexts, noDataAvailableActions }: ITableBody<TData>) => {
     if (loading) {
-        return <Loader size="large" text={loadingText} textPosition="below" />;
+        return (
+            <div className="table__content_empty">
+                <Loader size="large" text={loadingText} textPosition="below" />
+            </div>
+        );
     }
 
     if (!rows || rows.length === 0) {

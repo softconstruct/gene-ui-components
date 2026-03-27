@@ -62,7 +62,14 @@ interface ITableProps<TData> {
      */
     errorTexts?: ITableErrorTexts;
     /**
-     *
+     * An array of action button objects to display in the `empty` component's footer.
+     * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
+     * Each object conforms to the `IButtonProps` interface, allowing full customization of each button.
+     * @example
+     * actions={[
+     * { children: 'Cancel', appearance: 'secondary', onClick: handleCancel },
+     * { children: 'Reload', appearance: 'primary', onClick: handleReload }
+     * ]}
      */
     noDataAvailableActions?: IButtonProps[];
 }
@@ -108,6 +115,8 @@ const Table = <TData,>({
 
     const { paginationProps } = useTablePagination(pagination, table);
 
+    const shouldShowPagination = paginationProps && data?.length > 0;
+
     return (
         <div className={classNames("dataTable", className)}>
             <Scrollbar>
@@ -122,7 +131,7 @@ const Table = <TData,>({
                     />
                 </table>
             </Scrollbar>
-            {paginationProps && <Pagination className="dataTable__pagination" {...paginationProps} />}
+            {shouldShowPagination && <Pagination className="dataTable__pagination" {...paginationProps} />}
         </div>
     );
 };
