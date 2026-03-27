@@ -3,6 +3,7 @@ import { Cell, flexRender } from "@tanstack/react-table";
 
 // Styles
 import "./TableBodyCell.scss";
+import Text from "@components/atoms/Text";
 
 /**
  * Props for the {@link TableBodyCell} component.
@@ -29,16 +30,31 @@ interface ITableBodyCellProps<TData, TValue> {
  * @param props - The properties for the component.
  * @returns A table cell element with the rendered content.
  */
-const TableBodyCell = <TData, TValue>({ cell }: ITableBodyCellProps<TData, TValue>) => (
-    <td
-        className="tableBodyCell"
-        style={{
-            width: cell.column.getSize(),
-            minWidth: cell.column.getSize()
-        }}
-    >
-        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-    </td>
-);
+const TableBodyCell = <TData, TValue>({ cell }: ITableBodyCellProps<TData, TValue>) => {
+    const isCustomCell = false;
+
+    const renderCell = () => {
+        if (isCustomCell) {
+            return flexRender(cell.column.columnDef.cell, cell.getContext());
+        }
+        return (
+            <Text className="tableBodyCell__text" as="span" variant="labelMediumMedium">
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+            </Text>
+        );
+    };
+
+    return (
+        <td
+            className="tableBodyCell"
+            style={{
+                width: cell.column.getSize(),
+                minWidth: cell.column.getSize()
+            }}
+        >
+            <div className="tableBodyCell__content">{renderCell()}</div>
+        </td>
+    );
+};
 
 export default TableBodyCell;

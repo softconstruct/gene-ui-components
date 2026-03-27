@@ -31,7 +31,7 @@ interface ITableHeaderProps<TData> {
  * @returns The table header element containing all rendered header rows and cells.
  */
 const TableHeader = <TData,>({ headerGroups }: ITableHeaderProps<TData>) => (
-    <thead className="tableHeader">
+    <thead className="table__header tableHeader">
         {headerGroups.map((headerGroup) => (
             <tr className="tableHeader__row" key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

@@ -76,7 +76,7 @@ const TableBody = <TData,>({ rows, loading, loadingText, errorTexts }: ITableBod
     }
 
     return (
-        <tbody>
+        <tbody className="table__body tableBody">
             {rows.map((row) => (
                 <TableRow key={row.id} row={row} />
             ))}

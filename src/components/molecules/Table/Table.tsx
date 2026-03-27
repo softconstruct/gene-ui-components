@@ -95,7 +95,7 @@ const Table = <TData,>({
     return (
         <div className={classNames("dataTable", className)}>
             <Scrollbar>
-                <table className={classNames("dataTable__table")}>
+                <table className={classNames("dataTable__table table")}>
                     <TableHeader headerGroups={table.getHeaderGroups()} />
                     <TableBody
                         loading={isTableLoading}

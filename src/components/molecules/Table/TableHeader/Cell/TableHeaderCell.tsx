@@ -4,6 +4,7 @@ import { Header } from "@tanstack/table-core";
 
 // Styles
 import "./TableHeaderCell.scss";
+import Text from "@components/atoms/Text";
 
 /**
  * Props for the {@link TableHeaderCell} component.
@@ -38,7 +39,11 @@ const TableHeaderCell = <TData, TValue>({ header }: ITableHeaderCellProps<TData,
             minWidth: header.getSize()
         }}
     >
-        {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+        <div className="tableHeaderCell__content">
+            <Text className="tableHeaderCell__text" as="span" variant="labelMediumSemibold">
+                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+            </Text>
+        </div>
     </th>
 );
 
