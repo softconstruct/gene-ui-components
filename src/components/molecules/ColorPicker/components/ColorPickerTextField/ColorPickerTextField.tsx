@@ -57,7 +57,7 @@ const ColorPickerTextField: FC<IColorPickerTextFieldProps> = ({
     };
 
     return (
-        <div className="colorPickerTextField">
+        <div className={classNames("colorPickerTextField", `colorPickerTextField_size_${size}`)}>
             <div className="colorPickerTextField__wrapper">
                 <div className="colorPickerTextField__content">
                     <ColorIndicator size={size} onClick={() => onPickerOpen(true)} color={value} alpha={alpha} />
