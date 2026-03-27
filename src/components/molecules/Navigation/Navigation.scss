@@ -123,6 +123,13 @@
         height: 100%;
         border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
+
+        &_wrapper {
+            padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-xsmall) 0 var(--guit-ref-spacing-xsmall);
+            display: flex;
+            flex-direction: column;
+            gap: var(--guit-ref-spacing-3xsmall);
+        }
     }
 
     &__items {
