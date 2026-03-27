@@ -19,7 +19,8 @@ const meta: Meta<ITableProps<MockRowType>> = {
         data: args({ control: "false", ...propCategory.content }),
         errorTexts: args({ control: "object", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
-        loadingText: args({ control: "text", ...propCategory.content })
+        loadingText: args({ control: "text", ...propCategory.content }),
+        noDataAvailableActions: args({ control: "false", ...propCategory.functionality })
     },
     args: {}
 };
@@ -40,11 +41,6 @@ export const Default: Story = {
 export const NoDataAvailable: Story = {
     render: (props) => <Table {...props} />,
     args: { columns: mockColumns }
-};
-
-export const NoResultFound: Story = {
-    render: (props) => <Table {...props} />,
-    args: { columns: mockColumns, data: [] }
 };
 
 export const Loading: Story = {

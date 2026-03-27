@@ -2,6 +2,7 @@ import React, { ReactElement, useState } from "react";
 import { CellContext, ColumnDef, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import classNames from "classnames";
 
+import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
 // Components
@@ -60,6 +61,10 @@ interface ITableProps<TData> {
      * An object with error texts, used for various cases (no data, no result found).
      */
     errorTexts?: ITableErrorTexts;
+    /**
+     *
+     */
+    noDataAvailableActions?: IButtonProps[];
 }
 
 const defaultColumn = {
@@ -86,7 +91,8 @@ const Table = <TData,>({
     pagination = true,
     loading: externalLoading = false,
     loadingText = "Loading...",
-    errorTexts = DEFAULT_ERROR_TEXTS
+    errorTexts = DEFAULT_ERROR_TEXTS,
+    noDataAvailableActions
 }: ITableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
 
@@ -112,6 +118,7 @@ const Table = <TData,>({
                         loadingText={loadingText}
                         rows={table.getRowModel().rows}
                         errorTexts={errorTexts}
+                        noDataAvailableActions={noDataAvailableActions}
                     />
                 </table>
             </Scrollbar>

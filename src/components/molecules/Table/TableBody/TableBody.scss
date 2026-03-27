@@ -1,6 +1,6 @@
 .tableBody {
-  display: table-row-group;
-  width: 100%;
+    display: table-row-group;
+    width: 100%;
 }
 
 .table__content_empty {
@@ -10,7 +10,6 @@
     width: 100%;
     position: absolute;
     inset-inline: 0;
-    pointer-events: none;
     column-gap: var(--guit-ref-spacing-xsmall);
     padding-block: var(--guit-ref-spacing-xsmall);
     padding-inline: var(--guit-ref-spacing-large);

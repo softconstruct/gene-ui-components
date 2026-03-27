@@ -1,6 +1,7 @@
 import React from "react";
 import { Row } from "@tanstack/table-core";
 
+import { IButtonProps } from "@components/atoms/Button";
 // Components
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
@@ -33,6 +34,17 @@ interface ITableBody<TData> {
      * (e.g., when no data exists or no search results are found).
      */
     errorTexts: ITableErrorTexts;
+    /**
+     * An array of action button objects to display in the `empty` component's footer.
+     * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
+     * Each object conforms to the `IButtonProps` interface, allowing full customization of each button.
+     * @example
+     * actions={[
+     * { children: 'Cancel', appearance: 'secondary', onClick: handleCancel },
+     * { children: 'Reload', appearance: 'primary', onClick: handleReload }
+     * ]}
+     */
+    noDataAvailableActions?: IButtonProps[];
 }
 
 /**
@@ -47,30 +59,19 @@ interface ITableBody<TData> {
  * @param props - The properties for the component.
  * @returns The table body element, or a fallback UI (loader/empty state) depending on the data.
  */
-const TableBody = <TData,>({ rows, loading, loadingText, errorTexts }: ITableBody<TData>) => {
+const TableBody = <TData,>({ rows, loading, loadingText, errorTexts, noDataAvailableActions }: ITableBody<TData>) => {
     if (loading) {
         return <Loader size="large" text={loadingText} textPosition="below" />;
     }
 
-    if (!rows) {
+    if (!rows || rows.length === 0) {
         return (
             <Empty
                 appearance="noData"
                 title={errorTexts.noDataAvailableTitle}
                 description={errorTexts.noDataAvailableText}
                 className="table__content_empty"
-                actions={[{ children: "Retry", onClick: () => null }]}
-            />
-        );
-    }
-
-    // TODO: for this case we should check also the existence of search query (table should have searchData)
-    if (rows?.length === 0) {
-        return (
-            <Empty
-                appearance="noResult"
-                title={errorTexts.noResultFoundTitle}
-                description={errorTexts.noResultFoundText}
+                actions={noDataAvailableActions}
             />
         );
     }
