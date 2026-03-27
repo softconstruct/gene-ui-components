@@ -340,7 +340,6 @@ const ColorPicker: FC<IColorPickerProps> = ({
                 position="bottom-left"
                 open={isOpen}
                 setProps={setPropsForPopover}
-                size={size}
             >
                 <PopoverBody withPadding={false}>
                     <div className="colorPicker__wrapper">
