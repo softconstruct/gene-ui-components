@@ -56,28 +56,28 @@ describe("Table Component", () => {
         expect(loader.prop("text")).toBe(customLoadingText);
     });
 
-    it("renders Empty component with default texts when data is empty (noResult)", () => {
+    it("renders Empty component with default texts when data is empty (noData)", () => {
         setup.setProps({ data: [] });
 
         const emptyState = setup.find(Empty);
         expect(emptyState.exists()).toBeTruthy();
-        expect(emptyState.prop("appearance")).toBe("noResult");
-        expect(emptyState.prop("title")).toBe(DEFAULT_ERROR_TEXTS.noResultFoundTitle);
-        expect(emptyState.prop("description")).toBe(DEFAULT_ERROR_TEXTS.noResultFoundText);
+        expect(emptyState.prop("appearance")).toBe("noData");
+        expect(emptyState.prop("title")).toBe(DEFAULT_ERROR_TEXTS.noDataAvailableTitle);
+        expect(emptyState.prop("description")).toBe(DEFAULT_ERROR_TEXTS.noDataAvailableText);
     });
 
     it("renders Empty component with custom errorTexts when provided", () => {
         const customErrorTexts = {
-            noResultFoundTitle: "Custom No Result Title",
-            noResultFoundText: "Custom No Result Text"
+            noDataAvailableText: "Custom No Result Title",
+            noDataAvailableTitle: "Custom No Result Text"
         };
 
         setup.setProps({ data: [], errorTexts: customErrorTexts });
 
         const emptyState = setup.find(Empty);
         expect(emptyState.exists()).toBeTruthy();
-        expect(emptyState.prop("title")).toBe(customErrorTexts.noResultFoundTitle);
-        expect(emptyState.prop("description")).toBe(customErrorTexts.noResultFoundText);
+        expect(emptyState.prop("title")).toBe(customErrorTexts.noDataAvailableTitle);
+        expect(emptyState.prop("description")).toBe(customErrorTexts.noDataAvailableText);
     });
 
     it("renders Pagination component by default (pagination = true)", () => {
