@@ -1,3 +1,5 @@
+@use "../../../../../assets/styles/mixins";
+
 .tableRow {
     position: relative;
     display: table-row;
@@ -7,53 +9,17 @@
         background-color: var(--guit-sem-color-background-neutral-3-pressed);
     }
 
-    &:not(:active),
-    &:not(:hover) {
-        &:nth-child(even) {
-            background-color: var(--guit-sem-color-background-neutral-3);
-        }
-
-        &:nth-child(odd) {
-            background-color: var(--guit-sem-color-background-neutral-1);
-        }
+    &:nth-child(even) {
+        background-color: var(--guit-sem-color-background-neutral-3);
     }
 
-    &:hover:not(:active) {
-        background-color: var(--guit-sem-color-background-neutral-3-hover);
+    &:nth-child(odd) {
+        background-color: var(--guit-sem-color-background-neutral-1);
     }
 
-    &_selected:not(:active) {
-        background-color: var(--guit-sem-color-background-neutral-3-pressed);
-    }
-
-    &_red:not(:active, :hover) {
-        background-color: var(--guit-sem-color-background-error-1);
-    }
-
-    &_green:not(:active, :hover) {
-        background-color: var(--guit-sem-color-background-success-1);
-    }
-
-    &_highlighted:not(:active, :hover) {
-        background-color: var(--guit-sem-color-background-brand-1);
-    }
-
-    &_pinned {
-        position: sticky;
-        z-index: 2;
-
-        &::after {
-            content: "";
-            pointer-events: none;
-            position: absolute;
-            inset-inline: 0;
-            height: 0.4rem;
-            top: 100%;
-            background: linear-gradient(
-                to bottom,
-                var(--guit-sem-color-floating-1-rgba-1),
-                var(--guit-ref-color-transparent-neutral-800-0)
-            );
+    @include mixins.media-hover {
+        &:hover {
+            background-color: var(--guit-sem-color-background-neutral-3-hover);
         }
     }
 }

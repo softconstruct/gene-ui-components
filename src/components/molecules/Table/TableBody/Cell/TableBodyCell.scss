@@ -1,67 +1,26 @@
 .tableBodyCell {
-  height: 4.4rem;
-  padding-block: var(--guit-ref-spacing-medium);
-  padding-inline: var(--guit-ref-spacing-large);
-  border-bottom: var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-neutral-1);
-  vertical-align: middle;
+    height: 4.4rem;
+    padding-block: var(--guit-ref-spacing-medium);
+    padding-inline: var(--guit-ref-spacing-large);
+    border-bottom: var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-neutral-1);
+    vertical-align: middle;
 
-  &:not(&_pinned, :last-child) {
-    border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
-  }
-
-  &_expanded {
-    background-color: var(--guit-sem-color-background-neutral-2);
-    padding: var(--guit-ref-spacing-large);
-  }
-
-  &_text {
-    color: var(--guit-sem-color-foreground-neutral-2);
-  }
-
-  &_pinned {
-    position: sticky;
-    inset-inline-start: 0;
-    z-index: 1;
-    background-color: inherit;
-    border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-3);
-  }
-
-  &__content {
-    display: flex;
-    align-items: center;
-    gap: var(--guit-ref-spacing-3xsmall);
-
-    &_text {
-      position: relative;
-      min-width: var(--guit-ref-sizing-xsmall);
-      padding-block: var(--guit-ref-spacing-medium);
-      padding-inline: var(--guit-ref-spacing-large);
-
-      &_string {
-        text-align: start;
-      }
-
-      &_numeric {
-        justify-content: flex-end;
-      }
+    &:not(:last-child) {
+        border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
     }
 
-    &_checkbox {
-      justify-content: center;
-      padding-block: var(--guit-ref-spacing-xsmall);
-      padding-inline: var(--guit-ref-spacing-small);
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
     }
 
-    &_status {
-      padding-block: var(--guit-ref-spacing-2xsmall);
-      padding-inline: var(--guit-ref-spacing-large);
+    &__text {
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: var(--guit-sem-color-foreground-neutral-2);
     }
-
-    &_pill,
-    &_icon {
-      justify-content: center;
-      padding-block: var(--guit-ref-spacing-small);
-      padding-inline: var(--guit-ref-spacing-large);
-    }
-  }
 }

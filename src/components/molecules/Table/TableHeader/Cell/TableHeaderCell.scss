@@ -6,45 +6,9 @@
         var(--guit-sem-color-border-neutral-1);
     vertical-align: middle;
 
-    &:not(&_pinned, :last-child) {
+    &:not(:last-child) {
         border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
-    }
-
-    &_pinned {
-        position: sticky;
-        inset-inline-start: 0;
-        z-index: 1;
-        background-color: inherit;
-        border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-            var(--guit-sem-color-border-neutral-3);
-
-        &::after {
-            content: "";
-            display: block;
-            position: absolute;
-            inset-block: 0;
-            inset-inline-start: 100%;
-            inset-inline-end: 100%;
-            width: 0.4rem;
-            pointer-events: none;
-
-            [dir="ltr"] & {
-                background: linear-gradient(
-                    to right,
-                    var(--guit-sem-color-floating-1-rgba-1),
-                    var(--guit-ref-color-transparent-neutral-800-0)
-                );
-            }
-
-            [dir="rtl"] & {
-                background: linear-gradient(
-                    to left,
-                    var(--guit-sem-color-floating-1-rgba-1),
-                    var(--guit-ref-color-transparent-neutral-800-0)
-                );
-            }
-        }
     }
 
     &__content {
