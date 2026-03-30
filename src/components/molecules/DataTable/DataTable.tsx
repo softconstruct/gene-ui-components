@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useRef, useState } from "react";
 import { CellContext, ColumnDef, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import classNames from "classnames";
 
@@ -13,6 +13,9 @@ import TableHeader from "@components/molecules/DataTable/TableHeader/TableHeader
 // Types
 import { ITableNoDataTexts } from "@components/molecules/DataTable/types";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
+import Tooltip from "@components/molecules/Tooltip";
+
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./DataTable.scss";
@@ -76,12 +79,20 @@ interface IDataTableProps<TData> {
     noDataAvailableActions?: IButtonProps[];
 }
 
+const DefaultCellComponent = ({ value }: { value: string }) => {
+    const textRef = useRef<HTMLSpanElement | null>(null);
+    const isTruncated = useEllipsisDetection(textRef);
+    return (
+        <Tooltip text={value} isVisible={isTruncated}>
+            <Text ref={textRef} className="tableBodyCell__text" as="span" variant="labelMediumMedium">
+                {value}
+            </Text>
+        </Tooltip>
+    );
+};
+
 const defaultColumn = {
-    cell: <TData, TValue>({ getValue }: CellContext<TData, TValue>) => (
-        <Text className="tableBodyCell__text" as="span" variant="labelMediumMedium">
-            {getValue() as string}
-        </Text>
-    )
+    cell: <TData,>({ getValue }: CellContext<TData, string>) => <DefaultCellComponent value={getValue()} />
 };
 
 /**
@@ -106,12 +117,20 @@ const DataTable = <TData,>({
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
 
+    const initialPageSize =
+        typeof pagination === "object" && pagination.rowsPerPageOptions?.length ? pagination.rowsPerPageOptions[0] : 10;
+
     const table = useReactTable({
         data: data ?? [],
         columns,
         defaultColumn,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel()
+        getPaginationRowModel: getPaginationRowModel(),
+        initialState: {
+            pagination: {
+                pageSize: initialPageSize
+            }
+        }
     });
 
     const isTableLoading = externalLoading || internalLoading;
