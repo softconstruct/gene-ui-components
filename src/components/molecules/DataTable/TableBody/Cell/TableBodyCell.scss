@@ -1,0 +1,33 @@
+.tableBodyCell {
+    height: 4.4rem;
+    padding-block: var(--guit-ref-spacing-medium);
+    padding-inline: var(--guit-ref-spacing-large);
+    border-bottom: var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-neutral-1);
+    vertical-align: middle;
+
+    &:not(&_pinned, :last-child) {
+        border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+    }
+
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+
+        &_text {
+            position: relative;
+            min-width: var(--guit-ref-sizing-xsmall);
+            padding-block: var(--guit-ref-spacing-medium);
+            padding-inline: var(--guit-ref-spacing-large);
+
+            &_string {
+                text-align: start;
+            }
+
+            &_numeric {
+                justify-content: flex-end;
+            }
+        }
+    }
+}

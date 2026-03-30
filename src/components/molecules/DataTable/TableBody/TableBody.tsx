@@ -1,13 +1,13 @@
-import React from "react";
+import React, { FC, ReactNode } from "react";
 import { Row } from "@tanstack/table-core";
 
-import { IButtonProps } from "@components/atoms/Button";
-// Components
-import Loader from "@components/atoms/Loader";
-import Empty from "@components/molecules/Empty";
-import TableRow from "@components/molecules/Table/TableBody/Row/TableRow";
 // Types
-import { ITableErrorTexts } from "@components/molecules/Table/types";
+// Components
+import { IButtonProps } from "@components/atoms/Button";
+import Loader from "@components/atoms/Loader";
+import TableRow from "@components/molecules/DataTable/TableBody/Row/TableRow";
+import { ITableNoDataTexts } from "@components/molecules/DataTable/types";
+import Empty from "@components/molecules/Empty";
 
 // Styles
 import "./TableBody.scss";
@@ -28,12 +28,12 @@ interface ITableBody<TData> {
     /**
      * The text label displayed alongside the loading spinner.
      */
-    loadingText: string;
+    loadingText?: string;
     /**
      * A collection of text strings used for fallback UIs
      * (e.g., when no data exists or no search results are found).
      */
-    errorTexts: ITableErrorTexts;
+    noDataTexts?: ITableNoDataTexts;
     /**
      * An array of action button objects to display in the `empty` component's footer.
      * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
@@ -47,6 +47,21 @@ interface ITableBody<TData> {
     noDataAvailableActions?: IButtonProps[];
 }
 
+interface ITableEmptyDataWrapperProps {
+    children: ReactNode;
+}
+
+/**
+ * Renders empty data component with following the rules of data displaying at table.
+ */
+const TableEmptyDataWrapper: FC<ITableEmptyDataWrapperProps> = ({ children }) => (
+    <tbody className="table__content_empty">
+        <tr>
+            <td>{children}</td>
+        </tr>
+    </tbody>
+);
+
 /**
  * Renders the `<tbody>` section of the table, including empty and loading states.
  * * Handles conditional rendering based on the data's status:
@@ -59,29 +74,31 @@ interface ITableBody<TData> {
  * @param props - The properties for the component.
  * @returns The table body element, or a fallback UI (loader/empty state) depending on the data.
  */
-const TableBody = <TData,>({ rows, loading, loadingText, errorTexts, noDataAvailableActions }: ITableBody<TData>) => {
+const TableBody = <TData,>({ rows, loading, loadingText, noDataTexts, noDataAvailableActions }: ITableBody<TData>) => {
     if (loading) {
         return (
-            <div className="table__content_empty">
+            <TableEmptyDataWrapper>
                 <Loader size="large" text={loadingText} textPosition="below" />
-            </div>
+            </TableEmptyDataWrapper>
         );
     }
 
     if (!rows || rows.length === 0) {
         return (
-            <Empty
-                appearance="noData"
-                title={errorTexts.noDataAvailableTitle}
-                description={errorTexts.noDataAvailableText}
-                className="table__content_empty"
-                actions={noDataAvailableActions}
-            />
+            <TableEmptyDataWrapper>
+                <Empty
+                    appearance="noData"
+                    title={noDataTexts?.noDataAvailableTitle}
+                    description={noDataTexts?.noDataAvailableText}
+                    className="tableBody__emptyContent"
+                    actions={noDataAvailableActions}
+                />
+            </TableEmptyDataWrapper>
         );
     }
 
     return (
-        <tbody className="table__body tableBody">
+        <tbody className="tableBody">
             {rows.map((row) => (
                 <TableRow key={row.id} row={row} />
             ))}

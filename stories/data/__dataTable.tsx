@@ -1,11 +1,11 @@
 import React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
+// Components
 import Button from "@components/atoms/Button";
 import Pill from "@components/atoms/Pill";
 import Checkbox from "@components/molecules/Checkbox";
 import NumberField from "@components/molecules/NumberField";
-// Components
 import Switch from "@components/molecules/Switch";
 
 type ClientProfile = {

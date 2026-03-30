@@ -2,33 +2,35 @@ import React, { ReactElement, useState } from "react";
 import { CellContext, ColumnDef, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
 import classNames from "classnames";
 
+// Components
 import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
-// Components
-import Pagination from "@components/molecules/Pagination";
-// Constants
-import { DEFAULT_ERROR_TEXTS } from "@components/molecules/Table/constants";
 // Hooks
-import { useTablePagination } from "@components/molecules/Table/hooks/useTablePagination";
-import TableBody from "@components/molecules/Table/TableBody/TableBody";
-import TableHeader from "@components/molecules/Table/TableHeader/TableHeader";
+import { useTablePagination } from "@components/molecules/DataTable/hooks/useTablePagination";
+import TableBody from "@components/molecules/DataTable/TableBody/TableBody";
+import TableHeader from "@components/molecules/DataTable/TableHeader/TableHeader";
 // Types
-import { ITableErrorTexts, ITablePaginationProps } from "@components/molecules/Table/types";
+import { ITableNoDataTexts } from "@components/molecules/DataTable/types";
+import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 
 // Styles
-import "./Table.scss";
+import "./DataTable.scss";
 
 /**
- * Props for the {@link Table} component.
+ * Props for the {@link DataTable} component.
  * @template TData - The shape of the overall row data object.
  */
-interface ITableProps<TData> {
+interface IDataTableProps<TData> {
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Set sticky header.
+     */
+    sticky?: boolean;
     /**
      * Defines the pagination of the Table component.
      * Whether set `true` will display the raw pagination.
@@ -36,13 +38,13 @@ interface ITableProps<TData> {
      *
      * @default false
      */
-    pagination?: boolean | ITablePaginationProps;
+    pagination?: boolean | IPaginationProps;
     /**
      * Data record array to be displayed.
      *
      * @default []
      */
-    data?: TData[];
+    data?: TData[] | null;
     /**
      * Columns of table.
      *
@@ -60,7 +62,7 @@ interface ITableProps<TData> {
     /**
      * An object with error texts, used for various cases (no data, no result found).
      */
-    errorTexts?: ITableErrorTexts;
+    noDataTexts?: ITableNoDataTexts;
     /**
      * An array of action button objects to display in the `empty` component's footer.
      * The rendered buttons are automatically wrapped in a `ButtonGroup` component to ensure proper spacing and alignment.
@@ -84,27 +86,28 @@ const defaultColumn = {
 
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
- * * Data tables are essential for presenting information such as reports, inventories, or user data in a clear,
+ * Data tables are essential for presenting information such as reports, inventories, or user data in a clear,
  * sortable, and filterable manner, allowing users to quickly find, analyze, and manipulate data.
  *
  * @template TData - The shape of the overall row data object.
  * @param props - The properties for the component.
- * @returns The fully assembled Table component including headers, body, and optional pagination.
+ * @returns The fully assembled DataTable component including headers, body, and optional pagination.
  */
-const Table = <TData,>({
+const DataTable = <TData,>({
     className,
-    data = [] as TData[],
+    data = [],
     columns = [],
     pagination = true,
     loading: externalLoading = false,
-    loadingText = "Loading...",
-    errorTexts = DEFAULT_ERROR_TEXTS,
+    sticky = true,
+    loadingText,
+    noDataTexts,
     noDataAvailableActions
-}: ITableProps<TData>): ReactElement => {
+}: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
 
     const table = useReactTable({
-        data,
+        data: data ?? [],
         columns,
         defaultColumn,
         getCoreRowModel: getCoreRowModel(),
@@ -115,18 +118,18 @@ const Table = <TData,>({
 
     const { paginationProps } = useTablePagination(pagination, table);
 
-    const shouldShowPagination = paginationProps && data?.length > 0;
+    const shouldShowPagination = paginationProps && data && data.length > 0;
 
     return (
         <div className={classNames("dataTable", className)}>
             <Scrollbar>
-                <table className={classNames("dataTable__table table")}>
-                    <TableHeader headerGroups={table.getHeaderGroups()} />
+                <table className={classNames("dataTable__table")}>
+                    <TableHeader sticky={sticky} headerGroups={table.getHeaderGroups()} />
                     <TableBody
                         loading={isTableLoading}
                         loadingText={loadingText}
                         rows={table.getRowModel().rows}
-                        errorTexts={errorTexts}
+                        noDataTexts={noDataTexts}
                         noDataAvailableActions={noDataAvailableActions}
                     />
                 </table>
@@ -136,4 +139,4 @@ const Table = <TData,>({
     );
 };
 
-export { ITableProps, Table as default };
+export { IDataTableProps, DataTable as default };

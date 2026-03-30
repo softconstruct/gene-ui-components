@@ -1,0 +1,15 @@
+.tableHeader {
+    width: 100%;
+
+    &__sticky {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+    }
+
+    &__row {
+        position: relative;
+        width: 100%;
+        background-color: var(--guit-sem-color-background-neutral-4);
+    }
+}

@@ -24,12 +24,12 @@ interface IPaginationProps {
      * Total number of pages available.
      * This value determines the upper bound of pagination navigation.
      */
-    totalPages: number;
+    totalPages?: number;
     /**
      * The current active page (1-indexed).
      * This value sets the starting point of the pagination and updates dynamically with user interaction.
      */
-    current: number;
+    current?: number;
     /**
      * Optional array of available page sizes (e.g., [10, 25, 50]).
      * When provided, a dropdown is rendered to allow users to choose the number of items displayed per page.

@@ -2,6 +2,7 @@ import React from "react";
 import { flexRender } from "@tanstack/react-table";
 import { Header } from "@tanstack/table-core";
 
+// Components
 import Text from "@components/atoms/Text";
 
 // Styles

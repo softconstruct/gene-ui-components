@@ -1,8 +1,9 @@
 import React from "react";
 import { HeaderGroup } from "@tanstack/table-core";
+import classNames from "classnames";
 
 // Components
-import TableHeaderCell from "@components/molecules/Table/TableHeader/Cell/TableHeaderCell";
+import TableHeaderCell from "@components/molecules/DataTable/TableHeader/Cell/TableHeaderCell";
 
 // Styles
 import "./TableHeader.scss";
@@ -18,6 +19,10 @@ interface ITableHeaderProps<TData> {
      * natively supporting both simple flat headers and complex multi-level grouped headers.
      */
     headerGroups: HeaderGroup<TData>[];
+    /**
+     * Set sticky header.
+     */
+    sticky?: boolean;
 }
 
 /**
@@ -30,8 +35,12 @@ interface ITableHeaderProps<TData> {
  * @param props - The properties for the component.
  * @returns The table header element containing all rendered header rows and cells.
  */
-const TableHeader = <TData,>({ headerGroups }: ITableHeaderProps<TData>) => (
-    <thead className="table__header tableHeader">
+const TableHeader = <TData,>({ headerGroups, sticky }: ITableHeaderProps<TData>) => (
+    <thead
+        className={classNames("tableHeader", {
+            tableHeader__sticky: sticky
+        })}
+    >
         {headerGroups.map((headerGroup) => (
             <tr className="tableHeader__row" key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (

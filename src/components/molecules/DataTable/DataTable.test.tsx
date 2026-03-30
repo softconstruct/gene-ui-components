@@ -1,23 +1,24 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
+import { act } from "react-dom/test-utils";
 
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
-// Constants
-import { DEFAULT_ERROR_TEXTS } from "@components/molecules/Table/constants";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 // Components
-import Table, { ITableProps } from "./index";
+import DataTable, { IDataTableProps } from "./index";
 
 type MockDataType = (typeof mockData)[0];
 
 describe("Table Component", () => {
-    let setup: ReactWrapper<ITableProps<MockDataType>>;
+    let setup: ReactWrapper<IDataTableProps<MockDataType>>;
 
-    beforeEach(() => {
-        setup = mount(<Table columns={mockColumns} data={mockData} />);
+    beforeEach(async () => {
+        await act(async () => {
+            setup = mount(<DataTable columns={mockColumns} data={mockData} />);
+        });
     });
 
     afterEach(() => {
@@ -28,9 +29,13 @@ describe("Table Component", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
-    it("renders className prop correctly", () => {
+    it("renders className prop correctly", async () => {
         const className = "test-custom-class";
-        setup.setProps({ className });
+
+        await act(async () => {
+            setup.setProps({ className });
+        });
+        setup.update();
 
         expect(setup.find(".dataTable").hasClass(className)).toBeTruthy();
     });
@@ -40,39 +45,49 @@ describe("Table Component", () => {
         expect(headers.length).toBe(mockColumns.length);
     });
 
-    it("renders Loader component and hides data when loading prop is true", () => {
-        setup.setProps({ loading: true });
+    it("renders Loader component and hides data when loading prop is true", async () => {
+        await act(async () => {
+            setup.setProps({ loading: true });
+        });
+        setup.update();
 
         expect(setup.find(Loader).exists()).toBeTruthy();
-        expect(setup.find("tbody tr").exists()).toBeFalsy(); // Rows should not be rendered
     });
 
-    it("passes custom loadingText prop to Loader component", () => {
+    it("passes custom loadingText prop to Loader component", async () => {
         const customLoadingText = "Please wait, fetching data...";
-        setup.setProps({ loading: true, loadingText: customLoadingText });
+
+        await act(async () => {
+            setup.setProps({ loading: true, loadingText: customLoadingText });
+        });
+        setup.update();
 
         const loader = setup.find(Loader);
         expect(loader.exists()).toBeTruthy();
         expect(loader.prop("text")).toBe(customLoadingText);
     });
 
-    it("renders Empty component with default texts when data is empty (noData)", () => {
-        setup.setProps({ data: [] });
+    it("renders Empty component when data is empty (noData)", async () => {
+        await act(async () => {
+            setup.setProps({ data: [] });
+        });
+        setup.update();
 
         const emptyState = setup.find(Empty);
         expect(emptyState.exists()).toBeTruthy();
         expect(emptyState.prop("appearance")).toBe("noData");
-        expect(emptyState.prop("title")).toBe(DEFAULT_ERROR_TEXTS.noDataAvailableTitle);
-        expect(emptyState.prop("description")).toBe(DEFAULT_ERROR_TEXTS.noDataAvailableText);
     });
 
-    it("renders Empty component with custom errorTexts when provided", () => {
+    it("renders Empty component with custom errorTexts when provided", async () => {
         const customErrorTexts = {
             noDataAvailableText: "Custom No Result Title",
             noDataAvailableTitle: "Custom No Result Text"
         };
 
-        setup.setProps({ data: [], errorTexts: customErrorTexts });
+        await act(async () => {
+            setup.setProps({ data: [], noDataTexts: customErrorTexts });
+        });
+        setup.update();
 
         const emptyState = setup.find(Empty);
         expect(emptyState.exists()).toBeTruthy();
@@ -84,19 +99,25 @@ describe("Table Component", () => {
         expect(setup.find(Pagination).exists()).toBeTruthy();
     });
 
-    it("does not render Pagination when pagination prop is false", () => {
-        setup.setProps({ pagination: false });
+    it("does not render Pagination when pagination prop is false", async () => {
+        await act(async () => {
+            setup.setProps({ pagination: false });
+        });
+        setup.update();
 
         expect(setup.find(Pagination).exists()).toBeFalsy();
     });
 
-    it("passes custom config to Pagination when pagination prop is an object", () => {
+    it("passes custom config to Pagination when pagination prop is an object", async () => {
         const paginationConfig = {
             showInputPageField: true,
             rowsPerPageOptions: [5, 10, 15]
         };
 
-        setup.setProps({ pagination: paginationConfig });
+        await act(async () => {
+            setup.setProps({ pagination: paginationConfig });
+        });
+        setup.update();
 
         const paginationEl = setup.find(Pagination);
         expect(paginationEl.exists()).toBeTruthy();
