@@ -124,4 +124,19 @@ describe("Table Component", () => {
         expect(paginationEl.prop("showInputPageField")).toBe(true);
         expect(paginationEl.prop("rowsPerPageOptions")).toEqual([5, 10, 15]);
     });
+
+    it("renders sticky header by default", () => {
+        const thead = setup.find("thead");
+        expect(thead.hasClass("tableHeader__sticky")).toBeTruthy();
+    });
+
+    it("removes sticky header class when sticky prop is false", async () => {
+        await act(async () => {
+            setup.setProps({ sticky: false });
+        });
+        setup.update();
+
+        const thead = setup.find("thead");
+        expect(thead.hasClass("tableHeader__sticky")).toBeFalsy();
+    });
 });

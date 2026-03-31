@@ -6,6 +6,7 @@ import classNames from "classnames";
 import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
+import { INITIAL_PAGE_SIZE } from "@components/molecules/DataTable/constants";
 // Hooks
 import { useTablePagination } from "@components/molecules/DataTable/hooks/useTablePagination";
 import TableBody from "@components/molecules/DataTable/TableBody/TableBody";
@@ -118,7 +119,9 @@ const DataTable = <TData,>({
     const [internalLoading] = useState(false);
 
     const initialPageSize =
-        typeof pagination === "object" && pagination.rowsPerPageOptions?.length ? pagination.rowsPerPageOptions[0] : 10;
+        typeof pagination === "object" && pagination.rowsPerPageOptions?.length
+            ? pagination.rowsPerPageOptions[0]
+            : INITIAL_PAGE_SIZE;
 
     const table = useReactTable({
         data: data ?? [],
@@ -139,10 +142,16 @@ const DataTable = <TData,>({
 
     const shouldShowPagination = paginationProps && data && data.length > 0;
 
+    const isTableDataEmpty = isTableLoading || !data?.length;
+
     return (
         <div className={classNames("dataTable", className)}>
             <Scrollbar>
-                <table className={classNames("dataTable__table")}>
+                <table
+                    className={classNames("dataTable__table", {
+                        dataTable__noDataToDisplay: isTableDataEmpty
+                    })}
+                >
                     <TableHeader sticky={sticky} headerGroups={table.getHeaderGroups()} />
                     <TableBody
                         loading={isTableLoading}

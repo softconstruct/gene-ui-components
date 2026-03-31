@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -52,4 +52,60 @@ export const Loading: Story = {
 export const WithPagination: Story = {
     render: (props) => <DataTable {...props} />,
     args: { columns: mockColumns, data: mockData, pagination: true }
+};
+
+const AsyncPaginationTableWrapper = (props: IDataTableProps<MockRowType>) => {
+    const [data, setData] = useState<MockRowType[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setData(mockData);
+            setIsLoading(false);
+        }, 1500);
+
+        return () => clearTimeout(timer);
+    }, []);
+
+    const handlePageChange = () => {
+        setIsLoading(true);
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
+    };
+
+    const handlePageSizeChange = () => {
+        setIsLoading(true);
+
+        setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
+    };
+
+    const paginationProps = typeof props?.pagination === "object" ? props?.pagination : {};
+
+    return (
+        <DataTable
+            {...props}
+            data={data}
+            loading={isLoading}
+            pagination={{
+                ...paginationProps,
+                onPageChange: handlePageChange,
+                onPageSizeChange: handlePageSizeChange
+            }}
+        />
+    );
+};
+
+export const AsyncDataFetchingWithPagination: Story = {
+    render: (props) => <AsyncPaginationTableWrapper {...props} />,
+    args: {
+        columns: mockColumns,
+        loadingText: "Loading data...",
+        pagination: {
+            rowsPerPageOptions: [5, 10, 20],
+            showInputPageField: true
+        }
+    }
 };

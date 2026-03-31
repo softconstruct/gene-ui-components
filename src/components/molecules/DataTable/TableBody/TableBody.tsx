@@ -55,7 +55,7 @@ interface ITableEmptyDataWrapperProps {
  * Renders empty data component with following the rules of data displaying at table.
  */
 const TableEmptyDataWrapper: FC<ITableEmptyDataWrapperProps> = ({ children }) => (
-    <tbody className="tableBody__emptyContent">
+    <tbody className="tableBody__emptyBody">
         <tr>
             <td>{children}</td>
         </tr>
