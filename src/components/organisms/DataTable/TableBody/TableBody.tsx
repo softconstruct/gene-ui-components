@@ -5,9 +5,9 @@ import { Row } from "@tanstack/table-core";
 // Components
 import { IButtonProps } from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
-import TableRow from "@components/molecules/DataTable/TableBody/Row/TableRow";
-import { ITableNoDataTexts } from "@components/molecules/DataTable/types";
 import Empty from "@components/molecules/Empty";
+import TableRow from "@components/organisms/DataTable/TableBody/Row/TableRow";
+import { ITableNoDataTexts } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableBody.scss";

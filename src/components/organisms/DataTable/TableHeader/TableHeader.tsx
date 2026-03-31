@@ -3,7 +3,7 @@ import { HeaderGroup } from "@tanstack/table-core";
 import classNames from "classnames";
 
 // Components
-import TableHeaderCell from "@components/molecules/DataTable/TableHeader/Cell/TableHeaderCell";
+import TableHeaderCell from "@components/organisms/DataTable/TableHeader/Cell/TableHeaderCell";
 
 // Styles
 import "./TableHeader.scss";

@@ -12,7 +12,7 @@ import DataTable, { IDataTableProps } from "./index";
 type MockRowType = (typeof mockData)[0];
 
 const meta: Meta<IDataTableProps<MockRowType>> = {
-    title: "Molecules/DataTable",
+    title: "Organisms/DataTable",
     component: DataTable,
     subcomponents: { Pagination: Pagination as FunctionComponent<unknown> },
     argTypes: {

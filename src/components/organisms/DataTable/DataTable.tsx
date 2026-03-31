@@ -6,15 +6,15 @@ import classNames from "classnames";
 import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
-import { INITIAL_PAGE_SIZE } from "@components/molecules/DataTable/constants";
-// Hooks
-import { useTablePagination } from "@components/molecules/DataTable/hooks/useTablePagination";
-import TableBody from "@components/molecules/DataTable/TableBody/TableBody";
-import TableHeader from "@components/molecules/DataTable/TableHeader/TableHeader";
-// Types
-import { ITableNoDataTexts } from "@components/molecules/DataTable/types";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 import Tooltip from "@components/molecules/Tooltip";
+import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
+// Hooks
+import { useTablePagination } from "@components/organisms/DataTable/hooks/useTablePagination";
+import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
+import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader";
+// Types
+import { ITableNoDataTexts } from "@components/organisms/DataTable/types";
 
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 

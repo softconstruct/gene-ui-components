@@ -2,7 +2,7 @@ import React from "react";
 import { Row } from "@tanstack/table-core";
 
 // Components
-import TableBodyCell from "@components/molecules/DataTable/TableBody/Cell/TableBodyCell";
+import TableBodyCell from "@components/organisms/DataTable/TableBody/Cell/TableBodyCell";
 
 // Styles
 import "./TableRow.scss";
