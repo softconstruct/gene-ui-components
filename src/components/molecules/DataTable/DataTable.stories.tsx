@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+
+import Pagination from "@components/molecules/Pagination";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -12,6 +14,7 @@ type MockRowType = (typeof mockData)[0];
 const meta: Meta<IDataTableProps<MockRowType>> = {
     title: "Molecules/DataTable",
     component: DataTable,
+    subcomponents: { Pagination: Pagination as FunctionComponent<unknown> },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         pagination: args({ control: "object", ...propCategory.functionality }),
