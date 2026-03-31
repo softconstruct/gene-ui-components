@@ -102,7 +102,7 @@ describe("Pagination", () => {
         const perPageValuesText = setup.find(".pagination__perpage_values").text();
         expect(perPageValuesText).toContain(customLabel);
         // Example assertion: "10 of 20"
-        expect(perPageValuesText).toBe(`10 ${customLabel} 10`);
+        expect(perPageValuesText).toBe(`1-10 ${customLabel} 10`);
     });
 
     it("renders goToPageLabel prop correctly", () => {
