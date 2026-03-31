@@ -38,18 +38,25 @@ export const Default: Story = {
     args: {
         columns: mockColumns,
         data: mockData,
-        pagination: { rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
     }
 };
 
 export const NoDataAvailable: Story = {
     render: (props) => <DataTable {...props} />,
-    args: { columns: mockColumns }
+    args: {
+        columns: mockColumns,
+        noDataAvailableActions: [{ children: "Retry", onClick: () => null }],
+        noDataTexts: {
+            noDataAvailableText: "No Data Available",
+            noDataAvailableTitle: "No Data Available"
+        }
+    }
 };
 
 export const Loading: Story = {
     render: (props) => <DataTable {...props} />,
-    args: { columns: mockColumns, loading: true }
+    args: { columns: mockColumns, loading: true, loadingText: "Loading" }
 };
 
 export const WithPagination: Story = {
@@ -89,7 +96,6 @@ const AsyncPaginationTableWrapper = (props: IDataTableProps<MockRowType>) => {
 
     return (
         <DataTable
-            {...props}
             data={data}
             loading={isLoading}
             pagination={{
@@ -97,6 +103,7 @@ const AsyncPaginationTableWrapper = (props: IDataTableProps<MockRowType>) => {
                 onPageChange: handlePageChange,
                 onPageSizeChange: handlePageSizeChange
             }}
+            {...props}
         />
     );
 };
@@ -107,6 +114,7 @@ export const AsyncDataFetchingWithPagination: Story = {
         columns: mockColumns,
         loadingText: "Loading data...",
         pagination: {
+            pageSize: 10,
             rowsPerPageOptions: [5, 10, 20],
             showInputPageField: true
         }

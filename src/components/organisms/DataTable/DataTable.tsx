@@ -40,19 +40,49 @@ interface IDataTableProps<TData> {
      * Whether set `true` will display the raw pagination.
      * Can accept also config object with custom handlers and data.
      *
-     * @default false
+     * @default true
      */
     pagination?: boolean | IPaginationProps;
     /**
-     * Data record array to be displayed.
+     * Data record array to be displayed in the table.
+     * Each object in this array represents a single row, and its shape should match the `TData` generic.
      *
      * @default []
+     *
+     * @example
+     * ```tsx
+     * type Person = { id: number; firstName: string; status: string };
+     *  const tableData: Person[] = [
+     * { id: 1, firstName: "John", status: "Active" },
+     * { id: 2, firstName: "Jane", status: "Pending" },
+     * { id: 3, firstName: "Alice", status: "Inactive" }
+     * ];
+     * ```
      */
     data?: TData[] | null;
     /**
-     * Columns of table.
+     * Configuration array for the table columns.<br/>
+     * Uses TanStack Table's `ColumnDef` structure to define headers, data accessors, and custom cell rendering.
      *
      * @default []
+     *
+     * @example
+     * ```tsx
+     * [
+     * {
+     * accessorKey: "id",
+     * header: "ID",
+     * },
+     * {
+     * accessorKey: "firstName",
+     * header: "First Name",
+     * cell: (info) => <span className="custom-name-class">{info.getValue() as string}</span>
+     * },
+     * {
+     * accessorKey: "status",
+     * }
+     * ];
+     * ```
      */
     columns: ColumnDef<TData>[];
     /**
@@ -119,8 +149,8 @@ const DataTable = <TData,>({
     const [internalLoading] = useState(false);
 
     const initialPageSize =
-        typeof pagination === "object" && pagination.rowsPerPageOptions?.length
-            ? pagination.rowsPerPageOptions[0]
+        typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)
+            ? pagination.pageSize || pagination?.rowsPerPageOptions?.[0]
             : INITIAL_PAGE_SIZE;
 
     const table = useReactTable({
@@ -140,7 +170,7 @@ const DataTable = <TData,>({
 
     const { paginationProps } = useTablePagination(pagination, table);
 
-    const shouldShowPagination = paginationProps && data && data.length > 0;
+    const shouldShowPagination = !isTableLoading && paginationProps && data && paginationProps.totalPages > 0;
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
