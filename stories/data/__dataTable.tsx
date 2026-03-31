@@ -69,14 +69,14 @@ export const mockColumns: ColumnDef<ClientProfile>[] = [
     { accessorKey: "Created", header: "Created" }
 ];
 
-export const mockData: ClientProfile[] = [
+const baseMockData: ClientProfile[] = [
     {
         Id: 12100972,
         FirstName: "Darwin",
         LastName:
             "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
         DayOffs: 1,
-        Email: "****",
+        Email: "darwin.lorem@example.com",
         IsVerified: false,
         IsLocked: true,
         Created: "2026-01-14",
@@ -87,7 +87,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Alice",
         LastName: "Smith",
         DayOffs: 0,
-        Email: "****",
+        Email: "alice.smith@example.com",
         IsVerified: true,
         IsLocked: false,
         Created: "2026-02-05",
@@ -98,7 +98,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Marcus",
         LastName: "Finch",
         DayOffs: 5,
-        Email: "****",
+        Email: "marcus.finch@example.com",
         IsVerified: true,
         IsLocked: false,
         Created: "2026-02-18",
@@ -109,7 +109,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Sophia",
         LastName: "Carter",
         DayOffs: 9,
-        Email: "****",
+        Email: "sophia.carter@example.com",
         IsVerified: false,
         IsLocked: false,
         Created: "2026-03-01",
@@ -120,7 +120,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Liam",
         LastName: "O'Connor",
         DayOffs: 22,
-        Email: "****",
+        Email: "liam.oconnor@example.com",
         IsVerified: true,
         IsLocked: true,
         Created: "2026-01-22",
@@ -131,7 +131,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Emma",
         LastName: "Bridges",
         DayOffs: 10,
-        Email: "****",
+        Email: "emma.bridges@example.com",
         IsVerified: false,
         IsLocked: false,
         Created: "2026-03-10",
@@ -142,7 +142,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Noah",
         LastName: "Patel",
         DayOffs: 4,
-        Email: "****",
+        Email: "noah.patel@example.com",
         IsVerified: true,
         IsLocked: false,
         Created: "2026-01-05",
@@ -153,7 +153,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Olivia",
         LastName: "Gomez",
         DayOffs: 5,
-        Email: "****",
+        Email: "olivia.gomez@example.com",
         IsVerified: true,
         IsLocked: false,
         Created: "2026-02-28",
@@ -164,7 +164,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Elijah",
         LastName: "Woodard",
         DayOffs: 7,
-        Email: "****",
+        Email: "elijah.woodard@example.com",
         IsVerified: false,
         IsLocked: true,
         Created: "2026-01-30",
@@ -175,7 +175,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Ava",
         LastName: "Nguyen",
         DayOffs: 8,
-        Email: "****",
+        Email: "ava.nguyen@example.com",
         IsVerified: true,
         IsLocked: false,
         Created: "2026-03-15",
@@ -186,7 +186,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "William",
         LastName: "Kim",
         DayOffs: 14,
-        Email: "****",
+        Email: "william.kim@example.com",
         IsVerified: false,
         IsLocked: false,
         Created: "2026-03-18",
@@ -197,7 +197,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Isabella",
         LastName: "Martinez",
         DayOffs: 12,
-        Email: "****",
+        Email: "isabella.martinez@example.com",
         IsVerified: true,
         IsLocked: true,
         Created: "2026-01-11",
@@ -208,7 +208,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "James",
         LastName: "Taylor",
         DayOffs: 28,
-        Email: "****",
+        Email: "james.taylor@example.com",
         IsVerified: true,
         IsLocked: false,
         Created: "2026-02-14",
@@ -219,7 +219,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Mia",
         LastName: "Anderson",
         DayOffs: 30,
-        Email: "****",
+        Email: "mia.anderson@example.com",
         IsVerified: false,
         IsLocked: false,
         Created: "2026-03-05",
@@ -230,7 +230,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Benjamin",
         LastName: "Thomas",
         DayOffs: 7,
-        Email: "****",
+        Email: "benjamin.thomas@example.com",
         IsVerified: true,
         IsLocked: false,
         Created: "2026-01-28",
@@ -241,7 +241,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Charlotte",
         LastName: "Moore",
         DayOffs: 11,
-        Email: "****",
+        Email: "charlotte.moore@example.com",
         IsVerified: true,
         IsLocked: true,
         Created: "2026-02-09",
@@ -252,7 +252,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Lucas",
         LastName: "Jackson",
         DayOffs: 0,
-        Email: "****",
+        Email: "lucas.jackson@example.com",
         IsVerified: false,
         IsLocked: false,
         Created: "2026-03-12",
@@ -263,7 +263,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Amelia",
         LastName: "White",
         DayOffs: 2,
-        Email: "****",
+        Email: "amelia.white@example.com",
         IsVerified: true,
         IsLocked: false,
         Created: "2026-01-19",
@@ -274,7 +274,7 @@ export const mockData: ClientProfile[] = [
         FirstName: "Henry",
         LastName: "Harris",
         DayOffs: 88,
-        Email: "****",
+        Email: "henry.harris@example.com",
         IsVerified: false,
         IsLocked: true,
         Created: "2026-02-25",
@@ -285,10 +285,23 @@ export const mockData: ClientProfile[] = [
         FirstName: "Harper",
         LastName: "Martin",
         DayOffs: 0,
-        Email: "****",
+        Email: "harper.martin@example.com",
         IsVerified: true,
         IsLocked: false,
         Created: "2026-03-08",
         Status: "active"
     }
 ];
+
+const MOCK_DATA_SIZE = 112;
+
+export const mockData: ClientProfile[] = Array.from({ length: MOCK_DATA_SIZE }, (_, index) => {
+    const source = baseMockData[index % baseMockData.length];
+    const sequence = index + 1;
+
+    return {
+        ...source,
+        Id: source.Id + index * 100000,
+        Email: `${source.FirstName.toLowerCase()}.${sequence}@mail.com`
+    };
+});

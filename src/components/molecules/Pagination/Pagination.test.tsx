@@ -101,7 +101,6 @@ describe("Pagination", () => {
         // Check if the text indicating the page range contains the custom label.
         const perPageValuesText = setup.find(".pagination__perpage_values").text();
         expect(perPageValuesText).toContain(customLabel);
-        // Example assertion: "10 of 20"
         expect(perPageValuesText).toBe(`1-10 ${customLabel} 10`);
     });
 
