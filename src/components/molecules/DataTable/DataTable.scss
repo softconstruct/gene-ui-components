@@ -4,6 +4,7 @@
     height: 100%;
     overflow-x: auto;
     max-width: 100%;
+    will-change: transform;
 
     &__table {
         display: table;

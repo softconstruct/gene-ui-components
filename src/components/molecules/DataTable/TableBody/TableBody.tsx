@@ -90,7 +90,6 @@ const TableBody = <TData,>({ rows, loading, loadingText, noDataTexts, noDataAvai
                     appearance="noData"
                     title={noDataTexts?.noDataAvailableTitle}
                     description={noDataTexts?.noDataAvailableText}
-                    className="tableBody__emptyContent"
                     actions={noDataAvailableActions}
                 />
             </TableEmptyDataWrapper>
