@@ -1,0 +1,25 @@
+@use "../../../../../assets/styles/mixins";
+
+.tableRow {
+    position: relative;
+    display: table-row;
+    width: 100%;
+
+    &:active {
+        background-color: var(--guit-sem-color-background-neutral-3-pressed);
+    }
+
+    &:nth-child(even) {
+        background-color: var(--guit-sem-color-background-neutral-3);
+    }
+
+    &:nth-child(odd) {
+        background-color: var(--guit-sem-color-background-neutral-1);
+    }
+
+    @include mixins.media-hover {
+        &:hover {
+            background-color: var(--guit-sem-color-background-neutral-3-hover);
+        }
+    }
+}
