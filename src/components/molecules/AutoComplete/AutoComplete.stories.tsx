@@ -20,6 +20,7 @@ const meta: Meta<IAutoCompleteProps> = {
         showMore: args({ control: "boolean", ...propCategory.appearance }),
         showMoreLabel: args({ control: "text", ...propCategory.content }),
         showMoreDisabled: args({ control: "boolean", ...propCategory.states }),
+        showMoreLoading: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
         position: args({
             control: "select",
@@ -101,17 +102,25 @@ export const Default: Story = {
 };
 
 const WithFooterStoryComponent: FC<IAutoCompleteProps> = (props) => {
-    const { showMoreDisabled } = props;
+    const { showMoreDisabled, showMoreLoading } = props;
     const [propsForPopover, setPropsForPopover] = useState({});
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
 
     const visibleItems = items.slice(0, visibleCount);
     const allLoaded = visibleCount >= items.length;
     const isShowMoreDisabled = !!showMoreDisabled || allLoaded;
+    const isShowMoreLoading = !!showMoreLoading || isLoadingMore;
 
     const handleShowMore = useCallback(() => {
-        setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, items.length));
-    }, []);
+        if (isShowMoreLoading || isShowMoreDisabled) return;
+        setIsLoadingMore(true);
+
+        setTimeout(() => {
+            setVisibleCount((prev) => Math.min(prev + PAGE_SIZE, items.length));
+            setIsLoadingMore(false);
+        }, 1200);
+    }, [isShowMoreDisabled, isShowMoreLoading]);
 
     return (
         <div style={{ padding: "2rem", minHeight: "400px" }}>
@@ -124,6 +133,7 @@ const WithFooterStoryComponent: FC<IAutoCompleteProps> = (props) => {
                 showMore
                 onShowMore={handleShowMore}
                 showMoreDisabled={isShowMoreDisabled}
+                showMoreLoading={isShowMoreLoading}
             >
                 {visibleItems.map((item) => (
                     <AutoCompleteItem key={item} id={item}>

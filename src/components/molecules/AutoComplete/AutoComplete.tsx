@@ -100,6 +100,11 @@ interface IAutoCompleteProps {
      */
     showMoreDisabled?: boolean;
     /**
+     * Shows loading state for the "Show more" button.
+     * Useful while waiting for the next batch of server data.
+     */
+    showMoreLoading?: boolean;
+    /**
      * Callback when the open state changes.
      */
     onOpenChange?: (isOpen: boolean) => void;
@@ -122,6 +127,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
     onShowMore,
     showMoreLabel,
     showMoreDisabled = false,
+    showMoreLoading = false,
     onOpenChange
 }) => {
     const [isOpenState, setIsOpenState] = useState<boolean>(false);
@@ -264,7 +270,8 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
                         showMore={showMore}
                         onShowMore={onShowMore}
                         showMoreLabel={showMoreLabel}
-                        disabled={!hasChildren || loading || showMoreDisabled}
+                        loading={showMoreLoading}
+                        disabled={!hasChildren || loading || showMoreDisabled || showMoreLoading}
                     />
                 )}
             </div>
@@ -279,6 +286,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
         onShowMore,
         showMore,
         showMoreDisabled,
+        showMoreLoading,
         showMoreLabel,
         size
     ]);

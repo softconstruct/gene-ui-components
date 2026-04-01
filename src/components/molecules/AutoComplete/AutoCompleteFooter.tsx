@@ -20,6 +20,10 @@ interface IAutoCompleteFooterProps {
      * Disables the "Show more" button.
      */
     disabled?: boolean;
+    /**
+     * Shows loading state for the "Show more" button.
+     */
+    loading?: boolean;
 }
 
 /**
@@ -30,7 +34,8 @@ const AutoCompleteFooter: FC<IAutoCompleteFooterProps> = ({
     showMore = false,
     onShowMore,
     showMoreLabel = "Show more",
-    disabled
+    disabled,
+    loading = false
 }) => {
     return (
         showMore && (
@@ -41,7 +46,8 @@ const AutoCompleteFooter: FC<IAutoCompleteFooterProps> = ({
                     layout="text"
                     size="small"
                     onClick={onShowMore}
-                    disabled={disabled}
+                    loading={loading}
+                    disabled={disabled || loading}
                 >
                     {showMoreLabel}
                 </Button>
