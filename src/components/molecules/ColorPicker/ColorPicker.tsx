@@ -18,6 +18,7 @@ import TextField from "@components/molecules/TextField";
 
 // Hooks
 import useClickOutside from "@hooks/useClickOutside";
+import useDebouncedCallback from "@hooks/useDebounceCallback";
 
 // Styles
 import "./ColorPicker.scss";
@@ -92,7 +93,7 @@ interface IColorPickerProps {
     format?: ColorFormat;
     /**
      * Callback fired continuously as the user modifies the color.
-     * * @param hex - The 6 or 8 character HEX string representation of the color.
+     * @param hex - The 6 or 8 character HEX string representation of the color.
      * @param rgba - The parsed RGBA/RGB object representing the current state.
      * @param alpha - The alpha integer value mapped from 0 to 100.
      */
@@ -155,12 +156,15 @@ const ColorPicker: FC<IColorPickerProps> = ({
 
     const [localHex, setLocalHex] = useState<string>(hex);
 
-    const emitChange = useCallback(
-        (next: RGBA) => {
-            onChange?.(rgbToHex(next), next, Math.round(next.a * ALPHA_SCALE_MAX));
+    const triggerOnChange = useCallback(
+        (next: unknown) => {
+            const newColor = next as RGBA;
+            onChange?.(rgbToHex(newColor), newColor, Math.round(newColor.a * ALPHA_SCALE_MAX));
         },
         [onChange]
     );
+
+    const { debouncedCallback: emitChange } = useDebouncedCallback(triggerOnChange, 200);
 
     const updateRGBA = (updater: (prev: RGBA) => RGBA) => {
         setRgba((prev) => {
