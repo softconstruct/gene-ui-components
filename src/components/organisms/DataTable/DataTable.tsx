@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, useRef, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import {
     CellContext,
     ColumnDef,
@@ -10,23 +10,18 @@ import {
 } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import { ChevronDown, ChevronRight } from "@geneui/icons";
-
 // Components
 import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
-import Text from "@components/atoms/Text";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
-import Tooltip from "@components/molecules/Tooltip";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
+import { DefaultCellComponent, ExpanderCell } from "@components/organisms/DataTable/helper";
 // Hooks
 import { useTablePagination } from "@components/organisms/DataTable/hooks/useTablePagination";
 import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
 import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader";
 // Types
 import { ITableNoDataTexts } from "@components/organisms/DataTable/types";
-
-import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./DataTable.scss";
@@ -121,27 +116,9 @@ interface IDataTableProps<TData> {
     expandable?: boolean;
 }
 
-const DefaultCellComponent = ({ value }: { value: string }) => {
-    const textRef = useRef<HTMLSpanElement | null>(null);
-    const isTruncated = useEllipsisDetection(textRef);
-    return (
-        <Tooltip text={value} isVisible={isTruncated}>
-            <Text ref={textRef} className="tableBodyCell__text" as="span" variant="labelMediumMedium">
-                {value}
-            </Text>
-        </Tooltip>
-    );
-};
-
 const defaultColumn = {
     cell: <TData,>({ getValue }: CellContext<TData, string>) => <DefaultCellComponent value={getValue()} />
 };
-
-const ExpanderCell = <TData,>({ row }: CellContext<TData, unknown>) => (
-    <button type="button" onClick={row.getToggleExpandedHandler()}>
-        {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
-    </button>
-);
 
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
@@ -162,26 +139,22 @@ const DataTable = <TData,>({
     loadingText,
     noDataTexts,
     noDataAvailableActions,
-    expandable
+    expandable = false
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
+    let tableColumns = columns;
 
-    const tableColumns = useMemo(() => {
-        const baseColumns: ColumnDef<TData>[] = [...columns];
-
-        if (!expandable) {
-            return baseColumns;
-        }
-
-        const expandedCol: ColumnDef<TData> = {
-            id: "expander",
-            header: "",
-            cell: ExpanderCell
-        };
-
-        return [expandedCol, ...baseColumns];
-    }, [columns, expandable]);
+    if (expandable) {
+        tableColumns = [
+            {
+                id: "expander",
+                header: "",
+                cell: ExpanderCell
+            },
+            ...tableColumns
+        ];
+    }
 
     const initialPageSize =
         typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)

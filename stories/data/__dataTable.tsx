@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC, ReactNode } from "react";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -18,8 +18,10 @@ type ClientProfile = {
     IsLocked: boolean;
     Created: string;
     Status: "new" | "active" | "inactive" | "suspended";
-    SubRows?: ClientProfile[];
+    expandedRow?: ReactNode;
 };
+
+const ExpandedData: FC<{ data: string }> = ({ data }) => <div className="swapComponent">{data}</div>;
 
 export const mockColumns: TableColumn<ClientProfile>[] = [
     { accessorKey: "Id", header: "Id" },
@@ -82,19 +84,9 @@ const baseMockData: ClientProfile[] = [
         IsLocked: true,
         Created: "2026-01-14",
         Status: "new",
-        SubRows: [
-            {
-                Id: 121009721,
-                FirstName: "Darwin",
-                LastName: "lirilillarila",
-                DayOffs: 1,
-                Email: "darwin.lorem@example.com",
-                IsVerified: false,
-                IsLocked: true,
-                Created: "2026-01-14",
-                Status: "new"
-            }
-        ]
+        expandedRow: (
+            <ExpandedData data="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." />
+        )
     },
     {
         Id: 34829102,

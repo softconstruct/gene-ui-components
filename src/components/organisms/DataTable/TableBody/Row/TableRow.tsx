@@ -1,4 +1,5 @@
-import React from "react";
+import React, { ReactNode } from "react";
+import { Cell } from "@tanstack/react-table";
 import { Row } from "@tanstack/table-core";
 
 // Components
@@ -17,7 +18,11 @@ interface ITableRowProps<TData> {
      * Provides access to row-level data and internal methods, such as retrieving
      * the visible cells to be rendered within this specific row.
      */
-    row: Row<TData>;
+    row: Omit<Row<TData>, "original"> & {
+        original: Row<TData>["original"] & {
+            expandedRow?: ReactNode;
+        };
+    };
 }
 
 /**
@@ -29,33 +34,23 @@ interface ITableRowProps<TData> {
  * @param props - The properties for the component.
  * @returns A table row element containing its respective rendered cells.
  */
-const TableRow = <TData,>({ row }: ITableRowProps<TData>) => (
-    <>
-        <tr className="tableRow">
-            {row.getVisibleCells().map((cell) => (
-                <TableBodyCell key={cell.id} cell={cell} />
-            ))}
-        </tr>
-        {row.getIsExpanded() && (
-            <tr>
-                <td colSpan={row.getVisibleCells().length}>
-                    <div className="p-4">
-                        Custom Detail View for{" "}
-                        {(() => {
-                            const original = row.original as unknown as {
-                                name?: string;
-                                FirstName?: string;
-                                LastName?: string;
-                                Id?: unknown;
-                            };
-                            const fullName = [original.FirstName, original.LastName].filter(Boolean).join(" ");
-                            return original.name ?? (fullName || String(original.Id ?? ""));
-                        })()}
-                    </div>
-                </td>
+const TableRow = <TData,>({ row }: ITableRowProps<TData>) => {
+    return (
+        <>
+            <tr className="tableRow">
+                {row.getVisibleCells().map((cell: Cell<any, any>) => (
+                    <TableBodyCell key={cell.id} cell={cell} />
+                ))}
             </tr>
-        )}
-    </>
-);
+            {row.getIsExpanded() && row.original.expandedRow && (
+                <tr className="tableRow">
+                    <td colSpan={row.getVisibleCells().length} className="tableBodyCell">
+                        {row.original.expandedRow}
+                    </td>
+                </tr>
+            )}
+        </>
+    );
+};
 
 export default TableRow;

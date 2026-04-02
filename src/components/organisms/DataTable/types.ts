@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { ColumnDef } from "@tanstack/table-core";
 
 export interface ITableNoDataTexts {
@@ -6,5 +7,5 @@ export interface ITableNoDataTexts {
 }
 
 export type TableColumn<T> = ColumnDef<T extends object ? T : never> & {
-    subRows?: TableColumn<T>[];
+    expandedData?: ReactNode;
 };
