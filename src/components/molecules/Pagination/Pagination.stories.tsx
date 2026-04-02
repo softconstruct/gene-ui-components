@@ -13,6 +13,8 @@ const meta: Meta<IPaginationProps> = {
         current: args({ control: "text", ...propCategory.content }),
         rowsPerPageOptions: args({ control: "array", ...propCategory.content }),
         totalPages: args({ control: "number", ...propCategory.content }),
+        totalItems: args({ control: "number", ...propCategory.content }),
+        pageSize: args({ control: "number", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance }),
         onPageChange: args({ control: "false", ...propCategory.action }),
         onPageSizeChange: args({ control: "false", ...propCategory.action }),
@@ -24,9 +26,8 @@ const meta: Meta<IPaginationProps> = {
     },
 
     args: {
-        current: 30,
         rowsPerPageOptions: [10, 20, 30, 40],
-        totalPages: 25
+        totalItems: 113
     }
 };
 

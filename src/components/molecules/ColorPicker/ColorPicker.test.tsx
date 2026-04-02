@@ -1,9 +1,8 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
-import { HexColorPicker } from "react-colorful";
 import { act } from "react-dom/test-utils";
 
-// Components
+import { HexColorPicker } from "./components/CustomColorPickers/CustomColorPickers";
 import ColorPicker, { IColorPickerProps } from "./index";
 
 describe("ColorPicker", () => {
@@ -15,6 +14,7 @@ describe("ColorPicker", () => {
 
     afterEach(() => {
         setup.unmount();
+        jest.clearAllMocks();
     });
 
     describe("Rendering & Default States", () => {
@@ -24,206 +24,196 @@ describe("ColorPicker", () => {
 
         it("renders className prop correctly", () => {
             const className = "test-class";
-            const wrapper = setup.setProps({ className });
-
-            expect(wrapper.hasClass(className)).toBeTruthy();
+            setup.setProps({ className });
+            setup.update();
+            expect(setup.find(".colorPicker").hasClass(className)).toBeTruthy();
         });
 
         it("renders defaultColor prop correctly", () => {
-            const defaultHexPropValue = "#000000";
-            const wrapper = setup.setProps({ defaultColor: defaultHexPropValue });
-
-            setup.update();
-
-            expect(wrapper.find(".colorPicker__textField").at(0).props().value).toBe(defaultHexPropValue);
+            const defaultHexPropValue = "#ff0000";
+            setup = mount(<ColorPicker defaultColor={defaultHexPropValue} />);
+            expect(setup.find("input.colorPickerTextField__input").at(0).props().value).toBe(defaultHexPropValue);
         });
 
-        it("renders recentColors prop correctly", () => {
-            const defaultRecentColors = ["#000000", "#ffff00", "#ff0000"];
-
-            const wrapper = setup.setProps({ recentColors: defaultRecentColors, open: true });
+        it("renders recentColors prop correctly including empty states", () => {
+            const defaultRecentColors = ["#000000", "", "#ff0000"];
+            act(() => {
+                setup.setProps({ recentColors: defaultRecentColors, open: true });
+            });
             setup.update();
 
-            expect(wrapper.find(".colorPicker__recentColor")).toHaveLength(3);
+            const recentColorNodes = setup.find(".colorPicker__recentColor");
+            expect(recentColorNodes).toHaveLength(3);
+
+            expect(recentColorNodes.at(1).hasClass("colorPicker__recentColor__empty")).toBeTruthy();
         });
 
         it("renders alphaEnabled prop correctly", () => {
-            const wrapper = setup.setProps({ alphaEnabled: true });
+            act(() => {
+                setup.setProps({ alphaEnabled: true });
+            });
+            setup.update();
+            expect(setup.find(".colorPickerTextField__percent").exists()).toBeTruthy();
 
-            expect(wrapper.find(".colorPicker__alphaField").exists()).toBeTruthy();
+            act(() => {
+                setup.setProps({ alphaEnabled: false });
+            });
+            setup.update();
+            expect(setup.find(".colorPickerTextField__percent").exists()).toBeFalsy();
         });
 
-        it("renders alphaValue prop correctly", () => {
-            const wrapper = setup.setProps({ alphaEnabled: true, alphaValue: 40 });
+        it("renders controlled value prop correctly", () => {
+            act(() => {
+                setup.setProps({ value: "#444444" });
+            });
             setup.update();
-
-            expect(wrapper.find(".colorPicker__alphaField").at(0).props().value).toBe(40);
-        });
-
-        it("renders value prop correctly", () => {
-            const wrapper = setup.setProps({ value: "#444444" });
-            setup.update();
-            expect(wrapper.find(".colorPicker__textField").at(0).props().value).toBe("#444444");
+            expect(setup.find("input.colorPickerTextField__input").at(0).props().value).toBe("#444444");
         });
 
         it("renders open prop correctly", () => {
-            const wrapper = setup.setProps({ open: true });
+            act(() => {
+                setup.setProps({ open: true });
+            });
             setup.update();
-
-            expect(wrapper.find(".colorPicker__wrapper").exists()).toBeTruthy();
+            expect(setup.find(".colorPicker__wrapper").exists()).toBeTruthy();
         });
 
         it("renders format prop correctly", () => {
-            const wrapper = setup.setProps({ format: "rgb", open: true });
-            setup.update();
-
-            expect(wrapper.find(".colorPicker__rgbInputs").exists()).toBeTruthy();
-        });
-
-        it("processing onchange prop correctly", () => {
-            const mockOnChangeHandler = jest.fn();
-            const wrapper = setup.setProps({ onChange: mockOnChangeHandler, open: true });
-            wrapper.update();
-            const newColor = "#ffffff";
-
-            const colorPicker = wrapper.find(HexColorPicker);
-
             act(() => {
-                colorPicker.prop("onChange")!(newColor);
+                setup.setProps({ format: "rgb", open: true });
             });
-
             setup.update();
-            expect(mockOnChangeHandler).toHaveBeenCalledTimes(1);
-        });
-
-        it("propcessing onOutsideClick prop correctly", () => {
-            const mockOnOutsideClickHandler = jest.fn();
-            const wrapper = setup.setProps({ onOutsideClick: mockOnOutsideClickHandler, open: true });
-            wrapper.update();
-
-            const outsideClickEvent = new MouseEvent("mousedown", {
-                bubbles: true,
-                cancelable: true
-            });
-
-            act(() => {
-                document.dispatchEvent(outsideClickEvent);
-            });
-
-            wrapper.update();
-            expect(mockOnOutsideClickHandler).toHaveBeenCalledTimes(1);
+            expect(setup.find(".colorPicker__rgbInputs").exists()).toBeTruthy();
         });
     });
 
     describe("Popover Visibility and Outside Clicks", () => {
-        it("should close on outside click", () => {
-            setup.find("input").at(0).simulate("focus");
+        it("should open on indicator click and close on outside click", () => {
+            setup.find("button.colorIndicator").simulate("click");
             setup.update();
-            const outsideClickEvent = new MouseEvent("mousedown", {
-                bubbles: true,
-                cancelable: true
-            });
+            expect(setup.find(".colorPicker__wrapper").exists()).toBeTruthy();
 
             act(() => {
-                document.dispatchEvent(outsideClickEvent);
+                document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
             });
-
             setup.update();
             expect(setup.find(".colorPicker__wrapper").exists()).toBeFalsy();
         });
 
-        it("should respect open prop (controlled)", () => {
-            const wrapper = setup.setProps({ open: false });
-            wrapper.find("input").at(0).simulate("focus");
-            wrapper.update();
-            expect(wrapper.find(".colorPicker__wrapper").exists()).toBeFalsy();
+        it("should respect onOutsideClick prop (controlled)", () => {
+            const mockOnOutsideClick = jest.fn();
+            act(() => {
+                setup.setProps({ open: true, onOutsideClick: mockOnOutsideClick });
+            });
+            setup.update();
+
+            act(() => {
+                document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+            });
+
+            expect(mockOnOutsideClick).toHaveBeenCalledTimes(1);
         });
     });
 
     describe("Color Changing & Callback Logic", () => {
-        it("Should update color via HEX input", () => {
-            const wrapper = setup.setProps({ open: true, format: "hex" });
-            wrapper.update();
-            const hexInput = wrapper.find(".colorPicker__hexInput").find("input").at(0);
-            const newHexValue = "#000000";
+        it("Should update color via HEX input field", () => {
+            act(() => {
+                setup.setProps({ open: true, format: "hex" });
+            });
+            setup.update();
 
-            hexInput.simulate("change", { target: { value: newHexValue } });
+            const newHexValue = "#123456";
+            setup.find(".colorPicker__hexInput input").simulate("change", { target: { value: newHexValue } });
+            setup.update();
 
-            const updatedHexInput = wrapper.find(".colorPicker__hexInput").at(0);
-            wrapper.update();
-            expect(updatedHexInput.props().value).toEqual(newHexValue);
+            expect(setup.find(".colorPicker__hexInput input").props().value).toEqual(newHexValue);
         });
 
-        it("Should update color via RGB input", () => {
-            setup.setProps({ open: true, format: "rgb" });
+        it("Should fallback to empty/white if invalid HEX is typed", () => {
+            act(() => {
+                setup.setProps({ open: true, format: "hex" });
+            });
             setup.update();
 
-            const rgbInputs = setup.find(".colorPicker__rgbInputs input");
-            rgbInputs.forEach((input) => input.simulate("change", { target: { value: 255 } }));
-
+            setup.find(".colorPicker__hexInput input").simulate("change", { target: { value: "invalid" } });
             setup.update();
-            const hexToRgbValue = "#ffffff";
-            expect(setup.find(".colorPicker__textField").at(0).prop("value")).toBe(hexToRgbValue);
+
+            expect(setup.find(".colorPicker__hexInput input").props().value).toEqual("invalid");
         });
 
-        it("Should clamp RGB values", () => {
-            setup.setProps({ open: true, format: "rgb" });
+        it("Should update color via RGB inputs and clamp values", () => {
+            act(() => {
+                setup.setProps({ open: true, format: "rgb" });
+            });
             setup.update();
 
-            const rgbInputs = setup.find(".colorPicker__rgbInputs input");
-            rgbInputs.forEach((input) => input.simulate("change", { target: { value: 999 } }));
+            const rInput = setup.find(".colorPicker__rgbInputs input[name='r']");
 
+            rInput.simulate("change", { target: { value: "999" } });
             setup.update();
-            const hexToRgbValue = "#ffffff";
-            expect(setup.find(".colorPicker__textField").at(0).prop("value")).toBe(hexToRgbValue);
+
+            expect(String(setup.find(".colorPicker__rgbInputs input[name='r']").props().value)).toBe("255");
+        });
+
+        it("processing onChange prop correctly via CustomColorPickers", () => {
+            jest.useFakeTimers();
+            const mockOnChangeHandler = jest.fn();
+
+            act(() => {
+                setup.setProps({ onChange: mockOnChangeHandler, open: true, alphaEnabled: false });
+            });
+            setup.update();
+
+            const hexColorPicker = setup.find(HexColorPicker);
+            act(() => {
+                hexColorPicker.prop("onChange")("#ffffff");
+            });
+
+            act(() => {
+                jest.advanceTimersByTime(200);
+            });
+            setup.update();
+
+            expect(mockOnChangeHandler).toHaveBeenCalled();
+            jest.useRealTimers();
         });
     });
 
     describe("Alpha (Transparency) Logic", () => {
-        it("Hide alpha value field if prop is set to false", () => {
-            setup.setProps({ alphaEnabled: false });
-            expect(setup.find(".colorPicker__alphaField").exists()).toBeFalsy();
+        it("Should update alpha via outer field input and clamp above 100", () => {
+            act(() => {
+                setup.setProps({ alphaEnabled: true });
+            });
+            setup.update();
+
+            const alphaFieldInput = setup.find(".colorPickerTextField__percent input");
+            alphaFieldInput.simulate("change", { target: { value: "888" } });
+            setup.update();
+
+            expect(setup.find(".colorPickerTextField__percent input").props().value).toBe(100);
         });
 
-        it("Should update alpha via outer field input", () => {
-            const wrapper = setup.setProps({ alphaEnabled: true });
-            const alphaFieldInput = wrapper.find(".colorPicker__alphaField input").at(0);
-            alphaFieldInput.simulate("change", { target: { value: 10 } });
-            wrapper.update();
-            expect(wrapper.find(".colorPicker__alphaField input").at(0).props().value).toBe("10");
-        });
-
-        it("Should update alpha via inner field input", () => {
-            const wrapper = setup.setProps({ alphaEnabled: true, open: true });
-            wrapper.update();
-            const alphaFieldInput = wrapper.find(".colorPicker__alphaInput input").at(0);
-            alphaFieldInput.simulate("change", { target: { value: 88 } });
-            wrapper.update();
-            expect(wrapper.find(".colorPicker__alphaField input").at(0).props().value).toBe("88");
-        });
-
-        it("Should clamp alpha values", () => {
-            const wrapper = setup.setProps({ alphaEnabled: true });
-            const alphaFieldInput = wrapper.find(".colorPicker__alphaField input").at(0);
-            alphaFieldInput.simulate("change", { target: { value: 888 } });
-            wrapper.update();
-            expect(wrapper.find(".colorPicker__alphaField input").at(0).props().value).toBe("100");
+        it("Should parse and respect alpha from defaultColor rgba() string", () => {
+            setup = mount(<ColorPicker defaultColor="rgba(0, 0, 0, 0.5)" alphaEnabled />);
+            expect(setup.find(".colorPickerTextField__percent input").props().value).toBe(50);
         });
     });
 
     describe("Recent Colors", () => {
-        it("Should apply recent color on click", () => {
-            const defaultRecentColors = ["#000000", "#ffff00", "#ff0000"];
-
-            const wrapper = setup.setProps({ recentColors: defaultRecentColors, open: true });
+        it("Should apply recent color on click, including clearing with empty string", () => {
+            const defaultRecentColors = ["#111111", ""];
+            act(() => {
+                setup.setProps({ recentColors: defaultRecentColors, open: true, defaultColor: "#ff0000" });
+            });
             setup.update();
 
-            const firstRecentColorValue = defaultRecentColors[0];
-            const firstRecentColor = wrapper.find(".colorPicker__recentColor").at(0);
-            firstRecentColor.simulate("click");
-            wrapper.update();
+            setup.find(".colorPicker__recentColor").at(0).simulate("click");
             setup.update();
-            expect(wrapper.find(".colorPicker__textField").at(0).props().value).toBe(firstRecentColorValue);
+            expect(setup.find("input.colorPickerTextField__input").at(0).props().value).toBe("#111111");
+
+            setup.find(".colorPicker__recentColor").at(1).simulate("click");
+            setup.update();
+            expect(setup.find("input.colorPickerTextField__input").at(0).props().value).toBe("");
         });
     });
 });

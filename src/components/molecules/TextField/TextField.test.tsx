@@ -70,10 +70,21 @@ describe("TextField ", () => {
         expect(wrapper.find("input").prop("value")).toEqual(value);
     });
 
+    it("renders null value prop as empty string", () => {
+        const wrapper = setup.setProps({ value: null });
+        wrapper.update();
+        expect(wrapper.find("input").prop("value")).toEqual("");
+    });
+
     it("renders defaultValue prop correctly", () => {
         const defaultValue = "test-value";
         const wrapper = mount(<TextField defaultValue={defaultValue} />);
         expect(wrapper.find("input").prop("value")).toEqual(defaultValue);
+    });
+
+    it("renders null defaultValue as empty string", () => {
+        const wrapper = mount(<TextField defaultValue={null} />);
+        expect(wrapper.find("input").prop("value")).toEqual("");
     });
 
     it("renders placeholder correctly", () => {
@@ -85,6 +96,12 @@ describe("TextField ", () => {
     it("renders IconBefore prop correctly", () => {
         const wrapper = setup.setProps({ IconBefore: Info });
         expect(wrapper.find(Info).exists()).toBeTruthy();
+    });
+
+    it("renders IconAfter prop correctly", () => {
+        const wrapper = setup.setProps({ IconAfter: Info });
+        expect(wrapper.find(Info).exists()).toBeTruthy();
+        expect(wrapper.find(".textField__wrapper").hasClass("textField__wrapper_iconAfter")).toBeTruthy();
     });
 
     it("renders onChange prop correctly", () => {

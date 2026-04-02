@@ -1,0 +1,134 @@
+@use "../../../../../assets/styles/mixins";
+
+.colorPickerTextField {
+    $this: &;
+
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-3xsmall);
+    align-items: flex-start;
+
+    &_size {
+        &_large {
+            #{ $this }__wrapper {
+                gap: var(--guit-ref-spacing-xsmall);
+                height: var(--guit-sem-dimension-height-large);
+                padding-inline: var(--guit-ref-spacing-medium);
+                border-radius: var(--guit-ref-radius-2xsmall);
+            }
+
+            #{ $this }__input {
+                font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+                font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+                font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+                line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+            }
+        }
+
+        &_medium {
+            #{ $this }__wrapper {
+                gap: var(--guit-ref-spacing-xsmall);
+                height: var(--guit-sem-dimension-height-medium);
+                padding-inline: var(--guit-ref-spacing-xsmall);
+                border-radius: var(--guit-ref-radius-3xsmall);
+            }
+
+            #{ $this }__input {
+                font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
+                font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
+                font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
+                line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
+            }
+        }
+
+        &_small {
+            #{ $this }__wrapper {
+                gap: var(--guit-ref-spacing-2xsmall);
+                height: var(--guit-sem-dimension-height-small);
+                padding-inline: var(--guit-ref-spacing-xsmall);
+                border-radius: var(--guit-ref-radius-3xsmall);
+            }
+
+            #{ $this }__input {
+                font-family: var(--guit-sem-font-caption-large-medium-font-family);
+                font-size: var(--guit-sem-font-caption-large-medium-font-size);
+                font-weight: var(--guit-sem-font-caption-large-medium-font-weight);
+                line-height: var(--guit-sem-font-caption-large-medium-line-height);
+                letter-spacing: var(--guit-sem-font-caption-large-medium-letter-spacing);
+            }
+        }
+    }
+
+    &__wrapper {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+        overflow: hidden;
+
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
+        }
+
+        &:focus-within {
+            outline-offset: var(--guit-ref-border-width-thin);
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
+        }
+    }
+
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-2xsmall);
+        width: 100%;
+    }
+
+    &__value {
+        height: 100%;
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__divider {
+        flex: 0 0 auto;
+        width: 2rem;
+        max-height: 2rem;
+        padding-block: 0.2rem;
+    }
+
+    &__percent {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        flex: 0 0 auto;
+        width: 5rem;
+        height: 100%;
+        text-align: end;
+    }
+
+    &__input {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background-color: transparent;
+        color: var(--guit-sem-color-foreground-neutral-2);
+        outline: none;
+        text-align: inherit;
+
+        &::placeholder {
+            color: var(--guit-sem-color-foreground-neutral-1);
+        }
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        color: var(--guit-sem-color-foreground-neutral-1);
+    }
+}

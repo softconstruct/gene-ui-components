@@ -1,5 +1,8 @@
 .colorPicker {
-    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-2xsmall);
+    width: 100%;
 
     &__textField {
         max-width: 16rem;
@@ -9,85 +12,75 @@
         max-width: 6rem;
     }
 
-    &__fieldsWrapper {
-        display: flex;
-        gap: var(--guit-ref-spacing-2xsmall);
+    &__alphaInput {
+        max-width: 7rem;
     }
 
     &__inputs {
         display: flex;
-        gap: var(--guit-ref-spacing-2xsmall);
         width: 100%;
+    }
+
+    &__inputsRgb {
+        gap: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__inputsHex {
+        gap: var(--guit-ref-spacing-2xsmall);
     }
 
     &__rgbInputs {
         display: flex;
-        gap: var(--guit-ref-spacing-2xsmall);
+        gap: var(--guit-ref-spacing-3xsmall);
+        width: 100%;
+    }
+
+    &__hexInput {
         width: 100%;
     }
 
     &__recents {
         display: grid;
-        grid-template-columns: repeat(8, 1fr);
-        grid-gap: var(--guit-ref-spacing-xsmall);
+        grid-template-columns: repeat(10, 1fr);
+        grid-gap: var(--guit-ref-spacing-xsmall) 0.5rem;
         width: 100%;
         padding-inline: var(--guit-ref-spacing-3xsmall);
     }
 
+    &__recentColorWrapper {
+        width: var(--guit-sem-dimension-width-small);
+        height: var(--guit-sem-dimension-height-small);
+        padding: 0.2rem;
+    }
+
     &__recentColor {
-        width: var(--guit-sem-dimension-width-medium-nudge);
-        height: var(--guit-sem-dimension-height-medium-nudge);
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
         border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
-        border-radius: var(--guit-ref-radius-3xsmall);
+        border-radius: var(--guit-ref-radius-4xsmall);
+
+        &__empty {
+            &::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0.1rem;
+                height: 150%;
+                background-color: var(--guit-sem-color-background-error-2);
+                transform: translate(-50%, -50%) rotate(45deg);
+            }
+        }
     }
 
     &__wrapper {
-        box-sizing: content-box;
         display: flex;
         flex-direction: column;
         gap: var(--guit-ref-spacing-medium);
-        width: 28.8rem;
+        width: 32rem;
         padding: var(--guit-ref-spacing-large);
-
-        .react-colorful {
-            gap: var(--guit-ref-spacing-large);
-            width: 100%;
-            height: auto;
-        }
-
-        .react-colorful__saturation {
-            border-radius: 0.4rem;
-            height: 16rem;
-            border-bottom: none;
-        }
-
-        .react-colorful__alpha,
-        .react-colorful__hue {
-            width: 100%;
-            height: 0.8rem;
-            border-radius: 10rem;
-        }
-
-        .react-colorful__saturation-pointer {
-            width: 1.4rem;
-            height: 1.4rem;
-        }
-
-        .react-colorful__hue-pointer,
-        .react-colorful__alpha-pointer {
-            width: 1rem;
-            height: 1rem;
-        }
-
-        .react-colorful__alpha,
-        .react-colorful__alpha-pointer {
-            background-size: 0.5rem 0.5rem;
-        }
-
-        .react-colorful__alpha-gradient,
-        .react-colorful__saturation {
-            box-shadow: none;
-        }
     }
 }
