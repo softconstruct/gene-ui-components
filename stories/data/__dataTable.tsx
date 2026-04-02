@@ -1,5 +1,4 @@
 import React from "react";
-import { ColumnDef } from "@tanstack/react-table";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -7,6 +6,7 @@ import Pill from "@components/atoms/Pill";
 import Checkbox from "@components/molecules/Checkbox";
 import NumberField from "@components/molecules/NumberField";
 import Switch from "@components/molecules/Switch";
+import { TableColumn } from "@components/organisms/DataTable/types";
 
 type ClientProfile = {
     Id: number;
@@ -18,9 +18,10 @@ type ClientProfile = {
     IsLocked: boolean;
     Created: string;
     Status: "new" | "active" | "inactive" | "suspended";
+    SubRows?: ClientProfile[];
 };
 
-export const mockColumns: ColumnDef<ClientProfile>[] = [
+export const mockColumns: TableColumn<ClientProfile>[] = [
     { accessorKey: "Id", header: "Id" },
     {
         accessorKey: "IsVerified",
@@ -80,7 +81,20 @@ const baseMockData: ClientProfile[] = [
         IsVerified: false,
         IsLocked: true,
         Created: "2026-01-14",
-        Status: "new"
+        Status: "new",
+        SubRows: [
+            {
+                Id: 121009721,
+                FirstName: "Darwin",
+                LastName: "lirilillarila",
+                DayOffs: 1,
+                Email: "darwin.lorem@example.com",
+                IsVerified: false,
+                IsLocked: true,
+                Created: "2026-01-14",
+                Status: "new"
+            }
+        ]
     },
     {
         Id: 34829102,

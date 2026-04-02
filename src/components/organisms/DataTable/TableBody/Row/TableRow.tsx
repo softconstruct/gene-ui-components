@@ -30,11 +30,32 @@ interface ITableRowProps<TData> {
  * @returns A table row element containing its respective rendered cells.
  */
 const TableRow = <TData,>({ row }: ITableRowProps<TData>) => (
-    <tr className="tableRow">
-        {row.getVisibleCells().map((cell) => (
-            <TableBodyCell key={cell.id} cell={cell} />
-        ))}
-    </tr>
+    <>
+        <tr className="tableRow">
+            {row.getVisibleCells().map((cell) => (
+                <TableBodyCell key={cell.id} cell={cell} />
+            ))}
+        </tr>
+        {row.getIsExpanded() && (
+            <tr>
+                <td colSpan={row.getVisibleCells().length}>
+                    <div className="p-4">
+                        Custom Detail View for{" "}
+                        {(() => {
+                            const original = row.original as unknown as {
+                                name?: string;
+                                FirstName?: string;
+                                LastName?: string;
+                                Id?: unknown;
+                            };
+                            const fullName = [original.FirstName, original.LastName].filter(Boolean).join(" ");
+                            return original.name ?? (fullName || String(original.Id ?? ""));
+                        })()}
+                    </div>
+                </td>
+            </tr>
+        )}
+    </>
 );
 
 export default TableRow;

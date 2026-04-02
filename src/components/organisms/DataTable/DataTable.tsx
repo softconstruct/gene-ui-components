@@ -1,6 +1,16 @@
-import React, { ReactElement, useRef, useState } from "react";
-import { CellContext, ColumnDef, getCoreRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
+import React, { ReactElement, useMemo, useRef, useState } from "react";
+import {
+    CellContext,
+    ColumnDef,
+    ExpandedState,
+    getCoreRowModel,
+    getExpandedRowModel,
+    getPaginationRowModel,
+    useReactTable
+} from "@tanstack/react-table";
 import classNames from "classnames";
+
+import { ChevronDown, ChevronRight } from "@geneui/icons";
 
 // Components
 import { IButtonProps } from "@components/atoms/Button";
@@ -108,6 +118,7 @@ interface IDataTableProps<TData> {
      * ]}
      */
     noDataAvailableActions?: IButtonProps[];
+    expandable?: boolean;
 }
 
 const DefaultCellComponent = ({ value }: { value: string }) => {
@@ -125,6 +136,12 @@ const DefaultCellComponent = ({ value }: { value: string }) => {
 const defaultColumn = {
     cell: <TData,>({ getValue }: CellContext<TData, string>) => <DefaultCellComponent value={getValue()} />
 };
+
+const ExpanderCell = <TData,>({ row }: CellContext<TData, unknown>) => (
+    <button type="button" onClick={row.getToggleExpandedHandler()}>
+        {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
+    </button>
+);
 
 /**
  * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
@@ -144,9 +161,27 @@ const DataTable = <TData,>({
     sticky = true,
     loadingText,
     noDataTexts,
-    noDataAvailableActions
+    noDataAvailableActions,
+    expandable
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
+    const [expanded, setExpanded] = useState<ExpandedState>({});
+
+    const tableColumns = useMemo(() => {
+        const baseColumns: ColumnDef<TData>[] = [...columns];
+
+        if (!expandable) {
+            return baseColumns;
+        }
+
+        const expandedCol: ColumnDef<TData> = {
+            id: "expander",
+            header: "",
+            cell: ExpanderCell
+        };
+
+        return [expandedCol, ...baseColumns];
+    }, [columns, expandable]);
 
     const initialPageSize =
         typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)
@@ -155,14 +190,23 @@ const DataTable = <TData,>({
 
     const table = useReactTable({
         data: data ?? [],
-        columns,
+        columns: tableColumns,
         defaultColumn,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        getExpandedRowModel: getExpandedRowModel(),
+        onExpandedChange: setExpanded,
+        getSubRows: (row) => {
+            const subRows = (row as unknown as { SubRows?: unknown }).SubRows;
+            return Array.isArray(subRows) ? (subRows as TData[]) : [];
+        },
         initialState: {
             pagination: {
                 pageSize: initialPageSize
             }
+        },
+        state: {
+            expanded
         }
     });
 
