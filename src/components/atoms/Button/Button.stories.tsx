@@ -16,18 +16,44 @@ const meta: Meta<IButtonProps> = {
         fullWidth: args({ control: "boolean", ...propCategory.appearance }),
         iconPosition: args({ control: "select", ...propCategory.appearance }),
         className: args({ control: "false", ...propCategory.appearance }),
-        disabled: args({ control: "boolean", ...propCategory.states }),
+        disabled: args({
+            control: "boolean",
+            description: "Disables the native button element.",
+            ...propCategory.states
+        }),
         loading: args({ control: "boolean", ...propCategory.states }),
         Icon: args({ control: "false", ...propCategory.content }),
         name: args({ control: "false", ...propCategory.others }),
         "aria-label": args({ control: "text", ...propCategory.others }),
         "aria-expanded": args({ control: "text", ...propCategory.others }),
         onClick: args({ control: "false", ...propCategory.action }),
-        onBlur: args({ control: "false", ...propCategory.action }),
-        onFocus: args({ control: "false", ...propCategory.action }),
+        onMouseEnter: args({
+            control: "false",
+            ...propCategory.action
+        }),
+        onMouseLeave: args({
+            control: "false",
+            ...propCategory.action
+        }),
+        onBlur: args({
+            control: "false",
+            ...propCategory.action
+        }),
+        onFocus: args({
+            control: "false",
+            ...propCategory.action
+        }),
         type: args({ control: "select", ...propCategory.functionality }),
         tabIndex: args({ control: "number", ...propCategory.others }),
-        id: args({ control: "text", ...propCategory.others })
+        id: args({ control: "text", ...propCategory.others }),
+        ref: args({
+            control: "false",
+            ...propCategory.others
+        }),
+        key: args({
+            control: "false",
+            ...propCategory.others
+        })
     },
     args: {
         children: "Button",

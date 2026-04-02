@@ -76,6 +76,7 @@ export { default as PageHeader, IPageHeaderProps } from "./components/molecules/
 export { default as PopoverConfirm, IPopoverConfirmProps } from "./components/molecules/PopoverConfirm";
 
 // Organisms
+export { default as DataTable, IDataTableProps } from "@components/organisms/DataTable";
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
 export { default as DataCardList, IDataCardListProps } from "@components/organisms/DataCardList";
 

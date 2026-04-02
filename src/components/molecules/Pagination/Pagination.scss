@@ -29,6 +29,10 @@
             & > span {
                 white-space: nowrap;
             }
+
+            &_disabled {
+                color: var(--guit-sem-color-foreground-disabled);
+            }
         }
     }
 
@@ -54,12 +58,17 @@
             & > span {
                 white-space: nowrap;
             }
+
+            &_disabled {
+                color: var(--guit-sem-color-foreground-disabled);
+            }
         }
 
         &_list {
             display: flex;
             align-items: center;
             gap: var(--guit-ref-spacing-xsmall);
+            margin-inline-start: auto;
         }
 
         &_item {
@@ -94,6 +103,14 @@
 
                 #{ $that }_value {
                     color: var(--guit-sem-color-foreground-inverse);
+                }
+
+                &_disabled {
+                    background-color: var(--guit-sem-color-background-disabled);
+
+                    #{ $that }_value {
+                        color: var(--guit-sem-color-foreground-disabled);
+                    }
                 }
             }
 
