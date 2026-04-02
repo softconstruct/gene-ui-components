@@ -19,6 +19,7 @@ const meta: Meta<IPaginationProps> = {
         onPageChange: args({ control: "false", ...propCategory.action }),
         onPageSizeChange: args({ control: "false", ...propCategory.action }),
         showInputPageField: args({ control: "boolean", ...propCategory.states }),
+        disabled: args({ control: "boolean", ...propCategory.states }),
         pageSizeSuffixLabel: args({ control: "text", ...propCategory.content }),
         pageSizeOfLabel: args({ control: "text", ...propCategory.content }),
         goToPageLabel: args({ control: "text", ...propCategory.content }),

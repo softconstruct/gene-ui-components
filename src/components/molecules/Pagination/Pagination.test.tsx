@@ -63,6 +63,23 @@ describe("Pagination", () => {
         expect(wrapper.find("input[type='text']").exists()).toBeTruthy();
     });
 
+    it("disables all controls when disabled prop is true", () => {
+        const wrapper = setup.setProps({
+            disabled: true,
+            showInputPageField: true,
+            rowsPerPageOptions: [10, 20]
+        });
+
+        wrapper.find(".pagination__nav_item").forEach((button) => {
+            expect(button.prop("disabled")).toBeTruthy();
+        });
+        expect(wrapper.find("select").prop("disabled")).toBeTruthy();
+        expect(wrapper.find("input[type='text']").prop("disabled")).toBeTruthy();
+        wrapper.find(Button).forEach((button) => {
+            expect(button.prop("disabled")).toBeTruthy();
+        });
+    });
+
     it("updates current page from input field correctly", () => {
         const onPageSizeChange = jest.fn();
         const wrapper = setup.setProps({ showInputPageField: true, onPageSizeChange });
