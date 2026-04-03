@@ -21,6 +21,7 @@
         #{ $this }__arrow {
             position: absolute;
         }
+
         #{ $this }__arrowPath {
             fill: var(--guit-sem-color-background-neutral-1-nudge);
         }
@@ -125,7 +126,7 @@
         border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
         padding-inline: var(--guit-ref-spacing-large);
-        height: 4.8rem;
+        height: var(--guit-sem-dimension-height-2xlarge);
         overflow: hidden;
     }
 

@@ -106,13 +106,14 @@ export const Default: Story = {
 
 const DefaultOpenComponent: FC<IPopoverConfirmProps> = (props) => {
     const [propsForContent, setPropsForContent] = useState({});
+    const [open, setOpen] = useState(true);
 
     return (
         <div style={{ margin: "500px 500px", height: 1000 }}>
-            <PopoverConfirm {...props} setProps={setPropsForContent} defaultOpen>
+            <PopoverConfirm {...props} setProps={setPropsForContent} open={open} onOpenChange={setOpen}>
                 {confirmContent}
             </PopoverConfirm>
-            <Button onClick={() => {}} {...propsForContent}>
+            <Button onClick={() => setOpen(true)} {...propsForContent}>
                 Click to open
             </Button>
         </div>
