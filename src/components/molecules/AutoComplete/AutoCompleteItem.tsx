@@ -42,8 +42,8 @@ const AutoCompleteItem: FC<IAutoCompleteItemProps> = ({ id, children, disabled, 
             const originalOnClick = (renderedElement.props as { onClick?: (event: React.MouseEvent) => void }).onClick;
 
             const propsToApply = {
-                className: classNames("autoCompleteItem", renderedElement.props.className, className, {
-                    autoCompleteItem_disabled: disabled
+                className: classNames("autoComplete__item", renderedElement.props.className, className, {
+                    autoComplete__item_disabled: disabled
                 }),
                 onClick: (event: React.MouseEvent) => {
                     originalOnClick?.(event);
@@ -64,15 +64,15 @@ const AutoCompleteItem: FC<IAutoCompleteItemProps> = ({ id, children, disabled, 
             type="button"
             role="option"
             aria-selected="false"
-            className={classNames("autoCompleteItem", className, {
-                autoCompleteItem_disabled: disabled
+            className={classNames("autoComplete__item", className, {
+                autoComplete__item_disabled: disabled
             })}
             onClick={onClick}
             disabled={disabled}
             {...(disabled ? { tabIndex: -1 } : {})}
             data-id={id}
         >
-            <span className="autoCompleteItem__label">{children}</span>
+            <span className="autoComplete__item_label">{children}</span>
         </button>
     );
 };

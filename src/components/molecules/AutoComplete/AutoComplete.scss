@@ -31,7 +31,7 @@
     }
 
     &__state {
-        width: 100%;
+        width: 28rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -39,17 +39,14 @@
 
         &_size {
             &_large {
-                width: 28rem;
                 height: 18.4rem;
             }
 
             &_medium {
-                width: 28rem;
                 height: 16.4rem;
             }
 
             &_small {
-                width: 28rem;
                 height: 14.4rem;
             }
         }
@@ -99,49 +96,47 @@
             padding-inline: var(--guit-ref-spacing-medium);
         }
     }
-}
 
-.autoCompleteItem {
-    $this: &;
-
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 3.2rem;
-    color: var(--guit-sem-color-foreground-neutral-2);
-    user-select: none;
-    padding-inline-start: var(--guit-ref-spacing-medium);
-    padding-inline-end: var(--guit-ref-spacing-medium);
-    border-radius: var(--guit-ref-radius-3xsmall);
-
-    &:not(:last-of-type) {
-        margin-bottom: var(--guit-ref-spacing-3xsmall);
-    }
-
-    &:hover {
-        background-color: var(--guit-sem-color-background-neutral-1-nudge-hover);
-    }
-
-    &:active {
-        background-color: var(--guit-sem-color-background-neutral-1-nudge-pressed);
-    }
-
-    &:focus-visible {
-        z-index: 1;
-    }
-
-    &_disabled {
-        pointer-events: none;
+    &__item {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 3.2rem;
+        color: var(--guit-sem-color-foreground-neutral-2);
         user-select: none;
-        color: var(--guit-sem-color-foreground-disabled);
-    }
+        padding-inline-start: var(--guit-ref-spacing-medium);
+        padding-inline-end: var(--guit-ref-spacing-medium);
+        border-radius: var(--guit-ref-radius-3xsmall);
 
-    &__label {
-        flex: 1;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        text-align: start;
+        &:not(:last-of-type) {
+            margin-bottom: var(--guit-ref-spacing-3xsmall);
+        }
+
+        &:hover {
+            background-color: var(--guit-sem-color-background-neutral-1-nudge-hover);
+        }
+
+        &:active {
+            background-color: var(--guit-sem-color-background-neutral-1-nudge-pressed);
+        }
+
+        &:focus-visible {
+            z-index: 1;
+        }
+
+        &_disabled {
+            pointer-events: none;
+            user-select: none;
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+
+        &_label {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: start;
+        }
     }
 }
