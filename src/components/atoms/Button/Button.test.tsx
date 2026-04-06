@@ -108,4 +108,22 @@ describe("Button ", () => {
 
         expect(onBlurMock).toHaveBeenCalled();
     });
+
+    it("handles onMouseEnter event", () => {
+        const onMouseEnterMock = jest.fn();
+        const wrapper = setup.setProps({ onMouseEnter: onMouseEnterMock });
+
+        wrapper.find("button").simulate("mouseenter");
+
+        expect(onMouseEnterMock).toHaveBeenCalled();
+    });
+
+    it("handles onMouseLeave event", () => {
+        const onMouseLeaveMock = jest.fn();
+        const wrapper = setup.setProps({ onMouseLeave: onMouseLeaveMock });
+
+        wrapper.find("button").simulate("mouseleave");
+
+        expect(onMouseLeaveMock).toHaveBeenCalled();
+    });
 });
