@@ -1,0 +1,26 @@
+.popoverConfirm {
+    &__headerIcon {
+        &_error {
+            color: var(--guit-sem-color-foreground-error);
+        }
+
+        &_warning {
+            color: var(--guit-sem-color-foreground-warning);
+        }
+    }
+
+    &__content {
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        &_size {
+            &_medium {
+                height: 19.2rem;
+            }
+
+            &_small {
+                height: 11.2rem;
+            }
+        }
+    }
+}
