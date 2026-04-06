@@ -35,6 +35,13 @@ interface ISpreadsheetProps {
      */
     inset?: boolean;
     /**
+     * Controls the height behavior of the Spreadsheet body.<br/>
+     * `full` — fixed height of 80vh (default).<br/>
+     * `fit` — shrinks to fit content, capped at 80vh.
+     * @default "full"
+     */
+    heightMode?: "full" | "fit";
+    /**
      * The content to render inside the Spreadsheet.
      * Typically includes form elements, info panels, or custom UI blocks.
      */
@@ -44,7 +51,14 @@ interface ISpreadsheetProps {
 /**
  * The Spreadsheet component is a mobile-specific layout container designed to fully cover the Popover in mobile view. It acts as a structured content shell for displaying or editing contextual information triggered by a Popover — giving users a focused, full-screen experience on smaller screens.
  */
-const Spreadsheet: FC<ISpreadsheetProps> = ({ open, inset = true, onClose = () => {}, children, className }) => {
+const Spreadsheet: FC<ISpreadsheetProps> = ({
+    open,
+    inset = true,
+    onClose = () => {},
+    children,
+    className,
+    heightMode = "full"
+}) => {
     const onCloseHandler = () => {
         if (open) onClose();
     };
@@ -66,16 +80,14 @@ const Spreadsheet: FC<ISpreadsheetProps> = ({ open, inset = true, onClose = () =
             {open && geneUIProviderRef.current
                 ? createPortal(
                       <div className={classNames("spreadsheet", className)}>
-                          <div ref={bodyRef} className="spreadsheet__body">
-                              <Scrollbar>
-                                  <div
-                                      className={classNames(
-                                          { spreadsheet__body_inset: inset },
-                                          "spreadsheet__container"
-                                      )}
-                                  >
-                                      {children}
-                                  </div>
+                          <div
+                              ref={bodyRef}
+                              className={classNames("spreadsheet__body", `spreadsheet__body_height_${heightMode}`, {
+                                  spreadsheet__body_inset: inset
+                              })}
+                          >
+                              <Scrollbar height={heightMode === "fit" ? "auto" : "full"}>
+                                  <div className="spreadsheet__container">{children}</div>
                               </Scrollbar>
                           </div>
                       </div>,

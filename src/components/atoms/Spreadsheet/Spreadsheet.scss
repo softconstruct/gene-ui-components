@@ -18,11 +18,21 @@
         left: 0;
         right: 0;
         width: 100%;
-        height: 80vh;
-        max-height: 100%;
         background-color: var(--guit-sem-color-background-neutral-1-nudge);
         border-top-left-radius: var(--guit-ref-radius-2xsmall);
         border-top-right-radius: var(--guit-ref-radius-2xsmall);
+
+        &_height {
+            &_full {
+                height: 80vh;
+                max-height: 100%;
+            }
+
+            &_fit {
+                height: auto;
+                max-height: 80vh;
+            }
+        }
 
         &_inset {
             padding-inline: var(--guit-ref-spacing-large);
