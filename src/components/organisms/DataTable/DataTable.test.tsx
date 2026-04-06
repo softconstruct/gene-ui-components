@@ -96,15 +96,11 @@ describe("Table Component", () => {
     });
 
     it("renders Pagination component by default (pagination = true)", () => {
+        setup.setProps({ pagination: true });
         expect(setup.find(Pagination).exists()).toBeTruthy();
     });
 
     it("does not render Pagination when pagination prop is false", async () => {
-        await act(async () => {
-            setup.setProps({ pagination: false });
-        });
-        setup.update();
-
         expect(setup.find(Pagination).exists()).toBeFalsy();
     });
 

@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useMemo, useState } from "react";
 import {
     CellContext,
     ColumnDef,
@@ -21,7 +21,7 @@ import { useTablePagination } from "@components/organisms/DataTable/hooks/useTab
 import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
 import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader";
 // Types
-import { ITableNoDataTexts } from "@components/organisms/DataTable/types";
+import { DataTableColumn, ITableNoDataTexts } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./DataTable.scss";
@@ -89,7 +89,7 @@ interface IDataTableProps<TData> {
      * ];
      * ```
      */
-    columns: ColumnDef<TData>[];
+    columns: DataTableColumn<TData>[];
     /**
      * Toggles the loading state of the table.
      */
@@ -113,11 +113,16 @@ interface IDataTableProps<TData> {
      * ]}
      */
     noDataAvailableActions?: IButtonProps[];
+    /**
+     * Enables expandable rows, allowing for additional content to be revealed below a row when clicked.
+     */
     expandable?: boolean;
 }
 
 const defaultColumn = {
-    cell: <TData,>({ getValue }: CellContext<TData, string>) => <DefaultCellComponent value={getValue()} />
+    cell: <TData,>({ getValue }: CellContext<TData, unknown>) => (
+        <DefaultCellComponent value={String(getValue() ?? "")} />
+    )
 };
 
 /**
@@ -133,7 +138,7 @@ const DataTable = <TData,>({
     className,
     data = [],
     columns = [],
-    pagination = true,
+    pagination = false,
     loading: externalLoading = false,
     sticky = true,
     loadingText,
@@ -143,18 +148,42 @@ const DataTable = <TData,>({
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
-    let tableColumns = columns;
 
-    if (expandable) {
-        tableColumns = [
+    const tableColumns = useMemo(() => {
+        const adapted: ColumnDef<TData>[] = columns.map((col, index) => {
+            const isAccessorColumn = Boolean(col.accessorKey);
+
+            const base: ColumnDef<TData> = {
+                id: col.id ?? (col.accessorKey ? String(col.accessorKey) : `display_${index}`),
+                header: col.header ?? (col.accessorKey ? String(col.accessorKey) : ""),
+                size: col.size,
+                ...(isAccessorColumn ? { accessorKey: col.accessorKey } : {})
+            };
+
+            if (!col.renderCell) return base;
+
+            return {
+                ...base,
+                cell: (ctx) =>
+                    col.renderCell?.({
+                        value: isAccessorColumn ? (ctx.getValue() as unknown) : undefined,
+                        row: ctx.row.original,
+                        rowId: ctx.row.id
+                    })
+            };
+        });
+
+        if (!expandable) return adapted;
+
+        return [
             {
                 id: "expander",
                 header: "",
                 cell: ExpanderCell
             },
-            ...tableColumns
+            ...adapted
         ];
-    }
+    }, [columns, expandable]);
 
     const initialPageSize =
         typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)

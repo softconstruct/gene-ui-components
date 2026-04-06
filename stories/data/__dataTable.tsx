@@ -6,7 +6,7 @@ import Pill from "@components/atoms/Pill";
 import Checkbox from "@components/molecules/Checkbox";
 import NumberField from "@components/molecules/NumberField";
 import Switch from "@components/molecules/Switch";
-import { TableColumn } from "@components/organisms/DataTable/types";
+import { DataTableColumn } from "@components/organisms/DataTable/types";
 
 type ClientProfile = {
     Id: number;
@@ -23,36 +23,28 @@ type ClientProfile = {
 
 const ExpandedData: FC<{ data: string }> = ({ data }) => <div className="swapComponent">{data}</div>;
 
-export const mockColumns: TableColumn<ClientProfile>[] = [
+export const mockColumns: DataTableColumn<ClientProfile>[] = [
     { accessorKey: "Id", header: "Id" },
     {
         accessorKey: "IsVerified",
         header: "Verified",
-        cell: ({ getValue }) => {
-            const isVerified = getValue<boolean>();
-            return <Switch defaultChecked={isVerified} />;
-        }
+        renderCell: ({ value }) => <Switch defaultChecked={Boolean(value)} />
     },
     {
         accessorKey: "DayOffs",
         header: "Day offs",
-        cell: ({ getValue }) => {
-            return <NumberField defaultValue={Number(getValue())} />;
-        }
+        renderCell: ({ value }) => <NumberField defaultValue={Number(value)} />
     },
     {
         accessorKey: "Status",
         header: "Status",
-        cell: ({ getValue }) => {
-            const status = getValue<string>();
-            return <Pill text={status} />;
-        }
+        renderCell: ({ value }) => <Pill text={String(value)} />
     },
     { accessorKey: "FirstName", header: "First name" },
     {
-        accessorKey: "Actions",
+        id: "Actions",
         header: "Actions",
-        cell: () => (
+        renderCell: () => (
             <div style={{ display: "flex", gap: "1rem" }}>
                 <Button>View user data</Button>
                 <Button appearance="danger">Block user</Button>
@@ -64,10 +56,7 @@ export const mockColumns: TableColumn<ClientProfile>[] = [
     {
         accessorKey: "IsLocked",
         header: "Locked",
-        cell: ({ getValue }) => {
-            const isLocked = getValue<boolean>();
-            return <Checkbox defaultChecked={isLocked} />;
-        }
+        renderCell: ({ value }) => <Checkbox defaultChecked={Boolean(value)} />
     },
     { accessorKey: "Created", header: "Created" }
 ];

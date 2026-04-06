@@ -18,12 +18,12 @@ interface ITableRowProps<TData> {
      * Provides access to row-level data and internal methods, such as retrieving
      * the visible cells to be rendered within this specific row.
      */
-    row: Omit<Row<TData>, "original"> & {
-        original: Row<TData>["original"] & {
-            expandedRow?: ReactNode;
-        };
-    };
+    row: Row<TData>;
 }
+
+const hasExpandedRow = (value: unknown): value is { expandedRow?: ReactNode } => {
+    return typeof value === "object" && value !== null && "expandedRow" in value;
+};
 
 /**
  * Renders an individual table row (`<tr>`).
@@ -35,6 +35,8 @@ interface ITableRowProps<TData> {
  * @returns A table row element containing its respective rendered cells.
  */
 const TableRow = <TData,>({ row }: ITableRowProps<TData>) => {
+    const expandedRow = hasExpandedRow(row.original) ? row.original.expandedRow : undefined;
+
     return (
         <>
             <tr className="tableRow">
@@ -42,10 +44,10 @@ const TableRow = <TData,>({ row }: ITableRowProps<TData>) => {
                     <TableBodyCell key={cell.id} cell={cell} />
                 ))}
             </tr>
-            {row.getIsExpanded() && row.original.expandedRow && (
+            {row.getIsExpanded() && expandedRow && (
                 <tr className="tableRow">
                     <td colSpan={row.getVisibleCells().length} className="tableBodyCell">
-                        {row.original.expandedRow}
+                        {expandedRow}
                     </td>
                 </tr>
             )}
