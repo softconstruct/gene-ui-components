@@ -1,4 +1,4 @@
-import React, { FC, useRef } from "react";
+import React, { FC, KeyboardEvent, useRef } from "react";
 
 import { SLIDER_POINTER_RADIUS_PX } from "../constants";
 import { useElementDimensions } from "../hooks/useElementDimensions";
@@ -7,15 +7,41 @@ import { usePointerDrag } from "../hooks/usePointerDrag";
 interface IHueSliderProps {
     hueDegree: number;
     onChange: (hue: number) => void;
+    isColorEmpty?: boolean;
 }
 
-export const HueSlider: FC<IHueSliderProps> = ({ hueDegree, onChange }) => {
+const KEYBOARD_STEP_DEGREES = 10;
+
+export const HueSlider: FC<IHueSliderProps> = ({ hueDegree, onChange, isColorEmpty = false }) => {
     const sliderRef = useRef<HTMLDivElement>(null);
     const dimensions = useElementDimensions(sliderRef);
 
     const handleDrag = usePointerDrag(sliderRef, (horizontalPos) => {
         onChange(horizontalPos * 360);
     });
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+        let newHue = hueDegree;
+        let handled = false;
+
+        switch (e.key) {
+            case "ArrowRight":
+                newHue = (hueDegree + KEYBOARD_STEP_DEGREES) % 360;
+                handled = true;
+                break;
+            case "ArrowLeft":
+                newHue = (hueDegree - KEYBOARD_STEP_DEGREES + 360) % 360;
+                handled = true;
+                break;
+            default:
+                break;
+        }
+
+        if (handled) {
+            e.preventDefault();
+            onChange(newHue);
+        }
+    };
 
     const pointerLeftPosition =
         dimensions.width > 0
@@ -34,9 +60,10 @@ export const HueSlider: FC<IHueSliderProps> = ({ hueDegree, onChange }) => {
             tabIndex={0}
             onMouseDown={handleDrag}
             onTouchStart={handleDrag}
+            onKeyDown={handleKeyDown}
             style={{ backgroundImage: "linear-gradient(90deg, red, yellow, lime, cyan, blue, magenta, red)" }}
         >
-            <div className="colorPalette__huePointer" style={{ left: pointerLeftPosition }} />
+            {!isColorEmpty && <div className="colorPalette__huePointer" style={{ left: pointerLeftPosition }} />}
         </div>
     );
 };

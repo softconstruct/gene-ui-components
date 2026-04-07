@@ -41,7 +41,9 @@ interface IColorIndicator {
  * typically displayed inside or alongside the main text field.
  */
 const ColorIndicator: FC<IColorIndicator> = ({ onClick, color, size, alpha = 100 }) => {
-    const localRGB = hexToRgb(color);
+    const isEmptyColor = !color || color === "";
+    const localRGB = isEmptyColor ? null : hexToRgb(color);
+
     return (
         <button
             type="button"
@@ -51,12 +53,13 @@ const ColorIndicator: FC<IColorIndicator> = ({ onClick, color, size, alpha = 100
         >
             <span
                 className={classNames("colorIndicator__wrapper", {
-                    colorIndicator__wrapper_hasActive: !localRGB
+                    colorIndicator__wrapper_hasActive: isEmptyColor || !localRGB
                 })}
                 style={{
-                    backgroundColor: localRGB
-                        ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha / ALPHA_SCALE_MAX})`
-                        : "transparent"
+                    backgroundColor:
+                        localRGB && !isEmptyColor
+                            ? `rgba(${localRGB.r}, ${localRGB.g}, ${localRGB.b}, ${alpha / ALPHA_SCALE_MAX})`
+                            : "transparent"
                 }}
             />
         </button>

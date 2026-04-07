@@ -37,6 +37,7 @@
 
     &__hexInput {
         width: 100%;
+        unicode-bidi: bidi-override;
     }
 
     &__recents {
@@ -82,5 +83,9 @@
         gap: var(--guit-ref-spacing-medium);
         width: 32rem;
         padding: var(--guit-ref-spacing-large);
+
+        &_mobile {
+            width: 100%;
+        }
     }
 }

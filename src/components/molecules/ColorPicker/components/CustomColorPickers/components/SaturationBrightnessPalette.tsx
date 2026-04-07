@@ -1,4 +1,4 @@
-import React, { FC, useRef } from "react";
+import React, { FC, KeyboardEvent, useRef } from "react";
 
 import { IHsvColor } from "../../../types";
 import { SATURATION_POINTER_RADIUS_PX } from "../constants";
@@ -8,15 +8,54 @@ import { usePointerDrag } from "../hooks/usePointerDrag";
 interface ISaturationBrightnessPaletteProps {
     hsv: IHsvColor;
     onChange: (saturation: number, value: number) => void;
+    isColorEmpty?: boolean;
 }
 
-export const SaturationBrightnessPalette: FC<ISaturationBrightnessPaletteProps> = ({ hsv, onChange }) => {
+const KEYBOARD_STEP = 0.05;
+
+export const SaturationBrightnessPalette: FC<ISaturationBrightnessPaletteProps> = ({
+    hsv,
+    onChange,
+    isColorEmpty = false
+}) => {
     const paletteRef = useRef<HTMLDivElement>(null);
     const dimensions = useElementDimensions(paletteRef);
 
     const handleDrag = usePointerDrag(paletteRef, (horizontalPos, verticalPos) => {
         onChange(horizontalPos, 1 - verticalPos);
     });
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+        let newSaturation = hsv.saturation;
+        let newValue = hsv.value;
+        let handled = false;
+
+        switch (e.key) {
+            case "ArrowRight":
+                newSaturation = Math.min(1, hsv.saturation + KEYBOARD_STEP);
+                handled = true;
+                break;
+            case "ArrowLeft":
+                newSaturation = Math.max(0, hsv.saturation - KEYBOARD_STEP);
+                handled = true;
+                break;
+            case "ArrowUp":
+                newValue = Math.min(1, hsv.value + KEYBOARD_STEP);
+                handled = true;
+                break;
+            case "ArrowDown":
+                newValue = Math.max(0, hsv.value - KEYBOARD_STEP);
+                handled = true;
+                break;
+            default:
+                break;
+        }
+
+        if (handled) {
+            e.preventDefault();
+            onChange(newSaturation, newValue);
+        }
+    };
 
     const pointerLeftPosition =
         dimensions.width > 0
@@ -36,6 +75,7 @@ export const SaturationBrightnessPalette: FC<ISaturationBrightnessPaletteProps> 
             tabIndex={0}
             onMouseDown={handleDrag}
             onTouchStart={handleDrag}
+            onKeyDown={handleKeyDown}
             aria-label="Color saturation and brightness picker"
             aria-valuenow={Math.round(hsv.saturation * 100)}
             aria-valuemin={0}
@@ -44,10 +84,12 @@ export const SaturationBrightnessPalette: FC<ISaturationBrightnessPaletteProps> 
                 backgroundImage: `linear-gradient(0deg, #000, transparent), linear-gradient(90deg, #fff, hsl(${hsv.hue}, 100%, 50%))`
             }}
         >
-            <div
-                className="colorPalette__saturationPointer"
-                style={{ left: pointerLeftPosition, top: pointerTopPosition }}
-            />
+            {!isColorEmpty && (
+                <div
+                    className="colorPalette__saturationPointer"
+                    style={{ left: pointerLeftPosition, top: pointerTopPosition }}
+                />
+            )}
         </div>
     );
 };

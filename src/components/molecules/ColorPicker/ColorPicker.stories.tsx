@@ -19,7 +19,7 @@ const meta: Meta<IColorPickerProps> = {
         size: args({ control: "select", ...propCategory.appearance }),
         placeholder: args({ control: "text", ...propCategory.content }),
         defaultColor: args({ control: "text", ...propCategory.content }),
-        recentColors: args({ control: "false", ...propCategory.content }),
+        recentColors: args({ control: "object", ...propCategory.content }),
         onChange: args({ control: "false", ...propCategory.action }),
         open: args({ control: "boolean", ...propCategory.states }),
         format: args({ control: "select", ...propCategory.functionality }),

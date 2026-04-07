@@ -1,6 +1,11 @@
-import { RGB } from "@components/molecules/ColorPicker/types";
+import { RGB, RGBA } from "@components/molecules/ColorPicker/types";
 
 const ALPHA_SCALE_MAX = 100;
 const RGB_CHANNELS: (keyof RGB)[] = ["r", "g", "b"];
 
-export { RGB_CHANNELS, ALPHA_SCALE_MAX };
+/**
+ * Default empty RGBA state used when resetting or clearing color selection
+ */
+const EMPTY_RGBA: RGBA = { r: "", g: "", b: "", a: 1 };
+
+export { RGB_CHANNELS, ALPHA_SCALE_MAX, EMPTY_RGBA };

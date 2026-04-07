@@ -7,6 +7,11 @@ import { RGB, RGBA } from "./types";
  * @returns A formatted HEX string (e.g., "#ffffff").
  */
 const rgbToHex = (val: RGB | RGBA): string => {
+    // If any RGB value is empty string, return empty hex
+    if (val.r === "" || val.g === "" || val.b === "") {
+        return "";
+    }
+
     const r = Number(val.r).toString(16).padStart(2, "0");
     const g = Number(val.g).toString(16).padStart(2, "0");
     const b = Number(val.b).toString(16).padStart(2, "0");

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { ChangeEvent, FC, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
 // Icons
@@ -13,8 +13,9 @@ import {
     RgbaColorPicker
 } from "@components/molecules/ColorPicker/components/CustomColorPickers/CustomColorPickers";
 // Constants
-import { ALPHA_SCALE_MAX, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
+import { ALPHA_SCALE_MAX, EMPTY_RGBA, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
 import TextField from "@components/molecules/TextField";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Hooks
 import useClickOutside from "@hooks/useClickOutside";
@@ -134,6 +135,10 @@ const ColorPicker: FC<IColorPickerProps> = ({
 
     const [propsForPopover, setPropsForPopover] = useState({});
 
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
+
+    const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
+
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
@@ -148,7 +153,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
             return { ...parsed, a: hasExplicitAlpha ? parsed.a : (alphaValue ?? ALPHA_SCALE_MAX) / ALPHA_SCALE_MAX };
         }
 
-        return { r: "", g: "", b: "", a: 1 };
+        return EMPTY_RGBA;
     });
 
     const hex = useMemo(() => rgbToHex(rgba), [defaultColor, rgba]);
@@ -195,10 +200,9 @@ const ColorPicker: FC<IColorPickerProps> = ({
 
     const applyRecentColor = (colorStr: string) => {
         if (colorStr === "") {
-            const emptyRgba: RGBA = { r: "", g: "", b: "", a: 1 };
-            setRgba(emptyRgba);
+            setRgba(EMPTY_RGBA);
             setLocalHex("");
-            emitChange(emptyRgba);
+            emitChange(EMPTY_RGBA);
             return;
         }
 
@@ -226,8 +230,8 @@ const ColorPicker: FC<IColorPickerProps> = ({
                 emitChange({ ...rgb, a: rgba.a });
                 return;
             }
-            setRgba({ r: "", g: "", b: "", a: 1 });
-            emitChange({ r: "", g: "", b: "", a: 1 });
+            setRgba(EMPTY_RGBA);
+            emitChange(EMPTY_RGBA);
         },
         [rgba.a, emitChange]
     );
@@ -344,9 +348,14 @@ const ColorPicker: FC<IColorPickerProps> = ({
                 position="bottom-left"
                 open={isOpen}
                 setProps={setPropsForPopover}
+                mobileHeightMode="fit"
             >
                 <PopoverBody withPadding={false}>
-                    <div className="colorPicker__wrapper">
+                    <div
+                        className={classNames("colorPicker__wrapper", {
+                            colorPicker__wrapper_mobile: isMobileBreakpoint
+                        })}
+                    >
                         {isAlphaEnabled ? (
                             <RgbaColorPicker color={rgba} onChange={handlePickerChange as (val: RGBA) => void} />
                         ) : (

@@ -1,4 +1,4 @@
-import React, { FC, useRef } from "react";
+import React, { FC, KeyboardEvent, useRef } from "react";
 
 import { SLIDER_POINTER_RADIUS_PX } from "../constants";
 import { useElementDimensions } from "../hooks/useElementDimensions";
@@ -8,13 +8,39 @@ interface IAlphaSliderProps {
     opacityLevel: number;
     baseRgb: { r: number; g: number; b: number };
     onChange: (alpha: number) => void;
+    isColorEmpty?: boolean;
 }
 
-export const AlphaSlider: FC<IAlphaSliderProps> = ({ opacityLevel, baseRgb, onChange }) => {
+const KEYBOARD_STEP = 0.05;
+
+export const AlphaSlider: FC<IAlphaSliderProps> = ({ opacityLevel, baseRgb, onChange, isColorEmpty = false }) => {
     const sliderRef = useRef<HTMLDivElement>(null);
     const dimensions = useElementDimensions(sliderRef);
 
     const handleDrag = usePointerDrag(sliderRef, (horizontalPos) => onChange(horizontalPos));
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+        let newOpacity = opacityLevel;
+        let handled = false;
+
+        switch (e.key) {
+            case "ArrowRight":
+                newOpacity = Math.min(1, opacityLevel + KEYBOARD_STEP);
+                handled = true;
+                break;
+            case "ArrowLeft":
+                newOpacity = Math.max(0, opacityLevel - KEYBOARD_STEP);
+                handled = true;
+                break;
+            default:
+                break;
+        }
+
+        if (handled) {
+            e.preventDefault();
+            onChange(newOpacity);
+        }
+    };
 
     const pointerLeftPosition =
         dimensions.width > 0
@@ -33,6 +59,7 @@ export const AlphaSlider: FC<IAlphaSliderProps> = ({ opacityLevel, baseRgb, onCh
             ref={sliderRef}
             onMouseDown={handleDrag}
             onTouchStart={handleDrag}
+            onKeyDown={handleKeyDown}
         >
             <div
                 className="colorPalette__alphaGradient"
@@ -40,7 +67,7 @@ export const AlphaSlider: FC<IAlphaSliderProps> = ({ opacityLevel, baseRgb, onCh
                     backgroundImage: `linear-gradient(90deg, rgba(${baseRgb.r}, ${baseRgb.g}, ${baseRgb.b}, 0) 0%, rgba(${baseRgb.r}, ${baseRgb.g}, ${baseRgb.b}, 1) 100%)`
                 }}
             />
-            <div className="colorPalette__alphaPointer" style={{ left: pointerLeftPosition }} />
+            {!isColorEmpty && <div className="colorPalette__alphaPointer" style={{ left: pointerLeftPosition }} />}
         </div>
     );
 };

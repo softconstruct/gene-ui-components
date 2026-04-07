@@ -25,6 +25,8 @@ export interface IRgbaColorPickerProps {
 }
 
 export const HexColorPicker: FC<IHexColorPickerProps> = ({ color, onChange }) => {
+    const isColorEmpty = !color || color === "";
+
     const [hsvColor, setHsvColor] = useState<IHsvColor>(() => {
         const rgbColor = hexToRgb(color) ?? { r: 255, g: 255, b: 255 };
         return convertRgbToHsv(rgbColor.r, rgbColor.g, rgbColor.b);
@@ -68,21 +70,34 @@ export const HexColorPicker: FC<IHexColorPickerProps> = ({ color, onChange }) =>
 
     return (
         <div className="colorPalette">
-            <SaturationBrightnessPalette hsv={hsvColor} onChange={handleSaturationBrightnessChange} />
-            <HueSlider hueDegree={hsvColor.hue} onChange={handleHueChange} />
+            <SaturationBrightnessPalette
+                hsv={hsvColor}
+                onChange={handleSaturationBrightnessChange}
+                isColorEmpty={isColorEmpty}
+            />
+            <HueSlider hueDegree={hsvColor.hue} onChange={handleHueChange} isColorEmpty={isColorEmpty} />
         </div>
     );
 };
 
 export const RgbaColorPicker: FC<IRgbaColorPickerProps> = ({ color, onChange }) => {
-    const [hsvColor, setHsvColor] = useState<IHsvColor>(() => convertRgbToHsv(color.r, color.g, color.b));
+    const isColorEmpty =
+        (typeof color.r === "string" && color.r === "") ||
+        (typeof color.g === "string" && color.g === "") ||
+        (typeof color.b === "string" && color.b === "");
+
+    const [hsvColor, setHsvColor] = useState<IHsvColor>(() =>
+        convertRgbToHsv(color.r as number, color.g as number, color.b as number)
+    );
     const [opacityLevel, setOpacityLevel] = useState<number>(color.a ?? 1);
 
     useEffect(() => {
         setHsvColor((currentHsv: IHsvColor) => {
             const currentRgb = convertHsvToRgb(currentHsv.hue, currentHsv.saturation, currentHsv.value);
             const isIdenticalColor = color.r === currentRgb.r && color.g === currentRgb.g && color.b === currentRgb.b;
-            return isIdenticalColor ? currentHsv : convertRgbToHsv(color.r, color.g, color.b);
+            return isIdenticalColor
+                ? currentHsv
+                : convertRgbToHsv(color.r as number, color.g as number, color.b as number);
         });
         setOpacityLevel(color.a ?? 1);
     }, [color]);
@@ -124,9 +139,18 @@ export const RgbaColorPicker: FC<IRgbaColorPickerProps> = ({ color, onChange }) 
 
     return (
         <div className="colorPalette">
-            <SaturationBrightnessPalette hsv={hsvColor} onChange={handleSaturationBrightnessChange} />
-            <HueSlider hueDegree={hsvColor.hue} onChange={handleHueChange} />
-            <AlphaSlider opacityLevel={opacityLevel} baseRgb={currentBaseRgb} onChange={handleAlphaChange} />
+            <SaturationBrightnessPalette
+                hsv={hsvColor}
+                onChange={handleSaturationBrightnessChange}
+                isColorEmpty={isColorEmpty}
+            />
+            <HueSlider hueDegree={hsvColor.hue} onChange={handleHueChange} isColorEmpty={isColorEmpty} />
+            <AlphaSlider
+                opacityLevel={opacityLevel}
+                baseRgb={currentBaseRgb}
+                onChange={handleAlphaChange}
+                isColorEmpty={isColorEmpty}
+            />
         </div>
     );
 };
