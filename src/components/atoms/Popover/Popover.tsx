@@ -1,5 +1,6 @@
 import React, {
     Dispatch,
+    FC,
     forwardRef,
     MutableRefObject,
     ReactNode,
@@ -30,7 +31,7 @@ import {
 import { Placement } from "@floating-ui/utils";
 import classNames from "classnames";
 
-import { Info, X } from "@geneui/icons";
+import { IconProps, X } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -186,6 +187,23 @@ export interface IPopoverProps {
      * Can be either "click" or "hover".
      */
     trigger?: "click" | "hover";
+    /**
+     * Determines whether the close (X) button is displayed in the popover's header.
+     * @default true
+     */
+    hasCloseButton?: boolean;
+    /**
+     * Icon component displayed in the popover header before the title.
+     * The `Icon` prop accepts a React functional component that will be rendered before the title text.
+     */
+    Icon?: FC<IconProps>;
+    /**
+     * Controls the height behavior of the Spreadsheet overlay on mobile view.<br/>
+     * `full` — fixed height of 80vh (default).<br/>
+     * `fit` — shrinks to fit content, capped at 80vh.
+     * @default "full"
+     */
+    mobileHeightMode?: "full" | "fit";
 }
 
 /**
@@ -209,7 +227,10 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             disableReposition = false,
             onClose,
             open,
-            trigger = "click"
+            trigger = "click",
+            hasCloseButton = true,
+            Icon,
+            mobileHeightMode = "full"
         },
         popoverRef
     ) => {
@@ -381,6 +402,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                         <Spreadsheet
                             inset={false}
                             open={isPopoverOpened}
+                            heightMode={mobileHeightMode}
                             onClose={() => {
                                 onClose?.();
                             }}
@@ -393,17 +415,19 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                 {title && (
                                     <div className="popover__header">
                                         <p className="popover__title">
-                                            <Info className="popover__title_icon" size={20} />
+                                            {Icon && <Icon className="popover__title_icon" size={20} />}
                                             <span className="popover__title_text ellipsis-text">{title}</span>
                                         </p>
-                                        <Button
-                                            Icon={X}
-                                            size="small"
-                                            appearance="secondary"
-                                            layout="text"
-                                            className="popover__close"
-                                            onClick={() => setPopoverOpened(false)}
-                                        />
+                                        {hasCloseButton && (
+                                            <Button
+                                                Icon={X}
+                                                size="small"
+                                                appearance="secondary"
+                                                layout="text"
+                                                className="popover__close"
+                                                onClick={() => setPopoverOpened(false)}
+                                            />
+                                        )}
                                     </div>
                                 )}
                                 {children}
@@ -455,17 +479,19 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                     {title && (
                                         <div className="popover__header">
                                             <p className="popover__title">
-                                                <Info className="popover__title_icon" size={20} />
+                                                {Icon && <Icon className="popover__title_icon" size={20} />}
                                                 <span className="popover__title_text ellipsis-text">{title}</span>
                                             </p>
-                                            <Button
-                                                Icon={X}
-                                                size="small"
-                                                appearance="secondary"
-                                                layout="text"
-                                                className="popover__close"
-                                                onClick={() => setPopoverOpened(false)}
-                                            />
+                                            {hasCloseButton && (
+                                                <Button
+                                                    Icon={X}
+                                                    size="small"
+                                                    appearance="secondary"
+                                                    layout="text"
+                                                    className="popover__close"
+                                                    onClick={() => setPopoverOpened(false)}
+                                                />
+                                            )}
                                         </div>
                                     )}
                                     {children}
