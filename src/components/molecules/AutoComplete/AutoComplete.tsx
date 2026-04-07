@@ -5,6 +5,7 @@ import React, {
     KeyboardEvent as ReactKeyboardEvent,
     MouseEvent as ReactMouseEvent,
     ReactElement,
+    ReactNode,
     SetStateAction,
     useCallback,
     useEffect,
@@ -12,12 +13,13 @@ import React, {
     useRef,
     useState
 } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
 
-import Loader from "@components/atoms/Loader";
 // Components
+import Loader from "@components/atoms/Loader";
 import { IPopoverProps, IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
-import Scrollbar from "@components/atoms/Scrollbar";
+import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
 import Empty from "@components/molecules/Empty";
 
 // Hooks
@@ -109,6 +111,8 @@ interface IAutoCompleteProps {
      */
     onOpenChange?: (isOpen: boolean) => void;
 }
+
+const ESTIMATED_ROW_HEIGHT_PX = 32;
 
 /**
  * Autocomplete component enhances input fields by providing real-time suggestions as the user types. As users begin entering text, a list of potential matches is dynamically generated, allowing them to quickly select from these options instead of typing the entire input manually.
@@ -260,10 +264,50 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
                 </div>
             );
         }
-        return (
+        return null;
+    }, [emptyText, hasChildren, loading, loadingText, size]);
+
+    const scrollbarRef = useRef<ScrollbarRefType | null>(null);
+    const childrenArray = useMemo(() => Children.toArray(children) as ReactElement[], [children]);
+
+    const virtualizer = useVirtualizer({
+        count: hasChildren ? childrenArray.length : 0,
+        getScrollElement: () => scrollbarRef.current?.scrollbarRef?.scrollerElement ?? null,
+        estimateSize: () => ESTIMATED_ROW_HEIGHT_PX,
+        overscan: 4
+    });
+
+    let virtualizedContent: ReactNode = null;
+    if (loading || !hasChildren) {
+        virtualizedContent = content;
+    } else {
+        virtualizedContent = (
             <div className={classNames("autoComplete__inner", `autoComplete__inner_size_${size}`)}>
-                <Scrollbar className="autoComplete__scrollbar">
-                    <div className={classNames("autoComplete", className, "autoComplete__content")}>{children}</div>
+                <Scrollbar className="autoComplete__scrollbar" ref={scrollbarRef}>
+                    <div
+                        className={classNames(
+                            "autoComplete",
+                            className,
+                            "autoComplete__content",
+                            "autoComplete__virtualContainer"
+                        )}
+                        style={{ height: virtualizer.getTotalSize() }}
+                    >
+                        {virtualizer.getVirtualItems().map((row) => {
+                            const item = childrenArray[row.index];
+                            if (!item) return null;
+                            return (
+                                <div
+                                    className="autoComplete__virtualRow"
+                                    key={item.key ?? row.index}
+                                    data-index={row.index}
+                                    style={{ transform: `translateY(${row.start}px)` }}
+                                >
+                                    {item}
+                                </div>
+                            );
+                        })}
+                    </div>
                 </Scrollbar>
                 {showMore && (
                     <AutoCompleteFooter
@@ -276,20 +320,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
                 )}
             </div>
         );
-    }, [
-        children,
-        className,
-        emptyText,
-        hasChildren,
-        loading,
-        loadingText,
-        onShowMore,
-        showMore,
-        showMoreDisabled,
-        showMoreLoading,
-        showMoreLabel,
-        size
-    ]);
+    }
 
     return (
         <Popover
@@ -302,7 +333,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
             ref={popoverRef}
         >
             <PopoverBody withPadding={false} className="autoComplete__body" withScrollbar={false}>
-                {content}
+                {virtualizedContent}
             </PopoverBody>
         </Popover>
     );

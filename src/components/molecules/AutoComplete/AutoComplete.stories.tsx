@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from "react";
+import React, { FC, useCallback, useMemo, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import TextField from "@components/molecules/TextField";
@@ -88,7 +88,7 @@ const StoryComponent: FC<IAutoCompleteProps> = (props) => {
             </div>
             <AutoComplete {...props} setPropsForPopover={setPropsForPopover}>
                 {items.map((item) => (
-                    <AutoCompleteItem key={item} id={item} onClick={() => console.log("Selected:", item)}>
+                    <AutoCompleteItem key={item} id={item}>
                         {item}
                     </AutoCompleteItem>
                 ))}
@@ -180,9 +180,7 @@ const WithRenderStoryComponent: FC<IAutoCompleteProps> = (props) => {
                 <TextField placeholder="Search pages..." />
             </div>
             <AutoComplete {...props} setPropsForPopover={setPropsForPopover}>
-                <AutoCompleteItem id="home" onClick={() => console.log("Home clicked")}>
-                    Home
-                </AutoCompleteItem>
+                <AutoCompleteItem id="home">Home</AutoCompleteItem>
                 <AutoCompleteItem
                     id="profile"
                     render={(itemData) => (
@@ -221,4 +219,38 @@ const WithRenderStoryComponent: FC<IAutoCompleteProps> = (props) => {
 
 export const WithRender: Story = {
     render: (props) => <WithRenderStoryComponent {...props} />
+};
+
+const VirtualizedStoryComponent: FC<IAutoCompleteProps> = (props) => {
+    const [propsForPopover, setPropsForPopover] = useState({});
+    const virtualizedItems = useMemo(
+        () =>
+            Array.from({ length: 1200 }, (_, index) => ({
+                id: `item-${index + 1}`,
+                label: `item${index + 1}`
+            })),
+        []
+    );
+
+    return (
+        <div style={{ padding: "2rem", minHeight: "400px" }}>
+            <div {...propsForPopover} style={{ display: "inline-block", width: "100%" }}>
+                <TextField placeholder="Search large dataset..." />
+            </div>
+            <AutoComplete {...props} setPropsForPopover={setPropsForPopover}>
+                {virtualizedItems.map((item) => (
+                    <AutoCompleteItem key={item.id} id={item.id}>
+                        {item.label}
+                    </AutoCompleteItem>
+                ))}
+            </AutoComplete>
+        </div>
+    );
+};
+
+export const Virtualized: Story = {
+    render: (props) => <VirtualizedStoryComponent {...props} />,
+    args: {
+        size: "large"
+    }
 };

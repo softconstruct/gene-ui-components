@@ -75,6 +75,17 @@
         padding-inline-start: var(--guit-ref-spacing-3xsmall);
     }
 
+    &__virtualContainer {
+        position: relative;
+    }
+
+    &__virtualRow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+
     &__footer {
         flex: none;
         display: flex;

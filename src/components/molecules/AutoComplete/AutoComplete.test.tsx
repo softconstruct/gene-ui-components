@@ -63,7 +63,7 @@ describe("AutoComplete ", () => {
         expect(provider().find(".autoComplete__footer").find("button").hasClass("button_loading")).toBeTruthy();
     });
 
-    it("renders provided items", () => {
+    it("renders virtualized list container when provided items", () => {
         setup.setProps({
             open: true,
             children: [
@@ -76,6 +76,7 @@ describe("AutoComplete ", () => {
             ]
         });
 
-        expect(provider().find(AutoCompleteItem)).toHaveLength(2);
+        expect(provider().find(".autoComplete__virtualContainer").exists()).toBeTruthy();
+        expect(provider().find(Empty).exists()).toBeFalsy();
     });
 });
