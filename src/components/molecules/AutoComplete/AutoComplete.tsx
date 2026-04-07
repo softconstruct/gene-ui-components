@@ -20,6 +20,7 @@ import classNames from "classnames";
 import Loader from "@components/atoms/Loader";
 import { IPopoverProps, IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
+import Skeleton from "@components/atoms/Skeleton";
 import Empty from "@components/molecules/Empty";
 
 // Hooks
@@ -163,9 +164,6 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
 
             if (!onTargetClick) {
                 setIsOpenState(false);
-                if (onOpenChange) {
-                    onOpenChange(false);
-                }
             }
         },
         [popoverRef.current.floatingElement]
@@ -269,13 +267,24 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
 
     const scrollbarRef = useRef<ScrollbarRefType | null>(null);
     const childrenArray = useMemo(() => Children.toArray(children) as ReactElement[], [children]);
+    const shouldRenderShowMoreSkeleton = !!showMore && !!showMoreLoading && hasChildren;
+    const totalVirtualCount = childrenArray.length + (shouldRenderShowMoreSkeleton ? 1 : 0);
 
     const virtualizer = useVirtualizer({
-        count: hasChildren ? childrenArray.length : 0,
+        count: hasChildren ? totalVirtualCount : 0,
         getScrollElement: () => scrollbarRef.current?.scrollbarRef?.scrollerElement ?? null,
         estimateSize: () => ESTIMATED_ROW_HEIGHT_PX,
         overscan: 4
     });
+
+    useEffect(() => {
+        if (!shouldRenderShowMoreSkeleton) return;
+
+        const scrollerElement = scrollbarRef.current?.scrollbarRef?.scrollerElement;
+        if (!scrollerElement) return;
+
+        scrollerElement.scrollTo({ top: scrollerElement.scrollHeight, behavior: "smooth" });
+    }, [shouldRenderShowMoreSkeleton]);
 
     let virtualizedContent: ReactNode = null;
     if (loading || !hasChildren) {
@@ -294,6 +303,25 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
                         style={{ height: virtualizer.getTotalSize() }}
                     >
                         {virtualizer.getVirtualItems().map((row) => {
+                            if (shouldRenderShowMoreSkeleton && row.index === childrenArray.length) {
+                                return (
+                                    <div
+                                        className="autoComplete__virtualRow"
+                                        key="autoComplete-showMore-skeleton-row"
+                                        data-index={row.index}
+                                        style={{ transform: `translateY(${row.start}px)` }}
+                                    >
+                                        <div className="autoComplete__skeletonRow" aria-hidden="true">
+                                            <Skeleton
+                                                className="autoComplete__skeletonItem"
+                                                height={16}
+                                                rounded="rounded4X"
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            }
+
                             const item = childrenArray[row.index];
                             if (!item) return null;
                             return (
