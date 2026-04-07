@@ -244,7 +244,9 @@ const DataTable = <TData,>({
                     />
                 </table>
             </Scrollbar>
-            {shouldShowPagination && <Pagination className="dataTable__pagination" {...paginationProps} />}
+            {shouldShowPagination && (
+                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableDataEmpty} />
+            )}
         </div>
     );
 };
