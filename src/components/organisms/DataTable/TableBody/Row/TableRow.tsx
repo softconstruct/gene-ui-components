@@ -1,5 +1,4 @@
 import React, { ReactNode } from "react";
-import { Cell } from "@tanstack/react-table";
 import { Row } from "@tanstack/table-core";
 
 // Components
@@ -21,7 +20,7 @@ interface ITableRowProps<TData> {
     row: Row<TData>;
 }
 
-const hasExpandedRow = (value: unknown): value is { expandedRow?: ReactNode } => {
+const hasExpandedRow = <TData,>(value: TData): value is TData & { expandedRow?: ReactNode } => {
     return typeof value === "object" && value !== null && "expandedRow" in value;
 };
 
@@ -40,7 +39,7 @@ const TableRow = <TData,>({ row }: ITableRowProps<TData>) => {
     return (
         <>
             <tr className="tableRow">
-                {row.getVisibleCells().map((cell: Cell<any, any>) => (
+                {row.getVisibleCells().map((cell) => (
                     <TableBodyCell key={cell.id} cell={cell} />
                 ))}
             </tr>

@@ -22,7 +22,7 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
     );
 };
 
-export const ExpanderCell = <TData,>({ row }: CellContext<TData, unknown>) => {
+export const ExpanderCell = <TData, TValue>({ row }: CellContext<TData, TValue>) => {
     const toggleHandler = () => {
         row.toggleExpanded(!row.getIsExpanded());
     };

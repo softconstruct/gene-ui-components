@@ -18,6 +18,7 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         pagination: args({ control: "object", ...propCategory.functionality }),
+        manualPagination: args({ control: "object", ...propCategory.functionality }),
         columns: args({ control: "false", ...propCategory.content }),
         data: args({ control: "false", ...propCategory.content }),
         noDataTexts: args({ control: "object", ...propCategory.content }),

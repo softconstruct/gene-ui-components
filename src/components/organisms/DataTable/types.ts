@@ -15,7 +15,7 @@ export type DataTableRenderCellArgs<TData, TValue> = {
  * Public DataTable column type (Gene UI).
  * Kept intentionally small: only the props used by the current DataTable implementation.
  */
-export type DataTableColumn<TData, TValue = unknown> = {
+export type DataTableColumn<TData> = {
     /**
      * Column id. Needed for display-only columns (without accessorKey).
      */
@@ -35,5 +35,5 @@ export type DataTableColumn<TData, TValue = unknown> = {
     /**
      * Lean cell renderer (no TanStack CellContext exposure).
      */
-    renderCell?: (args: DataTableRenderCellArgs<TData, TValue>) => ReactNode;
+    renderCell?: (args: DataTableRenderCellArgs<TData, ReactNode>) => ReactNode;
 };

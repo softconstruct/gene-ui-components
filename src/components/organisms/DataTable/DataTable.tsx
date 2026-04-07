@@ -1,4 +1,4 @@
-import React, { ReactElement, useMemo, useState } from "react";
+import React, { ReactElement, ReactNode, useMemo, useState } from "react";
 import {
     CellContext,
     ColumnDef,
@@ -48,6 +48,14 @@ interface IDataTableProps<TData> {
      * @default true
      */
     pagination?: boolean | IPaginationProps;
+    /**
+     * Enables TanStack manual/server-side pagination mode.
+     * When `true`, DataTable will not auto-paginate row data on the client and expects
+     * the current page data to be provided through the `data` prop.
+     *
+     * @default false
+     */
+    manualPagination?: boolean;
     /**
      * Data record array to be displayed in the table.
      * Each object in this array represents a single row, and its shape should match the `TData` generic.
@@ -120,7 +128,7 @@ interface IDataTableProps<TData> {
 }
 
 const defaultColumn = {
-    cell: <TData,>({ getValue }: CellContext<TData, unknown>) => (
+    cell: <TData, TValue>({ getValue }: CellContext<TData, TValue>) => (
         <DefaultCellComponent value={String(getValue() ?? "")} />
     )
 };
@@ -144,13 +152,14 @@ const DataTable = <TData,>({
     loadingText,
     noDataTexts,
     noDataAvailableActions,
+    manualPagination = false,
     expandable = false
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
 
     const tableColumns = useMemo(() => {
-        const adapted: ColumnDef<TData>[] = columns.map((col, index) => {
+        const adapted: ColumnDef<TData, ReactNode>[] = columns.map((col, index) => {
             const isAccessorColumn = Boolean(col.accessorKey);
 
             const base: ColumnDef<TData> = {
@@ -164,9 +173,9 @@ const DataTable = <TData,>({
 
             return {
                 ...base,
-                cell: (ctx) =>
+                cell: (ctx: CellContext<TData, ReactNode>) =>
                     col.renderCell?.({
-                        value: isAccessorColumn ? (ctx.getValue() as unknown) : undefined,
+                        value: isAccessorColumn ? ctx.getValue() : undefined,
                         row: ctx.row.original,
                         rowId: ctx.row.id
                     })
@@ -198,14 +207,11 @@ const DataTable = <TData,>({
         getPaginationRowModel: getPaginationRowModel(),
         getExpandedRowModel: getExpandedRowModel(),
         onExpandedChange: setExpanded,
-        getSubRows: (row) => {
-            const subRows = (row as unknown as { SubRows?: unknown }).SubRows;
-            return Array.isArray(subRows) ? (subRows as TData[]) : [];
-        },
         initialState: {
-            pagination: {
-                pageSize: initialPageSize
-            }
+            ...(pagination && {
+                pagination: { pageSize: initialPageSize }
+            }),
+            ...(manualPagination && { manualPagination })
         },
         state: {
             expanded
