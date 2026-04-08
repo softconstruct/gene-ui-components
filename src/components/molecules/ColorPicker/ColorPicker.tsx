@@ -430,7 +430,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                             aria-label={`Select recent color ${recentColor}`}
                                             onClick={() => applyRecentColor(recentColor)}
                                             style={{
-                                                background: recentColor
+                                                "--color-picker-recent-color": recentColor
                                             }}
                                         />
                                     </div>
