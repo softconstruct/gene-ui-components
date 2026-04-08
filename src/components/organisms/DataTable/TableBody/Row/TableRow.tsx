@@ -1,8 +1,10 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { Row } from "@tanstack/table-core";
 
+import { hasExpandedRow } from "@components/organisms/DataTable/helper";
 // Components
 import TableBodyCell from "@components/organisms/DataTable/TableBody/Cell/TableBodyCell";
+import TableExpandedRow from "@components/organisms/DataTable/TableBody/Row/TableExpandedRow";
 
 // Styles
 import "./TableRow.scss";
@@ -20,10 +22,6 @@ interface ITableRowProps<TData> {
     row: Row<TData>;
 }
 
-const hasExpandedRow = <TData,>(value: TData): value is TData & { expandedRow?: ReactNode } => {
-    return typeof value === "object" && value !== null && "expandedRow" in value;
-};
-
 /**
  * Renders an individual table row (`<tr>`).
  * * This component iterates through all visible cells for the provided row instance
@@ -35,6 +33,7 @@ const hasExpandedRow = <TData,>(value: TData): value is TData & { expandedRow?: 
  */
 const TableRow = <TData,>({ row }: ITableRowProps<TData>) => {
     const expandedRow = hasExpandedRow(row.original) ? row.original.expandedRow : undefined;
+    const isRowExpanded = row.getIsExpanded() && expandedRow;
 
     return (
         <>
@@ -43,13 +42,7 @@ const TableRow = <TData,>({ row }: ITableRowProps<TData>) => {
                     <TableBodyCell key={cell.id} cell={cell} />
                 ))}
             </tr>
-            {row.getIsExpanded() && expandedRow && (
-                <tr className="tableRow">
-                    <td colSpan={row.getVisibleCells().length} className="tableBodyCell">
-                        {expandedRow}
-                    </td>
-                </tr>
-            )}
+            {isRowExpanded && <TableExpandedRow colspan={row.getVisibleCells().length}>{expandedRow}</TableExpandedRow>}
         </>
     );
 };

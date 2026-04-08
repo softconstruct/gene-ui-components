@@ -1,7 +1,6 @@
-import React, { ReactElement, ReactNode, useMemo, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import {
     CellContext,
-    ColumnDef,
     ExpandedState,
     getCoreRowModel,
     getExpandedRowModel,
@@ -15,7 +14,7 @@ import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
-import { DefaultCellComponent, ExpanderCell } from "@components/organisms/DataTable/helper";
+import { DefaultCellComponent, TableColumnsAdapter } from "@components/organisms/DataTable/helper";
 // Hooks
 import { useTablePagination } from "@components/organisms/DataTable/hooks/useTablePagination";
 import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
@@ -158,41 +157,7 @@ const DataTable = <TData,>({
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
 
-    const tableColumns = useMemo(() => {
-        const adapted: ColumnDef<TData, ReactNode>[] = columns.map((col, index) => {
-            const isAccessorColumn = Boolean(col.accessorKey);
-
-            const base: ColumnDef<TData> = {
-                id: col.id ?? (col.accessorKey ? String(col.accessorKey) : `display_${index}`),
-                header: col.header ?? (col.accessorKey ? String(col.accessorKey) : ""),
-                size: col.size,
-                ...(isAccessorColumn ? { accessorKey: col.accessorKey } : {})
-            };
-
-            if (!col.renderCell) return base;
-
-            return {
-                ...base,
-                cell: (ctx: CellContext<TData, ReactNode>) =>
-                    col.renderCell?.({
-                        value: isAccessorColumn ? ctx.getValue() : undefined,
-                        row: ctx.row.original,
-                        rowId: ctx.row.id
-                    })
-            };
-        });
-
-        if (!expandable) return adapted;
-
-        return [
-            {
-                id: "expander",
-                header: "",
-                cell: ExpanderCell
-            },
-            ...adapted
-        ];
-    }, [columns, expandable]);
+    const tableColumns = TableColumnsAdapter(columns, expandable);
 
     const initialPageSize =
         typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)
