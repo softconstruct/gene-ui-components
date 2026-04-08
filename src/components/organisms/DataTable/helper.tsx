@@ -1,11 +1,12 @@
-import React, { useRef } from "react";
-import { CellContext } from "@tanstack/react-table";
+import React, { ReactNode, useRef } from "react";
+import { CellContext, ColumnDef } from "@tanstack/react-table";
 
 import { ChevronDown, ChevronRight } from "@geneui/icons";
 
 import Text from "@components/atoms/Text";
 // Components
 import Tooltip from "@components/molecules/Tooltip";
+import { DataTableColumn } from "@components/organisms/DataTable/types";
 
 // hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
@@ -22,7 +23,7 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
     );
 };
 
-export const ExpanderCell = <TData,>({ row }: CellContext<TData, unknown>) => {
+export const ExpanderCell = <TData, TValue>({ row }: CellContext<TData, TValue>) => {
     const toggleHandler = () => {
         row.toggleExpanded(!row.getIsExpanded());
     };
@@ -31,4 +32,44 @@ export const ExpanderCell = <TData,>({ row }: CellContext<TData, unknown>) => {
             {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
         </button>
     );
+};
+
+export const TableColumnsAdapter = <TData,>(columns: DataTableColumn<TData>[], expandable: boolean) => {
+    const adapted: ColumnDef<TData, ReactNode>[] = columns.map((col, index) => {
+        const isAccessorColumn = Boolean(col.accessorKey);
+
+        const base: ColumnDef<TData> = {
+            id: col.id ?? (col.accessorKey ? String(col.accessorKey) : `display_${index}`),
+            header: col.header ?? (col.accessorKey ? String(col.accessorKey) : ""),
+            size: col.size,
+            ...(isAccessorColumn ? { accessorKey: col.accessorKey } : {})
+        };
+
+        if (!col.renderCell) return base;
+
+        return {
+            ...base,
+            cell: (ctx: CellContext<TData, ReactNode>) =>
+                col.renderCell?.({
+                    value: isAccessorColumn ? ctx.getValue() : undefined,
+                    row: ctx.row.original,
+                    rowId: ctx.row.id
+                })
+        };
+    });
+
+    if (!expandable) return adapted;
+
+    return [
+        {
+            id: "expander",
+            header: "",
+            cell: ExpanderCell
+        },
+        ...adapted
+    ];
+};
+
+export const hasExpandedRow = <TData,>(value: TData): value is TData & { expandedRow?: ReactNode } => {
+    return typeof value === "object" && value !== null && "expandedRow" in value;
 };

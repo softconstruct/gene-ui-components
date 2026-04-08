@@ -1,7 +1,6 @@
-import React, { ReactElement, useMemo, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import {
     CellContext,
-    ColumnDef,
     ExpandedState,
     getCoreRowModel,
     getExpandedRowModel,
@@ -15,7 +14,7 @@ import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
-import { DefaultCellComponent, ExpanderCell } from "@components/organisms/DataTable/helper";
+import { DefaultCellComponent, TableColumnsAdapter } from "@components/organisms/DataTable/helper";
 // Hooks
 import { useTablePagination } from "@components/organisms/DataTable/hooks/useTablePagination";
 import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
@@ -48,6 +47,14 @@ interface IDataTableProps<TData> {
      * @default true
      */
     pagination?: boolean | IPaginationProps;
+    /**
+     * Enables TanStack manual/server-side pagination mode.
+     * When `true`, DataTable will not auto-paginate row data on the client and expects
+     * the current page data to be provided through the `data` prop.
+     *
+     * @default false
+     */
+    manualPagination?: boolean;
     /**
      * Data record array to be displayed in the table.
      * Each object in this array represents a single row, and its shape should match the `TData` generic.
@@ -120,7 +127,7 @@ interface IDataTableProps<TData> {
 }
 
 const defaultColumn = {
-    cell: <TData,>({ getValue }: CellContext<TData, unknown>) => (
+    cell: <TData, TValue>({ getValue }: CellContext<TData, TValue>) => (
         <DefaultCellComponent value={String(getValue() ?? "")} />
     )
 };
@@ -144,46 +151,13 @@ const DataTable = <TData,>({
     loadingText,
     noDataTexts,
     noDataAvailableActions,
+    manualPagination = false,
     expandable = false
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
 
-    const tableColumns = useMemo(() => {
-        const adapted: ColumnDef<TData>[] = columns.map((col, index) => {
-            const isAccessorColumn = Boolean(col.accessorKey);
-
-            const base: ColumnDef<TData> = {
-                id: col.id ?? (col.accessorKey ? String(col.accessorKey) : `display_${index}`),
-                header: col.header ?? (col.accessorKey ? String(col.accessorKey) : ""),
-                size: col.size,
-                ...(isAccessorColumn ? { accessorKey: col.accessorKey } : {})
-            };
-
-            if (!col.renderCell) return base;
-
-            return {
-                ...base,
-                cell: (ctx) =>
-                    col.renderCell?.({
-                        value: isAccessorColumn ? (ctx.getValue() as unknown) : undefined,
-                        row: ctx.row.original,
-                        rowId: ctx.row.id
-                    })
-            };
-        });
-
-        if (!expandable) return adapted;
-
-        return [
-            {
-                id: "expander",
-                header: "",
-                cell: ExpanderCell
-            },
-            ...adapted
-        ];
-    }, [columns, expandable]);
+    const tableColumns = TableColumnsAdapter(columns, expandable);
 
     const initialPageSize =
         typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)
@@ -198,14 +172,11 @@ const DataTable = <TData,>({
         getPaginationRowModel: getPaginationRowModel(),
         getExpandedRowModel: getExpandedRowModel(),
         onExpandedChange: setExpanded,
-        getSubRows: (row) => {
-            const subRows = (row as unknown as { SubRows?: unknown }).SubRows;
-            return Array.isArray(subRows) ? (subRows as TData[]) : [];
-        },
         initialState: {
-            pagination: {
-                pageSize: initialPageSize
-            }
+            ...(pagination && {
+                pagination: { pageSize: initialPageSize }
+            }),
+            ...(manualPagination && { manualPagination })
         },
         state: {
             expanded
@@ -238,7 +209,9 @@ const DataTable = <TData,>({
                     />
                 </table>
             </Scrollbar>
-            {shouldShowPagination && <Pagination className="dataTable__pagination" {...paginationProps} />}
+            {shouldShowPagination && (
+                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableDataEmpty} />
+            )}
         </div>
     );
 };
