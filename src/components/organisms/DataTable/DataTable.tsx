@@ -124,6 +124,23 @@ interface IDataTableProps<TData> {
      * Enables expandable rows, allowing for additional content to be revealed below a row when clicked.
      */
     expandable?: boolean;
+    /**
+     * Callback invoked when a row's expanded state changes.
+     * Receives the expanded state object from TanStack Table, keyed by row IDs.
+     *
+     * @param expandedState - The expanded state object where keys are row IDs and values are true/false
+     *
+     * @example
+     * ```tsx
+     * <DataTable
+     *   expandable={true}
+     *   onExpandChange={(expandedState) => {
+     *     console.log('Expanded rows:', Object.keys(expandedState).filter(k => expandedState[k]));
+     *   }}
+     * />
+     * ```
+     */
+    onExpandChange?: (expandedState: ExpandedState) => void;
 }
 
 const defaultColumn = {
@@ -152,10 +169,19 @@ const DataTable = <TData,>({
     noDataTexts,
     noDataAvailableActions,
     manualPagination = false,
-    expandable = false
+    expandable = false,
+    onExpandChange
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
+
+    const handleExpandedChange = (updaterOrValue: ExpandedState | ((old: ExpandedState) => ExpandedState)) => {
+        setExpanded((prevState) => {
+            const newState = typeof updaterOrValue === "function" ? updaterOrValue(prevState) : updaterOrValue;
+            onExpandChange?.(newState);
+            return newState;
+        });
+    };
 
     const tableColumns = TableColumnsAdapter(columns, expandable);
 
@@ -171,7 +197,7 @@ const DataTable = <TData,>({
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         getExpandedRowModel: getExpandedRowModel(),
-        onExpandedChange: setExpanded,
+        onExpandedChange: handleExpandedChange,
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }

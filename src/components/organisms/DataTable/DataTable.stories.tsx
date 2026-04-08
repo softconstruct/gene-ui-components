@@ -26,7 +26,8 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         loadingText: args({ control: "text", ...propCategory.content }),
         noDataAvailableActions: args({ control: "false", ...propCategory.functionality }),
         sticky: args({ control: "boolean", ...propCategory.appearance }),
-        expandable: args({ control: "boolean", ...propCategory.content })
+        expandable: args({ control: "boolean", ...propCategory.content }),
+        onExpandChange: args({ control: "false", ...propCategory.functionality })
     },
     args: {}
 };

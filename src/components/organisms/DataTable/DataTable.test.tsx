@@ -135,4 +135,69 @@ describe("Table Component", () => {
         const thead = setup.find("thead");
         expect(thead.hasClass("tableHeader__sticky")).toBeFalsy();
     });
+
+    it("calls onExpandChange callback when a row is expanded", async () => {
+        const expandableData = mockData.map((item) => ({
+            ...item,
+            expandedRow: <div>Expanded Content</div>
+        }));
+
+        const onExpandChange = jest.fn();
+
+        await act(async () => {
+            setup.setProps({ expandable: true, data: expandableData, onExpandChange });
+        });
+        setup.update();
+
+        const expanderButton = setup.find("button").first();
+        await act(async () => {
+            expanderButton.simulate("click");
+        });
+        setup.update();
+
+        expect(onExpandChange).toHaveBeenCalled();
+        expect(onExpandChange.mock.calls[0][0]).toBeTruthy();
+    });
+
+    it("calls onExpandChange callback with correct expanded state when row is toggled", async () => {
+        const expandableData = mockData.map((item) => ({
+            ...item,
+            expandedRow: <div>Expanded Content</div>
+        }));
+
+        const onExpandChange = jest.fn();
+
+        await act(async () => {
+            setup.setProps({ expandable: true, data: expandableData, onExpandChange });
+        });
+        setup.update();
+
+        const expanderButton = setup.find("button").first();
+
+        await act(async () => {
+            expanderButton.simulate("click");
+        });
+        setup.update();
+
+        const firstCallState = onExpandChange.mock.calls[0][0];
+        expect(Object.keys(firstCallState).length).toBeGreaterThan(0);
+
+        await act(async () => {
+            expanderButton.simulate("click");
+        });
+        setup.update();
+
+        expect(onExpandChange).toHaveBeenCalledTimes(2);
+    });
+
+    it("does not call onExpandChange when expandable prop is false", async () => {
+        const onExpandChange = jest.fn();
+
+        await act(async () => {
+            setup.setProps({ expandable: false, onExpandChange });
+        });
+        setup.update();
+
+        expect(onExpandChange).not.toHaveBeenCalled();
+    });
 });
