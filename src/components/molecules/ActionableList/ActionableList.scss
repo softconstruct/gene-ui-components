@@ -1,5 +1,73 @@
 .actionableList {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-small);
+
+    &__search {
+        width: 100%;
+    }
+
+    &__stats {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--guit-ref-spacing-2xsmall);
+        color: var(--guit-sem-color-text-subtle);
+    }
+
+    &__statsDivider {
+        min-height: 16px;
+    }
+
+    &__list {
+        width: 100%;
+    }
+
+    &__children {
+        position: relative;
+        width: 100%;
+        margin-top: var(--guit-ref-spacing-2xsmall);
+        margin-inline-start: 0;
+        border: 1px solid var(--guit-sem-color-border-default);
+        border-radius: var(--guit-ref-radius-3xsmall);
+        background: var(--guit-sem-color-background-neutral-1);
+        overflow: hidden;
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: -9px;
+            left: -13px;
+            width: 1px;
+            height: calc(100% + 9px);
+            background-color: var(--guit-sem-color-border-default);
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 20px;
+            left: -13px;
+            width: 13px;
+            height: 1px;
+            background-color: var(--guit-sem-color-border-default);
+        }
+    }
+
+    &__state {
+        width: 100%;
+        min-height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &_loading {
+            min-height: 260px;
+        }
+    }
+
+    &__empty {
+        width: 100%;
+    }
 }

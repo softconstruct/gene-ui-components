@@ -1,0 +1,101 @@
+.actionableListItem {
+    width: 100%;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    gap: var(--guit-ref-spacing-2xsmall);
+    padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-medium);
+    border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
+    border-radius: var(--guit-ref-radius-3xsmall);
+    background: var(--guit-sem-color-background-neutral-1);
+
+    &_nested {
+        position: relative;
+
+        &::before {
+            position: absolute;
+            content: "";
+            top: 50%;
+            left: -1.6rem;
+            width: 1.6rem;
+            border-top: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-neutral-2);
+        }
+    }
+
+    &_draggable {
+        transition:
+            background-color 120ms ease,
+            box-shadow 120ms ease,
+            transform 120ms ease;
+    }
+
+    &_dragOver {
+        background: var(--guit-sem-color-surface-hover);
+    }
+
+    &_dragging {
+        opacity: 1;
+        background: var(--guit-sem-color-surface-hover);
+        box-shadow: var(--guit-ref-elevation-small);
+        transform: scale(0.995);
+        cursor: grabbing;
+    }
+
+    &__toggle {
+        flex-shrink: 0;
+
+        &_placeholder {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    &__checkbox {
+        margin-right: 0;
+    }
+
+    &__titleWrap {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__title {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        color: var(--guit-sem-color-text-default);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    &__meta {
+        color: var(--guit-sem-color-text-subtle);
+        white-space: nowrap;
+    }
+
+    &__info {
+        flex-shrink: 0;
+    }
+
+    &__dragIcon {
+        flex-shrink: 0;
+        color: var(--guit-sem-color-icon-subtle);
+        cursor: grab;
+        margin-left: var(--guit-ref-spacing-2xsmall);
+
+        &_dragging {
+            cursor: grabbing;
+        }
+    }
+
+    &__dragHandle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: grab;
+        user-select: none;
+    }
+}
