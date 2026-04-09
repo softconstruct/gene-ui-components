@@ -117,7 +117,16 @@
         background-color: transparent;
         color: var(--guit-sem-color-foreground-neutral-2);
         outline: none;
-        text-align: inherit;
+        direction: ltr;
+        unicode-bidi: isolate;
+
+        [dir="ltr"] & {
+            text-align: start;
+        }
+
+        [dir="rtl"] & {
+            text-align: end;
+        }
 
         &::placeholder {
             color: var(--guit-sem-color-foreground-neutral-1);
