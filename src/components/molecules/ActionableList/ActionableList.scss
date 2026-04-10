@@ -27,32 +27,11 @@
     &__children {
         position: relative;
         width: 100%;
-        margin-top: var(--guit-ref-spacing-2xsmall);
         margin-inline-start: 0;
         border: 1px solid var(--guit-sem-color-border-default);
         border-radius: var(--guit-ref-radius-3xsmall);
         background: var(--guit-sem-color-background-neutral-1);
         overflow: hidden;
-
-        &::before {
-            content: "";
-            position: absolute;
-            top: -9px;
-            left: -13px;
-            width: 1px;
-            height: calc(100% + 9px);
-            background-color: var(--guit-sem-color-border-default);
-        }
-
-        &::after {
-            content: "";
-            position: absolute;
-            top: 20px;
-            left: -13px;
-            width: 13px;
-            height: 1px;
-            background-color: var(--guit-sem-color-border-default);
-        }
     }
 
     &__state {

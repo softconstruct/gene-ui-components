@@ -8,6 +8,7 @@
     border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
     border-radius: var(--guit-ref-radius-3xsmall);
     background: var(--guit-sem-color-background-neutral-1);
+    margin-top: var(--guit-ref-spacing-medium);
 
     &_nested {
         position: relative;
@@ -19,6 +20,17 @@
             left: -1.6rem;
             width: 1.6rem;
             border-top: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-neutral-2);
+        }
+
+        &::after {
+            position: absolute;
+            content: "";
+            bottom: 50%;
+            left: -1.6rem;
+            height: calc(100% + 10rem);
+            width: 1px;
+            border-right: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
                 var(--guit-sem-color-border-neutral-2);
         }
     }
