@@ -41,7 +41,6 @@ const AutoCompleteFooter: FC<IAutoCompleteFooterProps> = ({
         showMore && (
             <div className="autoComplete__footer">
                 <Button
-                    className="autoComplete__footer_button"
                     appearance="secondary"
                     layout="text"
                     size="small"

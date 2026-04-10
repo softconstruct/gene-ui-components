@@ -291,50 +291,44 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
         virtualizedContent = content;
     } else {
         virtualizedContent = (
-            <div className={classNames("autoComplete__inner", `autoComplete__inner_size_${size}`)}>
-                <Scrollbar className="autoComplete__scrollbar" ref={scrollbarRef}>
-                    <div
-                        className={classNames(
-                            "autoComplete",
-                            className,
-                            "autoComplete__content",
-                            "autoComplete__virtualContainer"
-                        )}
-                        style={{ height: virtualizer.getTotalSize() }}
-                    >
-                        {virtualizer.getVirtualItems().map((row) => {
-                            if (shouldRenderShowMoreSkeleton && row.index === childrenArray.length) {
+            <div className={classNames("autoComplete", `autoComplete_size_${size}`)}>
+                <Scrollbar ref={scrollbarRef}>
+                    <div className="autoComplete__content" style={{ height: virtualizer.getTotalSize() }}>
+                        <div className={classNames(className, "autoComplete__virtualContainer")}>
+                            {virtualizer.getVirtualItems().map((row) => {
+                                if (shouldRenderShowMoreSkeleton && row.index === childrenArray.length) {
+                                    return (
+                                        <div
+                                            className="autoComplete__virtualRow"
+                                            key="autoComplete-showMore-skeleton-row"
+                                            data-index={row.index}
+                                            style={{ transform: `translateY(${row.start}px)` }}
+                                        >
+                                            <div className="autoComplete__skeletonRow" aria-hidden="true">
+                                                <Skeleton
+                                                    className="autoComplete__skeletonItem"
+                                                    height={16}
+                                                    rounded="rounded4X"
+                                                />
+                                            </div>
+                                        </div>
+                                    );
+                                }
+
+                                const item = childrenArray[row.index];
+                                if (!item) return null;
                                 return (
                                     <div
                                         className="autoComplete__virtualRow"
-                                        key="autoComplete-showMore-skeleton-row"
+                                        key={item.key ?? row.index}
                                         data-index={row.index}
                                         style={{ transform: `translateY(${row.start}px)` }}
                                     >
-                                        <div className="autoComplete__skeletonRow" aria-hidden="true">
-                                            <Skeleton
-                                                className="autoComplete__skeletonItem"
-                                                height={16}
-                                                rounded="rounded4X"
-                                            />
-                                        </div>
+                                        {item}
                                     </div>
                                 );
-                            }
-
-                            const item = childrenArray[row.index];
-                            if (!item) return null;
-                            return (
-                                <div
-                                    className="autoComplete__virtualRow"
-                                    key={item.key ?? row.index}
-                                    data-index={row.index}
-                                    style={{ transform: `translateY(${row.start}px)` }}
-                                >
-                                    {item}
-                                </div>
-                            );
-                        })}
+                            })}
+                        </div>
                     </div>
                 </Scrollbar>
                 {showMore && (
@@ -360,7 +354,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
             margin={4}
             ref={popoverRef}
         >
-            <PopoverBody withPadding={false} className="autoComplete__body" withScrollbar={false}>
+            <PopoverBody withPadding={false} withScrollbar={false}>
                 {virtualizedContent}
             </PopoverBody>
         </Popover>

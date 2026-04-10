@@ -1,33 +1,37 @@
+@use "../../../assets/styles/mixins";
+
 .autoComplete {
     $this: &;
 
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+    width: 28rem;
+    padding-block: var(--guit-ref-spacing-3xsmall);
 
-    &__body {
-        width: 28rem;
+    &_size {
+        &_large {
+            --dimension-height: 19.2rem;
+
+            height: var(--dimension-height);
+        }
+
+        &_medium {
+            --dimension-height: 17.2rem;
+
+            height: var(--dimension-height);
+        }
+
+        &_small {
+            --dimension-height: 15.2rem;
+
+            height: var(--dimension-height);
+        }
     }
 
-    &__inner {
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
-        overflow: hidden;
-        width: 28rem;
-
-        &_size {
-            &_large {
-                height: 18.4rem;
-            }
-
-            &_medium {
-                height: 16.4rem;
-            }
-
-            &_small {
-                height: 14.4rem;
-            }
-        }
+    &:has(#{ $this }__footer) {
+        height: calc(var(--dimension-height) + 3.2rem);
     }
 
     &__state {
@@ -39,51 +43,34 @@
 
         &_size {
             &_large {
-                height: 18.4rem;
+                height: 19.2rem;
             }
 
             &_medium {
-                height: 16.4rem;
+                height: 17.2rem;
             }
 
             &_small {
-                height: 14.4rem;
+                height: 15.2rem;
             }
         }
     }
 
-    &__scrollbar {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: var(--guit-ref-spacing-3xsmall);
-        width: 100%;
-        background-color: var(--guit-sem-color-background-neutral-1-nudge);
-        padding-top: var(--guit-ref-spacing-3xsmall);
-        padding-bottom: var(--guit-ref-spacing-3xsmall);
-        padding-inline-start: var(--guit-ref-spacing-4xsmall);
-    }
-
     &__content {
-        font-family: var(--guit-sem-font-body-medium-default-medium-font-family);
-        font-size: var(--guit-sem-font-body-medium-default-medium-font-size);
-        font-weight: var(--guit-sem-font-body-medium-default-medium-font-weight);
-        line-height: var(--guit-sem-font-body-medium-default-medium-line-height);
-        padding-top: var(--guit-ref-spacing-3xsmall);
-        padding-bottom: var(--guit-ref-spacing-3xsmall);
-        padding-inline-end: var(--guit-ref-spacing-2xsmall);
-        padding-inline-start: var(--guit-ref-spacing-3xsmall);
+        width: 100%;
+        padding: var(--guit-ref-spacing-3xsmall);
     }
 
     &__virtualContainer {
         position: relative;
+        width: 100%;
+        height: 100%;
     }
 
     &__virtualRow {
         position: absolute;
         top: 0;
-        left: 0;
-        right: 0;
+        inset-inline: 0;
     }
 
     &__skeletonRow {
@@ -99,67 +86,68 @@
     }
 
     &__footer {
-        flex: none;
         display: flex;
-        width: 100%;
         align-items: center;
         justify-content: flex-end;
-        border-top: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-            var(--guit-sem-color-border-neutral-2);
+        flex: 0 0 auto;
+        width: 100%;
+        height: 3.2rem;
         padding-block: var(--guit-ref-spacing-3xsmall);
         padding-inline: var(--guit-ref-spacing-medium);
+        border-top: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
         overflow: hidden;
+    }
+}
 
-        &_button {
-            width: auto;
-            height: 3.2rem;
-            gap: 0;
-            border-radius: 0;
-            padding-block: var(--guit-ref-spacing-3xsmall);
+.autoCompleteItem {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    user-select: none;
+    border-radius: var(--guit-ref-radius-3xsmall);
+    background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    color: var(--guit-sem-color-foreground-neutral-2);
+
+    &_size {
+        &_large {
+            gap: var(--guit-ref-spacing-xsmall);
+            height: var(--guit-sem-dimension-height-medium);
+            padding-block: var(--guit-ref-spacing-2xsmall);
             padding-inline: var(--guit-ref-spacing-medium);
+        }
+
+        &_medium {
+            gap: var(--guit-ref-spacing-xsmall);
+            height: var(--guit-sem-dimension-height-medium-nudge);
+            padding-block: var(--guit-ref-spacing-3xsmall);
+            padding-inline: var(--guit-ref-spacing-xsmall);
+        }
+
+        &_small {
+            gap: var(--guit-ref-spacing-2xsmall);
+            height: var(--guit-sem-dimension-height-small);
+            padding-block: var(--guit-ref-spacing-4xsmall);
+            padding-inline: var(--guit-ref-spacing-xsmall);
         }
     }
 
-    &__item {
-        display: flex;
-        align-items: center;
-        width: 100%;
-        height: 3.2rem;
-        color: var(--guit-sem-color-foreground-neutral-2);
-        user-select: none;
-        padding-inline-start: var(--guit-ref-spacing-medium);
-        padding-inline-end: var(--guit-ref-spacing-medium);
-        border-radius: var(--guit-ref-radius-3xsmall);
+    &_selected {
+        color: var(--guit-sem-color-foreground-selected);
+    }
 
-        &:not(:last-of-type) {
-            margin-bottom: var(--guit-ref-spacing-3xsmall);
-        }
+    &_disabled {
+        pointer-events: none;
+        color: var(--guit-sem-color-foreground-disabled);
+    }
 
+    @include mixins.media-hover {
         &:hover {
             background-color: var(--guit-sem-color-background-neutral-1-nudge-hover);
         }
+    }
 
-        &:active {
-            background-color: var(--guit-sem-color-background-neutral-1-nudge-pressed);
-        }
-
-        &:focus-visible {
-            z-index: 1;
-        }
-
-        &_disabled {
-            pointer-events: none;
-            user-select: none;
-            color: var(--guit-sem-color-foreground-disabled);
-        }
-
-        &_label {
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            text-align: start;
-        }
+    &:active {
+        background-color: var(--guit-sem-color-background-neutral-1-nudge-pressed);
     }
 }

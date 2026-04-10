@@ -1,6 +1,8 @@
 import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
 import classNames from "classnames";
 
+// import Text from "@components/atoms/Text";
+
 interface IAutoCompleteItemProps {
     /**
      * Unique identifier for the item, used in selection logic.
@@ -64,7 +66,7 @@ const AutoCompleteItem: FC<IAutoCompleteItemProps> = ({ id, children, disabled, 
             type="button"
             role="option"
             aria-selected="false"
-            className={classNames("autoComplete__item", className, {
+            className={classNames("autoComplete__item autoCompleteItem autoCompleteItem_size_large", className, {
                 autoComplete__item_disabled: disabled
             })}
             onClick={onClick}
@@ -72,7 +74,9 @@ const AutoCompleteItem: FC<IAutoCompleteItemProps> = ({ id, children, disabled, 
             {...(disabled ? { tabIndex: -1 } : {})}
             data-id={id}
         >
-            <span className="autoComplete__item_label">{children}</span>
+            {/* <Text className="ellipsis-text" as="span" variant="bodyMediumMedium"> */}
+            {/*    {children} */}
+            {/* </Text> */}
         </button>
     );
 };
