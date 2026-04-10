@@ -48,13 +48,29 @@ interface IActionableListItemProps {
      */
     withCheckbox?: boolean;
     /**
-     * Number of selected nodes in this row’s subtree (including self), for checked / indeterminate state.
+     * When set, drives checkbox checked state from the list (with `checkboxIndeterminate`); overrides count-based fallback.
+     */
+    checkboxChecked?: boolean;
+    /**
+     * Tri-state: partial selection under this row; used together with `checkboxChecked`.
+     */
+    checkboxIndeterminate?: boolean;
+    /**
+     * Number of selected nodes in this row’s subtree (including self), for checkbox when branch props are unset (e.g. Storybook).
      */
     selectedCount?: number;
     /**
-     * Total number of descendants including self (shown when withCheckbox is true).
+     * Total nodes in this row’s subtree including self — checkbox fallback when branch props are unset.
      */
     totalCount?: number;
+    /**
+     * “Selected x/y” numerator: typically direct children whose subtree is fully selected.
+     */
+    descendantsSelectedCount?: number;
+    /**
+     * “Selected x/y” denominator: typically direct child count. Zero hides the label (leaf rows).
+     */
+    descendantsTotalCount?: number;
     /**
      * Label prefix for the selected counter.
      */
@@ -94,8 +110,12 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     isExpandable = false,
     isExpanded = false,
     withCheckbox = false,
+    checkboxChecked,
+    checkboxIndeterminate,
     selectedCount = 0,
     totalCount = 0,
+    descendantsSelectedCount = 0,
+    descendantsTotalCount = 0,
     selectedLabel = "Selected",
     isDraggable = false,
     expandAriaLabel = "Toggle nested items",
@@ -111,8 +131,13 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     const [isDragging, setIsDragging] = useState(false);
     const [isDragOver, setIsDragOver] = useState(false);
 
-    const checkboxFullySelected = withCheckbox && totalCount > 0 && selectedCount === totalCount;
-    const checkboxIndeterminate = withCheckbox && totalCount > 0 && selectedCount > 0 && selectedCount < totalCount;
+    const hasBranchCheckbox = withCheckbox && checkboxChecked !== undefined;
+    const resolvedCheckboxChecked = hasBranchCheckbox
+        ? checkboxChecked
+        : withCheckbox && totalCount > 0 && selectedCount === totalCount;
+    const resolvedCheckboxIndeterminate = hasBranchCheckbox
+        ? Boolean(checkboxIndeterminate) && !resolvedCheckboxChecked
+        : withCheckbox && totalCount > 0 && selectedCount > 0 && selectedCount < totalCount;
 
     useEffect(() => {
         if (!isDraggable || !dragHandleRef.current || !rowRef.current) return () => undefined;
@@ -164,8 +189,8 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
 
             {withCheckbox && (
                 <Checkbox
-                    checked={checkboxFullySelected}
-                    indeterminate={checkboxIndeterminate}
+                    checked={resolvedCheckboxChecked}
+                    indeterminate={resolvedCheckboxIndeterminate}
                     onChange={(event) => onToggleCheck?.(event.target.checked)}
                     className="actionableListItem__checkbox"
                 />
@@ -179,9 +204,9 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                 </Tooltip>
             </span>
 
-            {withCheckbox && (
+            {withCheckbox && descendantsTotalCount > 0 && (
                 <Text as="span" variant="bodyMediumMedium" className="actionableListItem__meta">
-                    {`${selectedLabel} ${selectedCount}/${totalCount}`}
+                    {`${selectedLabel} ${descendantsSelectedCount}/${descendantsTotalCount}`}
                 </Text>
             )}
 

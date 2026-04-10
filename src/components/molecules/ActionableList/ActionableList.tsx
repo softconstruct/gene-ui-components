@@ -35,13 +35,76 @@ interface IActionableListItem {
      */
     infoText?: string;
     /**
-     * Child nodes.
+     * Child nodes — parent rows infer counts from `children.length` / subtree for the “Selected x/y” label.
      */
     children?: IActionableListItem[];
     /**
-     * Initial checked state for checkbox variant.
+     * When this is a **boolean**, the row is **controlled**: keep `items` in sync via `onItemsChange` / `onItemCheck(item, checked, items)`.
+     * When **omitted**, the list stores selection internally while you still pass normal `items` (id, title, infoText, children).
      */
     checked?: boolean;
+}
+
+/** Minimal tree shape for selection counts — full `IActionableListItem` nodes are assignable. */
+interface IActionableListTreeNode {
+    checked?: boolean;
+    children?: IActionableListTreeNode[];
+}
+
+interface IActionableListNodeMeta {
+    /** Subtree size including this node (checkbox checked / indeterminate). */
+    total: number;
+    selected: number;
+    /** All nodes under this node (excludes self) — “Selected x/y” denominator. */
+    descendantsTotal: number;
+    descendantsSelected: number;
+}
+
+function getActionableListNodeMeta(node: IActionableListTreeNode): IActionableListNodeMeta {
+    const children = node.children || [];
+    const childMeta = children.reduce(
+        (acc, child) => {
+            const meta = getActionableListNodeMeta(child);
+            return {
+                total: acc.total + meta.total,
+                selected: acc.selected + meta.selected
+            };
+        },
+        { total: 0, selected: 0 }
+    );
+    return {
+        total: childMeta.total + 1,
+        selected: childMeta.selected + (node.checked ? 1 : 0),
+        descendantsTotal: childMeta.total,
+        descendantsSelected: childMeta.selected
+    };
+}
+
+function actionableListNodeMetaToSelectionProps(meta: IActionableListNodeMeta): {
+    selectedCount: number;
+    totalCount: number;
+    descendantsSelectedCount: number;
+    descendantsTotalCount: number;
+} {
+    return {
+        selectedCount: meta.selected,
+        totalCount: meta.total,
+        descendantsSelectedCount: meta.descendantsSelected,
+        descendantsTotalCount: meta.descendantsTotal
+    };
+}
+
+/** True when every leaf under `item` is checked (parent rows count as selected if all child subtrees are fully selected). */
+function isSubtreeFullySelected(item: IActionableListItem): boolean {
+    const children = item.children || [];
+    if (children.length === 0) return !!item.checked;
+    return children.every((child) => isSubtreeFullySelected(child));
+}
+
+function isAnySelectionInSubtree(item: IActionableListItem): boolean {
+    if (item.checked) return true;
+    const children = item.children || [];
+    return children.some((child) => isAnySelectionInSubtree(child));
 }
 
 interface IActionableListTexts {
@@ -130,6 +193,10 @@ interface IActionableListProps {
      */
     onItemsChange?: (items: IActionableListItem[]) => void;
     /**
+     * Emits when a checkbox toggles: the row from `items` (after update), branch `checked`, and full `items` tree.
+     */
+    onItemCheck?: (item: IActionableListItem, checked: boolean, items: IActionableListItem[]) => void;
+    /**
      * Emits debounced search value.
      */
     onSearch?: (value: string) => void;
@@ -149,29 +216,57 @@ const defaultTexts: IActionableListTexts = {
     expandButtonAriaLabel: "Toggle nested items"
 };
 
-interface INodeMeta {
-    total: number;
-    selected: number;
-}
-
 const clampDepth = (level: number, max: number) => Math.min(Math.max(level, 1), max);
+
+const indexItemsById = (
+    nodes: IActionableListItem[],
+    map: Map<string, IActionableListItem> = new Map()
+): Map<string, IActionableListItem> => {
+    nodes.forEach((node) => {
+        map.set(node.id, node);
+        if (node.children?.length) indexItemsById(node.children, map);
+    });
+    return map;
+};
+
+/**
+ * Reconciles incoming `items` from props with previous list state: explicit `checked` from props wins (controlled);
+ * otherwise previous selection is kept (uncontrolled — omit `checked` on your data).
+ */
+const mergeItemsFromProps = (
+    incoming: IActionableListItem[],
+    previous: IActionableListItem[]
+): IActionableListItem[] => {
+    const prevById = indexItemsById(previous);
+    const merge = (nodes: IActionableListItem[]): IActionableListItem[] =>
+        nodes.map((node) => {
+            const prev = prevById.get(node.id);
+            let checked = false;
+            if (typeof node.checked === "boolean") {
+                checked = node.checked;
+            } else if (prev !== undefined && typeof prev.checked === "boolean") {
+                checked = prev.checked;
+            }
+            return {
+                ...node,
+                checked,
+                children: node.children?.length ? merge(node.children) : undefined
+            };
+        });
+    return merge(incoming);
+};
 
 const countAllItems = (items: IActionableListItem[]): number =>
     items.reduce((acc, item) => acc + 1 + countAllItems(item.children || []), 0);
 
-const getNodeMeta = (item: IActionableListItem): INodeMeta => {
-    const children = item.children || [];
-    const childMeta = children.reduce(
-        (acc, child) => {
-            const meta = getNodeMeta(child);
-            return { total: acc.total + meta.total, selected: acc.selected + meta.selected };
-        },
-        { total: 0, selected: 0 }
-    );
-    return {
-        total: childMeta.total + 1,
-        selected: childMeta.selected + (item.checked ? 1 : 0)
-    };
+const findItemById = (nodes: IActionableListItem[], targetId: string): IActionableListItem | undefined => {
+    const direct = nodes.find((node) => node.id === targetId);
+    if (direct !== undefined) return direct;
+    return nodes.reduce<IActionableListItem | undefined>((found, node) => {
+        if (found !== undefined) return found;
+        if (!node.children?.length) return undefined;
+        return findItemById(node.children, targetId);
+    }, undefined);
 };
 
 const updateItemById = (
@@ -251,7 +346,10 @@ const RenderNode: FC<IRenderNodeProps> = ({
     const childCount = item.children?.length || 0;
     const canExpand = childCount > 0 && level < maxNestedLevel;
     const isExpanded = canExpand ? expandedIds.has(item.id) : false;
-    const nodeMeta = getNodeMeta(item);
+    const branchFullySelected = isSubtreeFullySelected(item);
+    const branchIndeterminate = !branchFullySelected && isAnySelectionInSubtree(item);
+    const directChildTotal = item.children?.length ?? 0;
+    const directChildFullySelected = item.children?.filter((child) => isSubtreeFullySelected(child)).length ?? 0;
 
     const childLevel = clampDepth(level + 1, maxNestedLevel);
 
@@ -265,8 +363,14 @@ const RenderNode: FC<IRenderNodeProps> = ({
                 isExpandable={canExpand}
                 isExpanded={isExpanded}
                 withCheckbox={withCheckbox}
-                selectedCount={nodeMeta.selected}
-                totalCount={nodeMeta.total}
+                {...(withCheckbox
+                    ? {
+                          checkboxChecked: branchFullySelected,
+                          checkboxIndeterminate: branchIndeterminate,
+                          descendantsSelectedCount: directChildFullySelected,
+                          descendantsTotalCount: directChildTotal
+                      }
+                    : {})}
                 selectedLabel={texts.selectedItemsLabel}
                 isDraggable={isDraggable}
                 expandAriaLabel={texts.expandButtonAriaLabel}
@@ -313,16 +417,17 @@ const ActionableList: FC<IActionableListProps> = ({
     loading = false,
     texts,
     onItemsChange,
+    onItemCheck,
     onSearch
 }) => {
     const mergedTexts = { ...defaultTexts, ...texts };
 
-    const [localItems, setLocalItems] = useState<IActionableListItem[]>(items);
+    const [localItems, setLocalItems] = useState<IActionableListItem[]>(() => mergeItemsFromProps(items, []));
     const [searchValue, setSearchValue] = useState("");
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
     useEffect(() => {
-        setLocalItems(items);
+        setLocalItems((prev) => mergeItemsFromProps(items, prev));
     }, [items]);
 
     useEffect(() => {
@@ -370,7 +475,12 @@ const ActionableList: FC<IActionableListProps> = ({
     };
 
     const handleToggleCheck = (id: string, checked: boolean) => {
-        syncItems(updateItemById(localItems, id, (item) => applyCheckedToBranch(item, checked)));
+        const nextItems = updateItemById(localItems, id, (item) => applyCheckedToBranch(item, checked));
+        syncItems(nextItems);
+        const toggled = findItemById(nextItems, id);
+        if (toggled !== undefined) {
+            onItemCheck?.(toggled, checked, nextItems);
+        }
     };
 
     const handleDropReorder = (sourceId: string, targetId: string) => {
@@ -461,4 +571,13 @@ const ActionableList: FC<IActionableListProps> = ({
     );
 };
 
-export { IActionableListProps, IActionableListItem, IActionableListTexts, ActionableList as default };
+export {
+    actionableListNodeMetaToSelectionProps,
+    getActionableListNodeMeta,
+    IActionableListProps,
+    IActionableListItem,
+    IActionableListTexts,
+    IActionableListNodeMeta,
+    IActionableListTreeNode,
+    ActionableList as default
+};

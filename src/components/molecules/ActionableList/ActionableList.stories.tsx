@@ -37,6 +37,7 @@ const meta: Meta<IActionableListProps> = {
         loading: args({ control: "boolean", ...propCategory.states }),
         searchDebounceMs: args({ control: "number", ...propCategory.functionality }),
         onItemsChange: args({ control: "false", action: "onItemsChange", ...propCategory.action }),
+        onItemCheck: args({ control: "false", action: "onItemCheck", ...propCategory.action }),
         onSearch: args({ control: "false", action: "onSearch", ...propCategory.action })
     },
     args: {
@@ -91,4 +92,20 @@ export const EmptyStates: Story = {
         items: []
     },
     render: (props) => <ActionableList {...props} />
+};
+
+/** Same shape as app data: `id`, `title`, `infoText`, `children` only — selection is internal unless you set `checked` on nodes. */
+export const PlainDataShape: Story = {
+    name: "Plain data (no checked fields)",
+    args: {
+        ...meta.args,
+        items: actionableListLongTextData,
+        withCheckbox: true,
+        draggable: true
+    },
+    render: (props) => (
+        <div style={{ maxWidth: 760 }}>
+            <ActionableList {...props} />
+        </div>
+    )
 };

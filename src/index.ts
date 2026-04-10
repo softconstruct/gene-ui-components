@@ -85,7 +85,11 @@ export {
     default as ActionableList,
     IActionableListItem,
     IActionableListProps,
-    IActionableListTexts
+    IActionableListTexts,
+    IActionableListNodeMeta,
+    IActionableListTreeNode,
+    actionableListNodeMetaToSelectionProps,
+    getActionableListNodeMeta
 } from "./components/molecules/ActionableList";
 
 // Organisms

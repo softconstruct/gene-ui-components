@@ -40,4 +40,37 @@ describe("ActionableList ", () => {
 
         expect(wrapper.text()).toContain("No Data Available");
     });
+
+    it("calls onItemCheck with id and updated tree when checkbox toggles", () => {
+        const onItemCheck = jest.fn();
+        const wrapper = mount(
+            <ActionableList withCheckbox items={[{ id: "leaf-a", title: "Leaf A" }]} onItemCheck={onItemCheck} />
+        );
+
+        wrapper.find("input[type='checkbox']").simulate("change", { target: { checked: true } });
+
+        expect(onItemCheck).toHaveBeenCalledTimes(1);
+        const [row, checked, nextItems] = onItemCheck.mock.calls[0];
+        expect(row).toMatchObject({ id: "leaf-a", title: "Leaf A", checked: true });
+        expect(checked).toBe(true);
+        expect(nextItems[0]).toMatchObject({ id: "leaf-a", title: "Leaf A", checked: true });
+    });
+
+    it("shows every ancestor fully checked when only the deepest leaf is checked", () => {
+        const items = [
+            {
+                id: "p",
+                title: "Parent",
+                children: [{ id: "c", title: "Child" }]
+            }
+        ];
+        const wrapper = mount(<ActionableList items={items} withCheckbox maxNestedLevel={5} />);
+        const inputs = wrapper.find("input[type='checkbox']");
+        expect(inputs).toHaveLength(2);
+        inputs.at(1).simulate("change", { target: { checked: true } });
+        wrapper.update();
+        const after = wrapper.find("input[type='checkbox']");
+        expect(after.at(0).prop("checked")).toBe(true);
+        expect(after.at(1).prop("checked")).toBe(true);
+    });
 });
