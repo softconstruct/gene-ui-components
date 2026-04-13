@@ -3,10 +3,10 @@ import { CellContext, ColumnDef } from "@tanstack/react-table";
 
 import { ChevronDown, ChevronRight } from "@geneui/icons";
 
-import Text from "@components/atoms/Text";
 // Components
+import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
-import { DataTableColumn } from "@components/organisms/DataTable/types";
+import { DataTableColumn, ITableData } from "@components/organisms/DataTable/types";
 
 // hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
@@ -34,7 +34,10 @@ export const ExpanderCell = <TData, TValue>({ row }: CellContext<TData, TValue>)
     );
 };
 
-export const TableColumnsAdapter = <TData,>(columns: DataTableColumn<TData>[], expandable: boolean) => {
+export const TableColumnsAdapter = <TData extends ITableData>(
+    columns: DataTableColumn<TData>[],
+    expandable: boolean
+) => {
     const adapted: ColumnDef<TData, ReactNode>[] = columns.map((col, index) => {
         const isAccessorColumn = Boolean(col.accessorKey);
 
@@ -68,8 +71,4 @@ export const TableColumnsAdapter = <TData,>(columns: DataTableColumn<TData>[], e
         },
         ...adapted
     ];
-};
-
-export const hasExpandedRow = <TData,>(value: TData): value is TData & { expandedRow?: ReactNode } => {
-    return typeof value === "object" && value !== null && "expandedRow" in value;
 };

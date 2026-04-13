@@ -20,7 +20,7 @@ import { useTablePagination } from "@components/organisms/DataTable/hooks/useTab
 import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
 import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader";
 // Types
-import { DataTableColumn, ITableNoDataTexts } from "@components/organisms/DataTable/types";
+import { DataTableColumn, ITableData, ITableNoDataTexts } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./DataTable.scss";
@@ -29,7 +29,7 @@ import "./DataTable.scss";
  * Props for the {@link DataTable} component.
  * @template TData - The shape of the overall row data object.
  */
-interface IDataTableProps<TData> {
+interface IDataTableProps<TData extends ITableData> {
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -158,7 +158,7 @@ const defaultColumn = {
  * @param props - The properties for the component.
  * @returns The fully assembled DataTable component including headers, body, and optional pagination.
  */
-const DataTable = <TData,>({
+const DataTable = <TData extends ITableData>({
     className,
     data = [],
     columns = [],

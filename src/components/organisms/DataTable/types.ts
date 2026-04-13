@@ -5,9 +5,13 @@ export interface ITableNoDataTexts {
     noDataAvailableText?: string;
 }
 
+export interface ITableData {
+    expandedRow?: ReactNode;
+}
+
 export type DataTableRenderCellArgs<TData, TValue> = {
     value: TValue;
-    row: TData;
+    row: TData & ITableData;
     rowId: string;
 };
 

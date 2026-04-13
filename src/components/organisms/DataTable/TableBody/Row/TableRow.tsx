@@ -1,10 +1,10 @@
 import React from "react";
 import { Row } from "@tanstack/table-core";
 
-import { hasExpandedRow } from "@components/organisms/DataTable/helper";
 // Components
 import TableBodyCell from "@components/organisms/DataTable/TableBody/Cell/TableBodyCell";
 import TableExpandedRow from "@components/organisms/DataTable/TableBody/Row/TableExpandedRow";
+import { ITableData } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableRow.scss";
@@ -13,7 +13,7 @@ import "./TableRow.scss";
  * Props for the {@link TableRow} component.
  * @template TData - The shape of the overall row data object.
  */
-interface ITableRowProps<TData> {
+interface ITableRowProps<TData extends ITableData> {
     /**
      * The TanStack Table row instance.
      * Provides access to row-level data and internal methods, such as retrieving
@@ -31,8 +31,8 @@ interface ITableRowProps<TData> {
  * @param props - The properties for the component.
  * @returns A table row element containing its respective rendered cells.
  */
-const TableRow = <TData,>({ row }: ITableRowProps<TData>) => {
-    const expandedRow = hasExpandedRow(row.original) ? row.original.expandedRow : undefined;
+const TableRow = <TData extends ITableData>({ row }: ITableRowProps<TData>) => {
+    const { expandedRow } = row.original;
     const isRowExpanded = row.getIsExpanded() && expandedRow;
 
     return (
