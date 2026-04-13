@@ -33,9 +33,7 @@ const meta: Meta<IActionableListProps> = {
         texts: args({ control: "object", ...propCategory.content }),
         withCheckbox: args({ control: "boolean", ...propCategory.appearance }),
         draggable: args({ control: "boolean", ...propCategory.appearance }),
-        maxNestedLevel: args({ control: "number", ...propCategory.appearance }),
         loading: args({ control: "boolean", ...propCategory.states }),
-        searchDebounceMs: args({ control: "number", ...propCategory.functionality }),
         onItemsChange: args({ control: "false", action: "onItemsChange", ...propCategory.action }),
         onItemCheck: args({ control: "false", action: "onItemCheck", ...propCategory.action }),
         onSearch: args({ control: "false", action: "onSearch", ...propCategory.action })
@@ -44,9 +42,7 @@ const meta: Meta<IActionableListProps> = {
         items: ACTIONABLE_LIST_ITEMS,
         withCheckbox: true,
         draggable: true,
-        maxNestedLevel: 5,
         loading: false,
-        searchDebounceMs: 300,
         texts: {
             searchLabel: "Label",
             searchPlaceholder: "Search",

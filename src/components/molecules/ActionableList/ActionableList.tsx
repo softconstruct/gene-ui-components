@@ -19,7 +19,9 @@ import "./ActionableList.scss";
 
 // Sub-components
 import ActionableListItem from "./ActionableListItem/ActionableListItem";
-import ActionableListNodeWrapper from "./ActionableListNodeWrapper";
+import ActionableListNodeWrapper, {
+    type TActionableListLevel
+} from "./ActionableListNodeWrapper/ActionableListNodeWrapper";
 
 interface IActionableListItem {
     /**
@@ -173,14 +175,6 @@ interface IActionableListProps {
      */
     draggable?: boolean;
     /**
-     * Maximum tree depth (1-5).
-     */
-    maxNestedLevel?: 1 | 2 | 3 | 4 | 5;
-    /**
-     * Search debounce timeout in ms.
-     */
-    searchDebounceMs?: number;
-    /**
      * Optional controlled loading state.
      */
     loading?: boolean;
@@ -216,7 +210,16 @@ const defaultTexts: IActionableListTexts = {
     expandButtonAriaLabel: "Toggle nested items"
 };
 
-const clampDepth = (level: number, max: number) => Math.min(Math.max(level, 1), max);
+const ACTIONABLE_LIST_MAX_NESTED_LEVEL: TActionableListLevel = 5;
+const ACTIONABLE_LIST_SEARCH_DEBOUNCE_MS = 300;
+
+const nextLevel = (level: TActionableListLevel, max: TActionableListLevel): TActionableListLevel => {
+    if (level >= max) return max;
+    if (level === 1) return 2;
+    if (level === 2) return 3;
+    if (level === 3) return 4;
+    return 5;
+};
 
 const indexItemsById = (
     nodes: IActionableListItem[],
@@ -320,8 +323,7 @@ const reorderInTree = (items: IActionableListItem[], sourceId: string, targetId:
 
 interface IRenderNodeProps {
     item: IActionableListItem;
-    level: number;
-    maxNestedLevel: number;
+    level: TActionableListLevel;
     withCheckbox: boolean;
     isDraggable: boolean;
     expandedIds: Set<string>;
@@ -334,7 +336,6 @@ interface IRenderNodeProps {
 const RenderNode: FC<IRenderNodeProps> = ({
     item,
     level,
-    maxNestedLevel,
     withCheckbox,
     isDraggable,
     expandedIds,
@@ -344,14 +345,14 @@ const RenderNode: FC<IRenderNodeProps> = ({
     onDropReorder
 }) => {
     const childCount = item.children?.length || 0;
-    const canExpand = childCount > 0 && level < maxNestedLevel;
+    const canExpand = childCount > 0 && level < ACTIONABLE_LIST_MAX_NESTED_LEVEL;
     const isExpanded = canExpand ? expandedIds.has(item.id) : false;
     const branchFullySelected = isSubtreeFullySelected(item);
     const branchIndeterminate = !branchFullySelected && isAnySelectionInSubtree(item);
     const directChildTotal = item.children?.length ?? 0;
     const directChildFullySelected = item.children?.filter((child) => isSubtreeFullySelected(child)).length ?? 0;
 
-    const childLevel = clampDepth(level + 1, maxNestedLevel);
+    const childLevel = nextLevel(level, ACTIONABLE_LIST_MAX_NESTED_LEVEL);
 
     return (
         <>
@@ -387,7 +388,6 @@ const RenderNode: FC<IRenderNodeProps> = ({
                                 key={child.id}
                                 item={child}
                                 level={childLevel}
-                                maxNestedLevel={maxNestedLevel}
                                 withCheckbox={withCheckbox}
                                 isDraggable={isDraggable}
                                 expandedIds={expandedIds}
@@ -412,8 +412,6 @@ const ActionableList: FC<IActionableListProps> = ({
     items = [],
     withCheckbox = false,
     draggable: isDraggable = false,
-    maxNestedLevel = 5,
-    searchDebounceMs = 300,
     loading = false,
     texts,
     onItemsChange,
@@ -447,7 +445,7 @@ const ActionableList: FC<IActionableListProps> = ({
     const { debouncedCallback, clearDebounce } = useDebounceCallback((value: unknown) => {
         if (typeof value !== "string") return;
         onSearch?.(value);
-    }, searchDebounceMs);
+    }, ACTIONABLE_LIST_SEARCH_DEBOUNCE_MS);
 
     useEffect(() => clearDebounce, [clearDebounce]);
 
@@ -552,7 +550,6 @@ const ActionableList: FC<IActionableListProps> = ({
                                         key={item.id}
                                         item={item}
                                         level={1}
-                                        maxNestedLevel={maxNestedLevel}
                                         withCheckbox={withCheckbox}
                                         isDraggable={isDraggable}
                                         expandedIds={expandedIds}

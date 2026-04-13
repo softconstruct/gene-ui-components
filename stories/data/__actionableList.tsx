@@ -16,7 +16,7 @@ import { IActionableListItem } from "@components/molecules/ActionableList";
  * ├── initiative-apac
  * └── initiative-global
  *
- * deep-branch (optional: full depth 1→5 for maxNestedLevel demos)
+ * deep-branch (optional: full depth 1→5 for deep nesting demos)
  */
 const DEEP_BRANCH: IActionableListItem = {
     id: "deep-l1",

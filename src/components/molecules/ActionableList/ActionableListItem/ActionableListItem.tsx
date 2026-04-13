@@ -18,6 +18,8 @@ import useEllipsisDetection from "@hooks/useEllipsisDetection";
 // Styles
 import "./ActionableListItem.scss";
 
+import type { TActionableListLevel } from "../ActionableListNodeWrapper/ActionableListNodeWrapper";
+
 interface IActionableListItemProps {
     /**
      * Unique item identifier.
@@ -30,7 +32,7 @@ interface IActionableListItemProps {
     /**
      * Current nesting depth (1-based).
      */
-    level: number;
+    level: TActionableListLevel;
     /**
      * Optional tooltip text for the info icon.
      */

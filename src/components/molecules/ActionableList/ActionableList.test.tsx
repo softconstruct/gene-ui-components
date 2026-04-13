@@ -64,7 +64,7 @@ describe("ActionableList ", () => {
                 children: [{ id: "c", title: "Child" }]
             }
         ];
-        const wrapper = mount(<ActionableList items={items} withCheckbox maxNestedLevel={5} />);
+        const wrapper = mount(<ActionableList items={items} withCheckbox />);
         const inputs = wrapper.find("input[type='checkbox']");
         expect(inputs).toHaveLength(2);
         inputs.at(1).simulate("change", { target: { checked: true } });
