@@ -1,7 +1,7 @@
-import React, { cloneElement, FC, isValidElement, ReactNode } from "react";
+import React, { cloneElement, FC, isValidElement, MouseEvent, ReactNode } from "react";
 import classNames from "classnames";
 
-// import Text from "@components/atoms/Text";
+type AutoCompleteItemSize = "large" | "medium" | "small";
 
 interface IAutoCompleteItemProps {
     /**
@@ -19,7 +19,7 @@ interface IAutoCompleteItemProps {
     /**
      * Callback triggered when the item is clicked.
      */
-    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -31,26 +31,45 @@ interface IAutoCompleteItemProps {
      * The returned element will be cloned with autocomplete item classes, click handler, and disabled state injected automatically.
      */
     render?: (itemData: { id: number | string }) => ReactNode;
+    /**
+     * Internal size value propagated by AutoComplete.
+     */
+    size?: AutoCompleteItemSize;
 }
 
 /**
  * AutoCompleteItem represents a single option inside the AutoComplete dropdown.
  */
-const AutoCompleteItem: FC<IAutoCompleteItemProps> = ({ id, children, disabled, onClick, className, render }) => {
+const AutoCompleteItem: FC<IAutoCompleteItemProps> = ({
+    id,
+    children,
+    disabled,
+    onClick,
+    className,
+    render,
+    size = "large"
+}) => {
     if (render) {
         const renderedElement = render({ id });
 
         if (isValidElement(renderedElement)) {
-            const originalOnClick = (renderedElement.props as { onClick?: (event: React.MouseEvent) => void }).onClick;
+            const originalOnClick = (renderedElement.props as { onClick?: (event: MouseEvent) => void }).onClick;
 
             const propsToApply = {
-                className: classNames("autoComplete__item", renderedElement.props.className, className, {
-                    autoComplete__item_disabled: disabled
-                }),
-                onClick: (event: React.MouseEvent) => {
+                className: classNames(
+                    "autoCompleteItem",
+                    `autoCompleteItem_size_${size}`,
+                    renderedElement.props.className,
+                    className,
+                    {
+                        autoCompleteItem_disabled: disabled
+                    }
+                ),
+                onClick: (event: MouseEvent<HTMLButtonElement>) => {
+                    if (disabled) return;
                     originalOnClick?.(event);
                     if (!event.defaultPrevented) {
-                        onClick?.(event as React.MouseEvent<HTMLButtonElement>);
+                        onClick?.(event);
                     }
                 },
                 disabled,
@@ -66,17 +85,15 @@ const AutoCompleteItem: FC<IAutoCompleteItemProps> = ({ id, children, disabled, 
             type="button"
             role="option"
             aria-selected="false"
-            className={classNames("autoComplete__item autoCompleteItem autoCompleteItem_size_large", className, {
-                autoComplete__item_disabled: disabled
+            className={classNames("autoCompleteItem", `autoCompleteItem_size_${size}`, className, {
+                autoCompleteItem_disabled: disabled
             })}
             onClick={onClick}
             disabled={disabled}
             {...(disabled ? { tabIndex: -1 } : {})}
             data-id={id}
         >
-            {/* <Text className="ellipsis-text" as="span" variant="bodyMediumMedium"> */}
-            {/*    {children} */}
-            {/* </Text> */}
+            <span className="ellipsis-text">{children}</span>
         </button>
     );
 };

@@ -1,9 +1,10 @@
 import React, {
     Children,
+    cloneElement,
     Dispatch,
     FC,
-    KeyboardEvent as ReactKeyboardEvent,
-    MouseEvent as ReactMouseEvent,
+    KeyboardEvent,
+    MouseEvent,
     ReactElement,
     ReactNode,
     SetStateAction,
@@ -148,9 +149,7 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
     }, [open]);
 
     useEffect(() => {
-        if (onOpenChange) {
-            onOpenChange(isOpenState);
-        }
+        onOpenChange?.(isOpenState);
     }, [isOpenState, onOpenChange]);
 
     useClickOutside(
@@ -182,20 +181,20 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
             }
 
             const { onClick, onKeyDown, ...rest } = triggerProps as {
-                onClick?: (event: ReactMouseEvent<HTMLElement>) => void;
-                onKeyDown?: (event: ReactKeyboardEvent<HTMLElement>) => void;
+                onClick?: (event: MouseEvent<HTMLElement>) => void;
+                onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void;
                 [key: string]: unknown;
             };
 
             return {
                 ...rest,
-                onClick: (event: ReactMouseEvent<HTMLElement>) => {
+                onClick: (event: MouseEvent<HTMLElement>) => {
                     onClick?.(event);
                     if (!event.defaultPrevented) {
                         toggleAutoCompleteOpen();
                     }
                 },
-                onKeyDown: (event: ReactKeyboardEvent<HTMLElement>) => {
+                onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
                     onKeyDown?.(event);
                     if (!event.defaultPrevented && (event.key === "Enter" || event.key === " ")) {
                         event.preventDefault();
@@ -316,16 +315,21 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
                                 }
 
                                 const item = childrenArray[row.index];
-                                if (!item) return null;
                                 return (
-                                    <div
-                                        className="autoComplete__virtualRow"
-                                        key={item.key ?? row.index}
-                                        data-index={row.index}
-                                        style={{ transform: `translateY(${row.start}px)` }}
-                                    >
-                                        {item}
-                                    </div>
+                                    item && (
+                                        <div
+                                            className="autoComplete__virtualRow"
+                                            key={
+                                                item.key ??
+                                                (item.props as { id?: string | number }).id ??
+                                                `autoComplete-item-${row.index}`
+                                            }
+                                            data-index={row.index}
+                                            style={{ transform: `translateY(${row.start}px)` }}
+                                        >
+                                            {cloneElement(item, { size })}
+                                        </div>
+                                    )
                                 );
                             })}
                         </div>
