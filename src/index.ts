@@ -81,12 +81,12 @@ export { default as OTPField, IOTPFieldProps } from "./components/molecules/OTPF
 export { default as Breadcrumb, IBreadcrumbProps, IBreadcrumbItemProps } from "./components/molecules/Breadcrumb";
 export { default as PageHeader, IPageHeaderProps } from "./components/molecules/PageHeader";
 export { default as PopoverConfirm, IPopoverConfirmProps } from "./components/molecules/PopoverConfirm";
-export {
-    default as ActionableList,
+export type {
     IActionableListItem,
     IActionableListProps,
     IActionableListTexts
 } from "./components/molecules/ActionableList";
+export { default as ActionableList } from "./components/molecules/ActionableList";
 
 // Organisms
 export { default as DataTable, IDataTableProps } from "@components/organisms/DataTable";

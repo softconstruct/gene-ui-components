@@ -1,5 +1,4 @@
 import React, { FC, useEffect, useMemo, useState } from "react";
-import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
 import classNames from "classnames";
 
 import { Magnifier } from "@geneui/icons";
@@ -17,6 +16,22 @@ import useDebounceCallback from "@hooks/useDebounceCallback";
 // Styles
 import "./ActionableList.scss";
 
+import {
+    ACTIONABLE_LIST_DEFAULT_TEXTS,
+    ACTIONABLE_LIST_MAX_NESTED_LEVEL,
+    ACTIONABLE_LIST_SEARCH_DEBOUNCE_MS,
+    applyCheckedToBranch,
+    countAllItems,
+    filterTree,
+    findItemById,
+    getExpandedIdsFromItems,
+    isAnySelectionInSubtree,
+    isSubtreeFullySelected,
+    mergeItemsFromProps,
+    nextLevel,
+    reorderInTree,
+    updateItemById
+} from "./ActionableList.helpers";
 // Sub-components
 import ActionableListItem from "./ActionableListItem/ActionableListItem";
 import ActionableListNodeWrapper, {
@@ -45,19 +60,6 @@ interface IActionableListItem {
      * When **omitted**, the list stores selection internally while you still pass normal `items` (id, title, infoText, children).
      */
     checked?: boolean;
-}
-
-/** True when every leaf under `item` is checked (parent rows count as selected if all child subtrees are fully selected). */
-function isSubtreeFullySelected(item: IActionableListItem): boolean {
-    const children = item.children || [];
-    if (children.length === 0) return !!item.checked;
-    return children.every((child) => isSubtreeFullySelected(child));
-}
-
-function isAnySelectionInSubtree(item: IActionableListItem): boolean {
-    if (item.checked) return true;
-    const children = item.children || [];
-    return children.some((child) => isAnySelectionInSubtree(child));
 }
 
 interface IActionableListTexts {
@@ -146,131 +148,6 @@ interface IActionableListProps {
      */
     onSearch?: (value: string) => void;
 }
-
-const defaultTexts: IActionableListTexts = {
-    searchLabel: "Label",
-    searchPlaceholder: "Search",
-    filteredItemsLabel: "Filtered items",
-    totalItemsLabel: "Total items",
-    selectedItemsLabel: "Selected",
-    loadingTitle: "Loading Info",
-    noDataTitle: "No Data Available",
-    noDataDescription: "No data is available for display at this moment.",
-    noResultsTitle: "No Results Found",
-    noResultsDescription: "No results were found matching your criteria.",
-    expandButtonAriaLabel: "Toggle nested items"
-};
-
-const ACTIONABLE_LIST_MAX_NESTED_LEVEL: TActionableListLevel = 5;
-const ACTIONABLE_LIST_SEARCH_DEBOUNCE_MS = 300;
-
-const nextLevel = (level: TActionableListLevel, max: TActionableListLevel): TActionableListLevel => {
-    if (level >= max) return max;
-    if (level === 1) return 2;
-    if (level === 2) return 3;
-    if (level === 3) return 4;
-    return 5;
-};
-
-const indexItemsById = (
-    nodes: IActionableListItem[],
-    map: Map<string, IActionableListItem> = new Map()
-): Map<string, IActionableListItem> => {
-    nodes.forEach((node) => {
-        map.set(node.id, node);
-        if (node.children?.length) indexItemsById(node.children, map);
-    });
-    return map;
-};
-
-/**
- * Reconciles incoming `items` from props with previous list state: explicit `checked` from props wins (controlled);
- * otherwise previous selection is kept (uncontrolled — omit `checked` on your data).
- */
-const mergeItemsFromProps = (
-    incoming: IActionableListItem[],
-    previous: IActionableListItem[]
-): IActionableListItem[] => {
-    const prevById = indexItemsById(previous);
-    const merge = (nodes: IActionableListItem[]): IActionableListItem[] =>
-        nodes.map((node) => {
-            const prev = prevById.get(node.id);
-            let checked = false;
-            if (typeof node.checked === "boolean") {
-                checked = node.checked;
-            } else if (prev !== undefined && typeof prev.checked === "boolean") {
-                checked = prev.checked;
-            }
-            return {
-                ...node,
-                checked,
-                children: node.children?.length ? merge(node.children) : undefined
-            };
-        });
-    return merge(incoming);
-};
-
-const countAllItems = (items: IActionableListItem[]): number =>
-    items.reduce((acc, item) => acc + 1 + countAllItems(item.children || []), 0);
-
-const findItemById = (nodes: IActionableListItem[], targetId: string): IActionableListItem | undefined => {
-    const direct = nodes.find((node) => node.id === targetId);
-    if (direct !== undefined) return direct;
-    return nodes.reduce<IActionableListItem | undefined>((found, node) => {
-        if (found !== undefined) return found;
-        if (!node.children?.length) return undefined;
-        return findItemById(node.children, targetId);
-    }, undefined);
-};
-
-const updateItemById = (
-    items: IActionableListItem[],
-    targetId: string,
-    updater: (item: IActionableListItem) => IActionableListItem
-): IActionableListItem[] =>
-    items.map((item) => {
-        if (item.id === targetId) return updater(item);
-        if (!item.children?.length) return item;
-        return { ...item, children: updateItemById(item.children, targetId, updater) };
-    });
-
-const applyCheckedToBranch = (item: IActionableListItem, checked: boolean): IActionableListItem => ({
-    ...item,
-    checked,
-    children: item.children?.map((child) => applyCheckedToBranch(child, checked))
-});
-
-const filterTree = (items: IActionableListItem[], query: string): IActionableListItem[] => {
-    const q = query.trim().toLowerCase();
-    if (!q) return items;
-    return items.reduce<IActionableListItem[]>((acc, item) => {
-        const filteredChildren = filterTree(item.children || [], q);
-        if (item.title.toLowerCase().includes(q) || filteredChildren.length > 0) {
-            acc.push({ ...item, children: filteredChildren });
-        }
-        return acc;
-    }, []);
-};
-
-const reorderSiblingsById = (
-    items: IActionableListItem[],
-    sourceId: string,
-    targetId: string
-): IActionableListItem[] => {
-    const si = items.findIndex((n) => n.id === sourceId);
-    const ti = items.findIndex((n) => n.id === targetId);
-    if (si < 0 || ti < 0 || si === ti) return items;
-    return reorder({ list: items, startIndex: si, finishIndex: ti });
-};
-
-const reorderInTree = (items: IActionableListItem[], sourceId: string, targetId: string): IActionableListItem[] => {
-    const siblingResult = reorderSiblingsById(items, sourceId, targetId);
-    if (siblingResult !== items) return siblingResult;
-    return items.map((item) => {
-        if (!item.children?.length) return item;
-        return { ...item, children: reorderInTree(item.children, sourceId, targetId) };
-    });
-};
 
 interface IRenderNodeProps {
     item: IActionableListItem;
@@ -369,7 +246,7 @@ const ActionableList: FC<IActionableListProps> = ({
     onItemCheck,
     onSearch
 }) => {
-    const mergedTexts = { ...defaultTexts, ...texts };
+    const mergedTexts = { ...ACTIONABLE_LIST_DEFAULT_TEXTS, ...texts };
 
     const [localItems, setLocalItems] = useState<IActionableListItem[]>(() => mergeItemsFromProps(items, []));
     const [searchValue, setSearchValue] = useState("");
@@ -380,17 +257,7 @@ const ActionableList: FC<IActionableListProps> = ({
     }, [items]);
 
     useEffect(() => {
-        const ids = new Set<string>();
-        const walk = (nodes: IActionableListItem[]) => {
-            nodes.forEach((n) => {
-                if (n.children?.length) {
-                    ids.add(n.id);
-                    walk(n.children);
-                }
-            });
-        };
-        walk(items);
-        setExpandedIds(ids);
+        setExpandedIds(getExpandedIdsFromItems(items));
     }, [items]);
 
     const { debouncedCallback, clearDebounce } = useDebounceCallback((value: unknown) => {
@@ -519,4 +386,5 @@ const ActionableList: FC<IActionableListProps> = ({
     );
 };
 
-export { IActionableListProps, IActionableListItem, IActionableListTexts, ActionableList as default };
+export type { IActionableListItem, IActionableListProps, IActionableListTexts };
+export { ActionableList as default };

@@ -1,1 +1,2 @@
-export { IActionableListItem, IActionableListProps, IActionableListTexts, default } from "./ActionableList";
+export type { IActionableListItem, IActionableListProps, IActionableListTexts } from "./ActionableList";
+export { default } from "./ActionableList";
