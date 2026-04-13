@@ -180,7 +180,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
     const directChildTotal = item.children?.length ?? 0;
     const directChildFullySelected = item.children?.filter((child) => isSubtreeFullySelected(child)).length ?? 0;
 
-    const childLevel = nextLevel(level, ACTIONABLE_LIST_MAX_NESTED_LEVEL);
+    const childLevel = nextLevel(level);
 
     return (
         <>
