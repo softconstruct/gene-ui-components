@@ -47,55 +47,6 @@ interface IActionableListItem {
     checked?: boolean;
 }
 
-/** Minimal tree shape for selection counts — full `IActionableListItem` nodes are assignable. */
-interface IActionableListTreeNode {
-    checked?: boolean;
-    children?: IActionableListTreeNode[];
-}
-
-interface IActionableListNodeMeta {
-    /** Subtree size including this node (checkbox checked / indeterminate). */
-    total: number;
-    selected: number;
-    /** All nodes under this node (excludes self) — “Selected x/y” denominator. */
-    descendantsTotal: number;
-    descendantsSelected: number;
-}
-
-function getActionableListNodeMeta(node: IActionableListTreeNode): IActionableListNodeMeta {
-    const children = node.children || [];
-    const childMeta = children.reduce(
-        (acc, child) => {
-            const meta = getActionableListNodeMeta(child);
-            return {
-                total: acc.total + meta.total,
-                selected: acc.selected + meta.selected
-            };
-        },
-        { total: 0, selected: 0 }
-    );
-    return {
-        total: childMeta.total + 1,
-        selected: childMeta.selected + (node.checked ? 1 : 0),
-        descendantsTotal: childMeta.total,
-        descendantsSelected: childMeta.selected
-    };
-}
-
-function actionableListNodeMetaToSelectionProps(meta: IActionableListNodeMeta): {
-    selectedCount: number;
-    totalCount: number;
-    descendantsSelectedCount: number;
-    descendantsTotalCount: number;
-} {
-    return {
-        selectedCount: meta.selected,
-        totalCount: meta.total,
-        descendantsSelectedCount: meta.descendantsSelected,
-        descendantsTotalCount: meta.descendantsTotal
-    };
-}
-
 /** True when every leaf under `item` is checked (parent rows count as selected if all child subtrees are fully selected). */
 function isSubtreeFullySelected(item: IActionableListItem): boolean {
     const children = item.children || [];
@@ -568,13 +519,4 @@ const ActionableList: FC<IActionableListProps> = ({
     );
 };
 
-export {
-    actionableListNodeMetaToSelectionProps,
-    getActionableListNodeMeta,
-    IActionableListProps,
-    IActionableListItem,
-    IActionableListTexts,
-    IActionableListNodeMeta,
-    IActionableListTreeNode,
-    ActionableList as default
-};
+export { IActionableListProps, IActionableListItem, IActionableListTexts, ActionableList as default };

@@ -5,30 +5,27 @@ import { Meta, StoryObj } from "@storybook/react";
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
 import ActionableListItem, { IActionableListItemProps } from "./ActionableListItem/ActionableListItem";
-import {
-    actionableListNodeMetaToSelectionProps,
-    getActionableListNodeMeta,
-    type IActionableListTreeNode
-} from "./index";
 
-/** Parent with three children: two selected in the subtree — counts are derived, not hand-written. */
-const PLAYGROUND_TREE: IActionableListTreeNode = {
-    checked: false,
-    children: [{ checked: true }, { checked: true }, { checked: false }]
+const playgroundSelection = {
+    selectedCount: 2,
+    totalCount: 4,
+    descendantsSelectedCount: 2,
+    descendantsTotalCount: 3
 };
 
-const COLLAPSED_PARENT_TREE: IActionableListTreeNode = {
-    checked: false,
-    children: [{ checked: false }, { checked: false }, { checked: false }]
+const collapsedSelection = {
+    selectedCount: 0,
+    totalCount: 4,
+    descendantsSelectedCount: 0,
+    descendantsTotalCount: 3
 };
 
-const LEAF_TREE: IActionableListTreeNode = {
-    checked: false
+const leafSelection = {
+    selectedCount: 0,
+    totalCount: 1,
+    descendantsSelectedCount: 0,
+    descendantsTotalCount: 0
 };
-
-const playgroundSelection = actionableListNodeMetaToSelectionProps(getActionableListNodeMeta(PLAYGROUND_TREE));
-const collapsedSelection = actionableListNodeMetaToSelectionProps(getActionableListNodeMeta(COLLAPSED_PARENT_TREE));
-const leafSelection = actionableListNodeMetaToSelectionProps(getActionableListNodeMeta(LEAF_TREE));
 
 const meta: Meta<IActionableListItemProps> = {
     title: "Molecules/ActionableList/ActionableListItem",
