@@ -1,46 +1,17 @@
-import React, {
-    Children,
-    cloneElement,
-    Dispatch,
-    FC,
-    KeyboardEvent,
-    MouseEvent,
-    ReactElement,
-    ReactNode,
-    SetStateAction,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState
-} from "react";
+import React, { Children, FC, ReactElement, useEffect, useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
 
 // Components
 import Loader from "@components/atoms/Loader";
-import { IPopoverProps, IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
 import Skeleton from "@components/atoms/Skeleton";
 import Empty from "@components/molecules/Empty";
-
-// Hooks
-import { useClickOutside } from "@hooks/index";
 
 // Styles
 import "./AutoComplete.scss";
 
 import AutoCompleteFooter from "./AutoCompleteFooter";
-
-type SizeType = "large" | "medium" | "small";
-
-const popoverSizeMapping = {
-    large: "medium",
-    medium: "medium",
-    small: "medium"
-} as const;
-
-type GenericObject = Record<string, unknown>;
 
 interface IAutoCompleteProps {
     /**
@@ -49,16 +20,12 @@ interface IAutoCompleteProps {
      */
     className?: string;
     /**
-     * The content of the autocomplete dropdown. These should be `AutoCompleteItem` components.
+     * The content of the autocomplete list. These should be `AutoCompleteItem` components.
      */
     children: ReactElement | ReactElement[];
     /**
-     * A function for setting additional props for the Popover component that wraps the autocomplete.
-     * This will be provided by the parent (e.g. SearchField/TextField) and applied to the anchor element.
-     */
-    setPropsForPopover: Dispatch<SetStateAction<GenericObject>>;
-    /**
-     * Indicates whether the autocomplete is in a loading state. If true, a loading indicator is displayed instead of the items.
+     * Indicates whether the autocomplete is in a loading state.
+     * If true, a loading indicator is displayed instead of the items.
      */
     loading?: boolean;
     /**
@@ -70,32 +37,15 @@ interface IAutoCompleteProps {
      */
     emptyText?: string;
     /**
-     * Autocomplete size.<br/>
-     * Default value is `small`.<br/>
-     * Possible values: `large | medium | small`
-     */
-    size?: SizeType;
-    /**
-     * Position of the autocomplete popover, relative to the reference (trigger, anchor) element.<br/>
-     * Possible values: `bottom-center | bottom-left | bottom-right | left-bottom | left-center` <br/>
-     * `left-top | right-bottom | right-center | right-top | top-center | top-left | top-right | auto`
-     */
-    position?: IPopoverProps["position"];
-    /**
-     * Controls the open state for autocomplete, for more info see the Popover component open state.
-     * If omitted, the component manages its own open state.
-     */
-    open?: boolean;
-    /**
-     * When true, shows the footer with the \"Show more\" button.
+     * When true, shows the footer with the "Show more" button.
      */
     showMore?: boolean;
     /**
-     * Callback when the \"Show more\" button is clicked.
+     * Callback when the "Show more" button is clicked.
      */
     onShowMore?: () => void;
     /**
-     * Text for the \"Show more\" button.
+     * Text for the "Show more" button.
      */
     showMoreLabel?: string;
     /**
@@ -108,24 +58,17 @@ interface IAutoCompleteProps {
      * Useful while waiting for the next batch of server data.
      */
     showMoreLoading?: boolean;
-    /**
-     * Callback when the open state changes.
-     */
-    onOpenChange?: (isOpen: boolean) => void;
 }
 
 const ESTIMATED_ROW_HEIGHT_PX = 32;
 
 /**
- * Autocomplete component enhances input fields by providing real-time suggestions as the user types. As users begin entering text, a list of potential matches is dynamically generated, allowing them to quickly select from these options instead of typing the entire input manually.
+ * AutoComplete is a reusable list container that renders virtualized items with loading, empty, and "show more" states.
+ * It is designed to fill its parent dimensions and can be composed inside any layout, popover, or panel.
  */
 const AutoComplete: FC<IAutoCompleteProps> = ({
     className,
     children,
-    setPropsForPopover,
-    size = "small",
-    position = "bottom-left",
-    open,
     loading,
     loadingText,
     emptyText,
@@ -133,136 +76,9 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
     onShowMore,
     showMoreLabel,
     showMoreDisabled = false,
-    showMoreLoading = false,
-    onOpenChange
+    showMoreLoading = false
 }) => {
-    const [isOpenState, setIsOpenState] = useState<boolean>(false);
-    const popoverRef = useRef<IPopoverRef>({
-        floatingElement: { current: null },
-        referenceElement: { current: null }
-    });
-
-    useEffect(() => {
-        if (open !== undefined) {
-            setIsOpenState(open);
-        }
-    }, [open]);
-
-    useEffect(() => {
-        onOpenChange?.(isOpenState);
-    }, [isOpenState, onOpenChange]);
-
-    useClickOutside(
-        (e) => {
-            if (!isOpenState) return;
-
-            const onTargetClick =
-                e.target instanceof Node &&
-                popoverRef.current.referenceElement?.current instanceof Node &&
-                popoverRef.current.referenceElement.current.contains(e.target);
-
-            if (!onTargetClick) {
-                setIsOpenState(false);
-            }
-        },
-        [popoverRef.current.floatingElement]
-    );
-
-    const toggleAutoCompleteOpen = useCallback(() => {
-        setIsOpenState((prev) => !prev);
-    }, []);
-
-    const enhanceTriggerPropsRef = useRef<(triggerProps: GenericObject) => GenericObject>();
-
-    const enhanceTriggerProps = useCallback(
-        (triggerProps: GenericObject): GenericObject => {
-            if (!triggerProps || typeof triggerProps !== "object") {
-                return triggerProps;
-            }
-
-            const { onClick, onKeyDown, ...rest } = triggerProps as {
-                onClick?: (event: MouseEvent<HTMLElement>) => void;
-                onKeyDown?: (event: KeyboardEvent<HTMLElement>) => void;
-                [key: string]: unknown;
-            };
-
-            return {
-                ...rest,
-                onClick: (event: MouseEvent<HTMLElement>) => {
-                    onClick?.(event);
-                    if (!event.defaultPrevented) {
-                        toggleAutoCompleteOpen();
-                    }
-                },
-                onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
-                    onKeyDown?.(event);
-                    if (!event.defaultPrevented && (event.key === "Enter" || event.key === " ")) {
-                        event.preventDefault();
-                        toggleAutoCompleteOpen();
-                    }
-                }
-            };
-        },
-        [toggleAutoCompleteOpen]
-    );
-
-    enhanceTriggerPropsRef.current = enhanceTriggerProps;
-
-    const setReferenceProps = useCallback(
-        (value: SetStateAction<GenericObject>) => {
-            const enhanceFn = enhanceTriggerPropsRef.current;
-            if (!enhanceFn) {
-                if (typeof value === "function") {
-                    setPropsForPopover((prev) => value(prev));
-                } else {
-                    setPropsForPopover(value);
-                }
-                return;
-            }
-
-            if (typeof value === "function") {
-                setPropsForPopover((prev) => {
-                    const nextValue = value(prev);
-                    return enhanceFn(nextValue);
-                });
-            } else {
-                setPropsForPopover(enhanceFn(value));
-            }
-        },
-        [setPropsForPopover]
-    );
-
     const hasChildren = useMemo(() => Children.count(children) > 0, [children]);
-
-    const content = useMemo(() => {
-        if (loading) {
-            return (
-                <div
-                    className={classNames(
-                        "autoComplete__state",
-                        "autoComplete__loader",
-                        `autoComplete__state_size_${size}`
-                    )}
-                >
-                    <Loader text={loadingText} textPosition="below" />
-                </div>
-            );
-        }
-        if (!hasChildren) {
-            return (
-                <div
-                    className={classNames(
-                        "autoComplete__state",
-                        "autoComplete__empty",
-                        `autoComplete__state_size_${size}`
-                    )}
-                >
-                    <Empty description={emptyText} appearance="noResult" size={size === "small" ? "small" : "medium"} />
-                </div>
-            );
-        }
-        return null;
-    }, [emptyText, hasChildren, loading, loadingText, size]);
 
     const scrollbarRef = useRef<ScrollbarRefType | null>(null);
     const childrenArray = useMemo(() => Children.toArray(children) as ReactElement[], [children]);
@@ -285,83 +101,82 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
         scrollerElement.scrollTo({ top: scrollerElement.scrollHeight, behavior: "smooth" });
     }, [shouldRenderShowMoreSkeleton]);
 
-    let virtualizedContent: ReactNode = null;
-    if (loading || !hasChildren) {
-        virtualizedContent = content;
-    } else {
-        virtualizedContent = (
-            <div className={classNames("autoComplete", `autoComplete_size_${size}`)}>
-                <Scrollbar ref={scrollbarRef}>
-                    <div className="autoComplete__content" style={{ height: virtualizer.getTotalSize() }}>
-                        <div className={classNames(className, "autoComplete__virtualContainer")}>
-                            {virtualizer.getVirtualItems().map((row) => {
-                                if (shouldRenderShowMoreSkeleton && row.index === childrenArray.length) {
-                                    return (
-                                        <div
-                                            className="autoComplete__virtualRow"
-                                            key="autoComplete-showMore-skeleton-row"
-                                            data-index={row.index}
-                                            style={{ transform: `translateY(${row.start}px)` }}
-                                        >
-                                            <div className="autoComplete__skeletonRow" aria-hidden="true">
-                                                <Skeleton
-                                                    className="autoComplete__skeletonItem"
-                                                    height={16}
-                                                    rounded="rounded4X"
-                                                />
-                                            </div>
-                                        </div>
-                                    );
-                                }
+    if (loading) {
+        return (
+            <div className={classNames("autoComplete", className)}>
+                <div className="autoComplete__state autoComplete__loader">
+                    <Loader text={loadingText} textPosition="below" />
+                </div>
+            </div>
+        );
+    }
 
-                                const item = childrenArray[row.index];
-                                return (
-                                    item && (
-                                        <div
-                                            className="autoComplete__virtualRow"
-                                            key={
-                                                item.key ??
-                                                (item.props as { id?: string | number }).id ??
-                                                `autoComplete-item-${row.index}`
-                                            }
-                                            data-index={row.index}
-                                            style={{ transform: `translateY(${row.start}px)` }}
-                                        >
-                                            {cloneElement(item, { size })}
-                                        </div>
-                                    )
-                                );
-                            })}
-                        </div>
-                    </div>
-                </Scrollbar>
-                {showMore && (
-                    <AutoCompleteFooter
-                        showMore={showMore}
-                        onShowMore={onShowMore}
-                        showMoreLabel={showMoreLabel}
-                        loading={showMoreLoading}
-                        disabled={!hasChildren || loading || showMoreDisabled || showMoreLoading}
-                    />
-                )}
+    if (!hasChildren) {
+        return (
+            <div className={classNames("autoComplete", className)}>
+                <div className="autoComplete__state autoComplete__empty">
+                    <Empty description={emptyText} appearance="noResult" size="small" />
+                </div>
             </div>
         );
     }
 
     return (
-        <Popover
-            setProps={setReferenceProps}
-            size={popoverSizeMapping[size]}
-            position={position}
-            withArrow={false}
-            open={isOpenState}
-            margin={4}
-            ref={popoverRef}
-        >
-            <PopoverBody withPadding={false} withScrollbar={false}>
-                {virtualizedContent}
-            </PopoverBody>
-        </Popover>
+        <div className={classNames("autoComplete", className)}>
+            <Scrollbar ref={scrollbarRef}>
+                <div className="autoComplete__content" style={{ height: virtualizer.getTotalSize() }}>
+                    <div className="autoComplete__virtualContainer">
+                        {virtualizer.getVirtualItems().map((row) => {
+                            if (shouldRenderShowMoreSkeleton && row.index === childrenArray.length) {
+                                return (
+                                    <div
+                                        className="autoComplete__virtualRow"
+                                        key="autoComplete-showMore-skeleton-row"
+                                        data-index={row.index}
+                                        style={{ transform: `translateY(${row.start}px)` }}
+                                    >
+                                        <div className="autoComplete__skeletonRow" aria-hidden="true">
+                                            <Skeleton
+                                                className="autoComplete__skeletonItem"
+                                                height={16}
+                                                rounded="rounded4X"
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            }
+
+                            const item = childrenArray[row.index];
+                            return (
+                                item && (
+                                    <div
+                                        className="autoComplete__virtualRow"
+                                        key={
+                                            item.key ??
+                                            (item.props as { id?: string | number }).id ??
+                                            `autoComplete-item-${row.index}`
+                                        }
+                                        data-index={row.index}
+                                        style={{ transform: `translateY(${row.start}px)` }}
+                                    >
+                                        {item}
+                                    </div>
+                                )
+                            );
+                        })}
+                    </div>
+                </div>
+            </Scrollbar>
+            {showMore && (
+                <AutoCompleteFooter
+                    showMore={showMore}
+                    onShowMore={onShowMore}
+                    showMoreLabel={showMoreLabel}
+                    loading={showMoreLoading}
+                    disabled={showMoreDisabled || showMoreLoading}
+                />
+            )}
+        </div>
     );
 };
 
