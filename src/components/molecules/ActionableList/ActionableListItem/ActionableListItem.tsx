@@ -83,6 +83,10 @@ interface IActionableListItemProps {
      */
     selectedLabel?: string;
     /**
+     * Identifier of the parent group for same-sibling-group drop restriction.
+     */
+    parentId?: string;
+    /**
      * Whether drag-and-drop handle is shown.
      */
     isDraggable?: boolean;
@@ -132,6 +136,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     descendantsSelectedCount = 0,
     descendantsTotalCount = 0,
     selectedLabel = "Selected",
+    parentId = "root",
     isDraggable = false,
     dropGapEdge = null,
     expandAriaLabel = "Toggle nested items",
@@ -144,8 +149,14 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     const rowRef = useRef<HTMLDivElement | null>(null);
     const dragHandleRef = useRef<HTMLButtonElement | null>(null);
     const titleTextRef = useRef<HTMLSpanElement | null>(null);
+    const previewContainerRef = useRef<HTMLElement | null>(null);
+    const onDropReorderRef = useRef(onDropReorder);
+    const onDragTargetChangeRef = useRef(onDragTargetChange);
     const isTruncated = useEllipsisDetection(titleTextRef);
     const [isDragging, setIsDragging] = useState(false);
+
+    onDropReorderRef.current = onDropReorder;
+    onDragTargetChangeRef.current = onDragTargetChange;
 
     const computeEdge = (clientY: number): TDropGapEdge => {
         const rowEl = rowRef.current;
@@ -172,7 +183,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
             draggable({
                 element: rowEl,
                 dragHandle: handleEl,
-                getInitialData: () => ({ sourceId: id }),
+                getInitialData: () => ({ sourceId: id, parentId }),
                 onGenerateDragPreview: ({ nativeSetDragImage, location }) => {
                     if (!nativeSetDragImage) return;
                     setCustomNativeDragPreview({
@@ -183,49 +194,52 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                         }),
                         render: ({ container }) => {
                             const clone = rowEl.cloneNode(true) as HTMLElement;
-                            const { width, height } = rowEl.getBoundingClientRect();
                             clone.classList.remove("actionableListItem_nested");
                             clone.classList.add("actionableListItem_dragPreview");
                             Object.assign(clone.style, {
-                                width: `${width}px`,
-                                height: `${height}px`,
+                                width: `${rowEl.offsetWidth}px`,
+                                height: `${rowEl.offsetHeight}px`,
                                 overflow: "hidden",
                                 boxSizing: "border-box",
                                 pointerEvents: "none"
                             });
                             container.appendChild(clone);
+                            previewContainerRef.current = container;
+                            const cssContext = rowEl.closest(".actionableList") || rowEl.parentElement;
+                            cssContext?.appendChild(container);
                         }
                     });
                 },
                 onDragStart: () => {
+                    if (previewContainerRef.current) {
+                        document.body.appendChild(previewContainerRef.current);
+                        previewContainerRef.current = null;
+                    }
                     setIsDragging(true);
                     preventUnhandled.start();
                 },
                 onDrop: () => {
+                    if (previewContainerRef.current) {
+                        document.body.appendChild(previewContainerRef.current);
+                        previewContainerRef.current = null;
+                    }
                     setIsDragging(false);
+                    preventUnhandled.stop();
                 }
             }),
             dropTargetForElements({
                 element: rowEl,
-                getData: () => ({ targetId: id }),
-                canDrop: ({ source }) => {
-                    const sid = source.data.sourceId;
-                    return typeof sid === "string" && sid !== id;
-                },
+                getData: () => ({ targetId: id, parentId }),
+                canDrop: ({ source }) => source.data.parentId === parentId,
                 onDragEnter: ({ location }) => {
-                    onDragTargetChange?.(computeEdge(location.current.input.clientY));
+                    onDragTargetChangeRef.current?.(computeEdge(location.current.input.clientY));
                 },
                 onDrag: ({ location }) => {
-                    onDragTargetChange?.(computeEdge(location.current.input.clientY));
-                },
-                onDrop: ({ source }) => {
-                    const { sourceId } = source.data as { sourceId?: unknown };
-                    if (typeof sourceId !== "string") return;
-                    onDropReorder?.(sourceId);
+                    onDragTargetChangeRef.current?.(computeEdge(location.current.input.clientY));
                 }
             })
         );
-    }, [isDraggable, id, onDropReorder, onDragTargetChange]);
+    }, [isDraggable, id, parentId]);
 
     return (
         <div

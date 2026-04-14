@@ -1,5 +1,8 @@
 .actionableListItem {
-    --actionable-list-drop-gap: 40px;
+    --actionable-list-drop-gap: calc(
+        1.2rem + 2 * var(--guit-ref-spacing-xsmall) + 2 * var(--guit-ref-border-width-thin) +
+            var(--guit-ref-spacing-medium)
+    );
 
     position: relative;
     width: 100%;
@@ -38,7 +41,16 @@
     }
 
     &_dragging {
-        display: none;
+        visibility: hidden;
+    }
+
+    .actionableList_hasDropGap &_dragging {
+        height: 0;
+        min-height: 0;
+        overflow: hidden;
+        padding: 0;
+        margin: 0;
+        border: none;
     }
 
     &_dropGapTop {

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import classNames from "classnames";
 
@@ -158,6 +158,7 @@ interface IDropGap {
 interface IRenderNodeProps {
     item: IActionableListItem;
     level: TActionableListLevel;
+    parentId: string;
     withCheckbox: boolean;
     isDraggable: boolean;
     expandedIds: Set<string>;
@@ -172,6 +173,7 @@ interface IRenderNodeProps {
 const RenderNode: FC<IRenderNodeProps> = ({
     item,
     level,
+    parentId,
     withCheckbox,
     isDraggable,
     expandedIds,
@@ -199,6 +201,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
                 id={item.id}
                 title={item.title}
                 level={level}
+                parentId={parentId}
                 infoText={item.infoText}
                 isExpandable={canExpand}
                 isExpanded={isExpanded}
@@ -229,6 +232,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
                                 key={child.id}
                                 item={child}
                                 level={childLevel}
+                                parentId={item.id}
                                 withCheckbox={withCheckbox}
                                 isDraggable={isDraggable}
                                 expandedIds={expandedIds}
@@ -268,6 +272,10 @@ const ActionableList: FC<IActionableListProps> = ({
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
     const [dropGap, setDropGap] = useState<IDropGap | null>(null);
 
+    const handleDropReorderRef = useRef<(sourceId: string, targetId: string) => void>(() => {});
+    const dropGapRef = useRef(dropGap);
+    dropGapRef.current = dropGap;
+
     useEffect(() => {
         setLocalItems((prev) => mergeItemsFromProps(items, prev));
     }, [items]);
@@ -279,7 +287,14 @@ const ActionableList: FC<IActionableListProps> = ({
     useEffect(() => {
         if (!isDraggable) return () => undefined;
         return monitorForElements({
-            onDrop: () => setDropGap(null)
+            onDrop: ({ source }) => {
+                const gap = dropGapRef.current;
+                setDropGap(null);
+                const { sourceId } = source.data;
+                if (typeof sourceId === "string" && gap && sourceId !== gap.targetId) {
+                    handleDropReorderRef.current(sourceId, gap.targetId);
+                }
+            }
         });
     }, [isDraggable]);
 
@@ -326,6 +341,7 @@ const ActionableList: FC<IActionableListProps> = ({
         if (sourceId === targetId) return;
         syncItems(reorderInTree(localItems, sourceId, targetId));
     };
+    handleDropReorderRef.current = handleDropReorder;
 
     const handleDragTargetChange = useCallback((targetId: string, edge: TDropGapEdge) => {
         setDropGap((prev) => {
@@ -338,7 +354,7 @@ const ActionableList: FC<IActionableListProps> = ({
     const hasSearchResults = filteredItemsCount > 0;
 
     return (
-        <div className={classNames("actionableList", className)}>
+        <div className={classNames("actionableList", className, { actionableList_hasDropGap: dropGap !== null })}>
             <TextField
                 label={mergedTexts.searchLabel}
                 placeholder={mergedTexts.searchPlaceholder}
@@ -404,6 +420,7 @@ const ActionableList: FC<IActionableListProps> = ({
                                         key={item.id}
                                         item={item}
                                         level={1}
+                                        parentId="root"
                                         withCheckbox={withCheckbox}
                                         isDraggable={isDraggable}
                                         expandedIds={expandedIds}
