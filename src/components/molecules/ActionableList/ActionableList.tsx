@@ -357,12 +357,18 @@ const ActionableList: FC<IActionableListProps> = ({
             {!loading && (
                 <>
                     <div className="actionableList__stats">
-                        <Text as="span" variant="bodyMediumMedium">
-                            {`${mergedTexts.filteredItemsLabel} ${filteredItemsCount}`}
+                        <Text as="span" variant="bodyMediumMedium" className="actionableList__statsLabel">
+                            {mergedTexts.filteredItemsLabel}
+                        </Text>
+                        <Text as="span" variant="bodyMediumMedium" className="actionableList__statsCount">
+                            {filteredItemsCount}
                         </Text>
                         <Divider direction="vertical" className="actionableList__statsDivider" />
-                        <Text as="span" variant="bodyMediumMedium">
-                            {`${mergedTexts.totalItemsLabel} ${totalItemsCount}`}
+                        <Text as="span" variant="bodyMediumMedium" className="actionableList__statsLabel">
+                            {mergedTexts.totalItemsLabel}
+                        </Text>
+                        <Text as="span" variant="bodyMediumMedium" className="actionableList__statsCount">
+                            {totalItemsCount}
                         </Text>
                     </div>
 
