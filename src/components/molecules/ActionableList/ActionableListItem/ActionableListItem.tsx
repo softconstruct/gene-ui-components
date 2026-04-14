@@ -1,6 +1,9 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source";
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
+import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unhandled";
 import classNames from "classnames";
 
 import { ChevronDown, ChevronRight, GripDots } from "@geneui/icons";
@@ -19,6 +22,8 @@ import useEllipsisDetection from "@hooks/useEllipsisDetection";
 import "./ActionableListItem.scss";
 
 import type { TActionableListLevel } from "../ActionableListNodeWrapper/ActionableListNodeWrapper";
+
+type TDropGapEdge = "top" | "bottom";
 
 interface IActionableListItemProps {
     /**
@@ -58,19 +63,19 @@ interface IActionableListItemProps {
      */
     checkboxIndeterminate?: boolean;
     /**
-     * Number of selected nodes in this row’s subtree (including self), for checkbox when branch props are unset (e.g. Storybook).
+     * Number of selected nodes in this row's subtree (including self), for checkbox when branch props are unset (e.g. Storybook).
      */
     selectedCount?: number;
     /**
-     * Total nodes in this row’s subtree including self — checkbox fallback when branch props are unset.
+     * Total nodes in this row's subtree including self — checkbox fallback when branch props are unset.
      */
     totalCount?: number;
     /**
-     * “Selected x/y” numerator: typically direct children whose subtree is fully selected.
+     * "Selected x/y" numerator: typically direct children whose subtree is fully selected.
      */
     descendantsSelectedCount?: number;
     /**
-     * “Selected x/y” denominator: typically direct child count. Zero hides the label (leaf rows).
+     * "Selected x/y" denominator: typically direct child count. Zero hides the label (leaf rows).
      */
     descendantsTotalCount?: number;
     /**
@@ -81,6 +86,10 @@ interface IActionableListItemProps {
      * Whether drag-and-drop handle is shown.
      */
     isDraggable?: boolean;
+    /**
+     * Which edge to show a drop gap on (controlled by parent list).
+     */
+    dropGapEdge?: TDropGapEdge | null;
     /**
      * Accessible label for expand/collapse toggle.
      */
@@ -97,6 +106,10 @@ interface IActionableListItemProps {
      * Callback when a dragged item is dropped onto this row.
      */
     onDropReorder?: (sourceId: string) => void;
+    /**
+     * Reports that this row is the current drop target with the given edge.
+     */
+    onDragTargetChange?: (edge: TDropGapEdge) => void;
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -120,18 +133,26 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     descendantsTotalCount = 0,
     selectedLabel = "Selected",
     isDraggable = false,
+    dropGapEdge = null,
     expandAriaLabel = "Toggle nested items",
     onToggleExpand,
     onToggleCheck,
     onDropReorder,
+    onDragTargetChange,
     className
 }) => {
     const rowRef = useRef<HTMLDivElement | null>(null);
-    const dragHandleRef = useRef<HTMLSpanElement | null>(null);
+    const dragHandleRef = useRef<HTMLButtonElement | null>(null);
     const titleTextRef = useRef<HTMLSpanElement | null>(null);
     const isTruncated = useEllipsisDetection(titleTextRef);
     const [isDragging, setIsDragging] = useState(false);
-    const [isDragOver, setIsDragOver] = useState(false);
+
+    const computeEdge = (clientY: number): TDropGapEdge => {
+        const rowEl = rowRef.current;
+        if (!rowEl) return "bottom";
+        const { top, height } = rowEl.getBoundingClientRect();
+        return clientY < top + height / 2 ? "top" : "bottom";
+    };
 
     const hasBranchCheckbox = withCheckbox && checkboxChecked !== undefined;
     const resolvedCheckboxChecked = hasBranchCheckbox
@@ -144,28 +165,67 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     useEffect(() => {
         if (!isDraggable || !dragHandleRef.current || !rowRef.current) return () => undefined;
 
-        const element = dragHandleRef.current;
+        const rowEl = rowRef.current;
+        const handleEl = dragHandleRef.current;
+
         return combine(
             draggable({
-                element,
+                element: rowEl,
+                dragHandle: handleEl,
                 getInitialData: () => ({ sourceId: id }),
-                onDragStart: () => setIsDragging(true),
-                onDrop: () => setIsDragging(false)
+                onGenerateDragPreview: ({ nativeSetDragImage, location }) => {
+                    if (!nativeSetDragImage) return;
+                    setCustomNativeDragPreview({
+                        nativeSetDragImage,
+                        getOffset: preserveOffsetOnSource({
+                            element: rowEl,
+                            input: location.current.input
+                        }),
+                        render: ({ container }) => {
+                            const clone = rowEl.cloneNode(true) as HTMLElement;
+                            const { width, height } = rowEl.getBoundingClientRect();
+                            clone.classList.remove("actionableListItem_nested");
+                            clone.classList.add("actionableListItem_dragPreview");
+                            Object.assign(clone.style, {
+                                width: `${width}px`,
+                                height: `${height}px`,
+                                overflow: "hidden",
+                                boxSizing: "border-box",
+                                pointerEvents: "none"
+                            });
+                            container.appendChild(clone);
+                        }
+                    });
+                },
+                onDragStart: () => {
+                    setIsDragging(true);
+                    preventUnhandled.start();
+                },
+                onDrop: () => {
+                    setIsDragging(false);
+                }
             }),
             dropTargetForElements({
-                element: rowRef.current,
+                element: rowEl,
                 getData: () => ({ targetId: id }),
-                onDragEnter: () => setIsDragOver(true),
-                onDragLeave: () => setIsDragOver(false),
+                canDrop: ({ source }) => {
+                    const sid = source.data.sourceId;
+                    return typeof sid === "string" && sid !== id;
+                },
+                onDragEnter: ({ location }) => {
+                    onDragTargetChange?.(computeEdge(location.current.input.clientY));
+                },
+                onDrag: ({ location }) => {
+                    onDragTargetChange?.(computeEdge(location.current.input.clientY));
+                },
                 onDrop: ({ source }) => {
-                    setIsDragOver(false);
                     const { sourceId } = source.data as { sourceId?: unknown };
                     if (typeof sourceId !== "string") return;
                     onDropReorder?.(sourceId);
                 }
             })
         );
-    }, [isDraggable, id, onDropReorder]);
+    }, [isDraggable, id, onDropReorder, onDragTargetChange]);
 
     return (
         <div
@@ -173,8 +233,9 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
             className={classNames("actionableListItem", className, {
                 actionableListItem_nested: level > 1,
                 actionableListItem_draggable: isDraggable,
-                actionableListItem_dragOver: isDragOver,
-                actionableListItem_dragging: isDragging
+                actionableListItem_dragging: isDragging,
+                actionableListItem_dropGapTop: dropGapEdge === "top",
+                actionableListItem_dropGapBottom: dropGapEdge === "bottom"
             })}
         >
             {isExpandable && (
@@ -215,11 +276,11 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
             {infoText && <Info infoText={infoText} size="XSmall" className="actionableListItem__info" />}
 
             {isDraggable && (
-                <span
+                <button
                     ref={dragHandleRef}
                     className="actionableListItem__dragHandle"
                     aria-label="Drag row"
-                    role="button"
+                    type="button"
                 >
                     <GripDots
                         size={16}
@@ -227,10 +288,11 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                             actionableListItem__dragIcon_dragging: isDragging
                         })}
                     />
-                </span>
+                </button>
             )}
         </div>
     );
 };
 
+export type { TDropGapEdge };
 export { IActionableListItemProps, ActionableListItem as default };

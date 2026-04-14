@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import classNames from "classnames";
 
 import { Magnifier } from "@geneui/icons";
@@ -33,7 +34,7 @@ import {
     updateItemById
 } from "./ActionableList.helpers";
 // Sub-components
-import ActionableListItem from "./ActionableListItem/ActionableListItem";
+import ActionableListItem, { type TDropGapEdge } from "./ActionableListItem/ActionableListItem";
 import ActionableListNodeWrapper, {
     type TActionableListLevel
 } from "./ActionableListNodeWrapper/ActionableListNodeWrapper";
@@ -52,7 +53,7 @@ interface IActionableListItem {
      */
     infoText?: string;
     /**
-     * Child nodes — parent rows infer counts from `children.length` / subtree for the “Selected x/y” label.
+     * Child nodes — parent rows infer counts from `children.length` / subtree for the "Selected x/y" label.
      */
     children?: IActionableListItem[];
     /**
@@ -149,6 +150,11 @@ interface IActionableListProps {
     onSearch?: (value: string) => void;
 }
 
+interface IDropGap {
+    targetId: string;
+    edge: TDropGapEdge;
+}
+
 interface IRenderNodeProps {
     item: IActionableListItem;
     level: TActionableListLevel;
@@ -156,9 +162,11 @@ interface IRenderNodeProps {
     isDraggable: boolean;
     expandedIds: Set<string>;
     texts: IActionableListTexts;
+    dropGap: IDropGap | null;
     onToggleExpand: (id: string) => void;
     onToggleCheck: (id: string, checked: boolean) => void;
     onDropReorder: (sourceId: string, targetId: string) => void;
+    onDragTargetChange: (targetId: string, edge: TDropGapEdge) => void;
 }
 
 const RenderNode: FC<IRenderNodeProps> = ({
@@ -168,9 +176,11 @@ const RenderNode: FC<IRenderNodeProps> = ({
     isDraggable,
     expandedIds,
     texts,
+    dropGap,
     onToggleExpand,
     onToggleCheck,
-    onDropReorder
+    onDropReorder,
+    onDragTargetChange
 }) => {
     const childCount = item.children?.length || 0;
     const canExpand = childCount > 0 && level < ACTIONABLE_LIST_MAX_NESTED_LEVEL;
@@ -181,6 +191,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
     const directChildFullySelected = item.children?.filter((child) => isSubtreeFullySelected(child)).length ?? 0;
 
     const childLevel = nextLevel(level);
+    const dropGapEdge = dropGap?.targetId === item.id ? dropGap.edge : null;
 
     return (
         <>
@@ -202,10 +213,12 @@ const RenderNode: FC<IRenderNodeProps> = ({
                     : {})}
                 selectedLabel={texts.selectedItemsLabel}
                 isDraggable={isDraggable}
+                dropGapEdge={dropGapEdge}
                 expandAriaLabel={texts.expandButtonAriaLabel}
                 onToggleExpand={() => onToggleExpand(item.id)}
                 onToggleCheck={(checked) => onToggleCheck(item.id, checked)}
                 onDropReorder={(sourceId) => onDropReorder(sourceId, item.id)}
+                onDragTargetChange={(edge) => onDragTargetChange(item.id, edge)}
             />
 
             {canExpand && isExpanded && (
@@ -220,9 +233,11 @@ const RenderNode: FC<IRenderNodeProps> = ({
                                 isDraggable={isDraggable}
                                 expandedIds={expandedIds}
                                 texts={texts}
+                                dropGap={dropGap}
                                 onToggleExpand={onToggleExpand}
                                 onToggleCheck={onToggleCheck}
                                 onDropReorder={onDropReorder}
+                                onDragTargetChange={onDragTargetChange}
                             />
                         ))}
                     </ActionableListNodeWrapper>
@@ -251,6 +266,7 @@ const ActionableList: FC<IActionableListProps> = ({
     const [localItems, setLocalItems] = useState<IActionableListItem[]>(() => mergeItemsFromProps(items, []));
     const [searchValue, setSearchValue] = useState("");
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+    const [dropGap, setDropGap] = useState<IDropGap | null>(null);
 
     useEffect(() => {
         setLocalItems((prev) => mergeItemsFromProps(items, prev));
@@ -259,6 +275,13 @@ const ActionableList: FC<IActionableListProps> = ({
     useEffect(() => {
         setExpandedIds(getExpandedIdsFromItems(items));
     }, [items]);
+
+    useEffect(() => {
+        if (!isDraggable) return () => undefined;
+        return monitorForElements({
+            onDrop: () => setDropGap(null)
+        });
+    }, [isDraggable]);
 
     const { debouncedCallback, clearDebounce } = useDebounceCallback((value: unknown) => {
         if (typeof value !== "string") return;
@@ -303,6 +326,13 @@ const ActionableList: FC<IActionableListProps> = ({
         if (sourceId === targetId) return;
         syncItems(reorderInTree(localItems, sourceId, targetId));
     };
+
+    const handleDragTargetChange = useCallback((targetId: string, edge: TDropGapEdge) => {
+        setDropGap((prev) => {
+            if (prev?.targetId === targetId && prev?.edge === edge) return prev;
+            return { targetId, edge };
+        });
+    }, []);
 
     const hasData = totalItemsCount > 0;
     const hasSearchResults = filteredItemsCount > 0;
@@ -372,9 +402,11 @@ const ActionableList: FC<IActionableListProps> = ({
                                         isDraggable={isDraggable}
                                         expandedIds={expandedIds}
                                         texts={mergedTexts}
+                                        dropGap={dropGap}
                                         onToggleExpand={handleToggleExpand}
                                         onToggleCheck={handleToggleCheck}
                                         onDropReorder={handleDropReorder}
+                                        onDragTargetChange={handleDragTargetChange}
                                     />
                                 ))}
                             </ActionableListNodeWrapper>
