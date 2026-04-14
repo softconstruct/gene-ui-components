@@ -275,7 +275,12 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
 
             <span className="actionableListItem__titleWrap">
                 <Tooltip text={title} isVisible={isTruncated}>
-                    <Text ref={titleTextRef} as="span" variant="bodyMediumMedium" className="actionableListItem__title">
+                    <Text
+                        ref={titleTextRef}
+                        as="span"
+                        variant="labelMediumMedium"
+                        className="actionableListItem__title"
+                    >
                         {title}
                     </Text>
                 </Tooltip>

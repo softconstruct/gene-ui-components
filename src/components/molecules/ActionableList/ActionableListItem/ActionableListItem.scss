@@ -1,5 +1,5 @@
 .actionableListItem {
-    --py: var(--guit-ref-spacing-medium);
+    --py: var(--guit-ref-spacing-3xsmall);
     --bw: var(--guit-ref-border-width-thin);
     --mt: var(--guit-ref-spacing-medium);
     --actionable-list-drop-gap: calc(1.2rem + 2 * var(--py) + 2 * var(--bw) + var(--mt));
@@ -11,7 +11,7 @@
     display: flex;
     align-items: center;
     gap: var(--guit-ref-spacing-2xsmall);
-    padding: var(--guit-ref-spacing-xsmall) var(--py);
+    padding: var(--py) var(--guit-ref-spacing-medium);
     border: var(--bw) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
     border-radius: var(--guit-ref-radius-3xsmall);
     background: var(--guit-sem-color-background-neutral-1);
