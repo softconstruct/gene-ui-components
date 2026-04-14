@@ -88,6 +88,16 @@
     &__meta {
         color: var(--guit-sem-color-text-subtle);
         white-space: nowrap;
+        display: flex;
+        gap: var(--guit-ref-spacing-2xsmall);
+    }
+
+    &__metaLabel {
+        color: var(--guit-sem-color-foreground-neutral-1);
+    }
+
+    &__metaCount {
+        color: var(--guit-sem-color-foreground-neutral-2);
     }
 
     &__info {

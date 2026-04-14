@@ -261,7 +261,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
 
             <span className="actionableListItem__titleWrap">
                 <Tooltip text={title} isVisible={isTruncated}>
-                    <Text ref={titleTextRef} as="span" variant="bodyLargeMedium" className="actionableListItem__title">
+                    <Text ref={titleTextRef} as="span" variant="bodyMediumMedium" className="actionableListItem__title">
                         {title}
                     </Text>
                 </Tooltip>
@@ -269,7 +269,14 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
 
             {withCheckbox && descendantsTotalCount > 0 && (
                 <Text as="span" variant="bodyMediumMedium" className="actionableListItem__meta">
-                    {`${selectedLabel} ${descendantsSelectedCount}/${descendantsTotalCount}`}
+                    <Text as="span" variant="bodyMediumMedium" className="actionableListItem__metaLabel">
+                        {selectedLabel}
+                    </Text>
+                    <Text
+                        as="span"
+                        variant="bodyMediumMedium"
+                        className="actionableListItem__metaCount"
+                    >{`${descendantsSelectedCount}/${descendantsTotalCount}`}</Text>
                 </Text>
             )}
 
