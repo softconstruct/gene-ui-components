@@ -1,8 +1,8 @@
 .actionableListItem {
-    --actionable-list-drop-gap: calc(
-        1.2rem + 2 * var(--guit-ref-spacing-xsmall) + 2 * var(--guit-ref-border-width-thin) +
-            var(--guit-ref-spacing-medium)
-    );
+    --py: var(--guit-ref-spacing-xsmall);
+    --px: var(--guit-ref-spacing-medium);
+    --mt: var(--guit-ref-spacing-medium);
+    --actionable-list-drop-gap: calc(1.2rem + 2 * var(--py) + 2 * var(--px) + var(--mt));
 
     position: relative;
     width: 100%;
@@ -11,11 +11,11 @@
     display: flex;
     align-items: center;
     gap: var(--guit-ref-spacing-2xsmall);
-    padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-medium);
+    padding: var(--py) var(--px);
     border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
     border-radius: var(--guit-ref-radius-3xsmall);
     background: var(--guit-sem-color-background-neutral-1);
-    margin-top: var(--guit-ref-spacing-medium);
+    margin-top: var(--mt);
 
     &_nested {
         &::before {
