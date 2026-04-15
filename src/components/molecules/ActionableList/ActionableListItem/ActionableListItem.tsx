@@ -107,10 +107,6 @@ interface IActionableListItemProps {
      */
     onToggleCheck?: (checked: boolean) => void;
     /**
-     * Callback when a dragged item is dropped onto this row.
-     */
-    onDropReorder?: (sourceId: string) => void;
-    /**
      * Reports that this row is the current drop target with the given edge.
      */
     onDragTargetChange?: (edge: TDropGapEdge) => void;
@@ -142,7 +138,6 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     expandAriaLabel = "Toggle nested items",
     onToggleExpand,
     onToggleCheck,
-    onDropReorder,
     onDragTargetChange,
     className
 }) => {
@@ -150,12 +145,10 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     const dragHandleRef = useRef<HTMLButtonElement | null>(null);
     const titleTextRef = useRef<HTMLSpanElement | null>(null);
     const previewContainerRef = useRef<HTMLElement | null>(null);
-    const onDropReorderRef = useRef(onDropReorder);
     const onDragTargetChangeRef = useRef(onDragTargetChange);
     const isTruncated = useEllipsisDetection(titleTextRef);
     const [isDragging, setIsDragging] = useState(false);
 
-    onDropReorderRef.current = onDropReorder;
     onDragTargetChangeRef.current = onDragTargetChange;
 
     const computeEdge = (clientY: number): TDropGapEdge => {

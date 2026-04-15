@@ -173,7 +173,6 @@ interface IRenderNodeProps {
     dropGap: IDropGap | null;
     onToggleExpand: (id: string) => void;
     onToggleCheck: (id: string, checked: boolean) => void;
-    onDropReorder: (sourceId: string, targetId: string) => void;
     onDragTargetChange: (targetId: string, edge: TDropGapEdge) => void;
 }
 
@@ -188,7 +187,6 @@ const RenderNode: FC<IRenderNodeProps> = ({
     dropGap,
     onToggleExpand,
     onToggleCheck,
-    onDropReorder,
     onDragTargetChange
 }) => {
     const childCount = item.children?.length || 0;
@@ -227,7 +225,6 @@ const RenderNode: FC<IRenderNodeProps> = ({
                 expandAriaLabel={texts.expandButtonAriaLabel}
                 onToggleExpand={() => onToggleExpand(item.id)}
                 onToggleCheck={(checked) => onToggleCheck(item.id, checked)}
-                onDropReorder={(sourceId) => onDropReorder(sourceId, item.id)}
                 onDragTargetChange={(edge) => onDragTargetChange(item.id, edge)}
             />
 
@@ -247,7 +244,6 @@ const RenderNode: FC<IRenderNodeProps> = ({
                                 dropGap={dropGap}
                                 onToggleExpand={onToggleExpand}
                                 onToggleCheck={onToggleCheck}
-                                onDropReorder={onDropReorder}
                                 onDragTargetChange={onDragTargetChange}
                             />
                         ))}
@@ -478,7 +474,6 @@ const ActionableList: FC<IActionableListProps> = ({
                                             dropGap={dropGap}
                                             onToggleExpand={handleToggleExpand}
                                             onToggleCheck={handleToggleCheck}
-                                            onDropReorder={handleDropReorder}
                                             onDragTargetChange={handleDragTargetChange}
                                         />
                                     ))}
