@@ -7,6 +7,7 @@ import { Magnifier } from "@geneui/icons";
 // Components
 import Divider from "@components/atoms/Divider";
 import Loader from "@components/atoms/Loader";
+import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
@@ -355,23 +356,17 @@ const ActionableList: FC<IActionableListProps> = ({
 
     return (
         <div className={classNames("actionableList", className, { actionableList_hasDropGap: dropGap !== null })}>
-            <TextField
-                label={mergedTexts.searchLabel}
-                placeholder={mergedTexts.searchPlaceholder}
-                value={searchValue}
-                onChange={(event) => handleSearchChange(event.target.value)}
-                IconBefore={Magnifier}
-                className="actionableList__search"
-            />
-
-            {loading && (
-                <div className="actionableList__state actionableList__state_loading">
-                    <Loader text={mergedTexts.loadingTitle} size="xLarge" />
-                </div>
-            )}
-
-            {!loading && (
-                <>
+            <div className="actionableList__headerWrapper">
+                <TextField
+                    label={mergedTexts.searchLabel}
+                    placeholder={mergedTexts.searchPlaceholder}
+                    value={searchValue}
+                    onChange={(event) => handleSearchChange(event.target.value)}
+                    IconBefore={Magnifier}
+                    disabled={loading}
+                    className="actionableList__search"
+                />
+                {!loading && (
                     <div className="actionableList__stats">
                         <Text as="span" variant="bodyMediumMedium" className="actionableList__statsLabel">
                             {mergedTexts.filteredItemsLabel}
@@ -387,56 +382,66 @@ const ActionableList: FC<IActionableListProps> = ({
                             {totalItemsCount}
                         </Text>
                     </div>
-
-                    {!hasData && (
-                        <div className="actionableList__state">
-                            <Empty
-                                size="small"
-                                appearance="noData"
-                                title={mergedTexts.noDataTitle}
-                                description={mergedTexts.noDataDescription}
-                                className="actionableList__empty"
-                            />
-                        </div>
-                    )}
-
-                    {hasData && !hasSearchResults && (
-                        <div className="actionableList__state">
-                            <Empty
-                                size="small"
-                                appearance="noResult"
-                                title={mergedTexts.noResultsTitle}
-                                description={mergedTexts.noResultsDescription}
-                                className="actionableList__empty"
-                            />
-                        </div>
-                    )}
-
-                    {hasData && hasSearchResults && (
-                        <div className="actionableList__list">
-                            <ActionableListNodeWrapper level={1}>
-                                {filteredItems.map((item) => (
-                                    <RenderNode
-                                        key={item.id}
-                                        item={item}
-                                        level={1}
-                                        parentId="root"
-                                        withCheckbox={withCheckbox}
-                                        isDraggable={isDraggable}
-                                        expandedIds={expandedIds}
-                                        texts={mergedTexts}
-                                        dropGap={dropGap}
-                                        onToggleExpand={handleToggleExpand}
-                                        onToggleCheck={handleToggleCheck}
-                                        onDropReorder={handleDropReorder}
-                                        onDragTargetChange={handleDragTargetChange}
-                                    />
-                                ))}
-                            </ActionableListNodeWrapper>
-                        </div>
-                    )}
-                </>
+                )}
+            </div>
+            {loading && (
+                <div className="actionableList__state actionableList__state_loading">
+                    <Loader text={mergedTexts.loadingTitle} size="xLarge" />
+                </div>
             )}
+            <Scrollbar>
+                {!loading && (
+                    <>
+                        {!hasData && (
+                            <div className="actionableList__state">
+                                <Empty
+                                    size="small"
+                                    appearance="noData"
+                                    title={mergedTexts.noDataTitle}
+                                    description={mergedTexts.noDataDescription}
+                                    className="actionableList__empty"
+                                />
+                            </div>
+                        )}
+
+                        {hasData && !hasSearchResults && (
+                            <div className="actionableList__state">
+                                <Empty
+                                    size="small"
+                                    appearance="noResult"
+                                    title={mergedTexts.noResultsTitle}
+                                    description={mergedTexts.noResultsDescription}
+                                    className="actionableList__empty"
+                                />
+                            </div>
+                        )}
+
+                        {hasData && hasSearchResults && (
+                            <div className="actionableList__list">
+                                <ActionableListNodeWrapper level={1}>
+                                    {filteredItems.map((item) => (
+                                        <RenderNode
+                                            key={item.id}
+                                            item={item}
+                                            level={1}
+                                            parentId="root"
+                                            withCheckbox={withCheckbox}
+                                            isDraggable={isDraggable}
+                                            expandedIds={expandedIds}
+                                            texts={mergedTexts}
+                                            dropGap={dropGap}
+                                            onToggleExpand={handleToggleExpand}
+                                            onToggleCheck={handleToggleCheck}
+                                            onDropReorder={handleDropReorder}
+                                            onDragTargetChange={handleDragTargetChange}
+                                        />
+                                    ))}
+                                </ActionableListNodeWrapper>
+                            </div>
+                        )}
+                    </>
+                )}
+            </Scrollbar>
         </div>
     );
 };

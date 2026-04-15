@@ -64,13 +64,7 @@ export default meta;
 type Story = StoryObj<IActionableListProps>;
 
 export const Default: Story = {
-    render: (props) => (
-        <div style={{ maxWidth: 760 }}>
-            <ActionableList {...props} items={ACTIONABLE_LIST_ITEMS} />
-            <div style={{ height: 20 }} />
-            <ActionableList {...props} items={actionableListLongTextData} />
-        </div>
-    )
+    render: (props) => <ActionableList {...props} items={ACTIONABLE_LIST_ITEMS} />
 };
 
 export const AsyncLoading: Story = {
