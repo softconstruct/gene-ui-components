@@ -7,7 +7,7 @@ import { IButtonProps } from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import TableRow from "@components/organisms/DataTable/TableBody/Row/TableRow";
-import { ITableNoDataTexts } from "@components/organisms/DataTable/types";
+import { ITableData, ITableNoDataTexts } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableBody.scss";
@@ -74,7 +74,13 @@ const TableEmptyDataWrapper: FC<ITableEmptyDataWrapperProps> = ({ children }) =>
  * @param props - The properties for the component.
  * @returns The table body element, or a fallback UI (loader/empty state) depending on the data.
  */
-const TableBody = <TData,>({ rows, loading, loadingText, noDataTexts, noDataAvailableActions }: ITableBody<TData>) => {
+const TableBody = <TData extends ITableData>({
+    rows,
+    loading,
+    loadingText,
+    noDataTexts,
+    noDataAvailableActions
+}: ITableBody<TData>) => {
     if (loading) {
         return (
             <TableEmptyDataWrapper>
