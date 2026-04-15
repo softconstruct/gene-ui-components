@@ -36,6 +36,7 @@ const meta: Meta<IActionableListProps> = {
         loading: args({ control: "boolean", ...propCategory.states }),
         onItemsChange: args({ control: "false", action: "onItemsChange", ...propCategory.action }),
         onItemCheck: args({ control: "false", action: "onItemCheck", ...propCategory.action }),
+        onSelectAllChange: args({ control: "false", action: "onSelectAllChange", ...propCategory.action }),
         onSearch: args({ control: "false", action: "onSearch", ...propCategory.action })
     },
     args: {

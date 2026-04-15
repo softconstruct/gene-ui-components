@@ -56,6 +56,34 @@ describe("ActionableList ", () => {
         expect(nextItems[0]).toMatchObject({ id: "leaf-a", title: "Leaf A", checked: true });
     });
 
+    it("calls onSelectAllChange and not onItemCheck when select all is toggled", () => {
+        const onItemCheck = jest.fn();
+        const onSelectAllChange = jest.fn();
+        const wrapper = mount(
+            <ActionableList
+                withCheckbox
+                items={[
+                    { id: "a", title: "A" },
+                    { id: "b", title: "B" }
+                ]}
+                onItemCheck={onItemCheck}
+                onSelectAllChange={onSelectAllChange}
+            />
+        );
+
+        wrapper
+            .find(".actionableList__bulkSelection input[type='checkbox']")
+            .simulate("change", { target: { checked: true } });
+
+        expect(onItemCheck).not.toHaveBeenCalled();
+        expect(onSelectAllChange).toHaveBeenCalledTimes(1);
+        const [checked, items] = onSelectAllChange.mock.calls[0];
+        expect(checked).toBe(true);
+        expect(items).toHaveLength(2);
+        expect(items[0]).toMatchObject({ id: "a", checked: true });
+        expect(items[1]).toMatchObject({ id: "b", checked: true });
+    });
+
     it("shows every ancestor fully checked when only the deepest leaf is checked", () => {
         const items = [
             {

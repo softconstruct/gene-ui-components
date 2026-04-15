@@ -60,7 +60,7 @@ interface IActionableListItem {
      */
     children?: IActionableListItem[];
     /**
-     * When this is a **boolean**, the row is **controlled**: keep `items` in sync via `onItemsChange` / `onItemCheck(item, checked, items)`.
+     * When this is a **boolean**, the row is **controlled**: keep `items` in sync via `onItemsChange`; row toggles use `onItemCheck`, toolbar select all uses `onSelectAllChange`.
      * When **omitted**, the list stores selection internally while you still pass normal `items` (id, title, infoText, children).
      */
     checked?: boolean;
@@ -148,9 +148,14 @@ interface IActionableListProps {
      */
     onItemsChange?: (items: IActionableListItem[]) => void;
     /**
-     * Emits when a checkbox toggles: the row from `items` (after update), branch `checked`, and full `items` tree.
+     * Emits when a **row** checkbox toggles (not the toolbar Select all): the row from `items` (after update),
+     * branch `checked`, and full `items` tree.
      */
     onItemCheck?: (item: IActionableListItem, checked: boolean, items: IActionableListItem[]) => void;
+    /**
+     * Emits when the toolbar **Select all** checkbox is toggled: target `checked` state and full updated `items` tree.
+     */
+    onSelectAllChange?: (checked: boolean, items: IActionableListItem[]) => void;
     /**
      * Emits debounced search value.
      */
@@ -266,6 +271,7 @@ const ActionableList: FC<IActionableListProps> = ({
     texts,
     onItemsChange,
     onItemCheck,
+    onSelectAllChange,
     onSearch
 }) => {
     const mergedTexts = { ...ACTIONABLE_LIST_DEFAULT_TEXTS, ...texts };
@@ -348,6 +354,7 @@ const ActionableList: FC<IActionableListProps> = ({
         if (totalItemsCount === 0) return;
         const nextItems = localItems.map((item) => applyCheckedToBranch(item, checked));
         syncItems(nextItems);
+        onSelectAllChange?.(checked, nextItems);
     };
 
     const handleDropReorder = (sourceId: string, targetId: string) => {
