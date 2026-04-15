@@ -47,7 +47,7 @@ describe("ActionableList ", () => {
             <ActionableList withCheckbox items={[{ id: "leaf-a", title: "Leaf A" }]} onItemCheck={onItemCheck} />
         );
 
-        wrapper.find("input[type='checkbox']").simulate("change", { target: { checked: true } });
+        wrapper.find(".actionableList__list input[type='checkbox']").simulate("change", { target: { checked: true } });
 
         expect(onItemCheck).toHaveBeenCalledTimes(1);
         const [row, checked, nextItems] = onItemCheck.mock.calls[0];
@@ -65,11 +65,11 @@ describe("ActionableList ", () => {
             }
         ];
         const wrapper = mount(<ActionableList items={items} withCheckbox />);
-        const inputs = wrapper.find("input[type='checkbox']");
+        const inputs = wrapper.find(".actionableList__list input[type='checkbox']");
         expect(inputs).toHaveLength(2);
         inputs.at(1).simulate("change", { target: { checked: true } });
         wrapper.update();
-        const after = wrapper.find("input[type='checkbox']");
+        const after = wrapper.find(".actionableList__list input[type='checkbox']");
         expect(after.at(0).prop("checked")).toBe(true);
         expect(after.at(1).prop("checked")).toBe(true);
     });
