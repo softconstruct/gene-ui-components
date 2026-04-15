@@ -1,7 +1,7 @@
 import React from "react";
 import { CellContext } from "@tanstack/react-table";
 
-import { ChevronDown, ChevronRight } from "@geneui/icons";
+import { ChevronDown, ChevronLeft, ChevronRight } from "@geneui/icons";
 
 // Styles
 import "./ExpanderCell.scss";
@@ -18,12 +18,15 @@ import "./ExpanderCell.scss";
  * @returns A table cell element with the rendered content.
  */
 const ExpanderCell = <TData, TValue>({ row }: CellContext<TData, TValue>) => {
+    const isRTLMode = document.dir === "rtl";
+    const ExpanderChevronIcon = isRTLMode ? ChevronLeft : ChevronRight;
+
     const toggleHandler = () => {
         row.toggleExpanded(!row.getIsExpanded());
     };
     return (
-        <button type="button" onClick={toggleHandler}>
-            {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
+        <button type="button" onClick={toggleHandler} className="tableExpander">
+            {row.getIsExpanded() ? <ChevronDown /> : <ExpanderChevronIcon />}
         </button>
     );
 };

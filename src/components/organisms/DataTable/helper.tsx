@@ -1,11 +1,10 @@
 import React, { ReactNode, useRef } from "react";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 
-import { ChevronDown, ChevronRight } from "@geneui/icons";
-
 // Components
 import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
+import ExpanderCell from "@components/organisms/DataTable/TableBody/ExpanderCell/ExpanderCell";
 import { DataTableColumn, ITableData } from "@components/organisms/DataTable/types";
 
 // hooks
@@ -20,17 +19,6 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
                 {value}
             </Text>
         </Tooltip>
-    );
-};
-
-export const ExpanderCell = <TData, TValue>({ row }: CellContext<TData, TValue>) => {
-    const toggleHandler = () => {
-        row.toggleExpanded(!row.getIsExpanded());
-    };
-    return (
-        <button type="button" onClick={toggleHandler}>
-            {row.getIsExpanded() ? <ChevronDown /> : <ChevronRight />}
-        </button>
     );
 };
 
