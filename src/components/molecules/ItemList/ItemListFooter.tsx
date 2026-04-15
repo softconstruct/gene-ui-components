@@ -3,7 +3,7 @@ import React, { FC } from "react";
 // Components
 import Button from "@components/atoms/Button";
 
-interface IAutoCompleteFooterProps {
+interface IItemListFooterProps {
     /**
      * When true, the footer with "Show more" button is visible.
      */
@@ -27,10 +27,10 @@ interface IAutoCompleteFooterProps {
 }
 
 /**
- * Footer for the Autocomplete dropdown. Shown when showMore is true.
+ * Footer for the ItemList. Shown when showMore is true.
  * Contains a "Show more" button aligned to the right.
  */
-const AutoCompleteFooter: FC<IAutoCompleteFooterProps> = ({
+const ItemListFooter: FC<IItemListFooterProps> = ({
     showMore = false,
     onShowMore,
     showMoreLabel = "Show more",
@@ -39,7 +39,7 @@ const AutoCompleteFooter: FC<IAutoCompleteFooterProps> = ({
 }) => {
     return (
         showMore && (
-            <div className="autoComplete__footer">
+            <div className="itemList__footer">
                 <Button
                     appearance="secondary"
                     layout="text"
@@ -55,4 +55,4 @@ const AutoCompleteFooter: FC<IAutoCompleteFooterProps> = ({
     );
 };
 
-export { IAutoCompleteFooterProps, AutoCompleteFooter as default };
+export { IItemListFooterProps, ItemListFooter as default };

@@ -7,24 +7,23 @@ import Loader from "@components/atoms/Loader";
 import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
 import Skeleton from "@components/atoms/Skeleton";
 import Empty from "@components/molecules/Empty";
+import ItemListFooter from "@components/molecules/ItemList/ItemListFooter";
 
 // Styles
-import "./AutoComplete.scss";
+import "./ItemList.scss";
 
-import AutoCompleteFooter from "./AutoCompleteFooter";
-
-interface IAutoCompleteProps {
+interface IItemListProps {
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
     /**
-     * The content of the autocomplete list. These should be `AutoCompleteItem` components.
+     * The content of the item list. These should be `ItemListItem` components.
      */
     children: ReactElement | ReactElement[];
     /**
-     * Indicates whether the autocomplete is in a loading state.
+     * Indicates whether the list is in a loading state.
      * If true, a loading indicator is displayed instead of the items.
      */
     loading?: boolean;
@@ -63,10 +62,10 @@ interface IAutoCompleteProps {
 const ESTIMATED_ROW_HEIGHT_PX = 32;
 
 /**
- * AutoComplete is a reusable list container that renders virtualized items with loading, empty, and "show more" states.
+ * ItemList is a reusable list container that renders virtualized items with loading, empty, and "show more" states.
  * It is designed to fill its parent dimensions and can be composed inside any layout, popover, or panel.
  */
-const AutoComplete: FC<IAutoCompleteProps> = ({
+const ItemList: FC<IItemListProps> = ({
     className,
     children,
     loading,
@@ -103,8 +102,8 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
 
     if (loading) {
         return (
-            <div className={classNames("autoComplete", className)}>
-                <div className="autoComplete__state autoComplete__loader">
+            <div className={classNames("itemList", className)}>
+                <div className="itemList__state itemList__loader">
                     <Loader text={loadingText} textPosition="below" />
                 </div>
             </div>
@@ -113,8 +112,8 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
 
     if (!hasChildren) {
         return (
-            <div className={classNames("autoComplete", className)}>
-                <div className="autoComplete__state autoComplete__empty">
+            <div className={classNames("itemList", className)}>
+                <div className="itemList__state itemList__empty">
                     <Empty description={emptyText} appearance="noResult" size="small" />
                 </div>
             </div>
@@ -122,53 +121,55 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
     }
 
     return (
-        <div className={classNames("autoComplete", className)}>
-            <Scrollbar ref={scrollbarRef}>
-                <div className="autoComplete__content" style={{ height: virtualizer.getTotalSize() }}>
-                    <div className="autoComplete__virtualContainer">
-                        {virtualizer.getVirtualItems().map((row) => {
-                            if (shouldRenderShowMoreSkeleton && row.index === childrenArray.length) {
-                                return (
-                                    <div
-                                        className="autoComplete__virtualRow"
-                                        key="autoComplete-showMore-skeleton-row"
-                                        data-index={row.index}
-                                        style={{ transform: `translateY(${row.start}px)` }}
-                                    >
-                                        <div className="autoComplete__skeletonRow" aria-hidden="true">
-                                            <Skeleton
-                                                className="autoComplete__skeletonItem"
-                                                height={16}
-                                                rounded="rounded4X"
-                                            />
+        <div className={classNames("itemList", className)}>
+            <div className="itemList__scrollWrapper">
+                <Scrollbar ref={scrollbarRef}>
+                    <div className="itemList__content" style={{ height: virtualizer.getTotalSize() }}>
+                        <div className="itemList__virtualContainer">
+                            {virtualizer.getVirtualItems().map((row) => {
+                                if (shouldRenderShowMoreSkeleton && row.index === childrenArray.length) {
+                                    return (
+                                        <div
+                                            className="itemList__virtualRow"
+                                            key="itemList-showMore-skeleton-row"
+                                            data-index={row.index}
+                                            style={{ transform: `translateY(${row.start}px)` }}
+                                        >
+                                            <div className="itemList__skeletonRow" aria-hidden="true">
+                                                <Skeleton
+                                                    className="itemList__skeletonItem"
+                                                    height={16}
+                                                    rounded="rounded4X"
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            }
+                                    );
+                                }
 
-                            const item = childrenArray[row.index];
-                            return (
-                                item && (
-                                    <div
-                                        className="autoComplete__virtualRow"
-                                        key={
-                                            item.key ??
-                                            (item.props as { id?: string | number }).id ??
-                                            `autoComplete-item-${row.index}`
-                                        }
-                                        data-index={row.index}
-                                        style={{ transform: `translateY(${row.start}px)` }}
-                                    >
-                                        {item}
-                                    </div>
-                                )
-                            );
-                        })}
+                                const item = childrenArray[row.index];
+                                return (
+                                    item && (
+                                        <div
+                                            className="itemList__virtualRow"
+                                            key={
+                                                item.key ??
+                                                (item.props as { id?: string | number }).id ??
+                                                `itemList-item-${row.index}`
+                                            }
+                                            data-index={row.index}
+                                            style={{ transform: `translateY(${row.start}px)` }}
+                                        >
+                                            {item}
+                                        </div>
+                                    )
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
-            </Scrollbar>
+                </Scrollbar>
+            </div>
             {showMore && (
-                <AutoCompleteFooter
+                <ItemListFooter
                     showMore={showMore}
                     onShowMore={onShowMore}
                     showMoreLabel={showMoreLabel}
@@ -180,4 +181,4 @@ const AutoComplete: FC<IAutoCompleteProps> = ({
     );
 };
 
-export { IAutoCompleteProps, AutoComplete as default };
+export { IItemListProps, ItemList as default };
