@@ -1,7 +1,6 @@
 import React, { FC, ReactNode } from "react";
 import { Row } from "@tanstack/table-core";
 
-// Types
 // Components
 import { IButtonProps } from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";

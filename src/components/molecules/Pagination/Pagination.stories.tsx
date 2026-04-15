@@ -10,7 +10,8 @@ const meta: Meta<IPaginationProps> = {
     title: "Molecules/Pagination",
     component: Pagination,
     argTypes: {
-        current: args({ control: "text", ...propCategory.content }),
+        current: args({ control: "number", ...propCategory.content }),
+        defaultCurrent: args({ control: "number", ...propCategory.content }),
         rowsPerPageOptions: args({ control: "array", ...propCategory.content }),
         totalPages: args({ control: "number", ...propCategory.content }),
         totalItems: args({ control: "number", ...propCategory.content }),
