@@ -1,6 +1,6 @@
 import { reorder } from "@atlaskit/pragmatic-drag-and-drop/reorder";
 
-import type { IActionableListItem, IActionableListTexts } from "./ActionableList";
+import type { IActionableListItem, IActionableListTexts } from "./ActionableList.types";
 import type { TActionableListLevel } from "./ActionableListNodeWrapper/ActionableListNodeWrapper";
 
 export const ACTIONABLE_LIST_MAX_NESTED_LEVEL: TActionableListLevel = 5;
