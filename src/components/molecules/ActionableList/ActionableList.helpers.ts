@@ -9,6 +9,7 @@ export const ACTIONABLE_LIST_SEARCH_DEBOUNCE_MS = 300;
 export const ACTIONABLE_LIST_DEFAULT_TEXTS: IActionableListTexts = {
     searchLabel: "Label",
     searchPlaceholder: "Search",
+    bulkSelectedItemsLabel: "Selected items",
     filteredItemsLabel: "Filtered items",
     totalItemsLabel: "Total items",
     selectedItemsLabel: "Selected",
@@ -75,6 +76,12 @@ export const mergeItemsFromProps = (
 
 export const countAllItems = (items: IActionableListItem[]): number =>
     items.reduce((acc, item) => acc + 1 + countAllItems(item.children || []), 0);
+
+export const countCheckedItems = (items: IActionableListItem[]): number =>
+    items.reduce((acc, item) => {
+        const childCount = item.children?.length ? countCheckedItems(item.children) : 0;
+        return acc + (item.checked ? 1 : 0) + childCount;
+    }, 0);
 
 export const findItemById = (nodes: IActionableListItem[], targetId: string): IActionableListItem | undefined => {
     const direct = nodes.find((node) => node.id === targetId);

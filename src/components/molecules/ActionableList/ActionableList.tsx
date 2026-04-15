@@ -9,6 +9,7 @@ import Divider from "@components/atoms/Divider";
 import Loader from "@components/atoms/Loader";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
+import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
 
@@ -24,6 +25,7 @@ import {
     ACTIONABLE_LIST_SEARCH_DEBOUNCE_MS,
     applyCheckedToBranch,
     countAllItems,
+    countCheckedItems,
     filterTree,
     findItemById,
     getExpandedIdsFromItems,
@@ -73,6 +75,10 @@ interface IActionableListTexts {
      * Search input placeholder.
      */
     searchPlaceholder: string;
+    /**
+     * Label before the bulk "selected items" count (toolbar row).
+     */
+    bulkSelectedItemsLabel: string;
     /**
      * Label for filtered items count.
      */
@@ -314,6 +320,10 @@ const ActionableList: FC<IActionableListProps> = ({
     const filteredItems = useMemo(() => filterTree(localItems, searchValue), [localItems, searchValue]);
     const totalItemsCount = useMemo(() => countAllItems(localItems), [localItems]);
     const filteredItemsCount = useMemo(() => countAllItems(filteredItems), [filteredItems]);
+    const selectedItemsCount = useMemo(() => countCheckedItems(localItems), [localItems]);
+
+    const selectAllChecked = totalItemsCount > 0 && localItems.every((item) => isSubtreeFullySelected(item));
+    const selectAllIndeterminate = !selectAllChecked && localItems.some((item) => isAnySelectionInSubtree(item));
 
     const handleToggleExpand = (id: string) => {
         setExpandedIds((prev) => {
@@ -336,6 +346,12 @@ const ActionableList: FC<IActionableListProps> = ({
         if (toggled !== undefined) {
             onItemCheck?.(toggled, checked, nextItems);
         }
+    };
+
+    const handleSelectAll = (checked: boolean) => {
+        if (totalItemsCount === 0) return;
+        const nextItems = localItems.map((item) => applyCheckedToBranch(item, checked));
+        syncItems(nextItems);
     };
 
     const handleDropReorder = (sourceId: string, targetId: string) => {
@@ -365,28 +381,58 @@ const ActionableList: FC<IActionableListProps> = ({
                     IconBefore={Magnifier}
                     disabled={loading}
                     className="actionableList__search"
+                    clearable
+                    onClear={() => handleSearchChange("")}
                 />
                 {!loading && (
-                    <div className="actionableList__stats">
-                        <Text as="span" variant="bodyMediumMedium" className="actionableList__statsLabel">
-                            {mergedTexts.filteredItemsLabel}
-                        </Text>
-                        <Text as="span" variant="bodyMediumMedium" className="actionableList__statsCount">
-                            {filteredItemsCount}
-                        </Text>
-                        <Divider direction="vertical" className="actionableList__statsDivider" />
-                        <Text as="span" variant="bodyMediumMedium" className="actionableList__statsLabel">
-                            {mergedTexts.totalItemsLabel}
-                        </Text>
-                        <Text as="span" variant="bodyMediumMedium" className="actionableList__statsCount">
-                            {totalItemsCount}
-                        </Text>
+                    <div className="actionableList__statsRow">
+                        {withCheckbox && (
+                            <div className="actionableList__bulkSelection">
+                                <Checkbox
+                                    checked={selectAllChecked}
+                                    indeterminate={selectAllIndeterminate}
+                                    disabled={totalItemsCount === 0}
+                                    onChange={(event) => handleSelectAll(event.target.checked)}
+                                    label="Select all items"
+                                    className="actionableList__selectAll"
+                                />
+                                <Text
+                                    as="span"
+                                    variant="bodyMediumMedium"
+                                    className="actionableList__bulkSelectedLabel"
+                                >
+                                    {mergedTexts.bulkSelectedItemsLabel}
+                                </Text>
+                                <Text
+                                    as="span"
+                                    variant="bodyMediumMedium"
+                                    className="actionableList__bulkSelectedCount"
+                                >
+                                    {selectedItemsCount}
+                                </Text>
+                            </div>
+                        )}
+                        <div className="actionableList__stats">
+                            <Text as="span" variant="bodyMediumMedium" className="actionableList__statsLabel">
+                                {mergedTexts.filteredItemsLabel}
+                            </Text>
+                            <Text as="span" variant="bodyMediumMedium" className="actionableList__statsCount">
+                                {filteredItemsCount}
+                            </Text>
+                            <Divider direction="vertical" className="actionableList__statsDivider" />
+                            <Text as="span" variant="bodyMediumMedium" className="actionableList__statsLabel">
+                                {mergedTexts.totalItemsLabel}
+                            </Text>
+                            <Text as="span" variant="bodyMediumMedium" className="actionableList__statsCount">
+                                {totalItemsCount}
+                            </Text>
+                        </div>
                     </div>
                 )}
             </div>
             {loading && (
                 <div className="actionableList__state actionableList__state_loading">
-                    <Loader text={mergedTexts.loadingTitle} size="xLarge" />
+                    <Loader text={mergedTexts.loadingTitle} size="xLarge" textPosition="below" />
                 </div>
             )}
             <Scrollbar>

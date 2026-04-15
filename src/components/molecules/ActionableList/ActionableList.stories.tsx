@@ -4,7 +4,7 @@ import { Meta, StoryObj } from "@storybook/react";
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Data
-import { ACTIONABLE_LIST_ITEMS, actionableListLongTextData } from "../../../../stories/data/__actionableList";
+import { ACTIONABLE_LIST_ITEMS } from "../../../../stories/data/__actionableList";
 // Components
 import ActionableList, { IActionableListProps } from "./index";
 
@@ -46,6 +46,7 @@ const meta: Meta<IActionableListProps> = {
         texts: {
             searchLabel: "Label",
             searchPlaceholder: "Search",
+            bulkSelectedItemsLabel: "Selected items",
             filteredItemsLabel: "Filtered items",
             totalItemsLabel: "Total items",
             selectedItemsLabel: "Selected",
@@ -82,20 +83,4 @@ export const EmptyStates: Story = {
         items: []
     },
     render: (props) => <ActionableList {...props} />
-};
-
-/** Same shape as app data: `id`, `title`, `infoText`, `children` only — selection is internal unless you set `checked` on nodes. */
-export const PlainDataShape: Story = {
-    name: "Plain data (no checked fields)",
-    args: {
-        ...meta.args,
-        items: actionableListLongTextData,
-        withCheckbox: true,
-        draggable: true
-    },
-    render: (props) => (
-        <div style={{ maxWidth: 760 }}>
-            <ActionableList {...props} />
-        </div>
-    )
 };
