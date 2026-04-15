@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 
 // Styles
-import "./TableRow.scss";
+import "./TableExpandedRow.scss";
 
 /**
  * Props for the {@link TableExpandedRow} component.
@@ -20,8 +20,8 @@ interface ITableExpandedRowProps {
  */
 const TableExpandedRow = ({ colspan, children }: ITableExpandedRowProps) => {
     return (
-        <tr className="tableRow">
-            <td colSpan={colspan} className="tableBodyCell">
+        <tr className="tableExpandedRow">
+            <td colSpan={colspan} className="tableExpandedCell">
                 {children}
             </td>
         </tr>
