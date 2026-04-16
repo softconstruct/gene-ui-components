@@ -1,5 +1,6 @@
 import React from "react";
 import { CellContext } from "@tanstack/react-table";
+import classNames from "classnames";
 
 import { ChevronDown, ChevronLeft, ChevronRight } from "@geneui/icons";
 
@@ -21,25 +22,24 @@ const ExpanderCell = <TData, TValue>({ row }: CellContext<TData, TValue>) => {
     const isRTLMode = document.dir === "rtl";
     const ExpanderChevronIcon = isRTLMode ? ChevronLeft : ChevronRight;
 
+    const isPinned = row.getIsPinned();
+    const isExpanded = row.getIsExpanded();
+    const isSelected = row.getIsSelected?.() ?? false;
+
     const toggleHandler = () => {
-        row.toggleExpanded(!row.getIsExpanded());
+        row.toggleExpanded(!isExpanded);
     };
     return (
         <button
             type="button"
             onClick={toggleHandler}
-            className="tableExpander tableExpander_color_red tableExpander_pinned"
+            className={classNames("tableExpander", {
+                tableExpander_pinned: isPinned,
+                tableExpander_color_highlighted: isExpanded,
+                tableExpander_selected: isSelected
+            })}
         >
-            {/*
-            STATES
-            tableExpander_color_zebra
-            tableExpander_color_red
-            tableExpander_color_green
-            tableExpander_color_highlighted
-            tableExpander_selected
-            tableExpander_pinned
-            */}
-            {row.getIsExpanded() ? <ChevronDown /> : <ExpanderChevronIcon />}
+            {isExpanded ? <ChevronDown /> : <ExpanderChevronIcon />}
         </button>
     );
 };
