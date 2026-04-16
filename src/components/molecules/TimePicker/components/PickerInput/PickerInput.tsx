@@ -1,4 +1,4 @@
-import React, { FC, HTMLAttributes, ReactNode } from "react";
+import React, { ChangeEvent, FC, HTMLAttributes, ReactNode } from "react";
 import { InputMask } from "@react-input/mask";
 import classNames from "classnames";
 
@@ -106,7 +106,7 @@ interface IPickerInputBaseProps {
     /**
      * Callback function which triggers when user changes the value of the input.
      */
-    onChange?: () => void;
+    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     /**
      * Callback function which triggers when the field value is getting cleared with the clear button.
      */
@@ -211,7 +211,7 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
     onClick,
     onChange,
     onFocus,
-    mask,
+    mask = "__:__:__",
     popoverRefData
 }) => {
     const shouldShowClearableIcon = onClear && value && !disabled && !readOnly;

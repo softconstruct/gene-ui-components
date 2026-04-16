@@ -15,12 +15,24 @@ interface IPickerPopoverProps {
     position?: string;
     mobileHeightMode?: "fit" | "full";
     size?: "small" | "medium" | "large";
-    ref?: Ref<IPopoverRef>;
+    popoverRef?: Ref<IPopoverRef>;
     setProps: Dispatch<SetStateAction<Record<string, unknown>>>;
+    onSelect?: (column: string, val: string) => void;
+    parts?: any;
 }
 
-const PickerPopover: FC<IPickerPopoverProps> = ({ ref, open, setProps, onClose, size, position, mobileHeightMode }) => {
-    const is12Hour = false;
+const PickerPopover: FC<IPickerPopoverProps> = ({
+    popoverRef,
+    open,
+    setProps,
+    onClose,
+    size,
+    position,
+    onSelect,
+    mobileHeightMode,
+    parts
+}) => {
+    const is12Hour = true;
     const hours = useMemo(() => (is12Hour ? HOURS_12 : HOURS_24), [is12Hour, HOURS_12, HOURS_24]);
 
     const timeColumns = useMemo(
@@ -39,7 +51,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({ ref, open, setProps, onClose, 
             position={position}
             setProps={setProps}
             onClose={onClose}
-            ref={ref}
+            ref={popoverRef}
             mobileHeightMode={mobileHeightMode}
             withArrow={false}
         >
@@ -65,9 +77,9 @@ const PickerPopover: FC<IPickerPopoverProps> = ({ ref, open, setProps, onClose, 
                                         {data.map((item) => (
                                             <PickerButton
                                                 key={item}
-                                                // selected={active === item}
+                                                selected={parts[header] === item}
                                                 // disabled={isTimeDisabled(`${item}:00:00`)}
-                                                // onClick={() => setActive(item)}
+                                                onClick={() => onSelect?.(header, item)}
                                                 className={classNames(
                                                     "timePicker__pickerButton",
                                                     `timePicker__pickerButton_size_${size}`
@@ -89,8 +101,8 @@ const PickerPopover: FC<IPickerPopoverProps> = ({ ref, open, setProps, onClose, 
                             aria-label="Select AM/PM"
                         >
                             <PickerButton
-                                // active={selectedTime[activeField]?.meridiem === "AM"}
-                                // onClick={() => handleTimeSelect("AM", "meridiem")}
+                                selected={parts.meridiem === "AM"}
+                                onClick={() => onSelect?.("meridiem", "AM")}
                                 size={size}
                                 className={classNames(
                                     "timePicker__pickerButton",
@@ -100,8 +112,8 @@ const PickerPopover: FC<IPickerPopoverProps> = ({ ref, open, setProps, onClose, 
                                 AM
                             </PickerButton>
                             <PickerButton
-                                // active={selectedTime[activeField]?.meridiem === "PM"}
-                                // onClick={() => handleTimeSelect("PM", "meridiem")}
+                                selected={parts.meridiem === "PM"}
+                                onClick={() => onSelect?.("meridiem", "PM")}
                                 size={size}
                                 className={classNames(
                                     "timePicker__pickerButton",
