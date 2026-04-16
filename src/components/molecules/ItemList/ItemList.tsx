@@ -61,6 +61,9 @@ interface IItemListProps {
 
 const ESTIMATED_ROW_HEIGHT_PX = 32;
 
+const getItemKey = (item: ReactElement, index: number) =>
+    item.key ?? (item.props as { id?: string | number }).id ?? `itemList-item-${index}`;
+
 /**
  * ItemList is a reusable list container that renders virtualized items with loading, empty, and "show more" states.
  * It is designed to fill its parent dimensions and can be composed inside any layout, popover, or panel.
@@ -124,49 +127,46 @@ const ItemList: FC<IItemListProps> = ({
         <div className={classNames("itemList", className)}>
             <div className="itemList__scrollWrapper">
                 <Scrollbar ref={scrollbarRef}>
-                    <div className="itemList__content" style={{ height: virtualizer.getTotalSize() }}>
-                        <div className="itemList__virtualContainer">
-                            {virtualizer.getVirtualItems().map((row) => {
-                                if (shouldRenderShowMoreSkeleton && row.index === childrenArray.length) {
-                                    return (
-                                        <div
-                                            className="itemList__virtualRow"
-                                            key="itemList-showMore-skeleton-row"
-                                            data-index={row.index}
-                                            style={{ transform: `translateY(${row.start}px)` }}
-                                        >
-                                            <div className="itemList__skeletonRow" aria-hidden="true">
-                                                <Skeleton
-                                                    className="itemList__skeletonItem"
-                                                    height={16}
-                                                    rounded="rounded4X"
-                                                />
-                                            </div>
-                                        </div>
-                                    );
-                                }
-
-                                const item = childrenArray[row.index];
+                    <ul
+                        className="itemList__content itemList__virtualContainer"
+                        style={{ height: virtualizer.getTotalSize() }}
+                    >
+                        {virtualizer.getVirtualItems().map((row) => {
+                            if (shouldRenderShowMoreSkeleton && row.index === childrenArray.length) {
                                 return (
-                                    item && (
-                                        <div
-                                            className="itemList__virtualRow"
-                                            key={
-                                                item.key ??
-                                                (item.props as { id?: string | number }).id ??
-                                                `itemList-item-${row.index}`
-                                            }
-                                            ref={virtualizer.measureElement}
-                                            data-index={row.index}
-                                            style={{ transform: `translateY(${row.start}px)` }}
-                                        >
-                                            {item}
+                                    <li
+                                        className="itemList__virtualRow"
+                                        key="itemList-showMore-skeleton-row"
+                                        data-index={row.index}
+                                        style={{ transform: `translateY(${row.start}px)` }}
+                                    >
+                                        <div className="itemList__skeletonRow" aria-hidden="true">
+                                            <Skeleton
+                                                className="itemList__skeletonItem"
+                                                height={16}
+                                                rounded="rounded4X"
+                                            />
                                         </div>
-                                    )
+                                    </li>
                                 );
-                            })}
-                        </div>
-                    </div>
+                            }
+
+                            const item = childrenArray[row.index];
+                            return (
+                                item && (
+                                    <li
+                                        className="itemList__virtualRow"
+                                        key={getItemKey(item, row.index)}
+                                        ref={virtualizer.measureElement}
+                                        data-index={row.index}
+                                        style={{ transform: `translateY(${row.start}px)` }}
+                                    >
+                                        {item}
+                                    </li>
+                                )
+                            );
+                        })}
+                    </ul>
                 </Scrollbar>
             </div>
             {showMore && (

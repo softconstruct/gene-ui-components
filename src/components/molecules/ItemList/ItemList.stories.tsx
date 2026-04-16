@@ -3,12 +3,14 @@ import { Meta, StoryObj } from "@storybook/react";
 
 import { Globe, Magnifier, RecycleBin, ThreeDotsHorizontal } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
+import ItemList, { IItemListProps } from "@components/molecules/ItemList";
+import ItemListItem from "@components/molecules/ItemList/ItemListItem";
 
+// Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import ItemList, { IItemListProps } from "./index";
-import ItemListItem from "./ItemListItem";
 
 const meta: Meta<IItemListProps> = {
     title: "Molecules/ItemList",
@@ -59,7 +61,7 @@ const PAGE_SIZE = 5;
 
 const StoryComponent: FC<IItemListProps> = (props) => {
     return (
-        <div style={{ height: "300px", width: "28rem" }}>
+        <div style={{ height: "300px", width: "26.6rem" }}>
             <ItemList {...props}>
                 {items.map((item) => (
                     <ItemListItem key={item} id={item}>
@@ -96,7 +98,7 @@ const WithFooterStoryComponent: FC<IItemListProps> = (props) => {
     }, [isShowMoreDisabled, isShowMoreLoading]);
 
     return (
-        <div style={{ height: "300px", width: "28rem" }}>
+        <div style={{ height: "300px", width: "26.6rem" }}>
             <ItemList
                 {...props}
                 showMore
@@ -123,7 +125,7 @@ export const WithFooter: Story = {
 
 const NoResultStoryComponent: FC<IItemListProps> = (props) => {
     return (
-        <div style={{ height: "300px", width: "28rem" }}>
+        <div style={{ height: "300px", width: "26.6rem" }}>
             <ItemList {...props}>{[]}</ItemList>
         </div>
     );
@@ -183,46 +185,11 @@ const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
             helper: "Helper Text",
             updated: "04/10/2023",
             disabled: false
-        },
-        {
-            id: "row-8",
-            title: "1241 Title",
-            helper: "Helper Text",
-            updated: "04/11/2023",
-            disabled: false
-        },
-        {
-            id: "row-9",
-            title: "1242 Title",
-            helper: "Helper Text",
-            updated: "04/12/2023",
-            disabled: false
-        },
-        {
-            id: "row-10",
-            title: "1243 Title",
-            helper: "Helper Text",
-            updated: "04/13/2023",
-            disabled: false
-        },
-        {
-            id: "row-11",
-            title: "1244 Title",
-            helper: "Helper Text",
-            updated: "04/14/2023",
-            disabled: false
-        },
-        {
-            id: "row-12",
-            title: "1245 Title",
-            helper: "Helper Text",
-            updated: "04/15/2023",
-            disabled: true
         }
     ];
 
     return (
-        <div style={{ height: "300px", width: "28rem" }}>
+        <div style={{ height: "300px", width: "26.6rem" }}>
             <ItemList {...props}>
                 {complexItems.map((item) => (
                     <ItemListItem key={item.id} id={item.id} disabled={item.disabled}>

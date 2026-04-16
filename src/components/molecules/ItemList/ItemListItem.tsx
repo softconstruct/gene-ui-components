@@ -70,7 +70,6 @@ const ItemListItem: FC<IItemListItemProps> = ({ id, children, disabled, onClick,
             })}
             onClick={onClick}
             disabled={disabled}
-            {...(disabled ? { tabIndex: -1 } : {})}
             data-id={id}
         >
             <span className="ellipsis-text">{children}</span>

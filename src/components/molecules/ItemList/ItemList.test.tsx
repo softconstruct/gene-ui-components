@@ -4,10 +4,8 @@ import { mount, ReactWrapper } from "enzyme";
 // Components
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
-
-import GeneUIProvider from "../../providers/GeneUIProvider";
-import ItemList, { IItemListProps } from "./index";
-import ItemListItem from "./ItemListItem";
+import ItemList, { IItemListProps } from "@components/molecules/ItemList";
+import ItemListItem from "@components/molecules/ItemList/ItemListItem";
 
 describe("ItemList ", () => {
     let setup: ReactWrapper<IItemListProps>;
@@ -25,15 +23,10 @@ describe("ItemList ", () => {
     );
 
     beforeEach(() => {
-        setup = mount(Component, { wrappingComponent: GeneUIProvider });
+        setup = mount(Component);
     });
 
-    const provider = () =>
-        setup.getWrappingComponent().setProps({
-            children: Component
-        });
-
-    const showMoreButton = () => provider().find(".itemList__footer").find("button").first();
+    const showMoreButton = () => setup.find(".itemList__footer").find("button").first();
 
     afterEach(() => {
         setup.unmount();
@@ -45,32 +38,32 @@ describe("ItemList ", () => {
 
     it("renders loading state correctly", () => {
         setup.setProps({ loading: true, loadingText: "Loading data..." });
-        expect(provider().find(Loader).exists()).toBeTruthy();
+        expect(setup.find(Loader).exists()).toBeTruthy();
     });
 
     it("renders custom loading text", () => {
         setup.setProps({ loading: true, loadingText: "Loading custom..." });
-        expect(provider().text()).toContain("Loading custom...");
+        expect(setup.text()).toContain("Loading custom...");
     });
 
     it("renders empty state when there are no children", () => {
         setup.setProps({ children: [] as unknown as React.ReactElement[] });
-        expect(provider().find(Empty).exists()).toBeTruthy();
+        expect(setup.find(Empty).exists()).toBeTruthy();
     });
 
     it("renders custom empty text", () => {
         setup.setProps({ emptyText: "Nothing found", children: [] as unknown as React.ReactElement[] });
-        expect(provider().text()).toContain("Nothing found");
+        expect(setup.text()).toContain("Nothing found");
     });
 
     it("renders footer when showMore is true", () => {
         setup.setProps({ showMore: true });
-        expect(provider().find(".itemList__footer").exists()).toBeTruthy();
+        expect(setup.find(".itemList__footer").exists()).toBeTruthy();
     });
 
     it("does not render footer when showMore is false", () => {
         setup.setProps({ showMore: false });
-        expect(provider().find(".itemList__footer").exists()).toBeFalsy();
+        expect(setup.find(".itemList__footer").exists()).toBeFalsy();
     });
 
     it("disables showMore button when showMoreDisabled is true", () => {
@@ -80,12 +73,12 @@ describe("ItemList ", () => {
 
     it("hides footer when loading is true", () => {
         setup.setProps({ showMore: true, loading: true });
-        expect(provider().find(".itemList__footer").exists()).toBeFalsy();
+        expect(setup.find(".itemList__footer").exists()).toBeFalsy();
     });
 
     it("hides footer when there are no children", () => {
         setup.setProps({ showMore: true, children: [] as unknown as React.ReactElement[] });
-        expect(provider().find(".itemList__footer").exists()).toBeFalsy();
+        expect(setup.find(".itemList__footer").exists()).toBeFalsy();
     });
 
     it("shows loading state on showMore button when showMoreLoading is true", () => {
@@ -124,7 +117,7 @@ describe("ItemList ", () => {
             children: [] as unknown as React.ReactElement[]
         });
 
-        expect(provider().find(".itemList__skeletonRow")).toHaveLength(0);
+        expect(setup.find(".itemList__skeletonRow")).toHaveLength(0);
     });
 
     it("renders virtualized list container when provided items", () => {
@@ -132,13 +125,14 @@ describe("ItemList ", () => {
             children: renderItems(2)
         });
 
-        expect(provider().find(".itemList__virtualContainer").exists()).toBeTruthy();
-        expect(provider().find(Empty).exists()).toBeFalsy();
+        expect(setup.find(".itemList__virtualContainer").exists()).toBeTruthy();
+        expect(setup.find(".itemList__virtualContainer").first().type()).toEqual("ul");
+        expect(setup.find(Empty).exists()).toBeFalsy();
     });
 
     it("renders virtualized container and does not render empty state when items exist", () => {
         setup.setProps({ children: renderItems(5) });
-        expect(provider().find(".itemList__virtualContainer").exists()).toBeTruthy();
-        expect(provider().find(Empty).exists()).toBeFalsy();
+        expect(setup.find(".itemList__virtualContainer").exists()).toBeTruthy();
+        expect(setup.find(Empty).exists()).toBeFalsy();
     });
 });

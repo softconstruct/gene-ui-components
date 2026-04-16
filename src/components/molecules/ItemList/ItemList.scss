@@ -27,6 +27,8 @@
     &__content {
         width: 100%;
         padding: var(--guit-ref-spacing-3xsmall);
+        margin: 0;
+        list-style: none;
     }
 
     &__virtualContainer {
