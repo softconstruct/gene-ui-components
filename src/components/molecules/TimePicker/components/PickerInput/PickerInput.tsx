@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC, HTMLAttributes, ReactNode } from "react";
 import { InputMask } from "@react-input/mask";
 import classNames from "classnames";
 
@@ -59,6 +59,10 @@ interface IPickerShellProps {
      * Condition when the clear button should be visible.
      */
     shouldShowClearableIcon?: boolean;
+    /**
+     * Reference data of popover, used for positioning the popover accordingly to input field.
+     */
+    popoverRefData?: HTMLAttributes<HTMLDivElement>;
 }
 
 interface IPickerInputBaseProps {
@@ -111,31 +115,35 @@ interface IPickerInputBaseProps {
      * Callback function which triggers when the field is getting clicked.
      */
     onClick?: () => void;
+    /**
+     * Reference data of popover, used for positioning the popover accordingly to input field.
+     */
+    popoverRefData?: HTMLAttributes<HTMLDivElement>;
 }
 
 interface ISinglePickerInputProps extends IPickerInputBaseProps {
     /**
      * Placeholder value of single input picker.
      */
-    placeholder: string;
+    placeholder?: string;
     /**
      * The value of single input picker.
      */
-    value: string | null;
+    value?: string | null;
 }
 
 interface IRangePickerInputProps extends IPickerInputBaseProps {
     /**
      * Placeholder values of range input picker.
      */
-    placeholder: {
+    placeholder?: {
         start?: string;
         end?: string;
     };
     /**
      * The values of the range input picker.
      */
-    value: {
+    value?: {
         start?: string | null;
         end?: string | null;
     };
@@ -152,7 +160,8 @@ const PickerShell: FC<IPickerShellProps> = ({
     readOnly,
     EndIcon,
     handleClear,
-    shouldShowClearableIcon
+    shouldShowClearableIcon,
+    popoverRefData
 }) => {
     const shouldShowIconAppends = shouldShowClearableIcon || EndIcon;
     return (
@@ -163,6 +172,7 @@ const PickerShell: FC<IPickerShellProps> = ({
                 pickerInput_state_readOnly: readOnly,
                 [`pickerInput_size_${size}`]: size
             })}
+            {...popoverRefData}
         >
             {children}
             {shouldShowIconAppends && (
@@ -201,7 +211,8 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
     onClick,
     onChange,
     onFocus,
-    mask
+    mask,
+    popoverRefData
 }) => {
     const shouldShowClearableIcon = onClear && value && !disabled && !readOnly;
     return (
@@ -216,6 +227,7 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
             errorMessage={errorMessage}
             handleClear={onClear}
             shouldShowClearableIcon={!!shouldShowClearableIcon}
+            popoverRefData={popoverRefData}
         >
             <InputMask
                 mask={mask}
@@ -252,9 +264,10 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
     mask,
     onClick,
     onFocus,
-    onChange
+    onChange,
+    popoverRefData
 }) => {
-    const shouldShowClearableIcon = onClear && (value.start || value.end) && !disabled && !readOnly;
+    const shouldShowClearableIcon = onClear && (value?.start || value?.end) && !disabled && !readOnly;
     return (
         <PickerShell
             error={error}
@@ -267,6 +280,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
             errorMessage={errorMessage}
             handleClear={onClear}
             shouldShowClearableIcon={!!shouldShowClearableIcon}
+            popoverRefData={popoverRefData}
         >
             <InputMask
                 mask={mask}
@@ -275,9 +289,9 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
                     [`pickerInput__input_size_${size}`]: size
                 })}
                 showMask={false}
-                placeholder={placeholder.start}
+                placeholder={placeholder?.start}
                 autoComplete="off"
-                value={value.start ?? ""}
+                value={value?.start ?? ""}
                 disabled={disabled}
                 readOnly={readOnly}
                 separate
@@ -293,9 +307,9 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
                     [`pickerInput__input_size_${size}`]: size
                 })}
                 showMask={false}
-                placeholder={placeholder.end}
+                placeholder={placeholder?.end}
                 autoComplete="off"
-                value={value.end ?? ""}
+                value={value?.end ?? ""}
                 disabled={disabled}
                 readOnly={readOnly}
                 separate
