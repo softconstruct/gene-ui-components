@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, HTMLAttributes, ReactNode } from "react";
+import React, { ChangeEvent, FC, HTMLAttributes, ReactNode, SyntheticEvent } from "react";
 import { InputMask } from "@react-input/mask";
 import classNames from "classnames";
 
@@ -114,7 +114,7 @@ interface IPickerInputBaseProps {
     /**
      * Callback function which triggers when the field is getting clicked.
      */
-    onClick?: () => void;
+    onClick?: (e: SyntheticEvent) => void;
     /**
      * Reference data of popover, used for positioning the popover accordingly to input field.
      */
