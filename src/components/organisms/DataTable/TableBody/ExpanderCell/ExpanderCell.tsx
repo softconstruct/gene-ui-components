@@ -25,7 +25,20 @@ const ExpanderCell = <TData, TValue>({ row }: CellContext<TData, TValue>) => {
         row.toggleExpanded(!row.getIsExpanded());
     };
     return (
-        <button type="button" onClick={toggleHandler} className="tableExpander">
+        <button
+            type="button"
+            onClick={toggleHandler}
+            className="tableExpander tableExpander_color_red tableExpander_pinned"
+        >
+            {/*
+            STATES
+            tableExpander_color_zebra
+            tableExpander_color_red
+            tableExpander_color_green
+            tableExpander_color_highlighted
+            tableExpander_selected
+            tableExpander_pinned
+            */}
             {row.getIsExpanded() ? <ChevronDown /> : <ExpanderChevronIcon />}
         </button>
     );
