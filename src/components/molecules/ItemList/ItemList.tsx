@@ -156,6 +156,7 @@ const ItemList: FC<IItemListProps> = ({
                                                 (item.props as { id?: string | number }).id ??
                                                 `itemList-item-${row.index}`
                                             }
+                                            ref={virtualizer.measureElement}
                                             data-index={row.index}
                                             style={{ transform: `translateY(${row.start}px)` }}
                                         >

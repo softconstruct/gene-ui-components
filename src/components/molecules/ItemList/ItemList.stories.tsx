@@ -1,6 +1,11 @@
 import React, { FC, useCallback, useMemo, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import { Globe, Magnifier, RecycleBin, ThreeDotsHorizontal } from "@geneui/icons";
+
+import Button from "@components/atoms/Button";
+import Text from "@components/atoms/Text";
+
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import ItemList, { IItemListProps } from "./index";
 import ItemListItem from "./ItemListItem";
@@ -129,41 +134,136 @@ export const NoResult: Story = {
 };
 
 const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
+    const complexItems = [
+        {
+            id: "row-1",
+            title: "1234 Title",
+            helper: "Helper Text",
+            updated: "04/04/2023",
+            disabled: false
+        },
+        {
+            id: "row-2",
+            title: "1235 Title",
+            helper: "Helper Text",
+            updated: "04/05/2023",
+            disabled: false
+        },
+        {
+            id: "row-3",
+            title: "1236 Title",
+            helper: "Helper Text",
+            updated: "04/06/2023",
+            disabled: false
+        },
+        {
+            id: "row-4",
+            title: "1237 Title",
+            helper: "Helper Text",
+            updated: "04/07/2023",
+            disabled: false
+        },
+        {
+            id: "row-5",
+            title: "1238 Title",
+            helper: "Helper Text",
+            updated: "04/08/2023",
+            disabled: false
+        },
+        {
+            id: "row-6",
+            title: "1239 Title",
+            helper: "Helper Text",
+            updated: "04/09/2023",
+            disabled: false
+        },
+        {
+            id: "row-7",
+            title: "1240 Title",
+            helper: "Helper Text",
+            updated: "04/10/2023",
+            disabled: false
+        },
+        {
+            id: "row-8",
+            title: "1241 Title",
+            helper: "Helper Text",
+            updated: "04/11/2023",
+            disabled: false
+        },
+        {
+            id: "row-9",
+            title: "1242 Title",
+            helper: "Helper Text",
+            updated: "04/12/2023",
+            disabled: false
+        },
+        {
+            id: "row-10",
+            title: "1243 Title",
+            helper: "Helper Text",
+            updated: "04/13/2023",
+            disabled: false
+        },
+        {
+            id: "row-11",
+            title: "1244 Title",
+            helper: "Helper Text",
+            updated: "04/14/2023",
+            disabled: false
+        },
+        {
+            id: "row-12",
+            title: "1245 Title",
+            helper: "Helper Text",
+            updated: "04/15/2023",
+            disabled: true
+        }
+    ];
+
     return (
         <div style={{ height: "300px", width: "28rem" }}>
             <ItemList {...props}>
-                <ItemListItem id="home">Home</ItemListItem>
-                <ItemListItem
-                    id="profile"
-                    render={(itemData) => (
-                        <a
-                            href={`/users/${itemData.id}`}
-                            aria-label="Go to Profile"
-                            onClick={(e) => {
-                                e.preventDefault();
+                {complexItems.map((item) => (
+                    <ItemListItem key={item.id} id={item.id} disabled={item.disabled}>
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                width: "100%",
+                                gap: "0.75rem",
+                                paddingBlock: "0.4rem"
                             }}
-                        />
-                    )}
-                >
-                    Go to Profile
-                </ItemListItem>
-                <ItemListItem
-                    id="settings"
-                    render={(itemData) => (
-                        <a
-                            href={`/settings/${itemData.id}`}
-                            aria-label="Settings Page"
-                            onClick={(e) => {
-                                e.preventDefault();
-                            }}
-                        />
-                    )}
-                >
-                    Settings Page
-                </ItemListItem>
-                <ItemListItem id="disabled-item" disabled>
-                    Disabled Item
-                </ItemListItem>
+                        >
+                            <Globe size={20} />
+                            <div
+                                style={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    minWidth: 0,
+                                    flex: 1
+                                }}
+                            >
+                                <Text className="ellipsis-text" as="span" variant="bodyMediumMedium">
+                                    {item.title}
+                                </Text>
+                                <Text className="ellipsis-text" as="span" variant="captionMediumRegular">
+                                    {`${item.helper} \u2022 Updated: ${item.updated}`}
+                                </Text>
+                            </div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                                <Button Icon={Magnifier} appearance="secondary" layout="text" size="smallNudge" />
+                                <Button Icon={RecycleBin} appearance="secondary" layout="text" size="smallNudge" />
+                                <Button
+                                    Icon={ThreeDotsHorizontal}
+                                    appearance="secondary"
+                                    layout="text"
+                                    size="smallNudge"
+                                />
+                            </div>
+                        </div>
+                    </ItemListItem>
+                ))}
             </ItemList>
         </div>
     );
