@@ -20,30 +20,66 @@ interface ITimePickerBaseProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * Represents the loading state of a component.
+     */
     loading?: boolean;
+    /**
+     * The size of the component.
+     */
     size?: "small" | "medium" | "large";
+    /**
+     * The label text displayed next to the input field.
+     */
     label?: string;
+    /**
+     * Disables the input field, making it uneditable and non-interactive.
+     */
     disabled?: boolean;
+    /**
+     * Specifies whether the input field is mandatory for form submission.
+     */
     required?: boolean;
+    /**
+     * Specifies whether the input field is read-only, making it non-editable but still interactive.
+     */
     readOnly?: boolean;
 }
 
 interface ISingleTimePickerProps extends ITimePickerBaseProps {
+    /**
+     * The placeholder text displayed when the input field is empty.
+     */
     placeholder?: string;
+    /**
+     * The value of the input field.
+     */
     value?: string | null;
 }
 
 interface IRangeTimePickerProps extends ITimePickerBaseProps {
+    /**
+     * The placeholder text displayed when the input field is empty.
+     */
     placeholder?: {
         start: string;
         end: string;
     };
+    /**
+     * The value of the input field.
+     */
     value?: {
         start: string | null;
         end: string | null;
     };
 }
 
+/**
+ * Component for selecting a single time value.
+ *
+ * This component provides a user interface for choosing a specific time. It includes an input field
+ * and a popover for selecting time, with support for customization through props.
+ */
 const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
     ({ className, loading, size = "medium", label, disabled, required, readOnly, placeholder, value }, ref) => {
         const {
@@ -97,6 +133,11 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
     }
 );
 
+/**
+ * Component that renders a range time picker with support for custom labels,
+ * placeholders, and interaction states such as disabled or read-only. It allows users
+ * to select a start and end time within the defined range.
+ */
 const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
     (
         {
