@@ -1,40 +1,41 @@
 .actionableListItem {
-    --py: var(--guit-ref-spacing-3xsmall);
+    --py: var(--guit-ref-spacing-xsmall);
     --bw: var(--guit-ref-border-width-thin);
     --mt: var(--guit-ref-spacing-medium);
     --actionable-list-drop-gap: calc(1.2rem + 2 * var(--py) + 2 * var(--bw) + var(--mt));
 
     position: relative;
-    width: 100%;
-    min-height: 30px;
-    height: 30px;
     display: flex;
     align-items: center;
-    gap: var(--guit-ref-spacing-2xsmall);
+    gap: var(--guit-ref-spacing-3xsmall);
+    width: 100%;
+    min-height: var(--guit-sem-dimension-height-large);
+    margin-top: var(--mt);
     padding: var(--py) var(--guit-ref-spacing-medium);
     border: var(--bw) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
     border-radius: var(--guit-ref-radius-3xsmall);
-    background: var(--guit-sem-color-background-neutral-1);
-    margin-top: var(--mt);
+    background-color: var(--guit-sem-color-background-neutral-1);
 
     &_nested {
-        &::before {
+        &::before,
+        &::after {
             position: absolute;
             content: "";
+            inset-inline-start: -1.6rem;
+            pointer-events: none;
+        }
+
+        &::before {
             top: 50%;
-            left: -1.6rem;
             width: 1.6rem;
             border-top: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
                 var(--guit-sem-color-border-neutral-2);
         }
 
         &::after {
-            position: absolute;
-            content: "";
             bottom: 50%;
-            left: -1.6rem;
             height: calc(100% + 10rem);
-            width: 1px;
+            width: 0.1rem;
             border-right: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
                 var(--guit-sem-color-border-neutral-2);
         }
@@ -44,13 +45,14 @@
         visibility: hidden;
     }
 
+    // Review START
     .actionableList_hasDropGap &_dragging {
         height: 0;
         min-height: 0;
-        overflow: hidden;
         padding: 0;
         margin: 0;
         border: none;
+        overflow: hidden;
     }
 
     &_dropGapTop {
@@ -68,40 +70,31 @@
         border-radius: var(--guit-ref-radius-3xsmall);
     }
 
+    // Review END
+
     &__toggle {
         flex-shrink: 0;
-
-        &_placeholder {
-            width: 24px;
-            height: 24px;
-        }
     }
 
     &__checkbox {
-        margin-right: 0;
-    }
-
-    &__titleWrap {
-        flex: 1;
-        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: var(--guit-sem-dimension-width-small);
+        height: var(--guit-sem-dimension-height-small);
     }
 
     &__title {
         display: block;
         width: 100%;
-        max-width: 100%;
-        min-width: 0;
-        color: var(--guit-sem-color-text-default);
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        color: var(--guit-sem-color-foreground-neutral-2);
     }
 
     &__meta {
-        color: var(--guit-sem-color-text-subtle);
-        white-space: nowrap;
         display: flex;
         gap: var(--guit-ref-spacing-2xsmall);
+        white-space: nowrap;
     }
 
     &__metaLabel {
@@ -118,9 +111,7 @@
 
     &__dragIcon {
         flex-shrink: 0;
-        color: var(--guit-sem-color-icon-subtle);
         cursor: grab;
-        margin-left: var(--guit-ref-spacing-2xsmall);
 
         &_dragging {
             cursor: grabbing;
@@ -128,9 +119,11 @@
     }
 
     &__dragHandle {
-        display: inline-flex;
+        display: flex;
         align-items: center;
         justify-content: center;
+        flex-shrink: 0;
         cursor: grab;
+        color: var(--guit-sem-color-foreground-neutral-2);
     }
 }

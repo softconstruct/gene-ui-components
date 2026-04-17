@@ -1,6 +1,5 @@
 .actionableList {
     &__wrapper {
-        box-sizing: border-box;
         width: 100%;
         display: flex;
         flex-direction: column;
@@ -14,7 +13,7 @@
         &_level_4,
         &_level_5 {
             position: relative;
-            padding-inline-start: 32px;
+            padding-inline-start: 3.2rem;
         }
     }
 }

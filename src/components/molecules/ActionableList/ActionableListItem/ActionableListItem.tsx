@@ -265,22 +265,18 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                     className="actionableListItem__checkbox"
                 />
             )}
-
-            <span className="actionableListItem__titleWrap">
-                <Tooltip text={title} isVisible={isTruncated}>
-                    <Text
-                        ref={titleTextRef}
-                        as="span"
-                        variant="labelMediumMedium"
-                        className="actionableListItem__title"
-                    >
-                        {title}
-                    </Text>
-                </Tooltip>
-            </span>
-
+            <Tooltip text={title} isVisible={isTruncated}>
+                <Text
+                    ref={titleTextRef}
+                    as="span"
+                    variant="bodyLargeMedium"
+                    className="actionableListItem__title ellipsis-text"
+                >
+                    {title}
+                </Text>
+            </Tooltip>
             {withCheckbox && descendantsTotalCount > 0 && (
-                <Text as="span" variant="bodyMediumMedium" className="actionableListItem__meta">
+                <p className="actionableListItem__meta">
                     <Text as="span" variant="bodyMediumMedium" className="actionableListItem__metaLabel">
                         {selectedLabel}
                     </Text>
@@ -289,10 +285,10 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                         variant="bodyMediumMedium"
                         className="actionableListItem__metaCount"
                     >{`${descendantsSelectedCount}/${descendantsTotalCount}`}</Text>
-                </Text>
+                </p>
             )}
 
-            {infoText && <Info infoText={infoText} size="XSmall" className="actionableListItem__info" />}
+            {infoText && <Info infoText={infoText} size="smallNudge" className="actionableListItem__info" />}
 
             {isDraggable && (
                 <button
@@ -302,7 +298,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                     type="button"
                 >
                     <GripDots
-                        size={16}
+                        size={20}
                         className={classNames("actionableListItem__dragIcon", {
                             actionableListItem__dragIcon_dragging: isDragging
                         })}
