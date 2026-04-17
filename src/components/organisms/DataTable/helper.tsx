@@ -4,6 +4,7 @@ import { CellContext, ColumnDef } from "@tanstack/react-table";
 // Components
 import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
+import { EXPANDABLE_CELL_WIDTH } from "@components/organisms/DataTable/constants";
 import ExpanderCell from "@components/organisms/DataTable/TableBody/ExpanderCell/ExpanderCell";
 import { DataTableColumn, ITableData } from "@components/organisms/DataTable/types";
 
@@ -55,7 +56,8 @@ export const TableColumnsAdapter = <TData extends ITableData>(
         {
             id: "expander",
             header: "",
-            cell: ExpanderCell
+            cell: ExpanderCell,
+            size: EXPANDABLE_CELL_WIDTH
         },
         ...adapted
     ];

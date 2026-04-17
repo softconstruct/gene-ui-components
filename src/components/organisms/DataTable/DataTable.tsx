@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useCallback, useMemo, useState } from "react";
 import {
     CellContext,
     ExpandedState,
@@ -175,15 +175,18 @@ const DataTable = <TData extends ITableData>({
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
 
-    const handleExpandedChange = (updaterOrValue: ExpandedState | ((old: ExpandedState) => ExpandedState)) => {
-        setExpanded((prevState) => {
-            const newState = typeof updaterOrValue === "function" ? updaterOrValue(prevState) : updaterOrValue;
-            onExpandChange?.(newState);
-            return newState;
-        });
-    };
+    const handleExpandedChange = useCallback(
+        (updaterOrValue: ExpandedState | ((old: ExpandedState) => ExpandedState)) => {
+            setExpanded((prevState) => {
+                const newState = typeof updaterOrValue === "function" ? updaterOrValue(prevState) : updaterOrValue;
+                onExpandChange?.(newState);
+                return newState;
+            });
+        },
+        [onExpandChange]
+    );
 
-    const tableColumns = TableColumnsAdapter(columns, expandable);
+    const tableColumns = useMemo(() => TableColumnsAdapter(columns, expandable), [columns, expandable]);
 
     const initialPageSize =
         typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)
