@@ -1,6 +1,9 @@
 import React, { cloneElement, FC, isValidElement, MouseEvent, ReactNode } from "react";
 import classNames from "classnames";
 
+// Components
+import Text from "@components/atoms/Text";
+
 interface IItemListItemProps {
     /**
      * Unique identifier for the item, used in selection logic.
@@ -72,7 +75,13 @@ const ItemListItem: FC<IItemListItemProps> = ({ id, children, disabled, onClick,
             disabled={disabled}
             data-id={id}
         >
-            <span className="ellipsis-text">{children}</span>
+            {typeof children === "string" ? (
+                <Text className="ellipsis-text" as="span" variant="bodyMediumMedium">
+                    {children}
+                </Text>
+            ) : (
+                children
+            )}
         </button>
     );
 };

@@ -15,6 +15,13 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 const meta: Meta<IItemListProps> = {
     title: "Molecules/ItemList",
     component: ItemList,
+    decorators: [
+        (Story) => (
+            <div style={{ width: "100%", height: "100vh" }}>
+                <Story />
+            </div>
+        )
+    ],
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         children: args({ control: "false", ...propCategory.content }),
@@ -59,24 +66,6 @@ const items = [
 
 const PAGE_SIZE = 5;
 
-const StoryComponent: FC<IItemListProps> = (props) => {
-    return (
-        <div style={{ height: "300px", width: "26.6rem" }}>
-            <ItemList {...props}>
-                {items.map((item) => (
-                    <ItemListItem key={item} id={item}>
-                        {item}
-                    </ItemListItem>
-                ))}
-            </ItemList>
-        </div>
-    );
-};
-
-export const Default: Story = {
-    render: (props) => <StoryComponent {...props} />
-};
-
 const WithFooterStoryComponent: FC<IItemListProps> = (props) => {
     const { showMoreDisabled, showMoreLoading } = props;
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
@@ -98,41 +87,27 @@ const WithFooterStoryComponent: FC<IItemListProps> = (props) => {
     }, [isShowMoreDisabled, isShowMoreLoading]);
 
     return (
-        <div style={{ height: "300px", width: "26.6rem" }}>
-            <ItemList
-                {...props}
-                showMore
-                onShowMore={handleShowMore}
-                showMoreDisabled={isShowMoreDisabled}
-                showMoreLoading={isShowMoreLoading}
-            >
-                {visibleItems.map((item) => (
-                    <ItemListItem key={item} id={item}>
-                        {item}
-                    </ItemListItem>
-                ))}
-            </ItemList>
-        </div>
+        <ItemList
+            {...props}
+            showMore
+            onShowMore={handleShowMore}
+            showMoreDisabled={isShowMoreDisabled}
+            showMoreLoading={isShowMoreLoading}
+        >
+            {visibleItems.map((item) => (
+                <ItemListItem key={item} id={item}>
+                    {item}
+                </ItemListItem>
+            ))}
+        </ItemList>
     );
 };
 
-export const WithFooter: Story = {
+export const Default: Story = {
     render: (props) => <WithFooterStoryComponent {...props} />,
     args: {
         showMoreLabel: "Show more"
     }
-};
-
-const NoResultStoryComponent: FC<IItemListProps> = (props) => {
-    return (
-        <div style={{ height: "300px", width: "26.6rem" }}>
-            <ItemList {...props}>{[]}</ItemList>
-        </div>
-    );
-};
-
-export const NoResult: Story = {
-    render: (props) => <NoResultStoryComponent {...props} />
 };
 
 const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
@@ -185,21 +160,64 @@ const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
             helper: "Helper Text",
             updated: "04/10/2023",
             disabled: false
+        },
+        {
+            id: "row-8",
+            title: "1236 Title",
+            helper: "Helper Text",
+            updated: "04/06/2023",
+            disabled: false
+        },
+        {
+            id: "row-9",
+            title: "1237 Title",
+            helper: "Helper Text",
+            updated: "04/07/2023",
+            disabled: false
+        },
+        {
+            id: "row-10",
+            title: "1238 Title",
+            helper: "Helper Text",
+            updated: "04/08/2023",
+            disabled: false
+        },
+        {
+            id: "row-11",
+            title: "1239 Title",
+            helper: "Helper Text",
+            updated: "04/09/2023",
+            disabled: false
+        },
+        {
+            id: "row-12",
+            title: "1240 Title",
+            helper: "Helper Text",
+            updated: "04/10/2023",
+            disabled: false
         }
     ];
 
     return (
-        <div style={{ height: "300px", width: "26.6rem" }}>
-            <ItemList {...props}>
-                {complexItems.map((item) => (
-                    <ItemListItem key={item.id} id={item.id} disabled={item.disabled}>
+        <ItemList {...props}>
+            {complexItems.map((item) => (
+                <ItemListItem key={item.id} id={item.id} disabled={item.disabled}>
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "0.75rem",
+                            width: "100%",
+                            paddingBlock: "0.4rem"
+                        }}
+                    >
                         <div
                             style={{
                                 display: "flex",
                                 alignItems: "center",
-                                width: "100%",
                                 gap: "0.75rem",
-                                paddingBlock: "0.4rem"
+                                minWidth: 0,
+                                flex: 1
                             }}
                         >
                             <Globe size={20} />
@@ -218,21 +236,16 @@ const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
                                     {`${item.helper} \u2022 Updated: ${item.updated}`}
                                 </Text>
                             </div>
-                            <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-                                <Button Icon={Magnifier} appearance="secondary" layout="text" size="smallNudge" />
-                                <Button Icon={RecycleBin} appearance="secondary" layout="text" size="smallNudge" />
-                                <Button
-                                    Icon={ThreeDotsHorizontal}
-                                    appearance="secondary"
-                                    layout="text"
-                                    size="smallNudge"
-                                />
-                            </div>
                         </div>
-                    </ItemListItem>
-                ))}
-            </ItemList>
-        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginLeft: "auto" }}>
+                            <Button Icon={Magnifier} appearance="secondary" layout="text" size="smallNudge" />
+                            <Button Icon={RecycleBin} appearance="secondary" layout="text" size="smallNudge" />
+                            <Button Icon={ThreeDotsHorizontal} appearance="secondary" layout="text" size="smallNudge" />
+                        </div>
+                    </div>
+                </ItemListItem>
+            ))}
+        </ItemList>
     );
 };
 
@@ -251,15 +264,13 @@ const VirtualizedStoryComponent: FC<IItemListProps> = (props) => {
     );
 
     return (
-        <div style={{ height: "400px", width: "28rem" }}>
-            <ItemList {...props}>
-                {virtualizedItems.map((item) => (
-                    <ItemListItem key={item.id} id={item.id}>
-                        {item.label}
-                    </ItemListItem>
-                ))}
-            </ItemList>
-        </div>
+        <ItemList {...props}>
+            {virtualizedItems.map((item) => (
+                <ItemListItem key={item.id} id={item.id}>
+                    {item.label}
+                </ItemListItem>
+            ))}
+        </ItemList>
     );
 };
 
