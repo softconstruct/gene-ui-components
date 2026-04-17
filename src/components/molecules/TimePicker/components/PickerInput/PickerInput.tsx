@@ -8,6 +8,7 @@ import { IconProps, Minus, X } from "@geneui/icons";
 // Components
 import Button from "@components/atoms/Button";
 import HelperText from "@components/atoms/HelperText";
+import { TimePickerSizes } from "@components/molecules/TimePicker/types";
 
 // Styles
 import "./PickerInput.scss";
@@ -30,17 +31,17 @@ interface IPickerShellProps {
      * The size of the input field.
      * @default "medium"
      */
-    size?: "small" | "medium" | "large";
+    size?: TimePickerSizes;
     /**
      * The input component.
      */
     children: ReactNode;
     /**
-     * Whether the field should be displayed in errored state.
+     * Whether the field should be displayed in an errored state.
      */
     error?: boolean;
     /**
-     * Error message used to display when the component is in errored state.
+     * Error message used to display when the component is in the errored state.
      */
     errorMessage?: string;
     /**
@@ -48,7 +49,7 @@ interface IPickerShellProps {
      */
     disabled?: boolean;
     /**
-     * Whether the field should be read only.
+     * Whether the field should be read-only.
      */
     readOnly?: boolean;
     /**
@@ -56,7 +57,7 @@ interface IPickerShellProps {
      */
     EndIcon?: FC<IconProps>;
     /**
-     * Callback function which triggers when user clicks on clear button.
+     * Callback function which triggers when the user clicks on a clear button.
      */
     handleClear?: () => void;
     /**
@@ -78,7 +79,7 @@ interface IPickerInputBaseProps {
      * The size of the input field.
      * @default "medium"
      */
-    size?: "small" | "medium" | "large";
+    size?: TimePickerSizes;
     /**
      * Whether the field should be displayed in an errored state.
      */

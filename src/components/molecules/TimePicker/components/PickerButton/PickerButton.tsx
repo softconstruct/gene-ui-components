@@ -1,6 +1,8 @@
 import React, { ComponentPropsWithoutRef, FC } from "react";
 import classNames from "classnames";
 
+import { TimePickerSizes } from "@components/molecules/TimePicker/types";
+
 // Styles
 import "./PickerButton.scss";
 
@@ -9,7 +11,7 @@ interface IPickerButtonProps extends ComponentPropsWithoutRef<"button"> {
      * Controls the visual size of the button.
      * @default "medium"
      */
-    size?: "small" | "medium" | "large";
+    size?: TimePickerSizes;
 
     /**
      * Indicates whether the button is in an active (selected) state.

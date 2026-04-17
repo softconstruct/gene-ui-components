@@ -8,6 +8,7 @@ import Label from "@components/atoms/Label";
 import Skeleton from "@components/atoms/Skeleton";
 import PickerInput from "@components/molecules/TimePicker/components/PickerInput/PickerInput";
 import PickerPopover from "@components/molecules/TimePicker/components/PickerPopover/PickerPopover";
+import { TimePickerSizes } from "@components/molecules/TimePicker/types";
 
 // Styles
 import "./TimePicker.scss";
@@ -27,7 +28,7 @@ interface ITimePickerBaseProps {
     /**
      * The size of the component.
      */
-    size?: "small" | "medium" | "large";
+    size?: TimePickerSizes;
     /**
      * The label text displayed next to the input field.
      */

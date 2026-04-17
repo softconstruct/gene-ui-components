@@ -8,13 +8,7 @@ import Text from "@components/atoms/Text";
 import PickerButton from "@components/molecules/TimePicker/components/PickerButton/PickerButton";
 // Constants
 import { HOURS_12, HOURS_24, MINUTES, SECONDS } from "@components/molecules/TimePicker/constants";
-
-type TimeParts = {
-    hours: string | undefined;
-    minutes: string | undefined;
-    seconds: string | undefined;
-    meridiem: string | undefined;
-};
+import { TimeParts, TimePickerSizes } from "@components/molecules/TimePicker/types";
 
 type TimePartKey = "hours" | "minutes" | "seconds" | "meridiem";
 
@@ -38,7 +32,7 @@ interface IPickerPopoverProps {
     /**
      * Size of the popover and its items.
      */
-    size?: "small" | "medium" | "large";
+    size?: TimePickerSizes;
     /**
      * Reference to the popover element.
      */

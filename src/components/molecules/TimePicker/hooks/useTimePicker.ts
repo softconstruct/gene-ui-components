@@ -1,17 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 
 import { IPopoverRef } from "@components/atoms/Popover";
+import { TimeParts } from "@components/molecules/TimePicker/types";
 
 import { useClickOutside } from "@hooks/index";
 
 import { composeTime } from "../helpers";
-
-type TimeParts = {
-    hours: string | undefined;
-    minutes: string | undefined;
-    seconds: string | undefined;
-    meridiem: string | undefined;
-};
 
 const getInitialParts = (): TimeParts => ({
     hours: undefined,
