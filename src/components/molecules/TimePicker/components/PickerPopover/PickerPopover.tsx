@@ -9,16 +9,52 @@ import PickerButton from "@components/molecules/TimePicker/components/PickerButt
 // Constants
 import { HOURS_12, HOURS_24, MINUTES, SECONDS } from "@components/molecules/TimePicker/constants";
 
+type TimeParts = {
+    hours: string | undefined;
+    minutes: string | undefined;
+    seconds: string | undefined;
+    meridiem: string | undefined;
+};
+
+type TimePartKey = "hours" | "minutes" | "seconds" | "meridiem";
+
 interface IPickerPopoverProps {
+    /**
+     * Controls whether the popover is open.
+     */
     open?: boolean;
+    /**
+     * Callback invoked when the popover should be closed.
+     */
     onClose?: () => void;
+    /**
+     * Popover placement position.
+     */
     position?: string;
+    /**
+     * Controls the popover height mode on mobile.
+     */
     mobileHeightMode?: "fit" | "full";
+    /**
+     * Size of the popover and its items.
+     */
     size?: "small" | "medium" | "large";
+    /**
+     * Reference to the popover element.
+     */
     popoverRef?: Ref<IPopoverRef>;
+    /**
+     * Popover positioning props passed to the underlying popover component.
+     */
     setProps: Dispatch<SetStateAction<Record<string, unknown>>>;
+    /**
+     * Called when a time part is selected.
+     */
     onSelect?: (column: string, val: string) => void;
-    parts?: any;
+    /**
+     * Current selected time parts used to highlight the active item.
+     */
+    parts?: TimeParts;
 }
 
 const PickerPopover: FC<IPickerPopoverProps> = ({
@@ -35,14 +71,11 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     const is12Hour = true;
     const hours = useMemo(() => (is12Hour ? HOURS_12 : HOURS_24), [is12Hour, HOURS_12, HOURS_24]);
 
-    const timeColumns = useMemo(
-        () => [
-            { header: "hours", data: hours, active: false, setActive: () => {} },
-            { header: "minutes", data: MINUTES, active: false, setActive: () => {} },
-            { header: "seconds", data: SECONDS, active: true, setActive: () => {} }
-        ],
-        [hours, MINUTES, SECONDS]
-    );
+    const timeColumns: Array<{ header: TimePartKey; data: string[] }> = [
+        { header: "hours", data: hours },
+        { header: "minutes", data: MINUTES },
+        { header: "seconds", data: SECONDS }
+    ];
 
     return (
         <Popover
@@ -77,7 +110,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                                         {data.map((item) => (
                                             <PickerButton
                                                 key={item}
-                                                selected={parts[header] === item}
+                                                selected={parts?.[header] === item}
                                                 // disabled={isTimeDisabled(`${item}:00:00`)}
                                                 onClick={() => onSelect?.(header, item)}
                                                 className={classNames(
@@ -101,7 +134,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                             aria-label="Select AM/PM"
                         >
                             <PickerButton
-                                selected={parts.meridiem === "AM"}
+                                selected={parts?.meridiem === "AM"}
                                 onClick={() => onSelect?.("meridiem", "AM")}
                                 size={size}
                                 className={classNames(
@@ -112,7 +145,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                                 AM
                             </PickerButton>
                             <PickerButton
-                                selected={parts.meridiem === "PM"}
+                                selected={parts?.meridiem === "PM"}
                                 onClick={() => onSelect?.("meridiem", "PM")}
                                 size={size}
                                 className={classNames(
