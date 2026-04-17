@@ -300,7 +300,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
                 disabled={disabled}
                 readOnly={readOnly}
                 separate
-                onClick={onClick}
+                onClick={() => onClick("start")}
                 onChange={onChange}
                 onFocus={onFocus}
             />
@@ -318,7 +318,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
                 disabled={disabled}
                 readOnly={readOnly}
                 separate
-                onClick={onClick}
+                onClick={() => onClick("end")}
                 onChange={onChange}
                 onFocus={onFocus}
             />

@@ -13,6 +13,7 @@ import { TimePickerSizes } from "@components/molecules/TimePicker/types";
 // Styles
 import "./TimePicker.scss";
 
+// Hooks
 import { useRangeTimePicker, useSingleTimePicker } from "./hooks/useTimePicker";
 
 interface ITimePickerBaseProps {
@@ -109,6 +110,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             <div className={classNames("timePicker", className)} ref={ref}>
                 {label && <Label disabled={disabled} className="pickerInput__label" required={required} text={label} />}
                 <PickerInput
+                    size={size}
                     placeholder={placeholder}
                     value={valueToUse}
                     EndIcon={Clock}
@@ -161,7 +163,6 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             anchorProps,
             setAnchorProps,
             activeField,
-            // setActiveField,
             internalStart,
             internalEnd,
             partsStart,
@@ -169,7 +170,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             handleInputClick,
             handleInputChange,
             handleSelect
-        } = useRangeTimePicker(value, placeholder);
+        } = useRangeTimePicker(value);
 
         const valueToUse = {
             start: value?.start !== undefined ? value.start : internalStart,
@@ -188,6 +189,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             <div className={classNames("timePicker", className)} ref={ref}>
                 {label && <Label disabled={disabled} className="pickerInput__label" required={required} text={label} />}
                 <PickerInput.Range
+                    size={size}
                     placeholder={placeholder}
                     value={valueToUse}
                     EndIcon={Clock}

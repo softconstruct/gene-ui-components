@@ -86,10 +86,7 @@ export const useSingleTimePicker = (value?: string | null) => {
     };
 };
 
-export const useRangeTimePicker = (
-    value?: { start: string | null; end: string | null },
-    placeholder?: { start?: string | null; end?: string | null }
-) => {
+export const useRangeTimePicker = (value?: { start: string | null; end: string | null }) => {
     const base = useBasePicker();
 
     const [activeField, setActiveField] = useState<"start" | "end">("start");
@@ -100,12 +97,8 @@ export const useRangeTimePicker = (
     const [partsStart, setPartsStart] = useState(getInitialParts());
     const [partsEnd, setPartsEnd] = useState(getInitialParts());
 
-    const handleInputClick = (target: HTMLInputElement) => {
-        const ph = target.getAttribute("placeholder");
-
-        if (ph === placeholder?.end) setActiveField("end");
-        else setActiveField("start");
-
+    const handleInputClick = (field: "start" | "end") => {
+        setActiveField(field);
         base.setPopoverOpen(true);
     };
 
