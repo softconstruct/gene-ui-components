@@ -1,19 +1,18 @@
-import React, { ChangeEvent, forwardRef, useEffect, useRef, useState } from "react";
+import React, { forwardRef } from "react";
 import classNames from "classnames";
 
 import { Clock } from "@geneui/icons";
 
 // Components
 import Label from "@components/atoms/Label";
-import { IPopoverRef } from "@components/atoms/Popover";
 import Skeleton from "@components/atoms/Skeleton";
 import PickerInput from "@components/molecules/TimePicker/components/PickerInput/PickerInput";
 import PickerPopover from "@components/molecules/TimePicker/components/PickerPopover/PickerPopover";
 
-import { useClickOutside } from "@hooks/index";
-
 // Styles
 import "./TimePicker.scss";
+
+import { useRangeTimePicker, useSingleTimePicker } from "./hooks/useTimePicker";
 
 interface ITimePickerBaseProps {
     /**
@@ -47,62 +46,19 @@ interface IRangeTimePickerProps extends ITimePickerBaseProps {
 
 const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
     ({ className, loading, size = "medium", label, disabled, required, readOnly, placeholder, value }, ref) => {
-        const [popoverOpen, setPopoverOpen] = useState(false);
-        const [anchorProps, setAnchorProps] = useState({});
-
-        const [internalValue, setInternalValue] = useState(value ?? null);
-
-        const [parts, setParts] = useState<Record<string, string | undefined>>({
-            hours: undefined,
-            minutes: undefined,
-            seconds: undefined,
-            meridiem: undefined
-        });
-
-        const popoverRef = useRef<IPopoverRef>({
-            floatingElement: { current: null },
-            referenceElement: { current: null }
-        });
-
-        const composeTime = (p: Record<string, string | undefined>) => {
-            const hh = p.hours ?? "00";
-            const mm = p.minutes ?? "00";
-            const ss = p.seconds ?? "00";
-            return `${hh}:${mm}:${ss}`;
-        };
-
-        const handlePopoverSelect = (column: string, val: string) => {
-            setParts((prev) => {
-                const next = { ...prev, [column]: val };
-                const composed = composeTime(next);
-                setInternalValue(composed);
-                return next;
-            });
-        };
-
-        const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-            const v = e.target.value;
-            setInternalValue(v);
-            const match = /^(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(v);
-            if (match) {
-                setParts({
-                    hours: match[1],
-                    minutes: match[2],
-                    seconds: match[3] ?? "00",
-                    meridiem: undefined
-                });
-            }
-        };
+        const {
+            popoverOpen,
+            setPopoverOpen,
+            anchorProps,
+            setAnchorProps,
+            internalValue,
+            parts,
+            popoverRef,
+            handleInputChange,
+            handleSelect
+        } = useSingleTimePicker(value);
 
         const valueToUse = value !== undefined ? value : internalValue;
-
-        useEffect(() => {
-            setInternalValue(value ?? null);
-        }, [value]);
-
-        useClickOutside(() => {
-            setPopoverOpen(false);
-        }, [popoverRef?.current?.floatingElement, popoverRef?.current?.referenceElement]);
 
         if (loading) {
             return (
@@ -133,7 +89,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     size={size}
                     position="bottom-left"
                     mobileHeightMode="fit"
-                    onSelect={handlePopoverSelect}
+                    onSelect={handleSelect}
                     parts={parts}
                 />
             </div>
@@ -156,110 +112,27 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
         },
         ref
     ) => {
-        const [popoverOpen, setPopoverOpen] = useState(false);
-        const [anchorProps, setAnchorProps] = useState({});
-        const [activeField, setActiveField] = useState<"start" | "end" | undefined>(undefined);
-
-        const [internalStart, setInternalStart] = useState(value?.start ?? null);
-        const [internalEnd, setInternalEnd] = useState(value?.end ?? null);
-
-        const [partsStart, setPartsStart] = useState<Record<string, string | undefined>>({
-            hours: undefined,
-            minutes: undefined,
-            seconds: undefined,
-            meridiem: undefined
-        });
-        const [partsEnd, setPartsEnd] = useState<Record<string, string | undefined>>({
-            hours: undefined,
-            minutes: undefined,
-            seconds: undefined,
-            meridiem: undefined
-        });
-
-        const popoverRef = useRef<IPopoverRef>({
-            floatingElement: { current: null },
-            referenceElement: { current: null }
-        });
-
-        const composeTime = (p: Record<string, string | undefined>) => {
-            const hh = p.hours ?? "00";
-            const mm = p.minutes ?? "00";
-            const ss = p.seconds ?? "00";
-            return `${hh}:${mm}:${ss}`;
-        };
-
-        const handleInputClick = (e: React.SyntheticEvent) => {
-            const target = e.target as HTMLInputElement | null;
-            let field: "start" | "end" | undefined;
-            if (target) {
-                const ph = target.getAttribute("placeholder");
-                if (ph === placeholder.start) field = "start";
-                else if (ph === placeholder.end) field = "end";
-            }
-            setActiveField(field ?? "start");
-            setPopoverOpen(true);
-        };
-
-        const handlePopoverSelect = (column: string, val: string) => {
-            if (!activeField) return;
-            if (activeField === "start") {
-                setPartsStart((prev) => {
-                    const next = { ...prev, [column]: val };
-                    const composed = composeTime(next);
-                    setInternalStart(composed);
-                    return next;
-                });
-            } else {
-                setPartsEnd((prev) => {
-                    const next = { ...prev, [column]: val };
-                    const composed = composeTime(next);
-                    setInternalEnd(composed);
-                    return next;
-                });
-            }
-        };
-
-        const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            const target = e.target as HTMLInputElement;
-            const v = target.value;
-
-            let field: "start" | "end" | undefined;
-            const ph = target.getAttribute("placeholder");
-            if (ph === placeholder.start) field = "start";
-            else if (ph === placeholder.end) field = "end";
-
-            if (field === "end") {
-                setInternalEnd(v);
-            } else {
-                setInternalStart(v);
-            }
-
-            const match = /^(\d{2}):(\d{2})(?::(\d{2}))?$/.exec(v);
-            if (match) {
-                const nextParts = {
-                    hours: match[1],
-                    minutes: match[2],
-                    seconds: match[3] ?? "00",
-                    meridiem: undefined
-                };
-                if (field === "end") setPartsEnd(nextParts);
-                else setPartsStart(nextParts);
-            }
-        };
+        const {
+            popoverRef,
+            popoverOpen,
+            setPopoverOpen,
+            anchorProps,
+            setAnchorProps,
+            activeField,
+            // setActiveField,
+            internalStart,
+            internalEnd,
+            partsStart,
+            partsEnd,
+            handleInputClick,
+            handleInputChange,
+            handleSelect
+        } = useRangeTimePicker(value, placeholder);
 
         const valueToUse = {
             start: value?.start !== undefined ? value.start : internalStart,
             end: value?.end !== undefined ? value.end : internalEnd
         };
-
-        useEffect(() => {
-            setInternalStart(value?.start ?? null);
-            setInternalEnd(value?.end ?? null);
-        }, [value?.start, value?.end]);
-
-        useClickOutside(() => {
-            setPopoverOpen(false);
-        }, [popoverRef?.current?.floatingElement, popoverRef?.current?.referenceElement]);
 
         if (loading) {
             return (
@@ -291,7 +164,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     position="bottom-left"
                     mobileHeightMode="fit"
                     parts={activeField === "start" ? partsStart : partsEnd}
-                    onSelect={handlePopoverSelect}
+                    onSelect={handleSelect}
                 />
             </div>
         );

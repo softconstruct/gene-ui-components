@@ -2,10 +2,10 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
 // Components
-import TimePicker, { ITimePickerProps } from "./index";
+import TimePicker, { ISingleTimePickerProps } from "./index";
 
 describe("TimePicker ", () => {
-    let setup: ReactWrapper<ITimePickerProps>;
+    let setup: ReactWrapper<ISingleTimePickerProps>;
     beforeEach(() => {
         setup = mount(<TimePicker />);
     });

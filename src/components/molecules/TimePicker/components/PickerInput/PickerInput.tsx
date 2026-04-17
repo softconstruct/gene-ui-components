@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FC, HTMLAttributes, ReactNode, SyntheticEvent } from "react";
+import React, { ComponentProps, FC, HTMLAttributes, ReactNode } from "react";
 import { InputMask } from "@react-input/mask";
 import classNames from "classnames";
 
@@ -11,6 +11,10 @@ import HelperText from "@components/atoms/HelperText";
 
 // Styles
 import "./PickerInput.scss";
+
+type InputMaskProps = ComponentProps<typeof InputMask>;
+type PickerInputOnClick = NonNullable<InputMaskProps["onClick"]>;
+type PickerInputOnChange = NonNullable<InputMaskProps["onChange"]>;
 
 interface IPickerShellProps {
     /**
@@ -76,11 +80,11 @@ interface IPickerInputBaseProps {
      */
     size?: "small" | "medium" | "large";
     /**
-     * Whether the field should be displayed in errored state.
+     * Whether the field should be displayed in an errored state.
      */
     error?: boolean;
     /**
-     * Error message used to display when the component is in errored state.
+     * Error message used to display when the component is in the errored state.
      */
     errorMessage?: string;
     /**
@@ -88,7 +92,7 @@ interface IPickerInputBaseProps {
      */
     disabled?: boolean;
     /**
-     * Whether the field should be read only.
+     * Whether the field should be read-only.
      */
     readOnly?: boolean;
     /**
@@ -104,9 +108,9 @@ interface IPickerInputBaseProps {
      */
     onFocus?: () => void;
     /**
-     * Callback function which triggers when user changes the value of the input.
+     * Callback function which triggers when the user changes the value of the input.
      */
-    onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+    onChange?: PickerInputOnChange;
     /**
      * Callback function which triggers when the field value is getting cleared with the clear button.
      */
@@ -114,7 +118,7 @@ interface IPickerInputBaseProps {
     /**
      * Callback function which triggers when the field is getting clicked.
      */
-    onClick?: (e: SyntheticEvent) => void;
+    onClick?: PickerInputOnClick;
     /**
      * Reference data of popover, used for positioning the popover accordingly to input field.
      */
@@ -127,7 +131,7 @@ interface ISinglePickerInputProps extends IPickerInputBaseProps {
      */
     placeholder?: string;
     /**
-     * The value of single input picker.
+     * The value of a single input picker.
      */
     value?: string | null;
 }

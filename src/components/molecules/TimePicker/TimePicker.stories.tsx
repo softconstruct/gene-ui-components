@@ -1,12 +1,13 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import Section from "../Section";
 // Components
-import TimePicker, { ITimePickerProps } from "./index";
+import TimePicker from "./index";
 
-const meta: Meta<ITimePickerProps> = {
+const meta: Meta<typeof TimePicker> = {
     title: "Molecules/TimePicker",
     component: TimePicker,
     subcomponents: {
@@ -33,11 +34,44 @@ const meta: Meta<ITimePickerProps> = {
 
 export default meta;
 
-type Story = StoryObj<ITimePickerProps>;
+type SingleStory = StoryObj<typeof TimePicker>;
+type RangeStory = StoryObj<typeof TimePicker.Range>;
 
-export const Default: Story = {};
+const StoryWrapper = ({ children, title }: { children: ReactNode; title: string }) => (
+    <Section title={title}>{children}</Section>
+);
 
-export const RangePicker: Story = {
+type SinglePickerCase = {
+    title: string;
+} & React.ComponentProps<typeof TimePicker>;
+
+type RangePickerCase = {
+    title: string;
+} & React.ComponentProps<typeof TimePicker.Range>;
+
+const singlePickerCases: SinglePickerCase[] = [
+    { title: "Loading", loading: true },
+    { title: "Disabled", disabled: true },
+    { title: "Read only", readOnly: true },
+    { title: "Required", label: "Choose time", required: true },
+    { title: "With placeholder", placeholder: "Select time" },
+    { title: "With label", label: "Choose time" },
+    { title: "With controlled value", value: "10:24:30" }
+];
+
+const rangePickerCases: RangePickerCase[] = [
+    { title: "Loading", loading: true },
+    { title: "Disabled", disabled: true },
+    { title: "Read only", readOnly: true },
+    { title: "Required", label: "Choose time", required: true },
+    { title: "With placeholder", placeholder: { start: "Start time", end: "End time" } },
+    { title: "With label", label: "Choose time" },
+    { title: "With controlled value", value: { start: "10:24:30", end: "11:30:24" } }
+];
+
+export const Default: SingleStory = {};
+
+export const RangePicker: RangeStory = {
     render: (props) => <TimePicker.Range {...props} />,
     args: {
         placeholder: {
@@ -45,4 +79,28 @@ export const RangePicker: Story = {
             end: "End time"
         }
     }
+};
+
+export const SinglePickerStates: SingleStory = {
+    render: () => (
+        <div style={{ display: "flex", flex: 1, flexWrap: "wrap", gap: "2rem" }}>
+            {singlePickerCases.map((item) => (
+                <StoryWrapper title={item.title}>
+                    <TimePicker {...item} />
+                </StoryWrapper>
+            ))}
+        </div>
+    )
+};
+
+export const RangePickerStates: RangeStory = {
+    render: () => (
+        <div style={{ display: "flex", flex: 1, flexWrap: "wrap", gap: "2rem" }}>
+            {rangePickerCases.map((item) => (
+                <StoryWrapper title={item.title}>
+                    <TimePicker.Range {...item} />
+                </StoryWrapper>
+            ))}
+        </div>
+    )
 };

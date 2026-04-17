@@ -1,1 +1,1 @@
-export { ITimePickerProps, default } from "./TimePicker";
+export { ISingleTimePickerProps, IRangeTimePickerProps, default } from "./TimePicker";
