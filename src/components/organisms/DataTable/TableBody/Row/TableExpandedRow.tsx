@@ -13,9 +13,8 @@ interface ITableExpandedRowProps {
 
 /**
  * Renders an individual table expanded row (`<tr>`).
- * * This component iterates through all visible expanded rows
+ * This component iterates through all visible expanded rows
  *
- * @param props - The properties for the component.
  * @returns A table row element containing its respective rendered cells.
  */
 const TableExpandedRow = ({ colspan, children }: ITableExpandedRowProps) => {

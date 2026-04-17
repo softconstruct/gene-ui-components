@@ -158,14 +158,11 @@ const Pagination: FC<IPaginationProps> = ({
     const isControlledPage = current !== undefined && !!onPageChange;
     const isControlledPageSize = pageSize !== undefined && !!onPageSizeChange;
 
-    const getInitialPage = () => {
-        if (!defaultCurrent || Number.isNaN(defaultCurrent)) return 1;
-        return Math.max(1, Math.trunc(defaultCurrent));
-    };
+    const initialPage = defaultCurrent ? Math.max(1, defaultCurrent) : 1;
 
-    const [internalPage, setInternalPage] = useState(getInitialPage);
+    const [internalPage, setInternalPage] = useState(initialPage);
     const [internalPageSize, setInternalPageSize] = useState(rowsPerPageOptions?.[0] || pageSize || 10);
-    const [goToPageValue, setGoToPageValue] = useState(getInitialPage);
+    const [goToPageValue, setGoToPageValue] = useState(initialPage);
 
     const currentPage = isControlledPage ? current : internalPage;
     const currentPageSize = isControlledPageSize ? pageSize : internalPageSize;

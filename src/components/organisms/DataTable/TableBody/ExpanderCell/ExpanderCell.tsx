@@ -8,7 +8,7 @@ import Button from "@components/atoms/Button";
 
 /**
  * Renders an individual table body cell (`<td>`).
- * * This component acts as a wrapper that uses TanStack Table's `flexRender`
+ * This component acts as a wrapper that uses TanStack Table's `flexRender`
  * utility to evaluate and render the appropriate content based on the
  * specific column definitions.
  *
