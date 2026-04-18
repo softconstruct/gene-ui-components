@@ -174,35 +174,37 @@ const PickerShell: FC<IPickerShellProps> = ({
 }) => {
     const shouldShowIconAppends = shouldShowClearableIcon || EndIcon;
     return (
-        <div
-            className={classNames("pickerInput", className, `pickerInput_mode_${mode}`, {
-                pickerInput_state_error: error,
-                pickerInput_state_disabled: disabled,
-                pickerInput_state_readOnly: readOnly,
-                [`pickerInput_size_${size}`]: size
-            })}
-            {...popoverRefData}
-        >
-            {children}
-            {shouldShowIconAppends && (
-                <div className="pickerInput__append">
-                    {shouldShowClearableIcon && (
-                        <Button
-                            onClick={handleClear}
-                            Icon={X}
-                            appearance="secondary"
-                            aria-label="Clear time selection"
-                            size={size}
-                            layout="text"
-                        />
-                    )}
-                    {EndIcon && <EndIcon size={20} className="pickerInput__icon" aria-hidden="true" />}
-                </div>
-            )}
+        <>
+            <div
+                className={classNames("pickerInput", className, `pickerInput_mode_${mode}`, {
+                    pickerInput_state_error: error,
+                    pickerInput_state_disabled: disabled,
+                    pickerInput_state_readOnly: readOnly,
+                    [`pickerInput_size_${size}`]: size
+                })}
+                {...popoverRefData}
+            >
+                {children}
+                {shouldShowIconAppends && (
+                    <div className="pickerInput__append">
+                        {shouldShowClearableIcon && (
+                            <Button
+                                onClick={handleClear}
+                                Icon={X}
+                                appearance="secondary"
+                                aria-label="Clear time selection"
+                                size={size}
+                                layout="text"
+                            />
+                        )}
+                        {EndIcon && <EndIcon size={20} className="pickerInput__icon" aria-hidden="true" />}
+                    </div>
+                )}
+            </div>
             {errorMessage && (
                 <HelperText size="medium" text={errorMessage} status="error" className="pickerInput__errorMessage" />
             )}
-        </div>
+        </>
     );
 };
 

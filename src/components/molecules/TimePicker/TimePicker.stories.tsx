@@ -24,7 +24,11 @@ const meta: Meta<typeof TimePicker> = {
         label: args({ control: "text", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.functionality }),
         key: args({ control: "false", ...propCategory.functionality }),
-        ref: args({ control: "false", ...propCategory.functionality })
+        ref: args({ control: "false", ...propCategory.functionality }),
+        clearable: args({ control: "boolean", ...propCategory.functionality }),
+        onClear: args({ control: "false", ...propCategory.action }),
+        error: args({ control: "boolean", ...propCategory.states }),
+        errorMessage: args({ control: "text", ...propCategory.content })
     },
     args: {
         label: "Choose time",
@@ -57,7 +61,9 @@ const singlePickerCases: SinglePickerCase[] = [
     { title: "With placeholder", placeholder: "Select time" },
     { title: "With label", label: "Choose time" },
     { title: "With controlled value", value: "10:24:30" },
-    { title: "Clearable", clearable: true }
+    { title: "Clearable", clearable: true },
+    { title: "Errored", error: true },
+    { title: "Errored with message", error: true, errorMessage: "Error message" }
 ];
 
 const rangePickerCases: RangePickerCase[] = [
@@ -68,7 +74,9 @@ const rangePickerCases: RangePickerCase[] = [
     { title: "With placeholder", placeholder: { start: "Start time", end: "End time" } },
     { title: "With label", label: "Choose time" },
     { title: "With controlled value", value: { start: "10:24:30", end: "11:30:24" } },
-    { title: "Clearable", clearable: true }
+    { title: "Clearable", clearable: true },
+    { title: "Errored", error: true },
+    { title: "Errored with message", error: true, errorMessage: "Error message" }
 ];
 
 export const Default: SingleStory = {};
@@ -84,11 +92,11 @@ export const RangePicker: RangeStory = {
 };
 
 export const SinglePickerStates: SingleStory = {
-    render: () => (
+    render: (props) => (
         <div style={{ display: "flex", flex: 1, flexWrap: "wrap", gap: "2rem" }}>
             {singlePickerCases.map((item) => (
                 <StoryWrapper title={item.title}>
-                    <TimePicker {...item} />
+                    <TimePicker {...props} {...item} />
                 </StoryWrapper>
             ))}
         </div>
@@ -96,11 +104,11 @@ export const SinglePickerStates: SingleStory = {
 };
 
 export const RangePickerStates: RangeStory = {
-    render: () => (
+    render: (props) => (
         <div style={{ display: "flex", flex: 1, flexWrap: "wrap", gap: "2rem" }}>
             {rangePickerCases.map((item) => (
                 <StoryWrapper title={item.title}>
-                    <TimePicker.Range {...item} />
+                    <TimePicker.Range {...props} {...item} />
                 </StoryWrapper>
             ))}
         </div>

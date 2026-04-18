@@ -54,6 +54,14 @@ interface ITimePickerBaseProps {
      * Specifies whether the input field should display a clear button to clear the input value.
      */
     clearable?: boolean;
+    /**
+     * Specifies whether the input field is in an error state.
+     */
+    error?: boolean;
+    /**
+     * Error message to display when the input field is in an error state.
+     */
+    errorMessage?: string;
 }
 
 interface ISingleTimePickerProps extends ITimePickerBaseProps {
@@ -103,7 +111,9 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             placeholder,
             value,
             clearable,
-            onClear
+            onClear,
+            error,
+            errorMessage
         },
         ref
     ) => {
@@ -145,6 +155,8 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     onChange={handleInputChange}
                     onClear={handleClear}
                     clearable={clearable}
+                    error={error}
+                    errorMessage={errorMessage}
                 />
                 <PickerPopover
                     open={popoverOpen}
@@ -180,7 +192,9 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             placeholder,
             value,
             clearable,
-            onClear
+            onClear,
+            error,
+            errorMessage
         },
         ref
     ) => {
@@ -229,6 +243,8 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     onChange={handleInputChange}
                     onClear={handleClear}
                     clearable={clearable}
+                    error={error}
+                    errorMessage={errorMessage}
                 />
                 <PickerPopover
                     popoverRef={popoverRef}
