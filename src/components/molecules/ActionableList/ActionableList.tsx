@@ -278,7 +278,6 @@ const ActionableList: FC<IActionableListProps> = ({
                                     indeterminate={selectAllIndeterminate}
                                     disabled={totalItemsCount === 0}
                                     onChange={(event) => handleSelectAll(event.target.checked)}
-                                    label="Select all items"
                                     className="actionableList__selectAll"
                                 />
                                 <Text

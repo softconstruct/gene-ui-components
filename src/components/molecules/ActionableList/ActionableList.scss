@@ -30,26 +30,6 @@
         min-width: 0;
     }
 
-    // Review START
-    &__selectAll {
-        position: relative;
-        flex-shrink: 0;
-
-        .checkbox__label {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-    }
-
-    // Review END
-
     &__bulkSelectedLabel {
         color: var(--guit-sem-color-foreground-neutral-1);
     }
@@ -89,21 +69,13 @@
         overflow: hidden;
     }
 
-    // Review START
-
     &__state {
         width: 100%;
-        min-height: 220px;
+        min-height: 22.6rem;
         display: flex;
         align-items: center;
         justify-content: center;
-
-        &_loading {
-            min-height: 260px;
-        }
     }
-
-    // Review START
 
     &__empty {
         width: 100%;
