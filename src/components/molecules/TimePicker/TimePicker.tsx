@@ -46,6 +46,14 @@ interface ITimePickerBaseProps {
      * Specifies whether the input field is read-only, making it non-editable but still interactive.
      */
     readOnly?: boolean;
+    /**
+     * Callback function that is triggered when the input field value was cleared with clear button.
+     */
+    onClear?: () => void;
+    /**
+     * Specifies whether the input field should display a clear button to clear the input value.
+     */
+    clearable?: boolean;
 }
 
 interface ISingleTimePickerProps extends ITimePickerBaseProps {
@@ -83,7 +91,22 @@ interface IRangeTimePickerProps extends ITimePickerBaseProps {
  * and a popover for selecting time, with support for customization through props.
  */
 const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
-    ({ className, loading, size = "medium", label, disabled, required, readOnly, placeholder, value }, ref) => {
+    (
+        {
+            className,
+            loading,
+            size = "medium",
+            label,
+            disabled,
+            required,
+            readOnly,
+            placeholder,
+            value,
+            clearable,
+            onClear
+        },
+        ref
+    ) => {
         const {
             popoverOpen,
             setPopoverOpen,
@@ -93,8 +116,9 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             parts,
             popoverRef,
             handleInputChange,
-            handleSelect
-        } = useSingleTimePicker(value);
+            handleSelect,
+            handleClear
+        } = useSingleTimePicker(value, clearable, onClear);
 
         const valueToUse = value !== undefined ? value : internalValue;
 
@@ -119,6 +143,8 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     popoverRefData={anchorProps}
                     onClick={() => setPopoverOpen(true)}
                     onChange={handleInputChange}
+                    onClear={handleClear}
+                    clearable={clearable}
                 />
                 <PickerPopover
                     open={popoverOpen}
@@ -142,7 +168,22 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
  * to select a start and end time within the defined range.
  */
 const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
-    ({ className, loading, size = "medium", label, disabled, required, readOnly, placeholder, value }, ref) => {
+    (
+        {
+            className,
+            loading,
+            size = "medium",
+            label,
+            disabled,
+            required,
+            readOnly,
+            placeholder,
+            value,
+            clearable,
+            onClear
+        },
+        ref
+    ) => {
         const {
             popoverRef,
             popoverOpen,
@@ -156,8 +197,9 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             partsEnd,
             handleInputClick,
             handleInputChange,
-            handleSelect
-        } = useRangeTimePicker(value);
+            handleSelect,
+            handleClear
+        } = useRangeTimePicker(value, clearable, onClear);
 
         const valueToUse = {
             start: value?.start !== undefined ? value.start : internalStart,
@@ -185,6 +227,8 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     popoverRefData={anchorProps}
                     onClick={handleInputClick}
                     onChange={handleInputChange}
+                    onClear={handleClear}
+                    clearable={clearable}
                 />
                 <PickerPopover
                     popoverRef={popoverRef}

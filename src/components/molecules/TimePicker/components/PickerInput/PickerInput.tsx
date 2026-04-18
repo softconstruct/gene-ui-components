@@ -121,9 +121,13 @@ interface IPickerInputBaseProps {
      */
     onClick?: PickerInputOnClick;
     /**
-     * Reference data of popover, used for positioning the popover accordingly to input field.
+     * Reference data of popover, used for positioning the popover accordingly to the input field.
      */
     popoverRefData?: HTMLAttributes<HTMLDivElement>;
+    /**
+     * Whether the field should display a clear button to clear the input value.
+     */
+    clearable?: boolean;
 }
 
 interface ISinglePickerInputProps extends IPickerInputBaseProps {
@@ -211,6 +215,7 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
     EndIcon,
     errorMessage,
     onClear,
+    clearable,
     value,
     placeholder,
     onClick,
@@ -219,7 +224,7 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
     mask = "__:__:__",
     popoverRefData
 }) => {
-    const shouldShowClearableIcon = onClear && value && !disabled && !readOnly;
+    const shouldShowClearableIcon = clearable && value && !disabled && !readOnly;
     return (
         <PickerShell
             error={error}
@@ -264,6 +269,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
     EndIcon,
     errorMessage,
     onClear,
+    clearable,
     value,
     placeholder,
     mask = "__:__:__",
@@ -272,7 +278,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
     onChange,
     popoverRefData
 }) => {
-    const shouldShowClearableIcon = onClear && (value?.start || value?.end) && !disabled && !readOnly;
+    const shouldShowClearableIcon = clearable && (value?.start || value?.end) && !disabled && !readOnly;
     return (
         <PickerShell
             error={error}

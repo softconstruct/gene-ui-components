@@ -56,7 +56,8 @@ const singlePickerCases: SinglePickerCase[] = [
     { title: "Required", label: "Choose time", required: true },
     { title: "With placeholder", placeholder: "Select time" },
     { title: "With label", label: "Choose time" },
-    { title: "With controlled value", value: "10:24:30" }
+    { title: "With controlled value", value: "10:24:30" },
+    { title: "Clearable", clearable: true }
 ];
 
 const rangePickerCases: RangePickerCase[] = [
@@ -66,7 +67,8 @@ const rangePickerCases: RangePickerCase[] = [
     { title: "Required", label: "Choose time", required: true },
     { title: "With placeholder", placeholder: { start: "Start time", end: "End time" } },
     { title: "With label", label: "Choose time" },
-    { title: "With controlled value", value: { start: "10:24:30", end: "11:30:24" } }
+    { title: "With controlled value", value: { start: "10:24:30", end: "11:30:24" } },
+    { title: "Clearable", clearable: true }
 ];
 
 export const Default: SingleStory = {};

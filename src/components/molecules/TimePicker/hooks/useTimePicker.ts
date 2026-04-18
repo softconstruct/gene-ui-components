@@ -50,7 +50,7 @@ const useBasePicker = () => {
     };
 };
 
-export const useSingleTimePicker = (value?: string | null) => {
+export const useSingleTimePicker = (value?: string | null, clearable?: boolean, onClear?: () => void) => {
     const base = useBasePicker();
 
     const [internalValue, setInternalValue] = useState(value ?? null);
@@ -72,6 +72,14 @@ export const useSingleTimePicker = (value?: string | null) => {
         });
     };
 
+    const handleClear = () => {
+        onClear?.();
+        if (clearable && value === undefined) {
+            setInternalValue(null);
+            setParts(getInitialParts());
+        }
+    };
+
     useEffect(() => {
         setInternalValue(value ?? null);
         const parsed = parseTime(value);
@@ -83,11 +91,16 @@ export const useSingleTimePicker = (value?: string | null) => {
         internalValue,
         parts,
         handleInputChange,
-        handleSelect
+        handleSelect,
+        handleClear
     };
 };
 
-export const useRangeTimePicker = (value?: { start: string | null; end: string | null }) => {
+export const useRangeTimePicker = (
+    value?: { start: string | null; end: string | null },
+    clearable?: boolean,
+    onClear?: () => void
+) => {
     const base = useBasePicker();
 
     const [activeField, setActiveField] = useState<"start" | "end">("start");
@@ -105,7 +118,6 @@ export const useRangeTimePicker = (value?: { start: string | null; end: string |
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, field: "start" | "end") => {
         const nextValue = e.target.value;
-        console.log({ nextValue });
         const parsed = parseTime(nextValue);
 
         if (field === "start") {
@@ -133,6 +145,16 @@ export const useRangeTimePicker = (value?: { start: string | null; end: string |
         }
     };
 
+    const handleClear = () => {
+        onClear?.();
+        if (clearable && value === undefined) {
+            setInternalStart(null);
+            setInternalEnd(null);
+            setPartsStart(getInitialParts());
+            setPartsEnd(getInitialParts());
+        }
+    };
+
     useEffect(() => {
         setInternalStart(value?.start ?? null);
         setInternalEnd(value?.end ?? null);
@@ -148,6 +170,7 @@ export const useRangeTimePicker = (value?: { start: string | null; end: string |
         partsEnd,
         handleInputClick,
         handleInputChange,
-        handleSelect
+        handleSelect,
+        handleClear
     };
 };
