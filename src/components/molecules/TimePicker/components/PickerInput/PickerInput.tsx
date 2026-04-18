@@ -266,7 +266,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
     onClear,
     value,
     placeholder,
-    mask,
+    mask = "__:__:__",
     onClick,
     onFocus,
     onChange,
@@ -301,7 +301,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
                 readOnly={readOnly}
                 separate
                 onClick={() => onClick("start")}
-                onChange={onChange}
+                onChange={(e) => onChange(e, "start")}
                 onFocus={onFocus}
             />
             <Minus className="pickerInput__icon" size={16} aria-hidden="true" />
@@ -319,7 +319,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
                 readOnly={readOnly}
                 separate
                 onClick={() => onClick("end")}
-                onChange={onChange}
+                onChange={(e) => onChange(e, "end")}
                 onFocus={onFocus}
             />
         </PickerShell>

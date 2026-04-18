@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import { IPopoverRef } from "@components/atoms/Popover";
 import { TimeParts } from "@components/molecules/TimePicker/types";
@@ -56,9 +56,10 @@ export const useSingleTimePicker = (value?: string | null) => {
     const [internalValue, setInternalValue] = useState(value ?? null);
     const [parts, setParts] = useState(getInitialParts());
 
-    const handleInputChange = (v: string) => {
-        setInternalValue(v);
-        const parsed = parseTime(v);
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const nextValue = e.target.value;
+        setInternalValue(nextValue);
+        const parsed = parseTime(nextValue);
         if (parsed) setParts(parsed);
     };
 
@@ -102,14 +103,16 @@ export const useRangeTimePicker = (value?: { start: string | null; end: string |
         base.setPopoverOpen(true);
     };
 
-    const handleInputChange = (val: string, field: "start" | "end") => {
-        const parsed = parseTime(val);
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>, field: "start" | "end") => {
+        const nextValue = e.target.value;
+        console.log({ nextValue });
+        const parsed = parseTime(nextValue);
 
         if (field === "start") {
-            setInternalStart(val);
+            setInternalStart(nextValue);
             if (parsed) setPartsStart(parsed);
         } else {
-            setInternalEnd(val);
+            setInternalEnd(nextValue);
             if (parsed) setPartsEnd(parsed);
         }
     };

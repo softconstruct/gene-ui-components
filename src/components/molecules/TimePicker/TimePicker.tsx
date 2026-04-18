@@ -142,20 +142,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
  * to select a start and end time within the defined range.
  */
 const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
-    (
-        {
-            className,
-            loading,
-            size = "medium",
-            label,
-            disabled,
-            required,
-            readOnly,
-            placeholder = { start: undefined, end: undefined },
-            value
-        },
-        ref
-    ) => {
+    ({ className, loading, size = "medium", label, disabled, required, readOnly, placeholder, value }, ref) => {
         const {
             popoverRef,
             popoverOpen,
