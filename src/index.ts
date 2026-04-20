@@ -84,7 +84,8 @@ export { default as PopoverConfirm, IPopoverConfirmProps } from "./components/mo
 export {
     default as TimePicker,
     ISingleTimePickerProps,
-    IRangeTimePickerProps
+    IRangeTimePickerProps,
+    RangeTimePicker
 } from "./components/molecules/TimePicker";
 
 // Organisms

@@ -5,13 +5,13 @@ import { Meta, StoryObj } from "@storybook/react";
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import Section from "../Section";
 // Components
-import TimePicker from "./index";
+import TimePicker, { RangeTimePicker } from "./index";
 
 const meta: Meta<typeof TimePicker> = {
     title: "Molecules/TimePicker",
     component: TimePicker,
     subcomponents: {
-        "Time range picker": TimePicker.Range
+        "Time range picker": RangeTimePicker
     },
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
