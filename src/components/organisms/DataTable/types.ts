@@ -9,6 +9,11 @@ export interface ITableData {
     expandedRow?: ReactNode;
 }
 
+export type DataTableRowExpandChangeHandler<TData extends ITableData> = (
+    isExpanded: boolean,
+    rowData: TData & ITableData
+) => void;
+
 export type DataTableRenderCellArgs<TData, TValue> = {
     value: TValue;
     row: TData & ITableData;

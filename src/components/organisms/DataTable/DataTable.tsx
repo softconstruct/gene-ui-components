@@ -20,7 +20,12 @@ import { useTablePagination } from "@components/organisms/DataTable/hooks/useTab
 import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
 import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader";
 // Types
-import { DataTableColumn, ITableData, ITableNoDataTexts } from "@components/organisms/DataTable/types";
+import {
+    DataTableColumn,
+    DataTableRowExpandChangeHandler,
+    ITableData,
+    ITableNoDataTexts
+} from "@components/organisms/DataTable/types";
 
 // Styles
 import "./DataTable.scss";
@@ -125,22 +130,23 @@ interface IDataTableProps<TData extends ITableData> {
      */
     expandable?: boolean;
     /**
-     * Callback invoked when a row's expanded state changes.
-     * Receives the expanded state object from TanStack Table, keyed by row IDs.
+     * Callback invoked when a row is expanded or collapsed.
+     * Receives the resulting row state and the toggled row data.
      *
-     * @param expandedState - The expanded state object where keys are row IDs and values are true/false
+     * @param isExpanded - Indicates whether the row became expanded (`true`) or collapsed (`false`).
+     * @param rowData - Full row object for the toggled row.
      *
      * @example
      * ```tsx
      * <DataTable
      *   expandable={true}
-     *   onExpandChange={(expandedState) => {
-     *     console.log('Expanded rows:', Object.keys(expandedState).filter(k => expandedState[k]));
+     *   onRowExpandChange={(isExpanded, rowData) => {
+     *     console.log(isExpanded, rowData);
      *   }}
      * />
      * ```
      */
-    onExpandChange?: (expandedState: ExpandedState) => void;
+    onRowExpandChange?: DataTableRowExpandChangeHandler<TData>;
 }
 
 const defaultColumn = {
@@ -170,7 +176,7 @@ const DataTable = <TData extends ITableData>({
     noDataAvailableActions,
     manualPagination = false,
     expandable = false,
-    onExpandChange
+    onRowExpandChange
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -179,14 +185,16 @@ const DataTable = <TData extends ITableData>({
         (updaterOrValue: ExpandedState | ((old: ExpandedState) => ExpandedState)) => {
             setExpanded((prevState) => {
                 const newState = typeof updaterOrValue === "function" ? updaterOrValue(prevState) : updaterOrValue;
-                onExpandChange?.(newState);
                 return newState;
             });
         },
-        [onExpandChange]
+        []
     );
 
-    const tableColumns = useMemo(() => TableColumnsAdapter(columns, expandable), [columns, expandable]);
+    const tableColumns = useMemo(
+        () => TableColumnsAdapter(columns, expandable, onRowExpandChange),
+        [columns, expandable, onRowExpandChange]
+    );
 
     const initialPageSize =
         typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)

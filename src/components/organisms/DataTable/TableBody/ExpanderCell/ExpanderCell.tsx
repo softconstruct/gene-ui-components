@@ -5,6 +5,11 @@ import { ChevronDown, ChevronLeft, ChevronRight } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
+import { DataTableRowExpandChangeHandler, ITableData } from "@components/organisms/DataTable/types";
+
+interface IExpanderCellProps<TData extends ITableData, TValue> extends CellContext<TData, TValue> {
+    onRowExpandChange?: DataTableRowExpandChangeHandler<TData>;
+}
 
 /**
  * Renders an individual table body cell (`<td>`).
@@ -17,13 +22,18 @@ import Button from "@components/atoms/Button";
  * @param props - The properties for the component.
  * @returns A table cell element with the rendered content.
  */
-const ExpanderCell = <TData, TValue>({ row }: CellContext<TData, TValue>) => {
+const ExpanderCell = <TData extends ITableData, TValue>({
+    row,
+    onRowExpandChange
+}: IExpanderCellProps<TData, TValue>) => {
     const isRTLMode = document.dir === "rtl";
     const ExpanderChevronIcon = isRTLMode ? ChevronLeft : ChevronRight;
     const isExpanded = row.getIsExpanded();
 
     const toggleHandler = () => {
-        row.toggleExpanded(!isExpanded);
+        const nextExpanded = !isExpanded;
+        row.toggleExpanded(nextExpanded);
+        onRowExpandChange?.(nextExpanded, row.original);
     };
     return (
         <Button

@@ -6,7 +6,7 @@ import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
 import { EXPANDABLE_CELL_WIDTH } from "@components/organisms/DataTable/constants";
 import ExpanderCell from "@components/organisms/DataTable/TableBody/ExpanderCell/ExpanderCell";
-import { DataTableColumn, ITableData } from "@components/organisms/DataTable/types";
+import { DataTableColumn, DataTableRowExpandChangeHandler, ITableData } from "@components/organisms/DataTable/types";
 
 // hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
@@ -25,7 +25,8 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
 
 export const TableColumnsAdapter = <TData extends ITableData>(
     columns: DataTableColumn<TData>[],
-    expandable: boolean
+    expandable: boolean,
+    onRowExpandChange?: DataTableRowExpandChangeHandler<TData>
 ) => {
     const adapted: ColumnDef<TData, ReactNode>[] = columns.map((col, index) => {
         const isAccessorColumn = Boolean(col.accessorKey);
@@ -56,7 +57,9 @@ export const TableColumnsAdapter = <TData extends ITableData>(
         {
             id: "expander",
             header: "",
-            cell: ExpanderCell,
+            cell: (ctx: CellContext<TData, ReactNode>) => (
+                <ExpanderCell {...ctx} onRowExpandChange={onRowExpandChange} />
+            ),
             size: EXPANDABLE_CELL_WIDTH
         },
         ...adapted
