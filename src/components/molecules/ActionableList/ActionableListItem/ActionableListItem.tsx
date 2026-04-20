@@ -163,7 +163,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
         ? checkboxChecked
         : withCheckbox && totalCount > 0 && selectedCount === totalCount;
     const resolvedCheckboxIndeterminate = hasBranchCheckbox
-        ? Boolean(checkboxIndeterminate) && !resolvedCheckboxChecked
+        ? checkboxIndeterminate && !resolvedCheckboxChecked
         : withCheckbox && totalCount > 0 && selectedCount > 0 && selectedCount < totalCount;
 
     useEffect(() => {

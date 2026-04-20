@@ -36,6 +36,27 @@ describe("ActionableList ", () => {
         expect(setup.text()).not.toContain("Actionable Item 1");
     });
 
+    it("shows nested search matches even when collapsed by default", () => {
+        const wrapper = mount(
+            <ActionableList
+                items={[
+                    {
+                        id: "parent",
+                        title: "Parent",
+                        children: [{ id: "child", title: "Child target" }]
+                    }
+                ]}
+            />
+        );
+
+        expect(wrapper.text()).not.toContain("Child target");
+
+        wrapper.find("input").simulate("change", { target: { value: "target" } });
+        wrapper.update();
+
+        expect(wrapper.text()).toContain("Child target");
+    });
+
     it("keeps nested items collapsed by default", () => {
         const wrapper = mount(
             <ActionableList

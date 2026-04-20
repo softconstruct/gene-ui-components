@@ -58,6 +58,7 @@ interface IRenderNodeProps {
     expandedIds: Set<string>;
     texts: IActionableListTexts;
     dropGap: IDropGap | null;
+    isSearchActive: boolean;
     onToggleExpand: (id: string) => void;
     onToggleCheck: (id: string, checked: boolean) => void;
     onDragTargetChange: (targetId: string, edge: TDropGapEdge) => void;
@@ -72,13 +73,14 @@ const RenderNode: FC<IRenderNodeProps> = ({
     expandedIds,
     texts,
     dropGap,
+    isSearchActive,
     onToggleExpand,
     onToggleCheck,
     onDragTargetChange
 }) => {
     const childCount = item.children?.length || 0;
     const canExpand = childCount > 0 && level < ACTIONABLE_LIST_MAX_NESTED_LEVEL;
-    const isExpanded = canExpand ? expandedIds.has(item.id) : false;
+    const isExpanded = canExpand ? isSearchActive || expandedIds.has(item.id) : false;
     const branchFullySelected = isSubtreeFullySelected(item);
     const branchIndeterminate = !branchFullySelected && isAnySelectionInSubtree(item);
     const directChildTotal = item.children?.length ?? 0;
@@ -129,6 +131,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
                                 expandedIds={expandedIds}
                                 texts={texts}
                                 dropGap={dropGap}
+                                isSearchActive={isSearchActive}
                                 onToggleExpand={onToggleExpand}
                                 onToggleCheck={onToggleCheck}
                                 onDragTargetChange={onDragTargetChange}
@@ -361,6 +364,7 @@ const ActionableList: FC<IActionableListProps> = ({
                                             expandedIds={expandedIds}
                                             texts={mergedTexts}
                                             dropGap={dropGap}
+                                            isSearchActive={searchValue.trim().length > 0}
                                             onToggleExpand={handleToggleExpand}
                                             onToggleCheck={handleToggleCheck}
                                             onDragTargetChange={handleDragTargetChange}
