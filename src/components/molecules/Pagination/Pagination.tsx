@@ -43,6 +43,11 @@ interface IPaginationProps {
      */
     current?: number;
     /**
+     * The default current active page (1-indexed).
+     * Only provide this if the pagination is an `uncontrolled` component; otherwise, use the `current` property.
+     */
+    defaultCurrent?: number;
+    /**
      * The current page size (number of items per page).
      * When provided, enables controlled mode for page size.
      * When undefined, the component manages its own internal state (uncontrolled mode).
@@ -135,6 +140,7 @@ const Pagination: FC<IPaginationProps> = ({
     className,
     disabled = false,
     current,
+    defaultCurrent,
     totalPages,
     totalItems,
     pageSize,
@@ -152,9 +158,11 @@ const Pagination: FC<IPaginationProps> = ({
     const isControlledPage = current !== undefined && !!onPageChange;
     const isControlledPageSize = pageSize !== undefined && !!onPageSizeChange;
 
-    const [internalPage, setInternalPage] = useState(1);
+    const initialPage = defaultCurrent ? Math.max(1, defaultCurrent) : 1;
+
+    const [internalPage, setInternalPage] = useState(initialPage);
     const [internalPageSize, setInternalPageSize] = useState(rowsPerPageOptions?.[0] || pageSize || 10);
-    const [goToPageValue, setGoToPageValue] = useState(1);
+    const [goToPageValue, setGoToPageValue] = useState(initialPage);
 
     const currentPage = isControlledPage ? current : internalPage;
     const currentPageSize = isControlledPageSize ? pageSize : internalPageSize;
@@ -187,6 +195,13 @@ const Pagination: FC<IPaginationProps> = ({
             setGoToPageValue(internalPage);
         }
     }, [internalPage, isControlledPage]);
+
+    useEffect(() => {
+        if (isControlledPage) return;
+        if (internalPage > calculatedTotalPages) {
+            setInternalPage(Math.max(1, calculatedTotalPages));
+        }
+    }, [calculatedTotalPages, internalPage, isControlledPage]);
 
     const handlePageChange = (newPage: number) => {
         if (disabled) return;

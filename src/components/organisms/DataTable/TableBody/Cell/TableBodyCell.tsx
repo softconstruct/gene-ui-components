@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Cell, flexRender } from "@tanstack/react-table";
 
 // Styles
@@ -20,7 +20,7 @@ interface ITableBodyCellProps<TData, TValue> {
 
 /**
  * Renders an individual table body cell (`<td>`).
- * * This component acts as a wrapper that uses TanStack Table's `flexRender`
+ * This component acts as a wrapper that uses TanStack Table's `flexRender`
  * utility to evaluate and render the appropriate content based on the
  * specific column definitions.
  *
@@ -43,4 +43,20 @@ const TableBodyCell = <TData, TValue>({ cell }: ITableBodyCellProps<TData, TValu
     );
 };
 
-export default TableBodyCell;
+const areCellsEqual = (
+    prevProps: ITableBodyCellProps<unknown, unknown>,
+    nextProps: ITableBodyCellProps<unknown, unknown>
+) => {
+    // Expander cell must re-render on every row expand/collapse state change.
+    if (prevProps.cell.column.id === "expander" || nextProps.cell.column.id === "expander") return false;
+
+    return (
+        prevProps.cell.id === nextProps.cell.id &&
+        prevProps.cell.getValue() === nextProps.cell.getValue() &&
+        prevProps.cell.column.getSize() === nextProps.cell.column.getSize()
+    );
+};
+
+const MemoizedTableBodyCell = memo(TableBodyCell, areCellsEqual) as typeof TableBodyCell;
+
+export default MemoizedTableBodyCell;
