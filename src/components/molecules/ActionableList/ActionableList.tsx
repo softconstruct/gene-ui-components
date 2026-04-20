@@ -161,10 +161,13 @@ const ActionableList: FC<IActionableListProps> = ({
     onSearch
 }) => {
     const mergedTexts = { ...ACTIONABLE_LIST_DEFAULT_TEXTS, ...texts };
+    const wasExpansionToggledRef = useRef(false);
 
     const [localItems, setLocalItems] = useState<IActionableListItem[]>(() => mergeItemsFromProps(items, []));
     const [searchValue, setSearchValue] = useState("");
-    const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+    const [expandedIds, setExpandedIds] = useState<Set<string>>(() =>
+        defaultExpandAll ? getExpandedIdsFromItems(items) : new Set()
+    );
     const [dropGap, setDropGap] = useState<IDropGap | null>(null);
 
     const handleDropReorderRef = useRef<(sourceId: string, targetId: string) => void>(() => {});
@@ -176,6 +179,7 @@ const ActionableList: FC<IActionableListProps> = ({
     }, [items]);
 
     useEffect(() => {
+        if (wasExpansionToggledRef.current) return;
         setExpandedIds(defaultExpandAll ? getExpandedIdsFromItems(items) : new Set());
     }, [items, defaultExpandAll]);
 
@@ -214,6 +218,7 @@ const ActionableList: FC<IActionableListProps> = ({
     const selectAllIndeterminate = !selectAllChecked && localItems.some((item) => isAnySelectionInSubtree(item));
 
     const handleToggleExpand = (id: string) => {
+        wasExpansionToggledRef.current = true;
         setExpandedIds((prev) => {
             const next = new Set(prev);
             if (next.has(id)) next.delete(id);

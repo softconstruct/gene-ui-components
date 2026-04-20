@@ -57,6 +57,39 @@ describe("ActionableList ", () => {
         expect(wrapper.text()).toContain("Child target");
     });
 
+    it("preserves user expansion state when items prop updates", () => {
+        const wrapper = mount(
+            <ActionableList
+                items={[
+                    {
+                        id: "parent",
+                        title: "Parent",
+                        children: [{ id: "child", title: "Child" }]
+                    }
+                ]}
+            />
+        );
+
+        expect(wrapper.text()).not.toContain("Child");
+
+        wrapper.find(".actionableListItem__toggle").at(0).simulate("click");
+        wrapper.update();
+        expect(wrapper.text()).toContain("Child");
+
+        wrapper.setProps({
+            items: [
+                {
+                    id: "parent",
+                    title: "Parent updated",
+                    children: [{ id: "child", title: "Child" }]
+                }
+            ]
+        });
+        wrapper.update();
+
+        expect(wrapper.text()).toContain("Child");
+    });
+
     it("keeps nested items collapsed by default", () => {
         const wrapper = mount(
             <ActionableList
