@@ -5,12 +5,15 @@ import { act } from "react-dom/test-utils";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
+import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 // Components
 import DataTable, { IDataTableProps } from "./index";
 
 type MockDataType = (typeof mockData)[0];
+
+const TestIcon = () => <svg />;
 
 describe("Table Component", () => {
     let setup: ReactWrapper<IDataTableProps<MockDataType>>;
@@ -134,6 +137,21 @@ describe("Table Component", () => {
 
         const thead = setup.find("thead");
         expect(thead.hasClass("tableHeader__sticky")).toBeFalsy();
+    });
+
+    it("renders row actions when rowActions prop is provided", async () => {
+        const rowActions = [{ Icon: TestIcon, title: "Edit", onClick: jest.fn() }];
+
+        await act(async () => {
+            setup.setProps({ rowActions });
+        });
+        setup.update();
+
+        const actionWrappers = setup.find(".tableRow__actionsWrapper");
+        expect(actionWrappers.length).toBe(INITIAL_PAGE_SIZE);
+
+        const actionButtons = setup.find(".tableRow__actionsWrapper button");
+        expect(actionButtons.length).toBe(INITIAL_PAGE_SIZE * rowActions.length);
     });
 
     it("calls onRowExpandChange callback when a row is expanded", async () => {

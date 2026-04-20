@@ -23,4 +23,11 @@
         overflow: hidden;
         color: var(--guit-sem-color-foreground-neutral-2);
     }
+
+    &_active,
+    &:hover {
+        .tableRow__actionsWrapper {
+            opacity: 1;
+        }
+    }
 }

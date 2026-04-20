@@ -22,6 +22,7 @@ import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader
 // Types
 import {
     DataTableColumn,
+    DataTableRowAction,
     DataTableRowExpandChangeHandler,
     ITableData,
     ITableNoDataTexts
@@ -147,6 +148,15 @@ interface IDataTableProps<TData extends ITableData> {
      * ```
      */
     onRowExpandChange?: DataTableRowExpandChangeHandler<TData>;
+    /**
+     * An array of action button objects to display in the row's action menu.
+     * @example
+     * rowActions={[
+     * { Icon: Edit, title: 'Edit', disabled: false, onClick: handleEdit },
+     * { Icon: Delete, title: 'Delete', disabled: true, onClick: handleDelete }
+     * ]}
+     */
+    rowActions?: DataTableRowAction[];
 }
 
 const defaultColumn = {
@@ -176,7 +186,8 @@ const DataTable = <TData extends ITableData>({
     noDataAvailableActions,
     manualPagination = false,
     expandable = false,
-    onRowExpandChange
+    onRowExpandChange,
+    rowActions
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -243,6 +254,7 @@ const DataTable = <TData extends ITableData>({
                         rows={table.getRowModel().rows}
                         noDataTexts={noDataTexts}
                         noDataAvailableActions={noDataAvailableActions}
+                        rowActions={rowActions}
                     />
                 </table>
             </Scrollbar>

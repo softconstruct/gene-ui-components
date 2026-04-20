@@ -1,5 +1,9 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { fn } from "@storybook/test";
+
+import { Pencil, RecycleBin } from "@geneui/icons";
 
 import Pagination from "@components/molecules/Pagination";
 
@@ -27,7 +31,8 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         noDataAvailableActions: args({ control: "false", ...propCategory.functionality }),
         sticky: args({ control: "boolean", ...propCategory.appearance }),
         expandable: args({ control: "boolean", ...propCategory.content }),
-        onRowExpandChange: args({ control: "false", ...propCategory.functionality })
+        onRowExpandChange: args({ control: "false", ...propCategory.functionality }),
+        rowActions: args({ control: "object", ...propCategory.functionality })
     },
     args: {}
 };
@@ -122,5 +127,20 @@ export const AsyncDataFetchingWithPagination: Story = {
             rowsPerPageOptions: [5, 10, 20],
             showInputPageField: true
         }
+    }
+};
+
+export const WithRowActions: Story = {
+    render: (props) => <DataTable {...props} />,
+    args: {
+        data: mockData,
+        columns: mockColumns,
+        rowActions: [
+            { Icon: Pencil, title: "Edit", onClick: fn() },
+            {
+                Icon: RecycleBin,
+                onClick: fn()
+            }
+        ]
     }
 };

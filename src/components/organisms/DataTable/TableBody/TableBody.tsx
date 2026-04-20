@@ -6,7 +6,7 @@ import { IButtonProps } from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import TableRow from "@components/organisms/DataTable/TableBody/Row/TableRow";
-import { ITableData, ITableNoDataTexts } from "@components/organisms/DataTable/types";
+import { DataTableRowAction, ITableData, ITableNoDataTexts } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableBody.scss";
@@ -44,6 +44,10 @@ interface ITableBody<TData> {
      * ]}
      */
     noDataAvailableActions?: IButtonProps[];
+    /**
+     * An array of action button objects to display in the row's action menu.
+     */
+    rowActions?: DataTableRowAction[];
 }
 
 interface ITableEmptyDataWrapperProps {
@@ -78,7 +82,8 @@ const TableBody = <TData extends ITableData>({
     loading,
     loadingText,
     noDataTexts,
-    noDataAvailableActions
+    noDataAvailableActions,
+    rowActions
 }: ITableBody<TData>) => {
     if (loading) {
         return (
@@ -104,7 +109,7 @@ const TableBody = <TData extends ITableData>({
     return (
         <tbody className="tableBody">
             {rows.map((row) => (
-                <TableRow key={row.id} row={row} />
+                <TableRow key={row.id} row={row} rowActions={rowActions} />
             ))}
         </tbody>
     );
