@@ -61,6 +61,14 @@ interface IButtonProps {
      */
     onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
+     * Event handler triggered when the mouse pointer enters the button.
+     */
+    onMouseEnter?: (event: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Event handler triggered when the mouse pointer leaves the button.
+     */
+    onMouseLeave?: (event: MouseEvent<HTMLButtonElement>) => void;
+    /**
      * Icon position <br>
      * Possible values: `before | after`
      */
@@ -135,6 +143,8 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
             children,
             Icon,
             onClick,
+            onMouseEnter,
+            onMouseLeave,
             className,
             iconPosition,
             loading,
@@ -148,6 +158,7 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
         ref
     ) => {
         const isSizeXS = size === "smallNudge";
+        const isButtonDisabled = !!disabled && !loading;
         const isTextDisplayForXS =
             (appearance === "primary" || appearance === "danger" || appearance === "success") && isSizeXS;
 
@@ -158,10 +169,12 @@ const Button = forwardRef<HTMLButtonElement, IButtonProps>(
                 id={id}
                 onFocus={onFocus}
                 onBlur={onBlur}
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
                 // eslint-disable-next-line react/button-has-type
                 type={type || "button"}
                 onClick={onClick}
-                disabled={disabled && !loading}
+                disabled={isButtonDisabled}
                 tabIndex={loading ? -1 : tabIndex}
                 className={classNames(
                     `button button_size_${size} 

@@ -4,6 +4,7 @@
     background-color: var(--guit-sem-color-background-neutral-1-nudge);
     border-top-left-radius: var(--guit-ref-radius-2xsmall);
     border-top-right-radius: var(--guit-ref-radius-2xsmall);
+    z-index: 1;
     filter: drop-shadow(
             var(--guit-sem-shadow-floating-2-position-x-1) var(--guit-sem-shadow-floating-2-position-y-1)
                 var(--guit-sem-shadow-floating-2-blur-1) var(--guit-sem-color-floating-2-rgba-1)
@@ -20,6 +21,7 @@
         #{ $this }__arrow {
             position: absolute;
         }
+
         #{ $this }__arrowPath {
             fill: var(--guit-sem-color-background-neutral-1-nudge);
         }
@@ -124,7 +126,7 @@
         border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
         padding-inline: var(--guit-ref-spacing-large);
-        height: 4.8rem;
+        height: var(--guit-sem-dimension-height-2xlarge);
         overflow: hidden;
     }
 
@@ -164,14 +166,6 @@
         }
     }
 
-    &__content {
-        width: 100%;
-        height: 100%;
-
-        // todo need to investigate why we need overflow auto
-        // overflow-y: auto;
-    }
-
     &__footer {
         flex: none;
         display: flex;
@@ -184,7 +178,7 @@
         padding-inline: var(--guit-ref-spacing-large);
         overflow: hidden;
 
-        &_buttons {
+        &Actions {
             display: flex;
             align-items: center;
             column-gap: var(--guit-ref-spacing-xsmall);

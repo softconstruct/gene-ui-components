@@ -1,4 +1,4 @@
-import { createElement, forwardRef } from "react";
+import { createElement, forwardRef, ReactElement } from "react";
 import classNames from "classnames";
 
 // Styles
@@ -77,7 +77,7 @@ interface ITextProps {
     /**
      * Text content
      */
-    children: string;
+    children: string | ReactElement<ITextProps> | Array<string | ReactElement<ITextProps>>;
     /**
      * A unique identifier for the text element.
      * Useful for accessibility purposes, like `aria-labelledby`.

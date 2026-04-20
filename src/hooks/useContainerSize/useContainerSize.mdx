@@ -7,7 +7,7 @@ import useContainerSize from './useContainerSize';
 
 ## useContainerSize
 
-This hook provides the current width and height of a container element and updates dynamically when the container resizes using ResizeObserver.
+This hook provides the current width and height of a container element and updates dynamically when the container resizes using `ResizeObserver`. You can optionally debounce resize notifications using `useDebounceCallback` to avoid excessive renders during rapid window/container resizing.
 
 #### Returns
 
@@ -18,6 +18,7 @@ An object containing:
 #### Parameters
 
 -   **`observeResize`** (optional): Whether to observe resize changes. Defaults to `true`.
+-   **`debounceWait`** (optional): Debounce delay in milliseconds for resize updates. If `0` or omitted, updates are applied immediately (no debounce).
 
 #### Usage
 
@@ -60,11 +61,32 @@ const ExampleComponent: FC = () => {
 export default ExampleComponent;
 ```
 
+#### Responsive layout example
+
+```tsx
+import React, { FC } from "react";
+import { useContainerSize } from "@geneui/components";
+
+const ResponsiveBreadcrumbWrapper: FC = ({ children }) => {
+    const { containerRef, sizes } = useContainerSize({ debounceWait: 100 });
+
+    // You can pass sizes.width down to a child (for example, Breadcrumb)
+    // and compute how many items fit in that width.
+    return (
+        <div ref={containerRef}>
+            {React.cloneElement(children as React.ReactElement, {
+                containerWidth: sizes.width
+            })}
+        </div>
+    );
+};
+```
+
 #### Notes
 
-- This hook uses ResizeObserver API to efficiently track container size changes.
-- It initializes with the current container dimensions when the component mounts.
-- The ResizeObserver is automatically cleaned up when the component unmounts to prevent memory leaks.
+- This hook uses the `ResizeObserver` API and can debounce updates (via `debounceWait`) to reduce render thrash while dragging resizers.
+- It performs an **initial synchronous measurement** on mount, so you immediately get the real container size before any debounced updates.
+- The `ResizeObserver` is automatically cleaned up when the component unmounts to prevent memory leaks.
 - If `observeResize` is set to `false`, the hook will only measure the initial size and won't track changes.
 - The hook returns a ref that must be attached to the element you want to measure.
 </div>

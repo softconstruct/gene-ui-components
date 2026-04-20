@@ -5,26 +5,29 @@ import { IconProps, ThreeDotsHorizontal } from "@geneui/icons";
 // Components
 import Button from "@components/atoms/Button";
 
-interface Props {
+interface IPaginationButtonProps {
     onClick: (e: MouseEvent<HTMLButtonElement>) => void;
     Icon: FC<IconProps>;
     disabled?: boolean;
 }
 
-const PaginationButton: FC<Props> = ({ onClick, Icon, disabled }) => {
+const PaginationButton: FC<IPaginationButtonProps> = ({ onClick, Icon, disabled }) => {
     const [isHovered, setIsHovered] = useState<boolean>(false);
+
     return (
-        <div onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-            <Button
-                disabled={disabled}
-                onClick={onClick}
-                onBlur={() => setIsHovered(false)}
-                onFocus={() => setIsHovered(true)}
-                Icon={isHovered ? Icon : ThreeDotsHorizontal}
-                appearance="secondary"
-                layout="text"
-            />
-        </div>
+        <Button
+            disabled={disabled}
+            onClick={onClick}
+            Icon={isHovered ? Icon : ThreeDotsHorizontal}
+            onMouseEnter={() => {
+                setIsHovered(true);
+            }}
+            onMouseLeave={() => {
+                setIsHovered(false);
+            }}
+            appearance="secondary"
+            layout="text"
+        />
     );
 };
 
