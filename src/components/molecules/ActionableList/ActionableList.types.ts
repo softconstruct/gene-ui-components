@@ -96,6 +96,11 @@ export interface IActionableListProps {
      */
     loading?: boolean;
     /**
+     * Expands all parent nodes on initial render and when `items` changes.
+     * By default, all nodes start collapsed.
+     */
+    defaultExpandAll?: boolean;
+    /**
      * Text and localization values.
      */
     texts?: Partial<IActionableListTexts>;

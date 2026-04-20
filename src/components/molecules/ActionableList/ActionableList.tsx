@@ -150,6 +150,7 @@ const ActionableList: FC<IActionableListProps> = ({
     withCheckbox = false,
     draggable: isDraggable = false,
     loading = false,
+    defaultExpandAll = false,
     texts,
     onItemsChange,
     onItemCheck,
@@ -172,8 +173,8 @@ const ActionableList: FC<IActionableListProps> = ({
     }, [items]);
 
     useEffect(() => {
-        setExpandedIds(getExpandedIdsFromItems(items));
-    }, [items]);
+        setExpandedIds(defaultExpandAll ? getExpandedIdsFromItems(items) : new Set());
+    }, [items, defaultExpandAll]);
 
     useEffect(() => {
         if (!isDraggable) return () => undefined;

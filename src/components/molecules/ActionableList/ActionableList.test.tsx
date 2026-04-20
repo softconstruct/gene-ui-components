@@ -29,10 +29,46 @@ describe("ActionableList ", () => {
     });
 
     it("filters items by search value", () => {
+        setup.find(".actionableListItem__toggle").at(0).simulate("click");
         setup.find("input").simulate("change", { target: { value: "2.1" } });
 
         expect(setup.text()).toContain("Actionable Item 2.1");
         expect(setup.text()).not.toContain("Actionable Item 1");
+    });
+
+    it("keeps nested items collapsed by default", () => {
+        const wrapper = mount(
+            <ActionableList
+                items={[
+                    {
+                        id: "parent",
+                        title: "Parent",
+                        children: [{ id: "child", title: "Child" }]
+                    }
+                ]}
+            />
+        );
+
+        expect(wrapper.text()).toContain("Parent");
+        expect(wrapper.text()).not.toContain("Child");
+    });
+
+    it("expands all nested items when defaultExpandAll is true", () => {
+        const wrapper = mount(
+            <ActionableList
+                defaultExpandAll
+                items={[
+                    {
+                        id: "parent",
+                        title: "Parent",
+                        children: [{ id: "child", title: "Child" }]
+                    }
+                ]}
+            />
+        );
+
+        expect(wrapper.text()).toContain("Parent");
+        expect(wrapper.text()).toContain("Child");
     });
 
     it("renders no data state when items are empty", () => {
@@ -92,7 +128,7 @@ describe("ActionableList ", () => {
                 children: [{ id: "c", title: "Child" }]
             }
         ];
-        const wrapper = mount(<ActionableList items={items} withCheckbox />);
+        const wrapper = mount(<ActionableList items={items} withCheckbox defaultExpandAll />);
         const inputs = wrapper.find(".actionableList__list input[type='checkbox']");
         expect(inputs).toHaveLength(2);
         inputs.at(1).simulate("change", { target: { checked: true } });

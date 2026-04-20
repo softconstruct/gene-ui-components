@@ -34,6 +34,7 @@ const meta: Meta<IActionableListProps> = {
         withCheckbox: args({ control: "boolean", ...propCategory.appearance }),
         draggable: args({ control: "boolean", ...propCategory.appearance }),
         loading: args({ control: "boolean", ...propCategory.states }),
+        defaultExpandAll: args({ control: "boolean", ...propCategory.states }),
         onItemsChange: args({ control: "false", action: "onItemsChange", ...propCategory.action }),
         onItemCheck: args({ control: "false", action: "onItemCheck", ...propCategory.action }),
         onSelectAllChange: args({ control: "false", action: "onSelectAllChange", ...propCategory.action }),
@@ -44,6 +45,7 @@ const meta: Meta<IActionableListProps> = {
         withCheckbox: true,
         draggable: true,
         loading: false,
+        defaultExpandAll: true,
         texts: {
             searchLabel: "Label",
             searchPlaceholder: "Search",
