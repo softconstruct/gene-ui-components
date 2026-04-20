@@ -26,7 +26,7 @@ export type DataTableRowAction = {
     Icon: FC<IconProps>;
     title?: string;
     disabled?: boolean;
-    onClick?: (e: MouseEvent) => void;
+    onClick: (e: MouseEvent) => void;
 };
 
 /**
