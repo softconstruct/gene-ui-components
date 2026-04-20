@@ -28,7 +28,7 @@ const parseTime = (v?: string | null) => {
     };
 };
 
-const useBasePicker = () => {
+const useBasePicker = (onPopoverToggle?: (status: boolean) => void) => {
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [anchorProps, setAnchorProps] = useState({});
 
@@ -39,7 +39,10 @@ const useBasePicker = () => {
 
     useClickOutside(() => {
         setPopoverOpen(false);
+        onPopoverToggle?.(false);
     }, [popoverRef?.current?.floatingElement, popoverRef?.current?.referenceElement]);
+
+    // TODO: add handler for onPopoverToggle and call onPopoverToggle(popoverOpen)
 
     return {
         popoverOpen,
@@ -50,8 +53,15 @@ const useBasePicker = () => {
     };
 };
 
-export const useSingleTimePicker = (value?: string | null, clearable?: boolean, onClear?: () => void) => {
-    const base = useBasePicker();
+export const useSingleTimePicker = (
+    value?: string | null,
+    clearable?: boolean,
+    onClear?: () => void,
+    onTimeSelect?: (time: string, parts: TimeParts, field?: "start" | "end") => void,
+    onTimeInputChange?: (time: string, parts: TimeParts | null, field?: "start" | "end") => void,
+    onPopoverToggle?: (open: boolean) => void
+) => {
+    const base = useBasePicker(onPopoverToggle);
 
     const [internalValue, setInternalValue] = useState(value ?? null);
     const [parts, setParts] = useState(getInitialParts());
@@ -60,6 +70,7 @@ export const useSingleTimePicker = (value?: string | null, clearable?: boolean, 
         const nextValue = e.target.value;
         setInternalValue(nextValue);
         const parsed = parseTime(nextValue);
+        onTimeInputChange?.(nextValue, parsed);
         if (parsed) setParts(parsed);
     };
 
@@ -68,6 +79,7 @@ export const useSingleTimePicker = (value?: string | null, clearable?: boolean, 
             const next = { ...prev, [column]: val };
             const composed = composeTime(next, true);
             setInternalValue(composed);
+            onTimeSelect?.(composed, next);
             return next;
         });
     };
@@ -99,9 +111,12 @@ export const useSingleTimePicker = (value?: string | null, clearable?: boolean, 
 export const useRangeTimePicker = (
     value?: { start: string | null; end: string | null },
     clearable?: boolean,
-    onClear?: () => void
+    onClear?: () => void,
+    onTimeSelect?: (time: string, parts: TimeParts, field?: "start" | "end") => void,
+    onTimeInputChange?: (time: string, parts: TimeParts | null, field?: "start" | "end") => void,
+    onPopoverToggle?: (open: boolean) => void
 ) => {
-    const base = useBasePicker();
+    const base = useBasePicker(onPopoverToggle);
 
     const [activeField, setActiveField] = useState<"start" | "end">("start");
 
@@ -123,9 +138,11 @@ export const useRangeTimePicker = (
         if (field === "start") {
             setInternalStart(nextValue);
             if (parsed) setPartsStart(parsed);
+            onTimeInputChange?.(nextValue, parsed, "start");
         } else {
             setInternalEnd(nextValue);
             if (parsed) setPartsEnd(parsed);
+            onTimeInputChange?.(nextValue, parsed, "end");
         }
     };
 
@@ -134,12 +151,14 @@ export const useRangeTimePicker = (
             setPartsStart((prev) => {
                 const next = { ...prev, [column]: val };
                 setInternalStart(composeTime(next, true));
+                onTimeSelect?.(composeTime(next, true), next, "start");
                 return next;
             });
         } else {
             setPartsEnd((prev) => {
                 const next = { ...prev, [column]: val };
                 setInternalEnd(composeTime(next, true));
+                onTimeSelect?.(composeTime(next, true), next, "end");
                 return next;
             });
         }

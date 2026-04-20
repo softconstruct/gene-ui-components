@@ -7,7 +7,7 @@ import { Clock } from "@geneui/icons";
 import Label from "@components/atoms/Label";
 import PickerInput from "@components/molecules/TimePicker/components/PickerInput/PickerInput";
 import PickerPopover from "@components/molecules/TimePicker/components/PickerPopover/PickerPopover";
-import { TimePickerSizes } from "@components/molecules/TimePicker/types";
+import { TimeParts, TimePickerSizes } from "@components/molecules/TimePicker/types";
 
 // Styles
 import "./TimePicker.scss";
@@ -57,6 +57,16 @@ interface ITimePickerBaseProps {
      * Error message to display when the input field is in an error state.
      */
     errorMessage?: string;
+    /**
+     * Callback function that is triggered when a time is selected.
+     * @param {string} time - The selected time in the format passed as prop or "HH:mm:ss" as default.
+     */
+    onTimeSelect?: (time: string, parts: TimeParts, field?: "start" | "end") => void;
+    /**
+     * Callback function that is triggered when the input field value changes.
+     * @param {string} time - The new value of the input field.
+     */
+    onTimeInputChange?: (time: string, parts: TimeParts | null, field?: "start" | "end") => void;
 }
 
 interface ISingleTimePickerProps extends ITimePickerBaseProps {
@@ -106,6 +116,8 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             value,
             clearable,
             onClear,
+            onTimeSelect,
+            onTimeInputChange,
             error,
             errorMessage
         },
@@ -122,7 +134,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             handleInputChange,
             handleSelect,
             handleClear
-        } = useSingleTimePicker(value, clearable, onClear);
+        } = useSingleTimePicker(value, clearable, onClear, onTimeSelect, onTimeInputChange);
 
         const valueToUse = value !== undefined ? value : internalValue;
 
@@ -178,6 +190,8 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             value,
             clearable,
             onClear,
+            onTimeSelect,
+            onTimeInputChange,
             error,
             errorMessage
         },
@@ -198,7 +212,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             handleInputChange,
             handleSelect,
             handleClear
-        } = useRangeTimePicker(value, clearable, onClear);
+        } = useRangeTimePicker(value, clearable, onClear, onTimeSelect, onTimeInputChange);
 
         const valueToUse = {
             start: value?.start !== undefined ? value.start : internalStart,

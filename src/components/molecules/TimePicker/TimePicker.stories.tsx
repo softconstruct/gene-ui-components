@@ -16,7 +16,6 @@ const meta: Meta<typeof TimePicker> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
-        loading: args({ control: "boolean", ...propCategory.states }),
         readOnly: args({ control: "boolean", ...propCategory.states }),
         required: args({ control: "boolean", ...propCategory.functionality }),
         placeholder: args({ control: "text", ...propCategory.appearance }),
@@ -28,7 +27,10 @@ const meta: Meta<typeof TimePicker> = {
         clearable: args({ control: "boolean", ...propCategory.functionality }),
         onClear: args({ control: "false", ...propCategory.action }),
         error: args({ control: "boolean", ...propCategory.states }),
-        errorMessage: args({ control: "text", ...propCategory.content })
+        errorMessage: args({ control: "text", ...propCategory.content }),
+        onPopoverToggle: args({ control: "false", ...propCategory.action }),
+        onTimeSelect: args({ control: "false", ...propCategory.action }),
+        onTimeInputChange: args({ control: "false", ...propCategory.action })
     },
     args: {
         label: "Choose time",
@@ -54,7 +56,6 @@ type RangePickerCase = {
 } & React.ComponentProps<typeof TimePicker.Range>;
 
 const singlePickerCases: SinglePickerCase[] = [
-    { title: "Loading", loading: true },
     { title: "Disabled", disabled: true },
     { title: "Read only", readOnly: true },
     { title: "Required", label: "Choose time", required: true },
@@ -67,7 +68,6 @@ const singlePickerCases: SinglePickerCase[] = [
 ];
 
 const rangePickerCases: RangePickerCase[] = [
-    { title: "Loading", loading: true },
     { title: "Disabled", disabled: true },
     { title: "Read only", readOnly: true },
     { title: "Required", label: "Choose time", required: true },
