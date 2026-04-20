@@ -3,6 +3,8 @@ import React, {
     FC,
     FocusEvent,
     forwardRef,
+    HTMLAttributes,
+    Ref,
     useEffect,
     useImperativeHandle,
     useMemo,
@@ -160,6 +162,11 @@ interface ITextFieldProps {
      * `"numeric" | "decimal" | "tel" | "text" | "search" | "email" | "url"`
      */
     inputMode?: "numeric" | "decimal" | "tel" | "text" | "search" | "email" | "url";
+    /**
+     * Additional props forwarded to the text field input wrapper container.
+     * Useful for popover trigger integrations (e.g. `ref`, handlers, aria attrs).
+     */
+    popoverProps?: HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> };
 }
 
 export interface ITextFieldRef {
@@ -198,7 +205,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             helperText,
             status = "rest",
             onClear,
-            inputMode = "text"
+            inputMode = "text",
+            popoverProps
         },
         ref
     ) => {
@@ -296,7 +304,10 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                     labelFor={generatedId}
                     size={labelSize}
                 />
-                <div className={classNames(`textField__wrapper textField__wrapper_size_${size}`, paddedClassesForIcon)}>
+                <div
+                    className={classNames(`textField__wrapper textField__wrapper_size_${size}`, paddedClassesForIcon)}
+                    {...popoverProps}
+                >
                     {IconBefore && (
                         <span className="textField__icon">
                             <IconBefore size={iconSizeMap[size]} />

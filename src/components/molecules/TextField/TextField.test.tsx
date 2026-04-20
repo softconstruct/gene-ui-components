@@ -230,6 +230,22 @@ describe("TextField ", () => {
         expect(wrapper.find(HelperText).text()).toStrictEqual(helperText);
     });
 
+    it("forwards popoverProps to input wrapper element", () => {
+        const onClick = jest.fn();
+        const wrapper = setup.setProps({
+            popoverProps: {
+                title: "textfield-popover-trigger",
+                onClick
+            }
+        });
+
+        const inputWrapper = wrapper.find(".textField__wrapper");
+        expect(inputWrapper.prop("title")).toBe("textfield-popover-trigger");
+
+        inputWrapper.simulate("click");
+        expect(onClick).toHaveBeenCalledTimes(1);
+    });
+
     it.each<ITextFieldProps["status"]>(["rest", "warning", "error"])('should have "%s" status', (status) => {
         const wrapper = setup.setProps({ status, helperText: "test helper text" });
 
