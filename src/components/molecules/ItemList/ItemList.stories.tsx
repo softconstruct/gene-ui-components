@@ -15,23 +15,18 @@ import { args, propCategory } from "../../../../stories/assets/storybook.globals
 const meta: Meta<IItemListProps> = {
     title: "Molecules/ItemList",
     component: ItemList,
-    decorators: [
-        (Story) => (
-            <div style={{ width: "100%", height: "100vh" }}>
-                <Story />
-            </div>
-        )
-    ],
+
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        children: args({ control: "false", ...propCategory.content }),
+        children: args({ control: "array", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
         loadingText: args({ control: "text", ...propCategory.content }),
         emptyText: args({ control: "text", ...propCategory.content }),
         showMore: args({ control: "boolean", ...propCategory.appearance }),
         showMoreLabel: args({ control: "text", ...propCategory.content }),
         showMoreDisabled: args({ control: "boolean", ...propCategory.states }),
-        showMoreLoading: args({ control: "boolean", ...propCategory.states })
+        showMoreLoading: args({ control: "boolean", ...propCategory.states }),
+        onShowMore: args({ action: "onShowMore", control: "false", ...propCategory.action })
     },
     args: {
         emptyText: "No results",
@@ -201,7 +196,7 @@ const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
     return (
         <ItemList {...props}>
             {complexItems.map((item) => (
-                <ItemListItem key={item.id} id={item.id} disabled={item.disabled}>
+                <ItemListItem key={item.id} id={item.id} disabled>
                     <div
                         style={{
                             display: "flex",

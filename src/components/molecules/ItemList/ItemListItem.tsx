@@ -22,11 +22,6 @@ interface IItemListItemProps {
      */
     onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
     /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
-     */
-    className?: string;
-    /**
      * Custom render function for the item.<br/>
      * Receives item data and should return a React element (e.g. `<a>`, router `<Link>`).<br/>
      * The returned element will be cloned with item list classes, click handler, and disabled state injected automatically.
@@ -37,7 +32,7 @@ interface IItemListItemProps {
 /**
  * ItemListItem represents a single option inside the ItemList.
  */
-const ItemListItem: FC<IItemListItemProps> = ({ id, children, disabled, onClick, className, render }) => {
+const ItemListItem: FC<IItemListItemProps> = ({ id, children, disabled, onClick, render }) => {
     if (render) {
         const renderedElement = render({ id });
 
@@ -45,7 +40,7 @@ const ItemListItem: FC<IItemListItemProps> = ({ id, children, disabled, onClick,
             const originalOnClick = (renderedElement.props as { onClick?: (event: MouseEvent) => void }).onClick;
 
             const propsToApply = {
-                className: classNames("itemListItem", renderedElement.props.className, className, {
+                className: classNames("itemListItem", renderedElement.props.className, {
                     itemListItem_disabled: disabled
                 }),
                 onClick: (event: MouseEvent<HTMLButtonElement>) => {
@@ -68,7 +63,7 @@ const ItemListItem: FC<IItemListItemProps> = ({ id, children, disabled, onClick,
             type="button"
             role="option"
             aria-selected="false"
-            className={classNames("itemListItem", className, {
+            className={classNames("itemListItem", {
                 itemListItem_disabled: disabled
             })}
             onClick={onClick}
