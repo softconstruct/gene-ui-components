@@ -1,5 +1,4 @@
 import React, { FC } from "react";
-import classNames from "classnames";
 
 import "./ActionableListNodeWrapper.scss";
 
@@ -10,16 +9,14 @@ export interface IActionableListNodeWrapperProps {
      * Depth (1–5) shared by all sibling rows in this group. Sets `actionableList__wrapper_level_*` and inline-start inset.
      */
     level: TActionableListLevel;
-    className?: string;
+    /**
+     * Nested row nodes rendered inside this level wrapper.
+     */
     children?: React.ReactNode;
 }
 
-const ActionableListNodeWrapper: FC<IActionableListNodeWrapperProps> = ({ level, className, children }) => {
-    return (
-        <div className={classNames("actionableList__wrapper", `actionableList__wrapper_level_${level}`, className)}>
-            {children}
-        </div>
-    );
+const ActionableListNodeWrapper: FC<IActionableListNodeWrapperProps> = ({ level, children }) => {
+    return <div className={`actionableList__wrapper actionableList__wrapper_level_${level}`}>{children}</div>;
 };
 
 export default ActionableListNodeWrapper;

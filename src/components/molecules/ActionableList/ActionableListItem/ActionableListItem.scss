@@ -15,6 +15,7 @@
     border: var(--bw) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
     border-radius: var(--guit-ref-radius-3xsmall);
     background-color: var(--guit-sem-color-background-neutral-1);
+    user-select: auto;
 
     &_nested {
         &::before,

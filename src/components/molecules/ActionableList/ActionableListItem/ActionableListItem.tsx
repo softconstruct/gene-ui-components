@@ -193,8 +193,8 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                                 width: `${rowEl.offsetWidth}px`,
                                 height: `${rowEl.offsetHeight}px`,
                                 overflow: "hidden",
-                                boxSizing: "border-box",
-                                pointerEvents: "none"
+                                boxSizing: "border-box"
+                                // pointerEvents: "none"
                             });
                             container.appendChild(clone);
                             previewContainerRef.current = container;
