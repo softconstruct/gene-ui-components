@@ -10,13 +10,17 @@ const meta: Meta<IPaginationProps> = {
     title: "Molecules/Pagination",
     component: Pagination,
     argTypes: {
-        current: args({ control: "text", ...propCategory.content }),
+        current: args({ control: "number", ...propCategory.content }),
+        defaultCurrent: args({ control: "number", ...propCategory.content }),
         rowsPerPageOptions: args({ control: "array", ...propCategory.content }),
         totalPages: args({ control: "number", ...propCategory.content }),
+        totalItems: args({ control: "number", ...propCategory.content }),
+        pageSize: args({ control: "number", ...propCategory.content }),
         className: args({ control: "false", ...propCategory.appearance }),
         onPageChange: args({ control: "false", ...propCategory.action }),
         onPageSizeChange: args({ control: "false", ...propCategory.action }),
         showInputPageField: args({ control: "boolean", ...propCategory.states }),
+        disabled: args({ control: "boolean", ...propCategory.states }),
         pageSizeSuffixLabel: args({ control: "text", ...propCategory.content }),
         pageSizeOfLabel: args({ control: "text", ...propCategory.content }),
         goToPageLabel: args({ control: "text", ...propCategory.content }),
@@ -24,9 +28,8 @@ const meta: Meta<IPaginationProps> = {
     },
 
     args: {
-        current: 30,
         rowsPerPageOptions: [10, 20, 30, 40],
-        totalPages: 25
+        totalItems: 113
     }
 };
 

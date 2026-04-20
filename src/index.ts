@@ -11,7 +11,13 @@ export { default as Logo, ILogoProps } from "./components/atoms/Logo";
 export { default as Rate, IRateProps } from "./components/atoms/Rate";
 export { default as Text, ITextProps } from "./components/atoms/Text";
 export { default as TextLink, ITextLinkProps } from "./components/atoms/TextLink";
-export { Popover, PopoverBody, PopoverFooter, PopoverFooterActions, IPopoverProps } from "./components/atoms/Popover";
+export {
+    Popover,
+    PopoverBody,
+    PopoverFooter,
+    IPopoverFooterActionProps,
+    IPopoverProps
+} from "./components/atoms/Popover";
 export { default as Badge, IBadgeProps } from "./components/atoms/Badge";
 export { default as Scrollbar, IScrollbarProps } from "./components/atoms/Scrollbar";
 export { Grid, Col, Row, IColProps, IRowProps, IGridProps } from "./components/atoms/Grid";
@@ -70,9 +76,15 @@ export { default as NumberField, INumberFieldProps } from "./components/molecule
 export { default as InteractiveCard, IInteractiveCardProps } from "./components/molecules/InteractiveCard";
 export { default as Section, ISectionProps } from "./components/molecules/Section";
 export { default as Image, IImageProps } from "./components/molecules/Image";
+export { default as ColorPicker, IColorPickerProps } from "./components/molecules/ColorPicker";
+export { default as OTPField, IOTPFieldProps } from "./components/molecules/OTPField";
+export { default as Breadcrumb, IBreadcrumbProps, IBreadcrumbItemProps } from "./components/molecules/Breadcrumb";
+export { default as PageHeader, IPageHeaderProps } from "./components/molecules/PageHeader";
+export { default as PopoverConfirm, IPopoverConfirmProps } from "./components/molecules/PopoverConfirm";
 export { default as ItemList, IItemListProps } from "./components/molecules/ItemList";
 
 // Organisms
+export { default as DataTable, IDataTableProps } from "@components/organisms/DataTable";
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
 export { default as DataCardList, IDataCardListProps } from "@components/organisms/DataCardList";
 

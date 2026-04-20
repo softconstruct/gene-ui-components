@@ -21,15 +21,38 @@ interface IPaginationProps {
      */
     className?: string;
     /**
+     * Disables pagination interactions.
+     * When `true`, all navigation buttons, page size select, and go-to-page input are non-interactive.
+     */
+    disabled?: boolean;
+    /**
      * Total number of pages available.
      * This value determines the upper bound of pagination navigation.
+     * If not provided, will be calculated from `totalItems` and `pageSize`.
      */
-    totalPages: number;
+    totalPages?: number;
+    /**
+     * Total number of items across all pages.
+     * Used to display "X of Y items" and calculate `totalPages` if not explicitly provided.
+     */
+    totalItems?: number;
     /**
      * The current active page (1-indexed).
-     * This value sets the starting point of the pagination and updates dynamically with user interaction.
+     * When provided, enables controlled mode where the parent component manages pagination state.
+     * When undefined, the component manages its own internal state (uncontrolled mode).
      */
-    current: number;
+    current?: number;
+    /**
+     * The default current active page (1-indexed).
+     * Only provide this if the pagination is an `uncontrolled` component; otherwise, use the `current` property.
+     */
+    defaultCurrent?: number;
+    /**
+     * The current page size (number of items per page).
+     * When provided, enables controlled mode for page size.
+     * When undefined, the component manages its own internal state (uncontrolled mode).
+     */
+    pageSize?: number;
     /**
      * Optional array of available page sizes (e.g., [10, 25, 50]).
      * When provided, a dropdown is rendered to allow users to choose the number of items displayed per page.
@@ -115,8 +138,12 @@ const DEFAULT_GO_TO_PAGE_SUFFIX = "Page";
  */
 const Pagination: FC<IPaginationProps> = ({
     className,
-    current = 1,
-    totalPages = 25,
+    disabled = false,
+    current,
+    defaultCurrent,
+    totalPages,
+    totalItems,
+    pageSize,
     rowsPerPageOptions,
     onPageChange,
     onPageSizeChange,
@@ -128,31 +155,71 @@ const Pagination: FC<IPaginationProps> = ({
 }) => {
     const isRTLMode = document.dir === "rtl";
 
-    const [currentPage, setCurrentPage] = useState<number>(+current > totalPages ? 1 : +current);
-    const [currentPageSize, setCurrentPageSize] = useState<number>(rowsPerPageOptions?.[0] || 0);
-    const [goToPageValue, setGoToPageValue] = useState<number>(currentPage);
+    const isControlledPage = current !== undefined && !!onPageChange;
+    const isControlledPageSize = pageSize !== undefined && !!onPageSizeChange;
+
+    const initialPage = defaultCurrent ? Math.max(1, defaultCurrent) : 1;
+
+    const [internalPage, setInternalPage] = useState(initialPage);
+    const [internalPageSize, setInternalPageSize] = useState(rowsPerPageOptions?.[0] || pageSize || 10);
+    const [goToPageValue, setGoToPageValue] = useState(initialPage);
+
+    const currentPage = isControlledPage ? current : internalPage;
+    const currentPageSize = isControlledPageSize ? pageSize : internalPageSize;
+
+    const calculatedTotalPages =
+        totalPages ?? (totalItems && currentPageSize ? Math.ceil(totalItems / currentPageSize) : 25);
 
     // Generate the page numbers to display
-    const calculatedData = createPageNumbers(currentPage, +totalPages, MAXIMUM_SIZE_IN_VIEW_PORT);
+    const calculatedData = createPageNumbers(currentPage, calculatedTotalPages, MAXIMUM_SIZE_IN_VIEW_PORT);
 
     const pageValue = goToPageValue > 0 ? goToPageValue.toString() : "";
 
-    // Effect to sync internal state with external prop changes
+    // Sync internal state with external prop changes (controlled mode)
     useEffect(() => {
-        const newCurrentPage = +current > totalPages ? 1 : +current;
-        setCurrentPage(newCurrentPage);
-        setGoToPageValue(newCurrentPage);
-    }, [current, totalPages]);
+        if (isControlledPage) {
+            const newCurrentPage = +current > calculatedTotalPages ? 1 : +current;
+            setInternalPage(newCurrentPage);
+            setGoToPageValue(newCurrentPage);
+        }
+    }, [current, calculatedTotalPages, isControlledPage]);
+
+    useEffect(() => {
+        if (isControlledPageSize && pageSize) {
+            setInternalPageSize(pageSize);
+        }
+    }, [pageSize, isControlledPageSize]);
+
+    useEffect(() => {
+        if (!isControlledPage) {
+            setGoToPageValue(internalPage);
+        }
+    }, [internalPage, isControlledPage]);
+
+    useEffect(() => {
+        if (isControlledPage) return;
+        if (internalPage > calculatedTotalPages) {
+            setInternalPage(Math.max(1, calculatedTotalPages));
+        }
+    }, [calculatedTotalPages, internalPage, isControlledPage]);
 
     const handlePageChange = (newPage: number) => {
-        if (newPage >= 1 && newPage <= totalPages) {
+        if (disabled) return;
+
+        if (newPage >= 1 && newPage <= calculatedTotalPages) {
             if (newPage !== goToPageValue) setGoToPageValue(newPage);
-            setCurrentPage(newPage);
+
+            if (!isControlledPage) {
+                setInternalPage(newPage);
+            }
+
             onPageChange?.(newPage);
         }
     };
 
     const handleGoToPageChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (disabled) return;
+
         const inputValue = e.currentTarget.value;
         const isNumericValue = allowOnlyDigits(inputValue);
         if (!isNumericValue) return;
@@ -162,27 +229,45 @@ const Pagination: FC<IPaginationProps> = ({
     };
 
     const handleGoToPageBlur = () => {
+        if (disabled) return;
+
         if (currentPage === goToPageValue) return;
-        const currentPageValue = goToPageValue > totalPages ? totalPages : goToPageValue || currentPage;
+        const currentPageValue =
+            goToPageValue > calculatedTotalPages ? calculatedTotalPages : goToPageValue || currentPage;
         setGoToPageValue(currentPageValue);
         handlePageChange(currentPageValue);
     };
 
     const handlePageSizeChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        if (disabled) return;
+
         const value = +e.currentTarget.value;
-        setCurrentPageSize(value);
+
+        if (!isControlledPageSize) {
+            setInternalPageSize(value);
+            setInternalPage(1);
+        }
+
         onPageSizeChange?.(value);
     };
 
     const handlePageButtonClick = (e: PointerEvent<HTMLButtonElement>) => {
+        if (disabled) return;
         handlePageChange(+e.currentTarget.innerText);
     };
 
     const handleArrowClick = (isDoubleArrow?: boolean, isForward?: boolean) => {
+        if (disabled) return;
+
         const jumpSize = isDoubleArrow ? DOUBLE_ARROW_PAGE_JUMP_COUNT : 1;
-        const newPage = isForward ? Math.min(currentPage + jumpSize, totalPages) : Math.max(currentPage - jumpSize, 1);
+        const newPage = isForward
+            ? Math.min(currentPage + jumpSize, calculatedTotalPages)
+            : Math.max(currentPage - jumpSize, 1);
         handlePageChange(newPage);
     };
+
+    const startItem = totalItems === 0 ? 0 : (currentPage - 1) * currentPageSize + 1;
+    const endItem = totalItems ? Math.min(currentPage * currentPageSize, totalItems) : currentPage * currentPageSize;
 
     return (
         <div className={classNames("pagination", className)}>
@@ -190,7 +275,7 @@ const Pagination: FC<IPaginationProps> = ({
                 <div className="pagination__perpage">
                     {/* todo: import 'Dropdown' component */}
                     <div className="pagination__select">
-                        <select onChange={handlePageSizeChange}>
+                        <select value={currentPageSize} onChange={handlePageSizeChange} disabled={disabled}>
                             {rowsPerPageOptions.map((el) => (
                                 <option value={el} key={el}>
                                     {el}/{pageSizeSuffixLabel}
@@ -199,8 +284,15 @@ const Pagination: FC<IPaginationProps> = ({
                         </select>
                     </div>
 
-                    <div className="pagination__perpage_values">
-                        <span>{currentPageSize}</span> {pageSizeOfLabel} <span>{totalPages}</span>
+                    <div
+                        className={classNames("pagination__perpage_values", {
+                            pagination__perpage_values_disabled: disabled
+                        })}
+                    >
+                        <span>
+                            {startItem}-{endItem}
+                        </span>{" "}
+                        {pageSizeOfLabel} <span>{totalItems ?? calculatedTotalPages}</span>
                     </div>
                 </div>
             )}
@@ -209,17 +301,23 @@ const Pagination: FC<IPaginationProps> = ({
                     <Button
                         appearance="secondary"
                         layout="text"
-                        disabled={currentPage === 1}
+                        disabled={disabled || currentPage === 1}
                         Icon={isRTLMode ? ChevronRight : ChevronLeft}
                         onClick={() => handleArrowClick(false, false)}
                     />
 
                     {calculatedData[0] > 1 && (
                         <>
-                            <button className="pagination__nav_item" type="button" onClick={() => handlePageChange(1)}>
+                            <button
+                                className="pagination__nav_item"
+                                type="button"
+                                disabled={disabled}
+                                onClick={() => handlePageChange(1)}
+                            >
                                 <span className="pagination__nav_value">1</span>
                             </button>
                             <PaginationButton
+                                disabled={disabled}
                                 onClick={() => handleArrowClick(true, false)}
                                 Icon={isRTLMode ? ChevronDoubleRight : ChevronDoubleLeft}
                             />
@@ -230,40 +328,48 @@ const Pagination: FC<IPaginationProps> = ({
                         <button
                             key={el}
                             className={classNames("pagination__nav_item", {
-                                pagination__nav_item_selected: currentPage === el
+                                pagination__nav_item_selected: currentPage === el,
+                                pagination__nav_item_selected_disabled: disabled && currentPage === el
                             })}
                             type="button"
+                            disabled={disabled}
                             onClick={handlePageButtonClick}
                         >
                             <span className="pagination__nav_value">{el}</span>
                         </button>
                     ))}
 
-                    {calculatedData[calculatedData.length - 1] < totalPages && (
+                    {calculatedData[calculatedData.length - 1] < calculatedTotalPages && (
                         <>
                             <PaginationButton
+                                disabled={disabled}
                                 onClick={() => handleArrowClick(true, true)}
                                 Icon={isRTLMode ? ChevronDoubleLeft : ChevronDoubleRight}
                             />
                             <button
                                 className="pagination__nav_item"
                                 type="button"
-                                onClick={() => handlePageChange(totalPages)}
+                                disabled={disabled}
+                                onClick={() => handlePageChange(calculatedTotalPages)}
                             >
-                                <span className="pagination__nav_value">{totalPages}</span>
+                                <span className="pagination__nav_value">{calculatedTotalPages}</span>
                             </button>
                         </>
                     )}
                     <Button
                         appearance="secondary"
                         layout="text"
-                        disabled={currentPage === totalPages}
+                        disabled={disabled || currentPage === calculatedTotalPages}
                         Icon={isRTLMode ? ChevronLeft : ChevronRight}
                         onClick={() => handleArrowClick(false, true)}
                     />
                 </div>
                 {showInputPageField && (
-                    <div className="pagination__nav_specific">
+                    <div
+                        className={classNames("pagination__nav_specific", {
+                            pagination__nav_specific_disabled: disabled
+                        })}
+                    >
                         <span>{goToPageLabel}</span>
                         <TextField
                             size="medium"
@@ -272,6 +378,7 @@ const Pagination: FC<IPaginationProps> = ({
                             autoComplete="off"
                             className="pagination__input"
                             value={pageValue}
+                            disabled={disabled}
                         />
                         <span>{goToPageSuffixLabel}</span>
                     </div>
