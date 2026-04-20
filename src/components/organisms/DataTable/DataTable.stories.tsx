@@ -18,13 +18,16 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         pagination: args({ control: "object", ...propCategory.functionality }),
+        manualPagination: args({ control: "object", ...propCategory.functionality }),
         columns: args({ control: "false", ...propCategory.content }),
         data: args({ control: "false", ...propCategory.content }),
         noDataTexts: args({ control: "object", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
         loadingText: args({ control: "text", ...propCategory.content }),
         noDataAvailableActions: args({ control: "false", ...propCategory.functionality }),
-        sticky: args({ control: "boolean", ...propCategory.appearance })
+        sticky: args({ control: "boolean", ...propCategory.appearance }),
+        expandable: args({ control: "boolean", ...propCategory.content }),
+        onRowExpandChange: args({ control: "false", ...propCategory.functionality })
     },
     args: {}
 };
@@ -38,6 +41,7 @@ export const Default: Story = {
     args: {
         columns: mockColumns,
         data: mockData,
+        expandable: true,
         pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
     }
 };

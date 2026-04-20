@@ -1,12 +1,15 @@
-import React from "react";
-import { ColumnDef } from "@tanstack/react-table";
+import React, { FC, ReactNode } from "react";
 
 // Components
 import Button from "@components/atoms/Button";
+import Loader from "@components/atoms/Loader";
 import Pill from "@components/atoms/Pill";
 import Checkbox from "@components/molecules/Checkbox";
+import Empty from "@components/molecules/Empty";
 import NumberField from "@components/molecules/NumberField";
 import Switch from "@components/molecules/Switch";
+import DataTable from "@components/organisms/DataTable";
+import { DataTableColumn } from "@components/organisms/DataTable/types";
 
 type ClientProfile = {
     Id: number;
@@ -18,38 +21,168 @@ type ClientProfile = {
     IsLocked: boolean;
     Created: string;
     Status: "new" | "active" | "inactive" | "suspended";
+    expandedRow?: ReactNode;
 };
 
-export const mockColumns: ColumnDef<ClientProfile>[] = [
+const ExpandedData: FC<{ data: string }> = ({ data }) => <div className="swapComponent">{data}</div>;
+
+const nestedTableColumns: DataTableColumn<ClientProfile>[] = [
+    { accessorKey: "Id", header: "Id" },
+    { accessorKey: "Email", header: "Email" },
+    { accessorKey: "Status", header: "Status" }
+];
+
+const deepNestedColumns: DataTableColumn<ClientProfile>[] = [
+    { accessorKey: "Id", header: "Id" },
+    { accessorKey: "Email", header: "Email" },
+    { accessorKey: "Status", header: "Status" }
+];
+
+const deepNestedData: ClientProfile[] = [
+    {
+        Id: 9101,
+        FirstName: "Deep",
+        LastName: "Row 1",
+        DayOffs: 0,
+        Email: "deep.row1@mail.com",
+        IsVerified: true,
+        IsLocked: false,
+        Created: "2026-01-11",
+        Status: "active"
+    },
+    {
+        Id: 9102,
+        FirstName: "Deep",
+        LastName: "Row 2",
+        DayOffs: 1,
+        Email: "deep.row2@mail.com",
+        IsVerified: false,
+        IsLocked: false,
+        Created: "2026-01-12",
+        Status: "new"
+    },
+    {
+        Id: 9103,
+        FirstName: "Deep",
+        LastName: "Row 3",
+        DayOffs: 2,
+        Email: "deep.row3@mail.com",
+        IsVerified: true,
+        IsLocked: true,
+        Created: "2026-01-13",
+        Status: "inactive"
+    }
+];
+
+const nestedTableData: ClientProfile[] = [
+    {
+        Id: 9001,
+        FirstName: "Nested",
+        LastName: "Row 1",
+        DayOffs: 0,
+        Email: "nested.row1@mail.com",
+        IsVerified: true,
+        IsLocked: false,
+        Created: "2026-01-01",
+        Status: "active"
+    },
+    {
+        Id: 9002,
+        FirstName: "Nested",
+        LastName: "Row 2",
+        DayOffs: 0,
+        Email: "nested.row2@mail.com",
+        IsVerified: false,
+        IsLocked: false,
+        Created: "2026-01-02",
+        Status: "new",
+        expandedRow: <DataTable columns={deepNestedColumns} data={deepNestedData} />
+    },
+    {
+        Id: 9003,
+        FirstName: "Nested",
+        LastName: "Row 3",
+        DayOffs: 2,
+        Email: "nested.row3@mail.com",
+        IsVerified: true,
+        IsLocked: false,
+        Created: "2026-01-03",
+        Status: "inactive"
+    },
+    {
+        Id: 9004,
+        FirstName: "Nested",
+        LastName: "Row 4",
+        DayOffs: 1,
+        Email: "nested.row4@mail.com",
+        IsVerified: false,
+        IsLocked: true,
+        Created: "2026-01-04",
+        Status: "suspended"
+    },
+    {
+        Id: 9005,
+        FirstName: "Nested",
+        LastName: "Row 5",
+        DayOffs: 0,
+        Email: "nested.row5@mail.com",
+        IsVerified: true,
+        IsLocked: false,
+        Created: "2026-01-05",
+        Status: "active"
+    },
+    {
+        Id: 9006,
+        FirstName: "Nested",
+        LastName: "Row 6",
+        DayOffs: 3,
+        Email: "nested.row6@mail.com",
+        IsVerified: false,
+        IsLocked: false,
+        Created: "2026-01-06",
+        Status: "new"
+    },
+    {
+        Id: 9007,
+        FirstName: "Nested",
+        LastName: "Row 7",
+        DayOffs: 4,
+        Email: "nested.row7@mail.com",
+        IsVerified: true,
+        IsLocked: true,
+        Created: "2026-01-07",
+        Status: "inactive"
+    }
+];
+
+const defaultExpandedEmpty = (
+    <div style={{ display: "flex", justifyContent: "center" }}>
+        <Empty appearance="noData" title="No data" description="There is no extra information for this row." />
+    </div>
+);
+
+export const mockColumns: DataTableColumn<ClientProfile>[] = [
     { accessorKey: "Id", header: "Id" },
     {
         accessorKey: "IsVerified",
         header: "Verified",
-        cell: ({ getValue }) => {
-            const isVerified = getValue<boolean>();
-            return <Switch defaultChecked={isVerified} />;
-        }
+        renderCell: ({ value }) => <Switch defaultChecked={Boolean(value)} />
     },
     {
         accessorKey: "DayOffs",
         header: "Day offs",
-        cell: ({ getValue }) => {
-            return <NumberField defaultValue={Number(getValue())} />;
-        }
+        renderCell: ({ value }) => <NumberField defaultValue={Number(value)} />
     },
     {
         accessorKey: "Status",
         header: "Status",
-        cell: ({ getValue }) => {
-            const status = getValue<string>();
-            return <Pill text={status} />;
-        }
+        renderCell: ({ value }) => <Pill text={String(value)} />
     },
     { accessorKey: "FirstName", header: "First name" },
     {
-        accessorKey: "Actions",
+        id: "Actions",
         header: "Actions",
-        cell: () => (
+        renderCell: () => (
             <div style={{ display: "flex", gap: "1rem" }}>
                 <Button>View user data</Button>
                 <Button appearance="danger">Block user</Button>
@@ -61,10 +194,7 @@ export const mockColumns: ColumnDef<ClientProfile>[] = [
     {
         accessorKey: "IsLocked",
         header: "Locked",
-        cell: ({ getValue }) => {
-            const isLocked = getValue<boolean>();
-            return <Checkbox defaultChecked={isLocked} />;
-        }
+        renderCell: ({ value }) => <Checkbox defaultChecked={Boolean(value)} />
     },
     { accessorKey: "Created", header: "Created" }
 ];
@@ -80,7 +210,10 @@ const baseMockData: ClientProfile[] = [
         IsVerified: false,
         IsLocked: true,
         Created: "2026-01-14",
-        Status: "new"
+        Status: "new",
+        expandedRow: (
+            <ExpandedData data="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." />
+        )
     },
     {
         Id: 34829102,
@@ -91,7 +224,16 @@ const baseMockData: ClientProfile[] = [
         IsVerified: true,
         IsLocked: false,
         Created: "2026-02-05",
-        Status: "active"
+        Status: "active",
+        expandedRow: (
+            <DataTable
+                columns={nestedTableColumns}
+                data={nestedTableData}
+                pagination={false}
+                sticky={false}
+                expandable
+            />
+        )
     },
     {
         Id: 59382104,
@@ -102,7 +244,12 @@ const baseMockData: ClientProfile[] = [
         IsVerified: true,
         IsLocked: false,
         Created: "2026-02-18",
-        Status: "active"
+        Status: "active",
+        expandedRow: (
+            <div style={{ display: "flex", justifyContent: "center" }}>
+                <Loader size="large" text="Loading..." textPosition="below" />
+            </div>
+        )
     },
     {
         Id: 84729103,
@@ -302,6 +449,7 @@ export const mockData: ClientProfile[] = Array.from({ length: MOCK_DATA_SIZE }, 
     return {
         ...source,
         Id: source.Id + index * 100000,
-        Email: `${source.FirstName.toLowerCase()}.${sequence}@mail.com`
+        Email: `${source.FirstName.toLowerCase()}.${sequence}@mail.com`,
+        expandedRow: source.expandedRow ?? defaultExpandedEmpty
     };
 });
