@@ -18,7 +18,7 @@ describe("ItemList ", () => {
 
     const Component = (
         <ItemList>
-            <div>Test Child</div>
+            <ItemListItem id="test-item">Test Child</ItemListItem>
         </ItemList>
     );
 
@@ -57,7 +57,7 @@ describe("ItemList ", () => {
     });
 
     it("renders footer when showMore is true", () => {
-        setup.setProps({ showMore: true });
+        setup.setProps({ showMore: true, children: renderItems(1) });
         expect(setup.find(".itemList__footer").exists()).toBeTruthy();
     });
 
@@ -67,7 +67,7 @@ describe("ItemList ", () => {
     });
 
     it("disables showMore button when showMoreDisabled is true", () => {
-        setup.setProps({ showMore: true, showMoreDisabled: true });
+        setup.setProps({ showMore: true, showMoreDisabled: true, children: renderItems(1) });
         expect(showMoreButton().prop("disabled")).toBeTruthy();
     });
 
@@ -82,7 +82,7 @@ describe("ItemList ", () => {
     });
 
     it("shows loading state on showMore button when showMoreLoading is true", () => {
-        setup.setProps({ showMore: true, showMoreLoading: true });
+        setup.setProps({ showMore: true, showMoreLoading: true, children: renderItems(1) });
         expect(showMoreButton().hasClass("button_loading")).toBeTruthy();
     });
 

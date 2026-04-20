@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Globe, Magnifier, RecycleBin, ThreeDotsHorizontal } from "@geneui/icons";
@@ -26,7 +26,8 @@ const meta: Meta<IItemListProps> = {
         showMoreLabel: args({ control: "text", ...propCategory.content }),
         showMoreDisabled: args({ control: "boolean", ...propCategory.states }),
         showMoreLoading: args({ control: "boolean", ...propCategory.states }),
-        onShowMore: args({ action: "onShowMore", control: "false", ...propCategory.action })
+        onShowMore: args({ control: "false", ...propCategory.action }),
+        onItemClick: args({ control: "false", ...propCategory.action })
     },
     args: {
         emptyText: "No results",
@@ -106,6 +107,13 @@ export const Default: Story = {
 };
 
 const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => setLoading(false), 2000);
+        return () => clearTimeout(timeoutId);
+    }, []);
+
     const complexItems = [
         {
             id: "row-1",
@@ -194,9 +202,9 @@ const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
     ];
 
     return (
-        <ItemList {...props}>
+        <ItemList {...props} loading={loading} loadingText="Loading data...">
             {complexItems.map((item) => (
-                <ItemListItem key={item.id} id={item.id} disabled>
+                <ItemListItem key={item.id} id={item.id} disabled={item.disabled}>
                     <div
                         style={{
                             display: "flex",
@@ -246,6 +254,13 @@ const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
 
 export const WithRender: Story = {
     render: (props) => <WithRenderStoryComponent {...props} />
+};
+
+export const NoResult: Story = {
+    render: (props) => <ItemList {...props}>{[]}</ItemList>,
+    args: {
+        emptyText: "No results"
+    }
 };
 
 const VirtualizedStoryComponent: FC<IItemListProps> = (props) => {

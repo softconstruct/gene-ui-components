@@ -1,4 +1,4 @@
-import React, { Children, FC, ReactElement, useEffect, useMemo, useRef } from "react";
+import React, { Children, FC, ReactElement, ReactNode, useEffect, useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
 
@@ -8,6 +8,7 @@ import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
 import Skeleton from "@components/atoms/Skeleton";
 import Empty from "@components/molecules/Empty";
 import ItemListFooter from "@components/molecules/ItemList/ItemListFooter";
+import { IItemListItemProps } from "@components/molecules/ItemList/ItemListItem";
 
 // Styles
 import "./ItemList.scss";
@@ -21,7 +22,7 @@ interface IItemListProps {
     /**
      * The content of the item list. These should be `ItemListItem` components.
      */
-    children: ReactElement | ReactElement[];
+    children: ReactNode;
     /**
      * Indicates whether the list is in a loading state.
      * If true, a loading indicator is displayed instead of the items.
@@ -43,6 +44,10 @@ interface IItemListProps {
      * Callback when the "Show more" button is clicked.
      */
     onShowMore?: () => void;
+    /**
+     * Callback function that returns the clicked ItemListItem props.
+     */
+    onItemClick?: (item: IItemListItemProps) => void;
     /**
      * Text for the "Show more" button.
      */
@@ -76,14 +81,14 @@ const ItemList: FC<IItemListProps> = ({
     emptyText,
     showMore,
     onShowMore,
+    onItemClick,
     showMoreLabel,
     showMoreDisabled = false,
     showMoreLoading = false
 }) => {
     const hasChildren = useMemo(() => Children.count(children) > 0, [children]);
-
     const scrollbarRef = useRef<ScrollbarRefType | null>(null);
-    const childrenArray = useMemo(() => Children.toArray(children) as ReactElement[], [children]);
+    const childrenArray = useMemo(() => Children.toArray(children) as ReactElement<IItemListItemProps>[], [children]);
     const shouldRenderShowMoreSkeleton = !!showMore && !!showMoreLoading && hasChildren;
     const totalVirtualCount = childrenArray.length + (shouldRenderShowMoreSkeleton ? 1 : 0);
 
@@ -161,7 +166,14 @@ const ItemList: FC<IItemListProps> = ({
                                         data-index={row.index}
                                         style={{ transform: `translateY(${row.start}px)` }}
                                     >
-                                        {item}
+                                        {React.cloneElement(item, {
+                                            onClick: (event: React.MouseEvent<HTMLButtonElement>) => {
+                                                item.props.onClick?.(event);
+                                                if (!event.defaultPrevented) {
+                                                    onItemClick?.(item.props);
+                                                }
+                                            }
+                                        })}
                                     </li>
                                 )
                             );
