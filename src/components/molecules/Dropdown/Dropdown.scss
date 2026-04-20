@@ -1,5 +1,92 @@
 .dropdown {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    $this: &;
+
+    width: 100%;
+
+    &__trigger {
+        width: 100%;
+    }
+
+    &__body {
+        overflow: hidden;
+        min-height: 3.2rem;
+        max-height: 42rem;
+        border-radius: var(--guit-ref-radius-2xsmall);
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-3xsmall);
+        height: 100%;
+        min-height: 16rem;
+    }
+
+    &__search {
+        padding: var(--guit-ref-spacing-3xsmall);
+        border-bottom: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style)
+            var(--guit-sem-color-border-neutral-2);
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__scrollbar {
+        flex: 1;
+        min-height: 12rem;
+        max-height: 28.8rem;
+        padding: 0 var(--guit-ref-spacing-4xsmall) var(--guit-ref-spacing-4xsmall);
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        padding-top: var(--guit-ref-spacing-3xsmall);
+        gap: var(--guit-ref-spacing-3xsmall);
+        width: 100%;
+    }
+
+    &__loading,
+    &__empty {
+        height: 18rem;
+        width: 100%;
+        display: grid;
+        place-content: center;
+    }
+
+    &__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--guit-ref-spacing-small);
+        padding: var(--guit-ref-spacing-3xsmall);
+        border-top: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style)
+            var(--guit-sem-color-border-neutral-2);
+    }
+
+    &__footerActions {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        margin-inline-start: auto;
+    }
+
+    &__body_size {
+        &_large {
+            width: 36rem;
+        }
+
+        &_medium {
+            width: 28rem;
+        }
+
+        &_small {
+            width: 22rem;
+        }
+    }
 }

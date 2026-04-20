@@ -1,23 +1,428 @@
-import React, { FC } from "react";
+import React, {
+    ChangeEvent,
+    FC,
+    KeyboardEvent,
+    MouseEvent,
+    MutableRefObject,
+    useEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
+import { ReferenceType } from "@floating-ui/react";
 import classNames from "classnames";
+
+import { CaretDownFilled, Magnifier } from "@geneui/icons";
+
+// Components
+import Button from "@components/atoms/Button";
+import Loader from "@components/atoms/Loader";
+import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
+import Scrollbar from "@components/atoms/Scrollbar";
+import Checkbox from "@components/molecules/Checkbox";
+import Empty from "@components/molecules/Empty";
+import TextField from "@components/molecules/TextField";
+import Tooltip from "@components/molecules/Tooltip";
+
+// Hooks
+import { useClickOutside, useDebounce } from "@hooks/index";
 
 // Styles
 import "./Dropdown.scss";
 
+// Constants
+import {
+    DEFAULT_CLEAR_ALL_LABEL,
+    DEFAULT_CLEAR_LABEL,
+    DEFAULT_EMPTY_TEXT,
+    DEFAULT_LOADING_TEXT,
+    DEFAULT_SEARCH_PLACEHOLDER,
+    DEFAULT_SELECT_ALL_LABEL
+} from "./constants";
+// Internal components
+import DropdownItem from "./DropdownItem/DropdownItem";
+// Types
+import { DropdownStatus, DropdownVariant, IDropdownFooterActions, IDropdownOption } from "./types";
+
 interface IDropdownProps {
-    /**
-     * Additional class for the parent element.
-     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
-     */
     className?: string;
-    // fill Dropdown component props interface
+    options: IDropdownOption[];
+    variant?: DropdownVariant;
+    size?: "large" | "medium" | "small";
+    status?: DropdownStatus;
+    value?: string | null;
+    defaultValue?: string | null;
+    values?: string[];
+    defaultValues?: string[];
+    placeholder?: string;
+    label?: string;
+    helperText?: string;
+    required?: boolean;
+    disabled?: boolean;
+    readOnly?: boolean;
+    searchable?: boolean;
+    searchAutoFocus?: boolean;
+    searchPlaceholder?: string;
+    searchDebounceMs?: number;
+    searchValue?: string;
+    loading?: boolean;
+    loadingText?: string;
+    emptyText?: string;
+    selectAllLabel?: string;
+    clearLabel?: string;
+    clearAllLabel?: string;
+    footerActions?: IDropdownFooterActions;
+    filterFn?: (option: IDropdownOption, searchTerm: string) => boolean;
+    onSearchChange?: (value: string) => void;
+    onChange?: (value: IDropdownOption | IDropdownOption[] | null) => void;
 }
 
-/**
- * Dropdown component presents a list of options when triggered by a user interaction. When expanded, the dropdown reveals a menu that allows users to select a single or multiple options from a predefined set.
- */
-const Dropdown: FC<IDropdownProps> = ({ className }) => {
-    return <div className={classNames("dropdown", className)}>Dropdown</div>;
+const Dropdown: FC<IDropdownProps> = ({
+    className,
+    options,
+    variant = "single",
+    size = "medium",
+    status = "rest",
+    value,
+    defaultValue = null,
+    values,
+    defaultValues = [],
+    placeholder,
+    label,
+    helperText,
+    required,
+    disabled,
+    readOnly,
+    searchable,
+    searchAutoFocus = true,
+    searchPlaceholder = DEFAULT_SEARCH_PLACEHOLDER,
+    searchDebounceMs = 300,
+    searchValue,
+    loading,
+    loadingText = DEFAULT_LOADING_TEXT,
+    emptyText = DEFAULT_EMPTY_TEXT,
+    selectAllLabel = DEFAULT_SELECT_ALL_LABEL,
+    clearLabel = DEFAULT_CLEAR_LABEL,
+    clearAllLabel = DEFAULT_CLEAR_ALL_LABEL,
+    footerActions,
+    filterFn,
+    onSearchChange,
+    onChange
+}) => {
+    const isMulti = variant === "multi";
+    const isExternallyControlledSearch = searchValue !== undefined;
+    const [internalValue, setInternalValue] = useState<string | null>(defaultValue);
+    const [internalValues, setInternalValues] = useState<string[]>(defaultValues);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [popoverProps, setPopoverProps] = useState<Record<string, unknown>>({});
+    const [internalSearchValue, setInternalSearchValue] = useState<string>(searchValue || "");
+
+    const popoverRef = useRef<IPopoverRef>({
+        floatingElement: { current: null } as MutableRefObject<ReferenceType | null>,
+        referenceElement: { current: null } as MutableRefObject<ReferenceType | null>
+    });
+
+    useEffect(() => {
+        if (isExternallyControlledSearch) {
+            setInternalSearchValue(searchValue || "");
+        }
+    }, [searchValue, isExternallyControlledSearch]);
+
+    const selectedSingleValue = value !== undefined ? value : internalValue;
+    const selectedMultipleValues = values !== undefined ? values : internalValues;
+    const searchTerm = isExternallyControlledSearch ? searchValue || "" : internalSearchValue;
+
+    useClickOutside(
+        (event) => {
+            const onReferenceClick =
+                event.target instanceof Node &&
+                popoverRef.current.referenceElement?.current instanceof Node &&
+                popoverRef.current.referenceElement.current.contains(event.target as Node);
+
+            if (!onReferenceClick && isOpen) {
+                setIsOpen(false);
+            }
+        },
+        [popoverRef.current.floatingElement]
+    );
+
+    const emitSearch = (nextValue: string) => {
+        if (onSearchChange) {
+            onSearchChange(nextValue);
+        }
+        if (!isExternallyControlledSearch) {
+            setInternalSearchValue(nextValue);
+        }
+    };
+
+    const { debouncedCallback: onSearchDebounced } = useDebounce((...args: unknown[]) => {
+        const [nextValue] = args as [string];
+        emitSearch(nextValue);
+    }, searchDebounceMs);
+
+    const selectedSingleOption = useMemo(
+        () => options.find((option) => option.value === selectedSingleValue) || null,
+        [options, selectedSingleValue]
+    );
+    const selectedMultiOptions = useMemo(
+        () => options.filter((option) => selectedMultipleValues.includes(option.value)),
+        [options, selectedMultipleValues]
+    );
+
+    const selectedValueText = useMemo(() => {
+        if (isMulti) {
+            return selectedMultiOptions.map((option) => option.label).join(", ");
+        }
+        return selectedSingleOption?.label || "";
+    }, [isMulti, selectedMultiOptions, selectedSingleOption]);
+
+    const filteredOptions = useMemo(() => {
+        if (!searchable || onSearchChange) {
+            return options;
+        }
+        const normalizedTerm = searchTerm.trim().toLowerCase();
+        if (!normalizedTerm.length) return options;
+
+        return options.filter((option) => {
+            if (filterFn) {
+                return filterFn(option, normalizedTerm);
+            }
+            const optionLabel = option.label.toLowerCase();
+            const valueSnapshot = option.value.toLowerCase();
+            return optionLabel.includes(normalizedTerm) || valueSnapshot.includes(normalizedTerm);
+        });
+    }, [options, filterFn, searchable, searchTerm, onSearchChange]);
+
+    const toggleOpen = () => {
+        if (disabled || readOnly) return;
+        setIsOpen((prev) => !prev);
+    };
+
+    const triggerKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            toggleOpen();
+        }
+    };
+
+    const setSingleValue = (nextValue: string | null) => {
+        if (value === undefined) {
+            setInternalValue(nextValue);
+        }
+        const selectedOption = options.find((option) => option.value === nextValue) || null;
+        onChange?.(selectedOption);
+    };
+
+    const setMultiValue = (nextValues: string[]) => {
+        if (values === undefined) {
+            setInternalValues(nextValues);
+        }
+        const selectedOptions = options.filter((option) => nextValues.includes(option.value));
+        onChange?.(selectedOptions);
+    };
+
+    const optionSelectHandler = (option: IDropdownOption) => {
+        if (disabled || readOnly || option.disabled) return;
+
+        if (isMulti) {
+            const isSelected = selectedMultipleValues.includes(option.value);
+            const nextValues = isSelected
+                ? selectedMultipleValues.filter((currentValue) => currentValue !== option.value)
+                : [...selectedMultipleValues, option.value];
+            setMultiValue(nextValues);
+            return;
+        }
+
+        setSingleValue(option.value);
+        setIsOpen(false);
+    };
+
+    const selectAllHandler = (event: ChangeEvent<HTMLInputElement>) => {
+        if (!event.target.checked) {
+            setMultiValue([]);
+            return;
+        }
+
+        const enabledValues = filteredOptions.filter((option) => !option.disabled).map((option) => option.value);
+        setMultiValue(enabledValues);
+    };
+
+    const clearAllHandler = (event?: MouseEvent<HTMLButtonElement>) => {
+        event?.stopPropagation();
+        if (isMulti) {
+            setMultiValue([]);
+            return;
+        }
+        setSingleValue(null);
+    };
+
+    const clearSearchHandler = () => {
+        emitSearch("");
+    };
+
+    const selectAllChecked =
+        !!filteredOptions.length &&
+        filteredOptions.every((option) => option.disabled || selectedMultipleValues.includes(option.value));
+
+    const triggerPopoverProps = {
+        ...popoverProps,
+        role: "button",
+        tabIndex: disabled ? -1 : 0,
+        onClick: toggleOpen,
+        onKeyDown: triggerKeyDown
+    };
+
+    return (
+        <div className={classNames("dropdown", className)}>
+            <Tooltip text={selectedValueText} isVisible={isMulti && !!selectedValueText.length}>
+                <TextField
+                    className="dropdown__trigger"
+                    size={size}
+                    readOnly
+                    disabled={disabled}
+                    status={status}
+                    required={required}
+                    label={label}
+                    helperText={helperText}
+                    value={selectedValueText}
+                    placeholder={placeholder}
+                    IconAfter={CaretDownFilled}
+                    popoverProps={triggerPopoverProps}
+                />
+            </Tooltip>
+
+            <Popover
+                setProps={setPopoverProps}
+                ref={popoverRef}
+                open={isOpen}
+                position="bottom-left"
+                withArrow={false}
+                fitReference
+            >
+                <PopoverBody withPadding={false} withScrollbar={false} className="dropdown__body">
+                    <div className="dropdown__content">
+                        {searchable && (
+                            <div className="dropdown__search">
+                                <TextField
+                                    value={searchTerm}
+                                    onChange={(event) => {
+                                        const nextValue = event.target.value;
+                                        setInternalSearchValue(nextValue);
+                                        onSearchDebounced(nextValue);
+                                    }}
+                                    onClear={clearSearchHandler}
+                                    clearable
+                                    inputMode="search"
+                                    autoFocus={searchAutoFocus}
+                                    placeholder={searchPlaceholder}
+                                    IconBefore={Magnifier}
+                                    size={size}
+                                />
+                            </div>
+                        )}
+
+                        {isMulti && (
+                            <div className="dropdown__actions">
+                                <Checkbox
+                                    label={selectAllLabel}
+                                    checked={selectAllChecked}
+                                    onChange={selectAllHandler}
+                                    disabled={!filteredOptions.length || loading || disabled || readOnly}
+                                />
+                                <Button
+                                    appearance="secondary"
+                                    layout="text"
+                                    size="small"
+                                    onClick={clearAllHandler}
+                                    disabled={!selectedMultipleValues.length || loading || disabled || readOnly}
+                                >
+                                    {clearLabel}
+                                </Button>
+                            </div>
+                        )}
+
+                        {loading ? (
+                            <div className="dropdown__loading">
+                                <Loader text={loadingText} textPosition="below" />
+                            </div>
+                        ) : (
+                            <>
+                                {filteredOptions.length ? (
+                                    <Scrollbar className="dropdown__scrollbar">
+                                        <div role="listbox" aria-multiselectable={isMulti} className="dropdown__list">
+                                            {filteredOptions.map((option) => (
+                                                <DropdownItem
+                                                    key={option.id}
+                                                    label={option.label}
+                                                    variant={variant}
+                                                    selected={
+                                                        isMulti
+                                                            ? selectedMultipleValues.includes(option.value)
+                                                            : option.value === selectedSingleValue
+                                                    }
+                                                    disabled={disabled || readOnly || option.disabled}
+                                                    Icon={option.Icon}
+                                                    infoText={option.infoText}
+                                                    textAfter={option.textAfter}
+                                                    size={size}
+                                                    onClick={() => optionSelectHandler(option)}
+                                                />
+                                            ))}
+                                        </div>
+                                    </Scrollbar>
+                                ) : (
+                                    <div className="dropdown__empty">
+                                        <Empty title={emptyText} size="small" />
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
+
+                    {(footerActions || (isMulti && !!selectedMultipleValues.length)) && (
+                        <div className="dropdown__footer">
+                            {isMulti && (
+                                <Button
+                                    appearance="secondary"
+                                    layout="text"
+                                    size="small"
+                                    onClick={clearAllHandler}
+                                    disabled={!selectedMultipleValues.length || loading}
+                                >
+                                    {clearAllLabel}
+                                </Button>
+                            )}
+                            <div className="dropdown__footerActions">
+                                {footerActions?.secondary && (
+                                    <Button
+                                        appearance="secondary"
+                                        layout="text"
+                                        size="small"
+                                        onClick={footerActions.secondary.onClick}
+                                        disabled={footerActions.secondary.disabled}
+                                        aria-label={footerActions.secondary["aria-label"]}
+                                    >
+                                        {footerActions.secondary.text}
+                                    </Button>
+                                )}
+                                {footerActions?.primary && (
+                                    <Button
+                                        appearance="primary"
+                                        size="small"
+                                        onClick={footerActions.primary.onClick}
+                                        disabled={footerActions.primary.disabled}
+                                        aria-label={footerActions.primary["aria-label"]}
+                                    >
+                                        {footerActions.primary.text}
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+                    )}
+                </PopoverBody>
+            </Popover>
+        </div>
+    );
 };
 
 export { IDropdownProps, Dropdown as default };

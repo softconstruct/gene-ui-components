@@ -81,7 +81,18 @@ export { default as OTPField, IOTPFieldProps } from "./components/molecules/OTPF
 export { default as Breadcrumb, IBreadcrumbProps, IBreadcrumbItemProps } from "./components/molecules/Breadcrumb";
 export { default as PageHeader, IPageHeaderProps } from "./components/molecules/PageHeader";
 export { default as PopoverConfirm, IPopoverConfirmProps } from "./components/molecules/PopoverConfirm";
-export { default as Dropdown } from "./components/molecules/Dropdown";
+export {
+    default as Dropdown,
+    DropdownItem,
+    IDropdownItemProps,
+    IDropdownOption,
+    IDropdownFooterAction,
+    IDropdownFooterActions,
+    DropdownSize,
+    DropdownStatus,
+    DropdownVariant,
+    IDropdownProps
+} from "./components/molecules/Dropdown";
 
 // Organisms
 export { default as DataTable, IDataTableProps } from "@components/organisms/DataTable";
