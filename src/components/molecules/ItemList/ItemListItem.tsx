@@ -19,8 +19,9 @@ interface IItemListItemProps {
     disabled?: boolean;
     /**
      * Callback triggered when the item is clicked.
+     * Returns the clicked item props.
      */
-    onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+    onClick?: (item: IItemListItemProps) => void;
     /**
      * Custom render function for the item.<br/>
      * Receives item data and should return a React element (e.g. `<a>`, router `<Link>`).<br/>
@@ -33,6 +34,10 @@ interface IItemListItemProps {
  * ItemListItem represents a single option inside the ItemList.
  */
 const ItemListItem: FC<IItemListItemProps> = ({ id, children, disabled, onClick, render }) => {
+    const handleClick = () => {
+        onClick?.({ id, children, disabled, onClick, render });
+    };
+
     if (render) {
         const renderedElement = render({ id });
 
@@ -46,9 +51,6 @@ const ItemListItem: FC<IItemListItemProps> = ({ id, children, disabled, onClick,
                 onClick: (event: MouseEvent<HTMLButtonElement>) => {
                     if (disabled) return;
                     originalOnClick?.(event);
-                    if (!event.defaultPrevented) {
-                        onClick?.(event);
-                    }
                 },
                 disabled,
                 "data-id": id
@@ -66,7 +68,7 @@ const ItemListItem: FC<IItemListItemProps> = ({ id, children, disabled, onClick,
             className={classNames("itemListItem", {
                 itemListItem_disabled: disabled
             })}
-            onClick={onClick}
+            onClick={handleClick}
             disabled={disabled}
             data-id={id}
         >

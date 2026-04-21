@@ -8,7 +8,6 @@ import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
 import Skeleton from "@components/atoms/Skeleton";
 import Empty from "@components/molecules/Empty";
 import ItemListFooter from "@components/molecules/ItemList/ItemListFooter";
-import { IItemListItemProps } from "@components/molecules/ItemList/ItemListItem";
 
 // Styles
 import "./ItemList.scss";
@@ -45,10 +44,6 @@ interface IItemListProps {
      */
     onShowMore?: () => void;
     /**
-     * Callback function that returns the clicked ItemListItem props.
-     */
-    onItemClick?: (item: IItemListItemProps) => void;
-    /**
      * Text for the "Show more" button.
      */
     showMoreLabel?: string;
@@ -81,14 +76,13 @@ const ItemList: FC<IItemListProps> = ({
     emptyText,
     showMore,
     onShowMore,
-    onItemClick,
     showMoreLabel,
     showMoreDisabled = false,
     showMoreLoading = false
 }) => {
     const hasChildren = useMemo(() => Children.count(children) > 0, [children]);
     const scrollbarRef = useRef<ScrollbarRefType | null>(null);
-    const childrenArray = useMemo(() => Children.toArray(children) as ReactElement<IItemListItemProps>[], [children]);
+    const childrenArray = useMemo(() => Children.toArray(children) as ReactElement[], [children]);
     const shouldRenderShowMoreSkeleton = !!showMore && !!showMoreLoading && hasChildren;
     const totalVirtualCount = childrenArray.length + (shouldRenderShowMoreSkeleton ? 1 : 0);
 
@@ -166,14 +160,7 @@ const ItemList: FC<IItemListProps> = ({
                                         data-index={row.index}
                                         style={{ transform: `translateY(${row.start}px)` }}
                                     >
-                                        {React.cloneElement(item, {
-                                            onClick: (event: React.MouseEvent<HTMLButtonElement>) => {
-                                                item.props.onClick?.(event);
-                                                if (!event.defaultPrevented) {
-                                                    onItemClick?.(item.props);
-                                                }
-                                            }
-                                        })}
+                                        {item}
                                     </li>
                                 )
                             );

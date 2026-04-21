@@ -26,8 +26,7 @@ const meta: Meta<IItemListProps> = {
         showMoreLabel: args({ control: "text", ...propCategory.content }),
         showMoreDisabled: args({ control: "boolean", ...propCategory.states }),
         showMoreLoading: args({ control: "boolean", ...propCategory.states }),
-        onShowMore: args({ control: "false", ...propCategory.action }),
-        onItemClick: args({ control: "false", ...propCategory.action })
+        onShowMore: args({ control: "false", ...propCategory.action })
     },
     args: {
         emptyText: "No results",
@@ -91,7 +90,7 @@ const WithFooterStoryComponent: FC<IItemListProps> = (props) => {
             showMoreLoading={isShowMoreLoading}
         >
             {visibleItems.map((item) => (
-                <ItemListItem key={item} id={item}>
+                <ItemListItem key={item} id={item} onClick={() => {}}>
                     {item}
                 </ItemListItem>
             ))}
