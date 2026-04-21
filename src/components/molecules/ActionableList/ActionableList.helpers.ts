@@ -33,13 +33,8 @@ export const isAnySelectionInSubtree = (item: IActionableListItem): boolean => {
     return children.some((child: IActionableListItem) => isAnySelectionInSubtree(child));
 };
 
-export const nextLevel = (level: TActionableListLevel): TActionableListLevel => {
-    if (level >= ACTIONABLE_LIST_MAX_NESTED_LEVEL) return ACTIONABLE_LIST_MAX_NESTED_LEVEL;
-    if (level === 1) return 2;
-    if (level === 2) return 3;
-    if (level === 3) return 4;
-    return 5;
-};
+export const nextLevel = (level: TActionableListLevel): TActionableListLevel =>
+    Math.min(level + 1, ACTIONABLE_LIST_MAX_NESTED_LEVEL) as TActionableListLevel;
 
 export const mergeItemsFromProps = (
     incoming: IActionableListItem[],

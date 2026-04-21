@@ -2,7 +2,7 @@
     --py: var(--guit-ref-spacing-3xsmall);
     --bw: var(--guit-ref-border-width-thin);
     --mt: var(--guit-ref-spacing-medium);
-    --actionable-list-drop-gap: calc(1.2rem + 2 * var(--py) + 2 * var(--bw) + var(--mt));
+    --actionable-list-drop-gap: calc(2.4rem + 2 * var(--py) + 2 * var(--bw) + var(--mt));
 
     position: relative;
     display: flex;
@@ -44,6 +44,9 @@
 
     &_dragging {
         visibility: hidden;
+    }
+
+    .actionableList_hasDropGap &_dragging {
         height: 0;
         min-height: 0;
         padding: 0;
