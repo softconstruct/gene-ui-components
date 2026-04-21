@@ -4,9 +4,12 @@
     display: flex;
     max-width: 100%;
     height: 100%;
+    min-height: 0;
+    min-width: 0;
 
     &_horizontal {
         flex-direction: column;
+        min-height: 0;
 
         #{ $this }__wrapper {
             overflow: hidden;
@@ -373,9 +376,19 @@
 
     &__stage {
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        min-width: 0;
+        overflow: hidden;
 
         // todo: remove this styles after 'stage' component implementation
         padding: var(--guit-ref-spacing-xlarge);
         background-color: var(--guit-sem-color-background-neutral-3);
+    }
+
+    &__stage > * {
+        min-height: 0;
+        min-width: 0;
     }
 }

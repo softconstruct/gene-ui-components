@@ -296,4 +296,19 @@ describe("Tabs", () => {
 
         expect(wrapper.find(".tabs__stage").text()).toContain("Content 1");
     });
+
+    it("renders selected tab content as direct stage child", () => {
+        const wrapper = mount(
+            <Tabs defaultSelectedIndex={0}>
+                <Tab title="Tab 1">
+                    <div className="scroll-owner">Content 1</div>
+                </Tab>
+                <Tab title="Tab 2">
+                    <div>Content 2</div>
+                </Tab>
+            </Tabs>
+        );
+
+        expect(wrapper.find(".tabs__stage > .scroll-owner").exists()).toBe(true);
+    });
 });
