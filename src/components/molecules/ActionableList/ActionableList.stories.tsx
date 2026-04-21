@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -8,7 +8,7 @@ import { ACTIONABLE_LIST_ITEMS } from "../../../../stories/data/__actionableList
 // Components
 import ActionableList, { IActionableListProps } from "./index";
 
-const AsyncLoadingStory: React.FC<IActionableListProps> = (props) => {
+const AsyncLoadingStory: FC<IActionableListProps> = (props) => {
     const [loading, setLoading] = useState(true);
     const [items, setItems] = useState<IActionableListProps["items"]>([]);
 

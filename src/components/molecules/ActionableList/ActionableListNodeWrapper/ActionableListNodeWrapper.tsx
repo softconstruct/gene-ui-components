@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, ReactNode } from "react";
 
 import "./ActionableListNodeWrapper.scss";
 
@@ -12,7 +12,7 @@ export interface IActionableListNodeWrapperProps {
     /**
      * Nested row nodes rendered inside this level wrapper.
      */
-    children?: React.ReactNode;
+    children?: ReactNode;
 }
 
 const ActionableListNodeWrapper: FC<IActionableListNodeWrapperProps> = ({ level, children }) => {
