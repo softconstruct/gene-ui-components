@@ -30,6 +30,15 @@
         min-width: 0;
     }
 
+    &__checkbox {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: var(--guit-sem-dimension-width-small);
+        height: var(--guit-sem-dimension-height-small);
+    }
+
     &__bulkSelectedLabel {
         color: var(--guit-sem-color-foreground-neutral-1);
     }
