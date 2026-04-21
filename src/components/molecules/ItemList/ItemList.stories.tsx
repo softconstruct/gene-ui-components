@@ -11,14 +11,18 @@ import ItemListItem from "@components/molecules/ItemList/ItemListItem";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import { itemListData } from "../../../../stories/data/__itemList";
 
 const meta: Meta<IItemListProps> = {
     title: "Molecules/ItemList",
     component: ItemList,
+    subcomponents: {
+        ItemListItem: ItemListItem as React.ComponentType<unknown>
+    },
 
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        children: args({ control: "array", ...propCategory.content }),
+        children: args({ control: "false", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
         loadingText: args({ control: "text", ...propCategory.content }),
         emptyText: args({ control: "text", ...propCategory.content }),
@@ -113,96 +117,9 @@ const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
         return () => clearTimeout(timeoutId);
     }, []);
 
-    const complexItems = [
-        {
-            id: "row-1",
-            title: "1234 Title",
-            helper: "Helper Text",
-            updated: "04/04/2023",
-            disabled: false
-        },
-        {
-            id: "row-2",
-            title: "1235 Title",
-            helper: "Helper Text",
-            updated: "04/05/2023",
-            disabled: false
-        },
-        {
-            id: "row-3",
-            title: "1236 Title",
-            helper: "Helper Text",
-            updated: "04/06/2023",
-            disabled: false
-        },
-        {
-            id: "row-4",
-            title: "1237 Title",
-            helper: "Helper Text",
-            updated: "04/07/2023",
-            disabled: false
-        },
-        {
-            id: "row-5",
-            title: "1238 Title",
-            helper: "Helper Text",
-            updated: "04/08/2023",
-            disabled: false
-        },
-        {
-            id: "row-6",
-            title: "1239 Title",
-            helper: "Helper Text",
-            updated: "04/09/2023",
-            disabled: false
-        },
-        {
-            id: "row-7",
-            title: "1240 Title",
-            helper: "Helper Text",
-            updated: "04/10/2023",
-            disabled: false
-        },
-        {
-            id: "row-8",
-            title: "1236 Title",
-            helper: "Helper Text",
-            updated: "04/06/2023",
-            disabled: false
-        },
-        {
-            id: "row-9",
-            title: "1237 Title",
-            helper: "Helper Text",
-            updated: "04/07/2023",
-            disabled: false
-        },
-        {
-            id: "row-10",
-            title: "1238 Title",
-            helper: "Helper Text",
-            updated: "04/08/2023",
-            disabled: false
-        },
-        {
-            id: "row-11",
-            title: "1239 Title",
-            helper: "Helper Text",
-            updated: "04/09/2023",
-            disabled: false
-        },
-        {
-            id: "row-12",
-            title: "1240 Title",
-            helper: "Helper Text",
-            updated: "04/10/2023",
-            disabled: false
-        }
-    ];
-
     return (
         <ItemList {...props} loading={loading} loadingText="Loading data...">
-            {complexItems.map((item) => (
+            {itemListData.map((item) => (
                 <ItemListItem key={item.id} id={item.id} disabled={item.disabled}>
                     <div
                         style={{
@@ -265,22 +182,23 @@ export const NoResult: Story = {
 const VirtualizedStoryComponent: FC<IItemListProps> = (props) => {
     const virtualizedItems = useMemo(
         () =>
-            Array.from({ length: 1200 }, (_, index) => ({
+            Array.from({ length: 500 }, (_, index) => ({
                 id: `item-${index + 1}`,
                 label: `item${index + 1}`
             })),
         []
     );
-
-    return (
-        <ItemList {...props}>
-            {virtualizedItems.map((item) => (
+    const virtualizedChildren = useMemo(
+        () =>
+            virtualizedItems.map((item) => (
                 <ItemListItem key={item.id} id={item.id}>
                     {item.label}
                 </ItemListItem>
-            ))}
-        </ItemList>
+            )),
+        [virtualizedItems]
     );
+
+    return <ItemList {...props}>{virtualizedChildren}</ItemList>;
 };
 
 export const Virtualized: Story = {

@@ -4,6 +4,12 @@ import classNames from "classnames";
 // Components
 import Text from "@components/atoms/Text";
 
+interface IItemListItemClickData {
+    id: number | string;
+    children?: ReactNode;
+    disabled?: boolean;
+}
+
 interface IItemListItemProps {
     /**
      * Unique identifier for the item, used in selection logic.
@@ -21,7 +27,7 @@ interface IItemListItemProps {
      * Callback triggered when the item is clicked.
      * Returns the clicked item props.
      */
-    onClick?: (item: IItemListItemProps) => void;
+    onClick?: (item: IItemListItemClickData) => void;
     /**
      * Custom render function for the item.<br/>
      * Receives item data and should return a React element (e.g. `<a>`, router `<Link>`).<br/>
@@ -35,7 +41,7 @@ interface IItemListItemProps {
  */
 const ItemListItem: FC<IItemListItemProps> = ({ id, children, disabled, onClick, render }) => {
     const handleClick = () => {
-        onClick?.({ id, children, disabled, onClick, render });
+        onClick?.({ id, children, disabled });
     };
 
     if (render) {
