@@ -1,6 +1,8 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import { Pencil, RecycleBin } from "@geneui/icons";
+
 import Pagination from "@components/molecules/Pagination";
 
 // Helpers
@@ -27,7 +29,8 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         noDataAvailableActions: args({ control: "false", ...propCategory.functionality }),
         sticky: args({ control: "boolean", ...propCategory.appearance }),
         expandable: args({ control: "boolean", ...propCategory.content }),
-        onRowExpandChange: args({ control: "false", ...propCategory.functionality })
+        onRowExpandChange: args({ control: "false", ...propCategory.functionality }),
+        rowActions: args({ control: "object", ...propCategory.functionality })
     },
     args: {}
 };
@@ -42,7 +45,15 @@ export const Default: Story = {
         columns: mockColumns,
         data: mockData,
         expandable: true,
-        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
+        rowActions: [
+            { Icon: Pencil, title: "Edit", onClick: () => {} },
+            {
+                Icon: RecycleBin,
+                title: "delete",
+                onClick: () => {}
+            }
+        ]
     }
 };
 
@@ -56,11 +67,6 @@ export const NoDataAvailable: Story = {
             noDataAvailableTitle: "No Data Available"
         }
     }
-};
-
-export const Loading: Story = {
-    render: (props) => <DataTable {...props} />,
-    args: { columns: mockColumns, loading: true, loadingText: "Loading" }
 };
 
 export const WithPagination: Story = {

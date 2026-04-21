@@ -1,4 +1,6 @@
-import { ReactNode } from "react";
+import { FC, MouseEvent, ReactNode } from "react";
+
+import { IconProps } from "@geneui/icons";
 
 export interface ITableNoDataTexts {
     noDataAvailableTitle?: string;
@@ -18,6 +20,13 @@ export type DataTableRenderCellArgs<TData, TValue> = {
     value: TValue;
     row: TData & ITableData;
     rowId: string;
+};
+
+export type DataTableRowAction = {
+    Icon: FC<IconProps>;
+    title?: string;
+    disabled?: boolean;
+    onClick: (e: MouseEvent) => void;
 };
 
 /**
