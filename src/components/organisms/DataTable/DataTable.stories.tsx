@@ -1,7 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { fn } from "@storybook/test";
 
 import { Pencil, RecycleBin } from "@geneui/icons";
 
@@ -47,7 +45,15 @@ export const Default: Story = {
         columns: mockColumns,
         data: mockData,
         expandable: true,
-        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
+        rowActions: [
+            { Icon: Pencil, title: "Edit", onClick: () => {} },
+            {
+                Icon: RecycleBin,
+                title: "delete",
+                onClick: () => {}
+            }
+        ]
     }
 };
 
@@ -61,11 +67,6 @@ export const NoDataAvailable: Story = {
             noDataAvailableTitle: "No Data Available"
         }
     }
-};
-
-export const Loading: Story = {
-    render: (props) => <DataTable {...props} />,
-    args: { columns: mockColumns, loading: true, loadingText: "Loading" }
 };
 
 export const WithPagination: Story = {
@@ -127,20 +128,5 @@ export const AsyncDataFetchingWithPagination: Story = {
             rowsPerPageOptions: [5, 10, 20],
             showInputPageField: true
         }
-    }
-};
-
-export const WithRowActions: Story = {
-    render: (props) => <DataTable {...props} />,
-    args: {
-        data: mockData,
-        columns: mockColumns,
-        rowActions: [
-            { Icon: Pencil, title: "Edit", onClick: fn() },
-            {
-                Icon: RecycleBin,
-                onClick: fn()
-            }
-        ]
     }
 };
