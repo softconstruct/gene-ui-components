@@ -5,7 +5,7 @@ import { mount, ReactWrapper } from "enzyme";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import ItemList, { IItemListProps } from "@components/molecules/ItemList";
-import ItemListItem from "@components/molecules/ItemList/ItemListItem";
+import ItemListItem from "@components/molecules/ItemList/ItemListItem/ItemListItem";
 
 describe("ItemList ", () => {
     let setup: ReactWrapper<IItemListProps>;

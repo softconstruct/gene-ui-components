@@ -7,7 +7,7 @@ import { Globe, Magnifier, RecycleBin, ThreeDotsHorizontal } from "@geneui/icons
 import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
 import ItemList, { IItemListProps } from "@components/molecules/ItemList";
-import ItemListItem from "@components/molecules/ItemList/ItemListItem";
+import ItemListItem from "@components/molecules/ItemList/ItemListItem/ItemListItem";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";

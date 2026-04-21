@@ -4,6 +4,9 @@ import classNames from "classnames";
 // Components
 import Text from "@components/atoms/Text";
 
+// Styles
+import "./ItemListItem.scss";
+
 interface IItemListItemClickData {
     id: number | string;
     children?: ReactNode;
