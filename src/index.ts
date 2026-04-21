@@ -92,6 +92,7 @@ export { default as ActionableList } from "./components/molecules/ActionableList
 export { default as DataTable, IDataTableProps } from "@components/organisms/DataTable";
 export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
 export { default as DataCardList, IDataCardListProps } from "@components/organisms/DataCardList";
+export { default as TransferList } from "./components/organisms/TransferList";
 
 // Providers
 export {
