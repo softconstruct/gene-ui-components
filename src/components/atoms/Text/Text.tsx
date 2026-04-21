@@ -77,7 +77,7 @@ interface ITextProps {
     /**
      * Text content
      */
-    children: string | ReactElement<ITextProps> | Array<string | ReactElement<ITextProps>>;
+    children: string | number | ReactElement<ITextProps> | Array<string | number | ReactElement<ITextProps>>;
     /**
      * A unique identifier for the text element.
      * Useful for accessibility purposes, like `aria-labelledby`.
