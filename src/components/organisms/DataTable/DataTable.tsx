@@ -217,14 +217,14 @@ const DataTable = <TData extends ITableData>({
         columns: tableColumns,
         defaultColumn,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        ...(manualPagination ? {} : { getPaginationRowModel: getPaginationRowModel() }),
+        manualPagination,
         getExpandedRowModel: getExpandedRowModel(),
         onExpandedChange: handleExpandedChange,
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }
-            }),
-            ...(manualPagination && { manualPagination })
+            })
         },
         state: {
             expanded
