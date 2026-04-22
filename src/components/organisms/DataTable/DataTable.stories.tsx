@@ -9,9 +9,35 @@ import Pagination from "@components/molecules/Pagination";
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 // Components
-import DataTable, { IDataTableProps } from "./index";
+import DataTable, { IDataTableProps, IDataTableRowAction } from "./index";
 
 type MockRowType = (typeof mockData)[0];
+
+/** Row index in `mockData` (stable across pages for demo disabled rules). */
+const rowIndexInMockData = (row: MockRowType) => mockData.findIndex((r) => r.Id === row.Id);
+
+const defaultRowActions: IDataTableRowAction<MockRowType>[] = [
+    {
+        Icon: Pencil,
+        title: "Edit",
+        // Third row (index 2), seventh (6), ... - first action disabled
+        disabled: (row) => {
+            const i = rowIndexInMockData(row);
+            return i >= 0 && i % 4 === 2;
+        },
+        onClick: () => {}
+    },
+    {
+        Icon: RecycleBin,
+        title: "delete",
+        // First row (index 0), fifth (4), ... - second action disabled
+        disabled: (row) => {
+            const i = rowIndexInMockData(row);
+            return i >= 0 && i % 4 === 0;
+        },
+        onClick: () => {}
+    }
+];
 
 const meta: Meta<IDataTableProps<MockRowType>> = {
     title: "Organisms/DataTable",
@@ -46,14 +72,7 @@ export const Default: Story = {
         data: mockData,
         expandable: true,
         pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
-        rowActions: [
-            { Icon: Pencil, title: "Edit", onClick: () => {} },
-            {
-                Icon: RecycleBin,
-                title: "delete",
-                onClick: () => {}
-            }
-        ]
+        rowActions: defaultRowActions
     }
 };
 
