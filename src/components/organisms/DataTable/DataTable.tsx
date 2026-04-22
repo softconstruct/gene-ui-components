@@ -22,8 +22,8 @@ import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader
 // Types
 import {
     DataTableColumn,
-    DataTableRowAction,
     DataTableRowExpandChangeHandler,
+    IDataTableRowAction,
     ITableData,
     ITableNoDataTexts
 } from "@components/organisms/DataTable/types";
@@ -152,11 +152,11 @@ interface IDataTableProps<TData extends ITableData> {
      * An array of action button objects to display in the row's action menu.
      * @example
      * rowActions={[
-     * { Icon: Edit, title: 'Edit', disabled: false, onClick: handleEdit },
-     * { Icon: Delete, title: 'Delete', disabled: true, onClick: handleDelete }
+     * { Icon: Edit, title: 'Edit', disabled: false, onClick: (row, e) => handleEdit(row, e) },
+     * { Icon: Delete, title: 'Delete', disabled: true, onClick: (row, e) => handleDelete(row, e) }
      * ]}
      */
-    rowActions?: DataTableRowAction[];
+    rowActions?: IDataTableRowAction<TData>[];
 }
 
 const defaultColumn = {
