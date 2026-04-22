@@ -1,5 +1,6 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
+import { act } from "react-dom/test-utils";
 
 // Components
 import Scrollbar, { IScrollbarProps } from "./index";
@@ -31,5 +32,31 @@ describe("Scrollbar ", () => {
         const wrapper = setup.setProps({ children });
 
         expect(wrapper.contains("test children")).toBeTruthy();
+    });
+
+    it("keeps the track visible while the thumb is grabbed", () => {
+        jest.useFakeTimers();
+        const thumbYProps = setup.find("Scrollbar").prop("thumbYProps") as {
+            onDragStart: () => void;
+            onDragEnd: () => void;
+        };
+
+        act(() => {
+            thumbYProps.onDragStart();
+            jest.advanceTimersByTime(1100);
+        });
+        setup.update();
+
+        expect(setup.find(".scrollbar__track_direction_y").first().hasClass("scrollbar__track_active")).toBeTruthy();
+
+        act(() => {
+            thumbYProps.onDragEnd();
+            jest.advanceTimersByTime(1100);
+        });
+        setup.update();
+
+        expect(setup.find(".scrollbar__track_direction_y").first().hasClass("scrollbar__track_active")).toBeFalsy();
+
+        jest.useRealTimers();
     });
 });

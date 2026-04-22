@@ -23,6 +23,7 @@ import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader
 import {
     DataTableColumn,
     DataTableRowExpandChangeHandler,
+    IDataTableRowAction,
     ITableData,
     ITableNoDataTexts
 } from "@components/organisms/DataTable/types";
@@ -147,6 +148,15 @@ interface IDataTableProps<TData extends ITableData> {
      * ```
      */
     onRowExpandChange?: DataTableRowExpandChangeHandler<TData>;
+    /**
+     * An array of action button objects to display in the row's action menu.
+     * @example
+     * rowActions={[
+     * { Icon: Edit, title: 'Edit', disabled: false, onClick: (row, e) => handleEdit(row, e) },
+     * { Icon: Delete, title: 'Delete', disabled: true, onClick: (row, e) => handleDelete(row, e) }
+     * ]}
+     */
+    rowActions?: IDataTableRowAction<TData>[];
 }
 
 const defaultColumn = {
@@ -176,7 +186,8 @@ const DataTable = <TData extends ITableData>({
     noDataAvailableActions,
     manualPagination = false,
     expandable = false,
-    onRowExpandChange
+    onRowExpandChange,
+    rowActions
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -224,7 +235,7 @@ const DataTable = <TData extends ITableData>({
 
     const { paginationProps } = useTablePagination(pagination, table);
 
-    const shouldShowPagination = !isTableLoading && paginationProps && data && paginationProps.totalPages > 0;
+    const shouldShowPagination = !isTableLoading && paginationProps && paginationProps.totalPages > 0;
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
@@ -243,11 +254,12 @@ const DataTable = <TData extends ITableData>({
                         rows={table.getRowModel().rows}
                         noDataTexts={noDataTexts}
                         noDataAvailableActions={noDataAvailableActions}
+                        rowActions={rowActions}
                     />
                 </table>
             </Scrollbar>
             {shouldShowPagination && (
-                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableDataEmpty} />
+                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableLoading} />
             )}
         </div>
     );

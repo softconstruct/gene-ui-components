@@ -1,10 +1,12 @@
-import React from "react";
+import React, { FC, JSX, MouseEvent } from "react";
 import { Row } from "@tanstack/table-core";
 
 // Components
+import Button from "@components/atoms/Button";
+import Tooltip from "@components/molecules/Tooltip";
 import TableBodyCell from "@components/organisms/DataTable/TableBody/Cell/TableBodyCell";
 import TableExpandedRow from "@components/organisms/DataTable/TableBody/Row/TableExpandedRow";
-import { ITableData } from "@components/organisms/DataTable/types";
+import { IDataTableRowAction, ITableData } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableRow.scss";
@@ -20,7 +22,20 @@ interface ITableRowProps<TData extends ITableData> {
      * the visible cells to be rendered within this specific row.
      */
     row: Row<TData>;
+    /**
+     * An array of action button objects to display in the row's actions section.
+     */
+    rowActions?: IDataTableRowAction<TData>[];
 }
+
+interface IRowActionsWrapperProps {
+    title?: string;
+    children: JSX.Element;
+}
+
+const RowActionsWrapper: FC<IRowActionsWrapperProps> = ({ title, children }) => {
+    return title ? <Tooltip text={title}>{children}</Tooltip> : children;
+};
 
 /**
  * Renders an individual table row (`<tr>`).
@@ -31,7 +46,7 @@ interface ITableRowProps<TData extends ITableData> {
  * @param props - The properties for the component.
  * @returns A table row element containing its respective rendered cells.
  */
-const TableRow = <TData extends ITableData>({ row }: ITableRowProps<TData>) => {
+const TableRow = <TData extends ITableData>({ row, rowActions }: ITableRowProps<TData>) => {
     const { expandedRow } = row.original;
     const isRowExpanded = row.getIsExpanded() && expandedRow;
 
@@ -41,6 +56,34 @@ const TableRow = <TData extends ITableData>({ row }: ITableRowProps<TData>) => {
                 {row.getVisibleCells().map((cell) => (
                     <TableBodyCell key={cell.id} cell={cell} />
                 ))}
+
+                {rowActions?.length ? (
+                    <td className="tableRow__actionsWrapper">
+                        <div className="tableRow__actions">
+                            {rowActions.map(({ Icon, title, onClick, disabled }, index) => {
+                                const resolvedDisabled =
+                                    typeof disabled === "function" ? disabled(row.original) : disabled;
+
+                                const handleActionClick = (e: MouseEvent) => {
+                                    onClick(row.original, e);
+                                };
+
+                                return (
+                                    <RowActionsWrapper key={`action-${title ?? index}`} title={title}>
+                                        <Button
+                                            appearance="secondary"
+                                            layout="text"
+                                            size="small"
+                                            Icon={Icon}
+                                            disabled={resolvedDisabled}
+                                            onClick={handleActionClick}
+                                        />
+                                    </RowActionsWrapper>
+                                );
+                            })}
+                        </div>
+                    </td>
+                ) : null}
             </tr>
             {isRowExpanded && <TableExpandedRow colspan={row.getVisibleCells().length}>{expandedRow}</TableExpandedRow>}
         </>

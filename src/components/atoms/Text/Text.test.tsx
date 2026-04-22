@@ -62,4 +62,37 @@ describe("Text ", () => {
 
         expect(wrapper.find(`.text_alignment_${alignment}`).exists()).toBeTruthy();
     });
+
+    it("renders numeric children correctly", () => {
+        const wrapper = setup.setProps({ children: 123 });
+
+        expect(wrapper.text()).toBe("123");
+    });
+
+    it("renders nested Text as children correctly", () => {
+        const wrapper = setup.setProps({
+            children: (
+                <Text as="span" variant="captionMediumRegular">
+                    child text
+                </Text>
+            )
+        });
+
+        expect(wrapper.find(".text_variant_captionMediumRegular").exists()).toBeTruthy();
+        expect(wrapper.text()).toContain("child text");
+    });
+
+    it("renders mixed array children correctly", () => {
+        const wrapper = setup.setProps({
+            children: [
+                "count: ",
+                10,
+                <Text as="span" variant="captionMediumRegular" key="unit">
+                    items
+                </Text>
+            ]
+        });
+
+        expect(wrapper.text()).toBe("count: 10items");
+    });
 });

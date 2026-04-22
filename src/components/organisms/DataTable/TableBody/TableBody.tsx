@@ -6,7 +6,7 @@ import { IButtonProps } from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import TableRow from "@components/organisms/DataTable/TableBody/Row/TableRow";
-import { ITableData, ITableNoDataTexts } from "@components/organisms/DataTable/types";
+import { IDataTableRowAction, ITableData, ITableNoDataTexts } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableBody.scss";
@@ -15,7 +15,7 @@ import "./TableBody.scss";
  * Props for the {@link TableBody} component.
  * @template TData - The shape of the overall row data object.
  */
-interface ITableBody<TData> {
+interface ITableBody<TData extends ITableData> {
     /**
      * An array of TanStack Table row instances to be rendered.
      */
@@ -44,6 +44,10 @@ interface ITableBody<TData> {
      * ]}
      */
     noDataAvailableActions?: IButtonProps[];
+    /**
+     * An array of action button objects to display in the row's action menu.
+     */
+    rowActions?: IDataTableRowAction<TData>[];
 }
 
 interface ITableEmptyDataWrapperProps {
@@ -78,7 +82,8 @@ const TableBody = <TData extends ITableData>({
     loading,
     loadingText,
     noDataTexts,
-    noDataAvailableActions
+    noDataAvailableActions,
+    rowActions
 }: ITableBody<TData>) => {
     if (loading) {
         return (
@@ -104,7 +109,7 @@ const TableBody = <TData extends ITableData>({
     return (
         <tbody className="tableBody">
             {rows.map((row) => (
-                <TableRow key={row.id} row={row} />
+                <TableRow key={row.id} row={row} rowActions={rowActions} />
             ))}
         </tbody>
     );

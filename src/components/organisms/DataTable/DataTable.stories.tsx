@@ -1,15 +1,43 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import { Pencil, RecycleBin } from "@geneui/icons";
+
 import Pagination from "@components/molecules/Pagination";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 // Components
-import DataTable, { IDataTableProps } from "./index";
+import DataTable, { IDataTableProps, IDataTableRowAction } from "./index";
 
 type MockRowType = (typeof mockData)[0];
+
+/** Row index in `mockData` (stable across pages for demo disabled rules). */
+const rowIndexInMockData = (row: MockRowType) => mockData.findIndex((r) => r.Id === row.Id);
+
+const defaultRowActions: IDataTableRowAction<MockRowType>[] = [
+    {
+        Icon: Pencil,
+        title: "Edit",
+        // Third row (index 2), seventh (6), ... - first action disabled
+        disabled: (row) => {
+            const i = rowIndexInMockData(row);
+            return i >= 0 && i % 4 === 2;
+        },
+        onClick: () => {}
+    },
+    {
+        Icon: RecycleBin,
+        title: "delete",
+        // First row (index 0), fifth (4), ... - second action disabled
+        disabled: (row) => {
+            const i = rowIndexInMockData(row);
+            return i >= 0 && i % 4 === 0;
+        },
+        onClick: () => {}
+    }
+];
 
 const meta: Meta<IDataTableProps<MockRowType>> = {
     title: "Organisms/DataTable",
@@ -27,7 +55,8 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         noDataAvailableActions: args({ control: "false", ...propCategory.functionality }),
         sticky: args({ control: "boolean", ...propCategory.appearance }),
         expandable: args({ control: "boolean", ...propCategory.content }),
-        onRowExpandChange: args({ control: "false", ...propCategory.functionality })
+        onRowExpandChange: args({ control: "false", ...propCategory.functionality }),
+        rowActions: args({ control: "object", ...propCategory.functionality })
     },
     args: {}
 };
@@ -42,7 +71,8 @@ export const Default: Story = {
         columns: mockColumns,
         data: mockData,
         expandable: true,
-        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
+        rowActions: defaultRowActions
     }
 };
 
@@ -56,11 +86,6 @@ export const NoDataAvailable: Story = {
             noDataAvailableTitle: "No Data Available"
         }
     }
-};
-
-export const Loading: Story = {
-    render: (props) => <DataTable {...props} />,
-    args: { columns: mockColumns, loading: true, loadingText: "Loading" }
 };
 
 export const WithPagination: Story = {

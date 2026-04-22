@@ -69,6 +69,8 @@ const Scrollbar = forwardRef<ScrollbarRefType, IScrollbarProps>((props, ref) => 
     } = props;
 
     const [scrollDirection, setScrollDirection] = useState<"x" | "y" | null>(null);
+    const [grabbedDirection, setGrabbedDirection] = useState<"x" | "y" | null>(null);
+    const grabbedDirectionRef = useRef<"x" | "y" | null>(null);
     const previousScrollPosition = useRef({ scrollTop: 0, scrollLeft: 0 });
     const scrollbarRef = useRef<Scrollbars | null>(null);
 
@@ -77,6 +79,9 @@ const Scrollbar = forwardRef<ScrollbarRefType, IScrollbarProps>((props, ref) => 
     }));
 
     const scrollStateResetHandler = () => {
+        if (grabbedDirectionRef.current) {
+            return;
+        }
         setScrollDirection(null);
     };
 
@@ -93,9 +98,9 @@ const Scrollbar = forwardRef<ScrollbarRefType, IScrollbarProps>((props, ref) => 
         const deltaY = scrollTop - previous.scrollTop;
         const deltaX = scrollLeft - previous.scrollLeft;
 
-        if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        if (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0) {
             setScrollDirection("y");
-        } else if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        } else if (deltaX !== 0) {
             setScrollDirection("x");
         }
 
@@ -104,14 +109,45 @@ const Scrollbar = forwardRef<ScrollbarRefType, IScrollbarProps>((props, ref) => 
         debouncedCallback();
     };
 
+    const wheelHandler = (e: React.WheelEvent<HTMLDivElement>) => {
+        const { deltaX, deltaY } = e;
+        if (Math.abs(deltaY) >= Math.abs(deltaX) && deltaY !== 0) {
+            setScrollDirection("y");
+            clearDebounce();
+            debouncedCallback();
+        } else if (deltaX !== 0) {
+            setScrollDirection("x");
+            clearDebounce();
+            debouncedCallback();
+        }
+    };
+
     const showScrollbarHandler = (direction: "x" | "y" | null) => {
-        if (scrollDirection === direction) {
+        if (direction) {
             setScrollDirection(direction);
             clearDebounce();
         }
     };
 
     const hideScrollbarHandler = () => {
+        if (grabbedDirectionRef.current) {
+            return;
+        }
+        debouncedCallback();
+    };
+
+    const grabScrollbarHandler = (direction: "x" | "y" | null) => {
+        if (direction) {
+            grabbedDirectionRef.current = direction;
+            setGrabbedDirection(direction);
+            showScrollbarHandler(direction);
+        }
+    };
+
+    const releaseScrollbarHandler = () => {
+        grabbedDirectionRef.current = null;
+        setGrabbedDirection(null);
+        clearDebounce();
         debouncedCallback();
     };
 
@@ -132,22 +168,34 @@ const Scrollbar = forwardRef<ScrollbarRefType, IScrollbarProps>((props, ref) => 
         };
     }, [scrollToTop, scrollToLeft, scrollbarRef.current?.scrollerElement?.clientHeight]);
 
+    useEffect(() => {
+        if (!grabbedDirection) {
+            return undefined;
+        }
+
+        window.addEventListener("mouseup", releaseScrollbarHandler);
+
+        return () => {
+            window.removeEventListener("mouseup", releaseScrollbarHandler);
+        };
+    }, [grabbedDirection]);
+
     const trackProps = (direction: "x" | "y" | null) => {
         return {
             onMouseEnter: () => showScrollbarHandler(direction),
             onMouseLeave: () => hideScrollbarHandler(),
-            className: classNames("scrollbar__track", {
-                [`scrollbar__track_direction_${direction}`]: scrollDirection === direction
+            className: classNames("scrollbar__track", `scrollbar__track_direction_${direction}`, {
+                scrollbar__track_active: scrollDirection === direction || grabbedDirection === direction
             })
         };
     };
 
     const thumbProps = (direction: "x" | "y" | null) => {
         return {
-            onDragStart: () => showScrollbarHandler(direction),
-            onDragEnd: () => hideScrollbarHandler(),
-            className: classNames("scrollbar__thumb", {
-                [`scrollbar__thumb_direction_${direction}`]: scrollDirection === direction
+            onDragStart: () => grabScrollbarHandler(direction),
+            onDragEnd: () => releaseScrollbarHandler(),
+            className: classNames("scrollbar__thumb", `scrollbar__thumb_direction_${direction}`, {
+                scrollbar__thumb_active: scrollDirection === direction || grabbedDirection === direction
             })
         };
     };
@@ -157,7 +205,9 @@ const Scrollbar = forwardRef<ScrollbarRefType, IScrollbarProps>((props, ref) => 
             className={classNames(`scrollbar scrollbar_width_${width} scrollbar_height_${height}`, className)}
             noDefaultStyles
             scrollerProps={{
-                className: "scrollbar__scroller"
+                className: "scrollbar__scroller",
+                onScroll: scrollHandler,
+                onWheel: wheelHandler
             }}
             role="scrollbar"
             aria-valuenow={0}
@@ -170,7 +220,8 @@ const Scrollbar = forwardRef<ScrollbarRefType, IScrollbarProps>((props, ref) => 
             }}
             wrapperProps={{
                 className: "scrollbar__wrapper",
-                onScroll: scrollHandler
+                onScroll: scrollHandler,
+                onWheel: wheelHandler
             }}
             trackYProps={trackProps("y")}
             trackXProps={trackProps("x")}

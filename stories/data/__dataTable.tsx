@@ -1,7 +1,6 @@
 import React, { FC, ReactNode } from "react";
 
 // Components
-import Button from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Pill from "@components/atoms/Pill";
 import Checkbox from "@components/molecules/Checkbox";
@@ -171,24 +170,14 @@ export const mockColumns: DataTableColumn<ClientProfile>[] = [
     {
         accessorKey: "DayOffs",
         header: "Day offs",
-        renderCell: ({ value }) => <NumberField defaultValue={Number(value)} />
+        renderCell: ({ value }) => <NumberField size="small" defaultValue={Number(value)} />
     },
     {
         accessorKey: "Status",
         header: "Status",
-        renderCell: ({ value }) => <Pill text={String(value)} />
+        renderCell: ({ value }) => <Pill size="small" text={String(value)} />
     },
     { accessorKey: "FirstName", header: "First name" },
-    {
-        id: "Actions",
-        header: "Actions",
-        renderCell: () => (
-            <div style={{ display: "flex", gap: "1rem" }}>
-                <Button>View user data</Button>
-                <Button appearance="danger">Block user</Button>
-            </div>
-        )
-    },
     { accessorKey: "LastName", header: "Last name" },
     { accessorKey: "Email", header: "Email" },
     {

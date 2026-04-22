@@ -1,0 +1,19 @@
+.actionableList {
+    &__wrapper {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        &_level_1 {
+            padding-inline-start: 0;
+        }
+
+        &_level_2,
+        &_level_3,
+        &_level_4,
+        &_level_5 {
+            position: relative;
+            padding-inline-start: 3.2rem;
+        }
+    }
+}
