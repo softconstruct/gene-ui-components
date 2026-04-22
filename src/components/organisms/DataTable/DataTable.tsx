@@ -235,7 +235,7 @@ const DataTable = <TData extends ITableData>({
 
     const { paginationProps } = useTablePagination(pagination, table);
 
-    const shouldShowPagination = !isTableLoading && paginationProps && data && paginationProps.totalPages > 0;
+    const shouldShowPagination = !isTableLoading && paginationProps && paginationProps.totalPages > 0;
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
@@ -259,7 +259,7 @@ const DataTable = <TData extends ITableData>({
                 </table>
             </Scrollbar>
             {shouldShowPagination && (
-                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableDataEmpty} />
+                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableLoading} />
             )}
         </div>
     );
