@@ -1,5 +1,6 @@
 import React, { ReactNode } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+import { fn } from "@storybook/test";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -34,7 +35,8 @@ const meta: Meta<typeof TimePicker> = {
     },
     args: {
         label: "Choose time",
-        placeholder: "Select time"
+        placeholder: "Select time",
+        onPopoverToggle: fn()
     }
 };
 

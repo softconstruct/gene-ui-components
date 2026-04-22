@@ -58,6 +58,11 @@ interface ITimePickerBaseProps {
      */
     errorMessage?: string;
     /**
+     * Specifies whether the time picker should use 12-hour format.
+     * @default false
+     */
+    is12Hour?: boolean;
+    /**
      * Callback function that is triggered when a time is selected.
      * @param {string} time - The selected time in the format passed as prop or "HH:mm:ss" as default.
      */
@@ -67,6 +72,11 @@ interface ITimePickerBaseProps {
      * @param {string} time - The new value of the input field.
      */
     onTimeInputChange?: (time: string, parts: TimeParts | null, field?: "start" | "end") => void;
+    /**
+     * Callback function that is triggered when the popover is toggled.
+     * @param open
+     */
+    onPopoverToggle?: (open: boolean) => void;
 }
 
 interface ISingleTimePickerProps extends ITimePickerBaseProps {
@@ -118,8 +128,10 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             onClear,
             onTimeSelect,
             onTimeInputChange,
+            onPopoverToggle,
             error,
-            errorMessage
+            errorMessage,
+            is12Hour = false
         },
         ref
     ) => {
@@ -134,7 +146,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             handleInputChange,
             handleSelect,
             handleClear
-        } = useSingleTimePicker(value, clearable, onClear, onTimeSelect, onTimeInputChange);
+        } = useSingleTimePicker(value, clearable, onClear, onTimeSelect, onTimeInputChange, onPopoverToggle);
 
         const valueToUse = value !== undefined ? value : internalValue;
 
@@ -166,6 +178,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     mobileHeightMode="fit"
                     onSelect={handleSelect}
                     parts={parts}
+                    is12Hour={is12Hour}
                 />
             </div>
         );
@@ -192,7 +205,9 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             onClear,
             onTimeSelect,
             onTimeInputChange,
+            onPopoverToggle,
             error,
+            is12Hour = false,
             errorMessage
         },
         ref
@@ -212,7 +227,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             handleInputChange,
             handleSelect,
             handleClear
-        } = useRangeTimePicker(value, clearable, onClear, onTimeSelect, onTimeInputChange);
+        } = useRangeTimePicker(value, clearable, onClear, onTimeSelect, onTimeInputChange, onPopoverToggle);
 
         const valueToUse = {
             start: value?.start !== undefined ? value.start : internalStart,
@@ -247,6 +262,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     mobileHeightMode="fit"
                     parts={activeField === "start" ? partsStart : partsEnd}
                     onSelect={handleSelect}
+                    is12Hour={is12Hour}
                 />
             </div>
         );

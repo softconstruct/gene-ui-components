@@ -280,6 +280,10 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             };
         }, [popoverRef, refs.reference.current, refs.floating.current, open]);
 
+        // TODO: Do not call onClose on initial mount when popoverOpened is false.
+        // This effect currently fires on first render and emits a false close event
+        // even though no user interaction happened. It should only notify when the
+        // popover transitions from open -> closed, not for the initial closed state.
         useEffect(() => {
             if (!popoverOpened && onClose) {
                 onClose();

@@ -38,15 +38,20 @@ const useBasePicker = (onPopoverToggle?: (status: boolean) => void) => {
     });
 
     useClickOutside(() => {
-        setPopoverOpen(false);
-        onPopoverToggle?.(false);
+        if (popoverOpen) {
+            setPopoverOpen(false);
+            onPopoverToggle?.(false);
+        }
     }, [popoverRef?.current?.floatingElement, popoverRef?.current?.referenceElement]);
 
-    // TODO: add handler for onPopoverToggle and call onPopoverToggle(popoverOpen)
+    const handlePopoverToggle = (status: boolean) => {
+        setPopoverOpen(status);
+        onPopoverToggle?.(status);
+    };
 
     return {
         popoverOpen,
-        setPopoverOpen,
+        setPopoverOpen: handlePopoverToggle,
         anchorProps,
         setAnchorProps,
         popoverRef

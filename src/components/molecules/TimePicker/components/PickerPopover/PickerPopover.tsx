@@ -49,6 +49,10 @@ interface IPickerPopoverProps {
      * Current selected time parts used to highlight the active item.
      */
     parts?: TimeParts;
+    /**
+     * Whether the time picker is in 12-hour format.
+     */
+    is12Hour: boolean;
 }
 
 const PickerPopover: FC<IPickerPopoverProps> = ({
@@ -60,9 +64,9 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     position,
     onSelect,
     mobileHeightMode,
-    parts
+    parts,
+    is12Hour
 }) => {
-    const is12Hour = true;
     const hours = useMemo(() => (is12Hour ? HOURS_12 : HOURS_24), [is12Hour, HOURS_12, HOURS_24]);
 
     const timeColumns: Array<{ header: TimePartKey; data: string[] }> = [
@@ -105,7 +109,6 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                                             <PickerButton
                                                 key={item}
                                                 selected={parts?.[header] === item}
-                                                // disabled={isTimeDisabled(`${item}:00:00`)}
                                                 onClick={() => onSelect?.(header, item)}
                                                 className={classNames(
                                                     "timePicker__pickerButton",
