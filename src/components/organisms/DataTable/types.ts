@@ -23,12 +23,15 @@ export type DataTableRenderCellArgs<TData, TValue> = {
     rowId: string;
 };
 
-export type DataTableRowAction = {
+export interface IDataTableRowAction<TData extends ITableData> {
     Icon: FC<IconProps>;
     title?: string;
-    disabled?: boolean;
-    onClick: (e: MouseEvent) => void;
-};
+    disabled?: boolean | ((row: TData & ITableData) => boolean);
+    /**
+     * Row-aware click handler: receives the row data and the originating mouse event.
+     */
+    onClick: (row: TData & ITableData, e: MouseEvent) => void;
+}
 
 /**
  * Public DataTable column type (Gene UI).

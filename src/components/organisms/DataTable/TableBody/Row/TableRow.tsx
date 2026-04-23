@@ -1,4 +1,4 @@
-import React, { FC, JSX } from "react";
+import React, { FC, JSX, MouseEvent } from "react";
 import { Row } from "@tanstack/table-core";
 import classNames from "classnames";
 
@@ -7,7 +7,7 @@ import Button from "@components/atoms/Button";
 import Tooltip from "@components/molecules/Tooltip";
 import TableBodyCell from "@components/organisms/DataTable/TableBody/Cell/TableBodyCell";
 import TableExpandedRow from "@components/organisms/DataTable/TableBody/Row/TableExpandedRow";
-import { DataTableRowAction, ITableData } from "@components/organisms/DataTable/types";
+import { IDataTableRowAction, ITableData } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableRow.scss";
@@ -26,7 +26,7 @@ interface ITableRowProps<TData extends ITableData> {
     /**
      * An array of action button objects to display in the row's actions section.
      */
-    rowActions?: DataTableRowAction[];
+    rowActions?: IDataTableRowAction<TData>[];
 }
 
 interface IRowActionsWrapperProps {
@@ -65,18 +65,27 @@ const TableRow = <TData extends ITableData>({ row, rowActions }: ITableRowProps<
                 {rowActions?.length ? (
                     <td className="tableRow__actionsWrapper">
                         <div className="tableRow__actions">
-                            {rowActions.map(({ Icon, title, onClick, disabled }, index) => (
-                                <RowActionsWrapper key={`action-${title ?? index}`} title={title}>
-                                    <Button
-                                        appearance="secondary"
-                                        layout="text"
-                                        size="small"
-                                        Icon={Icon}
-                                        disabled={disabled}
-                                        onClick={onClick}
-                                    />
-                                </RowActionsWrapper>
-                            ))}
+                            {rowActions.map(({ Icon, title, onClick, disabled }, index) => {
+                                const resolvedDisabled =
+                                    typeof disabled === "function" ? disabled(row.original) : disabled;
+
+                                const handleActionClick = (e: MouseEvent) => {
+                                    onClick(row.original, e);
+                                };
+
+                                return (
+                                    <RowActionsWrapper key={`action-${title ?? index}`} title={title}>
+                                        <Button
+                                            appearance="secondary"
+                                            layout="text"
+                                            size="small"
+                                            Icon={Icon}
+                                            disabled={resolvedDisabled}
+                                            onClick={handleActionClick}
+                                        />
+                                    </RowActionsWrapper>
+                                );
+                            })}
                         </div>
                     </td>
                 ) : null}

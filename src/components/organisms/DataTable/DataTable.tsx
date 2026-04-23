@@ -22,8 +22,8 @@ import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader
 // Types
 import {
     DataTableColumn,
-    DataTableRowAction,
     DataTableRowExpandChangeHandler,
+    IDataTableRowAction,
     ITableData,
     ITableNoDataTexts
 } from "@components/organisms/DataTable/types";
@@ -152,11 +152,11 @@ interface IDataTableProps<TData extends ITableData> {
      * An array of action button objects to display in the row's action menu.
      * @example
      * rowActions={[
-     * { Icon: Edit, title: 'Edit', disabled: false, onClick: handleEdit },
-     * { Icon: Delete, title: 'Delete', disabled: true, onClick: handleDelete }
+     * { Icon: Edit, title: 'Edit', disabled: false, onClick: (row, e) => handleEdit(row, e) },
+     * { Icon: Delete, title: 'Delete', disabled: true, onClick: (row, e) => handleDelete(row, e) }
      * ]}
      */
-    rowActions?: DataTableRowAction[];
+    rowActions?: IDataTableRowAction<TData>[];
 }
 
 const defaultColumn = {
@@ -217,14 +217,14 @@ const DataTable = <TData extends ITableData>({
         columns: tableColumns,
         defaultColumn,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        ...(manualPagination ? {} : { getPaginationRowModel: getPaginationRowModel() }),
+        manualPagination,
         getExpandedRowModel: getExpandedRowModel(),
         onExpandedChange: handleExpandedChange,
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }
-            }),
-            ...(manualPagination && { manualPagination })
+            })
         },
         state: {
             expanded
@@ -235,7 +235,7 @@ const DataTable = <TData extends ITableData>({
 
     const { paginationProps } = useTablePagination(pagination, table);
 
-    const shouldShowPagination = !isTableLoading && paginationProps && data && paginationProps.totalPages > 0;
+    const shouldShowPagination = !isTableLoading && paginationProps && paginationProps.totalPages > 0;
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
@@ -259,7 +259,7 @@ const DataTable = <TData extends ITableData>({
                 </table>
             </Scrollbar>
             {shouldShowPagination && (
-                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableDataEmpty} />
+                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableLoading} />
             )}
         </div>
     );
