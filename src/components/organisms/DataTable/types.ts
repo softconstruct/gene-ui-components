@@ -8,6 +8,7 @@ export interface ITableNoDataTexts {
 }
 
 export interface ITableData {
+    rowStatus?: "default" | "zebra" | "red" | "green" | "highlighted";
     expandedRow?: ReactNode;
 }
 

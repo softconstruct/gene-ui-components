@@ -1,5 +1,6 @@
 import React, { FC, JSX } from "react";
 import { Row } from "@tanstack/table-core";
+import classNames from "classnames";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -47,12 +48,16 @@ const RowActionsWrapper: FC<IRowActionsWrapperProps> = ({ title, children }) => 
  * @returns A table row element containing its respective rendered cells.
  */
 const TableRow = <TData extends ITableData>({ row, rowActions }: ITableRowProps<TData>) => {
-    const { expandedRow } = row.original;
+    const { expandedRow, rowStatus = "default" } = row.original;
     const isRowExpanded = row.getIsExpanded() && expandedRow;
 
     return (
         <>
-            <tr className="tableRow">
+            <tr
+                className={classNames(`tableRow`, {
+                    [`tableRow_${rowStatus}`]: rowStatus
+                })}
+            >
                 {row.getVisibleCells().map((cell) => (
                     <TableBodyCell key={cell.id} cell={cell} />
                 ))}
