@@ -1,4 +1,4 @@
-export const itemListData = [
+export const listData = [
     {
         id: "row-1",
         title: "1234 Title",

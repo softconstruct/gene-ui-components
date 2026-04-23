@@ -1,0 +1,46 @@
+@use "../../../../assets/styles/mixins";
+
+.item {
+    display: flex;
+    gap: var(--guit-ref-spacing-xsmall);
+    width: 100%;
+    min-height: 3.2rem;
+
+    &_withCustomChildren {
+        padding-block: var(--guit-ref-spacing-2xsmall);
+        padding-inline: var(--guit-ref-spacing-medium);
+        border-radius: var(--guit-ref-radius-3xsmall);
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+        color: var(--guit-sem-color-foreground-neutral-2);
+    }
+
+    &__button {
+        width: 100%;
+        height: 100%;
+        text-align: start;
+        padding-block: var(--guit-ref-spacing-2xsmall);
+        padding-inline: var(--guit-ref-spacing-medium);
+        border-radius: var(--guit-ref-radius-3xsmall);
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+        color: var(--guit-sem-color-foreground-neutral-2);
+
+        &_selected {
+            color: var(--guit-sem-color-foreground-selected);
+        }
+
+        &_disabled {
+            pointer-events: none;
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-nudge-hover);
+            }
+        }
+
+        &:active {
+            background-color: var(--guit-sem-color-background-neutral-1-nudge-pressed);
+        }
+    }
+}

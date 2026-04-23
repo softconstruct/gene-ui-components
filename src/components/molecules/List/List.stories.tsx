@@ -6,18 +6,18 @@ import { Globe, Magnifier, RecycleBin, ThreeDotsHorizontal } from "@geneui/icons
 // Components
 import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
-import ItemList, { IItemListProps } from "@components/molecules/ItemList";
-import ItemListItem from "@components/molecules/ItemList/ItemListItem/ItemListItem";
+import List, { IListProps } from "@components/molecules/List";
+import Item from "@components/molecules/List/Item/Item";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import { itemListData } from "../../../../stories/data/__itemList";
+import { listData } from "../../../../stories/data/__list";
 
-const meta: Meta<IItemListProps> = {
-    title: "Molecules/ItemList",
-    component: ItemList,
+const meta: Meta<IListProps> = {
+    title: "Molecules/List",
+    component: List,
     subcomponents: {
-        ItemListItem: ItemListItem as React.ComponentType<unknown>
+        Item: Item as React.ComponentType<unknown>
     },
 
     argTypes: {
@@ -43,7 +43,7 @@ const meta: Meta<IItemListProps> = {
 
 export default meta;
 
-type Story = StoryObj<IItemListProps>;
+type Story = StoryObj<IListProps>;
 
 const items = [
     "item1",
@@ -65,7 +65,7 @@ const items = [
 
 const PAGE_SIZE = 5;
 
-const WithFooterStoryComponent: FC<IItemListProps> = (props) => {
+const WithFooterStoryComponent: FC<IListProps> = (props) => {
     const { showMoreDisabled, showMoreLoading } = props;
     const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
@@ -86,7 +86,7 @@ const WithFooterStoryComponent: FC<IItemListProps> = (props) => {
     }, [isShowMoreDisabled, isShowMoreLoading]);
 
     return (
-        <ItemList
+        <List
             {...props}
             showMore
             onShowMore={handleShowMore}
@@ -94,11 +94,11 @@ const WithFooterStoryComponent: FC<IItemListProps> = (props) => {
             showMoreLoading={isShowMoreLoading}
         >
             {visibleItems.map((item) => (
-                <ItemListItem key={item} id={item} onClick={() => {}}>
+                <Item key={item} id={item} onClick={() => {}}>
                     {item}
-                </ItemListItem>
+                </Item>
             ))}
-        </ItemList>
+        </List>
     );
 };
 
@@ -109,7 +109,7 @@ export const Default: Story = {
     }
 };
 
-const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
+const WithRenderStoryComponent: FC<IListProps> = (props) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -118,9 +118,9 @@ const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
     }, []);
 
     return (
-        <ItemList {...props} loading={loading} loadingText="Loading data...">
-            {itemListData.map((item) => (
-                <ItemListItem key={item.id} id={item.id} disabled={item.disabled}>
+        <List {...props} loading={loading} loadingText="Loading data...">
+            {listData.map((item) => (
+                <Item key={item.id} id={item.id} disabled={item.disabled}>
                     <div
                         style={{
                             display: "flex",
@@ -162,9 +162,9 @@ const WithRenderStoryComponent: FC<IItemListProps> = (props) => {
                             <Button Icon={ThreeDotsHorizontal} appearance="secondary" layout="text" size="smallNudge" />
                         </div>
                     </div>
-                </ItemListItem>
+                </Item>
             ))}
-        </ItemList>
+        </List>
     );
 };
 
@@ -173,13 +173,13 @@ export const WithRender: Story = {
 };
 
 export const NoResult: Story = {
-    render: (props) => <ItemList {...props}>{[]}</ItemList>,
+    render: (props) => <List {...props}>{[]}</List>,
     args: {
         emptyText: "No results"
     }
 };
 
-const VirtualizedStoryComponent: FC<IItemListProps> = (props) => {
+const VirtualizedStoryComponent: FC<IListProps> = (props) => {
     const virtualizedItems = useMemo(
         () =>
             Array.from({ length: 500 }, (_, index) => ({
@@ -190,15 +190,15 @@ const VirtualizedStoryComponent: FC<IItemListProps> = (props) => {
     );
     const virtualizedChildren = useMemo(
         () =>
-            virtualizedItems.map((item) => (
-                <ItemListItem key={item.id} id={item.id}>
-                    {item.label}
-                </ItemListItem>
+            virtualizedItems.map(({ id, label }) => (
+                <Item key={id} id={id} onClick={() => {}}>
+                    {label}
+                </Item>
             )),
         [virtualizedItems]
     );
 
-    return <ItemList {...props}>{virtualizedChildren}</ItemList>;
+    return <List {...props}>{virtualizedChildren}</List>;
 };
 
 export const Virtualized: Story = {

@@ -3,7 +3,7 @@ import React, { FC } from "react";
 // Components
 import Button from "@components/atoms/Button";
 
-interface IItemListFooterProps {
+interface IListFooterProps {
     /**
      * When true, the footer with "Show more" button is visible.
      */
@@ -27,10 +27,10 @@ interface IItemListFooterProps {
 }
 
 /**
- * Footer for the ItemList. Shown when showMore is true.
+ * Footer for the List. Shown when showMore is true.
  * Contains a "Show more" button aligned to the right.
  */
-const ItemListFooter: FC<IItemListFooterProps> = ({
+const ListFooter: FC<IListFooterProps> = ({
     showMore = false,
     onShowMore,
     showMoreLabel = "Show more",
@@ -39,7 +39,7 @@ const ItemListFooter: FC<IItemListFooterProps> = ({
 }) => {
     return (
         showMore && (
-            <div className="itemList__footer">
+            <div className="list__footer">
                 <Button
                     appearance="secondary"
                     layout="text"
@@ -55,4 +55,4 @@ const ItemListFooter: FC<IItemListFooterProps> = ({
     );
 };
 
-export { IItemListFooterProps, ItemListFooter as default };
+export { IListFooterProps, ListFooter as default };

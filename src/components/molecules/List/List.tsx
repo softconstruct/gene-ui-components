@@ -7,19 +7,19 @@ import Loader from "@components/atoms/Loader";
 import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
 import Skeleton from "@components/atoms/Skeleton";
 import Empty from "@components/molecules/Empty";
-import ItemListFooter from "@components/molecules/ItemList/ItemListFooter";
+import ListFooter from "@components/molecules/List/ListFooter";
 
 // Styles
-import "./ItemList.scss";
+import "./List.scss";
 
-interface IItemListProps {
+interface IListProps {
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
     /**
-     * The content of the item list. These should be `ItemListItem` components.
+     * The content of the list. These should be `Item` components.
      */
     children: ReactNode;
     /**
@@ -62,13 +62,13 @@ interface IItemListProps {
 const ESTIMATED_ROW_HEIGHT_PX = 32;
 
 const getItemKey = (item: ReactElement, index: number) =>
-    item.key ?? (item.props as { id?: string | number }).id ?? `itemList-item-${index}`;
+    item.key ?? (item.props as { id?: string | number }).id ?? `list-item-${index}`;
 
 /**
- * ItemList is a reusable list container that renders virtualized items with loading, empty, and "show more" states.
+ * List is a reusable list container that renders virtualized items with loading, empty, and "show more" states.
  * It is designed to fill its parent dimensions and can be composed inside any layout, popover, or panel.
  */
-const ItemList: FC<IItemListProps> = ({
+const List: FC<IListProps> = ({
     className,
     children,
     loading,
@@ -104,8 +104,8 @@ const ItemList: FC<IItemListProps> = ({
 
     if (loading) {
         return (
-            <div className={classNames("itemList", className)}>
-                <div className="itemList__state itemList__loader">
+            <div className={classNames("list", className)}>
+                <div className="list__state list__loader">
                     <Loader text={loadingText} textPosition="below" />
                 </div>
             </div>
@@ -114,8 +114,8 @@ const ItemList: FC<IItemListProps> = ({
 
     if (!hasChildren) {
         return (
-            <div className={classNames("itemList", className)}>
-                <div className="itemList__state itemList__empty">
+            <div className={classNames("list", className)}>
+                <div className="list__state list__empty">
                     <Empty description={emptyText} appearance="noResult" size="small" />
                 </div>
             </div>
@@ -123,28 +123,21 @@ const ItemList: FC<IItemListProps> = ({
     }
 
     return (
-        <div className={classNames("itemList", className)}>
-            <div className="itemList__scrollWrapper">
+        <div className={classNames("list", className)}>
+            <div className="list__scrollWrapper">
                 <Scrollbar ref={scrollbarRef}>
-                    <ul
-                        className="itemList__content itemList__virtualContainer"
-                        style={{ height: virtualizer.getTotalSize() }}
-                    >
+                    <ul className="list__content list__virtualContainer" style={{ height: virtualizer.getTotalSize() }}>
                         {virtualizer.getVirtualItems().map((row) => {
                             if (shouldRenderShowMoreSkeleton && row.index === childrenArray.length) {
                                 return (
                                     <li
-                                        className="itemList__virtualRow"
-                                        key="itemList-showMore-skeleton-row"
+                                        className="list__virtualRow"
+                                        key="list-showMore-skeleton-row"
                                         data-index={row.index}
                                         style={{ transform: `translateY(${row.start}px)` }}
                                     >
-                                        <div className="itemList__skeletonRow" aria-hidden="true">
-                                            <Skeleton
-                                                className="itemList__skeletonItem"
-                                                height={16}
-                                                rounded="rounded4X"
-                                            />
+                                        <div className="list__skeletonRow" aria-hidden="true">
+                                            <Skeleton className="list__skeletonItem" height={16} rounded="rounded4X" />
                                         </div>
                                     </li>
                                 );
@@ -154,7 +147,7 @@ const ItemList: FC<IItemListProps> = ({
                             return (
                                 item && (
                                     <li
-                                        className="itemList__virtualRow"
+                                        className="list__virtualRow"
                                         key={getItemKey(item, row.index)}
                                         ref={virtualizer.measureElement}
                                         data-index={row.index}
@@ -169,7 +162,7 @@ const ItemList: FC<IItemListProps> = ({
                 </Scrollbar>
             </div>
             {showMore && (
-                <ItemListFooter
+                <ListFooter
                     showMore={showMore}
                     onShowMore={onShowMore}
                     showMoreLabel={showMoreLabel}
@@ -181,4 +174,4 @@ const ItemList: FC<IItemListProps> = ({
     );
 };
 
-export { IItemListProps, ItemList as default };
+export { IListProps, List as default };
