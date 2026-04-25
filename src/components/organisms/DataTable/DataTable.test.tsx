@@ -6,6 +6,7 @@ import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
+import Toolbar from "@components/organisms/DataTable/Toolbar/Toolbar";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 // Components
@@ -217,5 +218,37 @@ describe("Table Component", () => {
         setup.update();
 
         expect(onRowExpandChange).not.toHaveBeenCalled();
+    });
+
+    it("renders Toolbar when isManageColumnsEnabled prop is true", async () => {
+        await act(async () => {
+            setup.setProps({ isManageColumnsEnabled: true });
+        });
+        setup.update();
+
+        const toolbar = setup.find(Toolbar);
+        expect(toolbar.exists()).toBeTruthy();
+        expect(toolbar.prop("isManageColumnsEnabled")).toBe(true);
+    });
+
+    it("passes custom manageColumnsTexts to Toolbar when provided", async () => {
+        const customTexts = {
+            saveText: "Confirm",
+            cancelText: "Discard",
+            restoreDefaultsText: "Reset to default",
+            searchPlaceholder: "Search columns..."
+        };
+
+        await act(async () => {
+            setup.setProps({
+                isManageColumnsEnabled: true,
+                manageColumnsTexts: customTexts
+            });
+        });
+        setup.update();
+
+        const toolbar = setup.find(Toolbar);
+        expect(toolbar.exists()).toBeTruthy();
+        expect(toolbar.prop("manageColumnsTexts")).toEqual(customTexts);
     });
 });

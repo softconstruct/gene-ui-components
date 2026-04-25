@@ -39,7 +39,7 @@ export type DataTableColumn<TData> = {
      */
     id?: string;
     /**
-     * Key from row object used to get cell values.
+     * Key from a row object used to get cell values.
      */
     accessorKey?: keyof TData & string;
     /**
@@ -51,7 +51,21 @@ export type DataTableColumn<TData> = {
      */
     size?: number;
     /**
+     * Whether the column is visible by default.
+     * @default true
+     */
+    defaultVisible?: boolean;
+    /**
      * Lean cell renderer (no TanStack CellContext exposure).
      */
     renderCell?: (args: DataTableRenderCellArgs<TData, ReactNode>) => ReactNode;
 };
+
+export type ColumnVisibilityState = Record<string, boolean>;
+
+export interface ITableManageColumnsTexts {
+    saveText?: string;
+    cancelText?: string;
+    restoreDefaultsText?: string;
+    searchPlaceholder?: string;
+}

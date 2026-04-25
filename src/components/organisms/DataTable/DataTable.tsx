@@ -19,12 +19,15 @@ import { DefaultCellComponent, TableColumnsAdapter } from "@components/organisms
 import { useTablePagination } from "@components/organisms/DataTable/hooks/useTablePagination";
 import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
 import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader";
+import Toolbar from "@components/organisms/DataTable/Toolbar/Toolbar";
 // Types
 import {
+    ColumnVisibilityState,
     DataTableColumn,
     DataTableRowAction,
     DataTableRowExpandChangeHandler,
     ITableData,
+    ITableManageColumnsTexts,
     ITableNoDataTexts
 } from "@components/organisms/DataTable/types";
 
@@ -42,13 +45,13 @@ interface IDataTableProps<TData extends ITableData> {
      */
     className?: string;
     /**
-     * Set sticky header.
+     * Set a sticky header.
      */
     sticky?: boolean;
     /**
      * Defines the pagination of the Table component.
      * Whether set `true` will display the raw pagination.
-     * Can accept also config object with custom handlers and data.
+     * Can accept also a config object with custom handlers and data.
      *
      * @default true
      */
@@ -127,6 +130,10 @@ interface IDataTableProps<TData extends ITableData> {
      */
     noDataAvailableActions?: IButtonProps[];
     /**
+     * Enables the ability to manage columns by dragging and dropping them in the desired order.
+     */
+    isManageColumnsEnabled?: boolean;
+    /**
      * Enables expandable rows, allowing for additional content to be revealed below a row when clicked.
      */
     expandable?: boolean;
@@ -157,6 +164,11 @@ interface IDataTableProps<TData extends ITableData> {
      * ]}
      */
     rowActions?: DataTableRowAction[];
+    /**
+     * An object with text labels for the Manage Columns popover.
+     * Use this to customize or localize the button texts.
+     */
+    manageColumnsTexts?: ITableManageColumnsTexts;
 }
 
 const defaultColumn = {
@@ -187,7 +199,9 @@ const DataTable = <TData extends ITableData>({
     manualPagination = false,
     expandable = false,
     onRowExpandChange,
-    rowActions
+    rowActions,
+    isManageColumnsEnabled = false,
+    manageColumnsTexts
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -212,6 +226,17 @@ const DataTable = <TData extends ITableData>({
             ? pagination.pageSize || pagination?.rowsPerPageOptions?.[0]
             : INITIAL_PAGE_SIZE;
 
+    const initialColumnVisibility = useMemo<ColumnVisibilityState>(() => {
+        return tableColumns.reduce<ColumnVisibilityState>((acc, column) => {
+            if (!column.id) return acc;
+
+            acc[column.id] = (column as { defaultVisible?: boolean }).defaultVisible ?? true;
+            return acc;
+        }, {});
+    }, [tableColumns]);
+
+    const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>(initialColumnVisibility);
+
     const table = useReactTable({
         data: data ?? [],
         columns: tableColumns,
@@ -220,6 +245,7 @@ const DataTable = <TData extends ITableData>({
         getPaginationRowModel: getPaginationRowModel(),
         getExpandedRowModel: getExpandedRowModel(),
         onExpandedChange: handleExpandedChange,
+        onColumnVisibilityChange: setColumnVisibility,
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }
@@ -227,7 +253,8 @@ const DataTable = <TData extends ITableData>({
             ...(manualPagination && { manualPagination })
         },
         state: {
-            expanded
+            expanded,
+            columnVisibility
         }
     });
 
@@ -239,8 +266,20 @@ const DataTable = <TData extends ITableData>({
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
+    const handleApplyColumnVisibility = useCallback((nextVisibility: ColumnVisibilityState) => {
+        setColumnVisibility(nextVisibility);
+    }, []);
+
     return (
         <div className={classNames("dataTable", className)}>
+            <Toolbar
+                isManageColumnsEnabled={isManageColumnsEnabled}
+                columns={table.getAllLeafColumns()}
+                columnVisibility={columnVisibility}
+                defaultColumnVisibility={initialColumnVisibility}
+                onApplyColumnVisibility={handleApplyColumnVisibility}
+                manageColumnsTexts={manageColumnsTexts}
+            />
             <Scrollbar>
                 <table
                     className={classNames("dataTable__table", {

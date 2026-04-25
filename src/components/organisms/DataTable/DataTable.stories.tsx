@@ -30,7 +30,9 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         sticky: args({ control: "boolean", ...propCategory.appearance }),
         expandable: args({ control: "boolean", ...propCategory.content }),
         onRowExpandChange: args({ control: "false", ...propCategory.functionality }),
-        rowActions: args({ control: "object", ...propCategory.functionality })
+        rowActions: args({ control: "object", ...propCategory.functionality }),
+        isManageColumnsEnabled: args({ control: "boolean", ...propCategory.functionality }),
+        manageColumnsTexts: args({ control: "object", ...propCategory.content })
     },
     args: {}
 };
@@ -127,6 +129,21 @@ export const AsyncDataFetchingWithPagination: Story = {
             pageSize: 10,
             rowsPerPageOptions: [5, 10, 20],
             showInputPageField: true
+        }
+    }
+};
+
+export const WithManageColumns: Story = {
+    render: (props) => <DataTable {...props} />,
+    args: {
+        data: mockData,
+        columns: mockColumns,
+        isManageColumnsEnabled: true,
+        manageColumnsTexts: {
+            searchPlaceholder: "Search...",
+            cancelText: "Cancel",
+            saveText: "Save changes",
+            restoreDefaultsText: "Restore defaults"
         }
     }
 };
