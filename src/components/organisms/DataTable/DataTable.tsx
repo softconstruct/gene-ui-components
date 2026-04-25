@@ -24,8 +24,8 @@ import Toolbar from "@components/organisms/DataTable/Toolbar/Toolbar";
 import {
     ColumnVisibilityState,
     DataTableColumn,
-    DataTableRowAction,
     DataTableRowExpandChangeHandler,
+    IDataTableRowAction,
     ITableData,
     ITableManageColumnsTexts,
     ITableNoDataTexts
@@ -159,11 +159,11 @@ interface IDataTableProps<TData extends ITableData> {
      * An array of action button objects to display in the row's action menu.
      * @example
      * rowActions={[
-     * { Icon: Edit, title: 'Edit', disabled: false, onClick: handleEdit },
-     * { Icon: Delete, title: 'Delete', disabled: true, onClick: handleDelete }
+     * { Icon: Edit, title: 'Edit', disabled: false, onClick: (row, e) => handleEdit(row, e) },
+     * { Icon: Delete, title: 'Delete', disabled: true, onClick: (row, e) => handleDelete(row, e) }
      * ]}
      */
-    rowActions?: DataTableRowAction[];
+    rowActions?: IDataTableRowAction<TData>[];
     /**
      * An object with text labels for the Manage Columns popover.
      * Use this to customize or localize the button texts.
@@ -242,15 +242,15 @@ const DataTable = <TData extends ITableData>({
         columns: tableColumns,
         defaultColumn,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        ...(manualPagination ? {} : { getPaginationRowModel: getPaginationRowModel() }),
+        manualPagination,
         getExpandedRowModel: getExpandedRowModel(),
         onExpandedChange: handleExpandedChange,
         onColumnVisibilityChange: setColumnVisibility,
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }
-            }),
-            ...(manualPagination && { manualPagination })
+            })
         },
         state: {
             expanded,
@@ -262,7 +262,7 @@ const DataTable = <TData extends ITableData>({
 
     const { paginationProps } = useTablePagination(pagination, table);
 
-    const shouldShowPagination = !isTableLoading && paginationProps && data && paginationProps.totalPages > 0;
+    const shouldShowPagination = !isTableLoading && paginationProps && paginationProps.totalPages > 0;
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
@@ -298,7 +298,7 @@ const DataTable = <TData extends ITableData>({
                 </table>
             </Scrollbar>
             {shouldShowPagination && (
-                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableDataEmpty} />
+                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableLoading} />
             )}
         </div>
     );
