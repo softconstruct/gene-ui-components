@@ -22,10 +22,10 @@ import Scrollbar from "@components/atoms/Scrollbar";
 import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
-import Tooltip from "@components/molecules/Tooltip";
+import { ITextFieldRef } from "@components/molecules/TextField/TextField";
 
 // Hooks
-import { useClickOutside, useDebounce } from "@hooks/index";
+import { useClickOutside, useDebounce, useWindowSize } from "@hooks/index";
 
 // Styles
 import "./Dropdown.scss";
@@ -43,6 +43,63 @@ import {
 import DropdownItem from "./DropdownItem/DropdownItem";
 // Types
 import { DropdownStatus, DropdownVariant, IDropdownFooterActions, IDropdownOption } from "./types";
+
+const MEASURE_SAFETY_OFFSET = 24;
+const FALLBACK_VISIBLE_ITEMS = 2;
+
+const getTextWidth = (text: string, font: string): number => {
+    if (typeof document === "undefined") return text.length * 8;
+    const context = document.createElement("canvas").getContext("2d");
+    if (!context) return text.length * 8;
+    context.font = font;
+    return context.measureText(text).width;
+};
+
+const getInputFont = (inputNode: HTMLInputElement): string => {
+    return getComputedStyle(inputNode).font || "400 14px Arial";
+};
+
+const getFallbackCompactText = (selectedLabels: string[]): { visibleText: string; suffixText: string } => {
+    if (selectedLabels.length <= FALLBACK_VISIBLE_ITEMS) {
+        return { visibleText: selectedLabels.join(", "), suffixText: "" };
+    }
+
+    const visibleText = selectedLabels.slice(0, FALLBACK_VISIBLE_ITEMS).join(", ");
+    const remainingCount = selectedLabels.length - FALLBACK_VISIBLE_ITEMS;
+    return { visibleText, suffixText: `+${remainingCount}...` };
+};
+
+const getCompactSelectedView = (
+    selectedLabels: string[],
+    triggerInputWidth: number,
+    inputNode: HTMLInputElement | null
+): { visibleText: string; suffixText: string } => {
+    if (selectedLabels.length <= 1) return { visibleText: selectedLabels.join(", "), suffixText: "" };
+    if (!inputNode || !triggerInputWidth) return getFallbackCompactText(selectedLabels);
+
+    const inputFont = getInputFont(inputNode);
+    const availableWidth = Math.max(triggerInputWidth - MEASURE_SAFETY_OFFSET, 0);
+    const fullText = selectedLabels.join(", ");
+
+    if (getTextWidth(fullText, inputFont) <= availableWidth) {
+        return { visibleText: fullText, suffixText: "" };
+    }
+
+    for (let visibleItems = selectedLabels.length - 1; visibleItems > 0; visibleItems--) {
+        const remainingCount = selectedLabels.length - visibleItems;
+        const visibleText = selectedLabels.slice(0, visibleItems).join(", ");
+        const suffixText = `+${remainingCount}...`;
+        const requiredWidth = getTextWidth(visibleText, inputFont) + getTextWidth(suffixText, inputFont);
+
+        if (requiredWidth <= availableWidth) {
+            return { visibleText, suffixText };
+        }
+    }
+
+    // Always keep at least one selected item visible and keep the count suffix.
+    // The input text will truncate if needed.
+    return { visibleText: selectedLabels[0], suffixText: `+${selectedLabels.length - 1}...` };
+};
 
 interface IDropdownProps {
     className?: string;
@@ -116,6 +173,9 @@ const Dropdown: FC<IDropdownProps> = ({
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [popoverProps, setPopoverProps] = useState<Record<string, unknown>>({});
     const [internalSearchValue, setInternalSearchValue] = useState<string>(searchValue || "");
+    const triggerTextFieldRef = useRef<ITextFieldRef | null>(null);
+    const [triggerInputWidth, setTriggerInputWidth] = useState(0);
+    const { width: windowWidth } = useWindowSize();
 
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null } as MutableRefObject<ReferenceType | null>,
@@ -131,6 +191,12 @@ const Dropdown: FC<IDropdownProps> = ({
     const selectedSingleValue = value !== undefined ? value : internalValue;
     const selectedMultipleValues = values !== undefined ? values : internalValues;
     const searchTerm = isExternallyControlledSearch ? searchValue || "" : internalSearchValue;
+
+    useEffect(() => {
+        const inputNode = triggerTextFieldRef.current?.getInputRef();
+        if (!inputNode) return;
+        setTriggerInputWidth(inputNode.clientWidth);
+    }, [windowWidth, selectedSingleValue, selectedMultipleValues, size, helperText, label]);
 
     useClickOutside(
         (event) => {
@@ -169,12 +235,15 @@ const Dropdown: FC<IDropdownProps> = ({
         [options, selectedMultipleValues]
     );
 
-    const selectedValueText = useMemo(() => {
+    const selectedView = useMemo(() => {
         if (isMulti) {
-            return selectedMultiOptions.map((option) => option.label).join(", ");
+            const selectedLabels = selectedMultiOptions.map((option) => option.label);
+            const inputNode = triggerTextFieldRef.current?.getInputRef() || null;
+            return getCompactSelectedView(selectedLabels, triggerInputWidth, inputNode);
         }
-        return selectedSingleOption?.label || "";
-    }, [isMulti, selectedMultiOptions, selectedSingleOption]);
+
+        return { visibleText: selectedSingleOption?.label || "", suffixText: "" };
+    }, [isMulti, selectedMultiOptions, selectedSingleOption, triggerInputWidth]);
 
     const filteredOptions = useMemo(() => {
         if (!searchable || onSearchChange) {
@@ -274,22 +343,21 @@ const Dropdown: FC<IDropdownProps> = ({
 
     return (
         <div className={classNames("dropdown", className)}>
-            <Tooltip text={selectedValueText} isVisible={isMulti && !!selectedValueText.length}>
-                <TextField
-                    className="dropdown__trigger"
-                    size={size}
-                    readOnly
-                    disabled={disabled}
-                    status={status}
-                    required={required}
-                    label={label}
-                    helperText={helperText}
-                    value={selectedValueText}
-                    placeholder={placeholder}
-                    IconAfter={CaretDownFilled}
-                    popoverProps={triggerPopoverProps}
-                />
-            </Tooltip>
+            <TextField
+                ref={triggerTextFieldRef}
+                className="dropdown__trigger"
+                size={size}
+                disabled={disabled}
+                status={status}
+                required={required}
+                label={label}
+                helperText={helperText}
+                value={selectedView.visibleText}
+                suffixText={selectedView.suffixText}
+                placeholder={placeholder}
+                IconAfter={CaretDownFilled}
+                popoverProps={triggerPopoverProps}
+            />
 
             <Popover
                 setProps={setPopoverProps}

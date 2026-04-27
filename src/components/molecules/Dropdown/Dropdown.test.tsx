@@ -62,6 +62,17 @@ describe("Dropdown ", () => {
         expect(setup.find("input.textField__input").at(0).prop("value")).toBe("");
     });
 
+    it("shows compact selected text with +N suffix in multiselect", () => {
+        setup.setProps({
+            variant: "multi",
+            values: ["option-1", "option-2", "option-3"]
+        });
+        setup.update();
+
+        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1, Option 2");
+        expect(setup.find(".textField__suffix").at(0).text()).toBe("+1...");
+    });
+
     it("calls onSearchChange in debounced mode", () => {
         jest.useFakeTimers();
         const onSearchChange = jest.fn();
