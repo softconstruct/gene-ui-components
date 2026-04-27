@@ -2,6 +2,8 @@ import { FC, MouseEvent } from "react";
 
 import { IconProps } from "@geneui/icons";
 
+import { IPopoverFooterActionProps } from "@components/atoms/Popover";
+
 export type DropdownSize = "large" | "medium" | "small";
 export type DropdownStatus = "rest" | "warning" | "error";
 export type DropdownVariant = "single" | "multi";
@@ -24,6 +26,6 @@ export interface IDropdownFooterAction {
 }
 
 export interface IDropdownFooterActions {
-    primary: IDropdownFooterAction;
-    secondary?: IDropdownFooterAction;
+    primary: Omit<IPopoverFooterActionProps, "appearance">;
+    secondary?: Omit<IPopoverFooterActionProps, "appearance">;
 }

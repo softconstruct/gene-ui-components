@@ -19,6 +19,7 @@ import Button from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
@@ -32,7 +33,6 @@ import "./Dropdown.scss";
 
 // Constants
 import {
-    DEFAULT_CLEAR_ALL_LABEL,
     DEFAULT_CLEAR_LABEL,
     DEFAULT_EMPTY_TEXT,
     DEFAULT_LOADING_TEXT,
@@ -127,8 +127,7 @@ interface IDropdownProps {
     emptyText?: string;
     selectAllLabel?: string;
     clearLabel?: string;
-    clearAllLabel?: string;
-    footerActions?: IDropdownFooterActions;
+    actions?: IDropdownFooterActions;
     filterFn?: (option: IDropdownOption, searchTerm: string) => boolean;
     onSearchChange?: (value: string) => void;
     onChange?: (value: IDropdownOption | IDropdownOption[] | null) => void;
@@ -160,8 +159,7 @@ const Dropdown: FC<IDropdownProps> = ({
     emptyText = DEFAULT_EMPTY_TEXT,
     selectAllLabel = DEFAULT_SELECT_ALL_LABEL,
     clearLabel = DEFAULT_CLEAR_LABEL,
-    clearAllLabel = DEFAULT_CLEAR_ALL_LABEL,
-    footerActions,
+    actions,
     filterFn,
     onSearchChange,
     onChange
@@ -416,28 +414,63 @@ const Dropdown: FC<IDropdownProps> = ({
                         ) : (
                             <>
                                 {filteredOptions.length ? (
-                                    <Scrollbar className="dropdown__scrollbar">
-                                        <div role="listbox" aria-multiselectable={isMulti} className="dropdown__list">
-                                            {filteredOptions.map((option) => (
-                                                <DropdownItem
-                                                    key={option.id}
-                                                    label={option.label}
-                                                    variant={variant}
-                                                    selected={
-                                                        isMulti
-                                                            ? selectedMultipleValues.includes(option.value)
-                                                            : option.value === selectedSingleValue
-                                                    }
-                                                    disabled={disabled || readOnly || option.disabled}
-                                                    Icon={option.Icon}
-                                                    infoText={option.infoText}
-                                                    textAfter={option.textAfter}
-                                                    size={size}
-                                                    onClick={() => optionSelectHandler(option)}
-                                                />
-                                            ))}
-                                        </div>
-                                    </Scrollbar>
+                                    <>
+                                        <Scrollbar className="dropdown__scrollbar">
+                                            <div
+                                                role="listbox"
+                                                aria-multiselectable={isMulti}
+                                                className="dropdown__list"
+                                            >
+                                                {filteredOptions.map((option) => (
+                                                    <DropdownItem
+                                                        key={option.id}
+                                                        label={option.label}
+                                                        variant={variant}
+                                                        selected={
+                                                            isMulti
+                                                                ? selectedMultipleValues.includes(option.value)
+                                                                : option.value === selectedSingleValue
+                                                        }
+                                                        disabled={disabled || readOnly || option.disabled}
+                                                        Icon={option.Icon}
+                                                        infoText={option.infoText}
+                                                        textAfter={option.textAfter}
+                                                        size={size}
+                                                        onClick={() => optionSelectHandler(option)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </Scrollbar>
+                                        {!!actions && (
+                                            <div className="dropdown__footer">
+                                                <ButtonGroup className="dropdown__footerActions" size="small">
+                                                    {actions?.secondary && (
+                                                        <Button
+                                                            appearance="secondary"
+                                                            layout="text"
+                                                            size={size}
+                                                            onClick={actions.secondary.onClick}
+                                                            disabled={actions.secondary.disabled}
+                                                            aria-label={actions.secondary["aria-label"]}
+                                                        >
+                                                            {actions.secondary.text}
+                                                        </Button>
+                                                    )}
+                                                    {actions?.primary && (
+                                                        <Button
+                                                            appearance={status === "error" ? "danger" : "primary"}
+                                                            size={size}
+                                                            onClick={actions.primary.onClick}
+                                                            disabled={actions.primary.disabled}
+                                                            aria-label={actions.primary["aria-label"]}
+                                                        >
+                                                            {actions.primary.text}
+                                                        </Button>
+                                                    )}
+                                                </ButtonGroup>
+                                            </div>
+                                        )}
+                                    </>
                                 ) : (
                                     <div className="dropdown__empty">
                                         <Empty title={emptyText} size="small" />
@@ -446,47 +479,6 @@ const Dropdown: FC<IDropdownProps> = ({
                             </>
                         )}
                     </div>
-
-                    {(footerActions || (isMulti && !!selectedMultipleValues.length)) && (
-                        <div className="dropdown__footer">
-                            {isMulti && (
-                                <Button
-                                    appearance="secondary"
-                                    layout="text"
-                                    size="small"
-                                    onClick={clearAllHandler}
-                                    disabled={!selectedMultipleValues.length || loading}
-                                >
-                                    {clearAllLabel}
-                                </Button>
-                            )}
-                            <div className="dropdown__footerActions">
-                                {footerActions?.secondary && (
-                                    <Button
-                                        appearance="secondary"
-                                        layout="text"
-                                        size="small"
-                                        onClick={footerActions.secondary.onClick}
-                                        disabled={footerActions.secondary.disabled}
-                                        aria-label={footerActions.secondary["aria-label"]}
-                                    >
-                                        {footerActions.secondary.text}
-                                    </Button>
-                                )}
-                                {footerActions?.primary && (
-                                    <Button
-                                        appearance="primary"
-                                        size="small"
-                                        onClick={footerActions.primary.onClick}
-                                        disabled={footerActions.primary.disabled}
-                                        aria-label={footerActions.primary["aria-label"]}
-                                    >
-                                        {footerActions.primary.text}
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    )}
                 </PopoverBody>
             </Popover>
         </div>

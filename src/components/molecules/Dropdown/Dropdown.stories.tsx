@@ -24,7 +24,8 @@ const meta: Meta<IDropdownProps> = {
         searchable: args({ control: "boolean", ...propCategory.functionality }),
         loading: args({ control: "boolean", ...propCategory.states }),
         loadingText: args({ control: "text", ...propCategory.content }),
-        emptyText: args({ control: "text", ...propCategory.content })
+        emptyText: args({ control: "text", ...propCategory.content }),
+        actions: args({ control: "object", ...propCategory.action })
     },
     args: {
         options: dropdownOptions,
@@ -79,7 +80,7 @@ export const Empty: Story = {
 
 export const WithFooterActions: Story = {
     args: {
-        footerActions: {
+        actions: {
             secondary: { text: "Secondary" },
             primary: { text: "Submit" }
         }
