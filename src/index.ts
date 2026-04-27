@@ -93,10 +93,22 @@ export {
     DropdownVariant,
     IDropdownProps
 } from "./components/molecules/Dropdown";
+export {
+    default as ActionableList,
+    IActionableListItem,
+    IActionableListProps,
+    IActionableListTexts
+} from "./components/molecules/ActionableList";
 
 // Organisms
-export { default as DataTable, IDataTableProps } from "@components/organisms/DataTable";
-export { default as GlobalHeader, IGlobalHeaderProps, IAction, IProducts } from "./components/organisms/GlobalHeader";
+export { default as DataTable, IDataTableProps, IDataTableRowAction } from "@components/organisms/DataTable";
+export {
+    default as GlobalHeader,
+    IGlobalHeaderProps,
+    IAction,
+    IProducts,
+    IPartnersProps
+} from "./components/organisms/GlobalHeader";
 export { default as DataCardList, IDataCardListProps } from "@components/organisms/DataCardList";
 
 // Providers

@@ -1,4 +1,6 @@
-import { ReactNode } from "react";
+import { FC, MouseEvent, ReactNode } from "react";
+
+import { IconProps } from "@geneui/icons";
 
 export interface ITableNoDataTexts {
     noDataAvailableTitle?: string;
@@ -19,6 +21,16 @@ export type DataTableRenderCellArgs<TData, TValue> = {
     row: TData & ITableData;
     rowId: string;
 };
+
+export interface IDataTableRowAction<TData extends ITableData> {
+    Icon: FC<IconProps>;
+    title?: string;
+    disabled?: boolean | ((row: TData & ITableData) => boolean);
+    /**
+     * Row-aware click handler: receives the row data and the originating mouse event.
+     */
+    onClick: (row: TData & ITableData, e: MouseEvent) => void;
+}
 
 /**
  * Public DataTable column type (Gene UI).
