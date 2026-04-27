@@ -230,6 +230,11 @@ describe("TextField ", () => {
         expect(wrapper.find(HelperText).text()).toStrictEqual(helperText);
     });
 
+    it("renders suffixText before icon area", () => {
+        const wrapper = setup.setProps({ suffixText: "+8..." });
+        expect(wrapper.find(".textField__suffix").text()).toBe("+8...");
+    });
+
     it("forwards popoverProps to input wrapper element", () => {
         const onClick = jest.fn();
         const wrapper = setup.setProps({

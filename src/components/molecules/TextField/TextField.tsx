@@ -167,6 +167,10 @@ interface ITextFieldProps {
      * Useful for popover trigger integrations (e.g. `ref`, handlers, aria attrs).
      */
     popoverProps?: HTMLAttributes<HTMLDivElement> & { ref?: Ref<HTMLDivElement> };
+    /**
+     * Optional suffix text rendered after input value and before IconAfter.
+     */
+    suffixText?: string;
 }
 
 export interface ITextFieldRef {
@@ -206,7 +210,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             status = "rest",
             onClear,
             inputMode = "text",
-            popoverProps
+            popoverProps,
+            suffixText
         },
         ref
     ) => {
@@ -352,6 +357,15 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                                     onClick={showPasswordToggle}
                                 />
                             )}
+                        </span>
+                    )}
+                    {suffixText && (
+                        <span
+                            className={classNames("textField__suffix", {
+                                textField__suffix_noIconAfter: !IconAfter && !(isClearable || isPassword)
+                            })}
+                        >
+                            {suffixText}
                         </span>
                     )}
                     {IconAfter && (

@@ -31,10 +31,12 @@ const meta: Meta<ITextFieldProps> = {
         placeholder: args({ control: "text", ...propCategory.content }),
         defaultValue: args({ control: "text", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content }),
+        suffixText: args({ control: "text", ...propCategory.content }),
         id: args({ control: "text", ...propCategory.others }),
         name: args({ control: "text", ...propCategory.others }),
         autoComplete: args({ control: "text", ...propCategory.functionality }),
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
+        popoverProps: args({ control: "object", ...propCategory.functionality }),
         helperText: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.appearance }),
         inputMode: args({ control: "select", ...propCategory.appearance })
