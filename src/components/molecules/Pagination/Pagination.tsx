@@ -1,10 +1,11 @@
-import React, { ChangeEvent, FC, PointerEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FC, PointerEvent, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 
 import { ChevronDoubleLeft, ChevronDoubleRight, ChevronLeft, ChevronRight } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
+import Dropdown, { IDropdownOption } from "@components/molecules/Dropdown";
 import PaginationButton from "@components/molecules/Pagination/PaginationButton";
 import TextField from "@components/molecules/TextField";
 
@@ -238,10 +239,11 @@ const Pagination: FC<IPaginationProps> = ({
         handlePageChange(currentPageValue);
     };
 
-    const handlePageSizeChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const handlePageSizeChange = (selectedOption: IDropdownOption | IDropdownOption[] | null) => {
         if (disabled) return;
+        if (!selectedOption || Array.isArray(selectedOption)) return;
 
-        const value = +e.currentTarget.value;
+        const value = +selectedOption.value;
 
         if (!isControlledPageSize) {
             setInternalPageSize(value);
@@ -269,19 +271,27 @@ const Pagination: FC<IPaginationProps> = ({
     const startItem = totalItems === 0 ? 0 : (currentPage - 1) * currentPageSize + 1;
     const endItem = totalItems ? Math.min(currentPage * currentPageSize, totalItems) : currentPage * currentPageSize;
 
+    const pageSizeOptions = useMemo(
+        () =>
+            (rowsPerPageOptions || []).map((optionValue) => ({
+                id: optionValue,
+                value: optionValue.toString(),
+                label: `${optionValue}/${pageSizeSuffixLabel}`
+            })),
+        [rowsPerPageOptions, pageSizeSuffixLabel]
+    );
+
     return (
         <div className={classNames("pagination", className)}>
             {rowsPerPageOptions && (
                 <div className="pagination__perpage">
-                    {/* todo: import 'Dropdown' component */}
                     <div className="pagination__select">
-                        <select value={currentPageSize} onChange={handlePageSizeChange} disabled={disabled}>
-                            {rowsPerPageOptions.map((el) => (
-                                <option value={el} key={el}>
-                                    {el}/{pageSizeSuffixLabel}
-                                </option>
-                            ))}
-                        </select>
+                        <Dropdown
+                            options={pageSizeOptions}
+                            value={currentPageSize.toString()}
+                            onChange={handlePageSizeChange}
+                            disabled={disabled}
+                        />
                     </div>
 
                     <div

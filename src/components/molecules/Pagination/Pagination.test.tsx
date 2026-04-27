@@ -1,7 +1,9 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
+import { act } from "react-dom/test-utils";
 
 import Button from "@components/atoms/Button";
+import Dropdown from "@components/molecules/Dropdown";
 import GeneUIProvider from "@components/providers/GeneUIProvider";
 
 import Pagination, { IPaginationProps } from "./index";
@@ -39,7 +41,7 @@ describe("Pagination", () => {
 
     it("renders page size dropdown when rowsPerPageOptions prop is provided", () => {
         const wrapper = setup.setProps({ rowsPerPageOptions: [10, 20, 30] });
-        expect(wrapper.find("select").exists()).toBeTruthy();
+        expect(wrapper.find(Dropdown).exists()).toBeTruthy();
     });
 
     it("calls onPageSizeChange when page size is changed", () => {
@@ -49,8 +51,12 @@ describe("Pagination", () => {
             onPageSizeChange
         });
 
-        wrapper.find("select").simulate("change", { currentTarget: { value: 10 } });
-        expect(onPageSizeChange).toHaveBeenCalledWith(10);
+        const dropdownOnChange = wrapper.find(Dropdown).first().prop("onChange");
+        act(() => {
+            dropdownOnChange?.({ id: 20, label: "20/Page", value: "20" });
+        });
+        wrapper.update();
+        expect(onPageSizeChange).toHaveBeenCalledWith(20);
     });
 
     it("disables previous arrow button on first page", () => {
@@ -73,8 +79,8 @@ describe("Pagination", () => {
         wrapper.find(".pagination__nav_item").forEach((button) => {
             expect(button.prop("disabled")).toBeTruthy();
         });
-        expect(wrapper.find("select").prop("disabled")).toBeTruthy();
-        expect(wrapper.find("input[type='text']").prop("disabled")).toBeTruthy();
+        expect(wrapper.find(Dropdown).prop("disabled")).toBeTruthy();
+        expect(wrapper.find(".pagination__input input").prop("disabled")).toBeTruthy();
         wrapper.find(Button).forEach((button) => {
             expect(button.prop("disabled")).toBeTruthy();
         });
@@ -104,9 +110,8 @@ describe("Pagination", () => {
             { wrappingComponent: GeneUIProvider }
         );
 
-        // Check if the first option in the dropdown has the correct custom label.
-        const firstOptionText = setup.find("option").first().text();
-        expect(firstOptionText).toBe(`10/${customLabel}`);
+        const dropdownOptions = setup.find(Dropdown).prop("options") || [];
+        expect(dropdownOptions[0]?.label).toBe(`10/${customLabel}`);
     });
 
     it("renders pageSizeOfLabel prop correctly", () => {

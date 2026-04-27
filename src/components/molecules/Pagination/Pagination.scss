@@ -36,6 +36,10 @@
         }
     }
 
+    &__select {
+        max-width: 11.6rem;
+    }
+
     &__nav {
         $that: &;
 
