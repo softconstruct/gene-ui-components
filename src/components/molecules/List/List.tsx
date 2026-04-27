@@ -1,4 +1,4 @@
-import React, { Children, FC, ReactElement, ReactNode, useEffect, useMemo, useRef } from "react";
+import React, { FC, ReactNode, useEffect, useMemo, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
 
@@ -7,10 +7,19 @@ import Loader from "@components/atoms/Loader";
 import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
 import Skeleton from "@components/atoms/Skeleton";
 import Empty from "@components/molecules/Empty";
+import Item from "@components/molecules/List/Item/Item";
 import ListFooter from "@components/molecules/List/ListFooter";
 
 // Styles
 import "./List.scss";
+
+interface IListItemData {
+    id: number | string;
+    label?: ReactNode;
+    disabled?: boolean;
+    onClick?: (item: IListItemData) => void;
+    render?: (item: IListItemData) => ReactNode;
+}
 
 interface IListProps {
     /**
@@ -18,10 +27,7 @@ interface IListProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
-    /**
-     * The content of the list. These should be `Item` components.
-     */
-    children: ReactNode;
+    items: IListItemData[];
     /**
      * Indicates whether the list is in a loading state.
      * If true, a loading indicator is displayed instead of the items.
@@ -61,16 +67,13 @@ interface IListProps {
 
 const ESTIMATED_ROW_HEIGHT_PX = 32;
 
-const getItemKey = (item: ReactElement, index: number) =>
-    item.key ?? (item.props as { id?: string | number }).id ?? `list-item-${index}`;
-
 /**
  * List is a reusable list container that renders virtualized items with loading, empty, and "show more" states.
  * It is designed to fill its parent dimensions and can be composed inside any layout, popover, or panel.
  */
 const List: FC<IListProps> = ({
     className,
-    children,
+    items,
     loading,
     loadingText,
     emptyText,
@@ -80,11 +83,11 @@ const List: FC<IListProps> = ({
     showMoreDisabled = false,
     showMoreLoading = false
 }) => {
-    const hasChildren = useMemo(() => Children.count(children) > 0, [children]);
+    const hasChildren = useMemo(() => items.length > 0, [items.length]);
     const scrollbarRef = useRef<ScrollbarRefType | null>(null);
-    const childrenArray = useMemo(() => Children.toArray(children) as ReactElement[], [children]);
+    const itemsArray = useMemo(() => items, [items]);
     const shouldRenderShowMoreSkeleton = !!showMore && !!showMoreLoading && hasChildren;
-    const totalVirtualCount = childrenArray.length + (shouldRenderShowMoreSkeleton ? 1 : 0);
+    const totalVirtualCount = itemsArray.length + (shouldRenderShowMoreSkeleton ? 1 : 0);
 
     const virtualizer = useVirtualizer({
         count: hasChildren ? totalVirtualCount : 0,
@@ -128,7 +131,7 @@ const List: FC<IListProps> = ({
                 <Scrollbar ref={scrollbarRef}>
                     <ul className="list__content list__virtualContainer" style={{ height: virtualizer.getTotalSize() }}>
                         {virtualizer.getVirtualItems().map((row) => {
-                            if (shouldRenderShowMoreSkeleton && row.index === childrenArray.length) {
+                            if (shouldRenderShowMoreSkeleton && row.index === itemsArray.length) {
                                 return (
                                     <li
                                         className="list__virtualRow"
@@ -143,18 +146,21 @@ const List: FC<IListProps> = ({
                                 );
                             }
 
-                            const item = childrenArray[row.index];
+                            const item = itemsArray[row.index];
                             return (
                                 item && (
-                                    <li
-                                        className="list__virtualRow"
-                                        key={getItemKey(item, row.index)}
+                                    <Item
+                                        virtualClassName="list__virtualRow"
+                                        key={item.id ?? `list-item-${row.index}`}
                                         ref={virtualizer.measureElement}
-                                        data-index={row.index}
-                                        style={{ transform: `translateY(${row.start}px)` }}
+                                        virtualIndex={row.index}
+                                        id={item.id}
+                                        disabled={item.disabled}
+                                        onClick={item.onClick ? () => item.onClick?.(item) : undefined}
+                                        virtualStyle={{ transform: `translateY(${row.start}px)` }}
                                     >
-                                        {item}
-                                    </li>
+                                        {item.render ? item.render(item) : item.label}
+                                    </Item>
                                 )
                             );
                         })}
@@ -174,4 +180,4 @@ const List: FC<IListProps> = ({
     );
 };
 
-export { IListProps, List as default };
+export { IListItemData, IListProps, List as default };

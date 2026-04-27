@@ -5,22 +5,16 @@ import { mount, ReactWrapper } from "enzyme";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import List, { IListProps } from "@components/molecules/List";
-import Item from "@components/molecules/List/Item/Item";
 
 describe("List ", () => {
     let setup: ReactWrapper<IListProps>;
     const renderItems = (count: number) =>
-        Array.from({ length: count }, (_, index) => (
-            <Item id={`item-${index + 1}`} key={`item-${index + 1}`}>
-                {`Item ${index + 1}`}
-            </Item>
-        ));
+        Array.from({ length: count }, (_, index) => ({
+            id: `item-${index + 1}`,
+            label: `Item ${index + 1}`
+        }));
 
-    const Component = (
-        <List>
-            <Item id="test-item">Test Child</Item>
-        </List>
-    );
+    const Component = <List items={[{ id: "test-item", label: "Test Child" }]} />;
 
     beforeEach(() => {
         setup = mount(Component);
@@ -47,17 +41,17 @@ describe("List ", () => {
     });
 
     it("renders empty state when there are no children", () => {
-        setup.setProps({ children: [] as unknown as React.ReactElement[] });
+        setup.setProps({ items: [] });
         expect(setup.find(Empty).exists()).toBeTruthy();
     });
 
     it("renders custom empty text", () => {
-        setup.setProps({ emptyText: "Nothing found", children: [] as unknown as React.ReactElement[] });
+        setup.setProps({ emptyText: "Nothing found", items: [] });
         expect(setup.text()).toContain("Nothing found");
     });
 
     it("renders footer when showMore is true", () => {
-        setup.setProps({ showMore: true, children: renderItems(1) });
+        setup.setProps({ showMore: true, items: renderItems(1) });
         expect(setup.find(".list__footer").exists()).toBeTruthy();
     });
 
@@ -67,7 +61,7 @@ describe("List ", () => {
     });
 
     it("disables showMore button when showMoreDisabled is true", () => {
-        setup.setProps({ showMore: true, showMoreDisabled: true, children: renderItems(1) });
+        setup.setProps({ showMore: true, showMoreDisabled: true, items: renderItems(1) });
         expect(showMoreButton().prop("disabled")).toBeTruthy();
     });
 
@@ -77,12 +71,12 @@ describe("List ", () => {
     });
 
     it("hides footer when there are no children", () => {
-        setup.setProps({ showMore: true, children: [] as unknown as React.ReactElement[] });
+        setup.setProps({ showMore: true, items: [] });
         expect(setup.find(".list__footer").exists()).toBeFalsy();
     });
 
     it("shows loading state on showMore button when showMoreLoading is true", () => {
-        setup.setProps({ showMore: true, showMoreLoading: true, children: renderItems(1) });
+        setup.setProps({ showMore: true, showMoreLoading: true, items: renderItems(1) });
         expect(showMoreButton().hasClass("button_loading")).toBeTruthy();
     });
 
@@ -90,7 +84,7 @@ describe("List ", () => {
         setup.setProps({
             showMore: true,
             showMoreLoading: true,
-            children: renderItems(1)
+            items: renderItems(1)
         });
 
         expect(showMoreButton().hasClass("button_loading")).toBeTruthy();
@@ -98,14 +92,14 @@ describe("List ", () => {
 
     it("calls onShowMore when footer button is clicked", () => {
         const onShowMore = jest.fn();
-        setup.setProps({ showMore: true, onShowMore, children: renderItems(2) });
+        setup.setProps({ showMore: true, onShowMore, items: renderItems(2) });
         showMoreButton().simulate("click");
         expect(onShowMore).toHaveBeenCalledTimes(1);
     });
 
     it("does not call onShowMore when button is disabled", () => {
         const onShowMore = jest.fn();
-        setup.setProps({ showMore: true, onShowMore, showMoreDisabled: true, children: renderItems(2) });
+        setup.setProps({ showMore: true, onShowMore, showMoreDisabled: true, items: renderItems(2) });
         showMoreButton().simulate("click");
         expect(onShowMore).toHaveBeenCalledTimes(0);
     });
@@ -114,7 +108,7 @@ describe("List ", () => {
         setup.setProps({
             showMore: true,
             showMoreLoading: true,
-            children: [] as unknown as React.ReactElement[]
+            items: []
         });
 
         expect(setup.find(".list__skeletonRow")).toHaveLength(0);
@@ -122,7 +116,7 @@ describe("List ", () => {
 
     it("renders virtualized list container when provided items", () => {
         setup.setProps({
-            children: renderItems(2)
+            items: renderItems(2)
         });
 
         expect(setup.find(".list__virtualContainer").exists()).toBeTruthy();
@@ -131,7 +125,7 @@ describe("List ", () => {
     });
 
     it("renders virtualized container and does not render empty state when items exist", () => {
-        setup.setProps({ children: renderItems(5) });
+        setup.setProps({ items: renderItems(5) });
         expect(setup.find(".list__virtualContainer").exists()).toBeTruthy();
         expect(setup.find(Empty).exists()).toBeFalsy();
     });

@@ -6,8 +6,7 @@ import { Globe, Magnifier, RecycleBin, ThreeDotsHorizontal } from "@geneui/icons
 // Components
 import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
-import List, { IListProps } from "@components/molecules/List";
-import Item from "@components/molecules/List/Item/Item";
+import List, { IListItemData, IListProps } from "@components/molecules/List";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -16,13 +15,9 @@ import { listData } from "../../../../stories/data/__list";
 const meta: Meta<IListProps> = {
     title: "Molecules/List",
     component: List,
-    subcomponents: {
-        Item: Item as React.ComponentType<unknown>
-    },
-
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        children: args({ control: "false", ...propCategory.content }),
+        items: args({ control: "false", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
         loadingText: args({ control: "text", ...propCategory.content }),
         emptyText: args({ control: "text", ...propCategory.content }),
@@ -74,6 +69,15 @@ const WithFooterStoryComponent: FC<IListProps> = (props) => {
     const allLoaded = visibleCount >= items.length;
     const isShowMoreDisabled = !!showMoreDisabled || allLoaded;
     const isShowMoreLoading = !!showMoreLoading || isLoadingMore;
+    const visibleItemsData = useMemo<IListItemData[]>(
+        () =>
+            visibleItems.map((item) => ({
+                id: item,
+                label: item,
+                onClick: () => {}
+            })),
+        [visibleItems]
+    );
 
     const handleShowMore = useCallback(() => {
         if (isShowMoreLoading || isShowMoreDisabled) return;
@@ -88,17 +92,12 @@ const WithFooterStoryComponent: FC<IListProps> = (props) => {
     return (
         <List
             {...props}
+            items={visibleItemsData}
             showMore
             onShowMore={handleShowMore}
             showMoreDisabled={isShowMoreDisabled}
             showMoreLoading={isShowMoreLoading}
-        >
-            {visibleItems.map((item) => (
-                <Item key={item} id={item} onClick={() => {}}>
-                    {item}
-                </Item>
-            ))}
-        </List>
+        />
     );
 };
 
@@ -117,10 +116,12 @@ const WithRenderStoryComponent: FC<IListProps> = (props) => {
         return () => clearTimeout(timeoutId);
     }, []);
 
-    return (
-        <List {...props} loading={loading} loadingText="Loading data...">
-            {listData.map((item) => (
-                <Item key={item.id} id={item.id} disabled={item.disabled}>
+    const renderedItems = useMemo<IListItemData[]>(
+        () =>
+            listData.map((item) => ({
+                id: item.id,
+                disabled: item.disabled,
+                render: () => (
                     <div
                         style={{
                             display: "flex",
@@ -162,10 +163,12 @@ const WithRenderStoryComponent: FC<IListProps> = (props) => {
                             <Button Icon={ThreeDotsHorizontal} appearance="secondary" layout="text" size="smallNudge" />
                         </div>
                     </div>
-                </Item>
-            ))}
-        </List>
+                )
+            })),
+        []
     );
+
+    return <List {...props} items={renderedItems} loading={loading} loadingText="Loading data..." />;
 };
 
 export const WithRender: Story = {
@@ -173,7 +176,7 @@ export const WithRender: Story = {
 };
 
 export const NoResult: Story = {
-    render: (props) => <List {...props}>{[]}</List>,
+    render: (props) => <List {...props} items={[]} />,
     args: {
         emptyText: "No results"
     }
@@ -182,7 +185,7 @@ export const NoResult: Story = {
 const VirtualizedStoryComponent: FC<IListProps> = (props) => {
     const virtualizedItems = useMemo(
         () =>
-            Array.from({ length: 500 }, (_, index) => ({
+            Array.from({ length: 200 }, (_, index) => ({
                 id: `item-${index + 1}`,
                 label: `item${index + 1}`
             })),
@@ -190,17 +193,22 @@ const VirtualizedStoryComponent: FC<IListProps> = (props) => {
     );
     const virtualizedChildren = useMemo(
         () =>
-            virtualizedItems.map(({ id, label }) => (
-                <Item key={id} id={id} onClick={() => {}}>
-                    {label}
-                </Item>
-            )),
+            virtualizedItems.map(({ id, label }) => ({
+                id,
+                label,
+                onClick: () => {}
+            })),
         [virtualizedItems]
     );
 
-    return <List {...props}>{virtualizedChildren}</List>;
+    return <List {...props} items={virtualizedChildren} />;
 };
 
 export const Virtualized: Story = {
-    render: (props) => <VirtualizedStoryComponent {...props} />
+    render: (props) => <VirtualizedStoryComponent {...props} />,
+    parameters: {
+        docs: {
+            disable: true
+        }
+    }
 };

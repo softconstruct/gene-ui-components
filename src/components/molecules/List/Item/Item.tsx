@@ -1,4 +1,4 @@
-import React, { FC, MouseEventHandler, ReactNode } from "react";
+import React, { CSSProperties, forwardRef, MouseEventHandler, ReactNode } from "react";
 import classNames from "classnames";
 
 // Styles
@@ -23,35 +23,52 @@ interface IItemProps {
      * When omitted, content is rendered as non-interactive (no button, not clickable).
      */
     onClick?: MouseEventHandler<HTMLButtonElement>;
+    /**
+     * Additional class for the virtual item.
+     */
+    virtualClassName?: string;
+    /**
+     * Style for the virtual item.
+     */
+    virtualStyle?: CSSProperties;
+    /**
+     * Index for the virtual item.
+     */
+    virtualIndex?: number;
 }
 
 /**
  * Item represents a single option inside the List.
  */
-const Item: FC<IItemProps> = ({ id, children, disabled, onClick }) => (
-    <li
-        className={classNames("item", {
-            item_withCustomChildren: !onClick
-        })}
-    >
-        {onClick ? (
-            <button
-                type="button"
-                role="option"
-                aria-selected="false"
-                className={classNames("item__button", {
-                    item__button_disabled: disabled
-                })}
-                onClick={onClick}
-                disabled={disabled}
-                data-id={id}
-            >
-                {children}
-            </button>
-        ) : (
-            children
-        )}
-    </li>
+const Item = forwardRef<HTMLLIElement, IItemProps>(
+    ({ id, children, disabled, onClick, virtualClassName, virtualStyle, virtualIndex }, ref) => (
+        <li
+            ref={ref}
+            data-index={virtualIndex}
+            style={virtualStyle}
+            className={classNames("item", virtualClassName, {
+                item_withCustomChildren: !onClick
+            })}
+        >
+            {onClick ? (
+                <button
+                    type="button"
+                    role="option"
+                    aria-selected="false"
+                    className={classNames("item__button", {
+                        item__button_disabled: disabled
+                    })}
+                    onClick={onClick}
+                    disabled={disabled}
+                    data-id={id}
+                >
+                    {children}
+                </button>
+            ) : (
+                children
+            )}
+        </li>
+    )
 );
 
 export { IItemProps, Item as default };
