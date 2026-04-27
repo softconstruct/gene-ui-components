@@ -88,9 +88,6 @@ export {
     IDropdownOption,
     IDropdownFooterAction,
     IDropdownFooterActions,
-    DropdownSize,
-    DropdownStatus,
-    DropdownVariant,
     IDropdownProps
 } from "./components/molecules/Dropdown";
 export {

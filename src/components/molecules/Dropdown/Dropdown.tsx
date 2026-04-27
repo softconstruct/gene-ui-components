@@ -37,15 +37,14 @@ import {
     DEFAULT_EMPTY_TEXT,
     DEFAULT_LOADING_TEXT,
     DEFAULT_SEARCH_PLACEHOLDER,
-    DEFAULT_SELECT_ALL_LABEL
+    DEFAULT_SELECT_ALL_LABEL,
+    FALLBACK_VISIBLE_ITEMS,
+    MEASURE_SAFETY_OFFSET
 } from "./constants";
 // Internal components
 import DropdownItem from "./DropdownItem/DropdownItem";
 // Types
 import { DropdownStatus, DropdownVariant, IDropdownFooterActions, IDropdownOption } from "./types";
-
-const MEASURE_SAFETY_OFFSET = 24;
-const FALLBACK_VISIBLE_ITEMS = 2;
 
 const getTextWidth = (text: string, font: string): number => {
     if (typeof document === "undefined") return text.length * 8;
@@ -102,34 +101,147 @@ const getCompactSelectedView = (
 };
 
 interface IDropdownProps {
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
     className?: string;
+    /**
+     * List of available options.
+     * Each option defines value, label, and optional visual metadata.
+     */
     options: IDropdownOption[];
+    /**
+     * Selection mode of the dropdown.
+     * Possible values: `single | multi`
+     * @default "single"
+     */
     variant?: DropdownVariant;
+    /**
+     * Dropdown size.
+     * Possible values: `large | medium | small`
+     * @default "medium"
+     */
     size?: "large" | "medium" | "small";
+    /**
+     * Visual status of the trigger field.
+     * Possible values: `rest | warning | error`
+     * @default "rest"
+     */
     status?: DropdownStatus;
+    /**
+     * Controlled selected value for `single` variant.
+     */
     value?: string | null;
+    /**
+     * Initial selected value for `single` variant in uncontrolled mode.
+     */
     defaultValue?: string | null;
+    /**
+     * Controlled selected values for `multi` variant.
+     */
     values?: string[];
+    /**
+     * Initial selected values for `multi` variant in uncontrolled mode.
+     */
     defaultValues?: string[];
+    /**
+     * Placeholder shown when nothing is selected.
+     */
     placeholder?: string;
+    /**
+     * Label shown above the dropdown trigger.
+     */
     label?: string;
+    /**
+     * Additional descriptive text shown in an info tooltip icon near the label.
+     */
+    infoText?: string;
+    /**
+     * Helper text displayed below the dropdown trigger.
+     */
     helperText?: string;
+    /**
+     * Marks the dropdown as required.
+     */
     required?: boolean;
+    /**
+     * Disables all dropdown interactions.
+     */
     disabled?: boolean;
+    /**
+     * Makes dropdown non-editable and non-selectable while keeping it visible.
+     */
     readOnly?: boolean;
+    /**
+     * Enables search input inside the dropdown panel.
+     */
     searchable?: boolean;
+    /**
+     * Automatically focuses search input when dropdown opens.
+     * @default true
+     */
     searchAutoFocus?: boolean;
+    /**
+     * Placeholder text for search input.
+     * @default "Search"
+     */
     searchPlaceholder?: string;
+    /**
+     * Debounce delay in milliseconds for search change callback.
+     * @default 300
+     */
     searchDebounceMs?: number;
+    /**
+     * Controlled search value for async/external search mode.
+     */
     searchValue?: string;
+    /**
+     * Displays loading state in dropdown panel.
+     */
     loading?: boolean;
+    /**
+     * Text shown with loader in loading state.
+     * @default "Loading"
+     */
     loadingText?: string;
+    /**
+     * Text shown when there are no options to render.
+     * @default "No data"
+     */
     emptyText?: string;
+    /**
+     * Label for the `Select all` checkbox in multi mode.
+     * @default "Select All"
+     */
     selectAllLabel?: string;
+    /**
+     * Label for inline clear action in multi mode.
+     * @default "Clear"
+     */
     clearLabel?: string;
+    /**
+     * Footer action buttons displayed in dropdown footer.
+     * `primary` action is required, `secondary` is optional.
+     * Button appearances are derived internally:
+     * - `primary`: `primary` for `rest/warning`, `danger` for `error`
+     * - `secondary`: always `secondary`
+     */
     actions?: IDropdownFooterActions;
+    /**
+     * Custom filtering function used in internal search mode.
+     * Receives option and normalized search term.
+     */
     filterFn?: (option: IDropdownOption, searchTerm: string) => boolean;
+    /**
+     * Callback fired when search value changes.
+     * Useful for async/external search mode.
+     */
     onSearchChange?: (value: string) => void;
+    /**
+     * Callback fired when selection changes.
+     * Returns selected option (single), selected options (multi), or null.
+     */
     onChange?: (value: IDropdownOption | IDropdownOption[] | null) => void;
 }
 
@@ -145,6 +257,7 @@ const Dropdown: FC<IDropdownProps> = ({
     defaultValues = [],
     placeholder,
     label,
+    infoText,
     helperText,
     required,
     disabled,
@@ -261,7 +374,7 @@ const Dropdown: FC<IDropdownProps> = ({
     }, [options, filterFn, searchable, searchTerm, onSearchChange]);
 
     const toggleOpen = () => {
-        if (disabled || readOnly) return;
+        if (disabled) return;
         setIsOpen((prev) => !prev);
     };
 
@@ -346,9 +459,11 @@ const Dropdown: FC<IDropdownProps> = ({
                 className="dropdown__trigger"
                 size={size}
                 disabled={disabled}
+                readOnly={readOnly}
                 status={status}
                 required={required}
                 label={label}
+                infoText={infoText}
                 helperText={helperText}
                 value={selectedView.visibleText}
                 suffixText={selectedView.suffixText}
@@ -364,6 +479,7 @@ const Dropdown: FC<IDropdownProps> = ({
                 position="bottom-left"
                 withArrow={false}
                 fitReference
+                mobileHeightMode="fit"
             >
                 <PopoverBody withPadding={false} withScrollbar={false} className="dropdown__body">
                     <div className="dropdown__content">

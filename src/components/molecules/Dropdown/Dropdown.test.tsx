@@ -56,10 +56,23 @@ describe("Dropdown ", () => {
         setup.update();
         expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1, Option 2");
 
-        setup.find(".dropdown__footer button").at(0).simulate("click");
+        setup.find(".dropdown__actions button").at(0).simulate("click");
         setup.update();
 
         expect(setup.find("input.textField__input").at(0).prop("value")).toBe("");
+    });
+
+    it("opens in readOnly mode but does not change value", () => {
+        setup.setProps({ readOnly: true, value: "option-1" });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        expect(setup.find(".dropdownItem").exists()).toBeTruthy();
+
+        setup.find(".dropdownItem").at(1).simulate("click");
+        setup.update();
+
+        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1");
     });
 
     it("shows compact selected text with +N suffix in multiselect", () => {
