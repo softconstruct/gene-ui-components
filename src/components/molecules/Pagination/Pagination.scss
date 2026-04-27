@@ -9,6 +9,8 @@
     gap: var(--guit-ref-spacing-large);
     background-color: var(--guit-sem-color-background-neutral-1);
     padding: var(--guit-ref-spacing-large);
+    border-top: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+        var(--guit-sem-color-border-neutral-2);
 
     &__perpage {
         display: flex;
