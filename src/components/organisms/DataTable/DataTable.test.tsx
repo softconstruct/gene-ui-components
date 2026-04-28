@@ -224,28 +224,29 @@ describe("Table Component", () => {
         setup.update();
 
         const tableRows = setup.find("tbody.tableBody tr.tableRow");
-        expect(tableRows.at(0).hasClass("tableRow_red")).toBe(Boolean(mockData[0].IsLocked));
-        expect(tableRows.at(1).hasClass("tableRow_red")).toBe(Boolean(mockData[1].IsLocked));
-        expect(tableRows.at(1).hasClass("tableRow_green")).toBe(!mockData[1].IsLocked);
+        expect(tableRows.at(0).hasClass("tableRow_status_red")).toBe(Boolean(mockData[0].IsLocked));
+        expect(tableRows.at(1).hasClass("tableRow_status_red")).toBe(Boolean(mockData[1].IsLocked));
+        expect(tableRows.at(1).hasClass("tableRow_status_green")).toBe(!mockData[1].IsLocked);
     });
 
-    it("prefers getRowStatus over row.rowStatus", async () => {
-        const dataWithDefaultRowStatus = mockData.map((row) => ({
-            ...row,
-            rowStatus: "default" as const
-        }));
+    it("does not add row status modifier class when getRowStatus is not provided", () => {
+        const firstRow = setup.find("tbody.tableBody tr.tableRow").at(0);
+        expect(firstRow.hasClass("tableRow_status_red")).toBe(false);
+        expect(firstRow.hasClass("tableRow_status_default")).toBe(false);
+        expect(firstRow.hasClass("tableRow_status_highlighted")).toBe(false);
+    });
 
+    it("does not add row status modifier class when getRowStatus returns undefined", async () => {
         await act(async () => {
             setup.setProps({
-                data: dataWithDefaultRowStatus,
-                getRowStatus: () => "highlighted"
+                getRowStatus: () => undefined
             });
         });
         setup.update();
 
         const firstRow = setup.find("tbody.tableBody tr.tableRow").at(0);
-        expect(firstRow.hasClass("tableRow_highlighted")).toBe(true);
-        expect(firstRow.hasClass("tableRow_default")).toBe(false);
+        expect(firstRow.hasClass("tableRow_status_red")).toBe(false);
+        expect(firstRow.hasClass("tableRow_status_default")).toBe(false);
     });
 
     it("keeps row actions rendered with pagination and expanded rows", async () => {

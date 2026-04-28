@@ -60,7 +60,7 @@ const TableRow = <TData extends ITableData>({ row, rowActions, getRowStatus }: I
         <>
             <tr
                 className={classNames(`tableRow`, {
-                    [`tableRow_${rowStatus}`]: rowStatus
+                    [`tableRow_status_${rowStatus}`]: rowStatus
                 })}
             >
                 {row.getVisibleCells().map((cell) => (
