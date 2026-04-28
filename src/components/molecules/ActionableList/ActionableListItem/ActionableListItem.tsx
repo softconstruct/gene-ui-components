@@ -268,7 +268,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                 <Text
                     ref={titleTextRef}
                     as="span"
-                    variant="bodyLargeMedium"
+                    variant="bodyMediumMedium"
                     className="actionableListItem__title ellipsis-text"
                 >
                     {title}
