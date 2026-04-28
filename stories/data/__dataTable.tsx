@@ -20,7 +20,6 @@ type ClientProfile = {
     IsLocked: boolean;
     Created: string;
     Status: "new" | "active" | "inactive" | "suspended";
-    expansionKind?: "text" | "nested" | "loader" | "empty";
 };
 
 const ExpandedData: FC<{ data: string }> = ({ data }) => <div className="swapComponent">{data}</div>;
@@ -52,8 +51,7 @@ const nestedTableData: ClientProfile[] = [
         IsVerified: false,
         IsLocked: false,
         Created: "2026-01-02",
-        Status: "new",
-        expansionKind: "nested"
+        Status: "new"
     },
     {
         Id: 9003,
@@ -157,8 +155,7 @@ const baseMockData: ClientProfile[] = [
         IsVerified: false,
         IsLocked: true,
         Created: "2026-01-14",
-        Status: "new",
-        expansionKind: "text"
+        Status: "new"
     },
     {
         Id: 34829102,
@@ -169,8 +166,7 @@ const baseMockData: ClientProfile[] = [
         IsVerified: true,
         IsLocked: false,
         Created: "2026-02-05",
-        Status: "active",
-        expansionKind: "nested"
+        Status: "active"
     },
     {
         Id: 59382104,
@@ -181,8 +177,7 @@ const baseMockData: ClientProfile[] = [
         IsVerified: true,
         IsLocked: false,
         Created: "2026-02-18",
-        Status: "active",
-        expansionKind: "loader"
+        Status: "active"
     },
     {
         Id: 84729103,
@@ -382,13 +377,22 @@ export const mockData: ClientProfile[] = Array.from({ length: MOCK_DATA_SIZE }, 
     return {
         ...source,
         Id: source.Id + index * 100000,
-        Email: `${source.FirstName.toLowerCase()}.${sequence}@mail.com`,
-        expansionKind: source.expansionKind ?? "empty"
+        Email: `${source.FirstName.toLowerCase()}.${sequence}@mail.com`
     };
 });
 
 export function renderMockExpandedRow(row: ClientProfile): ReactNode {
-    switch (row.expansionKind) {
+    let expansionKind: "text" | "nested" | "loader" | "empty" = "empty";
+
+    if (row.LastName.length > 200) {
+        expansionKind = "text";
+    } else if (row.Status === "active" && row.DayOffs === 0) {
+        expansionKind = "nested";
+    } else if (row.Status === "active" && row.DayOffs === 5) {
+        expansionKind = "loader";
+    }
+
+    switch (expansionKind) {
         case "text":
             return (
                 <ExpandedData data="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." />

@@ -28,7 +28,7 @@ const ExpanderCell = <TData, TValue>({ row, onRowExpandChange }: IExpanderCellPr
     const isExpanded = row.getIsExpanded();
 
     const toggleHandler = () => {
-        const nextExpanded = !isExpanded;
+        const nextExpanded = !row.getIsExpanded();
         row.toggleExpanded(nextExpanded);
         onRowExpandChange?.(nextExpanded, row.original);
     };
