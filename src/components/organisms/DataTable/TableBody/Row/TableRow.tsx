@@ -7,7 +7,11 @@ import Button from "@components/atoms/Button";
 import Tooltip from "@components/molecules/Tooltip";
 import TableBodyCell from "@components/organisms/DataTable/TableBody/Cell/TableBodyCell";
 import TableExpandedRow from "@components/organisms/DataTable/TableBody/Row/TableExpandedRow";
-import { DataTableGetRowStatus, IDataTableRowAction, ITableData } from "@components/organisms/DataTable/types";
+import {
+    DataTableGetRowStatus,
+    DataTableRenderExpandedRow,
+    IDataTableRowAction
+} from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableRow.scss";
@@ -16,7 +20,7 @@ import "./TableRow.scss";
  * Props for the {@link TableRow} component.
  * @template TData - The shape of the overall row data object.
  */
-interface ITableRowProps<TData extends ITableData> {
+interface ITableRowProps<TData> {
     /**
      * The TanStack Table row instance.
      * Provides access to row-level data and internal methods, such as retrieving
@@ -31,6 +35,10 @@ interface ITableRowProps<TData extends ITableData> {
      * Resolves the visual status variant for the current row.
      */
     getRowStatus?: DataTableGetRowStatus<TData>;
+    /**
+     * Returns expanded row content for the current row.
+     */
+    renderExpandedRow?: DataTableRenderExpandedRow<TData>;
 }
 
 interface IRowActionsWrapperProps {
@@ -51,10 +59,11 @@ const RowActionsWrapper: FC<IRowActionsWrapperProps> = ({ title, children }) => 
  * @param props - The properties for the component.
  * @returns A table row element containing its respective rendered cells.
  */
-const TableRow = <TData extends ITableData>({ row, rowActions, getRowStatus }: ITableRowProps<TData>) => {
-    const { expandedRow } = row.original;
+const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: ITableRowProps<TData>) => {
     const rowStatus = getRowStatus?.(row.original);
-    const isRowExpanded = row.getIsExpanded() && expandedRow;
+    const isRowExpanded = row.getIsExpanded();
+    const expandedRow = renderExpandedRow?.(row.original, isRowExpanded);
+    const hasExpandedRow = expandedRow !== null && expandedRow !== undefined;
 
     return (
         <>
@@ -95,7 +104,9 @@ const TableRow = <TData extends ITableData>({ row, rowActions, getRowStatus }: I
                     </td>
                 ) : null}
             </tr>
-            {isRowExpanded && <TableExpandedRow colspan={row.getVisibleCells().length}>{expandedRow}</TableExpandedRow>}
+            {isRowExpanded && hasExpandedRow && (
+                <TableExpandedRow colspan={row.getVisibleCells().length}>{expandedRow}</TableExpandedRow>
+            )}
         </>
     );
 };

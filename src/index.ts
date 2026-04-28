@@ -92,6 +92,7 @@ export { default as ActionableList } from "./components/molecules/ActionableList
 export {
     default as DataTable,
     DataTableGetRowStatus,
+    DataTableRenderExpandedRow,
     DataTableRowStatus,
     IDataTableProps,
     IDataTableRowAction

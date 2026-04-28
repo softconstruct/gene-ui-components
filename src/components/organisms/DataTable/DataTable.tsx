@@ -23,9 +23,9 @@ import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader
 import {
     DataTableColumn,
     DataTableGetRowStatus,
+    DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
     IDataTableRowAction,
-    ITableData,
     ITableNoDataTexts
 } from "@components/organisms/DataTable/types";
 
@@ -36,7 +36,7 @@ import "./DataTable.scss";
  * Props for the {@link DataTable} component.
  * @template TData - The shape of the overall row data object.
  */
-interface IDataTableProps<TData extends ITableData> {
+interface IDataTableProps<TData> {
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -128,9 +128,10 @@ interface IDataTableProps<TData extends ITableData> {
      */
     noDataAvailableActions?: IButtonProps[];
     /**
-     * Enables expandable rows, allowing for additional content to be revealed below a row when clicked.
+     * Returns expanded row content for a given row.
+     * When provided, rows become expandable and the returned node is rendered in a dedicated expanded row panel.
      */
-    expandable?: boolean;
+    renderExpandedRow?: DataTableRenderExpandedRow<TData>;
     /**
      * Callback invoked when a row is expanded or collapsed.
      * Receives the resulting row state and the toggled row data.
@@ -141,7 +142,7 @@ interface IDataTableProps<TData extends ITableData> {
      * @example
      * ```tsx
      * <DataTable
-     *   expandable={true}
+     *   renderExpandedRow={(row) => <div>{row.id}</div>}
      *   onRowExpandChange={(isExpanded, rowData) => {
      *     console.log(isExpanded, rowData);
      *   }}
@@ -162,7 +163,6 @@ interface IDataTableProps<TData extends ITableData> {
      * Resolves the visual status variant for a row from its data.
      * Use this when row styling should be derived from business fields such as `status`, `isLocked`, or similar flags,
      * without mutating or pre-mapping the incoming dataset.
-     * If provided, this value takes precedence over `row.rowStatus`.
      *
      * @example
      * ```tsx
@@ -189,7 +189,7 @@ const defaultColumn = {
  * @param props - The properties for the component.
  * @returns The fully assembled DataTable component including headers, body, and optional pagination.
  */
-const DataTable = <TData extends ITableData>({
+const DataTable = <TData,>({
     className,
     data = [],
     columns = [],
@@ -200,7 +200,7 @@ const DataTable = <TData extends ITableData>({
     noDataTexts,
     noDataAvailableActions,
     manualPagination = false,
-    expandable = false,
+    renderExpandedRow,
     onRowExpandChange,
     rowActions,
     getRowStatus
@@ -218,9 +218,11 @@ const DataTable = <TData extends ITableData>({
         []
     );
 
+    const isExpandable = Boolean(renderExpandedRow);
+
     const tableColumns = useMemo(
-        () => TableColumnsAdapter(columns, expandable, onRowExpandChange),
-        [columns, expandable, onRowExpandChange]
+        () => TableColumnsAdapter(columns, isExpandable, onRowExpandChange),
+        [columns, isExpandable, onRowExpandChange]
     );
 
     const initialPageSize =
@@ -272,6 +274,7 @@ const DataTable = <TData extends ITableData>({
                         noDataAvailableActions={noDataAvailableActions}
                         rowActions={rowActions}
                         getRowStatus={getRowStatus}
+                        renderExpandedRow={renderExpandedRow}
                     />
                 </table>
             </Scrollbar>

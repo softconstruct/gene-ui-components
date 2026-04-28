@@ -6,7 +6,7 @@ import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
 import { EXPANDABLE_CELL_WIDTH } from "@components/organisms/DataTable/constants";
 import ExpanderCell from "@components/organisms/DataTable/TableBody/ExpanderCell/ExpanderCell";
-import { DataTableColumn, DataTableRowExpandChangeHandler, ITableData } from "@components/organisms/DataTable/types";
+import { DataTableColumn, DataTableRowExpandChangeHandler } from "@components/organisms/DataTable/types";
 
 // hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
@@ -23,7 +23,7 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
     );
 };
 
-export const TableColumnsAdapter = <TData extends ITableData>(
+export const TableColumnsAdapter = <TData,>(
     columns: DataTableColumn<TData>[],
     expandable: boolean,
     onRowExpandChange?: DataTableRowExpandChangeHandler<TData>

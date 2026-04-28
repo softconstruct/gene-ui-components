@@ -9,31 +9,25 @@ export interface ITableNoDataTexts {
 
 export type DataTableRowStatus = "default" | "zebra" | "red" | "green" | "highlighted";
 
-export interface ITableData {
-    expandedRow?: ReactNode;
-}
+export type DataTableGetRowStatus<TData> = (row: TData) => DataTableRowStatus | undefined;
+export type DataTableRenderExpandedRow<TData> = (row: TData, isExpanded: boolean) => ReactNode;
 
-export type DataTableGetRowStatus<TData extends ITableData> = (row: TData) => DataTableRowStatus | undefined;
-
-export type DataTableRowExpandChangeHandler<TData extends ITableData> = (
-    isExpanded: boolean,
-    rowData: TData & ITableData
-) => void;
+export type DataTableRowExpandChangeHandler<TData> = (isExpanded: boolean, rowData: TData) => void;
 
 export type DataTableRenderCellArgs<TData, TValue> = {
     value: TValue;
-    row: TData & ITableData;
+    row: TData;
     rowId: string;
 };
 
-export interface IDataTableRowAction<TData extends ITableData> {
+export interface IDataTableRowAction<TData> {
     Icon: FC<IconProps>;
     title?: string;
-    disabled?: boolean | ((row: TData & ITableData) => boolean);
+    disabled?: boolean | ((row: TData) => boolean);
     /**
      * Row-aware click handler: receives the row data and the originating mouse event.
      */
-    onClick: (row: TData & ITableData, e: MouseEvent) => void;
+    onClick: (row: TData, e: MouseEvent) => void;
 }
 
 /**

@@ -251,16 +251,12 @@ describe("Table Component", () => {
 
     it("keeps row actions rendered with pagination and expanded rows", async () => {
         const onActionClick = jest.fn(() => undefined);
-        const expandableData = mockData.map((item) => ({
-            ...item,
-            expandedRow: <div>Expanded Content</div>
-        }));
 
         await act(async () => {
             setup.setProps({
-                data: expandableData,
+                data: mockData,
                 pagination: true,
-                expandable: true,
+                renderExpandedRow: () => <div>Expanded Content</div>,
                 rowActions: [{ Icon: TestIcon, title: "Action", onClick: onActionClick }]
             });
         });
@@ -276,15 +272,14 @@ describe("Table Component", () => {
     });
 
     it("calls onRowExpandChange callback when a row is expanded", async () => {
-        const expandableData = mockData.map((item) => ({
-            ...item,
-            expandedRow: <div>Expanded Content</div>
-        }));
-
         const onRowExpandChange = jest.fn();
 
         await act(async () => {
-            setup.setProps({ expandable: true, data: expandableData, onRowExpandChange });
+            setup.setProps({
+                data: mockData,
+                renderExpandedRow: () => <div>Expanded Content</div>,
+                onRowExpandChange
+            });
         });
         setup.update();
 
@@ -295,19 +290,18 @@ describe("Table Component", () => {
         setup.update();
 
         expect(onRowExpandChange).toHaveBeenCalled();
-        expect(onRowExpandChange).toHaveBeenCalledWith(true, expandableData[0]);
+        expect(onRowExpandChange).toHaveBeenCalledWith(true, mockData[0]);
     });
 
     it("calls onRowExpandChange callback with correct payload when row is toggled", async () => {
-        const expandableData = mockData.map((item) => ({
-            ...item,
-            expandedRow: <div>Expanded Content</div>
-        }));
-
         const onRowExpandChange = jest.fn();
 
         await act(async () => {
-            setup.setProps({ expandable: true, data: expandableData, onRowExpandChange });
+            setup.setProps({
+                data: mockData,
+                renderExpandedRow: () => <div>Expanded Content</div>,
+                onRowExpandChange
+            });
         });
         setup.update();
 
@@ -318,7 +312,7 @@ describe("Table Component", () => {
         });
         setup.update();
 
-        expect(onRowExpandChange).toHaveBeenNthCalledWith(1, true, expandableData[0]);
+        expect(onRowExpandChange).toHaveBeenNthCalledWith(1, true, mockData[0]);
 
         await act(async () => {
             expanderButton.simulate("click");
@@ -326,14 +320,14 @@ describe("Table Component", () => {
         setup.update();
 
         expect(onRowExpandChange).toHaveBeenCalledTimes(2);
-        expect(onRowExpandChange).toHaveBeenNthCalledWith(2, false, expandableData[0]);
+        expect(onRowExpandChange).toHaveBeenNthCalledWith(2, false, mockData[0]);
     });
 
-    it("does not call onRowExpandChange when expandable prop is false", async () => {
+    it("does not call onRowExpandChange when renderExpandedRow is not provided", async () => {
         const onRowExpandChange = jest.fn();
 
         await act(async () => {
-            setup.setProps({ expandable: false, onRowExpandChange });
+            setup.setProps({ onRowExpandChange });
         });
         setup.update();
 

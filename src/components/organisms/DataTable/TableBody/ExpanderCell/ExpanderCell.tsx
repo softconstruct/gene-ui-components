@@ -5,9 +5,9 @@ import { ChevronDown, ChevronLeft, ChevronRight } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
-import { DataTableRowExpandChangeHandler, ITableData } from "@components/organisms/DataTable/types";
+import { DataTableRowExpandChangeHandler } from "@components/organisms/DataTable/types";
 
-interface IExpanderCellProps<TData extends ITableData, TValue> extends CellContext<TData, TValue> {
+interface IExpanderCellProps<TData, TValue> extends CellContext<TData, TValue> {
     onRowExpandChange?: DataTableRowExpandChangeHandler<TData>;
 }
 
@@ -22,10 +22,7 @@ interface IExpanderCellProps<TData extends ITableData, TValue> extends CellConte
  * @param props - The properties for the component.
  * @returns A table cell element with the rendered content.
  */
-const ExpanderCell = <TData extends ITableData, TValue>({
-    row,
-    onRowExpandChange
-}: IExpanderCellProps<TData, TValue>) => {
+const ExpanderCell = <TData, TValue>({ row, onRowExpandChange }: IExpanderCellProps<TData, TValue>) => {
     const isRTLMode = document.dir === "rtl";
     const ExpanderChevronIcon = isRTLMode ? ChevronLeft : ChevronRight;
     const isExpanded = row.getIsExpanded();

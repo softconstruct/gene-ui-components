@@ -20,7 +20,7 @@ type ClientProfile = {
     IsLocked: boolean;
     Created: string;
     Status: "new" | "active" | "inactive" | "suspended";
-    expandedRow?: ReactNode;
+    expansionKind?: "text" | "nested" | "loader" | "empty";
 };
 
 const ExpandedData: FC<{ data: string }> = ({ data }) => <div className="swapComponent">{data}</div>;
@@ -29,48 +29,6 @@ const nestedTableColumns: DataTableColumn<ClientProfile>[] = [
     { accessorKey: "Id", header: "Id" },
     { accessorKey: "Email", header: "Email" },
     { accessorKey: "Status", header: "Status" }
-];
-
-const deepNestedColumns: DataTableColumn<ClientProfile>[] = [
-    { accessorKey: "Id", header: "Id" },
-    { accessorKey: "Email", header: "Email" },
-    { accessorKey: "Status", header: "Status" }
-];
-
-const deepNestedData: ClientProfile[] = [
-    {
-        Id: 9101,
-        FirstName: "Deep",
-        LastName: "Row 1",
-        DayOffs: 0,
-        Email: "deep.row1@mail.com",
-        IsVerified: true,
-        IsLocked: false,
-        Created: "2026-01-11",
-        Status: "active"
-    },
-    {
-        Id: 9102,
-        FirstName: "Deep",
-        LastName: "Row 2",
-        DayOffs: 1,
-        Email: "deep.row2@mail.com",
-        IsVerified: false,
-        IsLocked: false,
-        Created: "2026-01-12",
-        Status: "new"
-    },
-    {
-        Id: 9103,
-        FirstName: "Deep",
-        LastName: "Row 3",
-        DayOffs: 2,
-        Email: "deep.row3@mail.com",
-        IsVerified: true,
-        IsLocked: true,
-        Created: "2026-01-13",
-        Status: "inactive"
-    }
 ];
 
 const nestedTableData: ClientProfile[] = [
@@ -95,7 +53,7 @@ const nestedTableData: ClientProfile[] = [
         IsLocked: false,
         Created: "2026-01-02",
         Status: "new",
-        expandedRow: <DataTable columns={deepNestedColumns} data={deepNestedData} />
+        expansionKind: "nested"
     },
     {
         Id: 9003,
@@ -200,9 +158,7 @@ const baseMockData: ClientProfile[] = [
         IsLocked: true,
         Created: "2026-01-14",
         Status: "new",
-        expandedRow: (
-            <ExpandedData data="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." />
-        )
+        expansionKind: "text"
     },
     {
         Id: 34829102,
@@ -214,15 +170,7 @@ const baseMockData: ClientProfile[] = [
         IsLocked: false,
         Created: "2026-02-05",
         Status: "active",
-        expandedRow: (
-            <DataTable
-                columns={nestedTableColumns}
-                data={nestedTableData}
-                pagination={false}
-                sticky={false}
-                expandable
-            />
-        )
+        expansionKind: "nested"
     },
     {
         Id: 59382104,
@@ -234,11 +182,7 @@ const baseMockData: ClientProfile[] = [
         IsLocked: false,
         Created: "2026-02-18",
         Status: "active",
-        expandedRow: (
-            <div style={{ display: "flex", justifyContent: "center" }}>
-                <Loader size="large" text="Loading..." textPosition="below" />
-            </div>
-        )
+        expansionKind: "loader"
     },
     {
         Id: 84729103,
@@ -439,6 +383,34 @@ export const mockData: ClientProfile[] = Array.from({ length: MOCK_DATA_SIZE }, 
         ...source,
         Id: source.Id + index * 100000,
         Email: `${source.FirstName.toLowerCase()}.${sequence}@mail.com`,
-        expandedRow: source.expandedRow ?? defaultExpandedEmpty
+        expansionKind: source.expansionKind ?? "empty"
     };
 });
+
+export function renderMockExpandedRow(row: ClientProfile): ReactNode {
+    switch (row.expansionKind) {
+        case "text":
+            return (
+                <ExpandedData data="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." />
+            );
+        case "nested":
+            return (
+                <DataTable
+                    columns={nestedTableColumns}
+                    data={nestedTableData}
+                    pagination={false}
+                    sticky={false}
+                    renderExpandedRow={renderMockExpandedRow}
+                />
+            );
+        case "loader":
+            return (
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                    <Loader size="large" text="Loading..." textPosition="below" />
+                </div>
+            );
+        case "empty":
+        default:
+            return defaultExpandedEmpty;
+    }
+}

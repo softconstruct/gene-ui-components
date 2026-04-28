@@ -7,7 +7,7 @@ import Pagination from "@components/molecules/Pagination";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
+import { mockColumns, mockData, renderMockExpandedRow } from "../../../../stories/data/__dataTable";
 // Components
 import DataTable, { DataTableRowStatus, IDataTableProps, IDataTableRowAction } from "./index";
 
@@ -54,7 +54,7 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         loadingText: args({ control: "text", ...propCategory.content }),
         noDataAvailableActions: args({ control: "false", ...propCategory.functionality }),
         sticky: args({ control: "boolean", ...propCategory.appearance }),
-        expandable: args({ control: "boolean", ...propCategory.content }),
+        renderExpandedRow: args({ control: "false", ...propCategory.content }),
         onRowExpandChange: args({ control: "false", ...propCategory.functionality }),
         rowActions: args({ control: "object", ...propCategory.functionality }),
         getRowStatus: args({ control: "false", ...propCategory.appearance })
@@ -71,7 +71,7 @@ export const Default: Story = {
     args: {
         columns: mockColumns,
         data: mockData,
-        expandable: true,
+        renderExpandedRow: (row) => renderMockExpandedRow(row),
         pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
         rowActions: defaultRowActions
     }
