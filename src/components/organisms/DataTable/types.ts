@@ -7,10 +7,13 @@ export interface ITableNoDataTexts {
     noDataAvailableText?: string;
 }
 
+export type DataTableRowStatus = "default" | "zebra" | "red" | "green" | "highlighted";
+
 export interface ITableData {
-    rowStatus?: "default" | "zebra" | "red" | "green" | "highlighted";
     expandedRow?: ReactNode;
 }
+
+export type DataTableGetRowStatus<TData extends ITableData> = (row: TData) => DataTableRowStatus | undefined;
 
 export type DataTableRowExpandChangeHandler<TData extends ITableData> = (
     isExpanded: boolean,

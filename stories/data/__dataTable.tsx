@@ -8,7 +8,7 @@ import Empty from "@components/molecules/Empty";
 import NumberField from "@components/molecules/NumberField";
 import Switch from "@components/molecules/Switch";
 import DataTable from "@components/organisms/DataTable";
-import { DataTableColumn, ITableData } from "@components/organisms/DataTable/types";
+import { DataTableColumn } from "@components/organisms/DataTable/types";
 
 type ClientProfile = {
     Id: number;
@@ -20,7 +20,6 @@ type ClientProfile = {
     IsLocked: boolean;
     Created: string;
     Status: "new" | "active" | "inactive" | "suspended";
-    rowStatus?: ITableData["rowStatus"];
     expandedRow?: ReactNode;
 };
 
@@ -431,18 +430,15 @@ const baseMockData: ClientProfile[] = [
 ];
 
 const MOCK_DATA_SIZE = 112;
-const ROW_STATUSES: NonNullable<ITableData["rowStatus"]>[] = ["default", "zebra", "red", "green", "highlighted"];
 
 export const mockData: ClientProfile[] = Array.from({ length: MOCK_DATA_SIZE }, (_, index) => {
     const source = baseMockData[index % baseMockData.length];
     const sequence = index + 1;
-    const randomRowStatus = ROW_STATUSES[Math.floor(Math.random() * ROW_STATUSES.length)];
 
     return {
         ...source,
         Id: source.Id + index * 100000,
         Email: `${source.FirstName.toLowerCase()}.${sequence}@mail.com`,
-        rowStatus: randomRowStatus,
         expandedRow: source.expandedRow ?? defaultExpandedEmpty
     };
 });

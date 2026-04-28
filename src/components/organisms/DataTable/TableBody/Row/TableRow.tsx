@@ -7,7 +7,7 @@ import Button from "@components/atoms/Button";
 import Tooltip from "@components/molecules/Tooltip";
 import TableBodyCell from "@components/organisms/DataTable/TableBody/Cell/TableBodyCell";
 import TableExpandedRow from "@components/organisms/DataTable/TableBody/Row/TableExpandedRow";
-import { IDataTableRowAction, ITableData } from "@components/organisms/DataTable/types";
+import { DataTableGetRowStatus, IDataTableRowAction, ITableData } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableRow.scss";
@@ -27,6 +27,10 @@ interface ITableRowProps<TData extends ITableData> {
      * An array of action button objects to display in the row's actions section.
      */
     rowActions?: IDataTableRowAction<TData>[];
+    /**
+     * Resolves the visual status variant for the current row.
+     */
+    getRowStatus?: DataTableGetRowStatus<TData>;
 }
 
 interface IRowActionsWrapperProps {
@@ -47,8 +51,9 @@ const RowActionsWrapper: FC<IRowActionsWrapperProps> = ({ title, children }) => 
  * @param props - The properties for the component.
  * @returns A table row element containing its respective rendered cells.
  */
-const TableRow = <TData extends ITableData>({ row, rowActions }: ITableRowProps<TData>) => {
-    const { expandedRow, rowStatus = "default" } = row.original;
+const TableRow = <TData extends ITableData>({ row, rowActions, getRowStatus }: ITableRowProps<TData>) => {
+    const { expandedRow } = row.original;
+    const rowStatus = getRowStatus?.(row.original);
     const isRowExpanded = row.getIsExpanded() && expandedRow;
 
     return (

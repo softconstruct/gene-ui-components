@@ -1,2 +1,2 @@
 export { IDataTableProps, default } from "./DataTable";
-export { IDataTableRowAction } from "./types";
+export { DataTableGetRowStatus, DataTableRowStatus, IDataTableRowAction } from "./types";

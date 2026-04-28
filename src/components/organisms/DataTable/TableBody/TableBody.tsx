@@ -6,7 +6,12 @@ import { IButtonProps } from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import TableRow from "@components/organisms/DataTable/TableBody/Row/TableRow";
-import { IDataTableRowAction, ITableData, ITableNoDataTexts } from "@components/organisms/DataTable/types";
+import {
+    DataTableGetRowStatus,
+    IDataTableRowAction,
+    ITableData,
+    ITableNoDataTexts
+} from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableBody.scss";
@@ -48,6 +53,10 @@ interface ITableBody<TData extends ITableData> {
      * An array of action button objects to display in the row's action menu.
      */
     rowActions?: IDataTableRowAction<TData>[];
+    /**
+     * Resolves the visual status variant for a row from its data.
+     */
+    getRowStatus?: DataTableGetRowStatus<TData>;
 }
 
 interface ITableEmptyDataWrapperProps {
@@ -83,7 +92,8 @@ const TableBody = <TData extends ITableData>({
     loadingText,
     noDataTexts,
     noDataAvailableActions,
-    rowActions
+    rowActions,
+    getRowStatus
 }: ITableBody<TData>) => {
     if (loading) {
         return (
@@ -109,7 +119,7 @@ const TableBody = <TData extends ITableData>({
     return (
         <tbody className="tableBody">
             {rows.map((row) => (
-                <TableRow key={row.id} row={row} rowActions={rowActions} />
+                <TableRow key={row.id} row={row} rowActions={rowActions} getRowStatus={getRowStatus} />
             ))}
         </tbody>
     );

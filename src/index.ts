@@ -89,7 +89,13 @@ export type {
 export { default as ActionableList } from "./components/molecules/ActionableList";
 
 // Organisms
-export { default as DataTable, IDataTableProps, IDataTableRowAction } from "@components/organisms/DataTable";
+export {
+    default as DataTable,
+    DataTableGetRowStatus,
+    DataTableRowStatus,
+    IDataTableProps,
+    IDataTableRowAction
+} from "@components/organisms/DataTable";
 export {
     default as GlobalHeader,
     IGlobalHeaderProps,

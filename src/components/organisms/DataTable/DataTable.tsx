@@ -22,6 +22,7 @@ import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader
 // Types
 import {
     DataTableColumn,
+    DataTableGetRowStatus,
     DataTableRowExpandChangeHandler,
     IDataTableRowAction,
     ITableData,
@@ -157,6 +158,20 @@ interface IDataTableProps<TData extends ITableData> {
      * ]}
      */
     rowActions?: IDataTableRowAction<TData>[];
+    /**
+     * Resolves the visual status variant for a row from its data.
+     * Use this when row styling should be derived from business fields such as `status`, `isLocked`, or similar flags,
+     * without mutating or pre-mapping the incoming dataset.
+     * If provided, this value takes precedence over `row.rowStatus`.
+     *
+     * @example
+     * ```tsx
+     * <DataTable
+     *   getRowStatus={(row) => (row.isLocked ? "red" : "default")}
+     * />
+     * ```
+     */
+    getRowStatus?: DataTableGetRowStatus<TData>;
 }
 
 const defaultColumn = {
@@ -187,7 +202,8 @@ const DataTable = <TData extends ITableData>({
     manualPagination = false,
     expandable = false,
     onRowExpandChange,
-    rowActions
+    rowActions,
+    getRowStatus
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -255,6 +271,7 @@ const DataTable = <TData extends ITableData>({
                         noDataTexts={noDataTexts}
                         noDataAvailableActions={noDataAvailableActions}
                         rowActions={rowActions}
+                        getRowStatus={getRowStatus}
                     />
                 </table>
             </Scrollbar>

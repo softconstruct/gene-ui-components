@@ -215,6 +215,39 @@ describe("Table Component", () => {
         expect(actionButtons.first().prop("disabled")).toBe(true);
     });
 
+    it("resolves row status from getRowStatus callback", async () => {
+        await act(async () => {
+            setup.setProps({
+                getRowStatus: (row) => (row.IsLocked ? "red" : "green")
+            });
+        });
+        setup.update();
+
+        const tableRows = setup.find("tbody.tableBody tr.tableRow");
+        expect(tableRows.at(0).hasClass("tableRow_red")).toBe(Boolean(mockData[0].IsLocked));
+        expect(tableRows.at(1).hasClass("tableRow_red")).toBe(Boolean(mockData[1].IsLocked));
+        expect(tableRows.at(1).hasClass("tableRow_green")).toBe(!mockData[1].IsLocked);
+    });
+
+    it("prefers getRowStatus over row.rowStatus", async () => {
+        const dataWithDefaultRowStatus = mockData.map((row) => ({
+            ...row,
+            rowStatus: "default" as const
+        }));
+
+        await act(async () => {
+            setup.setProps({
+                data: dataWithDefaultRowStatus,
+                getRowStatus: () => "highlighted"
+            });
+        });
+        setup.update();
+
+        const firstRow = setup.find("tbody.tableBody tr.tableRow").at(0);
+        expect(firstRow.hasClass("tableRow_highlighted")).toBe(true);
+        expect(firstRow.hasClass("tableRow_default")).toBe(false);
+    });
+
     it("keeps row actions rendered with pagination and expanded rows", async () => {
         const onActionClick = jest.fn(() => undefined);
         const expandableData = mockData.map((item) => ({
