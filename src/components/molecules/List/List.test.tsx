@@ -116,7 +116,8 @@ describe("List ", () => {
 
     it("renders virtualized list container when provided items", () => {
         setup.setProps({
-            items: renderItems(2)
+            items: renderItems(2),
+            virtualized: true
         });
 
         expect(setup.find(".list__virtualContainer").exists()).toBeTruthy();
@@ -125,7 +126,7 @@ describe("List ", () => {
     });
 
     it("renders virtualized container and does not render empty state when items exist", () => {
-        setup.setProps({ items: renderItems(5) });
+        setup.setProps({ items: renderItems(5), virtualized: true });
         expect(setup.find(".list__virtualContainer").exists()).toBeTruthy();
         expect(setup.find(Empty).exists()).toBeFalsy();
     });

@@ -27,7 +27,14 @@ interface IListProps {
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
      */
     className?: string;
+    /**
+     * The items to display in the list.
+     */
     items: IListItemData[];
+    /**
+     * Enables virtualized rendering for large lists.
+     */
+    virtualized?: boolean;
     /**
      * Indicates whether the list is in a loading state.
      * If true, a loading indicator is displayed instead of the items.
@@ -74,6 +81,7 @@ const ESTIMATED_ROW_HEIGHT_PX = 32;
 const List: FC<IListProps> = ({
     className,
     items,
+    virtualized = false,
     loading,
     loadingText,
     emptyText,
@@ -129,42 +137,69 @@ const List: FC<IListProps> = ({
         <div className={classNames("list", className)}>
             <div className="list__scrollWrapper">
                 <Scrollbar ref={scrollbarRef}>
-                    <ul className="list__content list__virtualContainer" style={{ height: virtualizer.getTotalSize() }}>
-                        {virtualizer.getVirtualItems().map((row) => {
-                            if (shouldRenderShowMoreSkeleton && row.index === itemsArray.length) {
-                                return (
-                                    <li
-                                        className="list__virtualRow"
-                                        key="list-showMore-skeleton-row"
-                                        data-index={row.index}
-                                        style={{ transform: `translateY(${row.start}px)` }}
-                                    >
-                                        <div className="list__skeletonRow" aria-hidden="true">
-                                            <Skeleton className="list__skeletonItem" height={16} rounded="rounded4X" />
-                                        </div>
-                                    </li>
-                                );
-                            }
+                    {virtualized ? (
+                        <ul
+                            className="list__content list__virtualContainer"
+                            style={{ height: virtualizer.getTotalSize() }}
+                        >
+                            {virtualizer.getVirtualItems().map((row) => {
+                                if (shouldRenderShowMoreSkeleton && row.index === itemsArray.length) {
+                                    return (
+                                        <li
+                                            className="list__virtualRow"
+                                            key="list-showMore-skeleton-row"
+                                            data-index={row.index}
+                                            style={{ transform: `translateY(${row.start}px)` }}
+                                        >
+                                            <div className="list__skeletonRow" aria-hidden="true">
+                                                <Skeleton
+                                                    className="list__skeletonItem"
+                                                    height={16}
+                                                    rounded="rounded4X"
+                                                />
+                                            </div>
+                                        </li>
+                                    );
+                                }
 
-                            const item = itemsArray[row.index];
-                            return (
-                                item && (
-                                    <Item
-                                        virtualClassName="list__virtualRow"
-                                        key={item.id ?? `list-item-${row.index}`}
-                                        ref={virtualizer.measureElement}
-                                        virtualIndex={row.index}
-                                        id={item.id}
-                                        disabled={item.disabled}
-                                        onClick={item.onClick ? () => item.onClick?.(item) : undefined}
-                                        virtualStyle={{ transform: `translateY(${row.start}px)` }}
-                                    >
-                                        {item.render ? item.render(item) : item.label}
-                                    </Item>
-                                )
-                            );
-                        })}
-                    </ul>
+                                const item = itemsArray[row.index];
+                                return (
+                                    item && (
+                                        <Item
+                                            virtualClassName="list__virtualRow"
+                                            key={item.id ?? `list-item-${row.index}`}
+                                            ref={virtualizer.measureElement}
+                                            virtualIndex={row.index}
+                                            id={item.id}
+                                            disabled={item.disabled}
+                                            onClick={item.onClick ? () => item.onClick?.(item) : undefined}
+                                            virtualStyle={{ transform: `translateY(${row.start}px)` }}
+                                        >
+                                            {item.render ? item.render(item) : item.label}
+                                        </Item>
+                                    )
+                                );
+                            })}
+                        </ul>
+                    ) : (
+                        <ul className="list__content">
+                            {itemsArray.map((item, index) => (
+                                <Item
+                                    key={item.id ?? `list-item-${index}`}
+                                    id={item.id}
+                                    disabled={item.disabled}
+                                    onClick={item.onClick ? () => item.onClick?.(item) : undefined}
+                                >
+                                    {item.render ? item.render(item) : item.label}
+                                </Item>
+                            ))}
+                            {shouldRenderShowMoreSkeleton && (
+                                <li className="list__skeletonRow" aria-hidden="true">
+                                    <Skeleton className="list__skeletonItem" height={16} rounded="rounded4X" />
+                                </li>
+                            )}
+                        </ul>
+                    )}
                 </Scrollbar>
             </div>
             {showMore && (

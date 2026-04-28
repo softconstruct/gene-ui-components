@@ -25,6 +25,7 @@ const meta: Meta<IListProps> = {
         showMoreLabel: args({ control: "text", ...propCategory.content }),
         showMoreDisabled: args({ control: "boolean", ...propCategory.states }),
         showMoreLoading: args({ control: "boolean", ...propCategory.states }),
+        virtualized: args({ control: "boolean", ...propCategory.functionality }),
         onShowMore: args({ control: "false", ...propCategory.action })
     },
     args: {
@@ -206,6 +207,9 @@ const VirtualizedStoryComponent: FC<IListProps> = (props) => {
 
 export const Virtualized: Story = {
     render: (props) => <VirtualizedStoryComponent {...props} />,
+    args: {
+        virtualized: true
+    },
     parameters: {
         docs: {
             disable: true
