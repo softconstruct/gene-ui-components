@@ -135,7 +135,7 @@ const List: FC<IListProps> = ({
 
     return (
         <div className={classNames("list", className)}>
-            <div className="list__scrollWrapper">
+            <div className="list__body">
                 <Scrollbar ref={scrollbarRef}>
                     {virtualized ? (
                         <ul

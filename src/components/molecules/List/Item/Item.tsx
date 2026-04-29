@@ -46,7 +46,7 @@ const Item = forwardRef<HTMLLIElement, IItemProps>(
             ref={ref}
             data-index={virtualIndex}
             style={virtualStyle}
-            className={classNames("item", virtualClassName, {
+            className={classNames("item item_size_large", virtualClassName, {
                 item_withCustomChildren: !onClick
             })}
         >
