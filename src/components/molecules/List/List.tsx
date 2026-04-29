@@ -70,6 +70,11 @@ interface IListProps {
      * Useful while waiting for the next batch of server data.
      */
     showMoreLoading?: boolean;
+    /**
+     * Size of the list.
+     * Possible values: `small | medium | large`
+     */
+    size?: "small" | "medium" | "large";
 }
 
 const ESTIMATED_ROW_HEIGHT_PX = 32;
@@ -87,6 +92,7 @@ const List: FC<IListProps> = ({
     emptyText,
     showMore,
     onShowMore,
+    size,
     showMoreLabel,
     showMoreDisabled = false,
     showMoreLoading = false
@@ -103,6 +109,11 @@ const List: FC<IListProps> = ({
         estimateSize: () => ESTIMATED_ROW_HEIGHT_PX,
         overscan: 4
     });
+    const virtualItems = virtualizer.getVirtualItems();
+    const firstVirtualItem = virtualItems[0];
+    const lastVirtualItem = virtualItems[virtualItems.length - 1];
+    const topSpacerHeight = firstVirtualItem?.start ?? 0;
+    const bottomSpacerHeight = Math.max(0, virtualizer.getTotalSize() - (lastVirtualItem?.end ?? 0));
 
     useEffect(() => {
         if (!shouldRenderShowMoreSkeleton) return;
@@ -138,19 +149,18 @@ const List: FC<IListProps> = ({
             <div className="list__body">
                 <Scrollbar ref={scrollbarRef}>
                     {virtualized ? (
-                        <ul
-                            className="list__content list__virtualContainer"
-                            style={{ height: virtualizer.getTotalSize() }}
-                        >
-                            {virtualizer.getVirtualItems().map((row) => {
+                        <ul className="list__content list__virtualContainer">
+                            {topSpacerHeight > 0 && (
+                                <li
+                                    className="list__virtualSpacer"
+                                    aria-hidden="true"
+                                    style={{ height: topSpacerHeight }}
+                                />
+                            )}
+                            {virtualItems.map((row) => {
                                 if (shouldRenderShowMoreSkeleton && row.index === itemsArray.length) {
                                     return (
-                                        <li
-                                            className="list__virtualRow"
-                                            key="list-showMore-skeleton-row"
-                                            data-index={row.index}
-                                            style={{ transform: `translateY(${row.start}px)` }}
-                                        >
+                                        <li key="list-showMore-skeleton-row">
                                             <div className="list__skeletonRow" aria-hidden="true">
                                                 <Skeleton
                                                     className="list__skeletonItem"
@@ -166,20 +176,26 @@ const List: FC<IListProps> = ({
                                 return (
                                     item && (
                                         <Item
-                                            virtualClassName="list__virtualRow"
                                             key={item.id ?? `list-item-${row.index}`}
                                             ref={virtualizer.measureElement}
                                             virtualIndex={row.index}
                                             id={item.id}
                                             disabled={item.disabled}
+                                            size={size}
                                             onClick={item.onClick ? () => item.onClick?.(item) : undefined}
-                                            virtualStyle={{ transform: `translateY(${row.start}px)` }}
                                         >
                                             {item.render ? item.render(item) : item.label}
                                         </Item>
                                     )
                                 );
                             })}
+                            {bottomSpacerHeight > 0 && (
+                                <li
+                                    className="list__virtualSpacer"
+                                    aria-hidden="true"
+                                    style={{ height: bottomSpacerHeight }}
+                                />
+                            )}
                         </ul>
                     ) : (
                         <ul className="list__content">
@@ -188,6 +204,7 @@ const List: FC<IListProps> = ({
                                     key={item.id ?? `list-item-${index}`}
                                     id={item.id}
                                     disabled={item.disabled}
+                                    size={size}
                                     onClick={item.onClick ? () => item.onClick?.(item) : undefined}
                                 >
                                     {item.render ? item.render(item) : item.label}

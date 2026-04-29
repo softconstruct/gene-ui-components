@@ -18,6 +18,10 @@ interface IItemProps {
      */
     disabled?: boolean;
     /**
+     * Visual size of the item.
+     */
+    size?: "small" | "medium" | "large";
+    /**
      * Click handler for interactive item mode.
      * When provided, content is wrapped in a `<button>` and becomes clickable.
      * When omitted, content is rendered as non-interactive (no button, not clickable).
@@ -41,14 +45,12 @@ interface IItemProps {
  * Item represents a single option inside the List.
  */
 const Item = forwardRef<HTMLLIElement, IItemProps>(
-    ({ id, children, disabled, onClick, virtualClassName, virtualStyle, virtualIndex }, ref) => (
+    ({ id, children, disabled, size = "medium", onClick, virtualClassName, virtualStyle, virtualIndex }, ref) => (
         <li
             ref={ref}
             data-index={virtualIndex}
             style={virtualStyle}
-            className={classNames("item item_size_large", virtualClassName, {
-                item_withCustomChildren: !onClick
-            })}
+            className={classNames("item", `item_size_${size}`, virtualClassName)}
         >
             {onClick ? (
                 <button
