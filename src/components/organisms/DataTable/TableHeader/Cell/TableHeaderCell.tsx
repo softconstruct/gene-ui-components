@@ -5,6 +5,7 @@ import classNames from "classnames";
 
 // Components
 import Text from "@components/atoms/Text";
+import { EXPANDABLE_CELL_SIZE_REM } from "@components/organisms/DataTable/constants";
 
 // Styles
 import "./TableHeaderCell.scss";
@@ -41,17 +42,18 @@ const TableHeaderCell = <TData, TValue>({ header }: ITableHeaderCellProps<TData,
         <th
             className={classNames("tableHeaderCell", { tableHeaderCell_expander: isExpanderHeader })}
             style={{
-                width: isExpanderHeader ? "4.4rem" : undefined,
-                minWidth: isExpanderHeader ? "4.4rem" : undefined,
+                width: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : undefined,
+                minWidth: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : undefined,
                 maxWidth: 250 // temp
             }}
         >
-            {/* todo remove content if expandable */}
-            <div className="tableHeaderCell__content">
-                <Text className="tableHeaderCell__text" as="span" variant="labelMediumSemibold">
-                    {flexRender(header.column.columnDef.header, header.getContext()) as string}
-                </Text>
-            </div>
+            {!isExpanderHeader ? (
+                <div className="tableHeaderCell__content">
+                    <Text className="tableHeaderCell__text" as="span" variant="labelMediumSemibold">
+                        {flexRender(header.column.columnDef.header, header.getContext()) as string}
+                    </Text>
+                </div>
+            ) : null}
         </th>
     );
 };

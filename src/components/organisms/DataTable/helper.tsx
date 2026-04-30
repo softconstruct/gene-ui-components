@@ -4,7 +4,6 @@ import { CellContext, ColumnDef } from "@tanstack/react-table";
 // Components
 import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
-import { EXPANDABLE_CELL_WIDTH } from "@components/organisms/DataTable/constants";
 import ExpanderCell from "@components/organisms/DataTable/TableBody/ExpanderCell/ExpanderCell";
 import { DataTableColumn, DataTableRowExpandChangeHandler } from "@components/organisms/DataTable/types";
 
@@ -64,7 +63,6 @@ export const withExpanderColumn = <TData,>(
     {
         id: "expander",
         header: "",
-        size: EXPANDABLE_CELL_WIDTH,
         cell: (ctx: CellContext<TData, ReactNode>) => <ExpanderCell {...ctx} onRowExpandChange={onRowExpandChange} />
     },
     ...columns

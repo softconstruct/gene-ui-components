@@ -2,6 +2,8 @@ import React, { memo } from "react";
 import { Cell, ColumnDef, flexRender } from "@tanstack/react-table";
 import classNames from "classnames";
 
+import { EXPANDABLE_CELL_SIZE_REM } from "@components/organisms/DataTable/constants";
+
 // Styles
 import "./TableBodyCell.scss";
 
@@ -57,8 +59,8 @@ const TableBodyCell = <TData, TValue>({ cell, renderer, isExpanded }: ITableBody
                 tableBodyCell_expander_expanded: isExpanded
             })}
             style={{
-                width: isExpanderCell ? "4.4rem" : undefined,
-                minWidth: isExpanderCell ? "4.4rem" : undefined,
+                width: isExpanderCell ? EXPANDABLE_CELL_SIZE_REM : undefined,
+                minWidth: isExpanderCell ? EXPANDABLE_CELL_SIZE_REM : undefined,
                 maxWidth: 250 // temp
             }}
         >
