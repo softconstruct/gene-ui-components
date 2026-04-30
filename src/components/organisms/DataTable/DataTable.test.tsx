@@ -6,6 +6,7 @@ import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
+import { DataTableColumn } from "@components/organisms/DataTable/types";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 // Components
@@ -290,7 +291,9 @@ describe("Table Component", () => {
         setup.update();
 
         expect(onRowExpandChange).toHaveBeenCalled();
-        expect(onRowExpandChange).toHaveBeenCalledWith(true, mockData[0]);
+        expect(onRowExpandChange).toHaveBeenCalledWith(
+            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.any(String) })
+        );
     });
 
     it("calls onRowExpandChange callback with correct payload when row is toggled", async () => {
@@ -312,7 +315,10 @@ describe("Table Component", () => {
         });
         setup.update();
 
-        expect(onRowExpandChange).toHaveBeenNthCalledWith(1, true, mockData[0]);
+        expect(onRowExpandChange).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.any(String) })
+        );
 
         await act(async () => {
             expanderButton.simulate("click");
@@ -320,7 +326,10 @@ describe("Table Component", () => {
         setup.update();
 
         expect(onRowExpandChange).toHaveBeenCalledTimes(2);
-        expect(onRowExpandChange).toHaveBeenNthCalledWith(2, false, mockData[0]);
+        expect(onRowExpandChange).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({ isExpanded: false, row: mockData[0], rowId: expect.any(String) })
+        );
     });
 
     it("does not call onRowExpandChange when renderExpandedRow is not provided", async () => {
@@ -332,5 +341,86 @@ describe("Table Component", () => {
         setup.update();
 
         expect(onRowExpandChange).not.toHaveBeenCalled();
+    });
+});
+
+describe("Table Component - body cell memoization", () => {
+    const visibleData = mockData.slice(0, 3);
+
+    const buildSpyColumns = () => {
+        const renderSpy = jest.fn(({ value }: { value: unknown }) => <span>{String(value ?? "")}</span>);
+        const columns: DataTableColumn<MockDataType>[] = [
+            { accessorKey: "Id", header: "Id", renderCell: renderSpy },
+            { accessorKey: "Email", header: "Email", renderCell: renderSpy }
+        ];
+        return { renderSpy, columns };
+    };
+
+    const cellsRenderedFor = (renderSpy: jest.Mock, rowId: MockDataType["Id"]) =>
+        renderSpy.mock.calls.filter(([{ row }]) => row.Id === rowId).length;
+
+    it("does not re-render sibling rows' cells when one row toggles expanded; expander reflects new state", async () => {
+        const { renderSpy, columns } = buildSpyColumns();
+        const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
+            <DataTable columns={columns} data={visibleData} renderExpandedRow={() => <div>Expanded</div>} />
+        );
+
+        renderSpy.mockClear();
+
+        const firstExpanderButton = setupLocal.find("button[aria-label='Expand row']").at(0);
+        await act(async () => {
+            firstExpanderButton.simulate("click");
+        });
+        setupLocal.update();
+
+        // Sibling rows must not re-render — their snapshot inputs are unchanged.
+        expect(cellsRenderedFor(renderSpy, visibleData[1].Id)).toBe(0);
+        expect(cellsRenderedFor(renderSpy, visibleData[2].Id)).toBe(0);
+
+        // Row 0's data cells also don't re-render (their value/size didn't change),
+        // but the expander cell does — the snapshot's `isExpanded` flipped.
+        const expandedButtons = setupLocal.find("button[aria-expanded=true]");
+        expect(expandedButtons.length).toBe(1);
+
+        setupLocal.unmount();
+    });
+
+    it("does not re-render any cells when data array reference changes but row references are stable", async () => {
+        const { renderSpy, columns } = buildSpyColumns();
+        const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
+            <DataTable columns={columns} data={visibleData} />
+        );
+
+        renderSpy.mockClear();
+
+        await act(async () => {
+            setupLocal.setProps({ data: [...visibleData] });
+        });
+        setupLocal.update();
+
+        expect(renderSpy).not.toHaveBeenCalled();
+
+        setupLocal.unmount();
+    });
+
+    it("re-renders cells when row references change (new row objects)", async () => {
+        const { renderSpy, columns } = buildSpyColumns();
+        const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
+            <DataTable columns={columns} data={visibleData} />
+        );
+
+        renderSpy.mockClear();
+
+        const cloned = visibleData.map((row) => ({ ...row }));
+        await act(async () => {
+            setupLocal.setProps({ data: cloned });
+        });
+        setupLocal.update();
+
+        expect(cellsRenderedFor(renderSpy, visibleData[0].Id)).toBeGreaterThan(0);
+        expect(cellsRenderedFor(renderSpy, visibleData[1].Id)).toBeGreaterThan(0);
+        expect(cellsRenderedFor(renderSpy, visibleData[2].Id)).toBeGreaterThan(0);
+
+        setupLocal.unmount();
     });
 });

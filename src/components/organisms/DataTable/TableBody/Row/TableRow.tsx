@@ -62,8 +62,8 @@ const RowActionsWrapper: FC<IRowActionsWrapperProps> = ({ title, children }) => 
 const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: ITableRowProps<TData>) => {
     const rowStatus = getRowStatus?.(row.original);
     const isRowExpanded = row.getIsExpanded();
-    const expandedRow = renderExpandedRow?.(row.original, isRowExpanded);
-    const hasExpandedRow = expandedRow !== null && expandedRow !== undefined;
+    const expandedRow = isRowExpanded ? renderExpandedRow?.(row.original) : null;
+    const hasExpandedRow = expandedRow != null;
 
     return (
         <>
@@ -73,7 +73,12 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                 })}
             >
                 {row.getVisibleCells().map((cell) => (
-                    <TableBodyCell key={cell.id} cell={cell} />
+                    <TableBodyCell
+                        key={cell.id}
+                        cell={cell}
+                        isExpanded={isRowExpanded}
+                        renderer={cell.column.columnDef.cell}
+                    />
                 ))}
 
                 {rowActions?.length ? (

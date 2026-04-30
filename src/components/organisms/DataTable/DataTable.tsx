@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useMemo, useState } from "react";
+import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     CellContext,
     ExpandedState,
@@ -14,7 +14,7 @@ import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
-import { DefaultCellComponent, TableColumnsAdapter } from "@components/organisms/DataTable/helper";
+import { adaptColumns, DefaultCellComponent, withExpanderColumn } from "@components/organisms/DataTable/helper";
 // Hooks
 import { useTablePagination } from "@components/organisms/DataTable/hooks/useTablePagination";
 import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
@@ -134,17 +134,16 @@ interface IDataTableProps<TData> {
     renderExpandedRow?: DataTableRenderExpandedRow<TData>;
     /**
      * Callback invoked when a row is expanded or collapsed.
-     * Receives the resulting row state and the toggled row data.
+     * Receives a structured payload with the resulting state and the toggled row.
      *
-     * @param isExpanded - Indicates whether the row became expanded (`true`) or collapsed (`false`).
-     * @param rowData - Full row object for the toggled row.
+     * @param payload - Object with `isExpanded`, `row`, and stable `rowId` fields.
      *
      * @example
      * ```tsx
      * <DataTable
      *   renderExpandedRow={(row) => <div>{row.id}</div>}
-     *   onRowExpandChange={(isExpanded, rowData) => {
-     *     console.log(isExpanded, rowData);
+     *   onRowExpandChange={({ isExpanded, row, rowId }) => {
+     *     console.log(isExpanded, row, rowId);
      *   }}
      * />
      * ```
@@ -220,10 +219,22 @@ const DataTable = <TData,>({
 
     const isExpandable = Boolean(renderExpandedRow);
 
-    const tableColumns = useMemo(
-        () => TableColumnsAdapter(columns, isExpandable, onRowExpandChange),
-        [columns, isExpandable, onRowExpandChange]
+    // Keep the latest `onRowExpandChange` in a ref so the column model isn't
+    // rebuilt every render when consumers pass an inline (un-memoized) handler.
+    const onRowExpandChangeRef = useRef(onRowExpandChange);
+    useEffect(() => {
+        onRowExpandChangeRef.current = onRowExpandChange;
+    });
+
+    const stableOnRowExpandChange = useCallback<DataTableRowExpandChangeHandler<TData>>(
+        (payload) => onRowExpandChangeRef.current?.(payload),
+        []
     );
+
+    const tableColumns = useMemo(() => {
+        const adapted = adaptColumns(columns);
+        return isExpandable ? withExpanderColumn(adapted, stableOnRowExpandChange) : adapted;
+    }, [columns, isExpandable, stableOnRowExpandChange]);
 
     const initialPageSize =
         typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)

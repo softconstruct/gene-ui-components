@@ -23,27 +23,28 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
     );
 };
 
-export const TableColumnsAdapter = <TData,>(
-    columns: DataTableColumn<TData>[],
-    expandable: boolean,
-    onRowExpandChange?: DataTableRowExpandChangeHandler<TData>
-) => {
-    const adapted: ColumnDef<TData, ReactNode>[] = columns.map((col, index) => {
-        const isAccessorColumn = Boolean(col.accessorKey);
+/**
+ * Normalizes the public {@link DataTableColumn} shape into TanStack `ColumnDef[]`.
+ * Pure transformation: does not inject any non-data columns.
+ */
+export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
+    columns.map((col, index) => {
+        const { accessorKey, id, header, size, renderCell } = col;
+        const isAccessorColumn = Boolean(accessorKey);
 
         const base: ColumnDef<TData> = {
-            id: col.id ?? (col.accessorKey ? String(col.accessorKey) : `display_${index}`),
-            header: col.header ?? (col.accessorKey ? String(col.accessorKey) : ""),
-            size: col.size,
-            ...(isAccessorColumn ? { accessorKey: col.accessorKey } : {})
+            id: id ?? accessorKey ?? `display_${index}`,
+            header: header ?? accessorKey ?? "",
+            size,
+            ...(isAccessorColumn ? { accessorKey } : {})
         };
 
-        if (!col.renderCell) return base;
+        if (!renderCell) return base;
 
         return {
             ...base,
             cell: (ctx: CellContext<TData, ReactNode>) =>
-                col.renderCell?.({
+                renderCell({
                     value: isAccessorColumn ? ctx.getValue() : undefined,
                     row: ctx.row.original,
                     rowId: ctx.row.id
@@ -51,17 +52,20 @@ export const TableColumnsAdapter = <TData,>(
         };
     });
 
-    if (!expandable) return adapted;
-
-    return [
-        {
-            id: "expander",
-            header: "",
-            cell: (ctx: CellContext<TData, ReactNode>) => (
-                <ExpanderCell {...ctx} onRowExpandChange={onRowExpandChange} />
-            ),
-            size: EXPANDABLE_CELL_WIDTH
-        },
-        ...adapted
-    ];
-};
+/**
+ * Composes a leading "expander" column onto an already adapted column list.
+ * Kept separate from {@link adaptColumns} so other special columns (selection,
+ * drag-handle, …) can be composed the same way without further branching.
+ */
+export const withExpanderColumn = <TData,>(
+    columns: ColumnDef<TData, ReactNode>[],
+    onRowExpandChange?: DataTableRowExpandChangeHandler<TData>
+): ColumnDef<TData, ReactNode>[] => [
+    {
+        id: "expander",
+        header: "",
+        size: EXPANDABLE_CELL_WIDTH,
+        cell: (ctx: CellContext<TData, ReactNode>) => <ExpanderCell {...ctx} onRowExpandChange={onRowExpandChange} />
+    },
+    ...columns
+];

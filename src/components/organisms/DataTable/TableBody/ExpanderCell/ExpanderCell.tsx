@@ -12,32 +12,33 @@ interface IExpanderCellProps<TData, TValue> extends CellContext<TData, TValue> {
 }
 
 /**
- * Renders an individual table body cell (`<td>`).
- * This component acts as a wrapper that uses TanStack Table's `flexRender`
- * utility to evaluate and render the appropriate content based on the
- * specific column definitions.
+ * Renders the expander toggle button injected as a leading column of an expandable {@link DataTable}.
+ * Surfaces accessibility metadata (`aria-expanded`, `aria-label`) and adapts the chevron direction in RTL.
  *
  * @template TData - The shape of the overall row data object.
  * @template TValue - The type of the specific value held within this cell.
  * @param props - The properties for the component.
- * @returns A table cell element with the rendered content.
+ * @returns A button that toggles the expanded state of the parent row.
  */
 const ExpanderCell = <TData, TValue>({ row, onRowExpandChange }: IExpanderCellProps<TData, TValue>) => {
-    const isRTLMode = document.dir === "rtl";
-    const ExpanderChevronIcon = isRTLMode ? ChevronLeft : ChevronRight;
     const isExpanded = row.getIsExpanded();
+    const isRTLMode = typeof document !== "undefined" && document.dir === "rtl";
+    const CollapsedChevronIcon = isRTLMode ? ChevronLeft : ChevronRight;
 
     const toggleHandler = () => {
         const nextExpanded = !row.getIsExpanded();
         row.toggleExpanded(nextExpanded);
-        onRowExpandChange?.(nextExpanded, row.original);
+        onRowExpandChange?.({ isExpanded: nextExpanded, row: row.original, rowId: row.id });
     };
+
     return (
         <Button
             layout="text"
             appearance="secondary"
             size="small"
-            Icon={isExpanded ? ChevronDown : ExpanderChevronIcon}
+            Icon={isExpanded ? ChevronDown : CollapsedChevronIcon}
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? "Collapse row" : "Expand row"}
             onClick={toggleHandler}
         />
     );

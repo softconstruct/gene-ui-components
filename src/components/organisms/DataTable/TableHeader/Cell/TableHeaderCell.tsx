@@ -1,6 +1,7 @@
 import React from "react";
 import { flexRender } from "@tanstack/react-table";
 import { Header } from "@tanstack/table-core";
+import classNames from "classnames";
 
 // Components
 import Text from "@components/atoms/Text";
@@ -33,20 +34,26 @@ interface ITableHeaderCellProps<TData, TValue> {
  * @param props - The properties for the component.
  * @returns A table header cell element containing the rendered column header, or an empty cell if it's a placeholder.
  */
-const TableHeaderCell = <TData, TValue>({ header }: ITableHeaderCellProps<TData, TValue>) => (
-    <th
-        className="tableHeaderCell"
-        style={{
-            width: header.getSize(),
-            minWidth: header.getSize()
-        }}
-    >
-        <div className="tableHeaderCell__content">
-            <Text className="tableHeaderCell__text" as="span" variant="labelMediumSemibold">
-                {flexRender(header.column.columnDef.header, header.getContext()) as string}
-            </Text>
-        </div>
-    </th>
-);
+const TableHeaderCell = <TData, TValue>({ header }: ITableHeaderCellProps<TData, TValue>) => {
+    const isExpanderHeader = header.column.id === "expander";
+
+    return (
+        <th
+            className={classNames("tableHeaderCell", { tableHeaderCell_expander: isExpanderHeader })}
+            style={{
+                width: isExpanderHeader ? "4.4rem" : undefined,
+                minWidth: isExpanderHeader ? "4.4rem" : undefined,
+                maxWidth: 250 // temp
+            }}
+        >
+            {/* todo remove content if expandable */}
+            <div className="tableHeaderCell__content">
+                <Text className="tableHeaderCell__text" as="span" variant="labelMediumSemibold">
+                    {flexRender(header.column.columnDef.header, header.getContext()) as string}
+                </Text>
+            </div>
+        </th>
+    );
+};
 
 export default TableHeaderCell;

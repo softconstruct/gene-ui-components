@@ -93,6 +93,8 @@ export {
     default as DataTable,
     DataTableGetRowStatus,
     DataTableRenderExpandedRow,
+    DataTableRowExpandChangeHandler,
+    DataTableRowExpandChangePayload,
     DataTableRowStatus,
     IDataTableProps,
     IDataTableRowAction

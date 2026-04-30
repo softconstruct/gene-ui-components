@@ -10,9 +10,24 @@ export interface ITableNoDataTexts {
 export type DataTableRowStatus = "default" | "zebra" | "red" | "green" | "highlighted";
 
 export type DataTableGetRowStatus<TData> = (row: TData) => DataTableRowStatus | undefined;
-export type DataTableRenderExpandedRow<TData> = (row: TData, isExpanded: boolean) => ReactNode;
+export type DataTableRenderExpandedRow<TData> = (row: TData) => ReactNode;
 
-export type DataTableRowExpandChangeHandler<TData> = (isExpanded: boolean, rowData: TData) => void;
+export interface DataTableRowExpandChangePayload<TData> {
+    /**
+     * Whether the row became expanded (`true`) or collapsed (`false`).
+     */
+    isExpanded: boolean;
+    /**
+     * The full row data object for the toggled row.
+     */
+    row: TData;
+    /**
+     * Stable row id assigned by the table (matches `Row.id` from TanStack Table).
+     */
+    rowId: string;
+}
+
+export type DataTableRowExpandChangeHandler<TData> = (payload: DataTableRowExpandChangePayload<TData>) => void;
 
 export type DataTableRenderCellArgs<TData, TValue> = {
     value: TValue;
