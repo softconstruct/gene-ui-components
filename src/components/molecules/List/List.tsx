@@ -3,12 +3,12 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
 
 // Components
+import Button from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Scrollbar, { ScrollbarRefType } from "@components/atoms/Scrollbar";
 import Skeleton from "@components/atoms/Skeleton";
 import Empty from "@components/molecules/Empty";
 import Item from "@components/molecules/List/Item/Item";
-import ListFooter from "@components/molecules/List/ListFooter";
 
 // Styles
 import "./List.scss";
@@ -243,13 +243,18 @@ const List: FC<IListProps> = ({
                 </Scrollbar>
             </div>
             {showMore && (
-                <ListFooter
-                    showMore={showMore}
-                    onShowMore={onShowMore}
-                    showMoreLabel={showMoreLabel}
-                    loading={showMoreLoading}
-                    disabled={showMoreDisabled || showMoreLoading}
-                />
+                <div className="list__footer">
+                    <Button
+                        appearance="secondary"
+                        layout="text"
+                        size="small"
+                        onClick={onShowMore}
+                        loading={showMoreLoading}
+                        disabled={showMoreDisabled || showMoreLoading}
+                    >
+                        {showMoreLabel}
+                    </Button>
+                </div>
             )}
         </div>
     );
