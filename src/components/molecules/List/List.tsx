@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useMemo, useRef } from "react";
+import React, { FC, ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
 
@@ -100,6 +100,7 @@ const List: FC<IListProps> = ({
     const hasChildren = useMemo(() => items.length > 0, [items.length]);
     const scrollbarRef = useRef<ScrollbarRefType | null>(null);
     const itemsArray = useMemo(() => items, [items]);
+    const [skeletonRowHeight, setSkeletonRowHeight] = useState(ESTIMATED_ROW_HEIGHT_PX);
     const shouldRenderShowMoreSkeleton = !!showMore && !!showMoreLoading && hasChildren;
     const totalVirtualCount = itemsArray.length + (shouldRenderShowMoreSkeleton ? 1 : 0);
 
@@ -114,6 +115,22 @@ const List: FC<IListProps> = ({
     const lastVirtualItem = virtualItems[virtualItems.length - 1];
     const topSpacerHeight = firstVirtualItem?.start ?? 0;
     const bottomSpacerHeight = Math.max(0, virtualizer.getTotalSize() - (lastVirtualItem?.end ?? 0));
+
+    useLayoutEffect(() => {
+        if (loading || !hasChildren) return;
+
+        const scrollerElement = scrollbarRef.current?.scrollbarRef?.scrollerElement;
+        if (!scrollerElement) return;
+
+        const rows = scrollerElement.querySelectorAll<HTMLLIElement>(".item");
+        const lastRenderedRow = rows[rows.length - 1];
+        if (!lastRenderedRow) return;
+
+        const nextHeight = Math.round(lastRenderedRow.getBoundingClientRect().height);
+        if (nextHeight > 0) {
+            setSkeletonRowHeight((prevHeight) => (prevHeight === nextHeight ? prevHeight : nextHeight));
+        }
+    }, [itemsArray, virtualized, size, loading, hasChildren]);
 
     useEffect(() => {
         if (!shouldRenderShowMoreSkeleton) return;
@@ -160,14 +177,16 @@ const List: FC<IListProps> = ({
                             {virtualItems.map((row) => {
                                 if (shouldRenderShowMoreSkeleton && row.index === itemsArray.length) {
                                     return (
-                                        <li key="list-showMore-skeleton-row">
-                                            <div className="list__skeletonRow" aria-hidden="true">
-                                                <Skeleton
-                                                    className="list__skeletonItem"
-                                                    height={16}
-                                                    rounded="rounded4X"
-                                                />
-                                            </div>
+                                        <li
+                                            key="list-showMore-skeleton-row"
+                                            className="list__skeletonRow"
+                                            aria-hidden="true"
+                                        >
+                                            <Skeleton
+                                                className="list__skeletonItem"
+                                                height={skeletonRowHeight}
+                                                rounded="rounded4X"
+                                            />
                                         </li>
                                     );
                                 }
@@ -212,7 +231,11 @@ const List: FC<IListProps> = ({
                             ))}
                             {shouldRenderShowMoreSkeleton && (
                                 <li className="list__skeletonRow" aria-hidden="true">
-                                    <Skeleton className="list__skeletonItem" height={16} rounded="rounded4X" />
+                                    <Skeleton
+                                        className="list__skeletonItem"
+                                        height={skeletonRowHeight}
+                                        rounded="rounded4X"
+                                    />
                                 </li>
                             )}
                         </ul>

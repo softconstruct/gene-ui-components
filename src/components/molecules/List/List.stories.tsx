@@ -26,6 +26,7 @@ const meta: Meta<IListProps> = {
         showMoreDisabled: args({ control: "boolean", ...propCategory.states }),
         showMoreLoading: args({ control: "boolean", ...propCategory.states }),
         virtualized: args({ control: "boolean", ...propCategory.functionality }),
+        size: args({ control: "select", ...propCategory.appearance }),
         onShowMore: args({ control: "false", ...propCategory.action })
     },
     args: {
@@ -33,7 +34,9 @@ const meta: Meta<IListProps> = {
         loadingText: "Loading Info",
         loading: false,
         showMore: false,
-        showMoreLabel: "Show more"
+        showMoreLabel: "Show more",
+        virtualized: false,
+        size: "medium"
     }
 };
 
