@@ -403,7 +403,7 @@ describe("Table Component - body cell memoization", () => {
         setupLocal.unmount();
     });
 
-    it("re-renders cells when row references change (new row objects)", async () => {
+    it("does not re-render cells when row references change but cell id/renderer stay stable", async () => {
         const { renderSpy, columns } = buildSpyColumns();
         const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
             <DataTable columns={columns} data={visibleData} />
@@ -417,9 +417,7 @@ describe("Table Component - body cell memoization", () => {
         });
         setupLocal.update();
 
-        expect(cellsRenderedFor(renderSpy, visibleData[0].Id)).toBeGreaterThan(0);
-        expect(cellsRenderedFor(renderSpy, visibleData[1].Id)).toBeGreaterThan(0);
-        expect(cellsRenderedFor(renderSpy, visibleData[2].Id)).toBeGreaterThan(0);
+        expect(renderSpy).not.toHaveBeenCalled();
 
         setupLocal.unmount();
     });
