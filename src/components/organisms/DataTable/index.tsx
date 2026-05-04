@@ -1,2 +1,9 @@
 export { IDataTableProps, default } from "./DataTable";
-export { IDataTableRowAction } from "./types";
+export {
+    DataTableGetRowStatus,
+    DataTableRenderExpandedRow,
+    DataTableRowExpandChangeHandler,
+    DataTableRowExpandChangePayload,
+    DataTableRowStatus,
+    IDataTableRowAction
+} from "./types";

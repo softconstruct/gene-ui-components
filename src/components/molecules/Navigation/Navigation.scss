@@ -21,6 +21,7 @@
         display: flex;
         width: var(--guit-sem-dimension-width-3xlarge);
         height: 100%;
+        background-color: var(--guit-sem-color-background-neutral-1);
     }
 
     &__listWrapper {
@@ -123,6 +124,7 @@
         height: 100%;
         border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
+        background-color: var(--guit-sem-color-background-neutral-1);
 
         &_wrapper {
             padding: var(--guit-ref-spacing-xsmall) var(--guit-ref-spacing-xsmall) 0 var(--guit-ref-spacing-xsmall);
@@ -152,7 +154,7 @@
 
     &__button {
         &_render {
-            color: inherit;
+            color: var(--guit-sem-color-foreground-neutral-2);
         }
 
         display: flex;

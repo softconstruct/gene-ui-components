@@ -5,7 +5,7 @@
     border-bottom: var(--guit-ref-border-width-thin) solid var(--guit-sem-color-border-neutral-1);
     vertical-align: middle;
 
-    &:not(:last-child) {
+    &:has(~ &) {
         border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
     }
@@ -22,6 +22,11 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
         color: var(--guit-sem-color-foreground-neutral-2);
+    }
+
+    &_expander {
+        padding: 0;
+        padding-inline: var(--guit-ref-spacing-small);
     }
 
     &_active,
