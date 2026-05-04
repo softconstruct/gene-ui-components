@@ -39,7 +39,7 @@ const nestedTableData: ClientProfile[] = [
         Email: "nested.row1@mail.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-01-01",
+        Created: "2026/01/01",
         Status: "active"
     },
     {
@@ -50,7 +50,7 @@ const nestedTableData: ClientProfile[] = [
         Email: "nested.row2@mail.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-01-02",
+        Created: "2026/01/02",
         Status: "new"
     },
     {
@@ -61,7 +61,7 @@ const nestedTableData: ClientProfile[] = [
         Email: "nested.row3@mail.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-01-03",
+        Created: "2026/01/03",
         Status: "inactive"
     },
     {
@@ -72,7 +72,7 @@ const nestedTableData: ClientProfile[] = [
         Email: "nested.row4@mail.com",
         IsVerified: false,
         IsLocked: true,
-        Created: "2026-01-04",
+        Created: "2026/01/04",
         Status: "suspended"
     },
     {
@@ -83,7 +83,7 @@ const nestedTableData: ClientProfile[] = [
         Email: "nested.row5@mail.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-01-05",
+        Created: "2026/01/05",
         Status: "active"
     },
     {
@@ -94,7 +94,7 @@ const nestedTableData: ClientProfile[] = [
         Email: "nested.row6@mail.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-01-06",
+        Created: "2026/01/06",
         Status: "new"
     },
     {
@@ -105,7 +105,7 @@ const nestedTableData: ClientProfile[] = [
         Email: "nested.row7@mail.com",
         IsVerified: true,
         IsLocked: true,
-        Created: "2026-01-07",
+        Created: "2026/01/07",
         Status: "inactive"
     }
 ];
@@ -154,7 +154,7 @@ const baseMockData: ClientProfile[] = [
         Email: "darwin.lorem@example.com",
         IsVerified: false,
         IsLocked: true,
-        Created: "2026-01-14",
+        Created: "2026/01/14",
         Status: "new"
     },
     {
@@ -165,7 +165,7 @@ const baseMockData: ClientProfile[] = [
         Email: "alice.smith@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-02-05",
+        Created: "2026/02/05",
         Status: "active"
     },
     {
@@ -176,7 +176,7 @@ const baseMockData: ClientProfile[] = [
         Email: "marcus.finch@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-02-18",
+        Created: "2026/02/18",
         Status: "active"
     },
     {
@@ -187,7 +187,7 @@ const baseMockData: ClientProfile[] = [
         Email: "sophia.carter@example.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-03-01",
+        Created: "2026/03/01",
         Status: "new"
     },
     {
@@ -198,7 +198,7 @@ const baseMockData: ClientProfile[] = [
         Email: "liam.oconnor@example.com",
         IsVerified: true,
         IsLocked: true,
-        Created: "2026-01-22",
+        Created: "2026/01/22",
         Status: "inactive"
     },
     {
@@ -209,7 +209,7 @@ const baseMockData: ClientProfile[] = [
         Email: "emma.bridges@example.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-03-10",
+        Created: "2026/03/10",
         Status: "new"
     },
     {
@@ -220,7 +220,7 @@ const baseMockData: ClientProfile[] = [
         Email: "noah.patel@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-01-05",
+        Created: "2026/01/05",
         Status: "active"
     },
     {
@@ -231,7 +231,7 @@ const baseMockData: ClientProfile[] = [
         Email: "olivia.gomez@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-02-28",
+        Created: "2026/02/28",
         Status: "active"
     },
     {
@@ -242,7 +242,7 @@ const baseMockData: ClientProfile[] = [
         Email: "elijah.woodard@example.com",
         IsVerified: false,
         IsLocked: true,
-        Created: "2026-01-30",
+        Created: "2026/01/30",
         Status: "suspended"
     },
     {
@@ -253,7 +253,7 @@ const baseMockData: ClientProfile[] = [
         Email: "ava.nguyen@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-03-15",
+        Created: "2026/03/15",
         Status: "active"
     },
     {
@@ -264,7 +264,7 @@ const baseMockData: ClientProfile[] = [
         Email: "william.kim@example.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-03-18",
+        Created: "2026/03/18",
         Status: "new"
     },
     {
@@ -275,7 +275,7 @@ const baseMockData: ClientProfile[] = [
         Email: "isabella.martinez@example.com",
         IsVerified: true,
         IsLocked: true,
-        Created: "2026-01-11",
+        Created: "2026/01/11",
         Status: "inactive"
     },
     {
@@ -286,7 +286,7 @@ const baseMockData: ClientProfile[] = [
         Email: "james.taylor@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-02-14",
+        Created: "2026/02/14",
         Status: "active"
     },
     {
@@ -297,7 +297,7 @@ const baseMockData: ClientProfile[] = [
         Email: "mia.anderson@example.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-03-05",
+        Created: "2026/03/05",
         Status: "new"
     },
     {
@@ -308,7 +308,7 @@ const baseMockData: ClientProfile[] = [
         Email: "benjamin.thomas@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-01-28",
+        Created: "2026/01/28",
         Status: "active"
     },
     {
@@ -319,7 +319,7 @@ const baseMockData: ClientProfile[] = [
         Email: "charlotte.moore@example.com",
         IsVerified: true,
         IsLocked: true,
-        Created: "2026-02-09",
+        Created: "2026/02/09",
         Status: "suspended"
     },
     {
@@ -330,7 +330,7 @@ const baseMockData: ClientProfile[] = [
         Email: "lucas.jackson@example.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-03-12",
+        Created: "2026/03/12",
         Status: "new"
     },
     {
@@ -341,7 +341,7 @@ const baseMockData: ClientProfile[] = [
         Email: "amelia.white@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-01-19",
+        Created: "2026/01/19",
         Status: "active"
     },
     {
@@ -352,7 +352,7 @@ const baseMockData: ClientProfile[] = [
         Email: "henry.harris@example.com",
         IsVerified: false,
         IsLocked: true,
-        Created: "2026-02-25",
+        Created: "2026/02/25",
         Status: "inactive"
     },
     {
@@ -363,7 +363,7 @@ const baseMockData: ClientProfile[] = [
         Email: "harper.martin@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-03-08",
+        Created: "2026/03/08",
         Status: "active"
     }
 ];
