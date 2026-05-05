@@ -188,14 +188,21 @@ interface IDropdownProps {
      */
     searchPlaceholder?: string;
     /**
-     * Debounce delay in milliseconds for search change callback.
-     * @default 300
-     */
-    searchDebounceMs?: number;
-    /**
-     * Controlled search value for async/external search mode.
+     * Controlled search value. When defined, the input mirrors this value.
+     * Pair with `onSearchChange` to react to user input.
      */
     searchValue?: string;
+    /**
+     * Initial search value in uncontrolled mode.
+     * Ignored when `searchValue` is provided.
+     */
+    defaultSearchValue?: string;
+    /**
+     * Clears the search value when the popover closes.
+     * In controlled mode only `onSearchChange("")` is emitted - the parent owns the actual reset.
+     * @default false
+     */
+    resetSearchOnClose?: boolean;
     /**
      * Displays loading state in dropdown panel.
      */
@@ -229,13 +236,16 @@ interface IDropdownProps {
      */
     actions?: IDropdownFooterActions;
     /**
-     * Custom filtering function used in internal search mode.
-     * Receives option and normalized search term.
+     * Controls how options are filtered.
+     * - `undefined` (default): built-in internal filter matches the search term against `label` and `value`.
+     * - `function`: custom internal filter; receives the option and the normalized lowercased search term.
+     * - `false`: disables internal filtering. The parent must supply pre-filtered `options` (typical for async/external search). `onSearchChange` is then the place to fetch results.
      */
-    filterFn?: (option: IDropdownOption, searchTerm: string) => boolean;
+    filterFn?: false | ((option: IDropdownOption, searchTerm: string) => boolean);
     /**
-     * Callback fired when search value changes.
-     * Useful for async/external search mode.
+     * Callback fired when the search value changes.
+     * Always fires regardless of `filterFn` value, so it can be used safely for analytics,
+     * form integrations, or async fetching. Subject to the built-in 200ms debounce.
      */
     onSearchChange?: (value: string) => void;
     /**
@@ -265,8 +275,9 @@ const Dropdown: FC<IDropdownProps> = ({
     searchable,
     searchAutoFocus = true,
     searchPlaceholder = DEFAULT_SEARCH_PLACEHOLDER,
-    searchDebounceMs = 300,
     searchValue,
+    defaultSearchValue,
+    resetSearchOnClose = false,
     loading,
     loadingText = DEFAULT_LOADING_TEXT,
     emptyText = DEFAULT_EMPTY_TEXT,
@@ -278,12 +289,13 @@ const Dropdown: FC<IDropdownProps> = ({
     onChange
 }) => {
     const isMulti = variant === "multi";
-    const isExternallyControlledSearch = searchValue !== undefined;
+    const isControlledSearch = searchValue !== undefined;
+    const isExternalSearch = filterFn === false;
     const [internalValue, setInternalValue] = useState<string | null>(defaultValue);
     const [internalValues, setInternalValues] = useState<string[]>(defaultValues);
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [popoverProps, setPopoverProps] = useState<Record<string, unknown>>({});
-    const [internalSearchValue, setInternalSearchValue] = useState<string>(searchValue || "");
+    const [internalSearchValue, setInternalSearchValue] = useState<string>(searchValue ?? defaultSearchValue ?? "");
     const triggerTextFieldRef = useRef<ITextFieldRef | null>(null);
     const [triggerInputWidth, setTriggerInputWidth] = useState(0);
     const { width: windowWidth } = useWindowSize();
@@ -294,14 +306,14 @@ const Dropdown: FC<IDropdownProps> = ({
     });
 
     useEffect(() => {
-        if (isExternallyControlledSearch) {
+        if (isControlledSearch) {
             setInternalSearchValue(searchValue || "");
         }
-    }, [searchValue, isExternallyControlledSearch]);
+    }, [searchValue, isControlledSearch]);
 
     const selectedSingleValue = value !== undefined ? value : internalValue;
     const selectedMultipleValues = values !== undefined ? values : internalValues;
-    const searchTerm = isExternallyControlledSearch ? searchValue || "" : internalSearchValue;
+    const searchTerm = isControlledSearch ? searchValue || "" : internalSearchValue;
 
     useEffect(() => {
         const inputNode = triggerTextFieldRef.current?.getInputRef();
@@ -323,19 +335,26 @@ const Dropdown: FC<IDropdownProps> = ({
         [popoverRef.current.floatingElement]
     );
 
-    const emitSearch = (nextValue: string) => {
-        if (onSearchChange) {
-            onSearchChange(nextValue);
-        }
-        if (!isExternallyControlledSearch) {
-            setInternalSearchValue(nextValue);
-        }
+    const emitSearchRaw = (nextValue: string) => {
+        onSearchChange?.(nextValue);
     };
 
-    const { debouncedCallback: onSearchDebounced } = useDebounce((...args: unknown[]) => {
-        const [nextValue] = args as [string];
-        emitSearch(nextValue);
-    }, searchDebounceMs);
+    const { debouncedCallback: emitSearchDebounced, clearDebounce } = useDebounce(
+        (...args: unknown[]) => emitSearchRaw(args[0] as string),
+        200
+    );
+
+    const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const nextValue = event.target.value;
+        if (!isControlledSearch) setInternalSearchValue(nextValue);
+        emitSearchDebounced(nextValue);
+    };
+
+    const clearSearchHandler = () => {
+        clearDebounce();
+        if (!isControlledSearch) setInternalSearchValue("");
+        onSearchChange?.("");
+    };
 
     const selectedSingleOption = useMemo(
         () => options.find((option) => option.value === selectedSingleValue) || null,
@@ -357,21 +376,23 @@ const Dropdown: FC<IDropdownProps> = ({
     }, [isMulti, selectedMultiOptions, selectedSingleOption, triggerInputWidth]);
 
     const filteredOptions = useMemo(() => {
-        if (!searchable || onSearchChange) {
+        if (!searchable || isExternalSearch) {
             return options;
         }
         const normalizedTerm = searchTerm.trim().toLowerCase();
-        if (!normalizedTerm.length) return options;
+        if (!normalizedTerm.length) {
+            return options;
+        }
 
         return options.filter((option) => {
-            if (filterFn) {
+            if (typeof filterFn === "function") {
                 return filterFn(option, normalizedTerm);
             }
             const optionLabel = option.label.toLowerCase();
             const valueSnapshot = option.value.toLowerCase();
             return optionLabel.includes(normalizedTerm) || valueSnapshot.includes(normalizedTerm);
         });
-    }, [options, filterFn, searchable, searchTerm, onSearchChange]);
+    }, [options, filterFn, searchable, searchTerm, isExternalSearch]);
 
     const toggleOpen = () => {
         if (disabled) return;
@@ -436,9 +457,14 @@ const Dropdown: FC<IDropdownProps> = ({
         setSingleValue(null);
     };
 
-    const clearSearchHandler = () => {
-        emitSearch("");
-    };
+    useEffect(() => {
+        if (isOpen || !resetSearchOnClose) return;
+        clearDebounce();
+        if (!isControlledSearch) setInternalSearchValue("");
+        onSearchChange?.("");
+        // onSearchChange/clearDebounce are stable from useDebounce/parent; intentionally narrow deps to popover state and the toggle.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, resetSearchOnClose]);
 
     const selectAllChecked =
         !!filteredOptions.length &&
@@ -470,6 +496,7 @@ const Dropdown: FC<IDropdownProps> = ({
                 placeholder={placeholder}
                 IconAfter={CaretDownFilled}
                 popoverProps={triggerPopoverProps}
+                autoComplete="off"
             />
 
             <Popover
@@ -487,11 +514,7 @@ const Dropdown: FC<IDropdownProps> = ({
                             <div className="dropdown__search">
                                 <TextField
                                     value={searchTerm}
-                                    onChange={(event) => {
-                                        const nextValue = event.target.value;
-                                        setInternalSearchValue(nextValue);
-                                        onSearchDebounced(nextValue);
-                                    }}
+                                    onChange={handleSearchChange}
                                     onClear={clearSearchHandler}
                                     clearable
                                     inputMode="search"
@@ -499,6 +522,7 @@ const Dropdown: FC<IDropdownProps> = ({
                                     placeholder={searchPlaceholder}
                                     IconBefore={Magnifier}
                                     size={size}
+                                    autoComplete="on"
                                 />
                             </div>
                         )}

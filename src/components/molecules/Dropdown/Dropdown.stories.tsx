@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import { dropdownOptions } from "../../../../stories/data/__dropdown";
 // Components
-import Dropdown, { IDropdownProps } from "./index";
+import Dropdown, { IDropdownOption, IDropdownProps } from "./index";
 
 const meta: Meta<IDropdownProps> = {
     title: "Molecules/Dropdown",
@@ -23,6 +23,11 @@ const meta: Meta<IDropdownProps> = {
         readOnly: args({ control: "boolean", ...propCategory.states }),
         status: args({ control: "select", options: ["rest", "warning", "error"], ...propCategory.states }),
         searchable: args({ control: "boolean", ...propCategory.functionality }),
+        searchAutoFocus: args({ control: "boolean", ...propCategory.functionality }),
+        searchPlaceholder: args({ control: "text", ...propCategory.content }),
+        defaultSearchValue: args({ control: "text", ...propCategory.content }),
+        resetSearchOnClose: args({ control: "boolean", ...propCategory.functionality }),
+        filterFn: args({ control: "false", ...propCategory.functionality }),
         loading: args({ control: "boolean", ...propCategory.states }),
         loadingText: args({ control: "text", ...propCategory.content }),
         emptyText: args({ control: "text", ...propCategory.content }),
@@ -87,4 +92,54 @@ export const WithFooterActions: Story = {
             primary: { text: "Submit" }
         }
     }
+};
+
+const AsyncSearchStory = (renderProps: IDropdownProps) => {
+    const [search, setSearch] = useState("");
+    const [results, setResults] = useState<IDropdownOption[]>(dropdownOptions);
+    const [loading, setLoading] = useState(false);
+
+    /* eslint consistent-return: off */
+    useEffect(() => {
+        if (!search) {
+            setResults(dropdownOptions);
+            setLoading(false);
+            return;
+        }
+        setLoading(true);
+        const timeoutId = window.setTimeout(() => {
+            const normalized = search.toLowerCase();
+            setResults(dropdownOptions.filter((option) => option.label.toLowerCase().includes(normalized)));
+            setLoading(false);
+        }, 600);
+        return () => window.clearTimeout(timeoutId);
+    }, [search]);
+
+    return (
+        <Dropdown {...renderProps} options={results} loading={loading} filterFn={false} onSearchChange={setSearch} />
+    );
+};
+
+export const AsyncSearch: Story = {
+    args: {
+        searchable: true,
+        helperText: "Type to search; results are fetched by the parent."
+    },
+    render: (renderProps) => <AsyncSearchStory {...renderProps} />
+};
+
+const CustomFilterStory = (renderProps: IDropdownProps) => {
+    const startsWithFilter = useMemo(
+        () => (option: IDropdownOption, term: string) => option.label.toLowerCase().startsWith(term),
+        []
+    );
+    return <Dropdown {...renderProps} filterFn={startsWithFilter} />;
+};
+
+export const CustomFilter: Story = {
+    args: {
+        searchable: true,
+        helperText: "Custom filter: starts-with match on label."
+    },
+    render: (renderProps) => <CustomFilterStory {...renderProps} />
 };

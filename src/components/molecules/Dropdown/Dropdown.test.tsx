@@ -89,7 +89,7 @@ describe("Dropdown ", () => {
     it("calls onSearchChange in debounced mode", () => {
         jest.useFakeTimers();
         const onSearchChange = jest.fn();
-        setup.setProps({ searchable: true, onSearchChange, searchDebounceMs: 300 });
+        setup.setProps({ searchable: true, onSearchChange });
         setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
         setup.update();
 
@@ -98,10 +98,150 @@ describe("Dropdown ", () => {
             .simulate("change", { target: { value: "Op" } } as React.ChangeEvent<HTMLInputElement>);
 
         act(() => {
-            jest.advanceTimersByTime(300);
+            jest.advanceTimersByTime(200);
         });
 
         expect(onSearchChange).toHaveBeenCalledWith("Op");
+    });
+
+    it("filters internally even when onSearchChange is provided (analytics-safe)", () => {
+        jest.useFakeTimers();
+        const onSearchChange = jest.fn();
+        setup.setProps({ searchable: true, onSearchChange });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "Option 2" } } as React.ChangeEvent<HTMLInputElement>);
+        act(() => {
+            jest.advanceTimersByTime(200);
+        });
+        setup.update();
+
+        const items = setup.find(".dropdownItem");
+        expect(items.length).toBe(1);
+        expect(items.at(0).text()).toContain("Option 2");
+    });
+
+    it("does not filter internally when filterFn={false}", () => {
+        jest.useFakeTimers();
+        const onSearchChange = jest.fn();
+        setup.setProps({
+            searchable: true,
+            onSearchChange,
+            filterFn: false as const
+        });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "Option 2" } } as React.ChangeEvent<HTMLInputElement>);
+
+        act(() => {
+            jest.advanceTimersByTime(200);
+        });
+        setup.update();
+
+        expect(setup.find(".dropdownItem").length).toBe(options.length);
+        expect(onSearchChange).toHaveBeenCalledWith("Option 2");
+    });
+
+    it("respects a custom filterFn function", () => {
+        jest.useFakeTimers();
+        const startsWith = (option: IDropdownOption, term: string) => option.label.toLowerCase().startsWith(term);
+        setup.setProps({ searchable: true, filterFn: startsWith });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "option 1" } } as React.ChangeEvent<HTMLInputElement>);
+        act(() => {
+            jest.advanceTimersByTime(200);
+        });
+        setup.update();
+
+        const items = setup.find(".dropdownItem");
+        expect(items.length).toBe(1);
+        expect(items.at(0).text()).toContain("Option 1");
+    });
+
+    it("emits onSearchChange and filters from first character", () => {
+        jest.useFakeTimers();
+        const onSearchChange = jest.fn();
+        setup.setProps({
+            searchable: true,
+            onSearchChange
+        });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "2" } } as React.ChangeEvent<HTMLInputElement>);
+
+        act(() => {
+            jest.advanceTimersByTime(200);
+        });
+
+        expect(onSearchChange).toHaveBeenCalledWith("2");
+        expect(setup.find(".dropdownItem").length).toBe(1);
+    });
+
+    it("emits empty string on clear", () => {
+        jest.useFakeTimers();
+        const onSearchChange = jest.fn();
+        setup.setProps({
+            searchable: true,
+            onSearchChange,
+            defaultSearchValue: "Option 1"
+        });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
+
+        act(() => {
+            jest.advanceTimersByTime(200);
+        });
+
+        expect(onSearchChange).toHaveBeenCalledWith("");
+    });
+
+    it("clears search and emits '' when popover closes if resetSearchOnClose=true", () => {
+        jest.useFakeTimers();
+        const onSearchChange = jest.fn();
+        setup.setProps({
+            searchable: true,
+            onSearchChange,
+            resetSearchOnClose: true
+        });
+
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "Option 1" } } as React.ChangeEvent<HTMLInputElement>);
+        act(() => {
+            jest.advanceTimersByTime(200);
+        });
+        setup.update();
+
+        onSearchChange.mockClear();
+
+        setup.find(".dropdownItem").at(0).simulate("click");
+        setup.update();
+
+        expect(onSearchChange).toHaveBeenCalledWith("");
+
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+        const searchInput = setup.find(".dropdown__search input.textField__input");
+        expect(searchInput.prop("value")).toBe("");
     });
 
     it("renders loading and empty states", () => {
