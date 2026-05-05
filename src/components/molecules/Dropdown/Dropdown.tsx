@@ -34,71 +34,15 @@ import "./Dropdown.scss";
 // Constants
 import {
     DEFAULT_CLEAR_LABEL,
-    DEFAULT_EMPTY_TEXT,
-    DEFAULT_LOADING_TEXT,
     DEFAULT_SEARCH_PLACEHOLDER,
     DEFAULT_SELECT_ALL_LABEL,
-    FALLBACK_VISIBLE_ITEMS,
-    MEASURE_SAFETY_OFFSET
+    MENU_GAP_FROM_TARGET
 } from "./constants";
 // Internal components
 import DropdownItem from "./DropdownItem/DropdownItem";
+import { getCompactSelectedView } from "./helpers";
 // Types
 import { DropdownStatus, DropdownVariant, IDropdownFooterActions, IDropdownOption } from "./types";
-
-const getTextWidth = (text: string, font: string): number => {
-    if (typeof document === "undefined") return text.length * 8;
-    const context = document.createElement("canvas").getContext("2d");
-    if (!context) return text.length * 8;
-    context.font = font;
-    return context.measureText(text).width;
-};
-
-const getInputFont = (inputNode: HTMLInputElement): string => {
-    return getComputedStyle(inputNode).font || "400 14px Arial";
-};
-
-const getFallbackCompactText = (selectedLabels: string[]): { visibleText: string; suffixText: string } => {
-    if (selectedLabels.length <= FALLBACK_VISIBLE_ITEMS) {
-        return { visibleText: selectedLabels.join(", "), suffixText: "" };
-    }
-
-    const visibleText = selectedLabels.slice(0, FALLBACK_VISIBLE_ITEMS).join(", ");
-    const remainingCount = selectedLabels.length - FALLBACK_VISIBLE_ITEMS;
-    return { visibleText, suffixText: `+${remainingCount}...` };
-};
-
-const getCompactSelectedView = (
-    selectedLabels: string[],
-    triggerInputWidth: number,
-    inputNode: HTMLInputElement | null
-): { visibleText: string; suffixText: string } => {
-    if (selectedLabels.length <= 1) return { visibleText: selectedLabels.join(", "), suffixText: "" };
-    if (!inputNode || !triggerInputWidth) return getFallbackCompactText(selectedLabels);
-
-    const inputFont = getInputFont(inputNode);
-    const availableWidth = Math.max(triggerInputWidth - MEASURE_SAFETY_OFFSET, 0);
-    const fullText = selectedLabels.join(", ");
-
-    if (getTextWidth(fullText, inputFont) <= availableWidth) {
-        return { visibleText: fullText, suffixText: "" };
-    }
-
-    for (let visibleItems = selectedLabels.length - 1; visibleItems > 0; visibleItems--) {
-        const remainingCount = selectedLabels.length - visibleItems;
-        const visibleText = selectedLabels.slice(0, visibleItems).join(", ");
-        const suffixText = `+${remainingCount}...`;
-        const requiredWidth = getTextWidth(visibleText, inputFont) + getTextWidth(suffixText, inputFont);
-
-        if (requiredWidth <= availableWidth) {
-            return { visibleText, suffixText };
-        }
-    }
-
-    // Always keep at least one selected item visible and keep the count suffix.
-    // The input text will truncate if needed.
-    return { visibleText: selectedLabels[0], suffixText: `+${selectedLabels.length - 1}...` };
-};
 
 interface IDropdownProps {
     /**
@@ -279,8 +223,8 @@ const Dropdown: FC<IDropdownProps> = ({
     defaultSearchValue,
     resetSearchOnClose = false,
     loading,
-    loadingText = DEFAULT_LOADING_TEXT,
-    emptyText = DEFAULT_EMPTY_TEXT,
+    loadingText = "Loading",
+    emptyText = "No data",
     selectAllLabel = DEFAULT_SELECT_ALL_LABEL,
     clearLabel = DEFAULT_CLEAR_LABEL,
     actions,
@@ -503,10 +447,11 @@ const Dropdown: FC<IDropdownProps> = ({
                 setProps={setPopoverProps}
                 ref={popoverRef}
                 open={isOpen}
-                position="bottom-left"
+                position="bottom-center"
                 withArrow={false}
                 fitReference
                 mobileHeightMode="fit"
+                margin={MENU_GAP_FROM_TARGET}
             >
                 <PopoverBody withPadding={false} withScrollbar={false} className="dropdown__body">
                     <div className="dropdown__content">
@@ -583,7 +528,7 @@ const Dropdown: FC<IDropdownProps> = ({
                                         </Scrollbar>
                                         {!!actions && (
                                             <div className="dropdown__footer">
-                                                <ButtonGroup className="dropdown__footerActions" size="small">
+                                                <ButtonGroup className="dropdown__footerActions" size={size}>
                                                     {actions?.secondary && (
                                                         <Button
                                                             appearance="secondary"
