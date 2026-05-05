@@ -1,16 +1,20 @@
-import React from "react";
+import React, { MouseEvent } from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
+import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
+import { DataTableColumn } from "@components/organisms/DataTable/types";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 // Components
 import DataTable, { IDataTableProps } from "./index";
 
 type MockDataType = (typeof mockData)[0];
+
+const TestIcon = () => <svg />;
 
 describe("Table Component", () => {
     let setup: ReactWrapper<IDataTableProps<MockDataType>>;
@@ -96,15 +100,11 @@ describe("Table Component", () => {
     });
 
     it("renders Pagination component by default (pagination = true)", () => {
+        setup.setProps({ pagination: true });
         expect(setup.find(Pagination).exists()).toBeTruthy();
     });
 
     it("does not render Pagination when pagination prop is false", async () => {
-        await act(async () => {
-            setup.setProps({ pagination: false });
-        });
-        setup.update();
-
         expect(setup.find(Pagination).exists()).toBeFalsy();
     });
 
@@ -138,5 +138,287 @@ describe("Table Component", () => {
 
         const thead = setup.find("thead");
         expect(thead.hasClass("tableHeader__sticky")).toBeFalsy();
+    });
+
+    it("renders row actions when rowActions prop is provided", async () => {
+        const rowActions = [{ Icon: TestIcon, title: "Edit", onClick: jest.fn(() => undefined) }];
+
+        await act(async () => {
+            setup.setProps({ rowActions });
+        });
+        setup.update();
+
+        const actionWrappers = setup.find(".tableRow__actionsWrapper");
+        expect(actionWrappers.length).toBe(INITIAL_PAGE_SIZE);
+
+        const actionButtons = setup.find(".tableRow__actionsWrapper button");
+        expect(actionButtons.length).toBe(INITIAL_PAGE_SIZE * rowActions.length);
+    });
+
+    it("calls row action onClick with current row data", async () => {
+        const onEdit = jest.fn((row: MockDataType, event: MouseEvent) => ({ row, event }));
+        const rowActions = [{ Icon: TestIcon, title: "Edit", onClick: onEdit }];
+
+        await act(async () => {
+            setup.setProps({ rowActions });
+        });
+        setup.update();
+
+        const firstActionButton = setup.find(".tableRow__actionsWrapper button").first();
+        await act(async () => {
+            firstActionButton.simulate("click", { type: "click" });
+        });
+        setup.update();
+
+        expect(onEdit).toHaveBeenCalledTimes(1);
+        const [rowData, event] = onEdit.mock.calls[0];
+        expect(rowData.Id).toBe(mockData[0].Id);
+        expect(rowData.Email).toBe(mockData[0].Email);
+        expect(event).toBeDefined();
+    });
+
+    it("applies row action disabled state from row-based callback", async () => {
+        const rowActions = [
+            {
+                Icon: TestIcon,
+                title: "Delete",
+                disabled: (row: MockDataType) => row.IsLocked,
+                onClick: jest.fn(() => undefined)
+            }
+        ];
+
+        await act(async () => {
+            setup.setProps({ rowActions });
+        });
+        setup.update();
+
+        const actionButtons = setup.find(".tableRow__actionsWrapper button");
+        expect(actionButtons.at(0).prop("disabled")).toBe(Boolean(mockData[0].IsLocked));
+        expect(actionButtons.at(1).prop("disabled")).toBe(Boolean(mockData[1].IsLocked));
+    });
+
+    it("applies row action boolean disabled state", async () => {
+        const rowActions = [
+            {
+                Icon: TestIcon,
+                title: "Edit",
+                disabled: true,
+                onClick: jest.fn(() => undefined)
+            }
+        ];
+
+        await act(async () => {
+            setup.setProps({ rowActions });
+        });
+        setup.update();
+
+        const actionButtons = setup.find(".tableRow__actionsWrapper button");
+        expect(actionButtons.first().prop("disabled")).toBe(true);
+    });
+
+    it("resolves row status from getRowStatus callback", async () => {
+        await act(async () => {
+            setup.setProps({
+                getRowStatus: (row) => (row.IsLocked ? "red" : "green")
+            });
+        });
+        setup.update();
+
+        const tableRows = setup.find("tbody.tableBody tr.tableRow");
+        expect(tableRows.at(0).hasClass("tableRow_status_red")).toBe(Boolean(mockData[0].IsLocked));
+        expect(tableRows.at(1).hasClass("tableRow_status_red")).toBe(Boolean(mockData[1].IsLocked));
+        expect(tableRows.at(1).hasClass("tableRow_status_green")).toBe(!mockData[1].IsLocked);
+    });
+
+    it("does not add row status modifier class when getRowStatus is not provided", () => {
+        const firstRow = setup.find("tbody.tableBody tr.tableRow").at(0);
+        expect(firstRow.hasClass("tableRow_status_red")).toBe(false);
+        expect(firstRow.hasClass("tableRow_status_default")).toBe(false);
+        expect(firstRow.hasClass("tableRow_status_highlighted")).toBe(false);
+    });
+
+    it("does not add row status modifier class when getRowStatus returns undefined", async () => {
+        await act(async () => {
+            setup.setProps({
+                getRowStatus: () => undefined
+            });
+        });
+        setup.update();
+
+        const firstRow = setup.find("tbody.tableBody tr.tableRow").at(0);
+        expect(firstRow.hasClass("tableRow_status_red")).toBe(false);
+        expect(firstRow.hasClass("tableRow_status_default")).toBe(false);
+    });
+
+    it("keeps row actions rendered with pagination and expanded rows", async () => {
+        const onActionClick = jest.fn(() => undefined);
+
+        await act(async () => {
+            setup.setProps({
+                data: mockData,
+                pagination: true,
+                renderExpandedRow: () => <div>Expanded Content</div>,
+                rowActions: [{ Icon: TestIcon, title: "Action", onClick: onActionClick }]
+            });
+        });
+        setup.update();
+
+        const expanderButton = setup.find("button").first();
+        await act(async () => {
+            expanderButton.simulate("click");
+        });
+        setup.update();
+
+        expect(setup.find(".tableRow__actionsWrapper")).toHaveLength(INITIAL_PAGE_SIZE);
+    });
+
+    it("calls onRowExpandChange callback when a row is expanded", async () => {
+        const onRowExpandChange = jest.fn();
+
+        await act(async () => {
+            setup.setProps({
+                data: mockData,
+                renderExpandedRow: () => <div>Expanded Content</div>,
+                onRowExpandChange
+            });
+        });
+        setup.update();
+
+        const expanderButton = setup.find("button").first();
+        await act(async () => {
+            expanderButton.simulate("click");
+        });
+        setup.update();
+
+        expect(onRowExpandChange).toHaveBeenCalled();
+        expect(onRowExpandChange).toHaveBeenCalledWith(
+            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.any(String) })
+        );
+    });
+
+    it("calls onRowExpandChange callback with correct payload when row is toggled", async () => {
+        const onRowExpandChange = jest.fn();
+
+        await act(async () => {
+            setup.setProps({
+                data: mockData,
+                renderExpandedRow: () => <div>Expanded Content</div>,
+                onRowExpandChange
+            });
+        });
+        setup.update();
+
+        const expanderButton = setup.find("button").first();
+
+        await act(async () => {
+            expanderButton.simulate("click");
+        });
+        setup.update();
+
+        expect(onRowExpandChange).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.any(String) })
+        );
+
+        await act(async () => {
+            expanderButton.simulate("click");
+        });
+        setup.update();
+
+        expect(onRowExpandChange).toHaveBeenCalledTimes(2);
+        expect(onRowExpandChange).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({ isExpanded: false, row: mockData[0], rowId: expect.any(String) })
+        );
+    });
+
+    it("does not call onRowExpandChange when renderExpandedRow is not provided", async () => {
+        const onRowExpandChange = jest.fn();
+
+        await act(async () => {
+            setup.setProps({ onRowExpandChange });
+        });
+        setup.update();
+
+        expect(onRowExpandChange).not.toHaveBeenCalled();
+    });
+});
+
+describe("Table Component - body cell memoization", () => {
+    const visibleData = mockData.slice(0, 3);
+
+    const buildSpyColumns = () => {
+        const renderSpy = jest.fn(({ value }: { value: unknown }) => <span>{String(value ?? "")}</span>);
+        const columns: DataTableColumn<MockDataType>[] = [
+            { accessorKey: "Id", header: "Id", renderCell: renderSpy },
+            { accessorKey: "Email", header: "Email", renderCell: renderSpy }
+        ];
+        return { renderSpy, columns };
+    };
+
+    const cellsRenderedFor = (renderSpy: jest.Mock, rowId: MockDataType["Id"]) =>
+        renderSpy.mock.calls.filter(([{ row }]) => row.Id === rowId).length;
+
+    it("does not re-render sibling rows' cells when one row toggles expanded; expander reflects new state", async () => {
+        const { renderSpy, columns } = buildSpyColumns();
+        const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
+            <DataTable columns={columns} data={visibleData} renderExpandedRow={() => <div>Expanded</div>} />
+        );
+
+        renderSpy.mockClear();
+
+        const firstExpanderButton = setupLocal.find("button[aria-label='Expand row']").at(0);
+        await act(async () => {
+            firstExpanderButton.simulate("click");
+        });
+        setupLocal.update();
+
+        // Sibling rows must not re-render — their snapshot inputs are unchanged.
+        expect(cellsRenderedFor(renderSpy, visibleData[1].Id)).toBe(0);
+        expect(cellsRenderedFor(renderSpy, visibleData[2].Id)).toBe(0);
+
+        // Row 0's data cells also don't re-render (their value/size didn't change),
+        // but the expander cell does — the snapshot's `isExpanded` flipped.
+        const expandedButtons = setupLocal.find("button[aria-expanded=true]");
+        expect(expandedButtons.length).toBe(1);
+
+        setupLocal.unmount();
+    });
+
+    it("does not re-render any cells when data array reference changes but row references are stable", async () => {
+        const { renderSpy, columns } = buildSpyColumns();
+        const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
+            <DataTable columns={columns} data={visibleData} />
+        );
+
+        renderSpy.mockClear();
+
+        await act(async () => {
+            setupLocal.setProps({ data: [...visibleData] });
+        });
+        setupLocal.update();
+
+        expect(renderSpy).not.toHaveBeenCalled();
+
+        setupLocal.unmount();
+    });
+
+    it("does not re-render cells when row references change but cell id/renderer stay stable", async () => {
+        const { renderSpy, columns } = buildSpyColumns();
+        const setupLocal: ReactWrapper<IDataTableProps<MockDataType>> = mount(
+            <DataTable columns={columns} data={visibleData} />
+        );
+
+        renderSpy.mockClear();
+
+        const cloned = visibleData.map((row) => ({ ...row }));
+        await act(async () => {
+            setupLocal.setProps({ data: cloned });
+        });
+        setupLocal.update();
+
+        expect(renderSpy).not.toHaveBeenCalled();
+
+        setupLocal.unmount();
     });
 });

@@ -142,4 +142,20 @@ describe("Pagination", () => {
         const pageText = setup.find(".pagination__nav_specific span").last().text();
         expect(pageText).toBe(customLabel);
     });
+
+    it("uses defaultCurrent as initial page in uncontrolled mode", () => {
+        setup = mount(<Pagination totalPages={10} defaultCurrent={4} />, {
+            wrappingComponent: GeneUIProvider
+        });
+
+        expect(setup.find(".pagination__nav_item_selected .pagination__nav_value").text()).toBe("4");
+    });
+
+    it("ignores defaultCurrent when current is controlled", () => {
+        setup = mount(<Pagination totalPages={10} current={2} defaultCurrent={6} onPageChange={jest.fn()} />, {
+            wrappingComponent: GeneUIProvider
+        });
+
+        expect(setup.find(".pagination__nav_item_selected .pagination__nav_value").text()).toBe("2");
+    });
 });

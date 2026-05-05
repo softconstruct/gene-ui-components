@@ -53,6 +53,18 @@ interface IPickerPopoverProps {
      * Whether the time picker is in 12-hour format.
      */
     is12Hour: boolean;
+    /**
+     * Custom texts for the component.
+     * @param {string} texts.amText - The text to display for AM (AM/A).
+     * @param {string} texts.pmText - The text to display for PM (P/P).
+     */
+    texts?: {
+        amText?: string;
+        pmText?: string;
+        hours?: string;
+        minutes?: string;
+        seconds?: string;
+    };
 }
 
 const PickerPopover: FC<IPickerPopoverProps> = ({
@@ -65,14 +77,15 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     onSelect,
     mobileHeightMode,
     parts,
-    is12Hour
+    is12Hour,
+    texts
 }) => {
     const hours = useMemo(() => (is12Hour ? HOURS_12 : HOURS_24), [is12Hour, HOURS_12, HOURS_24]);
 
-    const timeColumns: Array<{ header: TimePartKey; data: string[] }> = [
-        { header: "hours", data: hours },
-        { header: "minutes", data: MINUTES },
-        { header: "seconds", data: SECONDS }
+    const timeColumns: Array<{ header: TimePartKey; data: string[]; text: string }> = [
+        { header: "hours", data: hours, text: texts?.hours || "hours" },
+        { header: "minutes", data: MINUTES, text: texts?.minutes || "minutes" },
+        { header: "seconds", data: SECONDS, text: texts?.seconds || "seconds" }
     ];
 
     return (
@@ -88,7 +101,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         >
             <PopoverBody withPadding={false}>
                 <div className={classNames("timePicker__wrapper", `timePicker__wrapper_size_${size}`)}>
-                    {timeColumns.map(({ header, data }) => (
+                    {timeColumns.map(({ header, data, text }) => (
                         <div
                             key={header}
                             className="timePicker__column"
@@ -98,7 +111,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                             <div className="timePicker__headerWrapper">
                                 <div className="timePicker__header">
                                     <Text className="ellipsis-text" as="p" variant="bodyMediumSemibold">
-                                        {header}
+                                        {text}
                                     </Text>
                                 </div>
                             </div>
@@ -139,7 +152,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                                     `timePicker__pickerButton_size_${size}`
                                 )}
                             >
-                                AM
+                                {texts?.amText || "AM"}
                             </PickerButton>
                             <PickerButton
                                 selected={parts?.meridiem === "PM"}
@@ -150,7 +163,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                                     `timePicker__pickerButton_size_${size}`
                                 )}
                             >
-                                PM
+                                {texts?.pmText || "PM"}
                             </PickerButton>
                         </div>
                     )}

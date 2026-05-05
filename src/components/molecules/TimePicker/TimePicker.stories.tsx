@@ -31,7 +31,9 @@ const meta: Meta<typeof TimePicker> = {
         errorMessage: args({ control: "text", ...propCategory.content }),
         onPopoverToggle: args({ control: "false", ...propCategory.action }),
         onTimeSelect: args({ control: "false", ...propCategory.action }),
-        onTimeInputChange: args({ control: "false", ...propCategory.action })
+        onTimeInputChange: args({ control: "false", ...propCategory.action }),
+        is12Hour: args({ control: "boolean", ...propCategory.functionality }),
+        texts: args({ control: "object", ...propCategory.content })
     },
     args: {
         label: "Choose time",

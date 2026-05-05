@@ -1,12 +1,14 @@
-import React from "react";
-import { ColumnDef } from "@tanstack/react-table";
+import React, { FC, ReactNode } from "react";
 
 // Components
-import Button from "@components/atoms/Button";
+import Loader from "@components/atoms/Loader";
 import Pill from "@components/atoms/Pill";
 import Checkbox from "@components/molecules/Checkbox";
+import Empty from "@components/molecules/Empty";
 import NumberField from "@components/molecules/NumberField";
 import Switch from "@components/molecules/Switch";
+import DataTable from "@components/organisms/DataTable";
+import { DataTableColumn } from "@components/organisms/DataTable/types";
 
 type ClientProfile = {
     Id: number;
@@ -20,51 +22,124 @@ type ClientProfile = {
     Status: "new" | "active" | "inactive" | "suspended";
 };
 
-export const mockColumns: ColumnDef<ClientProfile>[] = [
+const ExpandedData: FC<{ data: string }> = ({ data }) => <div className="swapComponent">{data}</div>;
+
+const nestedTableColumns: DataTableColumn<ClientProfile>[] = [
+    { accessorKey: "Id", header: "Id" },
+    { accessorKey: "Email", header: "Email" },
+    { accessorKey: "Status", header: "Status" }
+];
+
+const nestedTableData: ClientProfile[] = [
+    {
+        Id: 9001,
+        FirstName: "Nested",
+        LastName: "Row 1",
+        DayOffs: 0,
+        Email: "nested.row1@mail.com",
+        IsVerified: true,
+        IsLocked: false,
+        Created: "2026/01/01",
+        Status: "active"
+    },
+    {
+        Id: 9002,
+        FirstName: "Nested",
+        LastName: "Row 2",
+        DayOffs: 0,
+        Email: "nested.row2@mail.com",
+        IsVerified: false,
+        IsLocked: false,
+        Created: "2026/01/02",
+        Status: "new"
+    },
+    {
+        Id: 9003,
+        FirstName: "Nested",
+        LastName: "Row 3",
+        DayOffs: 2,
+        Email: "nested.row3@mail.com",
+        IsVerified: true,
+        IsLocked: false,
+        Created: "2026/01/03",
+        Status: "inactive"
+    },
+    {
+        Id: 9004,
+        FirstName: "Nested",
+        LastName: "Row 4",
+        DayOffs: 1,
+        Email: "nested.row4@mail.com",
+        IsVerified: false,
+        IsLocked: true,
+        Created: "2026/01/04",
+        Status: "suspended"
+    },
+    {
+        Id: 9005,
+        FirstName: "Nested",
+        LastName: "Row 5",
+        DayOffs: 0,
+        Email: "nested.row5@mail.com",
+        IsVerified: true,
+        IsLocked: false,
+        Created: "2026/01/05",
+        Status: "active"
+    },
+    {
+        Id: 9006,
+        FirstName: "Nested",
+        LastName: "Row 6",
+        DayOffs: 3,
+        Email: "nested.row6@mail.com",
+        IsVerified: false,
+        IsLocked: false,
+        Created: "2026/01/06",
+        Status: "new"
+    },
+    {
+        Id: 9007,
+        FirstName: "Nested",
+        LastName: "Row 7",
+        DayOffs: 4,
+        Email: "nested.row7@mail.com",
+        IsVerified: true,
+        IsLocked: true,
+        Created: "2026/01/07",
+        Status: "inactive"
+    }
+];
+
+const defaultExpandedEmpty = (
+    <div style={{ display: "flex", justifyContent: "center" }}>
+        <Empty appearance="noData" title="No data" description="There is no extra information for this row." />
+    </div>
+);
+
+export const mockColumns: DataTableColumn<ClientProfile>[] = [
     { accessorKey: "Id", header: "Id" },
     {
         accessorKey: "IsVerified",
         header: "Verified",
-        cell: ({ getValue }) => {
-            const isVerified = getValue<boolean>();
-            return <Switch defaultChecked={isVerified} />;
-        }
+        renderCell: ({ value }) => <Switch defaultChecked={Boolean(value)} />
     },
     {
         accessorKey: "DayOffs",
         header: "Day offs",
-        cell: ({ getValue }) => {
-            return <NumberField defaultValue={Number(getValue())} />;
-        }
+        renderCell: ({ value }) => <NumberField size="small" defaultValue={Number(value)} />
     },
     {
         accessorKey: "Status",
         header: "Status",
-        cell: ({ getValue }) => {
-            const status = getValue<string>();
-            return <Pill text={status} />;
-        }
+        renderCell: ({ value }) => <Pill size="small" text={String(value)} />
     },
     { accessorKey: "FirstName", header: "First name" },
-    {
-        accessorKey: "Actions",
-        header: "Actions",
-        cell: () => (
-            <div style={{ display: "flex", gap: "1rem" }}>
-                <Button>View user data</Button>
-                <Button appearance="danger">Block user</Button>
-            </div>
-        )
-    },
     { accessorKey: "LastName", header: "Last name" },
     { accessorKey: "Email", header: "Email" },
     {
         accessorKey: "IsLocked",
         header: "Locked",
-        cell: ({ getValue }) => {
-            const isLocked = getValue<boolean>();
-            return <Checkbox defaultChecked={isLocked} />;
-        }
+        renderCell: ({ value }) => <Checkbox defaultChecked={Boolean(value)} />
     },
     { accessorKey: "Created", header: "Created" }
 ];
@@ -79,7 +154,7 @@ const baseMockData: ClientProfile[] = [
         Email: "darwin.lorem@example.com",
         IsVerified: false,
         IsLocked: true,
-        Created: "2026-01-14",
+        Created: "2026/01/14",
         Status: "new"
     },
     {
@@ -90,7 +165,7 @@ const baseMockData: ClientProfile[] = [
         Email: "alice.smith@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-02-05",
+        Created: "2026/02/05",
         Status: "active"
     },
     {
@@ -101,7 +176,7 @@ const baseMockData: ClientProfile[] = [
         Email: "marcus.finch@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-02-18",
+        Created: "2026/02/18",
         Status: "active"
     },
     {
@@ -112,7 +187,7 @@ const baseMockData: ClientProfile[] = [
         Email: "sophia.carter@example.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-03-01",
+        Created: "2026/03/01",
         Status: "new"
     },
     {
@@ -123,7 +198,7 @@ const baseMockData: ClientProfile[] = [
         Email: "liam.oconnor@example.com",
         IsVerified: true,
         IsLocked: true,
-        Created: "2026-01-22",
+        Created: "2026/01/22",
         Status: "inactive"
     },
     {
@@ -134,7 +209,7 @@ const baseMockData: ClientProfile[] = [
         Email: "emma.bridges@example.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-03-10",
+        Created: "2026/03/10",
         Status: "new"
     },
     {
@@ -145,7 +220,7 @@ const baseMockData: ClientProfile[] = [
         Email: "noah.patel@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-01-05",
+        Created: "2026/01/05",
         Status: "active"
     },
     {
@@ -156,7 +231,7 @@ const baseMockData: ClientProfile[] = [
         Email: "olivia.gomez@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-02-28",
+        Created: "2026/02/28",
         Status: "active"
     },
     {
@@ -167,7 +242,7 @@ const baseMockData: ClientProfile[] = [
         Email: "elijah.woodard@example.com",
         IsVerified: false,
         IsLocked: true,
-        Created: "2026-01-30",
+        Created: "2026/01/30",
         Status: "suspended"
     },
     {
@@ -178,7 +253,7 @@ const baseMockData: ClientProfile[] = [
         Email: "ava.nguyen@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-03-15",
+        Created: "2026/03/15",
         Status: "active"
     },
     {
@@ -189,7 +264,7 @@ const baseMockData: ClientProfile[] = [
         Email: "william.kim@example.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-03-18",
+        Created: "2026/03/18",
         Status: "new"
     },
     {
@@ -200,7 +275,7 @@ const baseMockData: ClientProfile[] = [
         Email: "isabella.martinez@example.com",
         IsVerified: true,
         IsLocked: true,
-        Created: "2026-01-11",
+        Created: "2026/01/11",
         Status: "inactive"
     },
     {
@@ -211,7 +286,7 @@ const baseMockData: ClientProfile[] = [
         Email: "james.taylor@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-02-14",
+        Created: "2026/02/14",
         Status: "active"
     },
     {
@@ -222,7 +297,7 @@ const baseMockData: ClientProfile[] = [
         Email: "mia.anderson@example.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-03-05",
+        Created: "2026/03/05",
         Status: "new"
     },
     {
@@ -233,7 +308,7 @@ const baseMockData: ClientProfile[] = [
         Email: "benjamin.thomas@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-01-28",
+        Created: "2026/01/28",
         Status: "active"
     },
     {
@@ -244,7 +319,7 @@ const baseMockData: ClientProfile[] = [
         Email: "charlotte.moore@example.com",
         IsVerified: true,
         IsLocked: true,
-        Created: "2026-02-09",
+        Created: "2026/02/09",
         Status: "suspended"
     },
     {
@@ -255,7 +330,7 @@ const baseMockData: ClientProfile[] = [
         Email: "lucas.jackson@example.com",
         IsVerified: false,
         IsLocked: false,
-        Created: "2026-03-12",
+        Created: "2026/03/12",
         Status: "new"
     },
     {
@@ -266,7 +341,7 @@ const baseMockData: ClientProfile[] = [
         Email: "amelia.white@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-01-19",
+        Created: "2026/01/19",
         Status: "active"
     },
     {
@@ -277,7 +352,7 @@ const baseMockData: ClientProfile[] = [
         Email: "henry.harris@example.com",
         IsVerified: false,
         IsLocked: true,
-        Created: "2026-02-25",
+        Created: "2026/02/25",
         Status: "inactive"
     },
     {
@@ -288,7 +363,7 @@ const baseMockData: ClientProfile[] = [
         Email: "harper.martin@example.com",
         IsVerified: true,
         IsLocked: false,
-        Created: "2026-03-08",
+        Created: "2026/03/08",
         Status: "active"
     }
 ];
@@ -305,3 +380,41 @@ export const mockData: ClientProfile[] = Array.from({ length: MOCK_DATA_SIZE }, 
         Email: `${source.FirstName.toLowerCase()}.${sequence}@mail.com`
     };
 });
+
+export function renderMockExpandedRow(row: ClientProfile): ReactNode {
+    let expansionKind: "text" | "nested" | "loader" | "empty" = "empty";
+
+    if (row.LastName.length > 200) {
+        expansionKind = "text";
+    } else if (row.Status === "active" && row.DayOffs === 0) {
+        expansionKind = "nested";
+    } else if (row.Status === "active" && row.DayOffs === 5) {
+        expansionKind = "loader";
+    }
+
+    switch (expansionKind) {
+        case "text":
+            return (
+                <ExpandedData data="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." />
+            );
+        case "nested":
+            return (
+                <DataTable
+                    columns={nestedTableColumns}
+                    data={nestedTableData}
+                    pagination={false}
+                    sticky={false}
+                    renderExpandedRow={renderMockExpandedRow}
+                />
+            );
+        case "loader":
+            return (
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                    <Loader size="large" text="Loading..." textPosition="below" />
+                </div>
+            );
+        case "empty":
+        default:
+            return defaultExpandedEmpty;
+    }
+}

@@ -1,13 +1,17 @@
 import React, { FC, ReactNode } from "react";
 import { Row } from "@tanstack/table-core";
 
-// Types
 // Components
 import { IButtonProps } from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import TableRow from "@components/organisms/DataTable/TableBody/Row/TableRow";
-import { ITableNoDataTexts } from "@components/organisms/DataTable/types";
+import {
+    DataTableGetRowStatus,
+    DataTableRenderExpandedRow,
+    IDataTableRowAction,
+    ITableNoDataTexts
+} from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableBody.scss";
@@ -45,6 +49,18 @@ interface ITableBody<TData> {
      * ]}
      */
     noDataAvailableActions?: IButtonProps[];
+    /**
+     * An array of action button objects to display in the row's action menu.
+     */
+    rowActions?: IDataTableRowAction<TData>[];
+    /**
+     * Resolves the visual status variant for a row from its data.
+     */
+    getRowStatus?: DataTableGetRowStatus<TData>;
+    /**
+     * Returns expanded row content for a given row.
+     */
+    renderExpandedRow?: DataTableRenderExpandedRow<TData>;
 }
 
 interface ITableEmptyDataWrapperProps {
@@ -74,7 +90,16 @@ const TableEmptyDataWrapper: FC<ITableEmptyDataWrapperProps> = ({ children }) =>
  * @param props - The properties for the component.
  * @returns The table body element, or a fallback UI (loader/empty state) depending on the data.
  */
-const TableBody = <TData,>({ rows, loading, loadingText, noDataTexts, noDataAvailableActions }: ITableBody<TData>) => {
+const TableBody = <TData,>({
+    rows,
+    loading,
+    loadingText,
+    noDataTexts,
+    noDataAvailableActions,
+    rowActions,
+    getRowStatus,
+    renderExpandedRow
+}: ITableBody<TData>) => {
     if (loading) {
         return (
             <TableEmptyDataWrapper>
@@ -99,7 +124,13 @@ const TableBody = <TData,>({ rows, loading, loadingText, noDataTexts, noDataAvai
     return (
         <tbody className="tableBody">
             {rows.map((row) => (
-                <TableRow key={row.id} row={row} />
+                <TableRow
+                    key={row.id}
+                    row={row}
+                    rowActions={rowActions}
+                    getRowStatus={getRowStatus}
+                    renderExpandedRow={renderExpandedRow}
+                />
             ))}
         </tbody>
     );

@@ -77,6 +77,18 @@ interface ITimePickerBaseProps {
      * @param open
      */
     onPopoverToggle?: (open: boolean) => void;
+    /**
+     * Custom texts for the component.
+     * @param {string} texts.amText - The text to display for AM (AM/A).
+     * @param {string} texts.pmText - The text to display for PM (P/P).
+     */
+    texts?: {
+        amText?: string;
+        pmText?: string;
+        hours?: string;
+        minutes?: string;
+        seconds?: string;
+    };
 }
 
 interface ISingleTimePickerProps extends ITimePickerBaseProps {
@@ -131,7 +143,8 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             onPopoverToggle,
             error,
             errorMessage,
-            is12Hour = false
+            is12Hour = false,
+            texts
         },
         ref
     ) => {
@@ -179,6 +192,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     onSelect={handleSelect}
                     parts={parts}
                     is12Hour={is12Hour}
+                    texts={texts}
                 />
             </div>
         );
@@ -208,7 +222,8 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             onPopoverToggle,
             error,
             is12Hour = false,
-            errorMessage
+            errorMessage,
+            texts
         },
         ref
     ) => {
@@ -263,6 +278,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     parts={activeField === "start" ? partsStart : partsEnd}
                     onSelect={handleSelect}
                     is12Hour={is12Hour}
+                    texts={texts}
                 />
             </div>
         );

@@ -1,15 +1,43 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
+import { Pencil, RecycleBin } from "@geneui/icons";
+
 import Pagination from "@components/molecules/Pagination";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
+import { mockColumns, mockData, renderMockExpandedRow } from "../../../../stories/data/__dataTable";
 // Components
-import DataTable, { IDataTableProps } from "./index";
+import DataTable, { DataTableRowStatus, IDataTableProps, IDataTableRowAction } from "./index";
 
 type MockRowType = (typeof mockData)[0];
+
+/** Row index in `mockData` (stable across pages for demo disabled rules). */
+const rowIndexInMockData = (row: MockRowType) => mockData.findIndex((r) => r.Id === row.Id);
+
+const defaultRowActions: IDataTableRowAction<MockRowType>[] = [
+    {
+        Icon: Pencil,
+        title: "Edit",
+        // Third row (index 2), seventh (6), ... - first action disabled
+        disabled: (row) => {
+            const i = rowIndexInMockData(row);
+            return i >= 0 && i % 4 === 2;
+        },
+        onClick: () => {}
+    },
+    {
+        Icon: RecycleBin,
+        title: "delete",
+        // First row (index 0), fifth (4), ... - second action disabled
+        disabled: (row) => {
+            const i = rowIndexInMockData(row);
+            return i >= 0 && i % 4 === 0;
+        },
+        onClick: () => {}
+    }
+];
 
 const meta: Meta<IDataTableProps<MockRowType>> = {
     title: "Organisms/DataTable",
@@ -18,13 +46,18 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         pagination: args({ control: "object", ...propCategory.functionality }),
+        manualPagination: args({ control: "object", ...propCategory.functionality }),
         columns: args({ control: "false", ...propCategory.content }),
         data: args({ control: "false", ...propCategory.content }),
         noDataTexts: args({ control: "object", ...propCategory.content }),
         loading: args({ control: "boolean", ...propCategory.states }),
         loadingText: args({ control: "text", ...propCategory.content }),
         noDataAvailableActions: args({ control: "false", ...propCategory.functionality }),
-        sticky: args({ control: "boolean", ...propCategory.appearance })
+        sticky: args({ control: "boolean", ...propCategory.appearance }),
+        renderExpandedRow: args({ control: "false", ...propCategory.content }),
+        onRowExpandChange: args({ control: "false", ...propCategory.functionality }),
+        rowActions: args({ control: "object", ...propCategory.functionality }),
+        getRowStatus: args({ control: "false", ...propCategory.appearance })
     },
     args: {}
 };
@@ -38,7 +71,9 @@ export const Default: Story = {
     args: {
         columns: mockColumns,
         data: mockData,
-        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
+        renderExpandedRow: (row) => renderMockExpandedRow(row),
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true },
+        rowActions: defaultRowActions
     }
 };
 
@@ -54,14 +89,27 @@ export const NoDataAvailable: Story = {
     }
 };
 
-export const Loading: Story = {
-    render: (props) => <DataTable {...props} />,
-    args: { columns: mockColumns, loading: true, loadingText: "Loading" }
-};
-
 export const WithPagination: Story = {
     render: (props) => <DataTable {...props} />,
     args: { columns: mockColumns, data: mockData, pagination: true }
+};
+
+export const RowStatusFromCallback: Story = {
+    render: (props) => <DataTable {...props} />,
+    args: {
+        columns: mockColumns,
+        data: mockData,
+        getRowStatus: (row) => {
+            let status: DataTableRowStatus | undefined;
+            if (row.Status === "new") {
+                status = "green";
+            } else if (row.Status === "suspended") {
+                status = "red";
+            }
+            return status;
+        },
+        pagination: { pageSize: 10, rowsPerPageOptions: [2, 10, 20, 50, 100], showInputPageField: true }
+    }
 };
 
 const AsyncPaginationTableWrapper = (props: IDataTableProps<MockRowType>) => {
