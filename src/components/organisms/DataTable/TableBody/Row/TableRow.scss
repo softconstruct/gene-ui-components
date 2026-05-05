@@ -17,6 +17,28 @@
         background-color: var(--guit-sem-color-background-neutral-1);
     }
 
+    &_status {
+        &_default:not(:active, :hover) {
+            background-color: var(--guit-sem-color-background-neutral-1);
+        }
+
+        &_zebra:not(:active, :hover) {
+            background-color: var(--guit-sem-color-background-neutral-3);
+        }
+
+        &_red:not(:active, :hover) {
+            background-color: var(--guit-sem-color-background-error-1);
+        }
+
+        &_green:not(:active, :hover) {
+            background-color: var(--guit-sem-color-background-success-1);
+        }
+
+        &_highlighted:not(:active, :hover) {
+            background-color: var(--guit-sem-color-background-brand-1);
+        }
+    }
+
     @include mixins.media-hover {
         &:hover {
             background-color: var(--guit-sem-color-background-neutral-3-hover);
