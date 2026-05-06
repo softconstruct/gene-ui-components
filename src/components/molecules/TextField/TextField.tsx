@@ -4,6 +4,7 @@ import React, {
     FocusEvent,
     forwardRef,
     HTMLAttributes,
+    KeyboardEvent,
     Ref,
     useEffect,
     useImperativeHandle,
@@ -118,6 +119,10 @@ interface ITextFieldProps {
      */
     onFocus?: (event: FocusEvent<HTMLInputElement>) => void;
     /**
+     * Callback triggered when user presses a key while input is focused.
+     */
+    onKeyDown?: (event: KeyboardEvent<HTMLInputElement>) => void;
+    /**
      * Callback triggered when input loses focus.
      * event - React blur event
      */
@@ -195,6 +200,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             IconAfter,
             onChange,
             onFocus,
+            onKeyDown,
             onBlur,
             readOnly,
             disabled,
@@ -331,6 +337,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                         onChange={handleChange}
                         onBlur={onBlur}
                         onFocus={onInputFocus}
+                        onKeyDown={onKeyDown}
                         aria-invalid={status === "error"}
                         aria-required={required}
                         {...inputConditionalProps}

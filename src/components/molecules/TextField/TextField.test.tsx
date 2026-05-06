@@ -111,6 +111,20 @@ describe("TextField ", () => {
         expect(wrapper.find("input").prop("value")).toEqual(value);
     });
 
+    it("calls onKeyDown prop on input keydown", () => {
+        const onKeyDown = jest.fn();
+        const wrapper = setup.setProps({ onKeyDown });
+
+        wrapper.find(".textField__input").simulate("keyDown", { key: "ArrowDown" });
+
+        expect(onKeyDown).toHaveBeenCalledTimes(1);
+        expect(onKeyDown).toHaveBeenCalledWith(
+            expect.objectContaining({
+                key: "ArrowDown"
+            })
+        );
+    });
+
     it("renders controlled component without onChange handler", () => {
         const initialValue = "initial";
         const typedValue = "user-typed";

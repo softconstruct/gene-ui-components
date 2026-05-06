@@ -24,6 +24,7 @@ const meta: Meta<ITextFieldProps> = {
         onChange: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
+        onKeyDown: args({ control: "false", ...propCategory.action }),
         onClear: args({ control: "false", ...propCategory.action }),
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
