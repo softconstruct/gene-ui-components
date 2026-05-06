@@ -1,4 +1,5 @@
 import React from "react";
+import { ColumnPinningState } from "@tanstack/react-table";
 import { Column } from "@tanstack/table-core";
 
 // Components
@@ -38,6 +39,20 @@ interface IToolbarProps<TData> {
      * Use this to customize or localize the button texts.
      */
     manageColumnsTexts?: ITableManageColumnsTexts;
+    /**
+     * The current column pinning state of the table.
+     */
+    columnPinning: ColumnPinningState;
+    /**
+     * The initial or default column pinning state of the table.
+     * Used by the child components to restore columns to their original state.
+     */
+    defaultColumnPinning: ColumnPinningState;
+    /**
+     * Callback function triggered when the user commits a new column pinning state.
+     * @param nextPinning
+     */
+    onApplyColumnPinning: (nextPinning: ColumnPinningState) => void;
 }
 
 const Toolbar = <TData,>({
@@ -46,12 +61,11 @@ const Toolbar = <TData,>({
     columnVisibility,
     defaultColumnVisibility,
     onApplyColumnVisibility,
-    manageColumnsTexts
+    manageColumnsTexts,
+    columnPinning,
+    defaultColumnPinning,
+    onApplyColumnPinning
 }: IToolbarProps<TData>) => {
-    const shouldRenderToolbar = isManageColumnsEnabled;
-
-    if (!shouldRenderToolbar) return null;
-
     return (
         <div className="tableToolbar">
             <ManageColumns
@@ -60,6 +74,10 @@ const Toolbar = <TData,>({
                 defaultColumnVisibility={defaultColumnVisibility}
                 onApplyColumnVisibility={onApplyColumnVisibility}
                 texts={manageColumnsTexts}
+                disabled={!isManageColumnsEnabled}
+                columnPinning={columnPinning}
+                defaultColumnPinning={defaultColumnPinning}
+                onApplyColumnPinning={onApplyColumnPinning}
             />
         </div>
     );

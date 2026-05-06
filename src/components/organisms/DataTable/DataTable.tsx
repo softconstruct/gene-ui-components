@@ -1,6 +1,7 @@
 import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     CellContext,
+    ColumnPinningState,
     ExpandedState,
     getCoreRowModel,
     getExpandedRowModel,
@@ -220,6 +221,7 @@ const DataTable = <TData,>({
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
+    const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({ left: [], right: [] });
 
     const handleExpandedChange = useCallback(
         (updaterOrValue: ExpandedState | ((old: ExpandedState) => ExpandedState)) => {
@@ -264,6 +266,10 @@ const DataTable = <TData,>({
         }, {});
     }, [tableColumns]);
 
+    const handleApplyColumnPinning = useCallback((nextPinning: ColumnPinningState) => {
+        setColumnPinning(nextPinning);
+    }, []);
+
     const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>(initialColumnVisibility);
 
     const table = useReactTable({
@@ -276,6 +282,7 @@ const DataTable = <TData,>({
         getExpandedRowModel: getExpandedRowModel(),
         onExpandedChange: handleExpandedChange,
         onColumnVisibilityChange: setColumnVisibility,
+        onColumnPinningChange: setColumnPinning,
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }
@@ -283,7 +290,8 @@ const DataTable = <TData,>({
         },
         state: {
             expanded,
-            columnVisibility
+            columnVisibility,
+            columnPinning
         }
     });
 
@@ -307,6 +315,9 @@ const DataTable = <TData,>({
                 columnVisibility={columnVisibility}
                 defaultColumnVisibility={initialColumnVisibility}
                 onApplyColumnVisibility={handleApplyColumnVisibility}
+                columnPinning={columnPinning}
+                defaultColumnPinning={{ left: [], right: [] }}
+                onApplyColumnPinning={handleApplyColumnPinning}
                 manageColumnsTexts={manageColumnsTexts}
             />
             <Scrollbar>

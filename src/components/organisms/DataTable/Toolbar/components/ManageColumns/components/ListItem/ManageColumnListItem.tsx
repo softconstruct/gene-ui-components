@@ -1,6 +1,8 @@
 import React from "react";
 import { Column } from "@tanstack/react-table";
 
+import { GripDots, Pin, PinFilled } from "@geneui/icons";
+
 // Components
 import Label from "@components/atoms/Label";
 import Checkbox from "@components/molecules/Checkbox";
@@ -23,18 +25,41 @@ interface IManageColumnListItemProps<TData> {
      * @param column - The column instance whose visibility state is being changed.
      */
     onChange: (column: Column<TData>) => void;
+    /**
+     * Indicates whether the column is currently pinned in the table.
+     */
+    isPinnedDraft: boolean;
+    /**
+     * Callback function triggered when the pin icon is clicked.
+     * @param column
+     */
+    onPinToggle: (column: Column<TData>) => void;
 }
 
-const ManageColumnListItem = <TData,>({ column, checked, onChange }: IManageColumnListItemProps<TData>) => {
+const ManageColumnListItem = <TData,>({
+    column,
+    checked,
+    onChange,
+    isPinnedDraft,
+    onPinToggle
+}: IManageColumnListItemProps<TData>) => {
     const { header } = column.columnDef;
     const headerText = typeof header === "string" ? header : "";
+
+    const PinIconElement = isPinnedDraft ? PinFilled : Pin;
 
     if (!headerText) return null;
 
     return (
         <div className="manageColumnListItem">
-            <Checkbox id={column.id} checked={checked} onChange={() => onChange(column)} />
-            <Label text={headerText} labelFor={column.id} />
+            <div className="manageColumnListItem__content">
+                <Checkbox id={column.id} checked={checked} onChange={() => onChange(column)} />
+                <Label text={headerText} labelFor={column.id} />
+            </div>
+            <div className="manageColumnListItem__actions">
+                <PinIconElement onClick={() => onPinToggle(column)} />
+                <GripDots />
+            </div>
         </div>
     );
 };

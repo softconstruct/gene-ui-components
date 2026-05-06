@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Column } from "@tanstack/react-table";
+import { Column, ColumnPinningState } from "@tanstack/react-table";
 
 import { Gear } from "@geneui/icons";
 
@@ -23,11 +23,6 @@ interface IManageColumnsProps<TData> {
      * @default "Manage columns"
      */
     label?: string;
-    /**
-     * Indicates whether the manage columns button should be disabled.
-     * @default false
-     */
-    disabled?: boolean;
     /**
      * TanStack runtime columns to be displayed in the popover.
      */
@@ -53,6 +48,24 @@ interface IManageColumnsProps<TData> {
      * Use this to customize or localize the button texts.
      */
     texts?: ITableManageColumnsTexts;
+    /**
+     * Indicates whether the manage columns button should be disabled.
+     * @default false
+     */
+    disabled?: boolean;
+    /**
+     * Current committed column pinning state.
+     */
+    columnPinning: ColumnPinningState;
+    /**
+     * Initial/default column pinning state used by Restore defaults.
+     */
+    defaultColumnPinning: ColumnPinningState;
+    /**
+     * Applies draft pinning to the actual table state.
+     * @param nextPinning
+     */
+    onApplyColumnPinning: (nextPinning: ColumnPinningState) => void;
 }
 
 const ManageColumns = <TData,>({
@@ -63,7 +76,10 @@ const ManageColumns = <TData,>({
     defaultColumnVisibility,
     onApplyColumnVisibility,
     onToggle,
-    texts
+    texts,
+    columnPinning,
+    defaultColumnPinning,
+    onApplyColumnPinning
 }: IManageColumnsProps<TData>) => {
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
@@ -79,14 +95,19 @@ const ManageColumns = <TData,>({
         openPopover,
         handleCancel,
         handleSave,
+        draftPinning,
         handleSearch,
         handleRestoreDefaults,
-        handleToggleColumnVisibility
+        handleToggleColumnVisibility,
+        handleToggleColumnPinning
     } = useManageColumns<TData>({
         columns,
         columnVisibility,
         defaultColumnVisibility,
         onApplyColumnVisibility,
+        columnPinning,
+        defaultColumnPinning,
+        onApplyColumnPinning,
         onToggle
     });
 
@@ -122,6 +143,8 @@ const ManageColumns = <TData,>({
                 onSave={handleSave}
                 onCancel={handleCancel}
                 onRestoreDefaults={handleRestoreDefaults}
+                draftPinning={draftPinning}
+                onColumnPinningChange={handleToggleColumnPinning}
                 texts={texts}
             />
         </>

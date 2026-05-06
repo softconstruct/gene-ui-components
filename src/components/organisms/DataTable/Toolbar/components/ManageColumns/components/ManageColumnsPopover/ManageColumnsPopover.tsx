@@ -1,5 +1,5 @@
 import React, { ChangeEvent, Dispatch, RefObject, SetStateAction } from "react";
-import { Column } from "@tanstack/react-table";
+import { Column, ColumnPinningState } from "@tanstack/react-table";
 
 import Button from "@components/atoms/Button";
 import { IPopoverRef, Popover, PopoverBody, PopoverFooter } from "@components/atoms/Popover";
@@ -71,6 +71,16 @@ interface IManageColumnsPopoverProps<TData> {
      * Use this to customize or localize the button texts.
      */
     texts?: ITableManageColumnsTexts;
+    /**
+     * The temporary (draft) pinning state of the columns.
+     * This holds the user's selections before they click "Save".'
+     */
+    draftPinning: ColumnPinningState;
+    /**
+     * Callback function triggered when a user toggles the pinning state of a column.
+     * @param column
+     */
+    onColumnPinningChange: (column: Column<TData>) => void;
 }
 
 const ManageColumnsPopover = <TData,>({
@@ -85,7 +95,9 @@ const ManageColumnsPopover = <TData,>({
     onSave,
     onCancel,
     onRestoreDefaults,
-    texts
+    texts,
+    draftPinning,
+    onColumnPinningChange
 }: IManageColumnsPopoverProps<TData>) => {
     const hasColumns = columns.length > 0;
 
@@ -100,14 +112,19 @@ const ManageColumnsPopover = <TData,>({
                 />
                 <Scrollbar>
                     {hasColumns ? (
-                        columns.map((column) => (
-                            <ManageColumnListItem
-                                key={column.id}
-                                onChange={onColumnVisibilityChange}
-                                column={column}
-                                checked={draftVisibility[column.id] ?? true}
-                            />
-                        ))
+                        columns.map((column) => {
+                            const isPinnedDraft = (draftPinning.left || []).includes(column.id);
+                            return (
+                                <ManageColumnListItem
+                                    key={column.id}
+                                    onChange={onColumnVisibilityChange}
+                                    column={column}
+                                    checked={draftVisibility[column.id] ?? true}
+                                    isPinnedDraft={isPinnedDraft}
+                                    onPinToggle={onColumnPinningChange}
+                                />
+                            );
+                        })
                     ) : (
                         <Empty appearance="noResult" />
                     )}
