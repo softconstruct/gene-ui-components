@@ -5,6 +5,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    cursor: pointer;
     border: none;
     border-radius: var(--guit-ref-radius-3xsmall);
     background-color: transparent;
@@ -70,6 +71,7 @@
 
     &_disabled {
         pointer-events: none;
+        cursor: default;
         color: var(--guit-sem-color-foreground-disabled);
     }
 

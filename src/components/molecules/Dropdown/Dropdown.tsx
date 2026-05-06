@@ -4,6 +4,7 @@ import React, {
     KeyboardEvent,
     MouseEvent,
     MutableRefObject,
+    RefCallback,
     useEffect,
     useMemo,
     useRef,
@@ -241,6 +242,8 @@ const Dropdown: FC<IDropdownProps> = ({
     const [popoverProps, setPopoverProps] = useState<Record<string, unknown>>({});
     const [internalSearchValue, setInternalSearchValue] = useState<string>(searchValue ?? defaultSearchValue ?? "");
     const triggerTextFieldRef = useRef<ITextFieldRef | null>(null);
+    const optionRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+    const pendingFocusIndexRef = useRef<number | null>(null);
     const [triggerInputWidth, setTriggerInputWidth] = useState(0);
     const { width: windowWidth } = useWindowSize();
 
@@ -343,11 +346,104 @@ const Dropdown: FC<IDropdownProps> = ({
         setIsOpen((prev) => !prev);
     };
 
+    const getFocusableOptionButtons = (): HTMLButtonElement[] => {
+        return filteredOptions
+            .filter((option) => !(disabled || readOnly || option.disabled))
+            .map((option) => optionRefs.current[option.value])
+            .filter((node): node is HTMLButtonElement => !!node);
+    };
+    const focusOptionByIndex = (index: number) => {
+        const focusableOptions = getFocusableOptionButtons();
+
+        if (!focusableOptions.length) return;
+        const safeIndex = Math.max(0, Math.min(index, focusableOptions.length - 1));
+        focusableOptions[safeIndex].focus();
+    };
+
+    const focusPendingOptionIfReady = () => {
+        if (pendingFocusIndexRef.current === null) return;
+        const focusableOptions = getFocusableOptionButtons();
+        if (!focusableOptions.length) return;
+
+        const safeIndex = Math.max(0, Math.min(pendingFocusIndexRef.current, focusableOptions.length - 1));
+        pendingFocusIndexRef.current = null;
+        focusableOptions[safeIndex].focus();
+    };
+
+    const searchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === "Escape" && isOpen) {
+            event.preventDefault();
+            setIsOpen(false);
+            return;
+        }
+        if (event.key !== "ArrowDown") return;
+        event.preventDefault();
+        focusOptionByIndex(0);
+    };
+
     const triggerKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === "Escape" && isOpen) {
+            event.preventDefault();
+            setIsOpen(false);
+            return;
+        }
         if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             toggleOpen();
         }
+
+        if (event.key === "ArrowDown") {
+            event.preventDefault();
+            if (!isOpen) {
+                pendingFocusIndexRef.current = 0;
+                setIsOpen(true);
+                return;
+            }
+            focusOptionByIndex(0);
+        }
+    };
+
+    const listKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === "Escape" && isOpen) {
+            event.preventDefault();
+            setIsOpen(false);
+            return;
+        }
+        if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+        const focusableOptions = getFocusableOptionButtons();
+        if (!focusableOptions.length) return;
+
+        const activeElement = document.activeElement as HTMLElement | null;
+        const currentIndex = focusableOptions.findIndex((item) => item === activeElement);
+
+        event.preventDefault();
+
+        if (event.key === "Home") {
+            focusableOptions[0].focus();
+            return;
+        }
+
+        if (event.key === "End") {
+            focusableOptions[focusableOptions.length - 1].focus();
+            return;
+        }
+
+        if (event.key === "ArrowDown") {
+            const nextIndex = currentIndex < 0 ? 0 : Math.min(currentIndex + 1, focusableOptions.length - 1);
+            focusableOptions[nextIndex].focus();
+            return;
+        }
+
+        const prevIndex = currentIndex < 0 ? 0 : Math.max(currentIndex - 1, 0);
+        focusableOptions[prevIndex].focus();
+    };
+
+    const createOptionRef = (optionValue: string): RefCallback<HTMLButtonElement> => {
+        return (node) => {
+            optionRefs.current[optionValue] = node;
+            if (!node) return;
+            focusPendingOptionIfReady();
+        };
     };
 
     const setSingleValue = (nextValue: string | null) => {
@@ -410,6 +506,14 @@ const Dropdown: FC<IDropdownProps> = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen, resetSearchOnClose]);
 
+    useEffect(() => {
+        if (!isOpen) {
+            pendingFocusIndexRef.current = null;
+            return;
+        }
+        focusPendingOptionIfReady();
+    }, [isOpen, filteredOptions, disabled, readOnly]);
+
     const selectAllChecked =
         !!filteredOptions.length &&
         filteredOptions.every((option) => option.disabled || selectedMultipleValues.includes(option.value));
@@ -426,7 +530,7 @@ const Dropdown: FC<IDropdownProps> = ({
         <div className={classNames("dropdown", className)}>
             <TextField
                 ref={triggerTextFieldRef}
-                className="dropdown__trigger"
+                className={classNames("dropdown__trigger", { dropdown__trigger_noSearch: !searchable })}
                 size={size}
                 disabled={disabled}
                 readOnly={readOnly}
@@ -450,7 +554,6 @@ const Dropdown: FC<IDropdownProps> = ({
                 position="bottom-center"
                 withArrow={false}
                 fitReference
-                mobileHeightMode="fit"
                 margin={MENU_GAP_FROM_TARGET}
             >
                 <PopoverBody withPadding={false} withScrollbar={false} className="dropdown__body">
@@ -460,6 +563,7 @@ const Dropdown: FC<IDropdownProps> = ({
                                 <TextField
                                     value={searchTerm}
                                     onChange={handleSearchChange}
+                                    onKeyDown={searchKeyDown}
                                     onClear={clearSearchHandler}
                                     clearable
                                     inputMode="search"
@@ -467,12 +571,12 @@ const Dropdown: FC<IDropdownProps> = ({
                                     placeholder={searchPlaceholder}
                                     IconBefore={Magnifier}
                                     size={size}
-                                    autoComplete="on"
+                                    autoComplete="off"
                                 />
                             </div>
                         )}
 
-                        {isMulti && (
+                        {isMulti && !loading && !!filteredOptions.length && (
                             <div className="dropdown__actions">
                                 <Checkbox
                                     label={selectAllLabel}
@@ -485,7 +589,7 @@ const Dropdown: FC<IDropdownProps> = ({
                                     layout="text"
                                     size="small"
                                     onClick={clearAllHandler}
-                                    disabled={!selectedMultipleValues.length || loading || disabled || readOnly}
+                                    disabled={!selectedMultiOptions.length || loading || disabled || readOnly}
                                 >
                                     {clearLabel}
                                 </Button>
@@ -505,6 +609,8 @@ const Dropdown: FC<IDropdownProps> = ({
                                                 role="listbox"
                                                 aria-multiselectable={isMulti}
                                                 className="dropdown__list"
+                                                tabIndex={-1}
+                                                onKeyDown={listKeyDown}
                                             >
                                                 {filteredOptions.map((option) => (
                                                     <DropdownItem
@@ -522,6 +628,7 @@ const Dropdown: FC<IDropdownProps> = ({
                                                         textAfter={option.textAfter}
                                                         size={size}
                                                         onClick={() => optionSelectHandler(option)}
+                                                        buttonRef={createOptionRef(option.value)}
                                                     />
                                                 ))}
                                             </div>

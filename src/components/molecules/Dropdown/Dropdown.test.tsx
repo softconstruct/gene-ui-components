@@ -75,6 +75,13 @@ describe("Dropdown ", () => {
         expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1");
     });
 
+    it("adds no-search trigger modifier to hide caret when search is disabled", () => {
+        setup.setProps({ searchable: false });
+        setup.update();
+
+        expect(setup.find(".dropdown__trigger_noSearch").exists()).toBeTruthy();
+    });
+
     it("shows compact selected text with +N suffix in multiselect", () => {
         setup.setProps({
             variant: "multi",
@@ -253,5 +260,44 @@ describe("Dropdown ", () => {
         setup.setProps({ loading: false, options: [], emptyText: "No records" });
         setup.update();
         expect(setup.find(".empty").exists()).toBeTruthy();
+    });
+
+    it("opens and focuses first option with ArrowDown from trigger", () => {
+        setup.setProps({ searchable: false });
+
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("keyDown", { key: "ArrowDown" });
+        act(() => undefined);
+        setup.update();
+
+        const firstOption = setup.find(".dropdownItem").at(0).getDOMNode() as HTMLButtonElement;
+        expect(document.activeElement).toBe(firstOption);
+    });
+
+    it("closes on Escape when opened", () => {
+        setup.setProps({ searchable: true });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+        expect(setup.find(".dropdownItem").exists()).toBeTruthy();
+
+        setup.find(".dropdown__search input.textField__input").simulate("keyDown", { key: "Escape" });
+        setup.update();
+
+        expect(setup.find(".dropdownItem").exists()).toBeFalsy();
+    });
+
+    it("focuses first option on ArrowDown from search input", () => {
+        jest.useFakeTimers();
+        setup.setProps({ searchable: true });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        setup.find(".dropdown__search input.textField__input").simulate("keyDown", { key: "ArrowDown" });
+        act(() => {
+            jest.advanceTimersByTime(0);
+        });
+        setup.update();
+
+        const firstOption = setup.find(".dropdownItem").at(0).getDOMNode() as HTMLButtonElement;
+        expect(document.activeElement).toBe(firstOption);
     });
 });

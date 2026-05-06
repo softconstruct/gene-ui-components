@@ -5,6 +5,13 @@
 
     &__trigger {
         width: 100%;
+
+        // TODO: this is a temporary workaround
+        &_noSearch {
+            .textField__input {
+                caret-color: transparent;
+            }
+        }
     }
 
     &__body {

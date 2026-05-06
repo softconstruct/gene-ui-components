@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, Ref } from "react";
 import classNames from "classnames";
 
 import { CheckMark, IconProps } from "@geneui/icons";
@@ -24,6 +24,7 @@ export interface IDropdownItemProps {
     infoText?: string;
     textAfter?: string;
     onClick?: () => void;
+    buttonRef?: Ref<HTMLButtonElement>;
 }
 
 const DropdownItem: FC<IDropdownItemProps> = ({
@@ -36,7 +37,8 @@ const DropdownItem: FC<IDropdownItemProps> = ({
     size = "medium",
     infoText,
     textAfter,
-    onClick
+    onClick,
+    buttonRef
 }) => {
     return (
         <button
@@ -56,6 +58,7 @@ const DropdownItem: FC<IDropdownItemProps> = ({
             disabled={disabled}
             role="option"
             aria-selected={selected}
+            ref={buttonRef}
         >
             <span className="dropdownItem__main">
                 {variant === "multi" && (
