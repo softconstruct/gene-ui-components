@@ -83,7 +83,12 @@ const ManageColumnListItem = <TData,>({
             style={{ opacity: isDragging ? 0.4 : 1, transition: "opacity 0.2s ease" }}
         >
             <div className="manageColumnListItem__content">
-                <Checkbox id={column.id} checked={checked} onChange={() => onChange(column)} />
+                <Checkbox
+                    id={column.id}
+                    checked={checked}
+                    onChange={() => onChange(column)}
+                    className="manageColumnListItem__checkbox"
+                />
                 <Label text={headerText} labelFor={column.id} />
             </div>
             <div className="manageColumnListItem__actions">
