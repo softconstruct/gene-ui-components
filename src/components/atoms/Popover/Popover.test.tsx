@@ -13,6 +13,7 @@ import PopoverFooter, { IPopoverFooterActionProps } from "./PopoverFooter";
 
 describe("Popover", () => {
     let setup: ReactWrapper<IPopoverProps>;
+    const initialInnerWidth = window.innerWidth;
 
     const Component = (
         <Popover size="small" margin={0} setProps={() => {}}>
@@ -36,6 +37,12 @@ describe("Popover", () => {
 
     afterEach(() => {
         setup.unmount();
+        Object.defineProperty(window, "innerWidth", {
+            configurable: true,
+            writable: true,
+            value: initialInnerWidth
+        });
+        window.dispatchEvent(new Event("resize"));
     });
 
     it("renders without crashing", () => {
@@ -51,6 +58,50 @@ describe("Popover", () => {
         const title = "test";
         setup.setProps({ open: true, title });
         expect(provider().find(".popover__header").text()).toBe(title);
+    });
+
+    it("renders Spreadsheet on mobile by default", () => {
+        Object.defineProperty(window, "innerWidth", {
+            configurable: true,
+            writable: true,
+            value: 320
+        });
+        window.dispatchEvent(new Event("resize"));
+
+        const wrapper = mount(
+            <Popover size="small" margin={0} setProps={() => {}} open>
+                <PopoverBody>
+                    <div className="swapComponent" />
+                </PopoverBody>
+            </Popover>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        expect(wrapper.getWrappingComponent().find(".spreadsheet").exists()).toBeTruthy();
+        wrapper.unmount();
+    });
+
+    it("keeps regular popover on mobile when disableMobileSpreadsheet is true", () => {
+        Object.defineProperty(window, "innerWidth", {
+            configurable: true,
+            writable: true,
+            value: 320
+        });
+        window.dispatchEvent(new Event("resize"));
+
+        const wrapper = mount(
+            <Popover size="small" margin={0} setProps={() => {}} open disableMobileSpreadsheet>
+                <PopoverBody>
+                    <div className="swapComponent" />
+                </PopoverBody>
+            </Popover>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        const wrapped = wrapper.getWrappingComponent();
+        expect(wrapped.find(".spreadsheet").exists()).toBeFalsy();
+        expect(wrapped.find(".popover").exists()).toBeTruthy();
+        wrapper.unmount();
     });
 
     it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "fitContent"])(
