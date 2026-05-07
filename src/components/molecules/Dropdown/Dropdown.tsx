@@ -333,6 +333,8 @@ const Dropdown: FC<IDropdownProps> = ({
         return { visibleText: selectedSingleOption?.label || "", suffixText: "" };
     }, [isMulti, selectedMultiOptions, selectedSingleOption, triggerInputWidth]);
 
+    const shouldShowSearch = searchable && !loading && (!!options.length || !!searchTerm.trim().length);
+
     const filteredOptions = useMemo(() => {
         if (!searchable || isExternalSearch) {
             return options;
@@ -545,10 +547,11 @@ const Dropdown: FC<IDropdownProps> = ({
         <div className={classNames("dropdown", className)}>
             <TextField
                 ref={triggerTextFieldRef}
-                className={classNames("dropdown__trigger", { dropdown__trigger_noSearch: !searchable })}
+                className="dropdown__trigger"
                 size={size}
                 disabled={disabled}
                 readOnly={readOnly}
+                inputBehavior="trigger"
                 status={status}
                 required={required}
                 label={label}
@@ -574,7 +577,7 @@ const Dropdown: FC<IDropdownProps> = ({
             >
                 <PopoverBody withPadding={false} withScrollbar={false} className="dropdown__body">
                     <div className="dropdown__content">
-                        {searchable && (
+                        {shouldShowSearch && (
                             <div className="dropdown__search">
                                 <TextField
                                     value={searchTerm}

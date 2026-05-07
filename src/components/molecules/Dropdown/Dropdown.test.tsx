@@ -75,11 +75,29 @@ describe("Dropdown ", () => {
         expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1");
     });
 
-    it("adds no-search trigger modifier to hide caret when search is disabled", () => {
+    it("renders a presentational trigger input when search is disabled", () => {
         setup.setProps({ searchable: false });
         setup.update();
 
-        expect(setup.find(".dropdown__trigger_noSearch").exists()).toBeTruthy();
+        const triggerInput = setup.find(".dropdown__trigger input.textField__input").at(0);
+        expect(triggerInput.prop("readOnly")).toBe(true);
+        expect(triggerInput.prop("role")).toBe("presentation");
+        expect(setup.find(".dropdown__trigger .textField__wrapper").at(0).hasClass("textField__wrapper_readOnly")).toBe(
+            false
+        );
+    });
+
+    it("renders trigger semantics on trigger input when search is enabled", () => {
+        setup.setProps({ searchable: true });
+        setup.update();
+
+        const triggerInput = setup.find(".dropdown__trigger input.textField__input").at(0);
+        const triggerWrapper = setup.find(".dropdown__trigger .textField__wrapper").at(0);
+        expect(triggerInput.prop("readOnly")).toBe(true);
+        expect(triggerInput.prop("role")).toBe("presentation");
+        expect(triggerInput.prop("tabIndex")).toBe(-1);
+        expect(triggerWrapper.prop("role")).toBe("button");
+        expect(triggerWrapper.prop("tabIndex")).toBe(0);
     });
 
     it("shows compact selected text with +N suffix in multiselect", () => {

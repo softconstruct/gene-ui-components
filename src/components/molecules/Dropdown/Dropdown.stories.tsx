@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { fn } from "@storybook/test";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -43,7 +45,10 @@ const meta: Meta<IDropdownProps> = {
         status: "rest",
         searchable: true,
         loadingText: "Loading info",
-        emptyText: "No data"
+        emptyText: "No data",
+        onOpenChange: fn(),
+        onChange: fn(),
+        onSearchChange: fn()
     }
 };
 
