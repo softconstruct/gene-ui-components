@@ -1,5 +1,6 @@
 import React, { ChangeEvent, Dispatch, RefObject, SetStateAction, useEffect } from "react";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { Column, ColumnPinningState } from "@tanstack/react-table";
 
 import Button from "@components/atoms/Button";
@@ -67,8 +68,7 @@ interface IManageColumnsPopoverProps<TData> {
      * @param sourceId
      * @param destinationId
      */
-    onColumnReorder: (sourceId: string, destinationId: string) => void;
-
+    onColumnReorder: (sourceId: string, destinationId: string, edge: string | null) => void;
     /**
      * Callback function triggered when the user clicks the "Save" button.
      * Applies the draft changes to the actual table state.
@@ -119,8 +119,10 @@ const ManageColumnsPopover = <TData,>({
                 const sourceId = source.data.id as string;
                 const destId = destination.data.id as string;
 
+                const closestEdgeOfTarget = extractClosestEdge(destination.data);
+
                 if (sourceId && destId && sourceId !== destId) {
-                    onColumnReorder(sourceId, destId);
+                    onColumnReorder(sourceId, destId, closestEdgeOfTarget);
                 }
             }
         });

@@ -131,7 +131,7 @@ export const useManageColumns = <TData>({
         });
     };
 
-    const handleColumnReorder = (sourceId: string, destinationId: string) => {
+    const handleColumnReorder = (sourceId: string, destinationId: string, edge: string | null) => {
         setDraftColumnOrder((prev) => {
             const newOrder = [...prev];
             const sourceIndex = newOrder.indexOf(sourceId);
@@ -140,7 +140,15 @@ export const useManageColumns = <TData>({
             if (sourceIndex === -1 || destIndex === -1) return prev;
 
             newOrder.splice(sourceIndex, 1);
-            newOrder.splice(destIndex, 0, sourceId);
+
+            let finalIndex = destIndex;
+            if (sourceIndex < destIndex) {
+                finalIndex = edge === "bottom" ? destIndex : destIndex - 1;
+            } else {
+                finalIndex = edge === "bottom" ? destIndex + 1 : destIndex;
+            }
+
+            newOrder.splice(finalIndex, 0, sourceId);
             return newOrder;
         });
     };

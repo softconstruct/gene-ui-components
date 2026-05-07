@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
+import { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/types";
 import { Column } from "@tanstack/react-table";
 
 import { GripDots, Pin, PinFilled } from "@geneui/icons";
@@ -53,6 +55,7 @@ const ManageColumnListItem = <TData,>({
     const itemRef = useRef<HTMLDivElement>(null);
     const dragHandleRef = useRef<HTMLDivElement>(null);
     const [isDragging, setIsDragging] = useState(false);
+    const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
 
     useEffect(() => {
         const el = itemRef.current;
@@ -69,7 +72,14 @@ const ManageColumnListItem = <TData,>({
             }),
             dropTargetForElements({
                 element: el,
-                getData: () => ({ id: column.id })
+
+                getData: ({ input }) =>
+                    attachClosestEdge({ id: column.id }, { element: el, input, allowedEdges: ["top", "bottom"] }),
+
+                onDragEnter: (args) => setClosestEdge(extractClosestEdge(args.self.data)),
+                onDrag: (args) => setClosestEdge(extractClosestEdge(args.self.data)),
+                onDragLeave: () => setClosestEdge(null),
+                onDrop: () => setClosestEdge(null)
             })
         );
     }, [column.id]);
@@ -80,8 +90,11 @@ const ManageColumnListItem = <TData,>({
         <div
             ref={itemRef}
             className="manageColumnListItem"
-            style={{ opacity: isDragging ? 0.4 : 1, transition: "opacity 0.2s ease" }}
+            style={{ position: "relative", opacity: isDragging ? 0.4 : 1, transition: "opacity 0.2s ease" }}
         >
+            {closestEdge === "top" && (
+                <div className="manageColumnListItem__dropIndicator manageColumnListItem__dropIndicator--top" />
+            )}
             <div className="manageColumnListItem__content">
                 <Checkbox
                     id={column.id}
@@ -97,6 +110,9 @@ const ManageColumnListItem = <TData,>({
                     <GripDots />
                 </div>
             </div>
+            {closestEdge === "bottom" && (
+                <div className="manageColumnListItem__dropIndicator manageColumnListItem__dropIndicator--bottom" />
+            )}
         </div>
     );
 };
