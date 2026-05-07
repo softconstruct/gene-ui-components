@@ -1,4 +1,5 @@
-import React, { ChangeEvent, Dispatch, RefObject, SetStateAction } from "react";
+import React, { ChangeEvent, Dispatch, RefObject, SetStateAction, useEffect } from "react";
+import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Column, ColumnPinningState } from "@tanstack/react-table";
 
 import Button from "@components/atoms/Button";
@@ -41,19 +42,35 @@ interface IManageColumnsPopoverProps<TData> {
      * The array of filtered TanStack Table columns to be displayed in the list.
      */
     columns: Column<TData>[];
-    /**
-     * The temporary (draft) visibility state of the columns.
-     * This holds the user's selections before they click "Save".
-     */
+
     draftVisibility: ColumnVisibilityState;
     /**
      * Callback function triggered when a user toggles the checkbox for a specific column.
      * @param column - The column instance whose visibility is being toggled.
      */
     onColumnVisibilityChange: (column: Column<TData>) => void;
+
+    /**
+     * Column pinning state used by the Manage Columns popover.
+     * @default { left: [], right: [] }
+     */
+    draftPinning: ColumnPinningState;
+    /**
+     * Callback function triggered when a user toggles the pinning state of a column.
+     * @param column
+     */
+    onColumnPinningChange: (column: Column<TData>) => void;
+
+    /**
+     * Callback function triggered when a user reorders columns by dragging and dropping them.
+     * @param sourceId
+     * @param destinationId
+     */
+    onColumnReorder: (sourceId: string, destinationId: string) => void;
+
     /**
      * Callback function triggered when the user clicks the "Save" button.
-     * Applies the `draftVisibility` to the actual table state.
+     * Applies the draft changes to the actual table state.
      */
     onSave: () => void;
     /**
@@ -71,16 +88,6 @@ interface IManageColumnsPopoverProps<TData> {
      * Use this to customize or localize the button texts.
      */
     texts?: ITableManageColumnsTexts;
-    /**
-     * The temporary (draft) pinning state of the columns.
-     * This holds the user's selections before they click "Save".'
-     */
-    draftPinning: ColumnPinningState;
-    /**
-     * Callback function triggered when a user toggles the pinning state of a column.
-     * @param column
-     */
-    onColumnPinningChange: (column: Column<TData>) => void;
 }
 
 const ManageColumnsPopover = <TData,>({
@@ -92,14 +99,31 @@ const ManageColumnsPopover = <TData,>({
     columns,
     draftVisibility,
     onColumnVisibilityChange,
+    draftPinning,
+    onColumnPinningChange,
+    onColumnReorder,
     onSave,
     onCancel,
     onRestoreDefaults,
-    texts,
-    draftPinning,
-    onColumnPinningChange
+    texts
 }: IManageColumnsPopoverProps<TData>) => {
     const hasColumns = columns.length > 0;
+
+    useEffect(() => {
+        return monitorForElements({
+            onDrop({ source, location }) {
+                const destination = location.current.dropTargets[0];
+                if (!destination) return;
+
+                const sourceId = source.data.id as string;
+                const destId = destination.data.id as string;
+
+                if (sourceId && destId && sourceId !== destId) {
+                    onColumnReorder(sourceId, destId);
+                }
+            }
+        });
+    }, [onColumnReorder]);
 
     return (
         <Popover ref={popoverRef} withArrow={false} open={open} setProps={setProps} onClose={onClose}>
@@ -114,12 +138,13 @@ const ManageColumnsPopover = <TData,>({
                     {hasColumns ? (
                         columns.map((column) => {
                             const isPinnedDraft = (draftPinning.left || []).includes(column.id);
+
                             return (
                                 <ManageColumnListItem
                                     key={column.id}
-                                    onChange={onColumnVisibilityChange}
                                     column={column}
                                     checked={draftVisibility[column.id] ?? true}
+                                    onChange={onColumnVisibilityChange}
                                     isPinnedDraft={isPinnedDraft}
                                     onPinToggle={onColumnPinningChange}
                                 />

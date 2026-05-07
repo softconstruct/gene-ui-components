@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Column, ColumnPinningState } from "@tanstack/react-table";
+import { Column, ColumnOrderState, ColumnPinningState } from "@tanstack/react-table";
 
 import { Gear } from "@geneui/icons";
 
@@ -27,9 +27,7 @@ interface IManageColumnsProps<TData> {
      * TanStack runtime columns to be displayed in the popover.
      */
     columns?: Column<TData>[];
-    /**
-     * Current committed column visibility state.
-     */
+
     columnVisibility: ColumnVisibilityState;
     /**
      * Initial/default column visibility state used by Restore defaults.
@@ -39,8 +37,40 @@ interface IManageColumnsProps<TData> {
      * Applies draft visibility to the actual table state.
      */
     onApplyColumnVisibility: (nextVisibility: ColumnVisibilityState) => void;
+
     /**
-     * Callback function triggered when the popover is toggled.
+     * Column pinning state used by the Manage Columns popover.
+     * @default { left: [], right: [] }
+     */
+    columnPinning: ColumnPinningState;
+    /**
+     * Initial/default column pinning state used by Restore defaults.
+     */
+    defaultColumnPinning: ColumnPinningState;
+    /**
+     * Applies draft pinning to the actual table state.
+     * @param nextPinning
+     */
+    onApplyColumnPinning: (nextPinning: ColumnPinningState) => void;
+
+    /**
+     * Column order state used by the Manage Columns popover.
+     * @default []
+     */
+    columnOrder: ColumnOrderState;
+    /**
+     * Initial/default column order state used by Restore defaults.
+     */
+    defaultColumnOrder: ColumnOrderState;
+    /**
+     * Applies draft order to the actual table state.
+     * @param nextOrder
+     */
+    onApplyColumnOrder: (nextOrder: ColumnOrderState) => void;
+
+    /**
+     * Callback function triggered when the popover is opened or closed.
+     * @param open
      */
     onToggle?: (open: boolean) => void;
     /**
@@ -53,19 +83,6 @@ interface IManageColumnsProps<TData> {
      * @default false
      */
     disabled?: boolean;
-    /**
-     * Current committed column pinning state.
-     */
-    columnPinning: ColumnPinningState;
-    /**
-     * Initial/default column pinning state used by Restore defaults.
-     */
-    defaultColumnPinning: ColumnPinningState;
-    /**
-     * Applies draft pinning to the actual table state.
-     * @param nextPinning
-     */
-    onApplyColumnPinning: (nextPinning: ColumnPinningState) => void;
 }
 
 const ManageColumns = <TData,>({
@@ -75,11 +92,14 @@ const ManageColumns = <TData,>({
     columnVisibility,
     defaultColumnVisibility,
     onApplyColumnVisibility,
-    onToggle,
-    texts,
     columnPinning,
     defaultColumnPinning,
-    onApplyColumnPinning
+    onApplyColumnPinning,
+    columnOrder,
+    defaultColumnOrder,
+    onApplyColumnOrder,
+    onToggle,
+    texts
 }: IManageColumnsProps<TData>) => {
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
@@ -91,15 +111,18 @@ const ManageColumns = <TData,>({
         propsForPopover,
         setPropsForPopover,
         columnsToRender,
+
         draftVisibility,
+        draftPinning,
+
         openPopover,
         handleCancel,
         handleSave,
-        draftPinning,
         handleSearch,
         handleRestoreDefaults,
         handleToggleColumnVisibility,
-        handleToggleColumnPinning
+        handleToggleColumnPinning,
+        handleColumnReorder
     } = useManageColumns<TData>({
         columns,
         columnVisibility,
@@ -108,6 +131,9 @@ const ManageColumns = <TData,>({
         columnPinning,
         defaultColumnPinning,
         onApplyColumnPinning,
+        columnOrder,
+        defaultColumnOrder,
+        onApplyColumnOrder,
         onToggle
     });
 
@@ -140,11 +166,12 @@ const ManageColumns = <TData,>({
                 columns={columnsToRender}
                 draftVisibility={draftVisibility}
                 onColumnVisibilityChange={handleToggleColumnVisibility}
+                draftPinning={draftPinning}
+                onColumnPinningChange={handleToggleColumnPinning}
+                onColumnReorder={handleColumnReorder}
                 onSave={handleSave}
                 onCancel={handleCancel}
                 onRestoreDefaults={handleRestoreDefaults}
-                draftPinning={draftPinning}
-                onColumnPinningChange={handleToggleColumnPinning}
                 texts={texts}
             />
         </>

@@ -1,19 +1,38 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { Column, ColumnPinningState } from "@tanstack/react-table";
+import { Column, ColumnOrderState, ColumnPinningState } from "@tanstack/react-table";
 
 // Types
 import { ColumnVisibilityState } from "@components/organisms/DataTable/types";
 
 interface IUseManageColumnsParams<TData> {
     columns: Column<TData>[];
+
     columnVisibility: ColumnVisibilityState;
     defaultColumnVisibility: ColumnVisibilityState;
     onApplyColumnVisibility: (nextVisibility: ColumnVisibilityState) => void;
+
     columnPinning: ColumnPinningState;
     defaultColumnPinning: ColumnPinningState;
     onApplyColumnPinning: (nextPinning: ColumnPinningState) => void;
+
+    columnOrder: ColumnOrderState;
+    defaultColumnOrder: ColumnOrderState;
+    onApplyColumnOrder: (nextOrder: ColumnOrderState) => void;
+
     onToggle?: (open: boolean) => void;
 }
+
+const sortColumns = <TData>(cols: Column<TData>[], order: string[]) => {
+    if (!order.length) return cols;
+    return [...cols].sort((a, b) => {
+        const aIndex = order.indexOf(a.id);
+        const bIndex = order.indexOf(b.id);
+        if (aIndex === -1 && bIndex === -1) return 0;
+        if (aIndex === -1) return 1;
+        if (bIndex === -1) return -1;
+        return aIndex - bIndex;
+    });
+};
 
 export const useManageColumns = <TData>({
     columns,
@@ -23,38 +42,47 @@ export const useManageColumns = <TData>({
     columnPinning,
     defaultColumnPinning,
     onApplyColumnPinning,
+    columnOrder,
+    defaultColumnOrder,
+    onApplyColumnOrder,
     onToggle
 }: IUseManageColumnsParams<TData>) => {
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [propsForPopover, setPropsForPopover] = useState<Record<string, unknown>>({});
-    const [columnsToRender, setColumnsToRender] = useState<Column<TData>[]>(columns);
+
+    const initialOrder = columnOrder.length ? columnOrder : defaultColumnOrder;
+
+    const [columnsToRender, setColumnsToRender] = useState<Column<TData>[]>(sortColumns(columns, initialOrder));
 
     const [draftVisibility, setDraftVisibility] = useState<ColumnVisibilityState>(columnVisibility);
     const [draftPinning, setDraftPinning] = useState<ColumnPinningState>(columnPinning);
+    const [draftColumnOrder, setDraftColumnOrder] = useState<ColumnOrderState>(initialOrder);
 
     const openPopover = () => {
+        const currentOrder = columnOrder.length ? columnOrder : defaultColumnOrder;
         setDraftVisibility(columnVisibility);
         setDraftPinning(columnPinning);
-        setColumnsToRender(columns);
+        setDraftColumnOrder(currentOrder);
+        setColumnsToRender(sortColumns(columns, currentOrder));
         setPopoverOpen(true);
         onToggle?.(true);
     };
 
     const closePopover = () => {
         setPopoverOpen(false);
-        setColumnsToRender(columns);
         setDraftVisibility(columnVisibility);
         setDraftPinning(columnPinning);
+        setDraftColumnOrder(columnOrder.length ? columnOrder : defaultColumnOrder);
+        setColumnsToRender(sortColumns(columns, columnOrder.length ? columnOrder : defaultColumnOrder));
         onToggle?.(false);
     };
 
-    const handleCancel = () => {
-        closePopover();
-    };
+    const handleCancel = () => closePopover();
 
     const handleSave = () => {
         onApplyColumnVisibility(draftVisibility);
         onApplyColumnPinning(draftPinning);
+        onApplyColumnOrder(draftColumnOrder);
         setPopoverOpen(false);
         onToggle?.(false);
     };
@@ -62,24 +90,26 @@ export const useManageColumns = <TData>({
     const handleRestoreDefaults = () => {
         setDraftVisibility(defaultColumnVisibility);
         setDraftPinning(defaultColumnPinning);
+        setDraftColumnOrder(defaultColumnOrder);
+        setColumnsToRender(sortColumns(columns, defaultColumnOrder));
     };
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
         const searchValue = e.target.value.toLowerCase();
 
         if (!searchValue) {
-            setColumnsToRender(columns);
+            setColumnsToRender(sortColumns(columns, draftColumnOrder));
             return;
         }
 
-        setColumnsToRender(
-            columns.filter((column) => {
-                const { header } = column.columnDef;
-                const headerText = typeof header === "string" ? header : "";
+        const filtered = columns.filter((column) => {
+            const { header } = column.columnDef;
+            const headerText = typeof header === "string" ? header : "";
 
-                return headerText.toLowerCase().includes(searchValue) || column.id.toLowerCase().includes(searchValue);
-            })
-        );
+            return headerText.toLowerCase().includes(searchValue) || column.id.toLowerCase().includes(searchValue);
+        });
+
+        setColumnsToRender(sortColumns(filtered, draftColumnOrder));
     };
 
     const handleToggleColumnVisibility = (column: Column<TData>) => {
@@ -101,13 +131,35 @@ export const useManageColumns = <TData>({
         });
     };
 
+    const handleColumnReorder = (sourceId: string, destinationId: string) => {
+        setDraftColumnOrder((prev) => {
+            const newOrder = [...prev];
+            const sourceIndex = newOrder.indexOf(sourceId);
+            const destIndex = newOrder.indexOf(destinationId);
+
+            if (sourceIndex === -1 || destIndex === -1) return prev;
+
+            newOrder.splice(sourceIndex, 1);
+            newOrder.splice(destIndex, 0, sourceId);
+            return newOrder;
+        });
+    };
+
     useEffect(() => {
         if (!popoverOpen) {
             setDraftVisibility(columnVisibility);
             setDraftPinning(columnPinning);
-            setColumnsToRender(columns);
+            const order = columnOrder.length ? columnOrder : defaultColumnOrder;
+            setDraftColumnOrder(order);
+            setColumnsToRender(sortColumns(columns, order));
         }
-    }, [columns, columnVisibility, columnPinning, popoverOpen]);
+    }, [columns, columnVisibility, columnPinning, columnOrder, defaultColumnOrder, popoverOpen]);
+
+    useEffect(() => {
+        if (popoverOpen) {
+            setColumnsToRender((prev) => sortColumns(prev, draftColumnOrder));
+        }
+    }, [draftColumnOrder, popoverOpen]);
 
     return {
         popoverOpen,
@@ -123,6 +175,7 @@ export const useManageColumns = <TData>({
         handleSearch,
         handleRestoreDefaults,
         handleToggleColumnVisibility,
-        handleToggleColumnPinning
+        handleToggleColumnPinning,
+        handleColumnReorder
     };
 };

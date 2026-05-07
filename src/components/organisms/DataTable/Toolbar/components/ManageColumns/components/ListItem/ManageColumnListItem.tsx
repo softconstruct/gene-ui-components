@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
+import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Column } from "@tanstack/react-table";
 
 import { GripDots, Pin, PinFilled } from "@geneui/icons";
@@ -48,17 +50,47 @@ const ManageColumnListItem = <TData,>({
 
     const PinIconElement = isPinnedDraft ? PinFilled : Pin;
 
+    const itemRef = useRef<HTMLDivElement>(null);
+    const dragHandleRef = useRef<HTMLDivElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
+
+    useEffect(() => {
+        const el = itemRef.current;
+        const dragHandle = dragHandleRef.current;
+        if (!el || !dragHandle) return;
+
+        combine(
+            draggable({
+                element: el,
+                dragHandle,
+                getInitialData: () => ({ id: column.id }),
+                onDragStart: () => setIsDragging(true),
+                onDrop: () => setIsDragging(false)
+            }),
+            dropTargetForElements({
+                element: el,
+                getData: () => ({ id: column.id })
+            })
+        );
+    }, [column.id]);
+
     if (!headerText) return null;
 
     return (
-        <div className="manageColumnListItem">
+        <div
+            ref={itemRef}
+            className="manageColumnListItem"
+            style={{ opacity: isDragging ? 0.4 : 1, transition: "opacity 0.2s ease" }}
+        >
             <div className="manageColumnListItem__content">
                 <Checkbox id={column.id} checked={checked} onChange={() => onChange(column)} />
                 <Label text={headerText} labelFor={column.id} />
             </div>
             <div className="manageColumnListItem__actions">
-                <PinIconElement onClick={() => onPinToggle(column)} />
-                <GripDots />
+                <PinIconElement onClick={() => onPinToggle(column)} style={{ cursor: "pointer" }} />
+                <div ref={dragHandleRef} style={{ cursor: "grab", display: "flex", alignItems: "center" }}>
+                    <GripDots />
+                </div>
             </div>
         </div>
     );

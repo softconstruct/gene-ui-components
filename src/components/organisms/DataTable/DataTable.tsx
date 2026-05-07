@@ -1,6 +1,7 @@
 import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     CellContext,
+    ColumnOrderState,
     ColumnPinningState,
     ExpandedState,
     getCoreRowModel,
@@ -222,6 +223,7 @@ const DataTable = <TData,>({
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
     const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({ left: [], right: [] });
+    const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);
 
     const handleExpandedChange = useCallback(
         (updaterOrValue: ExpandedState | ((old: ExpandedState) => ExpandedState)) => {
@@ -266,10 +268,6 @@ const DataTable = <TData,>({
         }, {});
     }, [tableColumns]);
 
-    const handleApplyColumnPinning = useCallback((nextPinning: ColumnPinningState) => {
-        setColumnPinning(nextPinning);
-    }, []);
-
     const [columnVisibility, setColumnVisibility] = useState<ColumnVisibilityState>(initialColumnVisibility);
 
     const table = useReactTable({
@@ -283,6 +281,7 @@ const DataTable = <TData,>({
         onExpandedChange: handleExpandedChange,
         onColumnVisibilityChange: setColumnVisibility,
         onColumnPinningChange: setColumnPinning,
+        onColumnOrderChange: setColumnOrder,
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }
@@ -291,7 +290,8 @@ const DataTable = <TData,>({
         state: {
             expanded,
             columnVisibility,
-            columnPinning
+            columnPinning,
+            columnOrder
         }
     });
 
@@ -307,17 +307,31 @@ const DataTable = <TData,>({
         setColumnVisibility(nextVisibility);
     }, []);
 
+    const handleApplyColumnPinning = useCallback((nextPinning: ColumnPinningState) => {
+        setColumnPinning(nextPinning);
+    }, []);
+
+    const handleApplyColumnOrder = useCallback((nextOrder: ColumnOrderState) => {
+        setColumnOrder(nextOrder);
+    }, []);
+
+    const leafColumns = table.getAllLeafColumns();
+    const defaultColumnOrder = useMemo(() => leafColumns.map((c) => c.id), [leafColumns]);
+
     return (
         <div className={classNames("dataTable", className)}>
             <Toolbar
                 isManageColumnsEnabled={isManageColumnsEnabled}
-                columns={table.getAllLeafColumns()}
+                columns={leafColumns}
                 columnVisibility={columnVisibility}
                 defaultColumnVisibility={initialColumnVisibility}
                 onApplyColumnVisibility={handleApplyColumnVisibility}
                 columnPinning={columnPinning}
                 defaultColumnPinning={{ left: [], right: [] }}
                 onApplyColumnPinning={handleApplyColumnPinning}
+                columnOrder={columnOrder}
+                defaultColumnOrder={defaultColumnOrder}
+                onApplyColumnOrder={handleApplyColumnOrder}
                 manageColumnsTexts={manageColumnsTexts}
             />
             <Scrollbar>

@@ -1,6 +1,5 @@
 import React from "react";
-import { ColumnPinningState } from "@tanstack/react-table";
-import { Column } from "@tanstack/table-core";
+import { Column, ColumnOrderState, ColumnPinningState } from "@tanstack/react-table";
 
 // Components
 import ManageColumns from "@components/organisms/DataTable/Toolbar/components/ManageColumns/ManageColumns";
@@ -20,9 +19,7 @@ interface IToolbarProps<TData> {
      * If false, the toolbar will not render any column management UI.
      */
     isManageColumnsEnabled: boolean;
-    /**
-     * The current, committed visibility state of the table's columns.
-     */
+
     columnVisibility: ColumnVisibilityState;
     /**
      * The initial or default visibility state of the table's columns.
@@ -34,14 +31,7 @@ interface IToolbarProps<TData> {
      * @param nextVisibility - The new visibility state to be applied to the table.
      */
     onApplyColumnVisibility: (nextVisibility: ColumnVisibilityState) => void;
-    /**
-     * An object with text labels for the Manage Columns popover.
-     * Use this to customize or localize the button texts.
-     */
-    manageColumnsTexts?: ITableManageColumnsTexts;
-    /**
-     * The current column pinning state of the table.
-     */
+
     columnPinning: ColumnPinningState;
     /**
      * The initial or default column pinning state of the table.
@@ -53,6 +43,12 @@ interface IToolbarProps<TData> {
      * @param nextPinning
      */
     onApplyColumnPinning: (nextPinning: ColumnPinningState) => void;
+
+    columnOrder: ColumnOrderState;
+    defaultColumnOrder: ColumnOrderState;
+    onApplyColumnOrder: (nextOrder: ColumnOrderState) => void;
+
+    manageColumnsTexts?: ITableManageColumnsTexts;
 }
 
 const Toolbar = <TData,>({
@@ -61,10 +57,13 @@ const Toolbar = <TData,>({
     columnVisibility,
     defaultColumnVisibility,
     onApplyColumnVisibility,
-    manageColumnsTexts,
     columnPinning,
     defaultColumnPinning,
-    onApplyColumnPinning
+    onApplyColumnPinning,
+    columnOrder,
+    defaultColumnOrder,
+    onApplyColumnOrder,
+    manageColumnsTexts
 }: IToolbarProps<TData>) => {
     return (
         <div className="tableToolbar">
@@ -73,11 +72,14 @@ const Toolbar = <TData,>({
                 columnVisibility={columnVisibility}
                 defaultColumnVisibility={defaultColumnVisibility}
                 onApplyColumnVisibility={onApplyColumnVisibility}
-                texts={manageColumnsTexts}
-                disabled={!isManageColumnsEnabled}
                 columnPinning={columnPinning}
                 defaultColumnPinning={defaultColumnPinning}
                 onApplyColumnPinning={onApplyColumnPinning}
+                columnOrder={columnOrder}
+                defaultColumnOrder={defaultColumnOrder}
+                onApplyColumnOrder={onApplyColumnOrder}
+                texts={manageColumnsTexts}
+                disabled={!isManageColumnsEnabled}
             />
         </div>
     );
