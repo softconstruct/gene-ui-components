@@ -149,6 +149,11 @@ interface IDropdownProps {
      */
     resetSearchOnClose?: boolean;
     /**
+     * Forces regular Popover rendering on mobile instead of Spreadsheet fallback.
+     * @default true
+     */
+    disableMobileSpreadsheet?: boolean;
+    /**
      * Displays loading state in dropdown panel.
      */
     loading?: boolean;
@@ -198,6 +203,10 @@ interface IDropdownProps {
      * Returns selected option (single), selected options (multi), or null.
      */
     onChange?: (value: IDropdownOption | IDropdownOption[] | null) => void;
+    /**
+     * Callback fired when dropdown open state changes.
+     */
+    onOpenChange?: (open: boolean) => void;
 }
 
 const Dropdown: FC<IDropdownProps> = ({
@@ -223,6 +232,7 @@ const Dropdown: FC<IDropdownProps> = ({
     searchValue,
     defaultSearchValue,
     resetSearchOnClose = false,
+    disableMobileSpreadsheet = true,
     loading,
     loadingText = "Loading",
     emptyText = "No data",
@@ -231,7 +241,8 @@ const Dropdown: FC<IDropdownProps> = ({
     actions,
     filterFn,
     onSearchChange,
-    onChange
+    onChange,
+    onOpenChange
 }) => {
     const isMulti = variant === "multi";
     const isControlledSearch = searchValue !== undefined;
@@ -514,6 +525,10 @@ const Dropdown: FC<IDropdownProps> = ({
         focusPendingOptionIfReady();
     }, [isOpen, filteredOptions, disabled, readOnly]);
 
+    useEffect(() => {
+        onOpenChange?.(isOpen);
+    }, [isOpen, onOpenChange]);
+
     const selectAllChecked =
         !!filteredOptions.length &&
         filteredOptions.every((option) => option.disabled || selectedMultipleValues.includes(option.value));
@@ -555,6 +570,7 @@ const Dropdown: FC<IDropdownProps> = ({
                 withArrow={false}
                 fitReference
                 margin={MENU_GAP_FROM_TARGET}
+                disableMobileSpreadsheet={disableMobileSpreadsheet}
             >
                 <PopoverBody withPadding={false} withScrollbar={false} className="dropdown__body">
                     <div className="dropdown__content">
