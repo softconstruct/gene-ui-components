@@ -32,12 +32,23 @@
     &__rgbInputs {
         display: flex;
         gap: var(--guit-ref-spacing-3xsmall);
-        width: 100%;
+        flex: 1;
+        min-width: 0;
     }
 
     &__hexInput {
         width: 100%;
         unicode-bidi: bidi-override;
+    }
+
+    &__rgbInput {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__formatDropdown {
+        width: 8.6rem;
+        flex-shrink: 0;
     }
 
     &__recents {
