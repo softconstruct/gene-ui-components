@@ -53,7 +53,7 @@ const ManageColumnListItem = <TData,>({
     return (
         <div className="manageColumnListItem">
             <div className="manageColumnListItem__content">
-                <Checkbox id={column.id} checked={checked} onChange={() => onChange(column)} />
+                <Checkbox id={column.id} checked={checked} onChange={() => onChange(column)} className="manageColumnListItem__checkbox" />
                 <Label text={headerText} labelFor={column.id} />
             </div>
             <div className="manageColumnListItem__actions">

@@ -1,17 +1,31 @@
 .manageColumnListItem {
+  display: flex;
+  align-items: center;
+  gap: var(--guit-ref-spacing-xsmall);
+  padding-block: var(--guit-ref-spacing-3xsmall);
+  padding-inline: var(--guit-ref-spacing-xsmall);
+  height: var(--guit-sem-dimension-height-medium);
+  border-radius: var(--guit-ref-radius-3xsmall);
+  background-color: var(--guit-sem-color-background-neutral-1-nudge);
+
+  &__content {
+    flex: 1;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: var(--guit-ref-spacing-xsmall);
+    min-width: 0;
+  }
 
-    &__actions {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
+  &__checkbox {
+    flex: 0 0 auto;
+    padding: var(--guit-ref-spacing-3xsmall);
+  }
 
-    &__content {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
+  &__actions {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    margin-inline-start: auto;
+    gap: var(--guit-ref-spacing-4xsmall);
+  }
 }

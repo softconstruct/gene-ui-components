@@ -2,7 +2,7 @@ import React, { ChangeEvent, Dispatch, RefObject, SetStateAction } from "react";
 import { Column, ColumnPinningState } from "@tanstack/react-table";
 
 import Button from "@components/atoms/Button";
-import { IPopoverRef, Popover, PopoverBody, PopoverFooter } from "@components/atoms/Popover";
+import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
@@ -11,6 +11,7 @@ import { ColumnVisibilityState, ITableManageColumnsTexts } from "@components/org
 
 // Styles
 import "./ManageColumnsPopover.scss";
+import ButtonGroup from "@components/molecules/ButtonGroup";
 
 interface IManageColumnsPopoverProps<TData> {
     /**
@@ -103,43 +104,45 @@ const ManageColumnsPopover = <TData,>({
 
     return (
         <Popover ref={popoverRef} withArrow={false} open={open} setProps={setProps} onClose={onClose}>
-            <PopoverBody withScrollbar={false}>
+            <PopoverBody withScrollbar={false} withPadding={false} className="manageColumnsPopover__main" >
                 <TextField
                     autoComplete="off"
                     placeholder={texts?.searchPlaceholder ?? "Search"}
                     onChange={onSearch}
-                    className="manageColumns__search"
+                    className="manageColumnsPopover__header"
                 />
-                <Scrollbar>
-                    {hasColumns ? (
-                        columns.map((column) => {
-                            const isPinnedDraft = (draftPinning.left || []).includes(column.id);
-                            return (
-                                <ManageColumnListItem
-                                    key={column.id}
-                                    onChange={onColumnVisibilityChange}
-                                    column={column}
-                                    checked={draftVisibility[column.id] ?? true}
-                                    isPinnedDraft={isPinnedDraft}
-                                    onPinToggle={onColumnPinningChange}
-                                />
-                            );
-                        })
-                    ) : (
-                        <Empty appearance="noResult" />
-                    )}
-                </Scrollbar>
+                <div className="manageColumnsPopover__body">
+                    <Scrollbar>
+                        <div className="manageColumnsPopover__list">
+                            {hasColumns ? (
+                                columns.map((column) => {
+                                    const isPinnedDraft = (draftPinning.left || []).includes(column.id);
+                                    return (
+                                        <ManageColumnListItem
+                                            key={column.id}
+                                            onChange={onColumnVisibilityChange}
+                                            column={column}
+                                            checked={draftVisibility[column.id] ?? true}
+                                            isPinnedDraft={isPinnedDraft}
+                                            onPinToggle={onColumnPinningChange}
+                                        />
+                                    )
+                                })
+                            ) : (
+                                <Empty appearance="noResult" />
+                            )}
+                        </div>
+                    </Scrollbar>
+                </div>
+                <div className="manageColumnsPopover__footer">
+                    <Button layout="text" size="medium" onClick={onRestoreDefaults} appearance="secondary"> {texts?.restoreDefaultsText ?? "Restore defaults"}</Button>
+
+                    <ButtonGroup size="medium" className="manageColumnsPopover__actions" >
+                        <Button onClick={onCancel} size="medium" appearance="secondary">Cancel</Button>
+                        <Button onClick={onSave} size="medium"  appearance="primary">Save</Button>
+                    </ButtonGroup>
+                </div>
             </PopoverBody>
-            <PopoverFooter
-                actions={[
-                    { text: texts?.cancelText ?? "Cancel", onClick: onCancel, appearance: "secondary" },
-                    { text: texts?.saveText ?? "Save", onClick: onSave, appearance: "primary" }
-                ]}
-            >
-                <Button appearance="inverse" onClick={onRestoreDefaults}>
-                    {texts?.restoreDefaultsText ?? "Restore defaults"}
-                </Button>
-            </PopoverFooter>
         </Popover>
     );
 };
