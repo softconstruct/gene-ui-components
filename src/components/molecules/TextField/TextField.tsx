@@ -5,6 +5,7 @@ import React, {
     forwardRef,
     HTMLAttributes,
     KeyboardEvent,
+    MouseEvent,
     Ref,
     useEffect,
     useImperativeHandle,
@@ -176,6 +177,16 @@ interface ITextFieldProps {
      * Optional suffix text rendered after input value and before IconAfter.
      */
     suffixText?: string;
+    /**
+     * Controls input interaction behavior.
+     * - `editable`: default text input behavior.
+     * - `trigger`: non-editable trigger behavior for popover/picker controls.
+     *   In trigger mode the input is read-only, not tabbable directly, and
+     *   mouse down does not focus the native input (prevents caret blinking).
+     *   Does not apply the read-only visual variant — use `readOnly` for that.
+     * @default "editable"
+     */
+    inputBehavior?: "editable" | "trigger";
 }
 
 export interface ITextFieldRef {
@@ -217,7 +228,8 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             onClear,
             inputMode = "text",
             popoverProps,
-            suffixText
+            suffixText,
+            inputBehavior = "editable"
         },
         ref
     ) => {
@@ -269,6 +281,23 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
             onFocus?.(event);
         };
 
+        const isTriggerInput = inputBehavior === "trigger";
+        const triggerPopoverDefaults: HTMLAttributes<HTMLDivElement> = isTriggerInput
+            ? {
+                  tabIndex: 0,
+                  role: "button"
+              }
+            : {};
+        const mergedPopoverProps = {
+            ...triggerPopoverDefaults,
+            ...popoverProps
+        };
+
+        const onInputMouseDown = (event: MouseEvent<HTMLInputElement>) => {
+            if (!isTriggerInput) return;
+            event.preventDefault();
+        };
+
         useImperativeHandle(ref, () => ({
             focus: () => {
                 inputRef.current?.focus();
@@ -317,7 +346,7 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                 />
                 <div
                     className={classNames(`textField__wrapper textField__wrapper_size_${size}`, paddedClassesForIcon)}
-                    {...popoverProps}
+                    {...mergedPopoverProps}
                 >
                     {IconBefore && (
                         <span className="textField__icon">
@@ -332,12 +361,15 @@ const TextField = forwardRef<ITextFieldRef, ITextFieldProps>(
                         className="textField__input"
                         required={required}
                         disabled={disabled}
-                        readOnly={readOnly}
+                        readOnly={readOnly || isTriggerInput}
+                        role={isTriggerInput ? "presentation" : undefined}
+                        tabIndex={isTriggerInput ? -1 : undefined}
                         value={inputValue}
                         onChange={handleChange}
                         onBlur={onBlur}
                         onFocus={onInputFocus}
                         onKeyDown={onKeyDown}
+                        onMouseDown={onInputMouseDown}
                         aria-invalid={status === "error"}
                         aria-required={required}
                         {...inputConditionalProps}

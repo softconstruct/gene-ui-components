@@ -38,6 +38,7 @@ const meta: Meta<ITextFieldProps> = {
         autoComplete: args({ control: "text", ...propCategory.functionality }),
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         popoverProps: args({ control: "object", ...propCategory.functionality }),
+        inputBehavior: args({ control: "select", ...propCategory.functionality }),
         helperText: args({ control: "text", ...propCategory.content }),
         status: args({ control: "select", ...propCategory.appearance }),
         inputMode: args({ control: "select", ...propCategory.appearance })

@@ -290,4 +290,52 @@ describe("TextField ", () => {
             expect(wrapper.find(".textField__input").props().inputMode).toEqual(inputMode);
         }
     );
+
+    it('inputBehavior="trigger" sets the input to readOnly and role=presentation without applying the read-only visual variant', () => {
+        const wrapper = setup.setProps({ inputBehavior: "trigger" });
+
+        const input = wrapper.find("input");
+        const inputWrapper = wrapper.find(".textField__wrapper");
+        expect(input.prop("readOnly")).toBe(true);
+        expect(input.prop("role")).toBe("presentation");
+        expect(input.prop("tabIndex")).toBe(-1);
+        expect(inputWrapper.prop("role")).toBe("button");
+        expect(inputWrapper.prop("tabIndex")).toBe(0);
+        expect(wrapper.find(".textField__wrapper").hasClass("textField__wrapper_readOnly")).toBe(false);
+    });
+
+    it('inputBehavior="trigger" allows overriding default wrapper role/tabIndex via popoverProps', () => {
+        const wrapper = setup.setProps({
+            inputBehavior: "trigger",
+            popoverProps: { role: "combobox", tabIndex: 2 }
+        });
+        const inputWrapper = wrapper.find(".textField__wrapper");
+        expect(inputWrapper.prop("role")).toBe("combobox");
+        expect(inputWrapper.prop("tabIndex")).toBe(2);
+    });
+
+    it('readOnly visual variant still applies independently of inputBehavior="trigger"', () => {
+        const wrapper = setup.setProps({ readOnly: true });
+
+        expect(wrapper.find("input").prop("readOnly")).toBe(true);
+        expect(wrapper.find("input").prop("role")).toBeUndefined();
+        expect(wrapper.find(".textField__wrapper").hasClass("textField__wrapper_readOnly")).toBe(true);
+    });
+
+    it('inputBehavior="trigger" keeps focus, blur, and keydown wired on the input', () => {
+        const onFocus = jest.fn();
+        const onBlur = jest.fn();
+        const onKeyDown = jest.fn();
+        const wrapper = setup.setProps({ inputBehavior: "trigger", onFocus, onBlur, onKeyDown });
+
+        const input = wrapper.find(".textField__input");
+        input.simulate("focus");
+        input.simulate("keyDown", { key: "ArrowDown" });
+        input.simulate("blur");
+
+        expect(onFocus).toHaveBeenCalledTimes(1);
+        expect(onKeyDown).toHaveBeenCalledTimes(1);
+        expect(onKeyDown).toHaveBeenCalledWith(expect.objectContaining({ key: "ArrowDown" }));
+        expect(onBlur).toHaveBeenCalledTimes(1);
+    });
 });
