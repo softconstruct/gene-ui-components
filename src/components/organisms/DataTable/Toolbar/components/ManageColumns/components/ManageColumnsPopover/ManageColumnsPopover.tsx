@@ -127,7 +127,7 @@ const ManageColumnsPopover = <TData,>({
     }, [onColumnReorder]);
 
     return (
-        <Popover ref={popoverRef} withArrow={false} open={open} setProps={setProps} onClose={onClose}>
+        <Popover ref={popoverRef} withArrow={false} open={open} setProps={setProps} onClose={onClose} size="fitContent">
             <PopoverBody withScrollbar={false} withPadding={false} className="manageColumnsPopover__main">
                 <TextField
                     autoComplete="off"
