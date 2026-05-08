@@ -1,3 +1,13 @@
 .tableToolbar {
-    display: block;
+    display: flex;
+    align-items: center;
+    padding: var(--guit-ref-spacing-large);
+    background-color: var(--guit-sem-color-background-neutral-1);
+    gap: var(--guit-ref-spacing-2xlarge);
+
+    &__actions {
+        flex: 0 0 auto;
+        gap: var(--guit-ref-spacing-xsmall);
+        margin-inline-start: auto;
+    }
 }

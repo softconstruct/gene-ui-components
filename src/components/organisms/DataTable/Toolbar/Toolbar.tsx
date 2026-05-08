@@ -67,20 +67,22 @@ const Toolbar = <TData,>({
 }: IToolbarProps<TData>) => {
     return (
         <div className="tableToolbar">
-            <ManageColumns
-                columns={columns}
-                columnVisibility={columnVisibility}
-                defaultColumnVisibility={defaultColumnVisibility}
-                onApplyColumnVisibility={onApplyColumnVisibility}
-                columnPinning={columnPinning}
-                defaultColumnPinning={defaultColumnPinning}
-                onApplyColumnPinning={onApplyColumnPinning}
-                columnOrder={columnOrder}
-                defaultColumnOrder={defaultColumnOrder}
-                onApplyColumnOrder={onApplyColumnOrder}
-                texts={manageColumnsTexts}
-                disabled={!isManageColumnsEnabled}
-            />
+            <div className="tableToolbar__actions">
+                <ManageColumns
+                    columns={columns}
+                    columnVisibility={columnVisibility}
+                    defaultColumnVisibility={defaultColumnVisibility}
+                    onApplyColumnVisibility={onApplyColumnVisibility}
+                    columnPinning={columnPinning}
+                    defaultColumnPinning={defaultColumnPinning}
+                    onApplyColumnPinning={onApplyColumnPinning}
+                    columnOrder={columnOrder}
+                    defaultColumnOrder={defaultColumnOrder}
+                    onApplyColumnOrder={onApplyColumnOrder}
+                    texts={manageColumnsTexts}
+                    disabled={!isManageColumnsEnabled}
+                />
+            </div>
         </div>
     );
 };
