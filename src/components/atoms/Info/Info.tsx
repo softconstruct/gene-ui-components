@@ -1,4 +1,4 @@
-import React, { FC, KeyboardEvent, useMemo, useState } from "react";
+import React, { FC, KeyboardEvent, MouseEvent, useMemo, useState } from "react";
 import classnames from "classnames";
 
 import { IconProps, Info as InfoIcon } from "@geneui/icons";
@@ -45,6 +45,12 @@ interface IInfoProps {
      * If not provided, defaults to "press enter to open tooltip". This label describes the button's purpose and interaction method.
      */
     "aria-label"?: string;
+    /**
+     * Controls which element is used as the tooltip trigger.
+     * Use `span` when Info is rendered inside another interactive element, such as a button.
+     * @default "button"
+     */
+    triggerElement?: "button" | "span";
 }
 
 /**
@@ -56,7 +62,8 @@ const Info: FC<IInfoProps> = ({
     size = "smallNudge",
     appearance = "default",
     className,
-    "aria-label": ariaLabel
+    "aria-label": ariaLabel,
+    triggerElement = "button"
 }) => {
     const [alwaysShow, setAlwaysShow] = useState(false);
 
@@ -69,6 +76,10 @@ const Info: FC<IInfoProps> = ({
 
     const handleBlur = () => !disabled && alwaysShow && setAlwaysShow(false);
 
+    const stopSpanTriggerPropagation = (event: MouseEvent<HTMLSpanElement>) => {
+        event.stopPropagation();
+    };
+
     const buttonClassNames = useMemo(
         () =>
             classnames("info", className, {
@@ -77,9 +88,20 @@ const Info: FC<IInfoProps> = ({
             }),
         [appearance, className, disabled]
     );
+    const tooltipAppearance = appearance === "inverse" ? "inverse" : "default";
+    const icon = <InfoIcon className="info__icon" size={iconSizes[size]} />;
 
-    return (
-        <Tooltip text={infoText} alwaysShow={alwaysShow} appearance={appearance === "inverse" ? "inverse" : "default"}>
+    const trigger =
+        triggerElement === "span" ? (
+            <span
+                aria-hidden="true"
+                className={buttonClassNames}
+                onClick={stopSpanTriggerPropagation}
+                onMouseDown={stopSpanTriggerPropagation}
+            >
+                {icon}
+            </span>
+        ) : (
             <button
                 type="button"
                 aria-label={ariaLabel || "press enter to open tooltip"}
@@ -89,8 +111,18 @@ const Info: FC<IInfoProps> = ({
                 onKeyDown={keyDownHandler}
                 onBlur={handleBlur}
             >
-                <InfoIcon className="info__icon" size={iconSizes[size]} />
+                {icon}
             </button>
+        );
+
+    return (
+        <Tooltip
+            text={infoText}
+            alwaysShow={triggerElement === "button" ? alwaysShow : undefined}
+            appearance={tooltipAppearance}
+            isVisible={!disabled}
+        >
+            {trigger}
         </Tooltip>
     );
 };

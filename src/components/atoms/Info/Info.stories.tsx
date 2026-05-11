@@ -13,6 +13,8 @@ const meta: Meta<IInfoProps> = {
         appearance: args({ control: "select", ...propCategory.appearance }),
         disabled: args({ control: "boolean", ...propCategory.states }),
         size: args({ control: "select", ...propCategory.appearance }),
+        triggerElement: args({ control: "select", ...propCategory.functionality }),
+        "aria-label": args({ control: "text", ...propCategory.others }),
         className: args({ control: "false", ...propCategory.appearance })
     },
     args: {

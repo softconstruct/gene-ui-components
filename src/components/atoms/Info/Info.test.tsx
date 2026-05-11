@@ -46,4 +46,11 @@ describe("Info ", () => {
 
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
+
+    it('renders span trigger when triggerElement="span"', () => {
+        const wrapper = setup.setProps({ triggerElement: "span" });
+
+        expect(wrapper.find("button").exists()).toBeFalsy();
+        expect(wrapper.find("span.info").exists()).toBeTruthy();
+    });
 });
