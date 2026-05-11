@@ -70,7 +70,13 @@ const DropdownItem: FC<IDropdownItemProps> = ({
             <span className="dropdownItem__meta">
                 {textAfter && <span className="dropdownItem__textAfter ellipsis-text">{textAfter}</span>}
                 {infoText && (
-                    <Info infoText={infoText} size="XSmall" className="dropdownItem__info" disabled={disabled} />
+                    <Info
+                        infoText={infoText}
+                        size="XSmall"
+                        className="dropdownItem__info"
+                        disabled={disabled}
+                        triggerElement="span"
+                    />
                 )}
                 {variant === "single" && selected && <CheckMark className="dropdownItem__checkmark" size={20} />}
             </span>
