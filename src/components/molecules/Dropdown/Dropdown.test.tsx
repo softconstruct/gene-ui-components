@@ -3,6 +3,8 @@ import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
 // Components
+import Checkbox from "@components/molecules/Checkbox";
+
 import Dropdown, { IDropdownProps } from "./index";
 // Types
 import { IDropdownOption } from "./types";
@@ -60,6 +62,23 @@ describe("Dropdown ", () => {
         setup.update();
 
         expect(setup.find("input.textField__input").at(0).prop("value")).toBe("");
+    });
+
+    it("marks select all checkbox indeterminate when some options are selected", () => {
+        setup.setProps({ variant: "multi", values: ["option-1"] });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        let selectAllCheckbox = setup.find(".dropdown__actions").find(Checkbox).at(0);
+        expect(selectAllCheckbox.prop("checked")).toBe(false);
+        expect(selectAllCheckbox.prop("indeterminate")).toBe(true);
+
+        setup.setProps({ values: ["option-1", "option-2", "option-3"] });
+        setup.update();
+
+        selectAllCheckbox = setup.find(".dropdown__actions").find(Checkbox).at(0);
+        expect(selectAllCheckbox.prop("checked")).toBe(true);
+        expect(selectAllCheckbox.prop("indeterminate")).toBe(false);
     });
 
     it("opens in readOnly mode but does not change value", () => {

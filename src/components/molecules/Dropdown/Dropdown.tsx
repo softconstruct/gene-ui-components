@@ -353,6 +353,18 @@ const Dropdown: FC<IDropdownProps> = ({
             return optionLabel.includes(normalizedTerm) || valueSnapshot.includes(normalizedTerm);
         });
     }, [options, filterFn, searchable, searchTerm, isExternalSearch]);
+    const enabledFilteredOptions = useMemo(
+        () => filteredOptions.filter((option) => !option.disabled),
+        [filteredOptions]
+    );
+    const selectedEnabledFilteredOptionsCount = useMemo(
+        () => enabledFilteredOptions.filter((option) => selectedMultipleValues.includes(option.value)).length,
+        [enabledFilteredOptions, selectedMultipleValues]
+    );
+    const selectAllChecked =
+        !!enabledFilteredOptions.length && selectedEnabledFilteredOptionsCount === enabledFilteredOptions.length;
+    const selectAllIndeterminate =
+        selectedEnabledFilteredOptionsCount > 0 && selectedEnabledFilteredOptionsCount < enabledFilteredOptions.length;
 
     const toggleOpen = () => {
         if (disabled) return;
@@ -497,7 +509,7 @@ const Dropdown: FC<IDropdownProps> = ({
             return;
         }
 
-        const enabledValues = filteredOptions.filter((option) => !option.disabled).map((option) => option.value);
+        const enabledValues = enabledFilteredOptions.map((option) => option.value);
         setMultiValue(enabledValues);
     };
 
@@ -530,10 +542,6 @@ const Dropdown: FC<IDropdownProps> = ({
     useEffect(() => {
         onOpenChange?.(isOpen);
     }, [isOpen, onOpenChange]);
-
-    const selectAllChecked =
-        !!filteredOptions.length &&
-        filteredOptions.every((option) => option.disabled || selectedMultipleValues.includes(option.value));
 
     const triggerPopoverProps = {
         ...popoverProps,
@@ -600,6 +608,7 @@ const Dropdown: FC<IDropdownProps> = ({
                                 <Checkbox
                                     label={selectAllLabel}
                                     checked={selectAllChecked}
+                                    indeterminate={selectAllIndeterminate}
                                     onChange={selectAllHandler}
                                     disabled={!filteredOptions.length || loading || disabled || readOnly}
                                 />
