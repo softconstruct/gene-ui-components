@@ -37,6 +37,7 @@ type TDragState = {
  */
 const CustomDragLayer = () => {
     const [dragState, setDragState] = useState<TDragState>(null);
+    const isRTLMode = document.dir === "rtl";
 
     useEffect(() => {
         return monitorForElements({
@@ -72,7 +73,7 @@ const CustomDragLayer = () => {
             style={{
                 position: "fixed",
                 top: 0,
-                left: -dragState.previewNode.offsetWidth,
+                left: isRTLMode ? 0 : -dragState.previewNode.offsetWidth,
                 transform: `translate(${dragState.x}px, ${dragState.y}px)`,
                 pointerEvents: "none"
             }}
