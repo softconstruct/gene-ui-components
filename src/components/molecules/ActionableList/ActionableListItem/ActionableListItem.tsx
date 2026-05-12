@@ -144,8 +144,10 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     const rowRef = useRef<HTMLDivElement | null>(null);
     const dragHandleRef = useRef<HTMLButtonElement | null>(null);
     const titleTextRef = useRef<HTMLSpanElement | null>(null);
+    const selectedLabelRef = useRef<HTMLSpanElement | null>(null);
     const onDragTargetChangeRef = useRef(onDragTargetChange);
     const isTruncated = useEllipsisDetection(titleTextRef);
+    const isSelectedLabelTruncated = useEllipsisDetection(selectedLabelRef);
     const [isDragging, setIsDragging] = useState(false);
 
     onDragTargetChangeRef.current = onDragTargetChange;
@@ -184,9 +186,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
 
                     Object.assign(clone.style, {
                         width: `${rect.width}px`,
-                        height: `${rect.height}px`,
-                        boxSizing: "border-box",
-                        margin: "0"
+                        height: `${rect.height}px`
                     });
 
                     return {
@@ -266,9 +266,16 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
             </Tooltip>
             {withCheckbox && descendantsTotalCount > 0 && (
                 <p className="actionableListItem__meta">
-                    <Text as="span" variant="bodyMediumMedium" className="actionableListItem__metaLabel">
-                        {selectedLabel}
-                    </Text>
+                    <Tooltip text={selectedLabel} isVisible={isSelectedLabelTruncated}>
+                        <Text
+                            as="span"
+                            ref={selectedLabelRef}
+                            variant="bodyMediumMedium"
+                            className="actionableListItem__metaLabel ellipsis-text"
+                        >
+                            {selectedLabel}
+                        </Text>
+                    </Tooltip>
                     <Text
                         as="span"
                         variant="bodyMediumMedium"

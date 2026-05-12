@@ -68,6 +68,8 @@
         box-shadow: var(--guit-ref-elevation-small);
         background: var(--guit-sem-color-background-neutral-1);
         border-radius: var(--guit-ref-radius-3xsmall);
+        box-sizing: border-box;
+        margin: 0;
     }
 
     &__toggle {
@@ -85,21 +87,28 @@
 
     &__title {
         display: block;
-        width: 100%;
+        flex: 1 1 0;
+        min-width: 0;
         color: var(--guit-sem-color-foreground-neutral-2);
     }
 
     &__meta {
         display: flex;
+        align-items: center;
         gap: var(--guit-ref-spacing-2xsmall);
+        min-width: 0;
         white-space: nowrap;
     }
 
     &__metaLabel {
+        display: block;
+        flex: 1 1 auto;
+        min-width: 0;
         color: var(--guit-sem-color-foreground-neutral-1);
     }
 
     &__metaCount {
+        flex-shrink: 0;
         color: var(--guit-sem-color-foreground-neutral-2);
     }
 
@@ -110,6 +119,10 @@
     &__dragIcon {
         flex-shrink: 0;
         cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+        }
     }
 
     &__dragHandle {
@@ -120,8 +133,7 @@
         cursor: grab;
         color: var(--guit-sem-color-foreground-neutral-2);
 
-        &:active,
-        &:active .actionableListItem__dragIcon {
+        &:active {
             cursor: grabbing;
         }
     }
