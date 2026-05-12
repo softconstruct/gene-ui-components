@@ -192,7 +192,8 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                     return {
                         sourceId: id,
                         parentId,
-                        previewNode: clone
+                        previewNode: clone,
+                        initialRect: rect
                     };
                 },
                 onGenerateDragPreview: ({ nativeSetDragImage }) => {

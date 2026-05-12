@@ -110,10 +110,6 @@
     &__dragIcon {
         flex-shrink: 0;
         cursor: grab;
-
-        &_dragging {
-            cursor: grabbing;
-        }
     }
 
     &__dragHandle {
@@ -123,5 +119,19 @@
         flex-shrink: 0;
         cursor: grab;
         color: var(--guit-sem-color-foreground-neutral-2);
+
+        &:active,
+        &:active .actionableListItem__dragIcon {
+            cursor: grabbing;
+        }
+    }
+
+    &__dragLayer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform-origin: top left;
+        pointer-events: none;
+        transform: var(--drag-layer-transform);
     }
 }
