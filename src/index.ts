@@ -87,7 +87,7 @@ export type {
     IActionableListTexts
 } from "./components/molecules/ActionableList";
 export { default as ActionableList } from "./components/molecules/ActionableList";
-export { default as List, IListProps } from "./components/molecules/List";
+export { default as List, IListProps, IListItemData } from "./components/molecules/List";
 
 // Organisms
 export {
