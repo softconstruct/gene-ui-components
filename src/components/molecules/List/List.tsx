@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, { FC, MouseEventHandler, ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
 
@@ -79,6 +79,10 @@ interface IListProps {
 
 const ESTIMATED_ROW_HEIGHT_PX = 32;
 
+const getItemOnClickHandler = (item: IListItemData): MouseEventHandler<HTMLButtonElement> | undefined => {
+    return () => item?.onClick?.(item);
+};
+
 /**
  * List is a reusable list container that renders virtualized items with loading, empty, and "show more" states.
  * It is designed to fill its parent dimensions and can be composed inside any layout, popover, or panel.
@@ -101,7 +105,7 @@ const List: FC<IListProps> = ({
     const scrollbarRef = useRef<ScrollbarRefType | null>(null);
     const itemsArray = useMemo(() => items, [items]);
     const [skeletonRowHeight, setSkeletonRowHeight] = useState(ESTIMATED_ROW_HEIGHT_PX);
-    const shouldRenderShowMoreSkeleton = !!showMore && !!showMoreLoading && hasChildren;
+    const shouldRenderShowMoreSkeleton = showMore && showMoreLoading && hasChildren;
     const totalVirtualCount = itemsArray.length + (shouldRenderShowMoreSkeleton ? 1 : 0);
 
     const virtualizer = useVirtualizer({
@@ -111,8 +115,8 @@ const List: FC<IListProps> = ({
         overscan: 4
     });
     const virtualItems = virtualizer.getVirtualItems();
-    const firstVirtualItem = virtualItems[0];
-    const lastVirtualItem = virtualItems[virtualItems.length - 1];
+    const [firstVirtualItem] = virtualItems;
+    const lastVirtualItem = virtualItems.at(-1);
     const topSpacerHeight = firstVirtualItem?.start ?? 0;
     const bottomSpacerHeight = Math.max(0, virtualizer.getTotalSize() - (lastVirtualItem?.end ?? 0));
 
@@ -201,7 +205,7 @@ const List: FC<IListProps> = ({
                                             id={item.id}
                                             disabled={item.disabled}
                                             size={size}
-                                            onClick={item.onClick ? () => item.onClick?.(item) : undefined}
+                                            onClick={getItemOnClickHandler(item)}
                                         >
                                             {item.render ? item.render(item) : item.label}
                                         </Item>
@@ -224,7 +228,7 @@ const List: FC<IListProps> = ({
                                     id={item.id}
                                     disabled={item.disabled}
                                     size={size}
-                                    onClick={item.onClick ? () => item.onClick?.(item) : undefined}
+                                    onClick={getItemOnClickHandler(item)}
                                 >
                                     {item.render ? item.render(item) : item.label}
                                 </Item>

@@ -1,4 +1,4 @@
-import React, { CSSProperties, forwardRef, MouseEventHandler, ReactNode } from "react";
+import React, { forwardRef, MouseEventHandler, ReactNode } from "react";
 import classNames from "classnames";
 
 // Styles
@@ -28,14 +28,6 @@ interface IItemProps {
      */
     onClick?: MouseEventHandler<HTMLButtonElement>;
     /**
-     * Additional class for the virtual item.
-     */
-    virtualClassName?: string;
-    /**
-     * Style for the virtual item.
-     */
-    virtualStyle?: CSSProperties;
-    /**
      * Index for the virtual item.
      */
     virtualIndex?: number;
@@ -45,12 +37,13 @@ interface IItemProps {
  * Item represents a single option inside the List.
  */
 const Item = forwardRef<HTMLLIElement, IItemProps>(
-    ({ id, children, disabled, size = "medium", onClick, virtualClassName, virtualStyle, virtualIndex }, ref) => (
+    ({ id, children, disabled, size = "medium", onClick, virtualIndex }, ref) => (
         <li
             ref={ref}
             data-index={virtualIndex}
-            style={virtualStyle}
-            className={classNames("item", `item_size_${size}`, virtualClassName)}
+            className={classNames("item", `item_size_${size}`, {
+                item_interactive: !!onClick
+            })}
         >
             {onClick ? (
                 <button
