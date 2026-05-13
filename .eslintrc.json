@@ -58,8 +58,7 @@
                     "TagGroup": ["Tag"],
                     "Text": ["Text"],
                     "SegmentedControl": ["SegmentedControlButton"],
-                    "Accordion": ["AccordionItem"],
-                    "List": ["Item"]
+                    "Accordion": ["AccordionItem"]
                 }
             }
         ],

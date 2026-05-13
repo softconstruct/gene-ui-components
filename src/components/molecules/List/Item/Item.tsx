@@ -48,8 +48,6 @@ const Item = forwardRef<HTMLLIElement, IItemProps>(
             {onItemClick ? (
                 <button
                     type="button"
-                    role="option"
-                    aria-selected="false"
                     className={classNames("item__button", {
                         item__button_disabled: disabled
                     })}

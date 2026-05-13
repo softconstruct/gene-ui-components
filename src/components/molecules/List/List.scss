@@ -54,7 +54,7 @@
         justify-content: flex-end;
         flex: 0 0 auto;
         width: 100%;
-        height: 3.2rem;
+        height: var(--guit-sem-dimension-height-medium);
         padding: var(--guit-ref-spacing-3xsmall) var(--guit-ref-spacing-medium);
         overflow: hidden;
     }

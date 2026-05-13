@@ -98,7 +98,6 @@ const WithFooterStoryComponent: FC<IListProps> = (props) => {
             {...props}
             items={visibleItemsData}
             showMore
-            onItemClick={undefined}
             onShowMore={handleShowMore}
             showMoreDisabled={isShowMoreDisabled}
             showMoreLoading={isShowMoreLoading}

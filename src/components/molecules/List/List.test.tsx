@@ -53,6 +53,23 @@ describe("List ", () => {
         });
     });
 
+    it("does not wrap custom rendered items in a button when onItemClick is provided", () => {
+        const onItemClick = jest.fn();
+        setup.setProps({
+            items: [
+                {
+                    id: "custom-item",
+                    render: () => <div className="custom-row-content">Custom row</div>
+                }
+            ],
+            onItemClick
+        });
+
+        expect(setup.find(".item__button")).toHaveLength(0);
+        setup.find(".custom-row-content").simulate("click");
+        expect(onItemClick).not.toHaveBeenCalled();
+    });
+
     it("renders loading state correctly", () => {
         setup.setProps({ loading: true, loadingText: "Loading data..." });
         expect(setup.find(Loader).exists()).toBeTruthy();
@@ -76,6 +93,11 @@ describe("List ", () => {
     it("renders footer when showMore is true", () => {
         setup.setProps({ showMore: true, items: renderItems(1) });
         expect(setup.find(".list__footer").exists()).toBeTruthy();
+    });
+
+    it("uses default showMore label when not provided", () => {
+        setup.setProps({ showMore: true, items: renderItems(1), showMoreLabel: undefined });
+        expect(showMoreButton().text()).toContain("Show more");
     });
 
     it("does not render footer when showMore is false", () => {

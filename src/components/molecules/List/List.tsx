@@ -14,9 +14,22 @@ import Item from "@components/molecules/List/Item/Item";
 import "./List.scss";
 
 interface IListItemData {
+    /**
+     * Unique identifier for the list item.
+     */
     id: number | string;
+    /**
+     * Plain content rendered by the list when no custom `render` function is provided.
+     */
     label?: ReactNode;
+    /**
+     * Disables interaction for the item.
+     */
     disabled?: boolean;
+    /**
+     * Custom row renderer.
+     * Items rendered this way should handle their own nested interactions instead of using `onItemClick`.
+     */
     render?: (item: IListItemData) => ReactNode;
 }
 
@@ -33,6 +46,7 @@ interface IListProps {
     /**
      * Callback invoked when a list item is clicked.
      * Receives the clicked item data.
+     * Applies only to default label rows; custom `render` rows should handle their own interactions.
      */
     onItemClick?: (item: IListItemData) => void;
     /**
@@ -62,6 +76,7 @@ interface IListProps {
     onShowMore?: () => void;
     /**
      * Text for the "Show more" button.
+     * @default "Show more"
      */
     showMoreLabel?: string;
     /**
@@ -87,7 +102,7 @@ const getItemOnClickHandler = (
     item: IListItemData,
     onItemClick?: (clickedItem: IListItemData) => void
 ): MouseEventHandler<HTMLButtonElement> | undefined => {
-    if (!onItemClick) return undefined;
+    if (!onItemClick || item.render) return undefined;
 
     return () => onItemClick(item);
 };
@@ -107,7 +122,7 @@ const List: FC<IListProps> = ({
     showMore,
     onShowMore,
     size,
-    showMoreLabel,
+    showMoreLabel = "Show more",
     showMoreDisabled = false,
     showMoreLoading = false
 }) => {
