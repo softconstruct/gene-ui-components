@@ -1,17 +1,21 @@
 @use "../../../../assets/styles/mixins";
 
 .item {
+    $this: &;
+
+    display: flex;
+    align-items: center;
     width: 100%;
     border-radius: var(--guit-ref-radius-3xsmall);
     background-color: var(--guit-sem-color-background-neutral-1);
 
     &__button {
-        display: block;
+        display: flex;
+        align-items: center;
         width: 100%;
-        box-sizing: border-box;
-        border: 0;
+        height: 100%;
         background-color: var(--guit-sem-color-background-neutral-1);
-        text-align: start;
+        border-radius: inherit;
 
         @include mixins.media-hover {
             &:hover {
@@ -38,43 +42,25 @@
     &_size {
         &_large {
             min-height: var(--guit-sem-dimension-height-medium);
-            padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-medium);
 
-            &.item_interactive {
-                padding: 0;
-
-                > .item__button {
-                    min-height: var(--guit-sem-dimension-height-medium);
-                    padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-medium);
-                }
+            #{ $this }__button {
+                padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-medium);
             }
         }
 
         &_medium {
             min-height: var(--guit-sem-dimension-height-medium-nudge);
-            padding: var(--guit-ref-spacing-3xsmall) var(--guit-ref-spacing-xsmall);
 
-            &.item_interactive {
-                padding: 0;
-
-                > .item__button {
-                    min-height: var(--guit-sem-dimension-height-medium-nudge);
-                    padding: var(--guit-ref-spacing-3xsmall) var(--guit-ref-spacing-xsmall);
-                }
+            #{ $this }__button {
+                padding: var(--guit-ref-spacing-3xsmall) var(--guit-ref-spacing-xsmall);
             }
         }
 
         &_small {
             min-height: var(--guit-sem-dimension-height-small);
-            padding: var(--guit-ref-spacing-4xsmall) var(--guit-ref-spacing-xsmall);
 
-            &.item_interactive {
-                padding: 0;
-
-                > .item__button {
-                    min-height: var(--guit-sem-dimension-height-small);
-                    padding: var(--guit-ref-spacing-4xsmall) var(--guit-ref-spacing-xsmall);
-                }
+            #{ $this }__button {
+                padding: var(--guit-ref-spacing-4xsmall) var(--guit-ref-spacing-xsmall);
             }
         }
     }
