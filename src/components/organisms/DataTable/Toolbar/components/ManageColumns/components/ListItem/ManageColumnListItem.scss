@@ -1,4 +1,9 @@
 .manageColumnListItem {
+    --item-mb: var(--guit-ref-spacing-3xsmall);
+    --item-height: var(--guit-sem-dimension-height-medium);
+    --drop-gap: calc(var(--item-height) + var(--item-mb));
+
+    position: relative;
     display: flex;
     align-items: center;
     gap: var(--guit-ref-spacing-xsmall);
@@ -7,6 +12,38 @@
     height: var(--guit-sem-dimension-height-medium);
     border-radius: var(--guit-ref-radius-3xsmall);
     background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    margin-bottom: var(--item-mb);
+
+    &_dragging {
+        visibility: hidden;
+    }
+
+    .manageColumnsPopover__list--hasDropGap &_dragging {
+        height: 0;
+        min-height: 0;
+        padding: 0;
+        margin: 0;
+        border: none;
+        overflow: hidden;
+    }
+
+    &_dropGapTop {
+        margin-top: var(--drop-gap);
+    }
+
+    &_dropGapBottom {
+        margin-bottom: calc(var(--drop-gap) + var(--item-mb));
+    }
+
+    &_dragPreview {
+        display: flex;
+        box-shadow: var(--guit-ref-elevation-small);
+        background: var(--guit-sem-color-background-neutral-1);
+        border-radius: var(--guit-ref-radius-3xsmall);
+        box-sizing: border-box;
+        margin: 0;
+        z-index: 1000;
+    }
 
     &__content {
         flex: 1;
@@ -29,21 +66,25 @@
         gap: var(--guit-ref-spacing-4xsmall);
     }
 
-    &__dropIndicator {
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background-color: #2c68f5;
-        z-index: 10;
-        pointer-events: none;
+    &__dragHandle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        cursor: grab;
+        color: var(--guit-sem-color-foreground-neutral-2);
 
-        &--top {
-            top: -1px;
+        &:active {
+            cursor: grabbing;
         }
+    }
 
-        &--bottom {
-            bottom: -1px;
+    &__dragIcon {
+        flex-shrink: 0;
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
         }
     }
 }

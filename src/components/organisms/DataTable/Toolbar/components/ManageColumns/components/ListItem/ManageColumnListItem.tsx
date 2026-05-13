@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { attachClosestEdge, extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
-import { Edge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/types";
+import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/disable-native-drag-preview";
+import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unhandled";
 import { Column } from "@tanstack/react-table";
+import classNames from "classnames";
 
 import { GripDots, Pin, PinFilled } from "@geneui/icons";
 
@@ -38,6 +39,17 @@ interface IManageColumnListItemProps<TData> {
      * @param column
      */
     onPinToggle: (column: Column<TData>) => void;
+    /**
+     * The edge of the list item where the drop gap will appear.
+     * Can be either "top" or "bottom", indicating the position above or below the list item.
+     * If null, the drop gap will not be displayed.
+     */
+    dropGapEdge?: string | null;
+    /**
+     * Callback function triggered when the drag target changes.
+     * @param edge
+     */
+    onDragTargetChange?: (edge: string | null) => void;
 }
 
 const ManageColumnListItem = <TData,>({
@@ -45,7 +57,9 @@ const ManageColumnListItem = <TData,>({
     checked,
     onChange,
     isPinnedDraft,
-    onPinToggle
+    onPinToggle,
+    dropGapEdge = null,
+    onDragTargetChange
 }: IManageColumnListItemProps<TData>) => {
     const { header } = column.columnDef;
     const headerText = typeof header === "string" ? header : "";
@@ -54,8 +68,18 @@ const ManageColumnListItem = <TData,>({
 
     const itemRef = useRef<HTMLDivElement>(null);
     const dragHandleRef = useRef<HTMLDivElement>(null);
+    const onDragTargetChangeRef = useRef(onDragTargetChange);
+
     const [isDragging, setIsDragging] = useState(false);
-    const [closestEdge, setClosestEdge] = useState<Edge | null>(null);
+
+    onDragTargetChangeRef.current = onDragTargetChange;
+
+    const computeEdge = (clientY: number): string => {
+        const rowEl = itemRef.current;
+        if (!rowEl) return "bottom";
+        const { top, height } = rowEl.getBoundingClientRect();
+        return clientY < top + height / 2 ? "top" : "bottom";
+    };
 
     useEffect(() => {
         const el = itemRef.current;
@@ -66,20 +90,46 @@ const ManageColumnListItem = <TData,>({
             draggable({
                 element: el,
                 dragHandle,
-                getInitialData: () => ({ id: column.id }),
-                onDragStart: () => setIsDragging(true),
-                onDrop: () => setIsDragging(false)
+                getInitialData: () => {
+                    const rect = el.getBoundingClientRect();
+                    const clone = el.cloneNode(true) as HTMLElement;
+
+                    clone.classList.remove("manageColumnListItem_dragging");
+                    clone.classList.add("manageColumnListItem_dragPreview");
+
+                    Object.assign(clone.style, {
+                        width: `${rect.width}px`,
+                        height: `${rect.height}px`
+                    });
+
+                    return {
+                        id: column.id,
+                        previewNode: clone,
+                        initialRect: rect
+                    };
+                },
+                onGenerateDragPreview: ({ nativeSetDragImage }) => {
+                    disableNativeDragPreview({ nativeSetDragImage });
+                },
+                onDragStart: () => {
+                    setIsDragging(true);
+                    preventUnhandled.start();
+                },
+                onDrop: () => {
+                    setIsDragging(false);
+                    preventUnhandled.stop();
+                }
             }),
             dropTargetForElements({
                 element: el,
-
-                getData: ({ input }) =>
-                    attachClosestEdge({ id: column.id }, { element: el, input, allowedEdges: ["top", "bottom"] }),
-
-                onDragEnter: (args) => setClosestEdge(extractClosestEdge(args.self.data)),
-                onDrag: (args) => setClosestEdge(extractClosestEdge(args.self.data)),
-                onDragLeave: () => setClosestEdge(null),
-                onDrop: () => setClosestEdge(null)
+                canDrop: ({ source }) => source.data.id !== column.id,
+                getData: () => ({ id: column.id }),
+                onDragEnter: ({ location }) => {
+                    onDragTargetChangeRef.current?.(computeEdge(location.current.input.clientY));
+                },
+                onDrag: ({ location }) => {
+                    onDragTargetChangeRef.current?.(computeEdge(location.current.input.clientY));
+                }
             })
         );
     }, [column.id]);
@@ -89,12 +139,12 @@ const ManageColumnListItem = <TData,>({
     return (
         <div
             ref={itemRef}
-            className="manageColumnListItem"
-            style={{ position: "relative", opacity: isDragging ? 0.4 : 1, transition: "opacity 0.2s ease" }}
+            className={classNames("manageColumnListItem", {
+                manageColumnListItem_dragging: isDragging,
+                manageColumnListItem_dropGapTop: dropGapEdge === "top",
+                manageColumnListItem_dropGapBottom: dropGapEdge === "bottom"
+            })}
         >
-            {closestEdge === "top" && (
-                <div className="manageColumnListItem__dropIndicator manageColumnListItem__dropIndicator--top" />
-            )}
             <div className="manageColumnListItem__content">
                 <Checkbox
                     id={column.id}
@@ -106,13 +156,14 @@ const ManageColumnListItem = <TData,>({
             </div>
             <div className="manageColumnListItem__actions">
                 <PinIconElement onClick={() => onPinToggle(column)} style={{ cursor: "pointer" }} />
-                <div ref={dragHandleRef} style={{ cursor: "grab", display: "flex", alignItems: "center" }}>
-                    <GripDots />
+                <div ref={dragHandleRef} className="manageColumnListItem__dragHandle">
+                    <GripDots
+                        className={classNames("manageColumnListItem__dragIcon", {
+                            manageColumnListItem__dragIcon_dragging: isDragging
+                        })}
+                    />
                 </div>
             </div>
-            {closestEdge === "bottom" && (
-                <div className="manageColumnListItem__dropIndicator manageColumnListItem__dropIndicator--bottom" />
-            )}
         </div>
     );
 };

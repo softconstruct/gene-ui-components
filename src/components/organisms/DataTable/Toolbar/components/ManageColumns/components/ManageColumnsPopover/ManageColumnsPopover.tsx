@@ -1,11 +1,21 @@
-import React, { ChangeEvent, Dispatch, RefObject, SetStateAction, useEffect } from "react";
+import React, {
+    ChangeEvent,
+    Dispatch,
+    RefObject,
+    SetStateAction,
+    useCallback,
+    useEffect,
+    useRef,
+    useState
+} from "react";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { Column, ColumnPinningState } from "@tanstack/react-table";
+import classNames from "classnames";
 
 import Button from "@components/atoms/Button";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
+import CustomDragLayer from "@components/molecules/ActionableList/ActionableListItem/CustomDragLayer";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
@@ -110,27 +120,48 @@ const ManageColumnsPopover = <TData,>({
 }: IManageColumnsPopoverProps<TData>) => {
     const hasColumns = columns.length > 0;
 
+    const [dropGap, setDropGap] = useState<{ targetId: string; edge: string } | null>(null);
+    const dropGapRef = useRef(dropGap);
+    dropGapRef.current = dropGap;
+
+    const handleDragTargetChange = useCallback((targetId: string, edge: string | null) => {
+        setDropGap((prev) => {
+            if (edge === null) return prev;
+            if (prev?.targetId === targetId && prev?.edge === edge) return prev;
+            return { targetId, edge };
+        });
+    }, []);
+
     useEffect(() => {
         return monitorForElements({
-            onDrop({ source, location }) {
-                const destination = location.current.dropTargets[0];
-                if (!destination) return;
+            onDrop({ source }) {
+                const gap = dropGapRef.current;
+                setDropGap(null);
+
+                if (!gap) return;
 
                 const sourceId = source.data.id as string;
-                const destId = destination.data.id as string;
-
-                const closestEdgeOfTarget = extractClosestEdge(destination.data);
+                const destId = gap.targetId;
 
                 if (sourceId && destId && sourceId !== destId) {
-                    onColumnReorder(sourceId, destId, closestEdgeOfTarget);
+                    onColumnReorder(sourceId, destId, gap.edge);
                 }
             }
         });
     }, [onColumnReorder]);
 
     return (
-        <Popover ref={popoverRef} withArrow={false} open={open} setProps={setProps} onClose={onClose} size="fitContent">
+        <Popover
+            position="bottom-right"
+            ref={popoverRef}
+            withArrow={false}
+            open={open}
+            setProps={setProps}
+            onClose={onClose}
+            size="fitContent"
+        >
             <PopoverBody withScrollbar={false} withPadding={false} className="manageColumnsPopover__main">
+                <CustomDragLayer />
                 <TextField
                     autoComplete="off"
                     placeholder={texts?.searchPlaceholder ?? "Search"}
@@ -139,7 +170,11 @@ const ManageColumnsPopover = <TData,>({
                 />
                 <div className="manageColumnsPopover__body">
                     <Scrollbar>
-                        <div className="manageColumnsPopover__list">
+                        <div
+                            className={classNames("manageColumnsPopover__list", {
+                                "manageColumnsPopover__list--hasDropGap": dropGap !== null
+                            })}
+                        >
                             {hasColumns ? (
                                 columns.map((column) => {
                                     const isPinnedDraft = (draftPinning.left || []).includes(column.id);
@@ -151,6 +186,8 @@ const ManageColumnsPopover = <TData,>({
                                             isPinnedDraft={isPinnedDraft}
                                             onPinToggle={onColumnPinningChange}
                                             onChange={onColumnVisibilityChange}
+                                            dropGapEdge={dropGap?.targetId === column.id ? dropGap.edge : null}
+                                            onDragTargetChange={(edge) => handleDragTargetChange(column.id, edge)}
                                         />
                                     );
                                 })
@@ -167,10 +204,10 @@ const ManageColumnsPopover = <TData,>({
 
                     <ButtonGroup size="medium" className="manageColumnsPopover__actions">
                         <Button onClick={onCancel} size="medium" appearance="secondary">
-                            Cancel
+                            {texts?.cancelText ?? "Cancel"}
                         </Button>
                         <Button onClick={onSave} size="medium" appearance="primary">
-                            Save
+                            {texts?.saveText ?? "Save"}
                         </Button>
                     </ButtonGroup>
                 </div>
