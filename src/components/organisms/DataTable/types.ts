@@ -84,4 +84,5 @@ export interface ITableManageColumnsTexts {
     cancelText?: string;
     restoreDefaultsText?: string;
     searchPlaceholder?: string;
+    buttonText?: string;
 }

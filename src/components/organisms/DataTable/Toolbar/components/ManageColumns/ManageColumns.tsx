@@ -19,11 +19,6 @@ import "./ManageColumns.scss";
 
 interface IManageColumnsProps<TData> {
     /**
-     * Button label used to display the popover.
-     * @default "Manage columns"
-     */
-    label?: string;
-    /**
      * TanStack runtime columns to be displayed in the popover.
      */
     columns?: Column<TData>[];
@@ -86,7 +81,6 @@ interface IManageColumnsProps<TData> {
 }
 
 const ManageColumns = <TData,>({
-    label = "Manage columns",
     disabled = false,
     columns = [],
     columnVisibility,
@@ -154,7 +148,7 @@ const ManageColumns = <TData,>({
                 size="medium"
                 {...propsForPopover}
             >
-                {label}
+                {texts?.buttonText ?? "Manage columns"}
             </Button>
 
             <ManageColumnsPopover

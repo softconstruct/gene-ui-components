@@ -44,11 +44,31 @@ interface IToolbarProps<TData> {
      */
     onApplyColumnPinning: (nextPinning: ColumnPinningState) => void;
 
+    /**
+     * The initial or default column order state of the table.
+     * Used by the child components to restore columns to their original state.
+     */
     columnOrder: ColumnOrderState;
+    /**
+     * Callback function triggered when the user commits a new column order state.
+     * @param nextOrder
+     */
     defaultColumnOrder: ColumnOrderState;
+    /**
+     * Callback function triggered when the user commits a new column order state.
+     * @param nextOrder
+     */
     onApplyColumnOrder: (nextOrder: ColumnOrderState) => void;
-
+    /**
+     * An object with text labels for the Manage Columns popover.
+     * Use this to customize or localize the button texts.
+     */
     manageColumnsTexts?: ITableManageColumnsTexts;
+    /**
+     * Indicates whether the Manage Columns feature is available.
+     * If false, the toolbar will not render the Manage Columns button.
+     */
+    isManageColumnsAvailable?: boolean;
 }
 
 const Toolbar = <TData,>({
@@ -63,8 +83,10 @@ const Toolbar = <TData,>({
     columnOrder,
     defaultColumnOrder,
     onApplyColumnOrder,
-    manageColumnsTexts
+    manageColumnsTexts,
+    isManageColumnsAvailable
 }: IToolbarProps<TData>) => {
+    if (!isManageColumnsAvailable) return null;
     return (
         <div className="tableToolbar">
             <div className="tableToolbar__actions">

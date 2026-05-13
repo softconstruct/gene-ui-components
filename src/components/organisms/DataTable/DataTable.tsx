@@ -185,6 +185,12 @@ interface IDataTableProps<TData> {
      * Use this to customize or localize the button texts.
      */
     manageColumnsTexts?: ITableManageColumnsTexts;
+    /**
+     * Determines whether the Manage Columns button should be displayed in the toolbar.
+     * If `true`, the button will be visible and will trigger the popover when clicked.
+     * If `false`, the button will be hidden.
+     */
+    isManageColumnsAvailable?: boolean;
 }
 
 const defaultColumn = {
@@ -218,7 +224,8 @@ const DataTable = <TData,>({
     rowActions,
     getRowStatus,
     isManageColumnsEnabled = false,
-    manageColumnsTexts
+    manageColumnsTexts,
+    isManageColumnsAvailable = false
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -321,6 +328,7 @@ const DataTable = <TData,>({
     return (
         <div className={classNames("dataTable", className)}>
             <Toolbar
+                isManageColumnsAvailable={isManageColumnsAvailable}
                 isManageColumnsEnabled={isManageColumnsEnabled}
                 columns={leafColumns}
                 columnVisibility={columnVisibility}
