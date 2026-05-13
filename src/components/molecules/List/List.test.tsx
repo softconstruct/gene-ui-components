@@ -30,6 +30,29 @@ describe("List ", () => {
         expect(setup.exists()).toBeTruthy();
     });
 
+    it("applies className correctly", () => {
+        setup.setProps({ className: "custom-list-class" });
+        expect(setup.find(".list").hasClass("custom-list-class")).toBeTruthy();
+    });
+
+    it("renders non-interactive items when onItemClick is not provided", () => {
+        setup.setProps({ items: renderItems(2) });
+        expect(setup.find(".item__button")).toHaveLength(0);
+    });
+
+    it("calls onItemClick with the clicked item", () => {
+        const onItemClick = jest.fn();
+        setup.setProps({ items: renderItems(2), onItemClick });
+
+        setup.find(".item__button").first().simulate("click");
+
+        expect(onItemClick).toHaveBeenCalledTimes(1);
+        expect(onItemClick).toHaveBeenCalledWith({
+            id: "item-1",
+            label: "Item 1"
+        });
+    });
+
     it("renders loading state correctly", () => {
         setup.setProps({ loading: true, loadingText: "Loading data..." });
         expect(setup.find(Loader).exists()).toBeTruthy();

@@ -10,10 +10,6 @@ interface IItemProps {
      */
     id?: number | string;
     /**
-     * Content displayed inside the item. Typically a text label.
-     */
-    children?: ReactNode;
-    /**
      * Disables the item, preventing interaction.
      */
     disabled?: boolean;
@@ -26,7 +22,11 @@ interface IItemProps {
      * When provided, content is wrapped in a `<button>` and becomes clickable.
      * When omitted, content is rendered as non-interactive (no button, not clickable).
      */
-    onClick?: MouseEventHandler<HTMLButtonElement>;
+    onItemClick?: MouseEventHandler<HTMLButtonElement>;
+    /**
+     * Content displayed inside the item. Typically a text label.
+     */
+    children?: ReactNode;
     /**
      * Index for the virtual item.
      */
@@ -37,15 +37,15 @@ interface IItemProps {
  * Item represents a single option inside the List.
  */
 const Item = forwardRef<HTMLLIElement, IItemProps>(
-    ({ id, children, disabled, size = "medium", onClick, virtualIndex }, ref) => (
+    ({ id, disabled, children, size = "medium", onItemClick, virtualIndex }, ref) => (
         <li
             ref={ref}
             data-index={virtualIndex}
             className={classNames("item", `item_size_${size}`, {
-                item_interactive: !!onClick
+                item_interactive: !!onItemClick
             })}
         >
-            {onClick ? (
+            {onItemClick ? (
                 <button
                     type="button"
                     role="option"
@@ -53,7 +53,7 @@ const Item = forwardRef<HTMLLIElement, IItemProps>(
                     className={classNames("item__button", {
                         item__button_disabled: disabled
                     })}
-                    onClick={onClick}
+                    onClick={onItemClick}
                     disabled={disabled}
                     data-id={id}
                 >

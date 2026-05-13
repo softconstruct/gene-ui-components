@@ -17,7 +17,6 @@ interface IListItemData {
     id: number | string;
     label?: ReactNode;
     disabled?: boolean;
-    onClick?: (item: IListItemData) => void;
     render?: (item: IListItemData) => ReactNode;
 }
 
@@ -31,6 +30,11 @@ interface IListProps {
      * The items to display in the list.
      */
     items: IListItemData[];
+    /**
+     * Callback invoked when a list item is clicked.
+     * Receives the clicked item data.
+     */
+    onItemClick?: (item: IListItemData) => void;
     /**
      * Enables virtualized rendering for large lists.
      */
@@ -79,8 +83,13 @@ interface IListProps {
 
 const ESTIMATED_ROW_HEIGHT_PX = 32;
 
-const getItemOnClickHandler = (item: IListItemData): MouseEventHandler<HTMLButtonElement> | undefined => {
-    return () => item?.onClick?.(item);
+const getItemOnClickHandler = (
+    item: IListItemData,
+    onItemClick?: (clickedItem: IListItemData) => void
+): MouseEventHandler<HTMLButtonElement> | undefined => {
+    if (!onItemClick) return undefined;
+
+    return () => onItemClick(item);
 };
 
 /**
@@ -90,6 +99,7 @@ const getItemOnClickHandler = (item: IListItemData): MouseEventHandler<HTMLButto
 const List: FC<IListProps> = ({
     className,
     items,
+    onItemClick,
     virtualized = false,
     loading,
     loadingText,
@@ -201,11 +211,11 @@ const List: FC<IListProps> = ({
                                         <Item
                                             key={item.id ?? `list-item-${row.index}`}
                                             ref={virtualizer.measureElement}
-                                            virtualIndex={row.index}
                                             id={item.id}
                                             disabled={item.disabled}
+                                            virtualIndex={row.index}
                                             size={size}
-                                            onClick={getItemOnClickHandler(item)}
+                                            onItemClick={getItemOnClickHandler(item, onItemClick)}
                                         >
                                             {item.render ? item.render(item) : item.label}
                                         </Item>
@@ -228,7 +238,7 @@ const List: FC<IListProps> = ({
                                     id={item.id}
                                     disabled={item.disabled}
                                     size={size}
-                                    onClick={getItemOnClickHandler(item)}
+                                    onItemClick={getItemOnClickHandler(item, onItemClick)}
                                 >
                                     {item.render ? item.render(item) : item.label}
                                 </Item>

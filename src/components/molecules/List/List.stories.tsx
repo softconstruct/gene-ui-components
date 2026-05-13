@@ -18,6 +18,7 @@ const meta: Meta<IListProps> = {
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
         items: args({ control: "false", ...propCategory.content }),
+        onItemClick: args({ control: "false", ...propCategory.action }),
         loading: args({ control: "boolean", ...propCategory.states }),
         loadingText: args({ control: "text", ...propCategory.content }),
         emptyText: args({ control: "text", ...propCategory.content }),
@@ -77,8 +78,7 @@ const WithFooterStoryComponent: FC<IListProps> = (props) => {
         () =>
             visibleItems.map((item) => ({
                 id: item,
-                label: item,
-                onClick: () => {}
+                label: item
             })),
         [visibleItems]
     );
@@ -98,6 +98,7 @@ const WithFooterStoryComponent: FC<IListProps> = (props) => {
             {...props}
             items={visibleItemsData}
             showMore
+            onItemClick={undefined}
             onShowMore={handleShowMore}
             showMoreDisabled={isShowMoreDisabled}
             showMoreLoading={isShowMoreLoading}
@@ -107,6 +108,11 @@ const WithFooterStoryComponent: FC<IListProps> = (props) => {
 
 export const Default: Story = {
     render: (props) => <WithFooterStoryComponent {...props} />,
+    argTypes: {
+        showMore: args({ control: "false", ...propCategory.appearance }),
+        showMoreLoading: args({ control: "false", ...propCategory.states }),
+        showMoreDisabled: args({ control: "false", ...propCategory.states })
+    },
     args: {
         showMoreLabel: "Show more"
     }
@@ -199,13 +205,12 @@ const VirtualizedStoryComponent: FC<IListProps> = (props) => {
         () =>
             virtualizedItems.map(({ id, label }) => ({
                 id,
-                label,
-                onClick: () => {}
+                label
             })),
         [virtualizedItems]
     );
 
-    return <List {...props} items={virtualizedChildren} />;
+    return <List {...props} items={virtualizedChildren} onItemClick={() => {}} />;
 };
 
 export const Virtualized: Story = {
