@@ -297,6 +297,7 @@ describe("Dropdown ", () => {
         setup.setProps({ loading: false, options: [], emptyText: "No records" });
         setup.update();
         expect(setup.find(".empty").exists()).toBeTruthy();
+        expect(setup.find(".dropdown__stateScrollbar").exists()).toBeTruthy();
     });
 
     it("opens and focuses first option with ArrowDown from trigger", () => {

@@ -51,10 +51,16 @@
 
     &__loading,
     &__empty {
-        height: 18rem;
+        min-height: 18rem;
         width: 100%;
         display: grid;
         place-content: center;
+        padding: var(--guit-ref-spacing-large);
+    }
+
+    &__stateScrollbar {
+        height: 18rem;
+        width: 100%;
     }
 
     &__footer {

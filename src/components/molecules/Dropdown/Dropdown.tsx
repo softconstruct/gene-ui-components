@@ -625,9 +625,11 @@ const Dropdown: FC<IDropdownProps> = ({
                         )}
 
                         {loading ? (
-                            <div className="dropdown__loading">
-                                <Loader text={loadingText} textPosition="below" />
-                            </div>
+                            <Scrollbar className="dropdown__emptyScrollbar">
+                                <div className="dropdown__loading">
+                                    <Loader text={loadingText} textPosition="below" />
+                                </div>
+                            </Scrollbar>
                         ) : (
                             <>
                                 {filteredOptions.length ? (
@@ -692,9 +694,11 @@ const Dropdown: FC<IDropdownProps> = ({
                                         )}
                                     </>
                                 ) : (
-                                    <div className="dropdown__empty">
-                                        <Empty title={emptyText} size="small" />
-                                    </div>
+                                    <Scrollbar className="dropdown__stateScrollbar">
+                                        <div className="dropdown__empty">
+                                            <Empty title={emptyText} size="small" />
+                                        </div>
+                                    </Scrollbar>
                                 )}
                             </>
                         )}
