@@ -1,8 +1,7 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { preserveOffsetOnSource } from "@atlaskit/pragmatic-drag-and-drop/element/preserve-offset-on-source";
-import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
+import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/disable-native-drag-preview";
 import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unhandled";
 import classNames from "classnames";
 
@@ -12,6 +11,7 @@ import { ChevronDown, ChevronRight, GripDots } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import Info from "@components/atoms/Info";
 import Text from "@components/atoms/Text";
+import CustomDragLayer from "@components/molecules/ActionableList/ActionableListItem/CustomDragLayer";
 import Checkbox from "@components/molecules/Checkbox";
 import Tooltip from "@components/molecules/Tooltip";
 
@@ -144,9 +144,10 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     const rowRef = useRef<HTMLDivElement | null>(null);
     const dragHandleRef = useRef<HTMLButtonElement | null>(null);
     const titleTextRef = useRef<HTMLSpanElement | null>(null);
-    const previewContainerRef = useRef<HTMLElement | null>(null);
+    const selectedLabelRef = useRef<HTMLSpanElement | null>(null);
     const onDragTargetChangeRef = useRef(onDragTargetChange);
     const isTruncated = useEllipsisDetection(titleTextRef);
+    const isSelectedLabelTruncated = useEllipsisDetection(selectedLabelRef);
     const [isDragging, setIsDragging] = useState(false);
 
     onDragTargetChangeRef.current = onDragTargetChange;
@@ -176,45 +177,33 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
             draggable({
                 element: rowEl,
                 dragHandle: handleEl,
-                getInitialData: () => ({ sourceId: id, parentId }),
-                onGenerateDragPreview: ({ nativeSetDragImage, location }) => {
-                    if (!nativeSetDragImage) return;
-                    setCustomNativeDragPreview({
-                        nativeSetDragImage,
-                        getOffset: preserveOffsetOnSource({
-                            element: rowEl,
-                            input: location.current.input
-                        }),
-                        render: ({ container }) => {
-                            const clone = rowEl.cloneNode(true) as HTMLElement;
-                            clone.classList.remove("actionableListItem_nested");
-                            clone.classList.add("actionableListItem_dragPreview");
-                            Object.assign(clone.style, {
-                                width: `${rowEl.offsetWidth}px`,
-                                height: `${rowEl.offsetHeight}px`,
-                                overflow: "hidden",
-                                boxSizing: "border-box"
-                            });
-                            container.appendChild(clone);
-                            previewContainerRef.current = container;
-                            const cssContext = rowEl.closest(".actionableList") || rowEl.parentElement;
-                            cssContext?.appendChild(container);
-                        }
+                getInitialData: () => {
+                    const rect = rowEl.getBoundingClientRect();
+                    const clone = rowEl.cloneNode(true) as HTMLElement;
+
+                    clone.classList.remove("actionableListItem_nested");
+                    clone.classList.add("actionableListItem_dragPreview");
+
+                    Object.assign(clone.style, {
+                        width: `${rect.width}px`,
+                        height: `${rect.height}px`
                     });
+
+                    return {
+                        sourceId: id,
+                        parentId,
+                        previewNode: clone,
+                        initialRect: rect
+                    };
+                },
+                onGenerateDragPreview: ({ nativeSetDragImage }) => {
+                    disableNativeDragPreview({ nativeSetDragImage });
                 },
                 onDragStart: () => {
-                    if (previewContainerRef.current) {
-                        document.body.appendChild(previewContainerRef.current);
-                        previewContainerRef.current = null;
-                    }
                     setIsDragging(true);
                     preventUnhandled.start();
                 },
                 onDrop: () => {
-                    if (previewContainerRef.current) {
-                        document.body.appendChild(previewContainerRef.current);
-                        previewContainerRef.current = null;
-                    }
                     setIsDragging(false);
                     preventUnhandled.stop();
                 }
@@ -244,6 +233,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                 actionableListItem_dropGapBottom: dropGapEdge === "bottom"
             })}
         >
+            <CustomDragLayer />
             {isExpandable && (
                 <Button
                     size="smallNudge"
@@ -276,9 +266,16 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
             </Tooltip>
             {withCheckbox && descendantsTotalCount > 0 && (
                 <p className="actionableListItem__meta">
-                    <Text as="span" variant="bodyMediumMedium" className="actionableListItem__metaLabel">
-                        {selectedLabel}
-                    </Text>
+                    <Tooltip text={selectedLabel} isVisible={isSelectedLabelTruncated}>
+                        <Text
+                            as="span"
+                            ref={selectedLabelRef}
+                            variant="bodyMediumMedium"
+                            className="actionableListItem__metaLabel ellipsis-text"
+                        >
+                            {selectedLabel}
+                        </Text>
+                    </Tooltip>
                     <Text
                         as="span"
                         variant="bodyMediumMedium"
