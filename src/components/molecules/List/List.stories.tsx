@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { FC, MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 import { Globe, Magnifier, RecycleBin, ThreeDotsHorizontal } from "@geneui/icons";
@@ -64,6 +64,10 @@ const items = [
 ];
 
 const PAGE_SIZE = 5;
+
+const stopRowClickPropagation = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+};
 
 const WithFooterStoryComponent: FC<IListProps> = (props) => {
     const { showMoreDisabled, showMoreLoading } = props;
@@ -167,9 +171,27 @@ const WithRenderStoryComponent: FC<IListProps> = (props) => {
                             </div>
                         </div>
                         <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginLeft: "auto" }}>
-                            <Button Icon={Magnifier} appearance="secondary" layout="text" size="smallNudge" />
-                            <Button Icon={RecycleBin} appearance="secondary" layout="text" size="smallNudge" />
-                            <Button Icon={ThreeDotsHorizontal} appearance="secondary" layout="text" size="smallNudge" />
+                            <Button
+                                Icon={Magnifier}
+                                appearance="secondary"
+                                layout="text"
+                                size="smallNudge"
+                                onClick={stopRowClickPropagation}
+                            />
+                            <Button
+                                Icon={RecycleBin}
+                                appearance="secondary"
+                                layout="text"
+                                size="smallNudge"
+                                onClick={stopRowClickPropagation}
+                            />
+                            <Button
+                                Icon={ThreeDotsHorizontal}
+                                appearance="secondary"
+                                layout="text"
+                                size="smallNudge"
+                                onClick={stopRowClickPropagation}
+                            />
                         </div>
                     </div>
                 )
