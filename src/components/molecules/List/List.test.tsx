@@ -40,20 +40,22 @@ describe("List ", () => {
         expect(setup.find(".item__button")).toHaveLength(0);
     });
 
-    it("calls onItemClick with the clicked item", () => {
+    it("calls onItemClick with the clicked item and event", () => {
         const onItemClick = jest.fn();
         setup.setProps({ items: renderItems(2), onItemClick });
 
         setup.find(".item__button").first().simulate("click");
 
         expect(onItemClick).toHaveBeenCalledTimes(1);
-        expect(onItemClick).toHaveBeenCalledWith({
+        expect(onItemClick.mock.calls[0][0]).toEqual({
             id: "item-1",
             label: "Item 1"
         });
+        expect(onItemClick.mock.calls[0][1]).toBeDefined();
+        expect(typeof onItemClick.mock.calls[0][1].preventDefault).toBe("function");
     });
 
-    it("does not wrap custom rendered items in a button when onItemClick is provided", () => {
+    it("wraps custom rendered items in a button when onItemClick is provided", () => {
         const onItemClick = jest.fn();
         setup.setProps({
             items: [
@@ -65,9 +67,14 @@ describe("List ", () => {
             onItemClick
         });
 
-        expect(setup.find(".item__button")).toHaveLength(0);
-        setup.find(".custom-row-content").simulate("click");
-        expect(onItemClick).not.toHaveBeenCalled();
+        expect(setup.find(".item__button")).toHaveLength(1);
+        setup.find(".item__button").first().simulate("click");
+        expect(onItemClick).toHaveBeenCalledTimes(1);
+        expect(onItemClick.mock.calls[0][0]).toEqual({
+            id: "custom-item",
+            render: expect.any(Function)
+        });
+        expect(onItemClick.mock.calls[0][1]).toBeDefined();
     });
 
     it("renders loading state correctly", () => {

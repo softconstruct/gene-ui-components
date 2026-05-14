@@ -1,4 +1,14 @@
-import React, { FC, MouseEventHandler, ReactNode, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import React, {
+    FC,
+    MouseEvent,
+    MouseEventHandler,
+    ReactNode,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import classNames from "classnames";
 
@@ -28,7 +38,7 @@ interface IListItemData {
     disabled?: boolean;
     /**
      * Custom row renderer.
-     * Items rendered this way should handle their own nested interactions instead of using `onItemClick`.
+     * Custom content renderer for the row body.
      */
     render?: (item: IListItemData) => ReactNode;
 }
@@ -45,10 +55,9 @@ interface IListProps {
     items: IListItemData[];
     /**
      * Callback invoked when a list item is clicked.
-     * Receives the clicked item data.
-     * Applies only to default label rows; custom `render` rows should handle their own interactions.
+     * Receives the clicked item data and the click event.
      */
-    onItemClick?: (item: IListItemData) => void;
+    onItemClick?: (item: IListItemData, event: MouseEvent<HTMLButtonElement>) => void;
     /**
      * Enables virtualized rendering for large lists.
      */
@@ -100,11 +109,11 @@ const ESTIMATED_ROW_HEIGHT_PX = 32;
 
 const getItemOnClickHandler = (
     item: IListItemData,
-    onItemClick?: (clickedItem: IListItemData) => void
+    onItemClick?: (clickedItem: IListItemData, event: MouseEvent<HTMLButtonElement>) => void
 ): MouseEventHandler<HTMLButtonElement> | undefined => {
-    if (!onItemClick || item.render) return undefined;
+    if (!onItemClick) return undefined;
 
-    return () => onItemClick(item);
+    return (event) => onItemClick(item, event);
 };
 
 /**
