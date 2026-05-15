@@ -82,6 +82,71 @@ describe("Dropdown ", () => {
         expect(selectAllCheckbox.prop("indeterminate")).toBe(false);
     });
 
+    it("preserves selections outside search when select all is checked", () => {
+        setup.setProps({ variant: "multi", searchable: true });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        setup.find(".dropdownItem").at(0).simulate("click");
+        setup.update();
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "Option 2" } } as React.ChangeEvent<HTMLInputElement>);
+        setup.update();
+
+        setup
+            .find(".dropdown__actions")
+            .find(Checkbox)
+            .find("input")
+            .simulate("change", { target: { checked: true } } as React.ChangeEvent<HTMLInputElement>);
+        setup.update();
+
+        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1, Option 2");
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
+        setup.update();
+
+        const selectAllCheckbox = setup.find(".dropdown__actions").find(Checkbox).at(0);
+        expect(selectAllCheckbox.prop("checked")).toBe(false);
+        expect(selectAllCheckbox.prop("indeterminate")).toBe(true);
+        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1, Option 2");
+    });
+
+    it("preserves selections outside search when select all is unchecked", () => {
+        setup.setProps({ variant: "multi", searchable: true });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        setup.find(".dropdownItem").at(0).simulate("click");
+        setup.update();
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "Option 2" } } as React.ChangeEvent<HTMLInputElement>);
+        setup.update();
+
+        const selectAllInput = setup.find(".dropdown__actions").find(Checkbox).find("input");
+        selectAllInput.simulate("change", { target: { checked: true } } as React.ChangeEvent<HTMLInputElement>);
+        setup.update();
+        selectAllInput.simulate("change", { target: { checked: false } } as React.ChangeEvent<HTMLInputElement>);
+        setup.update();
+
+        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1");
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
+        setup.update();
+
+        const selectAllCheckbox = setup.find(".dropdown__actions").find(Checkbox).at(0);
+        expect(selectAllCheckbox.prop("checked")).toBe(false);
+        expect(selectAllCheckbox.prop("indeterminate")).toBe(true);
+        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1");
+    });
+
     it("opens in readOnly mode but does not change value", () => {
         setup.setProps({ readOnly: true, value: "option-1" });
         setup.find(".dropdown__trigger .textField__wrapper").simulate("click");

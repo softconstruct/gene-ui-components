@@ -513,13 +513,18 @@ const Dropdown: FC<IDropdownProps> = ({
     };
 
     const selectAllHandler = (event: ChangeEvent<HTMLInputElement>) => {
+        const filteredValueSet = new Set(enabledFilteredOptions.map((option) => option.value));
+
         if (!event.target.checked) {
-            setMultiValue([]);
+            setMultiValue(selectedMultipleValues.filter((selectedValue) => !filteredValueSet.has(selectedValue)));
             return;
         }
 
+        const valuesOutsideFilter = selectedMultipleValues.filter(
+            (selectedValue) => !filteredValueSet.has(selectedValue)
+        );
         const enabledValues = enabledFilteredOptions.map((option) => option.value);
-        setMultiValue(enabledValues);
+        setMultiValue([...valuesOutsideFilter, ...enabledValues]);
     };
 
     const clearAllHandler = (event?: MouseEvent<HTMLButtonElement>) => {
