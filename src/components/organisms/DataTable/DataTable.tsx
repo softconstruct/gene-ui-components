@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useMemo, useState } from "react";
+import React, { ReactElement, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     CellContext,
     ExpandedState,
@@ -14,7 +14,7 @@ import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
-import { DefaultCellComponent, TableColumnsAdapter } from "@components/organisms/DataTable/helper";
+import { adaptColumns, DefaultCellComponent, withExpanderColumn } from "@components/organisms/DataTable/helper";
 // Hooks
 import { useTablePagination } from "@components/organisms/DataTable/hooks/useTablePagination";
 import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
@@ -22,9 +22,10 @@ import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader
 // Types
 import {
     DataTableColumn,
-    DataTableRowAction,
+    DataTableGetRowStatus,
+    DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
-    ITableData,
+    IDataTableRowAction,
     ITableNoDataTexts
 } from "@components/organisms/DataTable/types";
 
@@ -35,7 +36,7 @@ import "./DataTable.scss";
  * Props for the {@link DataTable} component.
  * @template TData - The shape of the overall row data object.
  */
-interface IDataTableProps<TData extends ITableData> {
+interface IDataTableProps<TData> {
     /**
      * Additional class for the parent element.
      * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
@@ -127,22 +128,22 @@ interface IDataTableProps<TData extends ITableData> {
      */
     noDataAvailableActions?: IButtonProps[];
     /**
-     * Enables expandable rows, allowing for additional content to be revealed below a row when clicked.
+     * Returns expanded row content for a given row.
+     * When provided, rows become expandable and the returned node is rendered in a dedicated expanded row panel.
      */
-    expandable?: boolean;
+    renderExpandedRow?: DataTableRenderExpandedRow<TData>;
     /**
      * Callback invoked when a row is expanded or collapsed.
-     * Receives the resulting row state and the toggled row data.
+     * Receives a structured payload with the resulting state and the toggled row.
      *
-     * @param isExpanded - Indicates whether the row became expanded (`true`) or collapsed (`false`).
-     * @param rowData - Full row object for the toggled row.
+     * @param payload - Object with `isExpanded`, `row`, and stable `rowId` fields.
      *
      * @example
      * ```tsx
      * <DataTable
-     *   expandable={true}
-     *   onRowExpandChange={(isExpanded, rowData) => {
-     *     console.log(isExpanded, rowData);
+     *   renderExpandedRow={(row) => <div>{row.id}</div>}
+     *   onRowExpandChange={({ isExpanded, row, rowId }) => {
+     *     console.log(isExpanded, row, rowId);
      *   }}
      * />
      * ```
@@ -152,11 +153,24 @@ interface IDataTableProps<TData extends ITableData> {
      * An array of action button objects to display in the row's action menu.
      * @example
      * rowActions={[
-     * { Icon: Edit, title: 'Edit', disabled: false, onClick: handleEdit },
-     * { Icon: Delete, title: 'Delete', disabled: true, onClick: handleDelete }
+     * { Icon: Edit, title: 'Edit', disabled: false, onClick: (row, e) => handleEdit(row, e) },
+     * { Icon: Delete, title: 'Delete', disabled: true, onClick: (row, e) => handleDelete(row, e) }
      * ]}
      */
-    rowActions?: DataTableRowAction[];
+    rowActions?: IDataTableRowAction<TData>[];
+    /**
+     * Resolves the visual status variant for a row from its data.
+     * Use this when row styling should be derived from business fields such as `status`, `isLocked`, or similar flags,
+     * without mutating or pre-mapping the incoming dataset.
+     *
+     * @example
+     * ```tsx
+     * <DataTable
+     *   getRowStatus={(row) => (row.isLocked ? "red" : "default")}
+     * />
+     * ```
+     */
+    getRowStatus?: DataTableGetRowStatus<TData>;
 }
 
 const defaultColumn = {
@@ -174,7 +188,7 @@ const defaultColumn = {
  * @param props - The properties for the component.
  * @returns The fully assembled DataTable component including headers, body, and optional pagination.
  */
-const DataTable = <TData extends ITableData>({
+const DataTable = <TData,>({
     className,
     data = [],
     columns = [],
@@ -185,9 +199,10 @@ const DataTable = <TData extends ITableData>({
     noDataTexts,
     noDataAvailableActions,
     manualPagination = false,
-    expandable = false,
+    renderExpandedRow,
     onRowExpandChange,
-    rowActions
+    rowActions,
+    getRowStatus
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -202,10 +217,24 @@ const DataTable = <TData extends ITableData>({
         []
     );
 
-    const tableColumns = useMemo(
-        () => TableColumnsAdapter(columns, expandable, onRowExpandChange),
-        [columns, expandable, onRowExpandChange]
+    const isExpandable = Boolean(renderExpandedRow);
+
+    // Keep the latest `onRowExpandChange` in a ref so the column model isn't
+    // rebuilt every render when consumers pass an inline (un-memoized) handler.
+    const onRowExpandChangeRef = useRef(onRowExpandChange);
+    useEffect(() => {
+        onRowExpandChangeRef.current = onRowExpandChange;
+    });
+
+    const stableOnRowExpandChange = useCallback<DataTableRowExpandChangeHandler<TData>>(
+        (payload) => onRowExpandChangeRef.current?.(payload),
+        []
     );
+
+    const tableColumns = useMemo(() => {
+        const adapted = adaptColumns(columns);
+        return isExpandable ? withExpanderColumn(adapted, stableOnRowExpandChange) : adapted;
+    }, [columns, isExpandable, stableOnRowExpandChange]);
 
     const initialPageSize =
         typeof pagination === "object" && (pagination.pageSize || pagination.rowsPerPageOptions?.length)
@@ -217,14 +246,14 @@ const DataTable = <TData extends ITableData>({
         columns: tableColumns,
         defaultColumn,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        ...(manualPagination ? {} : { getPaginationRowModel: getPaginationRowModel() }),
+        manualPagination,
         getExpandedRowModel: getExpandedRowModel(),
         onExpandedChange: handleExpandedChange,
         initialState: {
             ...(pagination && {
                 pagination: { pageSize: initialPageSize }
-            }),
-            ...(manualPagination && { manualPagination })
+            })
         },
         state: {
             expanded
@@ -235,7 +264,7 @@ const DataTable = <TData extends ITableData>({
 
     const { paginationProps } = useTablePagination(pagination, table);
 
-    const shouldShowPagination = !isTableLoading && paginationProps && data && paginationProps.totalPages > 0;
+    const shouldShowPagination = !isTableLoading && paginationProps && paginationProps.totalPages > 0;
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
@@ -255,11 +284,13 @@ const DataTable = <TData extends ITableData>({
                         noDataTexts={noDataTexts}
                         noDataAvailableActions={noDataAvailableActions}
                         rowActions={rowActions}
+                        getRowStatus={getRowStatus}
+                        renderExpandedRow={renderExpandedRow}
                     />
                 </table>
             </Scrollbar>
             {shouldShowPagination && (
-                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableDataEmpty} />
+                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableLoading} />
             )}
         </div>
     );

@@ -79,6 +79,7 @@ const Partners: FC<IPartnersProps> = ({
 
     const onProductsToggle = () => {
         setHasScrolled(false);
+        setMappedPartners(partners || []);
         setIsProductsOpen((prevState) => !prevState);
     };
 
@@ -110,7 +111,7 @@ const Partners: FC<IPartnersProps> = ({
                 iconPosition="after"
                 {...propsForProductsPopover}
             >
-                {selectedPartner?.title || "Partner"}
+                {selectedPartner?.title || title}
             </Button>
             <Popover
                 setProps={setPropsForProductsPopover}

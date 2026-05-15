@@ -17,6 +17,10 @@
         gap: var(--guit-ref-spacing-xsmall);
     }
 
+    &_expander {
+        padding: 0;
+    }
+
     &__text {
         color: var(--guit-sem-color-foreground-neutral-2);
     }

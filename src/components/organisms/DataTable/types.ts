@@ -7,27 +7,43 @@ export interface ITableNoDataTexts {
     noDataAvailableText?: string;
 }
 
-export interface ITableData {
-    expandedRow?: ReactNode;
+export type DataTableRowStatus = "default" | "zebra" | "red" | "green" | "highlighted";
+
+export type DataTableGetRowStatus<TData> = (row: TData) => DataTableRowStatus | undefined;
+export type DataTableRenderExpandedRow<TData> = (row: TData) => ReactNode;
+
+export interface DataTableRowExpandChangePayload<TData> {
+    /**
+     * Whether the row became expanded (`true`) or collapsed (`false`).
+     */
+    isExpanded: boolean;
+    /**
+     * The full row data object for the toggled row.
+     */
+    row: TData;
+    /**
+     * Stable row id assigned by the table (matches `Row.id` from TanStack Table).
+     */
+    rowId: string;
 }
 
-export type DataTableRowExpandChangeHandler<TData extends ITableData> = (
-    isExpanded: boolean,
-    rowData: TData & ITableData
-) => void;
+export type DataTableRowExpandChangeHandler<TData> = (payload: DataTableRowExpandChangePayload<TData>) => void;
 
 export type DataTableRenderCellArgs<TData, TValue> = {
     value: TValue;
-    row: TData & ITableData;
+    row: TData;
     rowId: string;
 };
 
-export type DataTableRowAction = {
+export interface IDataTableRowAction<TData> {
     Icon: FC<IconProps>;
     title?: string;
-    disabled?: boolean;
-    onClick: (e: MouseEvent) => void;
-};
+    disabled?: boolean | ((row: TData) => boolean);
+    /**
+     * Row-aware click handler: receives the row data and the originating mouse event.
+     */
+    onClick: (row: TData, e: MouseEvent) => void;
+}
 
 /**
  * Public DataTable column type (Gene UI).

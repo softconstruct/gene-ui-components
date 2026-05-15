@@ -1,0 +1,67 @@
+@use "../../../../assets/styles/mixins";
+
+.item {
+    $this: &;
+
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-radius: var(--guit-ref-radius-3xsmall);
+    background-color: var(--guit-sem-color-background-neutral-1);
+
+    &__button {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        background-color: var(--guit-sem-color-background-neutral-1);
+        border-radius: inherit;
+
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-1-hover);
+            }
+        }
+
+        &:active {
+            background-color: var(--guit-sem-color-background-neutral-1-pressed);
+        }
+
+        &:focus-visible {
+            outline-offset: var(--guit-ref-border-width-thin);
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
+        }
+
+        &_disabled {
+            pointer-events: none;
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+
+    &_size {
+        &_large {
+            min-height: var(--guit-sem-dimension-height-medium);
+
+            #{ $this }__button {
+                padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-medium);
+            }
+        }
+
+        &_medium {
+            min-height: var(--guit-sem-dimension-height-medium-nudge);
+
+            #{ $this }__button {
+                padding: var(--guit-ref-spacing-3xsmall) var(--guit-ref-spacing-xsmall);
+            }
+        }
+
+        &_small {
+            min-height: var(--guit-sem-dimension-height-small);
+
+            #{ $this }__button {
+                padding: var(--guit-ref-spacing-4xsmall) var(--guit-ref-spacing-xsmall);
+            }
+        }
+    }
+}

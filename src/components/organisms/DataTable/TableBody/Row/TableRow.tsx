@@ -1,12 +1,17 @@
-import React, { FC, JSX } from "react";
+import React, { FC, JSX, MouseEvent } from "react";
 import { Row } from "@tanstack/table-core";
+import classNames from "classnames";
 
 // Components
 import Button from "@components/atoms/Button";
 import Tooltip from "@components/molecules/Tooltip";
 import TableBodyCell from "@components/organisms/DataTable/TableBody/Cell/TableBodyCell";
 import TableExpandedRow from "@components/organisms/DataTable/TableBody/Row/TableExpandedRow";
-import { DataTableRowAction, ITableData } from "@components/organisms/DataTable/types";
+import {
+    DataTableGetRowStatus,
+    DataTableRenderExpandedRow,
+    IDataTableRowAction
+} from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableRow.scss";
@@ -15,7 +20,7 @@ import "./TableRow.scss";
  * Props for the {@link TableRow} component.
  * @template TData - The shape of the overall row data object.
  */
-interface ITableRowProps<TData extends ITableData> {
+interface ITableRowProps<TData> {
     /**
      * The TanStack Table row instance.
      * Provides access to row-level data and internal methods, such as retrieving
@@ -25,7 +30,15 @@ interface ITableRowProps<TData extends ITableData> {
     /**
      * An array of action button objects to display in the row's actions section.
      */
-    rowActions?: DataTableRowAction[];
+    rowActions?: IDataTableRowAction<TData>[];
+    /**
+     * Resolves the visual status variant for the current row.
+     */
+    getRowStatus?: DataTableGetRowStatus<TData>;
+    /**
+     * Returns expanded row content for the current row.
+     */
+    renderExpandedRow?: DataTableRenderExpandedRow<TData>;
 }
 
 interface IRowActionsWrapperProps {
@@ -46,37 +59,59 @@ const RowActionsWrapper: FC<IRowActionsWrapperProps> = ({ title, children }) => 
  * @param props - The properties for the component.
  * @returns A table row element containing its respective rendered cells.
  */
-const TableRow = <TData extends ITableData>({ row, rowActions }: ITableRowProps<TData>) => {
-    const { expandedRow } = row.original;
-    const isRowExpanded = row.getIsExpanded() && expandedRow;
+const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: ITableRowProps<TData>) => {
+    const rowStatus = getRowStatus?.(row.original);
+    const isRowExpanded = row.getIsExpanded();
+    const expandedRow = isRowExpanded ? renderExpandedRow?.(row.original) : null;
+    const hasExpandedRow = expandedRow != null;
 
     return (
         <>
-            <tr className="tableRow">
+            <tr
+                className={classNames(`tableRow`, {
+                    [`tableRow_status_${rowStatus}`]: rowStatus
+                })}
+            >
                 {row.getVisibleCells().map((cell) => (
-                    <TableBodyCell key={cell.id} cell={cell} />
+                    <TableBodyCell
+                        key={cell.id}
+                        cell={cell}
+                        isExpanded={isRowExpanded}
+                        renderer={cell.column.columnDef.cell}
+                    />
                 ))}
 
                 {rowActions?.length ? (
                     <td className="tableRow__actionsWrapper">
                         <div className="tableRow__actions">
-                            {rowActions.map(({ Icon, title, onClick, disabled }, index) => (
-                                <RowActionsWrapper key={`action-${title ?? index}`} title={title}>
-                                    <Button
-                                        appearance="secondary"
-                                        layout="text"
-                                        size="small"
-                                        Icon={Icon}
-                                        disabled={disabled}
-                                        onClick={onClick}
-                                    />
-                                </RowActionsWrapper>
-                            ))}
+                            {rowActions.map(({ Icon, title, onClick, disabled }, index) => {
+                                const resolvedDisabled =
+                                    typeof disabled === "function" ? disabled(row.original) : disabled;
+
+                                const handleActionClick = (e: MouseEvent) => {
+                                    onClick(row.original, e);
+                                };
+
+                                return (
+                                    <RowActionsWrapper key={`action-${title ?? index}`} title={title}>
+                                        <Button
+                                            appearance="secondary"
+                                            layout="text"
+                                            size="small"
+                                            Icon={Icon}
+                                            disabled={resolvedDisabled}
+                                            onClick={handleActionClick}
+                                        />
+                                    </RowActionsWrapper>
+                                );
+                            })}
                         </div>
                     </td>
                 ) : null}
             </tr>
-            {isRowExpanded && <TableExpandedRow colspan={row.getVisibleCells().length}>{expandedRow}</TableExpandedRow>}
+            {isRowExpanded && hasExpandedRow && (
+                <TableExpandedRow colspan={row.getVisibleCells().length}>{expandedRow}</TableExpandedRow>
+            )}
         </>
     );
 };

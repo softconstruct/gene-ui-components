@@ -6,7 +6,12 @@ import { IButtonProps } from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
 import Empty from "@components/molecules/Empty";
 import TableRow from "@components/organisms/DataTable/TableBody/Row/TableRow";
-import { DataTableRowAction, ITableData, ITableNoDataTexts } from "@components/organisms/DataTable/types";
+import {
+    DataTableGetRowStatus,
+    DataTableRenderExpandedRow,
+    IDataTableRowAction,
+    ITableNoDataTexts
+} from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableBody.scss";
@@ -47,7 +52,15 @@ interface ITableBody<TData> {
     /**
      * An array of action button objects to display in the row's action menu.
      */
-    rowActions?: DataTableRowAction[];
+    rowActions?: IDataTableRowAction<TData>[];
+    /**
+     * Resolves the visual status variant for a row from its data.
+     */
+    getRowStatus?: DataTableGetRowStatus<TData>;
+    /**
+     * Returns expanded row content for a given row.
+     */
+    renderExpandedRow?: DataTableRenderExpandedRow<TData>;
 }
 
 interface ITableEmptyDataWrapperProps {
@@ -77,13 +90,15 @@ const TableEmptyDataWrapper: FC<ITableEmptyDataWrapperProps> = ({ children }) =>
  * @param props - The properties for the component.
  * @returns The table body element, or a fallback UI (loader/empty state) depending on the data.
  */
-const TableBody = <TData extends ITableData>({
+const TableBody = <TData,>({
     rows,
     loading,
     loadingText,
     noDataTexts,
     noDataAvailableActions,
-    rowActions
+    rowActions,
+    getRowStatus,
+    renderExpandedRow
 }: ITableBody<TData>) => {
     if (loading) {
         return (
@@ -109,7 +124,13 @@ const TableBody = <TData extends ITableData>({
     return (
         <tbody className="tableBody">
             {rows.map((row) => (
-                <TableRow key={row.id} row={row} rowActions={rowActions} />
+                <TableRow
+                    key={row.id}
+                    row={row}
+                    rowActions={rowActions}
+                    getRowStatus={getRowStatus}
+                    renderExpandedRow={renderExpandedRow}
+                />
             ))}
         </tbody>
     );
