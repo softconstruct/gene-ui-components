@@ -35,6 +35,7 @@ import "./Dropdown.scss";
 // Constants
 import {
     DEFAULT_CLEAR_LABEL,
+    DEFAULT_SEARCH_DEBOUNCE_MS,
     DEFAULT_SEARCH_PLACEHOLDER,
     DEFAULT_SELECT_ALL_LABEL,
     MENU_GAP_FROM_TARGET
@@ -195,7 +196,7 @@ interface IDropdownProps {
     /**
      * Callback fired when the search value changes.
      * Always fires regardless of `filterFn` value, so it can be used safely for analytics,
-     * form integrations, or async fetching. Subject to the built-in 200ms debounce.
+     * form integrations, or async fetching. Subject to the built-in 400ms debounce.
      */
     onSearchChange?: (value: string) => void;
     /**
@@ -231,7 +232,7 @@ const Dropdown: FC<IDropdownProps> = ({
     searchPlaceholder = DEFAULT_SEARCH_PLACEHOLDER,
     searchValue,
     defaultSearchValue,
-    resetSearchOnClose = false,
+    resetSearchOnClose = true,
     disableMobileSpreadsheet = true,
     loading,
     loadingText = "Loading",
@@ -254,6 +255,7 @@ const Dropdown: FC<IDropdownProps> = ({
     const [internalSearchValue, setInternalSearchValue] = useState<string>(searchValue ?? defaultSearchValue ?? "");
     const triggerTextFieldRef = useRef<ITextFieldRef | null>(null);
     const optionRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+    const hadSourceOptionsRef = useRef(options.length > 0);
     const pendingFocusIndexRef = useRef<number | null>(null);
     const [triggerInputWidth, setTriggerInputWidth] = useState(0);
     const { width: windowWidth } = useWindowSize();
@@ -268,6 +270,12 @@ const Dropdown: FC<IDropdownProps> = ({
             setInternalSearchValue(searchValue || "");
         }
     }, [searchValue, isControlledSearch]);
+
+    useEffect(() => {
+        if (options.length > 0) {
+            hadSourceOptionsRef.current = true;
+        }
+    }, [options.length]);
 
     const selectedSingleValue = value !== undefined ? value : internalValue;
     const selectedMultipleValues = values !== undefined ? values : internalValues;
@@ -299,7 +307,7 @@ const Dropdown: FC<IDropdownProps> = ({
 
     const { debouncedCallback: emitSearchDebounced, clearDebounce } = useDebounce(
         (...args: unknown[]) => emitSearchRaw(args[0] as string),
-        200
+        DEFAULT_SEARCH_DEBOUNCE_MS
     );
 
     const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -332,8 +340,6 @@ const Dropdown: FC<IDropdownProps> = ({
 
         return { visibleText: selectedSingleOption?.label || "", suffixText: "" };
     }, [isMulti, selectedMultiOptions, selectedSingleOption, triggerInputWidth]);
-
-    const shouldShowSearch = searchable && !loading && (!!options.length || !!searchTerm.trim().length);
 
     const filteredOptions = useMemo(() => {
         if (!searchable || isExternalSearch) {
@@ -394,6 +400,9 @@ const Dropdown: FC<IDropdownProps> = ({
         pendingFocusIndexRef.current = null;
         focusableOptions[safeIndex].focus();
     };
+
+    const hasOriginalData = options.length > 0 || hadSourceOptionsRef.current;
+    const isSearchReadOnly = !!loading || (!isExternalSearch && !hasOriginalData && !searchTerm.trim().length);
 
     const searchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Escape" && isOpen) {
@@ -585,7 +594,7 @@ const Dropdown: FC<IDropdownProps> = ({
             >
                 <PopoverBody withPadding={false} withScrollbar={false} className="dropdown__body">
                     <div className="dropdown__content">
-                        {shouldShowSearch && (
+                        {searchable && (
                             <div className="dropdown__search">
                                 <TextField
                                     value={searchTerm}
@@ -594,6 +603,7 @@ const Dropdown: FC<IDropdownProps> = ({
                                     onClear={clearSearchHandler}
                                     clearable
                                     inputMode="search"
+                                    readOnly={isSearchReadOnly}
                                     autoFocus={searchAutoFocus}
                                     placeholder={searchPlaceholder}
                                     IconBefore={Magnifier}

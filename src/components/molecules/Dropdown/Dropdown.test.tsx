@@ -5,6 +5,7 @@ import { act } from "react-dom/test-utils";
 // Components
 import Checkbox from "@components/molecules/Checkbox";
 
+import { DEFAULT_SEARCH_DEBOUNCE_MS } from "./constants";
 import Dropdown, { IDropdownProps } from "./index";
 // Types
 import { IDropdownOption } from "./types";
@@ -142,10 +143,61 @@ describe("Dropdown ", () => {
             .simulate("change", { target: { value: "Op" } } as React.ChangeEvent<HTMLInputElement>);
 
         act(() => {
-            jest.advanceTimersByTime(200);
+            jest.advanceTimersByTime(DEFAULT_SEARCH_DEBOUNCE_MS - 1);
+        });
+
+        expect(onSearchChange).not.toHaveBeenCalled();
+
+        act(() => {
+            jest.advanceTimersByTime(1);
         });
 
         expect(onSearchChange).toHaveBeenCalledWith("Op");
+    });
+
+    it("keeps search input editable when filter yields no matches", () => {
+        setup.setProps({ searchable: true });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "no-match" } } as React.ChangeEvent<HTMLInputElement>);
+        setup.update();
+
+        expect(setup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(false);
+        expect(setup.find(".dropdownItem").length).toBe(0);
+    });
+
+    it("keeps search input editable when external options are cleared after a search", () => {
+        setup.setProps({ searchable: true, filterFn: false as const });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "query" } } as React.ChangeEvent<HTMLInputElement>);
+        setup.setProps({ options: [] });
+        setup.update();
+
+        expect(setup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(false);
+    });
+
+    it("allows typing in external search mode when options start empty", () => {
+        setup.setProps({ searchable: true, filterFn: false as const, options: [] });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        expect(setup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(false);
+    });
+
+    it("marks search input readOnly when there is no original data and no search value", () => {
+        const emptySetup = mount(<Dropdown options={[]} searchable label="Label" />);
+        emptySetup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        emptySetup.update();
+
+        expect(emptySetup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(true);
+        emptySetup.unmount();
     });
 
     it("filters internally even when onSearchChange is provided (analytics-safe)", () => {
@@ -159,7 +211,7 @@ describe("Dropdown ", () => {
             .find(".dropdown__search input.textField__input")
             .simulate("change", { target: { value: "Option 2" } } as React.ChangeEvent<HTMLInputElement>);
         act(() => {
-            jest.advanceTimersByTime(200);
+            jest.advanceTimersByTime(DEFAULT_SEARCH_DEBOUNCE_MS);
         });
         setup.update();
 
@@ -184,7 +236,7 @@ describe("Dropdown ", () => {
             .simulate("change", { target: { value: "Option 2" } } as React.ChangeEvent<HTMLInputElement>);
 
         act(() => {
-            jest.advanceTimersByTime(200);
+            jest.advanceTimersByTime(DEFAULT_SEARCH_DEBOUNCE_MS);
         });
         setup.update();
 
@@ -203,7 +255,7 @@ describe("Dropdown ", () => {
             .find(".dropdown__search input.textField__input")
             .simulate("change", { target: { value: "option 1" } } as React.ChangeEvent<HTMLInputElement>);
         act(() => {
-            jest.advanceTimersByTime(200);
+            jest.advanceTimersByTime(DEFAULT_SEARCH_DEBOUNCE_MS);
         });
         setup.update();
 
@@ -227,7 +279,7 @@ describe("Dropdown ", () => {
             .simulate("change", { target: { value: "2" } } as React.ChangeEvent<HTMLInputElement>);
 
         act(() => {
-            jest.advanceTimersByTime(200);
+            jest.advanceTimersByTime(DEFAULT_SEARCH_DEBOUNCE_MS);
         });
 
         expect(onSearchChange).toHaveBeenCalledWith("2");
@@ -250,7 +302,7 @@ describe("Dropdown ", () => {
             .simulate("change", { target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
 
         act(() => {
-            jest.advanceTimersByTime(200);
+            jest.advanceTimersByTime(DEFAULT_SEARCH_DEBOUNCE_MS);
         });
 
         expect(onSearchChange).toHaveBeenCalledWith("");
@@ -271,7 +323,7 @@ describe("Dropdown ", () => {
             .find(".dropdown__search input.textField__input")
             .simulate("change", { target: { value: "Option 1" } } as React.ChangeEvent<HTMLInputElement>);
         act(() => {
-            jest.advanceTimersByTime(200);
+            jest.advanceTimersByTime(DEFAULT_SEARCH_DEBOUNCE_MS);
         });
         setup.update();
 
