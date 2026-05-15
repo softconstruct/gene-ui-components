@@ -47,10 +47,11 @@ describe("Info ", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    it('renders span trigger when triggerElement="span"', () => {
-        const wrapper = setup.setProps({ triggerElement: "span" });
+    it("renders span trigger when presentational is true", () => {
+        const wrapper = setup.setProps({ presentational: true });
 
         expect(wrapper.find("button").exists()).toBeFalsy();
         expect(wrapper.find("span.info").exists()).toBeTruthy();
+        expect(wrapper.find("span.info").prop("aria-hidden")).toBeTruthy();
     });
 });

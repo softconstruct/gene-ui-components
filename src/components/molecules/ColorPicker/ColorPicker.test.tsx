@@ -131,7 +131,7 @@ describe("ColorPicker", () => {
 
             setup.find(".colorPicker__formatDropdown .textField__wrapper").simulate("click");
             setup.update();
-            setup.find(".dropdownItem").at(0).simulate("click");
+            setup.find(".dropdownItem__action").at(0).simulate("click");
             setup.update();
 
             expect(setup.find(".colorPicker__rgbInputs").exists()).toBeTruthy();
@@ -152,7 +152,7 @@ describe("ColorPicker", () => {
 
             setup.find(".colorPicker__formatDropdown .textField__wrapper").simulate("click");
             setup.update();
-            setup.find(".dropdownItem").at(0).simulate("click");
+            setup.find(".dropdownItem__action").at(0).simulate("click");
             setup.update();
 
             expect(setup.find(".colorPicker__wrapper").exists()).toBeTruthy();

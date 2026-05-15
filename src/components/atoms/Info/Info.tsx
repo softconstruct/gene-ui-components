@@ -46,11 +46,10 @@ interface IInfoProps {
      */
     "aria-label"?: string;
     /**
-     * Controls which element is used as the tooltip trigger.
-     * Use `span` when Info is rendered inside another interactive element, such as a button.
-     * @default "button"
+     * Renders a non-button trigger when Info is placed inside another interactive element
+     * (e.g. a dropdown option). Required to avoid invalid nested `<button>` markup.
      */
-    triggerElement?: "button" | "span";
+    presentational?: boolean;
 }
 
 /**
@@ -63,7 +62,7 @@ const Info: FC<IInfoProps> = ({
     appearance = "default",
     className,
     "aria-label": ariaLabel,
-    triggerElement = "button"
+    presentational = false
 }) => {
     const [alwaysShow, setAlwaysShow] = useState(false);
 
@@ -76,7 +75,7 @@ const Info: FC<IInfoProps> = ({
 
     const handleBlur = () => !disabled && alwaysShow && setAlwaysShow(false);
 
-    const stopSpanTriggerPropagation = (event: MouseEvent<HTMLSpanElement>) => {
+    const stopPresentationalTriggerPropagation = (event: MouseEvent<HTMLSpanElement>) => {
         event.stopPropagation();
     };
 
@@ -91,34 +90,33 @@ const Info: FC<IInfoProps> = ({
     const tooltipAppearance = appearance === "inverse" ? "inverse" : "default";
     const icon = <InfoIcon className="info__icon" size={iconSizes[size]} />;
 
-    const trigger =
-        triggerElement === "span" ? (
-            <span
-                aria-hidden="true"
-                className={buttonClassNames}
-                onClick={stopSpanTriggerPropagation}
-                onMouseDown={stopSpanTriggerPropagation}
-            >
-                {icon}
-            </span>
-        ) : (
-            <button
-                type="button"
-                aria-label={ariaLabel || "press enter to open tooltip"}
-                disabled={disabled}
-                aria-pressed={alwaysShow}
-                className={buttonClassNames}
-                onKeyDown={keyDownHandler}
-                onBlur={handleBlur}
-            >
-                {icon}
-            </button>
-        );
+    const trigger = presentational ? (
+        <span
+            aria-hidden="true"
+            className={buttonClassNames}
+            onClick={stopPresentationalTriggerPropagation}
+            onMouseDown={stopPresentationalTriggerPropagation}
+        >
+            {icon}
+        </span>
+    ) : (
+        <button
+            type="button"
+            aria-label={ariaLabel || "press enter to open tooltip"}
+            disabled={disabled}
+            aria-pressed={alwaysShow}
+            className={buttonClassNames}
+            onKeyDown={keyDownHandler}
+            onBlur={handleBlur}
+        >
+            {icon}
+        </button>
+    );
 
     return (
         <Tooltip
             text={infoText}
-            alwaysShow={triggerElement === "button" ? alwaysShow : undefined}
+            alwaysShow={presentational ? undefined : alwaysShow}
             appearance={tooltipAppearance}
             isVisible={!disabled}
         >

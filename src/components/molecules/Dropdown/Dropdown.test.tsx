@@ -43,7 +43,7 @@ describe("Dropdown ", () => {
     it("selects value in single mode and closes popover", () => {
         setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
         setup.update();
-        setup.find(".dropdownItem").at(1).simulate("click");
+        setup.find(".dropdownItem__action").at(1).simulate("click");
         setup.update();
 
         expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 2");
@@ -54,8 +54,8 @@ describe("Dropdown ", () => {
         setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
         setup.update();
 
-        setup.find(".dropdownItem").at(0).simulate("click");
-        setup.find(".dropdownItem").at(1).simulate("click");
+        setup.find(".dropdownItem__action").at(0).simulate("click");
+        setup.find(".dropdownItem__action").at(1).simulate("click");
         setup.update();
         expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1, Option 2");
 
@@ -87,7 +87,7 @@ describe("Dropdown ", () => {
         setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
         setup.update();
 
-        setup.find(".dropdownItem").at(0).simulate("click");
+        setup.find(".dropdownItem__action").at(0).simulate("click");
         setup.update();
 
         setup
@@ -120,7 +120,7 @@ describe("Dropdown ", () => {
         setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
         setup.update();
 
-        setup.find(".dropdownItem").at(0).simulate("click");
+        setup.find(".dropdownItem__action").at(0).simulate("click");
         setup.update();
 
         setup
@@ -147,6 +147,23 @@ describe("Dropdown ", () => {
         expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1");
     });
 
+    it("renders info as a focusable button sibling to the option action", () => {
+        setup.setProps({
+            variant: "multi",
+            searchable: true,
+            options: [{ id: 1, label: "Option 1", value: "option-1", infoText: "Extra details" }]
+        });
+        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
+        setup.update();
+
+        const optionAction = setup.find(".dropdownItem__action");
+        const infoButton = setup.find(".dropdownItem__info button");
+
+        expect(optionAction.exists()).toBeTruthy();
+        expect(infoButton.exists()).toBeTruthy();
+        expect(infoButton.closest("button.dropdownItem__action").exists()).toBeFalsy();
+    });
+
     it("opens in readOnly mode but does not change value", () => {
         setup.setProps({ readOnly: true, value: "option-1" });
         setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
@@ -154,7 +171,7 @@ describe("Dropdown ", () => {
 
         expect(setup.find(".dropdownItem").exists()).toBeTruthy();
 
-        setup.find(".dropdownItem").at(1).simulate("click");
+        setup.find(".dropdownItem__action").at(1).simulate("click");
         setup.update();
 
         expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1");
@@ -394,7 +411,7 @@ describe("Dropdown ", () => {
 
         onSearchChange.mockClear();
 
-        setup.find(".dropdownItem").at(0).simulate("click");
+        setup.find(".dropdownItem__action").at(0).simulate("click");
         setup.update();
 
         expect(onSearchChange).toHaveBeenCalledWith("");
@@ -424,7 +441,7 @@ describe("Dropdown ", () => {
         act(() => undefined);
         setup.update();
 
-        const firstOption = setup.find(".dropdownItem").at(0).getDOMNode() as HTMLButtonElement;
+        const firstOption = setup.find(".dropdownItem__action").at(0).getDOMNode() as HTMLButtonElement;
         expect(document.activeElement).toBe(firstOption);
     });
 
@@ -452,7 +469,7 @@ describe("Dropdown ", () => {
         });
         setup.update();
 
-        const firstOption = setup.find(".dropdownItem").at(0).getDOMNode() as HTMLButtonElement;
+        const firstOption = setup.find(".dropdownItem__action").at(0).getDOMNode() as HTMLButtonElement;
         expect(document.activeElement).toBe(firstOption);
     });
 });

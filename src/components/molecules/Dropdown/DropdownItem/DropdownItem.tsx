@@ -40,9 +40,10 @@ const DropdownItem: FC<IDropdownItemProps> = ({
     onClick,
     buttonRef
 }) => {
+    const hasTrailing = Boolean(textAfter || (variant === "single" && selected));
+
     return (
-        <button
-            type="button"
+        <div
             className={classNames(
                 "dropdownItem",
                 `dropdownItem_size_${size}`,
@@ -54,33 +55,42 @@ const DropdownItem: FC<IDropdownItemProps> = ({
                 },
                 className
             )}
-            onClick={onClick}
-            disabled={disabled}
-            role="option"
-            aria-selected={selected}
-            ref={buttonRef}
         >
-            <span className="dropdownItem__main">
-                {variant === "multi" && (
-                    <Checkbox checked={selected} disabled={disabled} className="dropdownItem__checkbox" />
+            <button
+                type="button"
+                role="option"
+                aria-selected={selected}
+                className="dropdownItem__action"
+                onClick={onClick}
+                disabled={disabled}
+                ref={buttonRef}
+            >
+                <span className="dropdownItem__main">
+                    {variant === "multi" && (
+                        <Checkbox checked={selected} disabled={disabled} className="dropdownItem__checkbox" />
+                    )}
+                    {Icon && <Icon className="dropdownItem__icon" size={20} />}
+                    <span className="dropdownItem__label ellipsis-text">{label}</span>
+                </span>
+                {hasTrailing && (
+                    <span className="dropdownItem__trailing">
+                        {textAfter && <span className="dropdownItem__textAfter ellipsis-text">{textAfter}</span>}
+                        {variant === "single" && selected && (
+                            <CheckMark className="dropdownItem__checkmark" size={20} />
+                        )}
+                    </span>
                 )}
-                {Icon && <Icon className="dropdownItem__icon" size={20} />}
-                <span className="dropdownItem__label ellipsis-text">{label}</span>
-            </span>
-            <span className="dropdownItem__meta">
-                {textAfter && <span className="dropdownItem__textAfter ellipsis-text">{textAfter}</span>}
-                {infoText && (
-                    <Info
-                        infoText={infoText}
-                        size="XSmall"
-                        className="dropdownItem__info"
-                        disabled={disabled}
-                        triggerElement="span"
-                    />
-                )}
-                {variant === "single" && selected && <CheckMark className="dropdownItem__checkmark" size={20} />}
-            </span>
-        </button>
+            </button>
+            {infoText && (
+                <Info
+                    infoText={infoText}
+                    size="XSmall"
+                    className="dropdownItem__info"
+                    disabled={disabled}
+                    aria-label={`More information about ${label}`}
+                />
+            )}
+        </div>
     );
 };
 
