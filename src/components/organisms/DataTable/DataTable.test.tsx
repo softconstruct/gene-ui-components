@@ -434,3 +434,109 @@ describe("Table Component - body cell memoization", () => {
         setupLocal.unmount();
     });
 });
+
+describe("Table Component - Manage Columns Integration", () => {
+    let setup: ReactWrapper<IDataTableProps<MockDataType>>;
+
+    beforeEach(async () => {
+        await act(async () => {
+            setup = mount(
+                <DataTable
+                    columns={mockColumns}
+                    data={mockData}
+                    manageColumnsConfig={{
+                        enabled: true,
+                        available: true
+                    }}
+                />
+            );
+        });
+        setup.update();
+    });
+
+    afterEach(() => {
+        setup.unmount();
+    });
+
+    it("passes manageColumnsConfig with controlled open state and new callbacks to Toolbar", async () => {
+        const onSave = jest.fn();
+        const onRestoreDefaults = jest.fn();
+        const onSearch = jest.fn();
+        const onColumnVisibilityChange = jest.fn();
+
+        await act(async () => {
+            setup.setProps({
+                manageColumnsConfig: {
+                    open: true,
+                    enabled: true,
+                    onSave,
+                    onRestoreDefaults,
+                    onSearch,
+                    onColumnVisibilityChange
+                }
+            });
+        });
+        setup.update();
+
+        const toolbar = setup.find(Toolbar);
+        const config = toolbar.prop("manageColumnsConfig");
+
+        expect(config).toBeDefined();
+        expect(config?.open).toBe(true);
+        expect(config?.enabled).toBe(true);
+        expect(config?.onSave).toBe(onSave);
+        expect(config?.onRestoreDefaults).toBe(onRestoreDefaults);
+        expect(config?.onSearch).toBe(onSearch);
+        expect(config?.onColumnVisibilityChange).toBe(onColumnVisibilityChange);
+    });
+
+    it("updates table column visibility when onApplyColumnVisibility is emitted", async () => {
+        expect(setup.find("thead th").length).toBe(mockColumns.length);
+
+        const toolbar = setup.find(Toolbar);
+        const firstColId = mockColumns[0].accessorKey as string;
+
+        await act(async () => {
+            const newVisibility = { [firstColId]: false };
+            toolbar.prop("onApplyColumnVisibility")?.(newVisibility);
+        });
+        setup.update();
+
+        expect(setup.find("thead th").length).toBe(mockColumns.length - 1);
+    });
+
+    it("updates table column order when onApplyColumnOrder is emitted", async () => {
+        const toolbar = setup.find(Toolbar);
+        const col1 = mockColumns[0].accessorKey as string;
+        const col2 = mockColumns[1].accessorKey as string;
+
+        const reversedOrder = [col2, col1];
+
+        await act(async () => {
+            toolbar.prop("onApplyColumnOrder")?.(reversedOrder);
+        });
+        setup.update();
+
+        const headers = setup.find("thead th");
+        expect(headers.at(0).text()).toBe(mockColumns[1].header);
+        expect(headers.at(1).text()).toBe(mockColumns[0].header);
+    });
+
+    it("applies pinning classes to body and header cells when onApplyColumnPinning is emitted", async () => {
+        const toolbar = setup.find(Toolbar);
+        const firstColId = mockColumns[0].accessorKey as string;
+
+        const pinState = { left: [firstColId], right: [] };
+
+        await act(async () => {
+            toolbar.prop("onApplyColumnPinning")?.(pinState);
+        });
+        setup.update();
+
+        const firstHeaderCell = setup.find("thead th").first();
+        expect(firstHeaderCell.hasClass("tableHeaderCell_pinned")).toBeTruthy();
+
+        const firstBodyCell = setup.find("tbody tr").first().find("td").first();
+        expect(firstBodyCell.hasClass("tableBodyCell_pinned")).toBeTruthy();
+    });
+});
