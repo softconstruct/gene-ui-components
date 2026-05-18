@@ -58,9 +58,7 @@ const meta: Meta<IDataTableProps<MockRowType>> = {
         onRowExpandChange: args({ control: "false", ...propCategory.functionality }),
         rowActions: args({ control: "object", ...propCategory.functionality }),
         getRowStatus: args({ control: "false", ...propCategory.appearance }),
-        isManageColumnsEnabled: args({ control: "boolean", ...propCategory.functionality }),
-        manageColumnsTexts: args({ control: "object", ...propCategory.content }),
-        isManageColumnsAvailable: args({ control: "boolean", ...propCategory.functionality })
+        manageColumnsConfig: args({ control: "object", ...propCategory.functionality })
     },
     args: {}
 };
@@ -177,14 +175,14 @@ export const WithManageColumns: Story = {
     args: {
         data: mockData,
         columns: mockColumns,
-        isManageColumnsEnabled: true,
-        isManageColumnsAvailable: true,
-        manageColumnsTexts: {
-            searchPlaceholder: "Search...",
-            cancelText: "Cancel",
-            saveText: "Save changes",
-            restoreDefaultsText: "Restore defaults",
-            buttonText: "Manage columns"
+        manageColumnsConfig: {
+            texts: {
+                searchPlaceholder: "Search...",
+                cancelText: "Cancel",
+                saveText: "Save changes",
+                restoreDefaultsText: "Restore defaults",
+                buttonText: "Manage columns"
+            }
         }
     }
 };
