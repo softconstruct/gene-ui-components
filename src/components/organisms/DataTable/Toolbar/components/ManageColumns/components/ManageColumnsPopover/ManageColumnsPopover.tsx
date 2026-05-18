@@ -247,7 +247,7 @@ const ManageColumnsPopover = <TData,>({
                                     );
                                 })
                             ) : (
-                                <Empty appearance="noResult" className="manageColumnsPopover__empty" />
+                                <Empty appearance="noResult" className="manageColumnsPopover__empty" size="small" />
                             )}
                         </div>
                     </Scrollbar>

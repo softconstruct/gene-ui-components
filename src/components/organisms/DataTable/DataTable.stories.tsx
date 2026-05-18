@@ -176,6 +176,8 @@ export const WithManageColumns: Story = {
         data: mockData,
         columns: mockColumns,
         manageColumnsConfig: {
+            enabled: true,
+            available: true,
             texts: {
                 searchPlaceholder: "Search...",
                 cancelText: "Cancel",
