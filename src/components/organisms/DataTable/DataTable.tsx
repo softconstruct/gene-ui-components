@@ -30,8 +30,8 @@ import {
     DataTableRenderExpandedRow,
     DataTableRowExpandChangeHandler,
     IDataTableRowAction,
-    ITableManageColumnsTexts,
-    ITableNoDataTexts
+    ITableNoDataTexts,
+    ManageColumnsConfig
 } from "@components/organisms/DataTable/types";
 
 // Styles
@@ -133,10 +133,6 @@ interface IDataTableProps<TData> {
      */
     noDataAvailableActions?: IButtonProps[];
     /**
-     * Enables the ability to manage columns by dragging and dropping them in the desired order.
-     */
-    isManageColumnsEnabled?: boolean;
-    /**
      * Returns expanded row content for a given row.
      * When provided, rows become expandable and the returned node is rendered in a dedicated expanded row panel.
      */
@@ -181,16 +177,10 @@ interface IDataTableProps<TData> {
      */
     getRowStatus?: DataTableGetRowStatus<TData>;
     /**
-     * An object with text labels for the Manage Columns popover.
-     * Use this to customize or localize the button texts.
+     * Configuration object for managing columns.
+     * This object allows fine-grained control over the visibility, order, and position of columns.
      */
-    manageColumnsTexts?: ITableManageColumnsTexts;
-    /**
-     * Determines whether the Manage Columns button should be displayed in the toolbar.
-     * If `true`, the button will be visible and will trigger the popover when clicked.
-     * If `false`, the button will be hidden.
-     */
-    isManageColumnsAvailable?: boolean;
+    manageColumnsConfig?: ManageColumnsConfig;
 }
 
 const defaultColumn = {
@@ -223,9 +213,7 @@ const DataTable = <TData,>({
     onRowExpandChange,
     rowActions,
     getRowStatus,
-    isManageColumnsEnabled = false,
-    manageColumnsTexts,
-    isManageColumnsAvailable = false
+    manageColumnsConfig = {}
 }: IDataTableProps<TData>): ReactElement => {
     const [internalLoading] = useState(false);
     const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -328,8 +316,6 @@ const DataTable = <TData,>({
     return (
         <div className={classNames("dataTable", className)}>
             <Toolbar
-                isManageColumnsAvailable={isManageColumnsAvailable}
-                isManageColumnsEnabled={isManageColumnsEnabled}
                 columns={leafColumns}
                 columnVisibility={columnVisibility}
                 defaultColumnVisibility={initialColumnVisibility}
@@ -340,7 +326,7 @@ const DataTable = <TData,>({
                 columnOrder={columnOrder}
                 defaultColumnOrder={defaultColumnOrder}
                 onApplyColumnOrder={handleApplyColumnOrder}
-                manageColumnsTexts={manageColumnsTexts}
+                manageColumnsConfig={manageColumnsConfig}
             />
             <Scrollbar>
                 <table

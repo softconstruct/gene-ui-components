@@ -35,4 +35,11 @@
             opacity: 1;
         }
     }
+
+    &_pinned {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background-color: red;
+    }
 }

@@ -37,10 +37,14 @@ interface ITableHeaderCellProps<TData, TValue> {
  */
 const TableHeaderCell = <TData, TValue>({ header }: ITableHeaderCellProps<TData, TValue>) => {
     const isExpanderHeader = header.column.id === "expander";
+    const isPinned = header.column.getIsPinned();
 
     return (
         <th
-            className={classNames("tableHeaderCell", { tableHeaderCell_expander: isExpanderHeader })}
+            className={classNames("tableHeaderCell", {
+                tableHeaderCell_expander: isExpanderHeader,
+                tableHeaderCell_pinned: isPinned !== false
+            })}
             style={{
                 width: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : undefined,
                 minWidth: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : undefined,

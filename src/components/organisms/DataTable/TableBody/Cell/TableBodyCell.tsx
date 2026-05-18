@@ -14,7 +14,7 @@ import "./TableBodyCell.scss";
  * the rendering context) plus a set of primitive snapshots captured by the
  * parent at render time. Memoization compares only the snapshots, never the
  * live `cell` reference — TanStack recreates cell instances on every render,
- * and its live getters always return current state, which makes them unsafe
+ * and its live getters always return the current state, which makes them unsafe
  * for prev/next comparison inside `React.memo`.
  *
  * @template TData - The shape of the overall row data object.
@@ -37,6 +37,12 @@ interface ITableBodyCellProps<TData, TValue> {
      * consumers updating the `columns` prop with a new renderer closure.
      */
     renderer: ColumnDef<TData, TValue>["cell"];
+    /**
+     * Snapshot of `column.getIsPinned()` captured by the parent at render time.
+     * Required so that state-dependent renderers (pinned column background)
+     * invalidate the memo when the column toggles.
+     */
+    isPinned?: boolean | "left" | "right";
 }
 
 /**
@@ -50,13 +56,14 @@ interface ITableBodyCellProps<TData, TValue> {
  * @param props - The properties for the component.
  * @returns A table cell element with the rendered content.
  */
-const TableBodyCell = <TData, TValue>({ cell, renderer, isExpanded }: ITableBodyCellProps<TData, TValue>) => {
+const TableBodyCell = <TData, TValue>({ cell, renderer, isExpanded, isPinned }: ITableBodyCellProps<TData, TValue>) => {
     const isExpanderCell = cell.column.id === "expander";
     return (
         <td
             className={classNames("tableBodyCell", {
                 tableBodyCell_expander: isExpanderCell,
-                tableBodyCell_expander_expanded: isExpanded
+                tableBodyCell_expander_expanded: isExpanded,
+                tableBodyCell_pinned: isPinned !== false
             })}
             style={{
                 width: isExpanderCell ? EXPANDABLE_CELL_SIZE_REM : undefined,
@@ -77,7 +84,11 @@ const TableBodyCell = <TData, TValue>({ cell, renderer, isExpanded }: ITableBody
 const areCellsEqual = <TData, TValue>(
     prev: ITableBodyCellProps<TData, TValue>,
     next: ITableBodyCellProps<TData, TValue>
-) => prev.cell.id === next.cell.id && prev.isExpanded === next.isExpanded && prev.renderer === next.renderer;
+) =>
+    prev.cell.id === next.cell.id &&
+    prev.isExpanded === next.isExpanded &&
+    prev.renderer === next.renderer &&
+    prev.isPinned === next.isPinned;
 
 /**
  * `React.memo` erases the generic signature; this helper restores it without

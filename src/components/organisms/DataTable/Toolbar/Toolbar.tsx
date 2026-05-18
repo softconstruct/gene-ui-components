@@ -3,7 +3,7 @@ import { Column, ColumnOrderState, ColumnPinningState } from "@tanstack/react-ta
 
 // Components
 import ManageColumns from "@components/organisms/DataTable/Toolbar/components/ManageColumns/ManageColumns";
-import { ColumnVisibilityState, ITableManageColumnsTexts } from "@components/organisms/DataTable/types";
+import { ColumnVisibilityState, ManageColumnsConfig } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./Toolbar.scss";
@@ -15,11 +15,9 @@ interface IToolbarProps<TData> {
      */
     columns: Column<TData>[];
     /**
-     * Determines whether the "Manage columns" feature is enabled.
-     * If false, the toolbar will not render any column management UI.
+     * The current visibility state of the table's columns.
+     * This state is used to determine which columns are visible and which are hidden.
      */
-    isManageColumnsEnabled: boolean;
-
     columnVisibility: ColumnVisibilityState;
     /**
      * The initial or default visibility state of the table's columns.
@@ -60,20 +58,14 @@ interface IToolbarProps<TData> {
      */
     onApplyColumnOrder: (nextOrder: ColumnOrderState) => void;
     /**
-     * An object with text labels for the Manage Columns popover.
-     * Use this to customize or localize the button texts.
+     * Configuration object for managing columns.
+     * This object allows fine-grained control over the visibility, order, and position of columns.
      */
-    manageColumnsTexts?: ITableManageColumnsTexts;
-    /**
-     * Indicates whether the Manage Columns feature is available.
-     * If false, the toolbar will not render the Manage Columns button.
-     */
-    isManageColumnsAvailable?: boolean;
+    manageColumnsConfig: ManageColumnsConfig;
 }
 
 const Toolbar = <TData,>({
     columns,
-    isManageColumnsEnabled,
     columnVisibility,
     defaultColumnVisibility,
     onApplyColumnVisibility,
@@ -83,9 +75,9 @@ const Toolbar = <TData,>({
     columnOrder,
     defaultColumnOrder,
     onApplyColumnOrder,
-    manageColumnsTexts,
-    isManageColumnsAvailable
+    manageColumnsConfig
 }: IToolbarProps<TData>) => {
+    const { available: isManageColumnsAvailable, enabled: isManageColumnsEnabled } = manageColumnsConfig;
     if (!isManageColumnsAvailable) return null;
     return (
         <div className="tableToolbar">
@@ -101,8 +93,8 @@ const Toolbar = <TData,>({
                     columnOrder={columnOrder}
                     defaultColumnOrder={defaultColumnOrder}
                     onApplyColumnOrder={onApplyColumnOrder}
-                    texts={manageColumnsTexts}
                     disabled={!isManageColumnsEnabled}
+                    manageColumnsConfig={manageColumnsConfig}
                 />
             </div>
         </div>

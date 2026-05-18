@@ -1,25 +1,33 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { Column, ColumnOrderState, ColumnPinningState } from "@tanstack/react-table";
 
 // Types
-import { ColumnVisibilityState } from "@components/organisms/DataTable/types";
+import { ColumnVisibilityState, ManageColumnsConfig } from "@components/organisms/DataTable/types";
+
+const arraysEqual = (a: string[], b: string[]) => {
+    if (a.length !== b.length) return false;
+    return a.every((val, index) => val === b[index]);
+};
+
+export interface IManageColumnsDiffPayload {
+    visibilityChanges: Record<string, boolean>;
+    pinningChanges: ColumnPinningState | null;
+    orderChanges: ColumnOrderState | null;
+}
 
 interface IUseManageColumnsParams<TData> {
     columns: Column<TData>[];
-
     columnVisibility: ColumnVisibilityState;
     defaultColumnVisibility: ColumnVisibilityState;
     onApplyColumnVisibility: (nextVisibility: ColumnVisibilityState) => void;
-
     columnPinning: ColumnPinningState;
     defaultColumnPinning: ColumnPinningState;
     onApplyColumnPinning: (nextPinning: ColumnPinningState) => void;
-
     columnOrder: ColumnOrderState;
     defaultColumnOrder: ColumnOrderState;
     onApplyColumnOrder: (nextOrder: ColumnOrderState) => void;
-
     onToggle?: (open: boolean) => void;
+    manageColumnsConfig?: ManageColumnsConfig;
 }
 
 const sortColumns = <TData>(cols: Column<TData>[], order: string[]) => {
@@ -45,10 +53,17 @@ export const useManageColumns = <TData>({
     columnOrder,
     defaultColumnOrder,
     onApplyColumnOrder,
-    onToggle
+    onToggle,
+    manageColumnsConfig
 }: IUseManageColumnsParams<TData>) => {
-    const [popoverOpen, setPopoverOpen] = useState(false);
+    const isControlled = manageColumnsConfig && manageColumnsConfig.open !== undefined;
+
+    const [internalOpen, setInternalOpen] = useState(false);
     const [propsForPopover, setPropsForPopover] = useState<Record<string, unknown>>({});
+
+    const [searchValue, setSearchValue] = useState("");
+
+    const popoverOpen = manageColumnsConfig?.open ?? internalOpen;
 
     const [initialOrderRef] = useState<string[]>(() => {
         return defaultColumnOrder.length > 0 ? defaultColumnOrder : columns.map((c) => c.id);
@@ -62,12 +77,52 @@ export const useManageColumns = <TData>({
     const [draftPinning, setDraftPinning] = useState<ColumnPinningState>(columnPinning);
     const [draftColumnOrder, setDraftColumnOrder] = useState<ColumnOrderState>(initialOrder);
 
+    const [diffTracker, setDiffTracker] = useState({
+        visibility: new Set<string>(),
+        pinning: new Set<string>(),
+        orderChanged: false
+    });
+
+    const hasChanges = diffTracker.visibility.size > 0 || diffTracker.pinning.size > 0 || diffTracker.orderChanged;
+
+    const resetDiffTracker = () => {
+        setDiffTracker({ visibility: new Set(), pinning: new Set(), orderChanged: false });
+    };
+
+    const isDefaultState = useMemo(() => {
+        const visEqual = columns.every(
+            (col) => (draftVisibility[col.id] ?? true) === (defaultColumnVisibility[col.id] ?? true)
+        );
+        const pinEqual =
+            arraysEqual(draftPinning.left || [], defaultColumnPinning.left || []) &&
+            arraysEqual(draftPinning.right || [], defaultColumnPinning.right || []);
+        const orderEqual = arraysEqual(draftColumnOrder, initialOrderRef);
+        return visEqual && pinEqual && orderEqual;
+    }, [
+        draftVisibility,
+        defaultColumnVisibility,
+        draftPinning,
+        defaultColumnPinning,
+        draftColumnOrder,
+        initialOrderRef,
+        columns
+    ]);
+
+    const setPopoverOpen = (newOpen: boolean) => {
+        if (!isControlled) {
+            setInternalOpen(newOpen);
+        }
+        onToggle?.(newOpen);
+    };
+
     const openPopover = () => {
         const currentOrder = columnOrder.length ? columnOrder : initialOrderRef;
         setDraftVisibility(columnVisibility);
         setDraftPinning(columnPinning);
         setDraftColumnOrder(currentOrder);
         setColumnsToRender(sortColumns(columns, currentOrder));
+        setSearchValue("");
+        resetDiffTracker();
         setPopoverOpen(true);
         onToggle?.(true);
     };
@@ -79,17 +134,35 @@ export const useManageColumns = <TData>({
         const order = columnOrder.length ? columnOrder : initialOrderRef;
         setDraftColumnOrder(order);
         setColumnsToRender(sortColumns(columns, order));
+        setSearchValue("");
+        resetDiffTracker();
         onToggle?.(false);
     };
 
     const handleCancel = () => closePopover();
 
     const handleSave = () => {
+        const visibilityChanges: Record<string, boolean> = {};
+        diffTracker.visibility.forEach((colId) => {
+            visibilityChanges[colId] = draftVisibility[colId] ?? true;
+        });
+
+        const diffPayload: IManageColumnsDiffPayload = {
+            visibilityChanges,
+            pinningChanges: diffTracker.pinning.size > 0 ? draftPinning : null,
+            orderChanges: diffTracker.orderChanged ? draftColumnOrder : null
+        };
+
         onApplyColumnVisibility(draftVisibility);
         onApplyColumnPinning(draftPinning);
         onApplyColumnOrder(draftColumnOrder);
         setPopoverOpen(false);
         onToggle?.(false);
+        resetDiffTracker();
+
+        if (manageColumnsConfig?.onSave) {
+            manageColumnsConfig.onSave(diffPayload);
+        }
     };
 
     const handleRestoreDefaults = () => {
@@ -97,12 +170,37 @@ export const useManageColumns = <TData>({
         setDraftPinning(defaultColumnPinning);
         setDraftColumnOrder(initialOrderRef);
         setColumnsToRender(sortColumns(columns, initialOrderRef));
+        setSearchValue("");
+
+        // Update diff tracker to reflect changes against the currently applied state
+        setDiffTracker(() => {
+            const newVis = new Set<string>();
+            const newPin = new Set<string>();
+            columns.forEach((col) => {
+                if ((defaultColumnVisibility[col.id] ?? true) !== (columnVisibility[col.id] ?? true))
+                    newVis.add(col.id);
+                const originalPinned = (columnPinning.left || []).includes(col.id);
+                const defaultPinned = (defaultColumnPinning.left || []).includes(col.id);
+                if (originalPinned !== defaultPinned) newPin.add(col.id);
+            });
+            const activeOrder = columnOrder.length ? columnOrder : initialOrderRef;
+            return { visibility: newVis, pinning: newPin, orderChanged: !arraysEqual(initialOrderRef, activeOrder) };
+        });
+
+        if (manageColumnsConfig?.onRestoreDefaults) {
+            manageColumnsConfig.onRestoreDefaults();
+        }
     };
 
     const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
-        const searchValue = e.target.value.toLowerCase();
+        const val = e.target.value.toLowerCase();
+        setSearchValue(val);
 
-        if (!searchValue) {
+        if (manageColumnsConfig?.onSearch) {
+            manageColumnsConfig.onSearch(val);
+        }
+
+        if (!val) {
             setColumnsToRender(sortColumns(columns, draftColumnOrder));
             return;
         }
@@ -111,29 +209,82 @@ export const useManageColumns = <TData>({
             const { header } = column.columnDef;
             const headerText = typeof header === "string" ? header : "";
 
-            return headerText.toLowerCase().includes(searchValue) || column.id.toLowerCase().includes(searchValue);
+            return headerText.toLowerCase().includes(val) || column.id.toLowerCase().includes(val);
         });
 
         setColumnsToRender(sortColumns(filtered, draftColumnOrder));
     };
 
+    const handleSearchClear = () => {
+        setSearchValue("");
+        setColumnsToRender(sortColumns(columns, draftColumnOrder));
+    };
+
     const handleToggleColumnVisibility = (column: Column<TData>) => {
-        setDraftVisibility((prev) => ({
-            ...prev,
-            [column.id]: !(prev[column.id] ?? true)
-        }));
+        setDraftVisibility((prev) => {
+            const nextVal = !(prev[column.id] ?? true);
+            const originalVal = columnVisibility[column.id] ?? true;
+
+            // Collect diff into the object
+            setDiffTracker((prevDiffs) => {
+                const newVis = new Set(prevDiffs.visibility);
+                if (nextVal !== originalVal) newVis.add(column.id);
+                else newVis.delete(column.id);
+                return { ...prevDiffs, visibility: newVis };
+            });
+
+            return { ...prev, [column.id]: nextVal };
+        });
+        if (manageColumnsConfig?.onColumnVisibilityChange) {
+            manageColumnsConfig?.onColumnVisibilityChange();
+        }
     };
 
     const handleToggleColumnPinning = (column: Column<TData>) => {
         setDraftPinning((prev) => {
             const leftPinned = prev.left || [];
-            const isPinned = leftPinned.includes(column.id);
+            const isPinnedNext = !leftPinned.includes(column.id);
+            const originalPinned = (columnPinning.left || []).includes(column.id);
+
+            // Collect diff into the object
+            setDiffTracker((prevDiffs) => {
+                const newPin = new Set(prevDiffs.pinning);
+                if (isPinnedNext !== originalPinned) newPin.add(column.id);
+                else newPin.delete(column.id);
+                return { ...prevDiffs, pinning: newPin };
+            });
 
             return {
                 ...prev,
-                left: isPinned ? leftPinned.filter((id) => id !== column.id) : [...leftPinned, column.id]
+                left: isPinnedNext ? [...leftPinned, column.id] : leftPinned.filter((id) => id !== column.id)
             };
         });
+        if (manageColumnsConfig?.onColumnPin) {
+            manageColumnsConfig?.onColumnPin();
+        }
+    };
+
+    const handleToggleAllColumnsVisibility = (checked: boolean) => {
+        setDraftVisibility((prev) => {
+            const nextVisibility = { ...prev };
+
+            // Loop through columnsToRender so active search prevents selecting hidden columns
+            setDiffTracker((prevDiffs) => {
+                const newVis = new Set(prevDiffs.visibility);
+                columnsToRender.forEach((col) => {
+                    nextVisibility[col.id] = checked;
+                    const originalVal = columnVisibility[col.id] ?? true;
+                    if (checked !== originalVal) newVis.add(col.id);
+                    else newVis.delete(col.id);
+                });
+                return { ...prevDiffs, visibility: newVis };
+            });
+
+            return nextVisibility;
+        });
+        if (manageColumnsConfig?.onSelectAllColumnsVisibility) {
+            manageColumnsConfig?.onSelectAllColumnsVisibility();
+        }
     };
 
     const handleColumnReorder = (sourceId: string, destinationId: string, edge: string | null) => {
@@ -154,6 +305,17 @@ export const useManageColumns = <TData>({
             }
 
             newOrder.splice(finalIndex, 0, sourceId);
+
+            // Collect order diff
+            const activeOrder = columnOrder.length ? columnOrder : initialOrderRef;
+            setDiffTracker((prevDiffs) => ({
+                ...prevDiffs,
+                orderChanged: !arraysEqual(newOrder, activeOrder)
+            }));
+
+            if (manageColumnsConfig?.onColumnOrderChange) {
+                manageColumnsConfig?.onColumnOrderChange();
+            }
             return newOrder;
         });
     };
@@ -165,6 +327,8 @@ export const useManageColumns = <TData>({
             const order = columnOrder.length ? columnOrder : initialOrderRef;
             setDraftColumnOrder(order);
             setColumnsToRender(sortColumns(columns, order));
+            setSearchValue("");
+            resetDiffTracker();
         }
     }, [columns, columnVisibility, columnPinning, columnOrder, initialOrderRef, popoverOpen]);
 
@@ -178,6 +342,11 @@ export const useManageColumns = <TData>({
         }
     }, [draftColumnOrder, popoverOpen, initialOrderRef]);
 
+    const allColumnsVisibleCount = columnsToRender.filter((col) => draftVisibility[col.id] ?? true).length;
+    const allColumnsChecked = columnsToRender.length > 0 && allColumnsVisibleCount === columnsToRender.length;
+    const allColumnsIndeterminate = allColumnsVisibleCount > 0 && allColumnsVisibleCount < columnsToRender.length;
+    const isSearchActive = searchValue.trim().length > 0;
+
     return {
         popoverOpen,
         propsForPopover,
@@ -185,11 +354,19 @@ export const useManageColumns = <TData>({
         columnsToRender,
         draftVisibility,
         draftPinning,
+        allColumnsChecked,
+        allColumnsIndeterminate,
+        hasChanges,
+        isDefaultState,
+        searchValue,
+        isSearchActive,
         openPopover,
         closePopover,
         handleCancel,
         handleSave,
         handleSearch,
+        handleSearchClear,
+        handleToggleAllColumnsVisibility,
         handleRestoreDefaults,
         handleToggleColumnVisibility,
         handleToggleColumnPinning,

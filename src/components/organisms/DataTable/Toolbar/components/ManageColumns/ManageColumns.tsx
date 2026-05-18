@@ -10,7 +10,7 @@ import { IPopoverRef } from "@components/atoms/Popover";
 import { useManageColumns } from "@components/organisms/DataTable/hooks/useManageColumns";
 import ManageColumnsPopover from "@components/organisms/DataTable/Toolbar/components/ManageColumns/components/ManageColumnsPopover/ManageColumnsPopover";
 // Types
-import { ColumnVisibilityState, ITableManageColumnsTexts } from "@components/organisms/DataTable/types";
+import { ColumnVisibilityState, ManageColumnsConfig } from "@components/organisms/DataTable/types";
 
 import useClickOutside from "@hooks/useClickOutside";
 
@@ -69,15 +69,15 @@ interface IManageColumnsProps<TData> {
      */
     onToggle?: (open: boolean) => void;
     /**
-     * An object with text labels for the Manage Columns popover.
-     * Use this to customize or localize the button texts.
-     */
-    texts?: ITableManageColumnsTexts;
-    /**
      * Indicates whether the manage columns button should be disabled.
      * @default false
      */
     disabled?: boolean;
+    /**
+     * Configuration object for managing columns.
+     * This object allows fine-grained control over the visibility, order, and position of columns.
+     */
+    manageColumnsConfig: ManageColumnsConfig;
 }
 
 const ManageColumns = <TData,>({
@@ -93,12 +93,14 @@ const ManageColumns = <TData,>({
     defaultColumnOrder,
     onApplyColumnOrder,
     onToggle,
-    texts
+    manageColumnsConfig
 }: IManageColumnsProps<TData>) => {
     const popoverRef = useRef<IPopoverRef>({
         floatingElement: { current: null },
         referenceElement: { current: null }
     });
+
+    const { texts: manageColumnsTexts } = manageColumnsConfig;
 
     const {
         popoverOpen,
@@ -109,12 +111,20 @@ const ManageColumns = <TData,>({
         draftVisibility,
         draftPinning,
 
+        allColumnsChecked,
+        allColumnsIndeterminate,
+
+        hasChanges,
+        isDefaultState,
+
         openPopover,
         handleCancel,
         handleSave,
         handleSearch,
+        handleSearchClear,
         handleRestoreDefaults,
         handleToggleColumnVisibility,
+        handleToggleAllColumnsVisibility,
         handleToggleColumnPinning,
         handleColumnReorder
     } = useManageColumns<TData>({
@@ -128,7 +138,8 @@ const ManageColumns = <TData,>({
         columnOrder,
         defaultColumnOrder,
         onApplyColumnOrder,
-        onToggle
+        onToggle,
+        manageColumnsConfig
     });
 
     useClickOutside(() => {
@@ -148,7 +159,7 @@ const ManageColumns = <TData,>({
                 size="medium"
                 {...propsForPopover}
             >
-                {texts?.buttonText ?? "Manage columns"}
+                {manageColumnsTexts?.buttonText ?? "Manage columns"}
             </Button>
 
             <ManageColumnsPopover
@@ -166,7 +177,13 @@ const ManageColumns = <TData,>({
                 onSave={handleSave}
                 onCancel={handleCancel}
                 onRestoreDefaults={handleRestoreDefaults}
-                texts={texts}
+                manageColumnsConfig={manageColumnsConfig}
+                handleSearchClear={handleSearchClear}
+                allColumnsChecked={allColumnsChecked}
+                allColumnsIndeterminate={allColumnsIndeterminate}
+                onToggleAllColumns={handleToggleAllColumnsVisibility}
+                hasChanges={hasChanges}
+                isDefaultState={isDefaultState}
             />
         </>
     );

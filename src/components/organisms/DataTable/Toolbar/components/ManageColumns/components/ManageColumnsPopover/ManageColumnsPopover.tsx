@@ -12,15 +12,19 @@ import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/ad
 import { Column, ColumnPinningState } from "@tanstack/react-table";
 import classNames from "classnames";
 
+import { Magnifier } from "@geneui/icons";
+
 import Button from "@components/atoms/Button";
+import Label from "@components/atoms/Label";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import CustomDragLayer from "@components/molecules/ActionableList/ActionableListItem/CustomDragLayer";
 import ButtonGroup from "@components/molecules/ButtonGroup";
+import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
 import ManageColumnListItem from "@components/organisms/DataTable/Toolbar/components/ManageColumns/components/ListItem/ManageColumnListItem";
-import { ColumnVisibilityState, ITableManageColumnsTexts } from "@components/organisms/DataTable/types";
+import { ColumnVisibilityState, ManageColumnsConfig } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./ManageColumnsPopover.scss";
@@ -30,6 +34,14 @@ interface IManageColumnsPopoverProps<TData> {
      * Determines whether the popover is currently open and visible.
      */
     open: boolean;
+    /**
+     * Indicates whether there are any changes made to the draft state.
+     */
+    hasChanges?: boolean;
+    /**
+     * Indicates whether the popover is in a default state (i.e., all checkboxes are checked).
+     */
+    isDefaultState?: boolean;
     /**
      * Callback function triggered when the popover requests to be closed
      * (e.g., by pressing the escape key or clicking outside).
@@ -95,10 +107,27 @@ interface IManageColumnsPopoverProps<TData> {
      */
     onRestoreDefaults: () => void;
     /**
-     * An object with text labels for the Manage Columns popover.
-     * Use this to customize or localize the button texts.
+     * Configuration object for managing columns.
+     * This object allows fine-grained control over the visibility, order, and position of columns.
      */
-    texts?: ITableManageColumnsTexts;
+    manageColumnsConfig: ManageColumnsConfig;
+    /**
+     * Callback function triggered when the user clears the search input field.
+     */
+    handleSearchClear: () => void;
+    /**
+     * Indicates whether all columns are currently checked.
+     */
+    allColumnsChecked: boolean;
+    /**
+     * Indicates whether all columns are currently indeterminate (mixed state).
+     */
+    allColumnsIndeterminate: boolean;
+    /**
+     * Callback function triggered when the user toggles the "Select all" checkbox.
+     * @param checked - Indicates whether the "Select all" checkbox is checked or not.
+     */
+    onToggleAllColumns: (checked: boolean) => void;
 }
 
 const ManageColumnsPopover = <TData,>({
@@ -111,14 +140,21 @@ const ManageColumnsPopover = <TData,>({
     draftVisibility,
     onColumnVisibilityChange,
     draftPinning,
+    isDefaultState,
+    hasChanges,
     onColumnPinningChange,
     onColumnReorder,
     onSave,
     onCancel,
     onRestoreDefaults,
-    texts
+    manageColumnsConfig,
+    handleSearchClear,
+    allColumnsChecked,
+    allColumnsIndeterminate,
+    onToggleAllColumns
 }: IManageColumnsPopoverProps<TData>) => {
     const hasColumns = columns.length > 0;
+    const { loading, texts: manageColumnsTexts } = manageColumnsConfig;
 
     const [dropGap, setDropGap] = useState<{ targetId: string; edge: string } | null>(null);
     const dropGapRef = useRef(dropGap);
@@ -164,11 +200,30 @@ const ManageColumnsPopover = <TData,>({
                 <CustomDragLayer />
                 <TextField
                     autoComplete="off"
-                    placeholder={texts?.searchPlaceholder ?? "Search"}
+                    placeholder={manageColumnsTexts?.searchPlaceholder ?? "Search"}
                     onChange={onSearch}
                     className="manageColumnsPopover__header"
+                    disabled={loading}
+                    IconBefore={Magnifier}
+                    clearable
+                    onClear={handleSearchClear}
                 />
                 <div className="manageColumnsPopover__body">
+                    {hasColumns && (
+                        <div className="manageColumnsPopover__selectAll">
+                            <Checkbox
+                                id="manageColumns-selectAll"
+                                checked={allColumnsChecked}
+                                indeterminate={allColumnsIndeterminate}
+                                onChange={(e) => onToggleAllColumns(e.target.checked)}
+                                className="manageColumnsPopover__selectAllCheckbox"
+                            />
+                            <Label
+                                text={manageColumnsTexts?.selectAllColumnsText ?? "All Columns"}
+                                labelFor="manageColumns-selectAll"
+                            />
+                        </div>
+                    )}
                     <Scrollbar>
                         <div
                             className={classNames("manageColumnsPopover__list", {
@@ -192,22 +247,34 @@ const ManageColumnsPopover = <TData,>({
                                     );
                                 })
                             ) : (
-                                <Empty appearance="noResult" />
+                                <Empty appearance="noResult" className="manageColumnsPopover__empty" />
                             )}
                         </div>
                     </Scrollbar>
                 </div>
                 <div className="manageColumnsPopover__footer">
-                    <Button layout="text" size="medium" onClick={onRestoreDefaults} appearance="secondary">
-                        {texts?.restoreDefaultsText ?? "Restore defaults"}
+                    <Button
+                        disabled={loading || isDefaultState}
+                        layout="text"
+                        size="medium"
+                        onClick={onRestoreDefaults}
+                        appearance="secondary"
+                    >
+                        {manageColumnsTexts?.restoreDefaultsText ?? "Restore defaults"}
                     </Button>
 
                     <ButtonGroup size="medium" className="manageColumnsPopover__actions">
-                        <Button onClick={onCancel} size="medium" appearance="secondary">
-                            {texts?.cancelText ?? "Cancel"}
+                        <Button disabled={loading} onClick={onCancel} size="medium" appearance="secondary">
+                            {manageColumnsTexts?.cancelText ?? "Cancel"}
                         </Button>
-                        <Button onClick={onSave} size="medium" appearance="primary">
-                            {texts?.saveText ?? "Save"}
+                        <Button
+                            disabled={!hasChanges}
+                            loading={loading}
+                            onClick={onSave}
+                            size="medium"
+                            appearance="primary"
+                        >
+                            {manageColumnsTexts?.saveText ?? "Save"}
                         </Button>
                     </ButtonGroup>
                 </div>

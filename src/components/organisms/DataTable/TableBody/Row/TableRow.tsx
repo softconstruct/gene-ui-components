@@ -72,14 +72,18 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                     [`tableRow_status_${rowStatus}`]: rowStatus
                 })}
             >
-                {row.getVisibleCells().map((cell) => (
-                    <TableBodyCell
-                        key={cell.id}
-                        cell={cell}
-                        isExpanded={isRowExpanded}
-                        renderer={cell.column.columnDef.cell}
-                    />
-                ))}
+                {row.getVisibleCells().map((cell) => {
+                    const isPinned = cell.column.getIsPinned();
+                    return (
+                        <TableBodyCell
+                            key={cell.id}
+                            cell={cell}
+                            isExpanded={isRowExpanded}
+                            renderer={cell.column.columnDef.cell}
+                            isPinned={isPinned}
+                        />
+                    );
+                })}
 
                 {rowActions?.length ? (
                     <td className="tableRow__actionsWrapper">

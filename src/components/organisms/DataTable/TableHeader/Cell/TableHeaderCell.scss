@@ -24,4 +24,10 @@
     &__text {
         color: var(--guit-sem-color-foreground-neutral-2);
     }
+
+    &_pinned {
+        position: sticky;
+        left: 0;
+        background: red;
+    }
 }

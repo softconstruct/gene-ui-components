@@ -25,6 +25,22 @@
         padding: var(--guit-ref-spacing-3xsmall);
     }
 
+    &__selectAll {
+        display: flex;
+        align-items: center;
+        flex: 0 0 auto;
+        gap: var(--guit-ref-spacing-xsmall);
+        padding-block: var(--guit-ref-spacing-3xsmall);
+        padding-inline: var(--guit-ref-spacing-xsmall);
+        height: var(--guit-sem-dimension-height-medium);
+        margin-bottom: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__selectAllCheckbox {
+        flex: 0 0 auto;
+        padding: var(--guit-ref-spacing-3xsmall);
+    }
+
     &__list {
         display: flex;
         flex-direction: column;
@@ -44,5 +60,12 @@
 
     &__actions {
         margin-inline-start: auto;
+    }
+
+    &__empty {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
     }
 }

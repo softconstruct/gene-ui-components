@@ -344,36 +344,15 @@ describe("Table Component", () => {
         expect(onRowExpandChange).not.toHaveBeenCalled();
     });
 
-    it("renders Toolbar when isManageColumnsEnabled prop is true", async () => {
+    it("renders Toolbar when manage columns enabled prop is true", async () => {
         await act(async () => {
-            setup.setProps({ isManageColumnsEnabled: true });
+            setup.setProps({ manageColumnsConfig: { enabled: true, available: true } });
         });
         setup.update();
 
         const toolbar = setup.find(Toolbar);
         expect(toolbar.exists()).toBeTruthy();
-        expect(toolbar.prop("isManageColumnsEnabled")).toBe(true);
-    });
-
-    it("passes custom manageColumnsTexts to Toolbar when provided", async () => {
-        const customTexts = {
-            saveText: "Confirm",
-            cancelText: "Discard",
-            restoreDefaultsText: "Reset to default",
-            searchPlaceholder: "Search columns..."
-        };
-
-        await act(async () => {
-            setup.setProps({
-                isManageColumnsEnabled: true,
-                manageColumnsTexts: customTexts
-            });
-        });
-        setup.update();
-
-        const toolbar = setup.find(Toolbar);
-        expect(toolbar.exists()).toBeTruthy();
-        expect(toolbar.prop("manageColumnsTexts")).toEqual(customTexts);
+        expect(toolbar.prop("manageColumnsConfig").enabled).toBe(true);
     });
 });
 

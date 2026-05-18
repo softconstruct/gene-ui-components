@@ -2,6 +2,8 @@ import { FC, MouseEvent, ReactNode } from "react";
 
 import { IconProps } from "@geneui/icons";
 
+import { IManageColumnsDiffPayload } from "@components/organisms/DataTable/hooks/useManageColumns";
+
 export interface ITableNoDataTexts {
     noDataAvailableTitle?: string;
     noDataAvailableText?: string;
@@ -79,10 +81,67 @@ export type DataTableColumn<TData> = {
 
 export type ColumnVisibilityState = Record<string, boolean>;
 
-export interface ITableManageColumnsTexts {
-    saveText?: string;
-    cancelText?: string;
-    restoreDefaultsText?: string;
-    searchPlaceholder?: string;
-    buttonText?: string;
-}
+export type ManageColumnsConfig = {
+    /**
+     * Whether the manage columns are in loading state.
+     * Will disable all actions
+     */
+    loading?: boolean;
+    /**
+     * Whether the manage columns modal is open.
+     */
+    open?: boolean;
+    /**
+     * Whether the manage columns button is visible but disabled.
+     */
+    enabled?: boolean;
+    /**
+     * Whether the manage columns button is available.
+     */
+    available?: boolean;
+    /**
+     * Callback function which triggers when the save button is clicked.
+     */
+    onSave?: (diff: IManageColumnsDiffPayload) => void;
+    /**
+     * Texts to be displayed in the manage columns modal.
+     */
+    texts?: {
+        /** Text for the save button * */
+        saveText?: string;
+        /** Text for the cancel button * */
+        cancelText?: string;
+        /** Text for the restore-to-defaults button * */
+        restoreDefaultsText?: string;
+        /** Placeholder text for the search field input * */
+        searchPlaceholder?: string;
+        /** Text for the manage columns button * */
+        buttonText?: string;
+        /** Text for the select/deselect all columns button * */
+        selectAllColumnsText?: string;
+    };
+    /**
+     * Callback function which triggers when the column is getting pinned.
+     */
+    onColumnPin?: () => void;
+    /**
+     * Callback function which triggers when the column is getting reordered.
+     */
+    onColumnOrderChange?: () => void;
+    /**
+     * Callback function which triggers when the column visibility is getting changed.
+     */
+    onColumnVisibilityChange?: () => void;
+    /**
+     * Callback function which triggers when the restore button is clicked.
+     */
+    onRestoreDefaults?: () => void;
+    /**
+     * Callback function which triggers when the search input is changed.
+     */
+    onSearch?: (searchValue?: string) => void;
+    /**
+     * Callback function which triggers when the select all columns visibility is getting changed.
+     */
+    onSelectAllColumnsVisibility?: () => void;
+};
