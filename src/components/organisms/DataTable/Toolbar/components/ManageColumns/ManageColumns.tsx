@@ -6,16 +6,13 @@ import { Gear } from "@geneui/icons";
 // Components
 import Button from "@components/atoms/Button";
 import { IPopoverRef } from "@components/atoms/Popover";
-// Hooks
 import { useManageColumns } from "@components/organisms/DataTable/hooks/useManageColumns";
 import ManageColumnsPopover from "@components/organisms/DataTable/Toolbar/components/ManageColumns/components/ManageColumnsPopover/ManageColumnsPopover";
 // Types
 import { ColumnVisibilityState, ManageColumnsConfig } from "@components/organisms/DataTable/types";
 
+// Hooks
 import useClickOutside from "@hooks/useClickOutside";
-
-// Styles
-import "./ManageColumns.scss";
 
 interface IManageColumnsProps<TData> {
     /**
@@ -23,6 +20,10 @@ interface IManageColumnsProps<TData> {
      */
     columns?: Column<TData>[];
 
+    /**
+     * Column visibility state used by the Manage Columns popover.
+     * @default {}
+     */
     columnVisibility: ColumnVisibilityState;
     /**
      * Initial/default column visibility state used by Restore defaults.

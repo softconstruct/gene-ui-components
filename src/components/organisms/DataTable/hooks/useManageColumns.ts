@@ -172,7 +172,6 @@ export const useManageColumns = <TData>({
         setColumnsToRender(sortColumns(columns, initialOrderRef));
         setSearchValue("");
 
-        // Update diff tracker to reflect changes against the currently applied state
         setDiffTracker(() => {
             const newVis = new Set<string>();
             const newPin = new Set<string>();
@@ -246,7 +245,6 @@ export const useManageColumns = <TData>({
             const isPinnedNext = !leftPinned.includes(column.id);
             const originalPinned = (columnPinning.left || []).includes(column.id);
 
-            // Collect diff into the object
             setDiffTracker((prevDiffs) => {
                 const newPin = new Set(prevDiffs.pinning);
                 if (isPinnedNext !== originalPinned) newPin.add(column.id);
@@ -268,7 +266,6 @@ export const useManageColumns = <TData>({
         setDraftVisibility((prev) => {
             const nextVisibility = { ...prev };
 
-            // Loop through columnsToRender so active search prevents selecting hidden columns
             setDiffTracker((prevDiffs) => {
                 const newVis = new Set(prevDiffs.visibility);
                 columnsToRender.forEach((col) => {
@@ -306,7 +303,6 @@ export const useManageColumns = <TData>({
 
             newOrder.splice(finalIndex, 0, sourceId);
 
-            // Collect order diff
             const activeOrder = columnOrder.length ? columnOrder : initialOrderRef;
             setDiffTracker((prevDiffs) => ({
                 ...prevDiffs,

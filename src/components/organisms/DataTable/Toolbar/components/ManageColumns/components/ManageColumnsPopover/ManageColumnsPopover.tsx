@@ -14,6 +14,7 @@ import classNames from "classnames";
 
 import { Magnifier } from "@geneui/icons";
 
+// Components
 import Button from "@components/atoms/Button";
 import Label from "@components/atoms/Label";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
@@ -67,6 +68,10 @@ interface IManageColumnsPopoverProps<TData> {
      */
     columns: Column<TData>[];
 
+    /**
+     * Column visibility state used by the Manage Columns popover.
+     * @default { left: [], right: [] }
+     */
     draftVisibility: ColumnVisibilityState;
     /**
      * Callback function triggered when a user toggles the checkbox for a specific column.
