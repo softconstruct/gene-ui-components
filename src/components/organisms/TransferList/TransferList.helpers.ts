@@ -1,12 +1,21 @@
 import type { IActionableListItem } from "@components/molecules/ActionableList";
 
-import type { ITransferListTexts } from "./TransferList.types";
+import type { ITransferListPanel, ITransferListTexts } from "./TransferList.types";
+
+export const TRANSFER_LIST_MIN_PANELS = 2;
+export const TRANSFER_LIST_MAX_PANELS = 4;
 
 export const TRANSFER_LIST_DEFAULT_TEXTS: ITransferListTexts = {
-    leftTitle: "Source",
-    rightTitle: "Selected",
-    moveToTargetAriaLabel: "Move selected to target",
-    moveToSourceAriaLabel: "Move selected to source"
+    moveForwardAriaLabel: "Move selected to next panel",
+    moveBackwardAriaLabel: "Move selected to previous panel"
+};
+
+export const assertPanelCount = (panels: ITransferListPanel[]): void => {
+    if (panels.length < TRANSFER_LIST_MIN_PANELS || panels.length > TRANSFER_LIST_MAX_PANELS) {
+        throw new Error(
+            `TransferList requires between ${TRANSFER_LIST_MIN_PANELS} and ${TRANSFER_LIST_MAX_PANELS} panels, received ${panels.length}.`
+        );
+    }
 };
 
 export const collectNodeIds = (item: IActionableListItem): string[] => [
@@ -82,4 +91,74 @@ export const mergeMovedItems = (target: IActionableListItem[], moved: IActionabl
             return cleared;
         });
     return [...target, ...dedupedMoved];
+};
+
+export const insertAtRoot = (
+    items: IActionableListItem[],
+    item: IActionableListItem,
+    targetId: string,
+    edge: "top" | "bottom" = "bottom"
+): IActionableListItem[] => {
+    const targetIndex = items.findIndex((node) => node.id === targetId);
+    if (targetIndex === -1) return [...items, item];
+    const insertIndex = edge === "top" ? targetIndex : targetIndex + 1;
+    const next = [...items];
+    next.splice(insertIndex, 0, item);
+    return next;
+};
+
+interface IMoveBetweenPanelsResult {
+    sourceItems: IActionableListItem[];
+    targetItems: IActionableListItem[];
+    movedIds: string[];
+}
+
+export const moveBetweenPanels = (
+    sourceItems: IActionableListItem[],
+    targetItems: IActionableListItem[],
+    selectedIds: Set<string>
+): IMoveBetweenPanelsResult => {
+    const { remaining, moved, movedIds } = partitionTreeByIds(sourceItems, selectedIds);
+    if (!moved.length) {
+        return { sourceItems, targetItems, movedIds: [] };
+    }
+    return {
+        sourceItems: remaining,
+        targetItems: mergeMovedItems(targetItems, moved),
+        movedIds
+    };
+};
+
+export const moveItemByDrag = (
+    sourceItems: IActionableListItem[],
+    targetItems: IActionableListItem[],
+    sourceId: string,
+    targetId?: string,
+    edge: "top" | "bottom" = "bottom",
+    isEmptyTarget = false
+): IMoveBetweenPanelsResult => {
+    const { remaining, moved, movedIds } = partitionTreeByIds(sourceItems, new Set([sourceId]));
+    if (!moved.length) {
+        return { sourceItems, targetItems, movedIds: [] };
+    }
+    const cleared = moved.map((item) => clearChecked(item));
+    const existingIds = new Set(collectTreeIds(targetItems));
+    const deduped = cleared.filter((item) => !existingIds.has(item.id));
+    if (!deduped.length) {
+        return { sourceItems: remaining, targetItems, movedIds: [] };
+    }
+
+    if (isEmptyTarget || !targetItems.length || !targetId) {
+        return {
+            sourceItems: remaining,
+            targetItems: mergeMovedItems(targetItems, deduped),
+            movedIds
+        };
+    }
+
+    let nextTarget = targetItems;
+    deduped.forEach((item) => {
+        nextTarget = insertAtRoot(nextTarget, item, targetId, edge);
+    });
+    return { sourceItems: remaining, targetItems: nextTarget, movedIds };
 };

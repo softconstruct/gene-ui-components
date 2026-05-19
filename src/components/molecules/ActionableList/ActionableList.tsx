@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { dropTargetForElements, monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import classNames from "classnames";
 
 import { Magnifier } from "@geneui/icons";
@@ -37,7 +37,12 @@ import {
     updateItemById
 } from "./ActionableList.helpers";
 // Types
-import type { IActionableListItem, IActionableListProps, IActionableListTexts } from "./ActionableList.types";
+import type {
+    IActionableListItem,
+    IActionableListProps,
+    IActionableListTexts,
+    ICrossListDropPayload
+} from "./ActionableList.types";
 // Sub-components
 import ActionableListItem, { type TDropGapEdge } from "./ActionableListItem/ActionableListItem";
 import ActionableListNodeWrapper, {
@@ -55,6 +60,7 @@ interface IRenderNodeProps {
     parentId: string;
     withCheckbox: boolean;
     isDraggable: boolean;
+    dragListId?: string;
     expandedIds: Set<string>;
     texts: IActionableListTexts;
     dropGap: IDropGap | null;
@@ -70,6 +76,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
     parentId,
     withCheckbox,
     isDraggable,
+    dragListId,
     expandedIds,
     texts,
     dropGap,
@@ -110,6 +117,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
                     : {})}
                 selectedLabel={texts.selectedItemsLabel}
                 isDraggable={isDraggable}
+                dragListId={dragListId}
                 dropGapEdge={dropGapEdge}
                 expandAriaLabel={texts.expandButtonAriaLabel}
                 onToggleExpand={() => onToggleExpand(item.id)}
@@ -128,6 +136,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
                                 parentId={item.id}
                                 withCheckbox={withCheckbox}
                                 isDraggable={isDraggable}
+                                dragListId={dragListId}
                                 expandedIds={expandedIds}
                                 texts={texts}
                                 dropGap={dropGap}
@@ -152,12 +161,14 @@ const ActionableList: FC<IActionableListProps> = ({
     items = [],
     withCheckbox = false,
     draggable: isDraggable = false,
+    dragListId,
     loading = false,
     defaultExpandAll = false,
     texts,
     onItemsChange,
     onItemCheck,
     onSelectAllChange,
+    onCrossListDrop,
     onSearch
 }) => {
     const mergedTexts = { ...ACTIONABLE_LIST_DEFAULT_TEXTS, ...texts };
@@ -169,10 +180,14 @@ const ActionableList: FC<IActionableListProps> = ({
         defaultExpandAll ? getExpandedIdsFromItems(items) : new Set()
     );
     const [dropGap, setDropGap] = useState<IDropGap | null>(null);
+    const [isEmptyDropActive, setIsEmptyDropActive] = useState(false);
+    const emptyDropRef = useRef<HTMLDivElement>(null);
 
     const handleDropReorderRef = useRef<(sourceId: string, targetId: string) => void>(() => {});
+    const onCrossListDropRef = useRef(onCrossListDrop);
     const dropGapRef = useRef(dropGap);
     dropGapRef.current = dropGap;
+    onCrossListDropRef.current = onCrossListDrop;
 
     useEffect(() => {
         setLocalItems((prev) => mergeItemsFromProps(items, prev));
@@ -190,12 +205,30 @@ const ActionableList: FC<IActionableListProps> = ({
                 const gap = dropGapRef.current;
                 setDropGap(null);
                 const { sourceId } = source.data;
-                if (typeof sourceId === "string" && gap && sourceId !== gap.targetId) {
-                    handleDropReorderRef.current(sourceId, gap.targetId);
+                const sourceListId = source.data.dragListId;
+                if (typeof sourceId !== "string" || !gap || sourceId === gap.targetId) return;
+
+                if (
+                    dragListId &&
+                    typeof sourceListId === "string" &&
+                    sourceListId !== dragListId &&
+                    onCrossListDropRef.current
+                ) {
+                    const payload: ICrossListDropPayload = {
+                        sourceListId,
+                        targetListId: dragListId,
+                        sourceId,
+                        targetId: gap.targetId,
+                        edge: gap.edge
+                    };
+                    onCrossListDropRef.current(payload);
+                    return;
                 }
+
+                handleDropReorderRef.current(sourceId, gap.targetId);
             }
         });
-    }, [isDraggable]);
+    }, [isDraggable, dragListId]);
 
     const { debouncedCallback, clearDebounce } = useDebounceCallback((value: unknown) => {
         if (typeof value !== "string") return;
@@ -263,6 +296,43 @@ const ActionableList: FC<IActionableListProps> = ({
 
     const hasData = totalItemsCount > 0;
     const hasSearchResults = filteredItemsCount > 0;
+    const showEmptyDropZone = isDraggable && Boolean(dragListId) && Boolean(onCrossListDrop) && !loading && !hasData;
+
+    useEffect(() => {
+        const element = emptyDropRef.current;
+        if (!element || !showEmptyDropZone) return () => undefined;
+
+        return dropTargetForElements({
+            element,
+            getData: () => ({ isEmptyListTarget: true }),
+            canDrop: ({ source }) => {
+                const sourceListId = source.data.dragListId;
+                return typeof sourceListId === "string" && sourceListId !== dragListId;
+            },
+            onDragEnter: () => setIsEmptyDropActive(true),
+            onDragLeave: () => setIsEmptyDropActive(false),
+            onDrop: ({ source }) => {
+                setIsEmptyDropActive(false);
+                const { sourceId } = source.data;
+                const sourceListId = source.data.dragListId;
+                if (
+                    typeof sourceId !== "string" ||
+                    typeof sourceListId !== "string" ||
+                    !dragListId ||
+                    !onCrossListDropRef.current
+                ) {
+                    return;
+                }
+
+                onCrossListDropRef.current({
+                    sourceListId,
+                    targetListId: dragListId,
+                    sourceId,
+                    isEmptyTarget: true
+                });
+            }
+        });
+    }, [showEmptyDropZone, dragListId]);
 
     return (
         <div className={classNames("actionableList", className, { actionableList_hasDropGap: dropGap !== null })}>
@@ -332,7 +402,12 @@ const ActionableList: FC<IActionableListProps> = ({
                 {!loading && (
                     <>
                         {!hasData && (
-                            <div className="actionableList__state">
+                            <div
+                                ref={showEmptyDropZone ? emptyDropRef : undefined}
+                                className={classNames("actionableList__state", {
+                                    actionableList__state_dropTarget: isEmptyDropActive
+                                })}
+                            >
                                 <Empty
                                     size="small"
                                     appearance="noData"
@@ -366,6 +441,7 @@ const ActionableList: FC<IActionableListProps> = ({
                                             parentId="root"
                                             withCheckbox={withCheckbox}
                                             isDraggable={isDraggable}
+                                            dragListId={dragListId}
                                             expandedIds={expandedIds}
                                             texts={mergedTexts}
                                             dropGap={dropGap}
@@ -385,5 +461,10 @@ const ActionableList: FC<IActionableListProps> = ({
     );
 };
 
-export type { IActionableListItem, IActionableListProps, IActionableListTexts } from "./ActionableList.types";
+export type {
+    IActionableListItem,
+    IActionableListProps,
+    IActionableListTexts,
+    ICrossListDropPayload
+} from "./ActionableList.types";
 export { ActionableList as default };

@@ -1,5 +1,6 @@
 export type {
     ITransferListChangePayload,
+    ITransferListPanel,
     ITransferListProps,
     ITransferListTexts,
     TTransferListDirection

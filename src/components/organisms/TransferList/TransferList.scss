@@ -1,6 +1,5 @@
 .transferList {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     gap: var(--guit-ref-spacing-medium);
     width: 100%;
     border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
@@ -9,18 +8,24 @@
     max-height: 100%;
     overflow: hidden;
 
+    &_panels2 {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+    &_panels3 {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
+    &_panels4 {
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+    }
+
     &__panel {
         display: flex;
         flex-direction: column;
         min-width: 0;
         min-height: 0;
         padding: var(--guit-ref-spacing-large);
-    }
-
-    &__title {
-        flex-shrink: 0;
-        margin-bottom: var(--guit-ref-spacing-xsmall);
-        color: var(--guit-sem-color-foreground-neutral-2);
     }
 
     &__panel .actionableList {

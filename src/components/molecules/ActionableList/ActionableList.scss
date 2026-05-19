@@ -84,6 +84,14 @@
         display: flex;
         align-items: center;
         justify-content: center;
+
+        &_dropTarget {
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-brand-1);
+            outline-offset: calc(-1 * var(--guit-ref-border-width-thin));
+            border-radius: var(--guit-ref-radius-xsmall);
+            background-color: var(--guit-sem-color-background-brand-1-subtle);
+        }
     }
 
     &__empty {

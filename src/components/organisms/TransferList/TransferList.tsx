@@ -1,12 +1,11 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useMemo, useState } from "react";
+import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
-import Text from "@components/atoms/Text";
-import type { IActionableListItem } from "@components/molecules/ActionableList";
+import type { IActionableListItem, ICrossListDropPayload } from "@components/molecules/ActionableList";
 import ActionableList from "@components/molecules/ActionableList";
 
 // Styles
@@ -14,163 +13,217 @@ import "./TransferList.scss";
 
 import {
     applySelectionToTree,
+    assertPanelCount,
     collectNodeIds,
-    mergeMovedItems,
-    partitionTreeByIds,
+    collectTreeIds,
+    moveBetweenPanels,
+    moveItemByDrag,
     TRANSFER_LIST_DEFAULT_TEXTS
 } from "./TransferList.helpers";
-import type { ITransferListProps, TTransferListDirection } from "./TransferList.types";
+import type { ITransferListChangePayload, ITransferListProps } from "./TransferList.types";
 
 /**
- * Transfer List component enables users to move items between two or more lists, typically representing available and selected options.
+ * Transfer List component enables users to move items between two to four actionable lists.
  */
-const TransferList: FC<ITransferListProps> = ({
-    className,
-    sourceItems,
-    targetItems,
-    defaultSourceItems = [],
-    defaultTargetItems = [],
-    texts,
-    onChange
-}) => {
-    const [uncontrolledSourceItems, setUncontrolledSourceItems] = useState<IActionableListItem[]>(
-        () => defaultSourceItems || []
-    );
-    const [uncontrolledTargetItems, setUncontrolledTargetItems] = useState<IActionableListItem[]>(
-        () => defaultTargetItems || []
-    );
-    const [selectedSourceIds, setSelectedSourceIds] = useState<Set<string>>(new Set());
-    const [selectedTargetIds, setSelectedTargetIds] = useState<Set<string>>(new Set());
+const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = false, texts, onChange }) => {
+    assertPanelCount(panels);
 
     const mergedTexts = { ...TRANSFER_LIST_DEFAULT_TEXTS, ...texts };
-    const isControlled = sourceItems !== undefined && targetItems !== undefined;
-    const resolvedSourceItems = isControlled ? sourceItems : uncontrolledSourceItems;
-    const resolvedTargetItems = isControlled ? targetItems : uncontrolledTargetItems;
+    const isControlled = panels.every((panel) => panel.items !== undefined);
 
-    const sourceViewItems = useMemo(
-        () => applySelectionToTree(resolvedSourceItems, selectedSourceIds),
-        [resolvedSourceItems, selectedSourceIds]
+    const [uncontrolledPanelItems, setUncontrolledPanelItems] = useState<IActionableListItem[][]>(() =>
+        panels.map((panel) => panel.defaultItems ?? [])
     );
-    const targetViewItems = useMemo(
-        () => applySelectionToTree(resolvedTargetItems, selectedTargetIds),
-        [resolvedTargetItems, selectedTargetIds]
+    const [selectedIdsByPanel, setSelectedIdsByPanel] = useState<Set<string>[]>(() => panels.map(() => new Set()));
+
+    const panelTreeIdSignature = useMemo(
+        () =>
+            (isControlled ? panels.map((panel) => panel.items ?? []) : uncontrolledPanelItems)
+                .map((items) => collectTreeIds(items).sort().join(","))
+                .join("|"),
+        [isControlled, panels, uncontrolledPanelItems]
     );
 
-    const updateSelection = (
-        item: IActionableListItem,
-        checked: boolean,
-        setSelectedIds: Dispatch<SetStateAction<Set<string>>>
-    ) => {
+    const resolvedPanelItems = useMemo(
+        () => (isControlled ? panels.map((panel) => panel.items ?? []) : uncontrolledPanelItems),
+        [isControlled, panels, uncontrolledPanelItems, panelTreeIdSignature]
+    );
+
+    const panelViewItems = useMemo(
+        () =>
+            resolvedPanelItems.map((items, index) =>
+                applySelectionToTree(items, selectedIdsByPanel[index] ?? new Set())
+            ),
+        [resolvedPanelItems, selectedIdsByPanel]
+    );
+
+    const emitChange = useCallback(
+        (payload: ITransferListChangePayload) => {
+            if (!isControlled) {
+                setUncontrolledPanelItems(payload.panels);
+            }
+            onChange?.(payload);
+        },
+        [isControlled, onChange]
+    );
+
+    const updateSelection = (item: IActionableListItem, checked: boolean, panelIndex: number) => {
         const branchIds = collectNodeIds(item);
-        setSelectedIds((prev) => {
-            const next = new Set(prev);
-            branchIds.forEach((id) => {
-                if (checked) next.add(id);
-                else next.delete(id);
-            });
-            return next;
-        });
+        setSelectedIdsByPanel((prev) =>
+            prev.map((set, index) => {
+                if (index !== panelIndex) return set;
+                const next = new Set(set);
+                branchIds.forEach((id) => {
+                    if (checked) next.add(id);
+                    else next.delete(id);
+                });
+                return next;
+            })
+        );
     };
 
-    const handleSelectAll = (
-        checked: boolean,
-        items: IActionableListItem[],
-        setSelectedIds: Dispatch<SetStateAction<Set<string>>>
-    ) => {
+    const handleSelectAll = (checked: boolean, items: IActionableListItem[], panelIndex: number) => {
         if (!checked) {
-            setSelectedIds(new Set());
+            setSelectedIdsByPanel((prev) => prev.map((set, index) => (index === panelIndex ? new Set() : set)));
             return;
         }
         const allIds = items.flatMap((item) => collectNodeIds(item));
-        setSelectedIds(new Set(allIds));
+        setSelectedIdsByPanel((prev) => prev.map((set, index) => (index === panelIndex ? new Set(allIds) : set)));
     };
 
     useEffect(() => {
-        const sourceIds = new Set(resolvedSourceItems.flatMap((item) => collectNodeIds(item)));
-        setSelectedSourceIds((prev) => new Set(Array.from(prev).filter((id) => sourceIds.has(id))));
+        setSelectedIdsByPanel((prev) => {
+            const next = resolvedPanelItems.map((items, index) => {
+                const panelIds = new Set(collectTreeIds(items));
+                const current = prev[index] ?? new Set();
+                return new Set(Array.from(current).filter((id) => panelIds.has(id)));
+            });
 
-        const targetIds = new Set(resolvedTargetItems.flatMap((item) => collectNodeIds(item)));
-        setSelectedTargetIds((prev) => new Set(Array.from(prev).filter((id) => targetIds.has(id))));
-    }, [resolvedSourceItems, resolvedTargetItems]);
+            const isUnchanged = next.every((set, index) => {
+                const previous = prev[index] ?? new Set();
+                if (set.size !== previous.size) return false;
+                return Array.from(set).every((id) => previous.has(id));
+            });
 
-    const handleMove = (direction: TTransferListDirection) => {
-        const isToTarget = direction === "toTarget";
-        const sourceList = isToTarget ? resolvedSourceItems : resolvedTargetItems;
-        const targetList = isToTarget ? resolvedTargetItems : resolvedSourceItems;
-        const selectedIds = isToTarget ? selectedSourceIds : selectedTargetIds;
+            return isUnchanged ? prev : next;
+        });
+    }, [panelTreeIdSignature, resolvedPanelItems]);
 
-        if (selectedIds.size === 0) return;
+    const handleMove = (fromPanelIndex: number, toPanelIndex: number) => {
+        const selectedIds = selectedIdsByPanel[fromPanelIndex];
+        if (!selectedIds?.size) return;
 
-        const { remaining, moved, movedIds } = partitionTreeByIds(sourceList, selectedIds);
-        if (!moved.length) return;
-        const mergedTarget = mergeMovedItems(targetList, moved);
-        const nextSourceItems = isToTarget ? remaining : mergedTarget;
-        const nextTargetItems = isToTarget ? mergedTarget : remaining;
+        const sourceItems = resolvedPanelItems[fromPanelIndex];
+        const targetItems = resolvedPanelItems[toPanelIndex];
+        const {
+            sourceItems: nextSource,
+            targetItems: nextTarget,
+            movedIds
+        } = moveBetweenPanels(sourceItems, targetItems, selectedIds);
+        if (!movedIds.length) return;
 
-        if (!isControlled) {
-            setUncontrolledSourceItems(nextSourceItems);
-            setUncontrolledTargetItems(nextTargetItems);
-        }
+        const nextPanels = resolvedPanelItems.map((items, index) => {
+            if (index === fromPanelIndex) return nextSource;
+            if (index === toPanelIndex) return nextTarget;
+            return items;
+        });
 
-        if (isToTarget) setSelectedSourceIds(new Set());
-        else setSelectedTargetIds(new Set());
+        setSelectedIdsByPanel((prev) => prev.map((set, index) => (index === fromPanelIndex ? new Set() : set)));
 
-        onChange?.({
-            direction,
+        emitChange({
+            fromPanelIndex,
+            toPanelIndex,
+            direction: toPanelIndex > fromPanelIndex ? "forward" : "backward",
             movedIds,
-            sourceItems: nextSourceItems,
-            targetItems: nextTargetItems
+            panels: nextPanels
         });
     };
 
+    const handlePanelItemsChange = (panelIndex: number, items: IActionableListItem[]) => {
+        const nextPanels = resolvedPanelItems.map((panelItems, index) => (index === panelIndex ? items : panelItems));
+        emitChange({
+            fromPanelIndex: panelIndex,
+            toPanelIndex: panelIndex,
+            direction: "forward",
+            movedIds: [],
+            panels: nextPanels
+        });
+    };
+
+    const handleCrossListDrop = (payload: ICrossListDropPayload) => {
+        const fromPanelIndex = panels.findIndex((panel) => panel.id === payload.sourceListId);
+        const toPanelIndex = panels.findIndex((panel) => panel.id === payload.targetListId);
+        if (fromPanelIndex < 0 || toPanelIndex < 0 || fromPanelIndex === toPanelIndex) return;
+
+        const { sourceItems, targetItems, movedIds } = moveItemByDrag(
+            resolvedPanelItems[fromPanelIndex],
+            resolvedPanelItems[toPanelIndex],
+            payload.sourceId,
+            payload.targetId,
+            payload.edge,
+            payload.isEmptyTarget
+        );
+        if (!movedIds.length) return;
+
+        const nextPanels = resolvedPanelItems.map((items, index) => {
+            if (index === fromPanelIndex) return sourceItems;
+            if (index === toPanelIndex) return targetItems;
+            return items;
+        });
+
+        emitChange({
+            fromPanelIndex,
+            toPanelIndex,
+            direction: toPanelIndex > fromPanelIndex ? "forward" : "backward",
+            movedIds,
+            panels: nextPanels
+        });
+    };
+
+    const panelCount = panels.length;
+
     return (
-        <div className={classNames("transferList", className)}>
-            <div className="transferList__panel">
-                <Text as="span" variant="labelMediumMedium" className="transferList__title">
-                    {mergedTexts.leftTitle}
-                </Text>
-                <ActionableList
-                    withCheckbox
-                    items={sourceViewItems}
-                    texts={mergedTexts.listTexts}
-                    onItemCheck={(item, checked) => updateSelection(item, checked, setSelectedSourceIds)}
-                    onSelectAllChange={(checked, items) => handleSelectAll(checked, items, setSelectedSourceIds)}
-                />
-            </div>
+        <div className={classNames("transferList", `transferList_panels${panelCount}`, className)}>
+            {panels.map((panel, panelIndex) => (
+                <React.Fragment key={panel.id}>
+                    <div className="transferList__panel">
+                        <ActionableList
+                            withCheckbox
+                            draggable={draggable}
+                            dragListId={draggable ? panel.id : undefined}
+                            items={panelViewItems[panelIndex]}
+                            texts={panel.texts}
+                            onItemCheck={(item, checked) => updateSelection(item, checked, panelIndex)}
+                            onSelectAllChange={(checked, items) => handleSelectAll(checked, items, panelIndex)}
+                            onItemsChange={draggable ? (items) => handlePanelItemsChange(panelIndex, items) : undefined}
+                            onCrossListDrop={draggable ? handleCrossListDrop : undefined}
+                        />
+                    </div>
 
-            <div className="transferList__controls">
-                <Button
-                    size="medium"
-                    appearance="secondary"
-                    layout="text"
-                    Icon={ChevronRight}
-                    disabled={selectedSourceIds.size === 0}
-                    onClick={() => handleMove("toTarget")}
-                    aria-label={mergedTexts.moveToTargetAriaLabel}
-                />
-                <Button
-                    size="medium"
-                    appearance="secondary"
-                    layout="text"
-                    Icon={ChevronLeft}
-                    disabled={selectedTargetIds.size === 0}
-                    onClick={() => handleMove("toSource")}
-                    aria-label={mergedTexts.moveToSourceAriaLabel}
-                />
-            </div>
-
-            <div className="transferList__panel">
-                <Text as="span" variant="labelMediumMedium" className="transferList__title">
-                    {mergedTexts.rightTitle}
-                </Text>
-                <ActionableList
-                    withCheckbox
-                    items={targetViewItems}
-                    texts={mergedTexts.listTexts}
-                    onItemCheck={(item, checked) => updateSelection(item, checked, setSelectedTargetIds)}
-                    onSelectAllChange={(checked, items) => handleSelectAll(checked, items, setSelectedTargetIds)}
-                />
-            </div>
+                    {panelIndex < panelCount - 1 && (
+                        <div className="transferList__controls">
+                            <Button
+                                size="medium"
+                                appearance="secondary"
+                                layout="text"
+                                Icon={ChevronRight}
+                                disabled={(selectedIdsByPanel[panelIndex]?.size ?? 0) === 0}
+                                onClick={() => handleMove(panelIndex, panelIndex + 1)}
+                                aria-label={mergedTexts.moveForwardAriaLabel}
+                            />
+                            <Button
+                                size="medium"
+                                appearance="secondary"
+                                layout="text"
+                                Icon={ChevronLeft}
+                                disabled={(selectedIdsByPanel[panelIndex + 1]?.size ?? 0) === 0}
+                                onClick={() => handleMove(panelIndex + 1, panelIndex)}
+                                aria-label={mergedTexts.moveBackwardAriaLabel}
+                            />
+                        </div>
+                    )}
+                </React.Fragment>
+            ))}
         </div>
     );
 };

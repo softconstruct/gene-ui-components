@@ -87,6 +87,10 @@ interface IActionableListItemProps {
      */
     parentId?: string;
     /**
+     * Drag scope id for cross-list transfer.
+     */
+    dragListId?: string;
+    /**
      * Whether drag-and-drop handle is shown.
      */
     isDraggable?: boolean;
@@ -133,6 +137,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     descendantsTotalCount = 0,
     selectedLabel = "Selected",
     parentId = "root",
+    dragListId,
     isDraggable = false,
     dropGapEdge = null,
     expandAriaLabel = "Toggle nested items",
@@ -192,6 +197,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                     return {
                         sourceId: id,
                         parentId,
+                        ...(dragListId ? { dragListId } : {}),
                         previewNode: clone,
                         initialRect: rect
                     };
@@ -211,7 +217,14 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
             dropTargetForElements({
                 element: rowEl,
                 getData: () => ({ targetId: id, parentId }),
-                canDrop: ({ source }) => source.data.parentId === parentId,
+                canDrop: ({ source }) => {
+                    const sourceListId = source.data.dragListId as string | undefined;
+                    const sourceParentId = source.data.parentId as string;
+                    if (dragListId && sourceListId && sourceListId !== dragListId) {
+                        return parentId === "root";
+                    }
+                    return sourceParentId === parentId;
+                },
                 onDragEnter: ({ location }) => {
                     onDragTargetChangeRef.current?.(computeEdge(location.current.input.clientY));
                 },
@@ -220,7 +233,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                 }
             })
         );
-    }, [isDraggable, id, parentId]);
+    }, [isDraggable, id, parentId, dragListId]);
 
     return (
         <div

@@ -1,47 +1,58 @@
 import type { IActionableListItem, IActionableListTexts } from "@components/molecules/ActionableList";
 
-type TTransferListDirection = "toTarget" | "toSource";
+type TTransferListDirection = "forward" | "backward";
+
+interface ITransferListPanel {
+    /**
+     * Stable panel key and drag scope identifier.
+     */
+    id: string;
+    /**
+     * Controlled tree for this panel.
+     */
+    items?: IActionableListItem[];
+    /**
+     * Uncontrolled initial tree for this panel.
+     */
+    defaultItems?: IActionableListItem[];
+    /**
+     * Per-panel ActionableList texts; `searchLabel` is the panel label.
+     */
+    texts?: Partial<IActionableListTexts>;
+}
 
 interface ITransferListTexts {
     /**
-     * Left panel title.
+     * Aria-label for move selected to the next panel.
      */
-    leftTitle: string;
+    moveForwardAriaLabel: string;
     /**
-     * Right panel title.
+     * Aria-label for move selected to the previous panel.
      */
-    rightTitle: string;
-    /**
-     * Aria-label for move selected to right action.
-     */
-    moveToTargetAriaLabel: string;
-    /**
-     * Aria-label for move selected to left action.
-     */
-    moveToSourceAriaLabel: string;
-    /**
-     * Optional nested ActionableList text overrides used on both panels.
-     */
-    listTexts?: Partial<IActionableListTexts>;
+    moveBackwardAriaLabel: string;
 }
 
 interface ITransferListChangePayload {
     /**
-     * Move action direction.
+     * Index of the panel items were moved from.
+     */
+    fromPanelIndex: number;
+    /**
+     * Index of the panel items were moved to.
+     */
+    toPanelIndex: number;
+    /**
+     * Move direction relative to panel order.
      */
     direction: TTransferListDirection;
     /**
-     * IDs moved by the action.
+     * IDs moved by the action (empty for in-panel reorder).
      */
     movedIds: string[];
     /**
-     * Next source tree after move.
+     * Next state for all panels.
      */
-    sourceItems: IActionableListItem[];
-    /**
-     * Next target tree after move.
-     */
-    targetItems: IActionableListItem[];
+    panels: IActionableListItem[][];
 }
 
 interface ITransferListProps {
@@ -51,29 +62,27 @@ interface ITransferListProps {
      */
     className?: string;
     /**
-     * Controlled source tree.
+     * Two to four actionable list panels.
      */
-    sourceItems?: IActionableListItem[];
+    panels: ITransferListPanel[];
     /**
-     * Controlled target tree.
+     * Enables drag-and-drop reorder within a panel and transfer to root rows of adjacent panels.
      */
-    targetItems?: IActionableListItem[];
+    draggable?: boolean;
     /**
-     * Uncontrolled initial source tree.
-     */
-    defaultSourceItems?: IActionableListItem[];
-    /**
-     * Uncontrolled initial target tree.
-     */
-    defaultTargetItems?: IActionableListItem[];
-    /**
-     * Localized strings.
+     * Localized strings for transfer controls.
      */
     texts?: Partial<ITransferListTexts>;
     /**
-     * Called after move action with delta and next state.
+     * Called after move, cross-panel drag, or in-panel reorder.
      */
     onChange?: (payload: ITransferListChangePayload) => void;
 }
 
-export type { ITransferListChangePayload, ITransferListProps, ITransferListTexts, TTransferListDirection };
+export type {
+    ITransferListChangePayload,
+    ITransferListPanel,
+    ITransferListProps,
+    ITransferListTexts,
+    TTransferListDirection
+};

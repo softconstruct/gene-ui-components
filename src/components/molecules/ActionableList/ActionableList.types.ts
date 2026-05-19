@@ -22,6 +22,33 @@ export interface IActionableListItem {
     checked?: boolean;
 }
 
+export interface ICrossListDropPayload {
+    /**
+     * Drag scope id of the list the item was dragged from.
+     */
+    sourceListId: string;
+    /**
+     * Drag scope id of the list the item was dropped onto.
+     */
+    targetListId: string;
+    /**
+     * Id of the dragged item.
+     */
+    sourceId: string;
+    /**
+     * Id of the root-level row used as the drop target. Omitted when dropping onto an empty list.
+     */
+    targetId?: string;
+    /**
+     * Whether the item is inserted above or below the target row.
+     */
+    edge?: "top" | "bottom";
+    /**
+     * True when the item was dropped onto the empty-list drop zone.
+     */
+    isEmptyTarget?: boolean;
+}
+
 export interface IActionableListTexts {
     /**
      * Search field label.
@@ -91,6 +118,14 @@ export interface IActionableListProps {
      * Enables drag and drop variant.
      */
     draggable?: boolean;
+    /**
+     * Scope id included in drag data for cross-list transfer (e.g. TransferList panel id).
+     */
+    dragListId?: string;
+    /**
+     * Called when an item is dropped onto a root row from another list (requires `dragListId`).
+     */
+    onCrossListDrop?: (payload: ICrossListDropPayload) => void;
     /**
      * Optional controlled loading state.
      */

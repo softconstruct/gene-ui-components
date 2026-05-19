@@ -11,10 +11,21 @@ const sourceItems = [
 
 const targetItems = [{ id: "target-a", title: "Target A" }];
 
+const twoPanels: ITransferListProps["panels"] = [
+    { id: "source", defaultItems: sourceItems },
+    { id: "target", defaultItems: targetItems }
+];
+
+const threePanels: ITransferListProps["panels"] = [
+    { id: "panel-1", defaultItems: [{ id: "a", title: "A" }] },
+    { id: "panel-2", defaultItems: [{ id: "b", title: "B" }] },
+    { id: "panel-3", defaultItems: [{ id: "c", title: "C" }] }
+];
+
 describe("TransferList ", () => {
     let setup: ReactWrapper<ITransferListProps>;
     beforeEach(() => {
-        setup = mount(<TransferList defaultSourceItems={sourceItems} defaultTargetItems={targetItems} />);
+        setup = mount(<TransferList panels={twoPanels} />);
     });
 
     it("renders without crashing", () => {
@@ -28,29 +39,37 @@ describe("TransferList ", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
-    it("moves selected items to target and emits payload", () => {
+    it("does not render redundant panel title elements", () => {
+        expect(setup.find(".transferList__title").exists()).toBeFalsy();
+    });
+
+    it("moves selected items forward and emits payload", () => {
         const onChange = jest.fn();
-        const wrapper = mount(
-            <TransferList defaultSourceItems={sourceItems} defaultTargetItems={targetItems} onChange={onChange} />
-        );
+        const wrapper = mount(<TransferList panels={twoPanels} onChange={onChange} />);
 
         const sourceCheckboxes = wrapper.find(".transferList__panel").at(0).find("input[type='checkbox']");
         sourceCheckboxes.at(1).simulate("change", { target: { checked: true } });
 
-        const moveRightButton = wrapper.find(".transferList__controls button").at(0);
-        moveRightButton.simulate("click");
+        const moveForwardButton = wrapper.find(".transferList__controls button").at(0);
+        moveForwardButton.simulate("click");
 
         expect(onChange).toHaveBeenCalledTimes(1);
         const payload = onChange.mock.calls[0][0];
-        expect(payload.direction).toBe("toTarget");
+        expect(payload.fromPanelIndex).toBe(0);
+        expect(payload.toPanelIndex).toBe(1);
+        expect(payload.direction).toBe("forward");
         expect(payload.movedIds).toContain("source-a");
-        expect(payload.sourceItems.map((item: { id: string }) => item.id)).toEqual(["source-b"]);
-        expect(payload.targetItems.map((item: { id: string }) => item.id)).toEqual(["target-a", "source-a"]);
+        expect(payload.panels[0].map((item: { id: string }) => item.id)).toEqual(["source-b"]);
+        expect(payload.panels[1].map((item: { id: string }) => item.id)).toEqual(["target-a", "source-a"]);
     });
 
     it("does not mutate controlled lists without parent update", () => {
         const onChange = jest.fn();
-        const wrapper = mount(<TransferList sourceItems={sourceItems} targetItems={targetItems} onChange={onChange} />);
+        const controlledPanels = [
+            { id: "source", items: sourceItems },
+            { id: "target", items: targetItems }
+        ];
+        const wrapper = mount(<TransferList panels={controlledPanels} onChange={onChange} />);
 
         const sourceCheckboxes = wrapper.find(".transferList__panel").at(0).find("input[type='checkbox']");
         sourceCheckboxes.at(1).simulate("change", { target: { checked: true } });
@@ -61,5 +80,20 @@ describe("TransferList ", () => {
         expect(leftPanelText).toContain("Source A");
         expect(leftPanelText).toContain("Source B");
         expect(onChange).toHaveBeenCalledTimes(1);
+    });
+
+    it("renders three panels with two control columns", () => {
+        const wrapper = mount(<TransferList panels={threePanels} />);
+        expect(wrapper.find(".transferList__panel")).toHaveLength(3);
+        expect(wrapper.find(".transferList__controls")).toHaveLength(2);
+        expect(wrapper.find(".transferList").hasClass("transferList_panels3")).toBeTruthy();
+    });
+
+    it("throws when panel count is invalid", () => {
+        const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+        expect(() => mount(<TransferList panels={[{ id: "only", defaultItems: [] }]} />)).toThrow(
+            /requires between 2 and 4 panels/
+        );
+        consoleError.mockRestore();
     });
 });
