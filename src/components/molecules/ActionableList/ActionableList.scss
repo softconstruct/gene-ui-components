@@ -16,10 +16,10 @@
 
     &__statsRow {
         display: flex;
+        flex-wrap: nowrap;
         align-items: center;
         justify-content: space-between;
         gap: var(--guit-ref-spacing-medium);
-        flex-wrap: wrap;
         width: 100%;
     }
 
@@ -27,7 +27,19 @@
         display: flex;
         align-items: center;
         gap: var(--guit-ref-spacing-2xsmall);
+        flex-shrink: 1;
         min-width: 0;
+        overflow: hidden;
+    }
+
+    &__selectAll {
+        flex-shrink: 0;
+    }
+
+    &__bulkSelectedLabelWrapper {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
     }
 
     &__checkbox {
@@ -40,10 +52,13 @@
     }
 
     &__bulkSelectedLabel {
+        display: block;
+        min-width: 0;
         color: var(--guit-sem-color-foreground-neutral-1);
     }
 
     &__bulkSelectedCount {
+        flex-shrink: 0;
         color: var(--guit-sem-color-foreground-neutral-2);
     }
 
@@ -52,19 +67,24 @@
         align-items: center;
         justify-content: flex-end;
         gap: var(--guit-ref-spacing-2xsmall);
-        flex-shrink: 0;
+        flex-shrink: 1;
+        min-width: 0;
         margin-inline-start: auto;
     }
 
     &__statsLabel {
+        display: block;
+        min-width: 0;
         color: var(--guit-sem-color-foreground-neutral-1);
     }
 
     &__statsCount {
+        flex-shrink: 0;
         color: var(--guit-sem-color-foreground-neutral-2);
     }
 
     &__statsDivider {
+        flex-shrink: 0;
         min-height: 1.6rem;
     }
 

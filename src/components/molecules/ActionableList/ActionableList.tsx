@@ -12,9 +12,11 @@ import Text from "@components/atoms/Text";
 import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
+import Tooltip from "@components/molecules/Tooltip";
 
 // Hooks
 import useDebounceCallback from "@hooks/useDebounceCallback";
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./ActionableList.scss";
@@ -173,6 +175,14 @@ const ActionableList: FC<IActionableListProps> = ({
 }) => {
     const mergedTexts = { ...ACTIONABLE_LIST_DEFAULT_TEXTS, ...texts };
     const wasExpansionToggledRef = useRef(false);
+    const bulkSelectedLabelRef = useRef<HTMLSpanElement | null>(null);
+    const filteredItemsLabelRef = useRef<HTMLSpanElement | null>(null);
+    const totalItemsLabelRef = useRef<HTMLSpanElement | null>(null);
+    const isBulkSelectedLabelTruncated = useEllipsisDetection(bulkSelectedLabelRef, [
+        mergedTexts.bulkSelectedItemsLabel
+    ]);
+    const isFilteredItemsLabelTruncated = useEllipsisDetection(filteredItemsLabelRef, [mergedTexts.filteredItemsLabel]);
+    const isTotalItemsLabelTruncated = useEllipsisDetection(totalItemsLabelRef, [mergedTexts.totalItemsLabel]);
 
     const [localItems, setLocalItems] = useState<IActionableListItem[]>(() => mergeItemsFromProps(items, []));
     const [searchValue, setSearchValue] = useState("");
@@ -359,13 +369,21 @@ const ActionableList: FC<IActionableListProps> = ({
                                     onChange={(event) => handleSelectAll(event.target.checked)}
                                     className="actionableList__selectAll"
                                 />
-                                <Text
-                                    as="span"
-                                    variant="bodyMediumMedium"
-                                    className="actionableList__bulkSelectedLabel"
-                                >
-                                    {mergedTexts.bulkSelectedItemsLabel}
-                                </Text>
+                                <div className="actionableList__bulkSelectedLabelWrapper">
+                                    <Tooltip
+                                        text={mergedTexts.bulkSelectedItemsLabel}
+                                        isVisible={isBulkSelectedLabelTruncated}
+                                    >
+                                        <Text
+                                            ref={bulkSelectedLabelRef}
+                                            as="span"
+                                            variant="bodyMediumMedium"
+                                            className="actionableList__bulkSelectedLabel ellipsis-text"
+                                        >
+                                            {mergedTexts.bulkSelectedItemsLabel}
+                                        </Text>
+                                    </Tooltip>
+                                </div>
                                 <Text
                                     as="span"
                                     variant="bodyMediumMedium"
@@ -376,16 +394,30 @@ const ActionableList: FC<IActionableListProps> = ({
                             </div>
                         )}
                         <div className="actionableList__stats">
-                            <Text as="span" variant="bodyMediumMedium" className="actionableList__statsLabel">
-                                {mergedTexts.filteredItemsLabel}
-                            </Text>
+                            <Tooltip text={mergedTexts.filteredItemsLabel} isVisible={isFilteredItemsLabelTruncated}>
+                                <Text
+                                    ref={filteredItemsLabelRef}
+                                    as="span"
+                                    variant="bodyMediumMedium"
+                                    className="actionableList__statsLabel ellipsis-text"
+                                >
+                                    {mergedTexts.filteredItemsLabel}
+                                </Text>
+                            </Tooltip>
                             <Text as="span" variant="bodyMediumMedium" className="actionableList__statsCount">
                                 {filteredItemsCount}
                             </Text>
                             <Divider direction="vertical" className="actionableList__statsDivider" />
-                            <Text as="span" variant="bodyMediumMedium" className="actionableList__statsLabel">
-                                {mergedTexts.totalItemsLabel}
-                            </Text>
+                            <Tooltip text={mergedTexts.totalItemsLabel} isVisible={isTotalItemsLabelTruncated}>
+                                <Text
+                                    ref={totalItemsLabelRef}
+                                    as="span"
+                                    variant="bodyMediumMedium"
+                                    className="actionableList__statsLabel ellipsis-text"
+                                >
+                                    {mergedTexts.totalItemsLabel}
+                                </Text>
+                            </Tooltip>
                             <Text as="span" variant="bodyMediumMedium" className="actionableList__statsCount">
                                 {totalItemsCount}
                             </Text>
