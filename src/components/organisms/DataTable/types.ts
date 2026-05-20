@@ -108,17 +108,21 @@ export type ManageColumnsConfig = {
      */
     texts?: {
         /** Text for the save button * */
-        saveText?: string;
+        saveButton?: string;
         /** Text for the cancel button * */
-        cancelText?: string;
+        cancelButton?: string;
         /** Text for the restore-to-defaults button * */
-        restoreDefaultsText?: string;
+        restoreDefaultsButton?: string;
         /** Placeholder text for the search field input * */
         searchPlaceholder?: string;
         /** Text for the manage columns button * */
-        buttonText?: string;
+        label?: string;
         /** Text for the select/deselect all columns button * */
-        selectAllColumnsText?: string;
+        selectAllColumns?: string;
+        /** Title text to display when there are no results after search * */
+        noResultsFound?: string;
+        /** Description text to display when there are no results to display after search * */
+        noResultsFoundDescription?: string;
     };
     /**
      * Callback function which triggers when the column is getting pinned.

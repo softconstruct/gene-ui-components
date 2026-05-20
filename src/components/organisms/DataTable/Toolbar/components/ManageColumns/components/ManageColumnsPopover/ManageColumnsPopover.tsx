@@ -5,6 +5,7 @@ import React, {
     SetStateAction,
     useCallback,
     useEffect,
+    useLayoutEffect,
     useRef,
     useState
 } from "react";
@@ -67,6 +68,11 @@ interface IManageColumnsPopoverProps<TData> {
      * The array of filtered TanStack Table columns to be displayed in the list.
      */
     columns: Column<TData>[];
+
+    /**
+     * Indicates whether there is an active searching value.
+     */
+    isSearchActive?: boolean;
 
     /**
      * Column visibility state used by the Manage Columns popover.
@@ -156,7 +162,8 @@ const ManageColumnsPopover = <TData,>({
     handleSearchClear,
     allColumnsChecked,
     allColumnsIndeterminate,
-    onToggleAllColumns
+    onToggleAllColumns,
+    isSearchActive
 }: IManageColumnsPopoverProps<TData>) => {
     const hasColumns = columns.length > 0;
     const { loading, texts: manageColumnsTexts } = manageColumnsConfig;
@@ -164,6 +171,15 @@ const ManageColumnsPopover = <TData,>({
     const [dropGap, setDropGap] = useState<{ targetId: string; edge: string } | null>(null);
     const dropGapRef = useRef(dropGap);
     dropGapRef.current = dropGap;
+
+    const bodyRef = useRef<HTMLDivElement>(null);
+    const [cachedBodyHeight, setCachedBodyHeight] = useState<number | undefined>(undefined);
+
+    useLayoutEffect(() => {
+        if (!isSearchActive && bodyRef.current) {
+            setCachedBodyHeight(bodyRef.current.getBoundingClientRect().height);
+        }
+    }, [isSearchActive, columns]);
 
     const handleDragTargetChange = useCallback((targetId: string, edge: string | null) => {
         setDropGap((prev) => {
@@ -200,6 +216,7 @@ const ManageColumnsPopover = <TData,>({
             setProps={setProps}
             onClose={onClose}
             size="fitContent"
+            mobileHeightMode="fit"
         >
             <PopoverBody withScrollbar={false} withPadding={false} className="manageColumnsPopover__main">
                 <CustomDragLayer />
@@ -213,7 +230,11 @@ const ManageColumnsPopover = <TData,>({
                     clearable
                     onClear={handleSearchClear}
                 />
-                <div className="manageColumnsPopover__body">
+                <div
+                    className="manageColumnsPopover__body"
+                    ref={bodyRef}
+                    style={{ minHeight: isSearchActive && cachedBodyHeight ? `${cachedBodyHeight}px` : undefined }}
+                >
                     {hasColumns && (
                         <div className="manageColumnsPopover__selectAll">
                             <Checkbox
@@ -224,7 +245,7 @@ const ManageColumnsPopover = <TData,>({
                                 className="manageColumnsPopover__selectAllCheckbox"
                             />
                             <Label
-                                text={manageColumnsTexts?.selectAllColumnsText ?? "All Columns"}
+                                text={manageColumnsTexts?.selectAllColumns ?? "All Columns"}
                                 labelFor="manageColumns-selectAll"
                             />
                         </div>
@@ -252,7 +273,13 @@ const ManageColumnsPopover = <TData,>({
                                     );
                                 })
                             ) : (
-                                <Empty appearance="noResult" className="manageColumnsPopover__empty" size="small" />
+                                <Empty
+                                    appearance="noResult"
+                                    className="manageColumnsPopover__empty"
+                                    size="small"
+                                    title={manageColumnsTexts?.noResultsFound ?? "No results found"}
+                                    description={manageColumnsTexts?.noResultsFoundDescription}
+                                />
                             )}
                         </div>
                     </Scrollbar>
@@ -265,12 +292,12 @@ const ManageColumnsPopover = <TData,>({
                         onClick={onRestoreDefaults}
                         appearance="secondary"
                     >
-                        {manageColumnsTexts?.restoreDefaultsText ?? "Restore defaults"}
+                        {manageColumnsTexts?.restoreDefaultsButton ?? "Restore defaults"}
                     </Button>
 
                     <ButtonGroup size="medium" className="manageColumnsPopover__actions">
                         <Button disabled={loading} onClick={onCancel} size="medium" appearance="secondary">
-                            {manageColumnsTexts?.cancelText ?? "Cancel"}
+                            {manageColumnsTexts?.cancelButton ?? "Cancel"}
                         </Button>
                         <Button
                             disabled={!hasChanges}
@@ -279,7 +306,7 @@ const ManageColumnsPopover = <TData,>({
                             size="medium"
                             appearance="primary"
                         >
-                            {manageColumnsTexts?.saveText ?? "Save"}
+                            {manageColumnsTexts?.saveButton ?? "Save"}
                         </Button>
                     </ButtonGroup>
                 </div>

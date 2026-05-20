@@ -178,12 +178,15 @@ export const WithManageColumns: Story = {
         manageColumnsConfig: {
             enabled: true,
             available: true,
+            loading: false,
             texts: {
                 searchPlaceholder: "Search...",
-                cancelText: "Cancel",
-                saveText: "Save changes",
-                restoreDefaultsText: "Restore defaults",
-                buttonText: "Manage columns"
+                cancelButton: "Cancel",
+                saveButton: "Save changes",
+                restoreDefaultsButton: "Restore defaults",
+                label: "Manage columns",
+                noResultsFound: "No results found",
+                noResultsFoundDescription: undefined
             }
         }
     }

@@ -44,6 +44,8 @@
     &__list {
         display: flex;
         flex-direction: column;
+        justify-content: center;
+        height: 100%;
     }
 
     &__footer {

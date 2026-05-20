@@ -117,6 +117,7 @@ const ManageColumns = <TData,>({
 
         hasChanges,
         isDefaultState,
+        isSearchActive,
 
         openPopover,
         handleCancel,
@@ -160,7 +161,7 @@ const ManageColumns = <TData,>({
                 size="medium"
                 {...propsForPopover}
             >
-                {manageColumnsTexts?.buttonText ?? "Manage columns"}
+                {manageColumnsTexts?.label ?? "Manage columns"}
             </Button>
 
             <ManageColumnsPopover
@@ -185,6 +186,7 @@ const ManageColumns = <TData,>({
                 onToggleAllColumns={handleToggleAllColumnsVisibility}
                 hasChanges={hasChanges}
                 isDefaultState={isDefaultState}
+                isSearchActive={isSearchActive}
             />
         </>
     );
