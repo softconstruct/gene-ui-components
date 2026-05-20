@@ -33,6 +33,8 @@ const meta: Meta<IActionableListProps> = {
         texts: args({ control: "object", ...propCategory.content }),
         withCheckbox: args({ control: "boolean", ...propCategory.appearance }),
         draggable: args({ control: "boolean", ...propCategory.appearance }),
+        dragListId: args({ control: "false", ...propCategory.others }),
+        onCrossListDrop: args({ control: "false", ...propCategory.action }),
         loading: args({ control: "boolean", ...propCategory.states }),
         defaultExpandAll: args({ control: "boolean", ...propCategory.states }),
         onItemsChange: args({ control: "false", action: "onItemsChange", ...propCategory.action }),
