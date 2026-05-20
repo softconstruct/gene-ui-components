@@ -123,24 +123,30 @@ export const filterTree = (items: IActionableListItem[], query: string): IAction
 const reorderSiblingsById = (
     items: IActionableListItem[],
     sourceId: string,
-    targetId: string
+    targetId: string,
+    edge: "top" | "bottom"
 ): IActionableListItem[] => {
     const si = items.findIndex((n) => n.id === sourceId);
     const ti = items.findIndex((n) => n.id === targetId);
     if (si < 0 || ti < 0 || si === ti) return items;
-    return reorder({ list: items, startIndex: si, finishIndex: ti });
+
+    let finishIndex = edge === "top" ? ti : ti + 1;
+    if (si < finishIndex) finishIndex -= 1;
+
+    return reorder({ list: items, startIndex: si, finishIndex });
 };
 
 export const reorderInTree = (
     items: IActionableListItem[],
     sourceId: string,
-    targetId: string
+    targetId: string,
+    edge: "top" | "bottom" = "bottom"
 ): IActionableListItem[] => {
-    const siblingResult = reorderSiblingsById(items, sourceId, targetId);
+    const siblingResult = reorderSiblingsById(items, sourceId, targetId, edge);
     if (siblingResult !== items) return siblingResult;
     return items.map((item) => {
         if (!item.children?.length) return item;
-        return { ...item, children: reorderInTree(item.children, sourceId, targetId) };
+        return { ...item, children: reorderInTree(item.children, sourceId, targetId, edge) };
     });
 };
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
+import { reorderInTree } from "./ActionableList.helpers";
 // Components
 import ActionableList, { IActionableListProps } from "./index";
 
@@ -19,6 +20,26 @@ describe("ActionableList ", () => {
 
     it("renders without crashing", () => {
         expect(setup.exists()).toBeTruthy();
+    });
+
+    it("reorderInTree places item after target when edge is bottom", () => {
+        const items = [
+            { id: "a", title: "A" },
+            { id: "b", title: "B" },
+            { id: "c", title: "C" }
+        ];
+        const result = reorderInTree(items, "a", "c", "bottom");
+        expect(result.map((item) => item.id)).toEqual(["b", "c", "a"]);
+    });
+
+    it("reorderInTree places item before target when edge is top", () => {
+        const items = [
+            { id: "a", title: "A" },
+            { id: "b", title: "B" },
+            { id: "c", title: "C" }
+        ];
+        const result = reorderInTree(items, "c", "b", "top");
+        expect(result.map((item) => item.id)).toEqual(["a", "c", "b"]);
     });
 
     it("renders className prop correctly", () => {

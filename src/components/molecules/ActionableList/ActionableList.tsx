@@ -192,8 +192,9 @@ const ActionableList: FC<IActionableListProps> = ({
     const [dropGap, setDropGap] = useState<IDropGap | null>(null);
     const [isEmptyDropActive, setIsEmptyDropActive] = useState(false);
     const emptyDropRef = useRef<HTMLDivElement>(null);
+    const listEndDropRef = useRef<HTMLDivElement>(null);
 
-    const handleDropReorderRef = useRef<(sourceId: string, targetId: string) => void>(() => {});
+    const handleDropReorderRef = useRef<(sourceId: string, targetId: string, edge: TDropGapEdge) => void>(() => {});
     const onCrossListDropRef = useRef(onCrossListDrop);
     const dropGapRef = useRef(dropGap);
     dropGapRef.current = dropGap;
@@ -235,7 +236,7 @@ const ActionableList: FC<IActionableListProps> = ({
                     return;
                 }
 
-                handleDropReorderRef.current(sourceId, gap.targetId);
+                handleDropReorderRef.current(sourceId, gap.targetId, gap.edge);
             }
         });
     }, [isDraggable, dragListId]);
@@ -291,9 +292,9 @@ const ActionableList: FC<IActionableListProps> = ({
         onSelectAllChange?.(checked, nextItems);
     };
 
-    const handleDropReorder = (sourceId: string, targetId: string) => {
+    const handleDropReorder = (sourceId: string, targetId: string, edge: TDropGapEdge) => {
         if (sourceId === targetId) return;
-        syncItems(reorderInTree(localItems, sourceId, targetId));
+        syncItems(reorderInTree(localItems, sourceId, targetId, edge));
     };
     handleDropReorderRef.current = handleDropReorder;
 
@@ -343,6 +344,30 @@ const ActionableList: FC<IActionableListProps> = ({
             }
         });
     }, [showEmptyDropZone, dragListId]);
+
+    const lastRootItemId = filteredItems[filteredItems.length - 1]?.id;
+
+    useEffect(() => {
+        const element = listEndDropRef.current;
+        if (!element || !isDraggable || !hasSearchResults || !lastRootItemId) return () => undefined;
+
+        const targetId = lastRootItemId;
+
+        return dropTargetForElements({
+            element,
+            getData: () => ({ listEndTarget: true, targetId }),
+            canDrop: ({ source }) => {
+                const sourceListId = source.data.dragListId;
+                const sourceParentId = source.data.parentId;
+                if (dragListId && typeof sourceListId === "string" && sourceListId !== dragListId) {
+                    return sourceParentId === "root";
+                }
+                return sourceParentId === "root";
+            },
+            onDragEnter: () => handleDragTargetChange(targetId, "bottom"),
+            onDrag: () => handleDragTargetChange(targetId, "bottom")
+        });
+    }, [isDraggable, hasSearchResults, lastRootItemId, dragListId, handleDragTargetChange]);
 
     return (
         <div className={classNames("actionableList", className, { actionableList_hasDropGap: dropGap !== null })}>
@@ -484,6 +509,9 @@ const ActionableList: FC<IActionableListProps> = ({
                                         />
                                     ))}
                                 </ActionableListNodeWrapper>
+                                {isDraggable && (
+                                    <div ref={listEndDropRef} className="actionableList__listEndDrop" aria-hidden />
+                                )}
                             </div>
                         )}
                     </>
