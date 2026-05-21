@@ -40,7 +40,7 @@ const DropdownItem: FC<IDropdownItemProps> = ({
     onClick,
     buttonRef
 }) => {
-    const hasTrailing = Boolean(textAfter || (variant === "single" && selected));
+    const hasTextAfter = Boolean(textAfter);
 
     return (
         <div
@@ -72,12 +72,9 @@ const DropdownItem: FC<IDropdownItemProps> = ({
                     {Icon && <Icon className="dropdownItem__icon" size={20} />}
                     <span className="dropdownItem__label ellipsis-text">{label}</span>
                 </span>
-                {hasTrailing && (
+                {hasTextAfter && (
                     <span className="dropdownItem__trailing">
-                        {textAfter && <span className="dropdownItem__textAfter ellipsis-text">{textAfter}</span>}
-                        {variant === "single" && selected && (
-                            <CheckMark className="dropdownItem__checkmark" size={20} />
-                        )}
+                        <span className="dropdownItem__textAfter ellipsis-text">{textAfter}</span>
                     </span>
                 )}
             </button>
@@ -90,6 +87,7 @@ const DropdownItem: FC<IDropdownItemProps> = ({
                     aria-label={`More information about ${label}`}
                 />
             )}
+            {variant === "single" && selected && <CheckMark className="dropdownItem__checkmark" size={20} />}
         </div>
     );
 };
