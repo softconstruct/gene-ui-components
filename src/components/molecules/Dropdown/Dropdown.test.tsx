@@ -16,6 +16,16 @@ const options: IDropdownOption[] = [
     { id: 3, label: "Option 3", value: "option-3" }
 ];
 
+const getTriggerField = (wrapper: ReactWrapper<IDropdownProps>) => wrapper.find(".dropdown .textField").at(0);
+const getTriggerWrapper = (wrapper: ReactWrapper<IDropdownProps>) =>
+    getTriggerField(wrapper).find(".textField__wrapper");
+const getTriggerInput = (wrapper: ReactWrapper<IDropdownProps>) =>
+    getTriggerField(wrapper).find("input.textField__input");
+const openDropdown = (wrapper: ReactWrapper<IDropdownProps>) => {
+    getTriggerWrapper(wrapper).simulate("click");
+    wrapper.update();
+};
+
 describe("Dropdown ", () => {
     let setup: ReactWrapper<IDropdownProps>;
     beforeEach(() => {
@@ -41,34 +51,31 @@ describe("Dropdown ", () => {
     });
 
     it("selects value in single mode and closes popover", () => {
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
         setup.find(".dropdownItem__action").at(1).simulate("click");
         setup.update();
 
-        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 2");
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 2");
     });
 
     it("supports multiselect and clear", () => {
         setup.setProps({ variant: "multi" });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup.find(".dropdownItem__action").at(0).simulate("click");
         setup.find(".dropdownItem__action").at(1).simulate("click");
         setup.update();
-        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1, Option 2");
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 1, Option 2");
 
         setup.find(".dropdown__actions button").at(0).simulate("click");
         setup.update();
 
-        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("");
+        expect(getTriggerInput(setup).prop("value")).toBe("");
     });
 
     it("marks select all checkbox indeterminate when some options are selected", () => {
         setup.setProps({ variant: "multi", values: ["option-1"] });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         let selectAllCheckbox = setup.find(".dropdown__actions").find(Checkbox).at(0);
         expect(selectAllCheckbox.prop("checked")).toBe(false);
@@ -84,8 +91,7 @@ describe("Dropdown ", () => {
 
     it("preserves selections outside search when select all is checked", () => {
         setup.setProps({ variant: "multi", searchable: true });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup.find(".dropdownItem__action").at(0).simulate("click");
         setup.update();
@@ -102,7 +108,7 @@ describe("Dropdown ", () => {
             .simulate("change", { target: { checked: true } } as React.ChangeEvent<HTMLInputElement>);
         setup.update();
 
-        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1, Option 2");
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 1, Option 2");
 
         setup
             .find(".dropdown__search input.textField__input")
@@ -112,13 +118,12 @@ describe("Dropdown ", () => {
         const selectAllCheckbox = setup.find(".dropdown__actions").find(Checkbox).at(0);
         expect(selectAllCheckbox.prop("checked")).toBe(false);
         expect(selectAllCheckbox.prop("indeterminate")).toBe(true);
-        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1, Option 2");
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 1, Option 2");
     });
 
     it("preserves selections outside search when select all is unchecked", () => {
         setup.setProps({ variant: "multi", searchable: true });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup.find(".dropdownItem__action").at(0).simulate("click");
         setup.update();
@@ -134,7 +139,7 @@ describe("Dropdown ", () => {
         selectAllInput.simulate("change", { target: { checked: false } } as React.ChangeEvent<HTMLInputElement>);
         setup.update();
 
-        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1");
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 1");
 
         setup
             .find(".dropdown__search input.textField__input")
@@ -144,7 +149,7 @@ describe("Dropdown ", () => {
         const selectAllCheckbox = setup.find(".dropdown__actions").find(Checkbox).at(0);
         expect(selectAllCheckbox.prop("checked")).toBe(false);
         expect(selectAllCheckbox.prop("indeterminate")).toBe(true);
-        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1");
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 1");
     });
 
     it("renders info as a focusable button sibling to the option action", () => {
@@ -153,8 +158,7 @@ describe("Dropdown ", () => {
             searchable: true,
             options: [{ id: 1, label: "Option 1", value: "option-1", infoText: "Extra details" }]
         });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         const optionAction = setup.find(".dropdownItem__action");
         const infoButton = setup.find(".dropdownItem__info button");
@@ -166,35 +170,32 @@ describe("Dropdown ", () => {
 
     it("opens in readOnly mode but does not change value", () => {
         setup.setProps({ readOnly: true, value: "option-1" });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         expect(setup.find(".dropdownItem").exists()).toBeTruthy();
 
         setup.find(".dropdownItem__action").at(1).simulate("click");
         setup.update();
 
-        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1");
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 1");
     });
 
     it("renders a presentational trigger input when search is disabled", () => {
         setup.setProps({ searchable: false });
         setup.update();
 
-        const triggerInput = setup.find(".dropdown__trigger input.textField__input").at(0);
+        const triggerInput = getTriggerInput(setup);
         expect(triggerInput.prop("readOnly")).toBe(true);
         expect(triggerInput.prop("role")).toBe("presentation");
-        expect(setup.find(".dropdown__trigger .textField__wrapper").at(0).hasClass("textField__wrapper_readOnly")).toBe(
-            false
-        );
+        expect(getTriggerWrapper(setup).hasClass("textField__wrapper_readOnly")).toBe(false);
     });
 
     it("renders trigger semantics on trigger input when search is enabled", () => {
         setup.setProps({ searchable: true });
         setup.update();
 
-        const triggerInput = setup.find(".dropdown__trigger input.textField__input").at(0);
-        const triggerWrapper = setup.find(".dropdown__trigger .textField__wrapper").at(0);
+        const triggerInput = getTriggerInput(setup);
+        const triggerWrapper = getTriggerWrapper(setup);
         expect(triggerInput.prop("readOnly")).toBe(true);
         expect(triggerInput.prop("role")).toBe("presentation");
         expect(triggerInput.prop("tabIndex")).toBe(-1);
@@ -209,16 +210,15 @@ describe("Dropdown ", () => {
         });
         setup.update();
 
-        expect(setup.find("input.textField__input").at(0).prop("value")).toBe("Option 1, Option 2");
-        expect(setup.find(".textField__suffix").at(0).text()).toBe("+1...");
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 1, Option 2");
+        expect(getTriggerField(setup).find(".textField__suffix").text()).toBe("+1...");
     });
 
     it("calls onSearchChange in debounced mode", () => {
         jest.useFakeTimers();
         const onSearchChange = jest.fn();
         setup.setProps({ searchable: true, onSearchChange });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup
             .find(".dropdown__search input.textField__input")
@@ -239,8 +239,7 @@ describe("Dropdown ", () => {
 
     it("keeps search input editable when filter yields no matches", () => {
         setup.setProps({ searchable: true });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup
             .find(".dropdown__search input.textField__input")
@@ -253,8 +252,7 @@ describe("Dropdown ", () => {
 
     it("keeps search input editable when external options are cleared after a search", () => {
         setup.setProps({ searchable: true, filterFn: false as const });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup
             .find(".dropdown__search input.textField__input")
@@ -267,16 +265,14 @@ describe("Dropdown ", () => {
 
     it("allows typing in external search mode when options start empty", () => {
         setup.setProps({ searchable: true, filterFn: false as const, options: [] });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         expect(setup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(false);
     });
 
     it("marks search input readOnly when there is no original data and no search value", () => {
         const emptySetup = mount(<Dropdown options={[]} searchable label="Label" />);
-        emptySetup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        emptySetup.update();
+        openDropdown(emptySetup);
 
         expect(emptySetup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(true);
         emptySetup.unmount();
@@ -286,8 +282,7 @@ describe("Dropdown ", () => {
         jest.useFakeTimers();
         const onSearchChange = jest.fn();
         setup.setProps({ searchable: true, onSearchChange });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup
             .find(".dropdown__search input.textField__input")
@@ -310,8 +305,7 @@ describe("Dropdown ", () => {
             onSearchChange,
             filterFn: false as const
         });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup
             .find(".dropdown__search input.textField__input")
@@ -330,8 +324,7 @@ describe("Dropdown ", () => {
         jest.useFakeTimers();
         const startsWith = (option: IDropdownOption, term: string) => option.label.toLowerCase().startsWith(term);
         setup.setProps({ searchable: true, filterFn: startsWith });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup
             .find(".dropdown__search input.textField__input")
@@ -353,8 +346,7 @@ describe("Dropdown ", () => {
             searchable: true,
             onSearchChange
         });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup
             .find(".dropdown__search input.textField__input")
@@ -376,8 +368,7 @@ describe("Dropdown ", () => {
             onSearchChange,
             defaultSearchValue: "Option 1"
         });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup
             .find(".dropdown__search input.textField__input")
@@ -399,8 +390,7 @@ describe("Dropdown ", () => {
             resetSearchOnClose: true
         });
 
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
         setup
             .find(".dropdown__search input.textField__input")
             .simulate("change", { target: { value: "Option 1" } } as React.ChangeEvent<HTMLInputElement>);
@@ -416,16 +406,14 @@ describe("Dropdown ", () => {
 
         expect(onSearchChange).toHaveBeenCalledWith("");
 
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
         const searchInput = setup.find(".dropdown__search input.textField__input");
         expect(searchInput.prop("value")).toBe("");
     });
 
     it("renders loading and empty states", () => {
         setup.setProps({ loading: true, loadingText: "Loading info" });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
         expect(setup.find(".loader").exists()).toBeTruthy();
 
         setup.setProps({ loading: false, options: [], emptyText: "No records" });
@@ -437,7 +425,7 @@ describe("Dropdown ", () => {
     it("opens and focuses first option with ArrowDown from trigger", () => {
         setup.setProps({ searchable: false });
 
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("keyDown", { key: "ArrowDown" });
+        getTriggerWrapper(setup).simulate("keyDown", { key: "ArrowDown" });
         act(() => undefined);
         setup.update();
 
@@ -447,8 +435,7 @@ describe("Dropdown ", () => {
 
     it("closes on Escape when opened", () => {
         setup.setProps({ searchable: true });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
         expect(setup.find(".dropdownItem").exists()).toBeTruthy();
 
         setup.find(".dropdown__search input.textField__input").simulate("keyDown", { key: "Escape" });
@@ -460,8 +447,7 @@ describe("Dropdown ", () => {
     it("focuses first option on ArrowDown from search input", () => {
         jest.useFakeTimers();
         setup.setProps({ searchable: true });
-        setup.find(".dropdown__trigger .textField__wrapper").simulate("click");
-        setup.update();
+        openDropdown(setup);
 
         setup.find(".dropdown__search input.textField__input").simulate("keyDown", { key: "ArrowDown" });
         act(() => {
