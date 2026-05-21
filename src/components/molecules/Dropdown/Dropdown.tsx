@@ -371,6 +371,8 @@ const Dropdown: FC<IDropdownProps> = ({
         !!enabledFilteredOptions.length && selectedEnabledFilteredOptionsCount === enabledFilteredOptions.length;
     const selectAllIndeterminate =
         selectedEnabledFilteredOptionsCount > 0 && selectedEnabledFilteredOptionsCount < enabledFilteredOptions.length;
+    const showMultiSelectActions = isMulti && !loading && !!filteredOptions.length;
+    const showHeader = searchable || showMultiSelectActions;
 
     const toggleOpen = () => {
         if (disabled) return;
@@ -598,46 +600,48 @@ const Dropdown: FC<IDropdownProps> = ({
             >
                 <PopoverBody withPadding={false} withScrollbar={false} className="dropdown__wrapper">
                     <div className="dropdown__content">
-                        <div className={classNames("dropdown__header", `dropdown__header_size_${size}`, className)}>
-                            {searchable && (
-                                <div className="dropdown__search">
-                                    <TextField
-                                        value={searchTerm}
-                                        onChange={handleSearchChange}
-                                        onKeyDown={searchKeyDown}
-                                        onClear={clearSearchHandler}
-                                        clearable
-                                        inputMode="search"
-                                        readOnly={isSearchReadOnly}
-                                        autoFocus={searchAutoFocus}
-                                        placeholder={searchPlaceholder}
-                                        IconBefore={Magnifier}
-                                        size={size}
-                                        autoComplete="off"
-                                    />
-                                </div>
-                            )}
-                            {isMulti && !loading && !!filteredOptions.length && (
-                                <div className="dropdown__actions">
-                                    <Checkbox
-                                        label={selectAllLabel}
-                                        checked={selectAllChecked}
-                                        indeterminate={selectAllIndeterminate}
-                                        onChange={selectAllHandler}
-                                        disabled={!filteredOptions.length || loading || disabled || readOnly}
-                                    />
-                                    <Button
-                                        appearance="secondary"
-                                        layout="text"
-                                        size="small"
-                                        onClick={clearAllHandler}
-                                        disabled={!selectedMultiOptions.length || loading || disabled || readOnly}
-                                    >
-                                        {clearLabel}
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
+                        {showHeader && (
+                            <div className={classNames("dropdown__header", `dropdown__header_size_${size}`, className)}>
+                                {searchable && (
+                                    <div className="dropdown__search">
+                                        <TextField
+                                            value={searchTerm}
+                                            onChange={handleSearchChange}
+                                            onKeyDown={searchKeyDown}
+                                            onClear={clearSearchHandler}
+                                            clearable
+                                            inputMode="search"
+                                            readOnly={isSearchReadOnly}
+                                            autoFocus={searchAutoFocus}
+                                            placeholder={searchPlaceholder}
+                                            IconBefore={Magnifier}
+                                            size={size}
+                                            autoComplete="off"
+                                        />
+                                    </div>
+                                )}
+                                {showMultiSelectActions && (
+                                    <div className="dropdown__actions">
+                                        <Checkbox
+                                            label={selectAllLabel}
+                                            checked={selectAllChecked}
+                                            indeterminate={selectAllIndeterminate}
+                                            onChange={selectAllHandler}
+                                            disabled={!filteredOptions.length || loading || disabled || readOnly}
+                                        />
+                                        <Button
+                                            appearance="secondary"
+                                            layout="text"
+                                            size="small"
+                                            onClick={clearAllHandler}
+                                            disabled={!selectedMultiOptions.length || loading || disabled || readOnly}
+                                        >
+                                            {clearLabel}
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                         {loading ? (
                             <Scrollbar className="dropdown__emptyScrollbar">
                                 <div className="dropdown__loading">
