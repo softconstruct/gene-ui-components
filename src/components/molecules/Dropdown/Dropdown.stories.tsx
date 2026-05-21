@@ -12,31 +12,56 @@ import Dropdown, { IDropdownOption, IDropdownProps } from "./index";
 const meta: Meta<IDropdownProps> = {
     title: "Molecules/Dropdown",
     component: Dropdown,
+    parameters: {
+        controls: {
+            expanded: true
+        }
+    },
     argTypes: {
+        // Appearance
         className: args({ control: "false", ...propCategory.appearance }),
-        variant: args({ control: "select", options: ["single", "multi"], ...propCategory.functionality }),
-        options: args({ control: "false", ...propCategory.content }),
         size: args({ control: "select", options: ["large", "medium", "small"], ...propCategory.appearance }),
+        status: args({ control: "select", options: ["rest", "warning", "error"], ...propCategory.appearance }),
+
+        // Content
+        options: args({ control: "false", ...propCategory.content }),
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
         helperText: args({ control: "text", ...propCategory.content }),
-        required: args({ control: "boolean", ...propCategory.validation }),
-        disabled: args({ control: "boolean", ...propCategory.states }),
-        readOnly: args({ control: "boolean", ...propCategory.states }),
-        status: args({ control: "select", options: ["rest", "warning", "error"], ...propCategory.states }),
-        searchable: args({ control: "boolean", ...propCategory.functionality }),
-        searchAutoFocus: args({ control: "boolean", ...propCategory.functionality }),
-        searchPlaceholder: args({ control: "text", ...propCategory.content }),
-        defaultSearchValue: args({ control: "text", ...propCategory.content }),
-        resetSearchOnClose: args({ control: "boolean", ...propCategory.functionality }),
-        filterFn: args({ control: "false", ...propCategory.functionality }),
-        loading: args({ control: "boolean", ...propCategory.states }),
+        placeholder: args({ control: "text", ...propCategory.content }),
         loadingText: args({ control: "text", ...propCategory.content }),
         emptyText: args({ control: "text", ...propCategory.content }),
-        actions: args({ control: "object", ...propCategory.action })
+        selectAllLabel: args({ control: "text", ...propCategory.content }),
+        clearLabel: args({ control: "text", ...propCategory.content }),
+        searchPlaceholder: args({ control: "text", ...propCategory.content }),
+        defaultSearchValue: args({ control: "text", ...propCategory.content }),
+        searchValue: args({ control: "text", ...propCategory.content }),
+        variant: args({ control: "select", options: ["single", "multi"], ...propCategory.functionality }),
+        searchable: args({ control: "boolean", ...propCategory.functionality }),
+        searchAutoFocus: args({ control: "boolean", ...propCategory.functionality }),
+        resetSearchOnClose: args({
+            control: "boolean",
+            defaultValue: true,
+            ...propCategory.functionality
+        }),
+        filterFn: args({ control: "false", ...propCategory.functionality }),
+        disableMobileSpreadsheet: args({ control: "boolean", ...propCategory.functionality }),
+        actions: args({ control: "object", ...propCategory.functionality }),
+        disabled: args({ control: "boolean", ...propCategory.states }),
+        readOnly: args({ control: "boolean", ...propCategory.states }),
+        loading: args({ control: "boolean", ...propCategory.states }),
+        required: args({ control: "boolean", ...propCategory.validation }),
+        value: args({ control: "text", ...propCategory.content }),
+        defaultValue: args({ control: "text", ...propCategory.content }),
+        values: args({ control: "object", ...propCategory.content }),
+        defaultValues: args({ control: "object", ...propCategory.content }),
+        onOpenChange: args({ control: "false", action: "onOpenChange", ...propCategory.action }),
+        onChange: args({ control: "false", action: "onChange", ...propCategory.action }),
+        onSearchChange: args({ control: "false", action: "onSearchChange", ...propCategory.action })
     },
     args: {
         options: dropdownOptions,
+        variant: "single",
         size: "medium",
         label: "Label",
         infoText: "Info text",
@@ -44,6 +69,8 @@ const meta: Meta<IDropdownProps> = {
         placeholder: "Select option",
         status: "rest",
         searchable: true,
+        resetSearchOnClose: true,
+        disableMobileSpreadsheet: true,
         loadingText: "Loading info",
         emptyText: "No data",
         onOpenChange: fn(),

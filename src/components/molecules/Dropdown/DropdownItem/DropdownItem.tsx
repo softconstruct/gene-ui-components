@@ -3,8 +3,8 @@ import classNames from "classnames";
 
 import { CheckMark, IconProps } from "@geneui/icons";
 
-import Info from "@components/atoms/Info";
 // Components
+import Info from "@components/atoms/Info";
 import Checkbox from "@components/molecules/Checkbox";
 
 // Styles

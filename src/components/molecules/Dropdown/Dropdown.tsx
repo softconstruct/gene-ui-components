@@ -146,7 +146,7 @@ interface IDropdownProps {
     /**
      * Clears the search value when the popover closes.
      * In controlled mode only `onSearchChange("")` is emitted - the parent owns the actual reset.
-     * @default false
+     * @default true
      */
     resetSearchOnClose?: boolean;
     /**
@@ -601,7 +601,7 @@ const Dropdown: FC<IDropdownProps> = ({
                 <PopoverBody withPadding={false} withScrollbar={false} className="dropdown__wrapper">
                     <div className="dropdown__content">
                         {showHeader && (
-                            <div className={classNames("dropdown__header", `dropdown__header_size_${size}`, className)}>
+                            <div className={classNames("dropdown__header", `dropdown__header_size_${size}`)}>
                                 {searchable && (
                                     <div className="dropdown__search">
                                         <TextField
