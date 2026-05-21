@@ -8,9 +8,6 @@ import Button from "@components/atoms/Button";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
-// Hooks
-import useClickOutside from "@hooks/useClickOutside";
-
 // Styles
 import "./Products.scss";
 
@@ -52,10 +49,6 @@ const Products: FC<IProductsProps> = ({ onChange, children }) => {
         referenceElement: { current: null }
     });
 
-    useClickOutside(() => {
-        setPopoverOpen(false);
-    }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement]);
-
     const isRTL = document.dir === "rtl";
 
     const onProductsChange = (product: IProductProps) => {
@@ -85,6 +78,7 @@ const Products: FC<IProductsProps> = ({ onChange, children }) => {
                 margin={PRODUCT_GAP_FROM_TARGET}
                 open={popoverOpen}
                 ref={popoverRef}
+                onClose={() => setPopoverOpen(false)}
             >
                 <PopoverBody
                     className={classNames("products", {

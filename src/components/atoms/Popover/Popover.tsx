@@ -207,9 +207,16 @@ export interface IPopoverProps {
     mobileHeightMode?: "full" | "fit";
     /**
      * If `true`, the popover will close when the user presses the Escape key.
+     * Ignored if the component is controlled.
      * @default true
      */
     closeOnEscape?: boolean;
+    /**
+     * If `true`, the popover will close when the user clicks outside it.
+     * Ignored if the component is controlled.
+     * @default true
+     */
+    closeOnOutsidePress?: boolean;
 }
 
 /**
@@ -237,7 +244,8 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             hasCloseButton = true,
             Icon,
             mobileHeightMode = "full",
-            closeOnEscape = true
+            closeOnEscape = true,
+            closeOnOutsidePress = true
         },
         popoverRef
     ) => {
@@ -252,7 +260,6 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         const isPopoverOpened = isControlled ? open : popoverOpened;
 
         const handleOpenChange = (nextOpen: boolean, event?: Event | SyntheticEvent, reason?: string) => {
-            // TODO: [CHECK] should we change the opened state if the component is controlled ?
             setPopoverOpened(nextOpen);
 
             if (!nextOpen && onClose) {
@@ -301,7 +308,8 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
 
         const dismiss = useDismiss(context, {
             outsidePressEvent: "mousedown",
-            escapeKey: closeOnEscape
+            escapeKey: closeOnEscape,
+            outsidePress: closeOnOutsidePress
         });
 
         const role = useRole(context);

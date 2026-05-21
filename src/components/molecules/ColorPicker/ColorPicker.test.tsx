@@ -99,20 +99,6 @@ describe("ColorPicker", () => {
             setup.update();
             expect(setup.find(".colorPicker__wrapper").exists()).toBeFalsy();
         });
-
-        it("should respect onOutsideClick prop (controlled)", () => {
-            const mockOnOutsideClick = jest.fn();
-            act(() => {
-                setup.setProps({ open: true, onOutsideClick: mockOnOutsideClick });
-            });
-            setup.update();
-
-            act(() => {
-                document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
-            });
-
-            expect(mockOnOutsideClick).toHaveBeenCalledTimes(1);
-        });
     });
 
     describe("Color Changing & Callback Logic", () => {

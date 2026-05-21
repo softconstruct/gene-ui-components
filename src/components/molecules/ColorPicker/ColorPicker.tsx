@@ -18,7 +18,6 @@ import TextField from "@components/molecules/TextField";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Hooks
-import useClickOutside from "@hooks/useClickOutside";
 import useDebouncedCallback from "@hooks/useDebounceCallback";
 
 // Styles
@@ -99,11 +98,6 @@ interface IColorPickerProps {
      * @param alpha - The alpha integer value mapped from 0 to 100.
      */
     onChange?: (hex?: string, rgba?: RGBA | RGB | null, alpha?: number) => void;
-    /**
-     * Callback fired when a user clicks outside the bounds of an open picker popover.
-     * Used primarily to close the popover in controlled setups.
-     */
-    onOutsideClick?: () => void;
 }
 
 /**
@@ -123,8 +117,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
     label,
     labelInfoText,
     size = "medium",
-    placeholder,
-    onOutsideClick
+    placeholder
 }) => {
     const isColorControlled = value !== undefined;
     const isOpenControlled = open !== undefined;
@@ -313,14 +306,6 @@ const ColorPicker: FC<IColorPickerProps> = ({
     useEffect(() => {
         setIsAlphaEnabled(alphaEnabled);
     }, [alphaEnabled]);
-
-    useClickOutside(() => {
-        if (!isOpenControlled) {
-            setIsOpen(false);
-            return;
-        }
-        onOutsideClick?.();
-    }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement]);
 
     return (
         <div className={classNames("colorPicker", className)} {...propsForPopover}>
