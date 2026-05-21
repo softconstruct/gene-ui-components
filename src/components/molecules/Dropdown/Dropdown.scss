@@ -3,50 +3,74 @@
 
     width: 100%;
 
-    &__trigger {
+    &__header {
+        display: flex;
+        flex-direction: column;
         width: 100%;
+        padding-inline: var(--guit-ref-spacing-medium);
+        border-bottom: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style)
+            var(--guit-sem-color-border-neutral-2);
+
+        &_size {
+            &_large {
+                gap: var(--guit-ref-spacing-medium);
+                padding-block-start: var(--guit-ref-spacing-xsmall);
+                padding-block-end: var(--guit-ref-spacing-medium);
+            }
+
+            &_medium {
+                gap: var(--guit-ref-spacing-xsmall);
+                padding-block-start: var(--guit-ref-spacing-3xsmall);
+                padding-block-end: var(--guit-ref-spacing-xsmall);
+            }
+
+            &_small {
+                gap: var(--guit-ref-spacing-xsmall);
+                padding-block-start: var(--guit-ref-spacing-3xsmall);
+                padding-block-end: var(--guit-ref-spacing-xsmall);
+            }
+        }
     }
 
-    &__body {
-        overflow: hidden;
-        min-height: 3.2rem;
-        max-height: 42rem;
-        border-radius: var(--guit-ref-radius-2xsmall);
-        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
     }
 
     &__content {
         display: flex;
         flex-direction: column;
-        gap: var(--guit-ref-spacing-3xsmall);
-        height: 100%;
+        min-height: 3.2rem;
+        max-height: 42rem;
+        padding-block: var(--guit-ref-spacing-3xsmall);
+        border-radius: var(--guit-ref-radius-2xsmall);
+        background-color: var(--guit-sem-color-background-neutral-1-nudge);
+        overflow: hidden;
     }
 
     &__search {
-        padding: var(--guit-ref-spacing-3xsmall);
-        border-bottom: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style)
-            var(--guit-sem-color-border-neutral-2);
+        width: 100%;
     }
 
     &__actions {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 0 var(--guit-ref-spacing-3xsmall);
+        gap: var(--guit-ref-spacing-xsmall);
     }
 
     &__scrollbar {
         flex: 1;
         max-height: 28.8rem;
-        padding: 0 var(--guit-ref-spacing-4xsmall) var(--guit-ref-spacing-4xsmall);
     }
 
     &__list {
         display: flex;
         flex-direction: column;
-        padding-top: var(--guit-ref-spacing-3xsmall);
         gap: var(--guit-ref-spacing-3xsmall);
         width: 100%;
+        padding: var(--guit-ref-spacing-3xsmall);
     }
 
     &__loading,
@@ -66,31 +90,27 @@
     &__footer {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        gap: var(--guit-ref-spacing-small);
-        padding: var(--guit-ref-spacing-3xsmall);
-        border-top: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style)
+        justify-content: flex-end;
+        flex: 0 0 auto;
+        padding-inline: var(--guit-ref-spacing-medium);
+        border-top: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
-    }
 
-    &__footerActions {
-        display: inline-flex;
-        align-items: center;
-        gap: var(--guit-ref-spacing-3xsmall);
-        margin-inline-start: auto;
-    }
+        &_size {
+            &_large {
+                padding-block-start: var(--guit-ref-spacing-medium);
+                padding-block-end: var(--guit-ref-spacing-xsmall);
+            }
 
-    &__body_size {
-        &_large {
-            width: 36rem;
-        }
+            &_medium {
+                padding-block-start: var(--guit-ref-spacing-small);
+                padding-block-end: var(--guit-ref-spacing-2xsmall);
+            }
 
-        &_medium {
-            width: 28rem;
-        }
-
-        &_small {
-            width: 22rem;
+            &_small {
+                padding-block-start: var(--guit-ref-spacing-2xsmall);
+                padding-block-end: var(--guit-ref-spacing-4xsmall);
+            }
         }
     }
 }

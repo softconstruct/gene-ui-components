@@ -569,7 +569,6 @@ const Dropdown: FC<IDropdownProps> = ({
         <div className={classNames("dropdown", className)}>
             <TextField
                 ref={triggerTextFieldRef}
-                className="dropdown__trigger"
                 size={size}
                 disabled={disabled}
                 readOnly={readOnly}
@@ -597,48 +596,48 @@ const Dropdown: FC<IDropdownProps> = ({
                 margin={MENU_GAP_FROM_TARGET}
                 disableMobileSpreadsheet={disableMobileSpreadsheet}
             >
-                <PopoverBody withPadding={false} withScrollbar={false} className="dropdown__body">
+                <PopoverBody withPadding={false} withScrollbar={false} className="dropdown__wrapper">
                     <div className="dropdown__content">
-                        {searchable && (
-                            <div className="dropdown__search">
-                                <TextField
-                                    value={searchTerm}
-                                    onChange={handleSearchChange}
-                                    onKeyDown={searchKeyDown}
-                                    onClear={clearSearchHandler}
-                                    clearable
-                                    inputMode="search"
-                                    readOnly={isSearchReadOnly}
-                                    autoFocus={searchAutoFocus}
-                                    placeholder={searchPlaceholder}
-                                    IconBefore={Magnifier}
-                                    size={size}
-                                    autoComplete="off"
-                                />
-                            </div>
-                        )}
-
-                        {isMulti && !loading && !!filteredOptions.length && (
-                            <div className="dropdown__actions">
-                                <Checkbox
-                                    label={selectAllLabel}
-                                    checked={selectAllChecked}
-                                    indeterminate={selectAllIndeterminate}
-                                    onChange={selectAllHandler}
-                                    disabled={!filteredOptions.length || loading || disabled || readOnly}
-                                />
-                                <Button
-                                    appearance="secondary"
-                                    layout="text"
-                                    size="small"
-                                    onClick={clearAllHandler}
-                                    disabled={!selectedMultiOptions.length || loading || disabled || readOnly}
-                                >
-                                    {clearLabel}
-                                </Button>
-                            </div>
-                        )}
-
+                        <div className={classNames("dropdown__header", `dropdown__header_size_${size}`, className)}>
+                            {searchable && (
+                                <div className="dropdown__search">
+                                    <TextField
+                                        value={searchTerm}
+                                        onChange={handleSearchChange}
+                                        onKeyDown={searchKeyDown}
+                                        onClear={clearSearchHandler}
+                                        clearable
+                                        inputMode="search"
+                                        readOnly={isSearchReadOnly}
+                                        autoFocus={searchAutoFocus}
+                                        placeholder={searchPlaceholder}
+                                        IconBefore={Magnifier}
+                                        size={size}
+                                        autoComplete="off"
+                                    />
+                                </div>
+                            )}
+                            {isMulti && !loading && !!filteredOptions.length && (
+                                <div className="dropdown__actions">
+                                    <Checkbox
+                                        label={selectAllLabel}
+                                        checked={selectAllChecked}
+                                        indeterminate={selectAllIndeterminate}
+                                        onChange={selectAllHandler}
+                                        disabled={!filteredOptions.length || loading || disabled || readOnly}
+                                    />
+                                    <Button
+                                        appearance="secondary"
+                                        layout="text"
+                                        size="small"
+                                        onClick={clearAllHandler}
+                                        disabled={!selectedMultiOptions.length || loading || disabled || readOnly}
+                                    >
+                                        {clearLabel}
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
                         {loading ? (
                             <Scrollbar className="dropdown__emptyScrollbar">
                                 <div className="dropdown__loading">
@@ -679,12 +678,17 @@ const Dropdown: FC<IDropdownProps> = ({
                                             </div>
                                         </Scrollbar>
                                         {!!actions && (
-                                            <div className="dropdown__footer">
-                                                <ButtonGroup className="dropdown__footerActions" size={size}>
+                                            <div
+                                                className={classNames(
+                                                    "dropdown__footer",
+                                                    `dropdown__footer_size_${size}`
+                                                )}
+                                            >
+                                                <ButtonGroup size={size}>
                                                     {actions?.secondary && (
                                                         <Button
                                                             appearance="secondary"
-                                                            layout="text"
+                                                            layout="fill"
                                                             size={size}
                                                             onClick={actions.secondary.onClick}
                                                             disabled={actions.secondary.disabled}

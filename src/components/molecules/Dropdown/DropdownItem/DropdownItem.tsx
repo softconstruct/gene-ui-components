@@ -57,10 +57,10 @@ const DropdownItem: FC<IDropdownItemProps> = ({
             )}
         >
             <button
+                className="dropdownItem__action"
                 type="button"
                 role="option"
                 aria-selected={selected}
-                className="dropdownItem__action"
                 onClick={onClick}
                 disabled={disabled}
                 ref={buttonRef}
@@ -84,7 +84,7 @@ const DropdownItem: FC<IDropdownItemProps> = ({
             {infoText && (
                 <Info
                     infoText={infoText}
-                    size="XSmall"
+                    size="smallNudge"
                     className="dropdownItem__info"
                     disabled={disabled}
                     aria-label={`More information about ${label}`}

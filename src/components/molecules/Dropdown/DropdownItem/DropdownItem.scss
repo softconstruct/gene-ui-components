@@ -1,13 +1,80 @@
+@use "../../../../assets/styles/mixins";
+
 .dropdownItem {
     $this: &;
 
     display: flex;
     align-items: center;
+    gap: var(--guit-ref-spacing-xsmall);
     width: 100%;
     border-radius: var(--guit-ref-radius-3xsmall);
     color: var(--guit-sem-color-foreground-neutral-2);
-    padding: var(--guit-ref-spacing-2xsmall) var(--guit-ref-spacing-medium);
-    gap: var(--guit-ref-spacing-xsmall);
+    cursor: pointer;
+
+    @include mixins.media-hover {
+        &:hover {
+            background-color: var(--guit-sem-color-background-neutral-1-nudge-hover);
+        }
+    }
+
+    &:active {
+        background-color: var(--guit-sem-color-background-neutral-1-nudge-pressed);
+    }
+
+    &:has(&__action:focus-visible) {
+        outline-offset: var(--guit-ref-border-width-thin);
+        outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-focus);
+    }
+
+    &_size {
+        &_large {
+            height: 3.2rem;
+            padding-inline-end: var(--guit-ref-spacing-xsmall);
+
+            #{ $this }__action {
+                padding-block: var(--guit-ref-spacing-2xsmall);
+                padding-inline-start: var(--guit-ref-spacing-xsmall);
+            }
+        }
+
+        &_medium {
+            height: 2.8rem;
+            padding-inline-end: var(--guit-ref-spacing-3xsmall);
+
+            #{ $this }__action {
+                padding-block: var(--guit-ref-spacing-3xsmall);
+                padding-inline-start: var(--guit-ref-spacing-3xsmall);
+            }
+        }
+
+        &_small {
+            height: 2.4rem;
+            padding-inline-end: var(--guit-ref-spacing-3xsmall);
+
+            #{ $this }__action {
+                padding-block: var(--guit-ref-spacing-4xsmall);
+                padding-inline-start: var(--guit-ref-spacing-3xsmall);
+            }
+        }
+    }
+
+    &_selected {
+        color: var(--guit-sem-color-foreground-selected);
+
+        #{ $this }__info {
+            color: var(--guit-sem-color-foreground-selected);
+        }
+    }
+
+    &_disabled {
+        pointer-events: none;
+        cursor: default;
+        color: var(--guit-sem-color-foreground-disabled);
+
+        #{ $this }__info {
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
 
     &__action {
         flex: 1;
@@ -16,38 +83,19 @@
         align-items: center;
         justify-content: space-between;
         gap: var(--guit-ref-spacing-xsmall);
-        border: none;
-        border-radius: var(--guit-ref-radius-3xsmall);
-        background-color: transparent;
-        color: inherit;
-        cursor: pointer;
-        text-align: start;
-        padding: 0;
+        border-radius: inherit;
 
         &:focus-visible {
             outline: none;
         }
     }
 
-    &:hover {
-        background-color: var(--guit-sem-color-background-neutral-1-nudge-hover);
-    }
-
-    &:has(&__action:active) {
-        background-color: var(--guit-sem-color-background-neutral-1-nudge-pressed);
-    }
-
-    &:has(&__action:focus-visible) {
-        outline: none;
-        box-shadow: inset 0 0 0 var(--guit-ref-border-width-thin) var(--guit-sem-color-border-brand);
-    }
-
     &__main {
-        min-width: 0;
         display: inline-flex;
         align-items: center;
         gap: var(--guit-ref-spacing-3xsmall);
         flex: 1;
+        min-width: 0;
     }
 
     &__trailing {
@@ -60,6 +108,7 @@
 
     &__info {
         flex: 0 0 auto;
+        color: var(--guit-sem-color-foreground-neutral-1);
     }
 
     &__label,
@@ -82,30 +131,5 @@
 
     &__checkbox {
         flex: 0 0 auto;
-        pointer-events: none;
-    }
-
-    &_selected {
-        color: var(--guit-sem-color-foreground-selected);
-    }
-
-    &_disabled {
-        pointer-events: none;
-        cursor: default;
-        color: var(--guit-sem-color-foreground-disabled);
-    }
-
-    &_size {
-        &_large {
-            min-height: 4rem;
-        }
-
-        &_medium {
-            min-height: 3.6rem;
-        }
-
-        &_small {
-            min-height: 3.2rem;
-        }
     }
 }
