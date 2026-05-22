@@ -100,18 +100,37 @@ describe("ColorPicker", () => {
             expect(setup.find(".colorPicker__wrapper").exists()).toBeFalsy();
         });
 
-        it("should respect onOutsideClick prop (controlled)", () => {
-            const mockOnOutsideClick = jest.fn();
+        it("should close on outside click after focusing main textfield", () => {
+            setup.find("button.colorIndicator").simulate("click");
+            setup.update();
+
+            const input = setup.find("input.colorPickerTextField__input").getDOMNode() as HTMLInputElement;
             act(() => {
-                setup.setProps({ open: true, onOutsideClick: mockOnOutsideClick });
+                input.focus();
+            });
+
+            act(() => {
+                document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+            });
+            setup.update();
+            expect(setup.find(".colorPicker__wrapper").exists()).toBeFalsy();
+        });
+
+        it("should close on outside click after mousedown inside popover hex input", () => {
+            setup.find("button.colorIndicator").simulate("click");
+            setup.update();
+
+            const hexInput = setup.find(".colorPicker__hexInput input").getDOMNode() as HTMLInputElement;
+            act(() => {
+                hexInput.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
             });
             setup.update();
 
             act(() => {
                 document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
             });
-
-            expect(mockOnOutsideClick).toHaveBeenCalledTimes(1);
+            setup.update();
+            expect(setup.find(".colorPicker__wrapper").exists()).toBeFalsy();
         });
     });
 
