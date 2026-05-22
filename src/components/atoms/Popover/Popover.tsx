@@ -2,6 +2,7 @@ import React, {
     Dispatch,
     FC,
     forwardRef,
+    MouseEvent,
     MutableRefObject,
     ReactNode,
     SetStateAction,
@@ -18,6 +19,7 @@ import {
     flip,
     FloatingPortal,
     offset,
+    OpenChangeReason,
     platform,
     ReferenceType,
     shift,
@@ -37,6 +39,9 @@ import { IconProps, X } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import Spreadsheet from "@components/atoms/Spreadsheet";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
+
+// Hooks
+import useClickOutside from "@hooks/useClickOutside";
 
 // Styles
 import "./Popover.scss";
@@ -100,6 +105,8 @@ const arrowPositions: Record<string, ArrowPositions> = {
 } as const;
 
 export type StaticSides = "bottom" | "left" | "right" | "top";
+
+export type PopoverOpenChangeReasons = OpenChangeReason | "mobile-dismiss" | "close-button";
 
 export const staticSides: Record<string, StaticSides> = {
     top: "bottom",
@@ -170,7 +177,7 @@ export interface IPopoverProps {
     /**
      * A callback function that is called when the popover is closed.
      */
-    onClose?: () => void;
+    onClose?: (event: Event | MouseEvent, reason: PopoverOpenChangeReasons) => void;
     /**
      * Controls the open state of the popover externally.
      *
@@ -241,10 +248,23 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
 
         const isMobile = breakpoint?.isMobileBreakpoint;
 
+        const isControlled = open !== undefined;
+        const isPopoverOpened = isControlled ? open : popoverOpened;
+
+        const handleOpenChange = (nextOpen: boolean, event: Event | MouseEvent, reason: PopoverOpenChangeReasons) => {
+            setPopoverOpened(nextOpen);
+
+            if (!nextOpen && onClose) {
+                onClose(event, reason);
+            }
+        };
+
         const wosPosed = useRef(new Map());
         const { refs, floatingStyles, context, middlewareData, placement } = useFloating({
-            open: popoverOpened,
-            onOpenChange: setPopoverOpened,
+            open: isPopoverOpened,
+            onOpenChange: (currentOpen, event, reason) => {
+                handleOpenChange(currentOpen, event as Event | MouseEvent, reason as OpenChangeReason);
+            },
             placement: currentPosition as Placement,
             platform: {
                 ...platform,
@@ -280,38 +300,39 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             };
         }, [popoverRef, refs.reference.current, refs.floating.current, open]);
 
-        useEffect(() => {
-            if (!popoverOpened && onClose) {
-                onClose();
-            }
-        }, [popoverOpened]);
-
-        useDismiss(context, {
-            outsidePressEvent: "mousedown"
+        const dismiss = useDismiss(context, {
+            escapeKey: true,
+            outsidePress: false
         });
+
+        useClickOutside(
+            (event) => {
+                if (!isPopoverOpened) return;
+                handleOpenChange(false, event, "outside-press");
+            },
+            [refs.floating, refs.reference]
+        );
 
         const role = useRole(context);
 
         const click = useClick(context, {
             event: "click",
-            enabled: trigger === "click"
+            enabled: trigger === "click" && open === undefined
         });
         const hover = useHover(context, {
             enabled: trigger === "hover",
             delay: { close: 3000 }
         });
 
-        const interactions = trigger === "hover" ? [hover, role] : [click, role];
+        const interactions = trigger === "hover" ? [hover, role, dismiss] : [click, role, dismiss];
         const { getReferenceProps, getFloatingProps } = useInteractions(interactions);
 
         useEffect(() => {
-            const internalControl = open === undefined ? getReferenceProps() : {};
-
             setProps({
                 ref: refs.setReference,
-                ...internalControl
+                ...getReferenceProps()
             });
-        }, [setProps, getReferenceProps, open, refs.setReference]);
+        }, [setProps, getReferenceProps, refs.setReference]);
 
         const [currentDirection] = placement.split("-") as [StaticSides];
 
@@ -326,8 +347,6 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         const getCorrectPosition = arrowPosition
             ? { [arrowPosition]: offsetFromEdge }
             : { insetInlineStart: middlewareArrowData?.x };
-
-        const isPopoverOpened = open || popoverOpened;
 
         useLayoutEffect(() => {
             if (position === "auto") {
@@ -403,9 +422,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                             inset={false}
                             open={isPopoverOpened}
                             heightMode={mobileHeightMode}
-                            onClose={() => {
-                                onClose?.();
-                            }}
+                            onClose={(e) => handleOpenChange(false, e, "mobile-dismiss")}
                         >
                             <div
                                 className={classNames("popover__container", "popover__container_height_full")}
@@ -425,7 +442,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                                 appearance="secondary"
                                                 layout="text"
                                                 className="popover__close"
-                                                onClick={() => setPopoverOpened(false)}
+                                                onClick={(e) => handleOpenChange(false, e, "close-button")}
                                             />
                                         )}
                                     </div>
@@ -489,7 +506,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                                     appearance="secondary"
                                                     layout="text"
                                                     className="popover__close"
-                                                    onClick={() => setPopoverOpened(false)}
+                                                    onClick={(e) => handleOpenChange(false, e, "close-button")}
                                                 />
                                             )}
                                         </div>
