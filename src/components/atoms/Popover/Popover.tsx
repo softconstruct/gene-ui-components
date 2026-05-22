@@ -2,10 +2,10 @@ import React, {
     Dispatch,
     FC,
     forwardRef,
+    MouseEvent,
     MutableRefObject,
     ReactNode,
     SetStateAction,
-    SyntheticEvent,
     useContext,
     useEffect,
     useImperativeHandle,
@@ -19,6 +19,7 @@ import {
     flip,
     FloatingPortal,
     offset,
+    OpenChangeReason,
     platform,
     ReferenceType,
     shift,
@@ -102,6 +103,8 @@ const arrowPositions: Record<string, ArrowPositions> = {
 
 export type StaticSides = "bottom" | "left" | "right" | "top";
 
+export type PopoverOpenChangeReasons = OpenChangeReason | "mobile-dismiss" | "close-button";
+
 export const staticSides: Record<string, StaticSides> = {
     top: "bottom",
     right: "left",
@@ -171,7 +174,7 @@ export interface IPopoverProps {
     /**
      * A callback function that is called when the popover is closed.
      */
-    onClose?: (event?: Event | SyntheticEvent, reason?: string) => void;
+    onClose?: (event: Event | MouseEvent, reason: PopoverOpenChangeReasons) => void;
     /**
      * Controls the open state of the popover externally.
      *
@@ -205,18 +208,6 @@ export interface IPopoverProps {
      * @default "full"
      */
     mobileHeightMode?: "full" | "fit";
-    /**
-     * If `true`, the popover will close when the user presses the Escape key.
-     * Ignored if the component is controlled.
-     * @default true
-     */
-    closeOnEscape?: boolean;
-    /**
-     * If `true`, the popover will close when the user clicks outside it.
-     * Ignored if the component is controlled.
-     * @default true
-     */
-    closeOnOutsidePress?: boolean;
 }
 
 /**
@@ -243,9 +234,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             trigger = "click",
             hasCloseButton = true,
             Icon,
-            mobileHeightMode = "full",
-            closeOnEscape = true,
-            closeOnOutsidePress = true
+            mobileHeightMode = "full"
         },
         popoverRef
     ) => {
@@ -259,7 +248,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         const isControlled = open !== undefined;
         const isPopoverOpened = isControlled ? open : popoverOpened;
 
-        const handleOpenChange = (nextOpen: boolean, event?: Event | SyntheticEvent, reason?: string) => {
+        const handleOpenChange = (nextOpen: boolean, event: Event | MouseEvent, reason: PopoverOpenChangeReasons) => {
             setPopoverOpened(nextOpen);
 
             if (!nextOpen && onClose) {
@@ -270,7 +259,9 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         const wosPosed = useRef(new Map());
         const { refs, floatingStyles, context, middlewareData, placement } = useFloating({
             open: isPopoverOpened,
-            onOpenChange: handleOpenChange,
+            onOpenChange: (currentOpen, event, reason) => {
+                handleOpenChange(currentOpen, event as Event | MouseEvent, reason as OpenChangeReason);
+            },
             placement: currentPosition as Placement,
             platform: {
                 ...platform,
@@ -308,8 +299,8 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
 
         const dismiss = useDismiss(context, {
             outsidePressEvent: "mousedown",
-            escapeKey: closeOnEscape,
-            outsidePress: closeOnOutsidePress
+            escapeKey: true,
+            outsidePress: true
         });
 
         const role = useRole(context);
@@ -423,7 +414,7 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                             inset={false}
                             open={isPopoverOpened}
                             heightMode={mobileHeightMode}
-                            onClose={() => handleOpenChange(false, undefined, "mobile-dismiss")}
+                            onClose={(e) => handleOpenChange(false, e, "mobile-dismiss")}
                         >
                             <div
                                 className={classNames("popover__container", "popover__container_height_full")}

@@ -255,19 +255,6 @@ describe("Popover", () => {
         expect(onCloseMock.mock.calls[0][1]).toBe("escape-key");
     });
 
-    it("does not trigger onClose when Escape is pressed and closeOnEscape is false", () => {
-        const onCloseMock = jest.fn();
-        setup.setProps({ open: true, onClose: onCloseMock, closeOnEscape: false });
-
-        act(() => {
-            const event = new KeyboardEvent("keydown", { key: "Escape", bubbles: true });
-            document.dispatchEvent(event);
-        });
-
-        setup.update();
-        expect(onCloseMock).not.toHaveBeenCalled();
-    });
-
     it("calls onClose with 'outside-press' reason when a click occurs outside the popover", () => {
         const onCloseMock = jest.fn();
         setup.setProps({ open: true, onClose: onCloseMock });

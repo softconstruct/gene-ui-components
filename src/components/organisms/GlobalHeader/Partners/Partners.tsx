@@ -8,6 +8,7 @@ import Loader from "@components/atoms/Loader";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
+import TextField from "@components/molecules/TextField";
 import PartnerItem, { IPartnerItemProps } from "@components/organisms/GlobalHeader/Partners/PartnerItem";
 
 // Styles
@@ -125,14 +126,7 @@ const Partners: FC<IPartnersProps> = ({
                     ) : (
                         <div className="partners__popoverContent">
                             <div className="partners__header">
-                                {/* todo: implement "Search Field" component */}
-                                <input
-                                    type="search"
-                                    onChange={searchHandler}
-                                    placeholder={searchPlaceholder}
-                                    aria-label="Search partners"
-                                    role="searchbox"
-                                />
+                                <TextField onChange={searchHandler} placeholder={searchPlaceholder} />
                                 <div className="partners__title">
                                     <Text as="span" className="partners__titleName">
                                         {title}

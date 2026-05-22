@@ -31,9 +31,7 @@ const meta: Meta<IPopoverProps> = {
         onClose: args({ control: "false", ...propCategory.action }),
         defaultOpen: args({ control: "boolean", ...propCategory.states }),
         trigger: args({ control: "boolean", ...propCategory.functionality }),
-        mobileHeightMode: args({ control: "select", ...propCategory.appearance }),
-        closeOnEscape: args({ control: "boolean", ...propCategory.functionality }),
-        closeOnOutsidePress: args({ control: "boolean", ...propCategory.functionality })
+        mobileHeightMode: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         margin: 15,
