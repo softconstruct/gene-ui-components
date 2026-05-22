@@ -63,6 +63,23 @@ describe("Pagination", () => {
         expect(wrapper.find("input[type='text']").exists()).toBeTruthy();
     });
 
+    it("disables all controls when disabled prop is true", () => {
+        const wrapper = setup.setProps({
+            disabled: true,
+            showInputPageField: true,
+            rowsPerPageOptions: [10, 20]
+        });
+
+        wrapper.find(".pagination__nav_item").forEach((button) => {
+            expect(button.prop("disabled")).toBeTruthy();
+        });
+        expect(wrapper.find("select").prop("disabled")).toBeTruthy();
+        expect(wrapper.find("input[type='text']").prop("disabled")).toBeTruthy();
+        wrapper.find(Button).forEach((button) => {
+            expect(button.prop("disabled")).toBeTruthy();
+        });
+    });
+
     it("updates current page from input field correctly", () => {
         const onPageSizeChange = jest.fn();
         const wrapper = setup.setProps({ showInputPageField: true, onPageSizeChange });
@@ -101,8 +118,7 @@ describe("Pagination", () => {
         // Check if the text indicating the page range contains the custom label.
         const perPageValuesText = setup.find(".pagination__perpage_values").text();
         expect(perPageValuesText).toContain(customLabel);
-        // Example assertion: "10 of 20"
-        expect(perPageValuesText).toBe(`10 ${customLabel} 10`);
+        expect(perPageValuesText).toBe(`1-10 ${customLabel} 10`);
     });
 
     it("renders goToPageLabel prop correctly", () => {
@@ -125,5 +141,21 @@ describe("Pagination", () => {
         // Check if the label after the input field matches the custom label.
         const pageText = setup.find(".pagination__nav_specific span").last().text();
         expect(pageText).toBe(customLabel);
+    });
+
+    it("uses defaultCurrent as initial page in uncontrolled mode", () => {
+        setup = mount(<Pagination totalPages={10} defaultCurrent={4} />, {
+            wrappingComponent: GeneUIProvider
+        });
+
+        expect(setup.find(".pagination__nav_item_selected .pagination__nav_value").text()).toBe("4");
+    });
+
+    it("ignores defaultCurrent when current is controlled", () => {
+        setup = mount(<Pagination totalPages={10} current={2} defaultCurrent={6} onPageChange={jest.fn()} />, {
+            wrappingComponent: GeneUIProvider
+        });
+
+        expect(setup.find(".pagination__nav_item_selected .pagination__nav_value").text()).toBe("2");
     });
 });

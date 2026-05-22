@@ -72,6 +72,18 @@
         border-radius: var(--guit-ref-radius-3xsmall);
         inset-inline-end: 0;
         bottom: var(--guit-ref-spacing-3xsmall) !important;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition:
+            opacity 0.2s ease,
+            visibility 0.2s ease;
+
+        &_active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
 
         &_direction {
             &_y {

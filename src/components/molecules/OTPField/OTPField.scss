@@ -1,0 +1,46 @@
+.otpField {
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-large);
+    width: 100%;
+
+    &_size {
+        &_large {
+            max-width: 28rem;
+        }
+
+        &_medium {
+            max-width: 23.2rem;
+        }
+    }
+
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__textFieldWrapper {
+        display: flex;
+        gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__content {
+        display: flex;
+        gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__helperText {
+        flex: 1;
+        min-width: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__timer {
+        flex: 0 0 auto;
+        margin-inline-start: auto;
+
+        &_disabled {
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+}
