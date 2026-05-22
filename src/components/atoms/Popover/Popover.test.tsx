@@ -255,6 +255,22 @@ describe("Popover", () => {
         expect(onCloseMock.mock.calls[0][1]).toBe("escape-key");
     });
 
+    it("calls onClose with 'outside-press' reason after mousedown inside then outside popover", () => {
+        const onCloseMock = jest.fn();
+        setup.setProps({ open: true, onClose: onCloseMock });
+
+        const popoverElement = provider().find(".popover").first().getDOMNode() as HTMLElement;
+
+        act(() => {
+            popoverElement.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+            document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+        });
+
+        setup.update();
+        expect(onCloseMock).toHaveBeenCalledTimes(1);
+        expect(onCloseMock.mock.calls[0][1]).toBe("outside-press");
+    });
+
     it("calls onClose with 'outside-press' reason when a click occurs outside the popover", () => {
         const onCloseMock = jest.fn();
         setup.setProps({ open: true, onClose: onCloseMock });

@@ -22,8 +22,7 @@ const meta: Meta<IColorPickerProps> = {
         recentColors: args({ control: "object", ...propCategory.content }),
         onChange: args({ control: "false", ...propCategory.action }),
         open: args({ control: "boolean", ...propCategory.states }),
-        format: args({ control: "select", ...propCategory.functionality }),
-        onOutsideClick: args({ control: "false", ...propCategory.action })
+        format: args({ control: "select", ...propCategory.functionality })
     },
     args: {}
 };

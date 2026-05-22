@@ -40,6 +40,9 @@ import Button from "@components/atoms/Button";
 import Spreadsheet from "@components/atoms/Spreadsheet";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
+// Hooks
+import useClickOutside from "@hooks/useClickOutside";
+
 // Styles
 import "./Popover.scss";
 
@@ -298,16 +301,23 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         }, [popoverRef, refs.reference.current, refs.floating.current, open]);
 
         const dismiss = useDismiss(context, {
-            outsidePressEvent: "mousedown",
             escapeKey: true,
-            outsidePress: true
+            outsidePress: false
         });
+
+        useClickOutside(
+            (event) => {
+                if (!isPopoverOpened) return;
+                handleOpenChange(false, event, "outside-press");
+            },
+            [refs.floating, refs.reference]
+        );
 
         const role = useRole(context);
 
         const click = useClick(context, {
             event: "click",
-            enabled: trigger === "click"
+            enabled: trigger === "click" && open === undefined
         });
         const hover = useHover(context, {
             enabled: trigger === "hover",
@@ -318,13 +328,11 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
         const { getReferenceProps, getFloatingProps } = useInteractions(interactions);
 
         useEffect(() => {
-            const internalControl = open === undefined ? getReferenceProps() : {};
-
             setProps({
                 ref: refs.setReference,
-                ...internalControl
+                ...getReferenceProps()
             });
-        }, [setProps, getReferenceProps, open, refs.setReference]);
+        }, [setProps, getReferenceProps, refs.setReference]);
 
         const [currentDirection] = placement.split("-") as [StaticSides];
 
