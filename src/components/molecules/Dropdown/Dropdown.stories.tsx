@@ -12,18 +12,10 @@ import Dropdown, { IDropdownOption, IDropdownProps } from "./index";
 const meta: Meta<IDropdownProps> = {
     title: "Molecules/Dropdown",
     component: Dropdown,
-    parameters: {
-        controls: {
-            expanded: true
-        }
-    },
     argTypes: {
-        // Appearance
         className: args({ control: "false", ...propCategory.appearance }),
         size: args({ control: "select", options: ["large", "medium", "small"], ...propCategory.appearance }),
         status: args({ control: "select", options: ["rest", "warning", "error"], ...propCategory.appearance }),
-
-        // Content
         options: args({ control: "false", ...propCategory.content }),
         label: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),

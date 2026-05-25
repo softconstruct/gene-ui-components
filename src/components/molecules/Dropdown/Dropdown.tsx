@@ -255,7 +255,6 @@ const Dropdown: FC<IDropdownProps> = ({
     const [internalSearchValue, setInternalSearchValue] = useState<string>(searchValue ?? defaultSearchValue ?? "");
     const triggerTextFieldRef = useRef<ITextFieldRef | null>(null);
     const optionRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-    const hadSourceOptionsRef = useRef(options.length > 0);
     const pendingFocusIndexRef = useRef<number | null>(null);
     const [triggerInputWidth, setTriggerInputWidth] = useState(0);
     const { width: windowWidth } = useWindowSize();
@@ -270,12 +269,6 @@ const Dropdown: FC<IDropdownProps> = ({
             setInternalSearchValue(searchValue || "");
         }
     }, [searchValue, isControlledSearch]);
-
-    useEffect(() => {
-        if (options.length > 0) {
-            hadSourceOptionsRef.current = true;
-        }
-    }, [options.length]);
 
     const selectedSingleValue = value !== undefined ? value : internalValue;
     const selectedMultipleValues = values !== undefined ? values : internalValues;
@@ -403,8 +396,7 @@ const Dropdown: FC<IDropdownProps> = ({
         focusableOptions[safeIndex].focus();
     };
 
-    const hasOriginalData = options.length > 0 || hadSourceOptionsRef.current;
-    const isSearchReadOnly = !!loading || (!isExternalSearch && !hasOriginalData && !searchTerm.trim().length);
+    const isSearchReadOnly = !!loading;
 
     const searchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Escape" && isOpen) {

@@ -270,11 +270,11 @@ describe("Dropdown ", () => {
         expect(setup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(false);
     });
 
-    it("marks search input readOnly when there is no original data and no search value", () => {
+    it("keeps search input editable when options start empty", () => {
         const emptySetup = mount(<Dropdown options={[]} searchable label="Label" />);
         openDropdown(emptySetup);
 
-        expect(emptySetup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(true);
+        expect(emptySetup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(false);
         emptySetup.unmount();
     });
 
