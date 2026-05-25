@@ -58,11 +58,13 @@
         }
     }
 
-    &_selected {
-        color: var(--guit-sem-color-foreground-selected);
-
-        #{ $this }__info {
+    &_single {
+        &_selected {
             color: var(--guit-sem-color-foreground-selected);
+
+            #{ $this }__info {
+                color: var(--guit-sem-color-foreground-selected);
+            }
         }
     }
 

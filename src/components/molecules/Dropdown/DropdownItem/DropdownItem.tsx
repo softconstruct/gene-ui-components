@@ -48,7 +48,7 @@ const DropdownItem: FC<IDropdownItemProps> = ({
                 "dropdownItem",
                 `dropdownItem_size_${size}`,
                 {
-                    dropdownItem_selected: selected,
+                    dropdownItem_single_selected: variant === "single" && selected,
                     dropdownItem_disabled: disabled,
                     dropdownItem_multi: variant === "multi",
                     dropdownItem_single: variant === "single"
