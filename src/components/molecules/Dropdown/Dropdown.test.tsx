@@ -438,7 +438,9 @@ describe("Dropdown ", () => {
         openDropdown(setup);
         expect(setup.find(".dropdownItem").exists()).toBeTruthy();
 
-        setup.find(".dropdown__search input.textField__input").simulate("keyDown", { key: "Escape" });
+        act(() => {
+            document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+        });
         setup.update();
 
         expect(setup.find(".dropdownItem").exists()).toBeFalsy();
