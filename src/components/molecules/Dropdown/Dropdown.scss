@@ -7,7 +7,6 @@
         display: flex;
         flex-direction: column;
         width: 100%;
-        padding-inline: var(--guit-ref-spacing-medium);
         border-bottom: var(--guit-sem-border-default-width) var(--guit-sem-border-default-style)
             var(--guit-sem-color-border-neutral-2);
 
@@ -16,18 +15,21 @@
                 gap: var(--guit-ref-spacing-medium);
                 padding-block-start: var(--guit-ref-spacing-xsmall);
                 padding-block-end: var(--guit-ref-spacing-medium);
+                padding-inline: var(--guit-ref-spacing-medium);
             }
 
             &_medium {
                 gap: var(--guit-ref-spacing-xsmall);
                 padding-block-start: var(--guit-ref-spacing-3xsmall);
                 padding-block-end: var(--guit-ref-spacing-xsmall);
+                padding-inline: var(--guit-ref-spacing-xsmall);
             }
 
             &_small {
                 gap: var(--guit-ref-spacing-xsmall);
                 padding-block-start: var(--guit-ref-spacing-3xsmall);
                 padding-block-end: var(--guit-ref-spacing-xsmall);
+                padding-inline: var(--guit-ref-spacing-xsmall);
             }
         }
     }
