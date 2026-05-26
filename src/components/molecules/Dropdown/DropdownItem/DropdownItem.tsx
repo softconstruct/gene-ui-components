@@ -69,8 +69,14 @@ const DropdownItem: FC<IDropdownItemProps> = ({
                     {variant === "multi" && (
                         <Checkbox checked={selected} disabled={disabled} className="dropdownItem__checkbox" />
                     )}
-                    {Icon && <Icon className="dropdownItem__icon" size={20} />}
-                    <span className="dropdownItem__label ellipsis-text">{label}</span>
+                    {Icon ? (
+                        <span className="dropdownItem__iconLabel">
+                            <Icon className="dropdownItem__icon" size={20} />
+                            <span className="dropdownItem__label ellipsis-text">{label}</span>
+                        </span>
+                    ) : (
+                        <span className="dropdownItem__label ellipsis-text">{label}</span>
+                    )}
                 </span>
                 {hasTextAfter && (
                     <span className="dropdownItem__trailing">

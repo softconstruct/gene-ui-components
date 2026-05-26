@@ -127,6 +127,12 @@
         flex: 0 0 auto;
     }
 
+    &__iconLabel {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+    }
+
     &__checkmark {
         color: var(--guit-sem-color-foreground-selected);
     }
