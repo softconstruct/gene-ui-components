@@ -591,6 +591,7 @@ const Dropdown: FC<IDropdownProps> = ({
                                 {showMultiSelectActions && (
                                     <div className="dropdown__actions">
                                         <Checkbox
+                                            className="dropdown__checkbox"
                                             label={selectAllLabel}
                                             checked={selectAllChecked}
                                             indeterminate={selectAllIndeterminate}

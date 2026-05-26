@@ -29,31 +29,31 @@
     &_size {
         &_large {
             height: 3.2rem;
-            padding-inline-end: var(--guit-ref-spacing-xsmall);
+            padding-inline-end: var(--guit-ref-spacing-medium);
 
             #{ $this }__action {
                 padding-block: var(--guit-ref-spacing-2xsmall);
-                padding-inline-start: var(--guit-ref-spacing-xsmall);
+                padding-inline-start: var(--guit-ref-spacing-medium);
             }
         }
 
         &_medium {
             height: 2.8rem;
-            padding-inline-end: var(--guit-ref-spacing-3xsmall);
+            padding-inline-end: var(--guit-ref-spacing-small);
 
             #{ $this }__action {
                 padding-block: var(--guit-ref-spacing-3xsmall);
-                padding-inline-start: var(--guit-ref-spacing-3xsmall);
+                padding-inline-start: var(--guit-ref-spacing-small);
             }
         }
 
         &_small {
             height: 2.4rem;
-            padding-inline-end: var(--guit-ref-spacing-3xsmall);
+            padding-inline-end: var(--guit-ref-spacing-small);
 
             #{ $this }__action {
                 padding-block: var(--guit-ref-spacing-4xsmall);
-                padding-inline-start: var(--guit-ref-spacing-3xsmall);
+                padding-inline-start: var(--guit-ref-spacing-small);
             }
         }
     }
@@ -95,7 +95,7 @@
     &__main {
         display: inline-flex;
         align-items: center;
-        gap: var(--guit-ref-spacing-3xsmall);
+        gap: var(--guit-ref-spacing-medium);
         flex: 1;
         min-width: 0;
     }

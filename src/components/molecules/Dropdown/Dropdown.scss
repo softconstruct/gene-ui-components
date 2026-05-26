@@ -22,16 +22,20 @@
                 gap: var(--guit-ref-spacing-xsmall);
                 padding-block-start: var(--guit-ref-spacing-3xsmall);
                 padding-block-end: var(--guit-ref-spacing-xsmall);
-                padding-inline: var(--guit-ref-spacing-xsmall);
+                padding-inline: var(--guit-ref-spacing-small);
             }
 
             &_small {
                 gap: var(--guit-ref-spacing-xsmall);
                 padding-block-start: var(--guit-ref-spacing-3xsmall);
                 padding-block-end: var(--guit-ref-spacing-xsmall);
-                padding-inline: var(--guit-ref-spacing-xsmall);
+                padding-inline: var(--guit-ref-spacing-small);
             }
         }
+    }
+
+    &__checkbox {
+        padding: 0.4rem;
     }
 
     &__wrapper {
