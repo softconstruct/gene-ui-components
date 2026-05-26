@@ -27,7 +27,7 @@ import TextField from "@components/molecules/TextField";
 import { ITextFieldRef } from "@components/molecules/TextField/TextField";
 
 // Hooks
-import { useClickOutside, useDebounce, useWindowSize } from "@hooks/index";
+import { useDebounce, useWindowSize } from "@hooks/index";
 
 // Styles
 import "./Dropdown.scss";
@@ -255,7 +255,6 @@ const Dropdown: FC<IDropdownProps> = ({
     const [internalSearchValue, setInternalSearchValue] = useState<string>(searchValue ?? defaultSearchValue ?? "");
     const triggerTextFieldRef = useRef<ITextFieldRef | null>(null);
     const optionRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-    const hadSourceOptionsRef = useRef(options.length > 0);
     const pendingFocusIndexRef = useRef<number | null>(null);
     const [triggerInputWidth, setTriggerInputWidth] = useState(0);
     const { width: windowWidth } = useWindowSize();
@@ -271,12 +270,6 @@ const Dropdown: FC<IDropdownProps> = ({
         }
     }, [searchValue, isControlledSearch]);
 
-    useEffect(() => {
-        if (options.length > 0) {
-            hadSourceOptionsRef.current = true;
-        }
-    }, [options.length]);
-
     const selectedSingleValue = value !== undefined ? value : internalValue;
     const selectedMultipleValues = values !== undefined ? values : internalValues;
     const searchTerm = isControlledSearch ? searchValue || "" : internalSearchValue;
@@ -287,19 +280,9 @@ const Dropdown: FC<IDropdownProps> = ({
         setTriggerInputWidth(inputNode.clientWidth);
     }, [windowWidth, selectedSingleValue, selectedMultipleValues, size, helperText, label]);
 
-    useClickOutside(
-        (event) => {
-            const onReferenceClick =
-                event.target instanceof Node &&
-                popoverRef.current.referenceElement?.current instanceof Node &&
-                popoverRef.current.referenceElement.current.contains(event.target as Node);
-
-            if (!onReferenceClick && isOpen) {
-                setIsOpen(false);
-            }
-        },
-        [popoverRef.current.floatingElement]
-    );
+    const handlePopoverClose = () => {
+        setIsOpen(false);
+    };
 
     const emitSearchRaw = (nextValue: string) => {
         onSearchChange?.(nextValue);
@@ -403,26 +386,15 @@ const Dropdown: FC<IDropdownProps> = ({
         focusableOptions[safeIndex].focus();
     };
 
-    const hasOriginalData = options.length > 0 || hadSourceOptionsRef.current;
-    const isSearchReadOnly = !!loading || (!isExternalSearch && !hasOriginalData && !searchTerm.trim().length);
+    const isSearchReadOnly = !!loading;
 
     const searchKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === "Escape" && isOpen) {
-            event.preventDefault();
-            setIsOpen(false);
-            return;
-        }
         if (event.key !== "ArrowDown") return;
         event.preventDefault();
         focusOptionByIndex(0);
     };
 
     const triggerKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (event.key === "Escape" && isOpen) {
-            event.preventDefault();
-            setIsOpen(false);
-            return;
-        }
         if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             toggleOpen();
@@ -440,11 +412,6 @@ const Dropdown: FC<IDropdownProps> = ({
     };
 
     const listKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if (event.key === "Escape" && isOpen) {
-            event.preventDefault();
-            setIsOpen(false);
-            return;
-        }
         if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
         const focusableOptions = getFocusableOptionButtons();
         if (!focusableOptions.length) return;
@@ -592,6 +559,7 @@ const Dropdown: FC<IDropdownProps> = ({
                 setProps={setPopoverProps}
                 ref={popoverRef}
                 open={isOpen}
+                onClose={handlePopoverClose}
                 position="bottom-center"
                 withArrow={false}
                 fitReference

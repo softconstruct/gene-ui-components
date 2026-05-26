@@ -270,11 +270,11 @@ describe("Dropdown ", () => {
         expect(setup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(false);
     });
 
-    it("marks search input readOnly when there is no original data and no search value", () => {
+    it("keeps search input editable when options start empty", () => {
         const emptySetup = mount(<Dropdown options={[]} searchable label="Label" />);
         openDropdown(emptySetup);
 
-        expect(emptySetup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(true);
+        expect(emptySetup.find(".dropdown__search input.textField__input").prop("readOnly")).toBe(false);
         emptySetup.unmount();
     });
 
@@ -438,7 +438,9 @@ describe("Dropdown ", () => {
         openDropdown(setup);
         expect(setup.find(".dropdownItem").exists()).toBeTruthy();
 
-        setup.find(".dropdown__search input.textField__input").simulate("keyDown", { key: "Escape" });
+        act(() => {
+            document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+        });
         setup.update();
 
         expect(setup.find(".dropdownItem").exists()).toBeFalsy();
