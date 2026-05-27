@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { KeyboardEvent, useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/disable-native-drag-preview";
@@ -9,7 +9,6 @@ import classNames from "classnames";
 import { GripDots, Pin, PinFilled } from "@geneui/icons";
 
 // Components
-import Label from "@components/atoms/Label";
 import Checkbox from "@components/molecules/Checkbox";
 
 // Styles
@@ -50,6 +49,10 @@ interface IManageColumnListItemProps<TData> {
      * @param edge
      */
     onDragTargetChange?: (edge: string | null) => void;
+    /**
+     * Callback function triggered when keyboard reordering is performed.
+     */
+    onKeyboardReorder?: (sourceId: string, direction: "up" | "down") => void;
 }
 
 const ManageColumnListItem = <TData,>({
@@ -59,7 +62,8 @@ const ManageColumnListItem = <TData,>({
     isPinnedDraft,
     onPinToggle,
     dropGapEdge = null,
-    onDragTargetChange
+    onDragTargetChange,
+    onKeyboardReorder
 }: IManageColumnListItemProps<TData>) => {
     const { header } = column.columnDef;
     const headerText = typeof header === "string" ? header : "";
@@ -134,6 +138,23 @@ const ManageColumnListItem = <TData,>({
         );
     }, [column.id]);
 
+    const onPinKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onPinToggle(column);
+        }
+    };
+
+    const onDragHandleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "ArrowUp") {
+            e.preventDefault();
+            onKeyboardReorder?.(column.id, "up");
+        } else if (e.key === "ArrowDown") {
+            e.preventDefault();
+            onKeyboardReorder?.(column.id, "down");
+        }
+    };
+
     if (!headerText) return null;
 
     return (
@@ -151,12 +172,27 @@ const ManageColumnListItem = <TData,>({
                     checked={checked}
                     onChange={() => onChange(column)}
                     className="manageColumnListItem__checkbox"
+                    label={headerText}
                 />
-                <Label text={headerText} labelFor={column.id} />
             </div>
             <div className="manageColumnListItem__actions">
-                <PinIconElement onClick={() => onPinToggle(column)} style={{ cursor: "pointer" }} />
-                <div ref={dragHandleRef} className="manageColumnListItem__dragHandle">
+                <div
+                    className="manageColumnListItem__pinAction"
+                    onClick={() => onPinToggle(column)}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={isPinnedDraft ? "Unpin column" : "Pin column"}
+                    onKeyDown={onPinKeyDown}
+                >
+                    <PinIconElement />
+                </div>
+                <div
+                    ref={dragHandleRef}
+                    className="manageColumnListItem__dragHandle"
+                    tabIndex={0}
+                    role="button"
+                    onKeyDown={onDragHandleKeyDown}
+                >
                     <GripDots
                         className={classNames("manageColumnListItem__dragIcon", {
                             manageColumnListItem__dragIcon_dragging: isDragging

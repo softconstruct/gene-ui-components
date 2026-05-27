@@ -128,7 +128,8 @@ const ManageColumns = <TData,>({
         handleToggleColumnVisibility,
         handleToggleAllColumnsVisibility,
         handleToggleColumnPinning,
-        handleColumnReorder
+        handleColumnReorder,
+        handleKeyboardReorder
     } = useManageColumns<TData>({
         columns,
         columnVisibility,
@@ -176,6 +177,7 @@ const ManageColumns = <TData,>({
                 draftPinning={draftPinning}
                 onColumnPinningChange={handleToggleColumnPinning}
                 onColumnReorder={handleColumnReorder}
+                onKeyboardReorder={handleKeyboardReorder}
                 onSave={handleSave}
                 onCancel={handleCancel}
                 onRestoreDefaults={handleRestoreDefaults}

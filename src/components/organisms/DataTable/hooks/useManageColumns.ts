@@ -123,7 +123,7 @@ export const useManageColumns = <TData>({
         setColumnsToRender(sortColumns(columns, currentOrder));
         setSearchValue("");
         resetDiffTracker();
-        setPopoverOpen(true);
+        setPopoverOpen(!popoverOpen);
         onToggle?.(true);
     };
 
@@ -338,10 +338,19 @@ export const useManageColumns = <TData>({
         }
     }, [draftColumnOrder, popoverOpen, initialOrderRef]);
 
-    const allColumnsVisibleCount = columnsToRender.filter((col) => draftVisibility[col.id] ?? true).length;
-    const allColumnsChecked = columnsToRender.length > 0 && allColumnsVisibleCount === columnsToRender.length;
-    const allColumnsIndeterminate = allColumnsVisibleCount > 0 && allColumnsVisibleCount < columnsToRender.length;
+    const allColumnsVisibleCount = columns.filter((col) => draftVisibility[col.id] ?? true).length;
+    const allColumnsChecked = columns.length > 0 && allColumnsVisibleCount === columns.length;
+    const allColumnsIndeterminate = allColumnsVisibleCount > 0 && allColumnsVisibleCount < columns.length;
     const isSearchActive = searchValue.trim().length > 0;
+
+    const handleKeyboardReorder = (sourceId: string, direction: "up" | "down") => {
+        const sourceIndex = draftColumnOrder.indexOf(sourceId);
+        const destIndex = direction === "up" ? sourceIndex - 1 : sourceIndex + 1;
+
+        if (destIndex >= 0 && destIndex < draftColumnOrder.length) {
+            handleColumnReorder(sourceId, draftColumnOrder[destIndex], direction === "up" ? "top" : "bottom");
+        }
+    };
 
     return {
         popoverOpen,
@@ -366,6 +375,7 @@ export const useManageColumns = <TData>({
         handleRestoreDefaults,
         handleToggleColumnVisibility,
         handleToggleColumnPinning,
-        handleColumnReorder
+        handleColumnReorder,
+        handleKeyboardReorder
     };
 };

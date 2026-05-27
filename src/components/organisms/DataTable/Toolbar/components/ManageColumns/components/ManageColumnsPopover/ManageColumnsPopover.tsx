@@ -17,7 +17,6 @@ import { Magnifier } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
-import Label from "@components/atoms/Label";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import CustomDragLayer from "@components/molecules/ActionableList/ActionableListItem/CustomDragLayer";
@@ -100,43 +99,46 @@ interface IManageColumnsPopoverProps<TData> {
      * Callback function triggered when a user reorders columns by dragging and dropping them.
      * @param sourceId
      * @param destinationId
+     * @param edge
      */
     onColumnReorder: (sourceId: string, destinationId: string, edge: string | null) => void;
     /**
-     * Callback function triggered when the user clicks the "Save" button.
-     * Applies the draft changes to the actual table state.
+     * Callback function triggered when keyboard reordering is performed.
+     * @param sourceId
+     * @param direction
+     */
+    onKeyboardReorder?: (sourceId: string, direction: "up" | "down") => void;
+    /**
+     * Callback function triggered when the save button is clicked.
      */
     onSave: () => void;
     /**
-     * Callback function triggered when the user clicks the "Cancel" button.
-     * Discards any draft changes and closes the popover.
+     * Callback function triggered when the cancel button is clicked.
      */
     onCancel: () => void;
     /**
-     * Callback function triggered when the user clicks the "Restore defaults" button.
-     * Resets the checkboxes inside the popover to their initial default visibility state.
+     * Callback function triggered when the restore defaults button is clicked.
      */
     onRestoreDefaults: () => void;
     /**
      * Configuration object for managing columns.
-     * This object allows fine-grained control over the visibility, order, and position of columns.
      */
     manageColumnsConfig: ManageColumnsConfig;
     /**
-     * Callback function triggered when the user clears the search input field.
+     * Callback function triggered when the search clear button is clicked.
      */
     handleSearchClear: () => void;
     /**
-     * Indicates whether all columns are currently checked.
+     * Indicates whether all columns are checked.
      */
     allColumnsChecked: boolean;
     /**
-     * Indicates whether all columns are currently indeterminate (mixed state).
+     * Indicates whether the select-all checkbox is in an indeterminate state.
      */
     allColumnsIndeterminate: boolean;
     /**
-     * Callback function triggered when the user toggles the "Select all" checkbox.
-     * @param checked - Indicates whether the "Select all" checkbox is checked or not.
+     * Callback function triggered when the select-all checkbox is toggled.
+     * @param checked
      */
     onToggleAllColumns: (checked: boolean) => void;
 }
@@ -155,6 +157,7 @@ const ManageColumnsPopover = <TData,>({
     hasChanges,
     onColumnPinningChange,
     onColumnReorder,
+    onKeyboardReorder,
     onSave,
     onCancel,
     onRestoreDefaults,
@@ -195,13 +198,13 @@ const ManageColumnsPopover = <TData,>({
                 const gap = dropGapRef.current;
                 setDropGap(null);
 
-                if (!gap) return;
+                if (gap) {
+                    const sourceId = source.data.id as string;
+                    const destId = gap.targetId;
 
-                const sourceId = source.data.id as string;
-                const destId = gap.targetId;
-
-                if (sourceId && destId && sourceId !== destId) {
-                    onColumnReorder(sourceId, destId, gap.edge);
+                    if (sourceId && destId && sourceId !== destId) {
+                        onColumnReorder(sourceId, destId, gap.edge);
+                    }
                 }
             }
         });
@@ -229,6 +232,7 @@ const ManageColumnsPopover = <TData,>({
                     IconBefore={Magnifier}
                     clearable
                     onClear={handleSearchClear}
+                    autoFocus
                 />
                 <div
                     className="manageColumnsPopover__body"
@@ -243,17 +247,15 @@ const ManageColumnsPopover = <TData,>({
                                 indeterminate={allColumnsIndeterminate}
                                 onChange={(e) => onToggleAllColumns(e.target.checked)}
                                 className="manageColumnsPopover__selectAllCheckbox"
-                            />
-                            <Label
-                                text={manageColumnsTexts?.selectAllColumns ?? "All Columns"}
-                                labelFor="manageColumns-selectAll"
+                                label={manageColumnsTexts?.selectAllColumns ?? "All Columns"}
                             />
                         </div>
                     )}
-                    <Scrollbar>
+                    <Scrollbar className="manageColumnsPopover__scrollbar">
                         <div
                             className={classNames("manageColumnsPopover__list", {
-                                "manageColumnsPopover__list--hasDropGap": dropGap !== null
+                                "manageColumnsPopover__list--hasDropGap": dropGap !== null,
+                                manageColumnsPopover__list_empty: !hasColumns
                             })}
                         >
                             {hasColumns ? (
@@ -269,6 +271,7 @@ const ManageColumnsPopover = <TData,>({
                                             onChange={onColumnVisibilityChange}
                                             dropGapEdge={dropGap?.targetId === column.id ? dropGap.edge : null}
                                             onDragTargetChange={(edge) => handleDragTargetChange(column.id, edge)}
+                                            onKeyboardReorder={onKeyboardReorder}
                                         />
                                     );
                                 })

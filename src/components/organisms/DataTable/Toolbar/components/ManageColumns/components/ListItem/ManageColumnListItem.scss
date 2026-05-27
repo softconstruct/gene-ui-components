@@ -66,6 +66,19 @@
         gap: var(--guit-ref-spacing-4xsmall);
     }
 
+    &__pinAction {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+
+        &:focus-visible {
+            outline-offset: var(--guit-ref-border-width-thin);
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
+        }
+    }
+
     &__dragHandle {
         display: flex;
         align-items: center;
@@ -76,6 +89,12 @@
 
         &:active {
             cursor: grabbing;
+        }
+
+        &:focus-visible {
+            outline-offset: var(--guit-ref-border-width-thin);
+            outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                var(--guit-sem-color-border-focus);
         }
     }
 
