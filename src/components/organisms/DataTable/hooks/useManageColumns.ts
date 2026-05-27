@@ -147,15 +147,35 @@ export const useManageColumns = <TData>({
             visibilityChanges[colId] = draftVisibility[colId] ?? true;
         });
 
+        // Ensure pinned columns are at the top of the order
+        const leftPinned = draftPinning.left || [];
+        const rightPinned = draftPinning.right || [];
+        const allPinnedIds = [...leftPinned, ...rightPinned];
+
+        // We want to maintain the order from draftColumnOrder for all columns.
+        // Pinned columns should come first in the final order passed to onApplyColumnOrder,
+        // but their relative order must match draftColumnOrder.
+        const pinnedIds = draftColumnOrder.filter((id) => allPinnedIds.includes(id));
+        const unpinnedIds = draftColumnOrder.filter((id) => !allPinnedIds.includes(id));
+        const finalOrder = [...pinnedIds, ...unpinnedIds];
+
+        // Also update the draft pinning to match the final order for consistency
+        const newLeftPinned = finalOrder.filter((id) => leftPinned.includes(id));
+        const newRightPinned = finalOrder.filter((id) => rightPinned.includes(id));
+        const finalPinning = { ...draftPinning, left: newLeftPinned, right: newRightPinned };
+
+        const pinningChanged = !arraysEqual(leftPinned, newLeftPinned) || !arraysEqual(rightPinned, newRightPinned);
+
         const diffPayload: IManageColumnsDiffPayload = {
             visibilityChanges,
-            pinningChanges: diffTracker.pinning.size > 0 ? draftPinning : null,
-            orderChanges: diffTracker.orderChanged ? draftColumnOrder : null
+            pinningChanges: diffTracker.pinning.size > 0 || pinningChanged ? finalPinning : null,
+            orderChanges: diffTracker.orderChanged || !arraysEqual(finalOrder, columnOrder) ? finalOrder : null
         };
 
         onApplyColumnVisibility(draftVisibility);
-        onApplyColumnPinning(draftPinning);
-        onApplyColumnOrder(draftColumnOrder);
+        onApplyColumnPinning(finalPinning);
+        onApplyColumnOrder(finalOrder);
+
         setPopoverOpen(false);
         onToggle?.(false);
         resetDiffTracker();
@@ -178,6 +198,7 @@ export const useManageColumns = <TData>({
             columns.forEach((col) => {
                 if ((defaultColumnVisibility[col.id] ?? true) !== (columnVisibility[col.id] ?? true))
                     newVis.add(col.id);
+
                 const originalPinned = (columnPinning.left || []).includes(col.id);
                 const defaultPinned = (defaultColumnPinning.left || []).includes(col.id);
                 if (originalPinned !== defaultPinned) newPin.add(col.id);
@@ -262,15 +283,20 @@ export const useManageColumns = <TData>({
         }
     };
 
+    const isSearchActive = searchValue.trim().length > 0;
+
     const handleToggleAllColumnsVisibility = (checked: boolean) => {
         setDraftVisibility((prev) => {
             const nextVisibility = { ...prev };
 
             setDiffTracker((prevDiffs) => {
                 const newVis = new Set(prevDiffs.visibility);
-                columnsToRender.forEach((col) => {
-                    nextVisibility[col.id] = checked;
+                const columnsToToggle = isSearchActive ? columnsToRender : columns;
+
+                columnsToToggle.forEach((col) => {
                     const originalVal = columnVisibility[col.id] ?? true;
+                    nextVisibility[col.id] = checked;
+
                     if (checked !== originalVal) newVis.add(col.id);
                     else newVis.delete(col.id);
                 });
@@ -338,10 +364,9 @@ export const useManageColumns = <TData>({
         }
     }, [draftColumnOrder, popoverOpen, initialOrderRef]);
 
-    const allColumnsVisibleCount = columns.filter((col) => draftVisibility[col.id] ?? true).length;
-    const allColumnsChecked = columns.length > 0 && allColumnsVisibleCount === columns.length;
-    const allColumnsIndeterminate = allColumnsVisibleCount > 0 && allColumnsVisibleCount < columns.length;
-    const isSearchActive = searchValue.trim().length > 0;
+    const totalVisibleColumnsCount = columns.filter((col) => draftVisibility[col.id] ?? true).length;
+    const allColumnsChecked = columns.length > 0 && totalVisibleColumnsCount === columns.length;
+    const allColumnsIndeterminate = totalVisibleColumnsCount > 0 && totalVisibleColumnsCount < columns.length;
 
     const handleKeyboardReorder = (sourceId: string, direction: "up" | "down") => {
         const sourceIndex = draftColumnOrder.indexOf(sourceId);
