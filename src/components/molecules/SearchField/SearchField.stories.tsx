@@ -1,3 +1,4 @@
+import React from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
@@ -10,15 +11,18 @@ const meta: Meta<ISearchFieldProps> = {
     component: SearchField,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance })
-        // fill SearchField component argTypes
     },
-    args: {
-        // fill SearchField component args
-    }
+    args: {}
 };
 
 export default meta;
 
 type Story = StoryObj<ISearchFieldProps>;
 
-export const Default: Story = {};
+export const Default: Story = {
+    render: (props) => (
+        <div style={{ padding: "2rem", minHeight: "300px", width: "320px" }}>
+            <SearchField {...props} />
+        </div>
+    )
+};

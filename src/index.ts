@@ -76,7 +76,7 @@ export { default as NumberField, INumberFieldProps } from "./components/molecule
 export { default as InteractiveCard, IInteractiveCardProps } from "./components/molecules/InteractiveCard";
 export { default as Section, ISectionProps } from "./components/molecules/Section";
 export { default as Image, IImageProps } from "./components/molecules/Image";
-export { default as SearchField } from "./components/molecules/SearchField";
+export { default as SearchField, ISearchFieldProps } from "./components/molecules/SearchField";
 export { default as ColorPicker, IColorPickerProps } from "./components/molecules/ColorPicker";
 export { default as OTPField, IOTPFieldProps } from "./components/molecules/OTPField";
 export { default as Breadcrumb, IBreadcrumbProps, IBreadcrumbItemProps } from "./components/molecules/Breadcrumb";

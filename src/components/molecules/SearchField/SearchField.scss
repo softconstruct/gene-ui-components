@@ -1,5 +1,8 @@
 .searchField {
-    // Your styles here
-    color: var(--guit-ref-color-magenta-500base);
-    font-size: var(--guit-sem-font-caption-large-medium-font-size);
+    width: 100%;
+
+    &__anchor {
+        display: block;
+        width: 100%;
+    }
 }
