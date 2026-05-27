@@ -620,7 +620,7 @@ const Dropdown: FC<IDropdownProps> = ({
                         ) : (
                             <>
                                 {filteredOptions.length ? (
-                                    <>
+                                    <div className="dropdown__body">
                                         <Scrollbar className="dropdown__scrollbar">
                                             <div
                                                 role="listbox"
@@ -684,7 +684,7 @@ const Dropdown: FC<IDropdownProps> = ({
                                                 </ButtonGroup>
                                             </div>
                                         )}
-                                    </>
+                                    </div>
                                 ) : (
                                     <Scrollbar className="dropdown__stateScrollbar">
                                         <div className="dropdown__empty">
