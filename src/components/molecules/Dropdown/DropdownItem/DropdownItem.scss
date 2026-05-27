@@ -35,6 +35,9 @@
                 padding-block: var(--guit-ref-spacing-2xsmall);
                 padding-inline-start: var(--guit-ref-spacing-medium);
             }
+            #{ $this }__main {
+                gap: var(--guit-ref-spacing-medium);
+            }
         }
 
         &_medium {
@@ -45,6 +48,9 @@
                 padding-block: var(--guit-ref-spacing-3xsmall);
                 padding-inline-start: var(--guit-ref-spacing-small);
             }
+            #{ $this }__main {
+                gap: var(--guit-ref-spacing-medium);
+            }
         }
 
         &_small {
@@ -54,6 +60,9 @@
             #{ $this }__action {
                 padding-block: var(--guit-ref-spacing-4xsmall);
                 padding-inline-start: var(--guit-ref-spacing-small);
+            }
+            #{ $this }__main {
+                gap: var(--guit-ref-spacing-small);
             }
         }
     }
@@ -95,7 +104,6 @@
     &__main {
         display: inline-flex;
         align-items: center;
-        gap: var(--guit-ref-spacing-medium);
         flex: 1;
         min-width: 0;
     }
