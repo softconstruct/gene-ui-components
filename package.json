@@ -170,7 +170,6 @@
     },
     "dependencies": {
         "@atlaskit/pragmatic-drag-and-drop": "^1.7.10",
-        "@atlaskit/pragmatic-drag-and-drop-hitbox": "^1.1.0",
         "@floating-ui/core": "^1.6.8",
         "@floating-ui/react": "^0.26.16",
         "@floating-ui/react-dom": "^2.1.2",
