@@ -148,4 +148,8 @@ export type ManageColumnsConfig = {
      * Callback function which triggers when the select all columns visibility is getting changed.
      */
     onSelectAllColumnsVisibility?: () => void;
+    /**
+     * List of column ids that should be disabled for hiding.
+     */
+    disabledColumns?: string[];
 };

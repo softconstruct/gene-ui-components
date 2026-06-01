@@ -241,6 +241,8 @@ export const useManageColumns = <TData>({
     };
 
     const handleToggleColumnVisibility = (column: Column<TData>) => {
+        if (manageColumnsConfig?.disabledColumns?.includes(column.id)) return;
+
         setDraftVisibility((prev) => {
             const nextVal = !(prev[column.id] ?? true);
             const originalVal = columnVisibility[column.id] ?? true;
@@ -300,6 +302,8 @@ export const useManageColumns = <TData>({
                 }
 
                 columnsToToggle.forEach((col) => {
+                    if (manageColumnsConfig?.disabledColumns?.includes(col.id)) return;
+
                     const originalVal = columnVisibility[col.id] ?? true;
                     nextVisibility[col.id] = targetChecked;
 

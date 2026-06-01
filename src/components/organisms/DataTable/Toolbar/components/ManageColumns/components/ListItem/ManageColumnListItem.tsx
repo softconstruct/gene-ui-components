@@ -25,6 +25,10 @@ interface IManageColumnListItemProps<TData> {
      */
     checked: boolean;
     /**
+     * Indicates whether the list item should be in a disabled state.
+     */
+    disabled?: boolean;
+    /**
      * Callback function triggered when the checkbox state is toggled.
      * @param column - The column instance whose visibility state is being changed.
      */
@@ -58,6 +62,7 @@ interface IManageColumnListItemProps<TData> {
 const ManageColumnListItem = <TData,>({
     column,
     checked,
+    disabled,
     onChange,
     isPinnedDraft,
     onPinToggle,
@@ -170,6 +175,7 @@ const ManageColumnListItem = <TData,>({
                 <Checkbox
                     id={column.id}
                     checked={checked}
+                    disabled={disabled}
                     onChange={() => onChange(column)}
                     className="manageColumnListItem__checkbox"
                     label={headerText}

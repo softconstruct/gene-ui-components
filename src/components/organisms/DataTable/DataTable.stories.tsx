@@ -179,6 +179,7 @@ export const WithManageColumns: Story = {
             enabled: true,
             available: true,
             loading: false,
+            disabledColumns: ["DayOffs"],
             texts: {
                 searchPlaceholder: "Search...",
                 cancelButton: "Cancel",

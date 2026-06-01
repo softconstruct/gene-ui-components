@@ -260,11 +260,13 @@ const ManageColumnsPopover = <TData,>({
                             {hasColumns ? (
                                 columns.map((column) => {
                                     const isPinnedDraft = (draftPinning.left || []).includes(column.id);
+                                    const isDisabled = manageColumnsConfig?.disabledColumns?.includes(column.id);
                                     return (
                                         <ManageColumnListItem
                                             key={column.id}
                                             column={column}
                                             checked={draftVisibility[column.id] ?? true}
+                                            disabled={isDisabled}
                                             isPinnedDraft={isPinnedDraft}
                                             onPinToggle={onColumnPinningChange}
                                             onChange={onColumnVisibilityChange}
