@@ -293,11 +293,17 @@ export const useManageColumns = <TData>({
                 const newVis = new Set(prevDiffs.visibility);
                 const columnsToToggle = isSearchActive ? columnsToRender : columns;
 
+                let targetChecked = checked;
+                if (isSearchActive) {
+                    const allVisibleChecked = columnsToToggle.every((col) => nextVisibility[col.id] ?? true);
+                    targetChecked = !allVisibleChecked;
+                }
+
                 columnsToToggle.forEach((col) => {
                     const originalVal = columnVisibility[col.id] ?? true;
-                    nextVisibility[col.id] = checked;
+                    nextVisibility[col.id] = targetChecked;
 
-                    if (checked !== originalVal) newVis.add(col.id);
+                    if (targetChecked !== originalVal) newVis.add(col.id);
                     else newVis.delete(col.id);
                 });
                 return { ...prevDiffs, visibility: newVis };
@@ -364,9 +370,9 @@ export const useManageColumns = <TData>({
         }
     }, [draftColumnOrder, popoverOpen, initialOrderRef]);
 
-    const totalVisibleColumnsCount = columns.filter((col) => draftVisibility[col.id] ?? true).length;
-    const allColumnsChecked = columns.length > 0 && totalVisibleColumnsCount === columns.length;
-    const allColumnsIndeterminate = totalVisibleColumnsCount > 0 && totalVisibleColumnsCount < columns.length;
+    const globalVisibleColumnsCount = columns.filter((col) => draftVisibility[col.id] ?? true).length;
+    const allColumnsChecked = columns.length > 0 && globalVisibleColumnsCount === columns.length;
+    const allColumnsIndeterminate = globalVisibleColumnsCount > 0 && globalVisibleColumnsCount < columns.length;
 
     const handleKeyboardReorder = (sourceId: string, direction: "up" | "down") => {
         const sourceIndex = draftColumnOrder.indexOf(sourceId);

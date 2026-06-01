@@ -232,7 +232,6 @@ const ManageColumnsPopover = <TData,>({
                     IconBefore={Magnifier}
                     clearable
                     onClear={handleSearchClear}
-                    autoFocus
                 />
                 <div
                     className="manageColumnsPopover__body"
