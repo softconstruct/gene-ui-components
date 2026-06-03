@@ -1,4 +1,4 @@
-import React, { FC, KeyboardEvent, MouseEvent, useMemo, useState } from "react";
+import React, { FC, KeyboardEvent, useMemo, useState } from "react";
 import classnames from "classnames";
 
 import { IconProps, Info as InfoIcon } from "@geneui/icons";
@@ -45,11 +45,6 @@ interface IInfoProps {
      * If not provided, defaults to "press enter to open tooltip". This label describes the button's purpose and interaction method.
      */
     "aria-label"?: string;
-    /**
-     * Renders a non-button trigger when Info is placed inside another interactive element
-     * (e.g. a dropdown option). Required to avoid invalid nested `<button>` markup.
-     */
-    presentational?: boolean;
 }
 
 /**
@@ -61,8 +56,7 @@ const Info: FC<IInfoProps> = ({
     size = "smallNudge",
     appearance = "default",
     className,
-    "aria-label": ariaLabel,
-    presentational = false
+    "aria-label": ariaLabel
 }) => {
     const [alwaysShow, setAlwaysShow] = useState(false);
 
@@ -75,10 +69,6 @@ const Info: FC<IInfoProps> = ({
 
     const handleBlur = () => !disabled && alwaysShow && setAlwaysShow(false);
 
-    const stopPresentationalTriggerPropagation = (event: MouseEvent<HTMLSpanElement>) => {
-        event.stopPropagation();
-    };
-
     const buttonClassNames = useMemo(
         () =>
             classnames("info", className, {
@@ -90,37 +80,19 @@ const Info: FC<IInfoProps> = ({
     const tooltipAppearance = appearance === "inverse" ? "inverse" : "default";
     const icon = <InfoIcon className="info__icon" size={iconSizes[size]} />;
 
-    const trigger = presentational ? (
-        <span
-            aria-hidden="true"
-            className={buttonClassNames}
-            onClick={stopPresentationalTriggerPropagation}
-            onMouseDown={stopPresentationalTriggerPropagation}
-        >
-            {icon}
-        </span>
-    ) : (
-        <button
-            type="button"
-            aria-label={ariaLabel || "press enter to open tooltip"}
-            disabled={disabled}
-            aria-pressed={alwaysShow}
-            className={buttonClassNames}
-            onKeyDown={keyDownHandler}
-            onBlur={handleBlur}
-        >
-            {icon}
-        </button>
-    );
-
     return (
-        <Tooltip
-            text={infoText}
-            alwaysShow={presentational ? undefined : alwaysShow}
-            appearance={tooltipAppearance}
-            isVisible={!disabled}
-        >
-            {trigger}
+        <Tooltip text={infoText} alwaysShow={alwaysShow} appearance={tooltipAppearance} isVisible={!disabled}>
+            <button
+                type="button"
+                aria-label={ariaLabel || "press enter to open tooltip"}
+                disabled={disabled}
+                aria-pressed={alwaysShow}
+                className={buttonClassNames}
+                onKeyDown={keyDownHandler}
+                onBlur={handleBlur}
+            >
+                {icon}
+            </button>
         </Tooltip>
     );
 };
