@@ -1,4 +1,4 @@
-import React, { FC, Ref } from "react";
+import React, { FC, KeyboardEvent, Ref } from "react";
 import classNames from "classnames";
 
 import { CheckMark, IconProps } from "@geneui/icons";
@@ -24,6 +24,7 @@ export interface IDropdownItemProps {
     infoText?: string;
     textAfter?: string;
     onClick?: () => void;
+    onKeyDown?: (event: KeyboardEvent<HTMLButtonElement>) => void;
     buttonRef?: Ref<HTMLButtonElement>;
 }
 
@@ -38,6 +39,7 @@ const DropdownItem: FC<IDropdownItemProps> = ({
     infoText,
     textAfter,
     onClick,
+    onKeyDown,
     buttonRef
 }) => {
     const hasTextAfter = Boolean(textAfter);
@@ -62,6 +64,7 @@ const DropdownItem: FC<IDropdownItemProps> = ({
                 role="option"
                 aria-selected={selected}
                 onClick={onClick}
+                onKeyDown={onKeyDown}
                 disabled={disabled}
                 ref={buttonRef}
             >

@@ -411,13 +411,14 @@ const Dropdown: FC<IDropdownProps> = ({
         }
     };
 
-    const listKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const optionKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
         if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+
         const focusableOptions = getFocusableOptionButtons();
         if (!focusableOptions.length) return;
 
-        const activeElement = document.activeElement as HTMLElement | null;
-        const currentIndex = focusableOptions.findIndex((item) => item === activeElement);
+        const currentIndex = focusableOptions.indexOf(event.currentTarget);
+        if (currentIndex < 0) return;
 
         event.preventDefault();
 
@@ -432,13 +433,11 @@ const Dropdown: FC<IDropdownProps> = ({
         }
 
         if (event.key === "ArrowDown") {
-            const nextIndex = currentIndex < 0 ? 0 : Math.min(currentIndex + 1, focusableOptions.length - 1);
-            focusableOptions[nextIndex].focus();
+            focusableOptions[Math.min(currentIndex + 1, focusableOptions.length - 1)].focus();
             return;
         }
 
-        const prevIndex = currentIndex < 0 ? 0 : Math.max(currentIndex - 1, 0);
-        focusableOptions[prevIndex].focus();
+        focusableOptions[Math.max(currentIndex - 1, 0)].focus();
     };
 
     const createOptionRef = (optionValue: string): RefCallback<HTMLButtonElement> => {
@@ -626,8 +625,6 @@ const Dropdown: FC<IDropdownProps> = ({
                                                 role="listbox"
                                                 aria-multiselectable={isMulti}
                                                 className="dropdown__list"
-                                                tabIndex={-1}
-                                                onKeyDown={listKeyDown}
                                             >
                                                 {filteredOptions.map((option) => (
                                                     <DropdownItem
@@ -645,6 +642,7 @@ const Dropdown: FC<IDropdownProps> = ({
                                                         textAfter={option.textAfter}
                                                         size={size}
                                                         onClick={() => optionSelectHandler(option)}
+                                                        onKeyDown={optionKeyDown}
                                                         buttonRef={createOptionRef(option.value)}
                                                     />
                                                 ))}

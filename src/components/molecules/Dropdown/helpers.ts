@@ -1,4 +1,4 @@
-import { FALLBACK_VISIBLE_ITEMS, MEASURE_SAFETY_OFFSET } from "./constants";
+import { FALLBACK_VISIBLE_ITEMS, MEASURE_SAFETY_OFFSET, TEXT_MEASURE_FALLBACK_CHAR_WIDTH_PX } from "./constants";
 
 export interface ICompactSelectedView {
     visibleText: string;
@@ -6,9 +6,9 @@ export interface ICompactSelectedView {
 }
 
 const getTextWidth = (text: string, font: string): number => {
-    if (typeof document === "undefined") return text.length * 8;
+    if (typeof document === "undefined") return text.length * TEXT_MEASURE_FALLBACK_CHAR_WIDTH_PX;
     const context = document.createElement("canvas").getContext("2d");
-    if (!context) return text.length * 8;
+    if (!context) return text.length * TEXT_MEASURE_FALLBACK_CHAR_WIDTH_PX;
     context.font = font;
     return context.measureText(text).width;
 };
