@@ -125,7 +125,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
 
     const [isOpen, setIsOpen] = useState(!!open);
     const [isAlphaEnabled, setIsAlphaEnabled] = useState(alphaEnabled);
-    const [formatState, setFormatState] = useState<ColorFormat>(format);
+    const [colorFormatMode, setColorFormatMode] = useState<ColorFormat>(format);
     const [isFormatDropdownOpen, setIsFormatDropdownOpen] = useState(false);
 
     const [propsForPopover, setPropsForPopover] = useState({});
@@ -302,7 +302,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
     }, [open, isOpenControlled]);
 
     useEffect(() => {
-        setFormatState(format);
+        setColorFormatMode(format);
     }, [format]);
 
     useEffect(() => {
@@ -353,22 +353,22 @@ const ColorPicker: FC<IColorPickerProps> = ({
                         )}
                         <div
                             className={classNames("colorPicker__inputs", {
-                                colorPicker__inputsRgb: formatState === "rgb",
-                                colorPicker__inputsHex: formatState === "hex"
+                                colorPicker__inputsRgb: colorFormatMode === "rgb",
+                                colorPicker__inputsHex: colorFormatMode === "hex"
                             })}
                         >
                             <Dropdown
                                 className="colorPicker__formatDropdown"
                                 options={FORMAT_OPTIONS}
-                                value={formatState}
+                                value={colorFormatMode}
                                 size="small"
                                 onOpenChange={setIsFormatDropdownOpen}
                                 onChange={(nextValue) => {
                                     if (!nextValue || Array.isArray(nextValue)) return;
-                                    setFormatState(nextValue.value as ColorFormat);
+                                    setColorFormatMode(nextValue.value as ColorFormat);
                                 }}
                             />
-                            {formatState === "hex" ? (
+                            {colorFormatMode === "hex" ? (
                                 <TextField
                                     type="text"
                                     size="small"
