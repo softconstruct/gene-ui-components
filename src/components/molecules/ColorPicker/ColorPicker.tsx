@@ -15,6 +15,7 @@ import {
 // Constants
 import { ALPHA_SCALE_MAX, EMPTY_RGBA, FORMAT_OPTIONS, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
 import Dropdown from "@components/molecules/Dropdown";
+import { IDropdownOption } from "@components/molecules/Dropdown/types";
 import TextField from "@components/molecules/TextField";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
@@ -363,10 +364,9 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                 value={colorFormatMode}
                                 size="small"
                                 onOpenChange={setIsFormatDropdownOpen}
-                                onChange={(nextValue) => {
-                                    if (!nextValue || Array.isArray(nextValue)) return;
-                                    setColorFormatMode(nextValue.value as ColorFormat);
-                                }}
+                                onChange={(option) =>
+                                    setColorFormatMode((option as IDropdownOption).value as ColorFormat)
+                                }
                             />
                             {colorFormatMode === "hex" ? (
                                 <TextField

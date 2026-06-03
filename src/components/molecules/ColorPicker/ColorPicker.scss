@@ -13,12 +13,16 @@
     }
 
     &__alphaInput {
+        flex: 0 0 auto;
+        width: 7rem;
         max-width: 7rem;
     }
 
     &__inputs {
         display: flex;
+        align-items: center;
         width: 100%;
+        min-width: 0;
     }
 
     &__inputsRgb {
@@ -37,7 +41,8 @@
     }
 
     &__hexInput {
-        width: 100%;
+        flex: 1 1 0;
+        min-width: 0;
         unicode-bidi: bidi-override;
     }
 
@@ -47,8 +52,9 @@
     }
 
     &__formatDropdown {
+        flex: 0 0 8.6rem;
         width: 8.6rem;
-        flex-shrink: 0;
+        max-width: 8.6rem;
     }
 
     &__recents {
