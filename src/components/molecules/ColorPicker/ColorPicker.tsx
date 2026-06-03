@@ -13,9 +13,8 @@ import {
     RgbaColorPicker
 } from "@components/molecules/ColorPicker/components/CustomColorPickers/CustomColorPickers";
 // Constants
-import { ALPHA_SCALE_MAX, EMPTY_RGBA, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
+import { ALPHA_SCALE_MAX, EMPTY_RGBA, FORMAT_OPTIONS, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
 import Dropdown from "@components/molecules/Dropdown";
-import { IDropdownOption } from "@components/molecules/Dropdown/types";
 import TextField from "@components/molecules/TextField";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
@@ -29,11 +28,6 @@ import "./ColorPicker.scss";
 import { ColorFormat, RGB, RGBA } from "./types";
 // Utils
 import { clamp, hexToRgb, parseColor, rgbToHex } from "./utils";
-
-const formatOptions: IDropdownOption[] = [
-    { id: "rgb", label: "RGB", value: "rgb" },
-    { id: "hex", label: "HEX", value: "hex" }
-];
 
 /**
  * Configuration properties for the ColorPicker component.
@@ -365,7 +359,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
                         >
                             <Dropdown
                                 className="colorPicker__formatDropdown"
-                                options={formatOptions}
+                                options={FORMAT_OPTIONS}
                                 value={formatState}
                                 size="small"
                                 onOpenChange={setIsFormatDropdownOpen}
