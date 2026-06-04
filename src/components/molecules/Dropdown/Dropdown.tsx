@@ -3,14 +3,12 @@ import React, {
     FC,
     KeyboardEvent,
     MouseEvent,
-    MutableRefObject,
     RefCallback,
     useEffect,
     useMemo,
     useRef,
     useState
 } from "react";
-import { ReferenceType } from "@floating-ui/react";
 import classNames from "classnames";
 
 import { CaretDownFilled, Magnifier } from "@geneui/icons";
@@ -261,8 +259,8 @@ const Dropdown: FC<IDropdownProps> = ({
     const { width: windowWidth } = useWindowSize();
 
     const popoverRef = useRef<IPopoverRef>({
-        floatingElement: { current: null } as MutableRefObject<ReferenceType | null>,
-        referenceElement: { current: null } as MutableRefObject<ReferenceType | null>
+        floatingElement: { current: null },
+        referenceElement: { current: null }
     });
 
     useEffect(() => {
