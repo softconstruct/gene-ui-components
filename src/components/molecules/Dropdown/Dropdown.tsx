@@ -447,8 +447,12 @@ const Dropdown: FC<IDropdownProps> = ({
 
     const createOptionRef = (optionValue: string): RefCallback<HTMLButtonElement> => {
         return (node) => {
+            if (!node) {
+                delete optionRefs.current[optionValue];
+                return;
+            }
+
             optionRefs.current[optionValue] = node;
-            if (!node) return;
             focusPendingOptionIfReady();
         };
     };
