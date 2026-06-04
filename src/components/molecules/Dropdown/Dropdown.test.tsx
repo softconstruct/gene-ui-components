@@ -214,7 +214,7 @@ describe("Dropdown ", () => {
         expect(getTriggerField(setup).find(".textField__suffix").text()).toBe("+1...");
     });
 
-    it("calls onSearchChange in debounced mode", () => {
+    it("calls onSearchChange in debounced mode when search is uncontrolled", () => {
         jest.useFakeTimers();
         const onSearchChange = jest.fn();
         setup.setProps({ searchable: true, onSearchChange });
@@ -234,6 +234,24 @@ describe("Dropdown ", () => {
             jest.advanceTimersByTime(1);
         });
 
+        expect(onSearchChange).toHaveBeenCalledWith("Op");
+    });
+
+    it("calls onSearchChange immediately when search is controlled", () => {
+        jest.useFakeTimers();
+        const onSearchChange = jest.fn();
+        setup.setProps({ searchable: true, searchValue: "", onSearchChange });
+        openDropdown(setup);
+
+        setup
+            .find(".dropdown__search input.textField__input")
+            .simulate("change", { target: { value: "Op" } } as React.ChangeEvent<HTMLInputElement>);
+
+        act(() => {
+            jest.advanceTimersByTime(DEFAULT_SEARCH_DEBOUNCE_MS);
+        });
+
+        expect(onSearchChange).toHaveBeenCalledTimes(1);
         expect(onSearchChange).toHaveBeenCalledWith("Op");
     });
 

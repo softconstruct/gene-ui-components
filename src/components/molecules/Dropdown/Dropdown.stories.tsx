@@ -153,11 +153,21 @@ export const AsyncSearch: Story = {
 };
 
 const CustomFilterStory = (renderProps: IDropdownProps) => {
+    const [search, setSearch] = useState("");
     const startsWithFilter = useMemo(
         () => (option: IDropdownOption, term: string) => option.label.toLowerCase().startsWith(term),
         []
     );
-    return <Dropdown {...renderProps} filterFn={startsWithFilter} />;
+    return (
+        <Dropdown
+            {...renderProps}
+            filterFn={startsWithFilter}
+            searchValue={search}
+            onSearchChange={(value) => {
+                setSearch(value);
+            }}
+        />
+    );
 };
 
 export const CustomFilter: Story = {

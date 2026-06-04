@@ -196,7 +196,8 @@ interface IDropdownProps {
     /**
      * Callback fired when the search value changes.
      * Always fires regardless of `filterFn` value, so it can be used safely for analytics,
-     * form integrations, or async fetching. Subject to the built-in 400ms debounce.
+     * form integrations, or async fetching. Debounced by 400ms in uncontrolled search mode only;
+     * fires immediately when `searchValue` is provided (controlled search).
      */
     onSearchChange?: (value: string) => void;
     /**
@@ -295,7 +296,13 @@ const Dropdown: FC<IDropdownProps> = ({
 
     const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
         const nextValue = event.target.value;
-        if (!isControlledSearch) setInternalSearchValue(nextValue);
+
+        if (isControlledSearch) {
+            onSearchChange?.(nextValue);
+            return;
+        }
+
+        setInternalSearchValue(nextValue);
         emitSearchDebounced(nextValue);
     };
 
