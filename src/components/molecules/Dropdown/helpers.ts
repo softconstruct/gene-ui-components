@@ -5,12 +5,19 @@ export interface ICompactSelectedView {
     suffixText: string;
 }
 
+let cachedCanvasContext: CanvasRenderingContext2D | null = null;
+
 const getTextWidth = (text: string, font: string): number => {
     if (typeof document === "undefined") return text.length * TEXT_MEASURE_FALLBACK_CHAR_WIDTH_PX;
-    const context = document.createElement("canvas").getContext("2d");
-    if (!context) return text.length * TEXT_MEASURE_FALLBACK_CHAR_WIDTH_PX;
-    context.font = font;
-    return context.measureText(text).width;
+
+    if (!cachedCanvasContext) {
+        cachedCanvasContext = document.createElement("canvas").getContext("2d");
+    }
+
+    if (!cachedCanvasContext) return text.length * TEXT_MEASURE_FALLBACK_CHAR_WIDTH_PX;
+
+    cachedCanvasContext.font = font;
+    return cachedCanvasContext.measureText(text).width;
 };
 
 const getInputFont = (inputNode: HTMLInputElement): string => {
