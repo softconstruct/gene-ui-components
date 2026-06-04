@@ -42,8 +42,6 @@ const DropdownItem: FC<IDropdownItemProps> = ({
     onKeyDown,
     buttonRef
 }) => {
-    const hasTextAfter = Boolean(textAfter);
-
     return (
         <div
             className={classNames(
@@ -81,7 +79,7 @@ const DropdownItem: FC<IDropdownItemProps> = ({
                         <span className="dropdownItem__label ellipsis-text">{label}</span>
                     )}
                 </span>
-                {hasTextAfter && (
+                {textAfter && (
                     <span className="dropdownItem__trailing">
                         <span className="dropdownItem__textAfter ellipsis-text">{textAfter}</span>
                     </span>
