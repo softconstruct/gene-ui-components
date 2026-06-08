@@ -254,6 +254,7 @@ const Dropdown: FC<IDropdownProps> = ({
     const [internalSearchValue, setInternalSearchValue] = useState<string>(searchValue ?? defaultSearchValue ?? "");
     const triggerTextFieldRef = useRef<ITextFieldRef | null>(null);
     const optionRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+    const selectedOptionCacheRef = useRef<Record<string, IDropdownOption>>({});
     const pendingFocusIndexRef = useRef<number | null>(null);
     const [triggerInputWidth, setTriggerInputWidth] = useState(0);
     const { width: windowWidth } = useWindowSize();
@@ -310,14 +311,31 @@ const Dropdown: FC<IDropdownProps> = ({
         onSearchChange?.("");
     };
 
-    const selectedSingleOption = useMemo(
-        () => options.find((option) => option.value === selectedSingleValue) || null,
-        [options, selectedSingleValue]
-    );
-    const selectedMultiOptions = useMemo(
-        () => options.filter((option) => selectedMultipleValues.includes(option.value)),
-        [options, selectedMultipleValues]
-    );
+    const selectedSingleOption = useMemo(() => {
+        if (!selectedSingleValue) return null;
+
+        const optionFromList = options.find((option) => option.value === selectedSingleValue);
+        if (optionFromList) {
+            selectedOptionCacheRef.current[selectedSingleValue] = optionFromList;
+            return optionFromList;
+        }
+
+        return selectedOptionCacheRef.current[selectedSingleValue] ?? null;
+    }, [options, selectedSingleValue]);
+
+    const selectedMultiOptions = useMemo(() => {
+        return selectedMultipleValues
+            .map((selectedValue) => {
+                const optionFromList = options.find((option) => option.value === selectedValue);
+                if (optionFromList) {
+                    selectedOptionCacheRef.current[selectedValue] = optionFromList;
+                    return optionFromList;
+                }
+
+                return selectedOptionCacheRef.current[selectedValue];
+            })
+            .filter((option): option is IDropdownOption => Boolean(option));
+    }, [options, selectedMultipleValues]);
 
     const selectedView = useMemo(() => {
         if (isMulti) {
@@ -461,15 +479,45 @@ const Dropdown: FC<IDropdownProps> = ({
         if (value === undefined) {
             setInternalValue(nextValue);
         }
-        const selectedOption = options.find((option) => option.value === nextValue) || null;
-        onChange?.(selectedOption);
+
+        if (nextValue === null) {
+            if (selectedSingleValue) {
+                delete selectedOptionCacheRef.current[selectedSingleValue];
+            }
+            onChange?.(null);
+            return;
+        }
+
+        const optionFromList = options.find((option) => option.value === nextValue) || null;
+        if (optionFromList) {
+            selectedOptionCacheRef.current[nextValue] = optionFromList;
+        }
+
+        onChange?.(optionFromList ?? selectedOptionCacheRef.current[nextValue] ?? null);
     };
 
     const setMultiValue = (nextValues: string[]) => {
         if (values === undefined) {
             setInternalValues(nextValues);
         }
-        const selectedOptions = options.filter((option) => nextValues.includes(option.value));
+
+        nextValues.forEach((selectedValue) => {
+            const optionFromList = options.find((option) => option.value === selectedValue);
+            if (optionFromList) {
+                selectedOptionCacheRef.current[selectedValue] = optionFromList;
+            }
+        });
+
+        Object.keys(selectedOptionCacheRef.current).forEach((cachedValue) => {
+            if (!nextValues.includes(cachedValue)) {
+                delete selectedOptionCacheRef.current[cachedValue];
+            }
+        });
+
+        const selectedOptions = nextValues
+            .map((selectedValue) => selectedOptionCacheRef.current[selectedValue])
+            .filter((option): option is IDropdownOption => Boolean(option));
+
         onChange?.(selectedOptions);
     };
 

@@ -3,9 +3,13 @@ import { Meta, StoryObj } from "@storybook/react";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { fn } from "@storybook/test";
 
+// Hooks
+import { useDebounce } from "@hooks/index";
+
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 import { dropdownOptions } from "../../../../stories/data/__dropdown";
+import { DEFAULT_SEARCH_DEBOUNCE_MS } from "./constants";
 // Components
 import Dropdown, { IDropdownOption, IDropdownProps } from "./index";
 
@@ -118,29 +122,74 @@ export const WithFooterActions: Story = {
     }
 };
 
-const AsyncSearchStory = (renderProps: IDropdownProps) => {
+const AsyncSearchStory = ({ variant, ...renderProps }: IDropdownProps) => {
+    const isMulti = variant === "multi";
     const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [results, setResults] = useState<IDropdownOption[]>(dropdownOptions);
     const [loading, setLoading] = useState(false);
+    const [values, setValues] = useState<string[]>([]);
+    const [value, setValue] = useState<string | null>(null);
+
+    const { debouncedCallback: debounceSearch, clearDebounce } = useDebounce(
+        (...callbackArgs: unknown[]) => setDebouncedSearch(callbackArgs[0] as string),
+        DEFAULT_SEARCH_DEBOUNCE_MS
+    );
+
+    const handleSearchChange = (nextValue: string) => {
+        setSearch(nextValue);
+
+        if (!nextValue) {
+            clearDebounce();
+            setDebouncedSearch("");
+            return;
+        }
+
+        debounceSearch(nextValue);
+    };
 
     /* eslint consistent-return: off */
     useEffect(() => {
-        if (!search) {
+        if (!debouncedSearch) {
             setResults(dropdownOptions);
             setLoading(false);
             return;
         }
         setLoading(true);
         const timeoutId = window.setTimeout(() => {
-            const normalized = search.toLowerCase();
+            const normalized = debouncedSearch.toLowerCase();
             setResults(dropdownOptions.filter((option) => option.label.toLowerCase().includes(normalized)));
             setLoading(false);
         }, 600);
         return () => window.clearTimeout(timeoutId);
-    }, [search]);
+    }, [debouncedSearch]);
 
     return (
-        <Dropdown {...renderProps} options={results} loading={loading} filterFn={false} onSearchChange={setSearch} />
+        <Dropdown
+            {...renderProps}
+            options={results}
+            loading={loading}
+            filterFn={false}
+            searchValue={search}
+            onSearchChange={handleSearchChange}
+            {...(isMulti
+                ? {
+                      values,
+                      onChange: (nextValue) => {
+                          if (Array.isArray(nextValue)) {
+                              setValues(nextValue.map((item) => item.value));
+                          }
+                      }
+                  }
+                : {
+                      value,
+                      onChange: (nextValue) => {
+                          if (!Array.isArray(nextValue)) {
+                              setValue(nextValue?.value ?? null);
+                          }
+                      }
+                  })}
+        />
     );
 };
 
@@ -148,6 +197,15 @@ export const AsyncSearch: Story = {
     args: {
         searchable: true,
         helperText: "Type to search; results are fetched by the parent."
+    },
+    render: (renderProps) => <AsyncSearchStory {...renderProps} />
+};
+
+export const AsyncSearchMulti: Story = {
+    args: {
+        variant: "multi",
+        searchable: true,
+        helperText: "Async search in multi-select; selected options stay in the trigger while filtering."
     },
     render: (renderProps) => <AsyncSearchStory {...renderProps} />
 };

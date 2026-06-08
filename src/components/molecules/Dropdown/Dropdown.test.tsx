@@ -268,6 +268,35 @@ describe("Dropdown ", () => {
         expect(setup.find(".dropdownItem").length).toBe(0);
     });
 
+    it("keeps single-select trigger label when selected option is absent from options", () => {
+        setup.setProps({ filterFn: false as const });
+        openDropdown(setup);
+
+        setup.find(".dropdownItem__action").at(0).simulate("click");
+        setup.update();
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 1");
+
+        setup.setProps({ options: [options[1], options[2]] });
+        setup.update();
+
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 1");
+    });
+
+    it("keeps multiselect trigger label when selected option is absent from options", () => {
+        setup.setProps({ variant: "multi", filterFn: false as const });
+        openDropdown(setup);
+
+        setup.find(".dropdownItem__action").at(0).simulate("click");
+        setup.update();
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 1");
+
+        setup.setProps({ options: [options[1], options[2]] });
+        setup.update();
+
+        expect(getTriggerInput(setup).prop("value")).toBe("Option 1");
+        expect(setup.find(".dropdownItem").length).toBe(2);
+    });
+
     it("keeps search input editable when external options are cleared after a search", () => {
         setup.setProps({ searchable: true, filterFn: false as const });
         openDropdown(setup);
