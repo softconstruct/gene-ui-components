@@ -148,6 +148,11 @@ const AsyncSearchStory = ({ variant, ...renderProps }: IDropdownProps) => {
         debounceSearch(nextValue);
     };
 
+    useEffect(() => {
+        setValue(null);
+        setValues([]);
+    }, [variant]);
+
     /* eslint consistent-return: off */
     useEffect(() => {
         if (!debouncedSearch) {
@@ -167,6 +172,7 @@ const AsyncSearchStory = ({ variant, ...renderProps }: IDropdownProps) => {
     return (
         <Dropdown
             {...renderProps}
+            variant={variant}
             options={results}
             loading={loading}
             filterFn={false}
@@ -196,16 +202,7 @@ const AsyncSearchStory = ({ variant, ...renderProps }: IDropdownProps) => {
 export const AsyncSearch: Story = {
     args: {
         searchable: true,
-        helperText: "Type to search; results are fetched by the parent."
-    },
-    render: (renderProps) => <AsyncSearchStory {...renderProps} />
-};
-
-export const AsyncSearchMulti: Story = {
-    args: {
-        variant: "multi",
-        searchable: true,
-        helperText: "Async search in multi-select; selected options stay in the trigger while filtering."
+        helperText: "Type to search; results are fetched by the parent. Use variant control for single or multi."
     },
     render: (renderProps) => <AsyncSearchStory {...renderProps} />
 };
