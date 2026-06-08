@@ -211,6 +211,12 @@ export interface IPopoverProps {
      * @default "full"
      */
     mobileHeightMode?: "full" | "fit";
+    /**
+     * Forces the regular popover rendering on mobile devices instead of Spreadsheet.
+     * Useful when mobile behavior should stay consistent with desktop.
+     * @default false
+     */
+    disableMobileSpreadsheet?: boolean;
 }
 
 /**
@@ -237,7 +243,8 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
             trigger = "click",
             hasCloseButton = true,
             Icon,
-            mobileHeightMode = "full"
+            mobileHeightMode = "full",
+            disableMobileSpreadsheet = false
         },
         popoverRef
     ) => {
@@ -414,10 +421,12 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
 
         const parentElement = refs.reference.current as HTMLElement | null;
 
+        const shouldUseSpreadsheet = isMobile && !disableMobileSpreadsheet;
+
         return (
             <>
                 {isPopoverOpened &&
-                    (isMobile ? (
+                    (shouldUseSpreadsheet ? (
                         <Spreadsheet
                             inset={false}
                             open={isPopoverOpened}
@@ -459,8 +468,10 @@ const Popover = forwardRef<IPopoverRef, IPopoverProps>(
                                         : floatingStyles
                                 }
                                 className={classNames(
-                                    `popover popover_position_${currentDirection} popover_size_${size}`,
-                                    { popover_size_reference: fitReference }
+                                    "popover",
+                                    `popover_position_${currentDirection}`,
+                                    { popover_size_reference: fitReference },
+                                    !fitReference && `popover_size_${size}`
                                 )}
                                 ref={refs.setFloating}
                                 {...getFloatingProps()}
