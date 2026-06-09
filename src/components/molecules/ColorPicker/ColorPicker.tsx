@@ -13,12 +13,13 @@ import {
     RgbaColorPicker
 } from "@components/molecules/ColorPicker/components/CustomColorPickers/CustomColorPickers";
 // Constants
-import { ALPHA_SCALE_MAX, EMPTY_RGBA, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
+import { ALPHA_SCALE_MAX, EMPTY_RGBA, FORMAT_OPTIONS, RGB_CHANNELS } from "@components/molecules/ColorPicker/constants";
+import Dropdown from "@components/molecules/Dropdown";
+import { IDropdownOption } from "@components/molecules/Dropdown/types";
 import TextField from "@components/molecules/TextField";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Hooks
-import useClickOutside from "@hooks/useClickOutside";
 import useDebouncedCallback from "@hooks/useDebounceCallback";
 
 // Styles
@@ -99,11 +100,6 @@ interface IColorPickerProps {
      * @param alpha - The alpha integer value mapped from 0 to 100.
      */
     onChange?: (hex?: string, rgba?: RGBA | RGB | null, alpha?: number) => void;
-    /**
-     * Callback fired when a user clicks outside the bounds of an open picker popover.
-     * Used primarily to close the popover in controlled setups.
-     */
-    onOutsideClick?: () => void;
 }
 
 /**
@@ -123,15 +119,15 @@ const ColorPicker: FC<IColorPickerProps> = ({
     label,
     labelInfoText,
     size = "medium",
-    placeholder,
-    onOutsideClick
+    placeholder
 }) => {
     const isColorControlled = value !== undefined;
     const isOpenControlled = open !== undefined;
 
     const [isOpen, setIsOpen] = useState(!!open);
     const [isAlphaEnabled, setIsAlphaEnabled] = useState(alphaEnabled);
-    const [formatState, setFormatState] = useState<ColorFormat>(format);
+    const [colorFormatMode, setColorFormatMode] = useState<ColorFormat>(format);
+    const [isFormatDropdownOpen, setIsFormatDropdownOpen] = useState(false);
 
     const [propsForPopover, setPropsForPopover] = useState({});
 
@@ -307,20 +303,12 @@ const ColorPicker: FC<IColorPickerProps> = ({
     }, [open, isOpenControlled]);
 
     useEffect(() => {
-        setFormatState(format);
+        setColorFormatMode(format);
     }, [format]);
 
     useEffect(() => {
         setIsAlphaEnabled(alphaEnabled);
     }, [alphaEnabled]);
-
-    useClickOutside(() => {
-        if (!isOpenControlled) {
-            setIsOpen(false);
-            return;
-        }
-        onOutsideClick?.();
-    }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement]);
 
     return (
         <div className={classNames("colorPicker", className)} {...propsForPopover}>
@@ -342,7 +330,10 @@ const ColorPicker: FC<IColorPickerProps> = ({
                 size={size}
             />
             <Popover
-                onClose={() => handleOpen(false)}
+                onClose={() => {
+                    if (isFormatDropdownOpen) return;
+                    handleOpen(false);
+                }}
                 withArrow={false}
                 ref={popoverRef}
                 position="bottom-left"
@@ -363,20 +354,21 @@ const ColorPicker: FC<IColorPickerProps> = ({
                         )}
                         <div
                             className={classNames("colorPicker__inputs", {
-                                colorPicker__inputsRgb: format === "rgb",
-                                colorPicker__inputsHex: format === "hex"
+                                colorPicker__inputsRgb: colorFormatMode === "rgb",
+                                colorPicker__inputsHex: colorFormatMode === "hex"
                             })}
                         >
-                            {/** TODO: Replace select with Dropdown component when it will be ready */}
-                            <select
-                                name="color_formats"
-                                value={formatState}
-                                onChange={(e) => setFormatState(e.target.value as ColorFormat)}
-                            >
-                                <option value="rgb">RGB</option>
-                                <option value="hex">HEX</option>
-                            </select>
-                            {formatState === "hex" ? (
+                            <Dropdown
+                                className="colorPicker__formatDropdown"
+                                options={FORMAT_OPTIONS}
+                                value={colorFormatMode}
+                                size="small"
+                                onOpenChange={setIsFormatDropdownOpen}
+                                onChange={(option) =>
+                                    setColorFormatMode((option as IDropdownOption).value as ColorFormat)
+                                }
+                            />
+                            {colorFormatMode === "hex" ? (
                                 <TextField
                                     type="text"
                                     size="small"
@@ -390,6 +382,7 @@ const ColorPicker: FC<IColorPickerProps> = ({
                                 <div className="colorPicker__rgbInputs">
                                     {RGB_CHANNELS.map((channel) => (
                                         <TextField
+                                            className="colorPicker__rgbInput"
                                             key={channel}
                                             size="small"
                                             value={rgba[channel]}

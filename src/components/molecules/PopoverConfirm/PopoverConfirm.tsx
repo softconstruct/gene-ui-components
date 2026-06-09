@@ -1,4 +1,14 @@
-import React, { Dispatch, FC, MutableRefObject, ReactNode, SetStateAction, useEffect, useRef, useState } from "react";
+import React, {
+    Dispatch,
+    FC,
+    MouseEvent,
+    MutableRefObject,
+    ReactNode,
+    SetStateAction,
+    useEffect,
+    useRef,
+    useState
+} from "react";
 import { ReferenceType } from "@floating-ui/react";
 import classNames from "classnames";
 
@@ -13,9 +23,7 @@ import {
     PopoverBody,
     PopoverFooter
 } from "@components/atoms/Popover";
-
-// Hooks
-import useClickOutside from "@hooks/useClickOutside";
+import { PopoverOpenChangeReasons } from "@components/atoms/Popover/Popover";
 
 // Styles
 import "./PopoverConfirm.scss";
@@ -36,7 +44,7 @@ interface IPopoverConfirmProps {
     /**
      * Callback fired when the open state changes (e.g. outside click).
      */
-    onOpenChange?: (isOpen: boolean) => void;
+    onOpenChange?: (isOpen: boolean, e: Event | MouseEvent, reason: PopoverOpenChangeReasons) => void;
     /**
      * Visual status of the confirm dialog. Changes the header icon and the primary button appearance.<br/>
      * Possible values: `error | warning`
@@ -138,26 +146,16 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
         }
     }, [controlledOpen]);
 
-    useClickOutside(
-        (e) => {
-            const onReferenceClick =
-                e.target instanceof Node &&
-                popoverRef.current.referenceElement?.current instanceof Node &&
-                popoverRef.current.referenceElement.current.contains(e.target as Node);
-
-            if (!onReferenceClick && isOpenState) {
-                setIsOpenState(false);
-                onOpenChange?.(false);
-            }
-        },
-        [popoverRef.current.floatingElement]
-    );
-
     const primaryButtonAppearance = appearanceByStatus[status];
     const IconComponent = iconByStatus[status];
     const headerIcon: FC<IconProps> = ({ className, ...props }: IconProps) => (
         <IconComponent {...props} className={classNames(className, `popoverConfirm__headerIcon_${status}`)} size={20} />
     );
+
+    const handlePopoverClose = (e: Event | MouseEvent, reason: PopoverOpenChangeReasons) => {
+        setIsOpenState(false);
+        onOpenChange?.(false, e, reason);
+    };
 
     const footerActions = React.useMemo((): IPopoverFooterActionProps[] => {
         const currentActions = actions || {
@@ -198,6 +196,7 @@ const PopoverConfirm: FC<IPopoverConfirmProps> = ({
                 hasCloseButton={false}
                 Icon={headerIcon}
                 mobileHeightMode="fit"
+                onClose={handlePopoverClose}
             >
                 <PopoverBody>
                     <div className={classNames("popoverConfirm__content", `popoverConfirm__content_size_${size}`)}>

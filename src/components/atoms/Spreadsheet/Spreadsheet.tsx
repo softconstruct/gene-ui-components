@@ -28,7 +28,7 @@ interface ISpreadsheetProps {
      * A callback function triggered when a close interaction is detected (e.g., click outside).
      * Use this to handle cleanup or update the state controlling open.
      */
-    onClose?: () => void;
+    onClose?: (e: MouseEvent) => void;
     /**
      * Controls whether padding/inset styles are applied to the content area inside the Spreadsheet.
      * Set to `false` to remove internal spacing for edge-to-edge content.
@@ -59,8 +59,8 @@ const Spreadsheet: FC<ISpreadsheetProps> = ({
     className,
     heightMode = "full"
 }) => {
-    const onCloseHandler = () => {
-        if (open) onClose();
+    const onCloseHandler = (e: MouseEvent) => {
+        if (open) onClose(e);
     };
     const bodyRef = useClickOutside(onCloseHandler);
     const { lock, unlock } = useScrollLock(document.body);

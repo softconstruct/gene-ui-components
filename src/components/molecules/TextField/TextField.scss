@@ -204,7 +204,9 @@
     }
 
     &__input {
-        width: 100%;
+        width: auto;
+        flex: 1 1 auto;
+        min-width: 0;
         height: 100%;
         border: none;
         background-color: transparent;
@@ -221,6 +223,16 @@
         align-items: center;
         gap: var(--guit-ref-spacing-3xsmall);
         flex: 0 0 auto;
+    }
+
+    &__suffix {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        color: var(--guit-sem-color-foreground-neutral-1);
+
+        &_noIconAfter {
+            padding-inline-end: var(--guit-ref-spacing-medium);
+        }
     }
 
     &__info {

@@ -13,6 +13,7 @@ import PopoverFooter, { IPopoverFooterActionProps } from "./PopoverFooter";
 
 describe("Popover", () => {
     let setup: ReactWrapper<IPopoverProps>;
+    const initialInnerWidth = window.innerWidth;
 
     const Component = (
         <Popover size="small" margin={0} setProps={() => {}}>
@@ -36,6 +37,12 @@ describe("Popover", () => {
 
     afterEach(() => {
         setup.unmount();
+        Object.defineProperty(window, "innerWidth", {
+            configurable: true,
+            writable: true,
+            value: initialInnerWidth
+        });
+        window.dispatchEvent(new Event("resize"));
     });
 
     it("renders without crashing", () => {
@@ -51,6 +58,50 @@ describe("Popover", () => {
         const title = "test";
         setup.setProps({ open: true, title });
         expect(provider().find(".popover__header").text()).toBe(title);
+    });
+
+    it("renders Spreadsheet on mobile by default", () => {
+        Object.defineProperty(window, "innerWidth", {
+            configurable: true,
+            writable: true,
+            value: 320
+        });
+        window.dispatchEvent(new Event("resize"));
+
+        const wrapper = mount(
+            <Popover size="small" margin={0} setProps={() => {}} open>
+                <PopoverBody>
+                    <div className="swapComponent" />
+                </PopoverBody>
+            </Popover>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        expect(wrapper.getWrappingComponent().find(".spreadsheet").exists()).toBeTruthy();
+        wrapper.unmount();
+    });
+
+    it("keeps regular popover on mobile when disableMobileSpreadsheet is true", () => {
+        Object.defineProperty(window, "innerWidth", {
+            configurable: true,
+            writable: true,
+            value: 320
+        });
+        window.dispatchEvent(new Event("resize"));
+
+        const wrapper = mount(
+            <Popover size="small" margin={0} setProps={() => {}} open disableMobileSpreadsheet>
+                <PopoverBody>
+                    <div className="swapComponent" />
+                </PopoverBody>
+            </Popover>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        const wrapped = wrapper.getWrappingComponent();
+        expect(wrapped.find(".spreadsheet").exists()).toBeFalsy();
+        expect(wrapped.find(".popover").exists()).toBeTruthy();
+        wrapper.unmount();
     });
 
     it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "fitContent"])(
@@ -239,5 +290,49 @@ describe("Popover", () => {
         wrapper.update();
         expect(onClose).not.toHaveBeenCalled();
         wrapper.unmount();
+    });
+
+    it("calls onClose with 'escape-key' reason when Escape is pressed", () => {
+        const onCloseMock = jest.fn();
+        setup.setProps({ open: true, onClose: onCloseMock });
+
+        act(() => {
+            const event = new KeyboardEvent("keydown", { key: "Escape", bubbles: true });
+            document.dispatchEvent(event);
+        });
+
+        setup.update();
+        expect(onCloseMock).toHaveBeenCalledTimes(1);
+        expect(onCloseMock.mock.calls[0][1]).toBe("escape-key");
+    });
+
+    it("calls onClose with 'outside-press' reason after mousedown inside then outside popover", () => {
+        const onCloseMock = jest.fn();
+        setup.setProps({ open: true, onClose: onCloseMock });
+
+        const popoverElement = provider().find(".popover").first().getDOMNode() as HTMLElement;
+
+        act(() => {
+            popoverElement.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+            document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+        });
+
+        setup.update();
+        expect(onCloseMock).toHaveBeenCalledTimes(1);
+        expect(onCloseMock.mock.calls[0][1]).toBe("outside-press");
+    });
+
+    it("calls onClose with 'outside-press' reason when a click occurs outside the popover", () => {
+        const onCloseMock = jest.fn();
+        setup.setProps({ open: true, onClose: onCloseMock });
+
+        act(() => {
+            const event = new MouseEvent("mousedown", { bubbles: true });
+            document.dispatchEvent(event);
+        });
+
+        setup.update();
+        expect(onCloseMock).toHaveBeenCalledTimes(1);
+        expect(onCloseMock.mock.calls[0][1]).toBe("outside-press");
     });
 });
