@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useState } from "react";
+import React, { FC, Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import classNames from "classnames";
 
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
@@ -150,18 +150,25 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
         });
     };
 
-    const handleCrossListDrop = (payload: ICrossListDropPayload) => {
-        const fromPanelIndex = panels.findIndex((panel) => panel.id === payload.sourceListId);
-        const toPanelIndex = panels.findIndex((panel) => panel.id === payload.targetListId);
+    const handleCrossListDrop = ({
+        sourceListId,
+        targetListId,
+        sourceId,
+        targetId,
+        edge,
+        isEmptyTarget
+    }: ICrossListDropPayload) => {
+        const fromPanelIndex = panels.findIndex(({ id }) => id === sourceListId);
+        const toPanelIndex = panels.findIndex(({ id }) => id === targetListId);
         if (fromPanelIndex < 0 || toPanelIndex < 0 || fromPanelIndex === toPanelIndex) return;
 
         const { sourceItems, targetItems, movedIds } = moveItemByDrag(
             resolvedPanelItems[fromPanelIndex],
             resolvedPanelItems[toPanelIndex],
-            payload.sourceId,
-            payload.targetId,
-            payload.edge,
-            payload.isEmptyTarget
+            sourceId,
+            targetId,
+            edge,
+            isEmptyTarget
         );
         if (!movedIds.length) return;
 
@@ -185,9 +192,10 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
     return (
         <div className={classNames("transferList", `transferList_panels${panelCount}`, className)}>
             {panels.map((panel, panelIndex) => (
-                <React.Fragment key={panel.id}>
+                <Fragment key={panel.id}>
                     <div className="transferList__panel">
                         <ActionableList
+                            className="transferList__actionableList"
                             withCheckbox
                             draggable={draggable}
                             dragListId={draggable ? panel.id : undefined}
@@ -222,7 +230,7 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
                             />
                         </div>
                     )}
-                </React.Fragment>
+                </Fragment>
             ))}
         </div>
     );
