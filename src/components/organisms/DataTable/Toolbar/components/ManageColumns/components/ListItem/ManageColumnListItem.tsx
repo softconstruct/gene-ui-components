@@ -1,8 +1,4 @@
-import React, { KeyboardEvent, useEffect, useRef, useState } from "react";
-import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
-import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/disable-native-drag-preview";
-import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unhandled";
+import React, { KeyboardEvent } from "react";
 import { Column } from "@tanstack/react-table";
 import classNames from "classnames";
 
@@ -13,6 +9,9 @@ import Checkbox from "@components/molecules/Checkbox";
 
 // Styles
 import "./ManageColumnListItem.scss";
+
+// Hooks
+import { useColumnListItemDnD } from "../../../../../hooks/useCustomListItemDnD";
 
 interface IManageColumnListItemProps<TData> {
     /**
@@ -72,91 +71,18 @@ const ManageColumnListItem = <TData,>({
 }: IManageColumnListItemProps<TData>) => {
     const { header } = column.columnDef;
     const headerText = typeof header === "string" ? header : "";
-
     const PinIconElement = isPinnedDraft ? PinFilled : Pin;
 
-    const itemRef = useRef<HTMLDivElement>(null);
-    const dragHandleRef = useRef<HTMLDivElement>(null);
-    const onDragTargetChangeRef = useRef(onDragTargetChange);
-
-    const [isDragging, setIsDragging] = useState(false);
-
-    onDragTargetChangeRef.current = onDragTargetChange;
-
-    const computeEdge = (clientY: number): string => {
-        const rowEl = itemRef.current;
-        if (!rowEl) return "bottom";
-        const { top, height } = rowEl.getBoundingClientRect();
-        return clientY < top + height / 2 ? "top" : "bottom";
-    };
-
-    useEffect(() => {
-        const el = itemRef.current;
-        const dragHandle = dragHandleRef.current;
-        if (!el || !dragHandle) return;
-
-        combine(
-            draggable({
-                element: el,
-                dragHandle,
-                getInitialData: () => {
-                    const rect = el.getBoundingClientRect();
-                    const clone = el.cloneNode(true) as HTMLElement;
-
-                    clone.classList.remove("manageColumnListItem_dragging");
-                    clone.classList.add("manageColumnListItem_dragPreview");
-
-                    Object.assign(clone.style, {
-                        width: `${rect.width}px`,
-                        height: `${rect.height}px`
-                    });
-
-                    return {
-                        id: column.id,
-                        previewNode: clone,
-                        initialRect: rect
-                    };
-                },
-                onGenerateDragPreview: ({ nativeSetDragImage }) => {
-                    disableNativeDragPreview({ nativeSetDragImage });
-                },
-                onDragStart: () => {
-                    setIsDragging(true);
-                    preventUnhandled.start();
-                },
-                onDrop: () => {
-                    setIsDragging(false);
-                    preventUnhandled.stop();
-                }
-            }),
-            dropTargetForElements({
-                element: el,
-                canDrop: ({ source }) => source.data.id !== column.id,
-                getData: () => ({ id: column.id }),
-                onDragEnter: ({ location }) => {
-                    onDragTargetChangeRef.current?.(computeEdge(location.current.input.clientY));
-                },
-                onDrag: ({ location }) => {
-                    onDragTargetChangeRef.current?.(computeEdge(location.current.input.clientY));
-                }
-            })
-        );
-    }, [column.id]);
+    const { itemRef, dragHandleRef, isDragging, onDragHandleKeyDown } = useColumnListItemDnD({
+        columnId: column.id,
+        onDragTargetChange,
+        onKeyboardReorder
+    });
 
     const onPinKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
             onPinToggle(column);
-        }
-    };
-
-    const onDragHandleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "ArrowUp") {
-            e.preventDefault();
-            onKeyboardReorder?.(column.id, "up");
-        } else if (e.key === "ArrowDown") {
-            e.preventDefault();
-            onKeyboardReorder?.(column.id, "down");
         }
     };
 

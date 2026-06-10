@@ -145,6 +145,6 @@
         transform-origin: top left;
         pointer-events: none;
         transform: var(--drag-layer-transform);
-        z-index: 1;
+        z-index: 12;
     }
 }

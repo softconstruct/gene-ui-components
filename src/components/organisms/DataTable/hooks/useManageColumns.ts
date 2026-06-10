@@ -147,19 +147,14 @@ export const useManageColumns = <TData>({
             visibilityChanges[colId] = draftVisibility[colId] ?? true;
         });
 
-        // Ensure pinned columns are at the top of the order
         const leftPinned = draftPinning.left || [];
         const rightPinned = draftPinning.right || [];
         const allPinnedIds = [...leftPinned, ...rightPinned];
 
-        // We want to maintain the order from draftColumnOrder for all columns.
-        // Pinned columns should come first in the final order passed to onApplyColumnOrder,
-        // but their relative order must match draftColumnOrder.
         const pinnedIds = draftColumnOrder.filter((id) => allPinnedIds.includes(id));
         const unpinnedIds = draftColumnOrder.filter((id) => !allPinnedIds.includes(id));
         const finalOrder = [...pinnedIds, ...unpinnedIds];
 
-        // Also update the draft pinning to match the final order for consistency
         const newLeftPinned = finalOrder.filter((id) => leftPinned.includes(id));
         const newRightPinned = finalOrder.filter((id) => rightPinned.includes(id));
         const finalPinning = { ...draftPinning, left: newLeftPinned, right: newRightPinned };
