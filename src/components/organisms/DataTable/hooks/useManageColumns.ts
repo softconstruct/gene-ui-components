@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import { Column, ColumnOrderState, ColumnPinningState } from "@tanstack/react-table";
+import { Column, ColumnOrderState, ColumnPinningState, Table } from "@tanstack/react-table";
 
 // Types
 import { ColumnVisibilityState, ManageColumnsConfig } from "@components/organisms/DataTable/types";
@@ -16,18 +16,9 @@ export interface IManageColumnsDiffPayload {
 }
 
 interface IUseManageColumnsParams<TData> {
-    columns: Column<TData>[];
-    columnVisibility: ColumnVisibilityState;
-    defaultColumnVisibility: ColumnVisibilityState;
-    onApplyColumnVisibility: (nextVisibility: ColumnVisibilityState) => void;
-    columnPinning: ColumnPinningState;
-    defaultColumnPinning: ColumnPinningState;
-    onApplyColumnPinning: (nextPinning: ColumnPinningState) => void;
-    columnOrder: ColumnOrderState;
-    defaultColumnOrder: ColumnOrderState;
-    onApplyColumnOrder: (nextOrder: ColumnOrderState) => void;
-    onToggle?: (open: boolean) => void;
-    manageColumnsConfig?: ManageColumnsConfig;
+    table: Table<TData>;
+    manageColumnsConfig: ManageColumnsConfig;
+    initialColumnVisibility: ColumnVisibilityState;
 }
 
 const sortColumns = <TData>(cols: Column<TData>[], order: string[]) => {
@@ -43,19 +34,19 @@ const sortColumns = <TData>(cols: Column<TData>[], order: string[]) => {
 };
 
 export const useManageColumns = <TData>({
-    columns,
-    columnVisibility,
-    defaultColumnVisibility,
-    onApplyColumnVisibility,
-    columnPinning,
-    defaultColumnPinning,
-    onApplyColumnPinning,
-    columnOrder,
-    defaultColumnOrder,
-    onApplyColumnOrder,
-    onToggle,
-    manageColumnsConfig
+    table,
+    manageColumnsConfig,
+    initialColumnVisibility
 }: IUseManageColumnsParams<TData>) => {
+    const columns = table.getAllLeafColumns();
+    const { columnVisibility } = table.getState();
+    const { columnPinning } = table.getState();
+    const { columnOrder } = table.getState();
+
+    const defaultColumnVisibility = initialColumnVisibility;
+    const defaultColumnPinning: ColumnPinningState = { left: [], right: [] };
+    const defaultColumnOrder = useMemo(() => columns.map((c) => c.id), [columns]);
+
     const isControlled = manageColumnsConfig && manageColumnsConfig.open !== undefined;
 
     const [internalOpen, setInternalOpen] = useState(false);
@@ -112,7 +103,6 @@ export const useManageColumns = <TData>({
         if (!isControlled) {
             setInternalOpen(newOpen);
         }
-        onToggle?.(newOpen);
     };
 
     const openPopover = () => {
@@ -124,7 +114,6 @@ export const useManageColumns = <TData>({
         setSearchValue("");
         resetDiffTracker();
         setPopoverOpen(!popoverOpen);
-        onToggle?.(true);
     };
 
     const closePopover = () => {
@@ -136,7 +125,6 @@ export const useManageColumns = <TData>({
         setColumnsToRender(sortColumns(columns, order));
         setSearchValue("");
         resetDiffTracker();
-        onToggle?.(false);
     };
 
     const handleCancel = () => closePopover();
@@ -167,12 +155,11 @@ export const useManageColumns = <TData>({
             orderChanges: diffTracker.orderChanged || !arraysEqual(finalOrder, columnOrder) ? finalOrder : null
         };
 
-        onApplyColumnVisibility(draftVisibility);
-        onApplyColumnPinning(finalPinning);
-        onApplyColumnOrder(finalOrder);
+        table.setColumnVisibility(draftVisibility);
+        table.setColumnPinning(finalPinning);
+        table.setColumnOrder(finalOrder);
 
         setPopoverOpen(false);
-        onToggle?.(false);
         resetDiffTracker();
 
         if (manageColumnsConfig?.onSave) {
@@ -242,7 +229,6 @@ export const useManageColumns = <TData>({
             const nextVal = !(prev[column.id] ?? true);
             const originalVal = columnVisibility[column.id] ?? true;
 
-            // Collect diff into the object
             setDiffTracker((prevDiffs) => {
                 const newVis = new Set(prevDiffs.visibility);
                 if (nextVal !== originalVal) newVis.add(column.id);

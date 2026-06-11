@@ -37,10 +37,15 @@ import {
 // Styles
 import "./DataTable.scss";
 
-/**
- * Props for the {@link DataTable} component.
- * @template TData - The shape of the overall row data object.
- */
+// Context
+import { DataTableProvider } from "./context";
+
+const defaultColumn = {
+    cell: <TData, TValue>({ getValue }: CellContext<TData, TValue>) => (
+        <DefaultCellComponent value={String(getValue() ?? "")} />
+    )
+};
+
 interface IDataTableProps<TData> {
     /**
      * Additional class for the parent element.
@@ -183,21 +188,6 @@ interface IDataTableProps<TData> {
     manageColumnsConfig?: ManageColumnsConfig;
 }
 
-const defaultColumn = {
-    cell: <TData, TValue>({ getValue }: CellContext<TData, TValue>) => (
-        <DefaultCellComponent value={String(getValue() ?? "")} />
-    )
-};
-
-/**
- * Data Table used to display structured information in a grid format, making it easy to organize, view, and interact with large datasets.
- * Data tables are essential for presenting information such as reports, inventories, or user data in a clear,
- * sortable, and filterable manner, allowing users to quickly find, analyze, and manipulate data.
- *
- * @template TData - The shape of the overall row data object.
- * @param props - The properties for the component.
- * @returns The fully assembled DataTable component including headers, body, and optional pagination.
- */
 const DataTable = <TData,>({
     className,
     data = [],
@@ -232,8 +222,6 @@ const DataTable = <TData,>({
 
     const isExpandable = Boolean(renderExpandedRow);
 
-    // Keep the latest `onRowExpandChange` in a ref so the column model isn't
-    // rebuilt every render when consumers pass an inline (un-memoized) handler.
     const onRowExpandChangeRef = useRef(onRowExpandChange);
     useEffect(() => {
         onRowExpandChangeRef.current = onRowExpandChange;
@@ -298,59 +286,34 @@ const DataTable = <TData,>({
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
-    const handleApplyColumnVisibility = useCallback((nextVisibility: ColumnVisibilityState) => {
-        setColumnVisibility(nextVisibility);
-    }, []);
-
-    const handleApplyColumnPinning = useCallback((nextPinning: ColumnPinningState) => {
-        setColumnPinning(nextPinning);
-    }, []);
-
-    const handleApplyColumnOrder = useCallback((nextOrder: ColumnOrderState) => {
-        setColumnOrder(nextOrder);
-    }, []);
-
-    const leafColumns = table.getAllLeafColumns();
-    const defaultColumnOrder = useMemo(() => leafColumns.map((c) => c.id), [leafColumns]);
-
     return (
-        <div className={classNames("dataTable", className)}>
-            <Toolbar
-                columns={leafColumns}
-                columnVisibility={columnVisibility}
-                defaultColumnVisibility={initialColumnVisibility}
-                onApplyColumnVisibility={handleApplyColumnVisibility}
-                columnPinning={columnPinning}
-                defaultColumnPinning={{ left: [], right: [] }}
-                onApplyColumnPinning={handleApplyColumnPinning}
-                columnOrder={columnOrder}
-                defaultColumnOrder={defaultColumnOrder}
-                onApplyColumnOrder={handleApplyColumnOrder}
-                manageColumnsConfig={manageColumnsConfig}
-            />
-            <Scrollbar>
-                <table
-                    className={classNames("dataTable__table", {
-                        dataTable__noDataToDisplay: isTableDataEmpty
-                    })}
-                >
-                    <TableHeader sticky={sticky} headerGroups={table.getHeaderGroups()} />
-                    <TableBody
-                        loading={isTableLoading}
-                        loadingText={loadingText}
-                        rows={table.getRowModel().rows}
-                        noDataTexts={noDataTexts}
-                        noDataAvailableActions={noDataAvailableActions}
-                        rowActions={rowActions}
-                        getRowStatus={getRowStatus}
-                        renderExpandedRow={renderExpandedRow}
-                    />
-                </table>
-            </Scrollbar>
-            {shouldShowPagination && (
-                <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableLoading} />
-            )}
-        </div>
+        <DataTableProvider value={{ table, manageColumnsConfig, initialColumnVisibility }}>
+            <div className={classNames("dataTable", className)}>
+                <Toolbar />
+                <Scrollbar>
+                    <table
+                        className={classNames("dataTable__table", {
+                            dataTable__noDataToDisplay: isTableDataEmpty
+                        })}
+                    >
+                        <TableHeader sticky={sticky} headerGroups={table.getHeaderGroups()} />
+                        <TableBody
+                            loading={isTableLoading}
+                            loadingText={loadingText}
+                            rows={table.getRowModel().rows}
+                            noDataTexts={noDataTexts}
+                            noDataAvailableActions={noDataAvailableActions}
+                            rowActions={rowActions}
+                            getRowStatus={getRowStatus}
+                            renderExpandedRow={renderExpandedRow}
+                        />
+                    </table>
+                </Scrollbar>
+                {shouldShowPagination && (
+                    <Pagination className="dataTable__pagination" {...paginationProps} disabled={isTableLoading} />
+                )}
+            </div>
+        </DataTableProvider>
     );
 };
 

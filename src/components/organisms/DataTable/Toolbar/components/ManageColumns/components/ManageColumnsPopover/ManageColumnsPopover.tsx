@@ -1,5 +1,4 @@
 import React, {
-    ChangeEvent,
     Dispatch,
     RefObject,
     SetStateAction,
@@ -10,7 +9,7 @@ import React, {
     useState
 } from "react";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { Column, ColumnPinningState } from "@tanstack/react-table";
+import { Column } from "@tanstack/react-table";
 import classNames from "classnames";
 
 import { Magnifier } from "@geneui/icons";
@@ -25,150 +24,43 @@ import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
 import ManageColumnListItem from "@components/organisms/DataTable/Toolbar/components/ManageColumns/components/ListItem/ManageColumnListItem";
-import { ColumnVisibilityState, ManageColumnsConfig } from "@components/organisms/DataTable/types";
 
 // Styles
 import "./ManageColumnsPopover.scss";
 
-interface IManageColumnsPopoverProps<TData> {
-    /**
-     * Determines whether the popover is currently open and visible.
-     */
-    open: boolean;
-    /**
-     * Indicates whether there are any changes made to the draft state.
-     */
-    hasChanges?: boolean;
-    /**
-     * Indicates whether the popover is in a default state (i.e., all checkboxes are checked).
-     */
-    isDefaultState?: boolean;
-    /**
-     * Callback function triggered when the popover requests to be closed
-     * (e.g., by pressing the escape key or clicking outside).
-     */
-    onClose: () => void;
-    /**
-     * Reference to the popover's internal elements, used for positioning
-     * and detecting outside clicks.
-     */
+// Context
+import { useDataTableContext, useManageColumnsContext } from "../../../../../context";
+
+interface IManageColumnsPopoverProps {
     popoverRef: RefObject<IPopoverRef>;
-    /**
-     * State setter function for injecting dynamic properties into the Popover component
-     * (managed by the `useManageColumns` hook).
-     */
     setProps: Dispatch<SetStateAction<Record<string, unknown>>>;
-    /**
-     * Callback function triggered when the user types in the search input field.
-     * @param e - The change event from the input element.
-     */
-    onSearch: (e: ChangeEvent<HTMLInputElement>) => void;
-    /**
-     * The array of filtered TanStack Table columns to be displayed in the list.
-     */
-    columns: Column<TData>[];
-
-    /**
-     * Indicates whether there is an active searching value.
-     */
-    isSearchActive?: boolean;
-
-    /**
-     * Column visibility state used by the Manage Columns popover.
-     * @default { left: [], right: [] }
-     */
-    draftVisibility: ColumnVisibilityState;
-    /**
-     * Callback function triggered when a user toggles the checkbox for a specific column.
-     * @param column - The column instance whose visibility is being toggled.
-     */
-    onColumnVisibilityChange: (column: Column<TData>) => void;
-
-    /**
-     * Column pinning state used by the Manage Columns popover.
-     * @default { left: [], right: [] }
-     */
-    draftPinning: ColumnPinningState;
-    /**
-     * Callback function triggered when a user toggles the pinning state of a column.
-     * @param column
-     */
-    onColumnPinningChange: (column: Column<TData>) => void;
-
-    /**
-     * Callback function triggered when a user reorders columns by dragging and dropping them.
-     * @param sourceId
-     * @param destinationId
-     * @param edge
-     */
-    onColumnReorder: (sourceId: string, destinationId: string, edge: string | null) => void;
-    /**
-     * Callback function triggered when keyboard reordering is performed.
-     * @param sourceId
-     * @param direction
-     */
-    onKeyboardReorder?: (sourceId: string, direction: "up" | "down") => void;
-    /**
-     * Callback function triggered when the save button is clicked.
-     */
-    onSave: () => void;
-    /**
-     * Callback function triggered when the cancel button is clicked.
-     */
-    onCancel: () => void;
-    /**
-     * Callback function triggered when the restore defaults button is clicked.
-     */
-    onRestoreDefaults: () => void;
-    /**
-     * Configuration object for managing columns.
-     */
-    manageColumnsConfig: ManageColumnsConfig;
-    /**
-     * Callback function triggered when the search clear button is clicked.
-     */
-    handleSearchClear: () => void;
-    /**
-     * Indicates whether all columns are checked.
-     */
-    allColumnsChecked: boolean;
-    /**
-     * Indicates whether the select-all checkbox is in an indeterminate state.
-     */
-    allColumnsIndeterminate: boolean;
-    /**
-     * Callback function triggered when the select-all checkbox is toggled.
-     * @param checked
-     */
-    onToggleAllColumns: (checked: boolean) => void;
 }
 
-const ManageColumnsPopover = <TData,>({
-    open,
-    onClose,
-    popoverRef,
-    setProps,
-    onSearch,
-    columns,
-    draftVisibility,
-    onColumnVisibilityChange,
-    draftPinning,
-    isDefaultState,
-    hasChanges,
-    onColumnPinningChange,
-    onColumnReorder,
-    onKeyboardReorder,
-    onSave,
-    onCancel,
-    onRestoreDefaults,
-    manageColumnsConfig,
-    handleSearchClear,
-    allColumnsChecked,
-    allColumnsIndeterminate,
-    onToggleAllColumns,
-    isSearchActive
-}: IManageColumnsPopoverProps<TData>) => {
-    const hasColumns = columns.length > 0;
+const ManageColumnsPopover = ({ popoverRef, setProps }: IManageColumnsPopoverProps) => {
+    const { manageColumnsConfig } = useDataTableContext<unknown>();
+    const {
+        popoverOpen: open,
+        handleSearch: onSearch,
+        columnsToRender: columns,
+        draftVisibility,
+        handleToggleColumnVisibility: onColumnVisibilityChange,
+        draftPinning,
+        handleToggleColumnPinning: onColumnPinningChange,
+        handleColumnReorder: onColumnReorder,
+        handleKeyboardReorder: onKeyboardReorder,
+        handleSave: onSave,
+        handleCancel: onCancel,
+        handleRestoreDefaults: onRestoreDefaults,
+        handleSearchClear,
+        allColumnsChecked,
+        allColumnsIndeterminate,
+        handleToggleAllColumnsVisibility: onToggleAllColumns,
+        isSearchActive,
+        isDefaultState,
+        hasChanges
+    } = useManageColumnsContext<unknown>();
+
+    const hasColumns = columns && columns.length > 0;
     const { loading, texts: manageColumnsTexts } = manageColumnsConfig;
 
     const [dropGap, setDropGap] = useState<{ targetId: string; edge: string } | null>(null);
@@ -217,7 +109,7 @@ const ManageColumnsPopover = <TData,>({
             withArrow={false}
             open={open}
             setProps={setProps}
-            onClose={onClose}
+            onClose={onCancel}
             size="fitContent"
             mobileHeightMode="fit"
         >
@@ -258,7 +150,7 @@ const ManageColumnsPopover = <TData,>({
                             })}
                         >
                             {hasColumns ? (
-                                columns.map((column) => {
+                                columns.map((column: Column<unknown>) => {
                                     const isPinnedDraft = (draftPinning.left || []).includes(column.id);
                                     const isDisabled = manageColumnsConfig?.disabledColumns?.includes(column.id);
                                     return (
