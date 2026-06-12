@@ -2,7 +2,10 @@ import React, { MouseEvent } from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
+import Button from "@components/atoms/Button";
 import Loader from "@components/atoms/Loader";
+import { Popover } from "@components/atoms/Popover";
+import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
@@ -352,7 +355,9 @@ describe("Table Component", () => {
 
         const toolbar = setup.find(Toolbar);
         expect(toolbar.exists()).toBeTruthy();
-        expect(toolbar.prop("manageColumnsConfig").enabled).toBe(true);
+
+        const manageButton = setup.find(Button).filterWhere((b) => b.text().includes("Manage columns"));
+        expect(manageButton.prop("disabled")).toBe(false);
     });
 });
 
@@ -458,62 +463,73 @@ describe("Table Component - Manage Columns Integration", () => {
         setup.unmount();
     });
 
-    it("passes manageColumnsConfig with controlled open state and new callbacks to Toolbar", async () => {
-        const onSave = jest.fn();
-        const onRestoreDefaults = jest.fn();
-        const onSearch = jest.fn();
-        const onColumnVisibilityChange = jest.fn();
-
+    it("respects the controlled open state and configuration within ManageColumns", async () => {
         await act(async () => {
             setup.setProps({
                 manageColumnsConfig: {
                     open: true,
                     enabled: true,
-                    onSave,
-                    onRestoreDefaults,
-                    onSearch,
-                    onColumnVisibilityChange
+                    available: true,
+                    texts: { label: "Custom Manage Label" }
                 }
             });
         });
         setup.update();
 
-        const toolbar = setup.find(Toolbar);
-        const config = toolbar.prop("manageColumnsConfig");
+        const manageButton = setup.find(Button).filterWhere((b) => b.text().includes("Custom Manage Label"));
+        expect(manageButton.exists()).toBeTruthy();
 
-        expect(config).toBeDefined();
-        expect(config?.open).toBe(true);
-        expect(config?.enabled).toBe(true);
-        expect(config?.onSave).toBe(onSave);
-        expect(config?.onRestoreDefaults).toBe(onRestoreDefaults);
-        expect(config?.onSearch).toBe(onSearch);
-        expect(config?.onColumnVisibilityChange).toBe(onColumnVisibilityChange);
+        const popover = setup.find(Popover);
+        expect(popover.prop("open")).toBe(true);
     });
 
-    it("updates table column visibility when onApplyColumnVisibility is emitted", async () => {
+    it("updates table column visibility when a column checkbox is toggled and saved", async () => {
         expect(setup.find("thead th").length).toBe(mockColumns.length);
 
-        const toolbar = setup.find(Toolbar);
+        // Open the popover layout
+        await act(async () => {
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
         const firstColId = mockColumns[0].accessorKey as string;
 
+        const checkbox = setup.find(Checkbox).filterWhere((c) => c.prop("id") === firstColId);
         await act(async () => {
-            const newVisibility = { [firstColId]: false };
-            toolbar.prop("onApplyColumnVisibility")?.(newVisibility);
+            checkbox.prop("onChange")();
+        });
+        setup.update();
+
+        const saveButton = setup.find(Button).filterWhere((b) => b.text().includes("Save"));
+        await act(async () => {
+            saveButton.simulate("click");
         });
         setup.update();
 
         expect(setup.find("thead th").length).toBe(mockColumns.length - 1);
     });
 
-    it("updates table column order when onApplyColumnOrder is emitted", async () => {
-        const toolbar = setup.find(Toolbar);
-        const col1 = mockColumns[0].accessorKey as string;
-        const col2 = mockColumns[1].accessorKey as string;
-
-        const reversedOrder = [col2, col1];
-
+    it("updates table column order when a keyboard reorder action is performed and saved", async () => {
         await act(async () => {
-            toolbar.prop("onApplyColumnOrder")?.(reversedOrder);
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
+        const firstDragHandle = setup.find(".manageColumnListItem__dragHandle").first();
+        await act(async () => {
+            firstDragHandle.simulate("keydown", { key: "ArrowDown" });
+        });
+        setup.update();
+
+        const saveButton = setup.find(Button).filterWhere((b) => b.text().includes("Save"));
+        await act(async () => {
+            saveButton.simulate("click");
         });
         setup.update();
 
@@ -522,14 +538,24 @@ describe("Table Component - Manage Columns Integration", () => {
         expect(headers.at(1).text()).toBe(mockColumns[0].header);
     });
 
-    it("applies pinning classes to body and header cells when onApplyColumnPinning is emitted", async () => {
-        const toolbar = setup.find(Toolbar);
-        const firstColId = mockColumns[0].accessorKey as string;
-
-        const pinState = { left: [firstColId], right: [] };
-
+    it("applies pinning classes to body and header cells when a column is pinned and saved", async () => {
         await act(async () => {
-            toolbar.prop("onApplyColumnPinning")?.(pinState);
+            setup
+                .find(Button)
+                .filterWhere((b) => b.text().includes("Manage columns"))
+                .simulate("click");
+        });
+        setup.update();
+
+        const firstPinAction = setup.find(".manageColumnListItem__pinAction").first();
+        await act(async () => {
+            firstPinAction.simulate("click");
+        });
+        setup.update();
+
+        const saveButton = setup.find(Button).filterWhere((b) => b.text().includes("Save"));
+        await act(async () => {
+            saveButton.simulate("click");
         });
         setup.update();
 

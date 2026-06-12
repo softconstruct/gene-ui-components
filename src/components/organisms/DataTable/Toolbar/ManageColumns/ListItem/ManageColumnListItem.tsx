@@ -11,7 +11,7 @@ import Checkbox from "@components/molecules/Checkbox";
 import "./ManageColumnListItem.scss";
 
 // Hooks
-import { useColumnListItemDnD } from "../../../../../hooks/useCustomListItemDnD";
+import { useColumnListItemDnD } from "../../../hooks/useCustomListItemDnD";
 
 interface IManageColumnListItemProps<TData> {
     /**

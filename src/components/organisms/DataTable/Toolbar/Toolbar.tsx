@@ -1,7 +1,7 @@
 import React from "react";
 
 // Components
-import ManageColumns from "@components/organisms/DataTable/Toolbar/components/ManageColumns/ManageColumns";
+import ManageColumns from "@components/organisms/DataTable/Toolbar/ManageColumns/ManageColumns";
 
 // Styles
 import "./Toolbar.scss";
