@@ -65,7 +65,31 @@ interface IPickerPopoverProps {
         minutes?: string;
         seconds?: string;
     };
+    /**
+     * Current active field
+     */
+    activeField?: "start" | "end";
+    /**
+     * Time parts.
+     */
+    partsStart?: TimeParts;
+    /**
+     * Programmatically disable time parts.
+     * @param type
+     * @param value
+     */
+    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", value: string) => boolean;
 }
+
+const convertTo24Hour = (hStr: string | undefined, meridiem: string | undefined): number => {
+    if (!hStr) return 0;
+    let h = parseInt(hStr, 10);
+    if (meridiem) {
+        if (meridiem === "PM" && h !== 12) h += 12;
+        if (meridiem === "AM" && h === 12) h = 0;
+    }
+    return h;
+};
 
 const PickerPopover: FC<IPickerPopoverProps> = ({
     popoverRef,
@@ -78,9 +102,50 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     mobileHeightMode,
     parts,
     is12Hour,
-    texts
+    texts,
+    shouldDisableTime,
+    activeField,
+    partsStart
 }) => {
     const hours = useMemo(() => (is12Hour ? HOURS_12 : HOURS_24), [is12Hour, HOURS_12, HOURS_24]);
+
+    const isPartDisabled = (header: TimePartKey, item: string): boolean => {
+        if (shouldDisableTime?.(header, item)) return true;
+
+        if (activeField !== "end" || !partsStart) return false;
+
+        const startH = convertTo24Hour(partsStart.hours, partsStart.meridiem);
+        const startM = parseInt(partsStart.minutes ?? "00", 10);
+        const startS = parseInt(partsStart.seconds ?? "00", 10);
+
+        if (header === "meridiem") {
+            return partsStart.meridiem === "PM" && item === "AM";
+        }
+
+        const currentMeridiem = parts?.meridiem ?? (is12Hour ? "AM" : undefined);
+
+        if (header === "hours") {
+            return convertTo24Hour(item, currentMeridiem) < startH;
+        }
+
+        if (header === "minutes") {
+            const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
+            if (currentH < startH) return true;
+            if (currentH === startH) return parseInt(item, 10) < startM;
+            return false;
+        }
+
+        if (header === "seconds") {
+            const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
+            const currentM = parseInt(parts?.minutes ?? "00", 10);
+            if (currentH < startH) return true;
+            if (currentH === startH && currentM < startM) return true;
+            if (currentH === startH && currentM === startM) return parseInt(item, 10) < startS;
+            return false;
+        }
+
+        return false;
+    };
 
     const timeColumns: Array<{ header: TimePartKey; data: string[]; text: string }> = [
         { header: "hours", data: hours, text: texts?.hours || "hours" },
@@ -127,6 +192,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                                                     "timePicker__pickerButton",
                                                     `timePicker__pickerButton_size_${size}`
                                                 )}
+                                                disabled={isPartDisabled(header, item)}
                                                 size={size}
                                             >
                                                 {item}
@@ -151,6 +217,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                                     "timePicker__pickerButton",
                                     `timePicker__pickerButton_size_${size}`
                                 )}
+                                disabled={isPartDisabled("meridiem", "AM")}
                             >
                                 {texts?.amText || "AM"}
                             </PickerButton>
@@ -162,6 +229,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                                     "timePicker__pickerButton",
                                     `timePicker__pickerButton_size_${size}`
                                 )}
+                                disabled={isPartDisabled("meridiem", "PM")}
                             >
                                 {texts?.pmText || "PM"}
                             </PickerButton>

@@ -7,6 +7,7 @@ import ColorPicker, { IColorPickerProps } from "./index";
 
 describe("ColorPicker", () => {
     let setup: ReactWrapper<IColorPickerProps>;
+    const initialInnerWidth = window.innerWidth;
 
     beforeEach(() => {
         setup = mount(<ColorPicker />);
@@ -15,6 +16,12 @@ describe("ColorPicker", () => {
     afterEach(() => {
         setup.unmount();
         jest.clearAllMocks();
+        Object.defineProperty(window, "innerWidth", {
+            configurable: true,
+            writable: true,
+            value: initialInnerWidth
+        });
+        window.dispatchEvent(new Event("resize"));
     });
 
     describe("Rendering & Default States", () => {
@@ -100,22 +107,77 @@ describe("ColorPicker", () => {
             expect(setup.find(".colorPicker__wrapper").exists()).toBeFalsy();
         });
 
-        it("should respect onOutsideClick prop (controlled)", () => {
-            const mockOnOutsideClick = jest.fn();
+        it("should close on outside click after focusing main textfield", () => {
+            setup.find("button.colorIndicator").simulate("click");
+            setup.update();
+
+            const input = setup.find("input.colorPickerTextField__input").getDOMNode() as HTMLInputElement;
             act(() => {
-                setup.setProps({ open: true, onOutsideClick: mockOnOutsideClick });
+                input.focus();
+            });
+
+            act(() => {
+                document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+            });
+            setup.update();
+            expect(setup.find(".colorPicker__wrapper").exists()).toBeFalsy();
+        });
+
+        it("should close on outside click after mousedown inside popover hex input", () => {
+            setup.find("button.colorIndicator").simulate("click");
+            setup.update();
+
+            const hexInput = setup.find(".colorPicker__hexInput input").getDOMNode() as HTMLInputElement;
+            act(() => {
+                hexInput.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
             });
             setup.update();
 
             act(() => {
                 document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
             });
-
-            expect(mockOnOutsideClick).toHaveBeenCalledTimes(1);
+            setup.update();
+            expect(setup.find(".colorPicker__wrapper").exists()).toBeFalsy();
         });
     });
 
     describe("Color Changing & Callback Logic", () => {
+        it("should switch format using Dropdown", () => {
+            act(() => {
+                setup.setProps({ open: true, format: "hex" });
+            });
+            setup.update();
+
+            setup.find(".colorPicker__formatDropdown .textField__wrapper").simulate("click");
+            setup.update();
+            setup.find(".dropdownItem__action").at(0).simulate("click");
+            setup.update();
+
+            expect(setup.find(".colorPicker__rgbInputs").exists()).toBeTruthy();
+        });
+
+        it("should keep ColorPicker open and select dropdown item on mobile", () => {
+            Object.defineProperty(window, "innerWidth", {
+                configurable: true,
+                writable: true,
+                value: 320
+            });
+            window.dispatchEvent(new Event("resize"));
+
+            act(() => {
+                setup.setProps({ open: true, format: "hex" });
+            });
+            setup.update();
+
+            setup.find(".colorPicker__formatDropdown .textField__wrapper").simulate("click");
+            setup.update();
+            setup.find(".dropdownItem__action").at(0).simulate("click");
+            setup.update();
+
+            expect(setup.find(".colorPicker__wrapper").exists()).toBeTruthy();
+            expect(setup.find(".colorPicker__rgbInputs").exists()).toBeTruthy();
+        });
+
         it("Should update color via HEX input field", () => {
             act(() => {
                 setup.setProps({ open: true, format: "hex" });

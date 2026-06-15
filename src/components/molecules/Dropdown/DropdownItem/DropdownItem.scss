@@ -1,0 +1,151 @@
+@use "../../../../assets/styles/mixins";
+
+.dropdownItem {
+    $this: &;
+
+    display: flex;
+    align-items: center;
+    gap: var(--guit-ref-spacing-xsmall);
+    width: 100%;
+    border-radius: var(--guit-ref-radius-3xsmall);
+    color: var(--guit-sem-color-foreground-neutral-2);
+    cursor: pointer;
+
+    @include mixins.media-hover {
+        &:hover {
+            background-color: var(--guit-sem-color-background-neutral-1-nudge-hover);
+        }
+    }
+
+    &:active {
+        background-color: var(--guit-sem-color-background-neutral-1-nudge-pressed);
+    }
+
+    &:has(&__action:focus-visible) {
+        outline-offset: var(--guit-ref-border-width-thin);
+        outline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-focus);
+    }
+
+    &_size {
+        &_large {
+            height: 3.2rem;
+            padding-inline-end: var(--guit-ref-spacing-medium);
+
+            #{ $this }__action {
+                padding-block: var(--guit-ref-spacing-2xsmall);
+                padding-inline-start: var(--guit-ref-spacing-medium);
+            }
+            #{ $this }__main {
+                gap: var(--guit-ref-spacing-medium);
+            }
+        }
+
+        &_medium {
+            height: 2.8rem;
+            padding-inline-end: var(--guit-ref-spacing-small);
+
+            #{ $this }__action {
+                padding-block: var(--guit-ref-spacing-3xsmall);
+                padding-inline-start: var(--guit-ref-spacing-small);
+            }
+            #{ $this }__main {
+                gap: var(--guit-ref-spacing-medium);
+            }
+        }
+
+        &_small {
+            height: 2.4rem;
+            padding-inline-end: var(--guit-ref-spacing-small);
+
+            #{ $this }__action {
+                padding-block: var(--guit-ref-spacing-4xsmall);
+                padding-inline-start: var(--guit-ref-spacing-small);
+            }
+            #{ $this }__main {
+                gap: var(--guit-ref-spacing-small);
+            }
+        }
+    }
+
+    &_single {
+        &_selected {
+            color: var(--guit-sem-color-foreground-selected);
+
+            #{ $this }__info {
+                color: var(--guit-sem-color-foreground-selected);
+            }
+        }
+    }
+
+    &_disabled {
+        pointer-events: none;
+        cursor: default;
+        color: var(--guit-sem-color-foreground-disabled);
+
+        #{ $this }__info {
+            color: var(--guit-sem-color-foreground-disabled);
+        }
+    }
+
+    &__action {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--guit-ref-spacing-xsmall);
+        border-radius: inherit;
+
+        &:focus-visible {
+            outline: none;
+        }
+    }
+
+    &__main {
+        display: inline-flex;
+        align-items: center;
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__trailing {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        flex: 0 0 auto;
+        min-width: 0;
+    }
+
+    &__info {
+        flex: 0 0 auto;
+        color: var(--guit-sem-color-foreground-neutral-1);
+    }
+
+    &__label,
+    &__textAfter {
+        min-width: 0;
+    }
+
+    &__textAfter {
+        color: var(--guit-sem-color-foreground-neutral-3);
+    }
+
+    &__icon,
+    &__checkmark {
+        flex: 0 0 auto;
+    }
+
+    &__iconLabel {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__checkmark {
+        color: var(--guit-sem-color-foreground-selected);
+    }
+
+    &__checkbox {
+        flex: 0 0 auto;
+    }
+}

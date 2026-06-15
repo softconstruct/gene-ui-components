@@ -82,17 +82,28 @@ export { default as Breadcrumb, IBreadcrumbProps, IBreadcrumbItemProps } from ".
 export { default as PageHeader, IPageHeaderProps } from "./components/molecules/PageHeader";
 export { default as PopoverConfirm, IPopoverConfirmProps } from "./components/molecules/PopoverConfirm";
 export {
+    default as Dropdown,
+    DropdownItem,
+    IDropdownItemProps,
+    IDropdownOption,
+    IDropdownFooterAction,
+    IDropdownFooterActions,
+    IDropdownProps
+} from "./components/molecules/Dropdown";
+export {
+    default as ActionableList,
+    IActionableListItem,
+    IActionableListProps,
+    IActionableListTexts
+} from "./components/molecules/ActionableList";
+export { default as List, IListProps, IListItemData } from "./components/molecules/List";
+
+export {
     default as TimePicker,
     ISingleTimePickerProps,
     IRangeTimePickerProps,
     RangeTimePicker
 } from "./components/molecules/TimePicker";
-export type {
-    IActionableListItem,
-    IActionableListProps,
-    IActionableListTexts
-} from "./components/molecules/ActionableList";
-export { default as ActionableList } from "./components/molecules/ActionableList";
 
 // Organisms
 export {

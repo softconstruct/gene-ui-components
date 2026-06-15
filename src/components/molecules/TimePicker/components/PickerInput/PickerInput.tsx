@@ -128,6 +128,10 @@ interface IPickerInputBaseProps {
      * Whether the field should display a clear button to clear the input value.
      */
     clearable?: boolean;
+    /**
+     * Whether the field should display meridiem.
+     */
+    is12Hour?: boolean;
 }
 
 interface ISinglePickerInputProps extends IPickerInputBaseProps {
@@ -224,7 +228,8 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
     onChange,
     onFocus,
     mask = "__:__:__",
-    popoverRefData
+    popoverRefData,
+    is12Hour
 }) => {
     const shouldShowClearableIcon = clearable && value && !disabled && !readOnly;
     return (
@@ -242,8 +247,8 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
             popoverRefData={popoverRefData}
         >
             <InputMask
-                mask={mask}
-                replacement={{ _: /[0-9]/ }}
+                mask={is12Hour ? "__:__:__ aa" : mask}
+                replacement={is12Hour ? { _: /[0-9]/, a: /[a-zA-Z]/ } : { _: /[0-9]/ }}
                 className={classNames("pickerInput__input", {
                     [`pickerInput__input_size_${size}`]: size
                 })}
@@ -278,7 +283,8 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
     onClick,
     onFocus,
     onChange,
-    popoverRefData
+    popoverRefData,
+    is12Hour
 }) => {
     const shouldShowClearableIcon = clearable && (value?.start || value?.end) && !disabled && !readOnly;
     return (
@@ -296,8 +302,8 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
             popoverRefData={popoverRefData}
         >
             <InputMask
-                mask={mask}
-                replacement={{ _: /[0-9]/ }}
+                mask={is12Hour ? "__:__:__ aa" : mask}
+                replacement={is12Hour ? { _: /[0-9]/, a: /[a-zA-Z]/ } : { _: /[0-9]/ }}
                 className={classNames("pickerInput__input", {
                     [`pickerInput__input_size_${size}`]: size
                 })}
@@ -314,8 +320,8 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
             />
             <Minus className="pickerInput__icon" size={16} aria-hidden="true" />
             <InputMask
-                mask={mask}
-                replacement={{ _: /[0-9]/ }}
+                mask={is12Hour ? "__:__:__ aa" : mask}
+                replacement={is12Hour ? { _: /[0-9]/, a: /[a-zA-Z]/ } : { _: /[0-9]/ }}
                 className={classNames("pickerInput__input", {
                     [`pickerInput__input_size_${size}`]: size
                 })}

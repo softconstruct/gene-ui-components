@@ -89,6 +89,12 @@ interface ITimePickerBaseProps {
         minutes?: string;
         seconds?: string;
     };
+    /**
+     * Disabled specific time programmatically.
+     * @param type
+     * @param value
+     */
+    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", value: string) => boolean;
 }
 
 interface ISingleTimePickerProps extends ITimePickerBaseProps {
@@ -144,7 +150,8 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             error,
             errorMessage,
             is12Hour = false,
-            texts
+            texts,
+            shouldDisableTime
         },
         ref
     ) => {
@@ -193,6 +200,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     parts={parts}
                     is12Hour={is12Hour}
                     texts={texts}
+                    shouldDisableTime={shouldDisableTime}
                 />
             </div>
         );
@@ -223,7 +231,8 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             error,
             is12Hour = false,
             errorMessage,
-            texts
+            texts,
+            shouldDisableTime
         },
         ref
     ) => {
@@ -279,6 +288,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     onSelect={handleSelect}
                     is12Hour={is12Hour}
                     texts={texts}
+                    shouldDisableTime={shouldDisableTime}
                 />
             </div>
         );
