@@ -2,7 +2,7 @@ import { FC, MouseEvent, ReactNode } from "react";
 
 import { IconProps } from "@geneui/icons";
 
-import { IManageColumnsDiffPayload } from "@components/organisms/DataTable/hooks/useManageColumns";
+import { IManageColumnsDiffPayload } from "@components/organisms/DataTable/Toolbar/ManageColumns/useManageColumns";
 
 export interface ITableNoDataTexts {
     noDataAvailableTitle?: string;

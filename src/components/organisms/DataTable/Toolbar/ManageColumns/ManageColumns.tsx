@@ -14,8 +14,6 @@ import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
-// Hooks
-import { useManageColumns } from "@components/organisms/DataTable/hooks/useManageColumns";
 import ManageColumnListItem from "@components/organisms/DataTable/Toolbar/ManageColumns/ListItem/ManageColumnListItem";
 
 import useClickOutside from "@hooks/useClickOutside";
@@ -25,6 +23,8 @@ import "./ManageColumns.scss";
 
 // Context
 import { useDataTableContext } from "../../context";
+// Hooks
+import { useManageColumns } from "./useManageColumns";
 
 const ManageColumns = <TData,>() => {
     const { table, manageColumnsConfig, initialColumnVisibility } = useDataTableContext<TData>();
