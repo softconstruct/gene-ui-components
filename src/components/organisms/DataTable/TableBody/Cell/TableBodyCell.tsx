@@ -39,10 +39,8 @@ interface ITableBodyCellProps<TData, TValue> {
     renderer: ColumnDef<TData, TValue>["cell"];
     /**
      * Snapshot of `column.getIsPinned()` captured by the parent at render time.
-     * Required so that state-dependent renderers (pinned column background)
-     * invalidate the memo when the column toggles.
      */
-    isPinned?: boolean | "left" | "right";
+    isPinned?: boolean;
 }
 
 /**
@@ -63,7 +61,7 @@ const TableBodyCell = <TData, TValue>({ cell, renderer, isExpanded, isPinned }: 
             className={classNames("tableBodyCell", {
                 tableBodyCell_expander: isExpanderCell,
                 tableBodyCell_expander_expanded: isExpanded,
-                tableBodyCell_pinned: isPinned !== false
+                tableBodyCell_pinned: isPinned
             })}
             style={{
                 width: isExpanderCell ? EXPANDABLE_CELL_SIZE_REM : undefined,

@@ -43,7 +43,7 @@ const TableHeaderCell = <TData, TValue>({ header }: ITableHeaderCellProps<TData,
         <th
             className={classNames("tableHeaderCell", {
                 tableHeaderCell_expander: isExpanderHeader,
-                tableHeaderCell_pinned: isPinned !== false
+                tableHeaderCell_pinned: isPinned
             })}
             style={{
                 width: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : undefined,

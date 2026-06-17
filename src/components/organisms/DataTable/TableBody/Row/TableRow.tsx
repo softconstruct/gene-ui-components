@@ -73,7 +73,7 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                 })}
             >
                 {row.getVisibleCells().map((cell) => {
-                    const isPinned = cell.column.getIsPinned();
+                    const isPinned = !!cell.column.getIsPinned();
                     return (
                         <TableBodyCell
                             key={cell.id}
