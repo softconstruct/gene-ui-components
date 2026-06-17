@@ -9,7 +9,6 @@ import { Gear, Magnifier } from "@geneui/icons";
 import Button from "@components/atoms/Button";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
-import CustomDragLayer from "@components/molecules/ActionableList/ActionableListItem/CustomDragLayer";
 import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
@@ -21,6 +20,7 @@ import useClickOutside from "@hooks/useClickOutside";
 // Styles
 import "./ManageColumns.scss";
 
+import DnDDragLayer from "../../../../../_internal/components/DnDDragLayer/DnDDragLayer";
 // Context
 import { useDataTableContext } from "../../context";
 // Hooks
@@ -139,7 +139,7 @@ const ManageColumns = <TData,>() => {
                 mobileHeightMode="fit"
             >
                 <PopoverBody withScrollbar={false} withPadding={false} className="manageColumnsPopover__main">
-                    <CustomDragLayer />
+                    <DnDDragLayer />
                     <TextField
                         autoComplete="off"
                         placeholder={manageColumnsTexts?.searchPlaceholder ?? "Search"}
