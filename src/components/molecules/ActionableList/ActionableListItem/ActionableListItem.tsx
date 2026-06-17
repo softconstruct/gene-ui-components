@@ -5,7 +5,7 @@ import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/elem
 import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unhandled";
 import classNames from "classnames";
 
-import { ChevronDown, ChevronRight, GripDots } from "@geneui/icons";
+import { ChevronDown, ChevronLeft, ChevronRight, GripDots } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -154,6 +154,8 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     const isTruncated = useEllipsisDetection(titleTextRef);
     const isSelectedLabelTruncated = useEllipsisDetection(selectedLabelRef);
     const [isDragging, setIsDragging] = useState(false);
+    const isRTLMode = typeof document !== "undefined" && document.dir === "rtl";
+    const collapsedExpandIcon = isRTLMode ? ChevronLeft : ChevronRight;
 
     onDragTargetChangeRef.current = onDragTargetChange;
 
@@ -252,7 +254,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                     size="smallNudge"
                     appearance="secondary"
                     layout="text"
-                    Icon={isExpanded ? ChevronDown : ChevronRight}
+                    Icon={isExpanded ? ChevronDown : collapsedExpandIcon}
                     onClick={onToggleExpand}
                     aria-label={expandAriaLabel}
                     className="actionableListItem__toggle"

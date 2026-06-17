@@ -29,6 +29,9 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
     assertPanelCount(panels);
 
     const mergedTexts = { ...TRANSFER_LIST_DEFAULT_TEXTS, ...texts };
+    const isRTLMode = typeof document !== "undefined" && document.dir === "rtl";
+    const ForwardIcon = isRTLMode ? ChevronLeft : ChevronRight;
+    const BackwardIcon = isRTLMode ? ChevronRight : ChevronLeft;
     const isControlled = panels.every((panel) => panel.items !== undefined);
 
     const [uncontrolledPanelItems, setUncontrolledPanelItems] = useState<IActionableListItem[][]>(() =>
@@ -214,7 +217,7 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
                                 size="medium"
                                 appearance="secondary"
                                 layout="text"
-                                Icon={ChevronRight}
+                                Icon={ForwardIcon}
                                 disabled={(selectedIdsByPanel[panelIndex]?.size ?? 0) === 0}
                                 onClick={() => handleMove(panelIndex, panelIndex + 1)}
                                 aria-label={mergedTexts.moveForwardAriaLabel}
@@ -223,7 +226,7 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
                                 size="medium"
                                 appearance="secondary"
                                 layout="text"
-                                Icon={ChevronLeft}
+                                Icon={BackwardIcon}
                                 disabled={(selectedIdsByPanel[panelIndex + 1]?.size ?? 0) === 0}
                                 onClick={() => handleMove(panelIndex + 1, panelIndex)}
                                 aria-label={mergedTexts.moveBackwardAriaLabel}
