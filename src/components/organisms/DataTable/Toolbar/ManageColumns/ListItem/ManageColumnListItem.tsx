@@ -85,10 +85,8 @@ const ManageColumnListItem = <TData,>({
     return (
         <div
             ref={itemRef}
-            className={classNames("manageColumnListItem", {
-                manageColumnListItem_dragging: isDragging,
-                manageColumnListItem_dropGapTop: dropGapEdge === "top",
-                manageColumnListItem_dropGapBottom: dropGapEdge === "bottom"
+            className={classNames("manageColumnListItem", `manageColumnListItem__drop-gap-${dropGapEdge}`, {
+                manageColumnListItem_dragging: isDragging
             })}
         >
             <div className="manageColumnListItem__content">

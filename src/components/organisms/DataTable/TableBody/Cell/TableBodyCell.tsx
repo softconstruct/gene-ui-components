@@ -1,11 +1,11 @@
-import React, { memo } from "react";
+import React, { memo, ReactElement } from "react";
 import { Cell, ColumnDef, flexRender } from "@tanstack/react-table";
 import classNames from "classnames";
 
-import { EXPANDABLE_CELL_SIZE_REM } from "@components/organisms/DataTable/constants";
-
 // Styles
 import "./TableBodyCell.scss";
+
+import { EXPANDABLE_CELL_SIZE_REM } from "../../constants";
 
 /**
  * Props for the {@link TableBodyCell} component.
@@ -93,7 +93,7 @@ const areCellsEqual = <TData, TValue>(
  * an unsafe `as typeof TableBodyCell` cast on the consumer side.
  */
 const memoGeneric = <TProps,>(
-    component: (props: TProps) => React.ReactElement | null,
+    component: (props: TProps) => ReactElement | null,
     isEqual: (prev: TProps, next: TProps) => boolean
 ): typeof component => memo(component, isEqual) as unknown as typeof component;
 

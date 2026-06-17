@@ -1,13 +1,12 @@
 import React from "react";
 
-// Components
-import ManageColumns from "@components/organisms/DataTable/Toolbar/ManageColumns/ManageColumns";
-
 // Styles
 import "./Toolbar.scss";
 
 // Context
 import { useDataTableContext } from "../context";
+// Components
+import ManageColumns from "./ManageColumns/ManageColumns";
 
 const Toolbar = <TData,>() => {
     const { manageColumnsConfig } = useDataTableContext<TData>();

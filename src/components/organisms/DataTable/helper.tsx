@@ -4,11 +4,12 @@ import { CellContext, ColumnDef } from "@tanstack/react-table";
 // Components
 import Text from "@components/atoms/Text";
 import Tooltip from "@components/molecules/Tooltip";
-import ExpanderCell from "@components/organisms/DataTable/TableBody/ExpanderCell/ExpanderCell";
-import { DataTableColumn, DataTableRowExpandChangeHandler } from "@components/organisms/DataTable/types";
 
 // hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
+
+import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
+import { DataTableColumn, DataTableRowExpandChangeHandler } from "./types";
 
 export const DefaultCellComponent = ({ value }: { value: string }) => {
     const textRef = useRef<HTMLSpanElement | null>(null);

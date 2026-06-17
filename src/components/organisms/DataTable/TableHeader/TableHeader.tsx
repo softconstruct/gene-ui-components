@@ -2,11 +2,11 @@ import React from "react";
 import { HeaderGroup } from "@tanstack/table-core";
 import classNames from "classnames";
 
-// Components
-import TableHeaderCell from "@components/organisms/DataTable/TableHeader/Cell/TableHeaderCell";
-
 // Styles
 import "./TableHeader.scss";
+
+// Components
+import TableHeaderCell from "./Cell/TableHeaderCell";
 
 /**
  * Props for the {@link TableHeader} component.

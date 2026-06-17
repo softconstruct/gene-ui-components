@@ -13,7 +13,6 @@ import ButtonGroup from "@components/molecules/ButtonGroup";
 import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
-import ManageColumnListItem from "@components/organisms/DataTable/Toolbar/ManageColumns/ListItem/ManageColumnListItem";
 
 import useClickOutside from "@hooks/useClickOutside";
 
@@ -23,6 +22,7 @@ import "./ManageColumns.scss";
 import DnDDragLayer from "../../../../../_internal/components/DnDDragLayer/DnDDragLayer";
 // Context
 import { useDataTableContext } from "../../context";
+import ManageColumnListItem from "./ListItem/ManageColumnListItem";
 // Hooks
 import { useManageColumns } from "./useManageColumns";
 

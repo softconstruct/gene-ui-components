@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import { Column, ColumnOrderState, ColumnPinningState, Table } from "@tanstack/react-table";
 
 // Types
-import { ColumnVisibilityState, ManageColumnsConfig } from "@components/organisms/DataTable/types";
+import { ColumnVisibilityState, ManageColumnsConfig } from "../../types";
 
 const arraysEqual = (a: string[], b: string[]) => {
     if (a.length !== b.length) return false;

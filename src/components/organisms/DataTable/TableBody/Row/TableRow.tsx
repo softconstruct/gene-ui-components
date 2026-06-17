@@ -5,16 +5,13 @@ import classNames from "classnames";
 // Components
 import Button from "@components/atoms/Button";
 import Tooltip from "@components/molecules/Tooltip";
-import TableBodyCell from "@components/organisms/DataTable/TableBody/Cell/TableBodyCell";
-import TableExpandedRow from "@components/organisms/DataTable/TableBody/Row/TableExpandedRow";
-import {
-    DataTableGetRowStatus,
-    DataTableRenderExpandedRow,
-    IDataTableRowAction
-} from "@components/organisms/DataTable/types";
 
 // Styles
 import "./TableRow.scss";
+
+import TableBodyCell from "../../TableBody/Cell/TableBodyCell";
+import { DataTableGetRowStatus, DataTableRenderExpandedRow, IDataTableRowAction } from "../../types";
+import TableExpandedRow from "../Row/TableExpandedRow";
 
 /**
  * Props for the {@link TableRow} component.

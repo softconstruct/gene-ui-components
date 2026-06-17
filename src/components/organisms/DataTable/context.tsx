@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from "react";
+import React, { createContext, ReactNode, useContext } from "react";
 import { Table } from "@tanstack/react-table";
 
 import { ColumnVisibilityState, ManageColumnsConfig } from "./types";
@@ -15,7 +15,7 @@ export const DataTableProvider = <TData,>({
     children,
     value
 }: {
-    children: React.ReactNode;
+    children: ReactNode;
     value: IDataTableContext<TData>;
 }) => {
     return (

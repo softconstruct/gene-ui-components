@@ -4,6 +4,8 @@ import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-d
 import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/disable-native-drag-preview";
 import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unhandled";
 
+import { DROP_TARGET_MIDPOINT_FRACTION } from "../../../constants";
+
 interface UseColumnListItemDnDProps {
     columnId: string;
     onDragTargetChange?: (edge: string | null) => void;
@@ -22,7 +24,7 @@ export const useColumnListItemDnD = ({ columnId, onDragTargetChange }: UseColumn
         const rowEl = itemRef.current;
         if (!rowEl) return "bottom";
         const { top, height } = rowEl.getBoundingClientRect();
-        return clientY < top + height / 2 ? "top" : "bottom";
+        return clientY < top + height * DROP_TARGET_MIDPOINT_FRACTION ? "top" : "bottom";
     };
 
     useEffect(() => {

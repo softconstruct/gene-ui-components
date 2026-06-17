@@ -5,7 +5,8 @@ import { ChevronDown, ChevronLeft, ChevronRight } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
-import { DataTableRowExpandChangeHandler } from "@components/organisms/DataTable/types";
+
+import { DataTableRowExpandChangeHandler } from "../../types";
 
 interface IExpanderCellProps<TData, TValue> extends CellContext<TData, TValue> {
     onRowExpandChange?: DataTableRowExpandChangeHandler<TData>;

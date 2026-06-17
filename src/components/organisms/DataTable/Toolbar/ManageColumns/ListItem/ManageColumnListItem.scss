@@ -27,12 +27,14 @@
         overflow: hidden;
     }
 
-    &_dropGapTop {
-        margin-top: var(--drop-gap);
-    }
+    &__drop-gap {
+        &-top {
+            margin-top: var(--drop-gap);
+        }
 
-    &_dropGapBottom {
-        margin-bottom: calc(var(--drop-gap) + var(--item-mb));
+        &-bottom {
+            margin-bottom: calc(var(--drop-gap) + var(--item-mb));
+        }
     }
 
     &_dragPreview {

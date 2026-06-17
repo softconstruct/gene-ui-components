@@ -5,10 +5,11 @@ import classNames from "classnames";
 
 // Components
 import Text from "@components/atoms/Text";
-import { EXPANDABLE_CELL_SIZE_REM } from "@components/organisms/DataTable/constants";
 
 // Styles
 import "./TableHeaderCell.scss";
+
+import { EXPANDABLE_CELL_SIZE_REM } from "../../constants";
 
 /**
  * Props for the {@link TableHeaderCell} component.

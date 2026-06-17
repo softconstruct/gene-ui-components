@@ -15,13 +15,19 @@ import classNames from "classnames";
 import { IButtonProps } from "@components/atoms/Button";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Pagination, { IPaginationProps } from "@components/molecules/Pagination";
-import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
-import { adaptColumns, DefaultCellComponent, withExpanderColumn } from "@components/organisms/DataTable/helper";
+
+// Styles
+import "./DataTable.scss";
+
+import { INITIAL_PAGE_SIZE } from "./constants";
+// Context
+import { DataTableProvider } from "./context";
+import { adaptColumns, DefaultCellComponent, withExpanderColumn } from "./helper";
 // Hooks
-import { useTablePagination } from "@components/organisms/DataTable/hooks/useTablePagination";
-import TableBody from "@components/organisms/DataTable/TableBody/TableBody";
-import TableHeader from "@components/organisms/DataTable/TableHeader/TableHeader";
-import Toolbar from "@components/organisms/DataTable/Toolbar/Toolbar";
+import { useTablePagination } from "./hooks/useTablePagination";
+import TableBody from "./TableBody/TableBody";
+import TableHeader from "./TableHeader/TableHeader";
+import Toolbar from "./Toolbar/Toolbar";
 // Types
 import {
     ColumnVisibilityState,
@@ -32,13 +38,7 @@ import {
     IDataTableRowAction,
     ITableNoDataTexts,
     ManageColumnsConfig
-} from "@components/organisms/DataTable/types";
-
-// Styles
-import "./DataTable.scss";
-
-// Context
-import { DataTableProvider } from "./context";
+} from "./types";
 
 const defaultColumn = {
     cell: <TData, TValue>({ getValue }: CellContext<TData, TValue>) => (
