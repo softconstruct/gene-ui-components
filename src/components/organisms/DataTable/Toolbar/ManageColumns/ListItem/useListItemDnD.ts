@@ -1,4 +1,4 @@
-import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import { draggable, dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/disable-native-drag-preview";
@@ -7,14 +7,9 @@ import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unha
 interface UseColumnListItemDnDProps {
     columnId: string;
     onDragTargetChange?: (edge: string | null) => void;
-    onKeyboardReorder?: (sourceId: string, direction: "up" | "down") => void;
 }
 
-export const useColumnListItemDnD = ({
-    columnId,
-    onDragTargetChange,
-    onKeyboardReorder
-}: UseColumnListItemDnDProps) => {
+export const useColumnListItemDnD = ({ columnId, onDragTargetChange }: UseColumnListItemDnDProps) => {
     const itemRef = useRef<HTMLDivElement>(null);
     const dragHandleRef = useRef<HTMLDivElement>(null);
     const onDragTargetChangeRef = useRef(onDragTargetChange);
@@ -84,20 +79,9 @@ export const useColumnListItemDnD = ({
         );
     }, [columnId]);
 
-    const onDragHandleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "ArrowUp") {
-            e.preventDefault();
-            onKeyboardReorder?.(columnId, "up");
-        } else if (e.key === "ArrowDown") {
-            e.preventDefault();
-            onKeyboardReorder?.(columnId, "down");
-        }
-    };
-
     return {
         itemRef,
         dragHandleRef,
-        isDragging,
-        onDragHandleKeyDown
+        isDragging
     };
 };

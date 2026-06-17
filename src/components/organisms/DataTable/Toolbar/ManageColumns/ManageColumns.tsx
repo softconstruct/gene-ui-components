@@ -51,7 +51,6 @@ const ManageColumns = <TData,>() => {
         draftPinning,
         handleToggleColumnPinning: onColumnPinningChange,
         handleColumnReorder: onColumnReorder,
-        handleKeyboardReorder: onKeyboardReorder,
         handleSave: onSave,
         handleCancel: onCancel,
         handleRestoreDefaults: onRestoreDefaults,
@@ -189,7 +188,6 @@ const ManageColumns = <TData,>() => {
                                                 onChange={onColumnVisibilityChange}
                                                 dropGapEdge={dropGap?.targetId === column.id ? dropGap.edge : null}
                                                 onDragTargetChange={(edge) => handleDragTargetChange(column.id, edge)}
-                                                onKeyboardReorder={onKeyboardReorder}
                                             />
                                         );
                                     })

@@ -52,10 +52,6 @@ interface IManageColumnListItemProps<TData> {
      * @param edge
      */
     onDragTargetChange?: (edge: string | null) => void;
-    /**
-     * Callback function triggered when keyboard reordering is performed.
-     */
-    onKeyboardReorder?: (sourceId: string, direction: "up" | "down") => void;
 }
 
 const ManageColumnListItem = <TData,>({
@@ -66,17 +62,15 @@ const ManageColumnListItem = <TData,>({
     isPinnedDraft,
     onPinToggle,
     dropGapEdge = null,
-    onDragTargetChange,
-    onKeyboardReorder
+    onDragTargetChange
 }: IManageColumnListItemProps<TData>) => {
     const { header } = column.columnDef;
     const headerText = typeof header === "string" ? header : "";
     const PinIconElement = isPinnedDraft ? PinFilled : Pin;
 
-    const { itemRef, dragHandleRef, isDragging, onDragHandleKeyDown } = useColumnListItemDnD({
+    const { itemRef, dragHandleRef, isDragging } = useColumnListItemDnD({
         columnId: column.id,
-        onDragTargetChange,
-        onKeyboardReorder
+        onDragTargetChange
     });
 
     const onPinKeyDown = (e: KeyboardEvent) => {
@@ -118,13 +112,7 @@ const ManageColumnListItem = <TData,>({
                 >
                     <PinIconElement />
                 </div>
-                <div
-                    ref={dragHandleRef}
-                    className="manageColumnListItem__dragHandle"
-                    tabIndex={0}
-                    role="button"
-                    onKeyDown={onDragHandleKeyDown}
-                >
+                <div ref={dragHandleRef} className="manageColumnListItem__dragHandle" tabIndex={0} role="button">
                     <GripDots
                         className={classNames("manageColumnListItem__dragIcon", {
                             manageColumnListItem__dragIcon_dragging: isDragging

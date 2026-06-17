@@ -359,15 +359,6 @@ export const useManageColumns = <TData>({
     const allColumnsChecked = columns.length > 0 && globalVisibleColumnsCount === columns.length;
     const allColumnsIndeterminate = globalVisibleColumnsCount > 0 && globalVisibleColumnsCount < columns.length;
 
-    const handleKeyboardReorder = (sourceId: string, direction: "up" | "down") => {
-        const sourceIndex = draftColumnOrder.indexOf(sourceId);
-        const destIndex = direction === "up" ? sourceIndex - 1 : sourceIndex + 1;
-
-        if (destIndex >= 0 && destIndex < draftColumnOrder.length) {
-            handleColumnReorder(sourceId, draftColumnOrder[destIndex], direction === "up" ? "top" : "bottom");
-        }
-    };
-
     return {
         popoverOpen,
         propsForPopover,
@@ -391,7 +382,6 @@ export const useManageColumns = <TData>({
         handleRestoreDefaults,
         handleToggleColumnVisibility,
         handleToggleColumnPinning,
-        handleColumnReorder,
-        handleKeyboardReorder
+        handleColumnReorder
     };
 };
