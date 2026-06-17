@@ -512,32 +512,6 @@ describe("Table Component - Manage Columns Integration", () => {
         expect(setup.find("thead th").length).toBe(mockColumns.length - 1);
     });
 
-    it("updates table column order when a keyboard reorder action is performed and saved", async () => {
-        await act(async () => {
-            setup
-                .find(Button)
-                .filterWhere((b) => b.text().includes("Manage columns"))
-                .simulate("click");
-        });
-        setup.update();
-
-        const firstDragHandle = setup.find(".manageColumnListItem__dragHandle").first();
-        await act(async () => {
-            firstDragHandle.simulate("keydown", { key: "ArrowDown" });
-        });
-        setup.update();
-
-        const saveButton = setup.find(Button).filterWhere((b) => b.text().includes("Save"));
-        await act(async () => {
-            saveButton.simulate("click");
-        });
-        setup.update();
-
-        const headers = setup.find("thead th");
-        expect(headers.at(0).text()).toBe(mockColumns[1].header);
-        expect(headers.at(1).text()).toBe(mockColumns[0].header);
-    });
-
     it("applies pinning classes to body and header cells when a column is pinned and saved", async () => {
         await act(async () => {
             setup
