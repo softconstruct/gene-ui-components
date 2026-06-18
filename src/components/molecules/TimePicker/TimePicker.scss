@@ -68,6 +68,13 @@
         align-items: center;
         flex-direction: column;
 
+        &:not(:last-child) {
+            #{ $this }__body {
+                border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+                    var(--guit-sem-color-border-neutral-2);
+            }
+        }
+
         &_meridiem {
             gap: var(--guit-ref-spacing-3xsmall);
             padding-top: var(--guit-ref-spacing-xsmall);
@@ -97,8 +104,6 @@
         min-width: 0;
         min-height: 0;
         width: 100%;
-        border-inline-end: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-            var(--guit-sem-color-border-neutral-2);
     }
 
     &__list {

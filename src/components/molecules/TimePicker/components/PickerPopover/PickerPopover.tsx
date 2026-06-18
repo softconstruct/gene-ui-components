@@ -155,7 +155,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
 
     return (
         <Popover
-            size={size}
+            size="fitContent"
             open={open}
             position={position}
             setProps={setProps}
