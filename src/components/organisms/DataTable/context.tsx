@@ -9,26 +9,16 @@ interface IDataTableContext<TData> {
     initialColumnVisibility: ColumnVisibilityState;
 }
 
-const DataTableContext = createContext<IDataTableContext<unknown> | null>(null);
+const DataTableContext = createContext<IDataTableContext<object> | null>(null);
 
-export const DataTableProvider = <TData,>({
-    children,
-    value
-}: {
-    children: ReactNode;
-    value: IDataTableContext<TData>;
-}) => {
-    return (
-        <DataTableContext.Provider value={value as unknown as IDataTableContext<unknown>}>
-            {children}
-        </DataTableContext.Provider>
-    );
+export const DataTableProvider = ({ children, value }: { children: ReactNode; value: IDataTableContext<object> }) => {
+    return <DataTableContext.Provider value={value}>{children}</DataTableContext.Provider>;
 };
 
-export const useDataTableContext = <TData,>() => {
+export const useDataTableContext = () => {
     const context = useContext(DataTableContext);
     if (!context) {
         throw new Error("useDataTableContext must be used within a DataTableProvider");
     }
-    return context as unknown as IDataTableContext<TData>;
+    return context;
 };

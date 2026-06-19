@@ -111,13 +111,15 @@ const areCellsEqual = <TData, TValue>(
     prev.dirMode === next.dirMode;
 
 /**
- * `React.memo` erases the generic signature; this helper restores it without
- * an unsafe `as typeof TableBodyCell` cast on the consumer side.
+ * `React.memo` erases the generic signature; this helper restores it.
  */
-const memoGeneric = <TProps,>(
+function memoGeneric<TProps>(
     component: (props: TProps) => ReactElement | null,
     isEqual: (prev: TProps, next: TProps) => boolean
-): typeof component => memo(component, isEqual) as unknown as typeof component;
+): (props: TProps) => ReactElement | null {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return memo(component, isEqual) as any;
+}
 
 const MemoizedTableBodyCell = memoGeneric(TableBodyCell, areCellsEqual);
 

@@ -50,7 +50,7 @@ export const useManageColumns = <TData>({
     const isControlled = manageColumnsConfig && manageColumnsConfig.open !== undefined;
 
     const [internalOpen, setInternalOpen] = useState(false);
-    const [propsForPopover, setPropsForPopover] = useState<Record<string, unknown>>({});
+    const [propsForPopover, setPropsForPopover] = useState({});
 
     const [searchValue, setSearchValue] = useState("");
 

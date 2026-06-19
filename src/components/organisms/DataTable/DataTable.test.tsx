@@ -1,4 +1,4 @@
-import React, { MouseEvent } from "react";
+import React, { MouseEvent, ReactNode } from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
@@ -10,7 +10,7 @@ import Empty from "@components/molecules/Empty";
 import Pagination from "@components/molecules/Pagination";
 import { INITIAL_PAGE_SIZE } from "@components/organisms/DataTable/constants";
 import Toolbar from "@components/organisms/DataTable/Toolbar/Toolbar";
-import { DataTableColumn } from "@components/organisms/DataTable/types";
+import { DataTableColumn, DataTableRenderCellArgs } from "@components/organisms/DataTable/types";
 
 import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 // Components
@@ -296,7 +296,7 @@ describe("Table Component", () => {
 
         expect(onRowExpandChange).toHaveBeenCalled();
         expect(onRowExpandChange).toHaveBeenCalledWith(
-            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.any(String) })
+            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.stringMatching(/.+/) })
         );
     });
 
@@ -321,7 +321,7 @@ describe("Table Component", () => {
 
         expect(onRowExpandChange).toHaveBeenNthCalledWith(
             1,
-            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.any(String) })
+            expect.objectContaining({ isExpanded: true, row: mockData[0], rowId: expect.stringMatching(/.+/) })
         );
 
         await act(async () => {
@@ -332,7 +332,7 @@ describe("Table Component", () => {
         expect(onRowExpandChange).toHaveBeenCalledTimes(2);
         expect(onRowExpandChange).toHaveBeenNthCalledWith(
             2,
-            expect.objectContaining({ isExpanded: false, row: mockData[0], rowId: expect.any(String) })
+            expect.objectContaining({ isExpanded: false, row: mockData[0], rowId: expect.stringMatching(/.+/) })
         );
     });
 
@@ -365,7 +365,9 @@ describe("Table Component - body cell memoization", () => {
     const visibleData = mockData.slice(0, 3);
 
     const buildSpyColumns = () => {
-        const renderSpy = jest.fn(({ value }: { value: unknown }) => <span>{String(value ?? "")}</span>);
+        const renderSpy = jest.fn(({ value }: DataTableRenderCellArgs<MockDataType, ReactNode>) => (
+            <span>{String(value ?? "")}</span>
+        ));
         const columns: DataTableColumn<MockDataType>[] = [
             { accessorKey: "Id", header: "Id", renderCell: renderSpy },
             { accessorKey: "Email", header: "Email", renderCell: renderSpy }
