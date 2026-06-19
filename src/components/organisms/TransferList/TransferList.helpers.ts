@@ -29,7 +29,7 @@ export const applySelectionToTree = (items: IActionableListItem[], selectedIds: 
     items.map((item) => ({
         ...item,
         checked: selectedIds.has(item.id),
-        children: item.children?.length ? applySelectionToTree(item.children, selectedIds) : undefined
+        children: Array.isArray(item.children) ? applySelectionToTree(item.children, selectedIds) : undefined
     }));
 
 interface IPartitionResult {
@@ -62,7 +62,7 @@ export const partitionTreeByIds = (items: IActionableListItem[], selectedIds: Se
 
         return {
             ...node,
-            children: keptChildren.length ? keptChildren : undefined
+            children: Array.isArray(node.children) ? keptChildren : undefined
         };
     };
 

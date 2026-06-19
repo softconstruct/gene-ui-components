@@ -47,6 +47,10 @@ interface IActionableListItemProps {
      */
     isExpandable?: boolean;
     /**
+     * Disables expand/collapse when a group has no children.
+     */
+    isExpandDisabled?: boolean;
+    /**
      * Whether the row is currently expanded.
      */
     isExpanded?: boolean;
@@ -127,6 +131,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     level,
     infoText,
     isExpandable = false,
+    isExpandDisabled = false,
     isExpanded = false,
     withCheckbox = false,
     checkboxChecked,
@@ -260,6 +265,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                     layout="text"
                     Icon={isExpanded ? ChevronDown : collapsedExpandIcon}
                     onClick={onToggleExpand}
+                    disabled={isExpandDisabled}
                     aria-label={expandAriaLabel}
                     className="actionableListItem__toggle"
                 />

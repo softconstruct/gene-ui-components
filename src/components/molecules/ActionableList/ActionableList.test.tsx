@@ -45,6 +45,19 @@ describe("ActionableList ", () => {
         expect(countLeafItems(items)).toBe(4);
     });
 
+    it("countLeafItems treats empty groups as groups, not leaves", () => {
+        const items = [
+            {
+                id: "portfolio-na",
+                title: "Portfolio - North America",
+                children: []
+            },
+            { id: "latam", title: "LATAM Market Assessment" }
+        ];
+
+        expect(countLeafItems(items)).toBe(1);
+    });
+
     it("countCheckedItems counts selected leaves only, not parent group rows", () => {
         const items = [
             {
@@ -68,6 +81,26 @@ describe("ActionableList ", () => {
         ];
 
         expect(countCheckedItems(items)).toBe(2);
+    });
+
+    it("renders a disabled expand toggle for empty groups", () => {
+        const wrapper = mount(
+            <ActionableList
+                defaultExpandAll
+                items={[
+                    {
+                        id: "portfolio-na",
+                        title: "Portfolio - North America",
+                        children: []
+                    }
+                ]}
+            />
+        );
+
+        const toggle = wrapper.find(".actionableListItem__toggle").hostNodes();
+        expect(toggle).toHaveLength(1);
+        expect(toggle.prop("disabled")).toBe(true);
+        expect(wrapper.find(".actionableListItem__dragHandle")).toHaveLength(0);
     });
 
     it("reorderInTree places item after target when edge is bottom", () => {

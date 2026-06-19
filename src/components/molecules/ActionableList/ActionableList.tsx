@@ -26,12 +26,14 @@ import {
     ACTIONABLE_LIST_MAX_NESTED_LEVEL,
     ACTIONABLE_LIST_SEARCH_DEBOUNCE_MS,
     applyCheckedToBranch,
+    countAllItems,
     countCheckedItems,
     countLeafItems,
     filterTree,
     findItemById,
     getExpandedIdsFromItems,
     isAnySelectionInSubtree,
+    isGroupItem,
     isSubtreeFullySelected,
     mergeItemsFromProps,
     nextLevel,
@@ -90,8 +92,9 @@ const RenderNode: FC<IRenderNodeProps> = ({
     onToggleCheck,
     onDragTargetChange
 }) => {
-    const childCount = item.children?.length || 0;
-    const canExpand = childCount > 0 && level < ACTIONABLE_LIST_MAX_NESTED_LEVEL;
+    const isGroup = isGroupItem(item);
+    const childCount = item.children?.length ?? 0;
+    const canExpand = isGroup && childCount > 0 && level < ACTIONABLE_LIST_MAX_NESTED_LEVEL;
     const isExpanded = canExpand ? isSearchActive || expandedIds.has(item.id) : false;
     const branchFullySelected = isSubtreeFullySelected(item);
     const branchIndeterminate = !branchFullySelected && isAnySelectionInSubtree(item);
@@ -109,7 +112,8 @@ const RenderNode: FC<IRenderNodeProps> = ({
                 level={level}
                 parentId={parentId}
                 infoText={item.infoText}
-                isExpandable={canExpand}
+                isExpandable={isGroup && level < ACTIONABLE_LIST_MAX_NESTED_LEVEL}
+                isExpandDisabled={isGroup && childCount === 0}
                 isExpanded={isExpanded}
                 withCheckbox={withCheckbox}
                 {...(withCheckbox
@@ -121,7 +125,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
                       }
                     : {})}
                 selectedLabel={texts.selectedItemsLabel}
-                isDraggable={isDraggable}
+                isDraggable={isDraggable && (!isGroup || childCount > 0)}
                 dragListId={dragListId}
                 dropGapEdge={dropGapEdge}
                 expandAriaLabel={texts.expandButtonAriaLabel}
@@ -331,8 +335,8 @@ const ActionableList: FC<IActionableListProps> = ({
         });
     }, []);
 
-    const hasData = totalItemsCount > 0;
-    const hasSearchResults = filteredItemsCount > 0;
+    const hasData = useMemo(() => countAllItems(localItems) > 0, [localItems]);
+    const hasSearchResults = useMemo(() => countAllItems(filteredItems) > 0, [filteredItems]);
     const showEmptyDropZone =
         isDraggable && Boolean(dragListId) && Boolean(onCrossListDrop || delegateCrossListDrop) && !loading && !hasData;
 

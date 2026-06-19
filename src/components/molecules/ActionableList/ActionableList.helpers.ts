@@ -36,6 +36,8 @@ export const isAnySelectionInSubtree = (item: IActionableListItem): boolean => {
 export const nextLevel = (level: TActionableListLevel): TActionableListLevel =>
     Math.min(level + 1, ACTIONABLE_LIST_MAX_NESTED_LEVEL) as TActionableListLevel;
 
+export const isGroupItem = (item: IActionableListItem): boolean => Array.isArray(item.children);
+
 export const mergeItemsFromProps = (
     incoming: IActionableListItem[],
     previous: IActionableListItem[]
@@ -62,7 +64,7 @@ export const mergeItemsFromProps = (
             return {
                 ...node,
                 checked,
-                children: node.children?.length ? merge(node.children) : undefined
+                children: isGroupItem(node) ? merge(node.children ?? []) : undefined
             };
         });
 
@@ -75,14 +77,14 @@ export const countAllItems = (items: IActionableListItem[]): number =>
 /** Counts leaf nodes only — parent rows with children are grouping headers, not items. */
 export const countLeafItems = (items: IActionableListItem[]): number =>
     items.reduce((acc, item) => {
-        if (!item.children?.length) return acc + 1;
-        return acc + countLeafItems(item.children);
+        if (isGroupItem(item)) return acc + countLeafItems(item.children ?? []);
+        return acc + 1;
     }, 0);
 
 export const countCheckedItems = (items: IActionableListItem[]): number =>
     items.reduce((acc, item) => {
-        if (!item.children?.length) return acc + (item.checked ? 1 : 0);
-        return acc + countCheckedItems(item.children);
+        if (isGroupItem(item)) return acc + countCheckedItems(item.children ?? []);
+        return acc + (item.checked ? 1 : 0);
     }, 0);
 
 export const findItemById = (nodes: IActionableListItem[], targetId: string): IActionableListItem | undefined => {
@@ -119,9 +121,12 @@ export const filterTree = (items: IActionableListItem[], query: string): IAction
     const q = query.trim().toLowerCase();
     if (!q) return items;
     return items.reduce<IActionableListItem[]>((acc, item) => {
-        const filteredChildren = filterTree(item.children || [], q);
+        const filteredChildren = isGroupItem(item) ? filterTree(item.children ?? [], q) : [];
         if (item.title.toLowerCase().includes(q) || filteredChildren.length > 0) {
-            acc.push({ ...item, children: filteredChildren });
+            acc.push({
+                ...item,
+                children: isGroupItem(item) ? filteredChildren : undefined
+            });
         }
         return acc;
     }, []);
