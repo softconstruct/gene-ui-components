@@ -41,6 +41,14 @@ interface ITableBodyCellProps<TData, TValue> {
      * Snapshot of `column.getIsPinned()` captured by the parent at render time.
      */
     isPinned?: boolean;
+    /**
+     * Snapshot of `column.columnDef.size` captured by the parent at render time.
+     */
+    offset: number;
+    /**
+     * Actual rtl/ltr mode.
+     */
+    dirMode: string;
 }
 
 /**
@@ -54,8 +62,17 @@ interface ITableBodyCellProps<TData, TValue> {
  * @param props - The properties for the component.
  * @returns A table cell element with the rendered content.
  */
-const TableBodyCell = <TData, TValue>({ cell, renderer, isExpanded, isPinned }: ITableBodyCellProps<TData, TValue>) => {
+const TableBodyCell = <TData, TValue>({
+    cell,
+    renderer,
+    isExpanded,
+    isPinned,
+    offset,
+    dirMode
+}: ITableBodyCellProps<TData, TValue>) => {
     const isExpanderCell = cell.column.id === "expander";
+    const isRTL = dirMode === "rtl";
+
     return (
         <td
             className={classNames("tableBodyCell", {
@@ -64,9 +81,12 @@ const TableBodyCell = <TData, TValue>({ cell, renderer, isExpanded, isPinned }: 
                 tableBodyCell_pinned: isPinned
             })}
             style={{
-                width: isExpanderCell ? EXPANDABLE_CELL_SIZE_REM : undefined,
-                minWidth: isExpanderCell ? EXPANDABLE_CELL_SIZE_REM : undefined,
-                maxWidth: 250 // temp
+                width: isExpanderCell ? EXPANDABLE_CELL_SIZE_REM : `${cell.column.getSize()}px`,
+                minWidth: isExpanderCell ? EXPANDABLE_CELL_SIZE_REM : `${cell.column.getSize()}px`,
+                ...(isPinned && {
+                    left: !isRTL ? `${offset}px` : undefined,
+                    right: isRTL ? `${offset}px` : undefined
+                })
             }}
         >
             <div className="tableBodyCell__content">{flexRender(renderer, cell.getContext())}</div>
@@ -86,7 +106,9 @@ const areCellsEqual = <TData, TValue>(
     prev.cell.id === next.cell.id &&
     prev.isExpanded === next.isExpanded &&
     prev.renderer === next.renderer &&
-    prev.isPinned === next.isPinned;
+    prev.isPinned === next.isPinned &&
+    prev.offset === next.offset &&
+    prev.dirMode === next.dirMode;
 
 /**
  * `React.memo` erases the generic signature; this helper restores it without

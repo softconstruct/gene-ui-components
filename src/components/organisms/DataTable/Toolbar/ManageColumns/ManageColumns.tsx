@@ -169,7 +169,6 @@ const ManageColumns = <TData,>() => {
                         <Scrollbar className="manageColumnsPopover__scrollbar">
                             <div
                                 className={classNames("manageColumnsPopover__list", {
-                                    "manageColumnsPopover__list--hasDropGap": dropGap !== null,
                                     manageColumnsPopover__list_empty: !hasColumns
                                 })}
                             >
@@ -187,6 +186,7 @@ const ManageColumns = <TData,>() => {
                                                 onPinToggle={onColumnPinningChange}
                                                 onChange={onColumnVisibilityChange}
                                                 dropGapEdge={dropGap?.targetId === column.id ? dropGap.edge : null}
+                                                hasDropGap={dropGap !== null}
                                                 onDragTargetChange={(edge) => handleDragTargetChange(column.id, edge)}
                                             />
                                         );

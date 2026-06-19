@@ -23,6 +23,7 @@ interface ITableHeaderCellProps<TData, TValue> {
      * (like whether this specific cell is a placeholder in a grouped header setup).
      */
     header: Header<TData, TValue>;
+    offset: number;
 }
 
 /**
@@ -36,9 +37,10 @@ interface ITableHeaderCellProps<TData, TValue> {
  * @param props - The properties for the component.
  * @returns A table header cell element containing the rendered column header, or an empty cell if it's a placeholder.
  */
-const TableHeaderCell = <TData, TValue>({ header }: ITableHeaderCellProps<TData, TValue>) => {
+const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProps<TData, TValue>) => {
     const isExpanderHeader = header.column.id === "expander";
     const isPinned = header.column.getIsPinned();
+    const isRTL = document.dir === "rtl";
 
     return (
         <th
@@ -47,9 +49,12 @@ const TableHeaderCell = <TData, TValue>({ header }: ITableHeaderCellProps<TData,
                 tableHeaderCell_pinned: isPinned
             })}
             style={{
-                width: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : undefined,
-                minWidth: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : undefined,
-                maxWidth: 250 // temp
+                width: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : `${header.column.getSize()}px`,
+                minWidth: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : `${header.column.getSize()}px`,
+                ...(isPinned && {
+                    left: !isRTL ? `${offset}px` : undefined,
+                    right: isRTL ? `${offset}px` : undefined
+                })
             }}
         >
             {!isExpanderHeader ? (

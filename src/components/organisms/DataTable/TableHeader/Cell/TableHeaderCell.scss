@@ -5,6 +5,7 @@
     vertical-align: middle;
     position: relative;
     box-shadow: inset 0 -0.1rem 0 0 var(--guit-sem-color-background-neutral-4);
+    max-width: 25rem;
 
     &::after {
         content: "";
@@ -12,13 +13,8 @@
         inset-inline-end: 0;
         top: 0;
         bottom: 0;
-        pointer-events: none;
         width: 0.1rem;
-        background: linear-gradient(
-            90deg,
-            var(--guit-sem-color-border-neutral-2) 0%,
-            var(--guit-sem-color-border-neutral-2) 20%
-        );
+        background: var(--guit-sem-color-border-neutral-2);
     }
 
     &__content {
@@ -42,15 +38,7 @@
         inset-inline-start: 0;
 
         &::after {
-            inset-inline-end: -0.3rem;
-            width: 0.4rem;
-            background: linear-gradient(
-                90deg,
-                var(--guit-sem-color-border-neutral-3) 0%,
-                var(--guit-sem-color-border-neutral-3) 20%,
-                rgb(211 211 212 / 50%) 21%,
-                rgb(255 255 255 / 0%) 100%
-            );
+            background: var(--guit-sem-color-border-neutral-3);
         }
     }
 }

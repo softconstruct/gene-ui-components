@@ -71,6 +71,7 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
             >
                 {row.getVisibleCells().map((cell) => {
                     const isPinned = !!cell.column.getIsPinned();
+                    const offset = isPinned ? cell.column.getStart("left") : 0;
                     return (
                         <TableBodyCell
                             key={cell.id}
@@ -78,6 +79,8 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                             isExpanded={isRowExpanded}
                             renderer={cell.column.columnDef.cell}
                             isPinned={isPinned}
+                            offset={offset}
+                            dirMode={document.dir}
                         />
                     );
                 })}

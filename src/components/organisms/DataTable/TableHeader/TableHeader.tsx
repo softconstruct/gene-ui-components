@@ -44,7 +44,7 @@ const TableHeader = <TData,>({ headerGroups, sticky }: ITableHeaderProps<TData>)
         {headerGroups.map((headerGroup) => (
             <tr className="tableHeader__row" key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                    <TableHeaderCell key={header.id} header={header} />
+                    <TableHeaderCell key={header.id} header={header} offset={header.column.getStart("left")} />
                 ))}
             </tr>
         ))}

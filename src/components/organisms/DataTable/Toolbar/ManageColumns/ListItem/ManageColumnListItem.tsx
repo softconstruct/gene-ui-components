@@ -52,6 +52,10 @@ interface IManageColumnListItemProps<TData> {
      * @param edge
      */
     onDragTargetChange?: (edge: string | null) => void;
+    /**
+     * Indicates whether the list has a drop gap.
+     */
+    hasDropGap?: boolean;
 }
 
 const ManageColumnListItem = <TData,>({
@@ -62,7 +66,8 @@ const ManageColumnListItem = <TData,>({
     isPinnedDraft,
     onPinToggle,
     dropGapEdge = null,
-    onDragTargetChange
+    onDragTargetChange,
+    hasDropGap
 }: IManageColumnListItemProps<TData>) => {
     const { header } = column.columnDef;
     const headerText = typeof header === "string" ? header : "";
@@ -86,7 +91,8 @@ const ManageColumnListItem = <TData,>({
         <div
             ref={itemRef}
             className={classNames("manageColumnListItem", `manageColumnListItem__drop-gap-${dropGapEdge}`, {
-                manageColumnListItem_dragging: isDragging
+                manageColumnListItem_dragging: isDragging,
+                manageColumnListItem_collapsed: isDragging && hasDropGap
             })}
         >
             <div className="manageColumnListItem__content">
