@@ -26,8 +26,8 @@ import {
     ACTIONABLE_LIST_MAX_NESTED_LEVEL,
     ACTIONABLE_LIST_SEARCH_DEBOUNCE_MS,
     applyCheckedToBranch,
-    countAllItems,
     countCheckedItems,
+    countLeafItems,
     filterTree,
     findItemById,
     getExpandedIdsFromItems,
@@ -280,8 +280,8 @@ const ActionableList: FC<IActionableListProps> = ({
     };
 
     const filteredItems = useMemo(() => filterTree(localItems, searchValue), [localItems, searchValue]);
-    const totalItemsCount = useMemo(() => countAllItems(localItems), [localItems]);
-    const filteredItemsCount = useMemo(() => countAllItems(filteredItems), [filteredItems]);
+    const totalItemsCount = useMemo(() => countLeafItems(localItems), [localItems]);
+    const filteredItemsCount = useMemo(() => countLeafItems(filteredItems), [filteredItems]);
     const selectedItemsCount = useMemo(() => countCheckedItems(localItems), [localItems]);
 
     const selectAllChecked = totalItemsCount > 0 && localItems.every((item) => isSubtreeFullySelected(item));

@@ -72,10 +72,17 @@ export const mergeItemsFromProps = (
 export const countAllItems = (items: IActionableListItem[]): number =>
     items.reduce((acc, item) => acc + 1 + countAllItems(item.children || []), 0);
 
+/** Counts leaf nodes only — parent rows with children are grouping headers, not items. */
+export const countLeafItems = (items: IActionableListItem[]): number =>
+    items.reduce((acc, item) => {
+        if (!item.children?.length) return acc + 1;
+        return acc + countLeafItems(item.children);
+    }, 0);
+
 export const countCheckedItems = (items: IActionableListItem[]): number =>
     items.reduce((acc, item) => {
-        const childCount = item.children?.length ? countCheckedItems(item.children) : 0;
-        return acc + (item.checked ? 1 : 0) + childCount;
+        if (!item.children?.length) return acc + (item.checked ? 1 : 0);
+        return acc + countCheckedItems(item.children);
     }, 0);
 
 export const findItemById = (nodes: IActionableListItem[], targetId: string): IActionableListItem | undefined => {

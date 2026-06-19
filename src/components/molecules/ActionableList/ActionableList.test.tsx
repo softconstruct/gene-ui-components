@@ -1,7 +1,7 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-import { reorderInTree } from "./ActionableList.helpers";
+import { countCheckedItems, countLeafItems, reorderInTree } from "./ActionableList.helpers";
 // Components
 import ActionableList, { IActionableListProps } from "./index";
 
@@ -20,6 +20,54 @@ describe("ActionableList ", () => {
 
     it("renders without crashing", () => {
         expect(setup.exists()).toBeTruthy();
+    });
+
+    it("countLeafItems excludes parent rows and counts nested leaves only", () => {
+        const items = [
+            {
+                id: "portfolio-na",
+                title: "Portfolio - North America",
+                children: [
+                    { id: "na-pricing", title: "Pricing and Contracts" },
+                    { id: "na-sales", title: "Sales Enablement" }
+                ]
+            },
+            {
+                id: "portfolio-emea",
+                title: "Portfolio - EMEA",
+                children: [
+                    { id: "emea-distributor", title: "Distributor Onboarding" },
+                    { id: "emea-localization", title: "Localization" }
+                ]
+            }
+        ];
+
+        expect(countLeafItems(items)).toBe(4);
+    });
+
+    it("countCheckedItems counts selected leaves only, not parent group rows", () => {
+        const items = [
+            {
+                id: "portfolio-na",
+                title: "Portfolio - North America",
+                checked: true,
+                children: [
+                    { id: "na-pricing", title: "Pricing and Contracts", checked: true },
+                    { id: "na-sales", title: "Sales Enablement", checked: true }
+                ]
+            },
+            {
+                id: "portfolio-emea",
+                title: "Portfolio - EMEA",
+                checked: false,
+                children: [
+                    { id: "emea-distributor", title: "Distributor Onboarding", checked: false },
+                    { id: "emea-localization", title: "Localization", checked: false }
+                ]
+            }
+        ];
+
+        expect(countCheckedItems(items)).toBe(2);
     });
 
     it("reorderInTree places item after target when edge is bottom", () => {
