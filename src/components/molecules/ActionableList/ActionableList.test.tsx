@@ -87,6 +87,7 @@ describe("ActionableList ", () => {
         const wrapper = mount(
             <ActionableList
                 defaultExpandAll
+                draggable
                 items={[
                     {
                         id: "portfolio-na",
@@ -100,7 +101,7 @@ describe("ActionableList ", () => {
         const toggle = wrapper.find(".actionableListItem__toggle").hostNodes();
         expect(toggle).toHaveLength(1);
         expect(toggle.prop("disabled")).toBe(true);
-        expect(wrapper.find(".actionableListItem__dragHandle")).toHaveLength(0);
+        expect(wrapper.find(".actionableListItem__dragHandle")).toHaveLength(1);
     });
 
     it("reorderInTree places item after target when edge is bottom", () => {

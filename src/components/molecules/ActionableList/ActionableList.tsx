@@ -125,7 +125,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
                       }
                     : {})}
                 selectedLabel={texts.selectedItemsLabel}
-                isDraggable={isDraggable && (!isGroup || childCount > 0)}
+                isDraggable={isDraggable}
                 dragListId={dragListId}
                 dropGapEdge={dropGapEdge}
                 expandAriaLabel={texts.expandButtonAriaLabel}
