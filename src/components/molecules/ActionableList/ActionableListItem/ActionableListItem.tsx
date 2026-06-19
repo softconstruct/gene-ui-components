@@ -218,7 +218,11 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
             }),
             dropTargetForElements({
                 element: rowEl,
-                getData: () => ({ targetId: id, parentId }),
+                getData: () => ({
+                    targetId: id,
+                    parentId,
+                    ...(dragListId ? { targetListId: dragListId } : {})
+                }),
                 canDrop: ({ source }) => {
                     const sourceListId = source.data.dragListId as string | undefined;
                     const sourceParentId = source.data.parentId as string;

@@ -1,4 +1,5 @@
 export type {
+    IActionableListDropGap,
     IActionableListItem,
     IActionableListProps,
     IActionableListTexts,

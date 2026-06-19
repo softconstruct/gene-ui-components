@@ -1,3 +1,5 @@
+import type { MutableRefObject } from "react";
+
 export interface IActionableListItem {
     /**
      * Unique item identifier.
@@ -47,6 +49,11 @@ export interface ICrossListDropPayload {
      * True when the item was dropped onto the empty-list drop zone.
      */
     isEmptyTarget?: boolean;
+}
+
+export interface IActionableListDropGap {
+    targetId: string;
+    edge: "top" | "bottom";
 }
 
 export interface IActionableListTexts {
@@ -126,6 +133,14 @@ export interface IActionableListProps {
      * Called when an item is dropped onto a root row from another list (requires `dragListId`).
      */
     onCrossListDrop?: (payload: ICrossListDropPayload) => void;
+    /**
+     * When true, cross-list drops are coordinated by a parent (e.g. TransferList).
+     */
+    delegateCrossListDrop?: boolean;
+    /**
+     * Mirrors the active drop gap for parent-coordinated cross-list drops.
+     */
+    dropGapOutletRef?: MutableRefObject<IActionableListDropGap | null>;
     /**
      * Optional controlled loading state.
      */

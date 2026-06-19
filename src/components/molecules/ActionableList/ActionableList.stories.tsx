@@ -34,6 +34,8 @@ const meta: Meta<IActionableListProps> = {
         withCheckbox: args({ control: "boolean", ...propCategory.appearance }),
         draggable: args({ control: "boolean", ...propCategory.appearance }),
         dragListId: args({ control: "false", ...propCategory.others }),
+        delegateCrossListDrop: args({ control: "false", ...propCategory.others }),
+        dropGapOutletRef: args({ control: "false", ...propCategory.others }),
         onCrossListDrop: args({ control: "false", ...propCategory.action }),
         loading: args({ control: "boolean", ...propCategory.states }),
         defaultExpandAll: args({ control: "boolean", ...propCategory.states }),

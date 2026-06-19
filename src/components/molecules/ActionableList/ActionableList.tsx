@@ -39,12 +39,7 @@ import {
     updateItemById
 } from "./ActionableList.helpers";
 // Types
-import type {
-    IActionableListItem,
-    IActionableListProps,
-    IActionableListTexts,
-    ICrossListDropPayload
-} from "./ActionableList.types";
+import type { IActionableListItem, IActionableListProps, IActionableListTexts } from "./ActionableList.types";
 // Sub-components
 import ActionableListItem, { type TDropGapEdge } from "./ActionableListItem/ActionableListItem";
 import ActionableListNodeWrapper, {
@@ -55,6 +50,14 @@ interface IDropGap {
     targetId: string;
     edge: TDropGapEdge;
 }
+
+const isDroppedOnOtherList = (
+    location: { current: { dropTargets: ReadonlyArray<{ data: Record<string | symbol, unknown> }> } },
+    listId: string
+) =>
+    location.current.dropTargets.some(({ data: { targetListId, isPanelDropTarget } }) => {
+        return typeof targetListId === "string" && targetListId !== listId && !isPanelDropTarget;
+    });
 
 interface IRenderNodeProps {
     item: IActionableListItem;
@@ -171,6 +174,8 @@ const ActionableList: FC<IActionableListProps> = ({
     onItemCheck,
     onSelectAllChange,
     onCrossListDrop,
+    delegateCrossListDrop = false,
+    dropGapOutletRef,
     onSearch
 }) => {
     const mergedTexts = { ...ACTIONABLE_LIST_DEFAULT_TEXTS, ...texts };
@@ -201,6 +206,12 @@ const ActionableList: FC<IActionableListProps> = ({
     onCrossListDropRef.current = onCrossListDrop;
 
     useEffect(() => {
+        if (!dropGapOutletRef) return;
+        // eslint-disable-next-line no-param-reassign -- mirror drop gap for parent-coordinated cross-list DnD
+        dropGapOutletRef.current = dropGap;
+    }, [dropGap, dropGapOutletRef]);
+
+    useEffect(() => {
         setLocalItems((prev) => mergeItemsFromProps(items, prev));
     }, [items]);
 
@@ -212,34 +223,49 @@ const ActionableList: FC<IActionableListProps> = ({
     useEffect(() => {
         if (!isDraggable) return () => undefined;
         return monitorForElements({
-            onDrop: ({ source }) => {
+            onDrop: ({ source, location }) => {
                 const gap = dropGapRef.current;
-                setDropGap(null);
                 const { sourceId } = source.data;
                 const sourceListId = source.data.dragListId;
+                const isCrossList = Boolean(
+                    dragListId && typeof sourceListId === "string" && sourceListId !== dragListId
+                );
+
+                if (isCrossList && delegateCrossListDrop) {
+                    requestAnimationFrame(() => setDropGap(null));
+                    return;
+                }
+
+                setDropGap(null);
                 if (typeof sourceId !== "string" || !gap || sourceId === gap.targetId) return;
 
-                if (
-                    dragListId &&
-                    typeof sourceListId === "string" &&
-                    sourceListId !== dragListId &&
-                    onCrossListDropRef.current
-                ) {
-                    const payload: ICrossListDropPayload = {
-                        sourceListId,
+                if (isCrossList) {
+                    if (
+                        !dragListId ||
+                        !location.current.dropTargets.some(({ data }) => data.targetListId === dragListId) ||
+                        !onCrossListDropRef.current
+                    ) {
+                        return;
+                    }
+
+                    onCrossListDropRef.current({
+                        sourceListId: sourceListId as string,
                         targetListId: dragListId,
                         sourceId,
                         targetId: gap.targetId,
                         edge: gap.edge
-                    };
-                    onCrossListDropRef.current(payload);
+                    });
                     return;
+                }
+
+                if (dragListId && typeof sourceListId === "string" && sourceListId === dragListId) {
+                    if (isDroppedOnOtherList(location, dragListId)) return;
                 }
 
                 handleDropReorderRef.current(sourceId, gap.targetId, gap.edge);
             }
         });
-    }, [isDraggable, dragListId]);
+    }, [isDraggable, dragListId, delegateCrossListDrop]);
 
     const { debouncedCallback, clearDebounce } = useDebounceCallback((value: unknown) => {
         if (typeof value !== "string") return;
@@ -307,7 +333,8 @@ const ActionableList: FC<IActionableListProps> = ({
 
     const hasData = totalItemsCount > 0;
     const hasSearchResults = filteredItemsCount > 0;
-    const showEmptyDropZone = isDraggable && Boolean(dragListId) && Boolean(onCrossListDrop) && !loading && !hasData;
+    const showEmptyDropZone =
+        isDraggable && Boolean(dragListId) && Boolean(onCrossListDrop || delegateCrossListDrop) && !loading && !hasData;
 
     useEffect(() => {
         const element = emptyDropRef.current;
@@ -315,7 +342,10 @@ const ActionableList: FC<IActionableListProps> = ({
 
         return dropTargetForElements({
             element,
-            getData: () => ({ isEmptyListTarget: true }),
+            getData: () => ({
+                isEmptyListTarget: true,
+                ...(dragListId ? { targetListId: dragListId } : {})
+            }),
             canDrop: ({ source }) => {
                 const sourceListId = source.data.dragListId;
                 return typeof sourceListId === "string" && sourceListId !== dragListId;
@@ -324,6 +354,8 @@ const ActionableList: FC<IActionableListProps> = ({
             onDragLeave: () => setIsEmptyDropActive(false),
             onDrop: ({ source }) => {
                 setIsEmptyDropActive(false);
+                if (delegateCrossListDrop) return;
+
                 const { sourceId } = source.data;
                 const sourceListId = source.data.dragListId;
                 if (
@@ -343,7 +375,7 @@ const ActionableList: FC<IActionableListProps> = ({
                 });
             }
         });
-    }, [showEmptyDropZone, dragListId]);
+    }, [showEmptyDropZone, dragListId, delegateCrossListDrop]);
 
     const lastRootItemId = filteredItems[filteredItems.length - 1]?.id;
 
@@ -355,7 +387,11 @@ const ActionableList: FC<IActionableListProps> = ({
 
         return dropTargetForElements({
             element,
-            getData: () => ({ listEndTarget: true, targetId }),
+            getData: () => ({
+                targetId,
+                edge: "bottom" as const,
+                ...(dragListId ? { targetListId: dragListId } : {})
+            }),
             canDrop: ({ source }) => {
                 const sourceListId = source.data.dragListId;
                 const sourceParentId = source.data.parentId;
@@ -522,6 +558,7 @@ const ActionableList: FC<IActionableListProps> = ({
 };
 
 export type {
+    IActionableListDropGap,
     IActionableListItem,
     IActionableListProps,
     IActionableListTexts,

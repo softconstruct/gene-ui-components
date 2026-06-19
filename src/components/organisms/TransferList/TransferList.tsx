@@ -1,11 +1,26 @@
-import React, { FC, Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+    FC,
+    Fragment,
+    MutableRefObject,
+    useCallback,
+    useEffect,
+    useLayoutEffect,
+    useMemo,
+    useRef,
+    useState
+} from "react";
+import { dropTargetForElements, monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import classNames from "classnames";
 
 import { ChevronLeft, ChevronRight } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
-import type { IActionableListItem, ICrossListDropPayload } from "@components/molecules/ActionableList";
+import type {
+    IActionableListDropGap,
+    IActionableListItem,
+    ICrossListDropPayload
+} from "@components/molecules/ActionableList";
 import ActionableList from "@components/molecules/ActionableList";
 
 // Styles
@@ -21,6 +36,83 @@ import {
     TRANSFER_LIST_DEFAULT_TEXTS
 } from "./TransferList.helpers";
 import type { ITransferListChangePayload, ITransferListProps } from "./TransferList.types";
+
+const applyDropGap = (
+    targetListId: string,
+    payload: ICrossListDropPayload,
+    panelDropGapRefs: Record<string, MutableRefObject<IActionableListDropGap | null>>
+): ICrossListDropPayload => {
+    const gap = panelDropGapRefs[targetListId]?.current;
+    if (!gap) return payload;
+
+    return {
+        ...payload,
+        targetId: gap.targetId,
+        edge: gap.edge
+    };
+};
+
+const resolveCrossListDrop = (
+    sourceData: Record<string | symbol, unknown>,
+    dropTargets: ReadonlyArray<{ data: Record<string | symbol, unknown> }>,
+    panelDropGapRefs: Record<string, MutableRefObject<IActionableListDropGap | null>>
+): ICrossListDropPayload | null => {
+    const { sourceId } = sourceData;
+    const sourceListId = sourceData.dragListId;
+    if (typeof sourceId !== "string" || typeof sourceListId !== "string") return null;
+
+    const crossListTargets = dropTargets.filter(({ data }) => {
+        const { targetListId } = data;
+        return typeof targetListId === "string" && targetListId !== sourceListId;
+    });
+    if (!crossListTargets.length) return null;
+
+    const emptyTarget = crossListTargets.find(({ data }) => data.isEmptyListTarget);
+    if (emptyTarget) {
+        return {
+            sourceListId,
+            sourceId,
+            targetListId: emptyTarget.data.targetListId as string,
+            isEmptyTarget: true
+        };
+    }
+
+    const rowTargets = crossListTargets.filter(({ data }) => !data.isPanelDropTarget);
+    if (rowTargets.length) {
+        const { data } = rowTargets[rowTargets.length - 1];
+        const targetListId = data.targetListId as string;
+        return applyDropGap(
+            targetListId,
+            {
+                sourceListId,
+                sourceId,
+                targetListId,
+                targetId: typeof data.targetId === "string" ? data.targetId : undefined,
+                edge: data.edge === "top" || data.edge === "bottom" ? data.edge : "bottom"
+            },
+            panelDropGapRefs
+        );
+    }
+
+    const panelTargets = crossListTargets.filter(({ data }) => data.isPanelDropTarget);
+    if (panelTargets.length) {
+        const { data } = panelTargets[panelTargets.length - 1];
+        const targetListId = data.targetListId as string;
+        return applyDropGap(
+            targetListId,
+            {
+                sourceListId,
+                sourceId,
+                targetListId,
+                targetId: typeof data.targetId === "string" ? data.targetId : undefined,
+                edge: data.edge === "top" || data.edge === "bottom" ? data.edge : "bottom"
+            },
+            panelDropGapRefs
+        );
+    }
+
+    return null;
+};
 
 /**
  * Transfer List component enables users to move items between two to four actionable lists.
@@ -38,6 +130,15 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
         panels.map((panel) => panel.defaultItems ?? [])
     );
     const [selectedIdsByPanel, setSelectedIdsByPanel] = useState<Set<string>[]>(() => panels.map(() => new Set()));
+    const panelRefs = useRef<Record<string, HTMLDivElement | null>>({});
+    const panelDropGapRefs = useRef<Record<string, MutableRefObject<IActionableListDropGap | null>>>({});
+
+    const getDropGapOutletRef = (panelId: string) => {
+        if (!panelDropGapRefs.current[panelId]) {
+            panelDropGapRefs.current[panelId] = { current: null };
+        }
+        return panelDropGapRefs.current[panelId];
+    };
 
     const panelTreeIdSignature = useMemo(
         () =>
@@ -153,42 +254,91 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
         });
     };
 
-    const handleCrossListDrop = ({
-        sourceListId,
-        targetListId,
-        sourceId,
-        targetId,
-        edge,
-        isEmptyTarget
-    }: ICrossListDropPayload) => {
-        const fromPanelIndex = panels.findIndex(({ id }) => id === sourceListId);
-        const toPanelIndex = panels.findIndex(({ id }) => id === targetListId);
-        if (fromPanelIndex < 0 || toPanelIndex < 0 || fromPanelIndex === toPanelIndex) return;
+    const handleCrossListDrop = useCallback(
+        ({ sourceListId, targetListId, sourceId, targetId, edge, isEmptyTarget }: ICrossListDropPayload) => {
+            const fromPanelIndex = panels.findIndex(({ id }) => id === sourceListId);
+            const toPanelIndex = panels.findIndex(({ id }) => id === targetListId);
+            if (fromPanelIndex < 0 || toPanelIndex < 0 || fromPanelIndex === toPanelIndex) return;
 
-        const { sourceItems, targetItems, movedIds } = moveItemByDrag(
-            resolvedPanelItems[fromPanelIndex],
-            resolvedPanelItems[toPanelIndex],
-            sourceId,
-            targetId,
-            edge,
-            isEmptyTarget
-        );
-        if (!movedIds.length) return;
+            const { sourceItems, targetItems, movedIds } = moveItemByDrag(
+                resolvedPanelItems[fromPanelIndex],
+                resolvedPanelItems[toPanelIndex],
+                sourceId,
+                targetId,
+                edge,
+                isEmptyTarget
+            );
+            if (!movedIds.length) return;
 
-        const nextPanels = resolvedPanelItems.map((items, index) => {
-            if (index === fromPanelIndex) return sourceItems;
-            if (index === toPanelIndex) return targetItems;
-            return items;
+            const nextPanels = resolvedPanelItems.map((items, index) => {
+                if (index === fromPanelIndex) return sourceItems;
+                if (index === toPanelIndex) return targetItems;
+                return items;
+            });
+
+            emitChange({
+                fromPanelIndex,
+                toPanelIndex,
+                direction: toPanelIndex > fromPanelIndex ? "forward" : "backward",
+                movedIds,
+                panels: nextPanels
+            });
+        },
+        [emitChange, panels, resolvedPanelItems]
+    );
+
+    useEffect(() => {
+        if (!draggable) return () => undefined;
+
+        return monitorForElements({
+            onDrop: ({ source, location }) => {
+                const payload = resolveCrossListDrop(
+                    source.data,
+                    location.current.dropTargets,
+                    panelDropGapRefs.current
+                );
+                if (!payload) return;
+                handleCrossListDrop(payload);
+            }
+        });
+    }, [draggable, handleCrossListDrop]);
+
+    useLayoutEffect(() => {
+        if (!draggable) return () => undefined;
+
+        const cleanups: (() => void)[] = [];
+
+        panels.forEach((panel, panelIndex) => {
+            const element = panelRefs.current[panel.id];
+            if (!element) return;
+
+            const panelItems = resolvedPanelItems[panelIndex];
+
+            cleanups.push(
+                dropTargetForElements({
+                    element,
+                    getData: () => {
+                        if (!panelItems.length) {
+                            return { targetListId: panel.id, isEmptyListTarget: true };
+                        }
+
+                        return {
+                            targetListId: panel.id,
+                            targetId: panelItems[panelItems.length - 1].id,
+                            edge: "bottom" as const,
+                            isPanelDropTarget: true
+                        };
+                    },
+                    canDrop: ({ source }) => {
+                        const sourceListId = source.data.dragListId;
+                        return typeof sourceListId === "string" && sourceListId !== panel.id;
+                    }
+                })
+            );
         });
 
-        emitChange({
-            fromPanelIndex,
-            toPanelIndex,
-            direction: toPanelIndex > fromPanelIndex ? "forward" : "backward",
-            movedIds,
-            panels: nextPanels
-        });
-    };
+        return () => cleanups.forEach((cleanup) => cleanup());
+    }, [draggable, panels, resolvedPanelItems, panelTreeIdSignature]);
 
     const panelCount = panels.length;
 
@@ -196,18 +346,24 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
         <div className={classNames("transferList", `transferList_panels${panelCount}`, className)}>
             {panels.map((panel, panelIndex) => (
                 <Fragment key={panel.id}>
-                    <div className="transferList__panel">
+                    <div
+                        ref={(element) => {
+                            panelRefs.current[panel.id] = element;
+                        }}
+                        className="transferList__panel"
+                    >
                         <ActionableList
                             className="transferList__actionableList"
                             withCheckbox
                             draggable={draggable}
                             dragListId={draggable ? panel.id : undefined}
+                            delegateCrossListDrop={draggable}
+                            dropGapOutletRef={draggable ? getDropGapOutletRef(panel.id) : undefined}
                             items={panelViewItems[panelIndex]}
                             texts={panel.texts}
                             onItemCheck={(item, checked) => updateSelection(item, checked, panelIndex)}
                             onSelectAllChange={(checked, items) => handleSelectAll(checked, items, panelIndex)}
                             onItemsChange={draggable ? (items) => handlePanelItemsChange(panelIndex, items) : undefined}
-                            onCrossListDrop={draggable ? handleCrossListDrop : undefined}
                         />
                     </div>
 
