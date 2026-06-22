@@ -1,9 +1,9 @@
-import React, { createContext, ReactNode, useContext } from "react";
+import React, { Context, createContext, Provider, ReactNode, useContext } from "react";
 import { Table } from "@tanstack/react-table";
 
 import { ColumnVisibilityState, ManageColumnsConfig } from "./types";
 
-interface IDataTableContext<TData> {
+export interface IDataTableContext<TData> {
     table: Table<TData>;
     manageColumnsConfig: ManageColumnsConfig;
     initialColumnVisibility: ColumnVisibilityState;
@@ -11,14 +11,23 @@ interface IDataTableContext<TData> {
 
 const DataTableContext = createContext<IDataTableContext<object> | null>(null);
 
-export const DataTableProvider = ({ children, value }: { children: ReactNode; value: IDataTableContext<object> }) => {
-    return <DataTableContext.Provider value={value}>{children}</DataTableContext.Provider>;
+interface IDataTableProviderProps<TData> {
+    children: ReactNode;
+    value: IDataTableContext<TData>;
+}
+
+export const DataTableProvider = <TData,>({ children, value }: IDataTableProviderProps<TData>) => {
+    const DataTableContextProvider = DataTableContext.Provider as Provider<IDataTableContext<TData> | null>;
+    return <DataTableContextProvider value={value}>{children}</DataTableContextProvider>;
 };
 
-export const useDataTableContext = () => {
-    const context = useContext(DataTableContext);
+export const useDataTableContext = <TData,>() => {
+    const TableContext = DataTableContext as Context<IDataTableContext<TData> | null>;
+    const context = useContext(TableContext);
+
     if (!context) {
         throw new Error("useDataTableContext must be used within a DataTableProvider");
     }
+
     return context;
 };
