@@ -1,5 +1,5 @@
 import React, { ReactNode, useRef } from "react";
-import { CellContext, ColumnDef } from "@tanstack/react-table";
+import { Cell, CellContext, ColumnDef } from "@tanstack/react-table";
 
 // Components
 import Text from "@components/atoms/Text";
@@ -8,8 +8,52 @@ import Tooltip from "@components/molecules/Tooltip";
 // hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
+import { EXPANDABLE_CELL_SIZE_REM } from "./constants";
 import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
 import { DataTableColumn, DataTableRowExpandChangeHandler } from "./types";
+
+/**
+ * Props for the TableBodyCell component, defined here to be used by areCellsEqual.
+ */
+export interface ICellProps<TData extends object, TValue> {
+    cell: Cell<TData, TValue>;
+    isExpanded: boolean;
+    renderer: ColumnDef<TData, TValue>["cell"];
+    isPinned?: boolean;
+    offset: number;
+    dirMode: string;
+}
+
+export const getCellStyle = (
+    isExpander: boolean,
+    columnSize: number,
+    offset: number,
+    isPinned: boolean | string | undefined,
+    isRTL: boolean
+) => ({
+    width: isExpander ? EXPANDABLE_CELL_SIZE_REM : `${columnSize}px`,
+    minWidth: isExpander ? EXPANDABLE_CELL_SIZE_REM : `${columnSize}px`,
+    ...(isPinned && {
+        left: !isRTL ? `${offset}px` : undefined,
+        right: isRTL ? `${offset}px` : undefined
+    })
+});
+
+/**
+ * Custom equality for TableBodyCell's memo. Compares only the
+ * primitive snapshot props — the cell instance itself is intentionally
+ * ignored because TanStack creates a new one on every render.
+ */
+export const areCellsEqual = <TData extends object, TValue>(
+    prev: ICellProps<TData, TValue>,
+    next: ICellProps<TData, TValue>
+) =>
+    prev.cell.id === next.cell.id &&
+    prev.isExpanded === next.isExpanded &&
+    prev.renderer === next.renderer &&
+    prev.isPinned === next.isPinned &&
+    prev.offset === next.offset &&
+    prev.dirMode === next.dirMode;
 
 export const DefaultCellComponent = ({ value }: { value: string }) => {
     const textRef = useRef<HTMLSpanElement | null>(null);
@@ -27,7 +71,7 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
  * Normalizes the public {@link DataTableColumn} shape into TanStack `ColumnDef[]`.
  * Pure transformation: does not inject any non-data columns.
  */
-export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
+export const adaptColumns = <TData extends object>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
     columns.map((col, index) => {
         const { accessorKey, id, header, size, renderCell } = col;
         const isAccessorColumn = Boolean(accessorKey);
@@ -57,7 +101,7 @@ export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnD
  * Kept separate from {@link adaptColumns} so other special columns (selection,
  * drag-handle, …) can be composed the same way without further branching.
  */
-export const withExpanderColumn = <TData,>(
+export const withExpanderColumn = <TData extends object>(
     columns: ColumnDef<TData, ReactNode>[],
     onRowExpandChange?: DataTableRowExpandChangeHandler<TData>
 ): ColumnDef<TData, ReactNode>[] => [

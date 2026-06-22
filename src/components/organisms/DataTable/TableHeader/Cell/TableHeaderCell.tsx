@@ -9,14 +9,14 @@ import Text from "@components/atoms/Text";
 // Styles
 import "./TableHeaderCell.scss";
 
-import { EXPANDABLE_CELL_SIZE_REM } from "../../constants";
+import { getCellStyle } from "../../helper";
 
 /**
  * Props for the {@link TableHeaderCell} component.
  * @template TData - The shape of the overall row data object.
  * @template TValue - The type of the specific value held within this column.
  */
-interface ITableHeaderCellProps<TData, TValue> {
+interface ITableHeaderCellProps<TData extends object, TValue> {
     /**
      * The TanStack Table header instance.
      * Contains the column definition, context data, and structural information
@@ -37,7 +37,7 @@ interface ITableHeaderCellProps<TData, TValue> {
  * @param props - The properties for the component.
  * @returns A table header cell element containing the rendered column header, or an empty cell if it's a placeholder.
  */
-const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProps<TData, TValue>) => {
+const TableHeaderCell = <TData extends object, TValue>({ header, offset }: ITableHeaderCellProps<TData, TValue>) => {
     const isExpanderHeader = header.column.id === "expander";
     const isPinned = header.column.getIsPinned();
     const isRTL = document.dir === "rtl";
@@ -48,14 +48,7 @@ const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProp
                 tableHeaderCell_expander: isExpanderHeader,
                 tableHeaderCell_pinned: isPinned
             })}
-            style={{
-                width: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : `${header.column.getSize()}px`,
-                minWidth: isExpanderHeader ? EXPANDABLE_CELL_SIZE_REM : `${header.column.getSize()}px`,
-                ...(isPinned && {
-                    left: !isRTL ? `${offset}px` : undefined,
-                    right: isRTL ? `${offset}px` : undefined
-                })
-            }}
+            style={getCellStyle(isExpanderHeader, header.column.getSize(), offset, isPinned, isRTL)}
         >
             {!isExpanderHeader ? (
                 <div className="tableHeaderCell__content">
