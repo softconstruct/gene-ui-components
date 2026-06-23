@@ -25,6 +25,21 @@ export const collectNodeIds = (item: IActionableListItem): string[] => [
 
 export const collectTreeIds = (items: IActionableListItem[]): string[] => items.flatMap((item) => collectNodeIds(item));
 
+export const mergeSelectionWithScope = (
+    current: ReadonlySet<string>,
+    scopeLeafIds: readonly string[],
+    checked: boolean
+): Set<string> => {
+    const scopeSet = new Set(scopeLeafIds);
+    if (!checked) {
+        const next = new Set(current);
+        scopeSet.forEach((id) => next.delete(id));
+        return next;
+    }
+    const preservedOutsideScope = [...current].filter((id) => !scopeSet.has(id));
+    return new Set([...preservedOutsideScope, ...scopeSet]);
+};
+
 export const applySelectionToTree = (items: IActionableListItem[], selectedIds: Set<string>): IActionableListItem[] =>
     items.map((item) => ({
         ...item,

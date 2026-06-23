@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { dropTargetForElements, monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import classNames from "classnames";
 
@@ -26,8 +26,11 @@ import {
     ACTIONABLE_LIST_MAX_NESTED_LEVEL,
     ACTIONABLE_LIST_SEARCH_DEBOUNCE_MS,
     applyCheckedToBranch,
+    applyCheckedToLeavesById,
+    collectLeafIds,
     countAllItems,
     countCheckedItems,
+    countCheckedLeavesInScope,
     countLeafItems,
     filterTree,
     findItemById,
@@ -177,6 +180,7 @@ const ActionableList: FC<IActionableListProps> = ({
     onItemsChange,
     onItemCheck,
     onSelectAllChange,
+    managedSelection = false,
     onCrossListDrop,
     delegateCrossListDrop = false,
     dropGapOutletRef,
@@ -194,6 +198,7 @@ const ActionableList: FC<IActionableListProps> = ({
     const isTotalItemsLabelTruncated = useEllipsisDetection(totalItemsLabelRef, [mergedTexts.totalItemsLabel]);
 
     const [localItems, setLocalItems] = useState<IActionableListItem[]>(() => mergeItemsFromProps(items, []));
+    const workingItems = managedSelection ? items : localItems;
     const [searchValue, setSearchValue] = useState("");
     const [expandedIds, setExpandedIds] = useState<Set<string>>(() =>
         defaultExpandAll ? getExpandedIdsFromItems(items) : new Set()
@@ -215,9 +220,10 @@ const ActionableList: FC<IActionableListProps> = ({
         dropGapOutletRef.current = dropGap;
     }, [dropGap, dropGapOutletRef]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
+        if (managedSelection) return;
         setLocalItems((prev) => mergeItemsFromProps(items, prev));
-    }, [items]);
+    }, [items, managedSelection]);
 
     useEffect(() => {
         if (wasExpansionToggledRef.current) return;
@@ -283,13 +289,21 @@ const ActionableList: FC<IActionableListProps> = ({
         debouncedCallback(value);
     };
 
-    const filteredItems = useMemo(() => filterTree(localItems, searchValue), [localItems, searchValue]);
-    const totalItemsCount = useMemo(() => countLeafItems(localItems), [localItems]);
+    const filteredItems = useMemo(() => filterTree(workingItems, searchValue), [workingItems, searchValue]);
+    const isSearchActive = searchValue.trim().length > 0;
+    const filteredLeafIds = useMemo(() => new Set(collectLeafIds(filteredItems)), [filteredItems]);
+    const totalItemsCount = useMemo(() => countLeafItems(workingItems), [workingItems]);
     const filteredItemsCount = useMemo(() => countLeafItems(filteredItems), [filteredItems]);
-    const selectedItemsCount = useMemo(() => countCheckedItems(localItems), [localItems]);
+    const selectedItemsCount = useMemo(() => countCheckedItems(workingItems), [workingItems]);
+    const selectedFilteredLeafCount = useMemo(
+        () => countCheckedLeavesInScope(workingItems, filteredLeafIds),
+        [workingItems, filteredLeafIds]
+    );
 
-    const selectAllChecked = totalItemsCount > 0 && localItems.every((item) => isSubtreeFullySelected(item));
-    const selectAllIndeterminate = !selectAllChecked && localItems.some((item) => isAnySelectionInSubtree(item));
+    const selectAllScopeLeafCount = isSearchActive ? filteredItemsCount : totalItemsCount;
+    const selectedScopeLeafCount = isSearchActive ? selectedFilteredLeafCount : selectedItemsCount;
+    const selectAllChecked = selectAllScopeLeafCount > 0 && selectedScopeLeafCount === selectAllScopeLeafCount;
+    const selectAllIndeterminate = selectedScopeLeafCount > 0 && selectedScopeLeafCount < selectAllScopeLeafCount;
 
     const handleToggleExpand = (id: string) => {
         wasExpansionToggledRef.current = true;
@@ -307,8 +321,10 @@ const ActionableList: FC<IActionableListProps> = ({
     };
 
     const handleToggleCheck = (id: string, checked: boolean) => {
-        const nextItems = updateItemById(localItems, id, (item) => applyCheckedToBranch(item, checked));
-        syncItems(nextItems);
+        const nextItems = updateItemById(workingItems, id, (item) => applyCheckedToBranch(item, checked));
+        if (!managedSelection) {
+            syncItems(nextItems);
+        }
         const toggled = findItemById(nextItems, id);
         if (toggled !== undefined) {
             onItemCheck?.(toggled, checked, nextItems);
@@ -316,15 +332,22 @@ const ActionableList: FC<IActionableListProps> = ({
     };
 
     const handleSelectAll = (checked: boolean) => {
-        if (totalItemsCount === 0) return;
-        const nextItems = localItems.map((item) => applyCheckedToBranch(item, checked));
-        syncItems(nextItems);
-        onSelectAllChange?.(checked, nextItems);
+        if (selectAllScopeLeafCount === 0) return;
+
+        const scopeLeafIds = collectLeafIds(isSearchActive ? filteredItems : workingItems);
+        const targetLeafIds = new Set(scopeLeafIds);
+        const nextItems = applyCheckedToLeavesById(workingItems, targetLeafIds, checked);
+
+        onSelectAllChange?.(checked, nextItems, scopeLeafIds);
+
+        if (!managedSelection) {
+            syncItems(nextItems);
+        }
     };
 
     const handleDropReorder = (sourceId: string, targetId: string, edge: TDropGapEdge) => {
         if (sourceId === targetId) return;
-        syncItems(reorderInTree(localItems, sourceId, targetId, edge));
+        syncItems(reorderInTree(workingItems, sourceId, targetId, edge));
     };
     handleDropReorderRef.current = handleDropReorder;
 
@@ -335,7 +358,7 @@ const ActionableList: FC<IActionableListProps> = ({
         });
     }, []);
 
-    const hasData = useMemo(() => countAllItems(localItems) > 0, [localItems]);
+    const hasData = useMemo(() => countAllItems(workingItems) > 0, [workingItems]);
     const hasSearchResults = useMemo(() => countAllItems(filteredItems) > 0, [filteredItems]);
     const showEmptyDropZone =
         isDraggable && Boolean(dragListId) && Boolean(onCrossListDrop || delegateCrossListDrop) && !loading && !hasData;
@@ -430,7 +453,7 @@ const ActionableList: FC<IActionableListProps> = ({
                                 <Checkbox
                                     checked={selectAllChecked}
                                     indeterminate={selectAllIndeterminate}
-                                    disabled={totalItemsCount === 0}
+                                    disabled={selectAllScopeLeafCount === 0}
                                     onChange={(event) => handleSelectAll(event.target.checked)}
                                     className="actionableList__selectAll"
                                 />

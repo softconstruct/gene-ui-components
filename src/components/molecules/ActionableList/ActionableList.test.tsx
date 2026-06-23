@@ -1,7 +1,15 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-import { countCheckedItems, countLeafItems, reorderInTree } from "./ActionableList.helpers";
+import Checkbox from "@components/molecules/Checkbox";
+
+import {
+    applyCheckedToLeavesById,
+    collectLeafIds,
+    countCheckedItems,
+    countLeafItems,
+    reorderInTree
+} from "./ActionableList.helpers";
 // Components
 import ActionableList, { IActionableListProps } from "./index";
 
@@ -270,11 +278,114 @@ describe("ActionableList ", () => {
 
         expect(onItemCheck).not.toHaveBeenCalled();
         expect(onSelectAllChange).toHaveBeenCalledTimes(1);
-        const [checked, items] = onSelectAllChange.mock.calls[0];
+        const [checked, items, scopeLeafIds] = onSelectAllChange.mock.calls[0];
         expect(checked).toBe(true);
         expect(items).toHaveLength(2);
+        expect(scopeLeafIds).toEqual(["a", "b"]);
         expect(items[0]).toMatchObject({ id: "a", checked: true });
         expect(items[1]).toMatchObject({ id: "b", checked: true });
+    });
+
+    const getSelectAllCheckbox = (wrapper: ReactWrapper) =>
+        wrapper.find(".actionableList__bulkSelection").find(Checkbox).at(0);
+
+    it("select all during search selects only filtered items", () => {
+        const items = Array.from({ length: 10 }, (_, index) => ({
+            id: `item-${index + 1}`,
+            title: index < 3 ? `foo ${index + 1}` : `item ${index + 1}`
+        }));
+
+        const onSelectAllChange = jest.fn();
+        const wrapper = mount(<ActionableList withCheckbox items={items} onSelectAllChange={onSelectAllChange} />);
+
+        wrapper.find(".actionableList__search input").simulate("change", { target: { value: "f" } });
+        wrapper.update();
+
+        getSelectAllCheckbox(wrapper)
+            .find("input")
+            .simulate("change", { target: { checked: true } });
+        wrapper.update();
+
+        expect(getSelectAllCheckbox(wrapper).prop("checked")).toBe(true);
+        expect(getSelectAllCheckbox(wrapper).prop("indeterminate")).toBe(false);
+        expect(countCheckedItems(onSelectAllChange.mock.calls[0][1])).toBe(3);
+        expect(onSelectAllChange.mock.calls[0][2]).toEqual(["item-1", "item-2", "item-3"]);
+
+        wrapper.find(".actionableList__search input").simulate("change", { target: { value: "" } });
+        wrapper.update();
+
+        expect(getSelectAllCheckbox(wrapper).prop("checked")).toBe(false);
+        expect(getSelectAllCheckbox(wrapper).prop("indeterminate")).toBe(true);
+    });
+
+    it("select all is unchecked when search has no results", () => {
+        const items = Array.from({ length: 10 }, (_, index) => ({
+            id: `item-${index + 1}`,
+            title: `item ${index + 1}`
+        }));
+
+        const wrapper = mount(<ActionableList withCheckbox items={items} />);
+
+        wrapper.find(".actionableList__search input").simulate("change", { target: { value: "g" } });
+        wrapper.update();
+
+        expect(getSelectAllCheckbox(wrapper).prop("checked")).toBe(false);
+        expect(getSelectAllCheckbox(wrapper).prop("indeterminate")).toBe(false);
+        expect(getSelectAllCheckbox(wrapper).prop("disabled")).toBe(true);
+    });
+
+    it("unchecking select all during search preserves selections outside the filter", () => {
+        const items = [
+            { id: "a", title: "Alpha" },
+            { id: "b", title: "Beta" },
+            { id: "c", title: "Gamma" }
+        ];
+
+        const wrapper = mount(<ActionableList withCheckbox items={items} />);
+
+        wrapper
+            .find(".actionableList__list input[type='checkbox']")
+            .at(0)
+            .simulate("change", { target: { checked: true } });
+        wrapper.update();
+
+        wrapper.find(".actionableList__search input").simulate("change", { target: { value: "b" } });
+        wrapper.update();
+
+        const selectAllInput = getSelectAllCheckbox(wrapper).find("input");
+        selectAllInput.simulate("change", { target: { checked: true } });
+        wrapper.update();
+        selectAllInput.simulate("change", { target: { checked: false } });
+        wrapper.update();
+
+        wrapper.find(".actionableList__search input").simulate("change", { target: { value: "" } });
+        wrapper.update();
+
+        expect(getSelectAllCheckbox(wrapper).prop("checked")).toBe(false);
+        expect(getSelectAllCheckbox(wrapper).prop("indeterminate")).toBe(true);
+
+        const listCheckboxes = wrapper.find(".actionableList__list input[type='checkbox']");
+        expect(listCheckboxes.at(0).prop("checked")).toBe(true);
+        expect(listCheckboxes.at(1).prop("checked")).toBe(false);
+        expect(listCheckboxes.at(2).prop("checked")).toBe(false);
+    });
+
+    it("applyCheckedToLeavesById updates only targeted leaves", () => {
+        const items = [
+            {
+                id: "group",
+                title: "Group",
+                children: [
+                    { id: "a", title: "A", checked: false },
+                    { id: "b", title: "B", checked: true }
+                ]
+            },
+            { id: "c", title: "C", checked: false }
+        ];
+
+        const result = applyCheckedToLeavesById(items, new Set(["a", "c"]), true);
+        expect(collectLeafIds(result)).toEqual(["a", "b", "c"]);
+        expect(countCheckedItems(result)).toBe(3);
     });
 
     it("shows every ancestor fully checked when only the deepest leaf is checked", () => {

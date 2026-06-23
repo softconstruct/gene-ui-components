@@ -87,6 +87,13 @@ export const countCheckedItems = (items: IActionableListItem[]): number =>
         return acc + (item.checked ? 1 : 0);
     }, 0);
 
+/** Counts checked leaves in `items` whose ids are in `scopeLeafIds`. */
+export const countCheckedLeavesInScope = (items: IActionableListItem[], scopeLeafIds: ReadonlySet<string>): number =>
+    items.reduce((acc, item) => {
+        if (isGroupItem(item)) return acc + countCheckedLeavesInScope(item.children ?? [], scopeLeafIds);
+        return acc + (item.checked && scopeLeafIds.has(item.id) ? 1 : 0);
+    }, 0);
+
 export const findItemById = (nodes: IActionableListItem[], targetId: string): IActionableListItem | undefined => {
     const direct = nodes.find((node) => node.id === targetId);
     if (direct !== undefined) return direct;
@@ -116,6 +123,24 @@ export const applyCheckedToBranch = (item: IActionableListItem, checked: boolean
     checked,
     children: item.children?.map((child: IActionableListItem) => applyCheckedToBranch(child, checked))
 });
+
+export const collectLeafIds = (items: IActionableListItem[]): string[] =>
+    items.flatMap((item) => (isGroupItem(item) ? collectLeafIds(item.children ?? []) : [item.id]));
+
+export const applyCheckedToLeavesById = (
+    items: IActionableListItem[],
+    leafIds: ReadonlySet<string>,
+    checked: boolean
+): IActionableListItem[] =>
+    items.map((item) => {
+        if (isGroupItem(item)) {
+            return {
+                ...item,
+                children: applyCheckedToLeavesById(item.children ?? [], leafIds, checked)
+            };
+        }
+        return leafIds.has(item.id) ? { ...item, checked } : item;
+    });
 
 export const filterTree = (items: IActionableListItem[], query: string): IActionableListItem[] => {
     const q = query.trim().toLowerCase();

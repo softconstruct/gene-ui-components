@@ -1,8 +1,17 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
+import {
+    collectLeafIds,
+    countCheckedItems,
+    countCheckedLeavesInScope,
+    filterTree
+} from "@components/molecules/ActionableList/ActionableList.helpers";
+import Checkbox from "@components/molecules/Checkbox";
+
 // Components
 import TransferList, { ITransferListProps } from "./index";
+import { applySelectionToTree, mergeSelectionWithScope } from "./TransferList.helpers";
 
 const sourceItems = [
     { id: "source-a", title: "Source A" },
@@ -95,5 +104,80 @@ describe("TransferList ", () => {
             /requires between 2 and 4 panels/
         );
         consoleError.mockRestore();
+    });
+
+    it("mergeSelectionWithScope selects only scoped leaves", () => {
+        const items = [
+            {
+                id: "portfolio-na",
+                title: "Portfolio - North America",
+                children: [
+                    { id: "na-pricing", title: "Pricing and Contracts" },
+                    { id: "na-sales", title: "Sales Enablement" }
+                ]
+            },
+            {
+                id: "portfolio-emea",
+                title: "Portfolio - EMEA",
+                children: [{ id: "emea-distributor", title: "Distributor Onboarding" }]
+            }
+        ];
+        const scope = collectLeafIds(filterTree(items, "and"));
+
+        expect(scope).toEqual(["na-pricing"]);
+
+        const selectedIds = mergeSelectionWithScope(new Set(), scope, true);
+        const viewItems = applySelectionToTree(items, selectedIds);
+
+        expect(countCheckedLeavesInScope(viewItems, new Set(scope))).toBe(1);
+        expect(countCheckedItems(viewItems)).toBe(1);
+    });
+
+    it("select all during search selects only filtered items in a panel", () => {
+        const portfolioPanels: ITransferListProps["panels"] = [
+            {
+                id: "available",
+                defaultItems: [
+                    {
+                        id: "portfolio-na",
+                        title: "Portfolio - North America",
+                        children: [
+                            { id: "na-pricing", title: "Pricing and Contracts" },
+                            { id: "na-sales", title: "Sales Enablement" }
+                        ]
+                    },
+                    {
+                        id: "portfolio-emea",
+                        title: "Portfolio - EMEA",
+                        children: [{ id: "emea-distributor", title: "Distributor Onboarding" }]
+                    }
+                ]
+            },
+            { id: "selected", defaultItems: [] }
+        ];
+
+        const wrapper = mount(<TransferList panels={portfolioPanels} />);
+        const sourcePanel = wrapper.find(".transferList__panel").at(0);
+
+        sourcePanel.find(".actionableList__search input").simulate("change", { target: { value: "and" } });
+        wrapper.update();
+
+        sourcePanel
+            .find(".actionableList__bulkSelection")
+            .find(Checkbox)
+            .at(0)
+            .find("input")
+            .simulate("change", { target: { checked: true } });
+        wrapper.update();
+
+        expect(sourcePanel.find(".actionableList__bulkSelectedCount").at(0).text()).toBe("1");
+        expect(wrapper.find(".transferList__controls button").at(0).prop("disabled")).toBe(false);
+
+        sourcePanel.find(".actionableList__search input").simulate("change", { target: { value: "" } });
+        wrapper.update();
+
+        expect(sourcePanel.find(".actionableList__bulkSelectedCount").at(0).text()).toBe("1");
+        const selectAllCheckbox = sourcePanel.find(".actionableList__bulkSelection").find(Checkbox).at(0);
+        expect(selectAllCheckbox.prop("checked")).toBe(false);
     });
 });

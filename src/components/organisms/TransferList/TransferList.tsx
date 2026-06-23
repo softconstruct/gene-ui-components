@@ -31,6 +31,7 @@ import {
     assertPanelCount,
     collectNodeIds,
     collectTreeIds,
+    mergeSelectionWithScope,
     moveBetweenPanels,
     moveItemByDrag,
     TRANSFER_LIST_DEFAULT_TEXTS
@@ -186,13 +187,12 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
         );
     };
 
-    const handleSelectAll = (checked: boolean, items: IActionableListItem[], panelIndex: number) => {
-        if (!checked) {
-            setSelectedIdsByPanel((prev) => prev.map((set, index) => (index === panelIndex ? new Set() : set)));
-            return;
-        }
-        const allIds = items.flatMap((item) => collectNodeIds(item));
-        setSelectedIdsByPanel((prev) => prev.map((set, index) => (index === panelIndex ? new Set(allIds) : set)));
+    const handleSelectAll = (checked: boolean, panelIndex: number, scopeLeafIds: string[] = []) => {
+        if (checked && scopeLeafIds.length === 0) return;
+
+        setSelectedIdsByPanel((prev) =>
+            prev.map((set, index) => (index === panelIndex ? mergeSelectionWithScope(set, scopeLeafIds, checked) : set))
+        );
     };
 
     useEffect(() => {
@@ -355,6 +355,7 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
                         <ActionableList
                             className="transferList__actionableList"
                             withCheckbox
+                            managedSelection
                             draggable={draggable}
                             dragListId={draggable ? panel.id : undefined}
                             delegateCrossListDrop={draggable}
@@ -362,7 +363,9 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
                             items={panelViewItems[panelIndex]}
                             texts={panel.texts}
                             onItemCheck={(item, checked) => updateSelection(item, checked, panelIndex)}
-                            onSelectAllChange={(checked, items) => handleSelectAll(checked, items, panelIndex)}
+                            onSelectAllChange={(checked, _items, scopeLeafIds) =>
+                                handleSelectAll(checked, panelIndex, scopeLeafIds)
+                            }
                             onItemsChange={draggable ? (items) => handlePanelItemsChange(panelIndex, items) : undefined}
                         />
                     </div>

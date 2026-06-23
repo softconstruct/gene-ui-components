@@ -164,9 +164,15 @@ export interface IActionableListProps {
      */
     onItemCheck?: (item: IActionableListItem, checked: boolean, items: IActionableListItem[]) => void;
     /**
-     * Emits when the toolbar **Select all** checkbox is toggled: target `checked` state and full updated `items` tree.
+     * Emits when the toolbar **Select all** checkbox is toggled: target `checked` state, full updated `items` tree,
+     * and leaf ids in the current select-all scope (filtered leaves while searching, otherwise all leaves).
      */
-    onSelectAllChange?: (checked: boolean, items: IActionableListItem[]) => void;
+    onSelectAllChange?: (checked: boolean, items: IActionableListItem[], scopeLeafIds: string[]) => void;
+    /**
+     * When `true`, selection is read from the `items` prop and checkbox toggles only emit callbacks.
+     * Used by TransferList; not intended for standalone ActionableList usage.
+     */
+    managedSelection?: boolean;
     /**
      * Emits debounced search value.
      */
