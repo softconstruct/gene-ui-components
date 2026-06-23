@@ -31,9 +31,7 @@
         justify-content: center;
         gap: var(--guit-ref-spacing-2xsmall);
         padding: var(--guit-ref-spacing-large);
-        border-right: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
-            var(--guit-sem-color-border-neutral-2);
-        border-left: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+        border-inline: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
     }
 }
