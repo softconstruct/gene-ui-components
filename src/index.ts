@@ -117,6 +117,7 @@ export {
     IPartnersProps
 } from "./components/organisms/GlobalHeader";
 export { default as DataCardList, IDataCardListProps } from "@components/organisms/DataCardList";
+export { default as TransferList } from "./components/organisms/TransferList";
 
 // Providers
 export {
