@@ -1,14 +1,9 @@
 import type { IActionableListItem } from "@components/molecules/ActionableList";
 
-import type { ITransferListPanel, ITransferListTexts } from "./TransferList.types";
+import type { ITransferListPanel } from "./TransferList.types";
 
 export const TRANSFER_LIST_MIN_PANELS = 2;
 export const TRANSFER_LIST_MAX_PANELS = 4;
-
-export const TRANSFER_LIST_DEFAULT_TEXTS: ITransferListTexts = {
-    moveForwardAriaLabel: "Move selected to next panel",
-    moveBackwardAriaLabel: "Move selected to previous panel"
-};
 
 export const assertPanelCount = (panels: ITransferListPanel[]): void => {
     if (panels.length < TRANSFER_LIST_MIN_PANELS || panels.length > TRANSFER_LIST_MAX_PANELS) {

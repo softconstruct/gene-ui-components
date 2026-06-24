@@ -101,7 +101,6 @@ const meta: Meta<ITransferListProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         panels: args({ control: "false", ...propCategory.content }),
         draggable: args({ control: "boolean", ...propCategory.appearance }),
-        texts: args({ control: "object", ...propCategory.content }),
         onChange: args({ control: "false", action: "onChange", ...propCategory.action })
     }
 };

@@ -21,17 +21,6 @@ interface ITransferListPanel {
     texts?: Partial<IActionableListTexts>;
 }
 
-interface ITransferListTexts {
-    /**
-     * Aria-label for move selected to the next panel.
-     */
-    moveForwardAriaLabel: string;
-    /**
-     * Aria-label for move selected to the previous panel.
-     */
-    moveBackwardAriaLabel: string;
-}
-
 interface ITransferListChangePayload {
     /**
      * Index of the panel items were moved from.
@@ -70,19 +59,9 @@ interface ITransferListProps {
      */
     draggable?: boolean;
     /**
-     * Localized strings for transfer controls.
-     */
-    texts?: Partial<ITransferListTexts>;
-    /**
      * Called after move, cross-panel drag, or in-panel reorder.
      */
     onChange?: (payload: ITransferListChangePayload) => void;
 }
 
-export type {
-    ITransferListChangePayload,
-    ITransferListPanel,
-    ITransferListProps,
-    ITransferListTexts,
-    TTransferListDirection
-};
+export type { ITransferListChangePayload, ITransferListPanel, ITransferListProps, TTransferListDirection };

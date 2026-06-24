@@ -33,8 +33,7 @@ import {
     collectTreeIds,
     mergeSelectionWithScope,
     moveBetweenPanels,
-    moveItemByDrag,
-    TRANSFER_LIST_DEFAULT_TEXTS
+    moveItemByDrag
 } from "./TransferList.helpers";
 import type { ITransferListChangePayload, ITransferListProps } from "./TransferList.types";
 
@@ -118,10 +117,9 @@ const resolveCrossListDrop = (
 /**
  * Transfer List component enables users to move items between two to four actionable lists.
  */
-const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = false, texts, onChange }) => {
+const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = false, onChange }) => {
     assertPanelCount(panels);
 
-    const mergedTexts = { ...TRANSFER_LIST_DEFAULT_TEXTS, ...texts };
     const isRTLMode = typeof document !== "undefined" && document.dir === "rtl";
     const ForwardIcon = isRTLMode ? ChevronLeft : ChevronRight;
     const BackwardIcon = isRTLMode ? ChevronRight : ChevronLeft;
@@ -379,7 +377,7 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
                                 Icon={ForwardIcon}
                                 disabled={(selectedIdsByPanel[panelIndex]?.size ?? 0) === 0}
                                 onClick={() => handleMove(panelIndex, panelIndex + 1)}
-                                aria-label={mergedTexts.moveForwardAriaLabel}
+                                aria-label="Move selected to next panel"
                             />
                             <Button
                                 size="medium"
@@ -388,7 +386,7 @@ const TransferList: FC<ITransferListProps> = ({ className, panels, draggable = f
                                 Icon={BackwardIcon}
                                 disabled={(selectedIdsByPanel[panelIndex + 1]?.size ?? 0) === 0}
                                 onClick={() => handleMove(panelIndex + 1, panelIndex)}
-                                aria-label={mergedTexts.moveBackwardAriaLabel}
+                                aria-label="Move selected to previous panel"
                             />
                         </div>
                     )}
