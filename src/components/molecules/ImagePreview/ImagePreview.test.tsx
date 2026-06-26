@@ -6,6 +6,8 @@ import { act } from "react-dom/test-utils";
 import Button from "@components/atoms/Button";
 import Text from "@components/atoms/Text";
 import Controllers from "@components/molecules/ImagePreview/Controllers/Controllers";
+import Magnifier from "@components/molecules/ImagePreview/Magnifier/Magnifier";
+import Switch from "@components/molecules/Switch";
 import GeneUIProvider from "@components/providers/GeneUIProvider";
 
 import { getImageDownloadFileName } from "./ImagePreview.helpers";
@@ -89,6 +91,14 @@ const updateImagePreviewProps = async (
     await flushUpdates();
 
     return wrapper.update();
+};
+
+const getPreviewImage = (wrapper: ReactWrapper<IImagePreviewProps>) => {
+    if (wrapper.find(Magnifier).exists()) {
+        return wrapper.find(Magnifier).find("img").first();
+    }
+
+    return wrapper.find(".imagePreview__image").first();
 };
 
 describe("ImagePreview ", () => {
@@ -212,7 +222,7 @@ describe("ImagePreview ", () => {
             showSize: false
         });
 
-        expect(wrapper.find(".imagePreview__image").prop("alt")).toBe("Image 1");
+        expect(getPreviewImage(wrapper).prop("alt")).toBe("Image 1");
     });
 
     it("uses empty alt text when image title is not provided", async () => {
@@ -221,7 +231,7 @@ describe("ImagePreview ", () => {
             showSize: false
         });
 
-        expect(wrapper.find(".imagePreview__image").prop("alt")).toBe("");
+        expect(getPreviewImage(wrapper).prop("alt")).toBe("");
     });
 
     it("updates title when navigating between images", async () => {
@@ -270,9 +280,7 @@ describe("ImagePreview ", () => {
             .first()
             .simulate("click");
 
-        expect(wrapper.find(".imagePreview__image").prop("style")).toEqual(
-            expect.objectContaining({ transform: "rotate(90deg)" })
-        );
+        expect(wrapper.find(Magnifier).prop("rotation")).toBe(90);
     });
 
     it("rotates image counterclockwise when rotate left button is clicked", async () => {
@@ -285,9 +293,7 @@ describe("ImagePreview ", () => {
             .first()
             .simulate("click");
 
-        expect(wrapper.find(".imagePreview__image").prop("style")).toEqual(
-            expect.objectContaining({ transform: "rotate(-90deg)" })
-        );
+        expect(wrapper.find(Magnifier).prop("rotation")).toBe(-90);
     });
 
     it("does not render rotate buttons when showRotate is false", async () => {
@@ -318,9 +324,77 @@ describe("ImagePreview ", () => {
             .simulate("click");
         wrapper.find(".imagePreview__body").find(Button).at(1).simulate("click");
 
-        expect(wrapper.find(".imagePreview__image").prop("style")).toEqual(
-            expect.objectContaining({ transform: "rotate(0deg)" })
-        );
+        expect(wrapper.find(Magnifier).prop("rotation")).toBe(0);
+    });
+
+    it("passes withMagnifier prop to Controllers by default", () => {
+        expect(setup.find(Controllers).prop("withMagnifier")).toBe(true);
+    });
+
+    it("passes withMagnifier false to Controllers when withMagnifier is false", async () => {
+        const wrapper = await updateImagePreviewProps(setup, { withMagnifier: false });
+
+        expect(wrapper.find(Controllers).prop("withMagnifier")).toBe(false);
+    });
+
+    it("renders magnifier switch when withMagnifier is true", () => {
+        expect(setup.find(Controllers).find(Switch).exists()).toBeTruthy();
+    });
+
+    it("does not render magnifier switch when withMagnifier is false", async () => {
+        const wrapper = await updateImagePreviewProps(setup, { withMagnifier: false });
+
+        expect(wrapper.find(Controllers).find(Switch)).toHaveLength(0);
+    });
+
+    it("renders Magnifier when withMagnifier is true and images are provided", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages[0], showSize: false });
+
+        expect(wrapper.find(Magnifier).exists()).toBeTruthy();
+        expect(wrapper.find(Magnifier).prop("showMagnifier")).toBe(false);
+    });
+
+    it("does not render Magnifier when withMagnifier is false", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages[0], withMagnifier: false, showSize: false });
+
+        expect(wrapper.find(Magnifier)).toHaveLength(0);
+    });
+
+    it("uses magnifierDefaultValue as initial magnifier switch state", async () => {
+        const wrapper = await mountImagePreview({
+            images: previewImages[0],
+            magnifierDefaultValue: true,
+            showSize: false
+        });
+
+        expect(wrapper.find(Magnifier).prop("showMagnifier")).toBe(true);
+        expect(wrapper.find(Controllers).prop("magnifierChecked")).toBe(true);
+    });
+
+    it("toggles magnifier when switch value changes", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages[0], showSize: false });
+
+        await act(async () => {
+            wrapper.find(Controllers).prop("onMagnifierChange")?.(true);
+        });
+
+        wrapper.update();
+
+        expect(wrapper.find(Magnifier).prop("showMagnifier")).toBe(true);
+        expect(wrapper.find(Controllers).prop("magnifierChecked")).toBe(true);
+    });
+
+    it("rotates image with plain img when withMagnifier is false", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages[0], withMagnifier: false, showSize: false });
+
+        wrapper
+            .find(Controllers)
+            .find(Button)
+            .filterWhere((button) => button.prop("aria-label") === "Rotate right")
+            .first()
+            .simulate("click");
+
+        expect(getPreviewImage(wrapper).prop("style")).toEqual(expect.objectContaining({ transform: "rotate(90deg)" }));
     });
 
     it("passes showDownload prop to Controllers by default", () => {
@@ -399,7 +473,7 @@ describe("ImagePreview ", () => {
             showSize: false
         });
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[0].path);
+        expect(getPreviewImage(wrapper).prop("src")).toBe(previewImages[0].path);
     });
 
     it("renders image from images array", async () => {
@@ -408,7 +482,7 @@ describe("ImagePreview ", () => {
             showSize: false
         });
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[0].path);
+        expect(getPreviewImage(wrapper).prop("src")).toBe(previewImages[0].path);
     });
 
     it("renders page count for images array", async () => {
@@ -442,7 +516,7 @@ describe("ImagePreview ", () => {
 
         wrapper.find(".imagePreview__body").find(Button).at(1).simulate("click");
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[1].path);
+        expect(getPreviewImage(wrapper).prop("src")).toBe(previewImages[1].path);
         expect(wrapper.find(".imagePreview__count").text()).toBe("2/3");
     });
 
@@ -451,7 +525,7 @@ describe("ImagePreview ", () => {
 
         wrapper.find(".imagePreview__body").find(Button).at(0).simulate("click");
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[2].path);
+        expect(getPreviewImage(wrapper).prop("src")).toBe(previewImages[2].path);
         expect(wrapper.find(".imagePreview__count").text()).toBe("3/3");
     });
 
@@ -461,7 +535,7 @@ describe("ImagePreview ", () => {
         wrapper.find(".imagePreview__body").find(Button).at(1).simulate("click");
         await updateImagePreviewProps(wrapper, { images: previewImages.slice(0, 2), showSize: false });
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[0].path);
+        expect(getPreviewImage(wrapper).prop("src")).toBe(previewImages[0].path);
         expect(wrapper.find(".imagePreview__count").text()).toBe("1/2");
     });
 
@@ -472,7 +546,7 @@ describe("ImagePreview ", () => {
             showSize: false
         });
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[2].path);
+        expect(getPreviewImage(wrapper).prop("src")).toBe(previewImages[2].path);
         expect(wrapper.find(".imagePreview__count").text()).toBe("3/3");
         expect(wrapper.find(Text).first().text()).toBe("Image 3");
     });
@@ -496,7 +570,7 @@ describe("ImagePreview ", () => {
             images: previewImages[0],
             showSize: false
         });
-        const image = wrapper.find("img");
+        const image = getPreviewImage(wrapper);
         const imageNode = image.getDOMNode() as HTMLImageElement;
 
         Object.defineProperty(imageNode, "naturalWidth", { value: 700, configurable: true });
@@ -517,7 +591,7 @@ describe("ImagePreview ", () => {
             images: previewImages[0],
             showSize: false
         });
-        const image = wrapper.find("img");
+        const image = getPreviewImage(wrapper);
         const imageNode = image.getDOMNode() as HTMLImageElement;
 
         Object.defineProperty(imageNode, "naturalWidth", { value: 700, configurable: true });

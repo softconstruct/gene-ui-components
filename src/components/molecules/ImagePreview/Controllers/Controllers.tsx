@@ -12,6 +12,19 @@ interface IControllersProps {
     withOverlay?: boolean;
     className?: string;
     /**
+     * Shows magnifier switch in the footer.
+     * @default true
+     */
+    withMagnifier?: boolean;
+    /**
+     * Controls magnifier switch checked state.
+     */
+    magnifierChecked?: boolean;
+    /**
+     * Callback fired when magnifier switch value changes.
+     */
+    onMagnifierChange?: (checked: boolean) => void;
+    /**
      * Shows rotate controls in the footer.
      * @default true
      */
@@ -41,6 +54,9 @@ interface IControllersProps {
 const Controllers: FC<IControllersProps> = ({
     withOverlay = false,
     className,
+    withMagnifier = true,
+    magnifierChecked = false,
+    onMagnifierChange,
     showRotate = true,
     onRotateRight,
     onRotateLeft,
@@ -53,8 +69,16 @@ const Controllers: FC<IControllersProps> = ({
                 controllers__withOverlay: withOverlay
             })}
         >
-            <Label text="Magnifier" labelFor="magnifierSwitcher" />
-            <Switch id="magnifierSwitcher" />
+            {withMagnifier && (
+                <>
+                    <Label text="Magnifier" labelFor="magnifierSwitcher" />
+                    <Switch
+                        id="magnifierSwitcher"
+                        checked={magnifierChecked}
+                        onChange={(event) => onMagnifierChange?.(event.currentTarget.checked)}
+                    />
+                </>
+            )}
             <ButtonGroup size="medium">
                 {showRotate && (
                     <>

@@ -5,6 +5,7 @@ import classNames from "classnames";
 import { ChevronLeft, ChevronRight, X } from "@geneui/icons";
 
 import Controllers from "@components/molecules/ImagePreview/Controllers/Controllers";
+import Magnifier from "@components/molecules/ImagePreview/Magnifier/Magnifier";
 import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 // Styles
@@ -83,6 +84,16 @@ interface IImagePreviewProps {
      * @default true
      */
     showDownload?: boolean;
+    /**
+     * Enables magnifier functionality.
+     * @default true
+     */
+    withMagnifier?: boolean;
+    /**
+     * Initial checked state of the magnifier switch.
+     * @default false
+     */
+    magnifierDefaultValue?: boolean;
 }
 
 /**
@@ -98,7 +109,9 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     showSize = true,
     showDimensions = true,
     showRotate = true,
-    showDownload = true
+    showDownload = true,
+    withMagnifier = true,
+    magnifierDefaultValue = false
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
@@ -113,6 +126,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
 
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [rotation, setRotation] = useState(0);
+    const [isMagnifierOn, setIsMagnifierOn] = useState(magnifierDefaultValue);
     const [imageMeta, setImageMeta] = useState<IImagePreviewImageMeta>(defaultImageMeta);
 
     const hasMultipleImages = imageList.length > 1;
@@ -128,6 +142,10 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     useEffect(() => {
         setSelectedIndex(defaultIndex);
     }, [images, defaultIndex]);
+
+    useEffect(() => {
+        setIsMagnifierOn(magnifierDefaultValue);
+    }, [magnifierDefaultValue]);
 
     useEffect(() => {
         setRotation(0);
@@ -195,6 +213,10 @@ const ImagePreview: FC<IImagePreviewProps> = ({
         downloadImage(currentPath, currentImage?.title).catch(() => {});
     };
 
+    const onMagnifierChange = (checked: boolean) => {
+        setIsMagnifierOn(checked);
+    };
+
     const content = (
         <div
             className={classNames("imagePreview", className, {
@@ -253,15 +275,26 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                     />
                 )}
                 <div className="imagePreview__imageWrapper">
-                    {currentPath && (
-                        <img
-                            src={currentPath}
-                            alt={currentImage?.title || ""}
-                            className="imagePreview__image"
-                            style={{ transform: `rotate(${rotation}deg)` }}
-                            onLoad={onImageLoad}
-                        />
-                    )}
+                    {currentPath &&
+                        (withMagnifier ? (
+                            <Magnifier
+                                imgUrl={currentPath}
+                                alt={currentImage?.title || ""}
+                                className="imagePreview__image"
+                                withMagnifier
+                                showMagnifier={isMagnifierOn}
+                                rotation={rotation}
+                                onLoad={onImageLoad}
+                            />
+                        ) : (
+                            <img
+                                src={currentPath}
+                                alt={currentImage?.title || ""}
+                                className="imagePreview__image"
+                                style={{ transform: `rotate(${rotation}deg)` }}
+                                onLoad={onImageLoad}
+                            />
+                        ))}
                 </div>
                 {hasMultipleImages && (
                     <Button
@@ -287,6 +320,9 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                 )}
                 <Controllers
                     withOverlay={withOverlay}
+                    withMagnifier={withMagnifier}
+                    magnifierChecked={isMagnifierOn}
+                    onMagnifierChange={onMagnifierChange}
                     showRotate={showRotate}
                     showDownload={showDownload}
                     onRotateLeft={onRotateLeft}

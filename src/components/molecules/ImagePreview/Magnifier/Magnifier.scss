@@ -1,0 +1,23 @@
+.magnifier {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+    max-height: 100%;
+
+    &__glass {
+        position: absolute;
+        border: 0.2rem solid var(--guit-sem-color-border-neutral-2);
+        cursor: none;
+        width: 15rem;
+        height: 15rem;
+        z-index: 1;
+    }
+
+    &__image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+}
