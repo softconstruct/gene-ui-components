@@ -6,13 +6,13 @@ import Image from "@components/molecules/Image";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import ImagePreview, { IImagePreviewProps } from "./index";
+import ImagePreview, { IImagePreviewImage, IImagePreviewProps } from "./index";
 
-const imagePaths = [
-    "https://picsum.photos/id/237/500/500",
-    "https://picsum.photos/id/238/500/700",
-    "https://picsum.photos/id/239/800/500",
-    "https://picsum.photos/id/240/200/500"
+const previewImages: IImagePreviewImage[] = [
+    { path: "https://picsum.photos/id/237/500/500", title: "Black dog portrait" },
+    { path: "https://picsum.photos/id/238/500/700", title: "Forest trail" },
+    { path: "https://picsum.photos/id/239/800/500", title: "Mountain lake" },
+    { path: "https://picsum.photos/id/240/200/500", title: "City skyline" }
 ];
 
 const meta: Meta<IImagePreviewProps> = {
@@ -20,7 +20,7 @@ const meta: Meta<IImagePreviewProps> = {
     component: ImagePreview,
     argTypes: {
         className: args({ control: "false", ...propCategory.appearance }),
-        path: args({ control: "false", ...propCategory.content }),
+        images: args({ control: "false", ...propCategory.content }),
         defaultIndex: args({ control: "number", ...propCategory.states }),
         withOverlay: args({ control: "boolean", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states }),
@@ -39,7 +39,7 @@ type Story = StoryObj<IImagePreviewProps>;
 export const NoOverlay: Story = {
     args: {
         withOverlay: false,
-        path: imagePaths
+        images: previewImages
     }
 };
 
@@ -53,8 +53,14 @@ const ImagePreviewWithOverlayStory = (props: IImagePreviewProps) => {
 
     return (
         <div style={{ height: "100vh" }}>
-            <Image id="test id" src={imagePaths[0]} aspectRatio="16x9" onImageClick={() => setIsOpen(true)} />
-            <ImagePreview {...props} withOverlay path={imagePaths[0]} open={isOpen} onClose={() => setIsOpen(false)} />
+            <Image id="test id" src={previewImages[0].path} aspectRatio="16x9" onImageClick={() => setIsOpen(true)} />
+            <ImagePreview
+                {...props}
+                withOverlay
+                images={{ path: previewImages[0].path }}
+                open={isOpen}
+                onClose={() => setIsOpen(false)}
+            />
         </div>
     );
 };
@@ -78,11 +84,12 @@ const ImagePreviewWithOverlayGalleryStory = (props: IImagePreviewProps) => {
     return (
         <div style={{ height: "100vh" }}>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 16, maxWidth: 800 }}>
-                {imagePaths.map((src, index) => (
-                    <div key={src} style={{ width: 180 }}>
+                {previewImages.map((image, index) => (
+                    <div key={image.path} style={{ width: 180 }}>
                         <Image
                             id={`gallery-image-${index}`}
-                            src={src}
+                            src={image.path}
+                            title={image.title}
                             aspectRatio="1x1"
                             onImageClick={() => {
                                 setActiveIndex(index);
@@ -95,7 +102,7 @@ const ImagePreviewWithOverlayGalleryStory = (props: IImagePreviewProps) => {
             <ImagePreview
                 {...props}
                 withOverlay
-                path={imagePaths}
+                images={previewImages}
                 defaultIndex={activeIndex}
                 open={isOpen}
                 onClose={() => setIsOpen(false)}

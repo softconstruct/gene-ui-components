@@ -7,12 +7,12 @@ import Text from "@components/atoms/Text";
 import Controllers from "@components/molecules/ImagePreview/Controllers/Controllers";
 import GeneUIProvider from "@components/providers/GeneUIProvider";
 
-import ImagePreview, { IImagePreviewProps } from "./index";
+import ImagePreview, { IImagePreviewImage, IImagePreviewProps } from "./index";
 
-const imagePaths = [
-    "https://example.com/image-1.jpg",
-    "https://example.com/image-2.jpg",
-    "https://example.com/image-3.jpg"
+const previewImages: IImagePreviewImage[] = [
+    { path: "https://example.com/image-1.jpg", title: "Image 1" },
+    { path: "https://example.com/image-2.jpg", title: "Image 2" },
+    { path: "https://example.com/image-3.jpg", title: "Image 3" }
 ];
 
 describe("ImagePreview ", () => {
@@ -99,14 +99,34 @@ describe("ImagePreview ", () => {
         expect(setup.find(".imagePreview__footer").exists()).toBeTruthy();
     });
 
-    it("renders title and metadata text", () => {
+    it("renders metadata text", () => {
         const texts = setup.find(Text).map((node) => node.text());
 
-        expect(texts).toContain("Title");
         expect(texts).toContain("2MB 700x394");
     });
 
-    it("does not render page count when path is not provided", () => {
+    it("does not render title when image title is not provided", () => {
+        const wrapper = setup.setProps({ images: { path: previewImages[0].path } });
+        const texts = wrapper.find(Text).map((node) => node.text());
+
+        expect(texts).not.toContain("Image 1");
+    });
+
+    it("renders title when image title is provided", () => {
+        const wrapper = setup.setProps({ images: previewImages[0] });
+
+        expect(wrapper.find(Text).first().text()).toBe("Image 1");
+    });
+
+    it("updates title when navigating between images", () => {
+        const wrapper = setup.setProps({ images: previewImages });
+
+        wrapper.find(".imagePreview__body").find(Button).at(1).simulate("click");
+
+        expect(wrapper.find(Text).first().text()).toBe("Image 2");
+    });
+
+    it("does not render page count when images is not provided", () => {
         expect(setup.find(".imagePreview__count")).toHaveLength(0);
     });
 
@@ -133,7 +153,7 @@ describe("ImagePreview ", () => {
         expect(setup.find(".imagePreview__controllers_withOverlay")).toHaveLength(0);
     });
 
-    it("does not render navigation buttons when path is not provided", () => {
+    it("does not render navigation buttons when images is not provided", () => {
         expect(setup.find(".imagePreview__body").find(Button)).toHaveLength(0);
     });
 
@@ -147,72 +167,72 @@ describe("ImagePreview ", () => {
         }).not.toThrow();
     });
 
-    it("renders image from string path", () => {
-        const path = "https://example.com/image.jpg";
-        const wrapper = setup.setProps({ path });
+    it("renders image from single images object", () => {
+        const wrapper = setup.setProps({ images: previewImages[0] });
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(path);
+        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[0].path);
     });
 
-    it("renders image from array path", () => {
-        const wrapper = setup.setProps({ path: imagePaths });
+    it("renders image from images array", () => {
+        const wrapper = setup.setProps({ images: previewImages });
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(imagePaths[0]);
+        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[0].path);
     });
 
-    it("renders page count for path array", () => {
-        const wrapper = setup.setProps({ path: imagePaths });
+    it("renders page count for images array", () => {
+        const wrapper = setup.setProps({ images: previewImages });
 
         expect(wrapper.find(".imagePreview__count").text()).toBe("1/3");
     });
 
-    it("does not render page count for single path", () => {
-        const wrapper = setup.setProps({ path: imagePaths[0] });
+    it("does not render page count for single image", () => {
+        const wrapper = setup.setProps({ images: previewImages[0] });
 
         expect(wrapper.find(".imagePreview__count")).toHaveLength(0);
     });
 
-    it("renders navigation buttons only when path is an array with multiple items", () => {
-        const singlePathWrapper = mount(<ImagePreview path={imagePaths[0]} />);
-        const multiplePathsWrapper = mount(<ImagePreview path={imagePaths} />);
+    it("renders navigation buttons only when images is an array with multiple items", () => {
+        const singleImageWrapper = mount(<ImagePreview images={previewImages[0]} />);
+        const multipleImagesWrapper = mount(<ImagePreview images={previewImages} />);
 
-        expect(singlePathWrapper.find(".imagePreview__body").find(Button)).toHaveLength(0);
-        expect(multiplePathsWrapper.find(".imagePreview__body").find(Button)).toHaveLength(2);
+        expect(singleImageWrapper.find(".imagePreview__body").find(Button)).toHaveLength(0);
+        expect(multipleImagesWrapper.find(".imagePreview__body").find(Button)).toHaveLength(2);
     });
 
     it("navigates to next image on forward button click", () => {
-        const wrapper = mount(<ImagePreview path={imagePaths} />);
+        const wrapper = mount(<ImagePreview images={previewImages} />);
 
         wrapper.find(".imagePreview__body").find(Button).at(1).simulate("click");
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(imagePaths[1]);
+        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[1].path);
         expect(wrapper.find(".imagePreview__count").text()).toBe("2/3");
     });
 
     it("navigates to previous image on back button click", () => {
-        const wrapper = mount(<ImagePreview path={imagePaths} />);
+        const wrapper = mount(<ImagePreview images={previewImages} />);
 
         wrapper.find(".imagePreview__body").find(Button).at(0).simulate("click");
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(imagePaths[2]);
+        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[2].path);
         expect(wrapper.find(".imagePreview__count").text()).toBe("3/3");
     });
 
-    it("resets selected image when path changes", () => {
-        const wrapper = mount(<ImagePreview path={imagePaths} />);
+    it("resets selected image when images changes", () => {
+        const wrapper = mount(<ImagePreview images={previewImages} />);
 
         wrapper.find(".imagePreview__body").find(Button).at(1).simulate("click");
-        wrapper.setProps({ path: [imagePaths[0], imagePaths[1]] });
+        wrapper.setProps({ images: previewImages.slice(0, 2) });
         wrapper.update();
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(imagePaths[0]);
+        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[0].path);
         expect(wrapper.find(".imagePreview__count").text()).toBe("1/2");
     });
 
     it("renders image at defaultIndex", () => {
-        const wrapper = mount(<ImagePreview path={imagePaths} defaultIndex={2} />);
+        const wrapper = mount(<ImagePreview images={previewImages} defaultIndex={2} />);
 
-        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(imagePaths[2]);
+        expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[2].path);
         expect(wrapper.find(".imagePreview__count").text()).toBe("3/3");
+        expect(wrapper.find(Text).first().text()).toBe("Image 3");
     });
 });

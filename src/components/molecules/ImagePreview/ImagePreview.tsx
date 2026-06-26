@@ -12,6 +12,17 @@ import "./ImagePreview.scss";
 
 import { Button, Text } from "../../../index";
 
+interface IImagePreviewImage {
+    /**
+     * Image source path.
+     */
+    path: string;
+    /**
+     * Optional title displayed in the preview header.
+     */
+    title?: string;
+}
+
 interface IImagePreviewProps {
     /**
      * Additional class for the parent element.
@@ -19,11 +30,11 @@ interface IImagePreviewProps {
      */
     className?: string;
     /**
-     * Image source path or a list of paths for carousel navigation.
+     * Image or a list of images for carousel navigation.
      */
-    path?: string | string[];
+    images?: IImagePreviewImage | IImagePreviewImage[];
     /**
-     * Initial image index when `path` contains multiple items.
+     * Initial image index when `images` contains multiple items.
      * @default 0
      */
     defaultIndex?: number;
@@ -46,7 +57,7 @@ interface IImagePreviewProps {
  */
 const ImagePreview: FC<IImagePreviewProps> = ({
     className,
-    path,
+    images,
     defaultIndex = 0,
     withOverlay = false,
     open = true,
@@ -55,29 +66,30 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
 
-    const paths = useMemo(() => {
-        if (!path) {
+    const imageList = useMemo(() => {
+        if (!images) {
             return [];
         }
 
-        return Array.isArray(path) ? path : [path];
-    }, [path]);
+        return Array.isArray(images) ? images : [images];
+    }, [images]);
 
     const [selectedIndex, setSelectedIndex] = useState(0);
 
     useEffect(() => {
         setSelectedIndex(defaultIndex);
-    }, [path, defaultIndex]);
+    }, [images, defaultIndex]);
 
-    const hasMultipleImages = paths.length > 1;
-    const currentPath = paths[selectedIndex];
+    const hasMultipleImages = imageList.length > 1;
+    const currentImage = imageList[selectedIndex];
+    const currentPath = currentImage?.path;
 
     const onPrevClick = () => {
-        setSelectedIndex((prev) => (prev === 0 ? paths.length - 1 : prev - 1));
+        setSelectedIndex((prev) => (prev === 0 ? imageList.length - 1 : prev - 1));
     };
 
     const onNextClick = () => {
-        setSelectedIndex((prev) => (prev === paths.length - 1 ? 0 : prev + 1));
+        setSelectedIndex((prev) => (prev === imageList.length - 1 ? 0 : prev + 1));
     };
 
     const content = (
@@ -92,9 +104,11 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                         imagePreview__headerInfo_withOverlay: withOverlay
                     })}
                 >
-                    <Text as="span" variant="bodyMediumRegular">
-                        Title
-                    </Text>
+                    {currentImage?.title && (
+                        <Text as="span" variant="bodyMediumRegular">
+                            {currentImage.title}
+                        </Text>
+                    )}
                     <Text as="span" variant="bodyMediumRegular">
                         2MB 700x394
                     </Text>
@@ -145,7 +159,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                             imagePreview__count_withOverlay: withOverlay
                         })}
                     >
-                        {selectedIndex + 1}/{paths.length}
+                        {selectedIndex + 1}/{imageList.length}
                     </span>
                 )}
                 <Controllers
@@ -169,4 +183,4 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     return content;
 };
 
-export { IImagePreviewProps, ImagePreview as default };
+export { IImagePreviewImage, IImagePreviewProps, ImagePreview as default };
