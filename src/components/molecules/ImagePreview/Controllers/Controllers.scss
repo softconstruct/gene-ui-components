@@ -3,6 +3,14 @@
     align-items: center;
     gap: 0.8rem;
     max-width: fit-content;
+    height: 4rem;
+
+    &__magnifier {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        flex-shrink: 0;
+    }
 
     &__withOverlay {
         padding: 0.4rem 1.2rem 0.4rem 1.6rem;

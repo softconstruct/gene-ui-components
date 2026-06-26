@@ -397,6 +397,19 @@ describe("ImagePreview ", () => {
         expect(getPreviewImage(wrapper).prop("style")).toEqual(expect.objectContaining({ transform: "rotate(90deg)" }));
     });
 
+    it("does not render Controllers when no actions are enabled", async () => {
+        const wrapper = await mountImagePreview({
+            images: previewImages[0],
+            withMagnifier: false,
+            showRotate: false,
+            showDownload: false,
+            showSize: false
+        });
+
+        expect(wrapper.find(".imagePreview__controllers")).toHaveLength(0);
+        expect(wrapper.find(".controllers")).toHaveLength(0);
+    });
+
     it("passes showDownload prop to Controllers by default", () => {
         expect(setup.find(Controllers).prop("showDownload")).toBe(true);
     });

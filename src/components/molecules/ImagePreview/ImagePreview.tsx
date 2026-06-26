@@ -138,6 +138,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     const hasMetadataToDisplay = shouldShowSize || shouldShowDimensions;
     const shouldShowMetadata = canShowMetadata && hasMetadataToDisplay;
     const shouldShowMetaDivider = shouldShowSize && shouldShowDimensions;
+    const shouldRenderControllers = withMagnifier || showRotate || showDownload;
 
     useEffect(() => {
         setSelectedIndex(defaultIndex);
@@ -318,20 +319,22 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                         {selectedIndex + 1}/{imageList.length}
                     </span>
                 )}
-                <Controllers
-                    withOverlay={withOverlay}
-                    withMagnifier={withMagnifier}
-                    magnifierChecked={isMagnifierOn}
-                    onMagnifierChange={onMagnifierChange}
-                    showRotate={showRotate}
-                    showDownload={showDownload}
-                    onRotateLeft={onRotateLeft}
-                    onRotateRight={onRotateRight}
-                    onDownload={onDownloadClick}
-                    className={classNames("imagePreview__controllers", {
-                        imagePreview__controllers_withOverlay: withOverlay
-                    })}
-                />
+                {shouldRenderControllers && (
+                    <Controllers
+                        withOverlay={withOverlay}
+                        withMagnifier={withMagnifier}
+                        magnifierChecked={isMagnifierOn}
+                        onMagnifierChange={onMagnifierChange}
+                        showRotate={showRotate}
+                        showDownload={showDownload}
+                        onRotateLeft={onRotateLeft}
+                        onRotateRight={onRotateRight}
+                        onDownload={onDownloadClick}
+                        className={classNames("imagePreview__controllers", {
+                            imagePreview__controllers_withOverlay: withOverlay
+                        })}
+                    />
+                )}
             </div>
         </div>
     );

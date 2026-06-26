@@ -63,51 +63,62 @@ const Controllers: FC<IControllersProps> = ({
     showDownload = true,
     onDownload
 }) => {
+    const hasButtonActions = showRotate || showDownload;
+    const hasMagnifierControl = withMagnifier;
+    const hasVisibleContent = hasMagnifierControl || hasButtonActions;
+
+    if (!hasVisibleContent) {
+        return null;
+    }
+
     return (
         <div
             className={classNames("controllers", className, {
-                controllers__withOverlay: withOverlay
+                controllers__withOverlay: withOverlay,
+                controllers_magnifierOnly: hasMagnifierControl && !hasButtonActions
             })}
         >
-            {withMagnifier && (
-                <>
+            {hasMagnifierControl && (
+                <div className="controllers__magnifier">
                     <Label text="Magnifier" labelFor="magnifierSwitcher" />
                     <Switch
                         id="magnifierSwitcher"
                         checked={magnifierChecked}
                         onChange={(event) => onMagnifierChange?.(event.currentTarget.checked)}
                     />
-                </>
+                </div>
             )}
-            <ButtonGroup size="medium">
-                {showRotate && (
-                    <>
+            {hasButtonActions && (
+                <ButtonGroup size="medium">
+                    {showRotate && (
+                        <>
+                            <Button
+                                appearance="secondary"
+                                layout="text"
+                                Icon={RotateRight}
+                                aria-label="Rotate right"
+                                onClick={onRotateRight}
+                            />
+                            <Button
+                                appearance="secondary"
+                                layout="text"
+                                Icon={RotateLeft}
+                                aria-label="Rotate left"
+                                onClick={onRotateLeft}
+                            />
+                        </>
+                    )}
+                    {showDownload && (
                         <Button
                             appearance="secondary"
                             layout="text"
-                            Icon={RotateRight}
-                            aria-label="Rotate right"
-                            onClick={onRotateRight}
+                            Icon={Download}
+                            aria-label="Download"
+                            onClick={onDownload}
                         />
-                        <Button
-                            appearance="secondary"
-                            layout="text"
-                            Icon={RotateLeft}
-                            aria-label="Rotate left"
-                            onClick={onRotateLeft}
-                        />
-                    </>
-                )}
-                {showDownload && (
-                    <Button
-                        appearance="secondary"
-                        layout="text"
-                        Icon={Download}
-                        aria-label="Download"
-                        onClick={onDownload}
-                    />
-                )}
-            </ButtonGroup>
+                    )}
+                </ButtonGroup>
+            )}
         </div>
     );
 };
