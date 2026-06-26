@@ -25,6 +25,7 @@ const meta: Meta<IImagePreviewProps> = {
         showSize: args({ control: "boolean", ...propCategory.functionality }),
         showDimensions: args({ control: "boolean", ...propCategory.functionality }),
         showRotate: args({ control: "boolean", ...propCategory.functionality }),
+        showDownload: args({ control: "boolean", ...propCategory.functionality }),
         withOverlay: args({ control: "boolean", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states }),
         onClose: args({ control: "false", ...propCategory.action })
@@ -34,7 +35,8 @@ const meta: Meta<IImagePreviewProps> = {
         open: true,
         showSize: true,
         showDimensions: true,
-        showRotate: true
+        showRotate: true,
+        showDownload: true
     }
 };
 

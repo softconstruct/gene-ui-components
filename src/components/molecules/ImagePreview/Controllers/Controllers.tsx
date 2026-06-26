@@ -24,6 +24,15 @@ interface IControllersProps {
      * Callback fired when the rotate-left button is clicked.
      */
     onRotateLeft?: () => void;
+    /**
+     * Shows download control in the footer.
+     * @default true
+     */
+    showDownload?: boolean;
+    /**
+     * Callback fired when the download button is clicked.
+     */
+    onDownload?: () => void;
 }
 
 /**
@@ -34,7 +43,9 @@ const Controllers: FC<IControllersProps> = ({
     className,
     showRotate = true,
     onRotateRight,
-    onRotateLeft
+    onRotateLeft,
+    showDownload = true,
+    onDownload
 }) => {
     return (
         <div
@@ -63,7 +74,15 @@ const Controllers: FC<IControllersProps> = ({
                         />
                     </>
                 )}
-                <Button appearance="secondary" layout="text" Icon={Download} aria-label="Download" />
+                {showDownload && (
+                    <Button
+                        appearance="secondary"
+                        layout="text"
+                        Icon={Download}
+                        aria-label="Download"
+                        onClick={onDownload}
+                    />
+                )}
             </ButtonGroup>
         </div>
     );

@@ -11,7 +11,7 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 import "./ImagePreview.scss";
 
 import { Button, Text } from "../../../index";
-import { formatFileSize, IMAGE_PREVIEW_ROTATION_STEP } from "./ImagePreview.helpers";
+import { downloadImage, formatFileSize, IMAGE_PREVIEW_ROTATION_STEP } from "./ImagePreview.helpers";
 
 interface IImagePreviewImageMeta {
     size: number;
@@ -78,6 +78,11 @@ interface IImagePreviewProps {
      * @default true
      */
     showRotate?: boolean;
+    /**
+     * Shows download control in the footer.
+     * @default true
+     */
+    showDownload?: boolean;
 }
 
 /**
@@ -92,7 +97,8 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     onClose,
     showSize = true,
     showDimensions = true,
-    showRotate = true
+    showRotate = true,
+    showDownload = true
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
@@ -179,6 +185,14 @@ const ImagePreview: FC<IImagePreviewProps> = ({
 
     const onRotateRight = () => {
         setRotation((prev) => prev + IMAGE_PREVIEW_ROTATION_STEP);
+    };
+
+    const onDownloadClick = () => {
+        if (!currentPath) {
+            return;
+        }
+
+        downloadImage(currentPath, currentImage?.title).catch(() => {});
     };
 
     const content = (
@@ -274,8 +288,10 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                 <Controllers
                     withOverlay={withOverlay}
                     showRotate={showRotate}
+                    showDownload={showDownload}
                     onRotateLeft={onRotateLeft}
                     onRotateRight={onRotateRight}
+                    onDownload={onDownloadClick}
                     className={classNames("imagePreview__controllers", {
                         imagePreview__controllers_withOverlay: withOverlay
                     })}

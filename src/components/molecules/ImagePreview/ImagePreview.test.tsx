@@ -8,6 +8,7 @@ import Text from "@components/atoms/Text";
 import Controllers from "@components/molecules/ImagePreview/Controllers/Controllers";
 import GeneUIProvider from "@components/providers/GeneUIProvider";
 
+import { getImageDownloadFileName } from "./ImagePreview.helpers";
 import ImagePreview, { IImagePreviewImage, IImagePreviewProps } from "./index";
 
 const previewImages: IImagePreviewImage[] = [
@@ -22,6 +23,36 @@ const mockImageFetch = () => {
             arrayBuffer: () => Promise.resolve(new ArrayBuffer(2 * 1024 * 1024))
         })
     ) as jest.Mock;
+};
+
+const mockDownload = () => {
+    const clickMock = jest.fn();
+    const link = {
+        href: "",
+        download: "",
+        click: clickMock
+    };
+    const originalCreateElement = document.createElement.bind(document);
+
+    jest.spyOn(document, "createElement").mockImplementation((tagName, options) => {
+        if (tagName === "a") {
+            return link as unknown as HTMLAnchorElement;
+        }
+
+        return originalCreateElement(tagName, options);
+    });
+    jest.spyOn(document.body, "appendChild").mockImplementation((node) => node);
+    jest.spyOn(document.body, "removeChild").mockImplementation((node) => node);
+
+    global.URL.createObjectURL = jest.fn(() => "blob:mock-url");
+    global.URL.revokeObjectURL = jest.fn();
+    global.fetch = jest.fn(() =>
+        Promise.resolve({
+            blob: () => Promise.resolve(new Blob(["image-data"], { type: "image/jpeg" }))
+        })
+    ) as jest.Mock;
+
+    return { clickMock, link };
 };
 
 const flushUpdates = async () => {
@@ -71,6 +102,7 @@ describe("ImagePreview ", () => {
     afterEach(async () => {
         await flushUpdates();
         global.fetch = originalFetch;
+        jest.restoreAllMocks();
     });
 
     it("renders without crashing", () => {
@@ -289,6 +321,50 @@ describe("ImagePreview ", () => {
         expect(wrapper.find(".imagePreview__image").prop("style")).toEqual(
             expect.objectContaining({ transform: "rotate(0deg)" })
         );
+    });
+
+    it("passes showDownload prop to Controllers by default", () => {
+        expect(setup.find(Controllers).prop("showDownload")).toBe(true);
+    });
+
+    it("passes showDownload false to Controllers when showDownload is false", async () => {
+        const wrapper = await updateImagePreviewProps(setup, { showDownload: false });
+
+        expect(wrapper.find(Controllers).prop("showDownload")).toBe(false);
+    });
+
+    it("does not render download button when showDownload is false", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages[0], showDownload: false, showSize: false });
+
+        expect(
+            wrapper
+                .find(Controllers)
+                .find(Button)
+                .filterWhere((button) => button.prop("aria-label") === "Download")
+        ).toHaveLength(0);
+    });
+
+    it("downloads current image when download button is clicked", async () => {
+        const { clickMock, link } = mockDownload();
+        const wrapper = await mountImagePreview({ images: previewImages[0], showSize: false });
+
+        await act(async () => {
+            wrapper
+                .find(Controllers)
+                .find(Button)
+                .filterWhere((button) => button.prop("aria-label") === "Download")
+                .first()
+                .simulate("click");
+            await new Promise((resolve) => {
+                setTimeout(resolve);
+            });
+        });
+
+        wrapper.update();
+
+        expect(global.fetch).toHaveBeenCalledWith(previewImages[0].path);
+        expect(link.download).toBe(getImageDownloadFileName(previewImages[0].path, previewImages[0].title));
+        expect(clickMock).toHaveBeenCalled();
     });
 
     it("applies overlay modifier classes when withOverlay is true", () => {
