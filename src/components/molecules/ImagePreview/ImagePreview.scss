@@ -31,6 +31,19 @@
         }
     }
 
+    &__meta {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    &__metaDivider {
+        width: 0.1rem;
+        height: 1.2rem;
+        background-color: currentcolor;
+        opacity: 0.4;
+    }
+
     &__body {
         display: flex;
         flex: 1;

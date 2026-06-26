@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useMemo, useState } from "react";
+import React, { FC, SyntheticEvent, useContext, useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import classNames from "classnames";
 
@@ -11,6 +11,19 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 import "./ImagePreview.scss";
 
 import { Button, Text } from "../../../index";
+import { formatFileSize } from "./ImagePreview.helpers";
+
+interface IImagePreviewImageMeta {
+    size: number;
+    width: number;
+    height: number;
+}
+
+const defaultImageMeta: IImagePreviewImageMeta = {
+    size: 0,
+    width: 0,
+    height: 0
+};
 
 interface IImagePreviewImage {
     /**
@@ -50,6 +63,16 @@ interface IImagePreviewProps {
      * Callback fired when the close button is clicked in overlay mode.
      */
     onClose?: () => void;
+    /**
+     * Shows the image file size in the header.
+     * @default true
+     */
+    showSize?: boolean;
+    /**
+     * Shows the image dimensions in the header.
+     * @default true
+     */
+    showDimensions?: boolean;
 }
 
 /**
@@ -61,7 +84,9 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     defaultIndex = 0,
     withOverlay = false,
     open = true,
-    onClose
+    onClose,
+    showSize = true,
+    showDimensions = true
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
@@ -75,14 +100,59 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     }, [images]);
 
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [imageMeta, setImageMeta] = useState<IImagePreviewImageMeta>(defaultImageMeta);
+
+    const hasMultipleImages = imageList.length > 1;
+    const currentImage = imageList[selectedIndex];
+    const currentPath = currentImage?.path;
+    const shouldShowSize = showSize && imageMeta.size > 0;
+    const shouldShowDimensions = showDimensions && imageMeta.width > 0 && imageMeta.height > 0;
+    const canShowMetadata = showSize || showDimensions;
+    const hasMetadataToDisplay = shouldShowSize || shouldShowDimensions;
+    const shouldShowMetadata = canShowMetadata && hasMetadataToDisplay;
+    const shouldShowMetaDivider = shouldShowSize && shouldShowDimensions;
 
     useEffect(() => {
         setSelectedIndex(defaultIndex);
     }, [images, defaultIndex]);
 
-    const hasMultipleImages = imageList.length > 1;
-    const currentImage = imageList[selectedIndex];
-    const currentPath = currentImage?.path;
+    useEffect(() => {
+        setImageMeta(defaultImageMeta);
+
+        let isCancelled = false;
+
+        if (currentPath && showSize) {
+            fetch(currentPath)
+                .then((response) => response.arrayBuffer())
+                .then((buffer) => {
+                    if (!isCancelled) {
+                        setImageMeta((prev) => ({
+                            ...prev,
+                            size: buffer.byteLength
+                        }));
+                    }
+                })
+                .catch(() => {});
+        }
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [currentPath, showSize]);
+
+    const onImageLoad = (event: SyntheticEvent<HTMLImageElement>) => {
+        if (!showDimensions) {
+            return;
+        }
+
+        const { naturalWidth, naturalHeight } = event.currentTarget;
+
+        setImageMeta((prev) => ({
+            ...prev,
+            width: naturalWidth,
+            height: naturalHeight
+        }));
+    };
 
     const onPrevClick = () => {
         setSelectedIndex((prev) => (prev === 0 ? imageList.length - 1 : prev - 1));
@@ -109,9 +179,21 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                             {currentImage.title}
                         </Text>
                     )}
-                    <Text as="span" variant="bodyMediumRegular">
-                        2MB 700x394
-                    </Text>
+                    {shouldShowMetadata && (
+                        <div className="imagePreview__meta">
+                            {shouldShowSize && (
+                                <Text as="span" variant="bodyMediumRegular">
+                                    {formatFileSize(imageMeta.size)}
+                                </Text>
+                            )}
+                            {shouldShowMetaDivider && <span className="imagePreview__metaDivider" aria-hidden="true" />}
+                            {shouldShowDimensions && (
+                                <Text as="span" variant="bodyMediumRegular">
+                                    {`${imageMeta.width}x${imageMeta.height}`}
+                                </Text>
+                            )}
+                        </div>
+                    )}
                 </div>
                 {withOverlay && (
                     <Button
@@ -138,7 +220,14 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                     />
                 )}
                 <div className="imagePreview__imageWrapper">
-                    {currentPath && <img src={currentPath} alt="" className="imagePreview__image" />}
+                    {currentPath && (
+                        <img
+                            src={currentPath}
+                            alt={currentImage?.title || ""}
+                            className="imagePreview__image"
+                            onLoad={onImageLoad}
+                        />
+                    )}
                 </div>
                 {hasMultipleImages && (
                     <Button

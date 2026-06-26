@@ -22,13 +22,17 @@ const meta: Meta<IImagePreviewProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         images: args({ control: "false", ...propCategory.content }),
         defaultIndex: args({ control: "number", ...propCategory.states }),
+        showSize: args({ control: "boolean", ...propCategory.functionality }),
+        showDimensions: args({ control: "boolean", ...propCategory.functionality }),
         withOverlay: args({ control: "boolean", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states }),
         onClose: args({ control: "false", ...propCategory.action })
     },
     args: {
         withOverlay: false,
-        open: true
+        open: true,
+        showSize: true,
+        showDimensions: true
     }
 };
 

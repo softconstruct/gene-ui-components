@@ -1,5 +1,6 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
+import { act } from "react-dom/test-utils";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -15,10 +16,61 @@ const previewImages: IImagePreviewImage[] = [
     { path: "https://example.com/image-3.jpg", title: "Image 3" }
 ];
 
+const mockImageFetch = () => {
+    global.fetch = jest.fn(() =>
+        Promise.resolve({
+            arrayBuffer: () => Promise.resolve(new ArrayBuffer(2 * 1024 * 1024))
+        })
+    ) as jest.Mock;
+};
+
+const flushUpdates = async () => {
+    await act(async () => {
+        await new Promise((resolve) => {
+            setTimeout(resolve);
+        });
+    });
+};
+
+const mountImagePreview = async (
+    props?: IImagePreviewProps,
+    options?: { wrappingComponent?: typeof GeneUIProvider }
+) => {
+    let wrapper: ReactWrapper<IImagePreviewProps>;
+
+    await act(async () => {
+        wrapper = mount(<ImagePreview {...props} />, options);
+    });
+
+    await flushUpdates();
+
+    return wrapper!.update();
+};
+
+const updateImagePreviewProps = async (
+    wrapper: ReactWrapper<IImagePreviewProps>,
+    props: Partial<IImagePreviewProps>
+) => {
+    await act(async () => {
+        wrapper.setProps(props);
+    });
+
+    await flushUpdates();
+
+    return wrapper.update();
+};
+
 describe("ImagePreview ", () => {
     let setup: ReactWrapper<IImagePreviewProps>;
+    const originalFetch = global.fetch;
+
     beforeEach(() => {
         setup = mount(<ImagePreview />);
+    });
+
+    afterEach(async () => {
+        await flushUpdates();
+        global.fetch = originalFetch;
     });
 
     it("renders without crashing", () => {
@@ -99,27 +151,52 @@ describe("ImagePreview ", () => {
         expect(setup.find(".imagePreview__footer").exists()).toBeTruthy();
     });
 
-    it("renders metadata text", () => {
-        const texts = setup.find(Text).map((node) => node.text());
-
-        expect(texts).toContain("2MB 700x394");
+    it("does not render metadata when images is not provided", () => {
+        expect(setup.find(".imagePreview__meta")).toHaveLength(0);
     });
 
-    it("does not render title when image title is not provided", () => {
-        const wrapper = setup.setProps({ images: { path: previewImages[0].path } });
+    it("does not render title when image title is not provided", async () => {
+        const wrapper = await updateImagePreviewProps(setup, {
+            images: { path: previewImages[0].path },
+            showSize: false
+        });
         const texts = wrapper.find(Text).map((node) => node.text());
 
         expect(texts).not.toContain("Image 1");
     });
 
-    it("renders title when image title is provided", () => {
-        const wrapper = setup.setProps({ images: previewImages[0] });
+    it("renders title when image title is provided", async () => {
+        const wrapper = await updateImagePreviewProps(setup, {
+            images: previewImages[0],
+            showSize: false
+        });
 
         expect(wrapper.find(Text).first().text()).toBe("Image 1");
     });
 
-    it("updates title when navigating between images", () => {
-        const wrapper = setup.setProps({ images: previewImages });
+    it("uses image title as img alt text", async () => {
+        const wrapper = await updateImagePreviewProps(setup, {
+            images: previewImages[0],
+            showSize: false
+        });
+
+        expect(wrapper.find(".imagePreview__image").prop("alt")).toBe("Image 1");
+    });
+
+    it("uses empty alt text when image title is not provided", async () => {
+        const wrapper = await updateImagePreviewProps(setup, {
+            images: { path: previewImages[0].path },
+            showSize: false
+        });
+
+        expect(wrapper.find(".imagePreview__image").prop("alt")).toBe("");
+    });
+
+    it("updates title when navigating between images", async () => {
+        const wrapper = await updateImagePreviewProps(setup, {
+            images: previewImages,
+            showSize: false
+        });
 
         wrapper.find(".imagePreview__body").find(Button).at(1).simulate("click");
 
@@ -167,40 +244,52 @@ describe("ImagePreview ", () => {
         }).not.toThrow();
     });
 
-    it("renders image from single images object", () => {
-        const wrapper = setup.setProps({ images: previewImages[0] });
+    it("renders image from single images object", async () => {
+        const wrapper = await updateImagePreviewProps(setup, {
+            images: previewImages[0],
+            showSize: false
+        });
 
         expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[0].path);
     });
 
-    it("renders image from images array", () => {
-        const wrapper = setup.setProps({ images: previewImages });
+    it("renders image from images array", async () => {
+        const wrapper = await updateImagePreviewProps(setup, {
+            images: previewImages,
+            showSize: false
+        });
 
         expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[0].path);
     });
 
-    it("renders page count for images array", () => {
-        const wrapper = setup.setProps({ images: previewImages });
+    it("renders page count for images array", async () => {
+        const wrapper = await updateImagePreviewProps(setup, {
+            images: previewImages,
+            showSize: false
+        });
 
         expect(wrapper.find(".imagePreview__count").text()).toBe("1/3");
     });
 
-    it("does not render page count for single image", () => {
-        const wrapper = setup.setProps({ images: previewImages[0] });
+    it("does not render page count for single image", async () => {
+        const wrapper = await updateImagePreviewProps(setup, {
+            images: previewImages[0],
+            showSize: false
+        });
 
         expect(wrapper.find(".imagePreview__count")).toHaveLength(0);
     });
 
-    it("renders navigation buttons only when images is an array with multiple items", () => {
-        const singleImageWrapper = mount(<ImagePreview images={previewImages[0]} />);
-        const multipleImagesWrapper = mount(<ImagePreview images={previewImages} />);
+    it("renders navigation buttons only when images is an array with multiple items", async () => {
+        const singleImageWrapper = await mountImagePreview({ images: previewImages[0], showSize: false });
+        const multipleImagesWrapper = await mountImagePreview({ images: previewImages, showSize: false });
 
         expect(singleImageWrapper.find(".imagePreview__body").find(Button)).toHaveLength(0);
         expect(multipleImagesWrapper.find(".imagePreview__body").find(Button)).toHaveLength(2);
     });
 
-    it("navigates to next image on forward button click", () => {
-        const wrapper = mount(<ImagePreview images={previewImages} />);
+    it("navigates to next image on forward button click", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages, showSize: false });
 
         wrapper.find(".imagePreview__body").find(Button).at(1).simulate("click");
 
@@ -208,8 +297,8 @@ describe("ImagePreview ", () => {
         expect(wrapper.find(".imagePreview__count").text()).toBe("2/3");
     });
 
-    it("navigates to previous image on back button click", () => {
-        const wrapper = mount(<ImagePreview images={previewImages} />);
+    it("navigates to previous image on back button click", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages, showSize: false });
 
         wrapper.find(".imagePreview__body").find(Button).at(0).simulate("click");
 
@@ -217,22 +306,102 @@ describe("ImagePreview ", () => {
         expect(wrapper.find(".imagePreview__count").text()).toBe("3/3");
     });
 
-    it("resets selected image when images changes", () => {
-        const wrapper = mount(<ImagePreview images={previewImages} />);
+    it("resets selected image when images changes", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages, showSize: false });
 
         wrapper.find(".imagePreview__body").find(Button).at(1).simulate("click");
-        wrapper.setProps({ images: previewImages.slice(0, 2) });
-        wrapper.update();
+        await updateImagePreviewProps(wrapper, { images: previewImages.slice(0, 2), showSize: false });
 
         expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[0].path);
         expect(wrapper.find(".imagePreview__count").text()).toBe("1/2");
     });
 
-    it("renders image at defaultIndex", () => {
-        const wrapper = mount(<ImagePreview images={previewImages} defaultIndex={2} />);
+    it("renders image at defaultIndex", async () => {
+        const wrapper = await mountImagePreview({
+            images: previewImages,
+            defaultIndex: 2,
+            showSize: false
+        });
 
         expect(wrapper.find(".imagePreview__image").prop("src")).toBe(previewImages[2].path);
         expect(wrapper.find(".imagePreview__count").text()).toBe("3/3");
         expect(wrapper.find(Text).first().text()).toBe("Image 3");
+    });
+
+    it("renders size when showSize is true", async () => {
+        mockImageFetch();
+
+        const wrapper = await mountImagePreview({
+            images: previewImages[0],
+            showDimensions: false
+        });
+
+        expect(wrapper.find(".imagePreview__meta").text()).toContain("2 MB");
+    });
+
+    it("does not render size when showSize is false", async () => {
+        const fetchMock = jest.fn();
+        global.fetch = fetchMock;
+
+        const wrapper = await mountImagePreview({
+            images: previewImages[0],
+            showSize: false
+        });
+        const image = wrapper.find("img");
+        const imageNode = image.getDOMNode() as HTMLImageElement;
+
+        Object.defineProperty(imageNode, "naturalWidth", { value: 700, configurable: true });
+        Object.defineProperty(imageNode, "naturalHeight", { value: 394, configurable: true });
+
+        await act(async () => {
+            image.simulate("load");
+        });
+
+        wrapper.update();
+
+        expect(wrapper.find(".imagePreview__meta").text()).toBe("700x394");
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it("renders dimensions when showDimensions is true", async () => {
+        const wrapper = await mountImagePreview({
+            images: previewImages[0],
+            showSize: false
+        });
+        const image = wrapper.find("img");
+        const imageNode = image.getDOMNode() as HTMLImageElement;
+
+        Object.defineProperty(imageNode, "naturalWidth", { value: 700, configurable: true });
+        Object.defineProperty(imageNode, "naturalHeight", { value: 394, configurable: true });
+
+        await act(async () => {
+            image.simulate("load");
+        });
+
+        wrapper.update();
+
+        expect(wrapper.find(".imagePreview__meta").text()).toBe("700x394");
+    });
+
+    it("does not render dimensions when showDimensions is false", async () => {
+        mockImageFetch();
+
+        const wrapper = await mountImagePreview({
+            images: previewImages[0],
+            showDimensions: false
+        });
+
+        expect(wrapper.find(".imagePreview__meta").text()).toContain("2 MB");
+        expect(wrapper.find(".imagePreview__meta").text()).not.toContain("700x394");
+    });
+
+    it("does not render metadata when showSize and showDimensions are false", async () => {
+        const wrapper = await mountImagePreview({
+            images: previewImages[0],
+            showSize: false,
+            showDimensions: false
+        });
+
+        expect(wrapper.find(".imagePreview__meta")).toHaveLength(0);
     });
 });
