@@ -33,8 +33,31 @@
 
     &__body {
         display: flex;
-        justify-content: space-between;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
         width: 100%;
+        min-height: 0;
+        gap: 1.6rem;
+    }
+
+    &__imageWrapper {
+        display: flex;
+        flex: 1;
+        align-items: center;
+        justify-content: center;
+        min-width: 0;
+        min-height: 0;
+    }
+
+    &__image {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    &__nav {
+        flex-shrink: 0;
     }
 
     &__footer {
