@@ -11,7 +11,7 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 import "./ImagePreview.scss";
 
 import { Button, Text } from "../../../index";
-import { formatFileSize } from "./ImagePreview.helpers";
+import { formatFileSize, IMAGE_PREVIEW_ROTATION_STEP } from "./ImagePreview.helpers";
 
 interface IImagePreviewImageMeta {
     size: number;
@@ -73,6 +73,11 @@ interface IImagePreviewProps {
      * @default true
      */
     showDimensions?: boolean;
+    /**
+     * Shows rotate controls in the footer.
+     * @default true
+     */
+    showRotate?: boolean;
 }
 
 /**
@@ -86,7 +91,8 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     open = true,
     onClose,
     showSize = true,
-    showDimensions = true
+    showDimensions = true,
+    showRotate = true
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
@@ -100,6 +106,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     }, [images]);
 
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [rotation, setRotation] = useState(0);
     const [imageMeta, setImageMeta] = useState<IImagePreviewImageMeta>(defaultImageMeta);
 
     const hasMultipleImages = imageList.length > 1;
@@ -115,6 +122,10 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     useEffect(() => {
         setSelectedIndex(defaultIndex);
     }, [images, defaultIndex]);
+
+    useEffect(() => {
+        setRotation(0);
+    }, [currentPath]);
 
     useEffect(() => {
         setImageMeta(defaultImageMeta);
@@ -160,6 +171,14 @@ const ImagePreview: FC<IImagePreviewProps> = ({
 
     const onNextClick = () => {
         setSelectedIndex((prev) => (prev === imageList.length - 1 ? 0 : prev + 1));
+    };
+
+    const onRotateLeft = () => {
+        setRotation((prev) => prev - IMAGE_PREVIEW_ROTATION_STEP);
+    };
+
+    const onRotateRight = () => {
+        setRotation((prev) => prev + IMAGE_PREVIEW_ROTATION_STEP);
     };
 
     const content = (
@@ -225,6 +244,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                             src={currentPath}
                             alt={currentImage?.title || ""}
                             className="imagePreview__image"
+                            style={{ transform: `rotate(${rotation}deg)` }}
                             onLoad={onImageLoad}
                         />
                     )}
@@ -253,6 +273,9 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                 )}
                 <Controllers
                     withOverlay={withOverlay}
+                    showRotate={showRotate}
+                    onRotateLeft={onRotateLeft}
+                    onRotateRight={onRotateRight}
                     className={classNames("imagePreview__controllers", {
                         imagePreview__controllers_withOverlay: withOverlay
                     })}

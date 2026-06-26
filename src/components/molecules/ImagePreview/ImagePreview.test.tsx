@@ -218,6 +218,79 @@ describe("ImagePreview ", () => {
         expect(wrapper.find(".imagePreview__controllers_withOverlay").exists()).toBeTruthy();
     });
 
+    it("passes showRotate prop to Controllers by default", () => {
+        expect(setup.find(Controllers).prop("showRotate")).toBe(true);
+    });
+
+    it("passes showRotate false to Controllers when showRotate is false", async () => {
+        const wrapper = await updateImagePreviewProps(setup, { showRotate: false });
+
+        expect(wrapper.find(Controllers).prop("showRotate")).toBe(false);
+    });
+
+    it("rotates image clockwise when rotate right button is clicked", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages[0], showSize: false });
+
+        wrapper
+            .find(Controllers)
+            .find(Button)
+            .filterWhere((button) => button.prop("aria-label") === "Rotate right")
+            .first()
+            .simulate("click");
+
+        expect(wrapper.find(".imagePreview__image").prop("style")).toEqual(
+            expect.objectContaining({ transform: "rotate(90deg)" })
+        );
+    });
+
+    it("rotates image counterclockwise when rotate left button is clicked", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages[0], showSize: false });
+
+        wrapper
+            .find(Controllers)
+            .find(Button)
+            .filterWhere((button) => button.prop("aria-label") === "Rotate left")
+            .first()
+            .simulate("click");
+
+        expect(wrapper.find(".imagePreview__image").prop("style")).toEqual(
+            expect.objectContaining({ transform: "rotate(-90deg)" })
+        );
+    });
+
+    it("does not render rotate buttons when showRotate is false", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages[0], showRotate: false, showSize: false });
+
+        expect(
+            wrapper
+                .find(Controllers)
+                .find(Button)
+                .filterWhere((button) => button.prop("aria-label") === "Rotate right")
+        ).toHaveLength(0);
+        expect(
+            wrapper
+                .find(Controllers)
+                .find(Button)
+                .filterWhere((button) => button.prop("aria-label") === "Rotate left")
+        ).toHaveLength(0);
+    });
+
+    it("resets rotation when navigating to another image", async () => {
+        const wrapper = await mountImagePreview({ images: previewImages, showSize: false });
+
+        wrapper
+            .find(Controllers)
+            .find(Button)
+            .filterWhere((button) => button.prop("aria-label") === "Rotate right")
+            .first()
+            .simulate("click");
+        wrapper.find(".imagePreview__body").find(Button).at(1).simulate("click");
+
+        expect(wrapper.find(".imagePreview__image").prop("style")).toEqual(
+            expect.objectContaining({ transform: "rotate(0deg)" })
+        );
+    });
+
     it("applies overlay modifier classes when withOverlay is true", () => {
         const wrapper = mount(<ImagePreview withOverlay />, { wrappingComponent: GeneUIProvider });
 

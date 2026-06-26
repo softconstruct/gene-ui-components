@@ -1,4 +1,6 @@
 const MIN_BYTES = 1;
+export const IMAGE_PREVIEW_ROTATION_STEP = 90;
+
 const BYTES_IN_KILOBYTE = 1024;
 const EMPTY_SIZE_LABEL = "0 Byte";
 const FILE_SIZE_UNITS = ["Byte", "KB", "MB", "GB", "TB"] as const;

@@ -24,6 +24,7 @@ const meta: Meta<IImagePreviewProps> = {
         defaultIndex: args({ control: "number", ...propCategory.states }),
         showSize: args({ control: "boolean", ...propCategory.functionality }),
         showDimensions: args({ control: "boolean", ...propCategory.functionality }),
+        showRotate: args({ control: "boolean", ...propCategory.functionality }),
         withOverlay: args({ control: "boolean", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states }),
         onClose: args({ control: "false", ...propCategory.action })
@@ -32,7 +33,8 @@ const meta: Meta<IImagePreviewProps> = {
         withOverlay: false,
         open: true,
         showSize: true,
-        showDimensions: true
+        showDimensions: true,
+        showRotate: true
     }
 };
 
