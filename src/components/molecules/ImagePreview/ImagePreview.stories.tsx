@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Components
-import Button from "@components/atoms/Button";
+import Image from "@components/molecules/Image";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
@@ -43,7 +43,12 @@ const ImagePreviewWithOverlayStory = (props: IImagePreviewProps) => {
 
     return (
         <div style={{ height: "100vh" }}>
-            <Button onClick={() => setIsOpen(true)}>Open Image Preview</Button>
+            <Image
+                id="test id"
+                src="https://picsum.photos/id/237/500/500"
+                aspectRatio="16x9"
+                onImageClick={() => setIsOpen(true)}
+            />
             <ImagePreview {...props} withOverlay open={isOpen} onClose={() => setIsOpen(false)} />
         </div>
     );
