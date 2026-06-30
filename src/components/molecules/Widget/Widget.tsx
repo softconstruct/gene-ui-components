@@ -51,7 +51,7 @@ const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableE
     return (
         <div className={classNames("widget", className)}>
             <div className="widget__header">
-                <Label text={title} infoText={infoText} />
+                <Label className="widget__label" text={title} infoText={infoText} />
                 <div className="widget__controls">
                     <SegmentedControl value="test1" size="small">
                         <SegmentedControlButton name="test 1" Icon={Tag}>
@@ -65,20 +65,25 @@ const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableE
                 </div>
             </div>
             <div className="widget__body">
-                <div className="widget__info">
+                <div className="widget__content">
                     {Icon && (
                         <div className="widget__iconWrapper">
-                            <Icon size={28} className="widget__icon" />
+                            <Icon size={28} />
                         </div>
                     )}
-                    <Text as="h4" variant="headingXLargeSemibold">
-                        $ 17.00
-                    </Text>
-                    <div className="widget__percentWrapper">
-                        <ArrowBounceDown size={20} className="widget__icon" />
-                        <Text as="span" variant="subheadingMediumSemibold">
-                            -32%
-                        </Text>
+                    <div className="widget__info">
+                        <div className="widget__values">
+                            <Text as="h4" variant="headingLargeSemibold">
+                                $ 17.00
+                            </Text>
+                            <div className="widget__percentWrapper">
+                                {/* widget__percent_down // widget__percent_up */}
+                                <ArrowBounceDown size={16} className="widget__percent widget__percent_down" />-
+                                <Text as="span" variant="labelLargeSemibold">
+                                    32%
+                                </Text>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 {swappableElement && <div className="widget__swap">{swappableElement}</div>}
