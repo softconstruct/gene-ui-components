@@ -504,7 +504,7 @@ describe("ImagePreview ", () => {
             showSize: false
         });
 
-        expect(wrapper.find(".imagePreview__count").text()).toBe("1/3");
+        expect(wrapper.find("span.imagePreview__count").text()).toBe("1/3");
     });
 
     it("does not render page count for single image", async () => {
@@ -530,7 +530,7 @@ describe("ImagePreview ", () => {
         wrapper.find(".imagePreview__body").find(Button).at(1).simulate("click");
 
         expect(getPreviewImage(wrapper).prop("src")).toBe(previewImages[1].path);
-        expect(wrapper.find(".imagePreview__count").text()).toBe("2/3");
+        expect(wrapper.find("span.imagePreview__count").text()).toBe("2/3");
     });
 
     it("navigates to previous image on back button click", async () => {
@@ -539,7 +539,7 @@ describe("ImagePreview ", () => {
         wrapper.find(".imagePreview__body").find(Button).at(0).simulate("click");
 
         expect(getPreviewImage(wrapper).prop("src")).toBe(previewImages[2].path);
-        expect(wrapper.find(".imagePreview__count").text()).toBe("3/3");
+        expect(wrapper.find("span.imagePreview__count").text()).toBe("3/3");
     });
 
     it("resets selected image when images changes", async () => {
@@ -549,7 +549,7 @@ describe("ImagePreview ", () => {
         await updateImagePreviewProps(wrapper, { images: previewImages.slice(0, 2), showSize: false });
 
         expect(getPreviewImage(wrapper).prop("src")).toBe(previewImages[0].path);
-        expect(wrapper.find(".imagePreview__count").text()).toBe("1/2");
+        expect(wrapper.find("span.imagePreview__count").text()).toBe("1/2");
     });
 
     it("renders image at defaultIndex", async () => {
@@ -560,7 +560,7 @@ describe("ImagePreview ", () => {
         });
 
         expect(getPreviewImage(wrapper).prop("src")).toBe(previewImages[2].path);
-        expect(wrapper.find(".imagePreview__count").text()).toBe("3/3");
+        expect(wrapper.find("span.imagePreview__count").text()).toBe("3/3");
         expect(wrapper.find(Text).first().text()).toBe("Image 3");
     });
 
