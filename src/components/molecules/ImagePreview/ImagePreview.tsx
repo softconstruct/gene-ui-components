@@ -11,7 +11,7 @@ import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider"
 // Styles
 import "./ImagePreview.scss";
 
-import { Button, Text } from "../../../index";
+import { Button, Divider, Text } from "../../../index";
 import { downloadImage, formatFileSize, IMAGE_PREVIEW_ROTATION_STEP } from "./ImagePreview.helpers";
 
 interface IImagePreviewImageMeta {
@@ -231,7 +231,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                     })}
                 >
                     {currentImage?.title && (
-                        <Text as="span" variant="bodyMediumRegular">
+                        <Text as="span" variant="labelMediumSemibold" className="ellipsis-text">
                             {currentImage.title}
                         </Text>
                     )}
@@ -242,7 +242,9 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                                     {formatFileSize(imageMeta.size)}
                                 </Text>
                             )}
-                            {shouldShowMetaDivider && <span className="imagePreview__metaDivider" aria-hidden="true" />}
+                            {shouldShowMetaDivider && (
+                                <Divider className="imagePreview__metaDivider" direction="vertical" />
+                            )}
                             {shouldShowDimensions && (
                                 <Text as="span" variant="bodyMediumRegular">
                                     {`${imageMeta.width}x${imageMeta.height}`}
@@ -268,7 +270,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                     <Button
                         appearance="inverse"
                         layout="fill"
-                        size="medium"
+                        size="large"
                         Icon={ChevronLeft}
                         className="imagePreview__nav imagePreview__nav_back"
                         aria-label="Previous image"
@@ -301,7 +303,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                     <Button
                         appearance="inverse"
                         layout="fill"
-                        size="medium"
+                        size="large"
                         Icon={ChevronRight}
                         className="imagePreview__nav imagePreview__nav_forward"
                         aria-label="Next image"
@@ -311,13 +313,15 @@ const ImagePreview: FC<IImagePreviewProps> = ({
             </div>
             <div className="imagePreview__footer">
                 {hasMultipleImages && (
-                    <span
+                    <Text
+                        as="span"
+                        variant="labelLargeMedium"
                         className={classNames("imagePreview__count", {
                             imagePreview__count_withOverlay: withOverlay
                         })}
                     >
                         {selectedIndex + 1}/{imageList.length}
-                    </span>
+                    </Text>
                 )}
                 {shouldRenderControllers && (
                     <Controllers

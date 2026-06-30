@@ -1,9 +1,9 @@
 .imagePreview {
-    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
+    gap: var(--guit-ref-spacing-large);
+    width: 100%;
+    height: 100%;
 
     &_withOverlay {
         position: fixed;
@@ -12,20 +12,25 @@
         z-index: 10;
         width: 100%;
         height: 100%;
-        padding: 1.6rem 2.4rem;
+        padding: var(--guit-ref-spacing-large) var(--guit-ref-spacing-2xlarge);
         background-color: var(--guit-sem-color-background-transparent-overlay-notheme-2);
     }
 
     &__header {
         display: flex;
-        justify-content: space-between;
+        align-items: center;
+        gap: var(--guit-ref-spacing-xsmall);
+        flex-shrink: 0;
         width: 100%;
-        height: 4.4rem;
     }
 
     &__headerInfo {
         display: flex;
         flex-direction: column;
+        gap: var(--guit-ref-spacing-3xsmall);
+        flex: 1;
+        min-width: 0;
+        height: 4.4rem;
 
         &_withOverlay {
             color: var(--guit-sem-color-foreground-inverse-notheme);
@@ -35,42 +40,49 @@
     &__meta {
         display: flex;
         align-items: center;
-        gap: 0.8rem;
+        gap: var(--guit-ref-spacing-xsmall);
     }
 
     &__metaDivider {
-        width: 0.1rem;
-        height: 1.2rem;
-        background-color: currentcolor;
-        opacity: 0.4;
+        padding-block: 0.4rem;
+    }
+
+    &__close {
+        flex-shrink: 0;
     }
 
     &__body {
         display: flex;
-        flex: 1;
         align-items: center;
         justify-content: center;
+        gap: var(--guit-ref-spacing-large);
+        flex: 1;
         width: 100%;
+        height: 100%;
         min-height: 0;
-        gap: 1.6rem;
     }
 
     &__imageWrapper {
         display: flex;
-        flex: 1;
         align-items: center;
         justify-content: center;
+        flex: 1;
         min-width: 0;
-        min-height: 0;
+        height: 100%;
+        container-type: size;
     }
 
     &__image {
-        max-width: 100%;
-        max-height: 100%;
-        object-fit: contain;
+        display: block;
+        max-width: min(100cqw, 100cqh);
+        max-height: min(100cqw, 100cqh);
+        width: auto;
+        height: auto;
     }
 
     &__nav {
+        position: relative;
+        z-index: 1;
         flex-shrink: 0;
     }
 
@@ -78,7 +90,8 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 1.6rem;
+        gap: var(--guit-ref-spacing-large);
+        flex-shrink: 0;
     }
 
     &__count {
