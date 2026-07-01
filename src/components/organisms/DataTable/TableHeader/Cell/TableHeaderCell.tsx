@@ -16,7 +16,7 @@ import { getCellStyle } from "../../helper";
  * @template TData - The shape of the overall row data object.
  * @template TValue - The type of the specific value held within this column.
  */
-interface ITableHeaderCellProps<TData extends object, TValue> {
+interface ITableHeaderCellProps<TData, TValue> {
     /**
      * The TanStack Table header instance.
      * Contains the column definition, context data, and structural information
@@ -37,7 +37,7 @@ interface ITableHeaderCellProps<TData extends object, TValue> {
  * @param props - The properties for the component.
  * @returns A table header cell element containing the rendered column header, or an empty cell if it's a placeholder.
  */
-const TableHeaderCell = <TData extends object, TValue>({ header, offset }: ITableHeaderCellProps<TData, TValue>) => {
+const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProps<TData, TValue>) => {
     const isExpanderHeader = header.column.id === "expander";
     const isPinned = header.column.getIsPinned();
     const isRTL = document.dir === "rtl";

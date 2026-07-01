@@ -73,7 +73,7 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                     const isPinned = !!cell.column.getIsPinned();
                     const offset = isPinned ? cell.column.getStart("left") : 0;
                     return (
-                        <TableBodyCell
+                        <TableBodyCell<TData, unknown>
                             key={cell.id}
                             cell={cell}
                             isExpanded={isRowExpanded}

@@ -9,7 +9,7 @@ export interface IDataTableContext<TData> {
     initialColumnVisibility: ColumnVisibilityState;
 }
 
-const DataTableContext = createContext<IDataTableContext<object> | null>(null);
+const DataTableContext = createContext<IDataTableContext<unknown> | null>(null);
 
 interface IDataTableProviderProps<TData> {
     children: ReactNode;

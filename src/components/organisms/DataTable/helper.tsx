@@ -15,7 +15,7 @@ import { DataTableColumn, DataTableRowExpandChangeHandler } from "./types";
 /**
  * Props for the TableBodyCell component, defined here to be used by areCellsEqual.
  */
-export interface ICellProps<TData extends object, TValue> {
+export interface ICellProps<TData, TValue> {
     cell: Cell<TData, TValue>;
     isExpanded: boolean;
     renderer: ColumnDef<TData, TValue>["cell"];
@@ -44,10 +44,7 @@ export const getCellStyle = (
  * primitive snapshot props — the cell instance itself is intentionally
  * ignored because TanStack creates a new one on every render.
  */
-export const areCellsEqual = <TData extends object, TValue>(
-    prev: ICellProps<TData, TValue>,
-    next: ICellProps<TData, TValue>
-) =>
+export const areCellsEqual = <TData, TValue>(prev: ICellProps<TData, TValue>, next: ICellProps<TData, TValue>) =>
     prev.cell.id === next.cell.id &&
     prev.isExpanded === next.isExpanded &&
     prev.renderer === next.renderer &&
@@ -71,7 +68,7 @@ export const DefaultCellComponent = ({ value }: { value: string }) => {
  * Normalizes the public {@link DataTableColumn} shape into TanStack `ColumnDef[]`.
  * Pure transformation: does not inject any non-data columns.
  */
-export const adaptColumns = <TData extends object>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
+export const adaptColumns = <TData,>(columns: DataTableColumn<TData>[]): ColumnDef<TData, ReactNode>[] =>
     columns.map((col, index) => {
         const { accessorKey, id, header, size, renderCell } = col;
         const isAccessorColumn = Boolean(accessorKey);
@@ -101,7 +98,7 @@ export const adaptColumns = <TData extends object>(columns: DataTableColumn<TDat
  * Kept separate from {@link adaptColumns} so other special columns (selection,
  * drag-handle, …) can be composed the same way without further branching.
  */
-export const withExpanderColumn = <TData extends object>(
+export const withExpanderColumn = <TData,>(
     columns: ColumnDef<TData, ReactNode>[],
     onRowExpandChange?: DataTableRowExpandChangeHandler<TData>
 ): ColumnDef<TData, ReactNode>[] => [
