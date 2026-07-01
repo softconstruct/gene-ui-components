@@ -143,15 +143,12 @@ const ImagePreview: FC<IImagePreviewProps> = ({
 
     useEffect(() => {
         setSelectedIndex(defaultIndex);
+        setRotation(0);
     }, [images, defaultIndex]);
 
     useEffect(() => {
         setIsMagnifierOn(magnifierDefaultValue);
     }, [magnifierDefaultValue]);
-
-    useEffect(() => {
-        setRotation(0);
-    }, [currentPath]);
 
     useEffect(() => {
         setImageMeta(defaultImageMeta);
@@ -192,10 +189,12 @@ const ImagePreview: FC<IImagePreviewProps> = ({
     };
 
     const onPrevClick = () => {
+        setRotation(0);
         setSelectedIndex((prev) => (prev === 0 ? imageList.length - 1 : prev - 1));
     };
 
     const onNextClick = () => {
+        setRotation(0);
         setSelectedIndex((prev) => (prev === imageList.length - 1 ? 0 : prev + 1));
     };
 
@@ -282,6 +281,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                     {currentPath &&
                         (withMagnifier ? (
                             <Magnifier
+                                key={currentPath}
                                 imgUrl={currentPath}
                                 alt={currentImage?.title || ""}
                                 className="imagePreview__image"
@@ -292,6 +292,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                             />
                         ) : (
                             <img
+                                key={currentPath}
                                 src={currentPath}
                                 alt={currentImage?.title || ""}
                                 className="imagePreview__image"
