@@ -9,7 +9,15 @@ import "./Controllers.scss";
 import { Button, ButtonGroup, Label, Switch } from "../../../../index";
 
 interface IControllersProps {
+    /**
+     * Applies overlay-specific styling to the controllers when `ImagePreview` is rendered in overlay mode.
+     * @default false
+     */
     withOverlay?: boolean;
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
     className?: string;
     /**
      * Shows magnifier switch in the footer.
