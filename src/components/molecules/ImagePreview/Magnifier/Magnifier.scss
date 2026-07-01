@@ -1,4 +1,6 @@
 .magnifier {
+    transform: rotate(var(--magnifier-rotation, 0deg));
+
     &__glass {
         position: absolute;
         border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
@@ -7,6 +9,11 @@
         width: 15rem;
         height: 15rem;
         z-index: 1;
+        background-repeat: no-repeat;
+
+        &_circle {
+            border-radius: 50%;
+        }
     }
 
     &__image {

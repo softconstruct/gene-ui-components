@@ -1,4 +1,4 @@
-import React, { FC, MouseEvent, SyntheticEvent, useCallback, useRef, useState } from "react";
+import React, { CSSProperties, FC, MouseEvent, SyntheticEvent, useCallback, useMemo, useRef, useState } from "react";
 import classNames from "classnames";
 
 import {
@@ -68,6 +68,7 @@ const Magnifier: FC<IMagnifierProps> = ({
 
     const [isCursorInImageScope, setIsCursorInImageScope] = useState(false);
     const [glassPositionStyles, setGlassPositionStyles] = useState<IMagnifierGlassStyles>({});
+    const [imageLayoutVersion, setImageLayoutVersion] = useState(0);
 
     const onMouseMoveHandler = useCallback(
         (event: MouseEvent) => {
@@ -115,28 +116,45 @@ const Magnifier: FC<IMagnifierProps> = ({
         }
     };
 
+    const onImageLoadHandler = (event: SyntheticEvent<HTMLImageElement>) => {
+        setImageLayoutVersion((version) => version + 1);
+        onLoad?.(event);
+    };
+
     const shouldShowGlass = withMagnifier && showMagnifier && isCursorInImageScope;
 
+    const magnifierStyle = useMemo(
+        () =>
+            ({
+                "--magnifier-rotation": `${rotation}deg`
+            }) as CSSProperties,
+        [rotation]
+    );
+
+    const glassClassName = classNames("magnifier__glass", {
+        magnifier__glass_circle: magnifierAppearance === "circle"
+    });
+
+    const glassStyle = useMemo(() => {
+        const imageElement = imageRef.current;
+        const backgroundSize = imageElement
+            ? `${imageElement.clientWidth * zoom}px ${imageElement.clientHeight * zoom}px`
+            : "0 0";
+
+        return {
+            backgroundImage: `url(${imgUrl})`,
+            backgroundSize,
+            ...glassPositionStyles
+        } as CSSProperties;
+    }, [glassPositionStyles, imageLayoutVersion, imgUrl, zoom]);
+
     return (
-        <div
-            className="magnifier"
-            style={{
-                transform: `rotate(${rotation}deg)`
-            }}
-        >
+        <div className="magnifier" style={magnifierStyle}>
             {shouldShowGlass && (
                 <div
                     ref={glassRef}
-                    className="magnifier__glass"
-                    style={{
-                        borderRadius: magnifierAppearance === "circle" ? "50%" : undefined,
-                        backgroundImage: `url(${imgUrl})`,
-                        backgroundRepeat: "no-repeat",
-                        backgroundSize: imageRef.current
-                            ? `${imageRef.current.clientWidth * zoom}px ${imageRef.current.clientHeight * zoom}px`
-                            : "0 0",
-                        ...glassPositionStyles
-                    }}
+                    className={glassClassName}
+                    style={glassStyle}
                     onMouseLeave={onMouseLeaveHandler}
                     onMouseMove={onMouseMoveHandler}
                 />
@@ -148,7 +166,7 @@ const Magnifier: FC<IMagnifierProps> = ({
                 className={classNames("magnifier__image", className)}
                 onMouseEnter={onMouseEnterHandler}
                 onMouseMove={(event) => showMagnifier && onMouseMoveHandler(event)}
-                onLoad={onLoad}
+                onLoad={onImageLoadHandler}
             />
         </div>
     );
