@@ -115,6 +115,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
 }) => {
     const { geneUIProviderRef } = useContext(GeneUIDesignSystemContext);
     const providerCurrent = geneUIProviderRef.current;
+    const isRTL = document.dir === "rtl";
 
     const imageList = useMemo(() => {
         if (!images) {
@@ -271,7 +272,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                         appearance="inverse"
                         layout="fill"
                         size="large"
-                        Icon={ChevronLeft}
+                        Icon={isRTL ? ChevronRight : ChevronLeft}
                         className="imagePreview__nav imagePreview__nav_back"
                         aria-label="Previous image"
                         onClick={onPrevClick}
@@ -304,7 +305,7 @@ const ImagePreview: FC<IImagePreviewProps> = ({
                         appearance="inverse"
                         layout="fill"
                         size="large"
-                        Icon={ChevronRight}
+                        Icon={isRTL ? ChevronLeft : ChevronRight}
                         className="imagePreview__nav imagePreview__nav_forward"
                         aria-label="Next image"
                         onClick={onNextClick}
