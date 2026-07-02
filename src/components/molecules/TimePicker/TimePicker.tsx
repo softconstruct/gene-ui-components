@@ -166,7 +166,7 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             handleInputChange,
             handleSelect,
             handleClear
-        } = useSingleTimePicker(value, clearable, onClear, onTimeSelect, onTimeInputChange, onPopoverToggle);
+        } = useSingleTimePicker(value, clearable, onClear, onTimeSelect, onTimeInputChange, onPopoverToggle, is12Hour);
 
         const valueToUse = value !== undefined ? value : internalValue;
 
@@ -251,7 +251,7 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             handleInputChange,
             handleSelect,
             handleClear
-        } = useRangeTimePicker(value, clearable, onClear, onTimeSelect, onTimeInputChange, onPopoverToggle);
+        } = useRangeTimePicker(value, clearable, onClear, onTimeSelect, onTimeInputChange, onPopoverToggle, is12Hour);
 
         const valueToUse = {
             start: value?.start !== undefined ? value.start : internalStart,

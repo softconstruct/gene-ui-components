@@ -32,12 +32,12 @@ const meta: Meta<typeof TimePicker> = {
         onTimeSelect: args({ control: "false", ...propCategory.action }),
         onTimeInputChange: args({ control: "false", ...propCategory.action }),
         is12Hour: args({ control: "boolean", ...propCategory.functionality }),
-        texts: args({ control: "object", ...propCategory.content })
+        texts: args({ control: "object", ...propCategory.content }),
+        shouldDisableTime: args({ control: "false", ...propCategory.functionality })
     },
     args: {
         label: "Choose time",
-        placeholder: "Select time",
-        onPopoverToggle: jest.fn()
+        placeholder: "Select time"
     }
 };
 
@@ -65,9 +65,20 @@ const singlePickerCases: SinglePickerCase[] = [
     { title: "With placeholder", placeholder: "Select time" },
     { title: "With label", label: "Choose time" },
     { title: "With controlled value", value: "10:24:30" },
-    { title: "Clearable", clearable: true },
+    { title: "Clearable", clearable: true, value: "10:24:30" },
     { title: "Errored", error: true },
-    { title: "Errored with message", error: true, errorMessage: "Error message" }
+    { title: "Errored with message", error: true, errorMessage: "Error message" },
+    { title: "Size: Small", size: "small" },
+    { title: "Size: Large", size: "large" },
+    { title: "12-Hour Format", is12Hour: true, placeholder: "12:00:00 AM" },
+    {
+        title: "Custom Texts",
+        texts: { hours: "Hr", minutes: "Min", seconds: "Sec", amText: "Day", pmText: "Night" }
+    },
+    {
+        title: "Disabled Specific Times",
+        shouldDisableTime: (type, value) => type === "hours" && parseInt(value, 10) < 12
+    }
 ];
 
 const rangePickerCases: RangePickerCase[] = [
@@ -77,9 +88,20 @@ const rangePickerCases: RangePickerCase[] = [
     { title: "With placeholder", placeholder: { start: "Start time", end: "End time" } },
     { title: "With label", label: "Choose time" },
     { title: "With controlled value", value: { start: "10:24:30", end: "11:30:24" } },
-    { title: "Clearable", clearable: true },
+    { title: "Clearable", clearable: true, value: { start: "10:24:30", end: "11:30:24" } },
     { title: "Errored", error: true },
-    { title: "Errored with message", error: true, errorMessage: "Error message" }
+    { title: "Errored with message", error: true, errorMessage: "Error message" },
+    { title: "Size: Small", size: "small" },
+    { title: "Size: Large", size: "large" },
+    { title: "12-Hour Format", is12Hour: true },
+    {
+        title: "Custom Texts",
+        texts: { hours: "Hr", minutes: "Min", seconds: "Sec", amText: "Day", pmText: "Night" }
+    },
+    {
+        title: "Disabled Specific Times",
+        shouldDisableTime: (type, value) => type === "hours" && parseInt(value, 10) > 18
+    }
 ];
 
 export const Default: SingleStory = {};
@@ -98,7 +120,7 @@ export const SinglePickerStates: SingleStory = {
     render: (props) => (
         <div style={{ display: "flex", flex: 1, flexWrap: "wrap", gap: "2rem" }}>
             {singlePickerCases.map((item) => (
-                <StoryWrapper title={item.title}>
+                <StoryWrapper key={item.title} title={item.title}>
                     <TimePicker {...props} {...item} />
                 </StoryWrapper>
             ))}
@@ -110,7 +132,7 @@ export const RangePickerStates: RangeStory = {
     render: (props) => (
         <div style={{ display: "flex", flex: 1, flexWrap: "wrap", gap: "2rem" }}>
             {rangePickerCases.map((item) => (
-                <StoryWrapper title={item.title}>
+                <StoryWrapper key={item.title} title={item.title}>
                     <TimePicker.Range {...props} {...item} />
                 </StoryWrapper>
             ))}

@@ -6,7 +6,7 @@ const composeTime = (p: Record<string, string | undefined>, is12Hours: boolean) 
     const mm = p.minutes ?? "00";
     const ss = p.seconds ?? "00";
     const meridiem = is12Hours && p.meridiem ? p.meridiem : "";
-    return `${hh}:${mm}:${ss} ${meridiem}`;
+    return meridiem ? `${hh}:${mm}:${ss} ${meridiem}` : `${hh}:${mm}:${ss}`;
 };
 
 export { generateRange, composeTime };
