@@ -97,6 +97,7 @@ export {
     IActionableListTexts
 } from "./components/molecules/ActionableList";
 export { default as List, IListProps, IListItemData } from "./components/molecules/List";
+export { default as ImagePreview, IImagePreviewImage, IImagePreviewProps } from "./components/molecules/ImagePreview";
 
 // Organisms
 export {
