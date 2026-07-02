@@ -450,7 +450,9 @@ describe("ImagePreview ", () => {
         wrapper.update();
 
         expect(global.fetch).toHaveBeenCalledWith(previewImages[0].path);
-        expect(link.download).toBe(getImageDownloadFileName(previewImages[0].path, previewImages[0].title));
+        expect(link.download).toBe(
+            getImageDownloadFileName(new Blob(["image-data"], { type: "image/jpeg" }), previewImages[0].title)
+        );
         expect(clickMock).toHaveBeenCalled();
     });
 
