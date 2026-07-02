@@ -97,6 +97,7 @@ export {
     IActionableListTexts
 } from "./components/molecules/ActionableList";
 export { default as List, IListProps, IListItemData } from "./components/molecules/List";
+export { default as ImagePreview, IImagePreviewImage, IImagePreviewProps } from "./components/molecules/ImagePreview";
 
 export {
     default as TimePicker,
@@ -124,6 +125,7 @@ export {
     IPartnersProps
 } from "./components/organisms/GlobalHeader";
 export { default as DataCardList, IDataCardListProps } from "@components/organisms/DataCardList";
+export { default as TransferList } from "./components/organisms/TransferList";
 
 // Providers
 export {

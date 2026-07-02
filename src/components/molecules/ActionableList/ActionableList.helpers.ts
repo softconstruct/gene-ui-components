@@ -36,6 +36,8 @@ export const isAnySelectionInSubtree = (item: IActionableListItem): boolean => {
 export const nextLevel = (level: TActionableListLevel): TActionableListLevel =>
     Math.min(level + 1, ACTIONABLE_LIST_MAX_NESTED_LEVEL) as TActionableListLevel;
 
+export const isGroupItem = (item: IActionableListItem): boolean => Array.isArray(item.children);
+
 export const mergeItemsFromProps = (
     incoming: IActionableListItem[],
     previous: IActionableListItem[]
@@ -62,7 +64,7 @@ export const mergeItemsFromProps = (
             return {
                 ...node,
                 checked,
-                children: node.children?.length ? merge(node.children) : undefined
+                children: isGroupItem(node) ? merge(node.children ?? []) : undefined
             };
         });
 
@@ -72,10 +74,24 @@ export const mergeItemsFromProps = (
 export const countAllItems = (items: IActionableListItem[]): number =>
     items.reduce((acc, item) => acc + 1 + countAllItems(item.children || []), 0);
 
+/** Counts leaf nodes only — parent rows with children are grouping headers, not items. */
+export const countLeafItems = (items: IActionableListItem[]): number =>
+    items.reduce((acc, item) => {
+        if (isGroupItem(item)) return acc + countLeafItems(item.children ?? []);
+        return acc + 1;
+    }, 0);
+
 export const countCheckedItems = (items: IActionableListItem[]): number =>
     items.reduce((acc, item) => {
-        const childCount = item.children?.length ? countCheckedItems(item.children) : 0;
-        return acc + (item.checked ? 1 : 0) + childCount;
+        if (isGroupItem(item)) return acc + countCheckedItems(item.children ?? []);
+        return acc + (item.checked ? 1 : 0);
+    }, 0);
+
+/** Counts checked leaves in `items` whose ids are in `scopeLeafIds`. */
+export const countCheckedLeavesInScope = (items: IActionableListItem[], scopeLeafIds: ReadonlySet<string>): number =>
+    items.reduce((acc, item) => {
+        if (isGroupItem(item)) return acc + countCheckedLeavesInScope(item.children ?? [], scopeLeafIds);
+        return acc + (item.checked && scopeLeafIds.has(item.id) ? 1 : 0);
     }, 0);
 
 export const findItemById = (nodes: IActionableListItem[], targetId: string): IActionableListItem | undefined => {
@@ -108,13 +124,34 @@ export const applyCheckedToBranch = (item: IActionableListItem, checked: boolean
     children: item.children?.map((child: IActionableListItem) => applyCheckedToBranch(child, checked))
 });
 
+export const collectLeafIds = (items: IActionableListItem[]): string[] =>
+    items.flatMap((item) => (isGroupItem(item) ? collectLeafIds(item.children ?? []) : [item.id]));
+
+export const applyCheckedToLeavesById = (
+    items: IActionableListItem[],
+    leafIds: ReadonlySet<string>,
+    checked: boolean
+): IActionableListItem[] =>
+    items.map((item) => {
+        if (isGroupItem(item)) {
+            return {
+                ...item,
+                children: applyCheckedToLeavesById(item.children ?? [], leafIds, checked)
+            };
+        }
+        return leafIds.has(item.id) ? { ...item, checked } : item;
+    });
+
 export const filterTree = (items: IActionableListItem[], query: string): IActionableListItem[] => {
     const q = query.trim().toLowerCase();
     if (!q) return items;
     return items.reduce<IActionableListItem[]>((acc, item) => {
-        const filteredChildren = filterTree(item.children || [], q);
+        const filteredChildren = isGroupItem(item) ? filterTree(item.children ?? [], q) : [];
         if (item.title.toLowerCase().includes(q) || filteredChildren.length > 0) {
-            acc.push({ ...item, children: filteredChildren });
+            acc.push({
+                ...item,
+                children: isGroupItem(item) ? filteredChildren : undefined
+            });
         }
         return acc;
     }, []);
@@ -123,24 +160,30 @@ export const filterTree = (items: IActionableListItem[], query: string): IAction
 const reorderSiblingsById = (
     items: IActionableListItem[],
     sourceId: string,
-    targetId: string
+    targetId: string,
+    edge: "top" | "bottom"
 ): IActionableListItem[] => {
     const si = items.findIndex((n) => n.id === sourceId);
     const ti = items.findIndex((n) => n.id === targetId);
     if (si < 0 || ti < 0 || si === ti) return items;
-    return reorder({ list: items, startIndex: si, finishIndex: ti });
+
+    let finishIndex = edge === "top" ? ti : ti + 1;
+    if (si < finishIndex) finishIndex -= 1;
+
+    return reorder({ list: items, startIndex: si, finishIndex });
 };
 
 export const reorderInTree = (
     items: IActionableListItem[],
     sourceId: string,
-    targetId: string
+    targetId: string,
+    edge: "top" | "bottom" = "bottom"
 ): IActionableListItem[] => {
-    const siblingResult = reorderSiblingsById(items, sourceId, targetId);
+    const siblingResult = reorderSiblingsById(items, sourceId, targetId, edge);
     if (siblingResult !== items) return siblingResult;
     return items.map((item) => {
         if (!item.children?.length) return item;
-        return { ...item, children: reorderInTree(item.children, sourceId, targetId) };
+        return { ...item, children: reorderInTree(item.children, sourceId, targetId, edge) };
     });
 };
 

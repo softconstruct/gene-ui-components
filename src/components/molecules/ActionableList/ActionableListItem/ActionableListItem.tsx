@@ -5,7 +5,7 @@ import { disableNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/elem
 import { preventUnhandled } from "@atlaskit/pragmatic-drag-and-drop/prevent-unhandled";
 import classNames from "classnames";
 
-import { ChevronDown, ChevronRight, GripDots } from "@geneui/icons";
+import { ChevronDown, ChevronLeft, ChevronRight, GripDots } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -47,6 +47,10 @@ interface IActionableListItemProps {
      */
     isExpandable?: boolean;
     /**
+     * Disables expand/collapse when a group has no children.
+     */
+    isExpandDisabled?: boolean;
+    /**
      * Whether the row is currently expanded.
      */
     isExpanded?: boolean;
@@ -87,6 +91,10 @@ interface IActionableListItemProps {
      */
     parentId?: string;
     /**
+     * Drag scope id for cross-list transfer.
+     */
+    dragListId?: string;
+    /**
      * Whether drag-and-drop handle is shown.
      */
     isDraggable?: boolean;
@@ -123,6 +131,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     level,
     infoText,
     isExpandable = false,
+    isExpandDisabled = false,
     isExpanded = false,
     withCheckbox = false,
     checkboxChecked,
@@ -133,6 +142,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     descendantsTotalCount = 0,
     selectedLabel = "Selected",
     parentId = "root",
+    dragListId,
     isDraggable = false,
     dropGapEdge = null,
     expandAriaLabel = "Toggle nested items",
@@ -149,6 +159,8 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
     const isTruncated = useEllipsisDetection(titleTextRef);
     const isSelectedLabelTruncated = useEllipsisDetection(selectedLabelRef);
     const [isDragging, setIsDragging] = useState(false);
+    const isRTLMode = typeof document !== "undefined" && document.dir === "rtl";
+    const collapsedExpandIcon = isRTLMode ? ChevronLeft : ChevronRight;
 
     onDragTargetChangeRef.current = onDragTargetChange;
 
@@ -192,6 +204,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                     return {
                         sourceId: id,
                         parentId,
+                        ...(dragListId ? { dragListId } : {}),
                         previewNode: clone,
                         initialRect: rect
                     };
@@ -210,8 +223,19 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
             }),
             dropTargetForElements({
                 element: rowEl,
-                getData: () => ({ targetId: id, parentId }),
-                canDrop: ({ source }) => source.data.parentId === parentId,
+                getData: () => ({
+                    targetId: id,
+                    parentId,
+                    ...(dragListId ? { targetListId: dragListId } : {})
+                }),
+                canDrop: ({ source }) => {
+                    const sourceListId = source.data.dragListId as string | undefined;
+                    const sourceParentId = source.data.parentId as string;
+                    if (dragListId && sourceListId && sourceListId !== dragListId) {
+                        return parentId === "root";
+                    }
+                    return sourceParentId === parentId;
+                },
                 onDragEnter: ({ location }) => {
                     onDragTargetChangeRef.current?.(computeEdge(location.current.input.clientY));
                 },
@@ -220,7 +244,7 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                 }
             })
         );
-    }, [isDraggable, id, parentId]);
+    }, [isDraggable, id, parentId, dragListId]);
 
     return (
         <div
@@ -239,8 +263,9 @@ const ActionableListItem: FC<IActionableListItemProps> = ({
                     size="smallNudge"
                     appearance="secondary"
                     layout="text"
-                    Icon={isExpanded ? ChevronDown : ChevronRight}
+                    Icon={isExpanded ? ChevronDown : collapsedExpandIcon}
                     onClick={onToggleExpand}
+                    disabled={isExpandDisabled}
                     aria-label={expandAriaLabel}
                     className="actionableListItem__toggle"
                 />

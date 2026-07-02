@@ -63,6 +63,12 @@ describe("Switch", () => {
         expect(wrapper.find('input[type="checkbox"]').props().name).toBe(name);
     });
 
+    it("renders id prop correctly", () => {
+        const id = "switch-id";
+        const wrapper = setup.setProps({ id });
+        expect(wrapper.find('input[type="checkbox"]').props().id).toBe(id);
+    });
+
     it("renders value prop correctly", () => {
         const value = "test";
         const wrapper = setup.setProps({ value });
