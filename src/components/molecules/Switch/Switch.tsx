@@ -61,6 +61,10 @@ interface ISwitchProps {
      */
     name?: string;
     /**
+     * `HTML` `id` attribute for the `input` element
+     */
+    id?: string;
+    /**
      * The value of the component that will be returned in the onChange event.
      */
     value?: string;
@@ -101,6 +105,7 @@ const Switch: FC<ISwitchProps> = (props) => {
         onFocus,
         onBlur,
         name,
+        id,
         checked,
         defaultChecked = false,
         className,
@@ -144,6 +149,7 @@ const Switch: FC<ISwitchProps> = (props) => {
                     <input
                         type="checkbox"
                         className="switch__input"
+                        {...(id && { id })}
                         onChange={onChangeHandler}
                         onFocus={onFocusHandler}
                         onBlur={onBlurHandler}

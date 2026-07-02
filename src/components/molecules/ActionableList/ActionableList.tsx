@@ -1,5 +1,5 @@
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import React, { FC, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { dropTargetForElements, monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import classNames from "classnames";
 
 import { Magnifier } from "@geneui/icons";
@@ -12,9 +12,11 @@ import Text from "@components/atoms/Text";
 import Checkbox from "@components/molecules/Checkbox";
 import Empty from "@components/molecules/Empty";
 import TextField from "@components/molecules/TextField";
+import Tooltip from "@components/molecules/Tooltip";
 
 // Hooks
 import useDebounceCallback from "@hooks/useDebounceCallback";
+import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
 // Styles
 import "./ActionableList.scss";
@@ -24,12 +26,17 @@ import {
     ACTIONABLE_LIST_MAX_NESTED_LEVEL,
     ACTIONABLE_LIST_SEARCH_DEBOUNCE_MS,
     applyCheckedToBranch,
+    applyCheckedToLeavesById,
+    collectLeafIds,
     countAllItems,
     countCheckedItems,
+    countCheckedLeavesInScope,
+    countLeafItems,
     filterTree,
     findItemById,
     getExpandedIdsFromItems,
     isAnySelectionInSubtree,
+    isGroupItem,
     isSubtreeFullySelected,
     mergeItemsFromProps,
     nextLevel,
@@ -49,12 +56,21 @@ interface IDropGap {
     edge: TDropGapEdge;
 }
 
+const isDroppedOnOtherList = (
+    location: { current: { dropTargets: ReadonlyArray<{ data: Record<string | symbol, unknown> }> } },
+    listId: string
+) =>
+    location.current.dropTargets.some(({ data: { targetListId, isPanelDropTarget } }) => {
+        return typeof targetListId === "string" && targetListId !== listId && !isPanelDropTarget;
+    });
+
 interface IRenderNodeProps {
     item: IActionableListItem;
     level: TActionableListLevel;
     parentId: string;
     withCheckbox: boolean;
     isDraggable: boolean;
+    dragListId?: string;
     expandedIds: Set<string>;
     texts: IActionableListTexts;
     dropGap: IDropGap | null;
@@ -70,6 +86,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
     parentId,
     withCheckbox,
     isDraggable,
+    dragListId,
     expandedIds,
     texts,
     dropGap,
@@ -78,8 +95,9 @@ const RenderNode: FC<IRenderNodeProps> = ({
     onToggleCheck,
     onDragTargetChange
 }) => {
-    const childCount = item.children?.length || 0;
-    const canExpand = childCount > 0 && level < ACTIONABLE_LIST_MAX_NESTED_LEVEL;
+    const isGroup = isGroupItem(item);
+    const childCount = item.children?.length ?? 0;
+    const canExpand = isGroup && childCount > 0 && level < ACTIONABLE_LIST_MAX_NESTED_LEVEL;
     const isExpanded = canExpand ? isSearchActive || expandedIds.has(item.id) : false;
     const branchFullySelected = isSubtreeFullySelected(item);
     const branchIndeterminate = !branchFullySelected && isAnySelectionInSubtree(item);
@@ -97,7 +115,8 @@ const RenderNode: FC<IRenderNodeProps> = ({
                 level={level}
                 parentId={parentId}
                 infoText={item.infoText}
-                isExpandable={canExpand}
+                isExpandable={isGroup && level < ACTIONABLE_LIST_MAX_NESTED_LEVEL}
+                isExpandDisabled={isGroup && childCount === 0}
                 isExpanded={isExpanded}
                 withCheckbox={withCheckbox}
                 {...(withCheckbox
@@ -110,6 +129,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
                     : {})}
                 selectedLabel={texts.selectedItemsLabel}
                 isDraggable={isDraggable}
+                dragListId={dragListId}
                 dropGapEdge={dropGapEdge}
                 expandAriaLabel={texts.expandButtonAriaLabel}
                 onToggleExpand={() => onToggleExpand(item.id)}
@@ -128,6 +148,7 @@ const RenderNode: FC<IRenderNodeProps> = ({
                                 parentId={item.id}
                                 withCheckbox={withCheckbox}
                                 isDraggable={isDraggable}
+                                dragListId={dragListId}
                                 expandedIds={expandedIds}
                                 texts={texts}
                                 dropGap={dropGap}
@@ -152,31 +173,57 @@ const ActionableList: FC<IActionableListProps> = ({
     items = [],
     withCheckbox = false,
     draggable: isDraggable = false,
+    dragListId,
     loading = false,
     defaultExpandAll = false,
     texts,
     onItemsChange,
     onItemCheck,
     onSelectAllChange,
+    managedSelection = false,
+    onCrossListDrop,
+    delegateCrossListDrop = false,
+    dropGapOutletRef,
     onSearch
 }) => {
     const mergedTexts = { ...ACTIONABLE_LIST_DEFAULT_TEXTS, ...texts };
     const wasExpansionToggledRef = useRef(false);
+    const bulkSelectedLabelRef = useRef<HTMLSpanElement | null>(null);
+    const filteredItemsLabelRef = useRef<HTMLSpanElement | null>(null);
+    const totalItemsLabelRef = useRef<HTMLSpanElement | null>(null);
+    const isBulkSelectedLabelTruncated = useEllipsisDetection(bulkSelectedLabelRef, [
+        mergedTexts.bulkSelectedItemsLabel
+    ]);
+    const isFilteredItemsLabelTruncated = useEllipsisDetection(filteredItemsLabelRef, [mergedTexts.filteredItemsLabel]);
+    const isTotalItemsLabelTruncated = useEllipsisDetection(totalItemsLabelRef, [mergedTexts.totalItemsLabel]);
 
     const [localItems, setLocalItems] = useState<IActionableListItem[]>(() => mergeItemsFromProps(items, []));
+    const workingItems = managedSelection ? items : localItems;
     const [searchValue, setSearchValue] = useState("");
     const [expandedIds, setExpandedIds] = useState<Set<string>>(() =>
         defaultExpandAll ? getExpandedIdsFromItems(items) : new Set()
     );
     const [dropGap, setDropGap] = useState<IDropGap | null>(null);
+    const [isEmptyDropActive, setIsEmptyDropActive] = useState(false);
+    const emptyDropRef = useRef<HTMLDivElement>(null);
+    const listEndDropRef = useRef<HTMLDivElement>(null);
 
-    const handleDropReorderRef = useRef<(sourceId: string, targetId: string) => void>(() => {});
+    const handleDropReorderRef = useRef<(sourceId: string, targetId: string, edge: TDropGapEdge) => void>(() => {});
+    const onCrossListDropRef = useRef(onCrossListDrop);
     const dropGapRef = useRef(dropGap);
     dropGapRef.current = dropGap;
+    onCrossListDropRef.current = onCrossListDrop;
 
     useEffect(() => {
+        if (!dropGapOutletRef) return;
+        // eslint-disable-next-line no-param-reassign -- mirror drop gap for parent-coordinated cross-list DnD
+        dropGapOutletRef.current = dropGap;
+    }, [dropGap, dropGapOutletRef]);
+
+    useLayoutEffect(() => {
+        if (managedSelection) return;
         setLocalItems((prev) => mergeItemsFromProps(items, prev));
-    }, [items]);
+    }, [items, managedSelection]);
 
     useEffect(() => {
         if (wasExpansionToggledRef.current) return;
@@ -186,16 +233,49 @@ const ActionableList: FC<IActionableListProps> = ({
     useEffect(() => {
         if (!isDraggable) return () => undefined;
         return monitorForElements({
-            onDrop: ({ source }) => {
+            onDrop: ({ source, location }) => {
                 const gap = dropGapRef.current;
-                setDropGap(null);
                 const { sourceId } = source.data;
-                if (typeof sourceId === "string" && gap && sourceId !== gap.targetId) {
-                    handleDropReorderRef.current(sourceId, gap.targetId);
+                const sourceListId = source.data.dragListId;
+                const isCrossList = Boolean(
+                    dragListId && typeof sourceListId === "string" && sourceListId !== dragListId
+                );
+
+                if (isCrossList && delegateCrossListDrop) {
+                    requestAnimationFrame(() => setDropGap(null));
+                    return;
                 }
+
+                setDropGap(null);
+                if (typeof sourceId !== "string" || !gap || sourceId === gap.targetId) return;
+
+                if (isCrossList) {
+                    if (
+                        !dragListId ||
+                        !location.current.dropTargets.some(({ data }) => data.targetListId === dragListId) ||
+                        !onCrossListDropRef.current
+                    ) {
+                        return;
+                    }
+
+                    onCrossListDropRef.current({
+                        sourceListId: sourceListId as string,
+                        targetListId: dragListId,
+                        sourceId,
+                        targetId: gap.targetId,
+                        edge: gap.edge
+                    });
+                    return;
+                }
+
+                if (dragListId && typeof sourceListId === "string" && sourceListId === dragListId) {
+                    if (isDroppedOnOtherList(location, dragListId)) return;
+                }
+
+                handleDropReorderRef.current(sourceId, gap.targetId, gap.edge);
             }
         });
-    }, [isDraggable]);
+    }, [isDraggable, dragListId, delegateCrossListDrop]);
 
     const { debouncedCallback, clearDebounce } = useDebounceCallback((value: unknown) => {
         if (typeof value !== "string") return;
@@ -209,13 +289,21 @@ const ActionableList: FC<IActionableListProps> = ({
         debouncedCallback(value);
     };
 
-    const filteredItems = useMemo(() => filterTree(localItems, searchValue), [localItems, searchValue]);
-    const totalItemsCount = useMemo(() => countAllItems(localItems), [localItems]);
-    const filteredItemsCount = useMemo(() => countAllItems(filteredItems), [filteredItems]);
-    const selectedItemsCount = useMemo(() => countCheckedItems(localItems), [localItems]);
+    const filteredItems = useMemo(() => filterTree(workingItems, searchValue), [workingItems, searchValue]);
+    const isSearchActive = searchValue.trim().length > 0;
+    const filteredLeafIds = useMemo(() => new Set(collectLeafIds(filteredItems)), [filteredItems]);
+    const totalItemsCount = useMemo(() => countLeafItems(workingItems), [workingItems]);
+    const filteredItemsCount = useMemo(() => countLeafItems(filteredItems), [filteredItems]);
+    const selectedItemsCount = useMemo(() => countCheckedItems(workingItems), [workingItems]);
+    const selectedFilteredLeafCount = useMemo(
+        () => countCheckedLeavesInScope(workingItems, filteredLeafIds),
+        [workingItems, filteredLeafIds]
+    );
 
-    const selectAllChecked = totalItemsCount > 0 && localItems.every((item) => isSubtreeFullySelected(item));
-    const selectAllIndeterminate = !selectAllChecked && localItems.some((item) => isAnySelectionInSubtree(item));
+    const selectAllScopeLeafCount = isSearchActive ? filteredItemsCount : totalItemsCount;
+    const selectedScopeLeafCount = isSearchActive ? selectedFilteredLeafCount : selectedItemsCount;
+    const selectAllChecked = selectAllScopeLeafCount > 0 && selectedScopeLeafCount === selectAllScopeLeafCount;
+    const selectAllIndeterminate = selectedScopeLeafCount > 0 && selectedScopeLeafCount < selectAllScopeLeafCount;
 
     const handleToggleExpand = (id: string) => {
         wasExpansionToggledRef.current = true;
@@ -233,8 +321,10 @@ const ActionableList: FC<IActionableListProps> = ({
     };
 
     const handleToggleCheck = (id: string, checked: boolean) => {
-        const nextItems = updateItemById(localItems, id, (item) => applyCheckedToBranch(item, checked));
-        syncItems(nextItems);
+        const nextItems = updateItemById(workingItems, id, (item) => applyCheckedToBranch(item, checked));
+        if (!managedSelection) {
+            syncItems(nextItems);
+        }
         const toggled = findItemById(nextItems, id);
         if (toggled !== undefined) {
             onItemCheck?.(toggled, checked, nextItems);
@@ -242,15 +332,22 @@ const ActionableList: FC<IActionableListProps> = ({
     };
 
     const handleSelectAll = (checked: boolean) => {
-        if (totalItemsCount === 0) return;
-        const nextItems = localItems.map((item) => applyCheckedToBranch(item, checked));
-        syncItems(nextItems);
-        onSelectAllChange?.(checked, nextItems);
+        if (selectAllScopeLeafCount === 0) return;
+
+        const scopeLeafIds = collectLeafIds(isSearchActive ? filteredItems : workingItems);
+        const targetLeafIds = new Set(scopeLeafIds);
+        const nextItems = applyCheckedToLeavesById(workingItems, targetLeafIds, checked);
+
+        onSelectAllChange?.(checked, nextItems, scopeLeafIds);
+
+        if (!managedSelection) {
+            syncItems(nextItems);
+        }
     };
 
-    const handleDropReorder = (sourceId: string, targetId: string) => {
+    const handleDropReorder = (sourceId: string, targetId: string, edge: TDropGapEdge) => {
         if (sourceId === targetId) return;
-        syncItems(reorderInTree(localItems, sourceId, targetId));
+        syncItems(reorderInTree(workingItems, sourceId, targetId, edge));
     };
     handleDropReorderRef.current = handleDropReorder;
 
@@ -261,8 +358,79 @@ const ActionableList: FC<IActionableListProps> = ({
         });
     }, []);
 
-    const hasData = totalItemsCount > 0;
-    const hasSearchResults = filteredItemsCount > 0;
+    const hasData = useMemo(() => countAllItems(workingItems) > 0, [workingItems]);
+    const hasSearchResults = useMemo(() => countAllItems(filteredItems) > 0, [filteredItems]);
+    const showEmptyDropZone =
+        isDraggable && Boolean(dragListId) && Boolean(onCrossListDrop || delegateCrossListDrop) && !loading && !hasData;
+
+    useEffect(() => {
+        const element = emptyDropRef.current;
+        if (!element || !showEmptyDropZone) return () => undefined;
+
+        return dropTargetForElements({
+            element,
+            getData: () => ({
+                isEmptyListTarget: true,
+                ...(dragListId ? { targetListId: dragListId } : {})
+            }),
+            canDrop: ({ source }) => {
+                const sourceListId = source.data.dragListId;
+                return typeof sourceListId === "string" && sourceListId !== dragListId;
+            },
+            onDragEnter: () => setIsEmptyDropActive(true),
+            onDragLeave: () => setIsEmptyDropActive(false),
+            onDrop: ({ source }) => {
+                setIsEmptyDropActive(false);
+                if (delegateCrossListDrop) return;
+
+                const { sourceId } = source.data;
+                const sourceListId = source.data.dragListId;
+                if (
+                    typeof sourceId !== "string" ||
+                    typeof sourceListId !== "string" ||
+                    !dragListId ||
+                    !onCrossListDropRef.current
+                ) {
+                    return;
+                }
+
+                onCrossListDropRef.current({
+                    sourceListId,
+                    targetListId: dragListId,
+                    sourceId,
+                    isEmptyTarget: true
+                });
+            }
+        });
+    }, [showEmptyDropZone, dragListId, delegateCrossListDrop]);
+
+    const lastRootItemId = filteredItems[filteredItems.length - 1]?.id;
+
+    useEffect(() => {
+        const element = listEndDropRef.current;
+        if (!element || !isDraggable || !hasSearchResults || !lastRootItemId) return () => undefined;
+
+        const targetId = lastRootItemId;
+
+        return dropTargetForElements({
+            element,
+            getData: () => ({
+                targetId,
+                edge: "bottom" as const,
+                ...(dragListId ? { targetListId: dragListId } : {})
+            }),
+            canDrop: ({ source }) => {
+                const sourceListId = source.data.dragListId;
+                const sourceParentId = source.data.parentId;
+                if (dragListId && typeof sourceListId === "string" && sourceListId !== dragListId) {
+                    return sourceParentId === "root";
+                }
+                return sourceParentId === "root";
+            },
+            onDragEnter: () => handleDragTargetChange(targetId, "bottom"),
+            onDrag: () => handleDragTargetChange(targetId, "bottom")
+        });
+    }, [isDraggable, hasSearchResults, lastRootItemId, dragListId, handleDragTargetChange]);
 
     return (
         <div className={classNames("actionableList", className, { actionableList_hasDropGap: dropGap !== null })}>
@@ -285,17 +453,25 @@ const ActionableList: FC<IActionableListProps> = ({
                                 <Checkbox
                                     checked={selectAllChecked}
                                     indeterminate={selectAllIndeterminate}
-                                    disabled={totalItemsCount === 0}
+                                    disabled={selectAllScopeLeafCount === 0}
                                     onChange={(event) => handleSelectAll(event.target.checked)}
                                     className="actionableList__selectAll"
                                 />
-                                <Text
-                                    as="span"
-                                    variant="bodyMediumMedium"
-                                    className="actionableList__bulkSelectedLabel"
-                                >
-                                    {mergedTexts.bulkSelectedItemsLabel}
-                                </Text>
+                                <div className="actionableList__bulkSelectedLabelWrapper">
+                                    <Tooltip
+                                        text={mergedTexts.bulkSelectedItemsLabel}
+                                        isVisible={isBulkSelectedLabelTruncated}
+                                    >
+                                        <Text
+                                            ref={bulkSelectedLabelRef}
+                                            as="span"
+                                            variant="bodyMediumMedium"
+                                            className="actionableList__bulkSelectedLabel ellipsis-text"
+                                        >
+                                            {mergedTexts.bulkSelectedItemsLabel}
+                                        </Text>
+                                    </Tooltip>
+                                </div>
                                 <Text
                                     as="span"
                                     variant="bodyMediumMedium"
@@ -306,16 +482,30 @@ const ActionableList: FC<IActionableListProps> = ({
                             </div>
                         )}
                         <div className="actionableList__stats">
-                            <Text as="span" variant="bodyMediumMedium" className="actionableList__statsLabel">
-                                {mergedTexts.filteredItemsLabel}
-                            </Text>
+                            <Tooltip text={mergedTexts.filteredItemsLabel} isVisible={isFilteredItemsLabelTruncated}>
+                                <Text
+                                    ref={filteredItemsLabelRef}
+                                    as="span"
+                                    variant="bodyMediumMedium"
+                                    className="actionableList__statsLabel ellipsis-text"
+                                >
+                                    {mergedTexts.filteredItemsLabel}
+                                </Text>
+                            </Tooltip>
                             <Text as="span" variant="bodyMediumMedium" className="actionableList__statsCount">
                                 {filteredItemsCount}
                             </Text>
                             <Divider direction="vertical" className="actionableList__statsDivider" />
-                            <Text as="span" variant="bodyMediumMedium" className="actionableList__statsLabel">
-                                {mergedTexts.totalItemsLabel}
-                            </Text>
+                            <Tooltip text={mergedTexts.totalItemsLabel} isVisible={isTotalItemsLabelTruncated}>
+                                <Text
+                                    ref={totalItemsLabelRef}
+                                    as="span"
+                                    variant="bodyMediumMedium"
+                                    className="actionableList__statsLabel ellipsis-text"
+                                >
+                                    {mergedTexts.totalItemsLabel}
+                                </Text>
+                            </Tooltip>
                             <Text as="span" variant="bodyMediumMedium" className="actionableList__statsCount">
                                 {totalItemsCount}
                             </Text>
@@ -332,7 +522,12 @@ const ActionableList: FC<IActionableListProps> = ({
                 {!loading && (
                     <>
                         {!hasData && (
-                            <div className="actionableList__state">
+                            <div
+                                ref={showEmptyDropZone ? emptyDropRef : undefined}
+                                className={classNames("actionableList__state", {
+                                    actionableList__state_dropTarget: isEmptyDropActive
+                                })}
+                            >
                                 <Empty
                                     size="small"
                                     appearance="noData"
@@ -366,6 +561,7 @@ const ActionableList: FC<IActionableListProps> = ({
                                             parentId="root"
                                             withCheckbox={withCheckbox}
                                             isDraggable={isDraggable}
+                                            dragListId={dragListId}
                                             expandedIds={expandedIds}
                                             texts={mergedTexts}
                                             dropGap={dropGap}
@@ -376,6 +572,9 @@ const ActionableList: FC<IActionableListProps> = ({
                                         />
                                     ))}
                                 </ActionableListNodeWrapper>
+                                {isDraggable && (
+                                    <div ref={listEndDropRef} className="actionableList__listEndDrop" aria-hidden />
+                                )}
                             </div>
                         )}
                     </>
@@ -385,5 +584,11 @@ const ActionableList: FC<IActionableListProps> = ({
     );
 };
 
-export type { IActionableListItem, IActionableListProps, IActionableListTexts } from "./ActionableList.types";
+export type {
+    IActionableListDropGap,
+    IActionableListItem,
+    IActionableListProps,
+    IActionableListTexts,
+    ICrossListDropPayload
+} from "./ActionableList.types";
 export { ActionableList as default };
