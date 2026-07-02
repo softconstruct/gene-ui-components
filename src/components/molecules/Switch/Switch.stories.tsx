@@ -24,6 +24,7 @@ const meta: Meta<typeof Switch> = {
         direction: args({ control: "select", ...propCategory.appearance }),
         autoFocus: args({ control: "boolean", ...propCategory.functionality }),
         name: args({ control: "false", ...propCategory.others }),
+        id: args({ control: "text", ...propCategory.others }),
         onChange: args({ control: "false", ...propCategory.action }),
         onBlur: args({ control: "false", ...propCategory.action }),
         onFocus: args({ control: "false", ...propCategory.action }),
