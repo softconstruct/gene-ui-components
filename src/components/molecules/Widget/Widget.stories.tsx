@@ -19,12 +19,14 @@ const meta: Meta<IWidgetProps> = {
         infoText: args({ control: "text", ...propCategory.content }),
         value: args({ control: "text", ...propCategory.content }),
         trend: args({ control: "select", options: ["up", "down"], ...propCategory.content }),
+        trendValue: args({ control: "text", ...propCategory.content }),
         Icon: args({ control: "false", ...propCategory.content }),
         swappableElement: args({ control: "false", ...propCategory.content })
     },
     args: {
         value: "$ 123",
-        trend: "down"
+        trend: "down",
+        trendValue: "-33%"
     }
 };
 
@@ -38,6 +40,7 @@ export const Default: Story = {
         infoText: "Additional info for label",
         value: "$ 123",
         trend: "down",
+        trendValue: "-33%",
         Icon: Globe,
         swappableElement: <div>Swappable Element</div>
     }

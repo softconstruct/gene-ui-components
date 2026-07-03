@@ -58,12 +58,17 @@ interface IWidgetProps {
      * Possible values: `up` | `down`
      */
     trend?: WidgetTrend;
+    /**
+     * Percentage or delta text displayed beside the trend icon.
+     * When provided, it is rendered within the trend section next to the direction arrow.
+     */
+    trendValue?: string;
 }
 
 /**
  * Widget components are versatile, self-contained elements that provide specific functionality or display information in a compact, interactive format. These components are designed to be easily embedded within various parts of a digital interface, such as dashboards, sidebars, or standalone sections, offering users quick access to key features and data.
  */
-const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableElement, value, trend }) => {
+const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableElement, value, trend, trendValue }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
     const TrendIcon = trend ? trendIcons[trend] : null;
@@ -105,9 +110,11 @@ const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableE
                                         className={classNames("widget__trendIcon", `widget__trendIcon_${trend}`)}
                                     />
                                 )}
-                                <Text as="span" variant="labelLargeSemibold">
-                                    -32%
-                                </Text>
+                                {trendValue && (
+                                    <Text as="span" variant="labelLargeSemibold">
+                                        {trendValue}
+                                    </Text>
+                                )}
                             </div>
                         </div>
                     </div>

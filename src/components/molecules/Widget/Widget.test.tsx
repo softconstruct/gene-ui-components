@@ -101,9 +101,18 @@ describe("Widget", () => {
         expect(setup.find(ArrowBounceDown).exists()).toBeFalsy();
     });
 
-    it("renders percent wrapper in current implementation", () => {
+    it("renders trendValue when provided", () => {
+        const wrapper = setup.setProps({ trendValue: "-33%" });
+
+        expect(wrapper.find(".widget__trendWrapper").text()).toContain("-33%");
+    });
+
+    it("does not render trendValue when not provided", () => {
+        expect(setup.find(".widget__trendWrapper").text()).toBe("");
+    });
+
+    it("renders trend wrapper in current implementation", () => {
         expect(setup.find(".widget__trendWrapper").exists()).toBeTruthy();
-        expect(setup.find(".widget__trendWrapper").text()).toContain("-32%");
     });
 
     it("renders complete widget with all props", () => {
@@ -115,6 +124,7 @@ describe("Widget", () => {
                 infoText="Additional info"
                 value="$ 999"
                 trend="up"
+                trendValue="+12%"
                 Icon={Globe}
                 swappableElement={swappableElement}
             />
@@ -125,6 +135,7 @@ describe("Widget", () => {
         expect(wrapper.find("Label").prop("infoText")).toBe("Additional info");
         expect(wrapper.find(".widget__values").text()).toContain("$ 999");
         expect(wrapper.find(ArrowBounceUp).exists()).toBeTruthy();
+        expect(wrapper.find(".widget__trendWrapper").text()).toContain("+12%");
         expect(wrapper.find(Globe).exists()).toBeTruthy();
         expect(wrapper.find(".widget__swap").text()).toContain("Swap content");
     });
