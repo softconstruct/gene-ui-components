@@ -68,6 +68,16 @@ const widgetStories: Array<Partial<IWidgetProps> & { id: string }> = [
     {
         id: "title-only",
         title: "Widget Title"
+    },
+    {
+        id: "without-header",
+        title: undefined,
+        infoText: undefined,
+        value: "$ 456",
+        trend: "up",
+        trendValue: "+8%",
+        Icon: Globe,
+        swappableElement: <div>Chart placeholder</div>
     }
 ];
 
@@ -78,7 +88,7 @@ const WidgetCombinationsComponent: FC<IWidgetProps> = (props) => {
                 {widgetStories.map(({ id, ...storyData }) => (
                     <Col key={id} size={6}>
                         <div style={{ padding: "8px 0" }}>
-                            <Widget {...storyData} {...props} />
+                            <Widget {...props} {...storyData} />
                         </div>
                     </Col>
                 ))}

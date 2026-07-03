@@ -36,11 +36,24 @@ describe("Widget", () => {
         expect(wrapper.find("Label").prop("infoText")).toBe("Info text");
     });
 
-    it("renders header with Label and Button", () => {
+    it("renders header with Label and Button when title is provided", () => {
         const wrapper = setup.setProps({ title: "Title" });
         expect(wrapper.find(".widget__header").exists()).toBeTruthy();
         expect(wrapper.find("Label").exists()).toBeTruthy();
         expect(wrapper.find(Button).exists()).toBeTruthy();
+    });
+
+    it("renders header when only infoText is provided", () => {
+        const wrapper = setup.setProps({ infoText: "Info text" });
+
+        expect(wrapper.find(".widget__header").exists()).toBeTruthy();
+        expect(wrapper.find("Label").prop("infoText")).toBe("Info text");
+    });
+
+    it("does not render header when title and infoText are not provided", () => {
+        expect(setup.find(".widget__header").exists()).toBeFalsy();
+        expect(setup.find("Label").exists()).toBeFalsy();
+        expect(setup.find(Button).exists()).toBeFalsy();
     });
 
     it("renders icon when Icon prop is provided", () => {

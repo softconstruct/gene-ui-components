@@ -72,23 +72,26 @@ const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableE
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
     const TrendIcon = trend ? trendIcons[trend] : null;
+    const hasHeader = Boolean(title || infoText);
 
     return (
         <div className={classNames("widget", className)}>
-            <div className="widget__header">
-                <Label className="widget__label" text={title} infoText={infoText} />
-                <div className="widget__controls">
-                    <SegmentedControl value="test1" size="small">
-                        <SegmentedControlButton name="test 1" Icon={Tag}>
-                            {isMobileBreakpoint ? "" : "test 1"}
-                        </SegmentedControlButton>
-                        <SegmentedControlButton name="test 2" Icon={Tag}>
-                            {isMobileBreakpoint ? "" : "test 2"}
-                        </SegmentedControlButton>
-                    </SegmentedControl>
-                    <Button Icon={ArrowRight} appearance="secondary" layout="text" size="small" />
+            {hasHeader && (
+                <div className="widget__header">
+                    <Label className="widget__label" text={title} infoText={infoText} />
+                    <div className="widget__controls">
+                        <SegmentedControl value="test1" size="small">
+                            <SegmentedControlButton name="test 1" Icon={Tag}>
+                                {isMobileBreakpoint ? "" : "test 1"}
+                            </SegmentedControlButton>
+                            <SegmentedControlButton name="test 2" Icon={Tag}>
+                                {isMobileBreakpoint ? "" : "test 2"}
+                            </SegmentedControlButton>
+                        </SegmentedControl>
+                        <Button Icon={ArrowRight} appearance="secondary" layout="text" size="small" />
+                    </div>
                 </div>
-            </div>
+            )}
             <div className="widget__body">
                 <div className="widget__content">
                     {Icon && (
