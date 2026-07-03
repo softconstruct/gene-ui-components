@@ -76,13 +76,13 @@
         white-space: nowrap;
     }
 
-    &__percentWrapper {
+    &__trendWrapper {
         display: flex;
         align-items: center;
         gap: var(--guit-ref-spacing-3xsmall);
     }
 
-    &__percent {
+    &__trendIcon {
         &_down {
             color: var(--guit-sem-color-foreground-error);
         }

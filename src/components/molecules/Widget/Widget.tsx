@@ -1,7 +1,7 @@
 import React, { FC, JSX, useContext } from "react";
 import classNames from "classnames";
 
-import { ArrowBounceDown, ArrowRight, IconProps, Tag } from "@geneui/icons";
+import { ArrowBounceDown, ArrowBounceUp, ArrowRight, IconProps, Tag } from "@geneui/icons";
 
 // Styles
 import "./Widget.scss";
@@ -14,6 +14,13 @@ import {
     SegmentedControlButton,
     Text
 } from "../../../index";
+
+type WidgetTrend = "up" | "down";
+
+const trendIcons: Record<WidgetTrend, FC<IconProps>> = {
+    up: ArrowBounceUp,
+    down: ArrowBounceDown
+};
 
 interface IWidgetProps {
     /**
@@ -45,14 +52,22 @@ interface IWidgetProps {
      * When provided, it is rendered as the main heading value above the percentage change.
      */
     value?: string;
+    /**
+     * Direction of the metric change shown beside the percentage value.
+     * Renders an arrow icon with success styling for `up` or error styling for `down`.
+     * Possible values: `up` | `down`
+     */
+    trend?: WidgetTrend;
 }
 
 /**
  * Widget components are versatile, self-contained elements that provide specific functionality or display information in a compact, interactive format. These components are designed to be easily embedded within various parts of a digital interface, such as dashboards, sidebars, or standalone sections, offering users quick access to key features and data.
  */
-const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableElement, value }) => {
+const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableElement, value, trend }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
+    const TrendIcon = trend ? trendIcons[trend] : null;
+
     return (
         <div className={classNames("widget", className)}>
             <div className="widget__header">
@@ -83,11 +98,15 @@ const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableE
                                     {value}
                                 </Text>
                             )}
-                            <div className="widget__percentWrapper">
-                                {/* widget__percent_down // widget__percent_up */}
-                                <ArrowBounceDown size={16} className="widget__percent widget__percent_down" />-
+                            <div className="widget__trendWrapper">
+                                {TrendIcon && (
+                                    <TrendIcon
+                                        size={16}
+                                        className={classNames("widget__trendIcon", `widget__trendIcon_${trend}`)}
+                                    />
+                                )}
                                 <Text as="span" variant="labelLargeSemibold">
-                                    32%
+                                    -32%
                                 </Text>
                             </div>
                         </div>

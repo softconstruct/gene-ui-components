@@ -1,7 +1,7 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-import { Globe } from "@geneui/icons";
+import { ArrowBounceDown, ArrowBounceUp, Globe } from "@geneui/icons";
 
 // Components
 import Button from "@components/atoms/Button";
@@ -80,9 +80,30 @@ describe("Widget", () => {
         expect(setup.find(".widget__values h4")).toHaveLength(0);
     });
 
+    it("renders up trend icon when trend is up", () => {
+        const wrapper = setup.setProps({ trend: "up" });
+
+        expect(wrapper.find(ArrowBounceUp).exists()).toBeTruthy();
+        expect(wrapper.find(".widget__trendIcon_up").exists()).toBeTruthy();
+        expect(wrapper.find(ArrowBounceDown).exists()).toBeFalsy();
+    });
+
+    it("renders down trend icon when trend is down", () => {
+        const wrapper = setup.setProps({ trend: "down" });
+
+        expect(wrapper.find(ArrowBounceDown).exists()).toBeTruthy();
+        expect(wrapper.find(".widget__trendIcon_down").exists()).toBeTruthy();
+        expect(wrapper.find(ArrowBounceUp).exists()).toBeFalsy();
+    });
+
+    it("does not render trend icon when trend is not provided", () => {
+        expect(setup.find(ArrowBounceUp).exists()).toBeFalsy();
+        expect(setup.find(ArrowBounceDown).exists()).toBeFalsy();
+    });
+
     it("renders percent wrapper in current implementation", () => {
-        expect(setup.find(".widget__percentWrapper").exists()).toBeTruthy();
-        expect(setup.find(".widget__percentWrapper").text()).toContain("-32%");
+        expect(setup.find(".widget__trendWrapper").exists()).toBeTruthy();
+        expect(setup.find(".widget__trendWrapper").text()).toContain("-32%");
     });
 
     it("renders complete widget with all props", () => {
@@ -93,6 +114,7 @@ describe("Widget", () => {
                 title="Complete Widget"
                 infoText="Additional info"
                 value="$ 999"
+                trend="up"
                 Icon={Globe}
                 swappableElement={swappableElement}
             />
@@ -102,6 +124,7 @@ describe("Widget", () => {
         expect(wrapper.find("Label").prop("text")).toBe("Complete Widget");
         expect(wrapper.find("Label").prop("infoText")).toBe("Additional info");
         expect(wrapper.find(".widget__values").text()).toContain("$ 999");
+        expect(wrapper.find(ArrowBounceUp).exists()).toBeTruthy();
         expect(wrapper.find(Globe).exists()).toBeTruthy();
         expect(wrapper.find(".widget__swap").text()).toContain("Swap content");
     });
