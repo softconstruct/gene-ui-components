@@ -1,20 +1,34 @@
 .tableBodyCell {
+    position: relative;
+    max-width: 25rem;
     height: 4.4rem;
     padding-block: var(--guit-ref-spacing-medium);
     padding-inline: var(--guit-ref-spacing-large);
     vertical-align: middle;
-    position: relative;
     box-shadow: inset 0 -0.1rem 0 0 var(--guit-sem-color-border-neutral-1);
-    max-width: 25rem;
+
+    &_active,
+    &:hover {
+        .tableRow__actionsWrapper {
+            opacity: 1;
+        }
+    }
 
     &::after {
         content: "";
+        display: block;
         position: absolute;
         inset-inline-end: 0;
         top: 0;
         bottom: 0;
         width: 0.1rem;
-        background: var(--guit-sem-color-border-neutral-2);
+        background-color: var(--guit-sem-color-border-neutral-2);
+        pointer-events: none;
+    }
+
+    &_expander {
+        padding: 0;
+        padding-inline: var(--guit-ref-spacing-small);
     }
 
     &__content {
@@ -31,18 +45,6 @@
         color: var(--guit-sem-color-foreground-neutral-2);
     }
 
-    &_expander {
-        padding: 0;
-        padding-inline: var(--guit-ref-spacing-small);
-    }
-
-    &_active,
-    &:hover {
-        .tableRow__actionsWrapper {
-            opacity: 1;
-        }
-    }
-
     &_pinned {
         position: sticky;
         z-index: 1;
@@ -50,7 +52,7 @@
         inset-inline-start: 0;
 
         &::after {
-            background: var(--guit-sem-color-border-neutral-3);
+            background-color: var(--guit-sem-color-border-neutral-3);
         }
     }
 }
