@@ -1,4 +1,4 @@
-import React, { FC, JSX, useContext } from "react";
+import React, { FC, JSX, MouseEvent, useContext } from "react";
 import classNames from "classnames";
 
 import { ArrowBounceDown, ArrowBounceUp, ArrowRight, IconProps, Tag } from "@geneui/icons";
@@ -63,22 +63,43 @@ interface IWidgetProps {
      * When provided, it is rendered within the trend section next to the direction arrow.
      */
     trendValue?: string;
+    /**
+     * Called when the header details button is clicked.
+     * Use it to navigate to a detailed view of the widget data.
+     * When not provided, the details button is not rendered.
+     */
+    onDetailsClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 /**
  * Widget components are versatile, self-contained elements that provide specific functionality or display information in a compact, interactive format. These components are designed to be easily embedded within various parts of a digital interface, such as dashboards, sidebars, or standalone sections, offering users quick access to key features and data.
  */
-const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableElement, value, trend, trendValue }) => {
+const Widget: FC<IWidgetProps> = ({
+    className,
+    title,
+    infoText,
+    Icon,
+    swappableElement,
+    value,
+    trend,
+    trendValue,
+    onDetailsClick
+}) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
     const TrendIcon = trend ? trendIcons[trend] : null;
-    const hasHeader = Boolean(title || infoText);
+    const hasLabel = Boolean(title || infoText);
+    const hasHeader = hasLabel || Boolean(onDetailsClick);
 
     return (
         <div className={classNames("widget", className)}>
             {hasHeader && (
-                <div className="widget__header">
-                    <Label className="widget__label" text={title} infoText={infoText} />
+                <div
+                    className={classNames("widget__header", {
+                        widget__header_noLabel: !hasLabel
+                    })}
+                >
+                    {hasLabel && <Label className="widget__label" text={title} infoText={infoText} />}
                     <div className="widget__controls">
                         <SegmentedControl value="test1" size="small">
                             <SegmentedControlButton name="test 1" Icon={Tag}>
@@ -88,7 +109,16 @@ const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableE
                                 {isMobileBreakpoint ? "" : "test 2"}
                             </SegmentedControlButton>
                         </SegmentedControl>
-                        <Button Icon={ArrowRight} appearance="secondary" layout="text" size="small" />
+                        {onDetailsClick && (
+                            <Button
+                                className="widget__detailsButton"
+                                Icon={ArrowRight}
+                                appearance="secondary"
+                                layout="text"
+                                size="small"
+                                onClick={onDetailsClick}
+                            />
+                        )}
                     </div>
                 </div>
             )}

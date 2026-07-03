@@ -21,7 +21,8 @@ const meta: Meta<IWidgetProps> = {
         trend: args({ control: "select", options: ["up", "down"], ...propCategory.content }),
         trendValue: args({ control: "text", ...propCategory.content }),
         Icon: args({ control: "false", ...propCategory.content }),
-        swappableElement: args({ control: "false", ...propCategory.content })
+        swappableElement: args({ control: "false", ...propCategory.content }),
+        onDetailsClick: args({ control: "false", ...propCategory.action })
     },
     args: {
         value: "$ 123",
@@ -42,7 +43,8 @@ export const Default: Story = {
         trend: "down",
         trendValue: "-33%",
         Icon: Globe,
-        swappableElement: <div>Swappable Element</div>
+        swappableElement: <div>Swappable Element</div>,
+        onDetailsClick: () => {}
     }
 };
 
@@ -73,11 +75,20 @@ const widgetStories: Array<Partial<IWidgetProps> & { id: string }> = [
         id: "without-header",
         title: undefined,
         infoText: undefined,
+        onDetailsClick: undefined,
         value: "$ 456",
         trend: "up",
         trendValue: "+8%",
         Icon: Globe,
         swappableElement: <div>Chart placeholder</div>
+    },
+    {
+        id: "details-only-header",
+        title: undefined,
+        infoText: undefined,
+        value: "$ 789",
+        trend: "down",
+        trendValue: "-5%"
     }
 ];
 
@@ -98,5 +109,8 @@ const WidgetCombinationsComponent: FC<IWidgetProps> = (props) => {
 };
 
 export const WidgetCombinations: Story = {
+    args: {
+        onDetailsClick: () => {}
+    },
     render: (props) => <WidgetCombinationsComponent {...props} />
 };

@@ -4,7 +4,6 @@ import { mount, ReactWrapper } from "enzyme";
 import { ArrowBounceDown, ArrowBounceUp, Globe } from "@geneui/icons";
 
 // Components
-import Button from "@components/atoms/Button";
 import Widget, { IWidgetProps } from "@components/molecules/Widget";
 
 describe("Widget", () => {
@@ -36,11 +35,10 @@ describe("Widget", () => {
         expect(wrapper.find("Label").prop("infoText")).toBe("Info text");
     });
 
-    it("renders header with Label and Button when title is provided", () => {
+    it("renders header with Label when title is provided", () => {
         const wrapper = setup.setProps({ title: "Title" });
         expect(wrapper.find(".widget__header").exists()).toBeTruthy();
         expect(wrapper.find("Label").exists()).toBeTruthy();
-        expect(wrapper.find(Button).exists()).toBeTruthy();
     });
 
     it("renders header when only infoText is provided", () => {
@@ -50,10 +48,41 @@ describe("Widget", () => {
         expect(wrapper.find("Label").prop("infoText")).toBe("Info text");
     });
 
-    it("does not render header when title and infoText are not provided", () => {
+    it("renders header when only onDetailsClick is provided", () => {
+        const onDetailsClick = jest.fn();
+        const wrapper = setup.setProps({ onDetailsClick });
+
+        expect(wrapper.find(".widget__header").exists()).toBeTruthy();
+        expect(wrapper.find(".widget__header").hasClass("widget__header_noLabel")).toBeTruthy();
+        expect(wrapper.find("Label").exists()).toBeFalsy();
+        expect(wrapper.find(".widget__detailsButton").exists()).toBeTruthy();
+    });
+
+    it("does not render header when title, infoText, and onDetailsClick are not provided", () => {
         expect(setup.find(".widget__header").exists()).toBeFalsy();
         expect(setup.find("Label").exists()).toBeFalsy();
-        expect(setup.find(Button).exists()).toBeFalsy();
+        expect(setup.find(".widget__detailsButton").exists()).toBeFalsy();
+    });
+
+    it("renders details button when onDetailsClick is provided", () => {
+        const wrapper = setup.setProps({ title: "Title", onDetailsClick: jest.fn() });
+
+        expect(wrapper.find(".widget__detailsButton").exists()).toBeTruthy();
+    });
+
+    it("does not render details button when onDetailsClick is not provided", () => {
+        const wrapper = setup.setProps({ title: "Title" });
+
+        expect(wrapper.find(".widget__detailsButton").exists()).toBeFalsy();
+    });
+
+    it("calls onDetailsClick when details button is clicked", () => {
+        const onDetailsClick = jest.fn();
+        const wrapper = setup.setProps({ title: "Title", onDetailsClick });
+
+        wrapper.find(".widget__detailsButton").first().simulate("click");
+
+        expect(onDetailsClick).toHaveBeenCalledTimes(1);
     });
 
     it("renders icon when Icon prop is provided", () => {
@@ -129,6 +158,7 @@ describe("Widget", () => {
     });
 
     it("renders complete widget with all props", () => {
+        const onDetailsClick = jest.fn();
         const swappableElement = <span>Swap content</span>;
         const wrapper = mount(
             <Widget
@@ -140,6 +170,7 @@ describe("Widget", () => {
                 trendValue="+12%"
                 Icon={Globe}
                 swappableElement={swappableElement}
+                onDetailsClick={onDetailsClick}
             />
         );
 
@@ -151,5 +182,6 @@ describe("Widget", () => {
         expect(wrapper.find(".widget__trendWrapper").text()).toContain("+12%");
         expect(wrapper.find(Globe).exists()).toBeTruthy();
         expect(wrapper.find(".widget__swap").text()).toContain("Swap content");
+        expect(wrapper.find(".widget__detailsButton").exists()).toBeTruthy();
     });
 });

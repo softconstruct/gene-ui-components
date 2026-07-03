@@ -13,6 +13,10 @@
         padding: var(--guit-ref-spacing-medium) var(--guit-ref-spacing-large);
         border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
             var(--guit-sem-color-border-neutral-2);
+
+        &_noLabel {
+            justify-content: flex-end;
+        }
     }
 
     &__label {
