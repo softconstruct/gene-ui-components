@@ -72,6 +72,10 @@
         width: 100%;
     }
 
+    &__value {
+        white-space: nowrap;
+    }
+
     &__percentWrapper {
         display: flex;
         align-items: center;

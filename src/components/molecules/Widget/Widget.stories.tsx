@@ -17,10 +17,13 @@ const meta: Meta<IWidgetProps> = {
         className: args({ control: "false", ...propCategory.appearance }),
         title: args({ control: "text", ...propCategory.content }),
         infoText: args({ control: "text", ...propCategory.content }),
+        value: args({ control: "text", ...propCategory.content }),
         Icon: args({ control: "false", ...propCategory.content }),
         swappableElement: args({ control: "false", ...propCategory.content })
     },
-    args: {}
+    args: {
+        value: "$ 123"
+    }
 };
 
 export default meta;
@@ -31,6 +34,7 @@ export const Default: Story = {
     args: {
         title: "Title",
         infoText: "Additional info for label",
+        value: "$ 123",
         Icon: Globe,
         swappableElement: <div>Swappable Element</div>
     }

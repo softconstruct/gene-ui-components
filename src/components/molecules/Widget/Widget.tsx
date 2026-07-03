@@ -40,12 +40,17 @@ interface IWidgetProps {
      * When provided, this content will be rendered alongside the widget info section.
      */
     swappableElement?: JSX.Element;
+    /**
+     * Primary metric value displayed in the widget body.
+     * When provided, it is rendered as the main heading value above the percentage change.
+     */
+    value?: string;
 }
 
 /**
  * Widget components are versatile, self-contained elements that provide specific functionality or display information in a compact, interactive format. These components are designed to be easily embedded within various parts of a digital interface, such as dashboards, sidebars, or standalone sections, offering users quick access to key features and data.
  */
-const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableElement }) => {
+const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableElement, value }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
     return (
@@ -73,9 +78,11 @@ const Widget: FC<IWidgetProps> = ({ className, title, infoText, Icon, swappableE
                     )}
                     <div className="widget__info">
                         <div className="widget__values">
-                            <Text as="h4" variant="headingLargeSemibold">
-                                $ 17.00
-                            </Text>
+                            {value && (
+                                <Text as="h4" variant="headingLargeSemibold" className="widget__value">
+                                    {value}
+                                </Text>
+                            )}
                             <div className="widget__percentWrapper">
                                 {/* widget__percent_down // widget__percent_up */}
                                 <ArrowBounceDown size={16} className="widget__percent widget__percent_down" />-

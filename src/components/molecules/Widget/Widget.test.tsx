@@ -70,8 +70,14 @@ describe("Widget", () => {
         expect(setup.find(".widget__info").exists()).toBeTruthy();
     });
 
-    it("renders hardcoded value text in current implementation", () => {
-        expect(setup.find(".widget__info").text()).toContain("$ 17.00");
+    it("renders value when provided", () => {
+        const wrapper = setup.setProps({ value: "$ 123" });
+
+        expect(wrapper.find(".widget__values").text()).toContain("$ 123");
+    });
+
+    it("does not render value when not provided", () => {
+        expect(setup.find(".widget__values h4")).toHaveLength(0);
     });
 
     it("renders percent wrapper in current implementation", () => {
@@ -86,6 +92,7 @@ describe("Widget", () => {
                 className="custom-widget"
                 title="Complete Widget"
                 infoText="Additional info"
+                value="$ 999"
                 Icon={Globe}
                 swappableElement={swappableElement}
             />
@@ -94,6 +101,7 @@ describe("Widget", () => {
         expect(wrapper.find(".widget").hasClass("custom-widget")).toBeTruthy();
         expect(wrapper.find("Label").prop("text")).toBe("Complete Widget");
         expect(wrapper.find("Label").prop("infoText")).toBe("Additional info");
+        expect(wrapper.find(".widget__values").text()).toContain("$ 999");
         expect(wrapper.find(Globe).exists()).toBeTruthy();
         expect(wrapper.find(".widget__swap").text()).toContain("Swap content");
     });
