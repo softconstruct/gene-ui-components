@@ -2,15 +2,18 @@ import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 import { act } from "react-dom/test-utils";
 
+import { ErrorFilled, Info, TriangleAlert } from "@geneui/icons";
+
+// Components
+import ButtonGroup from "../../molecules/ButtonGroup";
 import GeneUIProvider from "../../providers/GeneUIProvider";
 import Button from "../Button";
-// Components
 import { IPopoverProps, Popover, PopoverBody } from "./index";
-import PopoverFooter from "./PopoverFooter";
-import PopoverFooterActions from "./PopoverFooterActions";
+import PopoverFooter, { IPopoverFooterActionProps } from "./PopoverFooter";
 
 describe("Popover", () => {
     let setup: ReactWrapper<IPopoverProps>;
+    const initialInnerWidth = window.innerWidth;
 
     const Component = (
         <Popover size="small" margin={0} setProps={() => {}}>
@@ -34,6 +37,12 @@ describe("Popover", () => {
 
     afterEach(() => {
         setup.unmount();
+        Object.defineProperty(window, "innerWidth", {
+            configurable: true,
+            writable: true,
+            value: initialInnerWidth
+        });
+        window.dispatchEvent(new Event("resize"));
     });
 
     it("renders without crashing", () => {
@@ -51,6 +60,50 @@ describe("Popover", () => {
         expect(provider().find(".popover__header").text()).toBe(title);
     });
 
+    it("renders Spreadsheet on mobile by default", () => {
+        Object.defineProperty(window, "innerWidth", {
+            configurable: true,
+            writable: true,
+            value: 320
+        });
+        window.dispatchEvent(new Event("resize"));
+
+        const wrapper = mount(
+            <Popover size="small" margin={0} setProps={() => {}} open>
+                <PopoverBody>
+                    <div className="swapComponent" />
+                </PopoverBody>
+            </Popover>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        expect(wrapper.getWrappingComponent().find(".spreadsheet").exists()).toBeTruthy();
+        wrapper.unmount();
+    });
+
+    it("keeps regular popover on mobile when disableMobileSpreadsheet is true", () => {
+        Object.defineProperty(window, "innerWidth", {
+            configurable: true,
+            writable: true,
+            value: 320
+        });
+        window.dispatchEvent(new Event("resize"));
+
+        const wrapper = mount(
+            <Popover size="small" margin={0} setProps={() => {}} open disableMobileSpreadsheet>
+                <PopoverBody>
+                    <div className="swapComponent" />
+                </PopoverBody>
+            </Popover>,
+            { wrappingComponent: GeneUIProvider }
+        );
+
+        const wrapped = wrapper.getWrappingComponent();
+        expect(wrapped.find(".spreadsheet").exists()).toBeFalsy();
+        expect(wrapped.find(".popover").exists()).toBeTruthy();
+        wrapper.unmount();
+    });
+
     it.each<IPopoverProps["size"]>(["xLarge", "large", "medium", "small", "fitContent"])(
         "should have %p size",
         (size) => {
@@ -65,16 +118,19 @@ describe("Popover", () => {
         expect(provider().find(`.popover_size_reference`).exists()).toBeTruthy();
     });
 
-    it("renders PopoverFooterActions child correct", () => {
+    it("renders PopoverFooter actions correct", () => {
         const child = "test";
         setup.setProps({
             open: true,
             children: (
-                <PopoverFooter>
-                    <PopoverFooterActions>
-                        <Button onClick={() => {}}>{child}</Button>
-                    </PopoverFooterActions>
-                </PopoverFooter>
+                <PopoverFooter
+                    actions={[
+                        {
+                            text: child,
+                            onClick: () => {}
+                        }
+                    ]}
+                />
             )
         });
         expect(provider().find(Button).first().props().children).toBe(child);
@@ -86,6 +142,130 @@ describe("Popover", () => {
             open: true
         });
         expect(provider().find(".popover__arrowPath").exists()).toBeTruthy();
+    });
+
+    it("renders hasCloseButton prop correctly", () => {
+        setup.setProps({
+            hasCloseButton: true,
+            open: true,
+            title: "Test Title"
+        });
+        expect(provider().find(".popover__close").exists()).toBeTruthy();
+    });
+
+    it("does not render icon when Icon prop is not provided", () => {
+        setup.setProps({
+            open: true,
+            title: "Test Title"
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeFalsy();
+    });
+
+    it("renders custom Icon prop correctly", () => {
+        setup.setProps({
+            open: true,
+            title: "Test Title",
+            Icon: ErrorFilled
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+    });
+
+    it("renders different custom icons correctly", () => {
+        setup.setProps({
+            open: true,
+            title: "Test Title",
+            Icon: TriangleAlert
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+
+        setup.setProps({
+            Icon: Info
+        });
+        expect(provider().find(".popover__title_icon").exists()).toBeTruthy();
+    });
+
+    it("renders multiple PopoverFooter actions correctly", () => {
+        const actions: IPopoverFooterActionProps[] = [
+            { text: "Primary", appearance: "primary", onClick: () => {} },
+            { text: "Secondary", appearance: "secondary", onClick: () => {} },
+            { text: "Cancel", appearance: "danger", onClick: () => {} }
+        ];
+        setup.setProps({
+            open: true,
+            children: <PopoverFooter actions={actions} />
+        });
+        const buttons = provider().find(Button);
+        expect(buttons).toHaveLength(3);
+        expect(buttons.at(0).props().children).toBe("Primary");
+        expect(buttons.at(1).props().children).toBe("Secondary");
+        expect(buttons.at(2).props().children).toBe("Cancel");
+    });
+
+    it("renders PopoverFooter actions with icons correctly", () => {
+        setup.setProps({
+            open: true,
+            children: (
+                <PopoverFooter
+                    actions={[
+                        { Icon: Info, text: "View", onClick: () => {} },
+                        { Icon: Info, onClick: () => {} }
+                    ]}
+                />
+            )
+        });
+        const buttons = provider().find(Button);
+        expect(buttons).toHaveLength(2);
+        expect(buttons.at(0).props().Icon).toBe(Info);
+        expect(buttons.at(0).props().children).toBe("View");
+    });
+
+    it("renders PopoverFooter children alongside actions", () => {
+        setup.setProps({
+            open: true,
+            children: (
+                <PopoverFooter actions={[{ text: "Action", onClick: () => {} }]}>
+                    <div className="footer-content">Footer Content</div>
+                </PopoverFooter>
+            )
+        });
+        expect(provider().find(".footer-content").exists()).toBeTruthy();
+        expect(provider().find(Button).exists()).toBeTruthy();
+        expect(provider().find(ButtonGroup).exists()).toBeTruthy();
+    });
+
+    it("renders ButtonGroup when actions are provided", () => {
+        setup.setProps({
+            open: true,
+            children: <PopoverFooter actions={[{ text: "Action", onClick: () => {} }]} />
+        });
+        expect(provider().find(ButtonGroup).exists()).toBeTruthy();
+        expect(provider().find(ButtonGroup).hasClass("popover__footerActions")).toBeTruthy();
+    });
+
+    it("does not render ButtonGroup when actions array is empty", () => {
+        setup.setProps({
+            open: true,
+            children: <PopoverFooter actions={[]} />
+        });
+        expect(provider().find(ButtonGroup).exists()).toBeFalsy();
+    });
+
+    it("does not render ButtonGroup when actions prop is undefined", () => {
+        setup.setProps({
+            open: true,
+            children: <PopoverFooter />
+        });
+        expect(provider().find(ButtonGroup).exists()).toBeFalsy();
+    });
+
+    it("calls action onClick handler when action button is clicked", () => {
+        const onClickMock = jest.fn();
+        setup.setProps({
+            open: true,
+            children: <PopoverFooter actions={[{ text: "Test Action", onClick: onClickMock }]} />
+        });
+        provider().find(Button).first().simulate("click");
+        expect(onClickMock).toHaveBeenCalled();
     });
 
     it("does not close when pointer down starts inside popover and click ends outside", () => {
@@ -110,5 +290,49 @@ describe("Popover", () => {
         wrapper.update();
         expect(onClose).not.toHaveBeenCalled();
         wrapper.unmount();
+    });
+
+    it("calls onClose with 'escape-key' reason when Escape is pressed", () => {
+        const onCloseMock = jest.fn();
+        setup.setProps({ open: true, onClose: onCloseMock });
+
+        act(() => {
+            const event = new KeyboardEvent("keydown", { key: "Escape", bubbles: true });
+            document.dispatchEvent(event);
+        });
+
+        setup.update();
+        expect(onCloseMock).toHaveBeenCalledTimes(1);
+        expect(onCloseMock.mock.calls[0][1]).toBe("escape-key");
+    });
+
+    it("calls onClose with 'outside-press' reason after mousedown inside then outside popover", () => {
+        const onCloseMock = jest.fn();
+        setup.setProps({ open: true, onClose: onCloseMock });
+
+        const popoverElement = provider().find(".popover").first().getDOMNode() as HTMLElement;
+
+        act(() => {
+            popoverElement.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+            document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
+        });
+
+        setup.update();
+        expect(onCloseMock).toHaveBeenCalledTimes(1);
+        expect(onCloseMock.mock.calls[0][1]).toBe("outside-press");
+    });
+
+    it("calls onClose with 'outside-press' reason when a click occurs outside the popover", () => {
+        const onCloseMock = jest.fn();
+        setup.setProps({ open: true, onClose: onCloseMock });
+
+        act(() => {
+            const event = new MouseEvent("mousedown", { bubbles: true });
+            document.dispatchEvent(event);
+        });
+
+        setup.update();
+        expect(onCloseMock).toHaveBeenCalledTimes(1);
+        expect(onCloseMock.mock.calls[0][1]).toBe("outside-press");
     });
 });

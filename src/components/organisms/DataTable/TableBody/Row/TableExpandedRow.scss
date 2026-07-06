@@ -1,0 +1,10 @@
+.tableExpandedRow {
+    position: relative;
+    display: table-row;
+    width: 100%;
+    background-color: var(--guit-sem-color-background-neutral-2);
+
+    .tableExpandedCell {
+        padding: var(--guit-ref-spacing-large);
+    }
+}

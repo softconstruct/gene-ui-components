@@ -1,0 +1,20 @@
+.controllers {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--guit-ref-spacing-xsmall);
+
+    &__magnifier {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        height: 3.2rem;
+    }
+
+    &__withOverlay {
+        height: 4rem;
+        padding-block: var(--guit-ref-spacing-3xsmall);
+        padding-inline: var(--guit-ref-spacing-medium);
+        border-radius: var(--guit-ref-radius-2xsmall);
+        background-color: var(--guit-sem-color-background-inverse);
+    }
+}

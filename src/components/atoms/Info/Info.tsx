@@ -77,9 +77,11 @@ const Info: FC<IInfoProps> = ({
             }),
         [appearance, className, disabled]
     );
+    const tooltipAppearance = appearance === "inverse" ? "inverse" : "default";
+    const icon = <InfoIcon className="info__icon" size={iconSizes[size]} />;
 
     return (
-        <Tooltip text={infoText} alwaysShow={alwaysShow} appearance={appearance === "inverse" ? "inverse" : "default"}>
+        <Tooltip text={infoText} alwaysShow={alwaysShow} appearance={tooltipAppearance} isVisible={!disabled}>
             <button
                 type="button"
                 aria-label={ariaLabel || "press enter to open tooltip"}
@@ -89,7 +91,7 @@ const Info: FC<IInfoProps> = ({
                 onKeyDown={keyDownHandler}
                 onBlur={handleBlur}
             >
-                <InfoIcon className="info__icon" size={iconSizes[size]} />
+                {icon}
             </button>
         </Tooltip>
     );

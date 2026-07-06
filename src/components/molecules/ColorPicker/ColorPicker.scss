@@ -1,0 +1,109 @@
+.colorPicker {
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-2xsmall);
+    width: 100%;
+
+    &__textField {
+        max-width: 16rem;
+    }
+
+    &__alphaField {
+        max-width: 6rem;
+    }
+
+    &__alphaInput {
+        flex: 0 0 auto;
+        width: 7rem;
+        max-width: 7rem;
+    }
+
+    &__inputs {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        min-width: 0;
+    }
+
+    &__inputsRgb {
+        gap: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__inputsHex {
+        gap: var(--guit-ref-spacing-2xsmall);
+    }
+
+    &__rgbInputs {
+        display: flex;
+        gap: var(--guit-ref-spacing-3xsmall);
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__hexInput {
+        flex: 1 1 0;
+        min-width: 0;
+        unicode-bidi: bidi-override;
+    }
+
+    &__rgbInput {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__formatDropdown {
+        flex: 0 0 8.6rem;
+        width: 8.6rem;
+        max-width: 8.6rem;
+    }
+
+    &__recents {
+        display: grid;
+        grid-template-columns: repeat(10, 1fr);
+        grid-gap: var(--guit-ref-spacing-xsmall) 0.5rem;
+        width: 100%;
+        padding-inline: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__recentColorWrapper {
+        width: var(--guit-sem-dimension-width-small);
+        height: var(--guit-sem-dimension-height-small);
+        padding: 0.2rem;
+    }
+
+    &__recentColor {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+        background: var(--color-picker-recent-color, transparent);
+        border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+        border-radius: var(--guit-ref-radius-4xsmall);
+
+        &__empty {
+            &::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0.1rem;
+                height: 150%;
+                background-color: var(--guit-sem-color-background-error-2);
+                transform: translate(-50%, -50%) rotate(45deg);
+            }
+        }
+    }
+
+    &__wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-medium);
+        width: 32rem;
+        padding: var(--guit-ref-spacing-large);
+
+        &_mobile {
+            width: 100%;
+        }
+    }
+}

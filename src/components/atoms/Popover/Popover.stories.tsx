@@ -1,16 +1,20 @@
-import React, { FC, useRef, useState } from "react";
+import React, { ComponentType, FC, useRef, useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
 // Components
+import Avatar from "../Avatar";
 import Button from "../Button";
-import { IPopoverProps, Popover, PopoverBody, PopoverFooter, PopoverFooterActions } from "./index";
+import { IPopoverProps, Popover, PopoverBody, PopoverFooter } from "./index";
 
 const meta: Meta<IPopoverProps> = {
     title: "Atoms/Popover",
     component: Popover,
-    subcomponents: { PopoverBody, PopoverFooter, PopoverFooterActions },
+    subcomponents: {
+        PopoverBody: PopoverBody as ComponentType<unknown>,
+        PopoverFooter: PopoverFooter as ComponentType<unknown>
+    },
     argTypes: {
         position: args({ control: "select", ...propCategory.appearance }),
         margin: args({ control: "number", ...propCategory.appearance }),
@@ -18,20 +22,25 @@ const meta: Meta<IPopoverProps> = {
         fitReference: args({ control: "boolean", ...propCategory.appearance }),
         open: args({ control: "boolean", ...propCategory.states, defaultValue: undefined }),
         withArrow: args({ control: "boolean", ...propCategory.states }),
+        hasCloseButton: args({ control: "boolean", ...propCategory.functionality }),
         disableReposition: args({ control: "boolean", ...propCategory.states }),
         children: args({ control: "false", ...propCategory.content }),
         title: args({ control: "text", ...propCategory.content }),
+        Icon: args({ control: "component", ...propCategory.content }),
         setProps: args({ control: "false", ...propCategory.functionality }),
         onClose: args({ control: "false", ...propCategory.action }),
         defaultOpen: args({ control: "boolean", ...propCategory.states }),
-        trigger: args({ control: "boolean", ...propCategory.functionality })
+        trigger: args({ control: "boolean", ...propCategory.functionality }),
+        mobileHeightMode: args({ control: "select", ...propCategory.appearance }),
+        disableMobileSpreadsheet: args({ control: "boolean", ...propCategory.functionality })
     },
     args: {
         margin: 15,
         position: "bottom-left",
         size: "medium",
         title: "Popover",
-        onClose: () => {}
+        onClose: () => {},
+        hasCloseButton: true
     }
 };
 
@@ -47,7 +56,7 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
 
     return (
         <div style={{ margin: "500px 500px", height: 1000 }}>
-            <Popover {...props} title={title} setProps={setPropsForContent} ref={popRef}>
+            <Popover {...props} title={title} setProps={setPropsForContent} ref={popRef} defaultOpen>
                 <PopoverBody>
                     <span>
                         Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of
@@ -63,20 +72,21 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
                 </PopoverBody>
 
                 {!fitReference && size !== "small" && (
-                    <PopoverFooter>
-                        <div
-                            className="swapComponent"
-                            style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
-                        />
-
-                        <PopoverFooterActions>
-                            <Button onClick={() => {}} size="medium" appearance="inverse">
-                                Primary
-                            </Button>
-                            <Button onClick={() => {}} size="medium" appearance="primary">
-                                Secondary
-                            </Button>
-                        </PopoverFooterActions>
+                    <PopoverFooter
+                        actions={[
+                            {
+                                text: "Secondary",
+                                appearance: "secondary",
+                                onClick: () => {}
+                            },
+                            {
+                                text: "Primary",
+                                appearance: "primary",
+                                onClick: () => {}
+                            }
+                        ]}
+                    >
+                        <Avatar size="small" fullName="John Doe" color="blue" />
                     </PopoverFooter>
                 )}
             </Popover>
@@ -88,62 +98,10 @@ const PopoverStoryComponent: FC<IPopoverProps> = (props) => {
 };
 
 export const Default: Story = {
-    render: (props: IPopoverProps) => <PopoverStoryComponent {...props} />
-};
-
-const WithoutFooterComponent: FC<IPopoverProps> = (props) => {
-    const [propsForContent, setPropsForContent] = useState({});
-    return (
-        <div style={{ margin: "500px 500px", height: 1000 }}>
-            <Popover {...props} setProps={setPropsForContent}>
-                <PopoverBody>
-                    <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
-                </PopoverBody>
-            </Popover>
-            <Button onClick={() => {}} {...propsForContent}>
-                Click for open
-            </Button>
-        </div>
-    );
-};
-
-export const WithoutFooter: Story = {
-    render: (props: IPopoverProps) => <WithoutFooterComponent {...props} />
-};
-
-const WithoutHeaderComponent: FC<IPopoverProps> = (props) => {
-    const [propsForContent, setPropsForContent] = useState({});
-    return (
-        <div style={{ margin: "500px 500px", height: 1000 }}>
-            <Popover {...props} setProps={setPropsForContent} title="">
-                <PopoverBody>
-                    <div className="swapComponent" style={{ minHeight: "100%", background: "#F4E1EC" }} />
-                </PopoverBody>
-                <PopoverFooter>
-                    <div
-                        className="swapComponent"
-                        style={{ minHeight: "32px", width: "60px", background: "#F4E1EC" }}
-                    />
-
-                    <PopoverFooterActions>
-                        <Button onClick={() => {}} size="medium" appearance="inverse">
-                            Primary
-                        </Button>
-                        <Button onClick={() => {}} size="medium" appearance="primary">
-                            Secondary
-                        </Button>
-                    </PopoverFooterActions>
-                </PopoverFooter>
-            </Popover>
-            <Button onClick={() => {}} {...propsForContent}>
-                Click for open
-            </Button>
-        </div>
-    );
-};
-
-export const WithoutHeader: Story = {
-    render: (props: IPopoverProps) => <WithoutHeaderComponent {...props} />
+    render: (props: IPopoverProps) => <PopoverStoryComponent {...props} />,
+    args: {
+        defaultOpen: true
+    }
 };
 
 const WithoutHeaderAndFooterComponent: FC<IPopoverProps> = (props) => {

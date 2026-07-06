@@ -56,6 +56,7 @@
                     "ButtonGroup": ["Button"],
                     "Carousel": ["CarouselItem"],
                     "TagGroup": ["Tag"],
+                    "Text": ["Text"],
                     "SegmentedControl": ["SegmentedControlButton"],
                     "Accordion": ["AccordionItem"],
                     "FileUploadList": ["FileUploadItem"]

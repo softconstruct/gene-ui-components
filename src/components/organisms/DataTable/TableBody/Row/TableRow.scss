@@ -1,0 +1,96 @@
+@use "../../../../../assets/styles/mixins";
+
+.tableRow {
+    position: relative;
+    display: table-row;
+    width: 100%;
+
+    &:active {
+        background-color: var(--guit-sem-color-background-neutral-3-pressed);
+    }
+
+    &:nth-child(even) {
+        background-color: var(--guit-sem-color-background-neutral-3);
+    }
+
+    &:nth-child(odd) {
+        background-color: var(--guit-sem-color-background-neutral-1);
+    }
+
+    &_status {
+        &_default:not(:active, :hover) {
+            background-color: var(--guit-sem-color-background-neutral-1);
+        }
+
+        &_zebra:not(:active, :hover) {
+            background-color: var(--guit-sem-color-background-neutral-3);
+        }
+
+        &_red:not(:active, :hover) {
+            background-color: var(--guit-sem-color-background-error-1);
+        }
+
+        &_green:not(:active, :hover) {
+            background-color: var(--guit-sem-color-background-success-1);
+        }
+
+        &_highlighted:not(:active, :hover) {
+            background-color: var(--guit-sem-color-background-brand-1);
+        }
+    }
+
+    @include mixins.media-hover {
+        &:hover {
+            background-color: var(--guit-sem-color-background-neutral-3-hover);
+
+            .tableRow__actionsWrapper {
+                opacity: 1;
+                visibility: visible;
+                pointer-events: auto;
+            }
+        }
+    }
+
+    &__actionsWrapper {
+        position: sticky;
+        inset-inline-end: 0;
+        top: 0;
+        z-index: 2;
+        width: 0;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-1);
+    }
+
+    &__actions {
+        position: absolute;
+        inset-inline-end: 0;
+        inset-block: 0;
+        display: flex;
+        align-items: center;
+        column-gap: var(--guit-ref-spacing-3xsmall);
+        padding: var(--guit-ref-spacing-small) var(--guit-ref-spacing-large);
+        background-color: var(--guit-sem-color-background-neutral-3-hover);
+
+        &::after {
+            content: "";
+            position: absolute;
+            inset-block: 0;
+            width: 0.4rem;
+            pointer-events: none;
+        }
+
+        [dir="ltr"] &::after {
+            right: 100%;
+            background: linear-gradient(to left, var(--guit-sem-color-raised-top-rgba), transparent);
+        }
+
+        [dir="rtl"] &::after {
+            left: 100%;
+            background: linear-gradient(to right, var(--guit-sem-color-raised-top-rgba), transparent);
+        }
+    }
+}

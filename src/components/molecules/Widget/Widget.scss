@@ -1,0 +1,99 @@
+.widget {
+    display: flex;
+    flex-direction: column;
+    border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid) var(--guit-sem-color-border-neutral-2);
+    border-radius: var(--guit-ref-radius-2xsmall);
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-medium);
+        width: 100%;
+        height: 4.8rem;
+        padding: var(--guit-ref-spacing-medium) var(--guit-ref-spacing-large);
+        border-bottom: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+
+        &_noLabel {
+            justify-content: flex-end;
+        }
+    }
+
+    &__label {
+        flex: 1;
+    }
+
+    &__controls {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-xsmall);
+        flex: 0 0 auto;
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-medium);
+        width: 100%;
+        padding: var(--guit-ref-spacing-large);
+    }
+
+    &__swap {
+        width: 100%;
+    }
+
+    &__content {
+        display: flex;
+        gap: var(--guit-ref-spacing-medium);
+        width: 100%;
+    }
+
+    &__iconWrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 4.8rem;
+        height: 4.8rem;
+        padding: var(--guit-ref-spacing-xsmall);
+        border-radius: var(--guit-ref-radius-xsmall);
+        background-color: var(--guit-sem-color-background-neutral-3);
+        color: var(--guit-sem-color-foreground-neutral-1);
+    }
+
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--guit-ref-spacing-3xsmall);
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__values {
+        display: flex;
+        gap: var(--guit-ref-spacing-3xsmall);
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    &__value {
+        white-space: nowrap;
+    }
+
+    &__trendWrapper {
+        display: flex;
+        align-items: center;
+        gap: var(--guit-ref-spacing-3xsmall);
+        padding-top: var(--guit-ref-spacing-2xsmall);
+    }
+
+    &__trendIcon {
+        &_down {
+            color: var(--guit-sem-color-foreground-error);
+        }
+
+        &_up {
+            color: var(--guit-sem-color-foreground-success);
+        }
+    }
+}

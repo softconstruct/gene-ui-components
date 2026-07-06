@@ -16,11 +16,13 @@ const meta: Meta<ISpreadsheetProps> = {
         open: args({ control: "boolean", ...propCategory.states }),
         inset: args({ control: "boolean", ...propCategory.appearance }),
         children: args({ control: "false", ...propCategory.content }),
-        onClose: args({ control: "false", ...propCategory.functionality })
+        onClose: args({ control: "false", ...propCategory.functionality }),
+        heightMode: args({ control: "select", ...propCategory.appearance })
     },
     args: {
         open: false,
-        inset: false
+        inset: false,
+        heightMode: "full"
     }
 };
 

@@ -6,9 +6,11 @@ import { Tag as TagOutline } from "@geneui/icons";
 // Components
 import Pill from "@components/atoms/Pill";
 import { ITabsProps, Tab, Tabs } from "@components/molecules/Tabs";
+import DataTable from "@components/organisms/DataTable";
 
 // Helpers
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
+import { mockColumns, mockData } from "../../../../stories/data/__dataTable";
 
 const meta: Meta<ITabsProps> = {
     title: "Molecules/Tabs",
@@ -110,5 +112,30 @@ export const VerticalUncontrolled: Story = {
         onClose: undefined,
         closable: true,
         direction: "vertical"
+    }
+};
+
+const largeTableData = Array.from({ length: 12 }, (_, chunkIndex) =>
+    mockData.map((row) => ({
+        ...row,
+        Id: row.Id + chunkIndex * 10000
+    }))
+).flat();
+
+export const WithNestedScrollableContent: Story = {
+    render: (props: ITabsProps) => (
+        <div style={{ height: "56rem" }}>
+            <Tabs {...props}>
+                <Tab title="Large Data Table">
+                    <div style={{ height: "100%", minHeight: 0 }}>
+                        <DataTable columns={mockColumns} data={largeTableData} pagination />
+                    </div>
+                </Tab>
+                <Tab title="Overview">Overview content</Tab>
+            </Tabs>
+        </div>
+    ),
+    args: {
+        closable: false
     }
 };

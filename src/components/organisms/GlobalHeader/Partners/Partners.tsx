@@ -8,10 +8,8 @@ import Loader from "@components/atoms/Loader";
 import { IPopoverRef, Popover, PopoverBody } from "@components/atoms/Popover";
 import Scrollbar from "@components/atoms/Scrollbar";
 import Text from "@components/atoms/Text";
+import TextField from "@components/molecules/TextField";
 import PartnerItem, { IPartnerItemProps } from "@components/organisms/GlobalHeader/Partners/PartnerItem";
-
-// Hooks
-import useClickOutside from "@hooks/useClickOutside";
 
 // Styles
 import "./Partners.scss";
@@ -73,12 +71,9 @@ const Partners: FC<IPartnersProps> = ({
         }
     }, [selectedPartner, isProductsOpen, selectedPartnerRef.current, assignSelectedRef]);
 
-    useClickOutside(() => {
-        setIsProductsOpen(false);
-    }, [popoverRef.current.floatingElement, popoverRef.current.referenceElement]);
-
     const onProductsToggle = () => {
         setHasScrolled(false);
+        setMappedPartners(partners || []);
         setIsProductsOpen((prevState) => !prevState);
     };
 
@@ -110,7 +105,7 @@ const Partners: FC<IPartnersProps> = ({
                 iconPosition="after"
                 {...propsForProductsPopover}
             >
-                {selectedPartner?.title || "Partner"}
+                {selectedPartner?.title || title}
             </Button>
             <Popover
                 setProps={setPropsForProductsPopover}
@@ -119,6 +114,7 @@ const Partners: FC<IPartnersProps> = ({
                 withArrow={false}
                 open={isProductsOpen}
                 ref={popoverRef}
+                onClose={() => setIsProductsOpen(false)}
             >
                 <PopoverBody
                     withScrollbar={false}
@@ -130,14 +126,7 @@ const Partners: FC<IPartnersProps> = ({
                     ) : (
                         <div className="partners__popoverContent">
                             <div className="partners__header">
-                                {/* todo: implement "Search Field" component */}
-                                <input
-                                    type="search"
-                                    onChange={searchHandler}
-                                    placeholder={searchPlaceholder}
-                                    aria-label="Search partners"
-                                    role="searchbox"
-                                />
+                                <TextField onChange={searchHandler} placeholder={searchPlaceholder} />
                                 <div className="partners__title">
                                     <Text as="span" className="partners__titleName">
                                         {title}

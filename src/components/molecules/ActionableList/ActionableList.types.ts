@@ -1,0 +1,180 @@
+import type { MutableRefObject } from "react";
+
+export interface IActionableListItem {
+    /**
+     * Unique item identifier.
+     */
+    id: string;
+    /**
+     * Main row title.
+     */
+    title: string;
+    /**
+     * Optional tooltip text for the info icon.
+     */
+    infoText?: string;
+    /**
+     * Child nodes — parent rows infer counts from `children.length` / subtree for the "Selected x/y" label.
+     */
+    children?: IActionableListItem[];
+    /**
+     * When this is a **boolean**, the row is **controlled**: keep `items` in sync via `onItemsChange`; row toggles use `onItemCheck`, toolbar select all uses `onSelectAllChange`.
+     * When **omitted**, the list stores selection internally while you still pass normal `items` (id, title, infoText, children).
+     */
+    checked?: boolean;
+}
+
+export interface ICrossListDropPayload {
+    /**
+     * Drag scope id of the list the item was dragged from.
+     */
+    sourceListId: string;
+    /**
+     * Drag scope id of the list the item was dropped onto.
+     */
+    targetListId: string;
+    /**
+     * Id of the dragged item.
+     */
+    sourceId: string;
+    /**
+     * Id of the root-level row used as the drop target. Omitted when dropping onto an empty list.
+     */
+    targetId?: string;
+    /**
+     * Whether the item is inserted above or below the target row.
+     */
+    edge?: "top" | "bottom";
+    /**
+     * True when the item was dropped onto the empty-list drop zone.
+     */
+    isEmptyTarget?: boolean;
+}
+
+export interface IActionableListDropGap {
+    targetId: string;
+    edge: "top" | "bottom";
+}
+
+export interface IActionableListTexts {
+    /**
+     * Search field label.
+     */
+    searchLabel: string;
+    /**
+     * Search input placeholder.
+     */
+    searchPlaceholder: string;
+    /**
+     * Label before the bulk "selected items" count (toolbar row).
+     */
+    bulkSelectedItemsLabel: string;
+    /**
+     * Label for filtered items count.
+     */
+    filteredItemsLabel: string;
+    /**
+     * Label for total items count.
+     */
+    totalItemsLabel: string;
+    /**
+     * Prefix for selected/total row counter.
+     */
+    selectedItemsLabel: string;
+    /**
+     * Loading text near spinner.
+     */
+    loadingTitle: string;
+    /**
+     * Empty state title for no data.
+     */
+    noDataTitle: string;
+    /**
+     * Empty state description for no data.
+     */
+    noDataDescription: string;
+    /**
+     * Empty state title when search returns no results.
+     */
+    noResultsTitle: string;
+    /**
+     * Empty state description when search returns no results.
+     */
+    noResultsDescription: string;
+    /**
+     * Accessible label for expand/collapse button.
+     */
+    expandButtonAriaLabel: string;
+}
+
+export interface IActionableListProps {
+    /**
+     * Additional class for the parent element.
+     * This prop should be used to set placement properties for the element relative to its parent using BEM conventions.
+     */
+    className?: string;
+    /**
+     * Tree items to render.
+     */
+    items?: IActionableListItem[];
+    /**
+     * Enables checkbox variant.
+     */
+    withCheckbox?: boolean;
+    /**
+     * Enables drag and drop variant.
+     */
+    draggable?: boolean;
+    /**
+     * Scope id included in drag data for cross-list transfer (e.g. TransferList panel id).
+     */
+    dragListId?: string;
+    /**
+     * Called when an item is dropped onto a root row from another list (requires `dragListId`).
+     */
+    onCrossListDrop?: (payload: ICrossListDropPayload) => void;
+    /**
+     * When true, cross-list drops are coordinated by a parent (e.g. TransferList).
+     */
+    delegateCrossListDrop?: boolean;
+    /**
+     * Mirrors the active drop gap for parent-coordinated cross-list drops.
+     */
+    dropGapOutletRef?: MutableRefObject<IActionableListDropGap | null>;
+    /**
+     * Optional controlled loading state.
+     */
+    loading?: boolean;
+    /**
+     * Expands all parent nodes on initial render and when `items` changes.
+     * By default, all nodes start collapsed.
+     */
+    defaultExpandAll?: boolean;
+    /**
+     * Text and localization values.
+     */
+    texts?: Partial<IActionableListTexts>;
+    /**
+     * Emits whenever nested data changes (check/reorder).
+     */
+    onItemsChange?: (items: IActionableListItem[]) => void;
+    /**
+     * Emits when a **row** checkbox toggles (not the toolbar Select all): the row from `items` (after update),
+     * branch `checked`, and full `items` tree.
+     */
+    onItemCheck?: (item: IActionableListItem, checked: boolean, items: IActionableListItem[]) => void;
+    /**
+     * Emits when the toolbar **Select all** checkbox is toggled: target `checked` state, full updated `items` tree,
+     * and leaf ids in the current select-all scope (filtered leaves while searching, otherwise all leaves).
+     */
+    onSelectAllChange?: (checked: boolean, items: IActionableListItem[], scopeLeafIds: string[]) => void;
+    /**
+     * When `true`, selection is read from the `items` prop and checkbox toggles only emit callbacks.
+     * Used by TransferList; not intended for standalone ActionableList usage.
+     */
+    managedSelection?: boolean;
+    /**
+     * Emits debounced search value.
+     */
+    onSearch?: (value: string) => void;
+}
