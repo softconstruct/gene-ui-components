@@ -98,6 +98,7 @@ export {
 } from "./components/molecules/ActionableList";
 export { default as List, IListProps, IListItemData } from "./components/molecules/List";
 export { default as ImagePreview, IImagePreviewImage, IImagePreviewProps } from "./components/molecules/ImagePreview";
+export { default as Widget, IWidgetProps } from "./components/molecules/Widget";
 
 // Organisms
 export {
