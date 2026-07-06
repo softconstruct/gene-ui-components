@@ -1,7 +1,7 @@
 import React from "react";
 import { mount, ReactWrapper } from "enzyme";
 
-import { ArrowBounceDown, ArrowBounceUp, Globe } from "@geneui/icons";
+import { ArrowBounceDown, ArrowBounceUp, Globe, Tag } from "@geneui/icons";
 
 // Components
 import Widget, { IWidgetProps } from "@components/molecules/Widget";
@@ -58,10 +58,11 @@ describe("Widget", () => {
         expect(wrapper.find(".widget__detailsButton").exists()).toBeTruthy();
     });
 
-    it("does not render header when title, infoText, and onDetailsClick are not provided", () => {
+    it("does not render header when title, infoText, onDetailsClick, and segmentedControl are not provided", () => {
         expect(setup.find(".widget__header").exists()).toBeFalsy();
         expect(setup.find("Label").exists()).toBeFalsy();
         expect(setup.find(".widget__detailsButton").exists()).toBeFalsy();
+        expect(setup.find("SegmentedControl").exists()).toBeFalsy();
     });
 
     it("renders details button when onDetailsClick is provided", () => {
@@ -157,8 +158,49 @@ describe("Widget", () => {
         expect(setup.find(".widget__trendWrapper").exists()).toBeTruthy();
     });
 
+    it("renders segmented control when segmentedControl is provided", () => {
+        const segmentedControl = [
+            { name: "option1", Icon: Tag, children: "Option 1" },
+            { name: "option2", Icon: Tag, children: "Option 2" }
+        ];
+        const wrapper = setup.setProps({ title: "Title", segmentedControl });
+
+        expect(wrapper.find("SegmentedControl").exists()).toBeTruthy();
+        expect(wrapper.find("SegmentedControlButton")).toHaveLength(2);
+    });
+
+    it("does not render segmented control when segmentedControl is not provided", () => {
+        const wrapper = setup.setProps({ title: "Title" });
+
+        expect(wrapper.find("SegmentedControl").exists()).toBeFalsy();
+    });
+
+    it("renders header when only segmentedControl is provided", () => {
+        const segmentedControl = [{ name: "option1", Icon: Tag, children: "Option 1" }];
+        const wrapper = setup.setProps({ segmentedControl });
+
+        expect(wrapper.find(".widget__header").exists()).toBeTruthy();
+        expect(wrapper.find(".widget__header").hasClass("widget__header_noLabel")).toBeTruthy();
+        expect(wrapper.find("SegmentedControl").exists()).toBeTruthy();
+    });
+
+    it("calls onSegmentedControlChange when a segmented control button is clicked", () => {
+        const onSegmentedControlChange = jest.fn();
+        const segmentedControl = [
+            { name: "option1", Icon: Tag, children: "Option 1" },
+            { name: "option2", Icon: Tag, children: "Option 2" }
+        ];
+        const wrapper = setup.setProps({ title: "Title", segmentedControl, onSegmentedControlChange });
+
+        wrapper.find('button[name="option2"]').simulate("click");
+
+        expect(onSegmentedControlChange).toHaveBeenCalledWith("option2");
+    });
+
     it("renders complete widget with all props", () => {
         const onDetailsClick = jest.fn();
+        const onSegmentedControlChange = jest.fn();
+        const segmentedControl = [{ name: "option1", Icon: Tag, children: "Option 1" }];
         const swappableElement = <span>Swap content</span>;
         const wrapper = mount(
             <Widget
@@ -170,6 +212,8 @@ describe("Widget", () => {
                 trendValue="+12%"
                 Icon={Globe}
                 swappableElement={swappableElement}
+                segmentedControl={segmentedControl}
+                onSegmentedControlChange={onSegmentedControlChange}
                 onDetailsClick={onDetailsClick}
             />
         );
@@ -182,6 +226,7 @@ describe("Widget", () => {
         expect(wrapper.find(".widget__trendWrapper").text()).toContain("+12%");
         expect(wrapper.find(Globe).exists()).toBeTruthy();
         expect(wrapper.find(".widget__swap").text()).toContain("Swap content");
+        expect(wrapper.find("SegmentedControl").exists()).toBeTruthy();
         expect(wrapper.find(".widget__detailsButton").exists()).toBeTruthy();
     });
 });

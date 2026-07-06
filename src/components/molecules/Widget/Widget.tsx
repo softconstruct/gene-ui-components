@@ -1,7 +1,7 @@
 import React, { FC, JSX, MouseEvent, useContext } from "react";
 import classNames from "classnames";
 
-import { ArrowBounceDown, ArrowBounceUp, ArrowRight, IconProps, Tag } from "@geneui/icons";
+import { ArrowBounceDown, ArrowBounceUp, ArrowRight, IconProps } from "@geneui/icons";
 
 // Styles
 import "./Widget.scss";
@@ -9,6 +9,7 @@ import "./Widget.scss";
 import {
     Button,
     GeneUIDesignSystemContext,
+    ISegmentedControlButtonProps,
     Label,
     SegmentedControl,
     SegmentedControlButton,
@@ -69,6 +70,21 @@ interface IWidgetProps {
      * When not provided, the details button is not rendered.
      */
     onDetailsClick?: (event: MouseEvent<HTMLButtonElement>) => void;
+    /**
+     * Configuration for the segmented control buttons displayed in the widget header.
+     * When provided, a `SegmentedControl` is rendered with the given button options.
+     */
+    segmentedControl?: ISegmentedControlButtonProps[];
+    /**
+     * Fires when the user selects one of the segmented control items.
+     * Returns the value of the `name` prop from the selected `SegmentedControlButton`.
+     */
+    onSegmentedControlChange?: (name: string) => void;
+    /**
+     * Controlled selected value for the segmented control.
+     * When provided, the segmented control renders selection based on this value.
+     */
+    segmentedControlValue?: string;
 }
 
 /**
@@ -83,13 +99,17 @@ const Widget: FC<IWidgetProps> = ({
     value,
     trend,
     trendValue,
-    onDetailsClick
+    onDetailsClick,
+    segmentedControl,
+    onSegmentedControlChange,
+    segmentedControlValue
 }) => {
     const { breakpoint } = useContext(GeneUIDesignSystemContext);
     const isMobileBreakpoint = breakpoint?.isMobileBreakpoint;
     const TrendIcon = trend ? trendIcons[trend] : null;
     const hasLabel = Boolean(title || infoText);
-    const hasHeader = hasLabel || Boolean(onDetailsClick);
+    const hasSegmentedControl = Boolean(segmentedControl?.length);
+    const hasHeader = hasLabel || Boolean(onDetailsClick) || hasSegmentedControl;
 
     return (
         <div className={classNames("widget", className)}>
@@ -101,14 +121,19 @@ const Widget: FC<IWidgetProps> = ({
                 >
                     {hasLabel && <Label className="widget__label" text={title} infoText={infoText} />}
                     <div className="widget__controls">
-                        <SegmentedControl value="test1" size="small">
-                            <SegmentedControlButton name="test 1" Icon={Tag}>
-                                {isMobileBreakpoint ? "" : "test 1"}
-                            </SegmentedControlButton>
-                            <SegmentedControlButton name="test 2" Icon={Tag}>
-                                {isMobileBreakpoint ? "" : "test 2"}
-                            </SegmentedControlButton>
-                        </SegmentedControl>
+                        {hasSegmentedControl && (
+                            <SegmentedControl
+                                value={segmentedControlValue}
+                                size="small"
+                                onChange={onSegmentedControlChange}
+                            >
+                                {segmentedControl!.map(({ name, Icon: SegmentIcon, children }) => (
+                                    <SegmentedControlButton key={name} name={name} Icon={SegmentIcon}>
+                                        {isMobileBreakpoint ? "" : children}
+                                    </SegmentedControlButton>
+                                ))}
+                            </SegmentedControl>
+                        )}
                         {onDetailsClick && (
                             <Button
                                 className="widget__detailsButton"
