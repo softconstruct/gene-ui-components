@@ -1,0 +1,22 @@
+.magnifier {
+    transform: rotate(var(--magnifier-rotation, 0deg));
+
+    &__glass {
+        position: absolute;
+        border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-solid)
+            var(--guit-sem-color-border-neutral-2);
+        cursor: none;
+        width: 15rem;
+        height: 15rem;
+        z-index: 1;
+        background-repeat: no-repeat;
+
+        &_circle {
+            border-radius: 50%;
+        }
+    }
+
+    &__image {
+        object-fit: contain;
+    }
+}
