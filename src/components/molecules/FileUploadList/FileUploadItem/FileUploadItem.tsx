@@ -20,7 +20,7 @@ import "./FileUploadItem.scss";
 // Types
 export type FileType = "image" | "video" | "audio" | "file";
 
-export const icons: Record<FileType, FC<IconProps>> = {
+const icons: Record<FileType, FC<IconProps>> = {
     image: Image,
     video: PlaySquare,
     audio: NoteMusical,
@@ -182,7 +182,7 @@ const FileUploadItem: FC<IFileUploadItemProps> = ({
                 ))}
                 {shouldShowItemActions && (
                     <div className="fileUploadItem__cell">
-                        <ButtonGroup size="small">
+                        <ButtonGroup size="small" iconOnly>
                             {actions.map((action) => (
                                 <Button
                                     key={action.name}
@@ -190,7 +190,9 @@ const FileUploadItem: FC<IFileUploadItemProps> = ({
                                     appearance="secondary"
                                     className="fileUploadItem__button"
                                     {...action}
-                                />
+                                >
+                                    {action.name}
+                                </Button>
                             ))}
                         </ButtonGroup>
                     </div>
