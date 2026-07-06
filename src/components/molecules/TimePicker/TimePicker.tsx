@@ -58,10 +58,10 @@ interface ITimePickerBaseProps {
      */
     errorMessage?: string;
     /**
-     * Specifies whether the time picker should use 12-hour format.
-     * @default false
+     * Specifies whether the time picker should use 12 or 24-hour format.
+     * @default "24h"
      */
-    is12Hour?: boolean;
+    timeFormat?: "12h" | "24h";
     /**
      * Callback function that is triggered when a time is selected.
      * @param {string} time - The selected time in the format passed as prop or "HH:mm:ss" as default.
@@ -149,12 +149,13 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             onPopoverToggle,
             error,
             errorMessage,
-            is12Hour = false,
+            timeFormat = "24h",
             texts,
             shouldDisableTime
         },
         ref
     ) => {
+        const is12Hour = timeFormat === "12h";
         const {
             popoverOpen,
             setPopoverOpen,
@@ -229,13 +230,14 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             onTimeInputChange,
             onPopoverToggle,
             error,
-            is12Hour = false,
+            timeFormat = "24h",
             errorMessage,
             texts,
             shouldDisableTime
         },
         ref
     ) => {
+        const is12Hour = timeFormat === "12h";
         const {
             popoverRef,
             popoverOpen,

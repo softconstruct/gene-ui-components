@@ -102,8 +102,8 @@ describe("TimePicker", () => {
 
     describe("Corner Cases: 12-Hour Mode and Customizations", () => {
         it("renders AM/PM column when is12Hour is true", () => {
-            setup.setProps({ is12Hour: true });
-            // Simulate click to open popover
+            setup.setProps({ timeFormat: "12h" });
+
             setup.find("input.pickerInput__input").simulate("click");
             setup.update();
 
@@ -112,7 +112,7 @@ describe("TimePicker", () => {
 
         it("applies custom texts to headers and meridiem buttons", () => {
             setup.setProps({
-                is12Hour: true,
+                timeFormat: "12h",
                 texts: { hours: "H", minutes: "M", seconds: "S", amText: "Day", pmText: "Night" }
             });
             setup.find("input.pickerInput__input").simulate("click");
