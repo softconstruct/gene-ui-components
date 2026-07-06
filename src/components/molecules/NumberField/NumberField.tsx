@@ -110,8 +110,8 @@ interface INumberFieldProps {
     id?: string;
 }
 
-const iconSizes: Record<"small" | "medium" | "large", 16 | 20 | 24 | 28 | 32 | 48> = {
-    small: 16,
+const iconSizes: Record<"small" | "medium" | "large", 12 | 16> = {
+    small: 12,
     medium: 16,
     large: 16
 } as const;
