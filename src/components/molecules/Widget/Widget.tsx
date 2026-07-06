@@ -121,6 +121,7 @@ const Widget: FC<IWidgetProps> = ({
                 >
                     {hasLabel && <Label className="widget__label" text={title} infoText={infoText} />}
                     <div className="widget__controls">
+                        {/* TODO: add DatePicker */}
                         {hasSegmentedControl && (
                             <SegmentedControl
                                 value={segmentedControlValue}
