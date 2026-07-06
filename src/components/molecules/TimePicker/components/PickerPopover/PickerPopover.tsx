@@ -73,11 +73,7 @@ interface IPickerPopoverProps {
      * Time parts.
      */
     partsStart?: TimeParts;
-    /**
-     * Programmatically disable time parts.
-     * @param type
-     * @param value
-     */
+    partsEnd?: TimeParts;
     shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", value: string) => boolean;
 }
 
@@ -105,43 +101,64 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
     texts,
     shouldDisableTime,
     activeField,
-    partsStart
+    partsStart,
+    partsEnd
 }) => {
     const hours = useMemo(() => (is12Hour ? HOURS_12 : HOURS_24), [is12Hour, HOURS_12, HOURS_24]);
 
     const isPartDisabled = (header: TimePartKey, item: string): boolean => {
         if (shouldDisableTime?.(header, item)) return true;
 
-        if (activeField !== "end" || !partsStart) return false;
-
-        const startH = convertTo24Hour(partsStart.hours, partsStart.meridiem);
-        const startM = parseInt(partsStart.minutes ?? "00", 10);
-        const startS = parseInt(partsStart.seconds ?? "00", 10);
-
-        if (header === "meridiem") {
-            return partsStart.meridiem === "PM" && item === "AM";
-        }
-
         const currentMeridiem = parts?.meridiem ?? (is12Hour ? "AM" : undefined);
 
-        if (header === "hours") {
-            return convertTo24Hour(item, currentMeridiem) < startH;
+        if (activeField === "end" && partsStart && partsStart.hours) {
+            const startH = convertTo24Hour(partsStart.hours, partsStart.meridiem);
+            const startM = parseInt(partsStart.minutes ?? "00", 10);
+            const startS = parseInt(partsStart.seconds ?? "00", 10);
+
+            if (header === "meridiem") {
+                return partsStart.meridiem === "PM" && item === "AM";
+            }
+            if (header === "hours") {
+                return convertTo24Hour(item, currentMeridiem) < startH;
+            }
+            if (header === "minutes") {
+                const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
+                if (currentH < startH) return true;
+                if (currentH === startH) return parseInt(item, 10) < startM;
+            }
+            if (header === "seconds") {
+                const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
+                const currentM = parseInt(parts?.minutes ?? "00", 10);
+                if (currentH < startH) return true;
+                if (currentH === startH && currentM < startM) return true;
+                if (currentH === startH && currentM === startM) return parseInt(item, 10) < startS;
+            }
         }
 
-        if (header === "minutes") {
-            const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
-            if (currentH < startH) return true;
-            if (currentH === startH) return parseInt(item, 10) < startM;
-            return false;
-        }
+        if (activeField === "start" && partsEnd && partsEnd.hours) {
+            const endH = convertTo24Hour(partsEnd.hours, partsEnd.meridiem);
+            const endM = parseInt(partsEnd.minutes ?? "00", 10);
+            const endS = parseInt(partsEnd.seconds ?? "00", 10);
 
-        if (header === "seconds") {
-            const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
-            const currentM = parseInt(parts?.minutes ?? "00", 10);
-            if (currentH < startH) return true;
-            if (currentH === startH && currentM < startM) return true;
-            if (currentH === startH && currentM === startM) return parseInt(item, 10) < startS;
-            return false;
+            if (header === "meridiem") {
+                return partsEnd.meridiem === "AM" && item === "PM";
+            }
+            if (header === "hours") {
+                return convertTo24Hour(item, currentMeridiem) > endH;
+            }
+            if (header === "minutes") {
+                const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
+                if (currentH > endH) return true;
+                if (currentH === endH) return parseInt(item, 10) > endM;
+            }
+            if (header === "seconds") {
+                const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
+                const currentM = parseInt(parts?.minutes ?? "00", 10);
+                if (currentH > endH) return true;
+                if (currentH === endH && currentM > endM) return true;
+                if (currentH === endH && currentM === endM) return parseInt(item, 10) > endS;
+            }
         }
 
         return false;

@@ -305,6 +305,9 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     position="bottom-left"
                     mobileHeightMode="fit"
                     parts={activeField === "start" ? partsStart : partsEnd}
+                    activeField={activeField}
+                    partsStart={partsStart}
+                    partsEnd={partsEnd}
                     onSelect={handleSelect}
                     is12Hour={is12Hour}
                     texts={texts}

@@ -85,10 +85,8 @@ export const useSingleTimePicker = (
         let parsed: TimeParts | null = parseTime(nextValue, is12Hour);
 
         if (parsed) {
-            if (shouldDisableTime) {
-                const nearestParts = getNearestAvailableTime(parsed, is12Hour, shouldDisableTime);
-                if (nearestParts) parsed = nearestParts;
-            }
+            const nearestParts = getNearestAvailableTime(parsed, is12Hour, shouldDisableTime, null, null);
+            if (nearestParts) parsed = nearestParts;
 
             const composed = composeTime(parsed, is12Hour);
             setInternalValue(composed);
@@ -102,13 +100,17 @@ export const useSingleTimePicker = (
 
     const handleSelect = (column: string, val: string) => {
         setParts((prev) => {
-            const next = {
+            let next: TimeParts = {
                 hours: prev.hours ?? (is12Hour ? "12" : "00"),
                 minutes: prev.minutes ?? "00",
                 seconds: prev.seconds ?? "00",
                 meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined),
                 [column]: val
-            };
+            } as TimeParts;
+
+            const nearest = getNearestAvailableTime(next, is12Hour, shouldDisableTime, null, null);
+            if (nearest) next = nearest;
+
             const composed = composeTime(next, is12Hour);
             setInternalValue(composed);
             onTimeSelect?.(composed, next);
@@ -160,8 +162,11 @@ export const useRangeTimePicker = (
         const nextValue = e.target.value;
         let parsed: TimeParts | null = parseTime(nextValue, is12Hour);
 
-        if (parsed && shouldDisableTime) {
-            const nearestParts = getNearestAvailableTime(parsed, is12Hour, shouldDisableTime);
+        if (parsed) {
+            const minParts = field === "end" && partsStart.hours ? partsStart : null;
+            const maxParts = field === "start" && partsEnd.hours ? partsEnd : null;
+
+            const nearestParts = getNearestAvailableTime(parsed, is12Hour, shouldDisableTime, minParts, maxParts);
             if (nearestParts) parsed = nearestParts;
         }
 
@@ -189,13 +194,18 @@ export const useRangeTimePicker = (
     const handleSelect = (column: string, val: string) => {
         if (activeField === "start") {
             setPartsStart((prev) => {
-                const next = {
+                let next: TimeParts = {
                     hours: prev.hours ?? (is12Hour ? "12" : "00"),
                     minutes: prev.minutes ?? "00",
                     seconds: prev.seconds ?? "00",
                     meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined),
                     [column]: val
-                };
+                } as TimeParts;
+
+                const maxParts = partsEnd.hours ? partsEnd : null;
+                const nearest = getNearestAvailableTime(next, is12Hour, shouldDisableTime, null, maxParts);
+                if (nearest) next = nearest;
+
                 const composed = composeTime(next, is12Hour);
                 setInternalStart(composed);
                 onTimeSelect?.(composed, next, "start");
@@ -203,13 +213,18 @@ export const useRangeTimePicker = (
             });
         } else {
             setPartsEnd((prev) => {
-                const next = {
+                let next: TimeParts = {
                     hours: prev.hours ?? (is12Hour ? "12" : "00"),
                     minutes: prev.minutes ?? "00",
                     seconds: prev.seconds ?? "00",
                     meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined),
                     [column]: val
-                };
+                } as TimeParts;
+
+                const minParts = partsStart.hours ? partsStart : null;
+                const nearest = getNearestAvailableTime(next, is12Hour, shouldDisableTime, minParts, null);
+                if (nearest) next = nearest;
+
                 const composed = composeTime(next, is12Hour);
                 setInternalEnd(composed);
                 onTimeSelect?.(composed, next, "end");

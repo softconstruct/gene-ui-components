@@ -44,47 +44,62 @@ const convertSecondsToParts = (totalSeconds: number, is12Hour: boolean): TimePar
     };
 };
 
+const isValidTimeParts = (parts: TimeParts) =>
+    parts.hours !== undefined && parts.minutes !== undefined && parts.seconds !== undefined;
+
 const isTimeDisabled = (
     parts: TimeParts,
-    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", value: string) => boolean
+    is12Hour: boolean,
+    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", value: string) => boolean,
+    minParts?: TimeParts | null,
+    maxParts?: TimeParts | null
 ): boolean => {
-    if (!shouldDisableTime) return false;
-    if (parts.hours && shouldDisableTime("hours", parts.hours)) return true;
-    if (parts.minutes && shouldDisableTime("minutes", parts.minutes)) return true;
-    if (parts.seconds && shouldDisableTime("seconds", parts.seconds)) return true;
-    if (parts.meridiem && shouldDisableTime("meridiem", parts.meridiem)) return true;
+    if (shouldDisableTime) {
+        if (parts.hours && shouldDisableTime("hours", parts.hours)) return true;
+        if (parts.minutes && shouldDisableTime("minutes", parts.minutes)) return true;
+        if (parts.seconds && shouldDisableTime("seconds", parts.seconds)) return true;
+        if (parts.meridiem && shouldDisableTime("meridiem", parts.meridiem)) return true;
+    }
+
+    if (isValidTimeParts(parts)) {
+        const currentSec = convertPartsToSeconds(parts, is12Hour);
+        if (minParts && isValidTimeParts(minParts)) {
+            if (currentSec < convertPartsToSeconds(minParts, is12Hour)) return true;
+        }
+        if (maxParts && isValidTimeParts(maxParts)) {
+            if (currentSec > convertPartsToSeconds(maxParts, is12Hour)) return true;
+        }
+    }
     return false;
 };
 
 const getNearestAvailableTime = (
     parts: TimeParts,
     is12Hour: boolean,
-    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", value: string) => boolean
+    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", value: string) => boolean,
+    minParts?: TimeParts | null,
+    maxParts?: TimeParts | null
 ): TimeParts | null => {
-    if (!shouldDisableTime) return parts;
-    if (!isTimeDisabled(parts, shouldDisableTime)) return parts;
+    if (!isTimeDisabled(parts, is12Hour, shouldDisableTime, minParts, maxParts)) return parts;
 
     const initialSeconds = convertPartsToSeconds(parts, is12Hour);
     const MAX_SECONDS = 24 * 3600;
 
     // Search outwards from the current inputted time for the closest valid time
     for (let offset = 1; offset <= MAX_SECONDS / 2; offset++) {
-        // Forward check
         const forwardSeconds = (initialSeconds + offset + MAX_SECONDS) % MAX_SECONDS;
         const forwardParts = convertSecondsToParts(forwardSeconds, is12Hour);
-        if (!isTimeDisabled(forwardParts, shouldDisableTime)) {
+        if (!isTimeDisabled(forwardParts, is12Hour, shouldDisableTime, minParts, maxParts)) {
             return forwardParts;
         }
 
-        // Backward check
         const backwardSeconds = (initialSeconds - offset + MAX_SECONDS) % MAX_SECONDS;
         const backwardParts = convertSecondsToParts(backwardSeconds, is12Hour);
-        if (!isTimeDisabled(backwardParts, shouldDisableTime)) {
+        if (!isTimeDisabled(backwardParts, is12Hour, shouldDisableTime, minParts, maxParts)) {
             return backwardParts;
         }
     }
 
-    // In case all times are disabled (safeguard)
     return null;
 };
 
