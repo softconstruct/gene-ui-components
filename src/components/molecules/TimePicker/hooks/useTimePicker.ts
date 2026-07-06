@@ -5,7 +5,7 @@ import { TimeParts } from "@components/molecules/TimePicker/types";
 
 import { useClickOutside } from "@hooks/index";
 
-import { composeTime } from "../helpers";
+import { composeTime, getNearestAvailableTime } from "../helpers";
 
 const getInitialParts = (): TimeParts => ({
     hours: undefined,
@@ -14,7 +14,7 @@ const getInitialParts = (): TimeParts => ({
     meridiem: undefined
 });
 
-const parseTime = (v?: string | null, is12Hour = false) => {
+const parseTime = (v?: string | null, is12Hour = false): TimeParts | null => {
     if (!v) return null;
 
     const trimmed = v.trim();
@@ -73,6 +73,7 @@ export const useSingleTimePicker = (
     onTimeSelect?: (time: string, parts: TimeParts, field?: "start" | "end") => void,
     onTimeInputChange?: (time: string, parts: TimeParts | null, field?: "start" | "end") => void,
     onPopoverToggle?: (open: boolean) => void,
+    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", val: string) => boolean,
     is12Hour = false
 ) => {
     const base = useBasePicker(onPopoverToggle);
@@ -81,8 +82,14 @@ export const useSingleTimePicker = (
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const nextValue = e.target.value;
-        const parsed = parseTime(nextValue, is12Hour);
+        let parsed: TimeParts | null = parseTime(nextValue, is12Hour);
+
         if (parsed) {
+            if (shouldDisableTime) {
+                const nearestParts = getNearestAvailableTime(parsed, is12Hour, shouldDisableTime);
+                if (nearestParts) parsed = nearestParts;
+            }
+
             const composed = composeTime(parsed, is12Hour);
             setInternalValue(composed);
             setParts(parsed);
@@ -133,6 +140,7 @@ export const useRangeTimePicker = (
     onTimeSelect?: (time: string, parts: TimeParts, field?: "start" | "end") => void,
     onTimeInputChange?: (time: string, parts: TimeParts | null, field?: "start" | "end") => void,
     onPopoverToggle?: (open: boolean) => void,
+    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", val: string) => boolean,
     is12Hour = false
 ) => {
     const base = useBasePicker(onPopoverToggle);
@@ -150,7 +158,12 @@ export const useRangeTimePicker = (
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>, field: "start" | "end") => {
         const nextValue = e.target.value;
-        const parsed = parseTime(nextValue, is12Hour);
+        let parsed: TimeParts | null = parseTime(nextValue, is12Hour);
+
+        if (parsed && shouldDisableTime) {
+            const nearestParts = getNearestAvailableTime(parsed, is12Hour, shouldDisableTime);
+            if (nearestParts) parsed = nearestParts;
+        }
 
         if (field === "start") {
             if (parsed) {
