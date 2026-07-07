@@ -65,8 +65,8 @@ const FileUploadItemStory: StoryObj<IFileUploadItemProps> = storyObjBuilder({
         helperText: undefined,
         uploadingText: "Uploading"
     },
-    render: (props: IFileUploadItemProps) => {
-        const { name, ...rest } = props;
+    render: (props) => {
+        const { name, ...rest } = props as IFileUploadItemProps;
         return (
             <FileUploadList>
                 <FileUploadItem name={name} {...rest} />
