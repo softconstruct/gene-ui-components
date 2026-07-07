@@ -1,6 +1,10 @@
 .timePicker {
     $this: &;
 
+    display: flex;
+    flex-direction: column;
+    gap: var(--guit-ref-spacing-3xsmall);
+
     &__wrapper {
         display: flex;
         height: 36.8rem;
