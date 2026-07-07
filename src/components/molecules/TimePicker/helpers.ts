@@ -29,7 +29,7 @@ const convertSecondsToParts = (totalSeconds: number, is12Hour: boolean): TimePar
     const m = Math.floor((totalSeconds % 3600) / 60);
     const s = totalSeconds % 60;
 
-    let meridiem: string | undefined;
+    let meridiem;
     if (is12Hour) {
         meridiem = h >= 12 ? "PM" : "AM";
         if (h > 12) h -= 12;
@@ -50,7 +50,7 @@ const isValidTimeParts = (parts: TimeParts) =>
 const isTimeDisabled = (
     parts: TimeParts,
     is12Hour: boolean,
-    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", value: string) => boolean,
+    shouldDisableTime?: (type: keyof TimeParts, value: string) => boolean,
     minParts?: TimeParts | null,
     maxParts?: TimeParts | null
 ): boolean => {
@@ -76,7 +76,7 @@ const isTimeDisabled = (
 const getNearestAvailableTime = (
     parts: TimeParts,
     is12Hour: boolean,
-    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", value: string) => boolean,
+    shouldDisableTime?: (type: keyof TimeParts, value: string) => boolean,
     minParts?: TimeParts | null,
     maxParts?: TimeParts | null
 ): TimeParts | null => {
@@ -85,7 +85,6 @@ const getNearestAvailableTime = (
     const initialSeconds = convertPartsToSeconds(parts, is12Hour);
     const MAX_SECONDS = 24 * 3600;
 
-    // Search outwards from the current inputted time for the closest valid time
     for (let offset = 1; offset <= MAX_SECONDS / 2; offset++) {
         const forwardSeconds = (initialSeconds + offset + MAX_SECONDS) % MAX_SECONDS;
         const forwardParts = convertSecondsToParts(forwardSeconds, is12Hour);
@@ -103,11 +102,90 @@ const getNearestAvailableTime = (
     return null;
 };
 
+const convertTo24Hour = (hStr?: string, meridiem?: string): number => {
+    if (!hStr) return 0;
+    let h = parseInt(hStr, 10);
+    if (meridiem) {
+        if (meridiem === "PM" && h !== 12) h += 12;
+        if (meridiem === "AM" && h === 12) h = 0;
+    }
+    return h;
+};
+
+const isPickerPartDisabled = (
+    header: keyof TimeParts,
+    item: string,
+    parts: TimeParts | undefined,
+    is12Hour: boolean,
+    activeField?: "start" | "end",
+    partsStart?: TimeParts,
+    partsEnd?: TimeParts,
+    shouldDisableTime?: (type: keyof TimeParts, value: string) => boolean
+): boolean => {
+    if (shouldDisableTime?.(header, item)) return true;
+
+    const currentMeridiem = parts?.meridiem ?? (is12Hour ? "AM" : undefined);
+
+    if (activeField === "end" && partsStart && partsStart.hours) {
+        const startH = convertTo24Hour(partsStart.hours, partsStart.meridiem);
+        const startM = parseInt(partsStart.minutes ?? "00", 10);
+        const startS = parseInt(partsStart.seconds ?? "00", 10);
+
+        if (header === "meridiem") {
+            return partsStart.meridiem === "PM" && item === "AM";
+        }
+        if (header === "hours") {
+            return convertTo24Hour(item, currentMeridiem) < startH;
+        }
+        if (header === "minutes") {
+            const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
+            if (currentH < startH) return true;
+            if (currentH === startH) return parseInt(item, 10) < startM;
+        }
+        if (header === "seconds") {
+            const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
+            const currentM = parseInt(parts?.minutes ?? "00", 10);
+            if (currentH < startH) return true;
+            if (currentH === startH && currentM < startM) return true;
+            if (currentH === startH && currentM === startM) return parseInt(item, 10) < startS;
+        }
+    }
+
+    if (activeField === "start" && partsEnd && partsEnd.hours) {
+        const endH = convertTo24Hour(partsEnd.hours, partsEnd.meridiem);
+        const endM = parseInt(partsEnd.minutes ?? "00", 10);
+        const endS = parseInt(partsEnd.seconds ?? "00", 10);
+
+        if (header === "meridiem") {
+            return partsEnd.meridiem === "AM" && item === "PM";
+        }
+        if (header === "hours") {
+            return convertTo24Hour(item, currentMeridiem) > endH;
+        }
+        if (header === "minutes") {
+            const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
+            if (currentH > endH) return true;
+            if (currentH === endH) return parseInt(item, 10) > endM;
+        }
+        if (header === "seconds") {
+            const currentH = convertTo24Hour(parts?.hours, currentMeridiem);
+            const currentM = parseInt(parts?.minutes ?? "00", 10);
+            if (currentH > endH) return true;
+            if (currentH === endH && currentM > endM) return true;
+            if (currentH === endH && currentM === endM) return parseInt(item, 10) > endS;
+        }
+    }
+
+    return false;
+};
+
 export {
     generateRange,
     composeTime,
     convertPartsToSeconds,
     convertSecondsToParts,
     isTimeDisabled,
-    getNearestAvailableTime
+    getNearestAvailableTime,
+    convertTo24Hour,
+    isPickerPartDisabled
 };

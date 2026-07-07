@@ -73,7 +73,7 @@ export const useSingleTimePicker = (
     onTimeSelect?: (time: string, parts: TimeParts, field?: "start" | "end") => void,
     onTimeInputChange?: (time: string, parts: TimeParts | null, field?: "start" | "end") => void,
     onPopoverToggle?: (open: boolean) => void,
-    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", val: string) => boolean,
+    shouldDisableTime?: (type: keyof TimeParts, val: string) => boolean,
     is12Hour = false
 ) => {
     const base = useBasePicker(onPopoverToggle);
@@ -98,18 +98,28 @@ export const useSingleTimePicker = (
         }
     };
 
-    const handleSelect = (column: string, val: string) => {
+    const handleSelect = (column: keyof TimeParts, val: string) => {
         setParts((prev) => {
-            let next: TimeParts = {
+            const next: TimeParts = {
                 hours: prev.hours ?? (is12Hour ? "12" : "00"),
                 minutes: prev.minutes ?? "00",
                 seconds: prev.seconds ?? "00",
-                meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined),
-                [column]: val
-            } as TimeParts;
+                meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined)
+            };
+
+            if (column === "hours") next.hours = val;
+            else if (column === "minutes") next.minutes = val;
+            else if (column === "seconds") next.seconds = val;
+            else if (column === "meridiem") next.meridiem = val;
 
             const nearest = getNearestAvailableTime(next, is12Hour, shouldDisableTime, null, null);
-            if (nearest) next = nearest;
+
+            if (nearest) {
+                next.hours = nearest.hours;
+                next.minutes = nearest.minutes;
+                next.seconds = nearest.seconds;
+                next.meridiem = nearest.meridiem;
+            }
 
             const composed = composeTime(next, is12Hour);
             setInternalValue(composed);
@@ -142,7 +152,7 @@ export const useRangeTimePicker = (
     onTimeSelect?: (time: string, parts: TimeParts, field?: "start" | "end") => void,
     onTimeInputChange?: (time: string, parts: TimeParts | null, field?: "start" | "end") => void,
     onPopoverToggle?: (open: boolean) => void,
-    shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", val: string) => boolean,
+    shouldDisableTime?: (type: keyof TimeParts, val: string) => boolean,
     is12Hour = false
 ) => {
     const base = useBasePicker(onPopoverToggle);
@@ -191,20 +201,30 @@ export const useRangeTimePicker = (
         }
     };
 
-    const handleSelect = (column: string, val: string) => {
+    const handleSelect = (column: keyof TimeParts, val: string) => {
         if (activeField === "start") {
             setPartsStart((prev) => {
-                let next: TimeParts = {
+                const next: TimeParts = {
                     hours: prev.hours ?? (is12Hour ? "12" : "00"),
                     minutes: prev.minutes ?? "00",
                     seconds: prev.seconds ?? "00",
-                    meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined),
-                    [column]: val
-                } as TimeParts;
+                    meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined)
+                };
+
+                if (column === "hours") next.hours = val;
+                else if (column === "minutes") next.minutes = val;
+                else if (column === "seconds") next.seconds = val;
+                else if (column === "meridiem") next.meridiem = val;
 
                 const maxParts = partsEnd.hours ? partsEnd : null;
                 const nearest = getNearestAvailableTime(next, is12Hour, shouldDisableTime, null, maxParts);
-                if (nearest) next = nearest;
+
+                if (nearest) {
+                    next.hours = nearest.hours;
+                    next.minutes = nearest.minutes;
+                    next.seconds = nearest.seconds;
+                    next.meridiem = nearest.meridiem;
+                }
 
                 const composed = composeTime(next, is12Hour);
                 setInternalStart(composed);
@@ -213,17 +233,27 @@ export const useRangeTimePicker = (
             });
         } else {
             setPartsEnd((prev) => {
-                let next: TimeParts = {
+                const next: TimeParts = {
                     hours: prev.hours ?? (is12Hour ? "12" : "00"),
                     minutes: prev.minutes ?? "00",
                     seconds: prev.seconds ?? "00",
-                    meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined),
-                    [column]: val
-                } as TimeParts;
+                    meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined)
+                };
+
+                if (column === "hours") next.hours = val;
+                else if (column === "minutes") next.minutes = val;
+                else if (column === "seconds") next.seconds = val;
+                else if (column === "meridiem") next.meridiem = val;
 
                 const minParts = partsStart.hours ? partsStart : null;
                 const nearest = getNearestAvailableTime(next, is12Hour, shouldDisableTime, minParts, null);
-                if (nearest) next = nearest;
+
+                if (nearest) {
+                    next.hours = nearest.hours;
+                    next.minutes = nearest.minutes;
+                    next.seconds = nearest.seconds;
+                    next.meridiem = nearest.meridiem;
+                }
 
                 const composed = composeTime(next, is12Hour);
                 setInternalEnd(composed);
