@@ -412,7 +412,7 @@ describe("AccordionItem", () => {
     it("renders actions when provided", () => {
         const wrapper = setup.setProps({
             children: (
-                <AccordionItem title="Test" actions={[{ Icon: Tag, id: "test-action" }]}>
+                <AccordionItem title="Test" actions={[{ Icon: Tag, id: "test-action", name: "Test action" }]}>
                     Content
                 </AccordionItem>
             )
@@ -511,9 +511,9 @@ describe("AccordionItem", () => {
                 <AccordionItem
                     title="Test"
                     actions={[
-                        { Icon: Tag, id: "action-1" },
-                        { Icon: Tag, id: "action-2" },
-                        { Icon: Tag, id: "action-3" }
+                        { Icon: Tag, id: "action-1", name: "Action 1" },
+                        { Icon: Tag, id: "action-2", name: "Action 2" },
+                        { Icon: Tag, id: "action-3", name: "Action 3" }
                     ]}
                 >
                     Content
@@ -531,7 +531,7 @@ describe("AccordionItem", () => {
         const onClickMock = jest.fn();
         const wrapper = setup.setProps({
             children: (
-                <AccordionItem title="Test" actions={[{ Icon: Tag, onClick: onClickMock }]}>
+                <AccordionItem title="Test" actions={[{ Icon: Tag, onClick: onClickMock, name: "Tag" }]}>
                     Content
                 </AccordionItem>
             )
@@ -550,18 +550,5 @@ describe("AccordionItem", () => {
             )
         });
         expect(wrapper.find(ButtonGroup).exists()).toBeFalsy();
-    });
-
-    it("does not render action button when action has no Icon", () => {
-        const wrapper = setup.setProps({
-            children: (
-                <AccordionItem title="Test" actions={[{ Icon: Tag, id: "with-icon" }, { id: "without-icon" }]}>
-                    Content
-                </AccordionItem>
-            )
-        });
-        wrapper.update();
-        expect(wrapper.find(ButtonGroup).find(Button)).toHaveLength(1);
-        expect(wrapper.find(ButtonGroup).find(Button).first().prop("id")).toBe("with-icon");
     });
 });

@@ -41,7 +41,7 @@ interface IAccordionActionProps {
     /**
      * The `Icon` component to display in the action button. If not provided, the action button will not be rendered.
      */
-    Icon?: FC<IconProps>;
+    Icon: FC<IconProps>;
     /**
      * A callback function that is called when the button is clicked.
      */
@@ -53,7 +53,7 @@ interface IAccordionActionProps {
     /**
      * Specifies the name of the button.
      */
-    name?: string;
+    name: string;
     /**
      * An ARIA label for the button.
      */
@@ -165,15 +165,12 @@ const AccordionItem: FC<IAccordionItemProps> = ({ title, Icon, children, actions
                 {hasActions && (
                     <ButtonGroup className="accordionItem__actions" size={size} iconOnly>
                         {actionsWithIds.map((action) => {
-                            if (action.Icon || action.text) {
-                                const { text: actionText, ...restAction } = action;
-                                return (
-                                    <Button key={action.id} {...restAction} layout="text" appearance="secondary">
-                                        {actionText}
-                                    </Button>
-                                );
-                            }
-                            return null;
+                            const { text: actionText, ...restAction } = action;
+                            return (
+                                <Button key={action.id} {...restAction} layout="text" appearance="secondary">
+                                    {actionText}
+                                </Button>
+                            );
                         })}
                     </ButtonGroup>
                 )}

@@ -36,11 +36,11 @@ interface IImageAction {
     /**
      * Text label for the action, used for tooltips or overflow menus.
      */
-    label?: string;
+    label: string;
     /**
      * The icon component to display for this action.
      */
-    Icon?: FC<IconProps>;
+    Icon: FC<IconProps>;
     /**
      * Callback triggered when the action item is clicked.
      */
