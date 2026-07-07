@@ -24,7 +24,7 @@ export const mockData: IFileUploadItemProps[] = [
         actions: DEFAULT_FILE_ACTIONS
     },
     {
-        name: "Quarterly-report.pdf",
+        name: "Quarterly-report.png",
         time: "11:00AM",
         size: "12MB",
         type: "image",
@@ -34,7 +34,7 @@ export const mockData: IFileUploadItemProps[] = [
         actions: UPLOADING_FILE_ACTIONS
     },
     {
-        name: "Failed-upload.pdf",
+        name: "Failed-upload.wav",
         time: "09:15AM",
         size: "8MB",
         type: "audio",
@@ -46,7 +46,7 @@ export const mockData: IFileUploadItemProps[] = [
         actions: ERROR_FILE_ACTIONS
     },
     {
-        name: "Large-file.zip",
+        name: "Large-file.flv",
         time: "02:30PM",
         size: "250MB",
         type: "video",
