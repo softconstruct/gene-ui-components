@@ -9,7 +9,11 @@ const argTypes = {
     className: args({ control: "false", ...propCategory.appearance }),
     type: args({ control: "select", ...propCategory.appearance }),
     label: args({ control: "text", ...propCategory.content }),
-    description: args({ control: "text", ...propCategory.content })
+    description: args({ control: "text", ...propCategory.content }),
+    onChange: args({ control: "false", ...propCategory.action }),
+    // TODO: Add `accept` argType when accept prop is implemented.
+    multiple: args({ control: "boolean", ...propCategory.functionality }),
+    disabled: args({ control: "boolean", ...propCategory.states })
 };
 
 const meta: Meta<IUploaderProps> = {
@@ -34,6 +38,16 @@ export const Button: Story = {
     args: {
         type: "button",
         label: "Label",
-        description: "Description"
+        description: "Description",
+        multiple: false
+    }
+};
+
+export const ButtonDisabled: Story = {
+    args: {
+        type: "button",
+        label: "Label",
+        description: "Description",
+        disabled: true
     }
 };
