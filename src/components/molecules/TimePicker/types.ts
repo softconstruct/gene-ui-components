@@ -1,8 +1,10 @@
 export type TimeParts = {
-    hours: string | undefined;
-    minutes: string | undefined;
-    seconds: string | undefined;
-    meridiem: string | undefined;
+    hours?: string;
+    minutes?: string;
+    seconds?: string;
+    meridiem?: string;
 };
+
+export type TimePickerRangeFields = "start" | "end";
 
 export type TimePickerSizes = "small" | "medium" | "large";

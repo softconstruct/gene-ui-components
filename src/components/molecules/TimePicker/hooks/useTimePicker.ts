@@ -1,11 +1,25 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
 import { IPopoverRef } from "@components/atoms/Popover";
-import { TimeParts } from "@components/molecules/TimePicker/types";
+import {
+    LAST_HOUR_IN_24H_FORMAT_DAY,
+    LAST_MINUTE_IN_HOUR,
+    LAST_SECOND_IN_MINUTE,
+    MERIDIEM_OFFSET,
+    MERIDIEMS,
+    PICKER_RANGE_FIELDS,
+    TIME_PART_DEFAULT_TEXT_VALUE,
+    TIME_PARTS_RADIX
+} from "@components/molecules/TimePicker/constants";
+import { TimeParts, TimePickerRangeFields } from "@components/molecules/TimePicker/types";
 
 import { useClickOutside } from "@hooks/index";
 
 import { composeTime, getNearestAvailableTime } from "../helpers";
+
+// ---------------------------------------------------------
+// Initialization & Parsing
+// ---------------------------------------------------------
 
 const getInitialParts = (): TimeParts => ({
     hours: undefined,
@@ -18,21 +32,33 @@ const parseTime = (v?: string | null, is12Hour = false): TimeParts | null => {
     if (!v) return null;
 
     const trimmed = v.trim();
-    const match = /^(\d{2}):(\d{2})(?::(\d{2}))?(?:\s+(AM|PM))?$/i.exec(trimmed);
-    if (!match) return null;
+    const parsedTime = /^(\d{2}):(\d{2})(?::(\d{2}))?(?:\s+(AM|PM))?$/i.exec(trimmed);
 
-    let hours = parseInt(match[1], 10);
-    let minutes = parseInt(match[2], 10);
-    let seconds = match[3] ? parseInt(match[3], 10) : 0;
-    const defaultMeridiem = is12Hour ? "AM" : undefined;
-    const meridiem = match[4] ? match[4].toUpperCase() : defaultMeridiem;
+    if (!parsedTime) return null;
+
+    let hours = parseInt(parsedTime[1], TIME_PARTS_RADIX);
+    let minutes = parseInt(parsedTime[2], TIME_PARTS_RADIX);
+    let seconds = parsedTime[3] ? parseInt(parsedTime[3], TIME_PARTS_RADIX) : 0;
+    const defaultMeridiem = is12Hour ? MERIDIEMS.AM : undefined;
+    const meridiem = parsedTime[4] ? parsedTime[4].toUpperCase() : defaultMeridiem;
 
     if (is12Hour) {
-        if (hours > 12) hours = 12;
-        if (hours < 1) hours = 1;
-    } else if (hours > 23) hours = 23;
-    if (minutes > 59) minutes = 59;
-    if (seconds > 59) seconds = 59;
+        if (hours > MERIDIEM_OFFSET) {
+            hours = MERIDIEM_OFFSET;
+        }
+        if (hours < 1) {
+            hours = 1;
+        }
+    } else if (hours > LAST_HOUR_IN_24H_FORMAT_DAY) {
+        hours = LAST_HOUR_IN_24H_FORMAT_DAY;
+    }
+
+    if (minutes > LAST_MINUTE_IN_HOUR) {
+        minutes = LAST_MINUTE_IN_HOUR;
+    }
+    if (seconds > LAST_SECOND_IN_MINUTE) {
+        seconds = LAST_SECOND_IN_MINUTE;
+    }
 
     return {
         hours: hours.toString().padStart(2, "0"),
@@ -42,6 +68,74 @@ const parseTime = (v?: string | null, is12Hour = false): TimeParts | null => {
     };
 };
 
+// ---------------------------------------------------------
+// Shared Action Helpers
+// ---------------------------------------------------------
+
+/**
+ * @description
+ * Shared function to process raw string input from the user
+ */
+const processTimeInput = (
+    nextValue: string,
+    is12Hour: boolean,
+    shouldDisableTime?: (type: keyof TimeParts, value: string) => boolean,
+    minParts: TimeParts | null = null,
+    maxParts: TimeParts | null = null
+): { parsed: TimeParts | null; composedValue: string } => {
+    let parsed = parseTime(nextValue, is12Hour);
+
+    if (!parsed) {
+        return { parsed: null, composedValue: nextValue };
+    }
+
+    const nearest = getNearestAvailableTime(parsed, is12Hour, shouldDisableTime, minParts, maxParts);
+    if (nearest) {
+        parsed = nearest;
+    }
+
+    return { parsed, composedValue: composeTime(parsed, is12Hour) };
+};
+
+/**
+ * @description
+ * Shared function between single and range picker hooks to process time selection
+ */
+const processTimeSelection = (
+    prev: TimeParts,
+    column: keyof TimeParts,
+    val: string,
+    is12Hour: boolean,
+    shouldDisableTime?: (type: keyof TimeParts, value: string) => boolean,
+    minParts: TimeParts | null = null,
+    maxParts: TimeParts | null = null
+): { nextParts: TimeParts; composedTime: string } => {
+    const next: TimeParts = {
+        hours: prev.hours ?? (is12Hour ? `${MERIDIEM_OFFSET}` : TIME_PART_DEFAULT_TEXT_VALUE),
+        minutes: prev.minutes ?? TIME_PART_DEFAULT_TEXT_VALUE,
+        seconds: prev.seconds ?? TIME_PART_DEFAULT_TEXT_VALUE,
+        meridiem: prev.meridiem ?? (is12Hour ? MERIDIEMS.AM : undefined)
+    };
+
+    next[column] = val;
+
+    const nearest = getNearestAvailableTime(next, is12Hour, shouldDisableTime, minParts, maxParts);
+    if (nearest) {
+        next[column] = nearest[column];
+    }
+
+    const composedTime = composeTime(next, is12Hour);
+    return { nextParts: next, composedTime };
+};
+
+// ---------------------------------------------------------
+// Hooks
+// ---------------------------------------------------------
+
+/**
+ * @description
+ * This hook is for internal use of single and range picker hooks. It's sharing common functionality.
+ */
 const useBasePicker = (onPopoverToggle?: (status: boolean) => void) => {
     const [popoverOpen, setPopoverOpen] = useState(false);
     const [anchorProps, setAnchorProps] = useState({});
@@ -66,12 +160,16 @@ const useBasePicker = (onPopoverToggle?: (status: boolean) => void) => {
     return { popoverOpen, setPopoverOpen: handlePopoverToggle, anchorProps, setAnchorProps, popoverRef };
 };
 
+/**
+ * @description
+ * This hook is for managing the state of the time picker (single mode).
+ */
 export const useSingleTimePicker = (
     value?: string | null,
     clearable?: boolean,
     onClear?: () => void,
-    onTimeSelect?: (time: string, parts: TimeParts, field?: "start" | "end") => void,
-    onTimeInputChange?: (time: string, parts: TimeParts | null, field?: "start" | "end") => void,
+    onTimeSelect?: (time: string, parts: TimeParts, field?: TimePickerRangeFields) => void,
+    onTimeInputChange?: (time: string, parts: TimeParts | null, field?: TimePickerRangeFields) => void,
     onPopoverToggle?: (open: boolean) => void,
     shouldDisableTime?: (type: keyof TimeParts, val: string) => boolean,
     is12Hour = false
@@ -81,50 +179,22 @@ export const useSingleTimePicker = (
     const [parts, setParts] = useState(getInitialParts());
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const nextValue = e.target.value;
-        let parsed: TimeParts | null = parseTime(nextValue, is12Hour);
+        const { parsed, composedValue } = processTimeInput(e.target.value, is12Hour, shouldDisableTime);
 
+        setInternalValue(composedValue);
         if (parsed) {
-            const nearestParts = getNearestAvailableTime(parsed, is12Hour, shouldDisableTime, null, null);
-            if (nearestParts) parsed = nearestParts;
-
-            const composed = composeTime(parsed, is12Hour);
-            setInternalValue(composed);
             setParts(parsed);
-            onTimeInputChange?.(composed, parsed);
-        } else {
-            setInternalValue(nextValue);
-            onTimeInputChange?.(nextValue, null);
         }
+
+        onTimeInputChange?.(composedValue, parsed);
     };
 
     const handleSelect = (column: keyof TimeParts, val: string) => {
         setParts((prev) => {
-            const next: TimeParts = {
-                hours: prev.hours ?? (is12Hour ? "12" : "00"),
-                minutes: prev.minutes ?? "00",
-                seconds: prev.seconds ?? "00",
-                meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined)
-            };
-
-            if (column === "hours") next.hours = val;
-            else if (column === "minutes") next.minutes = val;
-            else if (column === "seconds") next.seconds = val;
-            else if (column === "meridiem") next.meridiem = val;
-
-            const nearest = getNearestAvailableTime(next, is12Hour, shouldDisableTime, null, null);
-
-            if (nearest) {
-                next.hours = nearest.hours;
-                next.minutes = nearest.minutes;
-                next.seconds = nearest.seconds;
-                next.meridiem = nearest.meridiem;
-            }
-
-            const composed = composeTime(next, is12Hour);
-            setInternalValue(composed);
-            onTimeSelect?.(composed, next);
-            return next;
+            const { nextParts, composedTime } = processTimeSelection(prev, column, val, is12Hour, shouldDisableTime);
+            setInternalValue(composedTime);
+            onTimeSelect?.(composedTime, nextParts);
+            return nextParts;
         });
     };
 
@@ -139,128 +209,93 @@ export const useSingleTimePicker = (
     useEffect(() => {
         setInternalValue(value ?? null);
         const parsed = parseTime(value, is12Hour);
-        if (parsed) setParts(parsed);
+        if (parsed) {
+            setParts(parsed);
+        }
     }, [value, is12Hour]);
 
     return { ...base, internalValue, parts, handleInputChange, handleSelect, handleClear };
 };
 
+/**
+ * @description
+ * This hook is used to handle the time picker logic for a range time picker.
+ */
 export const useRangeTimePicker = (
     value?: { start: string | null; end: string | null },
     clearable?: boolean,
     onClear?: () => void,
-    onTimeSelect?: (time: string, parts: TimeParts, field?: "start" | "end") => void,
-    onTimeInputChange?: (time: string, parts: TimeParts | null, field?: "start" | "end") => void,
+    onTimeSelect?: (time: string, parts: TimeParts, field?: TimePickerRangeFields) => void,
+    onTimeInputChange?: (time: string, parts: TimeParts | null, field?: TimePickerRangeFields) => void,
     onPopoverToggle?: (open: boolean) => void,
     shouldDisableTime?: (type: keyof TimeParts, val: string) => boolean,
     is12Hour = false
 ) => {
     const base = useBasePicker(onPopoverToggle);
-    const [activeField, setActiveField] = useState<"start" | "end">("start");
+    const [activeField, setActiveField] = useState<TimePickerRangeFields>(PICKER_RANGE_FIELDS.START);
     const [internalStart, setInternalStart] = useState(value?.start ?? null);
     const [internalEnd, setInternalEnd] = useState(value?.end ?? null);
 
     const [partsStart, setPartsStart] = useState(getInitialParts());
     const [partsEnd, setPartsEnd] = useState(getInitialParts());
 
-    const handleInputClick = (field: "start" | "end") => {
+    const handleInputClick = (field: TimePickerRangeFields) => {
         setActiveField(field);
         base.setPopoverOpen(true);
     };
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>, field: "start" | "end") => {
-        const nextValue = e.target.value;
-        let parsed: TimeParts | null = parseTime(nextValue, is12Hour);
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>, field: TimePickerRangeFields) => {
+        const isStart = field === PICKER_RANGE_FIELDS.START;
 
-        if (parsed) {
-            const minParts = field === "end" && partsStart.hours ? partsStart : null;
-            const maxParts = field === "start" && partsEnd.hours ? partsEnd : null;
+        const minParts = !isStart && partsStart.hours ? partsStart : null;
+        const maxParts = isStart && partsEnd.hours ? partsEnd : null;
 
-            const nearestParts = getNearestAvailableTime(parsed, is12Hour, shouldDisableTime, minParts, maxParts);
-            if (nearestParts) parsed = nearestParts;
-        }
+        const { parsed, composedValue } = processTimeInput(
+            e.target.value,
+            is12Hour,
+            shouldDisableTime,
+            minParts,
+            maxParts
+        );
 
-        if (field === "start") {
+        if (isStart) {
+            setInternalStart(composedValue);
             if (parsed) {
-                const composed = composeTime(parsed, is12Hour);
-                setInternalStart(composed);
                 setPartsStart(parsed);
-                onTimeInputChange?.(composed, parsed, "start");
-            } else {
-                setInternalStart(nextValue);
-                onTimeInputChange?.(nextValue, null, "start");
             }
-        } else if (parsed) {
-            const composed = composeTime(parsed, is12Hour);
-            setInternalEnd(composed);
-            setPartsEnd(parsed);
-            onTimeInputChange?.(composed, parsed, "end");
         } else {
-            setInternalEnd(nextValue);
-            onTimeInputChange?.(nextValue, null, "end");
+            setInternalEnd(composedValue);
+            if (parsed) {
+                setPartsEnd(parsed);
+            }
         }
+
+        onTimeInputChange?.(composedValue, parsed, field);
     };
 
     const handleSelect = (column: keyof TimeParts, val: string) => {
-        if (activeField === "start") {
-            setPartsStart((prev) => {
-                const next: TimeParts = {
-                    hours: prev.hours ?? (is12Hour ? "12" : "00"),
-                    minutes: prev.minutes ?? "00",
-                    seconds: prev.seconds ?? "00",
-                    meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined)
-                };
+        const isStart = activeField === PICKER_RANGE_FIELDS.START;
 
-                if (column === "hours") next.hours = val;
-                else if (column === "minutes") next.minutes = val;
-                else if (column === "seconds") next.seconds = val;
-                else if (column === "meridiem") next.meridiem = val;
+        const updateState = isStart ? setPartsStart : setPartsEnd;
+        const setInternal = isStart ? setInternalStart : setInternalEnd;
+        const minParts = !isStart && partsStart.hours ? partsStart : null;
+        const maxParts = isStart && partsEnd.hours ? partsEnd : null;
 
-                const maxParts = partsEnd.hours ? partsEnd : null;
-                const nearest = getNearestAvailableTime(next, is12Hour, shouldDisableTime, null, maxParts);
+        updateState((prev) => {
+            const { nextParts, composedTime } = processTimeSelection(
+                prev,
+                column,
+                val,
+                is12Hour,
+                shouldDisableTime,
+                minParts,
+                maxParts
+            );
 
-                if (nearest) {
-                    next.hours = nearest.hours;
-                    next.minutes = nearest.minutes;
-                    next.seconds = nearest.seconds;
-                    next.meridiem = nearest.meridiem;
-                }
-
-                const composed = composeTime(next, is12Hour);
-                setInternalStart(composed);
-                onTimeSelect?.(composed, next, "start");
-                return next;
-            });
-        } else {
-            setPartsEnd((prev) => {
-                const next: TimeParts = {
-                    hours: prev.hours ?? (is12Hour ? "12" : "00"),
-                    minutes: prev.minutes ?? "00",
-                    seconds: prev.seconds ?? "00",
-                    meridiem: prev.meridiem ?? (is12Hour ? "AM" : undefined)
-                };
-
-                if (column === "hours") next.hours = val;
-                else if (column === "minutes") next.minutes = val;
-                else if (column === "seconds") next.seconds = val;
-                else if (column === "meridiem") next.meridiem = val;
-
-                const minParts = partsStart.hours ? partsStart : null;
-                const nearest = getNearestAvailableTime(next, is12Hour, shouldDisableTime, minParts, null);
-
-                if (nearest) {
-                    next.hours = nearest.hours;
-                    next.minutes = nearest.minutes;
-                    next.seconds = nearest.seconds;
-                    next.meridiem = nearest.meridiem;
-                }
-
-                const composed = composeTime(next, is12Hour);
-                setInternalEnd(composed);
-                onTimeSelect?.(composed, next, "end");
-                return next;
-            });
-        }
+            setInternal(composedTime);
+            onTimeSelect?.(composedTime, nextParts, activeField);
+            return nextParts;
+        });
     };
 
     const handleClear = () => {
@@ -276,10 +311,16 @@ export const useRangeTimePicker = (
     useEffect(() => {
         setInternalStart(value?.start ?? null);
         setInternalEnd(value?.end ?? null);
+
         const pStart = parseTime(value?.start, is12Hour);
-        if (pStart) setPartsStart(pStart);
+        if (pStart) {
+            setPartsStart(pStart);
+        }
+
         const pEnd = parseTime(value?.end, is12Hour);
-        if (pEnd) setPartsEnd(pEnd);
+        if (pEnd) {
+            setPartsEnd(pEnd);
+        }
     }, [value?.start, value?.end, is12Hour]);
 
     return {
