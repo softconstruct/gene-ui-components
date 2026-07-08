@@ -78,4 +78,68 @@ describe("Uploader ", () => {
         expect(clickSpy).not.toHaveBeenCalled();
         clickSpy.mockRestore();
     });
+
+    it("renders dropzone browse trigger", () => {
+        const wrapper = setup.setProps({ type: "dropZone" });
+
+        expect(wrapper.find(".uploader__browseTrigger").exists()).toBeTruthy();
+    });
+
+    it("opens file picker when dropzone browse trigger is clicked", () => {
+        const clickSpy = jest.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => undefined);
+        const wrapper = setup.setProps({ type: "dropZone" });
+
+        wrapper.find(".uploader__browseTrigger").simulate("click");
+
+        expect(clickSpy).toHaveBeenCalled();
+        clickSpy.mockRestore();
+    });
+
+    it("adds drag active class on drag enter and removes it on drag leave", () => {
+        const wrapper = setup.setProps({ type: "dropZone" });
+
+        wrapper.find(".uploader__dropZone").simulate("dragenter", {
+            preventDefault: jest.fn(),
+            stopPropagation: jest.fn()
+        });
+        expect(wrapper.find(".uploader__dropZone_dragActive").exists()).toBeTruthy();
+
+        wrapper.find(".uploader__dropZone").simulate("dragleave", {
+            preventDefault: jest.fn(),
+            stopPropagation: jest.fn()
+        });
+        expect(wrapper.find(".uploader__dropZone_dragActive").exists()).toBeFalsy();
+    });
+
+    it("calls onDrop when files are dropped on dropzone", () => {
+        const onDrop = jest.fn();
+        const mockFiles = [{ name: "dropped.pdf" }] as unknown as FileList;
+        const wrapper = setup.setProps({ type: "dropZone", onDrop });
+
+        wrapper.find(".uploader__dropZone").simulate("drop", {
+            preventDefault: jest.fn(),
+            stopPropagation: jest.fn(),
+            dataTransfer: { files: mockFiles }
+        });
+
+        expect(onDrop).toHaveBeenCalledWith(mockFiles);
+    });
+
+    it("does not open picker or handle drop when dropzone is disabled", () => {
+        const clickSpy = jest.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => undefined);
+        const onDrop = jest.fn();
+        const mockFiles = [{ name: "dropped.pdf" }] as unknown as FileList;
+        const wrapper = setup.setProps({ type: "dropZone", disabled: true, onDrop });
+
+        wrapper.find(".uploader__browseTrigger").simulate("click");
+        wrapper.find(".uploader__dropZone").simulate("drop", {
+            preventDefault: jest.fn(),
+            stopPropagation: jest.fn(),
+            dataTransfer: { files: mockFiles }
+        });
+
+        expect(clickSpy).not.toHaveBeenCalled();
+        expect(onDrop).not.toHaveBeenCalled();
+        clickSpy.mockRestore();
+    });
 });

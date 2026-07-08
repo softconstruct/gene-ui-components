@@ -11,6 +11,7 @@ const argTypes = {
     label: args({ control: "text", ...propCategory.content }),
     description: args({ control: "text", ...propCategory.content }),
     onChange: args({ control: "false", ...propCategory.action }),
+    onDrop: args({ control: "false", ...propCategory.action }),
     // TODO: Add `accept` argType when accept prop is implemented.
     multiple: args({ control: "boolean", ...propCategory.functionality }),
     disabled: args({ control: "boolean", ...propCategory.states })

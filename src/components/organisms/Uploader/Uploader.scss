@@ -7,10 +7,20 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        gap: 8px;
         background-color: var(--guit-sem-color-background-neutral-3);
         border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-dashed)
             var(--guit-sem-color-border-neutral-2);
         border-radius: var(--guit-ref-radius-2xsmall);
+
+        &_dragActive {
+            border-color: var(--guit-sem-color-border-selected-2);
+            background-color: var(--guit-sem-color-background-selected-1);
+        }
+
+        &_disabled {
+            cursor: not-allowed;
+        }
     }
 
     &__buttonWrapper {
@@ -20,5 +30,20 @@
 
     &__input {
         display: none;
+    }
+
+    &__browseTrigger {
+        padding: 0;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        color: var(--guit-sem-color-text-brand-1);
+        text-decoration: underline;
+        font: inherit;
+
+        &:disabled {
+            cursor: not-allowed;
+            color: var(--guit-sem-color-text-disabled-1);
+        }
     }
 }
