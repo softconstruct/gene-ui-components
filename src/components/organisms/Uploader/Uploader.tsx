@@ -6,7 +6,7 @@ import { Download } from "@geneui/icons";
 // Styles
 import "./Uploader.scss";
 
-import { Button, Text } from "../../../index";
+import { Button, Text, TextLink } from "../../../index";
 
 interface IUploaderProps {
     /**
@@ -41,6 +41,7 @@ const Uploader: FC<IUploaderProps> = ({ className, type = "dropZone", label, des
             {label && <div className="uploader__label">{label}</div>}
             {isDropZone ? (
                 <div className="uploader__dropZone">
+                    <TextLink text="Upload File" href="#" underline size="large" />
                     {description && (
                         <Text as="span" variant="bodyMediumRegular">
                             {description}

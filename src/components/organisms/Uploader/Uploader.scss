@@ -4,6 +4,7 @@
 
     &__dropZone {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         background-color: var(--guit-sem-color-background-neutral-3);
