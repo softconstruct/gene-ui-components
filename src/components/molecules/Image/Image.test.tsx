@@ -1,12 +1,14 @@
 import React, { ChangeEvent } from "react";
 import { mount, ReactWrapper } from "enzyme";
 
+// Components
+import { Eye } from "@geneui/icons";
+
 import Loader from "@components/atoms/Loader";
 import Checkbox from "@components/molecules/Checkbox";
 
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
-// Components
 import Image, { IImageProps } from "./index";
 
 jest.mock("@hooks/useEllipsisDetection", () => ({
@@ -121,7 +123,7 @@ describe("Image Component", () => {
 
     describe("Actions", () => {
         const mockActionClick = jest.fn();
-        const actions = [{ id: "edit", label: "Edit Button", onActionItemClick: mockActionClick }];
+        const actions = [{ id: "edit", label: "Edit Button", Icon: Eye, onActionItemClick: mockActionClick }];
 
         it("calls action callback when clicked", () => {
             wrapper = setup({ actions });
@@ -205,7 +207,7 @@ describe("Image Component", () => {
         });
 
         it("disables action buttons when the image is loading", () => {
-            const actions = [{ id: "1", label: "Edit", onActionItemClick: jest.fn() }];
+            const actions = [{ id: "1", label: "Edit", Icon: Eye, onActionItemClick: jest.fn() }];
 
             wrapper = setup({
                 loading: true,
@@ -217,7 +219,7 @@ describe("Image Component", () => {
         });
 
         it("renders the footer even if only 'actions' are provided (no title/desc)", () => {
-            const actions = [{ id: "1", label: "Edit", onActionItemClick: jest.fn() }];
+            const actions = [{ id: "1", label: "Edit", Icon: Eye, onActionItemClick: jest.fn() }];
 
             wrapper = setup({
                 title: undefined,
