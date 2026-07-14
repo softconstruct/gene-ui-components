@@ -166,14 +166,14 @@ const ManageColumns = <TData,>() => {
                                 />
                             </div>
                         )}
-                        <Scrollbar className="manageColumnsPopover__scrollbar">
-                            <div
-                                className={classNames("manageColumnsPopover__list", {
-                                    manageColumnsPopover__list_empty: !hasColumns
-                                })}
-                            >
-                                {hasColumns ? (
-                                    columns.map((column: Column<TData>) => {
+                        {hasColumns ? (
+                            <Scrollbar className="manageColumnsPopover__scrollbar">
+                                <div
+                                    className={classNames("manageColumnsPopover__list", {
+                                        manageColumnsPopover__list_empty: !hasColumns
+                                    })}
+                                >
+                                    {columns.map((column: Column<TData>) => {
                                         const isPinnedDraft = (draftPinning.left || []).includes(column.id);
                                         const isDisabled = manageColumnsConfig?.disabledColumns?.includes(column.id);
                                         return (
@@ -190,18 +190,18 @@ const ManageColumns = <TData,>() => {
                                                 onDragTargetChange={(edge) => handleDragTargetChange(column.id, edge)}
                                             />
                                         );
-                                    })
-                                ) : (
-                                    <Empty
-                                        appearance="noResult"
-                                        className="manageColumnsPopover__empty"
-                                        size="small"
-                                        title={manageColumnsTexts?.noResultsFound ?? "No results found"}
-                                        description={manageColumnsTexts?.noResultsFoundDescription}
-                                    />
-                                )}
-                            </div>
-                        </Scrollbar>
+                                    })}
+                                </div>
+                            </Scrollbar>
+                        ) : (
+                            <Empty
+                                appearance="noResult"
+                                className="manageColumnsPopover__empty"
+                                size="small"
+                                title={manageColumnsTexts?.noResultsFound ?? "No results found"}
+                                description={manageColumnsTexts?.noResultsFoundDescription}
+                            />
+                        )}
                     </div>
                     <div className="manageColumnsPopover__footer">
                         <Button

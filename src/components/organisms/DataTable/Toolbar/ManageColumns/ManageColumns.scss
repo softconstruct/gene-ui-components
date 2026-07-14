@@ -19,6 +19,7 @@
     &__body {
         flex: 1;
         display: flex;
+        justify-content: center;
         flex-direction: column;
         max-height: 40rem;
         min-height: 0;
