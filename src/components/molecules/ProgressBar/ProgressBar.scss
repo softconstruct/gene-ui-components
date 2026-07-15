@@ -20,14 +20,11 @@
             }
 
             #{ $this }__loadingBar {
+                animation-name: progress-bar-loading-from-left;
                 animation-duration: 1.6s;
                 animation-timing-function: var(--guit-ref-motion-easing-standard);
                 animation-iteration-count: infinite;
                 will-change: transform;
-
-                [dir="ltr"] & {
-                    animation-name: progress-bar-loading-from-left;
-                }
 
                 [dir="rtl"] & {
                     animation-name: progress-bar-loading-from-right;
@@ -92,6 +89,10 @@
     &__loadingBar {
         height: 100%;
         border-radius: inherit;
+    }
+
+    &__fill {
+        transition: width 0.4s var(--guit-ref-motion-easing-standard);
     }
 
     &__loadingBar {

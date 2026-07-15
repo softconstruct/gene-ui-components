@@ -131,7 +131,12 @@ export {
     ITransferListProps,
     ITransferListChangePayload
 } from "./components/organisms/TransferList";
-export { default as Uploader, IUploaderProps } from "./components/organisms/Uploader";
+export {
+    default as Uploader,
+    IUploaderActionHelpers,
+    IUploaderProps,
+    IUploaderUploadPayload
+} from "./components/organisms/Uploader";
 
 // Providers
 export {

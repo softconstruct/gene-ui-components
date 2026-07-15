@@ -1,1 +1,1 @@
-export { IUploaderProps, default } from "./Uploader";
+export { IUploaderActionHelpers, IUploaderProps, IUploaderUploadPayload, default } from "./Uploader";
