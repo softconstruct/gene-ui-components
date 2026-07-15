@@ -86,6 +86,17 @@ describe("Uploader ", () => {
         clickSpy.mockRestore();
     });
 
+    it("renders uploadText for both uploader types", () => {
+        const uploadText = "Select file";
+        const wrapper = setup.setProps({ type: "dropZone", uploadText });
+
+        expect(wrapper.find(".uploader__browseTrigger").text()).toBe(uploadText);
+
+        wrapper.setProps({ type: "button" });
+
+        expect(wrapper.find(Button).text()).toBe(uploadText);
+    });
+
     it("calls onChange with file list when files are selected", async () => {
         const onChange = jest.fn();
         const wrapper = setup.setProps({ type: "button", onChange });

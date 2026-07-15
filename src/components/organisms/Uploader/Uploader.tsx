@@ -62,6 +62,10 @@ interface IUploaderProps {
      */
     dropZoneText?: string;
     /**
+     * Text displayed by the control that opens the file picker.
+     */
+    uploadText?: string;
+    /**
      * Fired whenever the file list changes (select, drop, upload progress, complete, error, or delete).<br>
      * Mirrors the main FileUploader `onChange({ value })` pattern, but returns the list directly.
      */
@@ -110,6 +114,7 @@ const Uploader: FC<IUploaderProps> = ({
     label,
     description,
     dropZoneText,
+    uploadText = "Upload",
     onChange,
     upload,
     maxFileSize,
@@ -364,7 +369,7 @@ const Uploader: FC<IUploaderProps> = ({
                             onClick={handleBrowseClick}
                             disabled={disabled}
                         >
-                            Click to upload
+                            {uploadText}
                         </button>
                     </div>
                     {description && (
@@ -388,7 +393,7 @@ const Uploader: FC<IUploaderProps> = ({
                         disabled={disabled}
                         onClick={handleBrowseClick}
                     >
-                        Upload
+                        {uploadText}
                     </Button>
                 </div>
             )}
