@@ -276,20 +276,17 @@ export const useManageColumns = <TData>({
                 const newVis = new Set(prevDiffs.visibility);
                 const columnsToToggle = isSearchActive ? columnsToRender : columns;
 
-                let targetChecked = checked;
-                if (isSearchActive) {
-                    const allVisibleChecked = columnsToToggle.every((col) => nextVisibility[col.id] ?? true);
-                    targetChecked = !allVisibleChecked;
-                }
-
                 columnsToToggle.forEach((col) => {
                     if (manageColumnsConfig?.disabledColumns?.includes(col.id)) return;
 
                     const originalVal = columnVisibility[col.id] ?? true;
-                    nextVisibility[col.id] = targetChecked;
+                    nextVisibility[col.id] = checked;
 
-                    if (targetChecked !== originalVal) newVis.add(col.id);
-                    else newVis.delete(col.id);
+                    if (checked !== originalVal) {
+                        newVis.add(col.id);
+                    } else {
+                        newVis.delete(col.id);
+                    }
                 });
                 return { ...prevDiffs, visibility: newVis };
             });
@@ -355,9 +352,11 @@ export const useManageColumns = <TData>({
         }
     }, [draftColumnOrder, popoverOpen, initialOrderRef]);
 
-    const globalVisibleColumnsCount = columns.filter((col) => draftVisibility[col.id] ?? true).length;
-    const allColumnsChecked = columns.length > 0 && globalVisibleColumnsCount === columns.length;
-    const allColumnsIndeterminate = globalVisibleColumnsCount > 0 && globalVisibleColumnsCount < columns.length;
+    const columnsInScope = isSearchActive ? columnsToRender : columns;
+    const visibleColumnsInScopeCount = columnsInScope.filter((col) => draftVisibility[col.id] ?? true).length;
+    const allColumnsChecked = columnsInScope.length > 0 && visibleColumnsInScopeCount === columnsInScope.length;
+    const allColumnsIndeterminate =
+        visibleColumnsInScopeCount > 0 && visibleColumnsInScopeCount < columnsInScope.length;
 
     return {
         popoverOpen,
