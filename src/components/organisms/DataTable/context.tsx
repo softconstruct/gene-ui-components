@@ -7,6 +7,7 @@ export interface IDataTableContext<TData> {
     table: Table<TData>;
     manageColumnsConfig: ManageColumnsConfig;
     initialColumnVisibility: ColumnVisibilityState;
+    dirMode: string;
 }
 
 const DataTableContext = createContext<IDataTableContext<unknown> | null>(null);

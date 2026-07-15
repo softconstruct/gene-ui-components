@@ -81,6 +81,7 @@ const ManageColumnListItem = <TData,>({
     const onPinKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
+            e.stopPropagation();
             onPinToggle(column);
         }
     };
@@ -108,7 +109,10 @@ const ManageColumnListItem = <TData,>({
             <div className="manageColumnListItem__actions">
                 <div
                     className="manageColumnListItem__pinAction"
-                    onClick={() => onPinToggle(column)}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onPinToggle(column);
+                    }}
                     tabIndex={0}
                     role="button"
                     aria-label={isPinnedDraft ? "Unpin column" : "Pin column"}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { Column } from "@tanstack/react-table";
 import classNames from "classnames";
@@ -70,12 +70,14 @@ const ManageColumns = <TData,>() => {
 
     const [dropGap, setDropGap] = useState<{ targetId: string; edge: string } | null>(null);
     const dropGapRef = useRef(dropGap);
-    dropGapRef.current = dropGap;
+    useEffect(() => {
+        dropGapRef.current = dropGap;
+    }, [dropGap]);
 
     const bodyRef = useRef<HTMLDivElement>(null);
     const [cachedBodyHeight, setCachedBodyHeight] = useState<number | undefined>(undefined);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (!isSearchActive && bodyRef.current) {
             setCachedBodyHeight(bodyRef.current.getBoundingClientRect().height);
         }

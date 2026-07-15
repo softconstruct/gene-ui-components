@@ -286,8 +286,33 @@ const DataTable = <TData,>({
 
     const isTableDataEmpty = isTableLoading || !data?.length;
 
+    const [dirMode, setDirMode] = useState(document.dir || "ltr");
+
+    useEffect(() => {
+        const observer = new MutationObserver(() => {
+            setDirMode(document.dir || "ltr");
+        });
+
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["dir"]
+        });
+
+        return () => observer.disconnect();
+    }, []);
+
+    const contextValue = useMemo(
+        () => ({
+            table,
+            manageColumnsConfig,
+            initialColumnVisibility,
+            dirMode
+        }),
+        [table, manageColumnsConfig, initialColumnVisibility, dirMode]
+    );
+
     return (
-        <DataTableProvider value={{ table, manageColumnsConfig, initialColumnVisibility }}>
+        <DataTableProvider value={contextValue}>
             <div className={classNames("dataTable", className)}>
                 <Toolbar />
                 <Scrollbar>

@@ -75,6 +75,8 @@ export type DataTableColumn<TData> = {
     defaultVisible?: boolean;
     /**
      * Lean cell renderer (no TanStack CellContext exposure).
+     * IMPORTANT: For optimal performance on large tables, ensure this function is memoized
+     * (e.g., using `useCallback` or defined outside the component) to avoid unnecessary cell re-renders.
      */
     renderCell?: (args: DataTableRenderCellArgs<TData, ReactNode>) => ReactNode;
 };

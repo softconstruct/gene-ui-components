@@ -9,6 +9,7 @@ import Tooltip from "@components/molecules/Tooltip";
 // Styles
 import "./TableRow.scss";
 
+import { useDataTableContext } from "../../context";
 import TableBodyCell from "../../TableBody/Cell/TableBodyCell";
 import { DataTableGetRowStatus, DataTableRenderExpandedRow, IDataTableRowAction } from "../../types";
 import TableExpandedRow from "../Row/TableExpandedRow";
@@ -57,6 +58,7 @@ const RowActionsWrapper: FC<IRowActionsWrapperProps> = ({ title, children }) => 
  * @returns A table row element containing its respective rendered cells.
  */
 const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: ITableRowProps<TData>) => {
+    const { dirMode } = useDataTableContext();
     const rowStatus = getRowStatus?.(row.original);
     const isRowExpanded = row.getIsExpanded();
     const expandedRow = isRowExpanded ? renderExpandedRow?.(row.original) : null;
@@ -80,7 +82,7 @@ const TableRow = <TData,>({ row, rowActions, getRowStatus, renderExpandedRow }: 
                             renderer={cell.column.columnDef.cell}
                             isPinned={isPinned}
                             offset={offset}
-                            dirMode={document.dir}
+                            dirMode={dirMode}
                         />
                     );
                 })}

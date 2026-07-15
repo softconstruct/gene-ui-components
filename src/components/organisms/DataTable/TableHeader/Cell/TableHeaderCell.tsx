@@ -9,6 +9,7 @@ import Text from "@components/atoms/Text";
 // Styles
 import "./TableHeaderCell.scss";
 
+import { useDataTableContext } from "../../context";
 import { getCellStyle } from "../../helper";
 
 /**
@@ -38,9 +39,10 @@ interface ITableHeaderCellProps<TData, TValue> {
  * @returns A table header cell element containing the rendered column header, or an empty cell if it's a placeholder.
  */
 const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProps<TData, TValue>) => {
+    const { dirMode } = useDataTableContext();
     const isExpanderHeader = header.column.id === "expander";
     const isPinned = header.column.getIsPinned();
-    const isRTL = document.dir === "rtl";
+    const isRTL = dirMode === "rtl";
 
     return (
         <th
