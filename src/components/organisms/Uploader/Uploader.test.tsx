@@ -119,9 +119,11 @@ describe("Uploader ", () => {
     });
 
     it("renders dropzone browse trigger", () => {
-        const wrapper = setup.setProps({ type: "dropZone" });
+        const dropZoneText = "Drag and Drop file or";
+        const wrapper = setup.setProps({ type: "dropZone", dropZoneText });
 
         expect(wrapper.find(".uploader__browseTrigger").exists()).toBeTruthy();
+        expect(wrapper.find(".uploader__uploadPrompt").find(Text).text()).toBe(dropZoneText);
     });
 
     it("opens file picker when dropzone browse trigger is clicked", () => {

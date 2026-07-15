@@ -57,6 +57,11 @@ interface IUploaderProps {
      */
     description?: string;
     /**
+     * Text displayed before the upload trigger in the drop zone.
+     * Include connecting words such as "or" in this text so translations can keep them in the correct context.
+     */
+    dropZoneText?: string;
+    /**
      * Fired whenever the file list changes (select, drop, upload progress, complete, error, or delete).<br>
      * Mirrors the main FileUploader `onChange({ value })` pattern, but returns the list directly.
      */
@@ -104,6 +109,7 @@ const Uploader: FC<IUploaderProps> = ({
     type = "dropZone",
     label,
     description,
+    dropZoneText,
     onChange,
     upload,
     maxFileSize,
@@ -346,14 +352,21 @@ const Uploader: FC<IUploaderProps> = ({
                     onDragLeave={handleDragLeave}
                     onDrop={handleDrop}
                 >
-                    <button
-                        type="button"
-                        className="uploader__browseTrigger"
-                        onClick={handleBrowseClick}
-                        disabled={disabled}
-                    >
-                        Click to upload
-                    </button>
+                    <div className="uploader__uploadPrompt">
+                        {dropZoneText && (
+                            <Text as="span" variant="bodyMediumRegular">
+                                {dropZoneText}
+                            </Text>
+                        )}
+                        <button
+                            type="button"
+                            className="uploader__browseTrigger"
+                            onClick={handleBrowseClick}
+                            disabled={disabled}
+                        >
+                            Click to upload
+                        </button>
+                    </div>
                     {description && (
                         <Text as="span" variant="bodyMediumRegular">
                             {description}

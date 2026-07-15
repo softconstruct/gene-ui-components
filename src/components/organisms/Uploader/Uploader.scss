@@ -32,6 +32,12 @@
         display: none;
     }
 
+    &__uploadPrompt {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
     &__browseTrigger {
         padding: 0;
         border: none;

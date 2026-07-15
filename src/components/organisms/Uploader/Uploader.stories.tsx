@@ -30,6 +30,7 @@ const argTypes = {
     type: args({ control: "select", ...propCategory.appearance }),
     label: args({ control: "text", ...propCategory.content }),
     description: args({ control: "text", ...propCategory.content }),
+    dropZoneText: args({ control: "text", ...propCategory.content }),
     onChange: args({ control: "false", ...propCategory.action }),
     upload: args({ control: "false", ...propCategory.action }),
     // TODO: Add `accept` argType when accept prop is implemented.
@@ -55,6 +56,7 @@ export const DropZone: Story = {
     args: {
         type: "dropZone",
         label: "Label",
+        dropZoneText: "Drag and Drop file or",
         description: "Max file size 25MB",
         multiple: true,
         maxFileSize: 25 * 1024 * 1024,
