@@ -1,59 +1,107 @@
+@use "../../../assets/styles/mixins";
+
 .uploader {
+    $this: &;
+
     display: flex;
     flex-direction: column;
+    width: 100%;
+
+    &_typedropZone {
+        gap: var(--guit-ref-spacing-large);
+
+        #{ $this }__body {
+            gap: var(--guit-ref-spacing-xsmall);
+        }
+    }
+
+    &_typebutton {
+        gap: var(--guit-ref-spacing-large);
+
+        #{ $this }__body {
+            gap: var(--guit-ref-spacing-4xsmall);
+        }
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+    }
 
     &__dropZone {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        background-color: var(--guit-sem-color-background-neutral-3);
+        gap: var(--guit-ref-spacing-xsmall);
+        width: 100%;
+        height: 12rem;
         border: var(--guit-ref-border-width-thin) var(--guit-ref-border-style-dashed)
             var(--guit-sem-color-border-neutral-2);
         border-radius: var(--guit-ref-radius-2xsmall);
+        background-color: var(--guit-sem-color-background-neutral-3);
 
         &_dragActive {
-            border-color: var(--guit-sem-color-border-selected-2);
-            background-color: var(--guit-sem-color-background-selected-1);
+            border-color: var(--guit-sem-color-border-focus);
+            background-color: var(--guit-sem-color-background-brand-1);
         }
 
         &_disabled {
             cursor: not-allowed;
+        }
+
+        @include mixins.media-hover {
+            &:hover {
+                background-color: var(--guit-sem-color-background-neutral-3-hover);
+            }
         }
     }
 
     &__buttonWrapper {
         display: flex;
         flex-direction: column;
+        gap: var(--guit-ref-spacing-xsmall);
+    }
+
+    &__fileDescription {
+        color: var(--guit-sem-color-foreground-neutral-1);
+    }
+
+    &__description {
+        color: var(--guit-sem-color-foreground-neutral-2);
     }
 
     &__input {
-        display: none;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
     }
 
     &__uploadPrompt {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: var(--guit-ref-spacing-3xsmall);
+    }
+
+    &__title {
+        color: var(--guit-sem-color-foreground-neutral-2);
     }
 
     &__browseTrigger {
-        padding: 0;
-        border: none;
-        background: transparent;
-        cursor: pointer;
-        color: var(--guit-sem-color-text-brand-1);
+        border-radius: var(--guit-ref-radius-4xsmall);
+        color: var(--guit-sem-color-foreground-brand);
         text-decoration: underline;
-        font: inherit;
 
         &:disabled {
             cursor: not-allowed;
             color: var(--guit-sem-color-text-disabled-1);
         }
-    }
-
-    &__fileList {
-        width: 100%;
     }
 }

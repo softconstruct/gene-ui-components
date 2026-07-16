@@ -6,7 +6,7 @@ import { Upload } from "@geneui/icons";
 // Styles
 import "./Uploader.scss";
 
-import { Button, FileUploadItem, FileUploadList, IFileUploadItemProps, Text } from "../../../index";
+import { Button, FileUploadItem, FileUploadList, IFileUploadItemProps, Label, Text } from "../../../index";
 import { DEFAULT_UPLOAD_FAILED_MSG, DEFAULT_UPLOADING_TEXT } from "./Uploader.constants";
 import { completeUploadItem, createFileItem, processLocalFile, toErrorItem, toUploadingItem } from "./Uploader.helpers";
 
@@ -337,68 +337,72 @@ const Uploader: FC<IUploaderProps> = ({
 
     return (
         <div className={classNames("uploader", `uploader_type${type}`, className)}>
-            {label && <div className="uploader__label">{label}</div>}
-            <input
-                ref={fileInputRef}
-                type="file"
-                className="uploader__input"
-                multiple={multiple}
-                onChange={handleFileInputChange}
-                disabled={disabled}
-            />
-            {isDropZone ? (
-                <div
-                    className={classNames("uploader__dropZone", {
-                        uploader__dropZone_dragActive: isDragActive,
-                        uploader__dropZone_disabled: disabled
-                    })}
-                    onDragOver={handleDragOver}
-                    onDragEnter={handleDragEnter}
-                    onDragLeave={handleDragLeave}
-                    onDrop={handleDrop}
-                >
-                    <div className="uploader__uploadPrompt">
-                        {dropZoneText && (
-                            <Text as="span" variant="bodyMediumRegular">
-                                {dropZoneText}
+            <div className="uploader__body">
+                {label && <Label text={label} />}
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    id="uploader__input"
+                    className="uploader__input"
+                    multiple={multiple}
+                    onChange={handleFileInputChange}
+                    disabled={disabled}
+                />
+                {isDropZone ? (
+                    <div
+                        className={classNames("uploader__dropZone", {
+                            uploader__dropZone_dragActive: isDragActive,
+                            uploader__dropZone_disabled: disabled
+                        })}
+                        onDragOver={handleDragOver}
+                        onDragEnter={handleDragEnter}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                    >
+                        <span className="uploader__uploadPrompt">
+                            {dropZoneText && (
+                                <Text className="uploader__title" as="span" variant="bodyMediumRegular">
+                                    {dropZoneText}
+                                </Text>
+                            )}
+                            <button
+                                type="button"
+                                className="uploader__browseTrigger"
+                                onClick={handleBrowseClick}
+                                disabled={disabled}
+                            >
+                                <Text as="span" variant="bodyLargeMedium">
+                                    {uploadText}
+                                </Text>
+                            </button>
+                        </span>
+                        {description && (
+                            <Text className="uploader__fileDescription" as="span" variant="captionLargeMedium">
+                                {description}
                             </Text>
                         )}
-                        <button
-                            type="button"
-                            className="uploader__browseTrigger"
-                            onClick={handleBrowseClick}
+                    </div>
+                ) : (
+                    <div className="uploader__buttonWrapper">
+                        {description && (
+                            <Text className="uploader__description" as="span" variant="bodyMediumRegular">
+                                {description}
+                            </Text>
+                        )}
+                        <Button
+                            appearance="primary"
+                            layout="fill"
+                            Icon={Upload}
                             disabled={disabled}
+                            onClick={handleBrowseClick}
                         >
                             {uploadText}
-                        </button>
+                        </Button>
                     </div>
-                    {description && (
-                        <Text as="span" variant="bodyMediumRegular">
-                            {description}
-                        </Text>
-                    )}
-                </div>
-            ) : (
-                <div className="uploader__buttonWrapper">
-                    {description && (
-                        <Text as="span" variant="bodyMediumRegular">
-                            {description}
-                        </Text>
-                    )}
-                    <Button
-                        className="uploader__button"
-                        appearance="primary"
-                        layout="fill"
-                        Icon={Upload}
-                        disabled={disabled}
-                        onClick={handleBrowseClick}
-                    >
-                        {uploadText}
-                    </Button>
-                </div>
-            )}
+                )}
+            </div>
             {hasFiles && (
-                <FileUploadList className="uploader__fileList">
+                <FileUploadList>
                     {filesToRender.map((file) => (
                         <FileUploadItem key={file.id ?? file.name} {...file} />
                     ))}
