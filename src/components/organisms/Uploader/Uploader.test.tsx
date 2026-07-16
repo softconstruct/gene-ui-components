@@ -163,6 +163,25 @@ describe("Uploader ", () => {
         expect(wrapper.find(".uploader__dropZone_dragActive").exists()).toBeFalsy();
     });
 
+    it("keeps drag active class when dragging over nested dropzone children", () => {
+        const wrapper = setup.setProps({ type: "dropZone", dropZoneText: "Drag and Drop file or" });
+
+        wrapper.find(".uploader__dropZone").simulate("dragenter", {
+            preventDefault: jest.fn(),
+            stopPropagation: jest.fn()
+        });
+        expect(wrapper.find(".uploader__dropZone_dragActive").exists()).toBeTruthy();
+
+        wrapper.find(".uploader__dropZone").simulate("dragleave", {
+            preventDefault: jest.fn(),
+            stopPropagation: jest.fn(),
+            relatedTarget: wrapper.find(".uploader__browseTrigger").getDOMNode()
+        });
+        wrapper.update();
+
+        expect(wrapper.find(".uploader__dropZone_dragActive").exists()).toBeTruthy();
+    });
+
     it("adds dropped files and calls onChange", async () => {
         const onChange = jest.fn();
         const wrapper = setup.setProps({ type: "dropZone", onChange });

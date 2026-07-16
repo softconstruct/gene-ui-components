@@ -297,6 +297,12 @@ const Uploader: FC<IUploaderProps> = ({
 
         event.preventDefault();
         event.stopPropagation();
+
+        const relatedTarget = event.relatedTarget as Node | null;
+        if (relatedTarget && event.currentTarget.contains(relatedTarget)) {
+            return;
+        }
+
         setIsDragActive(false);
     };
 
