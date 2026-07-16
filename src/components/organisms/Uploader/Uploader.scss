@@ -47,7 +47,16 @@
         }
 
         &_disabled {
+            border-color: var(--guit-sem-color-border-disabled-1);
+            background-color: var(--guit-sem-color-background-disabled);
             cursor: not-allowed;
+            color: var(--guit-sem-color-foreground-disabled);
+
+            #{ $this }__title,
+            #{ $this }__fileDescription,
+            #{ $this }__browseTrigger {
+                color: var(--guit-sem-color-foreground-disabled);
+            }
         }
 
         @include mixins.media-hover {
