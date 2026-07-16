@@ -4,7 +4,7 @@ import { act } from "react-dom/test-utils";
 
 // Components
 import Button from "@components/atoms/Button";
-import Text from "@components/atoms/Text";
+import Label from "@components/atoms/Label";
 import { FileUploadItem, FileUploadList } from "@components/molecules/FileUploadList";
 import ProgressBar from "@components/molecules/ProgressBar";
 
@@ -59,14 +59,14 @@ describe("Uploader ", () => {
         const label = "Uploader Label";
         const wrapper = setup.setProps({ label });
 
-        expect(wrapper.find(".uploader__label").text()).toBe(label);
+        expect(wrapper.find(Label).prop("text")).toBe(label);
     });
 
     it("renders description prop correctly", () => {
         const description = "Uploader description";
         const wrapper = setup.setProps({ description, type: "button" });
 
-        expect(wrapper.find(Text).text()).toBe(description);
+        expect(wrapper.find(".uploader__description").first().text()).toBe(description);
     });
 
     it("renders hidden file input for button type", () => {
@@ -134,7 +134,7 @@ describe("Uploader ", () => {
         const wrapper = setup.setProps({ type: "dropZone", dropZoneText });
 
         expect(wrapper.find(".uploader__browseTrigger").exists()).toBeTruthy();
-        expect(wrapper.find(".uploader__uploadPrompt").find(Text).text()).toBe(dropZoneText);
+        expect(wrapper.find(".uploader__title").first().text()).toBe(dropZoneText);
     });
 
     it("opens file picker when dropzone browse trigger is clicked", () => {
