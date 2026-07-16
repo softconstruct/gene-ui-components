@@ -8,7 +8,7 @@ import Tooltip from "@components/molecules/Tooltip";
 // hooks
 import useEllipsisDetection from "@hooks/useEllipsisDetection";
 
-import { EXPANDABLE_CELL_SIZE_REM } from "./constants";
+import { CELL_MAX_WIDTH, EXPANDABLE_CELL_SIZE_REM } from "./constants";
 import ExpanderCell from "./TableBody/ExpanderCell/ExpanderCell";
 import { DataTableColumn, DataTableRowExpandChangeHandler } from "./types";
 
@@ -33,6 +33,7 @@ export const getCellStyle = (
 ) => ({
     width: isExpander ? EXPANDABLE_CELL_SIZE_REM : `${columnSize}px`,
     minWidth: isExpander ? EXPANDABLE_CELL_SIZE_REM : `${columnSize}px`,
+    maxWidth: isExpander ? EXPANDABLE_CELL_SIZE_REM : CELL_MAX_WIDTH,
     ...(isPinned && {
         left: !isRTL ? `${offset}px` : undefined,
         right: isRTL ? `${offset}px` : undefined
