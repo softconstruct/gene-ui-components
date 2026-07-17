@@ -329,6 +329,33 @@ describe("Uploader ", () => {
         wrapper.unmount();
     });
 
+    it("prepends newly selected files to the start of the list", async () => {
+        const wrapper = mount(<Uploader type="button" multiple />);
+        const firstFile = new File(["first"], "first.pdf", { type: "application/pdf" });
+        const secondFile = new File(["second"], "second.pdf", { type: "application/pdf" });
+
+        wrapper.find('input[type="file"]').simulate("change", {
+            target: { files: createFileList(firstFile), value: "first.pdf" }
+        });
+
+        await act(async () => {
+            await Promise.resolve();
+        });
+        wrapper.update();
+
+        wrapper.find('input[type="file"]').simulate("change", {
+            target: { files: createFileList(secondFile), value: "second.pdf" }
+        });
+        wrapper.update();
+
+        expect(wrapper.find(FileUploadItem).map((item) => item.props().name)).toEqual(["second.pdf", "first.pdf"]);
+
+        await act(async () => {
+            await Promise.resolve();
+        });
+        wrapper.unmount();
+    });
+
     it("calls upload and updates progress dynamically", async () => {
         let resolveUpload: (() => void) | undefined;
         const upload = jest.fn(

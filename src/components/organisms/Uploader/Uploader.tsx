@@ -237,7 +237,7 @@ const Uploader: FC<IUploaderProps> = ({
             nextItems.push(toUploadingItem(baseItem));
         });
 
-        const nextFiles = multiple ? [...currentFiles, ...nextItems] : nextItems;
+        const nextFiles = multiple ? [...nextItems, ...currentFiles] : nextItems;
         emitFiles(nextFiles);
 
         nextItems.forEach((item) => {
