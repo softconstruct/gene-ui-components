@@ -204,6 +204,36 @@ describe("Uploader ", () => {
         wrapper.update();
     });
 
+    it("keeps only the first dropped file when multiple is false", async () => {
+        const onChange = jest.fn();
+        const wrapper = setup.setProps({ type: "dropZone", multiple: false, onChange });
+        const droppedFiles = [
+            new File(["one"], "one.pdf", { type: "application/pdf" }),
+            new File(["two"], "two.pdf", { type: "application/pdf" })
+        ];
+
+        wrapper.find(".uploader__dropZone").simulate("drop", {
+            preventDefault: jest.fn(),
+            stopPropagation: jest.fn(),
+            dataTransfer: {
+                files: {
+                    0: droppedFiles[0],
+                    1: droppedFiles[1],
+                    length: 2,
+                    item: (index: number) => droppedFiles[index] ?? null
+                }
+            }
+        });
+
+        expect(wrapper.find(FileUploadItem)).toHaveLength(1);
+        expect(wrapper.find(FileUploadItem).props().name).toBe("one.pdf");
+        expect(onChange.mock.calls[0][0]).toHaveLength(1);
+
+        await act(async () => {
+            await Promise.resolve();
+        });
+    });
+
     it("does not open picker or handle drop when dropzone is disabled", () => {
         const clickSpy = jest.spyOn(HTMLInputElement.prototype, "click").mockImplementation(() => undefined);
         const onChange = jest.fn();

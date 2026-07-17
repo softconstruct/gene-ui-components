@@ -218,10 +218,11 @@ const Uploader: FC<IUploaderProps> = ({
         }
 
         const filesArray = Array.from(nativeFiles as ArrayLike<File>);
+        const selectedNativeFiles = multiple ? filesArray : filesArray.slice(0, 1);
         const currentFiles = filesRef.current;
         const nextItems: IFileUploadItemProps[] = [];
 
-        filesArray.forEach((nativeFile, index) => {
+        selectedNativeFiles.forEach((nativeFile, index) => {
             const baseItem = createFileItem(nativeFile, index);
             const isTooLarge = typeof maxFileSize === "number" && nativeFile.size > maxFileSize;
 
