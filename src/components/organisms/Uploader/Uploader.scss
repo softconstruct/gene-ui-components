@@ -58,12 +58,6 @@
                 color: var(--guit-sem-color-foreground-disabled);
             }
         }
-
-        @include mixins.media-hover {
-            &:hover {
-                background-color: var(--guit-sem-color-background-neutral-3-hover);
-            }
-        }
     }
 
     &__buttonWrapper {
