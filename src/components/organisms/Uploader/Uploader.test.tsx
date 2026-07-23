@@ -55,6 +55,12 @@ describe("Uploader ", () => {
         expect(wrapper.hasClass(className)).toBeTruthy();
     });
 
+    it.each<IUploaderProps["type"]>(["dropZone", "button"])("renders %s type modifier class", (type) => {
+        const wrapper = setup.setProps({ type });
+
+        expect(wrapper.find(".uploader").hasClass(`uploader_type_${type}`)).toBeTruthy();
+    });
+
     it("renders label prop correctly", () => {
         const label = "Uploader Label";
         const wrapper = setup.setProps({ label });

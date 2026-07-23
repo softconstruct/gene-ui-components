@@ -343,7 +343,7 @@ const Uploader: FC<IUploaderProps> = ({
     });
 
     return (
-        <div className={classNames("uploader", `uploader_type${type}`, className)}>
+        <div className={classNames("uploader", `uploader_type_${type}`, className)}>
             <div className="uploader__body">
                 {label && <Label text={label} className="uploader__label" />}
                 <input

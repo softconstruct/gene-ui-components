@@ -7,19 +7,21 @@
     flex-direction: column;
     width: 100%;
 
-    &_typedropZone {
-        gap: var(--guit-ref-spacing-large);
+    &_type {
+        &_dropZone {
+            gap: var(--guit-ref-spacing-large);
 
-        #{ $this }__body {
-            gap: var(--guit-ref-spacing-xsmall);
+            #{ $this }__body {
+                gap: var(--guit-ref-spacing-xsmall);
+            }
         }
-    }
 
-    &_typebutton {
-        gap: var(--guit-ref-spacing-large);
+        &_button {
+            gap: var(--guit-ref-spacing-large);
 
-        #{ $this }__body {
-            gap: var(--guit-ref-spacing-4xsmall);
+            #{ $this }__body {
+                gap: var(--guit-ref-spacing-4xsmall);
+            }
         }
     }
 

@@ -25,11 +25,13 @@
                 animation-timing-function: var(--guit-ref-motion-easing-standard);
                 animation-iteration-count: infinite;
                 will-change: transform;
-
-                [dir="rtl"] & {
-                    animation-name: progress-bar-loading-from-right;
-                }
             }
+        }
+    }
+
+    &_rtl {
+        #{ $this }__loadingBar {
+            animation-name: progress-bar-loading-from-right;
         }
     }
 
