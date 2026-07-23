@@ -134,6 +134,7 @@ const FileUploadItem: FC<IFileUploadItemProps> = ({
     const isSizeTruncated = useEllipsisDetection(sizeRef);
 
     const shouldShowProgressBar = loading || status === "error" || status === "warning";
+    const progressBarType = loading && typeof progressPercent !== "number" ? "indeterminate" : "determinate";
     const shouldShowItemActions = actions && actions.length > 0;
 
     const listItemDataColumns = [
@@ -203,7 +204,7 @@ const FileUploadItem: FC<IFileUploadItemProps> = ({
                     percent={progressPercent}
                     size="medium"
                     uploadingText={uploadingText}
-                    type="determinate"
+                    type={progressBarType}
                     status={status}
                     helperText={helperText}
                 />
