@@ -52,10 +52,8 @@
         }
 
         &_mobile {
-            &_view {
-                #{$this}__column {
-                    width: 100%;
-                }
+            #{$this}__column {
+                width: 100%;
             }
         }
     }
