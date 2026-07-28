@@ -1,13 +1,12 @@
-import React, { ReactNode, useState } from "react";
+import React, { useState } from "react";
 import { Meta, StoryObj } from "@storybook/react";
 
 // Helpers
 import { TimeParts } from "@components/molecules/TimePicker/types";
 
 import { args, propCategory } from "../../../../stories/assets/storybook.globals";
-import Section from "../Section";
 // Components
-import TimePicker, { RangeTimePicker } from "./index";
+import TimePicker, { IRangeTimePickerProps, ISingleTimePickerProps, RangeTimePicker } from "./index";
 
 const meta: Meta<typeof TimePicker> = {
     title: "Molecules/TimePicker",
@@ -35,7 +34,9 @@ const meta: Meta<typeof TimePicker> = {
         onTimeInputChange: args({ control: "false", ...propCategory.action }),
         timeFormat: args({ control: "select", ...propCategory.functionality }),
         texts: args({ control: "object", ...propCategory.content }),
-        shouldDisableTime: args({ control: "false", ...propCategory.functionality })
+        shouldDisableTime: args({ control: "false", ...propCategory.functionality }),
+        ariaControls: args({ control: "false", ...propCategory.others }),
+        ariaLabel: args({ control: "false", ...propCategory.others })
     },
     args: {
         label: "Choose time",
@@ -48,25 +49,19 @@ export default meta;
 type SingleStory = StoryObj<typeof TimePicker>;
 type RangeStory = StoryObj<typeof TimePicker.Range>;
 
-const StoryWrapper = ({ children, title }: { children: ReactNode; title: string }) => (
-    <Section title={title}>{children}</Section>
-);
-
 type SinglePickerCase = {
-    title: string;
-    RenderComponent?: () => React.JSX.Element;
+    RenderComponent?: (props: ISingleTimePickerProps) => React.JSX.Element;
 } & React.ComponentProps<typeof TimePicker>;
 
 type RangePickerCase = {
-    title: string;
-    RenderComponent?: () => React.JSX.Element;
+    RenderComponent?: (props: IRangeTimePickerProps) => React.JSX.Element;
 } & React.ComponentProps<typeof TimePicker.Range>;
 
-const ClearableSinglePicker = () => {
-    return <TimePicker placeholder="Choose time" clearable />;
+const ClearableSinglePicker = (props: ISingleTimePickerProps) => {
+    return <TimePicker {...props} placeholder="Choose time" clearable />;
 };
 
-const ControlledSinglePicker = () => {
+const ControlledSinglePicker = (props: ISingleTimePickerProps) => {
     const [value, setValue] = useState<string | null>("10:24:30");
     const handleTimeSelect = (time: string) => {
         setValue(time);
@@ -77,6 +72,7 @@ const ControlledSinglePicker = () => {
 
     return (
         <TimePicker
+            {...props}
             value={value}
             onTimeSelect={handleTimeSelect}
             onTimeInputChange={handleTimeInputChange}
@@ -86,19 +82,19 @@ const ControlledSinglePicker = () => {
 };
 
 const singlePickerCases: SinglePickerCase[] = [
-    { title: "Disabled", disabled: true },
-    { title: "Required", label: "Choose time", required: true },
-    { title: "With controlled value", RenderComponent: ControlledSinglePicker },
-    { title: "Clearable", RenderComponent: ClearableSinglePicker },
-    { title: "Errored with message", error: true, errorMessage: "Error message" },
-    { title: "12-Hour Format", timeFormat: "12h", placeholder: "12:00:00 AM" },
+    { label: "Disabled", disabled: true },
+    { label: "Required", required: true },
+    { label: "With controlled value", RenderComponent: ControlledSinglePicker },
+    { label: "Clearable", RenderComponent: ClearableSinglePicker },
+    { label: "Errored with message", error: true, errorMessage: "Error message" },
+    { label: "12-Hour Format", timeFormat: "12h", placeholder: "12:00:00 AM" },
     {
-        title: "Disabled Specific Times",
+        label: "Disabled Specific Times",
         shouldDisableTime: (type, value) => type === "hours" && parseInt(value, 10) < 12
     }
 ];
 
-const ControlledRangePicker = () => {
+const ControlledRangePicker = (props: IRangeTimePickerProps) => {
     const [value, setValue] = useState<{ start: string | null; end: string | null }>({ start: null, end: null });
 
     const handleTimeSelect = (time: string, parts: TimeParts, field?: "start" | "end") => {
@@ -113,22 +109,43 @@ const ControlledRangePicker = () => {
         }
     };
 
-    return <TimePicker.Range value={value} onTimeSelect={handleTimeSelect} onTimeInputChange={handleTimeInputChange} />;
+    return (
+        <TimePicker.Range
+            {...props}
+            value={value}
+            onTimeSelect={handleTimeSelect}
+            onTimeInputChange={handleTimeInputChange}
+        />
+    );
 };
 
-const ClearableRangePicker = () => {
-    return <TimePicker.Range placeholder={{ start: "Start time", end: "End time" }} clearable />;
+const ClearableRangePicker = (props: IRangeTimePickerProps) => {
+    return <TimePicker.Range {...props} placeholder={{ start: "Start time", end: "End time" }} clearable />;
 };
 
 const rangePickerCases: RangePickerCase[] = [
-    { title: "Disabled", disabled: true },
-    { title: "Required", label: "Choose time", required: true },
-    { title: "With controlled value", RenderComponent: ControlledRangePicker },
-    { title: "Clearable", RenderComponent: ClearableRangePicker },
-    { title: "Errored with message", error: true, errorMessage: "Error message" },
-    { title: "12-Hour Format", timeFormat: "12h" },
+    { label: "Disabled", disabled: true, placeholder: { start: "Start time", end: "End time" } },
+    { label: "Required", required: true, placeholder: { start: "Start time", end: "End time" } },
     {
-        title: "Disabled Specific Times",
+        label: "With controlled value",
+        placeholder: { start: "Start time", end: "End time" },
+        RenderComponent: ControlledRangePicker
+    },
+    {
+        label: "Clearable",
+        placeholder: { start: "Start time", end: "End time" },
+        RenderComponent: ClearableRangePicker
+    },
+    {
+        label: "Errored with message",
+        error: true,
+        errorMessage: "Error message",
+        placeholder: { start: "Start time", end: "End time" }
+    },
+    { label: "12-Hour Format", timeFormat: "12h", placeholder: { start: "Start time", end: "End time" } },
+    {
+        label: "Disabled Specific Times",
+        placeholder: { start: "Start time", end: "End time" },
         shouldDisableTime: (type, value) => type === "hours" && parseInt(value, 10) > 18
     }
 ];
@@ -138,11 +155,13 @@ export const Default: SingleStory = {};
 export const SinglePickerStates: SingleStory = {
     render: (props) => (
         <div style={{ display: "flex", flex: 1, flexWrap: "wrap", gap: "2rem" }}>
-            {singlePickerCases.map((item) => (
-                <StoryWrapper key={item.title} title={item.title}>
-                    {item.RenderComponent ? <item.RenderComponent /> : <TimePicker {...props} {...item} />}
-                </StoryWrapper>
-            ))}
+            {singlePickerCases.map((item) =>
+                item.RenderComponent ? (
+                    <item.RenderComponent {...props} {...item} />
+                ) : (
+                    <TimePicker {...props} {...item} />
+                )
+            )}
         </div>
     )
 };
@@ -151,9 +170,13 @@ export const RangePickerStates: RangeStory = {
     render: (props) => (
         <div style={{ display: "flex", flex: 1, flexWrap: "wrap", gap: "2rem" }}>
             {rangePickerCases.map((item) => (
-                <StoryWrapper key={item.title} title={item.title}>
-                    {item.RenderComponent ? <item.RenderComponent /> : <TimePicker.Range {...props} {...item} />}
-                </StoryWrapper>
+                <div>
+                    {item.RenderComponent ? (
+                        <item.RenderComponent {...props} {...item} />
+                    ) : (
+                        <TimePicker.Range {...props} {...item} />
+                    )}
+                </div>
             ))}
         </div>
     )

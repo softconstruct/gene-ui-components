@@ -7,6 +7,11 @@ import { Clock } from "@geneui/icons";
 import Label from "@components/atoms/Label";
 import PickerInput from "@components/molecules/TimePicker/components/PickerInput/PickerInput";
 import PickerPopover from "@components/molecules/TimePicker/components/PickerPopover/PickerPopover";
+import {
+    LABEL_SIZE_MAPPER,
+    RANGE_TIME_PICKER_FIELDS_IDS,
+    TIME_PICKER_FIELD_ID
+} from "@components/molecules/TimePicker/constants";
 import { TimeParts, TimePickerSizes } from "@components/molecules/TimePicker/types";
 
 // Styles
@@ -95,6 +100,10 @@ interface ITimePickerBaseProps {
      * @param value
      */
     shouldDisableTime?: (type: "hours" | "minutes" | "seconds" | "meridiem", value: string) => boolean;
+    /**
+     * Aria-controls attribute of the picker input field.
+     */
+    ariaControls?: string;
 }
 
 interface ISingleTimePickerProps extends ITimePickerBaseProps {
@@ -106,6 +115,10 @@ interface ISingleTimePickerProps extends ITimePickerBaseProps {
      * The value of the input field.
      */
     value?: string | null;
+    /**
+     * Aria-label attribute of the picker input field.
+     */
+    ariaLabel?: string;
 }
 
 interface IRangeTimePickerProps extends ITimePickerBaseProps {
@@ -122,6 +135,13 @@ interface IRangeTimePickerProps extends ITimePickerBaseProps {
     value?: {
         start: string | null;
         end: string | null;
+    };
+    /**
+     * Aria-label attribute of the picker input field.
+     */
+    ariaLabels?: {
+        start: string;
+        end: string;
     };
 }
 
@@ -151,7 +171,9 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
             errorMessage,
             timeFormat = "24h",
             texts,
-            shouldDisableTime
+            shouldDisableTime,
+            ariaLabel,
+            ariaControls
         },
         ref
     ) => {
@@ -182,8 +204,18 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
 
         return (
             <div className={classNames("timePicker", className)} ref={ref}>
-                {label && <Label disabled={disabled} className="pickerInput__label" required={required} text={label} />}
+                {label && (
+                    <Label
+                        labelFor={TIME_PICKER_FIELD_ID}
+                        size={LABEL_SIZE_MAPPER[size]}
+                        disabled={disabled}
+                        className="pickerInput__label"
+                        required={required}
+                        text={label}
+                    />
+                )}
                 <PickerInput
+                    id={TIME_PICKER_FIELD_ID}
                     size={size}
                     placeholder={placeholder}
                     value={valueToUse}
@@ -197,6 +229,9 @@ const SingleTimePicker = forwardRef<HTMLDivElement, ISingleTimePickerProps>(
                     clearable={clearable}
                     error={error}
                     errorMessage={errorMessage}
+                    isExpanded={popoverOpen}
+                    ariaControls={ariaControls}
+                    ariaLabel={ariaLabel}
                 />
                 <PickerPopover
                     open={popoverOpen}
@@ -242,7 +277,9 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
             timeFormat = "24h",
             errorMessage,
             texts,
-            shouldDisableTime
+            shouldDisableTime,
+            ariaLabels,
+            ariaControls
         },
         ref
     ) => {
@@ -280,8 +317,18 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
 
         return (
             <div className={classNames("timePicker", className)} ref={ref}>
-                {label && <Label disabled={disabled} className="pickerInput__label" required={required} text={label} />}
+                {label && (
+                    <Label
+                        labelFor={RANGE_TIME_PICKER_FIELDS_IDS.start}
+                        size={LABEL_SIZE_MAPPER[size]}
+                        disabled={disabled}
+                        className="pickerInput__label"
+                        required={required}
+                        text={label}
+                    />
+                )}
                 <PickerInput.Range
+                    ids={RANGE_TIME_PICKER_FIELDS_IDS}
                     size={size}
                     placeholder={placeholder}
                     value={valueToUse}
@@ -295,6 +342,9 @@ const RangeTimePicker = forwardRef<HTMLDivElement, IRangeTimePickerProps>(
                     clearable={clearable}
                     error={error}
                     errorMessage={errorMessage}
+                    isExpanded={popoverOpen}
+                    ariaControls={ariaControls}
+                    ariaLabels={ariaLabels}
                 />
                 <PickerPopover
                     popoverRef={popoverRef}

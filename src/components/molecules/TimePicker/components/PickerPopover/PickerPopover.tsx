@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, Ref, SetStateAction, useCallback, useMemo } from "react";
+import React, { Dispatch, FC, Ref, SetStateAction, useCallback, useContext, useMemo } from "react";
 import classNames from "classnames";
 
 // Components
@@ -10,6 +10,7 @@ import PickerButton from "@components/molecules/TimePicker/components/PickerButt
 import { HOURS_12, HOURS_24, MINUTES, SECONDS } from "@components/molecules/TimePicker/constants";
 import { isPickerPartDisabled } from "@components/molecules/TimePicker/helpers";
 import { TimeParts, TimePickerSizes } from "@components/molecules/TimePicker/types";
+import { GeneUIDesignSystemContext } from "@components/providers/GeneUIProvider";
 
 interface IPickerPopoverProps {
     /**
@@ -111,6 +112,11 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
         { header: "seconds", data: SECONDS, text: texts?.seconds || "seconds" }
     ];
 
+    const headerTextVariant = size === "large" || size === "medium" ? "bodyMediumSemibold" : "captionLargeSemibold";
+
+    const { breakpoint } = useContext(GeneUIDesignSystemContext);
+    const isMobile = breakpoint?.isMobileBreakpoint;
+
     return (
         <Popover
             size="fitContent"
@@ -123,17 +129,21 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
             withArrow={false}
         >
             <PopoverBody withPadding={false}>
-                <div className={classNames("timePicker__wrapper", `timePicker__wrapper_size_${size}`)}>
+                <div
+                    className={classNames("timePicker__wrapper", `timePicker__wrapper_size_${size}`, {
+                        timePicker__wrapper_mobile: isMobile
+                    })}
+                >
                     {timeColumns.map(({ header, data, text }) => (
                         <div
                             key={header}
                             className="timePicker__column"
-                            role="listbox"
+                            role="group"
                             aria-label={`Select ${header?.toLowerCase()}`}
                         >
                             <div className="timePicker__headerWrapper">
                                 <div className="timePicker__header">
-                                    <Text className="ellipsis-text" as="p" variant="bodyMediumSemibold">
+                                    <Text className="ellipsis-text" as="p" variant={headerTextVariant}>
                                         {text}
                                     </Text>
                                 </div>
@@ -164,7 +174,7 @@ const PickerPopover: FC<IPickerPopoverProps> = ({
                     {is12Hour && (
                         <div
                             className="timePicker__column timePicker__column_meridiem"
-                            role="listbox"
+                            role="group"
                             aria-label="Select AM/PM"
                         >
                             <PickerButton

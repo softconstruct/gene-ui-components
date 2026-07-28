@@ -65,9 +65,17 @@ interface IPickerShellProps {
      */
     shouldShowClearableIcon?: boolean;
     /**
-     * Reference data of popover, used for positioning the popover accordingly to input field.
+     * Reference data of popover, used for positioning the popover accordingly to the input field.
      */
     popoverRefData?: HTMLAttributes<HTMLDivElement>;
+    /**
+     * Used for accessibility, determines whether the picker popover is open/expanded.
+     */
+    isExpanded: boolean;
+    /**
+     * Used for accessibility, receives the id of the picker popover.
+     */
+    ariaControls?: string;
 }
 
 interface IPickerInputBaseProps {
@@ -132,6 +140,14 @@ interface IPickerInputBaseProps {
      * Whether the field should display meridiem.
      */
     is12Hour?: boolean;
+    /**
+     * Used for accessibility, determines whether the picker popover is open/expanded.
+     */
+    isExpanded: boolean;
+    /**
+     * Aria-controls attribute of the picker input field.
+     */
+    ariaControls?: string;
 }
 
 interface ISinglePickerInputProps extends IPickerInputBaseProps {
@@ -143,6 +159,14 @@ interface ISinglePickerInputProps extends IPickerInputBaseProps {
      * The value of a single input picker.
      */
     value?: string | null;
+    /**
+     * ID used to tie the input field to a label.
+     */
+    id: string;
+    /**
+     * Aria-label attribute of the picker input field.
+     */
+    ariaLabel?: string;
 }
 
 interface IRangePickerInputProps extends IPickerInputBaseProps {
@@ -160,6 +184,20 @@ interface IRangePickerInputProps extends IPickerInputBaseProps {
         start?: string | null;
         end?: string | null;
     };
+    /**
+     * IDs used to tie the input field to the label
+     */
+    ids: {
+        start: string;
+        end: string;
+    };
+    /**
+     * Aria-label attribute of the picker input field.
+     */
+    ariaLabels?: {
+        start: string;
+        end: string;
+    };
 }
 
 const PickerShell: FC<IPickerShellProps> = ({
@@ -174,12 +212,19 @@ const PickerShell: FC<IPickerShellProps> = ({
     EndIcon,
     handleClear,
     shouldShowClearableIcon,
-    popoverRefData
+    popoverRefData,
+    isExpanded,
+    ariaControls = "Time picker shell"
 }) => {
     const shouldShowIconAppends = shouldShowClearableIcon || EndIcon;
+    const helperTextSize = size === "medium" || size === "large" ? "medium" : "small";
+
     return (
         <>
             <div
+                role="combobox"
+                aria-expanded={isExpanded}
+                aria-controls={ariaControls}
                 className={classNames("pickerInput", className, `pickerInput_mode_${mode}`, {
                     pickerInput_state_error: error,
                     pickerInput_state_disabled: disabled,
@@ -206,7 +251,12 @@ const PickerShell: FC<IPickerShellProps> = ({
                 )}
             </div>
             {errorMessage && (
-                <HelperText size="medium" text={errorMessage} status="error" className="pickerInput__errorMessage" />
+                <HelperText
+                    size={helperTextSize}
+                    text={errorMessage}
+                    status="error"
+                    className="pickerInput__errorMessage"
+                />
             )}
         </>
     );
@@ -229,7 +279,11 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
     onFocus,
     mask = "__:__:__",
     popoverRefData,
-    is12Hour
+    is12Hour,
+    id,
+    isExpanded,
+    ariaControls,
+    ariaLabel
 }) => {
     const shouldShowClearableIcon = clearable && value && !disabled && !readOnly;
     return (
@@ -245,8 +299,11 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
             handleClear={onClear}
             shouldShowClearableIcon={!!shouldShowClearableIcon}
             popoverRefData={popoverRefData}
+            isExpanded={isExpanded}
+            ariaControls={ariaControls}
         >
             <InputMask
+                id={id}
                 mask={is12Hour ? "__:__:__ aa" : mask}
                 replacement={is12Hour ? { _: /[0-9]/, a: /[a-zA-Z]/ } : { _: /[0-9]/ }}
                 className={classNames("pickerInput__input", {
@@ -262,6 +319,7 @@ const SinglePickerInput: FC<ISinglePickerInputProps> = ({
                 onClick={onClick}
                 onChange={onChange}
                 onFocus={onFocus}
+                aria-label={ariaLabel || "Time picker input"}
             />
         </PickerShell>
     );
@@ -284,7 +342,11 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
     onFocus,
     onChange,
     popoverRefData,
-    is12Hour
+    is12Hour,
+    ids,
+    isExpanded,
+    ariaControls,
+    ariaLabels
 }) => {
     const shouldShowClearableIcon = clearable && (value?.start || value?.end) && !disabled && !readOnly;
     return (
@@ -300,8 +362,11 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
             handleClear={onClear}
             shouldShowClearableIcon={!!shouldShowClearableIcon}
             popoverRefData={popoverRefData}
+            isExpanded={isExpanded}
+            ariaControls={ariaControls}
         >
             <InputMask
+                id={ids?.start}
                 mask={is12Hour ? "__:__:__ aa" : mask}
                 replacement={is12Hour ? { _: /[0-9]/, a: /[a-zA-Z]/ } : { _: /[0-9]/ }}
                 className={classNames("pickerInput__input", {
@@ -317,9 +382,11 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
                 onClick={() => onClick("start")}
                 onChange={(e) => onChange(e, "start")}
                 onFocus={onFocus}
+                aria-label={ariaLabels?.start || "Range time picker start time"}
             />
             <Minus className="pickerInput__icon" size={16} aria-hidden="true" />
             <InputMask
+                id={ids?.end}
                 mask={is12Hour ? "__:__:__ aa" : mask}
                 replacement={is12Hour ? { _: /[0-9]/, a: /[a-zA-Z]/ } : { _: /[0-9]/ }}
                 className={classNames("pickerInput__input", {
@@ -335,6 +402,7 @@ const RangePickerInput: FC<IRangePickerInputProps> = ({
                 onClick={() => onClick("end")}
                 onChange={(e) => onChange(e, "end")}
                 onFocus={onFocus}
+                aria-label={ariaLabels?.end || "Range time picker end time"}
             />
         </PickerShell>
     );

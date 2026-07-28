@@ -1,5 +1,11 @@
 import { generateRange } from "@components/molecules/TimePicker/helpers";
 
+const LABEL_SIZE_MAPPER = {
+    large: "medium",
+    medium: "medium",
+    small: "small"
+} as const;
+
 const HOURS_24 = generateRange(0, 23);
 const HOURS_12 = generateRange(1, 12);
 const MINUTES = generateRange(0, 59);
@@ -32,7 +38,15 @@ const LAST_MINUTE_IN_HOUR = 59;
 const LAST_SECOND_IN_MINUTE = 59;
 const LAST_HOUR_IN_24H_FORMAT_DAY = 23;
 
+const TIME_PICKER_FIELD_ID = "time-picker-field";
+
+const RANGE_TIME_PICKER_FIELDS_IDS = {
+    start: "range-time-picker-start-field",
+    end: "range-time-picker-end-field"
+};
+
 export {
+    LABEL_SIZE_MAPPER,
     HOURS_24,
     HOURS_12,
     MINUTES,
@@ -48,5 +62,7 @@ export {
     TIME_PARTS_RADIX,
     LAST_MINUTE_IN_HOUR,
     LAST_SECOND_IN_MINUTE,
-    LAST_HOUR_IN_24H_FORMAT_DAY
+    LAST_HOUR_IN_24H_FORMAT_DAY,
+    TIME_PICKER_FIELD_ID,
+    RANGE_TIME_PICKER_FIELDS_IDS
 };
