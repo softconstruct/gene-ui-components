@@ -81,4 +81,28 @@ describe("ProgressBar ", () => {
 
         expect(wrapper.find(".progressBar").hasClass(`progressBar_type_${type}`)).toBeTruthy();
     });
+
+    it("adds progressBar_rtl class when document direction is rtl", () => {
+        const originalDir = document.dir;
+        document.dir = "rtl";
+
+        const wrapper = mount(<ProgressBar />);
+
+        expect(wrapper.find(".progressBar").hasClass("progressBar_rtl")).toBeTruthy();
+
+        wrapper.unmount();
+        document.dir = originalDir;
+    });
+
+    it("does not add progressBar_rtl class when document direction is ltr", () => {
+        const originalDir = document.dir;
+        document.dir = "ltr";
+
+        const wrapper = mount(<ProgressBar />);
+
+        expect(wrapper.find(".progressBar").hasClass("progressBar_rtl")).toBeFalsy();
+
+        wrapper.unmount();
+        document.dir = originalDir;
+    });
 });

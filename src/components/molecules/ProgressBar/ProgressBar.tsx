@@ -88,6 +88,7 @@ const ProgressBar: FC<IProgressBarProps> = ({
     const isSuccess = percent === 100;
     const effectiveType = isError ? "determinate" : type;
     const isRestOrWarning = status === "rest" || status === "warning";
+    const isRTLMode = typeof document !== "undefined" && document.dir === "rtl";
 
     const processedPercent = useMemo(() => {
         let result = percent || 0;
@@ -108,7 +109,8 @@ const ProgressBar: FC<IProgressBarProps> = ({
                 {
                     progressBar_status_error: isError,
                     progressBar_status_success: isSuccess,
-                    progressBar_status_rest: isRestOrWarning
+                    progressBar_status_rest: isRestOrWarning,
+                    progressBar_rtl: isRTLMode
                 }
             )}
         >
@@ -128,16 +130,18 @@ const ProgressBar: FC<IProgressBarProps> = ({
                         className="progressBar__helperText"
                     />
                 )}
-                {isDeterminate && isTypeRest && isPercentLowerThanMax && (
+                {((isDeterminate && isTypeRest && isPercentLowerThanMax) || (!isDeterminate && isTypeRest)) && (
                     <p className="progressBar__statusBar">
                         {uploadingText && (
                             <Text as="span" variant={textVariantMap[size]} className="progressBar__uploadingText">
                                 {uploadingText}
                             </Text>
                         )}
-                        <Text as="span" variant={textVariantMap[size]} className="progressBar__percent">
-                            {processedPercent}
-                        </Text>
+                        {isDeterminate && (
+                            <Text as="span" variant={textVariantMap[size]} className="progressBar__percent">
+                                {processedPercent}
+                            </Text>
+                        )}
                     </p>
                 )}
             </div>
