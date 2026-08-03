@@ -73,6 +73,9 @@ const TableBodyCell = <TData, TValue>({
     const isExpanderCell = cell.column.id === "expander";
     const isRTL = dirMode === "rtl";
 
+    const explicitSize = cell.column.columnDef.meta?.explicitSize;
+    const isCustomCell = Boolean(cell.column.columnDef.meta?.isCustomCell);
+
     return (
         <td
             className={classNames("tableBodyCell", {
@@ -80,7 +83,15 @@ const TableBodyCell = <TData, TValue>({
                 tableBodyCell_expander_expanded: isExpanded,
                 tableBodyCell_pinned: isPinned
             })}
-            style={getCellStyle(isExpanderCell, cell.column.getSize(), offset, isPinned, isRTL)}
+            style={getCellStyle(
+                isExpanderCell,
+                cell.column.getSize(),
+                explicitSize,
+                offset,
+                isPinned,
+                isRTL,
+                isCustomCell
+            )}
         >
             <div className="tableBodyCell__content">{flexRender(renderer, cell.getContext())}</div>
         </td>

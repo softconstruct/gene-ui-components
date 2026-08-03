@@ -1,4 +1,5 @@
 import { FC, MouseEvent, ReactNode } from "react";
+import { RowData } from "@tanstack/react-table";
 
 import { IconProps } from "@geneui/icons";
 
@@ -155,3 +156,11 @@ export type ManageColumnsConfig = {
      */
     disabledColumns?: string[];
 };
+
+declare module "@tanstack/react-table" {
+    // eslint-disable-next-line
+    interface ColumnMeta<TData extends RowData, TValue> {
+        isCustomCell?: boolean;
+        explicitSize?: number;
+    }
+}

@@ -121,13 +121,11 @@ export const mockColumns: DataTableColumn<ClientProfile>[] = [
     {
         accessorKey: "IsVerified",
         header: "Verified",
-        size: 50,
         renderCell: ({ value }) => <Switch defaultChecked={Boolean(value)} />
     },
     {
         accessorKey: "DayOffs",
         header: "Day offs",
-        size: 100,
         renderCell: ({ value }) => <NumberField size="small" defaultValue={Number(value)} />
     },
     {
@@ -141,7 +139,6 @@ export const mockColumns: DataTableColumn<ClientProfile>[] = [
     {
         accessorKey: "IsLocked",
         header: "Locked",
-        size: 50,
         renderCell: ({ value }) => <Checkbox defaultChecked={Boolean(value)} />
     },
     { accessorKey: "Created", header: "Created" }

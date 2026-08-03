@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { flexRender } from "@tanstack/react-table";
 import { Header } from "@tanstack/table-core";
 import classNames from "classnames";
@@ -44,13 +44,53 @@ const TableHeaderCell = <TData, TValue>({ header, offset }: ITableHeaderCellProp
     const isPinned = header.column.getIsPinned();
     const isRTL = dirMode === "rtl";
 
+    const explicitSize = header.column.columnDef.meta?.explicitSize;
+    const isCustomCell = Boolean(header.column.columnDef.meta?.isCustomCell);
+
+    const { table } = header.getContext();
+    const thRef = useRef<HTMLTableCellElement>(null);
+
+    // eslint-disable-next-line consistent-return
+    useEffect(() => {
+        if (thRef.current && explicitSize === undefined) {
+            const observer = new ResizeObserver((entries) => {
+                const entry = entries[0];
+                const rect = entry.target.getBoundingClientRect();
+                const newWidth = Math.ceil(rect.width);
+
+                table.setColumnSizing((old) => {
+                    const currentSize = old[header.column.id] ?? header.column.columnDef.size ?? 150;
+                    if (Math.abs(currentSize - newWidth) > 1) {
+                        return {
+                            ...old,
+                            [header.column.id]: newWidth
+                        };
+                    }
+                    return old;
+                });
+            });
+
+            observer.observe(thRef.current);
+            return () => observer.disconnect();
+        }
+    }, [explicitSize, header.column.id, table]);
+
     return (
         <th
+            ref={thRef}
             className={classNames("tableHeaderCell", {
                 tableHeaderCell_expander: isExpanderHeader,
                 tableHeaderCell_pinned: isPinned
             })}
-            style={getCellStyle(isExpanderHeader, header.column.getSize(), offset, isPinned, isRTL)}
+            style={getCellStyle(
+                isExpanderHeader,
+                header.column.getSize(),
+                explicitSize,
+                offset,
+                isPinned,
+                isRTL,
+                isCustomCell
+            )}
         >
             {!isExpanderHeader ? (
                 <div className="tableHeaderCell__content">
