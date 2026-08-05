@@ -27,6 +27,8 @@ import { ITextFieldRef } from "@components/molecules/TextField/TextField";
 // Hooks
 import { useDebounce, useWindowSize } from "@hooks/index";
 
+import { Expand } from "@types";
+
 // Styles
 import "./Dropdown.scss";
 
@@ -54,7 +56,7 @@ interface IDropdownProps {
      * List of available options.
      * Each option defines value, label, and optional visual metadata.
      */
-    options: IDropdownOption[];
+    options: Expand<IDropdownOption>[];
     /**
      * Selection mode of the dropdown.
      * Possible values: `single | multi`

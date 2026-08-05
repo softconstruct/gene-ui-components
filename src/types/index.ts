@@ -11,3 +11,5 @@ export type BreakpointsTypes = Record<DeviceTypes, number>;
  * true or false as a boolean or as its equivalent strings.
  */
 export type Booleanish = boolean | "true" | "false";
+
+export type Expand<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
